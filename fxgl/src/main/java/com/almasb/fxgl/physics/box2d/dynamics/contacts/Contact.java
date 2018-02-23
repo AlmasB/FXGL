@@ -47,16 +47,16 @@ public abstract class Contact {
     public Contact m_next;
 
     // Nodes for connecting bodies.
-    public ContactEdge m_nodeA = null;
-    public ContactEdge m_nodeB = null;
+    public ContactEdge m_nodeA = new ContactEdge();
+    public ContactEdge m_nodeB = new ContactEdge();
 
-    public Fixture m_fixtureA;
-    public Fixture m_fixtureB;
+    public Fixture m_fixtureA = null;
+    public Fixture m_fixtureB = null;
 
     public int m_indexA;
     public int m_indexB;
 
-    public final Manifold m_manifold;
+    public final Manifold m_manifold = new Manifold();
 
     public float m_toiCount;
     public float m_toi;
@@ -69,11 +69,6 @@ public abstract class Contact {
     protected final IWorldPool pool;
 
     protected Contact(IWorldPool argPool) {
-        m_fixtureA = null;
-        m_fixtureB = null;
-        m_nodeA = new ContactEdge();
-        m_nodeB = new ContactEdge();
-        m_manifold = new Manifold();
         pool = argPool;
     }
 
@@ -103,8 +98,8 @@ public abstract class Contact {
         m_nodeB.other = null;
 
         m_toiCount = 0;
-        m_friction = Contact.mixFriction(fA.getFriction(), fB.getFriction());
-        m_restitution = Contact.mixRestitution(fA.getRestitution(), fB.getRestitution());
+        m_friction = mixFriction(fA.getFriction(), fB.getFriction());
+        m_restitution = mixRestitution(fA.getRestitution(), fB.getRestitution());
 
         m_tangentSpeed = 0;
     }
@@ -179,7 +174,7 @@ public abstract class Contact {
     }
 
     public void resetFriction() {
-        m_friction = Contact.mixFriction(m_fixtureA.getFriction(), m_fixtureB.getFriction());
+        m_friction = mixFriction(m_fixtureA.getFriction(), m_fixtureB.getFriction());
     }
 
     public void setRestitution(float restitution) {
@@ -191,7 +186,7 @@ public abstract class Contact {
     }
 
     public void resetRestitution() {
-        m_restitution = Contact.mixRestitution(m_fixtureA.getRestitution(), m_fixtureB.getRestitution());
+        m_restitution = mixRestitution(m_fixtureA.getRestitution(), m_fixtureB.getRestitution());
     }
 
     public void setTangentSpeed(float speed) {
@@ -293,26 +288,20 @@ public abstract class Contact {
     }
 
     /**
-     * Friction mixing law. The idea is to allow either fixture to drive the restitution to zero. For
-     * example, anything slides on ice.
-     *
-     * @param friction1
-     * @param friction2
-     * @return
+     * Friction mixing law.
+     * The idea is to allow either fixture to drive the restitution to zero.
+     * For example, anything slides on ice.
      */
-    public static final float mixFriction(float friction1, float friction2) {
+    private static float mixFriction(float friction1, float friction2) {
         return JBoxUtils.sqrt(friction1 * friction2);
     }
 
     /**
-     * Restitution mixing law. The idea is allow for anything to bounce off an inelastic surface. For
-     * example, a superball bounces on anything.
-     *
-     * @param restitution1
-     * @param restitution2
-     * @return
+     * Restitution mixing law.
+     * The idea is allow for anything to bounce off an inelastic surface.
+     * For example, a superball bounces on anything.
      */
-    public static final float mixRestitution(float restitution1, float restitution2) {
+    private static float mixRestitution(float restitution1, float restitution2) {
         return restitution1 > restitution2 ? restitution1 : restitution2;
     }
 }
