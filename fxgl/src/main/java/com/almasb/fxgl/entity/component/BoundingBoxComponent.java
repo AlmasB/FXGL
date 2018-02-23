@@ -532,8 +532,7 @@ public class BoundingBoxComponent extends Component
 
     @Override
     public BoundingBoxComponent copy() {
-        // https://github.com/AlmasB/FXGL/issues/481
-        return new BoundingBoxComponent(hitBoxes.toArray(new HitBox[0]));
+        return new BoundingBoxComponent(hitBoxes.stream().map(HitBox::copy).toArray(HitBox[]::new));
     }
 
 //    private boolean isXFlipped() {
