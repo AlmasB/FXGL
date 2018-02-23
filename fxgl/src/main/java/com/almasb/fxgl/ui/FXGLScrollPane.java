@@ -12,10 +12,11 @@ public class FXGLScrollPane extends ScrollPane{
 
     public FXGLScrollPane() {
         super();
+        getStyleClass().setAll("fxgl-scroll-pane");
     }
 
     public FXGLScrollPane(Node content) {
-        super(content);
-        getStyleClass().setAll("fxgl-scroll-pane");
+        this();
+        setContent(content);
     }
 }

@@ -18,6 +18,7 @@ import com.almasb.fxgl.input.TriggerView;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.scene.menu.MenuType;
+import com.almasb.fxgl.ui.FXGLScrollPane;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import com.almasb.fxgl.util.Language;
 import javafx.beans.binding.Bindings;
@@ -252,8 +253,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         app.getInput().getBindings().forEach((action, trigger) -> addNewInputBinding(action, trigger, grid));
 
-        // https://github.com/AlmasB/FXGL/issues/492
-        ScrollPane scroll = new ScrollPane(grid);
+        ScrollPane scroll = new FXGLScrollPane(grid);
         scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
         scroll.setMaxHeight(app.getHeight() / 2.5);
 
@@ -388,7 +388,7 @@ public abstract class FXGLMenu extends FXGLScene {
     protected final MenuContent createContentCredits() {
         log.debug("createContentCredits()");
 
-        ScrollPane pane = new ScrollPane();
+        ScrollPane pane = new FXGLScrollPane();
         pane.setPrefWidth(app.getWidth() * 3 / 5);
         pane.setPrefHeight(app.getHeight() / 2);
         pane.setStyle("-fx-background:black;");

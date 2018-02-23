@@ -170,8 +170,6 @@
     -fx-border-style: solid;
 }
 
-/** https://github.com/AlmasB/FXGL/issues/492 */
-
 /**
  * FXGL scroll pane
  */
@@ -184,49 +182,49 @@
 /**
  * Adapted from https://farrukhobaid.wordpress.com/2013/01/16/dark-scrollbar-skin-for-javafx/
  */
-.fxgl-scroll-bar {
+.fxgl-scroll-pane .scroll-bar {
     -fx-background-color: rgb(96,96,96);
     -fx-background-radius: 1.5em;
 }
 
-.fxgl-scroll-bar .track {
+.fxgl-scroll-pane .scroll-bar .track {
     -fx-background-color: transparent;
 	-fx-border-color: transparent;
 	-fx-background-radius: 0em;
 	-fx-border-radius: 2em;
 }
 
-.fxgl-scroll-bar .track-background {
+.fxgl-scroll-pane .scroll-bar .track-background {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-background-radius: 2em;
 }
 
-.fxgl-scroll-bar .thumb {
+.fxgl-scroll-pane .scroll-bar .thumb {
     -fx-background-color: orange;
 	-fx-background-insets: 2, 0, 0;
 	-fx-background-radius: 2em;
 }
 
-.fxgl-scroll-bar:vertical:focused,
-.fxgl-scroll-bar:horizontal:focused {
+.fxgl-scroll-pane .scroll-bar:vertical:focused,
+.fxgl-scroll-pane .scroll-bar:horizontal:focused {
     -fx-background-color: transparent,rgb(96,96,96),rgb(96,96,96);
 }
 
-.fxgl-scroll-bar:vertical .increment-button, .fxgl-scroll-bar:vertical .decrement-button {
+.fxgl-scroll-pane .scroll-bar:vertical .increment-button, .scroll-bar:vertical .decrement-button {
     -fx-background-color:transparent;
 	-fx-background-radius: 0em;
 	-fx-padding:0 10 0 0;
 }
 
-.fxgl-scroll-bar:horizontal .increment-button, .fxgl-scroll-bar:horizontal .decrement-button {
+.fxgl-scroll-pane .scroll-bar:horizontal .increment-button, .scroll-bar:horizontal .decrement-button {
     -fx-background-color:transparent;
 	-fx-background-radius: 0em;
 	-fx-padding:0 0 10 0;
 }
 
-.fxgl-scroll-bar .increment-arrow,
-.fxgl-scroll-bar .decrement-arrow {
+.fxgl-scroll-pane .scroll-bar .increment-arrow,
+.fxgl-scroll-pane .scroll-bar .decrement-arrow {
 	-fx-shape: " ";
 	-fx-padding:0;
 }
