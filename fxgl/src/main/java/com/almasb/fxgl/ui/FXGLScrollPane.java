@@ -11,7 +11,7 @@ import javafx.scene.control.ScrollPane;
 public class FXGLScrollPane extends ScrollPane{
 
     public FXGLScrollPane() {
-        this(null);
+        super();
     }
 
     public FXGLScrollPane(Node content) {
