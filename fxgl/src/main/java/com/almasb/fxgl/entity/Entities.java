@@ -10,6 +10,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.parser.tiled.Layer;
+import com.almasb.fxgl.parser.tiled.TiledLayerView;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.parser.tiled.Tileset;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -135,14 +136,14 @@ public final class Entities {
         }
 
         /**
-         * Generates view from tiles with {@link RenderLayer#TOP}.
+         * Generates view from tiles with {@link RenderLayer#DEFAULT}.
          *
          * @param map parsed Tiled map
          * @param layerName layer name as specified by Tiled
          * @return builder
          */
         public EntityBuilder viewFromTiles(TiledMap map, String layerName) {
-            return viewFromTiles(map, layerName, RenderLayer.TOP);
+            return viewFromTiles(map, layerName, RenderLayer.DEFAULT);
         }
 
         /**
@@ -157,11 +158,18 @@ public final class Entities {
             entity.getViewComponent().setView(tilesToView(map, layerName), false);
             entity.getViewComponent().setRenderLayer(renderLayer);
 
+            // https://github.com/AlmasB/FXGL/issues/474
+            //entity.xProperty().bind(FXGL.getApp().getGameScene().getViewport().xProperty());
+            //entity.yProperty().bind(FXGL.getApp().getGameScene().getViewport().yProperty());
             return this;
         }
 
         private Node tilesToView(TiledMap map, String layerName) {
             Layer layer = map.getLayerByName(layerName);
+
+            // https://github.com/AlmasB/FXGL/issues/474
+
+            //return new TiledLayerView(map, layer);
 
             WritableImage buffer = new WritableImage(
                     layer.getWidth() * map.getTilewidth(),

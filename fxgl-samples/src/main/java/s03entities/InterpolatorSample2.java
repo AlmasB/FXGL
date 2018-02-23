@@ -30,7 +30,7 @@ public class InterpolatorSample2 extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(600);
-        settings.setHeight(600);
+        settings.setHeight(700);
         settings.setTitle("InterpolatorSample2");
     }
 

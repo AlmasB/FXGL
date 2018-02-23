@@ -67,7 +67,7 @@ public class ViewComponent extends Component {
      */
     private final EntityView view = new EntityView();
 
-    private final ObjectProperty<RenderLayer> renderLayer = new SimpleObjectProperty<>(RenderLayer.TOP);
+    private final ObjectProperty<RenderLayer> renderLayer = new SimpleObjectProperty<>(RenderLayer.DEFAULT);
 
     /**
      * Creates view component with no graphics.

@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.ui
 
+import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.FXGL
-import javafx.animation.Interpolator
 import javafx.animation.TranslateTransition
 import javafx.geometry.HorizontalDirection
 import javafx.scene.layout.Pane
@@ -50,6 +50,8 @@ class InGamePanel(val direction: HorizontalDirection = HorizontalDirection.LEFT)
         translateX = -panelWidth - 4
         translateY = 4.0
         children.addAll(outerBorder)
+
+        isDisable = true
     }
 
     fun isOpen() = open
@@ -59,10 +61,11 @@ class InGamePanel(val direction: HorizontalDirection = HorizontalDirection.LEFT)
             return
 
         open = true
+        isDisable = false
 
         val translation = TranslateTransition(Duration.seconds(0.33), this)
         with(translation) {
-            interpolator = Interpolator.EASE_BOTH
+            interpolator = Interpolators.EXPONENTIAL.EASE_OUT()
             toX = 0.0
             play()
         }
@@ -73,10 +76,11 @@ class InGamePanel(val direction: HorizontalDirection = HorizontalDirection.LEFT)
             return
 
         open = false
+        isDisable = true
 
         val translation = TranslateTransition(Duration.seconds(0.33), this)
         with(translation) {
-            interpolator = Interpolator.EASE_BOTH
+            interpolator = Interpolators.EXPONENTIAL.EASE_OUT()
             toX = -panelWidth - 4
             play()
         }

@@ -266,10 +266,16 @@ public final class GameWorld {
     }
 
     /**
-     * @param mapFileName name of the .json file
+     * @param mapFileName name of the .json file or the .tmx file
      */
     public void setLevelFromMap(String mapFileName) {
-        setLevelFromMap(FXGL.getAssetLoader().loadJSON(mapFileName, TiledMap.class));
+        if (mapFileName.endsWith(".json")) {
+            setLevelFromMap(FXGL.getAssetLoader().loadJSON(mapFileName, TiledMap.class));
+        } else if (mapFileName.endsWith(".tmx")) {
+            setLevelFromMap(FXGL.getAssetLoader().loadTMX(mapFileName));
+        } else {
+            throw new IllegalArgumentException("Unknown Tiled map format");
+        }
     }
 
     public void setLevelFromMap(TiledMap map) {

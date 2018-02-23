@@ -61,8 +61,8 @@ class EntitiesTest {
         assertThat(e.isType(EntityType.TEST1), `is`(true))
     }
 
-    // TODO: can't do this because NPE because physics world is used via getApp()
-    // which is not inited with MockGameApp
+    // https://github.com/AlmasB/FXGL/issues/485
+
 //    @Test
 //    fun `Make screen bounds`() {
 //        val bounds = Entities.makeScreenBounds(20.0)

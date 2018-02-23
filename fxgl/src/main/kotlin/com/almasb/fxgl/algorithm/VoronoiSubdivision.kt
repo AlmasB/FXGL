@@ -18,6 +18,7 @@ import java.util.*
 
 /**
  * Polygonal 2D space subdivision using Voronoi diagram.
+ * Note: this is not thread-safe.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -25,7 +26,6 @@ object VoronoiSubdivision {
 
     private val log = Logger.get(javaClass)
 
-    // TODO: refactor for multi-thread
     private lateinit var bbox: Rectangle2D
     private lateinit var corners: List<Point2D>
 

@@ -211,9 +211,8 @@ public final class GameScene extends FXGLScene
         getRenderGroup(layer).getChildren().add(view);
     }
 
-    // TODO: fix
     public void addGameView(EntityView view) {
-        getRenderGroup(RenderLayer.BACKGROUND).getChildren().add(view);
+        getRenderGroup(RenderLayer.DEFAULT).getChildren().add(view);
     }
 
     /**
@@ -306,19 +305,14 @@ public final class GameScene extends FXGLScene
             particlesGC.setGlobalAlpha(1);
             particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
 
-            // TODO: this is very costly, do we know exact dimensions to clear
-            // OR can we do this off the render thread inbetween frames?
+            // https://github.com/AlmasB/FXGL/issues/494
             particlesGC.clearRect(0, 0, getWidth(), getHeight());
 
             wasDirty = false;
         }
 
         for (Entity e : drawables) {
-            DrawableComponent drawable = e.getComponent(DrawableComponent.class);
-
-            if (drawable != null) {
-                drawable.draw(particlesGC);
-            }
+            e.getComponentOptional(DrawableComponent.class).ifPresent(d -> d.draw(particlesGC));
         }
 
         for (ParticleControl particle : particles) {
@@ -344,7 +338,6 @@ public final class GameScene extends FXGLScene
     public void onEntityAdded(Entity entity) {
         initView(entity.getViewComponent());
 
-        // TODO: how does this integrate with the new ECS model?
         entity.getComponentOptional(DrawableComponent.class)
                 .ifPresent(c -> drawables.add(entity));
 

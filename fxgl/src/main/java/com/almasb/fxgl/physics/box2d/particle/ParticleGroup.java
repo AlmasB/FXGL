@@ -34,7 +34,6 @@ public class ParticleGroup {
     Object m_userData;
 
     public ParticleGroup() {
-        // m_system = null;
         m_firstIndex = 0;
         m_lastIndex = 0;
         m_groupFlags = 0;
@@ -115,7 +114,6 @@ public class ParticleGroup {
     public void setUserData(Object data) {
         m_userData = data;
     }
-
 
     public void updateStatistics() {
         if (m_timestamp != m_system.m_timestamp) {

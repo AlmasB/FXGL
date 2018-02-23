@@ -272,7 +272,7 @@ public abstract class GameApplication extends Application {
         // reasonable hack to trigger dialog state init before intro and menus
         DialogSubState.INSTANCE.getView();
 
-        // TODO: replace nulls with EMPTY
+        // https://github.com/AlmasB/FXGL/issues/477
         AppState intro = this.getSettings().isIntroEnabled() ? new IntroState(this, sceneFactory) : null;
         AppState mainMenu = this.getSettings().isMenuEnabled() ? new MainMenuState(sceneFactory) : null;
         AppState gameMenu = this.getSettings().isMenuEnabled() ? new GameMenuState(sceneFactory) : null;
@@ -451,6 +451,7 @@ public abstract class GameApplication extends Application {
      */
     void startLoadedGame(DataFile dataFile) {
         log.debug("Starting loaded game");
+        // https://github.com/AlmasB/FXGL/issues/476
         stateMachine.startLoad(dataFile);
     }
 

@@ -170,6 +170,8 @@
     -fx-border-style: solid;
 }
 
+/** https://github.com/AlmasB/FXGL/issues/492 */
+
 /**
  * FXGL scroll pane
  */

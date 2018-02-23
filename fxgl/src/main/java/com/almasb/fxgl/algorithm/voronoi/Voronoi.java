@@ -51,6 +51,8 @@ package com.almasb.fxgl.algorithm.voronoi;
 import java.util.*;
 
 /**
+ * https://github.com/AlmasB/FXGL/issues/478
+ *
  * See http://en.wikipedia.org/wiki/Fortune%27s_algorithm
  */
 public final class Voronoi {

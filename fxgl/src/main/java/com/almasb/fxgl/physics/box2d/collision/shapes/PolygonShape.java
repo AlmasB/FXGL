@@ -14,18 +14,13 @@ import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
-import com.almasb.fxgl.physics.box2d.pooling.arrays.IntArray;
-import com.almasb.fxgl.physics.box2d.pooling.arrays.Vec2Array;
 
 /**
  * A convex polygon shape.
  * Polygons have a maximum number of vertices equal to JBoxSettings.maxPolygonVertices.
  * In most cases you should not need many vertices for a convex polygon.
  */
-public class PolygonShape extends Shape {
-
-    /** Dump lots of debug information. */
-    private final static boolean m_debug = false;
+public final class PolygonShape extends Shape {
 
     /**
      * Local position of the shape centroid in parent body frame.
@@ -57,7 +52,7 @@ public class PolygonShape extends Shape {
     private Transform poolt1 = new Transform();
 
     public PolygonShape() {
-        super(ShapeType.POLYGON);
+        super(ShapeType.POLYGON, JBoxSettings.polygonRadius);
 
         for (int i = 0; i < m_vertices.length; i++) {
             m_vertices[i] = new Vec2();
@@ -67,11 +62,11 @@ public class PolygonShape extends Shape {
             m_normals[i] = new Vec2();
         }
 
-        setRadius(JBoxSettings.polygonRadius);
         m_centroid.setZero();
     }
 
-    public final Shape clone() {
+    @Override
+    public Shape clone() {
         PolygonShape shape = new PolygonShape();
         shape.m_centroid.set(this.m_centroid);
         for (int i = 0; i < shape.m_normals.length; i++) {
@@ -83,198 +78,13 @@ public class PolygonShape extends Shape {
         return shape;
     }
 
-    /**
-     * Create a convex hull from the given array of points. The count must be in the range [3,
-     * JBoxSettings.maxPolygonVertices].
-     *
-     * @warning the points may be re-ordered, even if they form a convex polygon.
-     * @warning collinear points are removed.
-     */
-    public final void set(final Vec2[] vertices, final int count) {
-        set(vertices, count, null, null);
-    }
-
-    /**
-     * Create a convex hull from the given array of points. The count must be in the range [3,
-     * JBoxSettings.maxPolygonVertices]. This method takes an arraypool for pooling.
-     *
-     * @warning the points may be re-ordered, even if they form a convex polygon.
-     * @warning collinear points are removed.
-     */
-    public final void set(final Vec2[] verts, final int num, final Vec2Array vecPool,
-                          final IntArray intPool) {
-        assert (3 <= num && num <= JBoxSettings.maxPolygonVertices);
-        if (num < 3) {
-            setAsBox(1.0f, 1.0f);
-            return;
-        }
-
-        int n = JBoxUtils.min(num, JBoxSettings.maxPolygonVertices);
-
-        // Perform welding and copy vertices into local buffer.
-        Vec2[] ps =
-                (vecPool != null)
-                        ? vecPool.get(JBoxSettings.maxPolygonVertices)
-                        : new Vec2[JBoxSettings.maxPolygonVertices];
-        int tempCount = 0;
-        for (int i = 0; i < n; ++i) {
-            Vec2 v = verts[i];
-            boolean unique = true;
-            for (int j = 0; j < tempCount; ++j) {
-                if (JBoxUtils.distanceSquared(v, ps[j]) < 0.5f * JBoxSettings.linearSlop) {
-                    unique = false;
-                    break;
-                }
-            }
-
-            if (unique) {
-                ps[tempCount++] = v;
-            }
-        }
-
-        n = tempCount;
-        if (n < 3) {
-            // Polygon is degenerate.
-            assert (false);
-            setAsBox(1.0f, 1.0f);
-            return;
-        }
-
-        // Create the convex hull using the Gift wrapping algorithm
-        // http://en.wikipedia.org/wiki/Gift_wrapping_algorithm
-
-        // Find the right most point on the hull
-        int i0 = 0;
-        float x0 = ps[0].x;
-        for (int i = 1; i < n; ++i) {
-            float x = ps[i].x;
-            if (x > x0 || (x == x0 && ps[i].y < ps[i0].y)) {
-                i0 = i;
-                x0 = x;
-            }
-        }
-
-        int[] hull =
-                (intPool != null)
-                        ? intPool.get(JBoxSettings.maxPolygonVertices)
-                        : new int[JBoxSettings.maxPolygonVertices];
-        int m = 0;
-        int ih = i0;
-
-        while (true) {
-            hull[m] = ih;
-
-            int ie = 0;
-            for (int j = 1; j < n; ++j) {
-                if (ie == ih) {
-                    ie = j;
-                    continue;
-                }
-
-                Vec2 r = pool1.set(ps[ie]).subLocal(ps[hull[m]]);
-                Vec2 v = pool2.set(ps[j]).subLocal(ps[hull[m]]);
-                float c = Vec2.cross(r, v);
-                if (c < 0.0f) {
-                    ie = j;
-                }
-
-                // Collinearity check
-                if (c == 0.0f && v.lengthSquared() > r.lengthSquared()) {
-                    ie = j;
-                }
-            }
-
-            ++m;
-            ih = ie;
-
-            if (ie == i0) {
-                break;
-            }
-        }
-
-        this.vertexCount = m;
-
-        // Copy vertices.
-        for (int i = 0; i < vertexCount; ++i) {
-            if (m_vertices[i] == null) {
-                m_vertices[i] = new Vec2();
-            }
-            m_vertices[i].set(ps[hull[i]]);
-        }
-
-        final Vec2 edge = pool1;
-
-        // Compute normals. Ensure the edges have non-zero length.
-        for (int i = 0; i < vertexCount; ++i) {
-            final int i1 = i;
-            final int i2 = i + 1 < vertexCount ? i + 1 : 0;
-            edge.set(m_vertices[i2]).subLocal(m_vertices[i1]);
-
-            assert (edge.lengthSquared() > JBoxSettings.EPSILON * JBoxSettings.EPSILON);
-            Vec2.crossToOutUnsafe(edge, 1f, m_normals[i]);
-            m_normals[i].getLengthAndNormalize();
-        }
-
-        // Compute the polygon centroid.
-        computeCentroidToOut(m_vertices, vertexCount, m_centroid);
-    }
-
-    /**
-     * Build vertices to represent an axis-aligned box.
-     *
-     * @param hx the half-width.
-     * @param hy the half-height.
-     */
-    public final void setAsBox(final float hx, final float hy) {
-        vertexCount = 4;
-        m_vertices[0].set(-hx, -hy);
-        m_vertices[1].set(hx, -hy);
-        m_vertices[2].set(hx, hy);
-        m_vertices[3].set(-hx, hy);
-        m_normals[0].set(0.0f, -1.0f);
-        m_normals[1].set(1.0f, 0.0f);
-        m_normals[2].set(0.0f, 1.0f);
-        m_normals[3].set(-1.0f, 0.0f);
-        m_centroid.setZero();
-    }
-
-    /**
-     * Build vertices to represent an oriented box.
-     *
-     * @param hx the half-width.
-     * @param hy the half-height.
-     * @param center the center of the box in local coordinates.
-     * @param angle the rotation of the box in local coordinates.
-     */
-    public final void setAsBox(final float hx, final float hy, final Vec2 center, final float angle) {
-        vertexCount = 4;
-        m_vertices[0].set(-hx, -hy);
-        m_vertices[1].set(hx, -hy);
-        m_vertices[2].set(hx, hy);
-        m_vertices[3].set(-hx, hy);
-        m_normals[0].set(0.0f, -1.0f);
-        m_normals[1].set(1.0f, 0.0f);
-        m_normals[2].set(0.0f, 1.0f);
-        m_normals[3].set(-1.0f, 0.0f);
-        m_centroid.set(center);
-
-        final Transform xf = poolt1;
-        xf.p.set(center);
-        xf.q.set(angle);
-
-        // Transform vertices and normals.
-        for (int i = 0; i < vertexCount; ++i) {
-            Transform.mulToOut(xf, m_vertices[i], m_vertices[i]);
-            Rotation.mulToOut(xf.q, m_normals[i], m_normals[i]);
-        }
-    }
-
+    @Override
     public int getChildCount() {
         return 1;
     }
 
     @Override
-    public final boolean testPoint(final Transform xf, final Vec2 p) {
+    public boolean testPoint(final Transform xf, final Vec2 p) {
         float tempx, tempy;
         final Rotation xfq = xf.q;
 
@@ -282,15 +92,6 @@ public class PolygonShape extends Shape {
         tempy = p.y - xf.p.y;
         final float pLocalx = xfq.c * tempx + xfq.s * tempy;
         final float pLocaly = -xfq.s * tempx + xfq.c * tempy;
-
-        if (m_debug) {
-            System.out.println("--testPoint debug--");
-            System.out.println("Vertices: ");
-            for (int i = 0; i < vertexCount; ++i) {
-                System.out.println(m_vertices[i]);
-            }
-            System.out.println("pLocal: " + pLocalx + ", " + pLocaly);
-        }
 
         for (int i = 0; i < vertexCount; ++i) {
             Vec2 vertex = m_vertices[i];
@@ -307,7 +108,7 @@ public class PolygonShape extends Shape {
     }
 
     @Override
-    public final void computeAABB(final AABB aabb, final Transform xf, int childIndex) {
+    public void computeAABB(final AABB aabb, final Transform xf, int childIndex) {
         final Vec2 lower = aabb.lowerBound;
         final Vec2 upper = aabb.upperBound;
         final Vec2 v1 = m_vertices[0];
@@ -331,30 +132,10 @@ public class PolygonShape extends Shape {
             upper.y = upper.y > vy ? upper.y : vy;
         }
 
-        lower.x -= radius;
-        lower.y -= radius;
-        upper.x += radius;
-        upper.y += radius;
-    }
-
-    /**
-     * Get the vertex count.
-     *
-     * @return
-     */
-    public final int getVertexCount() {
-        return vertexCount;
-    }
-
-    /**
-     * Get a vertex by index.
-     *
-     * @param index
-     * @return
-     */
-    public final Vec2 getVertex(final int index) {
-        assert (0 <= index && index < vertexCount);
-        return m_vertices[index];
+        lower.x -= getRadius();
+        lower.y -= getRadius();
+        upper.x += getRadius();
+        upper.y += getRadius();
     }
 
     @Override
@@ -413,8 +194,7 @@ public class PolygonShape extends Shape {
     }
 
     @Override
-    public final boolean raycast(RayCastOutput output, RayCastInput input, Transform xf,
-                                 int childIndex) {
+    public boolean raycast(RayCastOutput output, RayCastInput input, Transform xf, int childIndex) {
         final float xfqc = xf.q.c;
         final float xfqs = xf.q.s;
         final Vec2 xfp = xf.p;
@@ -490,46 +270,7 @@ public class PolygonShape extends Shape {
         return false;
     }
 
-    public final void computeCentroidToOut(final Vec2[] vs, final int count, final Vec2 out) {
-        assert (count >= 3);
-
-        out.set(0.0f, 0.0f);
-        float area = 0.0f;
-
-        // pRef is the reference point for forming triangles.
-        // It's location doesn't change the result (except for rounding error).
-        final Vec2 pRef = pool1;
-        pRef.setZero();
-
-        final Vec2 e1 = pool2;
-        final Vec2 e2 = pool3;
-
-        final float inv3 = 1.0f / 3.0f;
-
-        for (int i = 0; i < count; ++i) {
-            // Triangle vertices.
-            final Vec2 p1 = pRef;
-            final Vec2 p2 = vs[i];
-            final Vec2 p3 = i + 1 < count ? vs[i + 1] : vs[0];
-
-            e1.set(p2).subLocal(p1);
-            e2.set(p3).subLocal(p1);
-
-            final float D = Vec2.cross(e1, e2);
-
-            final float triangleArea = 0.5f * D;
-            area += triangleArea;
-
-            // Area weighted centroid
-            e1.set(p1).addLocal(p2).addLocal(p3).mulLocal(triangleArea * inv3);
-            out.addLocal(e1);
-        }
-
-        // Centroid
-        assert (area > JBoxSettings.EPSILON);
-        out.mulLocal(1.0f / area);
-    }
-
+    @Override
     public void computeMass(final MassData massData, float density) {
         // Polygon mass, centroid, and inertia.
         // Let rho be the polygon density in mass per unit area.
@@ -613,6 +354,235 @@ public class PolygonShape extends Shape {
 
         // Shift to center of mass then to original body origin.
         massData.I += massData.mass * (Vec2.dot(massData.center, massData.center));
+    }
+
+    /**
+     * Create a convex hull from the given array of points. The count must be in the range [3,
+     * JBoxSettings.maxPolygonVertices].
+     *
+     * @warning the points may be re-ordered, even if they form a convex polygon.
+     * @warning collinear points are removed.
+     */
+    public void set(final Vec2[] vertices, final int count) {
+        setImpl(vertices, count);
+    }
+
+    private void setImpl(final Vec2[] verts, final int num) {
+        assert (3 <= num && num <= JBoxSettings.maxPolygonVertices);
+
+        if (num < 3) {
+            setAsBox(1.0f, 1.0f);
+            return;
+        }
+
+        int n = JBoxUtils.min(num, JBoxSettings.maxPolygonVertices);
+
+        // Perform welding and copy vertices into local buffer.
+        Vec2[] ps = new Vec2[JBoxSettings.maxPolygonVertices];
+
+        int tempCount = 0;
+        for (int i = 0; i < n; ++i) {
+            Vec2 v = verts[i];
+            boolean unique = true;
+            for (int j = 0; j < tempCount; ++j) {
+                if (JBoxUtils.distanceSquared(v, ps[j]) < 0.5f * JBoxSettings.linearSlop) {
+                    unique = false;
+                    break;
+                }
+            }
+
+            if (unique) {
+                ps[tempCount++] = v;
+            }
+        }
+
+        n = tempCount;
+        if (n < 3) {
+            // Polygon is degenerate.
+            assert (false);
+            setAsBox(1.0f, 1.0f);
+            return;
+        }
+
+        // Create the convex hull using the Gift wrapping algorithm
+        // http://en.wikipedia.org/wiki/Gift_wrapping_algorithm
+
+        // Find the right most point on the hull
+        int i0 = 0;
+        float x0 = ps[0].x;
+        for (int i = 1; i < n; ++i) {
+            float x = ps[i].x;
+            if (x > x0 || (x == x0 && ps[i].y < ps[i0].y)) {
+                i0 = i;
+                x0 = x;
+            }
+        }
+
+        int[] hull = new int[JBoxSettings.maxPolygonVertices];
+        int m = 0;
+        int ih = i0;
+
+        while (true) {
+            hull[m] = ih;
+
+            int ie = 0;
+            for (int j = 1; j < n; ++j) {
+                if (ie == ih) {
+                    ie = j;
+                    continue;
+                }
+
+                Vec2 r = pool1.set(ps[ie]).subLocal(ps[hull[m]]);
+                Vec2 v = pool2.set(ps[j]).subLocal(ps[hull[m]]);
+                float c = Vec2.cross(r, v);
+                if (c < 0.0f) {
+                    ie = j;
+                }
+
+                // Collinearity check
+                if (c == 0.0f && v.lengthSquared() > r.lengthSquared()) {
+                    ie = j;
+                }
+            }
+
+            ++m;
+            ih = ie;
+
+            if (ie == i0) {
+                break;
+            }
+        }
+
+        this.vertexCount = m;
+
+        // Copy vertices.
+        for (int i = 0; i < vertexCount; ++i) {
+            if (m_vertices[i] == null) {
+                m_vertices[i] = new Vec2();
+            }
+            m_vertices[i].set(ps[hull[i]]);
+        }
+
+        final Vec2 edge = pool1;
+
+        // Compute normals. Ensure the edges have non-zero length.
+        for (int i = 0; i < vertexCount; ++i) {
+            final int i1 = i;
+            final int i2 = i + 1 < vertexCount ? i + 1 : 0;
+            edge.set(m_vertices[i2]).subLocal(m_vertices[i1]);
+
+            assert (edge.lengthSquared() > JBoxSettings.EPSILON * JBoxSettings.EPSILON);
+            Vec2.crossToOutUnsafe(edge, 1f, m_normals[i]);
+            m_normals[i].getLengthAndNormalize();
+        }
+
+        // Compute the polygon centroid.
+        computeCentroidToOut(m_vertices, vertexCount, m_centroid);
+    }
+
+    /**
+     * Build vertices to represent an axis-aligned box.
+     *
+     * @param hx the half-width.
+     * @param hy the half-height.
+     */
+    public void setAsBox(final float hx, final float hy) {
+        vertexCount = 4;
+        m_vertices[0].set(-hx, -hy);
+        m_vertices[1].set(hx, -hy);
+        m_vertices[2].set(hx, hy);
+        m_vertices[3].set(-hx, hy);
+        m_normals[0].set(0.0f, -1.0f);
+        m_normals[1].set(1.0f, 0.0f);
+        m_normals[2].set(0.0f, 1.0f);
+        m_normals[3].set(-1.0f, 0.0f);
+        m_centroid.setZero();
+    }
+
+    /**
+     * Build vertices to represent an oriented box.
+     *
+     * @param hx the half-width.
+     * @param hy the half-height.
+     * @param center the center of the box in local coordinates.
+     * @param angle the rotation of the box in local coordinates.
+     */
+    public void setAsBox(final float hx, final float hy, final Vec2 center, final float angle) {
+        vertexCount = 4;
+        m_vertices[0].set(-hx, -hy);
+        m_vertices[1].set(hx, -hy);
+        m_vertices[2].set(hx, hy);
+        m_vertices[3].set(-hx, hy);
+        m_normals[0].set(0.0f, -1.0f);
+        m_normals[1].set(1.0f, 0.0f);
+        m_normals[2].set(0.0f, 1.0f);
+        m_normals[3].set(-1.0f, 0.0f);
+        m_centroid.set(center);
+
+        final Transform xf = poolt1;
+        xf.p.set(center);
+        xf.q.set(angle);
+
+        // Transform vertices and normals.
+        for (int i = 0; i < vertexCount; ++i) {
+            Transform.mulToOut(xf, m_vertices[i], m_vertices[i]);
+            Rotation.mulToOut(xf.q, m_normals[i], m_normals[i]);
+        }
+    }
+
+    public int getVertexCount() {
+        return vertexCount;
+    }
+
+    /**
+     * Get a vertex by index.
+     *
+     * @param index
+     * @return
+     */
+    public Vec2 getVertex(final int index) {
+        assert (0 <= index && index < vertexCount);
+        return m_vertices[index];
+    }
+
+    public void computeCentroidToOut(final Vec2[] vs, final int count, final Vec2 out) {
+        assert (count >= 3);
+
+        out.set(0.0f, 0.0f);
+        float area = 0.0f;
+
+        // pRef is the reference point for forming triangles.
+        // It's location doesn't change the result (except for rounding error).
+        final Vec2 pRef = pool1;
+        pRef.setZero();
+
+        final Vec2 e1 = pool2;
+        final Vec2 e2 = pool3;
+
+        final float inv3 = 1.0f / 3.0f;
+
+        for (int i = 0; i < count; ++i) {
+            // Triangle vertices.
+            final Vec2 p1 = pRef;
+            final Vec2 p2 = vs[i];
+            final Vec2 p3 = i + 1 < count ? vs[i + 1] : vs[0];
+
+            e1.set(p2).subLocal(p1);
+            e2.set(p3).subLocal(p1);
+
+            final float D = Vec2.cross(e1, e2);
+
+            final float triangleArea = 0.5f * D;
+            area += triangleArea;
+
+            // Area weighted centroid
+            e1.set(p1).addLocal(p2).addLocal(p3).mulLocal(triangleArea * inv3);
+            out.addLocal(e1);
+        }
+
+        // Centroid
+        assert (area > JBoxSettings.EPSILON);
+        out.mulLocal(1.0f / area);
     }
 
     /**

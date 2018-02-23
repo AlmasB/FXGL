@@ -102,7 +102,7 @@ public class ParticleGroupDef {
     /**
      * The angular velocity of the group.
      */
-    public float angularVelocity = 0;
+    private float angularVelocity = 0;
 
     public float getAngularVelocity() {
         return angularVelocity;
@@ -175,5 +175,9 @@ public class ParticleGroupDef {
 
     public Object getUserData() {
         return userData;
+    }
+
+    public void setUserData(Object userData) {
+        this.userData = userData;
     }
 }

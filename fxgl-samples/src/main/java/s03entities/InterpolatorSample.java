@@ -57,6 +57,7 @@ public class InterpolatorSample extends GameApplication {
     }
 
     private ToggleGroup group = new ToggleGroup();
+    private ToggleGroup group2 = new ToggleGroup();
 
     @Override
     protected void initUI() {
@@ -78,7 +79,15 @@ public class InterpolatorSample extends GameApplication {
         btn3.setToggleGroup(group);
         btn2.setSelected(true);
 
-        vbox.getChildren().addAll(btn1, btn2, btn3);
+        RadioButton btn4 = new RadioButton("Translate");
+        RadioButton btn5 = new RadioButton("Scale");
+        RadioButton btn6 = new RadioButton("Rotate");
+        btn4.setToggleGroup(group2);
+        btn5.setToggleGroup(group2);
+        btn6.setToggleGroup(group2);
+        btn4.setSelected(true);
+
+        vbox.getChildren().addAll(btn1, btn2, btn3, btn4, btn5, btn6);
 
         vbox.setTranslateX(650);
         getGameScene().addUINode(vbox);
@@ -89,14 +98,44 @@ public class InterpolatorSample extends GameApplication {
 
         Interpolator ease = getEase(interpolator);
 
-        Entities.animationBuilder()
-                .interpolator(ease)
-                .duration(Duration.seconds(2.3))
-                .onFinished(() -> set("canPlay", true))
-                .translate(player)
-                .from(new Point2D(0, -150))
-                .to(new Point2D(0, 300))
-                .buildAndPlay();
+        String animType = ((RadioButton) group2.getSelectedToggle()).getText();
+
+        switch (animType) {
+            case "Translate":
+                Entities.animationBuilder()
+                        .interpolator(ease)
+                        .duration(Duration.seconds(2.3))
+                        .onFinished(() -> set("canPlay", true))
+                        .translate(player)
+                        .from(new Point2D(0, -150))
+                        .to(new Point2D(0, 300))
+                        .buildAndPlay();
+                break;
+            case "Scale":
+                Entities.animationBuilder()
+                        .interpolator(ease)
+                        .autoReverse(true)
+                        .repeat(2)
+                        .duration(Duration.seconds(1.15))
+                        .onFinished(() -> set("canPlay", true))
+                        .scale(player)
+                        .from(new Point2D(1, 1))
+                        .to(new Point2D(0, 0))
+                        .buildAndPlay();
+                break;
+            case "Rotate":
+                Entities.animationBuilder()
+                        .interpolator(ease)
+                        .duration(Duration.seconds(2.3))
+                        .onFinished(() -> set("canPlay", true))
+                        .rotate(player)
+                        .rotateFrom(0)
+                        .rotateTo(360)
+                        .buildAndPlay();
+                break;
+        }
+
+
     }
 
     private Interpolator getEase(EasingInterpolator interpolator) {

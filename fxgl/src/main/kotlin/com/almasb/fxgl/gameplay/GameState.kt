@@ -71,6 +71,9 @@ class GameState {
         }
     }
 
+    /**
+     * Create a new var with [propertyName] and [value].
+     */
     fun put(propertyName: String, value: Any) {
         if (exists(propertyName))
             throw IllegalArgumentException("Property $propertyName already exists")
@@ -86,6 +89,9 @@ class GameState {
         properties.put(propertyName, property)
     }
 
+    /**
+     * Set a new [value] to an existing var [propertyName].
+     */
     fun setValue(propertyName: String, value: Any) {
         when (value) {
             is Boolean -> booleanProperty(propertyName).value = value

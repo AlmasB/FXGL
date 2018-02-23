@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.animation
 
+import com.almasb.fxgl.core.math.FXGLMath
 import javafx.animation.Interpolator
 
 /**
@@ -263,6 +264,54 @@ enum class Interpolators : EasingInterpolator {
                 0.5*(r*r*((s*1.525+1)*r-s*1.525))
             else
                 0.5*(r2 * r2 * ((s*1.525 + 1) * r2 + s*1.525)+2)
+        }
+    },
+
+    RANDOM {
+        override fun easeIn(ratio: Double) = random(ratio)
+
+        override fun easeOut(ratio: Double) = random(ratio)
+
+        override fun easeInOut(ratio: Double) = random(ratio)
+
+        private fun random(ratio: Double): Double {
+            if (ratio == 0.0 || ratio == 1.0)
+                return ratio
+
+            var result: Double
+
+            // we don't want 0.0 to be at any point except for the start
+            // which is captured by "if" above
+            // and 1.0 is exclusive in FXGLMath.random()
+            do {
+                result = FXGLMath.random()
+            } while (result == 0.0)
+
+            return result
+        }
+    },
+
+    PERLIN {
+        override fun easeIn(ratio: Double) = perlin(ratio)
+
+        override fun easeOut(ratio: Double) = perlin(ratio)
+
+        override fun easeInOut(ratio: Double) = perlin(ratio)
+
+        private fun perlin(ratio: Double): Double {
+            if (ratio == 0.0 || ratio == 1.0)
+                return ratio
+
+            var result: Double
+
+            // we don't want 0.0 to be at any point except for the start
+            // which is captured by "if" above
+            // and 1.0 is exclusive in FXGLMath.noise1D
+            do {
+                result = FXGLMath.noise1D(ratio * 2)
+            } while (result == 0.0)
+
+            return result
         }
     }
 }

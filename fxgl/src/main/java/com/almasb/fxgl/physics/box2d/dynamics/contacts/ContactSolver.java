@@ -982,7 +982,6 @@ public class ContactSolver {
     }
 }
 
-
 class PositionSolverManifold {
 
     public final Vec2 normal = new Vec2();

@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Required;
@@ -27,11 +27,10 @@ public class PhysicsControl extends Control {
 
     private PhysicsWorld physicsWorld;
 
-    private double appHeight;
+    private Vec2 minMeters = Pools.obtain(Vec2.class);
 
-    PhysicsControl(double appHeight) {
-        this.appHeight = appHeight;
-        this.physicsWorld = FXGL.getApp().getPhysicsWorld();
+    PhysicsControl(PhysicsWorld physicsWorld) {
+        this.physicsWorld = physicsWorld;
     }
 
     @Override
@@ -45,22 +44,31 @@ public class PhysicsControl extends Control {
         // these give us min world coordinates of the overall bbox
         // but they are not coordinates of the entity
 
-        double minXWorld = toPixels(body.getPosition().x - toMeters(entity.getWidth() / 2));
-        double minYWorld = toPixels(toMeters(appHeight) - body.getPosition().y - toMeters(entity.getHeight() / 2));
+        minMeters.set(
+                body.getPosition().x - physicsWorld.toMetersF(entity.getWidth() / 2),
+                body.getPosition().y + physicsWorld.toMetersF(entity.getHeight() / 2)
+        );
+
+        Point2D minWorld = physicsWorld.toPoint(minMeters);
 
         // hence we do the following, as entity.x = minXWorld - minXLocal
 
         // we round positions so that it's easy for the rest of the world to work with
         // snapped to pixel values
         entity.setX(
-                Math.round(minXWorld - entity.getBoundingBoxComponent().getMinXLocal())
+                Math.round(minWorld.getX() - entity.getBoundingBoxComponent().getMinXLocal())
         );
 
         entity.setY(
-                Math.round(minYWorld - entity.getBoundingBoxComponent().getMinYLocal())
+                Math.round(minWorld.getY() - entity.getBoundingBoxComponent().getMinYLocal())
         );
 
         entity.setRotation(-Math.toDegrees(body.getAngle()));
+    }
+
+    @Override
+    public void onRemoved(Entity entity) {
+        Pools.free(minMeters);
     }
 
     /**
@@ -73,17 +81,11 @@ public class PhysicsControl extends Control {
         double w = getEntity().getWidth();
         double h = getEntity().getHeight();
 
-        body.setTransform(new Vec2(
-                toMeters(point.getX() + w / 2),
-                toMeters(appHeight - (point.getY() + h / 2))),
-                body.getAngle());
-    }
+        Vec2 positionMeters = physicsWorld.toPoint(new Point2D(
+                point.getX() + w / 2,
+                point.getY() + h / 2
+        ));
 
-    private float toMeters(double pixels) {
-        return physicsWorld.toMeters(pixels);
-    }
-
-    private float toPixels(double meters) {
-        return physicsWorld.toPixels(meters);
+        body.setTransform(positionMeters, body.getAngle());
     }
 }

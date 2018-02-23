@@ -7,7 +7,6 @@
 package com.almasb.fxgl.physics.box2d.collision.broadphase;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.callbacks.DebugDraw;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeCallback;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeRayCastCallback;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
@@ -89,6 +88,4 @@ public interface BroadPhaseStrategy {
      * @return
      */
     float getAreaRatio();
-
-    void drawTree(DebugDraw draw);
 }

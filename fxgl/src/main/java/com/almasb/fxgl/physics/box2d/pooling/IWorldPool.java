@@ -23,61 +23,61 @@ import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
  */
 public interface IWorldPool {
 
-    public IDynamicStack<Contact> getPolyContactStack();
+    IDynamicStack<Contact> getPolyContactStack();
 
-    public IDynamicStack<Contact> getCircleContactStack();
+    IDynamicStack<Contact> getCircleContactStack();
 
-    public IDynamicStack<Contact> getPolyCircleContactStack();
+    IDynamicStack<Contact> getPolyCircleContactStack();
 
-    public IDynamicStack<Contact> getEdgeCircleContactStack();
+    IDynamicStack<Contact> getEdgeCircleContactStack();
 
-    public IDynamicStack<Contact> getEdgePolyContactStack();
+    IDynamicStack<Contact> getEdgePolyContactStack();
 
-    public IDynamicStack<Contact> getChainCircleContactStack();
+    IDynamicStack<Contact> getChainCircleContactStack();
 
-    public IDynamicStack<Contact> getChainPolyContactStack();
+    IDynamicStack<Contact> getChainPolyContactStack();
 
-    public Vec2 popVec2();
+    Vec2 popVec2();
 
-    public Vec2[] popVec2(int num);
+    Vec2[] popVec2(int num);
 
-    public void pushVec2(int num);
+    void pushVec2(int num);
 
-    public Vec3 popVec3();
+    Vec3 popVec3();
 
-    public Vec3[] popVec3(int num);
+    Vec3[] popVec3(int num);
 
-    public void pushVec3(int num);
+    void pushVec3(int num);
 
-    public Mat22 popMat22();
+    Mat22 popMat22();
 
-    public Mat22[] popMat22(int num);
+    Mat22[] popMat22(int num);
 
-    public void pushMat22(int num);
+    void pushMat22(int num);
 
-    public Mat33 popMat33();
+    Mat33 popMat33();
 
-    public void pushMat33(int num);
+    void pushMat33(int num);
 
-    public AABB popAABB();
+    AABB popAABB();
 
-    public AABB[] popAABB(int num);
+    AABB[] popAABB(int num);
 
-    public void pushAABB(int num);
+    void pushAABB(int num);
 
-    public Rotation popRot();
+    Rotation popRot();
 
-    public void pushRot(int num);
+    void pushRot(int num);
 
-    public Collision getCollision();
+    Collision getCollision();
 
-    public TimeOfImpact getTimeOfImpact();
+    TimeOfImpact getTimeOfImpact();
 
-    public Distance getDistance();
+    Distance getDistance();
 
-    public float[] getFloatArray(int argLength);
+    float[] getFloatArray(int argLength);
 
-    public int[] getIntArray(int argLength);
+    int[] getIntArray(int argLength);
 
-    public Vec2[] getVec2Array(int argLength);
+    Vec2[] getVec2Array(int argLength);
 }

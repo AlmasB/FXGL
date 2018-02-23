@@ -12,7 +12,6 @@ import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Sweep;
-import com.almasb.fxgl.physics.box2d.common.Timer;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactSolver.ContactSolverDef;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.Joint;
@@ -140,16 +139,16 @@ import com.almasb.fxgl.physics.box2d.dynamics.joints.Joint;
  *
  * @author Daniel Murphy
  */
-public class Island {
+class Island {
 
-    public ContactListener m_listener;
+    private ContactListener listener;
 
     public Body[] m_bodies;
-    public Contact[] m_contacts;
-    public Joint[] m_joints;
+    private Contact[] m_contacts;
+    private Joint[] m_joints;
 
-    public Position[] m_positions;
-    public Velocity[] m_velocities;
+    private Position[] m_positions;
+    private Velocity[] m_velocities;
 
     public int m_bodyCount;
     public int m_jointCount;
@@ -159,9 +158,7 @@ public class Island {
     public int m_contactCapacity;
     public int m_jointCapacity;
 
-    public void init(int bodyCapacity, int contactCapacity, int jointCapacity,
-                     ContactListener listener) {
-        // System.out.println("Initializing Island");
+    public void init(int bodyCapacity, int contactCapacity, int jointCapacity, ContactListener listener) {
         m_bodyCapacity = bodyCapacity;
         m_contactCapacity = contactCapacity;
         m_jointCapacity = jointCapacity;
@@ -169,7 +166,7 @@ public class Island {
         m_contactCount = 0;
         m_jointCount = 0;
 
-        m_listener = listener;
+        this.listener = listener;
 
         if (m_bodies == null || m_bodyCapacity > m_bodies.length) {
             m_bodies = new Body[m_bodyCapacity];
@@ -209,13 +206,10 @@ public class Island {
     }
 
     private final ContactSolver contactSolver = new ContactSolver();
-    private final Timer timer = new Timer();
     private final SolverData solverData = new SolverData();
     private final ContactSolverDef solverDef = new ContactSolverDef();
 
-    public void solve(Profile profile, TimeStep step, Vec2 gravity, boolean allowSleep) {
-
-        // System.out.println("Solving Island");
+    public void solve(TimeStep step, Vec2 gravity, boolean allowSleep) {
         float h = step.dt;
 
         // Integrate velocities and apply damping. Initialize the body state.
@@ -259,8 +253,6 @@ public class Island {
             m_velocities[i].w = w;
         }
 
-        timer.reset();
-
         // Solver data
         solverData.step = step;
         solverData.positions = m_positions;
@@ -274,11 +266,9 @@ public class Island {
         solverDef.velocities = m_velocities;
 
         contactSolver.init(solverDef);
-        // System.out.println("island init vel");
         contactSolver.initializeVelocityConstraints();
 
         if (step.warmStarting) {
-            // System.out.println("island warm start");
             contactSolver.warmStart();
         }
 
@@ -286,11 +276,7 @@ public class Island {
             m_joints[i].initVelocityConstraints(solverData);
         }
 
-        profile.solveInit.accum(timer.getMilliseconds());
-
         // Solve velocity constraints
-        timer.reset();
-        // System.out.println("island solving velocities");
         for (int i = 0; i < step.velocityIterations; ++i) {
             for (int j = 0; j < m_jointCount; ++j) {
                 m_joints[j].solveVelocityConstraints(solverData);
@@ -301,7 +287,6 @@ public class Island {
 
         // Store impulses for warm starting
         contactSolver.storeImpulses();
-        profile.solveVelocity.accum(timer.getMilliseconds());
 
         // Integrate positions
         for (int i = 0; i < m_bodyCount; ++i) {
@@ -337,7 +322,6 @@ public class Island {
         }
 
         // Solve position constraints
-        timer.reset();
         boolean positionSolved = false;
         for (int i = 0; i < step.positionIterations; ++i) {
             boolean contactsOkay = contactSolver.solvePositionConstraints();
@@ -366,8 +350,6 @@ public class Island {
             body.m_angularVelocity = m_velocities[i].w;
             body.synchronizeTransform();
         }
-
-        profile.solvePosition.accum(timer.getMilliseconds());
 
         report(contactSolver.m_velocityConstraints);
 
@@ -434,38 +416,6 @@ public class Island {
                 break;
             }
         }
-        // #if 0
-        // // Is the new position really safe?
-        // for (int i = 0; i < m_contactCount; ++i)
-        // {
-        // Contact* c = m_contacts[i];
-        // Fixture* fA = c.GetFixtureA();
-        // Fixture* fB = c.GetFixtureB();
-        //
-        // Body bA = fA.GetBody();
-        // Body bB = fB.GetBody();
-        //
-        // int indexA = c.GetChildIndexA();
-        // int indexB = c.GetChildIndexB();
-        //
-        // DistanceInput input;
-        // input.proxyA.Set(fA.GetShape(), indexA);
-        // input.proxyB.Set(fB.GetShape(), indexB);
-        // input.transformA = bA.GetTransform();
-        // input.transformB = bB.GetTransform();
-        // input.useRadii = false;
-        //
-        // DistanceOutput output;
-        // SimplexCache cache;
-        // cache.count = 0;
-        // Distance(&output, &cache, &input);
-        //
-        // if (output.distance == 0 || cache.count == 3)
-        // {
-        // cache.count += 0;
-        // }
-        // }
-        // #endif
 
         // Leap of faith to new safe state.
         m_bodies[toiIndexA].m_sweep.c0.x = m_positions[toiIndexA].c.x;
@@ -556,8 +506,8 @@ public class Island {
 
     private final ContactImpulse impulse = new ContactImpulse();
 
-    public void report(ContactVelocityConstraint[] constraints) {
-        if (m_listener == null) {
+    private void report(ContactVelocityConstraint[] constraints) {
+        if (listener == null) {
             return;
         }
 
@@ -571,7 +521,7 @@ public class Island {
                 impulse.tangentImpulses[j] = vc.points[j].tangentImpulse;
             }
 
-            m_listener.postSolve(c, impulse);
+            listener.postSolve(c, impulse);
         }
     }
 }

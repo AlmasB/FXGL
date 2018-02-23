@@ -13,6 +13,7 @@ import com.almasb.fxgl.app.FXGL.Companion.getDisplay
 import com.almasb.fxgl.app.FXGL.Companion.getEventBus
 import com.almasb.fxgl.app.FXGL.Companion.getInput
 import com.almasb.fxgl.app.FXGL.Companion.getNotificationService
+import com.almasb.fxgl.app.FXGL.Companion.getUIFactory
 import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.entity.Entity
@@ -27,6 +28,7 @@ import javafx.geometry.Point2D
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
+import javafx.scene.text.Text
 import java.util.*
 import java.util.function.BiConsumer
 import java.util.function.Consumer
@@ -39,6 +41,8 @@ import java.util.function.Consumer
  */
 
 /* VARS */
+
+fun newVar(varName: String, value: Any) = getApp().gameState.put(varName, value)
 
 fun set(varName: String, value: Any) = getApp().gameState.setValue(varName, value)
 
@@ -209,3 +213,14 @@ fun showMessage(message: String) = getDisplay().showMessageBox(message)
 fun showMessage(message: String, callback: Runnable) = getDisplay().showMessageBox(message, callback)
 
 fun showConfirm(message: String, callback: Consumer<Boolean>) = getDisplay().showConfirmationBox(message, callback)
+
+/* UI */
+
+fun addVarText(x: Double, y: Double, varName: String): Text {
+    return getUIFactory().newText(getip(varName).asString())
+            .apply {
+                translateX = x
+                translateY = y
+            }
+            .also { getApp().gameScene.addUINode(it) }
+}

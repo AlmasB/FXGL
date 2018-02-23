@@ -170,7 +170,7 @@ public class Body {
         Fixture fixture = new Fixture(this, def);
 
         if ((m_flags & e_activeFlag) == e_activeFlag) {
-            BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
+            BroadPhase broadPhase = world.getContactManager().m_broadPhase;
             fixture.createProxies(broadPhase, m_xf);
         }
 
@@ -236,12 +236,12 @@ public class Body {
             if (fixture == fixtureA || fixture == fixtureB) {
                 // This destroys the contact and removes it from
                 // this body's contact list.
-                world.m_contactManager.destroy(c);
+                world.getContactManager().destroy(c);
             }
         }
 
         if ((m_flags & e_activeFlag) == e_activeFlag) {
-            BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
+            BroadPhase broadPhase = world.getContactManager().m_broadPhase;
             fixture.destroyProxies(broadPhase);
         }
 
@@ -271,7 +271,7 @@ public class Body {
         m_sweep.c0.set(m_sweep.c);
         m_sweep.a0 = m_sweep.a;
 
-        BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
+        BroadPhase broadPhase = world.getContactManager().m_broadPhase;
         for (Fixture f : fixtures) {
             f.synchronize(broadPhase, m_xf, m_xf);
         }
@@ -843,12 +843,12 @@ public class Body {
         while (ce != null) {
             ContactEdge ce0 = ce;
             ce = ce.next;
-            world.m_contactManager.destroy(ce0.contact);
+            world.getContactManager().destroy(ce0.contact);
         }
         m_contactList = null;
 
         // Touch the proxies so that new contacts will be created (when appropriate)
-        BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
+        BroadPhase broadPhase = world.getContactManager().m_broadPhase;
         for (Fixture f : fixtures) {
             int proxyCount = f.getProxyCount();
             for (int i = 0; i < proxyCount; ++i) {
@@ -949,7 +949,7 @@ public class Body {
             m_flags |= e_activeFlag;
 
             // Create all proxies.
-            BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
+            BroadPhase broadPhase = world.getContactManager().m_broadPhase;
             for (Fixture f : fixtures) {
                 f.createProxies(broadPhase, m_xf);
             }
@@ -959,7 +959,7 @@ public class Body {
             m_flags &= ~e_activeFlag;
 
             // Destroy all proxies.
-            BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
+            BroadPhase broadPhase = world.getContactManager().m_broadPhase;
             for (Fixture f : fixtures) {
                 f.destroyProxies(broadPhase);
             }
@@ -969,7 +969,7 @@ public class Body {
             while (ce != null) {
                 ContactEdge ce0 = ce;
                 ce = ce.next;
-                world.m_contactManager.destroy(ce0.contact);
+                world.getContactManager().destroy(ce0.contact);
             }
             m_contactList = null;
         }
@@ -1066,7 +1066,7 @@ public class Body {
         // end inline
 
         for (Fixture f : fixtures) {
-            f.synchronize(world.m_contactManager.m_broadPhase, xf1, m_xf);
+            f.synchronize(world.getContactManager().m_broadPhase, xf1, m_xf);
         }
     }
 

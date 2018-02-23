@@ -18,23 +18,19 @@ import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactEdge;
  *
  * @author Daniel Murphy
  */
-public class ContactManager implements PairCallback {
+class ContactManager implements PairCallback {
 
-    public BroadPhase m_broadPhase;
-    public Contact m_contactList;
-    public int m_contactCount;
-    public ContactFilter m_contactFilter;
-    public ContactListener m_contactListener;
+    public Contact m_contactList = null;
+    public int m_contactCount = 0;
+    public ContactFilter m_contactFilter = new ContactFilter();
+    public ContactListener m_contactListener = null;
 
     private final World pool;
+    public final BroadPhase m_broadPhase;
 
-    public ContactManager(World argPool, BroadPhase broadPhase) {
-        m_contactList = null;
-        m_contactCount = 0;
-        m_contactFilter = new ContactFilter();
-        m_contactListener = null;
-        m_broadPhase = broadPhase;
+    ContactManager(World argPool, BroadPhase broadPhase) {
         pool = argPool;
+        m_broadPhase = broadPhase;
     }
 
     /**

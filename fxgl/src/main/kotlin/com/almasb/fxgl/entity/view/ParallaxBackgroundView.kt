@@ -71,7 +71,6 @@ class ParallaxBackgroundView
         }
     }
 
-    // TODO: isolate in ParallaxTexture
     private fun redrawX() {
         textures.forEach {
             var w = canvas.width

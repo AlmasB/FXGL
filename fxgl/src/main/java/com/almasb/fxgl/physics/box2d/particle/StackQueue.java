@@ -6,16 +6,12 @@
 
 package com.almasb.fxgl.physics.box2d.particle;
 
-
 public class StackQueue<T> {
 
     private T[] m_buffer;
     private int m_front;
     private int m_back;
     private int m_end;
-
-    public StackQueue() {
-    }
 
     public void reset(T[] buffer) {
         m_buffer = buffer;

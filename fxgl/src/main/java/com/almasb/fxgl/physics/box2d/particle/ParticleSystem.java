@@ -173,16 +173,6 @@ public class ParticleSystem {
         m_userDataBuffer = new ParticleBuffer<Object>(Object.class);
     }
 
-//  public void assertNotSamePosition() {
-//    for (int i = 0; i < m_count; i++) {
-//      Vec2 vi = m_positionBuffer.data[i];
-//      for (int j = i + 1; j < m_count; j++) {
-//        Vec2 vj = m_positionBuffer.data[j];
-//        assert(vi.x != vj.x || vi.y != vj.y);
-//      }
-//    }
-//  }
-
     public int createParticle(ParticleDef def) {
         if (m_count >= m_internalAllocatedCapacity) {
             int capacity = m_count != 0 ? 2 * m_count : JBoxSettings.minParticleBufferCapacity;
@@ -224,7 +214,6 @@ public class ParticleSystem {
         int index = m_count++;
         m_flagsBuffer.data[index] = def.getTypeFlags();
         m_positionBuffer.data[index].set(def.position);
-//    assertNotSamePosition();
         m_velocityBuffer.data[index].set(def.velocity);
         m_groupBuffer[index] = null;
         if (m_depthBuffer != null) {
@@ -469,8 +458,7 @@ public class ParticleSystem {
         }
     }
 
-    // Only called from solveZombie() or joinParticleGroups().
-    void destroyParticleGroup(ParticleGroup group) {
+    private void destroyParticleGroup(ParticleGroup group) {
         assert (m_groupCount > 0);
         assert (group != null);
 
@@ -560,7 +548,7 @@ public class ParticleSystem {
         float dx = pb.x - pa.x;
         float dy = pb.y - pa.y;
         float d2 = dx * dx + dy * dy;
-//    assert(d2 != 0);
+
         if (d2 < m_squaredDiameter) {
             if (m_contactCount >= m_contactCapacity) {
                 int oldCapacity = m_contactCapacity;
@@ -762,7 +750,7 @@ public class ParticleSystem {
         solveDamping(step);
     }
 
-    void solvePressure(TimeStep step) {
+    private void solvePressure(TimeStep step) {
         // calculates the sum of contact-weights for each particle
         // that means dimensionless density
         for (int i = 0; i < m_count; i++) {
@@ -839,7 +827,7 @@ public class ParticleSystem {
         }
     }
 
-    void solveDamping(TimeStep step) {
+    private void solveDamping(TimeStep step) {
         // reduces normal velocity of each contact
         float damping = m_dampingStrength;
         for (int k = 0; k < m_bodyContactCount; k++) {
@@ -892,7 +880,7 @@ public class ParticleSystem {
         }
     }
 
-    public void solveWall(TimeStep step) {
+    private void solveWall(TimeStep step) {
         for (int i = 0; i < m_count; i++) {
             if ((m_flagsBuffer.data[i] & ParticleTypeInternal.b2_wallParticle) != 0) {
                 final Vec2 r = m_velocityBuffer.data[i];
@@ -907,7 +895,7 @@ public class ParticleSystem {
     private final Transform tempXf = new Transform();
     private final Transform tempXf2 = new Transform();
 
-    void solveRigid(final TimeStep step) {
+    private void solveRigid(final TimeStep step) {
         for (ParticleGroup group = m_groupList; group != null; group = group.getNext()) {
             if ((group.m_groupFlags & ParticleGroupType.b2_rigidParticleGroup) != 0) {
                 group.updateStatistics();
@@ -933,7 +921,7 @@ public class ParticleSystem {
         }
     }
 
-    void solveElastic(final TimeStep step) {
+    private void solveElastic(final TimeStep step) {
         float elasticStrength = step.inv_dt * m_elasticStrength;
         for (int k = 0; k < m_triadCount; k++) {
             final Triad triad = m_triadBuffer[k];
@@ -975,7 +963,7 @@ public class ParticleSystem {
         }
     }
 
-    void solveSpring(final TimeStep step) {
+    private void solveSpring(final TimeStep step) {
         float springStrength = step.inv_dt * m_springStrength;
         for (int k = 0; k < m_pairCount; k++) {
             final Pair pair = m_pairBuffer[k];
@@ -1002,7 +990,7 @@ public class ParticleSystem {
         }
     }
 
-    void solveTensile(final TimeStep step) {
+    private void solveTensile(final TimeStep step) {
         m_accumulation2Buffer = requestParticleBuffer(Vec2.class, m_accumulation2Buffer);
         for (int i = 0; i < m_count; i++) {
             m_accumulationBuffer[i] = 0;
@@ -1053,7 +1041,7 @@ public class ParticleSystem {
         }
     }
 
-    void solveViscous(final TimeStep step) {
+    private void solveViscous(final TimeStep step) {
         float viscousStrength = m_viscousStrength;
         for (int k = 0; k < m_bodyContactCount; k++) {
             final ParticleBodyContact contact = m_bodyContactBuffer[k];
@@ -1099,7 +1087,7 @@ public class ParticleSystem {
         }
     }
 
-    void solvePowder(final TimeStep step) {
+    private void solvePowder(final TimeStep step) {
         float powderStrength = m_powderStrength * getCriticalVelocity(step);
         float minWeight = 1.0f - JBoxSettings.particleStride;
         for (int k = 0; k < m_bodyContactCount; k++) {
@@ -1146,7 +1134,7 @@ public class ParticleSystem {
         }
     }
 
-    void solveSolid(final TimeStep step) {
+    private void solveSolid(final TimeStep step) {
         // applies extra repulsive force from solid particle groups
         m_depthBuffer = requestParticleBuffer(m_depthBuffer);
         float ejectionStrength = step.inv_dt * m_ejectionStrength;
@@ -1171,7 +1159,7 @@ public class ParticleSystem {
         }
     }
 
-    void solveColorMixing(final TimeStep step) {
+    private void solveColorMixing(final TimeStep step) {
         // mixes color between contacting particles
         m_colorBuffer.data = requestParticleBuffer(ParticleColor.class, m_colorBuffer.data);
         int colorMixing256 = (int) (256 * m_colorMixingStrength);
@@ -1198,7 +1186,7 @@ public class ParticleSystem {
         }
     }
 
-    void solveZombie() {
+    private void solveZombie() {
         // removes particles with zombie flag
         int newCount = 0;
         int[] newIndices = new int[m_count];
@@ -1402,7 +1390,6 @@ public class ParticleSystem {
     }
 
     private final NewIndices newIndices = new NewIndices();
-
 
     void RotateBuffer(int start, int mid, int end) {
         // move the particles assigned to the given group toward the end of array
@@ -1614,7 +1601,7 @@ public class ParticleSystem {
         setParticleBuffer(m_userDataBuffer, buffer, capacity);
     }
 
-    private static final int lowerBound(Proxy[] ray, int length, long tag) {
+    private static int lowerBound(Proxy[] ray, int length, long tag) {
         int left = 0;
         int step, curr;
         while (length > 0) {
@@ -1630,7 +1617,7 @@ public class ParticleSystem {
         return left;
     }
 
-    private static final int upperBound(Proxy[] ray, int length, long tag) {
+    private static int upperBound(Proxy[] ray, int length, long tag) {
         int left = 0;
         int step, curr;
         while (length > 0) {
@@ -2179,6 +2166,4 @@ public class ParticleSystem {
             return triad.indexA < 0 || triad.indexB < 0 || triad.indexC < 0;
         }
     }
-
-    ;
 }

@@ -43,7 +43,7 @@ import java.util.Iterator;
  */
 public final class PhysicsWorld implements EntityWorldListener, ContactListener {
 
-    private static final Logger log = Logger.get("FXGL.PhysicsWorld");
+    private static final Logger log = Logger.get(PhysicsWorld.class);
 
     private final double PIXELS_PER_METER;
     private final double METERS_PER_PIXELS;
@@ -66,10 +66,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      */
     public World getJBox2DWorld() {
         return jboxWorld;
-    }
-
-    public int getAppHeight() {
-        return appHeight;
     }
 
     private boolean isCollidable(Entity e) {
@@ -180,7 +176,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     private void initParticles() {
         jboxWorld.setParticleGravityScale(0.4f);
         jboxWorld.setParticleDensity(1.2f);
-        jboxWorld.setParticleRadius(toMeters(1));    // 0.5 for super realistic effect, but slow
+        jboxWorld.setParticleRadius(toMetersF(1));    // 0.5 for super realistic effect, but slow
     }
 
     private Array<Entity> delayedBodiesAdd = new UnorderedArray<>();
@@ -276,7 +272,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
         Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
 
-        // TODO: some "ground" id for sensor, otherwise may be some other sensor type?
+        // https://github.com/AlmasB/FXGL/issues/491
         // check sensors
         if (contact.getFixtureA().isSensor()) {
             e1.getComponent(PhysicsComponent.class).groundedList.add(e2);
@@ -319,7 +315,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
         Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
 
-        // TODO: some "ground" id for sensor, otherwise may be some other sensor type?
+        // https://github.com/AlmasB/FXGL/issues/491
         // check sensors
         if (contact.getFixtureA().isSensor()) {
             e1.getComponent(PhysicsComponent.class).groundedList.remove(e2);
@@ -500,11 +496,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     /**
      * Set global world gravity.
      *
-     * @param x x component
-     * @param y y component
+     * @param x x component (in pixels)
+     * @param y y component (in pixels)
      */
     public void setGravity(double x, double y) {
-        jboxWorld.setGravity(new Vec2(x, -y));
+        jboxWorld.setGravity(toVector(new Point2D(x, y)));
     }
 
     /**
@@ -521,8 +517,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
         // if position is 0, 0 then probably not set, so set ourselves
         if (physics.bodyDef.getPosition().x == 0 && physics.bodyDef.getPosition().y == 0) {
-            physics.bodyDef.getPosition().set(toMeters(bbox.getMinXWorld() + w / 2),
-                    toMeters(appHeight - (bbox.getMinYWorld() + h / 2)));
+            physics.bodyDef.getPosition().set(toMetersF(bbox.getMinXWorld() + w / 2),
+                    toMetersF(appHeight - (bbox.getMinYWorld() + h / 2)));
         }
 
         if (physics.bodyDef.getAngle() == 0) {
@@ -540,7 +536,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         physics.body.setUserData(e);
         physics.onInitPhysics();
 
-        e.addControl(new PhysicsControl(appHeight));
+        e.addControl(new PhysicsControl(this));
     }
 
     private void createFixtures(Entity e) {
@@ -569,16 +565,16 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
                 case CIRCLE:
 
                     CircleShape circleShape = new CircleShape();
-                    circleShape.setRadius(toMeters(w / 2));
-                    circleShape.m_p.set(toMeters(boundsCenterLocal.getX()), -toMeters(boundsCenterLocal.getY()));
+                    circleShape.setRadius(toMetersF(w / 2));
+                    circleShape.m_p.set(toMetersF(boundsCenterLocal.getX()), -toMetersF(boundsCenterLocal.getY()));
 
                     b2Shape = circleShape;
                     break;
 
                 case POLYGON:
                     PolygonShape polygonShape = new PolygonShape();
-                    polygonShape.setAsBox(toMeters(w / 2), toMeters(h / 2),
-                            new Vec2(toMeters(boundsCenterLocal.getX()), -toMeters(boundsCenterLocal.getY())), 0);
+                    polygonShape.setAsBox(toMetersF(w / 2), toMetersF(h / 2),
+                            new Vec2(toMetersF(boundsCenterLocal.getX()), -toMetersF(boundsCenterLocal.getY())), 0);
                     b2Shape = polygonShape;
                     break;
 
@@ -626,9 +622,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         Point2D sensorCenterLocal = new Point2D(0, e.getHeight() / 2 - sensorHeight / 2);
 
         PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(toMeters(sensorWidth / 2), toMeters(sensorHeight / 2),
-                new Vec2(toMeters(sensorCenterLocal.getX()), -toMeters(sensorCenterLocal.getY())), 0);
+        polygonShape.setAsBox(toMetersF(sensorWidth / 2), toMetersF(sensorHeight / 2),
+                new Vec2(toMetersF(sensorCenterLocal.getX()), -toMetersF(sensorCenterLocal.getY())), 0);
 
+        // https://github.com/AlmasB/FXGL/issues/491
         FixtureDef fd = new FixtureDef()
                 .sensor(true)
                 .shape(polygonShape);
@@ -643,7 +640,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         double height = e.getHeight();
 
         ParticleGroupDef def = e.getComponent(PhysicsParticleComponent.class).getDefinition();
-        def.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
+        def.setPosition(toMetersF(x + width / 2), toMetersF(appHeight - (y + height / 2)));
 
         Shape shape = null;
 
@@ -652,11 +649,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         if (!bbox.hitBoxesProperty().isEmpty()) {
             if (bbox.hitBoxesProperty().get(0).getShape().type == ShapeType.POLYGON) {
                 PolygonShape rectShape = new PolygonShape();
-                rectShape.setAsBox(toMeters(width / 2), toMeters(height / 2));
+                rectShape.setAsBox(toMetersF(width / 2), toMetersF(height / 2));
                 shape = rectShape;
             } else if (bbox.hitBoxesProperty().get(0).getShape().type == ShapeType.CIRCLE) {
                 CircleShape circleShape = new CircleShape();
-                circleShape.setRadius(toMeters(width / 2));
+                circleShape.setRadius(toMetersF(width / 2));
                 shape = circleShape;
             } else {
                 log.warning("Unknown hit box shape: " + bbox.hitBoxesProperty().get(0).getShape().type);
@@ -666,7 +663,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
         if (shape == null) {
             PolygonShape rectShape = new PolygonShape();
-            rectShape.setAsBox(toMeters(width / 2), toMeters(height / 2));
+            rectShape.setAsBox(toMetersF(width / 2), toMetersF(height / 2));
             shape = rectShape;
         }
         def.setShape(shape);
@@ -720,8 +717,12 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param pixels value in pixels
      * @return value in meters
      */
-    public float toMeters(double pixels) {
-        return (float) (pixels * METERS_PER_PIXELS);
+    public float toMetersF(double pixels) {
+        return (float) toMeters(pixels);
+    }
+
+    public double toMeters(double pixels) {
+        return pixels * METERS_PER_PIXELS;
     }
 
     /**
@@ -730,8 +731,12 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param meters value in meters
      * @return value in pixels
      */
-    public float toPixels(double meters) {
-        return (float) (meters * PIXELS_PER_METER);
+    public float toPixelsF(double meters) {
+        return (float) toPixels(meters);
+    }
+
+    public double toPixels(double meters) {
+        return meters * PIXELS_PER_METER;
     }
 
     /**
@@ -741,7 +746,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @return vector in meters
      */
     public Vec2 toVector(Point2D v) {
-        return new Vec2(toMeters(v.getX()), toMeters(-v.getY()));
+        return new Vec2(toMetersF(v.getX()), toMetersF(-v.getY()));
     }
 
     /**
@@ -761,7 +766,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @return point in physics space
      */
     public Vec2 toPoint(Point2D p) {
-        return new Vec2(toMeters(p.getX()), toMeters(appHeight - p.getY()));
+        return new Vec2(toMetersF(p.getX()), toMetersF(appHeight - p.getY()));
     }
 
     /**

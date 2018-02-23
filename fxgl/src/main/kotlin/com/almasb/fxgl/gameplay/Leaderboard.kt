@@ -47,7 +47,7 @@ class Leaderboard {
                 throw RuntimeException("HTTP error code: " + response.statusLine.statusCode)
             }
 
-            // TODO: sort on the server
+            // https://github.com/AlmasB/FXGL/issues/486
             objectMapper.readValue<List<ScoreData>>(response.entity.content, listScoreClass)
                     .sortedByDescending { it.score }
                     .take(numItems)

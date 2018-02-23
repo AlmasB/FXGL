@@ -39,7 +39,7 @@ public class VoronoiDiagram {
         }
     }
 
-    public static interface VoronoiDiagramCallback {
+    public interface VoronoiDiagramCallback {
         void callback(int aTag, int bTag, int cTag);
     }
 
@@ -101,7 +101,7 @@ public class VoronoiDiagram {
                     return new VoronoiDiagramTask[size];
                 }
             };
-    private final StackQueue<VoronoiDiagramTask> queue = new StackQueue<VoronoiDiagramTask>();
+    private final StackQueue<VoronoiDiagramTask> queue = new StackQueue<>();
 
     public void generate(float radius) {
         assert (m_diagram == null);
