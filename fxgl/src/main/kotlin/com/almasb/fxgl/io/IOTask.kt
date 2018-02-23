@@ -96,7 +96,7 @@ abstract class IOTask<T>
     }
 
     open protected fun fail(error: Throwable) {
-        log.warning("Task failed: $name Error: $error")
+        log.warning("Task failed: $name", error)
         if (onFailure == null) {
             // https://github.com/AlmasB/FXGL/issues/480
             FXGL.getExceptionHandler().handle(error)
