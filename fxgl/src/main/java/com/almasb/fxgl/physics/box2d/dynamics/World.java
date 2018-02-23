@@ -380,24 +380,24 @@ public final class World {
         }
 
         step.dtRatio = dtInverse * dt;
-
         step.warmStarting = warmStarting;
 
         // Update contacts. This is where some contacts are destroyed.
         contactManager.collide();
 
-        // Integrate velocities, solve velocity constraints, and integrate positions.
-        if (stepComplete && step.dt > 0.0f) {
-            particleSystem.solve(step); // Particle Simulation
-            solve(step);
-        }
+        if (step.dt > 0) {
 
-        // Handle TOI events.
-        if (continuousPhysics && step.dt > 0.0f) {
-            solveTOI(step);
-        }
+            if (stepComplete) {
+                // Integrate velocities, solve velocity constraints, and integrate positions
+                particleSystem.solve(step); // Particle Simulation
+                solve(step);
+            }
 
-        if (step.dt > 0.0f) {
+            if (continuousPhysics) {
+                // Handle TOI events.
+                solveTOI(step);
+            }
+
             dtInverse = step.inv_dt;
         }
 
@@ -406,111 +406,6 @@ public final class World {
         }
 
         locked = false;
-    }
-
-    private final WorldQueryWrapper wqwrapper = new WorldQueryWrapper();
-
-    /**
-     * Query the world for all fixtures that potentially overlap the provided AABB.
-     *
-     * @param callback a user implemented callback class.
-     * @param aabb the query box.
-     */
-    public void queryAABB(QueryCallback callback, AABB aabb) {
-        wqwrapper.broadPhase = contactManager.m_broadPhase;
-        wqwrapper.callback = callback;
-        contactManager.m_broadPhase.query(wqwrapper, aabb);
-    }
-
-    /**
-     * Query the world for all fixtures and particles that potentially overlap the provided AABB.
-     *
-     * @param callback a user implemented callback class.
-     * @param particleCallback callback for particles.
-     * @param aabb the query box.
-     */
-    public void queryAABB(QueryCallback callback, ParticleQueryCallback particleCallback, AABB aabb) {
-        wqwrapper.broadPhase = contactManager.m_broadPhase;
-        wqwrapper.callback = callback;
-        contactManager.m_broadPhase.query(wqwrapper, aabb);
-        particleSystem.queryAABB(particleCallback, aabb);
-    }
-
-    /**
-     * Query the world for all particles that potentially overlap the provided AABB.
-     *
-     * @param particleCallback callback for particles.
-     * @param aabb the query box.
-     */
-    public void queryAABB(ParticleQueryCallback particleCallback, AABB aabb) {
-        particleSystem.queryAABB(particleCallback, aabb);
-    }
-
-    private final WorldRayCastWrapper wrcwrapper = new WorldRayCastWrapper();
-    private final RayCastInput input = new RayCastInput();
-
-    /**
-     * Ray-cast the world for all fixtures in the path of the ray. Your callback controls whether you
-     * get the closest point, any point, or n-points. The ray-cast ignores shapes that contain the
-     * starting point.
-     *
-     * @param callback a user implemented callback class.
-     * @param point1 the ray starting point
-     * @param point2 the ray ending point
-     */
-    public void raycast(RayCastCallback callback, Vec2 point1, Vec2 point2) {
-        wrcwrapper.broadPhase = contactManager.m_broadPhase;
-        wrcwrapper.callback = callback;
-        input.maxFraction = 1.0f;
-        input.p1.set(point1);
-        input.p2.set(point2);
-        contactManager.m_broadPhase.raycast(wrcwrapper, input);
-    }
-
-    /**
-     * Ray-cast the world for all fixtures and particles in the path of the ray. Your callback
-     * controls whether you get the closest point, any point, or n-points. The ray-cast ignores shapes
-     * that contain the starting point.
-     *
-     * @param callback a user implemented callback class.
-     * @param particleCallback the particle callback class.
-     * @param point1 the ray starting point
-     * @param point2 the ray ending point
-     */
-    public void raycast(RayCastCallback callback, ParticleRaycastCallback particleCallback, Vec2 point1, Vec2 point2) {
-        wrcwrapper.broadPhase = contactManager.m_broadPhase;
-        wrcwrapper.callback = callback;
-        input.maxFraction = 1.0f;
-        input.p1.set(point1);
-        input.p2.set(point2);
-        contactManager.m_broadPhase.raycast(wrcwrapper, input);
-        particleSystem.raycast(particleCallback, point1, point2);
-    }
-
-    /**
-     * Ray-cast the world for all particles in the path of the ray. Your callback controls whether you
-     * get the closest point, any point, or n-points.
-     *
-     * @param particleCallback the particle callback class.
-     * @param point1 the ray starting point
-     * @param point2 the ray ending point
-     */
-    public void raycast(ParticleRaycastCallback particleCallback, Vec2 point1, Vec2 point2) {
-        particleSystem.raycast(particleCallback, point1, point2);
-    }
-
-    /**
-     * Call this after you are done with time steps to clear the forces.
-     * You normally call this after each call to Step, unless you are performing sub-steps.
-     * By default, forces will be automatically cleared, so you don't need to call this function.
-     *
-     * @see #setAutoClearForces(boolean)
-     */
-    public void clearForces() {
-        for (Body body = m_bodyList; body != null; body = body.getNext()) {
-            body.m_force.setZero();
-            body.m_torque = 0.0f;
-        }
     }
 
     private final Island island = new Island();
@@ -955,6 +850,111 @@ public final class World {
                 stepComplete = false;
                 break;
             }
+        }
+    }
+
+    private final WorldQueryWrapper wqwrapper = new WorldQueryWrapper();
+
+    /**
+     * Query the world for all fixtures that potentially overlap the provided AABB.
+     *
+     * @param callback a user implemented callback class.
+     * @param aabb the query box.
+     */
+    public void queryAABB(QueryCallback callback, AABB aabb) {
+        wqwrapper.broadPhase = contactManager.m_broadPhase;
+        wqwrapper.callback = callback;
+        contactManager.m_broadPhase.query(wqwrapper, aabb);
+    }
+
+    /**
+     * Query the world for all fixtures and particles that potentially overlap the provided AABB.
+     *
+     * @param callback a user implemented callback class.
+     * @param particleCallback callback for particles.
+     * @param aabb the query box.
+     */
+    public void queryAABB(QueryCallback callback, ParticleQueryCallback particleCallback, AABB aabb) {
+        wqwrapper.broadPhase = contactManager.m_broadPhase;
+        wqwrapper.callback = callback;
+        contactManager.m_broadPhase.query(wqwrapper, aabb);
+        particleSystem.queryAABB(particleCallback, aabb);
+    }
+
+    /**
+     * Query the world for all particles that potentially overlap the provided AABB.
+     *
+     * @param particleCallback callback for particles.
+     * @param aabb the query box.
+     */
+    public void queryAABB(ParticleQueryCallback particleCallback, AABB aabb) {
+        particleSystem.queryAABB(particleCallback, aabb);
+    }
+
+    private final WorldRayCastWrapper wrcwrapper = new WorldRayCastWrapper();
+    private final RayCastInput input = new RayCastInput();
+
+    /**
+     * Ray-cast the world for all fixtures in the path of the ray. Your callback controls whether you
+     * get the closest point, any point, or n-points. The ray-cast ignores shapes that contain the
+     * starting point.
+     *
+     * @param callback a user implemented callback class.
+     * @param point1 the ray starting point
+     * @param point2 the ray ending point
+     */
+    public void raycast(RayCastCallback callback, Vec2 point1, Vec2 point2) {
+        wrcwrapper.broadPhase = contactManager.m_broadPhase;
+        wrcwrapper.callback = callback;
+        input.maxFraction = 1.0f;
+        input.p1.set(point1);
+        input.p2.set(point2);
+        contactManager.m_broadPhase.raycast(wrcwrapper, input);
+    }
+
+    /**
+     * Ray-cast the world for all fixtures and particles in the path of the ray. Your callback
+     * controls whether you get the closest point, any point, or n-points. The ray-cast ignores shapes
+     * that contain the starting point.
+     *
+     * @param callback a user implemented callback class.
+     * @param particleCallback the particle callback class.
+     * @param point1 the ray starting point
+     * @param point2 the ray ending point
+     */
+    public void raycast(RayCastCallback callback, ParticleRaycastCallback particleCallback, Vec2 point1, Vec2 point2) {
+        wrcwrapper.broadPhase = contactManager.m_broadPhase;
+        wrcwrapper.callback = callback;
+        input.maxFraction = 1.0f;
+        input.p1.set(point1);
+        input.p2.set(point2);
+        contactManager.m_broadPhase.raycast(wrcwrapper, input);
+        particleSystem.raycast(particleCallback, point1, point2);
+    }
+
+    /**
+     * Ray-cast the world for all particles in the path of the ray. Your callback controls whether you
+     * get the closest point, any point, or n-points.
+     *
+     * @param particleCallback the particle callback class.
+     * @param point1 the ray starting point
+     * @param point2 the ray ending point
+     */
+    public void raycast(ParticleRaycastCallback particleCallback, Vec2 point1, Vec2 point2) {
+        particleSystem.raycast(particleCallback, point1, point2);
+    }
+
+    /**
+     * Call this after you are done with time steps to clear the forces.
+     * You normally call this after each call to Step, unless you are performing sub-steps.
+     * By default, forces will be automatically cleared, so you don't need to call this function.
+     *
+     * @see #setAutoClearForces(boolean)
+     */
+    public void clearForces() {
+        for (Body body = m_bodyList; body != null; body = body.getNext()) {
+            body.m_force.setZero();
+            body.m_torque = 0.0f;
         }
     }
 
