@@ -15,7 +15,6 @@ import com.almasb.fxgl.physics.box2d.collision.TimeOfImpact.TOIInput;
 import com.almasb.fxgl.physics.box2d.collision.TimeOfImpact.TOIOutput;
 import com.almasb.fxgl.physics.box2d.collision.TimeOfImpact.TOIOutputState;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.BroadPhase;
-import com.almasb.fxgl.physics.box2d.collision.broadphase.BroadPhaseStrategy;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.DefaultBroadPhaseBuffer;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.DynamicTree;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
@@ -352,8 +351,6 @@ public final class World {
     }
 
     private final TimeStep step = new TimeStep();
-    private final Timer stepTimer = new Timer();
-    private final Timer tempTimer = new Timer();
 
     /**
      * Take a time step.
@@ -364,8 +361,6 @@ public final class World {
      * @param positionIterations for the position constraint solver
      */
     public void step(float dt, int velocityIterations, int positionIterations) {
-        stepTimer.reset();
-        tempTimer.reset();
 
         // If new fixtures were added, we need to find the new contacts.
         if (newFixture) {
@@ -389,20 +384,16 @@ public final class World {
         step.warmStarting = warmStarting;
 
         // Update contacts. This is where some contacts are destroyed.
-        tempTimer.reset();
         contactManager.collide();
 
         // Integrate velocities, solve velocity constraints, and integrate positions.
         if (stepComplete && step.dt > 0.0f) {
-            tempTimer.reset();
             particleSystem.solve(step); // Particle Simulation
-            tempTimer.reset();
             solve(step);
         }
 
         // Handle TOI events.
         if (continuousPhysics && step.dt > 0.0f) {
-            tempTimer.reset();
             solveTOI(step);
         }
 
@@ -524,7 +515,6 @@ public final class World {
 
     private final Island island = new Island();
     private Body[] stack = new Body[10]; // jbox2dTODO djm find a good initial stack number;
-    private final Timer broadphaseTimer = new Timer();
 
     private void solve(TimeStep step) {
         // update previous transforms
@@ -661,7 +651,6 @@ public final class World {
             }
         }
 
-        broadphaseTimer.reset();
         // Synchronize fixtures, check for out of range bodies.
         for (Body b = m_bodyList; b != null; b = b.getNext()) {
             // If a body was not in an island then it did not move.

@@ -12,7 +12,6 @@ import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Sweep;
-import com.almasb.fxgl.physics.box2d.common.Timer;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactSolver.ContactSolverDef;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.Joint;
@@ -207,7 +206,6 @@ class Island {
     }
 
     private final ContactSolver contactSolver = new ContactSolver();
-    private final Timer timer = new Timer();
     private final SolverData solverData = new SolverData();
     private final ContactSolverDef solverDef = new ContactSolverDef();
 
@@ -255,8 +253,6 @@ class Island {
             m_velocities[i].w = w;
         }
 
-        timer.reset();
-
         // Solver data
         solverData.step = step;
         solverData.positions = m_positions;
@@ -281,7 +277,6 @@ class Island {
         }
 
         // Solve velocity constraints
-        timer.reset();
         for (int i = 0; i < step.velocityIterations; ++i) {
             for (int j = 0; j < m_jointCount; ++j) {
                 m_joints[j].solveVelocityConstraints(solverData);
@@ -327,7 +322,6 @@ class Island {
         }
 
         // Solve position constraints
-        timer.reset();
         boolean positionSolved = false;
         for (int i = 0; i < step.positionIterations; ++i) {
             boolean contactsOkay = contactSolver.solvePositionConstraints();
