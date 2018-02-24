@@ -280,7 +280,7 @@ public final class Fixture {
     }
 
     // These support body activation/deactivation.
-    public void createProxies(BroadPhase broadPhase, final Transform xf) {
+    void createProxies(BroadPhase broadPhase, final Transform xf) {
         // Create proxies in the broad-phase.
         proxyCount = shape.getChildCount();
 

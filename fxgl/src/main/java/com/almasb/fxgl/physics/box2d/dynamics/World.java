@@ -828,10 +828,22 @@ public final class World {
     private final WorldQueryWrapper wqwrapper = new WorldQueryWrapper();
 
     /**
+     * Query the world for all fixtures and particles that potentially overlap the provided AABB.
+     *
+     * @param callback a user implemented callback class
+     * @param particleCallback callback for particles
+     * @param aabb the query box
+     */
+    public void queryAABB(QueryCallback callback, ParticleQueryCallback particleCallback, AABB aabb) {
+        queryAABB(callback, aabb);
+        queryAABB(particleCallback, aabb);
+    }
+
+    /**
      * Query the world for all fixtures that potentially overlap the provided AABB.
      *
-     * @param callback a user implemented callback class.
-     * @param aabb the query box.
+     * @param callback a user implemented callback class
+     * @param aabb the query box
      */
     public void queryAABB(QueryCallback callback, AABB aabb) {
         wqwrapper.broadPhase = contactManager.m_broadPhase;
@@ -840,24 +852,10 @@ public final class World {
     }
 
     /**
-     * Query the world for all fixtures and particles that potentially overlap the provided AABB.
-     *
-     * @param callback a user implemented callback class.
-     * @param particleCallback callback for particles.
-     * @param aabb the query box.
-     */
-    public void queryAABB(QueryCallback callback, ParticleQueryCallback particleCallback, AABB aabb) {
-        wqwrapper.broadPhase = contactManager.m_broadPhase;
-        wqwrapper.callback = callback;
-        contactManager.m_broadPhase.query(wqwrapper, aabb);
-        particleSystem.queryAABB(particleCallback, aabb);
-    }
-
-    /**
      * Query the world for all particles that potentially overlap the provided AABB.
      *
-     * @param particleCallback callback for particles.
-     * @param aabb the query box.
+     * @param particleCallback callback for particles
+     * @param aabb the query box
      */
     public void queryAABB(ParticleQueryCallback particleCallback, AABB aabb) {
         particleSystem.queryAABB(particleCallback, aabb);
@@ -867,11 +865,26 @@ public final class World {
     private final RayCastInput input = new RayCastInput();
 
     /**
-     * Ray-cast the world for all fixtures in the path of the ray. Your callback controls whether you
-     * get the closest point, any point, or n-points. The ray-cast ignores shapes that contain the
-     * starting point.
+     * Ray-cast the world for all fixtures and particles in the path of the ray.
+     * Your callback controls whether you get the closest point, any point, or n-points.
+     * The ray-cast ignores shapes that contain the starting point.
      *
-     * @param callback a user implemented callback class.
+     * @param callback a user implemented callback class
+     * @param particleCallback the particle callback class
+     * @param point1 the ray starting point
+     * @param point2 the ray ending point
+     */
+    public void raycast(RayCastCallback callback, ParticleRaycastCallback particleCallback, Vec2 point1, Vec2 point2) {
+        raycast(callback, point1, point2);
+        raycast(particleCallback, point1, point2);
+    }
+
+    /**
+     * Ray-cast the world for all fixtures in the path of the ray.
+     * Your callback controls whether you get the closest point, any point, or n-points.
+     * The ray-cast ignores shapes that contain the starting point.
+     *
+     * @param callback a user implemented callback class
      * @param point1 the ray starting point
      * @param point2 the ray ending point
      */
@@ -885,30 +898,10 @@ public final class World {
     }
 
     /**
-     * Ray-cast the world for all fixtures and particles in the path of the ray. Your callback
-     * controls whether you get the closest point, any point, or n-points. The ray-cast ignores shapes
-     * that contain the starting point.
+     * Ray-cast the world for all particles in the path of the ray.
+     * Your callback controls whether you get the closest point, any point, or n-points.
      *
-     * @param callback a user implemented callback class.
-     * @param particleCallback the particle callback class.
-     * @param point1 the ray starting point
-     * @param point2 the ray ending point
-     */
-    public void raycast(RayCastCallback callback, ParticleRaycastCallback particleCallback, Vec2 point1, Vec2 point2) {
-        wrcwrapper.broadPhase = contactManager.m_broadPhase;
-        wrcwrapper.callback = callback;
-        input.maxFraction = 1.0f;
-        input.p1.set(point1);
-        input.p2.set(point2);
-        contactManager.m_broadPhase.raycast(wrcwrapper, input);
-        particleSystem.raycast(particleCallback, point1, point2);
-    }
-
-    /**
-     * Ray-cast the world for all particles in the path of the ray. Your callback controls whether you
-     * get the closest point, any point, or n-points.
-     *
-     * @param particleCallback the particle callback class.
+     * @param particleCallback the particle callback class
      * @param point1 the ray starting point
      * @param point2 the ray ending point
      */
@@ -1475,45 +1468,45 @@ public final class World {
         if (isLocked())
             throw new IllegalStateException("Physics world is locked during time step");
     }
-}
 
-class WorldQueryWrapper implements TreeCallback {
-    @Override
-    public boolean treeCallback(int nodeId) {
-        FixtureProxy proxy = (FixtureProxy) broadPhase.getUserData(nodeId);
-        return callback.reportFixture(proxy.fixture);
-    }
+    private static class WorldQueryWrapper implements TreeCallback {
+        BroadPhase broadPhase;
+        QueryCallback callback;
 
-    BroadPhase broadPhase;
-    QueryCallback callback;
-}
-
-class WorldRayCastWrapper implements TreeRayCastCallback {
-
-    // djm pooling
-    private final RayCastOutput output = new RayCastOutput();
-    private final Vec2 temp = new Vec2();
-    private final Vec2 point = new Vec2();
-
-    @Override
-    public float raycastCallback(RayCastInput input, int nodeId) {
-        Object userData = broadPhase.getUserData(nodeId);
-        FixtureProxy proxy = (FixtureProxy) userData;
-        Fixture fixture = proxy.fixture;
-        int index = proxy.childIndex;
-        boolean hit = fixture.raycast(output, input, index);
-
-        if (hit) {
-            float fraction = output.fraction;
-            // Vec2 point = (1.0f - fraction) * input.p1 + fraction * input.p2;
-            temp.set(input.p2).mulLocal(fraction);
-            point.set(input.p1).mulLocal(1 - fraction).addLocal(temp);
-            return callback.reportFixture(fixture, point, output.normal, fraction);
+        @Override
+        public boolean treeCallback(int nodeId) {
+            FixtureProxy proxy = (FixtureProxy) broadPhase.getUserData(nodeId);
+            return callback.reportFixture(proxy.fixture);
         }
-
-        return input.maxFraction;
     }
 
-    BroadPhase broadPhase;
-    RayCastCallback callback;
+    private static class WorldRayCastWrapper implements TreeRayCastCallback {
+
+        // djm pooling
+        private final RayCastOutput output = new RayCastOutput();
+        private final Vec2 temp = new Vec2();
+        private final Vec2 point = new Vec2();
+
+        BroadPhase broadPhase;
+        RayCastCallback callback;
+
+        @Override
+        public float raycastCallback(RayCastInput input, int nodeId) {
+            Object userData = broadPhase.getUserData(nodeId);
+            FixtureProxy proxy = (FixtureProxy) userData;
+            Fixture fixture = proxy.fixture;
+            int index = proxy.childIndex;
+            boolean hit = fixture.raycast(output, input, index);
+
+            if (hit) {
+                float fraction = output.fraction;
+                // Vec2 point = (1.0f - fraction) * input.p1 + fraction * input.p2;
+                temp.set(input.p2).mulLocal(fraction);
+                point.set(input.p1).mulLocal(1 - fraction).addLocal(temp);
+                return callback.reportFixture(fixture, point, output.normal, fraction);
+            }
+
+            return input.maxFraction;
+        }
+    }
 }
