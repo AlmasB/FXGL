@@ -10,8 +10,12 @@ import com.almasb.fxgl.physics.box2d.callbacks.ContactFilter;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.callbacks.PairCallback;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.BroadPhase;
+import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactEdge;
+import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactRegister;
+import com.almasb.fxgl.physics.box2d.pooling.IDynamicStack;
+import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 
 /**
  * Delegate of World.
@@ -25,12 +29,40 @@ class ContactManager implements PairCallback {
     public ContactFilter m_contactFilter = new ContactFilter();
     public ContactListener m_contactListener = null;
 
-    private final World pool;
+    private final IWorldPool pool;
     public final BroadPhase m_broadPhase;
 
-    ContactManager(World argPool, BroadPhase broadPhase) {
-        pool = argPool;
+    private ContactRegister[][] contactStacks = new ContactRegister[ShapeType.values().length][ShapeType.values().length];
+
+    ContactManager(IWorldPool pool, BroadPhase broadPhase) {
+        this.pool = pool;
         m_broadPhase = broadPhase;
+
+        initializeRegisters();
+    }
+
+    private void initializeRegisters() {
+        addType(pool.getCircleContactStack(), ShapeType.CIRCLE, ShapeType.CIRCLE);
+        addType(pool.getPolyCircleContactStack(), ShapeType.POLYGON, ShapeType.CIRCLE);
+        addType(pool.getPolyContactStack(), ShapeType.POLYGON, ShapeType.POLYGON);
+        addType(pool.getEdgeCircleContactStack(), ShapeType.EDGE, ShapeType.CIRCLE);
+        addType(pool.getEdgePolyContactStack(), ShapeType.EDGE, ShapeType.POLYGON);
+        addType(pool.getChainCircleContactStack(), ShapeType.CHAIN, ShapeType.CIRCLE);
+        addType(pool.getChainPolyContactStack(), ShapeType.CHAIN, ShapeType.POLYGON);
+    }
+
+    private void addType(IDynamicStack<Contact> creator, ShapeType type1, ShapeType type2) {
+        ContactRegister register = new ContactRegister();
+        register.creator = creator;
+        register.primary = true;
+        contactStacks[type1.ordinal()][type2.ordinal()] = register;
+
+        if (type1 != type2) {
+            ContactRegister register2 = new ContactRegister();
+            register2.creator = creator;
+            register2.primary = false;
+            contactStacks[type2.ordinal()][type1.ordinal()] = register2;
+        }
     }
 
     /**
@@ -94,7 +126,7 @@ class ContactManager implements PairCallback {
         }
 
         // Call the factory.
-        Contact c = pool.popContact(fixtureA, indexA, fixtureB, indexB);
+        Contact c = popContact(fixtureA, indexA, fixtureB, indexB);
         if (c == null) {
             return;
         }
@@ -202,7 +234,7 @@ class ContactManager implements PairCallback {
         }
 
         // Call the factory.
-        pool.pushContact(c);
+        pushContact(c);
         --m_contactCount;
     }
 
@@ -268,5 +300,40 @@ class ContactManager implements PairCallback {
             c.update(m_contactListener);
             c = c.getNext();
         }
+    }
+
+    private Contact popContact(Fixture fixtureA, int indexA, Fixture fixtureB, int indexB) {
+        final ShapeType type1 = fixtureA.getType();
+        final ShapeType type2 = fixtureB.getType();
+
+        final ContactRegister reg = contactStacks[type1.ordinal()][type2.ordinal()];
+        if (reg == null)
+            return null;
+
+        Contact c = reg.creator.pop();
+
+        if (reg.primary) {
+            c.init(fixtureA, indexA, fixtureB, indexB);
+        } else {
+            c.init(fixtureB, indexB, fixtureA, indexA);
+        }
+
+        return c;
+    }
+
+    private void pushContact(Contact contact) {
+        Fixture fixtureA = contact.getFixtureA();
+        Fixture fixtureB = contact.getFixtureB();
+
+        if (contact.m_manifold.pointCount > 0 && !fixtureA.isSensor() && !fixtureB.isSensor()) {
+            fixtureA.getBody().setAwake(true);
+            fixtureB.getBody().setAwake(true);
+        }
+
+        ShapeType type1 = fixtureA.getType();
+        ShapeType type2 = fixtureB.getType();
+
+        IDynamicStack<Contact> creator = contactStacks[type1.ordinal()][type2.ordinal()].creator;
+        creator.push(contact);
     }
 }

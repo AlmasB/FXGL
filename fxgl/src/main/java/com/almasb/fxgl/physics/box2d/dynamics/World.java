@@ -18,16 +18,16 @@ import com.almasb.fxgl.physics.box2d.collision.broadphase.BroadPhase;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.DefaultBroadPhaseBuffer;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.DynamicTree;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
-import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType;
-import com.almasb.fxgl.physics.box2d.common.*;
+import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
+import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
+import com.almasb.fxgl.physics.box2d.common.Sweep;
+import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactEdge;
-import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactRegister;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.Joint;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.JointDef;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.JointEdge;
 import com.almasb.fxgl.physics.box2d.particle.*;
-import com.almasb.fxgl.physics.box2d.pooling.IDynamicStack;
 import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 import com.almasb.fxgl.physics.box2d.pooling.normal.DefaultWorldPool;
 
@@ -47,8 +47,6 @@ public final class World {
 
     private DestructionListener destructionListener = null;
     private ParticleDestructionListener particleDestructionListener = null;
-
-    private ContactRegister[][] contactStacks = new ContactRegister[ShapeType.values().length][ShapeType.values().length];
 
     private boolean newFixture = false;
 
@@ -85,34 +83,8 @@ public final class World {
         this.pool = pool;
         this.gravity.set(gravity);
 
-        contactManager = new ContactManager(this, broadPhase);
+        contactManager = new ContactManager(pool, broadPhase);
         particleSystem = new ParticleSystem(this);
-
-        initializeRegisters();
-    }
-
-    private void initializeRegisters() {
-        addType(pool.getCircleContactStack(), ShapeType.CIRCLE, ShapeType.CIRCLE);
-        addType(pool.getPolyCircleContactStack(), ShapeType.POLYGON, ShapeType.CIRCLE);
-        addType(pool.getPolyContactStack(), ShapeType.POLYGON, ShapeType.POLYGON);
-        addType(pool.getEdgeCircleContactStack(), ShapeType.EDGE, ShapeType.CIRCLE);
-        addType(pool.getEdgePolyContactStack(), ShapeType.EDGE, ShapeType.POLYGON);
-        addType(pool.getChainCircleContactStack(), ShapeType.CHAIN, ShapeType.CIRCLE);
-        addType(pool.getChainPolyContactStack(), ShapeType.CHAIN, ShapeType.POLYGON);
-    }
-
-    private void addType(IDynamicStack<Contact> creator, ShapeType type1, ShapeType type2) {
-        ContactRegister register = new ContactRegister();
-        register.creator = creator;
-        register.primary = true;
-        contactStacks[type1.ordinal()][type2.ordinal()] = register;
-
-        if (type1 != type2) {
-            ContactRegister register2 = new ContactRegister();
-            register2.creator = creator;
-            register2.primary = false;
-            contactStacks[type2.ordinal()][type1.ordinal()] = register2;
-        }
     }
 
     /**
@@ -956,41 +928,6 @@ public final class World {
             body.m_force.setZero();
             body.m_torque = 0.0f;
         }
-    }
-
-    Contact popContact(Fixture fixtureA, int indexA, Fixture fixtureB, int indexB) {
-        final ShapeType type1 = fixtureA.getType();
-        final ShapeType type2 = fixtureB.getType();
-
-        final ContactRegister reg = contactStacks[type1.ordinal()][type2.ordinal()];
-        if (reg == null)
-            return null;
-
-        Contact c = reg.creator.pop();
-
-        if (reg.primary) {
-            c.init(fixtureA, indexA, fixtureB, indexB);
-        } else {
-            c.init(fixtureB, indexB, fixtureA, indexA);
-        }
-
-        return c;
-    }
-
-    void pushContact(Contact contact) {
-        Fixture fixtureA = contact.getFixtureA();
-        Fixture fixtureB = contact.getFixtureB();
-
-        if (contact.m_manifold.pointCount > 0 && !fixtureA.isSensor() && !fixtureB.isSensor()) {
-            fixtureA.getBody().setAwake(true);
-            fixtureB.getBody().setAwake(true);
-        }
-
-        ShapeType type1 = fixtureA.getType();
-        ShapeType type2 = fixtureB.getType();
-
-        IDynamicStack<Contact> creator = contactStacks[type1.ordinal()][type2.ordinal()].creator;
-        creator.push(contact);
     }
 
     /**
