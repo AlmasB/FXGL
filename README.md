@@ -69,7 +69,7 @@ Already have `pom.xml`? Then add:
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.4.2</version>
+    <version>0.4.3-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -86,7 +86,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:0.4.2'
+    compile 'com.github.almasb:fxgl:0.4.3-SNAPSHOT'
 }
 ```
 
@@ -112,4 +112,7 @@ You can support the FXGL development via [PayPal](https://www.paypal.me/FXGL) or
 
 ### Contact
 
-[Chat](https://gitter.im/AlmasB/FXGL) with the friendly FXGL community or ![Gmail](https://img.shields.io/badge/email-almaslvl@gmail.com-red.svg)
+* Ask questions on [StackOverflow](https://stackoverflow.com/search?q=fxgl) with tags `javafx` and `fxgl`
+* Tweet with [#fxgl](https://twitter.com/search?src=typd&q=%23fxgl)
+* [Chat](https://gitter.im/AlmasB/FXGL) with the friendly FXGL community
+* Email at ![Gmail](https://img.shields.io/badge/email-almaslvl@gmail.com-red.svg)
