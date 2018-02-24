@@ -820,14 +820,7 @@ public final class Body {
         m_force.setZero();
         m_torque = 0.0f;
 
-        // Delete the attached contacts.
-        ContactEdge ce = m_contactList;
-        while (ce != null) {
-            ContactEdge ce0 = ce;
-            ce = ce.next;
-            world.getContactManager().destroy(ce0.contact);
-        }
-        m_contactList = null;
+        destroyAttachedContacts();
 
         // Touch the proxies so that new contacts will be created (when appropriate)
         BroadPhase broadPhase = world.getContactManager().m_broadPhase;
@@ -837,6 +830,17 @@ public final class Body {
                 broadPhase.touchProxy(f.m_proxies[i].proxyId);
             }
         }
+    }
+
+    private void destroyAttachedContacts() {
+        // Delete the attached contacts.
+        ContactEdge ce = m_contactList;
+        while (ce != null) {
+            ContactEdge ce0 = ce;
+            ce = ce.next;
+            world.getContactManager().destroy(ce0.contact);
+        }
+        m_contactList = null;
     }
 
     /**
@@ -950,14 +954,7 @@ public final class Body {
                 f.destroyProxies(broadPhase);
             }
 
-            // Destroy the attached contacts.
-            ContactEdge ce = m_contactList;
-            while (ce != null) {
-                ContactEdge ce0 = ce;
-                ce = ce.next;
-                world.getContactManager().destroy(ce0.contact);
-            }
-            m_contactList = null;
+            destroyAttachedContacts();
         }
     }
 
