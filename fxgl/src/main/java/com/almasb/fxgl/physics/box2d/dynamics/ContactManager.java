@@ -73,8 +73,8 @@ class ContactManager implements PairCallback {
      */
     @Override
     public void addPair(Object proxyUserDataA, Object proxyUserDataB) {
-        FixtureProxy proxyA = (FixtureProxy) proxyUserDataA;
-        FixtureProxy proxyB = (FixtureProxy) proxyUserDataB;
+        Fixture.FixtureProxy proxyA = (Fixture.FixtureProxy) proxyUserDataA;
+        Fixture.FixtureProxy proxyB = (Fixture.FixtureProxy) proxyUserDataB;
 
         Fixture fixtureA = proxyA.fixture;
         Fixture fixtureB = proxyB.fixture;
@@ -284,8 +284,8 @@ class ContactManager implements PairCallback {
                 continue;
             }
 
-            int proxyIdA = fixtureA.m_proxies[indexA].proxyId;
-            int proxyIdB = fixtureB.m_proxies[indexB].proxyId;
+            int proxyIdA = fixtureA.getProxyId(indexA);
+            int proxyIdB = fixtureB.getProxyId(indexB);
             boolean overlap = m_broadPhase.testOverlap(proxyIdA, proxyIdB);
 
             // Here we destroy contacts that cease to overlap in the broad-phase.

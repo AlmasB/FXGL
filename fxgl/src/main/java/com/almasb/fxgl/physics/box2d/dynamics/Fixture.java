@@ -14,7 +14,6 @@ import com.almasb.fxgl.physics.box2d.collision.broadphase.BroadPhase;
 import com.almasb.fxgl.physics.box2d.collision.shapes.MassData;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactEdge;
@@ -40,7 +39,7 @@ public final class Fixture {
     private float restitution;
     private boolean isSensor;
 
-    public FixtureProxy[] m_proxies;
+    private FixtureProxy[] proxies;
     private int proxyCount = 0;
 
     Fixture(Body body, FixtureDef def) {
@@ -58,25 +57,29 @@ public final class Fixture {
         // Reserve proxy space
         int childCount = shape.getChildCount();
 
-        m_proxies = new FixtureProxy[childCount];
+        proxies = new FixtureProxy[childCount];
         for (int i = 0; i < childCount; i++) {
-            m_proxies[i] = new FixtureProxy();
-            m_proxies[i].fixture = null;
-            m_proxies[i].proxyId = BroadPhase.NULL_PROXY;
+            proxies[i] = new FixtureProxy();
         }
 
-        if (m_proxies.length < childCount) {
-            FixtureProxy[] old = m_proxies;
-            int newLen = JBoxUtils.max(old.length * 2, childCount);
-            m_proxies = new FixtureProxy[newLen];
-            System.arraycopy(old, 0, m_proxies, 0, old.length);
-            for (int i = 0; i < newLen; i++) {
-                if (i >= old.length) {
-                    m_proxies[i] = new FixtureProxy();
-                }
-                m_proxies[i].fixture = null;
-                m_proxies[i].proxyId = BroadPhase.NULL_PROXY;
-            }
+        // TODO: this shouldn't be possible, right?
+        // remove in the next version
+        // here proxies.length is always == childCount
+
+        if (proxies.length < childCount) {
+            throw new RuntimeException("BUG Fixture()");
+
+//            FixtureProxy[] old = proxies;
+//            int newLen = JBoxUtils.max(old.length * 2, childCount);
+//            proxies = new FixtureProxy[newLen];
+//            System.arraycopy(old, 0, proxies, 0, old.length);
+//            for (int i = 0; i < newLen; i++) {
+//                if (i >= old.length) {
+//                    proxies[i] = new FixtureProxy();
+//                }
+//                proxies[i].fixture = null;
+//                proxies[i].proxyId = BroadPhase.NULL_PROXY;
+//            }
         }
     }
 
@@ -196,8 +199,8 @@ public final class Fixture {
         return proxyCount;
     }
 
-    public FixtureProxy[] getProxies() {
-        return m_proxies;
+    public int getProxyId(int index) {
+        return proxies[index].proxyId;
     }
 
     /**
@@ -226,7 +229,7 @@ public final class Fixture {
         // Touch each proxy so that new pairs may be created
         BroadPhase broadPhase = world.getContactManager().m_broadPhase;
         for (int i = 0; i < proxyCount; ++i) {
-            broadPhase.touchProxy(m_proxies[i].proxyId);
+            broadPhase.touchProxy(proxies[i].proxyId);
         }
     }
 
@@ -266,7 +269,7 @@ public final class Fixture {
      * @return the fixture's AABB
      */
     public AABB getAABB(int childIndex) {
-        return m_proxies[childIndex].aabb;
+        return proxies[childIndex].aabb;
     }
 
     /**
@@ -285,7 +288,7 @@ public final class Fixture {
         proxyCount = shape.getChildCount();
 
         for (int i = 0; i < proxyCount; ++i) {
-            FixtureProxy proxy = m_proxies[i];
+            FixtureProxy proxy = proxies[i];
             shape.computeAABB(proxy.aabb, xf, i);
             proxy.proxyId = broadPhase.createProxy(proxy.aabb, proxy);
             proxy.fixture = this;
@@ -296,7 +299,7 @@ public final class Fixture {
     void destroyProxies(BroadPhase broadPhase) {
         // Destroy proxies in the broad-phase.
         for (int i = 0; i < proxyCount; ++i) {
-            FixtureProxy proxy = m_proxies[i];
+            FixtureProxy proxy = proxies[i];
             broadPhase.destroyProxy(proxy.proxyId);
             proxy.proxyId = BroadPhase.NULL_PROXY;
         }
@@ -314,11 +317,11 @@ public final class Fixture {
         }
 
         for (int i = 0; i < proxyCount; ++i) {
-            FixtureProxy proxy = m_proxies[i];
+            FixtureProxy proxy = proxies[i];
 
             // Compute an AABB that covers the swept shape (may miss some rotation effect).
-            final AABB aabb1 = pool1;
-            final AABB aabb2 = pool2;
+            AABB aabb1 = pool1;
+            AABB aabb2 = pool2;
             shape.computeAABB(aabb1, transform1, proxy.childIndex);
             shape.computeAABB(aabb2, transform2, proxy.childIndex);
 
@@ -333,6 +336,19 @@ public final class Fixture {
 
     // The proxies must be destroyed before calling this.
     void destroy() {
-        m_proxies = null;
+        proxies = null;
+    }
+
+    /**
+     * This proxy is used internally to connect fixtures to the broad-phase.
+     */
+    static class FixtureProxy {
+        final AABB aabb = new AABB();
+        Fixture fixture = null;
+        int proxyId = BroadPhase.NULL_PROXY;
+        int childIndex;
+
+        // only we can create these
+        private FixtureProxy() { }
     }
 }

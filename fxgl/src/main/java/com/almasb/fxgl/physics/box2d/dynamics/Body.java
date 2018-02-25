@@ -827,7 +827,7 @@ public final class Body {
         for (Fixture f : fixtures) {
             int proxyCount = f.getProxyCount();
             for (int i = 0; i < proxyCount; ++i) {
-                broadPhase.touchProxy(f.m_proxies[i].proxyId);
+                broadPhase.touchProxy(f.getProxyId(i));
             }
         }
     }

@@ -1475,7 +1475,7 @@ public final class World {
 
         @Override
         public boolean treeCallback(int nodeId) {
-            FixtureProxy proxy = (FixtureProxy) broadPhase.getUserData(nodeId);
+            Fixture.FixtureProxy proxy = (Fixture.FixtureProxy) broadPhase.getUserData(nodeId);
             return callback.reportFixture(proxy.fixture);
         }
     }
@@ -1493,7 +1493,7 @@ public final class World {
         @Override
         public float raycastCallback(RayCastInput input, int nodeId) {
             Object userData = broadPhase.getUserData(nodeId);
-            FixtureProxy proxy = (FixtureProxy) userData;
+            Fixture.FixtureProxy proxy = (Fixture.FixtureProxy) userData;
             Fixture fixture = proxy.fixture;
             int index = proxy.childIndex;
             boolean hit = fixture.raycast(output, input, index);
