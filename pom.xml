@@ -20,6 +20,7 @@
             while we want the samples to be ignored. Hence samples comes 2nd and extra 3rd.
         -->
         <module>fxgl-samples</module>
+        <module>fxgl-mobile</module>
 
         <!-- Extra functionality module (on top of the main module) -->
         <module>fxgl-extra</module>
@@ -84,6 +85,7 @@
         <jackson.version>2.9.0</jackson.version>
         <apache.http.version>4.5.3</apache.http.version>
         <classpath.scanner.version>2.4.5</classpath.scanner.version>
+        <charm.down.version>3.7.0</charm.down.version>
 
         <!-- test dependencies -->
         <junit.jupiter.version>5.0.0</junit.jupiter.version>
