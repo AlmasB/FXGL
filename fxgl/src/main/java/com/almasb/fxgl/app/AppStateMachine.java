@@ -18,7 +18,6 @@ import java.util.Deque;
  * Manages transitions, updates of all states.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
- * Edited by: Hanzallah Azim Burney (changed null comparision to AppState.EMPTY)
  */
 public final class AppStateMachine {
 
@@ -149,7 +148,6 @@ public final class AppStateMachine {
     }
 
     public State getIntroState() {
-        // https://github.com/AlmasB/FXGL/issues/477
         if (intro == AppState.EMPTY)
             throw new IllegalStateException("Intro is not enabled");
 
@@ -161,7 +159,6 @@ public final class AppStateMachine {
     }
 
     public State getMainMenuState() {
-        // https://github.com/AlmasB/FXGL/issues/477
         if (mainMenu == AppState.EMPTY)
             throw new IllegalStateException("Menu is not enabled");
 
@@ -169,7 +166,6 @@ public final class AppStateMachine {
     }
 
     public State getGameMenuState() {
-        // https://github.com/AlmasB/FXGL/issues/477
         if (gameMenu == AppState.EMPTY)
             throw new IllegalStateException("Menu is not enabled");
 
