@@ -77,6 +77,7 @@ import java.util.*;
  * APP fields during declaration, make these calls in initGame().
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * Edited by: Hanzallah Azim Burney (line 275: chnaged null to AppState.EMPTY)
  */
 public abstract class GameApplication extends Application {
 
@@ -270,10 +271,10 @@ public abstract class GameApplication extends Application {
         // reasonable hack to trigger dialog state init before intro and menus
         DialogSubState.INSTANCE.getView();
 
-        // https://github.com/AlmasB/FXGL/issues/477
-        AppState intro = this.getSettings().isIntroEnabled() ? new IntroState(this, sceneFactory) : null;
-        AppState mainMenu = this.getSettings().isMenuEnabled() ? new MainMenuState(sceneFactory) : null;
-        AppState gameMenu = this.getSettings().isMenuEnabled() ? new GameMenuState(sceneFactory) : null;
+        // Issue resolved
+        AppState intro = this.getSettings().isIntroEnabled() ? new IntroState(this, sceneFactory) : AppState.EMPTY;
+        AppState mainMenu = this.getSettings().isMenuEnabled() ? new MainMenuState(sceneFactory) : AppState.EMPTY;
+        AppState gameMenu = this.getSettings().isMenuEnabled() ? new GameMenuState(sceneFactory) : AppState.EMPTY;
 
         stateMachine = new AppStateMachine(loading, play, DialogSubState.INSTANCE, intro, mainMenu, gameMenu, initial);
 
