@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.physics.box2d.dynamics;
 
+import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.callbacks.*;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
@@ -62,16 +63,13 @@ public final class World {
 
     private boolean stepComplete = true;
 
-    private Body m_bodyList = null;
+    private Array<Body> bodies = new Array<>(WORLD_POOL_SIZE);
+
+    //private Body m_bodyList = null;
     private Joint m_jointList = null;
 
     private int bodyCount = 0;
     private int jointCount = 0;
-
-    /**
-     * This is used to compute the time step ratio to support a variable time step.
-     */
-    private float dtInverse = 0;
 
     private final Vec2 gravity = new Vec2();
 
@@ -100,13 +98,8 @@ public final class World {
 
         Body b = new Body(def, this);
 
-        // add to world doubly linked list
-        b.m_prev = null;
-        b.m_next = m_bodyList;
-        if (m_bodyList != null) {
-            m_bodyList.m_prev = b;
-        }
-        m_bodyList = b;
+        bodies.add(b);
+
         ++bodyCount;
 
         return b;
@@ -160,18 +153,7 @@ public final class World {
 
         body.getFixtures().clear();
 
-        // Remove world body list.
-        if (body.m_prev != null) {
-            body.m_prev.m_next = body.m_next;
-        }
-
-        if (body.m_next != null) {
-            body.m_next.m_prev = body.m_prev;
-        }
-
-        if (body == m_bodyList) {
-            m_bodyList = body.m_next;
-        }
+        bodies.removeValueByIdentity(body);
 
         --bodyCount;
         // jbox2dTODO djm recycle body
@@ -325,6 +307,11 @@ public final class World {
     private final TimeStep step = new TimeStep();
 
     /**
+     * This is used to compute the time step ratio to support a variable time step.
+     */
+    private float dtInverse = 0;
+
+    /**
      * Take a time step.
      * This performs collision detection, integration, and constraint solution.
      *
@@ -385,7 +372,7 @@ public final class World {
 
     private void solve(TimeStep step) {
         // update previous transforms
-        for (Body b = m_bodyList; b != null; b = b.m_next) {
+        for (Body b : bodies) {
             b.m_xf0.set(b.m_xf);
         }
 
@@ -393,7 +380,7 @@ public final class World {
         island.init(bodyCount, contactManager.m_contactCount, jointCount, contactManager.m_contactListener);
 
         // Clear all the island flags.
-        for (Body b = m_bodyList; b != null; b = b.m_next) {
+        for (Body b : bodies) {
             b.m_flags &= ~Body.e_islandFlag;
         }
         for (Contact c = contactManager.m_contactList; c != null; c = c.m_next) {
@@ -409,7 +396,7 @@ public final class World {
             stack = new Body[stackSize];
         }
 
-        for (Body seed = m_bodyList; seed != null; seed = seed.m_next) {
+        for (Body seed : bodies) {
             if ((seed.m_flags & Body.e_islandFlag) == Body.e_islandFlag) {
                 continue;
             }
@@ -519,7 +506,7 @@ public final class World {
         }
 
         // Synchronize fixtures, check for out of range bodies.
-        for (Body b = m_bodyList; b != null; b = b.getNext()) {
+        for (Body b : bodies) {
             // If a body was not in an island then it did not move.
             if ((b.m_flags & Body.e_islandFlag) == 0) {
                 continue;
@@ -551,7 +538,7 @@ public final class World {
         island.init(2 * JBoxSettings.maxTOIContacts, JBoxSettings.maxTOIContacts, 0, contactManager.m_contactListener);
 
         if (stepComplete) {
-            for (Body b = m_bodyList; b != null; b = b.m_next) {
+            for (Body b : bodies) {
                 b.m_flags &= ~Body.e_islandFlag;
                 b.m_sweep.alpha0 = 0.0f;
             }
@@ -917,7 +904,7 @@ public final class World {
      * @see #setAutoClearForces(boolean)
      */
     public void clearForces() {
-        for (Body body = m_bodyList; body != null; body = body.getNext()) {
+        for (Body body : bodies) {
             body.m_force.setZero();
             body.m_torque = 0.0f;
         }
@@ -1229,13 +1216,12 @@ public final class World {
     }
 
     /**
-     * Get the world body list. With the returned body, use Body.getNext to get the next body in the
-     * world list. A null body indicates the end of the list.
+     * DO NOT MODIFY.
      *
-     * @return the head of the world body list.
+     * @return all world bodies
      */
-    public Body getBodyList() {
-        return m_bodyList;
+    public Array<Body> getBodies() {
+        return bodies;
     }
 
     /**
@@ -1399,7 +1385,7 @@ public final class World {
 
         allowSleep = flag;
         if (!allowSleep) {
-            for (Body b = m_bodyList; b != null; b = b.m_next) {
+            for (Body b : bodies) {
                 b.setAwake(true);
             }
         }

@@ -69,8 +69,8 @@ public final class Body {
     public final Vec2 m_force = new Vec2();
     public float m_torque = 0;
 
-    public Body m_prev = null;
-    public Body m_next = null;
+    //public Body m_prev = null;
+    //public Body m_next = null;
 
     public float m_mass, m_invMass;
 
@@ -1006,9 +1006,9 @@ public final class Body {
     /**
      * Get the next body in the world's body list.
      **/
-    public Body getNext() {
-        return m_next;
-    }
+//    public Body getNext() {
+//        return m_next;
+//    }
 
     /**
      * Get the user data pointer that was provided in the body definition.
