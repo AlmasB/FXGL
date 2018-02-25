@@ -24,12 +24,6 @@
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.gluonhq</groupId>
-            <artifactId>charm-down-plugin-storage-android</artifactId>
-            <version>${charm.down.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
