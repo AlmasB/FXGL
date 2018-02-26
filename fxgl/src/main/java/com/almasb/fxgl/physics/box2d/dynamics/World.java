@@ -65,10 +65,7 @@ public final class World {
 
     private Array<Body> bodies = new Array<>(WORLD_POOL_SIZE);
 
-    //private Body m_bodyList = null;
     private Joint m_jointList = null;
-
-    private int bodyCount = 0;
     private int jointCount = 0;
 
     private final Vec2 gravity = new Vec2();
@@ -100,8 +97,6 @@ public final class World {
 
         bodies.add(b);
 
-        ++bodyCount;
-
         return b;
     }
 
@@ -113,7 +108,7 @@ public final class World {
      * @param body body to destroy
      */
     public void destroyBody(Body body) {
-        assert (bodyCount > 0);
+        assert bodies.contains(body, true);
         assertNotLocked();
 
         // Delete the attached joints.
@@ -154,8 +149,6 @@ public final class World {
         body.getFixtures().clear();
 
         bodies.removeValueByIdentity(body);
-
-        --bodyCount;
         // jbox2dTODO djm recycle body
     }
 
@@ -377,7 +370,7 @@ public final class World {
         }
 
         // Size the island for the worst case.
-        island.init(bodyCount, contactManager.m_contactCount, jointCount, contactManager.m_contactListener);
+        island.init(getBodyCount(), contactManager.m_contactCount, jointCount, contactManager.m_contactListener);
 
         // Clear all the island flags.
         for (Body b : bodies) {
@@ -391,7 +384,7 @@ public final class World {
         }
 
         // Build and simulate all awake islands.
-        int stackSize = bodyCount;
+        int stackSize = getBodyCount();
         if (stack.length < stackSize) {
             stack = new Body[stackSize];
         }
@@ -1291,7 +1284,7 @@ public final class World {
      * @return the number of bodies
      */
     public int getBodyCount() {
-        return bodyCount;
+        return bodies.size();
     }
 
     /**
