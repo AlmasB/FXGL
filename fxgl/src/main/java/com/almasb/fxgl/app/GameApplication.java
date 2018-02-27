@@ -170,7 +170,9 @@ public abstract class GameApplication extends Application {
     private void initLogger() {
         Logger.configure(new LoggerConfig());
         // we write all logs to file but adjust console log level based on app mode
-        Logger.addOutput(new FileOutput("FXGL"), LoggerLevel.DEBUG);
+        if (FXGL.isDesktop()) {
+            Logger.addOutput(new FileOutput("FXGL"), LoggerLevel.DEBUG);
+        }
         Logger.addOutput(new ConsoleOutput(), settings.getApplicationMode().getLoggerLevel());
 
         log.debug("Logger initialized");
@@ -313,7 +315,9 @@ public abstract class GameApplication extends Application {
             getGameplay().load(e.getProfile());
         });
 
-        getEventBus().scanForHandlers(this);
+        if (FXGL.isDesktop()) {
+            getEventBus().scanForHandlers(this);
+        }
     }
 
     private void runPreInit() {
@@ -323,16 +327,20 @@ public abstract class GameApplication extends Application {
             profiler = new Profiler();
         }
 
-        initAchievements();
+        if (FXGL.isDesktop()) {
+            initAchievements();
 
-        // 1. register system actions
-        SystemActions.INSTANCE.bind(getInput());
+            // 1. register system actions
+            SystemActions.INSTANCE.bind(getInput());
+        }
 
         // 2. register user actions
         initInput();
 
-        // 3. scan for annotated methods and register them too
-        getInput().scanForUserActions(this);
+        if (FXGL.isDesktop()) {
+            // 3. scan for annotated methods and register them too
+            getInput().scanForUserActions(this);
+        }
 
         generateDefaultProfile();
 

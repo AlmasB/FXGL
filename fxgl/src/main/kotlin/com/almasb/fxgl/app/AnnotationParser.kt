@@ -18,7 +18,7 @@ class AnnotationParser(appClass: Class<out GameApplication>) {
 
     private val packageName = appClass.`package`?.name
 
-    val isDisabled = packageName.isNullOrEmpty() || packageName!!.contains("[A-Z]".toRegex())
+    val isDisabled = packageName.isNullOrEmpty() || packageName!!.contains("[A-Z]".toRegex()) || !FXGL.isDesktop()
 
     private val annotationMap = hashMapOf<Class<*>, List<Class<*>>>()
 

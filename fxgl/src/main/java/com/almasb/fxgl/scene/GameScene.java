@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.scene;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.collection.Array;
@@ -91,7 +92,9 @@ public final class GameScene extends FXGLScene
     }
 
     private void initProfilerText(double x, double y) {
-        profilerText.setFont(FXGLAssets.UI_MONO_FONT.newFont(20));
+        if (FXGL.isDesktop()) {
+            profilerText.setFont(FXGLAssets.UI_MONO_FONT.newFont(20));
+        }
         profilerText.setFill(Color.RED);
         profilerText.setTranslateX(x);
         profilerText.setTranslateY(y);
