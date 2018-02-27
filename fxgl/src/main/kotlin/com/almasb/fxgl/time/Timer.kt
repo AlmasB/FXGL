@@ -32,8 +32,16 @@ class Timer {
     fun update(tpf: Double) {
         now += tpf
 
-        timerActions.forEach { it.update(tpf) }
-        timerActions.removeIf(TimerAction::isExpired)
+        val iter = timerActions.iterator()
+        while (iter.hasNext()) {
+            val action = iter.next()
+
+            action.update(tpf)
+
+            if (action.isExpired) {
+                iter.remove()
+            }
+        }
     }
 
     /**
