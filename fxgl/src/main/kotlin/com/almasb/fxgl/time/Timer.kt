@@ -39,7 +39,7 @@ class Timer {
             action.update(tpf)
 
             if (action.isExpired) {
-                iter.remove()
+                timerActions.remove(action)
             }
         }
     }
