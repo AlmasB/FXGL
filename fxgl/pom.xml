@@ -18,6 +18,11 @@
             <id>kotlinx</id>
             <url>https://kotlin.bintray.com/kotlinx/</url>
         </repository>
+
+        <repository>
+            <id>oss.sonatype.org-snapshot</id>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -73,6 +78,18 @@
             <groupId>com.gluonhq</groupId>
             <artifactId>charm-down-plugin-storage-desktop</artifactId>
             <version>${charm.down.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-plugin-audio</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-plugin-audio-desktop</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
