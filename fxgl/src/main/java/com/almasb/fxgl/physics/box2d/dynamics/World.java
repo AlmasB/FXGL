@@ -370,7 +370,7 @@ public final class World {
         }
 
         // Size the island for the worst case.
-        island.init(getBodyCount(), contactManager.m_contactCount, jointCount, contactManager.m_contactListener);
+        island.init(getBodyCount(), contactManager.m_contactCount, jointCount, contactManager.getContactListener());
 
         // Clear all the island flags.
         for (Body b : bodies) {
@@ -528,7 +528,7 @@ public final class World {
     private void solveTOI(final TimeStep step) {
 
         final Island island = toiIsland;
-        island.init(2 * JBoxSettings.maxTOIContacts, JBoxSettings.maxTOIContacts, 0, contactManager.m_contactListener);
+        island.init(2 * JBoxSettings.maxTOIContacts, JBoxSettings.maxTOIContacts, 0, contactManager.getContactListener());
 
         if (stepComplete) {
             for (Body b : bodies) {
@@ -662,7 +662,7 @@ public final class World {
             bB.advance(minAlpha);
 
             // The TOI contact likely has some new contact points.
-            minContact.update(contactManager.m_contactListener);
+            minContact.update(contactManager.getContactListener());
             minContact.m_flags &= ~Contact.TOI_FLAG;
             ++minContact.m_toiCount;
 
@@ -732,7 +732,7 @@ public final class World {
                         }
 
                         // Update the contact points
-                        contact.update(contactManager.m_contactListener);
+                        contact.update(contactManager.getContactListener());
 
                         // Was the contact disabled by the user?
                         if (!contact.isEnabled()) {
@@ -1420,7 +1420,7 @@ public final class World {
      * @param filter contact filter
      */
     public void setContactFilter(ContactFilter filter) {
-        contactManager.m_contactFilter = filter;
+        contactManager.setcontactFilter(filter);
     }
 
     /**
@@ -1429,7 +1429,7 @@ public final class World {
      * @param listener contact listener
      */
     public void setContactListener(ContactListener listener) {
-        contactManager.m_contactListener = listener;
+        contactManager.setContactListener(listener);
     }
 
     void notifyNewFixture() {

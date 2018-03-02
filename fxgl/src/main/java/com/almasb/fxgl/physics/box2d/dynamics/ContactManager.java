@@ -24,13 +24,14 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
  */
 class ContactManager implements PairCallback {
 
-    public Contact m_contactList = null;
-    public int m_contactCount = 0;
-    public ContactFilter m_contactFilter = new ContactFilter();
-    public ContactListener m_contactListener = null;
+    Contact m_contactList = null;
+    int m_contactCount = 0;
+
+    private ContactListener contactListener = null;
+    private ContactFilter contactFilter = new ContactFilter();
 
     private final IWorldPool pool;
-    public final BroadPhase m_broadPhase;
+    final BroadPhase m_broadPhase;
 
     private ContactRegister[][] contactStacks = new ContactRegister[ShapeType.values().length][ShapeType.values().length];
 
@@ -63,6 +64,18 @@ class ContactManager implements PairCallback {
             register2.primary = false;
             contactStacks[type2.ordinal()][type1.ordinal()] = register2;
         }
+    }
+
+    void setcontactFilter(ContactFilter contactFilter) {
+        this.contactFilter = contactFilter;
+    }
+
+    void setContactListener(ContactListener contactListener) {
+        this.contactListener = contactListener;
+    }
+
+    ContactListener getContactListener() {
+        return contactListener;
     }
 
     /**
@@ -121,7 +134,7 @@ class ContactManager implements PairCallback {
         }
 
         // Check user filtering.
-        if (m_contactFilter != null && !m_contactFilter.shouldCollide(fixtureA, fixtureB)) {
+        if (contactFilter != null && !contactFilter.shouldCollide(fixtureA, fixtureB)) {
             return;
         }
 
@@ -180,18 +193,18 @@ class ContactManager implements PairCallback {
         ++m_contactCount;
     }
 
-    public void findNewContacts() {
+    void findNewContacts() {
         m_broadPhase.updatePairs(this);
     }
 
-    public void destroy(Contact c) {
+    void destroy(Contact c) {
         Fixture fixtureA = c.getFixtureA();
         Fixture fixtureB = c.getFixtureB();
         Body bodyA = fixtureA.getBody();
         Body bodyB = fixtureB.getBody();
 
-        if (m_contactListener != null && c.isTouching()) {
-            m_contactListener.endContact(c);
+        if (contactListener != null && c.isTouching()) {
+            contactListener.endContact(c);
         }
 
         // Remove from the world.
@@ -242,7 +255,7 @@ class ContactManager implements PairCallback {
      * This is the top level collision call for the time step. Here all the narrow phase collision is
      * processed for the world contact list.
      */
-    public void collide() {
+    void collide() {
         // Update awake contacts.
         Contact c = m_contactList;
         while (c != null) {
@@ -264,7 +277,7 @@ class ContactManager implements PairCallback {
                 }
 
                 // Check user filtering.
-                if (m_contactFilter != null && !m_contactFilter.shouldCollide(fixtureA, fixtureB)) {
+                if (contactFilter != null && !contactFilter.shouldCollide(fixtureA, fixtureB)) {
                     Contact cNuke = c;
                     c = cNuke.getNext();
                     destroy(cNuke);
@@ -297,7 +310,7 @@ class ContactManager implements PairCallback {
             }
 
             // The contact persists.
-            c.update(m_contactListener);
+            c.update(contactListener);
             c = c.getNext();
         }
     }
