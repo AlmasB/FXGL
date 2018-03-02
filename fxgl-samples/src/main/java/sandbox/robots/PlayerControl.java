@@ -99,7 +99,7 @@ public class PlayerControl extends Control {
     public void jump() {
         if (jumpTimer.elapsed(Duration.seconds(0.25))) {
             if (physics.isOnGround()) {
-                physics.setVelocityY(-250);
+                physics.setVelocityY(-450);
                 jumpTimer.capture();
             }
         }
