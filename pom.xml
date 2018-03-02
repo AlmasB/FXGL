@@ -20,7 +20,6 @@
             while we want the samples to be ignored. Hence samples comes 2nd and extra 3rd.
         -->
         <module>fxgl-samples</module>
-        <module>fxgl-mobile</module>
 
         <!-- Extra functionality module (on top of the main module) -->
         <module>fxgl-extra</module>
