@@ -24,20 +24,20 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
  */
 class ContactManager implements PairCallback {
 
-    Contact m_contactList = null;
-    int m_contactCount = 0;
+    Contact contactList = null;
+    int contactCount = 0;
 
     private ContactListener contactListener = null;
     private ContactFilter contactFilter = new ContactFilter();
 
     private final IWorldPool pool;
-    final BroadPhase m_broadPhase;
+    final BroadPhase broadPhase;
 
     private ContactRegister[][] contactStacks = new ContactRegister[ShapeType.values().length][ShapeType.values().length];
 
     ContactManager(IWorldPool pool, BroadPhase broadPhase) {
         this.pool = pool;
-        m_broadPhase = broadPhase;
+        this.broadPhase = broadPhase;
 
         initializeRegisters();
     }
@@ -154,11 +154,11 @@ class ContactManager implements PairCallback {
 
         // Insert into the world.
         c.m_prev = null;
-        c.m_next = m_contactList;
-        if (m_contactList != null) {
-            m_contactList.m_prev = c;
+        c.m_next = contactList;
+        if (contactList != null) {
+            contactList.m_prev = c;
         }
-        m_contactList = c;
+        contactList = c;
 
         // Connect to island graph.
 
@@ -190,11 +190,11 @@ class ContactManager implements PairCallback {
             bodyB.setAwake(true);
         }
 
-        ++m_contactCount;
+        ++contactCount;
     }
 
     void findNewContacts() {
-        m_broadPhase.updatePairs(this);
+        broadPhase.updatePairs(this);
     }
 
     void destroy(Contact c) {
@@ -216,8 +216,8 @@ class ContactManager implements PairCallback {
             c.m_next.m_prev = c.m_prev;
         }
 
-        if (c == m_contactList) {
-            m_contactList = c.m_next;
+        if (c == contactList) {
+            contactList = c.m_next;
         }
 
         // Remove from body 1
@@ -248,7 +248,7 @@ class ContactManager implements PairCallback {
 
         // Call the factory.
         pushContact(c);
-        --m_contactCount;
+        --contactCount;
     }
 
     /**
@@ -257,7 +257,7 @@ class ContactManager implements PairCallback {
      */
     void collide() {
         // Update awake contacts.
-        Contact c = m_contactList;
+        Contact c = contactList;
         while (c != null) {
             Fixture fixtureA = c.getFixtureA();
             Fixture fixtureB = c.getFixtureB();
@@ -299,7 +299,7 @@ class ContactManager implements PairCallback {
 
             int proxyIdA = fixtureA.getProxyId(indexA);
             int proxyIdB = fixtureB.getProxyId(indexB);
-            boolean overlap = m_broadPhase.testOverlap(proxyIdA, proxyIdB);
+            boolean overlap = broadPhase.testOverlap(proxyIdA, proxyIdB);
 
             // Here we destroy contacts that cease to overlap in the broad-phase.
             if (!overlap) {

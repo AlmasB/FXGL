@@ -140,7 +140,7 @@ public final class World {
                 destructionListener.onDestroy(f);
             }
 
-            f.destroyProxies(contactManager.m_broadPhase);
+            f.destroyProxies(contactManager.broadPhase);
             f.destroy();
 
             // jbox2dTODO djm recycle fixtures (here or in that destroy method)
@@ -370,13 +370,13 @@ public final class World {
         }
 
         // Size the island for the worst case.
-        island.init(getBodyCount(), contactManager.m_contactCount, jointCount, contactManager.getContactListener());
+        island.init(getBodyCount(), contactManager.contactCount, jointCount, contactManager.getContactListener());
 
         // Clear all the island flags.
         for (Body b : bodies) {
             b.m_flags &= ~Body.e_islandFlag;
         }
-        for (Contact c = contactManager.m_contactList; c != null; c = c.m_next) {
+        for (Contact c = contactManager.contactList; c != null; c = c.m_next) {
             c.m_flags &= ~Contact.ISLAND_FLAG;
         }
         for (Joint j = m_jointList; j != null; j = j.m_next) {
@@ -536,7 +536,7 @@ public final class World {
                 b.m_sweep.alpha0 = 0.0f;
             }
 
-            for (Contact c = contactManager.m_contactList; c != null; c = c.m_next) {
+            for (Contact c = contactManager.contactList; c != null; c = c.m_next) {
                 // Invalidate TOI
                 c.m_flags &= ~(Contact.TOI_FLAG | Contact.ISLAND_FLAG);
                 c.m_toiCount = 0;
@@ -550,7 +550,7 @@ public final class World {
             Contact minContact = null;
             float minAlpha = 1.0f;
 
-            for (Contact c = contactManager.m_contactList; c != null; c = c.m_next) {
+            for (Contact c = contactManager.contactList; c != null; c = c.m_next) {
                 // Is this contact disabled?
                 if (!c.isEnabled()) {
                     continue;
@@ -826,9 +826,9 @@ public final class World {
      * @param aabb the query box
      */
     public void queryAABB(QueryCallback callback, AABB aabb) {
-        wqwrapper.broadPhase = contactManager.m_broadPhase;
+        wqwrapper.broadPhase = contactManager.broadPhase;
         wqwrapper.callback = callback;
-        contactManager.m_broadPhase.query(wqwrapper, aabb);
+        contactManager.broadPhase.query(wqwrapper, aabb);
     }
 
     /**
@@ -869,12 +869,12 @@ public final class World {
      * @param point2 the ray ending point
      */
     public void raycast(RayCastCallback callback, Vec2 point1, Vec2 point2) {
-        wrcwrapper.broadPhase = contactManager.m_broadPhase;
+        wrcwrapper.broadPhase = contactManager.broadPhase;
         wrcwrapper.callback = callback;
         input.maxFraction = 1.0f;
         input.p1.set(point1);
         input.p2.set(point2);
-        contactManager.m_broadPhase.raycast(wrcwrapper, input);
+        contactManager.broadPhase.raycast(wrcwrapper, input);
     }
 
     /**
@@ -1236,7 +1236,7 @@ public final class World {
      * @return the head of the world contact list.
      */
     public Contact getContactList() {
-        return contactManager.m_contactList;
+        return contactManager.contactList;
     }
 
     public boolean isSleepingAllowed() {
@@ -1277,7 +1277,7 @@ public final class World {
      * @return the number of broad-phase proxies
      */
     public int getProxyCount() {
-        return contactManager.m_broadPhase.getProxyCount();
+        return contactManager.broadPhase.getProxyCount();
     }
 
     /**
@@ -1298,28 +1298,28 @@ public final class World {
      * @return the number of contacts (each may have 0 or more contact points)
      */
     public int getContactCount() {
-        return contactManager.m_contactCount;
+        return contactManager.contactCount;
     }
 
     /**
      * @return the height of the dynamic tree
      */
     public int getTreeHeight() {
-        return contactManager.m_broadPhase.getTreeHeight();
+        return contactManager.broadPhase.getTreeHeight();
     }
 
     /**
      * @return the balance of the dynamic tree
      */
     public int getTreeBalance() {
-        return contactManager.m_broadPhase.getTreeBalance();
+        return contactManager.broadPhase.getTreeBalance();
     }
 
     /**
      * @return the quality of the dynamic tree
      */
     public float getTreeQuality() {
-        return contactManager.m_broadPhase.getTreeQuality();
+        return contactManager.broadPhase.getTreeQuality();
     }
 
     /**
