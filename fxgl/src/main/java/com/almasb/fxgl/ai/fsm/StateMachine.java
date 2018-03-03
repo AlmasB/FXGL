@@ -16,9 +16,6 @@
 
 package com.almasb.fxgl.ai.fsm;
 
-import com.almasb.fxgl.ai.msg.Telegram;
-import com.almasb.fxgl.ai.msg.Telegraph;
-
 /**
  * A state machine manages the state transitions of its entity.
  * Additionally, the state machine may be delegated by the entity to handle its messages.
@@ -27,7 +24,7 @@ import com.almasb.fxgl.ai.msg.Telegraph;
  * @param <S> the type of the states of this state machine
  * @author davebaol
  */
-public interface StateMachine<E, S extends State<E>> extends Telegraph {
+public interface StateMachine<E, S extends State<E>> {
 
     /**
      * Updates the state machine.
@@ -95,15 +92,15 @@ public interface StateMachine<E, S extends State<E>> extends Telegraph {
      */
     boolean isInState(S state);
 
-    /**
-     * Handles received telegrams.
-     * <p>
-     * Implementation classes should first route the telegram to the current state. If the current state does not deal with the
-     * message, it should be routed to the global state.
-     * </p>
-     *
-     * @param telegram the received telegram
-     * @return true if telegram has been successfully handled; false otherwise.
-     */
-    boolean handleMessage(Telegram telegram);
+//    /**
+//     * Handles received telegrams.
+//     * <p>
+//     * Implementation classes should first route the telegram to the current state. If the current state does not deal with the
+//     * message, it should be routed to the global state.
+//     * </p>
+//     *
+//     * @param telegram the received telegram
+//     * @return true if telegram has been successfully handled; false otherwise.
+//     */
+//    boolean handleMessage(Telegram telegram);
 }

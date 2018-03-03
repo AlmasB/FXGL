@@ -16,8 +16,6 @@
 
 package com.almasb.fxgl.ai.fsm;
 
-import com.almasb.fxgl.ai.msg.Telegram;
-
 /**
  * The state of a state machine defines the logic of the entities that enter, exit and last this state.
  * Additionally, a state may be delegated by an entity to handle its messages.
@@ -48,13 +46,13 @@ public interface State<E> {
      */
     void exit(E entity);
 
-    /**
-     * This method executes if the {@code entity} receives a {@code telegram} from the message dispatcher while it is in this
-     * state.
-     *
-     * @param entity   the entity that received the message
-     * @param telegram the message sent to the entity
-     * @return true if the message has been successfully handled; false otherwise.
-     */
-    boolean onMessage(E entity, Telegram telegram);
+//    /**
+//     * This method executes if the {@code entity} receives a {@code telegram} from the message dispatcher while it is in this
+//     * state.
+//     *
+//     * @param entity   the entity that received the message
+//     * @param telegram the message sent to the entity
+//     * @return true if the message has been successfully handled; false otherwise.
+//     */
+//    boolean onMessage(E entity, Telegram telegram);
 }

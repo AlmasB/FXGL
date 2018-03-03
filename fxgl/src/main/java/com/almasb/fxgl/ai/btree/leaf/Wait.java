@@ -16,13 +16,12 @@
 
 package com.almasb.fxgl.ai.btree.leaf;
 
-import com.almasb.fxgl.ai.GdxAI;
-import com.almasb.fxgl.ai.Timepiece;
 import com.almasb.fxgl.ai.btree.LeafTask;
 import com.almasb.fxgl.ai.btree.Task;
 import com.almasb.fxgl.ai.btree.annotation.TaskAttribute;
 import com.almasb.fxgl.ai.utils.random.ConstantFloatDistribution;
 import com.almasb.fxgl.ai.utils.random.FloatDistribution;
+import com.almasb.fxgl.app.FXGL;
 
 /** {@code Wait} is a leaf that keeps running for the specified amount of time then succeeds.
  * 
@@ -58,23 +57,23 @@ public class Wait<E> extends LeafTask<E> {
 
 	/** Draws a value from the distribution that determines the seconds to wait for.
 	 * <p>
-	 * This method is called when the task is entered. Also, this method internally calls {@link Timepiece#getTime()
-	 * GdxAI.getTimepiece().getTime()} to get the current AI time. This means that
+	 * This method is called when the task is entered. Also, this method internally calls
+	 * GdxAI.getTimepiece().getTime() to get the current AI time. This means that
 	 * <ul>
-	 * <li>if you forget to {@link Timepiece#update(float) update the timepiece} this task will keep running indefinitely.</li>
+	 * <li>if you forget to update the timepiece this task will keep running indefinitely.</li>
 	 * <li>the timepiece should be updated before this task runs.</li>
 	 * </ul> */
 	@Override
 	public void start () {
 		timeout = seconds.nextFloat();
-		startTime = GdxAI.getTimepiece().getTime();
+        startTime = (float) FXGL.getMasterTimer().getNow();
 	}
 
 	/** Executes this {@code Wait} task.
 	 * @return {@link Status#SUCCEEDED} if the specified timeout has expired; {@link Status#RUNNING} otherwise. */
 	@Override
 	public Status execute () {
-		return GdxAI.getTimepiece().getTime() - startTime < timeout ? Status.RUNNING : Status.SUCCEEDED;
+		return FXGL.getMasterTimer().getNow() - startTime < timeout ? Status.RUNNING : Status.SUCCEEDED;
 	}
 
 	@Override
