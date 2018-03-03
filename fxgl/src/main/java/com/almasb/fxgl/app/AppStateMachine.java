@@ -8,7 +8,6 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.saving.DataFile;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -184,11 +183,7 @@ public final class AppStateMachine {
         setState(intro);
     }
 
-    void startLoad(DataFile dataFile) {
-        // https://github.com/AlmasB/FXGL/issues/476
-        if (loading instanceof LoadingState)
-            ((LoadingState) loading).setDataFile(dataFile);
-
+    void startLoad() {
         setState(loading);
     }
 

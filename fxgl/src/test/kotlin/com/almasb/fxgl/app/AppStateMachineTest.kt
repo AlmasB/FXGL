@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.saving.DataFile
 import com.almasb.fxgl.scene.FXGLScene
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -85,7 +84,7 @@ class AppStateMachineTest {
         stateMachine.startIntro()
         assertTrue(stateMachine.currentState === Intro)
 
-        stateMachine.startLoad(DataFile.EMPTY)
+        stateMachine.startLoad()
         assertTrue(stateMachine.currentState === Loading)
 
         stateMachine.startPlay()
@@ -200,7 +199,7 @@ class AppStateMachineTest {
 
         assertThat(count, `is`(-1.0))
 
-        stateMachine.startLoad(DataFile.EMPTY)
+        stateMachine.startLoad()
 
         stateMachine.onUpdate(1.0)
 

@@ -18,7 +18,6 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.AddCollisionHandler
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.physics.PhysicsWorld
-import com.almasb.fxgl.saving.DataFile
 import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.scene.intro.IntroFinishedEvent
 import javafx.concurrent.Task
@@ -104,18 +103,13 @@ internal class LoadingState
 internal constructor(private val app: GameApplication,
                             sceneFactory: SceneFactory) : AppState(sceneFactory.newLoadingScene()) {
 
-    var dataFile = DataFile.EMPTY
-
     private var loadingFinished = false
 
     override fun onEnter(prevState: State) {
-
-        val initTask = InitAppTask(app, dataFile)
+        val initTask = InitAppTask(app)
         initTask.setOnSucceeded {
             loadingFinished = true
         }
-
-        dataFile = DataFile.EMPTY
 
         (scene as LoadingScene).bind(initTask)
 
@@ -129,7 +123,7 @@ internal constructor(private val app: GameApplication,
         }
     }
 
-    private class InitAppTask(private val app: GameApplication, private val dataFile: DataFile) : Task<Void>() {
+    private class InitAppTask(private val app: GameApplication) : Task<Void>() {
 
         companion object {
             private val log = Logger.get(InitAppTask::class.java)
@@ -196,10 +190,7 @@ internal constructor(private val app: GameApplication,
                 app.gameWorld.setEntityFactory(ReflectionUtils.newInstance(it) as EntityFactory)
             }
 
-            if (dataFile === DataFile.EMPTY)
-                app.initGame()
-            else
-                app.loadState(dataFile)
+            app.internalInitGame()
         }
 
         private fun initPhysics() {
