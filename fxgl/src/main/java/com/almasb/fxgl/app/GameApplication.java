@@ -207,8 +207,7 @@ public abstract class GameApplication extends Application {
 
     private void handleFatalErrorBeforeLaunch(Throwable error) {
         if (Logger.isConfigured()) {
-            log.fatal("Exception during FXGL configuration:");
-            log.fatal(Logger.errorTraceAsString(error));
+            log.fatal("Exception during FXGL configuration:", error);
             log.fatal("FXGL will now exit");
 
             Logger.close();
@@ -243,8 +242,7 @@ public abstract class GameApplication extends Application {
 
         handledOnce = true;
 
-        log.fatal("Uncaught Exception:");
-        log.fatal(Logger.errorTraceAsString(error));
+        log.fatal("Uncaught Exception:", error);
         log.fatal("Application will now exit");
 
         // stop main loop from running as we cannot continue
@@ -272,10 +270,9 @@ public abstract class GameApplication extends Application {
         // reasonable hack to trigger dialog state init before intro and menus
         DialogSubState.INSTANCE.getView();
 
-        // TODO: replace nulls with EMPTY
-        AppState intro = this.getSettings().isIntroEnabled() ? new IntroState(this, sceneFactory) : null;
-        AppState mainMenu = this.getSettings().isMenuEnabled() ? new MainMenuState(sceneFactory) : null;
-        AppState gameMenu = this.getSettings().isMenuEnabled() ? new GameMenuState(sceneFactory) : null;
+        AppState intro = this.getSettings().isIntroEnabled() ? new IntroState(this, sceneFactory) : AppState.EMPTY;
+        AppState mainMenu = this.getSettings().isMenuEnabled() ? new MainMenuState(sceneFactory) : AppState.EMPTY;
+        AppState gameMenu = this.getSettings().isMenuEnabled() ? new GameMenuState(sceneFactory) : AppState.EMPTY;
 
         stateMachine = new AppStateMachine(loading, play, DialogSubState.INSTANCE, intro, mainMenu, gameMenu, initial);
 
@@ -451,6 +448,7 @@ public abstract class GameApplication extends Application {
      */
     void startLoadedGame(DataFile dataFile) {
         log.debug("Starting loaded game");
+        // https://github.com/AlmasB/FXGL/issues/476
         stateMachine.startLoad(dataFile);
     }
 

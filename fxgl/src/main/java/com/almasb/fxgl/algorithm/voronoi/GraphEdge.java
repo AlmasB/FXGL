@@ -36,7 +36,7 @@ package com.almasb.fxgl.algorithm.voronoi;
 
 public class GraphEdge {
 
-    // TODO: check up to 1 px delta
+    // https://github.com/AlmasB/FXGL/issues/478
     public double x1, y1, x2, y2;
 
     public int site1;

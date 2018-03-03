@@ -7,10 +7,12 @@
 package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.app.FXGLMock
+import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.Entities
+import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.component.CollidableComponent
+import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -38,6 +40,34 @@ class PhysicsWorldTest {
     private val physicsWorld = PhysicsWorld(600, 50.0)
 
     @Test
+    fun `Jbox world`() {
+        assertThat(physicsWorld.jBox2DWorld.bodyCount, `is`(0))
+    }
+
+    @Test
+    fun `Pixels to meters`() {
+        assertThat(physicsWorld.toMeters(100.0), `is`(2.0))
+        assertThat(physicsWorld.toMetersF(100.0), `is`(2.0f))
+        assertThat(physicsWorld.toPoint(Point2D(100.0, 50.0)), `is`(Vec2(2.0, 11.0)))
+        assertThat(physicsWorld.toVector(Point2D(100.0, 50.0)), `is`(Vec2(2.0, -1.0)))
+    }
+
+    @Test
+    fun `Meters to pixels`() {
+        assertThat(physicsWorld.toPixels(2.0), `is`(100.0))
+        assertThat(physicsWorld.toPixelsF(2.0), `is`(100.0f))
+        assertThat(physicsWorld.toPoint(Vec2(2.0, 11.0)), `is`(Point2D(100.0, 50.0)))
+        assertThat(physicsWorld.toVector(Vec2(2.0, -1.0)), `is`(Point2D(100.0, 50.0)))
+    }
+
+    @Test
+    fun `Gravity`() {
+        physicsWorld.setGravity(50.0, 10.0)
+
+        assertThat(physicsWorld.jBox2DWorld.gravity, `is`(Vec2(1.0, -0.2)))
+    }
+
+    @Test
     fun `Collision notification`() {
         val entity1 = Entities.builder()
                 .type(EntityType.TYPE1)
@@ -52,6 +82,12 @@ class PhysicsWorldTest {
                 .bbox(HitBox("Test2", BoundingShape.box(40.0, 40.0)))
                 .with(CollidableComponent(true))
                 .build()
+
+        // entities that are not part of any world are not active
+        // so we add them to _some_ world
+        val gameWorld = GameWorld()
+        gameWorld.addEntity(entity1)
+        gameWorld.addEntity(entity2)
 
         var hitboxCount = 0
         var collisionBeginCount = 0
@@ -91,15 +127,9 @@ class PhysicsWorldTest {
 
         physicsWorld.addCollisionHandler(handler)
 
-        // TODO: we don't need game world, test physics world only
-        
-        // create game world and add listener
-        val gameWorld = GameWorld()
-        gameWorld.addWorldListener(physicsWorld)
-
-        gameWorld.addEntity(entity1)
-        gameWorld.addEntity(entity2)
-        gameWorld.onUpdate(0.016)
+        physicsWorld.onEntityAdded(entity1)
+        physicsWorld.onEntityAdded(entity2)
+        physicsWorld.onUpdate(0.016)
 
         // no collision happened, entities are apart
         assertThat(hitboxCount, `is`(0))
@@ -110,7 +140,6 @@ class PhysicsWorldTest {
         // move 2nd entity closer to first, colliding with it
         entity2.translateX(-30.0)
 
-        gameWorld.onUpdate(0.016)
         physicsWorld.onUpdate(0.016)
 
         // hit box and collision begin triggered, entities are now colliding
@@ -119,7 +148,6 @@ class PhysicsWorldTest {
         assertThat(collisionCount, `is`(1))
         assertThat(collisionEndCount, `is`(0))
 
-        gameWorld.onUpdate(0.016)
         physicsWorld.onUpdate(0.016)
 
         // collision continues
@@ -128,7 +156,6 @@ class PhysicsWorldTest {
         assertThat(collisionCount, `is`(2))
         assertThat(collisionEndCount, `is`(0))
 
-        gameWorld.onUpdate(0.016)
         physicsWorld.onUpdate(0.016)
 
         // collision continues
@@ -140,7 +167,6 @@ class PhysicsWorldTest {
         // move 2nd entity away from 1st
         entity2.translateX(30.0)
 
-        gameWorld.onUpdate(0.016)
         physicsWorld.onUpdate(0.016)
 
         // collision end
@@ -154,7 +180,6 @@ class PhysicsWorldTest {
         // move 2nd entity closer to 1st, colliding with it
         entity2.translateX(-30.0)
 
-        gameWorld.onUpdate(0.016)
         physicsWorld.onUpdate(0.016)
 
         // no change in collision

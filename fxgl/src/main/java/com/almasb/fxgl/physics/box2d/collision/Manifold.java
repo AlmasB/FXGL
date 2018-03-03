@@ -32,7 +32,7 @@ import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
  */
 public class Manifold {
 
-    public static enum ManifoldType {
+    public enum ManifoldType {
         CIRCLES, FACE_A, FACE_B
     }
 

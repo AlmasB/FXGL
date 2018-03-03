@@ -96,7 +96,8 @@ internal object PerlinNoiseGenerator {
     //! 2D quality noise generator, twice slower than Noise1D.
     //! A typical usage would be to pass 2d coordinates multiplied by a frequency value, like:
     //! float fRes=pNoise->noise2D(fX*fFreq,fY*fFreq);
-    // TODO: this doesn't return in range [-0.5..0.5)
+
+    // https://github.com/AlmasB/FXGL/issues/479
     fun noise2D(x: Double, y: Double): Double {
 
         // Compute what gradients to use

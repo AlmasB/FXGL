@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.event
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.entity.EntityEvent
@@ -14,6 +15,7 @@ import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.scene.Group
+import javafx.util.Duration
 import java.lang.reflect.Modifier
 
 /**
@@ -72,6 +74,10 @@ class EventBus {
      */
     fun <T : Event> removeEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>) {
         eventHandlers.removeEventHandler(eventType, eventHandler)
+    }
+
+    fun fireDelayedEvent(event: Event, delay: Duration) {
+        FXGL.getMasterTimer().runOnceAfter({ fireEvent(event) }, delay)
     }
 
     /**

@@ -372,7 +372,7 @@ fun Image.map(f: (Pixel) -> Pixel): Image {
     val newImage = WritableImage(w, h)
     val writer = newImage.pixelWriter
 
-    // TODO: can we parallelize this?
+    // https://github.com/AlmasB/FXGL/issues/489
     for (y in 0 until h) {
         for (x in 0 until w) {
 

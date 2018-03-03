@@ -7,18 +7,11 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>0.4.2</version>
+        <version>0.4.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>fxgl</artifactId>
     <packaging>jar</packaging>
-
-    <repositories>
-        <repository>
-            <id>kotlinx</id>
-            <url>https://kotlin.bintray.com/kotlinx/</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>

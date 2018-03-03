@@ -10,31 +10,72 @@ import com.almasb.fxgl.physics.box2d.callbacks.ContactFilter;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.callbacks.PairCallback;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.BroadPhase;
+import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactEdge;
+import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactRegister;
+import com.almasb.fxgl.physics.box2d.pooling.IDynamicStack;
+import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 
 /**
  * Delegate of World.
  *
  * @author Daniel Murphy
  */
-public class ContactManager implements PairCallback {
+class ContactManager implements PairCallback {
 
-    public BroadPhase m_broadPhase;
-    public Contact m_contactList;
-    public int m_contactCount;
-    public ContactFilter m_contactFilter;
-    public ContactListener m_contactListener;
+    Contact contactList = null;
+    int contactCount = 0;
 
-    private final World pool;
+    private ContactListener contactListener = null;
+    private ContactFilter contactFilter = new ContactFilter();
 
-    public ContactManager(World argPool, BroadPhase broadPhase) {
-        m_contactList = null;
-        m_contactCount = 0;
-        m_contactFilter = new ContactFilter();
-        m_contactListener = null;
-        m_broadPhase = broadPhase;
-        pool = argPool;
+    private final IWorldPool pool;
+    final BroadPhase broadPhase;
+
+    private ContactRegister[][] contactStacks = new ContactRegister[ShapeType.values().length][ShapeType.values().length];
+
+    ContactManager(IWorldPool pool, BroadPhase broadPhase) {
+        this.pool = pool;
+        this.broadPhase = broadPhase;
+
+        initializeRegisters();
+    }
+
+    private void initializeRegisters() {
+        addType(pool.getCircleContactStack(), ShapeType.CIRCLE, ShapeType.CIRCLE);
+        addType(pool.getPolyCircleContactStack(), ShapeType.POLYGON, ShapeType.CIRCLE);
+        addType(pool.getPolyContactStack(), ShapeType.POLYGON, ShapeType.POLYGON);
+        addType(pool.getEdgeCircleContactStack(), ShapeType.EDGE, ShapeType.CIRCLE);
+        addType(pool.getEdgePolyContactStack(), ShapeType.EDGE, ShapeType.POLYGON);
+        addType(pool.getChainCircleContactStack(), ShapeType.CHAIN, ShapeType.CIRCLE);
+        addType(pool.getChainPolyContactStack(), ShapeType.CHAIN, ShapeType.POLYGON);
+    }
+
+    private void addType(IDynamicStack<Contact> creator, ShapeType type1, ShapeType type2) {
+        ContactRegister register = new ContactRegister();
+        register.creator = creator;
+        register.primary = true;
+        contactStacks[type1.ordinal()][type2.ordinal()] = register;
+
+        if (type1 != type2) {
+            ContactRegister register2 = new ContactRegister();
+            register2.creator = creator;
+            register2.primary = false;
+            contactStacks[type2.ordinal()][type1.ordinal()] = register2;
+        }
+    }
+
+    void setcontactFilter(ContactFilter contactFilter) {
+        this.contactFilter = contactFilter;
+    }
+
+    void setContactListener(ContactListener contactListener) {
+        this.contactListener = contactListener;
+    }
+
+    ContactListener getContactListener() {
+        return contactListener;
     }
 
     /**
@@ -45,8 +86,8 @@ public class ContactManager implements PairCallback {
      */
     @Override
     public void addPair(Object proxyUserDataA, Object proxyUserDataB) {
-        FixtureProxy proxyA = (FixtureProxy) proxyUserDataA;
-        FixtureProxy proxyB = (FixtureProxy) proxyUserDataB;
+        Fixture.FixtureProxy proxyA = (Fixture.FixtureProxy) proxyUserDataA;
+        Fixture.FixtureProxy proxyB = (Fixture.FixtureProxy) proxyUserDataB;
 
         Fixture fixtureA = proxyA.fixture;
         Fixture fixtureB = proxyB.fixture;
@@ -93,12 +134,12 @@ public class ContactManager implements PairCallback {
         }
 
         // Check user filtering.
-        if (m_contactFilter != null && !m_contactFilter.shouldCollide(fixtureA, fixtureB)) {
+        if (contactFilter != null && !contactFilter.shouldCollide(fixtureA, fixtureB)) {
             return;
         }
 
         // Call the factory.
-        Contact c = pool.popContact(fixtureA, indexA, fixtureB, indexB);
+        Contact c = popContact(fixtureA, indexA, fixtureB, indexB);
         if (c == null) {
             return;
         }
@@ -113,11 +154,11 @@ public class ContactManager implements PairCallback {
 
         // Insert into the world.
         c.m_prev = null;
-        c.m_next = m_contactList;
-        if (m_contactList != null) {
-            m_contactList.m_prev = c;
+        c.m_next = contactList;
+        if (contactList != null) {
+            contactList.m_prev = c;
         }
-        m_contactList = c;
+        contactList = c;
 
         // Connect to island graph.
 
@@ -149,21 +190,21 @@ public class ContactManager implements PairCallback {
             bodyB.setAwake(true);
         }
 
-        ++m_contactCount;
+        ++contactCount;
     }
 
-    public void findNewContacts() {
-        m_broadPhase.updatePairs(this);
+    void findNewContacts() {
+        broadPhase.updatePairs(this);
     }
 
-    public void destroy(Contact c) {
+    void destroy(Contact c) {
         Fixture fixtureA = c.getFixtureA();
         Fixture fixtureB = c.getFixtureB();
         Body bodyA = fixtureA.getBody();
         Body bodyB = fixtureB.getBody();
 
-        if (m_contactListener != null && c.isTouching()) {
-            m_contactListener.endContact(c);
+        if (contactListener != null && c.isTouching()) {
+            contactListener.endContact(c);
         }
 
         // Remove from the world.
@@ -175,8 +216,8 @@ public class ContactManager implements PairCallback {
             c.m_next.m_prev = c.m_prev;
         }
 
-        if (c == m_contactList) {
-            m_contactList = c.m_next;
+        if (c == contactList) {
+            contactList = c.m_next;
         }
 
         // Remove from body 1
@@ -206,17 +247,17 @@ public class ContactManager implements PairCallback {
         }
 
         // Call the factory.
-        pool.pushContact(c);
-        --m_contactCount;
+        pushContact(c);
+        --contactCount;
     }
 
     /**
      * This is the top level collision call for the time step. Here all the narrow phase collision is
      * processed for the world contact list.
      */
-    public void collide() {
+    void collide() {
         // Update awake contacts.
-        Contact c = m_contactList;
+        Contact c = contactList;
         while (c != null) {
             Fixture fixtureA = c.getFixtureA();
             Fixture fixtureB = c.getFixtureB();
@@ -236,7 +277,7 @@ public class ContactManager implements PairCallback {
                 }
 
                 // Check user filtering.
-                if (m_contactFilter != null && !m_contactFilter.shouldCollide(fixtureA, fixtureB)) {
+                if (contactFilter != null && !contactFilter.shouldCollide(fixtureA, fixtureB)) {
                     Contact cNuke = c;
                     c = cNuke.getNext();
                     destroy(cNuke);
@@ -256,9 +297,9 @@ public class ContactManager implements PairCallback {
                 continue;
             }
 
-            int proxyIdA = fixtureA.m_proxies[indexA].proxyId;
-            int proxyIdB = fixtureB.m_proxies[indexB].proxyId;
-            boolean overlap = m_broadPhase.testOverlap(proxyIdA, proxyIdB);
+            int proxyIdA = fixtureA.getProxyId(indexA);
+            int proxyIdB = fixtureB.getProxyId(indexB);
+            boolean overlap = broadPhase.testOverlap(proxyIdA, proxyIdB);
 
             // Here we destroy contacts that cease to overlap in the broad-phase.
             if (!overlap) {
@@ -269,8 +310,43 @@ public class ContactManager implements PairCallback {
             }
 
             // The contact persists.
-            c.update(m_contactListener);
+            c.update(contactListener);
             c = c.getNext();
         }
+    }
+
+    private Contact popContact(Fixture fixtureA, int indexA, Fixture fixtureB, int indexB) {
+        final ShapeType type1 = fixtureA.getType();
+        final ShapeType type2 = fixtureB.getType();
+
+        final ContactRegister reg = contactStacks[type1.ordinal()][type2.ordinal()];
+        if (reg == null)
+            return null;
+
+        Contact c = reg.creator.pop();
+
+        if (reg.primary) {
+            c.init(fixtureA, indexA, fixtureB, indexB);
+        } else {
+            c.init(fixtureB, indexB, fixtureA, indexA);
+        }
+
+        return c;
+    }
+
+    private void pushContact(Contact contact) {
+        Fixture fixtureA = contact.getFixtureA();
+        Fixture fixtureB = contact.getFixtureB();
+
+        if (contact.m_manifold.pointCount > 0 && !fixtureA.isSensor() && !fixtureB.isSensor()) {
+            fixtureA.getBody().setAwake(true);
+            fixtureB.getBody().setAwake(true);
+        }
+
+        ShapeType type1 = fixtureA.getType();
+        ShapeType type2 = fixtureB.getType();
+
+        IDynamicStack<Contact> creator = contactStacks[type1.ordinal()][type2.ordinal()].creator;
+        creator.push(contact);
     }
 }

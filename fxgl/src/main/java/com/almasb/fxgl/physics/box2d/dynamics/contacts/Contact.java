@@ -5,12 +5,10 @@
  */
 package com.almasb.fxgl.physics.box2d.dynamics.contacts;
 
-
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.collision.ContactID;
 import com.almasb.fxgl.physics.box2d.collision.Manifold;
 import com.almasb.fxgl.physics.box2d.collision.ManifoldPoint;
-import com.almasb.fxgl.physics.box2d.collision.WorldManifold;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Transform;
@@ -19,9 +17,9 @@ import com.almasb.fxgl.physics.box2d.dynamics.Fixture;
 import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 
 /**
- * The class manages contact between two shapes. A contact exists for each overlapping AABB in the
- * broad-phase (except if filtered). Therefore a contact object may exist that has no contact
- * points.
+ * The class manages contact between two shapes.
+ * A contact exists for each overlapping AABB in the broad-phase (except if filtered).
+ * Therefore a contact object may exist that has no contact points.
  *
  * @author daniel
  */
@@ -48,16 +46,16 @@ public abstract class Contact {
     public Contact m_next;
 
     // Nodes for connecting bodies.
-    public ContactEdge m_nodeA = null;
-    public ContactEdge m_nodeB = null;
+    public ContactEdge m_nodeA = new ContactEdge();
+    public ContactEdge m_nodeB = new ContactEdge();
 
-    public Fixture m_fixtureA;
-    public Fixture m_fixtureB;
+    public Fixture m_fixtureA = null;
+    public Fixture m_fixtureB = null;
 
     public int m_indexA;
     public int m_indexB;
 
-    public final Manifold m_manifold;
+    public final Manifold m_manifold = new Manifold();
 
     public float m_toiCount;
     public float m_toi;
@@ -70,11 +68,6 @@ public abstract class Contact {
     protected final IWorldPool pool;
 
     protected Contact(IWorldPool argPool) {
-        m_fixtureA = null;
-        m_fixtureB = null;
-        m_nodeA = new ContactEdge();
-        m_nodeB = new ContactEdge();
-        m_manifold = new Manifold();
         pool = argPool;
     }
 
@@ -104,8 +97,8 @@ public abstract class Contact {
         m_nodeB.other = null;
 
         m_toiCount = 0;
-        m_friction = Contact.mixFriction(fA.getFriction(), fB.getFriction());
-        m_restitution = Contact.mixRestitution(fA.getRestitution(), fB.getRestitution());
+        m_friction = mixFriction(fA.getFriction(), fB.getFriction());
+        m_restitution = mixRestitution(fA.getRestitution(), fB.getRestitution());
 
         m_tangentSpeed = 0;
     }
@@ -118,22 +111,7 @@ public abstract class Contact {
     }
 
     /**
-     * Get the world manifold.
-     */
-    public void getWorldManifold(WorldManifold worldManifold) {
-        final Body bodyA = m_fixtureA.getBody();
-        final Body bodyB = m_fixtureB.getBody();
-        final Shape shapeA = m_fixtureA.getShape();
-        final Shape shapeB = m_fixtureB.getShape();
-
-        worldManifold.initialize(m_manifold, bodyA.getTransform(), shapeA.getRadius(),
-                bodyB.getTransform(), shapeB.getRadius());
-    }
-
-    /**
-     * Is this contact touching
-     *
-     * @return
+     * @return is this contact touching
      */
     public boolean isTouching() {
         return (m_flags & TOUCHING_FLAG) == TOUCHING_FLAG;
@@ -153,28 +131,19 @@ public abstract class Contact {
         }
     }
 
-    /**
-     * Has this contact been disabled?
-     *
-     * @return
-     */
     public boolean isEnabled() {
         return (m_flags & ENABLED_FLAG) == ENABLED_FLAG;
     }
 
     /**
-     * Get the next contact in the world's contact list.
-     *
-     * @return
+     * @return the next contact in the world's contact list
      */
     public Contact getNext() {
         return m_next;
     }
 
     /**
-     * Get the first fixture in this contact.
-     *
-     * @return
+     * @return the first fixture in this contact
      */
     public Fixture getFixtureA() {
         return m_fixtureA;
@@ -185,9 +154,7 @@ public abstract class Contact {
     }
 
     /**
-     * Get the second fixture in this contact.
-     *
-     * @return
+     * @return the second fixture in this contact
      */
     public Fixture getFixtureB() {
         return m_fixtureB;
@@ -206,7 +173,7 @@ public abstract class Contact {
     }
 
     public void resetFriction() {
-        m_friction = Contact.mixFriction(m_fixtureA.getFriction(), m_fixtureB.getFriction());
+        m_friction = mixFriction(m_fixtureA.getFriction(), m_fixtureB.getFriction());
     }
 
     public void setRestitution(float restitution) {
@@ -218,7 +185,7 @@ public abstract class Contact {
     }
 
     public void resetRestitution() {
-        m_restitution = Contact.mixRestitution(m_fixtureA.getRestitution(), m_fixtureB.getRestitution());
+        m_restitution = mixRestitution(m_fixtureA.getRestitution(), m_fixtureB.getRestitution());
     }
 
     public void setTangentSpeed(float speed) {
@@ -242,13 +209,11 @@ public abstract class Contact {
     private final Manifold oldManifold = new Manifold();
 
     public void update(ContactListener listener) {
-
         oldManifold.set(m_manifold);
 
         // Re-enable this contact.
         m_flags |= ENABLED_FLAG;
 
-        boolean touching = false;
         boolean wasTouching = (m_flags & TOUCHING_FLAG) == TOUCHING_FLAG;
 
         boolean sensorA = m_fixtureA.isSensor();
@@ -259,8 +224,8 @@ public abstract class Contact {
         Body bodyB = m_fixtureB.getBody();
         Transform xfA = bodyA.getTransform();
         Transform xfB = bodyB.getTransform();
-        // log.debug("TransformA: "+xfA);
-        // log.debug("TransformB: "+xfB);
+
+        boolean touching;
 
         if (sensor) {
             Shape shapeA = m_fixtureA.getShape();
@@ -322,26 +287,20 @@ public abstract class Contact {
     }
 
     /**
-     * Friction mixing law. The idea is to allow either fixture to drive the restitution to zero. For
-     * example, anything slides on ice.
-     *
-     * @param friction1
-     * @param friction2
-     * @return
+     * Friction mixing law.
+     * The idea is to allow either fixture to drive the restitution to zero.
+     * For example, anything slides on ice.
      */
-    public static final float mixFriction(float friction1, float friction2) {
+    private static float mixFriction(float friction1, float friction2) {
         return JBoxUtils.sqrt(friction1 * friction2);
     }
 
     /**
-     * Restitution mixing law. The idea is allow for anything to bounce off an inelastic surface. For
-     * example, a superball bounces on anything.
-     *
-     * @param restitution1
-     * @param restitution2
-     * @return
+     * Restitution mixing law.
+     * The idea is allow for anything to bounce off an inelastic surface.
+     * For example, a superball bounces on anything.
      */
-    public static final float mixRestitution(float restitution1, float restitution2) {
+    private static float mixRestitution(float restitution1, float restitution2) {
         return restitution1 > restitution2 ? restitution1 : restitution2;
     }
 }

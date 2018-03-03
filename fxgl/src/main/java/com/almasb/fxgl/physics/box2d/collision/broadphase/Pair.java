@@ -15,6 +15,7 @@ public class Pair implements Comparable<Pair> {
     public int proxyIdA;
     public int proxyIdB;
 
+    @Override
     public int compareTo(Pair pair2) {
         if (this.proxyIdA < pair2.proxyIdA) {
             return -1;

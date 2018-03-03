@@ -12,7 +12,6 @@
 
 package com.almasb.fxgl.ai.btree.utils;
 
-import com.almasb.fxgl.ai.GdxAI;
 import com.almasb.fxgl.ai.btree.BehaviorTree;
 
 import java.io.*;
@@ -24,7 +23,6 @@ public abstract class BehaviorTreeReader {
 
 	private static final String LOG_TAG = "BehaviorTreeReader";
 
-	protected boolean debug = false;
 	protected int lineNumber;
 	protected boolean reportsComments;
 
@@ -232,13 +230,10 @@ case 1:
 				if (needsUnescape) value = unescape(value);
 				outer:
 				if (stringIsUnquoted) {
-					if (debug) GdxAI.getLogger().info(LOG_TAG + "string: " + attrName + "=" + value);
 					if (value.equals("true")) {
-						if (debug) GdxAI.getLogger().info(LOG_TAG + "boolean: " + attrName + "=true");
 						attribute(attrName, Boolean.TRUE);
 						break outer;
 					} else if (value.equals("false")) {
-						if (debug) GdxAI.getLogger().info(LOG_TAG + "boolean: " + attrName + "=false");
 						attribute(attrName, Boolean.FALSE);
 						break outer;
 					} else if (value.equals("null")) {
@@ -247,11 +242,9 @@ case 1:
 					} else { // number
 						try {
 							if (containsFloatingPointCharacters(value)) {
-								if (debug) GdxAI.getLogger().info(LOG_TAG + "double: " + attrName + "=" + Double.parseDouble(value));
 								attribute(attrName, new Double(value));
 								break outer;
 							} else {
-								if (debug) GdxAI.getLogger().info(LOG_TAG + "double: " + attrName + "=" + Double.parseDouble(value));
 								attribute(attrName, new Long(value));
 								break outer;
 							}
@@ -261,7 +254,6 @@ case 1:
 					}
 				}
 				else {
-					if (debug) GdxAI.getLogger().info(LOG_TAG + "string: " + attrName + "=\"" + value + "\"");
 					attribute(attrName, value);
 				}
 				stringIsUnquoted = false;
@@ -270,7 +262,6 @@ case 1:
 	case 1:
 // line 188 "BehaviorTreeReader.rl"
 	{
-				if (debug) GdxAI.getLogger().info(LOG_TAG + "unquotedChars");
 				s = p;
 				needsUnescape = false;
 				stringIsUnquoted = true;
@@ -298,7 +289,6 @@ case 1:
 	case 2:
 // line 213 "BehaviorTreeReader.rl"
 	{
-				if (debug) GdxAI.getLogger().info(LOG_TAG + "quotedChars");
 				s = ++p;
 				needsUnescape = false;
 				outer:
@@ -328,7 +318,6 @@ case 1:
 				statementName = null;
 				taskProcessed = false;
 				lineNumber++;
-				if (debug) GdxAI.getLogger().info(LOG_TAG + "****NEWLINE**** "+lineNumber);
 			}
 	break;
 	case 4:
@@ -346,7 +335,6 @@ case 1:
 				taskProcessed = true;
 				if (statementName != null)
 					endLine();
-				if (debug) GdxAI.getLogger().info(LOG_TAG + "endLine: indent: " + indent + " taskName: " + statementName + " data[" + p + "] = " + (p >= eof ? "EOF" : "\"" + data[p] + "\""));
 			}
 	break;
 	case 6:
@@ -360,8 +348,6 @@ case 1:
 	{
 				if (reportsComments) {
 					comment(new String(data, s, p - s));
-				} else {
-					if (debug) GdxAI.getLogger().info(LOG_TAG + "# Comment");
 				}
 			}
 	break;
@@ -430,13 +416,10 @@ case 4:
 				if (needsUnescape) value = unescape(value);
 				outer:
 				if (stringIsUnquoted) {
-					if (debug) GdxAI.getLogger().info(LOG_TAG + "string: " + attrName + "=" + value);
 					if (value.equals("true")) {
-						if (debug) GdxAI.getLogger().info(LOG_TAG + "boolean: " + attrName + "=true");
 						attribute(attrName, Boolean.TRUE);
 						break outer;
 					} else if (value.equals("false")) {
-						if (debug) GdxAI.getLogger().info(LOG_TAG + "boolean: " + attrName + "=false");
 						attribute(attrName, Boolean.FALSE);
 						break outer;
 					} else if (value.equals("null")) {
@@ -445,11 +428,9 @@ case 4:
 					} else { // number
 						try {
 							if (containsFloatingPointCharacters(value)) {
-								if (debug) GdxAI.getLogger().info(LOG_TAG + "double: " + attrName + "=" + Double.parseDouble(value));
 								attribute(attrName, new Double(value));
 								break outer;
 							} else {
-								if (debug) GdxAI.getLogger().info(LOG_TAG + "double: " + attrName + "=" + Double.parseDouble(value));
 								attribute(attrName, new Long(value));
 								break outer;
 							}
@@ -459,7 +440,6 @@ case 4:
 					}
 				}
 				else {
-					if (debug) GdxAI.getLogger().info(LOG_TAG + "string: " + attrName + "=\"" + value + "\"");
 					attribute(attrName, value);
 				}
 				stringIsUnquoted = false;
@@ -474,7 +454,6 @@ case 4:
 				taskProcessed = true;
 				if (statementName != null)
 					endLine();
-				if (debug) GdxAI.getLogger().info(LOG_TAG + "endLine: indent: " + indent + " taskName: " + statementName + " data[" + p + "] = " + (p >= eof ? "EOF" : "\"" + data[p] + "\""));
 			}
 	break;
 	case 6:
@@ -488,8 +467,6 @@ case 4:
 	{
 				if (reportsComments) {
 					comment(new String(data, s, p - s));
-				} else {
-					if (debug) GdxAI.getLogger().info(LOG_TAG + "# Comment");
 				}
 			}
 	break;

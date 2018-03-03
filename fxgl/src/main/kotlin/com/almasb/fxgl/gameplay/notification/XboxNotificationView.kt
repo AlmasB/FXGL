@@ -18,7 +18,7 @@ import javafx.util.Duration
 /**
  * A notification view, inspired by Xbox One achievements.
  *
- * TODO: animations don't use position
+ * https://github.com/AlmasB/FXGL/issues/487
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

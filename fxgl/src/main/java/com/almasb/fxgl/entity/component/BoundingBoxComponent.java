@@ -532,9 +532,7 @@ public class BoundingBoxComponent extends Component
 
     @Override
     public BoundingBoxComponent copy() {
-        // hit boxes are immutable so can safely reuse them
-        // TODO: but we can't use same objects because of bind()
-        return new BoundingBoxComponent(hitBoxes.toArray(new HitBox[0]));
+        return new BoundingBoxComponent(hitBoxes.stream().map(HitBox::copy).toArray(HitBox[]::new));
     }
 
 //    private boolean isXFlipped() {

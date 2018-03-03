@@ -478,7 +478,7 @@ class Input : UserProfileSavable {
                 }
             }
 
-            val inputMapping: InputMapping = inputMappings[name]!!
+            val inputMapping: InputMapping = inputMappings[name] ?: throw IllegalStateException("No input mapping found for action $name")
 
             if (inputMapping.isKeyTrigger()) {
                 addAction(action, inputMapping.getKeyTrigger(), inputMapping.modifier)

@@ -285,7 +285,7 @@ public class PhysicsComponent extends Component {
      * @param impulse the angular impulse (in pixel/sec)
      */
     public void applyAngularImpulse(float impulse) {
-        applyBodyAngularImpulse(physicsWorld.toMeters(impulse));
+        applyBodyAngularImpulse(physicsWorld.toMetersF(impulse));
     }
 
     /**
@@ -303,7 +303,7 @@ public class PhysicsComponent extends Component {
      * @param torque the force (in pixel)
      */
     public void applyTorque(float torque) {
-        applyBodyTorque(physicsWorld.toMeters(torque));
+        applyBodyTorque(physicsWorld.toMetersF(torque));
     }
 
     /**

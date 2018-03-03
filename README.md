@@ -13,10 +13,10 @@ JavaFX Game Development Framework
 ### Why FXGL?
 
 * No native libraries, no installation, no setup required
+* "Out of the box": Java 8/9, Win/Mac/Linux/Android ([alpha](https://github.com/AlmasB/FXGL-MobileApp))
 * Simple and clean API
-* Superset of JavaFX: no need to learn new API
+* Superset of JavaFX: no need to learn new UI API
 * Brings real-world game development techniques to JavaFX
-* Works with Java 8 and 9 "out of the box"
 * Games are easily packaged into a single executable .jar
 
 ### Good for:
@@ -69,7 +69,7 @@ Already have `pom.xml`? Then add:
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.4.2</version>
+    <version>0.4.3</version>
 </dependency>
 ```
 
@@ -86,7 +86,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:0.4.2'
+    compile 'com.github.almasb:fxgl:0.4.3'
 }
 ```
 
@@ -112,4 +112,7 @@ You can support the FXGL development via [PayPal](https://www.paypal.me/FXGL) or
 
 ### Contact
 
-[Chat](https://gitter.im/AlmasB/FXGL) with the friendly FXGL community or ![Gmail](https://img.shields.io/badge/email-almaslvl@gmail.com-red.svg)
+* Ask questions on [StackOverflow](https://stackoverflow.com/search?q=fxgl) with tags `javafx` and `fxgl`
+* Tweet with [#fxgl](https://twitter.com/search?src=typd&q=%23fxgl)
+* [Chat](https://gitter.im/AlmasB/FXGL) with the friendly FXGL community
+* ![Email](https://img.shields.io/badge/email-almaslvl@gmail.com-red.svg)

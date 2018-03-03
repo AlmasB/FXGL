@@ -148,7 +148,7 @@ public final class AppStateMachine {
     }
 
     public State getIntroState() {
-        if (intro == null)
+        if (intro == AppState.EMPTY)
             throw new IllegalStateException("Intro is not enabled");
 
         return intro;
@@ -159,14 +159,14 @@ public final class AppStateMachine {
     }
 
     public State getMainMenuState() {
-        if (mainMenu == null)
+        if (mainMenu == AppState.EMPTY)
             throw new IllegalStateException("Menu is not enabled");
 
         return mainMenu;
     }
 
     public State getGameMenuState() {
-        if (gameMenu == null)
+        if (gameMenu == AppState.EMPTY)
             throw new IllegalStateException("Menu is not enabled");
 
         return gameMenu;
@@ -185,8 +185,7 @@ public final class AppStateMachine {
     }
 
     void startLoad(DataFile dataFile) {
-        // TODO: this needs to move, state machine shouldn't care about data files
-        // or know about concrete states
+        // https://github.com/AlmasB/FXGL/issues/476
         if (loading instanceof LoadingState)
             ((LoadingState) loading).setDataFile(dataFile);
 

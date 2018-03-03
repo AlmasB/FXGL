@@ -38,7 +38,7 @@ class SATTest {
         assertFalse(SAT.isColliding(box1, box2, 0.0, 0.0))
     }
 
-    // TODO: why does it fail?
+    // https://github.com/AlmasB/FXGL/issues/490
 //    @Test
 //    fun `HitBoxes with angles`() {
 //        val box1 = HitBox("main", BoundingShape.box(20.0, 40.0))

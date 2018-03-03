@@ -7,17 +7,15 @@
 package com.almasb.fxgl.physics.box2d.collision.broadphase;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.callbacks.DebugDraw;
 import com.almasb.fxgl.physics.box2d.callbacks.PairCallback;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeCallback;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeRayCastCallback;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 
-
 public interface BroadPhase {
 
-    public static final int NULL_PROXY = -1;
+    int NULL_PROXY = -1;
 
     /**
      * Create a proxy with an initial AABB. Pairs are not reported until updatePairs is called.
@@ -50,13 +48,9 @@ public interface BroadPhase {
     boolean testOverlap(int proxyIdA, int proxyIdB);
 
     /**
-     * Get the number of proxies.
-     *
-     * @return
+     * @return number of proxies
      */
     int getProxyCount();
-
-    void drawTree(DebugDraw argDraw);
 
     /**
      * Update the pairs. This results in pair callbacks. This can only add pairs.
@@ -86,9 +80,7 @@ public interface BroadPhase {
     void raycast(TreeRayCastCallback callback, RayCastInput input);
 
     /**
-     * Get the height of the embedded tree.
-     *
-     * @return
+     * @return height of the embedded tree
      */
     int getTreeHeight();
 

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="15" height="10" tilewidth="70" tileheight="70" infinite="0" nextobjectid="12">
+ <tileset firstgid="1" name="tiles_spritesheet" tilewidth="70" tileheight="70" spacing="2" tilecount="156" columns="12">
+  <image source="tiles_spritesheet.png" width="914" height="936"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="15" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,46,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,58,
+0,0,0,0,0,0,0,0,0,0,0,126,101,101,102,
+0,0,0,0,0,0,126,101,101,102,0,0,0,0,0,
+0,0,126,101,101,102,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+116,104,104,104,104,104,104,104,104,104,104,104,104,104,92
+</data>
+ </layer>
+ <objectgroup name="Object Layer 1">
+  <object id="1" type="platform" x="0" y="630" width="1050"/>
+  <object id="2" type="platform" x="140" y="490" width="280" height="70"/>
+  <object id="3" type="platform" x="420" y="420" width="280" height="70"/>
+  <object id="4" type="platform" x="770" y="350" width="280" height="70"/>
+  <object id="5" type="coin" x="490" y="350" width="70" height="70"/>
+  <object id="7" type="coin" x="560" y="350" width="70" height="70"/>
+  <object id="8" type="coin" x="840" y="280" width="70" height="70"/>
+  <object id="9" type="coin" x="210" y="420" width="70" height="70"/>
+  <object id="10" type="coin" x="910" y="560" width="70" height="70"/>
+  <object id="11" type="door" x="980" y="210" width="70" height="140"/>
+ </objectgroup>
+</map>

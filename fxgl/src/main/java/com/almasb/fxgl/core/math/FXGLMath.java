@@ -679,8 +679,7 @@ public final class FXGLMath {
 
         double noise = PerlinNoiseGenerator.INSTANCE.noise2D(x, y) + 0.5;
 
-        // TODO: fix this, shouldn't happen
-
+        // https://github.com/AlmasB/FXGL/issues/479
         if (noise < 0)
             return 0;
 

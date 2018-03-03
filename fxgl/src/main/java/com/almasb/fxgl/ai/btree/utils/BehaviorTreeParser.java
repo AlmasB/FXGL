@@ -16,7 +16,6 @@
 
 package com.almasb.fxgl.ai.btree.utils;
 
-import com.almasb.fxgl.ai.GdxAI;
 import com.almasb.fxgl.ai.btree.BehaviorTree;
 import com.almasb.fxgl.ai.btree.Task;
 import com.almasb.fxgl.ai.btree.annotation.TaskAttribute;
@@ -302,7 +301,6 @@ public class BehaviorTreeParser<E> {
 
 		@Override
 		public void parse (char[] data, int offset, int length) {
-			debug = btParser.debugLevel > BehaviorTreeParser.DEBUG_NONE;
 			root = null;
 			clear();
 			super.parse(data, offset, length);
@@ -320,8 +318,6 @@ public class BehaviorTreeParser<E> {
 		
 		@Override
 		protected void startLine (int indent) {
-			if (btParser.debugLevel > BehaviorTreeParser.DEBUG_LOW)
-				GdxAI.getLogger().debug(TAG + lineNumber + ": <" + indent + ">");
 			this.indent = indent;
 		}
 
@@ -334,9 +330,6 @@ public class BehaviorTreeParser<E> {
 		
 		@Override
 		protected void startStatement (String name, boolean isSubtreeReference, boolean isGuard) {
-			if (btParser.debugLevel > BehaviorTreeParser.DEBUG_LOW)
-				GdxAI.getLogger().debug(TAG + (isGuard? " guard" : " task") + " name '" + name + "'");
-			
 			this.isSubtreeRef = isSubtreeReference;
 			
 			this.statement = isSubtreeReference ? Statement.TreeTask : checkStatement(name);
@@ -350,9 +343,6 @@ public class BehaviorTreeParser<E> {
 
 		@Override
 		protected void attribute (String name, Object value) {
-			if (btParser.debugLevel > BehaviorTreeParser.DEBUG_LOW)
-				GdxAI.getLogger().debug(TAG + lineNumber + ": attribute '" + name + " : " + value + "'");
-			
 			boolean validAttribute = statement.attribute(this, name, value);
 			if (!validAttribute) {
 				if (statement == Statement.TreeTask) {

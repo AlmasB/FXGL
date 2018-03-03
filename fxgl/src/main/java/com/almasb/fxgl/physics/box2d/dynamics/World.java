@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.physics.box2d.dynamics;
 
+import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.callbacks.*;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
@@ -15,134 +16,44 @@ import com.almasb.fxgl.physics.box2d.collision.TimeOfImpact.TOIInput;
 import com.almasb.fxgl.physics.box2d.collision.TimeOfImpact.TOIOutput;
 import com.almasb.fxgl.physics.box2d.collision.TimeOfImpact.TOIOutputState;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.BroadPhase;
-import com.almasb.fxgl.physics.box2d.collision.broadphase.BroadPhaseStrategy;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.DefaultBroadPhaseBuffer;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.DynamicTree;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
-import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType;
-import com.almasb.fxgl.physics.box2d.common.*;
+import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
+import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
+import com.almasb.fxgl.physics.box2d.common.Sweep;
+import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactEdge;
-import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactRegister;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.Joint;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.JointDef;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.JointEdge;
 import com.almasb.fxgl.physics.box2d.particle.*;
-import com.almasb.fxgl.physics.box2d.pooling.IDynamicStack;
 import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 import com.almasb.fxgl.physics.box2d.pooling.normal.DefaultWorldPool;
 
 /**
- * The world class manages all physics entities, dynamic simulation, and asynchronous queries. The
- * world also contains efficient memory management facilities.
+ * The world class manages all physics entities, dynamic simulation, and asynchronous queries.
+ * The world also contains efficient memory management facilities.
  *
  * @author Daniel Murphy
  */
-public class World {
+public final class World {
     private static final int WORLD_POOL_SIZE = 100;
     private static final int WORLD_POOL_CONTAINER_SIZE = 10;
 
-    private boolean newFixture = false;
-
-    void notifyNewFixture() {
-        newFixture = true;
-    }
-
-    private boolean locked = false;
-
-    /**
-     * @return is the world locked (in the middle of a time step)
-     */
-    public boolean isLocked() {
-        return locked;
-    }
-
-    void assertNotLocked() {
-        if (isLocked())
-            throw new IllegalStateException("Physics world is locked during time step");
-    }
-
-    private boolean autoClearForces = true;
-
-    /**
-     * Set flag to control automatic clearing of forces after each time step.
-     *
-     * @param flag automatically clear forces flag
-     */
-    public void setAutoClearForces(boolean flag) {
-        autoClearForces = flag;
-    }
-
-    /**
-     * @return the flag that controls automatic clearing of forces after each time step
-     */
-    public boolean getAutoClearForces() {
-        return autoClearForces;
-    }
-
-    protected ContactManager m_contactManager;
-
-    private Body m_bodyList = null;
-    private Joint m_jointList = null;
-
-    private int bodyCount = 0;
-    private int jointCount = 0;
-
-    private final Vec2 m_gravity = new Vec2();
-    private boolean allowSleep = true;
-
-    public boolean isAllowSleep() {
-        return allowSleep;
-    }
-
-    public void setAllowSleep(boolean flag) {
-        if (flag == allowSleep) {
-            return;
-        }
-
-        allowSleep = flag;
-        if (!allowSleep) {
-            for (Body b = m_bodyList; b != null; b = b.m_next) {
-                b.setAwake(true);
-            }
-        }
-    }
-
-    private DestructionListener destructionListener = null;
-
-    public DestructionListener getDestructionListener() {
-        return destructionListener;
-    }
-
-    /**
-     * Register a destruction listener. The listener is owned by you and must remain in scope.
-     *
-     * @param listener destruction listener
-     */
-    public void setDestructionListener(DestructionListener listener) {
-        destructionListener = listener;
-    }
-
-    private ParticleDestructionListener particleDestructionListener = null;
-
-    public ParticleDestructionListener getParticleDestructionListener() {
-        return particleDestructionListener;
-    }
-
-    public void setParticleDestructionListener(ParticleDestructionListener listener) {
-        particleDestructionListener = listener;
-    }
-
+    private final ContactManager contactManager;
+    private final ParticleSystem particleSystem;
     private final IWorldPool pool;
 
-    public IWorldPool getPool() {
-        return pool;
-    }
+    private DestructionListener destructionListener = null;
+    private ParticleDestructionListener particleDestructionListener = null;
 
-    /**
-     * This is used to compute the time step ratio to support a variable time step.
-     */
-    private float dtInverse = 0;
+    private boolean newFixture = false;
+
+    private boolean locked = false;
+    private boolean autoClearForces = true;
+    private boolean allowSleep = true;
 
     // these are for debugging the solver
     private boolean warmStarting = true;
@@ -150,142 +61,30 @@ public class World {
 
     private boolean subStepping = false;
 
-    public void setSubStepping(boolean subStepping) {
-        this.subStepping = subStepping;
-    }
-
-    public boolean isSubStepping() {
-        return subStepping;
-    }
-
     private boolean stepComplete = true;
 
-    private Profile profile = new Profile();
+    private Array<Body> bodies = new Array<>(WORLD_POOL_SIZE);
 
-    private final ParticleSystem particleSystem;
+    private Joint m_jointList = null;
+    private int jointCount = 0;
 
-    public ParticleSystem getParticleSystem() {
-        return particleSystem;
-    }
+    private final Vec2 gravity = new Vec2();
 
-    private ContactRegister[][] contactStacks =
-            new ContactRegister[ShapeType.values().length][ShapeType.values().length];
-
-    /**
-     * Construct a world object.
-     *
-     * @param gravity the world gravity vector.
-     */
     public World(Vec2 gravity) {
-        this(gravity, new DefaultWorldPool(WORLD_POOL_SIZE, WORLD_POOL_CONTAINER_SIZE));
+        this(gravity, new DefaultWorldPool(WORLD_POOL_SIZE, WORLD_POOL_CONTAINER_SIZE), new DefaultBroadPhaseBuffer(new DynamicTree()));
     }
 
-    /**
-     * Construct a world object.
-     *
-     * @param gravity the world gravity vector.
-     */
-    public World(Vec2 gravity, IWorldPool pool) {
-        this(gravity, pool, new DynamicTree());
-    }
-
-    public World(Vec2 gravity, IWorldPool pool, BroadPhaseStrategy strategy) {
-        this(gravity, pool, new DefaultBroadPhaseBuffer(strategy));
-    }
-
-    public World(Vec2 gravity, IWorldPool pool, BroadPhase broadPhase) {
+    private World(Vec2 gravity, IWorldPool pool, BroadPhase broadPhase) {
         this.pool = pool;
+        this.gravity.set(gravity);
 
-        m_gravity.set(gravity);
-
-        m_contactManager = new ContactManager(this, broadPhase);
-
+        contactManager = new ContactManager(pool, broadPhase);
         particleSystem = new ParticleSystem(this);
-
-        initializeRegisters();
-    }
-
-    private void addType(IDynamicStack<Contact> creator, ShapeType type1, ShapeType type2) {
-        ContactRegister register = new ContactRegister();
-        register.creator = creator;
-        register.primary = true;
-        contactStacks[type1.ordinal()][type2.ordinal()] = register;
-
-        if (type1 != type2) {
-            ContactRegister register2 = new ContactRegister();
-            register2.creator = creator;
-            register2.primary = false;
-            contactStacks[type2.ordinal()][type1.ordinal()] = register2;
-        }
-    }
-
-    private void initializeRegisters() {
-        addType(pool.getCircleContactStack(), ShapeType.CIRCLE, ShapeType.CIRCLE);
-        addType(pool.getPolyCircleContactStack(), ShapeType.POLYGON, ShapeType.CIRCLE);
-        addType(pool.getPolyContactStack(), ShapeType.POLYGON, ShapeType.POLYGON);
-        addType(pool.getEdgeCircleContactStack(), ShapeType.EDGE, ShapeType.CIRCLE);
-        addType(pool.getEdgePolyContactStack(), ShapeType.EDGE, ShapeType.POLYGON);
-        addType(pool.getChainCircleContactStack(), ShapeType.CHAIN, ShapeType.CIRCLE);
-        addType(pool.getChainPolyContactStack(), ShapeType.CHAIN, ShapeType.POLYGON);
-    }
-
-    public Contact popContact(Fixture fixtureA, int indexA, Fixture fixtureB, int indexB) {
-        final ShapeType type1 = fixtureA.getType();
-        final ShapeType type2 = fixtureB.getType();
-
-        final ContactRegister reg = contactStacks[type1.ordinal()][type2.ordinal()];
-        if (reg != null) {
-            if (reg.primary) {
-                Contact c = reg.creator.pop();
-                c.init(fixtureA, indexA, fixtureB, indexB);
-                return c;
-            } else {
-                Contact c = reg.creator.pop();
-                c.init(fixtureB, indexB, fixtureA, indexA);
-                return c;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    public void pushContact(Contact contact) {
-        Fixture fixtureA = contact.getFixtureA();
-        Fixture fixtureB = contact.getFixtureB();
-
-        if (contact.m_manifold.pointCount > 0 && !fixtureA.isSensor() && !fixtureB.isSensor()) {
-            fixtureA.getBody().setAwake(true);
-            fixtureB.getBody().setAwake(true);
-        }
-
-        ShapeType type1 = fixtureA.getType();
-        ShapeType type2 = fixtureB.getType();
-
-        IDynamicStack<Contact> creator = contactStacks[type1.ordinal()][type2.ordinal()].creator;
-        creator.push(contact);
     }
 
     /**
-     * Register a contact filter to provide specific control over collision. Otherwise the default
-     * filter is used (_defaultFilter). The listener is owned by you and must remain in scope.
-     *
-     * @param filter contact filter
-     */
-    public void setContactFilter(ContactFilter filter) {
-        m_contactManager.m_contactFilter = filter;
-    }
-
-    /**
-     * Register a contact event listener. The listener is owned by you and must remain in scope.
-     *
-     * @param listener contact listener
-     */
-    public void setContactListener(ContactListener listener) {
-        m_contactManager.m_contactListener = listener;
-    }
-
-    /**
-     * Create a rigid body given a definition. No reference to the definition is retained.
+     * Create a rigid body given a definition.
+     * No reference to the definition is retained.
      * This function is locked during callbacks.
      *
      * @param def body definition
@@ -296,14 +95,7 @@ public class World {
 
         Body b = new Body(def, this);
 
-        // add to world doubly linked list
-        b.m_prev = null;
-        b.m_next = m_bodyList;
-        if (m_bodyList != null) {
-            m_bodyList.m_prev = b;
-        }
-        m_bodyList = b;
-        ++bodyCount;
+        bodies.add(b);
 
         return b;
     }
@@ -316,7 +108,7 @@ public class World {
      * @param body body to destroy
      */
     public void destroyBody(Body body) {
-        assert (bodyCount > 0);
+        assert bodies.contains(body, true);
         assertNotLocked();
 
         // Delete the attached joints.
@@ -339,7 +131,7 @@ public class World {
         while (ce != null) {
             ContactEdge ce0 = ce;
             ce = ce.next;
-            m_contactManager.destroy(ce0.contact);
+            contactManager.destroy(ce0.contact);
         }
         body.m_contactList = null;
 
@@ -348,7 +140,7 @@ public class World {
                 destructionListener.onDestroy(f);
             }
 
-            f.destroyProxies(m_contactManager.m_broadPhase);
+            f.destroyProxies(contactManager.broadPhase);
             f.destroy();
 
             // jbox2dTODO djm recycle fixtures (here or in that destroy method)
@@ -356,26 +148,15 @@ public class World {
 
         body.getFixtures().clear();
 
-        // Remove world body list.
-        if (body.m_prev != null) {
-            body.m_prev.m_next = body.m_next;
-        }
-
-        if (body.m_next != null) {
-            body.m_next.m_prev = body.m_prev;
-        }
-
-        if (body == m_bodyList) {
-            m_bodyList = body.m_next;
-        }
-
-        --bodyCount;
+        bodies.removeValueByIdentity(body);
         // jbox2dTODO djm recycle body
     }
 
     /**
-     * Create a joint to constrain bodies together. No reference to the definition is retained. This
-     * may cause the connected bodies to cease colliding. This function is locked during callbacks.
+     * Create a joint to constrain bodies together.
+     * No reference to the definition is retained.
+     * This may cause the connected bodies to cease colliding.
+     * This function is locked during callbacks.
      * Note: creating a joint doesn't wake the bodies.
      *
      * @param def joint definition
@@ -422,8 +203,7 @@ public class World {
             ContactEdge edge = bodyB.getContactList();
             while (edge != null) {
                 if (edge.other == bodyA) {
-                    // Flag the contact for filtering at the next time step (where either
-                    // body is awake).
+                    // Flag the contact for filtering at the next time step (where either body is awake).
                     edge.contact.flagForFiltering();
                 }
 
@@ -508,8 +288,7 @@ public class World {
             ContactEdge edge = bodyB.getContactList();
             while (edge != null) {
                 if (edge.other == bodyA) {
-                    // Flag the contact for filtering at the next time step (where either
-                    // body is awake).
+                    // Flag the contact for filtering at the next time step (where either body is awake).
                     edge.contact.flagForFiltering();
                 }
 
@@ -519,24 +298,25 @@ public class World {
     }
 
     private final TimeStep step = new TimeStep();
-    private final Timer stepTimer = new Timer();
-    private final Timer tempTimer = new Timer();
 
     /**
-     * Take a time step. This performs collision detection, integration, and constraint solution.
+     * This is used to compute the time step ratio to support a variable time step.
+     */
+    private float dtInverse = 0;
+
+    /**
+     * Take a time step.
+     * This performs collision detection, integration, and constraint solution.
      *
-     * @param dt the amount of time to simulate, this should not vary.
-     * @param velocityIterations for the velocity constraint solver.
-     * @param positionIterations for the position constraint solver.
+     * @param dt the amount of time to simulate, this should not vary
+     * @param velocityIterations for the velocity constraint solver
+     * @param positionIterations for the position constraint solver
      */
     public void step(float dt, int velocityIterations, int positionIterations) {
-        stepTimer.reset();
-        tempTimer.reset();
-        // log.debug("Starting step");
+
         // If new fixtures were added, we need to find the new contacts.
         if (newFixture) {
-            // log.debug("There's a new fixture, lets look for new contacts");
-            m_contactManager.findNewContacts();
+            contactManager.findNewContacts();
             newFixture = false;
         }
 
@@ -552,33 +332,24 @@ public class World {
         }
 
         step.dtRatio = dtInverse * dt;
-
         step.warmStarting = warmStarting;
-        profile.stepInit.record(tempTimer.getMilliseconds());
 
         // Update contacts. This is where some contacts are destroyed.
-        tempTimer.reset();
-        m_contactManager.collide();
-        profile.collide.record(tempTimer.getMilliseconds());
+        contactManager.collide();
 
-        // Integrate velocities, solve velocity constraints, and integrate positions.
-        if (stepComplete && step.dt > 0.0f) {
-            tempTimer.reset();
-            particleSystem.solve(step); // Particle Simulation
-            profile.solveParticleSystem.record(tempTimer.getMilliseconds());
-            tempTimer.reset();
-            solve(step);
-            profile.solve.record(tempTimer.getMilliseconds());
-        }
+        if (step.dt > 0) {
 
-        // Handle TOI events.
-        if (continuousPhysics && step.dt > 0.0f) {
-            tempTimer.reset();
-            solveTOI(step);
-            profile.solveTOI.record(tempTimer.getMilliseconds());
-        }
+            if (stepComplete) {
+                // Integrate velocities, solve velocity constraints, and integrate positions
+                particleSystem.solve(step); // Particle Simulation
+                solve(step);
+            }
 
-        if (step.dt > 0.0f) {
+            if (continuousPhysics) {
+                // Handle TOI events.
+                solveTOI(step);
+            }
+
             dtInverse = step.inv_dt;
         }
 
@@ -587,282 +358,25 @@ public class World {
         }
 
         locked = false;
-        // log.debug("ending step");
-
-        profile.step.record(stepTimer.getMilliseconds());
-    }
-
-    /**
-     * Call this after you are done with time steps to clear the forces. You normally call this after
-     * each call to Step, unless you are performing sub-steps. By default, forces will be
-     * automatically cleared, so you don't need to call this function.
-     *
-     * @see #setAutoClearForces(boolean)
-     */
-    public void clearForces() {
-        for (Body body = m_bodyList; body != null; body = body.getNext()) {
-            body.m_force.setZero();
-            body.m_torque = 0.0f;
-        }
-    }
-
-    private final WorldQueryWrapper wqwrapper = new WorldQueryWrapper();
-
-    /**
-     * Query the world for all fixtures that potentially overlap the provided AABB.
-     *
-     * @param callback a user implemented callback class.
-     * @param aabb the query box.
-     */
-    public void queryAABB(QueryCallback callback, AABB aabb) {
-        wqwrapper.broadPhase = m_contactManager.m_broadPhase;
-        wqwrapper.callback = callback;
-        m_contactManager.m_broadPhase.query(wqwrapper, aabb);
-    }
-
-    /**
-     * Query the world for all fixtures and particles that potentially overlap the provided AABB.
-     *
-     * @param callback a user implemented callback class.
-     * @param particleCallback callback for particles.
-     * @param aabb the query box.
-     */
-    public void queryAABB(QueryCallback callback, ParticleQueryCallback particleCallback, AABB aabb) {
-        wqwrapper.broadPhase = m_contactManager.m_broadPhase;
-        wqwrapper.callback = callback;
-        m_contactManager.m_broadPhase.query(wqwrapper, aabb);
-        particleSystem.queryAABB(particleCallback, aabb);
-    }
-
-    /**
-     * Query the world for all particles that potentially overlap the provided AABB.
-     *
-     * @param particleCallback callback for particles.
-     * @param aabb the query box.
-     */
-    public void queryAABB(ParticleQueryCallback particleCallback, AABB aabb) {
-        particleSystem.queryAABB(particleCallback, aabb);
-    }
-
-    private final WorldRayCastWrapper wrcwrapper = new WorldRayCastWrapper();
-    private final RayCastInput input = new RayCastInput();
-
-    /**
-     * Ray-cast the world for all fixtures in the path of the ray. Your callback controls whether you
-     * get the closest point, any point, or n-points. The ray-cast ignores shapes that contain the
-     * starting point.
-     *
-     * @param callback a user implemented callback class.
-     * @param point1 the ray starting point
-     * @param point2 the ray ending point
-     */
-    public void raycast(RayCastCallback callback, Vec2 point1, Vec2 point2) {
-        wrcwrapper.broadPhase = m_contactManager.m_broadPhase;
-        wrcwrapper.callback = callback;
-        input.maxFraction = 1.0f;
-        input.p1.set(point1);
-        input.p2.set(point2);
-        m_contactManager.m_broadPhase.raycast(wrcwrapper, input);
-    }
-
-    /**
-     * Ray-cast the world for all fixtures and particles in the path of the ray. Your callback
-     * controls whether you get the closest point, any point, or n-points. The ray-cast ignores shapes
-     * that contain the starting point.
-     *
-     * @param callback a user implemented callback class.
-     * @param particleCallback the particle callback class.
-     * @param point1 the ray starting point
-     * @param point2 the ray ending point
-     */
-    public void raycast(RayCastCallback callback, ParticleRaycastCallback particleCallback,
-                        Vec2 point1, Vec2 point2) {
-        wrcwrapper.broadPhase = m_contactManager.m_broadPhase;
-        wrcwrapper.callback = callback;
-        input.maxFraction = 1.0f;
-        input.p1.set(point1);
-        input.p2.set(point2);
-        m_contactManager.m_broadPhase.raycast(wrcwrapper, input);
-        particleSystem.raycast(particleCallback, point1, point2);
-    }
-
-    /**
-     * Ray-cast the world for all particles in the path of the ray. Your callback controls whether you
-     * get the closest point, any point, or n-points.
-     *
-     * @param particleCallback the particle callback class.
-     * @param point1 the ray starting point
-     * @param point2 the ray ending point
-     */
-    public void raycast(ParticleRaycastCallback particleCallback, Vec2 point1, Vec2 point2) {
-        particleSystem.raycast(particleCallback, point1, point2);
-    }
-
-    /**
-     * Get the world body list. With the returned body, use Body.getNext to get the next body in the
-     * world list. A null body indicates the end of the list.
-     *
-     * @return the head of the world body list.
-     */
-    public Body getBodyList() {
-        return m_bodyList;
-    }
-
-    /**
-     * Get the world joint list. With the returned joint, use Joint.getNext to get the next joint in
-     * the world list. A null joint indicates the end of the list.
-     *
-     * @return the head of the world joint list.
-     */
-    public Joint getJointList() {
-        return m_jointList;
-    }
-
-    /**
-     * Get the world contact list. With the returned contact, use Contact.getNext to get the next
-     * contact in the world list. A null contact indicates the end of the list.
-     * Contacts are created and destroyed in the middle of a time step.
-     * Use ContactListener to avoid missing contacts.
-     *
-     * @return the head of the world contact list.
-     */
-    public Contact getContactList() {
-        return m_contactManager.m_contactList;
-    }
-
-    public boolean isSleepingAllowed() {
-        return allowSleep;
-    }
-
-    public void setSleepingAllowed(boolean sleepingAllowed) {
-        allowSleep = sleepingAllowed;
-    }
-
-    /**
-     * Enable/disable warm starting. For testing.
-     *
-     * @param flag warm starting flag
-     */
-    public void setWarmStarting(boolean flag) {
-        warmStarting = flag;
-    }
-
-    public boolean isWarmStarting() {
-        return warmStarting;
-    }
-
-    /**
-     * Enable/disable continuous physics. For testing.
-     *
-     * @param flag continuous physics flag
-     */
-    public void setContinuousPhysics(boolean flag) {
-        continuousPhysics = flag;
-    }
-
-    public boolean isContinuousPhysics() {
-        return continuousPhysics;
-    }
-
-    /**
-     * @return the number of broad-phase proxies
-     */
-    public int getProxyCount() {
-        return m_contactManager.m_broadPhase.getProxyCount();
-    }
-
-    /**
-     * @return the number of bodies
-     */
-    public int getBodyCount() {
-        return bodyCount;
-    }
-
-    /**
-     * @return the number of joints
-     */
-    public int getJointCount() {
-        return jointCount;
-    }
-
-    /**
-     * @return the number of contacts (each may have 0 or more contact points)
-     */
-    public int getContactCount() {
-        return m_contactManager.m_contactCount;
-    }
-
-    /**
-     * @return the height of the dynamic tree
-     */
-    public int getTreeHeight() {
-        return m_contactManager.m_broadPhase.getTreeHeight();
-    }
-
-    /**
-     * @return the balance of the dynamic tree
-     */
-    public int getTreeBalance() {
-        return m_contactManager.m_broadPhase.getTreeBalance();
-    }
-
-    /**
-     * @return the quality of the dynamic tree
-     */
-    public float getTreeQuality() {
-        return m_contactManager.m_broadPhase.getTreeQuality();
-    }
-
-    /**
-     * Change the global gravity vector.
-     *
-     * @param gravity gravity vector
-     */
-    public void setGravity(Vec2 gravity) {
-        m_gravity.set(gravity);
-    }
-
-    /**
-     * @return global gravity vector
-     */
-    public Vec2 getGravity() {
-        return m_gravity;
-    }
-
-    /**
-     * @return the contact manager for testing purposes
-     */
-    public ContactManager getContactManager() {
-        return m_contactManager;
-    }
-
-    public Profile getProfile() {
-        return profile;
     }
 
     private final Island island = new Island();
     private Body[] stack = new Body[10]; // jbox2dTODO djm find a good initial stack number;
-    private final Timer broadphaseTimer = new Timer();
 
     private void solve(TimeStep step) {
-        profile.solveInit.startAccum();
-        profile.solveVelocity.startAccum();
-        profile.solvePosition.startAccum();
-
         // update previous transforms
-        for (Body b = m_bodyList; b != null; b = b.m_next) {
+        for (Body b : bodies) {
             b.m_xf0.set(b.m_xf);
         }
 
         // Size the island for the worst case.
-        island.init(bodyCount, m_contactManager.m_contactCount, jointCount,
-                m_contactManager.m_contactListener);
+        island.init(getBodyCount(), contactManager.contactCount, jointCount, contactManager.getContactListener());
 
         // Clear all the island flags.
-        for (Body b = m_bodyList; b != null; b = b.m_next) {
+        for (Body b : bodies) {
             b.m_flags &= ~Body.e_islandFlag;
         }
-        for (Contact c = m_contactManager.m_contactList; c != null; c = c.m_next) {
+        for (Contact c = contactManager.contactList; c != null; c = c.m_next) {
             c.m_flags &= ~Contact.ISLAND_FLAG;
         }
         for (Joint j = m_jointList; j != null; j = j.m_next) {
@@ -870,11 +384,12 @@ public class World {
         }
 
         // Build and simulate all awake islands.
-        int stackSize = bodyCount;
+        int stackSize = getBodyCount();
         if (stack.length < stackSize) {
             stack = new Body[stackSize];
         }
-        for (Body seed = m_bodyList; seed != null; seed = seed.m_next) {
+
+        for (Body seed : bodies) {
             if ((seed.m_flags & Body.e_islandFlag) == Body.e_islandFlag) {
                 continue;
             }
@@ -971,7 +486,7 @@ public class World {
                     other.m_flags |= Body.e_islandFlag;
                 }
             }
-            island.solve(profile, step, m_gravity, allowSleep);
+            island.solve(step, gravity, allowSleep);
 
             // Post solve cleanup.
             for (int i = 0; i < island.m_bodyCount; ++i) {
@@ -982,13 +497,9 @@ public class World {
                 }
             }
         }
-        profile.solveInit.endAccum();
-        profile.solveVelocity.endAccum();
-        profile.solvePosition.endAccum();
 
-        broadphaseTimer.reset();
         // Synchronize fixtures, check for out of range bodies.
-        for (Body b = m_bodyList; b != null; b = b.getNext()) {
+        for (Body b : bodies) {
             // If a body was not in an island then it did not move.
             if ((b.m_flags & Body.e_islandFlag) == 0) {
                 continue;
@@ -1003,8 +514,7 @@ public class World {
         }
 
         // Look for new contacts.
-        m_contactManager.findNewContacts();
-        profile.broadphase.record(broadphaseTimer.getMilliseconds());
+        contactManager.findNewContacts();
     }
 
     private final Island toiIsland = new Island();
@@ -1018,15 +528,15 @@ public class World {
     private void solveTOI(final TimeStep step) {
 
         final Island island = toiIsland;
-        island.init(2 * JBoxSettings.maxTOIContacts, JBoxSettings.maxTOIContacts, 0,
-                m_contactManager.m_contactListener);
+        island.init(2 * JBoxSettings.maxTOIContacts, JBoxSettings.maxTOIContacts, 0, contactManager.getContactListener());
+
         if (stepComplete) {
-            for (Body b = m_bodyList; b != null; b = b.m_next) {
+            for (Body b : bodies) {
                 b.m_flags &= ~Body.e_islandFlag;
                 b.m_sweep.alpha0 = 0.0f;
             }
 
-            for (Contact c = m_contactManager.m_contactList; c != null; c = c.m_next) {
+            for (Contact c = contactManager.contactList; c != null; c = c.m_next) {
                 // Invalidate TOI
                 c.m_flags &= ~(Contact.TOI_FLAG | Contact.ISLAND_FLAG);
                 c.m_toiCount = 0;
@@ -1040,7 +550,7 @@ public class World {
             Contact minContact = null;
             float minAlpha = 1.0f;
 
-            for (Contact c = m_contactManager.m_contactList; c != null; c = c.m_next) {
+            for (Contact c = contactManager.contactList; c != null; c = c.m_next) {
                 // Is this contact disabled?
                 if (!c.isEnabled()) {
                     continue;
@@ -1152,7 +662,7 @@ public class World {
             bB.advance(minAlpha);
 
             // The TOI contact likely has some new contact points.
-            minContact.update(m_contactManager.m_contactListener);
+            minContact.update(contactManager.getContactListener());
             minContact.m_flags &= ~Contact.TOI_FLAG;
             ++minContact.m_toiCount;
 
@@ -1222,7 +732,7 @@ public class World {
                         }
 
                         // Update the contact points
-                        contact.update(m_contactManager.m_contactListener);
+                        contact.update(contactManager.getContactListener());
 
                         // Was the contact disabled by the user?
                         if (!contact.isEnabled()) {
@@ -1286,12 +796,110 @@ public class World {
 
             // Commit fixture proxy movements to the broad-phase so that new contacts are created.
             // Also, some contacts can be destroyed.
-            m_contactManager.findNewContacts();
+            contactManager.findNewContacts();
 
             if (subStepping) {
                 stepComplete = false;
                 break;
             }
+        }
+    }
+
+    private final WorldQueryWrapper wqwrapper = new WorldQueryWrapper();
+
+    /**
+     * Query the world for all fixtures and particles that potentially overlap the provided AABB.
+     *
+     * @param callback a user implemented callback class
+     * @param particleCallback callback for particles
+     * @param aabb the query box
+     */
+    public void queryAABB(QueryCallback callback, ParticleQueryCallback particleCallback, AABB aabb) {
+        queryAABB(callback, aabb);
+        queryAABB(particleCallback, aabb);
+    }
+
+    /**
+     * Query the world for all fixtures that potentially overlap the provided AABB.
+     *
+     * @param callback a user implemented callback class
+     * @param aabb the query box
+     */
+    public void queryAABB(QueryCallback callback, AABB aabb) {
+        wqwrapper.broadPhase = contactManager.broadPhase;
+        wqwrapper.callback = callback;
+        contactManager.broadPhase.query(wqwrapper, aabb);
+    }
+
+    /**
+     * Query the world for all particles that potentially overlap the provided AABB.
+     *
+     * @param particleCallback callback for particles
+     * @param aabb the query box
+     */
+    public void queryAABB(ParticleQueryCallback particleCallback, AABB aabb) {
+        particleSystem.queryAABB(particleCallback, aabb);
+    }
+
+    private final WorldRayCastWrapper wrcwrapper = new WorldRayCastWrapper();
+    private final RayCastInput input = new RayCastInput();
+
+    /**
+     * Ray-cast the world for all fixtures and particles in the path of the ray.
+     * Your callback controls whether you get the closest point, any point, or n-points.
+     * The ray-cast ignores shapes that contain the starting point.
+     *
+     * @param callback a user implemented callback class
+     * @param particleCallback the particle callback class
+     * @param point1 the ray starting point
+     * @param point2 the ray ending point
+     */
+    public void raycast(RayCastCallback callback, ParticleRaycastCallback particleCallback, Vec2 point1, Vec2 point2) {
+        raycast(callback, point1, point2);
+        raycast(particleCallback, point1, point2);
+    }
+
+    /**
+     * Ray-cast the world for all fixtures in the path of the ray.
+     * Your callback controls whether you get the closest point, any point, or n-points.
+     * The ray-cast ignores shapes that contain the starting point.
+     *
+     * @param callback a user implemented callback class
+     * @param point1 the ray starting point
+     * @param point2 the ray ending point
+     */
+    public void raycast(RayCastCallback callback, Vec2 point1, Vec2 point2) {
+        wrcwrapper.broadPhase = contactManager.broadPhase;
+        wrcwrapper.callback = callback;
+        input.maxFraction = 1.0f;
+        input.p1.set(point1);
+        input.p2.set(point2);
+        contactManager.broadPhase.raycast(wrcwrapper, input);
+    }
+
+    /**
+     * Ray-cast the world for all particles in the path of the ray.
+     * Your callback controls whether you get the closest point, any point, or n-points.
+     *
+     * @param particleCallback the particle callback class
+     * @param point1 the ray starting point
+     * @param point2 the ray ending point
+     */
+    public void raycast(ParticleRaycastCallback particleCallback, Vec2 point1, Vec2 point2) {
+        particleSystem.raycast(particleCallback, point1, point2);
+    }
+
+    /**
+     * Call this after you are done with time steps to clear the forces.
+     * You normally call this after each call to Step, unless you are performing sub-steps.
+     * By default, forces will be automatically cleared, so you don't need to call this function.
+     *
+     * @see #setAutoClearForces(boolean)
+     */
+    public void clearForces() {
+        for (Body body : bodies) {
+            body.m_force.setZero();
+            body.m_torque = 0.0f;
         }
     }
 
@@ -1599,45 +1207,285 @@ public class World {
     public float computeParticleCollisionEnergy() {
         return particleSystem.computeParticleCollisionEnergy();
     }
-}
 
-class WorldQueryWrapper implements TreeCallback {
-    @Override
-    public boolean treeCallback(int nodeId) {
-        FixtureProxy proxy = (FixtureProxy) broadPhase.getUserData(nodeId);
-        return callback.reportFixture(proxy.fixture);
+    /**
+     * DO NOT MODIFY.
+     *
+     * @return all world bodies
+     */
+    public Array<Body> getBodies() {
+        return bodies;
     }
 
-    BroadPhase broadPhase;
-    QueryCallback callback;
-}
+    /**
+     * Get the world joint list. With the returned joint, use Joint.getNext to get the next joint in
+     * the world list. A null joint indicates the end of the list.
+     *
+     * @return the head of the world joint list.
+     */
+    public Joint getJointList() {
+        return m_jointList;
+    }
 
-class WorldRayCastWrapper implements TreeRayCastCallback {
+    /**
+     * Get the world contact list. With the returned contact, use Contact.getNext to get the next
+     * contact in the world list. A null contact indicates the end of the list.
+     * Contacts are created and destroyed in the middle of a time step.
+     * Use ContactListener to avoid missing contacts.
+     *
+     * @return the head of the world contact list.
+     */
+    public Contact getContactList() {
+        return contactManager.contactList;
+    }
 
-    // djm pooling
-    private final RayCastOutput output = new RayCastOutput();
-    private final Vec2 temp = new Vec2();
-    private final Vec2 point = new Vec2();
+    public boolean isSleepingAllowed() {
+        return allowSleep;
+    }
 
-    @Override
-    public float raycastCallback(RayCastInput input, int nodeId) {
-        Object userData = broadPhase.getUserData(nodeId);
-        FixtureProxy proxy = (FixtureProxy) userData;
-        Fixture fixture = proxy.fixture;
-        int index = proxy.childIndex;
-        boolean hit = fixture.raycast(output, input, index);
+    public void setSleepingAllowed(boolean sleepingAllowed) {
+        allowSleep = sleepingAllowed;
+    }
 
-        if (hit) {
-            float fraction = output.fraction;
-            // Vec2 point = (1.0f - fraction) * input.p1 + fraction * input.p2;
-            temp.set(input.p2).mulLocal(fraction);
-            point.set(input.p1).mulLocal(1 - fraction).addLocal(temp);
-            return callback.reportFixture(fixture, point, output.normal, fraction);
+    /**
+     * Enable/disable warm starting. For testing.
+     *
+     * @param flag warm starting flag
+     */
+    public void setWarmStarting(boolean flag) {
+        warmStarting = flag;
+    }
+
+    public boolean isWarmStarting() {
+        return warmStarting;
+    }
+
+    /**
+     * Enable/disable continuous physics. For testing.
+     *
+     * @param flag continuous physics flag
+     */
+    public void setContinuousPhysics(boolean flag) {
+        continuousPhysics = flag;
+    }
+
+    public boolean isContinuousPhysics() {
+        return continuousPhysics;
+    }
+
+    /**
+     * @return the number of broad-phase proxies
+     */
+    public int getProxyCount() {
+        return contactManager.broadPhase.getProxyCount();
+    }
+
+    /**
+     * @return the number of bodies
+     */
+    public int getBodyCount() {
+        return bodies.size();
+    }
+
+    /**
+     * @return the number of joints
+     */
+    public int getJointCount() {
+        return jointCount;
+    }
+
+    /**
+     * @return the number of contacts (each may have 0 or more contact points)
+     */
+    public int getContactCount() {
+        return contactManager.contactCount;
+    }
+
+    /**
+     * @return the height of the dynamic tree
+     */
+    public int getTreeHeight() {
+        return contactManager.broadPhase.getTreeHeight();
+    }
+
+    /**
+     * @return the balance of the dynamic tree
+     */
+    public int getTreeBalance() {
+        return contactManager.broadPhase.getTreeBalance();
+    }
+
+    /**
+     * @return the quality of the dynamic tree
+     */
+    public float getTreeQuality() {
+        return contactManager.broadPhase.getTreeQuality();
+    }
+
+    /**
+     * Change the global gravity vector.
+     *
+     * @param gravity gravity vector
+     */
+    public void setGravity(Vec2 gravity) {
+        this.gravity.set(gravity);
+    }
+
+    /**
+     * @return global gravity vector
+     */
+    public Vec2 getGravity() {
+        return gravity;
+    }
+
+    ContactManager getContactManager() {
+        return contactManager;
+    }
+
+    public IWorldPool getPool() {
+        return pool;
+    }
+
+    public DestructionListener getDestructionListener() {
+        return destructionListener;
+    }
+
+    /**
+     * Register a destruction listener. The listener is owned by you and must remain in scope.
+     *
+     * @param listener destruction listener
+     */
+    public void setDestructionListener(DestructionListener listener) {
+        destructionListener = listener;
+    }
+
+    public ParticleDestructionListener getParticleDestructionListener() {
+        return particleDestructionListener;
+    }
+
+    public void setParticleDestructionListener(ParticleDestructionListener listener) {
+        particleDestructionListener = listener;
+    }
+
+    public boolean isAllowSleep() {
+        return allowSleep;
+    }
+
+    public void setAllowSleep(boolean flag) {
+        if (flag == allowSleep) {
+            return;
         }
 
-        return input.maxFraction;
+        allowSleep = flag;
+        if (!allowSleep) {
+            for (Body b : bodies) {
+                b.setAwake(true);
+            }
+        }
     }
 
-    BroadPhase broadPhase;
-    RayCastCallback callback;
+    public void setSubStepping(boolean subStepping) {
+        this.subStepping = subStepping;
+    }
+
+    public boolean isSubStepping() {
+        return subStepping;
+    }
+
+    public ParticleSystem getParticleSystem() {
+        return particleSystem;
+    }
+
+    /**
+     * Set flag to control automatic clearing of forces after each time step.
+     *
+     * @param flag automatically clear forces flag
+     */
+    public void setAutoClearForces(boolean flag) {
+        autoClearForces = flag;
+    }
+
+    /**
+     * @return the flag that controls automatic clearing of forces after each time step
+     */
+    public boolean getAutoClearForces() {
+        return autoClearForces;
+    }
+
+    /**
+     * Register a contact filter to provide specific control over collision.
+     * Otherwise the default filter is used (_defaultFilter).
+     * The listener is owned by you and must remain in scope.
+     *
+     * @param filter contact filter
+     */
+    public void setContactFilter(ContactFilter filter) {
+        contactManager.setcontactFilter(filter);
+    }
+
+    /**
+     * Register a contact event listener. The listener is owned by you and must remain in scope.
+     *
+     * @param listener contact listener
+     */
+    public void setContactListener(ContactListener listener) {
+        contactManager.setContactListener(listener);
+    }
+
+    void notifyNewFixture() {
+        newFixture = true;
+    }
+
+    /**
+     * @return is the world locked (in the middle of a time step)
+     */
+    public boolean isLocked() {
+        return locked;
+    }
+
+    void assertNotLocked() {
+        if (isLocked())
+            throw new IllegalStateException("Physics world is locked during time step");
+    }
+
+    private static class WorldQueryWrapper implements TreeCallback {
+        BroadPhase broadPhase;
+        QueryCallback callback;
+
+        @Override
+        public boolean treeCallback(int nodeId) {
+            Fixture.FixtureProxy proxy = (Fixture.FixtureProxy) broadPhase.getUserData(nodeId);
+            return callback.reportFixture(proxy.fixture);
+        }
+    }
+
+    private static class WorldRayCastWrapper implements TreeRayCastCallback {
+
+        // djm pooling
+        private final RayCastOutput output = new RayCastOutput();
+        private final Vec2 temp = new Vec2();
+        private final Vec2 point = new Vec2();
+
+        BroadPhase broadPhase;
+        RayCastCallback callback;
+
+        @Override
+        public float raycastCallback(RayCastInput input, int nodeId) {
+            Object userData = broadPhase.getUserData(nodeId);
+            Fixture.FixtureProxy proxy = (Fixture.FixtureProxy) userData;
+            Fixture fixture = proxy.fixture;
+            int index = proxy.childIndex;
+            boolean hit = fixture.raycast(output, input, index);
+
+            if (hit) {
+                float fraction = output.fraction;
+                // Vec2 point = (1.0f - fraction) * input.p1 + fraction * input.p2;
+                temp.set(input.p2).mulLocal(fraction);
+                point.set(input.p1).mulLocal(1 - fraction).addLocal(temp);
+                return callback.reportFixture(fixture, point, output.normal, fraction);
+            }
+
+            return input.maxFraction;
+        }
+    }
 }

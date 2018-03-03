@@ -18,7 +18,7 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
  * @author daniel
  */
 public class TimeOfImpact {
-    public static final int MAX_ITERATIONS = 1000;
+    private static final int MAX_ITERATIONS = 1000;
 
     public static int toiCalls = 0;
     public static int toiIters = 0;
@@ -42,7 +42,7 @@ public class TimeOfImpact {
         public float tMax;
     }
 
-    public static enum TOIOutputState {
+    public enum TOIOutputState {
         UNKNOWN, FAILED, OVERLAPPED, TOUCHING, SEPARATED
     }
 
@@ -56,7 +56,6 @@ public class TimeOfImpact {
         public float t;
     }
 
-
     // djm pooling
     private final SimplexCache cache = new SimplexCache();
     private final DistanceInput distanceInput = new DistanceInput();
@@ -68,11 +67,10 @@ public class TimeOfImpact {
     private final Sweep sweepA = new Sweep();
     private final Sweep sweepB = new Sweep();
 
-
     private final IWorldPool pool;
 
-    public TimeOfImpact(IWorldPool argPool) {
-        pool = argPool;
+    public TimeOfImpact(IWorldPool pool) {
+        this.pool = pool;
     }
 
     /**
@@ -277,11 +275,9 @@ public class TimeOfImpact {
     }
 }
 
-
 enum Type {
     POINTS, FACE_A, FACE_B;
 }
-
 
 class SeparationFunction {
 
@@ -398,9 +394,7 @@ class SeparationFunction {
     private final Vec2 axisA = new Vec2();
     private final Vec2 axisB = new Vec2();
 
-    // float FindMinSeparation(int* indexA, int* indexB, float t) const
     public float findMinSeparation(int[] indexes, float t) {
-
         m_sweepA.getTransform(xfa, t);
         m_sweepB.getTransform(xfb, t);
 
@@ -419,8 +413,7 @@ class SeparationFunction {
                 Transform.mulToOutUnsafe(xfa, localPointA, pointA);
                 Transform.mulToOutUnsafe(xfb, localPointB, pointB);
 
-                float separation = Vec2.dot(pointB.subLocal(pointA), m_axis);
-                return separation;
+                return Vec2.dot(pointB.subLocal(pointA), m_axis);
             }
             case FACE_A: {
                 Rotation.mulToOutUnsafe(xfa.q, m_axis, normal);
@@ -435,8 +428,7 @@ class SeparationFunction {
                 localPointB.set(m_proxyB.getVertex(indexes[1]));
                 Transform.mulToOutUnsafe(xfb, localPointB, pointB);
 
-                float separation = Vec2.dot(pointB.subLocal(pointA), normal);
-                return separation;
+                return Vec2.dot(pointB.subLocal(pointA), normal);
             }
             case FACE_B: {
                 Rotation.mulToOutUnsafe(xfb.q, m_axis, normal);
@@ -451,8 +443,7 @@ class SeparationFunction {
                 localPointA.set(m_proxyA.getVertex(indexes[0]));
                 Transform.mulToOutUnsafe(xfa, localPointA, pointA);
 
-                float separation = Vec2.dot(pointA.subLocal(pointB), normal);
-                return separation;
+                return Vec2.dot(pointA.subLocal(pointB), normal);
             }
             default:
                 assert (false);
@@ -478,8 +469,7 @@ class SeparationFunction {
                 Transform.mulToOutUnsafe(xfa, localPointA, pointA);
                 Transform.mulToOutUnsafe(xfb, localPointB, pointB);
 
-                float separation = Vec2.dot(pointB.subLocal(pointA), m_axis);
-                return separation;
+                return Vec2.dot(pointB.subLocal(pointA), m_axis);
             }
             case FACE_A: {
                 Rotation.mulToOutUnsafe(xfa.q, m_axis, normal);
@@ -490,8 +480,8 @@ class SeparationFunction {
 
                 localPointB.set(m_proxyB.getVertex(indexB));
                 Transform.mulToOutUnsafe(xfb, localPointB, pointB);
-                float separation = Vec2.dot(pointB.subLocal(pointA), normal);
-                return separation;
+
+                return Vec2.dot(pointB.subLocal(pointA), normal);
             }
             case FACE_B: {
                 Rotation.mulToOutUnsafe(xfb.q, m_axis, normal);
@@ -503,8 +493,7 @@ class SeparationFunction {
                 localPointA.set(m_proxyA.getVertex(indexA));
                 Transform.mulToOutUnsafe(xfa, localPointA, pointA);
 
-                float separation = Vec2.dot(pointA.subLocal(pointB), normal);
-                return separation;
+                return Vec2.dot(pointA.subLocal(pointB), normal);
             }
             default:
                 assert (false);

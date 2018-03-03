@@ -8,6 +8,7 @@ package sandbox.robots;
 
 import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
@@ -45,13 +46,24 @@ public class MarioApp extends GameApplication {
 
 
         settings.setSingleStep(false);
-        settings.setApplicationMode(ApplicationMode.RELEASE);
+        settings.setProfilingEnabled(true);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     private PlayerControl playerControl;
 
     @Override
     protected void initInput() {
+        DSLKt.onKeyDown(KeyCode.K, "G+", () -> {
+            getPhysicsWorld().setGravity(0, -getPhysicsWorld().getJBox2DWorld().getGravity().y * 50 + 10);
+            System.out.println(-getPhysicsWorld().getJBox2DWorld().getGravity().y * 50);
+        });
+
+        DSLKt.onKeyDown(KeyCode.I, "G-", () -> {
+            getPhysicsWorld().setGravity(0, -getPhysicsWorld().getJBox2DWorld().getGravity().y * 50 - 10);
+            System.out.println(-getPhysicsWorld().getJBox2DWorld().getGravity().y * 50);
+        });
+
         getInput().addAction(new UserAction("Left") {
             @Override
             protected void onAction() {
@@ -137,7 +149,7 @@ public class MarioApp extends GameApplication {
         Entity player = getGameWorld().getEntitiesByType(MarioType.PLAYER).get(0);
         playerControl = player.getControl(PlayerControl.class);
 
-        player.addControl(new AIControl("robot.tree"));
+        //player.addControl(new AIControl("robot.tree"));
 
         getGameScene().getViewport().setBounds(0, 0, 30*70, 11 * 70);
         getGameScene().getViewport().bindToEntity(player, 500, 0);
@@ -151,6 +163,8 @@ public class MarioApp extends GameApplication {
 
     @Override
     protected void initPhysics() {
+        getPhysicsWorld().setGravity(0, 500 *2.5);
+
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(MarioType.PLAYER, MarioType.GHOST_PLATFORM) {
             @Override
             protected void onCollisionBegin(Entity a, Entity platform) {

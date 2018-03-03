@@ -96,9 +96,9 @@ abstract class IOTask<T>
     }
 
     open protected fun fail(error: Throwable) {
-        log.warning("Task failed: $name Error: $error")
+        log.warning("Task failed: $name", error)
         if (onFailure == null) {
-            // TODO: low-level shouldn't call high-level
+            // https://github.com/AlmasB/FXGL/issues/480
             FXGL.getExceptionHandler().handle(error)
         } else {
             onFailure!!.invoke(error)

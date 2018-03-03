@@ -18,16 +18,16 @@ import com.almasb.fxgl.physics.box2d.common.Transform;
 /**
  * A circle shape.
  */
-public class CircleShape extends Shape {
+public final class CircleShape extends Shape {
 
     public final Vec2 m_p = new Vec2();
 
     public CircleShape() {
-        super(ShapeType.CIRCLE);
-        setRadius(0);
+        super(ShapeType.CIRCLE, 0);
     }
 
-    public final Shape clone() {
+    @Override
+    public Shape clone() {
         CircleShape shape = new CircleShape();
         shape.m_p.x = m_p.x;
         shape.m_p.y = m_p.y;
@@ -35,52 +35,13 @@ public class CircleShape extends Shape {
         return shape;
     }
 
-    public final int getChildCount() {
+    @Override
+    public int getChildCount() {
         return 1;
-    }
-
-    /**
-     * Get the supporting vertex index in the given direction.
-     *
-     * @param d
-     * @return
-     */
-    public final int getSupport(final Vec2 d) {
-        return 0;
-    }
-
-    /**
-     * Get the supporting vertex in the given direction.
-     *
-     * @param d
-     * @return
-     */
-    public final Vec2 getSupportVertex(final Vec2 d) {
-        return m_p;
-    }
-
-    /**
-     * Get the vertex count.
-     *
-     * @return
-     */
-    public final int getVertexCount() {
-        return 1;
-    }
-
-    /**
-     * Get a vertex by index.
-     *
-     * @param index
-     * @return
-     */
-    public final Vec2 getVertex(final int index) {
-        assert (index == 0);
-        return m_p;
     }
 
     @Override
-    public final boolean testPoint(final Transform transform, final Vec2 p) {
+    public boolean testPoint(final Transform transform, final Vec2 p) {
         // Rot.mulToOutUnsafe(transform.q, m_p, center);
         // center.addLocal(transform.p);
         //
@@ -91,7 +52,7 @@ public class CircleShape extends Shape {
         float centerx = -(q.c * m_p.x - q.s * m_p.y + tp.x - p.x);
         float centery = -(q.s * m_p.x + q.c * m_p.y + tp.y - p.y);
 
-        return centerx * centerx + centery * centery <= radius * radius;
+        return centerx * centerx + centery * centery <= getRadius() * getRadius();
     }
 
     @Override
@@ -104,7 +65,7 @@ public class CircleShape extends Shape {
         float d1 = JBoxUtils.sqrt(dx * dx + dy * dy);
         normalOut.x = dx * 1 / d1;
         normalOut.y = dy * 1 / d1;
-        return d1 - radius;
+        return d1 - getRadius();
     }
 
     // Collision Detection in Interactive 3D Environments by Gino van den Bergen
@@ -112,7 +73,7 @@ public class CircleShape extends Shape {
     // x = s + a * r
     // norm(x) = radius
     @Override
-    public final boolean raycast(RayCastOutput output, RayCastInput input, Transform transform,
+    public boolean raycast(RayCastOutput output, RayCastInput input, Transform transform,
                                  int childIndex) {
 
         final Vec2 inputp1 = input.p1;
@@ -128,7 +89,7 @@ public class CircleShape extends Shape {
         final float sx = inputp1.x - positionx;
         final float sy = inputp1.y - positiony;
         // final float b = Vec2.dot(s, s) - radius * radius;
-        final float b = sx * sx + sy * sy - radius * radius;
+        final float b = sx * sx + sy * sy - getRadius() * getRadius();
 
         // Solve quadratic equation.
         final float rx = inputp2.x - inputp1.x;
@@ -161,26 +122,66 @@ public class CircleShape extends Shape {
     }
 
     @Override
-    public final void computeAABB(final AABB aabb, final Transform transform, int childIndex) {
+    public void computeAABB(final AABB aabb, final Transform transform, int childIndex) {
         final Rotation tq = transform.q;
         final Vec2 tp = transform.p;
         final float px = tq.c * m_p.x - tq.s * m_p.y + tp.x;
         final float py = tq.s * m_p.x + tq.c * m_p.y + tp.y;
 
-        aabb.lowerBound.x = px - radius;
-        aabb.lowerBound.y = py - radius;
-        aabb.upperBound.x = px + radius;
-        aabb.upperBound.y = py + radius;
+        aabb.lowerBound.x = px - getRadius();
+        aabb.lowerBound.y = py - getRadius();
+        aabb.upperBound.x = px + getRadius();
+        aabb.upperBound.y = py + getRadius();
     }
 
     @Override
-    public final void computeMass(final MassData massData, final float density) {
-        massData.mass = density * JBoxSettings.PI * radius * radius;
+    public void computeMass(final MassData massData, final float density) {
+        massData.mass = density * JBoxSettings.PI * getRadius() * getRadius();
         massData.center.x = m_p.x;
         massData.center.y = m_p.y;
 
         // inertia about the local origin
         // massData.I = massData.mass * (0.5f * radius * radius + Vec2.dot(m_p, m_p));
-        massData.I = massData.mass * (0.5f * radius * radius + (m_p.x * m_p.x + m_p.y * m_p.y));
+        massData.I = massData.mass * (0.5f * getRadius() * getRadius() + (m_p.x * m_p.x + m_p.y * m_p.y));
+    }
+
+    /**
+     * Get the supporting vertex index in the given direction.
+     *
+     * @param d
+     * @return
+     */
+    public int getSupport(final Vec2 d) {
+        return 0;
+    }
+
+    /**
+     * Get the supporting vertex in the given direction.
+     *
+     * @param d
+     * @return
+     */
+    public Vec2 getSupportVertex(final Vec2 d) {
+        return m_p;
+    }
+
+    /**
+     * Get the vertex count.
+     *
+     * @return
+     */
+    public int getVertexCount() {
+        return 1;
+    }
+
+    /**
+     * Get a vertex by index.
+     *
+     * @param index
+     * @return
+     */
+    public Vec2 getVertex(final int index) {
+        assert (index == 0);
+        return m_p;
     }
 }

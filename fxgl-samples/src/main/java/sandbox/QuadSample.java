@@ -32,18 +32,10 @@ public class QuadSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("QuadSample");
         settings.setVersion("0.1");
-
-
-
-
-
     }
 
     private List<Texture> originals = new ArrayList<>();
-
     private List<Texture> textures = new ArrayList<>();
-
-
     private List<Texture> textures2 = new ArrayList<>();
 
     @Override
@@ -69,15 +61,10 @@ public class QuadSample extends GameApplication {
         }
     }
 
-    int j = 0;
+    private int j = 0;
 
     @Override
     protected void onUpdate(double tpf) {
-
-//        for (int i = 0; i < textures.size(); i++) {
-//            Texture t = textures.get(i);
-//            t.setTranslateX(100 + FXGLMath.sin((float) getTick() + i / 0.5f));
-//        }
 
         Texture t = originals.get(j);
 

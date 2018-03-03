@@ -46,7 +46,7 @@ class Viewport
      * @return current visible viewport area
      */
     val visibleArea: Rectangle2D
-        get() = Rectangle2D(getX(), getY(), getX() + width, getY() + height)
+        get() = Rectangle2D(getX(), getY(), width, height)
 
     /**
      * Origin x.

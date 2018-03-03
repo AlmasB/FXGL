@@ -10,7 +10,7 @@ import javafx.util.Duration
 
 
 /**
- *
+ * Stateful temporary effect to be applied to an entity.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -19,14 +19,20 @@ abstract class Effect(duration: Duration) {
     private val duration = duration.toSeconds()
     private var t = 0.0
 
+    private lateinit var entity: Entity
+
     var isFinished = false
         private set
 
     abstract fun onStart(entity: Entity)
 
+    open fun onUpdate(entity: Entity, tpf: Double) {}
+
     abstract fun onEnd(entity: Entity)
 
     fun start(entity: Entity) {
+        this.entity = entity
+
         t = 0.0
         onStart(entity)
     }
@@ -35,6 +41,7 @@ abstract class Effect(duration: Duration) {
         if (isFinished)
             return
 
+        onUpdate(entity, tpf)
         t += tpf
 
         if (t >= duration) {

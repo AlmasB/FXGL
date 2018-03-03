@@ -22,11 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A rigid body. These are created via World.createBody.
+ * A rigid body.
+ * These are created via World.createBody.
  *
  * @author Daniel Murphy
  */
-public class Body {
+public final class Body {
     public static final int e_islandFlag = 0x0001;
     public static final int e_awakeFlag = 0x0002;
     public static final int e_autoSleepFlag = 0x0004;
@@ -68,13 +69,14 @@ public class Body {
     public final Vec2 m_force = new Vec2();
     public float m_torque = 0;
 
-    public Body m_prev = null;
-    public Body m_next = null;
+    //public Body m_prev = null;
+    //public Body m_next = null;
 
     public float m_mass, m_invMass;
 
     // Rotational inertia about the center of mass.
-    public float m_I = 0, m_invI = 0;
+    private float m_I = 0;
+    public float m_invI = 0;
 
     private float linearDamping;
     private float angularDamping;
@@ -82,17 +84,9 @@ public class Body {
 
     private float sleepTime = 0;
 
-    public float getSleepTime() {
-        return sleepTime;
-    }
-
-    void setSleepTime(float sleepTime) {
-        this.sleepTime = sleepTime;
-    }
-
     private Object userData;
 
-    public Body(final BodyDef bd, World world) {
+    Body(BodyDef bd, World world) {
         assert (bd.getPosition().isValid());
         assert (bd.getLinearVelocity().isValid());
         assert (bd.getGravityScale() >= 0.0f);
@@ -156,28 +150,29 @@ public class Body {
     }
 
     /**
-     * Creates a fixture and attach it to this body. Use this function if you need to set some fixture
-     * parameters, like friction. Otherwise you can create the fixture directly from a shape. If the
-     * density is non-zero, this function automatically updates the mass of the body. Contacts are not
-     * created until the next time step.
+     * Creates a fixture and attach it to this body.
+     * Use this function if you need to set some fixture parameters, like friction.
+     * Otherwise you can create the fixture directly from a shape.
+     * If the density is non-zero, this function automatically updates the mass of the body.
+     * Contacts are not created until the next time step.
      * Note: This function is locked during callbacks.
      *
-     * @param def the fixture definition.
+     * @param def the fixture definition
      */
-    public final Fixture createFixture(FixtureDef def) {
+    public Fixture createFixture(FixtureDef def) {
         world.assertNotLocked();
 
         Fixture fixture = new Fixture(this, def);
 
         if ((m_flags & e_activeFlag) == e_activeFlag) {
-            BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
+            BroadPhase broadPhase = world.getContactManager().broadPhase;
             fixture.createProxies(broadPhase, m_xf);
         }
 
         fixtures.add(fixture);
 
         // Adjust mass properties if needed.
-        if (fixture.getDensity() > 0.0f) {
+        if (fixture.getDensity() > 0) {
             resetMassData();
         }
 
@@ -191,15 +186,17 @@ public class Body {
     private final FixtureDef fixDef = new FixtureDef();
 
     /**
-     * Creates a fixture from a shape and attach it to this body. This is a convenience function. Use
-     * FixtureDef if you need to set parameters like friction, restitution, user data, or filtering.
+     * Creates a fixture from a shape and attach it to this body.
+     * This is a convenience function.
+     * Use FixtureDef if you need to set parameters like friction, restitution, user data, or filtering.
      * If the density is non-zero, this function automatically updates the mass of the body.
+     * Note: this function is locked during callbacks.
+     *
      *
      * @param shape the shape to be cloned.
      * @param density the shape density (set to zero for static bodies).
-     * @warning This function is locked during callbacks.
      */
-    public final Fixture createFixture(Shape shape, float density) {
+    public Fixture createFixture(Shape shape, float density) {
         fixDef.setShape(shape);
         fixDef.setDensity(density);
 
@@ -207,15 +204,17 @@ public class Body {
     }
 
     /**
-     * Destroy a fixture. This removes the fixture from the broad-phase and destroys all contacts
-     * associated with this fixture. This will automatically adjust the mass of the body if the body
-     * is dynamic and the fixture has positive density. All fixtures attached to a body are implicitly
-     * destroyed when the body is destroyed.
+     * Destroy a fixture.
+     * This removes the fixture from the broad-phase and destroys all contacts
+     * associated with this fixture.
+     * This will automatically adjust the mass of the body if the body
+     * is dynamic and the fixture has positive density.
+     * All fixtures attached to a body are implicitly destroyed when the body is destroyed.
+     * Note: this function is locked during callbacks.
      *
-     * @param fixture the fixture to be removed.
-     * @warning This function is locked during callbacks.
+     * @param fixture the fixture to be removed
      */
-    public final void destroyFixture(Fixture fixture) {
+    public void destroyFixture(Fixture fixture) {
         world.assertNotLocked();
 
         assert (fixture.getBody() == this);
@@ -234,14 +233,13 @@ public class Body {
             Fixture fixtureB = c.getFixtureB();
 
             if (fixture == fixtureA || fixture == fixtureB) {
-                // This destroys the contact and removes it from
-                // this body's contact list.
-                world.m_contactManager.destroy(c);
+                // This destroys the contact and removes it from this body's contact list.
+                world.getContactManager().destroy(c);
             }
         }
 
         if ((m_flags & e_activeFlag) == e_activeFlag) {
-            BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
+            BroadPhase broadPhase = world.getContactManager().broadPhase;
             fixture.destroyProxies(broadPhase);
         }
 
@@ -251,14 +249,15 @@ public class Body {
     }
 
     /**
-     * Set the position of the body's origin and rotation. This breaks any contacts and wakes the
-     * other bodies. Manipulating a body's transform may cause non-physical behavior. Note: contacts
-     * are updated on the next call to World.step().
+     * Set the position of the body's origin and rotation.
+     * This breaks any contacts and wakes the other bodies.
+     * Manipulating a body's transform may cause non-physical behavior.
+     * Note: contacts are updated on the next call to World.step().
      *
-     * @param position the world position of the body's local origin.
-     * @param angle the world rotation in radians.
+     * @param position the world position of the body's local origin
+     * @param angle the world rotation in radians
      */
-    public final void setTransform(Vec2 position, float angle) {
+    public void setTransform(Vec2 position, float angle) {
         world.assertNotLocked();
 
         m_xf.q.set(angle);
@@ -271,18 +270,16 @@ public class Body {
         m_sweep.c0.set(m_sweep.c);
         m_sweep.a0 = m_sweep.a;
 
-        BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
+        BroadPhase broadPhase = world.getContactManager().broadPhase;
         for (Fixture f : fixtures) {
             f.synchronize(broadPhase, m_xf, m_xf);
         }
     }
 
     /**
-     * Get the body transform for the body's origin.
-     *
      * @return the world transform of the body's origin.
      */
-    public final Transform getTransform() {
+    public Transform getTransform() {
         return m_xf;
     }
 
@@ -291,7 +288,7 @@ public class Body {
      *
      * @return the world position of the body's origin.
      */
-    public final Vec2 getPosition() {
+    public Vec2 getPosition() {
         return m_xf.p;
     }
 
@@ -300,21 +297,21 @@ public class Body {
      *
      * @return the current world rotation angle in radians.
      */
-    public final float getAngle() {
+    public float getAngle() {
         return m_sweep.a;
     }
 
     /**
      * Get the world position of the center of mass. Do not modify.
      */
-    public final Vec2 getWorldCenter() {
+    public Vec2 getWorldCenter() {
         return m_sweep.c;
     }
 
     /**
      * Get the local position of the center of mass. Do not modify.
      */
-    public final Vec2 getLocalCenter() {
+    public Vec2 getLocalCenter() {
         return m_sweep.localCenter;
     }
 
@@ -323,12 +320,12 @@ public class Body {
      *
      * @param v the new linear velocity of the center of mass.
      */
-    public final void setLinearVelocity(Vec2 v) {
+    public void setLinearVelocity(Vec2 v) {
         if (type == BodyType.STATIC) {
             return;
         }
 
-        if (Vec2.dot(v, v) > 0.0f) {
+        if (Vec2.dot(v, v) > 0) {
             setAwake(true);
         }
 
@@ -341,7 +338,7 @@ public class Body {
      *
      * @return the linear velocity of the center of mass.
      */
-    public final Vec2 getLinearVelocity() {
+    public Vec2 getLinearVelocity() {
         return m_linearVelocity;
     }
 
@@ -350,7 +347,7 @@ public class Body {
      *
      * @param w the new angular velocity in radians/second.
      */
-    public final void setAngularVelocity(float w) {
+    public void setAngularVelocity(float w) {
         if (type == BodyType.STATIC) {
             return;
         }
@@ -367,7 +364,7 @@ public class Body {
      *
      * @return the angular velocity in radians/second.
      */
-    public final float getAngularVelocity() {
+    public float getAngularVelocity() {
         return m_angularVelocity;
     }
 
@@ -388,38 +385,26 @@ public class Body {
     }
 
     /**
-     * Apply a force at a world point. If the force is not applied at the center of mass, it will
-     * generate a torque and affect the angular velocity. This wakes up the body.
+     * Apply a force at a world point.
+     * If the force is not applied at the center of mass, it will generate a torque and affect the angular velocity.
+     * This wakes up the body.
      *
-     * @param force the world force vector, usually in Newtons (N).
-     * @param point the world position of the point of application.
+     * @param force the world force vector, usually in Newtons (N)
+     * @param point the world position of the point of application
      */
-    public final void applyForce(Vec2 force, Vec2 point) {
-        if (type != BodyType.DYNAMIC) {
-            return;
-        }
-
-        if (!isAwake()) {
-            setAwake(true);
-        }
-
-        // m_force.addLocal(force);
-        // Vec2 temp = tltemp.get();
-        // temp.set(point).subLocal(m_sweep.c);
-        // m_torque += Vec2.cross(temp, force);
-
-        m_force.x += force.x;
-        m_force.y += force.y;
+    public void applyForce(Vec2 force, Vec2 point) {
+        applyForceToCenter(force);
 
         m_torque += (point.x - m_sweep.c.x) * force.y - (point.y - m_sweep.c.y) * force.x;
     }
 
     /**
-     * Apply a force to the center of mass. This wakes up the body.
+     * Apply a force to the center of mass.
+     * This wakes up the body.
      *
-     * @param force the world force vector, usually in Newtons (N).
+     * @param force the world force vector, usually in Newtons (N)
      */
-    public final void applyForceToCenter(Vec2 force) {
+    public void applyForceToCenter(Vec2 force) {
         if (type != BodyType.DYNAMIC) {
             return;
         }
@@ -428,17 +413,17 @@ public class Body {
             setAwake(true);
         }
 
-        m_force.x += force.x;
-        m_force.y += force.y;
+        m_force.addLocal(force);
     }
 
     /**
-     * Apply a torque. This affects the angular velocity without affecting the linear velocity of the
-     * center of mass. This wakes up the body.
+     * Apply a torque.
+     * This affects the angular velocity without affecting the linear velocity of the center of mass.
+     * This wakes up the body.
      *
-     * @param torque about the z-axis (out of the screen), usually in N-m.
+     * @param torque about the z-axis (out of the screen), usually in N-m
      */
-    public final void applyTorque(float torque) {
+    public void applyTorque(float torque) {
         if (type != BodyType.DYNAMIC) {
             return;
         }
@@ -451,16 +436,17 @@ public class Body {
     }
 
     /**
-     * Apply an impulse at a point. This immediately modifies the velocity. It also modifies the
-     * angular velocity if the point of application is not at the center of mass. This wakes up the
-     * body if 'wake' is set to true. If the body is sleeping and 'wake' is false, then there is no
-     * effect.
+     * Apply an impulse at a point.
+     * This immediately modifies the velocity.
+     * It also modifies the angular velocity if the point of application is not at the center of mass.
+     * This wakes up the body if 'wake' is set to true.
+     * If the body is sleeping and 'wake' is false, then there is no effect.
      *
-     * @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
-     * @param point the world position of the point of application.
+     * @param impulse the world impulse vector, usually in N-seconds or kg-m/s
+     * @param point the world position of the point of application
      * @param wake also wake up the body
      */
-    public final void applyLinearImpulse(Vec2 impulse, Vec2 point, boolean wake) {
+    public void applyLinearImpulse(Vec2 impulse, Vec2 point, boolean wake) {
         if (type != BodyType.DYNAMIC) {
             return;
         }
@@ -476,8 +462,7 @@ public class Body {
         m_linearVelocity.x += impulse.x * m_invMass;
         m_linearVelocity.y += impulse.y * m_invMass;
 
-        m_angularVelocity +=
-                m_invI * ((point.x - m_sweep.c.x) * impulse.y - (point.y - m_sweep.c.y) * impulse.x);
+        m_angularVelocity += m_invI * ((point.x - m_sweep.c.x) * impulse.y - (point.y - m_sweep.c.y) * impulse.x);
     }
 
     /**
@@ -498,70 +483,59 @@ public class Body {
     }
 
     /**
-     * Get the total mass of the body.
-     *
-     * @return the mass, usually in kilograms (kg).
+     * @return total mass of the body, usually in kilograms (kg)
      */
-    public final float getMass() {
+    public float getMass() {
         return m_mass;
     }
 
     /**
-     * Get the central rotational inertia of the body.
-     *
-     * @return the rotational inertia, usually in kg-m^2.
+     * @return central rotational inertia of the body, usually in kg-m^2
      */
-    public final float getInertia() {
-        return m_I
-                + m_mass
-                * (m_sweep.localCenter.x * m_sweep.localCenter.x + m_sweep.localCenter.y * m_sweep.localCenter.y);
+    public float getInertia() {
+        return m_I + m_mass * Vec2.dot(m_sweep.localCenter, m_sweep.localCenter);
     }
 
     /**
-     * Get the mass data of the body. The rotational inertia is relative to the center of mass.
+     * Get the mass data of the body.
+     * The rotational inertia is relative to the center of mass.
      * Fills in a struct containing the mass, inertia and center of the body.
      */
-    public final void getMassData(MassData data) {
-        // data.mass = m_mass;
-        // data.I = m_I + m_mass * Vec2.dot(m_sweep.localCenter, m_sweep.localCenter);
-        // data.center.set(m_sweep.localCenter);
-
+    public void getMassData(MassData data) {
         data.mass = m_mass;
-        data.I = m_I
-                        + m_mass
-                        * (m_sweep.localCenter.x * m_sweep.localCenter.x + m_sweep.localCenter.y * m_sweep.localCenter.y);
-        data.center.x = m_sweep.localCenter.x;
-        data.center.y = m_sweep.localCenter.y;
+        data.I = getInertia();
+        data.center.set(m_sweep.localCenter);
     }
 
     /**
-     * Set the mass properties to override the mass properties of the fixtures. Note that this changes
-     * the center of mass position. Note that creating or destroying fixtures can also alter the mass.
+     * Set the mass properties to override the mass properties of the fixtures.
+     * Note that this changes the center of mass position.
+     * Note that creating or destroying fixtures can also alter the mass.
      * This function has no effect if the body isn't dynamic.
      *
      * @param massData the mass properties.
      */
-    public final void setMassData(MassData massData) {
+    public void setMassData(MassData massData) {
         world.assertNotLocked();
 
         if (type != BodyType.DYNAMIC) {
             return;
         }
 
-        m_invMass = 0.0f;
-        m_I = 0.0f;
-        m_invI = 0.0f;
+        m_invMass = 0;
+        m_I = 0;
+        m_invI = 0;
 
         m_mass = massData.mass;
-        if (m_mass <= 0.0f) {
-            m_mass = 1f;
+        if (m_mass <= 0) {
+            m_mass = 1;
         }
 
         m_invMass = 1.0f / m_mass;
 
-        if (massData.I > 0.0f && (m_flags & e_fixedRotationFlag) == 0) {
+        if (massData.I > 0 && (m_flags & e_fixedRotationFlag) == 0) {
             m_I = massData.I - m_mass * Vec2.dot(massData.center, massData.center);
-            assert (m_I > 0.0f);
+            assert (m_I > 0);
             m_invI = 1.0f / m_I;
         }
 
@@ -586,21 +560,20 @@ public class Body {
     private final MassData pmd = new MassData();
 
     /**
-     * This resets the mass properties to the sum of the mass properties of the fixtures. This
-     * normally does not need to be called unless you called setMassData to override the mass and you
+     * This resets the mass properties to the sum of the mass properties of the fixtures.
+     * This normally does not need to be called unless you called setMassData to override the mass and you
      * later want to reset the mass.
      */
-    public final void resetMassData() {
+    public void resetMassData() {
         // Compute mass data from shapes. Each shape has its own density.
-        m_mass = 0.0f;
-        m_invMass = 0.0f;
-        m_I = 0.0f;
-        m_invI = 0.0f;
+        m_mass = 0;
+        m_invMass = 0;
+        m_I = 0;
+        m_invI = 0;
         m_sweep.localCenter.setZero();
 
         // Static and kinematic bodies have zero mass.
         if (type == BodyType.STATIC || type == BodyType.KINEMATIC) {
-            // m_sweep.c0 = m_sweep.c = m_xf.position;
             m_sweep.c0.set(m_xf.p);
             m_sweep.c.set(m_xf.p);
             m_sweep.a0 = m_sweep.a;
@@ -672,13 +645,13 @@ public class Body {
      * @param localPoint a point on the body measured relative the the body's origin.
      * @return the same point expressed in world coordinates.
      */
-    public final Vec2 getWorldPoint(Vec2 localPoint) {
+    public Vec2 getWorldPoint(Vec2 localPoint) {
         Vec2 v = new Vec2();
         getWorldPointToOut(localPoint, v);
         return v;
     }
 
-    public final void getWorldPointToOut(Vec2 localPoint, Vec2 out) {
+    public void getWorldPointToOut(Vec2 localPoint, Vec2 out) {
         Transform.mulToOut(m_xf, localPoint, out);
     }
 
@@ -688,17 +661,17 @@ public class Body {
      * @param localVector a vector fixed in the body.
      * @return the same vector expressed in world coordinates.
      */
-    public final Vec2 getWorldVector(Vec2 localVector) {
+    public Vec2 getWorldVector(Vec2 localVector) {
         Vec2 out = new Vec2();
         getWorldVectorToOut(localVector, out);
         return out;
     }
 
-    public final void getWorldVectorToOut(Vec2 localVector, Vec2 out) {
+    public void getWorldVectorToOut(Vec2 localVector, Vec2 out) {
         Rotation.mulToOut(m_xf.q, localVector, out);
     }
 
-    public final void getWorldVectorToOutUnsafe(Vec2 localVector, Vec2 out) {
+    public void getWorldVectorToOutUnsafe(Vec2 localVector, Vec2 out) {
         Rotation.mulToOutUnsafe(m_xf.q, localVector, out);
     }
 
@@ -708,13 +681,13 @@ public class Body {
      * @param worldPoint point in world coordinates.
      * @return the corresponding local point relative to the body's origin.
      */
-    public final Vec2 getLocalPoint(Vec2 worldPoint) {
+    public Vec2 getLocalPoint(Vec2 worldPoint) {
         Vec2 out = new Vec2();
         getLocalPointToOut(worldPoint, out);
         return out;
     }
 
-    public final void getLocalPointToOut(Vec2 worldPoint, Vec2 out) {
+    public void getLocalPointToOut(Vec2 worldPoint, Vec2 out) {
         Transform.mulTransToOut(m_xf, worldPoint, out);
     }
 
@@ -724,17 +697,17 @@ public class Body {
      * @param worldVector vector in world coordinates.
      * @return the corresponding local vector.
      */
-    public final Vec2 getLocalVector(Vec2 worldVector) {
+    public Vec2 getLocalVector(Vec2 worldVector) {
         Vec2 out = new Vec2();
         getLocalVectorToOut(worldVector, out);
         return out;
     }
 
-    public final void getLocalVectorToOut(Vec2 worldVector, Vec2 out) {
+    public void getLocalVectorToOut(Vec2 worldVector, Vec2 out) {
         Rotation.mulTrans(m_xf.q, worldVector, out);
     }
 
-    public final void getLocalVectorToOutUnsafe(Vec2 worldVector, Vec2 out) {
+    public void getLocalVectorToOutUnsafe(Vec2 worldVector, Vec2 out) {
         Rotation.mulTransUnsafe(m_xf.q, worldVector, out);
     }
 
@@ -744,13 +717,13 @@ public class Body {
      * @param worldPoint point in world coordinates.
      * @return the world velocity of a point.
      */
-    public final Vec2 getLinearVelocityFromWorldPoint(Vec2 worldPoint) {
+    public Vec2 getLinearVelocityFromWorldPoint(Vec2 worldPoint) {
         Vec2 out = new Vec2();
         getLinearVelocityFromWorldPointToOut(worldPoint, out);
         return out;
     }
 
-    public final void getLinearVelocityFromWorldPointToOut(Vec2 worldPoint, Vec2 out) {
+    public void getLinearVelocityFromWorldPointToOut(Vec2 worldPoint, Vec2 out) {
         final float tempX = worldPoint.x - m_sweep.c.x;
         final float tempY = worldPoint.y - m_sweep.c.y;
         out.x = -m_angularVelocity * tempY + m_linearVelocity.x;
@@ -763,13 +736,13 @@ public class Body {
      * @param localPoint point in local coordinates.
      * @return the world velocity of a point.
      */
-    public final Vec2 getLinearVelocityFromLocalPoint(Vec2 localPoint) {
+    public Vec2 getLinearVelocityFromLocalPoint(Vec2 localPoint) {
         Vec2 out = new Vec2();
         getLinearVelocityFromLocalPointToOut(localPoint, out);
         return out;
     }
 
-    public final void getLinearVelocityFromLocalPointToOut(Vec2 localPoint, Vec2 out) {
+    public void getLinearVelocityFromLocalPointToOut(Vec2 localPoint, Vec2 out) {
         getWorldPointToOut(localPoint, out);
         getLinearVelocityFromWorldPointToOut(out, out);
     }
@@ -777,29 +750,37 @@ public class Body {
     /**
      * Get the linear damping of the body.
      **/
-    public final float getLinearDamping() {
+    public float getLinearDamping() {
         return linearDamping;
     }
 
     /**
      * Set the linear damping of the body.
      **/
-    public final void setLinearDamping(float linearDamping) {
+    public void setLinearDamping(float linearDamping) {
         this.linearDamping = linearDamping;
     }
 
     /**
      * Get the angular damping of the body.
      **/
-    public final float getAngularDamping() {
+    public float getAngularDamping() {
         return angularDamping;
     }
 
     /**
      * Set the angular damping of the body.
      **/
-    public final void setAngularDamping(float angularDamping) {
+    public void setAngularDamping(float angularDamping) {
         this.angularDamping = angularDamping;
+    }
+
+    public float getSleepTime() {
+        return sleepTime;
+    }
+
+    void setSleepTime(float sleepTime) {
+        this.sleepTime = sleepTime;
     }
 
     /**
@@ -810,7 +791,8 @@ public class Body {
     }
 
     /**
-     * Set the type of this body. This may alter the mass and velocity.
+     * Set the type of this body.
+     * This may alter the mass and velocity.
      *
      * @param type body type
      */
@@ -838,36 +820,40 @@ public class Body {
         m_force.setZero();
         m_torque = 0.0f;
 
+        destroyAttachedContacts();
+
+        // Touch the proxies so that new contacts will be created (when appropriate)
+        BroadPhase broadPhase = world.getContactManager().broadPhase;
+        for (Fixture f : fixtures) {
+            int proxyCount = f.getProxyCount();
+            for (int i = 0; i < proxyCount; ++i) {
+                broadPhase.touchProxy(f.getProxyId(i));
+            }
+        }
+    }
+
+    private void destroyAttachedContacts() {
         // Delete the attached contacts.
         ContactEdge ce = m_contactList;
         while (ce != null) {
             ContactEdge ce0 = ce;
             ce = ce.next;
-            world.m_contactManager.destroy(ce0.contact);
+            world.getContactManager().destroy(ce0.contact);
         }
         m_contactList = null;
-
-        // Touch the proxies so that new contacts will be created (when appropriate)
-        BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
-        for (Fixture f : fixtures) {
-            int proxyCount = f.getProxyCount();
-            for (int i = 0; i < proxyCount; ++i) {
-                broadPhase.touchProxy(f.m_proxies[i].proxyId);
-            }
-        }
     }
 
     /**
      * @return is this body treated like a bullet for continuous collision detection?
      **/
-    public final boolean isBullet() {
+    public boolean isBullet() {
         return (m_flags & e_bulletFlag) == e_bulletFlag;
     }
 
     /**
      * Should this body be treated like a bullet for continuous collision detection?
      **/
-    public final void setBullet(boolean flag) {
+    public void setBullet(boolean flag) {
         if (flag) {
             m_flags |= e_bulletFlag;
         } else {
@@ -876,7 +862,8 @@ public class Body {
     }
 
     /**
-     * You can disable sleeping on this body. If you disable sleeping, the body will be woken.
+     * You can disable sleeping on this body.
+     * If you disable sleeping, the body will be woken.
      *
      * @param flag sleep flag
      */
@@ -897,9 +884,10 @@ public class Body {
     }
 
     /**
-     * Set the sleep state of the body. A sleeping body has very low CPU cost.
+     * Set the sleep state of the body.
+     * A sleeping body has very low CPU cost.
      *
-     * @param flag set to true to put body to sleep, false to wake it.
+     * @param flag set to true to put body to sleep, false to wake it
      */
     public void setAwake(boolean flag) {
         if (flag) {
@@ -927,14 +915,16 @@ public class Body {
     }
 
     /**
-     * Set the active state of the body. An inactive body is not simulated and cannot be collided with
-     * or woken up. If you pass a flag of true, all fixtures will be added to the broad-phase. If you
-     * pass a flag of false, all fixtures will be removed from the broad-phase and all contacts will
-     * be destroyed. Fixtures and joints are otherwise unaffected. You may continue to create/destroy
-     * fixtures and joints on inactive bodies. Fixtures on an inactive body are implicitly inactive
-     * and will not participate in collisions, ray-casts, or queries. Joints connected to an inactive
-     * body are implicitly inactive. An inactive body is still owned by a World object and remains in
-     * the body list.
+     * Set the active state of the body.
+     * An inactive body is not simulated and cannot be collided with or woken up.
+     * If you pass a flag of true, all fixtures will be added to the broad-phase.
+     * If you pass a flag of false, all fixtures will be removed from the broad-phase and all contacts will be destroyed.
+     * Fixtures and joints are otherwise unaffected.
+     * You may continue to create/destroy fixtures and joints on inactive bodies.
+     * Fixtures on an inactive body are implicitly inactive
+     * and will not participate in collisions, ray-casts, or queries.
+     * Joints connected to an inactive body are implicitly inactive.
+     * An inactive body is still owned by a World object and remains in the body list.
      *
      * @param flag active flag
      */
@@ -949,7 +939,7 @@ public class Body {
             m_flags |= e_activeFlag;
 
             // Create all proxies.
-            BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
+            BroadPhase broadPhase = world.getContactManager().broadPhase;
             for (Fixture f : fixtures) {
                 f.createProxies(broadPhase, m_xf);
             }
@@ -959,19 +949,12 @@ public class Body {
             m_flags &= ~e_activeFlag;
 
             // Destroy all proxies.
-            BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
+            BroadPhase broadPhase = world.getContactManager().broadPhase;
             for (Fixture f : fixtures) {
                 f.destroyProxies(broadPhase);
             }
 
-            // Destroy the attached contacts.
-            ContactEdge ce = m_contactList;
-            while (ce != null) {
-                ContactEdge ce0 = ce;
-                ce = ce.next;
-                world.m_contactManager.destroy(ce0.contact);
-            }
-            m_contactList = null;
+            destroyAttachedContacts();
         }
     }
 
@@ -1007,7 +990,7 @@ public class Body {
     /**
      * Get the list of all joints attached to this body.
      **/
-    public final JointEdge getJointList() {
+    public JointEdge getJointList() {
         return m_jointList;
     }
 
@@ -1016,42 +999,42 @@ public class Body {
      * Note: this list changes during the time step and you may miss some collisions if you don't
      * use ContactListener.
      */
-    public final ContactEdge getContactList() {
+    public ContactEdge getContactList() {
         return m_contactList;
     }
 
     /**
      * Get the next body in the world's body list.
      **/
-    public final Body getNext() {
-        return m_next;
-    }
+//    public Body getNext() {
+//        return m_next;
+//    }
 
     /**
      * Get the user data pointer that was provided in the body definition.
      **/
-    public final Object getUserData() {
+    public Object getUserData() {
         return userData;
     }
 
     /**
      * Set the user data. Use this to store your application specific data.
      */
-    public final void setUserData(Object data) {
+    public void setUserData(Object data) {
         userData = data;
     }
 
     /**
      * Get the parent world of this body.
      */
-    public final World getWorld() {
+    public World getWorld() {
         return world;
     }
 
     // djm pooling
     private final Transform pxf = new Transform();
 
-    protected final void synchronizeFixtures() {
+    void synchronizeFixtures() {
         final Transform xf1 = pxf;
         // xf1.position = m_sweep.c0 - Mul(xf1.R, m_sweep.localCenter);
 
@@ -1066,11 +1049,11 @@ public class Body {
         // end inline
 
         for (Fixture f : fixtures) {
-            f.synchronize(world.m_contactManager.m_broadPhase, xf1, m_xf);
+            f.synchronize(world.getContactManager().broadPhase, xf1, m_xf);
         }
     }
 
-    public final void synchronizeTransform() {
+    void synchronizeTransform() {
         // m_xf.q.set(m_sweep.a);
         //
         // // m_xf.position = m_sweep.c - Mul(m_xf.R, m_sweep.localCenter);
@@ -1086,8 +1069,8 @@ public class Body {
     }
 
     /**
-     * This is used to prevent connected bodies from colliding. It may lie, depending on the
-     * collideConnected flag.
+     * This is used to prevent connected bodies from colliding.
+     * It may lie, depending on the collideConnected flag.
      *
      * @param other other body
      * @return if they should collide
@@ -1110,7 +1093,7 @@ public class Body {
         return true;
     }
 
-    protected final void advance(float t) {
+    void advance(float t) {
         // Advance to the new safe time. This doesn't sync the broad-phase.
         m_sweep.advance(t);
         m_sweep.c.set(m_sweep.c0);

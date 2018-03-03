@@ -16,26 +16,23 @@ import com.almasb.fxgl.physics.box2d.common.Transform;
  *
  * @author daniel
  */
-public class WorldManifold {
+public final class WorldManifold {
     /**
      * World vector pointing from A to B
      */
-    public final Vec2 normal;
+    public final Vec2 normal = new Vec2();
 
     /**
      * World contact point (point of intersection)
      */
-    public final Vec2[] points;
+    public final Vec2[] points = new Vec2[JBoxSettings.maxManifoldPoints];
 
     /**
      * A negative value indicates overlap, in meters.
      */
-    public final float[] separations;
+    private final float[] separations = new float[JBoxSettings.maxManifoldPoints];
 
     public WorldManifold() {
-        normal = new Vec2();
-        points = new Vec2[JBoxSettings.maxManifoldPoints];
-        separations = new float[JBoxSettings.maxManifoldPoints];
         for (int i = 0; i < JBoxSettings.maxManifoldPoints; i++) {
             points[i] = new Vec2();
         }
@@ -44,8 +41,10 @@ public class WorldManifold {
     private final Vec2 pool3 = new Vec2();
     private final Vec2 pool4 = new Vec2();
 
-    public final void initialize(final Manifold manifold, final Transform xfA, float radiusA,
+    public void initialize(final Manifold manifold,
+                                 final Transform xfA, float radiusA,
                                  final Transform xfB, float radiusB) {
+
         if (manifold.pointCount == 0) {
             return;
         }

@@ -7,7 +7,6 @@
 package sandbox.rts;
 
 import com.almasb.fxgl.ai.fsm.State;
-import com.almasb.fxgl.ai.msg.Telegram;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entity;
 
@@ -113,9 +112,4 @@ public enum WorkerState implements State<Entity> {
 
     @Override
     public void exit(Entity entity) {}
-
-    @Override
-    public boolean onMessage(Entity entity, Telegram telegram) {
-        return false;
-    }
 }
