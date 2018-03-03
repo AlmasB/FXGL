@@ -128,9 +128,11 @@ class AppStateMachineTest {
         }
 
         stateMachine.addListener(listener)
-
         stateMachine.startPlay()
+        assertThat(count, `is`(4))
 
+        stateMachine.removeListener(listener)
+        stateMachine.startPlay()
         assertThat(count, `is`(4))
     }
 
@@ -177,6 +179,23 @@ class AppStateMachineTest {
         stateMachine.popState()
 
         assertThat(count, `is`(4))
+    }
+
+    @Test
+    fun `Throw if intro or menus not available`() {
+        stateMachine = AppStateMachine(Loading, Play, Dialog, AppState.EMPTY, AppState.EMPTY, AppState.EMPTY, Initial)
+
+        assertThrows(IllegalStateException::class.java, {
+            stateMachine.introState
+        })
+
+        assertThrows(IllegalStateException::class.java, {
+            stateMachine.mainMenuState
+        })
+
+        assertThrows(IllegalStateException::class.java, {
+            stateMachine.gameMenuState
+        })
     }
 
     @Test
