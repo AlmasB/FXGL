@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.saving.DataFile
 import com.almasb.fxgl.scene.FXGLScene
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -85,7 +84,7 @@ class AppStateMachineTest {
         stateMachine.startIntro()
         assertTrue(stateMachine.currentState === Intro)
 
-        stateMachine.startLoad(DataFile.EMPTY)
+        stateMachine.startLoad()
         assertTrue(stateMachine.currentState === Loading)
 
         stateMachine.startPlay()
@@ -129,9 +128,11 @@ class AppStateMachineTest {
         }
 
         stateMachine.addListener(listener)
-
         stateMachine.startPlay()
+        assertThat(count, `is`(4))
 
+        stateMachine.removeListener(listener)
+        stateMachine.startPlay()
         assertThat(count, `is`(4))
     }
 
@@ -181,6 +182,23 @@ class AppStateMachineTest {
     }
 
     @Test
+    fun `Throw if intro or menus not available`() {
+        stateMachine = AppStateMachine(Loading, Play, Dialog, AppState.EMPTY, AppState.EMPTY, AppState.EMPTY, Initial)
+
+        assertThrows(IllegalStateException::class.java, {
+            stateMachine.introState
+        })
+
+        assertThrows(IllegalStateException::class.java, {
+            stateMachine.mainMenuState
+        })
+
+        assertThrows(IllegalStateException::class.java, {
+            stateMachine.gameMenuState
+        })
+    }
+
+    @Test
     fun `update`() {
         var count = 0.0
 
@@ -200,7 +218,7 @@ class AppStateMachineTest {
 
         assertThat(count, `is`(-1.0))
 
-        stateMachine.startLoad(DataFile.EMPTY)
+        stateMachine.startLoad()
 
         stateMachine.onUpdate(1.0)
 

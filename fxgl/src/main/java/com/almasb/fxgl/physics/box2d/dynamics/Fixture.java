@@ -227,7 +227,7 @@ public final class Fixture {
         }
 
         // Touch each proxy so that new pairs may be created
-        BroadPhase broadPhase = world.getContactManager().m_broadPhase;
+        BroadPhase broadPhase = world.getContactManager().broadPhase;
         for (int i = 0; i < proxyCount; ++i) {
             broadPhase.touchProxy(proxies[i].proxyId);
         }

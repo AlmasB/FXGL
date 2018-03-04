@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.physics.box2d.dynamics.contacts;
 
-
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.collision.ContactID;
 import com.almasb.fxgl.physics.box2d.collision.Manifold;
@@ -210,13 +209,11 @@ public abstract class Contact {
     private final Manifold oldManifold = new Manifold();
 
     public void update(ContactListener listener) {
-
         oldManifold.set(m_manifold);
 
         // Re-enable this contact.
         m_flags |= ENABLED_FLAG;
 
-        boolean touching = false;
         boolean wasTouching = (m_flags & TOUCHING_FLAG) == TOUCHING_FLAG;
 
         boolean sensorA = m_fixtureA.isSensor();
@@ -227,6 +224,8 @@ public abstract class Contact {
         Body bodyB = m_fixtureB.getBody();
         Transform xfA = bodyA.getTransform();
         Transform xfB = bodyB.getTransform();
+
+        boolean touching;
 
         if (sensor) {
             Shape shapeA = m_fixtureA.getShape();

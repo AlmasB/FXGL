@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="24" tileheight="24" infinite="0" nextobjectid="4">
+ <tileset firstgid="1" name="sewer_tileset" tilewidth="24" tileheight="24" tilecount="72" columns="8">
+  <image source="sewer_tileset.png" trans="ff00ff" width="192" height="217"/>
+ </tileset>
+ <layer name="Bottom" width="64" height="64">
+  <data encoding="base64" compression="zlib">
+   eJztmN1qwkAQRpfeabWgFaHqja1af97D93+kjpiBZdikmwTd7Ho+OFCMRc+E4Vszdc59CN8VE2HqvfYjbCq25rp/LfSetvjfw372f3SN/Vz84/13wlnYV9z+PmTuvxDehGWEf4n3fySMhfce/jrDtujMU/rPhLnw2cNfZxjit+Gazlz36pLA39LFX2focwy8ZgnNPDf/k7vfuz60ue9D679UDMX/S1gJ6xf13wb+b8j+tnf69r/uf5cdTuHv905M//vzKWH//d6J6X9/PiXsf13v1fXfbT7Xaj4l7H+bLrbdHtrx3PY/xa7ijz/++fhrp1me3XGp/LXTmroxNY/2t8+0Svn9F+tvn2mVcv6N9bfPtOrOv6X667l37prPvyX61z3TevYZN5V/DuCPP/74448//vjjjz/++OOPP/74448//vjjjz8hhBBCCCGEkNfLHzZhCrU=
+  </data>
+ </layer>
+ <layer name="Top" width="64" height="64" opacity="0.49">
+  <data encoding="base64" compression="zlib">
+   eJzt1zEOwjAQRFEXhCrJVVKEQIHouP+Z2CK+AhPJ70lfbsfltnYtz/SAMP8f22j/36r97FEd2Tl/96re1fd8P9k57VZN1T28I2WulmpNDwEAAAjpd2FvtPuw34U99yEAAAAAAAAAAAAACT+/lQOV
+  </data>
+ </layer>
+ <objectgroup name="Collidables">
+  <object id="1" name="name1" type="type1" x="96" y="0" width="72" height="336"/>
+  <object id="2" name="name2" type="type2" x="504" y="0" width="360" height="168"/>
+ </objectgroup>
+ <objectgroup name="Group2">
+  <object id="3" name="no name" x="240" y="504" width="120" height="120"/>
+ </objectgroup>
+</map>

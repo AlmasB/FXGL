@@ -16,8 +16,6 @@
 
 package com.almasb.fxgl.ai.fsm;
 
-import com.almasb.fxgl.ai.msg.Telegram;
-
 /**
  * Default implementation of the {@link StateMachine} interface.
  *
@@ -180,27 +178,27 @@ public class DefaultStateMachine<E, S extends State<E>> implements StateMachine<
         return currentState == state;
     }
 
-    /**
-     * Handles received telegrams. The telegram is first routed to the current state. If the current state does not deal with the
-     * message, it's routed to the global state's message handler.
-     *
-     * @param telegram the received telegram
-     * @return true if telegram has been successfully handled; false otherwise.
-     */
-    @Override
-    public boolean handleMessage(Telegram telegram) {
-
-        // First see if the current state is valid and that it can handle the message
-        if (currentState != null && currentState.onMessage(owner, telegram)) {
-            return true;
-        }
-
-        // If not, and if a global state has been implemented, send
-        // the message to the global state
-        if (globalState != null && globalState.onMessage(owner, telegram)) {
-            return true;
-        }
-
-        return false;
-    }
+//    /**
+//     * Handles received telegrams. The telegram is first routed to the current state. If the current state does not deal with the
+//     * message, it's routed to the global state's message handler.
+//     *
+//     * @param telegram the received telegram
+//     * @return true if telegram has been successfully handled; false otherwise.
+//     */
+//    @Override
+//    public boolean handleMessage(Telegram telegram) {
+//
+//        // First see if the current state is valid and that it can handle the message
+//        if (currentState != null && currentState.onMessage(owner, telegram)) {
+//            return true;
+//        }
+//
+//        // If not, and if a global state has been implemented, send
+//        // the message to the global state
+//        if (globalState != null && globalState.onMessage(owner, telegram)) {
+//            return true;
+//        }
+//
+//        return false;
+//    }
 }

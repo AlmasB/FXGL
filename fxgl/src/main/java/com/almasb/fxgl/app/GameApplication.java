@@ -407,7 +407,7 @@ public abstract class GameApplication extends Application {
         }
     }
 
-    protected void stepLoop() {
+    protected final void stepLoop() {
         long frameStart = System.nanoTime();
 
         tick.set(tick.get() + 1);
@@ -440,13 +440,15 @@ public abstract class GameApplication extends Application {
     }
 
     private Profiler profiler;
+    private DataFile loadDataFile = DataFile.getEMPTY();
 
     /**
      * (Re-)initializes the user application as new and starts the game.
      */
-    protected void startNewGame() {
+    protected final void startNewGame() {
         log.debug("Starting new game");
-        stateMachine.startLoad(DataFile.getEMPTY());
+        loadDataFile = DataFile.getEMPTY();
+        stateMachine.startLoad();
     }
 
     /**
@@ -456,8 +458,20 @@ public abstract class GameApplication extends Application {
      */
     void startLoadedGame(DataFile dataFile) {
         log.debug("Starting loaded game");
-        // https://github.com/AlmasB/FXGL/issues/476
-        stateMachine.startLoad(dataFile);
+        loadDataFile = dataFile;
+        stateMachine.startLoad();
+    }
+
+    /**
+     * Callback to finalize init game.
+     * The data file to load will be set before this call.
+     */
+    void internalInitGame() {
+        if (loadDataFile == DataFile.getEMPTY()) {
+            initGame();
+        } else {
+            loadState(loadDataFile);
+        }
     }
 
     /**

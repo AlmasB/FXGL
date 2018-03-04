@@ -7,18 +7,13 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>1M-SNAPSHOT</version>
+        <version>0.4.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>fxgl</artifactId>
     <packaging>jar</packaging>
-
+    
     <repositories>
-        <repository>
-            <id>kotlinx</id>
-            <url>https://kotlin.bintray.com/kotlinx/</url>
-        </repository>
-
         <repository>
             <id>oss.sonatype.org-snapshot</id>
             <url>http://oss.sonatype.org/content/repositories/snapshots</url>

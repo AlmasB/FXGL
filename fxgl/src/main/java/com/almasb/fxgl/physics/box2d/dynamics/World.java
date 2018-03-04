@@ -65,10 +65,7 @@ public final class World {
 
     private Array<Body> bodies = new Array<>(WORLD_POOL_SIZE);
 
-    //private Body m_bodyList = null;
     private Joint m_jointList = null;
-
-    private int bodyCount = 0;
     private int jointCount = 0;
 
     private final Vec2 gravity = new Vec2();
@@ -100,8 +97,6 @@ public final class World {
 
         bodies.add(b);
 
-        ++bodyCount;
-
         return b;
     }
 
@@ -113,7 +108,7 @@ public final class World {
      * @param body body to destroy
      */
     public void destroyBody(Body body) {
-        assert (bodyCount > 0);
+        assert bodies.contains(body, true);
         assertNotLocked();
 
         // Delete the attached joints.
@@ -145,7 +140,7 @@ public final class World {
                 destructionListener.onDestroy(f);
             }
 
-            f.destroyProxies(contactManager.m_broadPhase);
+            f.destroyProxies(contactManager.broadPhase);
             f.destroy();
 
             // jbox2dTODO djm recycle fixtures (here or in that destroy method)
@@ -154,8 +149,6 @@ public final class World {
         body.getFixtures().clear();
 
         bodies.removeValueByIdentity(body);
-
-        --bodyCount;
         // jbox2dTODO djm recycle body
     }
 
@@ -377,13 +370,13 @@ public final class World {
         }
 
         // Size the island for the worst case.
-        island.init(bodyCount, contactManager.m_contactCount, jointCount, contactManager.m_contactListener);
+        island.init(getBodyCount(), contactManager.contactCount, jointCount, contactManager.getContactListener());
 
         // Clear all the island flags.
         for (Body b : bodies) {
             b.m_flags &= ~Body.e_islandFlag;
         }
-        for (Contact c = contactManager.m_contactList; c != null; c = c.m_next) {
+        for (Contact c = contactManager.contactList; c != null; c = c.m_next) {
             c.m_flags &= ~Contact.ISLAND_FLAG;
         }
         for (Joint j = m_jointList; j != null; j = j.m_next) {
@@ -391,7 +384,7 @@ public final class World {
         }
 
         // Build and simulate all awake islands.
-        int stackSize = bodyCount;
+        int stackSize = getBodyCount();
         if (stack.length < stackSize) {
             stack = new Body[stackSize];
         }
@@ -535,7 +528,7 @@ public final class World {
     private void solveTOI(final TimeStep step) {
 
         final Island island = toiIsland;
-        island.init(2 * JBoxSettings.maxTOIContacts, JBoxSettings.maxTOIContacts, 0, contactManager.m_contactListener);
+        island.init(2 * JBoxSettings.maxTOIContacts, JBoxSettings.maxTOIContacts, 0, contactManager.getContactListener());
 
         if (stepComplete) {
             for (Body b : bodies) {
@@ -543,7 +536,7 @@ public final class World {
                 b.m_sweep.alpha0 = 0.0f;
             }
 
-            for (Contact c = contactManager.m_contactList; c != null; c = c.m_next) {
+            for (Contact c = contactManager.contactList; c != null; c = c.m_next) {
                 // Invalidate TOI
                 c.m_flags &= ~(Contact.TOI_FLAG | Contact.ISLAND_FLAG);
                 c.m_toiCount = 0;
@@ -557,7 +550,7 @@ public final class World {
             Contact minContact = null;
             float minAlpha = 1.0f;
 
-            for (Contact c = contactManager.m_contactList; c != null; c = c.m_next) {
+            for (Contact c = contactManager.contactList; c != null; c = c.m_next) {
                 // Is this contact disabled?
                 if (!c.isEnabled()) {
                     continue;
@@ -669,7 +662,7 @@ public final class World {
             bB.advance(minAlpha);
 
             // The TOI contact likely has some new contact points.
-            minContact.update(contactManager.m_contactListener);
+            minContact.update(contactManager.getContactListener());
             minContact.m_flags &= ~Contact.TOI_FLAG;
             ++minContact.m_toiCount;
 
@@ -739,7 +732,7 @@ public final class World {
                         }
 
                         // Update the contact points
-                        contact.update(contactManager.m_contactListener);
+                        contact.update(contactManager.getContactListener());
 
                         // Was the contact disabled by the user?
                         if (!contact.isEnabled()) {
@@ -833,9 +826,9 @@ public final class World {
      * @param aabb the query box
      */
     public void queryAABB(QueryCallback callback, AABB aabb) {
-        wqwrapper.broadPhase = contactManager.m_broadPhase;
+        wqwrapper.broadPhase = contactManager.broadPhase;
         wqwrapper.callback = callback;
-        contactManager.m_broadPhase.query(wqwrapper, aabb);
+        contactManager.broadPhase.query(wqwrapper, aabb);
     }
 
     /**
@@ -876,12 +869,12 @@ public final class World {
      * @param point2 the ray ending point
      */
     public void raycast(RayCastCallback callback, Vec2 point1, Vec2 point2) {
-        wrcwrapper.broadPhase = contactManager.m_broadPhase;
+        wrcwrapper.broadPhase = contactManager.broadPhase;
         wrcwrapper.callback = callback;
         input.maxFraction = 1.0f;
         input.p1.set(point1);
         input.p2.set(point2);
-        contactManager.m_broadPhase.raycast(wrcwrapper, input);
+        contactManager.broadPhase.raycast(wrcwrapper, input);
     }
 
     /**
@@ -1243,7 +1236,7 @@ public final class World {
      * @return the head of the world contact list.
      */
     public Contact getContactList() {
-        return contactManager.m_contactList;
+        return contactManager.contactList;
     }
 
     public boolean isSleepingAllowed() {
@@ -1284,14 +1277,14 @@ public final class World {
      * @return the number of broad-phase proxies
      */
     public int getProxyCount() {
-        return contactManager.m_broadPhase.getProxyCount();
+        return contactManager.broadPhase.getProxyCount();
     }
 
     /**
      * @return the number of bodies
      */
     public int getBodyCount() {
-        return bodyCount;
+        return bodies.size();
     }
 
     /**
@@ -1305,28 +1298,28 @@ public final class World {
      * @return the number of contacts (each may have 0 or more contact points)
      */
     public int getContactCount() {
-        return contactManager.m_contactCount;
+        return contactManager.contactCount;
     }
 
     /**
      * @return the height of the dynamic tree
      */
     public int getTreeHeight() {
-        return contactManager.m_broadPhase.getTreeHeight();
+        return contactManager.broadPhase.getTreeHeight();
     }
 
     /**
      * @return the balance of the dynamic tree
      */
     public int getTreeBalance() {
-        return contactManager.m_broadPhase.getTreeBalance();
+        return contactManager.broadPhase.getTreeBalance();
     }
 
     /**
      * @return the quality of the dynamic tree
      */
     public float getTreeQuality() {
-        return contactManager.m_broadPhase.getTreeQuality();
+        return contactManager.broadPhase.getTreeQuality();
     }
 
     /**
@@ -1427,7 +1420,7 @@ public final class World {
      * @param filter contact filter
      */
     public void setContactFilter(ContactFilter filter) {
-        contactManager.m_contactFilter = filter;
+        contactManager.setcontactFilter(filter);
     }
 
     /**
@@ -1436,7 +1429,7 @@ public final class World {
      * @param listener contact listener
      */
     public void setContactListener(ContactListener listener) {
-        contactManager.m_contactListener = listener;
+        contactManager.setContactListener(listener);
     }
 
     void notifyNewFixture() {
