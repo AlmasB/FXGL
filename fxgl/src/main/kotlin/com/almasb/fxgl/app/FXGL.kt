@@ -22,6 +22,7 @@ import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.ui.FXGLDisplay
 import com.almasb.fxgl.util.Version
+import com.gluonhq.charm.down.Platform
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import java.io.IOException
@@ -49,6 +50,10 @@ class FXGL private constructor() {
         private val log = Logger.get("FXGL")
 
         private var configured = false
+
+        @JvmStatic fun isDesktop() = Platform.isDesktop()
+        @JvmStatic fun isAndroid() = Platform.isAndroid()
+        @JvmStatic fun isIOS() = Platform.isIOS()
 
         /**
          * @return FXGL system settings
@@ -114,14 +119,16 @@ class FXGL private constructor() {
             loadSystemProperties()
             loadUserProperties()
 
-            createRequiredDirs()
+            if (FXGL.isDesktop()) {
+                createRequiredDirs()
 
-            if (firstRun)
-                loadDefaultSystemData()
-            else
-                loadSystemData()
+                if (firstRun)
+                    loadDefaultSystemData()
+                else
+                    loadSystemData()
 
-            runUpdaterAndWait()
+                runUpdaterAndWait()
+            }
         }
 
         private fun loadSystemProperties() {

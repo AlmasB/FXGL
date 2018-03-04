@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.ui
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
 import javafx.collections.ObservableList
 import javafx.scene.control.*
@@ -19,7 +20,11 @@ import javafx.scene.text.Font
 class FXGLUIFactory : UIFactory {
 
     override fun newFont(size: Double): Font {
-        return FXGLAssets.UI_FONT.newFont(size)
+        if (FXGL.isDesktop()) {
+            return FXGLAssets.UI_FONT.newFont(size)
+        } else {
+            return Font.font(size)
+        }
     }
 
     override fun newButton(text: String): Button {
