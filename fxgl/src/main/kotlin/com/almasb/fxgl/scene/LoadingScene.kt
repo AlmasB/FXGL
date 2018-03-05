@@ -7,6 +7,7 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.centerTextBind
 import javafx.concurrent.Task
 import javafx.scene.control.ProgressBar
 import javafx.scene.paint.Color
@@ -37,7 +38,7 @@ open class LoadingScene : FXGLScene() {
             fill = Color.WHITE
         }
 
-        FXGL.getUIFactory().centerTextBind(
+        centerTextBind(
                 text,
                 settings.width / 2.0,
                 settings.height * 4 / 5.0

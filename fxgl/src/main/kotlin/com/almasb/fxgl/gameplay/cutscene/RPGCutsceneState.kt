@@ -7,6 +7,7 @@
 package com.almasb.fxgl.gameplay.cutscene
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.centerTextBind
 import javafx.beans.binding.Bindings
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
@@ -34,7 +35,7 @@ internal class RPGCutsceneState : CutsceneState() {
         textNPC.fill = Color.WHITE
         textNPC.font = Font.font(18.0)
         textNPC.wrappingWidth = FXGL.getAppWidth() - 100.0
-        FXGL.getUIFactory().centerTextBind(textNPC, FXGL.getAppWidth() / 2.0, 75.0)
+        centerTextBind(textNPC, FXGL.getAppWidth() / 2.0, 75.0)
 
         children.addAll(textNPC, boxPlayerLines)
     }

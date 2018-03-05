@@ -6,6 +6,7 @@
 
 package s05uimenus;
 
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.settings.GameSettings;
@@ -40,7 +41,7 @@ public class CenterTextSample extends GameApplication {
 
         getGameScene().addUINode(uiText);
 
-        getUIFactory().centerText(uiText);
+        DSLKt.centerText(uiText);
 
         // now comment above and uncomment below, see the difference
         //getUIFactory().centerTextBind(uiText);

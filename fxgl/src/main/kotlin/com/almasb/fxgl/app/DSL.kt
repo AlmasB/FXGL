@@ -231,6 +231,46 @@ fun addVarText(x: Double, y: Double, varName: String): Text {
             .also { getApp().gameScene.addUINode(it) }
 }
 
+fun centerTextX(text: Text, minX: Double, maxX: Double) {
+    text.translateX = (minX + maxX) / 2 - text.layoutBounds.width / 2
+}
+
+fun centerTextY(text: Text, minY: Double, maxY: Double) {
+    text.translateY = (minY + maxY) / 2 - text.layoutBounds.height / 2
+}
+
+fun centerText(text: Text) {
+    centerText(text, (FXGL.getAppWidth() / 2).toDouble(), (FXGL.getAppHeight() / 2).toDouble())
+}
+
+fun centerText(text: Text, x: Double, y: Double) {
+    text.translateX = x - text.layoutBounds.width / 2
+    text.translateY = y - text.layoutBounds.height / 2
+}
+
+/**
+ * Binds text to application center, i.e. text stays
+ * centered regardless of content size.
+ *
+ * @param text UI object
+ */
+fun centerTextBind(text: Text) {
+    centerTextBind(text, (FXGL.getAppWidth() / 2).toDouble(), (FXGL.getAppHeight() / 2).toDouble())
+}
+
+/**
+ * Binds text to given center point, i.e. text stays
+ * centered regardless of content size.
+ *
+ * @param text UI object
+ */
+fun centerTextBind(text: Text, x: Double, y: Double) {
+    text.layoutBoundsProperty().addListener { o, old, bounds ->
+        text.translateX = x - bounds.width / 2
+        text.translateY = y - bounds.height / 2
+    }
+}
+
 fun translate(node: Node, to: Point2D, duration: Duration): Animation<*> {
     return translate(node, Point2D(node.translateX, node.translateY), to, Duration.ZERO, duration)
 }

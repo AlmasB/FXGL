@@ -7,6 +7,7 @@
 package com.almasb.fxgl.gameplay.cutscene
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.centerTextBind
 import com.almasb.fxgl.input.UserAction
 import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
@@ -31,7 +32,7 @@ internal class JRPGCutsceneState : CutsceneState() {
         textRPG.translateX = 50.0
         textRPG.translateY = FXGL.getAppHeight() - 100.0
 
-        FXGL.getUIFactory().centerTextBind(textRPG, FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() - 100.0)
+        centerTextBind(textRPG, FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() - 100.0)
 
         children.addAll(textRPG)
 

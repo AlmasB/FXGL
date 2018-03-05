@@ -6,6 +6,7 @@
 
 package s07particles;
 
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.effect.ParticleControl;
@@ -115,7 +116,7 @@ public class SmokeSample extends GameApplication {
     protected void initUI() {
         debug = getUIFactory().newText("");
 
-        getUIFactory().centerText(debug);
+        DSLKt.centerText(debug);
 
         getGameScene().addUINode(debug);
     }

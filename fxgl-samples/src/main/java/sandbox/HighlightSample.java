@@ -6,6 +6,7 @@
 
 package sandbox;
 
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
@@ -72,7 +73,7 @@ public class HighlightSample extends GameApplication {
 
         text.setEffect(ds);
 
-        getUIFactory().centerText(text);
+        DSLKt.centerText(text);
 
         getGameScene().addUINode(text);
     }

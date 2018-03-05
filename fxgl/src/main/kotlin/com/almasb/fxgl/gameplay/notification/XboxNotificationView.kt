@@ -8,6 +8,7 @@ package com.almasb.fxgl.gameplay.notification
 
 import com.almasb.fxgl.animation.ParallelAnimation
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.centerTextX
 import com.almasb.fxgl.app.scale
 import com.almasb.fxgl.app.translate
 import com.almasb.fxgl.ui.Position
@@ -84,7 +85,7 @@ internal class XboxNotificationView : NotificationView() {
             }
         }
 
-        FXGL.getUIFactory().centerTextX(text1, 65.0, 395.0)
+        centerTextX(text1, 65.0, 395.0)
 
         scaleX = 0.0
         scaleY = 0.0
@@ -131,7 +132,7 @@ internal class XboxNotificationView : NotificationView() {
 
         children.add(text2)
 
-        FXGL.getUIFactory().centerTextX(text2, 65.0, 395.0)
+        centerTextX(text2, 65.0, 395.0)
 
         // move text 2 to replace text 1
         val anim = translate(text2, Point2D(text2.translateX, text2.translateY), Point2D(text2.translateX, 35.0), Duration.seconds(0.33))
