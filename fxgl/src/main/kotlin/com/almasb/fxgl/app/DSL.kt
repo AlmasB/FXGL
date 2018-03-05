@@ -6,6 +6,9 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.animation.AnimatedPoint2D
+import com.almasb.fxgl.animation.AnimatedValue
+import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.app.FXGL.Companion.getApp
 import com.almasb.fxgl.app.FXGL.Companion.getAssetLoader
 import com.almasb.fxgl.app.FXGL.Companion.getAudioPlayer
@@ -22,13 +25,16 @@ import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.texture.Texture
+import com.almasb.fxgl.util.EmptyRunnable
 import javafx.beans.property.*
 import javafx.event.Event
 import javafx.geometry.Point2D
+import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.text.Text
+import javafx.util.Duration
 import java.util.*
 import java.util.function.BiConsumer
 import java.util.function.Consumer
@@ -223,4 +229,156 @@ fun addVarText(x: Double, y: Double, varName: String): Text {
                 translateY = y
             }
             .also { getApp().gameScene.addUINode(it) }
+}
+
+fun translate(node: Node, to: Point2D, duration: Duration): Animation<*> {
+    return translate(node, Point2D(node.translateX, node.translateY), to, Duration.ZERO, duration)
+}
+
+fun translate(node: Node, from: Point2D, to: Point2D, duration: Duration): Animation<*> {
+    return translate(node, from, to, Duration.ZERO, duration)
+}
+
+fun translate(node: Node, from: Point2D, to: Point2D, delay: Duration, duration: Duration): Animation<*> {
+    return translate(node, from, to, delay, duration, EmptyRunnable)
+}
+
+fun translate(node: Node, from: Point2D, to: Point2D, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+    val anim = object : Animation<Point2D>(delay, duration, 1, AnimatedPoint2D(from, to)) {
+
+        override fun onProgress(value: Point2D) {
+            node.translateX = value.x
+            node.translateY = value.y
+        }
+    }
+    anim.onFinished = onFinishedAction
+    return anim
+}
+
+fun fadeIn(node: Node, duration: Duration): Animation<*> {
+    return fadeIn(node, duration, EmptyRunnable)
+}
+
+fun fadeIn(node: Node, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+    return fadeIn(node, Duration.ZERO, duration, onFinishedAction)
+}
+
+fun fadeIn(node: Node, delay: Duration, duration: Duration): Animation<*> {
+    return fadeIn(node, delay, duration, EmptyRunnable)
+}
+
+fun fadeIn(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+    val anim = object : Animation<Double>(delay, duration, 1, AnimatedValue(0.0, 1.0)) {
+        override fun onProgress(value: Double) {
+            node.opacity = value
+        }
+    }
+    anim.onFinished = onFinishedAction
+    return anim
+}
+
+fun fadeOut(node: Node, duration: Duration): Animation<*> {
+    return fadeOut(node, duration, EmptyRunnable)
+}
+
+fun fadeOut(node: Node, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+    return fadeOut(node, Duration.ZERO, duration, onFinishedAction)
+}
+
+fun fadeOut(node: Node, delay: Duration, duration: Duration): Animation<*> {
+    return fadeOut(node, delay, duration, EmptyRunnable)
+}
+
+fun fadeOut(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+    val anim = fadeIn(node, delay, duration, onFinishedAction)
+
+    // fade out is reverse fade in
+    anim.isReverse = true
+    return anim
+}
+
+fun fadeInOut(node: Node, duration: Duration): Animation<*> {
+    return fadeInOut(node, duration, EmptyRunnable)
+}
+
+fun fadeInOut(node: Node, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+    return fadeInOut(node, Duration.ZERO, duration, onFinishedAction)
+}
+
+fun fadeInOut(node: Node, delay: Duration, duration: Duration): Animation<*> {
+    return fadeInOut(node, delay, duration, EmptyRunnable)
+}
+
+fun fadeInOut(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+    val anim = fadeIn(node, delay, duration, onFinishedAction)
+    anim.cycleCount = 2
+    anim.isAutoReverse = true
+    return anim
+}
+
+fun fadeOutIn(node: Node, duration: Duration): Animation<*> {
+    return fadeOutIn(node, duration, EmptyRunnable)
+}
+
+fun fadeOutIn(node: Node, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+    return fadeOutIn(node, Duration.ZERO, duration, onFinishedAction)
+}
+
+fun fadeOutIn(node: Node, delay: Duration, duration: Duration): Animation<*> {
+    return fadeOutIn(node, delay, duration, EmptyRunnable)
+}
+
+fun fadeOutIn(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+    val anim = fadeInOut(node, delay, duration, onFinishedAction)
+
+    // fade out in is reverse fade in out
+    anim.isReverse = true
+    return anim
+}
+
+fun scale(node: Node, to: Point2D, duration: Duration): Animation<*> {
+    return scale(node, Point2D(node.scaleX, node.scaleY), to, Duration.ZERO, duration)
+}
+
+fun scale(node: Node, from: Point2D, to: Point2D, duration: Duration): Animation<*> {
+    return scale(node, from, to, Duration.ZERO, duration)
+}
+
+fun scale(node: Node, from: Point2D, to: Point2D, delay: Duration, duration: Duration): Animation<*> {
+    return scale(node, from, to, delay, duration, EmptyRunnable)
+}
+
+fun scale(node: Node, from: Point2D, to: Point2D, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+    val anim = object : Animation<Point2D>(delay, duration, 1, AnimatedPoint2D(from, to)) {
+
+        override fun onProgress(value: Point2D) {
+            node.scaleX = value.x
+            node.scaleY = value.y
+        }
+    }
+    anim.onFinished = onFinishedAction
+    return anim
+}
+
+fun rotate(node: Node, to: Double, duration: Duration): Animation<*> {
+    return rotate(node, node.rotate, to, Duration.ZERO, duration)
+}
+
+fun rotate(node: Node, from: Double, to: Double, duration: Duration): Animation<*> {
+    return rotate(node, from, to, Duration.ZERO, duration)
+}
+
+fun rotate(node: Node, from: Double, to: Double, delay: Duration, duration: Duration): Animation<*> {
+    return rotate(node, from, to, delay, duration, EmptyRunnable)
+}
+
+fun rotate(node: Node, from: Double, to: Double, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+    val anim = object : Animation<Double>(delay, duration, 1, AnimatedValue(from, to)) {
+
+        override fun onProgress(value: Double) {
+            node.rotate = value
+        }
+    }
+    anim.onFinished = onFinishedAction
+    return anim
 }

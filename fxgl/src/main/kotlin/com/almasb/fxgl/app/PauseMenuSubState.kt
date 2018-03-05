@@ -58,7 +58,7 @@ internal object PauseMenuSubState : SubState() {
 
         children.addAll(masker, content)
 
-        animation = FXGL.getUIFactory().translate(content,
+        animation = translate(content,
                 Point2D(FXGL.getAppWidth() / 2.0 - 125, -400.0),
                 Point2D(FXGL.getAppWidth() / 2.0 - 125, FXGL.getAppHeight() / 2.0 - 200),
                 Duration.seconds(0.5))

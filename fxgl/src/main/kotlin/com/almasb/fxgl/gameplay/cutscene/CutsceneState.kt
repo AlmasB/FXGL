@@ -10,6 +10,7 @@ import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.State
 import com.almasb.fxgl.app.SubState
+import com.almasb.fxgl.app.translate
 import javafx.geometry.Point2D
 import javafx.scene.shape.Rectangle
 import javafx.util.Duration
@@ -33,8 +34,8 @@ internal abstract class CutsceneState : SubState() {
 
         children.addAll(topLine, botLine)
 
-        animation = FXGL.getUIFactory().translate(topLine, Point2D.ZERO, Duration.seconds(0.5))
-        animation2 = FXGL.getUIFactory().translate(botLine, Point2D(0.0, FXGL.getAppHeight() - 200.0), Duration.seconds(0.5))
+        animation = translate(topLine, Point2D.ZERO, Duration.seconds(0.5))
+        animation2 = translate(botLine, Point2D(0.0, FXGL.getAppHeight() - 200.0), Duration.seconds(0.5))
     }
 
     override fun onEnter(prevState: State?) {

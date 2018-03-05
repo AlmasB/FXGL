@@ -6,6 +6,7 @@
 
 package s05uimenus;
 
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.paint.Color;
@@ -48,7 +49,7 @@ public class UIAnimationSample extends GameApplication {
 
         uiText.setOpacity(0);
 
-        getUIFactory().fadeOut(uiText, Duration.seconds(0), Duration.seconds(2)).startInPlayState();
+        DSLKt.fadeOut(uiText, Duration.seconds(0), Duration.seconds(2)).startInPlayState();
     }
 
     public static void main(String[] args) {

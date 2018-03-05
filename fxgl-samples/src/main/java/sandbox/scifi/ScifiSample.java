@@ -7,6 +7,7 @@
 package sandbox.scifi;
 
 import com.almasb.fxgl.animation.Animation;
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
@@ -205,7 +206,7 @@ public class ScifiSample extends GameApplication {
 
         getGameScene().addUINode(anim);
 
-        Animation<?> anim2 = getUIFactory().fadeOut(anim, Duration.seconds(1.75));
+        Animation<?> anim2 = DSLKt.fadeOut(anim, Duration.seconds(1.75));
         anim2.setOnFinished(() -> {
             getGameScene().removeUINode(anim);
 

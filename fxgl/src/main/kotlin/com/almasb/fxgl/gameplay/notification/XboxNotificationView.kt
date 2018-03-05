@@ -8,6 +8,8 @@ package com.almasb.fxgl.gameplay.notification
 
 import com.almasb.fxgl.animation.ParallelAnimation
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.scale
+import com.almasb.fxgl.app.translate
 import com.almasb.fxgl.ui.Position
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
@@ -94,10 +96,10 @@ internal class XboxNotificationView : NotificationView() {
 
 
         // move the whole view to left
-        val translateThis = FXGL.getUIFactory().translate(this, Point2D(translateX, translateY), Point2D(FXGL.getAppWidth() / 4.0, translateY), Duration.seconds(0.33))
+        val translateThis = translate(this, Point2D(translateX, translateY), Point2D(FXGL.getAppWidth() / 4.0, translateY), Duration.seconds(0.33))
 
         // but move the BG to right, creating the "slide out" effect
-        val translateBG = FXGL.getUIFactory().translate(bg, Point2D(bg.translateX, bg.translateY), Point2D(bg.translateX + 400.0, bg.translateY), Duration.seconds(0.33))
+        val translateBG = translate(bg, Point2D(bg.translateX, bg.translateY), Point2D(bg.translateX + 400.0, bg.translateY), Duration.seconds(0.33))
 
         bgAnimation = ParallelAnimation(1, translateThis, translateBG)
         bgAnimation.onFinished = Runnable {
@@ -109,7 +111,7 @@ internal class XboxNotificationView : NotificationView() {
 
 
 
-        val scale = FXGL.getUIFactory().scale(this, Point2D.ZERO, Point2D(1.0, 1.0), Duration.seconds(0.3))
+        val scale = scale(this, Point2D.ZERO, Point2D(1.0, 1.0), Duration.seconds(0.3))
         scale.onFinished = Runnable {
             FXGL.getMasterTimer().runOnceAfter({
                 // make background appear before the circle
@@ -132,11 +134,11 @@ internal class XboxNotificationView : NotificationView() {
         FXGL.getUIFactory().centerTextX(text2, 65.0, 395.0)
 
         // move text 2 to replace text 1
-        val anim = FXGL.getUIFactory().translate(text2, Point2D(text2.translateX, text2.translateY), Point2D(text2.translateX, 35.0), Duration.seconds(0.33))
+        val anim = translate(text2, Point2D(text2.translateX, text2.translateY), Point2D(text2.translateX, 35.0), Duration.seconds(0.33))
         anim.startInPlayState()
 
         // move text 1 down
-        val anim2 = FXGL.getUIFactory().translate(text1, Point2D(text1.translateX, text1.translateY), Point2D(text1.translateX, text1.translateY + 35.0), Duration.seconds(0.33))
+        val anim2 = translate(text1, Point2D(text1.translateX, text1.translateY), Point2D(text1.translateX, text1.translateY + 35.0), Duration.seconds(0.33))
         anim2.onFinished = Runnable {
             // when done, just swap them and keep text2 for next reuse
             text1.translateX = text2.translateX
@@ -154,7 +156,7 @@ internal class XboxNotificationView : NotificationView() {
 
         bgAnimation.onFinished = Runnable {
             children.setAll(circle)
-            FXGL.getUIFactory().scale(this, Point2D(1.0, 1.0), Point2D.ZERO, Duration.seconds(0.3)).startInPlayState()
+            scale(this, Point2D(1.0, 1.0), Point2D.ZERO, Duration.seconds(0.3)).startInPlayState()
         }
         bgAnimation.stop()
         bgAnimation.startReverse(FXGL.getApp().stateMachine.playState)

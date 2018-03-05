@@ -9,6 +9,7 @@ package com.almasb.fxgl.entity.component
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.SequentialAnimation
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.translate
 import com.almasb.fxgl.entity.Component
 import com.almasb.fxgl.entity.Entity
 import javafx.geometry.Point2D
@@ -55,10 +56,10 @@ class HighlightableComponent : Component() {
                 val dist4 = Point2D((-SIZE), view.layoutBounds.maxY).distance(Point2D(-SIZE, -SIZE))
 
                 SequentialAnimation(1,
-                                FXGL.getUIFactory().translate(particle, Point2D(-SIZE, -SIZE), Point2D(view.layoutBounds.maxX, (-SIZE)), Duration.seconds(dist1 / speed)),
-                                FXGL.getUIFactory().translate(particle, Point2D(view.layoutBounds.maxX, (-SIZE)), Point2D(view.layoutBounds.maxX, view.layoutBounds.maxY), Duration.seconds(dist2 / speed)),
-                                FXGL.getUIFactory().translate(particle, Point2D(view.layoutBounds.maxX, view.layoutBounds.maxY), Point2D((-SIZE), view.layoutBounds.maxY), Duration.seconds(dist3 / speed)),
-                                FXGL.getUIFactory().translate(particle, Point2D((-SIZE), view.layoutBounds.maxY), Point2D(-SIZE, -SIZE), Duration.seconds(dist4 / speed))
+                                translate(particle, Point2D(-SIZE, -SIZE), Point2D(view.layoutBounds.maxX, (-SIZE)), Duration.seconds(dist1 / speed)),
+                                translate(particle, Point2D(view.layoutBounds.maxX, (-SIZE)), Point2D(view.layoutBounds.maxX, view.layoutBounds.maxY), Duration.seconds(dist2 / speed)),
+                                translate(particle, Point2D(view.layoutBounds.maxX, view.layoutBounds.maxY), Point2D((-SIZE), view.layoutBounds.maxY), Duration.seconds(dist3 / speed)),
+                                translate(particle, Point2D((-SIZE), view.layoutBounds.maxY), Point2D(-SIZE, -SIZE), Duration.seconds(dist4 / speed))
 
                 ).startInPlayState()
 

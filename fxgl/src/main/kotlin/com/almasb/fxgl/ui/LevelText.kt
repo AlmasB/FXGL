@@ -8,6 +8,9 @@ package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.animation.ParallelAnimation
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.fadeIn
+import com.almasb.fxgl.app.fadeOut
+import com.almasb.fxgl.app.translate
 import javafx.geometry.Point2D
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
@@ -50,12 +53,12 @@ class LevelText(levelName: String) : StackPane() {
 
     fun animateIn() {
         ParallelAnimation(
-                FXGL.getUIFactory().fadeIn(this@LevelText, Duration.seconds(1.0)),
-                FXGL.getUIFactory().translate(text, Point2D(-20.0, 0.0), Point2D.ZERO, Duration.seconds(1.0))
+                fadeIn(this@LevelText, Duration.seconds(1.0)),
+                translate(text, Point2D(-20.0, 0.0), Point2D.ZERO, Duration.seconds(1.0))
         ).startInPlayState()
     }
 
     fun animateOut() {
-        FXGL.getUIFactory().fadeOut(this, Duration.seconds(1.0)).startInPlayState()
+        fadeOut(this, Duration.seconds(1.0)).startInPlayState()
     }
 }
