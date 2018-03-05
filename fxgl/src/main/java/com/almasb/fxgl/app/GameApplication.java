@@ -96,6 +96,10 @@ public abstract class GameApplication extends Application {
     @Override
     public final void start(Stage stage) {
         try {
+            // this will be set automatically by javafxports on mobile
+            if (System.getProperty("javafx.platform") == null)
+                System.setProperty("javafx.platform", "Desktop");
+
             initAppSettings();
             initLogger();
 

@@ -7,9 +7,8 @@
 package com.almasb.fxgl.audio
 
 import com.almasb.fxgl.core.Disposable
+import com.gluonhq.charm.down.plugins.audio.Audio
 import javafx.beans.property.DoubleProperty
-import javafx.scene.media.Media
-import javafx.scene.media.MediaPlayer
 
 /**
  * Represents a long-term audio in mp3 file.
@@ -17,56 +16,9 @@ import javafx.scene.media.MediaPlayer
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class Music(media: Media) : Disposable {
+class Music(internal val audio: Audio) : Disposable {
 
-    enum class Status {
-        PAUSED, PLAYING, STOPPED
-    }
-
-    private val mediaPlayer: MediaPlayer
-
-    internal var status = Status.STOPPED
-        private set
-
-    init {
-        mediaPlayer = MediaPlayer(media)
-    }
-
-    // check current time + current count
-    // cycle count may have been altered, hence >=
-    internal fun reachedEnd() =
-            mediaPlayer.currentTime == mediaPlayer.cycleDuration
-                    && mediaPlayer.currentCount >= mediaPlayer.cycleCount
-
-    internal fun start() {
-        if (status == Status.STOPPED) {
-            status = Status.PLAYING
-            mediaPlayer.play()
-        }
-    }
-
-    internal fun pause() {
-        if (status == Status.PLAYING) {
-            status = Status.PAUSED
-            mediaPlayer.pause()
-        }
-    }
-
-    internal fun resume() {
-        if (status == Status.PAUSED) {
-            status = Status.PLAYING
-            mediaPlayer.play()
-        }
-    }
-
-    internal fun stop() {
-        status = Status.STOPPED
-        mediaPlayer.stop()
-    }
-
-    internal fun bindVolume(volume: DoubleProperty) {
-        mediaPlayer.volumeProperty().bind(volume)
-    }
+    internal var isDisposed = false
 
     /**
      * @return balance of the audio output
@@ -79,11 +31,7 @@ class Music(media: Media) : Disposable {
 
      * @param balance
      */
-    var balance: Double
-        get() = mediaPlayer.balance
-        set(balance) {
-            mediaPlayer.balance = balance
-        }
+    var balance = 0.0
 
     /**
      * @return music rate
@@ -97,13 +45,7 @@ class Music(media: Media) : Disposable {
 
      * @param rate
      */
-    var rate: Double
-        get() {
-            return mediaPlayer.getRate()
-        }
-        set(rate) {
-            mediaPlayer.setRate(rate)
-        }
+    var rate = 1.0
 
     /**
      * @return number of times the music to be played
@@ -115,30 +57,9 @@ class Music(media: Media) : Disposable {
 
      * @param count
      */
-    var cycleCount: Int
-        get() {
-            return mediaPlayer.getCycleCount()
-        }
-        set(count) {
-            mediaPlayer.setCycleCount(count)
-        }
+    var cycleCount = 1
 
     override fun dispose() {
-        stop()
-        mediaPlayer.dispose()
-    }
-
-    override fun toString(): String {
-        val builder = StringBuilder()
-        builder.append("Music [balance=")
-        builder.append(balance)
-        builder.append(", volume=")
-        builder.append(mediaPlayer.getVolume())
-        builder.append(", rate=")
-        builder.append(rate)
-        builder.append(", cycleCount=")
-        builder.append(cycleCount)
-        builder.append("]")
-        return builder.toString()
+        isDisposed = true
     }
 }

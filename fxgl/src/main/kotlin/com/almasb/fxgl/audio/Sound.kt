@@ -6,14 +6,17 @@
 
 package com.almasb.fxgl.audio
 
-import javafx.scene.media.AudioClip
+import com.almasb.fxgl.core.Disposable
+import com.gluonhq.charm.down.plugins.audio.Audio
 
 /**
  * Represents a short sound in .wav file.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class Sound(internal val clip: AudioClip) {
+class Sound(internal val audio: Audio): Disposable {
+
+    internal var isDisposed = false
 
     /**
      * @return balance of the audio output
@@ -26,33 +29,7 @@ class Sound(internal val clip: AudioClip) {
 
      * @param balance sound balance
      */
-    var balance: Double
-        get() = clip.balance
-        set(balance) {
-            clip.balance = balance
-        }
-
-    /**
-     * @return sound pan value
-     */
-    /**
-     * The relative "center" of the clip. A pan value of 0.0 plays
-     * the clip normally where a -1.0 pan shifts the clip entirely to the left
-     * channel and 1.0 shifts entirely to the right channel. Unlike balance this
-     * setting mixes both channels so neither channel loses data. Setting
-     * pan on a mono clip has the same effect as setting balance, but with a
-     * much higher cost in CPU overhead so this is not recommended for mono
-     * clips.
-
-     * @param pan sound pan
-     */
-    var pan: Double
-        get() {
-            return clip.getPan()
-        }
-        set(pan) {
-            clip.setPan(pan)
-        }
+    var balance: Double = 0.0
 
     /**
      * @return sound rate
@@ -65,13 +42,7 @@ class Sound(internal val clip: AudioClip) {
 
      * @param rate sound rate
      */
-    var rate: Double
-        get() {
-            return clip.getRate()
-        }
-        set(rate) {
-            clip.setRate(rate)
-        }
+    var rate: Double = 1.0
 
     /**
      * @return number of times sound to be played
@@ -82,11 +53,9 @@ class Sound(internal val clip: AudioClip) {
 
      * @param count number of times to play
      */
-    var cycleCount: Int
-        get() {
-            return clip.getCycleCount()
-        }
-        set(count) {
-            clip.setCycleCount(count)
-        }
+    var cycleCount: Int = 1
+
+    override fun dispose() {
+        isDisposed = true
+    }
 }

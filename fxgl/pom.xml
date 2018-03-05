@@ -75,17 +75,17 @@
             <version>${charm.down.version}</version>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>com.github.almasb</groupId>-->
-            <!--<artifactId>fxgl-plugin-audio</artifactId>-->
-            <!--<version>0.0.1-SNAPSHOT</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-plugin-audio</artifactId>
+            <version>${audio.plugin.version}</version>
+        </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>com.github.almasb</groupId>-->
-            <!--<artifactId>fxgl-plugin-audio-desktop</artifactId>-->
-            <!--<version>0.0.1-SNAPSHOT</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-plugin-audio-desktop</artifactId>
+            <version>${audio.plugin.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

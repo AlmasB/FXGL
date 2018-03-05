@@ -23,6 +23,9 @@ import com.almasb.fxgl.ui.FontFactory
 import com.almasb.fxgl.ui.UI
 import com.almasb.fxgl.ui.UIController
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.gluonhq.charm.down.Services
+import com.gluonhq.charm.down.plugins.AudioService
+import com.gluonhq.charm.down.plugins.audio.AudioType
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.image.Image
@@ -92,6 +95,8 @@ class AssetLoader {
     private val CURSORS_DIR = UI_DIR + "cursors/"
 
     private val log = Logger.get(javaClass)
+
+    private val audioService = Services.get(AudioService::class.java).orElseThrow { RuntimeException("No AudioService present") }
 
     private val cachedAssets = ObjectMap<String, Any>()
 
@@ -244,7 +249,7 @@ class AssetLoader {
         }
 
         try {
-            val sound = Sound(AudioClip(getURL(SOUNDS_DIR + name).toExternalForm()))
+            val sound = Sound(audioService.loadAudio(AudioType.SOUND, SOUNDS_DIR + name))
             cachedAssets.put(SOUNDS_DIR + name, sound)
             return sound
         } catch (e: Exception) {
@@ -270,7 +275,7 @@ class AssetLoader {
         }
 
         try {
-            val music = Music(Media(getURL(MUSIC_DIR + name).toExternalForm()))
+            val music = Music(audioService.loadAudio(AudioType.MUSIC, MUSIC_DIR + name))
             cachedAssets.put(MUSIC_DIR + name, music)
             return music
         } catch (e: Exception) {
