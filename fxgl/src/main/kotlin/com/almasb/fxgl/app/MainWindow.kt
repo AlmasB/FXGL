@@ -157,9 +157,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
                 this@MainWindow.onShown?.run()
             }
 
-            if (FXGL.isDesktop()) {
-                icons.add(FXGLAssets.UI_ICON)
-            }
+            icons.add(FXGLAssets.UI_ICON)
 
             if (settings.isFullScreenAllowed) {
                 fullScreenExitHint = ""
@@ -260,9 +258,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
      */
     private fun registerScene(scene: FXGLScene) {
         scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
-        if (FXGL.isDesktop()) {
-            scene.appendCSS(FXGLAssets.UI_CSS)
-        }
+        scene.appendCSS(FXGLAssets.UI_CSS)
         scenes.add(scene)
     }
 
