@@ -44,10 +44,12 @@ public final class ReflectionUtils {
 
         List<File> classNames = getClasspathClasses(packageName);
 
-        //System.out.println(classNames);
+        System.out.println("CLASSNAMES:BEGIN");
+        System.out.println(classNames);
+        System.out.println("CLASSNAMES:END");
 
         for (File file : classNames) {
-            String name = file.toString().replace("\\", ".");
+            String name = file.toString().replace(File.separator, ".");
 
             int index = name.indexOf(packageName);
             name = name.substring(index, name.length() - 6);
@@ -55,7 +57,7 @@ public final class ReflectionUtils {
             try {
                 Class<?> cl = Class.forName(name);
 
-                //System.out.println(cl);
+                System.out.println(cl);
 
                 for (Class<? extends Annotation> annotationClass : annotations) {
                     if (cl.getAnnotation(annotationClass) != null) {
