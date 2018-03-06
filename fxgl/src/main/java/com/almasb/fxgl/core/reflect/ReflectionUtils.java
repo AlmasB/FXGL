@@ -111,7 +111,7 @@ public final class ReflectionUtils {
             if (f.isDirectory()) {
                 classes(result, f, rootName);
             } else {
-                String name = f.toString().replace("\\", ".");
+                String name = f.toString().replace(File.separator, ".");
 
                 //System.out.println(name + " -" + rootName);
 
