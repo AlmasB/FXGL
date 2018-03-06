@@ -6,16 +6,13 @@
 
 package com.almasb.fxgl.entity;
 
-import java.util.function.Function;
+import com.almasb.fxgl.util.Function;
 
 /**
- * Spawns an entity given spawn data.
+ * A function that spawns an entity given spawn data.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface EntitySpawner extends Function<SpawnData, Entity> {
 
-    default Entity spawn(SpawnData data) {
-        return apply(data);
-    }
 }

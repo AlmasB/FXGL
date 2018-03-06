@@ -85,7 +85,7 @@ class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
                 val c = line[j]
                 val producer = producers[c]
                 if (producer != null) {
-                    val e = producer.spawn(SpawnData(j.toDouble() * entityFactory.blockWidth(), i.toDouble() * entityFactory.blockHeight()))
+                    val e = producer.apply(SpawnData(j.toDouble() * entityFactory.blockWidth(), i.toDouble() * entityFactory.blockHeight()))
                     entities.add(e)
                 } else if (c != emptyChar) {
                     log.warning("No producer found for character: " + c)

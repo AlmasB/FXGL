@@ -406,7 +406,7 @@ public final class GameWorld {
         if (spawner == null)
             throw new IllegalArgumentException("EntityFactory does not have a method annotated @Spawns(" + entityName + ")");
 
-        Entity entity = spawner.spawn(data);
+        Entity entity = spawner.apply(data);
         addEntity(entity);
         return entity;
     }
