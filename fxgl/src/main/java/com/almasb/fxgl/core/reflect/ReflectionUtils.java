@@ -85,7 +85,7 @@ public final class ReflectionUtils {
 
                 File file = new File(root.getPath());
 
-                //System.out.println(file);
+                System.out.println("ROOT FILE: " + file);
 
                 if (file.isDirectory()) {
                     classes(result, file, rootName);
