@@ -36,6 +36,7 @@ import com.almasb.fxgl.time.Timer;
 import com.almasb.fxgl.ui.Display;
 import com.almasb.fxgl.ui.ErrorDialog;
 import com.almasb.fxgl.ui.UIFactory;
+import com.almasb.fxgl.util.BackportKt;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -49,6 +50,8 @@ import javafx.stage.StageStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -321,9 +324,7 @@ public abstract class GameApplication extends Application {
             getGameplay().load(e.getProfile());
         });
 
-        if (FXGL.isDesktop()) {
-            getEventBus().scanForHandlers(this);
-        }
+        getEventBus().scanForHandlers(this);
     }
 
     private void runPreInit() {
@@ -333,9 +334,9 @@ public abstract class GameApplication extends Application {
             profiler = new Profiler();
         }
 
-        if (FXGL.isDesktop()) {
-            initAchievements();
+        initAchievements();
 
+        if (FXGL.isDesktop()) {
             // 1. register system actions
             SystemActions.INSTANCE.bind(getInput());
         }
@@ -343,10 +344,8 @@ public abstract class GameApplication extends Application {
         // 2. register user actions
         initInput();
 
-        if (FXGL.isDesktop()) {
-            // 3. scan for annotated methods and register them too
-            getInput().scanForUserActions(this);
-        }
+        // 3. scan for annotated methods and register them too
+        getInput().scanForUserActions(this);
 
         generateDefaultProfile();
 
@@ -359,7 +358,8 @@ public abstract class GameApplication extends Application {
     private void initAchievements() {
         AnnotationParser parser = new AnnotationParser(this.getClass());
         parser.parse(SetAchievementStore.class);
-        parser.getClasses(SetAchievementStore.class).forEach(storeClass -> {
+
+        forEach(parser.getClasses(SetAchievementStore.class), storeClass -> {
             AchievementStore storeObject = (AchievementStore) ReflectionUtils.newInstance(storeClass);
             storeObject.initAchievements(getGameplay().getAchievementManager());
         });
@@ -485,7 +485,8 @@ public abstract class GameApplication extends Application {
      */
     protected final void exit() {
         log.debug("Exiting game application");
-        exitListeners.forEach(ExitListener::onExit);
+
+        forEach(exitListeners, l -> l.onExit());
 
         log.debug("Shutting down background threads");
         getExecutor().shutdownNow();

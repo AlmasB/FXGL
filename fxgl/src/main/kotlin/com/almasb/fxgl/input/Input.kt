@@ -452,9 +452,9 @@ class Input : UserProfileSavable {
         val map = HashMap<String, HashMap<ActionType, Method> >()
 
         for (method in instance.javaClass.declaredMethods) {
-            val action = method.getDeclaredAnnotation(OnUserAction::class.java)
+            val action = method.getAnnotation(OnUserAction::class.java)
             if (action != null) {
-                val mapping = map.getOrDefault(action.name, HashMap())
+                val mapping = map[action.name] ?: hashMapOf()
                 if (mapping.isEmpty()) {
                     map[action.name] = mapping
                 }
@@ -463,7 +463,7 @@ class Input : UserProfileSavable {
             }
         }
 
-        map.forEach { name, mapping ->
+        map.forEach { (name, mapping) ->
             val action = object : UserAction(name) {
                 override fun onActionBegin() {
                     mapping[ActionType.ON_ACTION_BEGIN]?.invoke(instance)

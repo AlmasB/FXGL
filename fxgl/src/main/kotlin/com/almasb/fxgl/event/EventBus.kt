@@ -123,7 +123,7 @@ class EventBus {
      */
     fun scanForHandlers(instance: Any) {
         for (method in instance.javaClass.declaredMethods) {
-            val annotation = method.getDeclaredAnnotation(Handles::class.java)
+            val annotation = method.getAnnotation(Handles::class.java)
 
             // method is marked @Handles
             if (annotation != null) {
