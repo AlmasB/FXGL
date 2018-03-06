@@ -18,7 +18,7 @@ class AnnotationParser(appClass: Class<out GameApplication>) {
 
     private val packageName = appClass.`package`?.name
 
-    val isDisabled = packageName.isNullOrEmpty() || packageName!!.contains("[A-Z]".toRegex()) || !FXGL.isDesktop()
+    val isDisabled = packageName.isNullOrEmpty() || packageName!!.contains("[A-Z]".toRegex())
 
     private val annotationMap = hashMapOf<Class<*>, List<Class<*>>>()
 
@@ -33,7 +33,7 @@ class AnnotationParser(appClass: Class<out GameApplication>) {
     fun parse(vararg annotationClasses: Class<out Annotation>) {
         if (!isDisabled) {
             annotationMap.putAll(ReflectionUtils.findClasses(packageName!!, *annotationClasses))
-            annotationMap.forEach { annotationClass, list ->
+            annotationMap.forEach { (annotationClass, list) ->
                 log.debug("@${annotationClass.simpleName}: ${list.map { it.simpleName }}")
             }
         }
