@@ -13,7 +13,8 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.*
-import java.util.zip.*
+import java.util.zip.GZIPInputStream
+import java.util.zip.InflaterInputStream
 import javax.xml.namespace.QName
 import javax.xml.stream.XMLInputFactory
 import javax.xml.stream.events.StartElement

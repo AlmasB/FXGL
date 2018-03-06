@@ -10,7 +10,6 @@ import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.gameplay.notification.NotificationServiceProvider

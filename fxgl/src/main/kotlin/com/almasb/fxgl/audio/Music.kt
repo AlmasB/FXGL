@@ -8,7 +8,6 @@ package com.almasb.fxgl.audio
 
 import com.almasb.fxgl.core.Disposable
 import com.gluonhq.charm.down.plugins.audio.Audio
-import javafx.beans.property.DoubleProperty
 
 /**
  * Represents a long-term audio in mp3 file.

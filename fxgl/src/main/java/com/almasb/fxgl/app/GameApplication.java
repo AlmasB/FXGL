@@ -46,7 +46,9 @@ import javafx.geometry.Rectangle2D;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * To use FXGL extend this class and implement necessary methods.

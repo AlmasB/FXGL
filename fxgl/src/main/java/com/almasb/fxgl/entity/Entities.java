@@ -10,7 +10,6 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.parser.tiled.Layer;
-import com.almasb.fxgl.parser.tiled.TiledLayerView;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.parser.tiled.Tileset;
 import com.almasb.fxgl.physics.BoundingShape;

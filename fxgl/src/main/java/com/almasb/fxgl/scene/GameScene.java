@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.scene;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.collection.Array;

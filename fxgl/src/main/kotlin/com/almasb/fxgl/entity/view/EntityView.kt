@@ -8,9 +8,6 @@ package com.almasb.fxgl.entity.view
 
 import com.almasb.fxgl.core.Disposable
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.entity.RenderLayer
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.ObservableList
 import javafx.scene.Node
 import javafx.scene.Parent

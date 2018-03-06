@@ -13,8 +13,8 @@ import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.parser.KVFile
-import com.almasb.fxgl.parser.tiled.TiledMap
 import com.almasb.fxgl.parser.tiled.TMXParser
+import com.almasb.fxgl.parser.tiled.TiledMap
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.script.Script
 import com.almasb.fxgl.script.ScriptFactory
@@ -29,8 +29,6 @@ import com.gluonhq.charm.down.plugins.audio.AudioType
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.image.Image
-import javafx.scene.media.AudioClip
-import javafx.scene.media.Media
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import java.io.*
