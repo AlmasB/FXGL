@@ -58,12 +58,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.github.lukehutch</groupId>
-            <artifactId>fast-classpath-scanner</artifactId>
-            <version>${classpath.scanner.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.gluonhq</groupId>
             <artifactId>charm-down-plugin-storage</artifactId>
             <version>${charm.down.version}</version>

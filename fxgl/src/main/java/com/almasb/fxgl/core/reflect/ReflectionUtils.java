@@ -9,16 +9,15 @@ package com.almasb.fxgl.core.reflect;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.util.Function;
 import com.almasb.fxgl.util.Optional;
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URL;
+import java.util.*;
 
 import static com.almasb.fxgl.util.BackportKt.forEach;
 
@@ -37,16 +36,82 @@ public final class ReflectionUtils {
     public static Map<Class<?>, List<Class<?>>> findClasses(String packageName, Class<? extends java.lang.annotation.Annotation>... annotations) {
         Map<Class<?>, List<Class<?>>> map = new HashMap<>();
 
-        FastClasspathScanner scanner = new FastClasspathScanner(packageName);
-
         for (Class<? extends Annotation> annotationClass : annotations) {
-            map.put(annotationClass, new ArrayList<>());
-            scanner.matchClassesWithAnnotation(annotationClass, map.get(annotationClass)::add);
+            List<Class<?>> classes = new ArrayList<>();
+
+            map.put(annotationClass, classes);
         }
 
-        scanner.scan();
+        List<File> classNames = getClasspathClasses(packageName);
+
+        //System.out.println(classNames);
+
+        for (File file : classNames) {
+            String name = file.toString().replace("\\", ".");
+
+            int index = name.indexOf(packageName);
+            name = name.substring(index, name.length() - 6);
+
+            try {
+                Class<?> cl = Class.forName(name);
+
+                //System.out.println(cl);
+
+                for (Class<? extends Annotation> annotationClass : annotations) {
+                    if (cl.getAnnotation(annotationClass) != null) {
+                        map.get(annotationClass).add(cl);
+                    }
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace(System.out);
+            }
+        }
+
+        System.out.println(map);
 
         return map;
+    }
+
+    private static List<File> getClasspathClasses(String rootName) {
+        try {
+            List<File> result = new ArrayList<>();
+
+            Enumeration<URL> roots = ReflectionUtils.class.getClassLoader().getResources("");
+
+            while (roots.hasMoreElements()) {
+                URL root = roots.nextElement();
+
+                File file = new File(root.getPath());
+
+                //System.out.println(file);
+
+                if (file.isDirectory()) {
+                    classes(result, file, rootName);
+                }
+            }
+
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace(System.out);
+        }
+
+        return Collections.emptyList();
+    }
+
+    private static void classes(List<File> result, File dir, String rootName) {
+        for (File f : dir.listFiles()) {
+            if (f.isDirectory()) {
+                classes(result, f, rootName);
+            } else {
+                String name = f.toString().replace("\\", ".");
+
+                //System.out.println(name + " -" + rootName);
+
+                if (name.endsWith(".class") && !name.contains("$") && name.contains(rootName)) {
+                    result.add(f);
+                }
+            }
+        }
     }
 
     public static <A extends java.lang.annotation.Annotation> Map<A, Method>
