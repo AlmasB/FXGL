@@ -8,13 +8,19 @@ package com.almasb.fxgl.core.reflect;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.util.Function;
+import com.almasb.fxgl.util.Optional;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
  * A collection of convenience methods to isolate reflection code.
@@ -49,7 +55,7 @@ public final class ReflectionUtils {
         Map<A, Method> map = new HashMap<>();
 
         for (Method method : instance.getClass().getDeclaredMethods()) {
-            A annotation = method.getDeclaredAnnotation(annotationClass);
+            A annotation = method.getAnnotation(annotationClass);
             if (annotation != null) {
                 map.put(annotation, method);
             }
@@ -63,8 +69,10 @@ public final class ReflectionUtils {
 
         Map<A, Function<T, R>> map = new HashMap<>();
 
-        findMethods(instance, annotationClass)
-                .forEach((annotation, method) -> map.put(annotation, mapToFunction(instance, method)));
+        forEach(
+                findMethods(instance, annotationClass),
+                (annotation, method) -> map.put(annotation, mapToFunction(instance, method))
+        );
 
         return map;
     }
@@ -75,8 +83,9 @@ public final class ReflectionUtils {
 
         Map<A, F> map = new HashMap<>();
 
-        findMethods(instance, annotationClass)
-                .forEach((annotation, method) -> {
+        forEach(
+                findMethods(instance, annotationClass),
+                (annotation, method) -> {
                     // we create an instance implementing F on the fly
                     // so that high-level calling code stays clean
                     F function = (F) Proxy.newProxyInstance(functionClass.getClassLoader(),
@@ -84,7 +93,8 @@ public final class ReflectionUtils {
                             (proxy, proxyMethod, args) -> method.invoke(instance, args));
 
                     map.put(annotation, function);
-                });
+                }
+        );
 
         return map;
     }
@@ -108,7 +118,7 @@ public final class ReflectionUtils {
         Array<Field> fields = new Array<>();
 
         for (Field field : instance.getClass().getDeclaredFields()) {
-            if (field.getDeclaredAnnotation(annotationClass) != null) {
+            if (field.getAnnotation(annotationClass) != null) {
                 fields.add(field);
             }
         }
