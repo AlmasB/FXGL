@@ -32,7 +32,7 @@ class AnnotationParser(val appClass: Class<out GameApplication>) {
 
     fun parse(vararg annotationClasses: Class<out Annotation>) {
         if (!isDisabled) {
-            annotationMap.putAll(ReflectionUtils.findClasses(appClass, *annotationClasses))
+            annotationMap.putAll(ReflectionUtils.findClasses(packageName!!, *annotationClasses))
             annotationMap.forEach { (annotationClass, list) ->
                 log.debug("@${annotationClass.simpleName}: ${list.map { it.simpleName }}")
             }
