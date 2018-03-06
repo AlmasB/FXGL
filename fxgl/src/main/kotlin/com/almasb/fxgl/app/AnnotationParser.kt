@@ -12,7 +12,7 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AnnotationParser(appClass: Class<out GameApplication>) {
+class AnnotationParser(val appClass: Class<out GameApplication>) {
 
     private val log = Logger.get(javaClass)
 
@@ -32,7 +32,7 @@ class AnnotationParser(appClass: Class<out GameApplication>) {
 
     fun parse(vararg annotationClasses: Class<out Annotation>) {
         if (!isDisabled) {
-            annotationMap.putAll(ReflectionUtils.findClasses(packageName!!, *annotationClasses))
+            annotationMap.putAll(ReflectionUtils.findClasses(appClass, *annotationClasses))
             annotationMap.forEach { (annotationClass, list) ->
                 log.debug("@${annotationClass.simpleName}: ${list.map { it.simpleName }}")
             }

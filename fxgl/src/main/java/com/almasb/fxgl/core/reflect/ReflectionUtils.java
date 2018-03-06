@@ -33,7 +33,7 @@ public final class ReflectionUtils {
     /**
      * @return mapping from annotation class to list of classes with that annotation (on the classpath)
      */
-    public static Map<Class<?>, List<Class<?>>> findClasses(String packageName, Class<? extends java.lang.annotation.Annotation>... annotations) {
+    public static Map<Class<?>, List<Class<?>>> findClasses(Class<?> rootClass, Class<? extends java.lang.annotation.Annotation>... annotations) {
         Map<Class<?>, List<Class<?>>> map = new HashMap<>();
 
         for (Class<? extends Annotation> annotationClass : annotations) {
@@ -42,7 +42,13 @@ public final class ReflectionUtils {
             map.put(annotationClass, classes);
         }
 
-        List<File> classNames = getClasspathClasses(packageName);
+        Package pack = rootClass.getPackage();
+
+        String packageName = pack.getName();
+
+        System.out.println(packageName);
+
+        List<File> classNames = getClasspathClasses(rootClass);
 
         System.out.println("CLASSNAMES:BEGIN");
         System.out.println(classNames);
@@ -74,11 +80,11 @@ public final class ReflectionUtils {
         return map;
     }
 
-    private static List<File> getClasspathClasses(String rootName) {
+    private static List<File> getClasspathClasses(Class<?> rootClass) {
         try {
             List<File> result = new ArrayList<>();
 
-            Enumeration<URL> roots = ReflectionUtils.class.getClassLoader().getResources("");
+            Enumeration<URL> roots = rootClass.getClassLoader().getResources("");
 
             while (roots.hasMoreElements()) {
                 URL root = roots.nextElement();
@@ -88,7 +94,7 @@ public final class ReflectionUtils {
                 System.out.println("ROOT FILE: " + file);
 
                 if (file.isDirectory()) {
-                    classes(result, file, rootName);
+                    classes(result, file, rootClass.getPackage().getName());
                 }
             }
 
