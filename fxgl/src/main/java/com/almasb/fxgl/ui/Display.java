@@ -7,13 +7,11 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.io.UIDialogHandler;
-import com.almasb.fxgl.util.EmptyRunnable;
+import com.almasb.fxgl.util.Consumer;
+import com.almasb.fxgl.util.Predicate;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * Provides access to dialogs.
@@ -28,9 +26,7 @@ public interface Display {
      *
      * @param message the message to show
      */
-    default void showMessageBox(String message) {
-        showMessageBox(message, EmptyRunnable.INSTANCE);
-    }
+    void showMessageBox(String message);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button. On
@@ -57,9 +53,7 @@ public interface Display {
      * @param message        message to show
      * @param resultCallback the function to be called
      */
-    default void showInputBox(String message, Consumer<String> resultCallback) {
-        showInputBox(message, s -> true, resultCallback);
-    }
+    void showInputBox(String message, Consumer<String> resultCallback);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback

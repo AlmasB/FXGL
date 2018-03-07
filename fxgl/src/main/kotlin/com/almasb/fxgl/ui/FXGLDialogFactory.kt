@@ -8,6 +8,9 @@ package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGL.Companion.localizedStringProperty
+import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.util.EmptyRunnable
+import com.almasb.fxgl.util.Predicate
 import javafx.beans.property.DoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.geometry.Insets
@@ -22,8 +25,6 @@ import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.scene.text.Text
-import java.util.function.Consumer
-import java.util.function.Predicate
 
 /**
  *
@@ -46,6 +47,10 @@ class FXGLDialogFactory : DialogFactory {
         wrapper.styleClass.add("dialog-border")
 
         return wrapper
+    }
+
+    override fun messageDialog(message: String): Pane {
+        return messageDialog(message, EmptyRunnable)
     }
 
     override fun messageDialog(message: String, callback: Runnable): Pane {
@@ -85,6 +90,10 @@ class FXGLDialogFactory : DialogFactory {
         vbox.setAlignment(Pos.CENTER)
 
         return wrap(vbox)
+    }
+
+    override fun inputDialog(message: String, callback: Consumer<String>): Pane {
+        return inputDialog(message, Predicate { true }, callback)
     }
 
     override fun inputDialog(message: String, filter: Predicate<String>, callback: Consumer<String>): Pane {
@@ -144,6 +153,18 @@ class FXGLDialogFactory : DialogFactory {
         vbox.setAlignment(Pos.CENTER)
 
         return wrap(vbox)
+    }
+
+    override fun errorDialog(error: Throwable): Pane {
+        return errorDialog(error, EmptyRunnable)
+    }
+
+    override fun errorDialog(errorMessage: String): Pane {
+        return errorDialog(errorMessage, EmptyRunnable)
+    }
+
+    override fun errorDialog(errorMessage: String, callback: Runnable): Pane {
+        return messageDialog("Error occurred: $errorMessage", callback)
     }
 
     override fun errorDialog(error: Throwable, callback: Runnable): Pane {

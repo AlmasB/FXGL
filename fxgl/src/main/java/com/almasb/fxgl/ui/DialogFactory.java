@@ -6,14 +6,12 @@
 
 package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.util.EmptyRunnable;
+import com.almasb.fxgl.util.Consumer;
+import com.almasb.fxgl.util.Predicate;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
-
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -22,15 +20,11 @@ public interface DialogFactory {
 
     Pane messageDialog(String message, Runnable callback);
 
-    default Pane messageDialog(String message) {
-        return messageDialog(message, EmptyRunnable.INSTANCE);
-    }
+    Pane messageDialog(String message);
 
     Pane confirmationDialog(String message, Consumer<Boolean> callback);
 
-    default Pane inputDialog(String message, Consumer<String> callback) {
-        return inputDialog(message, s -> true, callback);
-    }
+    Pane inputDialog(String message, Consumer<String> callback);
 
     Pane inputDialog(String message, Predicate<String> filter, Consumer<String> callback);
 
@@ -38,17 +32,11 @@ public interface DialogFactory {
 
     Pane errorDialog(Throwable error, Runnable callback);
 
-    default Pane errorDialog(Throwable error) {
-        return errorDialog(error, EmptyRunnable.INSTANCE);
-    }
+    Pane errorDialog(Throwable error);
 
-    default Pane errorDialog(String errorMessage) {
-        return errorDialog(errorMessage, EmptyRunnable.INSTANCE);
-    }
+    Pane errorDialog(String errorMessage);
 
-    default Pane errorDialog(String errorMessage, Runnable callback) {
-        return messageDialog("Error occurred: " + errorMessage, callback);
-    }
+    Pane errorDialog(String errorMessage, Runnable callback);
 
     Pane progressDialog(String message, DoubleProperty observable, Runnable callback);
 

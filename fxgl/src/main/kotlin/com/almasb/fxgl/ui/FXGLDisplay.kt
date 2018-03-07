@@ -8,11 +8,12 @@ package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.app.DialogSubState
 import com.almasb.fxgl.io.UIDialogHandler
+import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.util.EmptyRunnable
+import com.almasb.fxgl.util.Predicate
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Button
-import java.util.function.Consumer
-import java.util.function.Predicate
 
 /**
  * Display service.
@@ -23,6 +24,10 @@ import java.util.function.Predicate
 class FXGLDisplay : Display {
 
     private val dialogState = DialogSubState
+
+    override fun showMessageBox(message: String) {
+        showMessageBox(message, EmptyRunnable)
+    }
 
     override fun showMessageBox(message: String, callback: Runnable) {
         dialogState.showMessageBox(message, callback)
@@ -38,6 +43,10 @@ class FXGLDisplay : Display {
      */
     override fun showConfirmationBox(message: String, resultCallback: Consumer<Boolean>) {
         dialogState.showConfirmationBox(message, resultCallback)
+    }
+
+    override fun showInputBox(message: String, resultCallback: Consumer<String>) {
+        showInputBox(message, Predicate { true }, resultCallback)
     }
 
     /**

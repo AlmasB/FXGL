@@ -8,7 +8,9 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.io.UIDialogHandler
 import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.util.Consumer
 import com.almasb.fxgl.util.EmptyRunnable
+import com.almasb.fxgl.util.Predicate
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Button
@@ -22,8 +24,6 @@ import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import jfxtras.scene.control.window.Window
 import java.util.*
-import java.util.function.Consumer
-import java.util.function.Predicate
 
 /**
  *
