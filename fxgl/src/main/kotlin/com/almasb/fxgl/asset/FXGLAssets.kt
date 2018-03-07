@@ -9,6 +9,7 @@ package com.almasb.fxgl.asset
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGL.Companion.getString
 import com.almasb.fxgl.audio.Sound
+import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.ui.FontFactory
 import javafx.scene.image.Image
@@ -22,6 +23,8 @@ import javafx.scene.image.Image
 class FXGLAssets {
 
     companion object {
+        private val log = Logger.get(FXGLAssets::class.java)
+
         @JvmField val SOUND_NOTIFICATION: Sound
         @JvmField val SOUND_MENU_SELECT: Sound
         @JvmField val SOUND_MENU_BACK: Sound
@@ -35,6 +38,8 @@ class FXGLAssets {
         @JvmField val UI_ICON: Image
 
         init {
+            log.debug("Loading FXGLAssets")
+
             val loader = FXGL.getAssetLoader()
 
             SOUND_NOTIFICATION = loader.loadSound(getString("sound.notification"))

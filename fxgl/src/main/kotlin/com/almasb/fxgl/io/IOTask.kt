@@ -8,10 +8,10 @@ package com.almasb.fxgl.io
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.logging.Logger
+import com.almasb.fxgl.util.Consumer
 import javafx.concurrent.Task
 import java.util.concurrent.Callable
 import java.util.concurrent.Executor
-import java.util.function.Consumer
 
 /**
  * IO Task that wraps some IO or any other operation
@@ -99,7 +99,7 @@ abstract class IOTask<T>
         log.warning("Task failed: $name", error)
         if (onFailure == null) {
             // https://github.com/AlmasB/FXGL/issues/480
-            FXGL.getExceptionHandler().handle(error)
+            FXGL.getExceptionHandler().accept(error)
         } else {
             onFailure!!.invoke(error)
         }

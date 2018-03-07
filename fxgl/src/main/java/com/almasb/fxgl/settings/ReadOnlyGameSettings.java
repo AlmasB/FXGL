@@ -59,9 +59,9 @@ public class ReadOnlyGameSettings {
         private Logger log = Logger.get("ExceptionHandler");
 
         @Override
-        public void handle(Throwable e) {
+        public void accept(Throwable e) {
             log.warning("Caught Exception: ", e);
-            exceptionHandler.handle(e);
+            exceptionHandler.accept(e);
         }
     };
 

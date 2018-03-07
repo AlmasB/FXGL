@@ -20,6 +20,7 @@ import com.almasb.fxgl.scene.menu.MenuSettings
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.ui.FXGLDisplay
+import com.almasb.fxgl.util.Consumer
 import com.almasb.fxgl.util.Version
 import com.gluonhq.charm.down.Platform
 import javafx.beans.binding.Bindings
@@ -29,7 +30,6 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.Callable
-import java.util.function.Consumer
 
 /**
  * Represents the entire FXGL infrastructure.

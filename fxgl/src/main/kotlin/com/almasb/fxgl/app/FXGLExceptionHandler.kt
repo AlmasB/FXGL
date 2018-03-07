@@ -13,7 +13,7 @@ package com.almasb.fxgl.app
  */
 class FXGLExceptionHandler : ExceptionHandler {
 
-    override fun handle(e: Throwable) {
+    override fun accept(e: Throwable) {
         FXGL.getDisplay().showErrorBox(e)
     }
 }
