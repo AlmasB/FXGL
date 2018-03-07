@@ -9,6 +9,7 @@ package com.almasb.fxgl.scene.menu;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.scene.FXGLMenu;
+import com.almasb.fxgl.util.Supplier;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -17,8 +18,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-
-import java.util.function.Supplier;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
