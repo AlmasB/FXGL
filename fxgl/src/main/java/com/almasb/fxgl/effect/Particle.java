@@ -7,6 +7,7 @@ package com.almasb.fxgl.effect;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Poolable;
+import com.almasb.fxgl.util.Consumer;
 import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,8 +16,6 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
-
-import java.util.function.Consumer;
 
 /**
  * Simple particle represented by a Shape or an Image.

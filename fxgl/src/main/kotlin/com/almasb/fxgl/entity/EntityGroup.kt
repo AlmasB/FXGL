@@ -9,7 +9,7 @@ package com.almasb.fxgl.entity
 import com.almasb.fxgl.core.Disposable
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.collection.Predicate
-import java.util.function.Consumer
+import com.almasb.fxgl.util.Consumer
 
 /**
  * A group of entities of particular types.

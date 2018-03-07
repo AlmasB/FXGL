@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.ui
 
+import com.almasb.fxgl.util.Consumer
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.Parent
 import javafx.scene.effect.DropShadow
@@ -22,7 +23,6 @@ import javafx.scene.shape.Shape
 import javafx.scene.text.Font
 import javafx.scene.text.FontPosture
 import javafx.scene.text.Text
-import java.util.function.Consumer
 
 /**
  * Wheel menu with a maximum of 4 selectable elements.

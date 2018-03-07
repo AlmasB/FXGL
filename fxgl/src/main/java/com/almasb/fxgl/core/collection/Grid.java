@@ -6,10 +6,9 @@
 
 package com.almasb.fxgl.core.collection;
 
+import com.almasb.fxgl.util.BiFunction;
+import com.almasb.fxgl.util.Consumer;
 import com.almasb.fxgl.util.TriConsumer;
-
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

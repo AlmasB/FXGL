@@ -8,6 +8,7 @@ package com.almasb.fxgl.gameplay.qte
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.SubState
+import com.almasb.fxgl.util.Consumer
 import javafx.event.EventHandler
 import javafx.geometry.Pos.CENTER
 import javafx.scene.input.KeyCode
@@ -16,7 +17,6 @@ import javafx.scene.input.KeyEvent.KEY_PRESSED
 import javafx.scene.layout.HBox
 import javafx.util.Duration
 import java.util.*
-import java.util.function.Consumer
 
 /**
  * FXGL default QTE service provider.

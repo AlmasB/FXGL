@@ -7,6 +7,7 @@
 package com.almasb.fxgl.net;
 
 import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.fxgl.util.Consumer;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 
@@ -16,7 +17,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * Represents a communication between two machines over network.

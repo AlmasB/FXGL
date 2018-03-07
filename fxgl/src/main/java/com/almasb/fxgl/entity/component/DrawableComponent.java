@@ -8,9 +8,8 @@ package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.util.BiConsumer;
 import javafx.scene.canvas.GraphicsContext;
-
-import java.util.function.BiConsumer;
 
 /**
  * Allows drawing directly to graphics context.

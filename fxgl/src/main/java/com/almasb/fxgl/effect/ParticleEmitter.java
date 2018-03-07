@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.pool.Pools;
+import com.almasb.fxgl.util.Supplier;
 import com.almasb.fxgl.util.TriFunction;
 import javafx.animation.Interpolator;
 import javafx.beans.property.*;
@@ -26,7 +27,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.Random;
-import java.util.function.Supplier;
 
 /**
  * A general particle emitter.

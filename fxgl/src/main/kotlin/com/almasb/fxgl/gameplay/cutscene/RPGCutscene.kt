@@ -8,7 +8,7 @@ package com.almasb.fxgl.gameplay.cutscene
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.script.Script
-import java.util.function.Supplier
+import com.almasb.fxgl.util.Supplier
 
 /**
  *

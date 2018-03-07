@@ -14,6 +14,8 @@ import com.almasb.fxgl.entity.component.*
 import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
+import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.util.Optional
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import javafx.scene.input.MouseButton
@@ -30,8 +32,6 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
-import java.util.*
-import java.util.function.Consumer
 
 class GameWorldTest {
 

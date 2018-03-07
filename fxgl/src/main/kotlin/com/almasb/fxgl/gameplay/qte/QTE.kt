@@ -6,9 +6,9 @@
 
 package com.almasb.fxgl.gameplay.qte
 
+import com.almasb.fxgl.util.Consumer
 import javafx.scene.input.KeyCode
 import javafx.util.Duration
-import java.util.function.Consumer
 
 /**
  * Quick Time Events.

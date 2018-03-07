@@ -6,13 +6,13 @@
 
 package com.almasb.fxgl.core.math;
 
+import com.almasb.fxgl.util.Optional;
 import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 /**

@@ -28,6 +28,7 @@ import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.util.BiConsumer
 import com.almasb.fxgl.util.Consumer
 import com.almasb.fxgl.util.EmptyRunnable
+import com.almasb.fxgl.util.Optional
 import javafx.beans.property.*
 import javafx.event.Event
 import javafx.geometry.Point2D
@@ -37,7 +38,6 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.text.Text
 import javafx.util.Duration
-import java.util.*
 
 /**
  * Using this API results in more concise but less readable code.

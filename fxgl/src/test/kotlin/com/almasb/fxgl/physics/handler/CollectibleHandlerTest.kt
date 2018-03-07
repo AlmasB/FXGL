@@ -12,11 +12,11 @@ import com.almasb.fxgl.entity.component.CollidableComponent
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsWorld
+import com.almasb.fxgl.util.Consumer
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
-import java.util.function.Consumer
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

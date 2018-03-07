@@ -6,10 +6,10 @@
 
 package com.almasb.fxgl.entity
 
+import com.almasb.fxgl.util.Predicate
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import java.util.*
-import java.util.function.Predicate
 
 /**
  * Represents pure logical state of game.

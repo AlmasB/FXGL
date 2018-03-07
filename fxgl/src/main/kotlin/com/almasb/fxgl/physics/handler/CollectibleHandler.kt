@@ -9,7 +9,7 @@ package com.almasb.fxgl.physics.handler
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.physics.CollisionHandler
-import java.util.function.Consumer
+import com.almasb.fxgl.util.Consumer
 
 /**
  * Generic collectible collision handler.

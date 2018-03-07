@@ -7,7 +7,7 @@
 package com.almasb.fxgl.gameplay.cutscene
 
 import com.almasb.fxgl.util.EmptyRunnable
-import java.util.function.Supplier
+import com.almasb.fxgl.util.Supplier
 
 /**
  *

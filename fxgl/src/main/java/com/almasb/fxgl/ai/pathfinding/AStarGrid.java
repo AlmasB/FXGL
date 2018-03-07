@@ -6,10 +6,11 @@
 
 package com.almasb.fxgl.ai.pathfinding;
 
+import com.almasb.fxgl.util.Predicate;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -144,7 +145,7 @@ public class AStarGrid {
      */
     public final Optional<AStarNode> getRandomNode(Predicate<AStarNode> predicate) {
         List<AStarNode> filtered = getNodes().stream()
-                .filter(predicate)
+                .filter(predicate::test)
                 .collect(Collectors.toList());
 
         if (filtered.isEmpty())

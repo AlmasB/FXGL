@@ -19,13 +19,17 @@ import com.almasb.fxgl.entity.component.IrremovableComponent;
 import com.almasb.fxgl.entity.component.TimeComponent;
 import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.parser.tiled.TiledMap;
+import com.almasb.fxgl.util.Optional;
+import com.almasb.fxgl.util.Predicate;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
