@@ -23,6 +23,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
+import static com.almasb.fxgl.util.BackportKt.*;
+
 /**
  * Adds a game scene view to an entity.
  * To change view of an entity use {@link #setView(Node)}.
@@ -229,7 +231,8 @@ public class ViewComponent extends Component {
 
     private ListChangeListener<? super HitBox> hitboxListener = c -> {
         debugBBox.getChildren().clear();
-        c.getList().forEach(this::addDebugView);
+
+        forEach(c.getList(), this::addDebugView);
     };
 
     private void addDebugBBox() {
@@ -239,7 +242,7 @@ public class ViewComponent extends Component {
         bbox.hitBoxesProperty().addListener(hitboxListener);
 
         // generate view for current
-        bbox.hitBoxesProperty().forEach(this::addDebugView);
+        forEach(bbox.hitBoxesProperty(), this::addDebugView);
 
         getView().addNode(debugBBox);
     }

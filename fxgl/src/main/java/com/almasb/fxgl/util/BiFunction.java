@@ -13,7 +13,6 @@ package com.almasb.fxgl.util;
  * @param <U> the type of the second argument to the function
  * @param <R> the type of the result of the function
  */
-@FunctionalInterface
 public interface BiFunction<T, U, R> {
 
     /**

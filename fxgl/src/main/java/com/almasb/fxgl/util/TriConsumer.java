@@ -11,7 +11,6 @@ package com.almasb.fxgl.util;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@FunctionalInterface
 public interface TriConsumer<T, U, V> {
 
     void accept(T t, U u, V v);

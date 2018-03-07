@@ -6,11 +6,11 @@
 
 package com.almasb.fxgl.ai.pathfinding;
 
+import com.almasb.fxgl.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;

@@ -8,12 +8,12 @@ package com.almasb.fxgl.entity.action;
 
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Optional;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

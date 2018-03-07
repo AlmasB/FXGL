@@ -10,11 +10,10 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.util.BiConsumer;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-
-import java.util.function.BiConsumer;
 
 /**
  * Drawing entities directly to the graphics context.

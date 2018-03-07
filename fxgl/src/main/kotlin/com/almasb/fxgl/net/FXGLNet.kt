@@ -10,12 +10,12 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.io.IOTask
 import com.almasb.fxgl.io.taskOf
 import com.almasb.fxgl.io.voidTaskOf
+import com.almasb.fxgl.util.Optional
 import javafx.beans.value.ChangeListener
 import java.io.InputStreamReader
 import java.io.Serializable
 import java.net.URL
 import java.nio.file.Path
-import java.util.*
 
 /**
  * Main Net service provider for FXGL.

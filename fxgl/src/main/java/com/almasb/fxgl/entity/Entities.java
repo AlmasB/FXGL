@@ -24,6 +24,8 @@ import javafx.scene.paint.Color;
 
 import java.util.List;
 
+import static com.almasb.fxgl.util.BackportKt.forEach;
+
 /**
  * Helper class with static convenience methods.
  *
@@ -77,7 +79,7 @@ public final class Entities {
 
         public EntityBuilder from(SpawnData data) {
             at(data.getX(), data.getY());
-            data.getData().forEach(entry -> entity.setProperty(entry.key, entry.value));
+            forEach(data.getData(), entry -> entity.setProperty(entry.key, entry.value));
             return this;
         }
 

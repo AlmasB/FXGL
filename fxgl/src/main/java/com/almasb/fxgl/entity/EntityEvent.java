@@ -7,11 +7,10 @@
 package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.util.Optional;
 import javafx.beans.NamedArg;
 import javafx.event.Event;
 import javafx.event.EventType;
-
-import java.util.Optional;
 
 /**
  * A general entity event. Keeps track of its trigger and target entities.

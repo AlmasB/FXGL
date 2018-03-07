@@ -7,11 +7,11 @@
 package com.almasb.fxgl.net;
 
 import com.almasb.fxgl.io.IOTask;
+import com.almasb.fxgl.util.Optional;
 
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
-import java.util.Optional;
 
 /**
  * Defines methods for Net service.

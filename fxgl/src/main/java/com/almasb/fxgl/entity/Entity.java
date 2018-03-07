@@ -16,6 +16,8 @@ import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.script.Script;
+import com.almasb.fxgl.util.BackportKt;
+import com.almasb.fxgl.util.Optional;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -24,7 +26,8 @@ import javafx.scene.Node;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
  * A generic entity in the Entity-Component-Control model.
@@ -740,7 +743,7 @@ public class Entity {
     }
 
     private boolean isCoreComponent(Class<? extends Component> type) {
-        return type.getDeclaredAnnotation(CoreComponent.class) != null;
+        return type.getAnnotation(CoreComponent.class) != null;
     }
 
     private void removeAllComponents() {
@@ -775,26 +778,35 @@ public class Entity {
 
     @SuppressWarnings("unchecked")
     private void injectFields(Component component) {
-        ReflectionUtils.findFieldsByTypeRecursive(component, Component.class).forEach(field -> {
-            getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
-                ReflectionUtils.inject(field, component, comp);
-            });
-        });
+        forEach(
+                ReflectionUtils.findFieldsByTypeRecursive(component, Component.class),
+                field -> {
+                    getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
+                        ReflectionUtils.inject(field, component, comp);
+                    });
+                }
+        );
     }
 
     @SuppressWarnings("unchecked")
     private void injectFields(Control control) {
-        ReflectionUtils.findFieldsByTypeRecursive(control, Component.class).forEach(field -> {
-            getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
-                ReflectionUtils.inject(field, control, comp);
-            });
-        });
+        forEach(
+                ReflectionUtils.findFieldsByTypeRecursive(control, Component.class),
+                field -> {
+                    getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
+                        ReflectionUtils.inject(field, control, comp);
+                    });
+                }
+        );
 
-        ReflectionUtils.findFieldsByTypeRecursive(control, Control.class).forEach(field -> {
-            getControlOptional((Class<? extends Control>) field.getType()).ifPresent(ctrl -> {
-                ReflectionUtils.inject(field, control, ctrl);
-            });
-        });
+        forEach(
+                ReflectionUtils.findFieldsByTypeRecursive(control, Control.class),
+                field -> {
+                    getControlOptional((Class<? extends Control>) field.getType()).ifPresent(ctrl -> {
+                        ReflectionUtils.inject(field, control, ctrl);
+                    });
+                }
+        );
 
         injectEntityField(control);
     }
@@ -965,8 +977,6 @@ public class Entity {
 
     @Override
     public String toString() {
-        return "Entity("
-                + String.join("\n", "components=" + components, "controls=" + controls)
-                + ")";
+        return "Entity(" + "components=" + components + "\n" + "controls=" + controls + ")";
     }
 }
