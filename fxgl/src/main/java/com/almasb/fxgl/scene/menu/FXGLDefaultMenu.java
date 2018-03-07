@@ -10,6 +10,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.settings.MenuItem;
 import com.almasb.fxgl.ui.FXGLButton;
+import com.almasb.fxgl.util.Supplier;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -23,7 +24,6 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.EnumSet;
-import java.util.function.Supplier;
 
 import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
 

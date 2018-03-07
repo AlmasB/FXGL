@@ -20,7 +20,9 @@ import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.ui.FXGLScrollPane;
 import com.almasb.fxgl.ui.FXGLSpinner;
+import com.almasb.fxgl.util.Consumer;
 import com.almasb.fxgl.util.Language;
+import com.almasb.fxgl.util.Supplier;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
@@ -42,8 +44,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.util.Arrays;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static com.almasb.fxgl.app.FXGL.getSettings;
 import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
