@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
+import com.almasb.fxgl.util.Consumer
 import com.almasb.fxgl.util.InputPredicates
 import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.ReadOnlyBooleanWrapper
@@ -20,7 +21,6 @@ import javafx.collections.FXCollections
 import javafx.event.EventHandler
 import javafx.scene.input.KeyEvent
 import java.time.LocalDateTime
-import java.util.function.Consumer
 
 /**
  * Handles events that happen within menus.

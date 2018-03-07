@@ -25,6 +25,8 @@ import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.texture.Texture
+import com.almasb.fxgl.util.BiConsumer
+import com.almasb.fxgl.util.Consumer
 import com.almasb.fxgl.util.EmptyRunnable
 import javafx.beans.property.*
 import javafx.event.Event
@@ -36,8 +38,6 @@ import javafx.scene.input.MouseButton
 import javafx.scene.text.Text
 import javafx.util.Duration
 import java.util.*
-import java.util.function.BiConsumer
-import java.util.function.Consumer
 
 /**
  * Using this API results in more concise but less readable code.

@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.util
 
-import java.util.function.Predicate
-
 /**
  *
  *
