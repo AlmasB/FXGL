@@ -8,8 +8,8 @@ package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.core.Disposable
 import com.almasb.fxgl.core.collection.Array
-import com.almasb.fxgl.core.collection.Predicate
 import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.util.Predicate
 
 /**
  * A group of entities of particular types.
@@ -43,7 +43,7 @@ class EntityGroup<T : Entity>(private val world: GameWorld, initialEntities: Lis
     fun forEach(filter: Predicate<T>, action: Consumer<T>) {
         update()
 
-        entities.filter { filter.evaluate(it) }.forEach {
+        entities.filter { filter.test(it) }.forEach {
             if (it.isActive) {
                 action.accept(it)
             }

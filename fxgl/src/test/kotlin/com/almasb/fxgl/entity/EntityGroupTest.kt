@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.core.collection.Predicate
 import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.util.Predicate
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.*
 import org.junit.jupiter.api.BeforeEach
