@@ -53,16 +53,6 @@ public final class GameScene extends FXGLScene
      */
     private Group gameRoot = new Group();
 
-    /**
-     * Canvas for particles to accelerate drawing.
-     */
-    private Canvas particlesCanvas = new Canvas();
-
-    /**
-     * Graphics context for drawing particles.
-     */
-    private GraphicsContext particlesGC = particlesCanvas.getGraphicsContext2D();
-
     private Array<ParticleControl> particles = new UnorderedArray<>(16);
 
     /**
@@ -78,10 +68,9 @@ public final class GameScene extends FXGLScene
     }
 
     protected GameScene(int width, int height) {
-        getContentRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
+        getContentRoot().getChildren().addAll(gameRoot, uiRoot);
 
         initProfilerText(0, height - 120);
-        initParticlesCanvas(width, height);
         initViewport(width, height);
 
         log.debug("Game scene initialized: " + width + "x" + height);
@@ -94,12 +83,6 @@ public final class GameScene extends FXGLScene
         profilerText.setTranslateY(y);
 
         uiRoot.getChildren().add(profilerText);
-    }
-
-    private void initParticlesCanvas(double w, double h) {
-        particlesCanvas.setWidth(w);
-        particlesCanvas.setHeight(h);
-        particlesCanvas.setMouseTransparent(true);
     }
 
     private void initViewport(double w, double h) {
@@ -247,18 +230,6 @@ public final class GameScene extends FXGLScene
     }
 
     /**
-     * Returns graphics context of the game scene.
-     * The render layer is over all entities.
-     * Use this only if performance is required.
-     * The drawing on this context can be done in {@link GameApplication#onUpdate(double)}.
-     *
-     * @return graphics context
-     */
-    public GraphicsContext getGraphicsContext() {
-        return particlesGC;
-    }
-
-    /**
      * Returns render group for entity based on entity's
      * render layer. If no such group exists, a new group
      * will be created for that layer and placed
@@ -295,28 +266,8 @@ public final class GameScene extends FXGLScene
         return group;
     }
 
-    private boolean wasDirty = false;
-
     public void onUpdate(double tpf) {
         getViewport().onUpdate(tpf);
-
-        boolean dirty = particles.isNotEmpty();
-
-        if (dirty || wasDirty) {
-            particlesGC.setGlobalAlpha(1);
-            particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
-
-            // https://github.com/AlmasB/FXGL/issues/494
-            particlesGC.clearRect(0, 0, getWidth(), getHeight());
-
-            wasDirty = false;
-        }
-
-        for (ParticleControl particle : particles) {
-            particle.renderParticles(particlesGC, getViewport().getOrigin());
-        }
-
-        wasDirty = dirty;
     }
 
     public void clear() {

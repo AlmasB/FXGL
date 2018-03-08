@@ -5,16 +5,19 @@
  */
 package com.almasb.fxgl.effect;
 
+import com.almasb.fxgl.animation.AnimatedColor;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Poolable;
 import com.almasb.fxgl.util.Consumer;
 import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.Node;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Ellipse;
 import javafx.util.Duration;
 
 /**
@@ -85,6 +88,14 @@ public class Particle implements Poolable {
      */
     private Image image = null;
 
+    private Ellipse view = new Ellipse();
+    private ImageView imageView = new ImageView();
+    private AnimatedColor colorAnimation = new AnimatedColor(Color.BLACK, Color.WHITE);
+
+    public Node getView() {
+        return imageView.getImage() != null ? imageView : view;
+    }
+
     private Consumer<Particle> control = null;
 
     public Particle(Point2D position, Point2D vel, Point2D acceleration, double radius, Point2D scale, Duration expireTime, Paint startColor, Paint endColor, BlendMode blendMode) {
@@ -114,6 +125,28 @@ public class Particle implements Poolable {
         this.initialLife = expireTime.toSeconds();
         this.life = initialLife;
         this.interpolator = interpolator;
+
+        imageView.setImage(image);
+        colorAnimation = new AnimatedColor((Color)startColor, (Color)endColor, interpolator);
+
+        // for physics?
+        if (image != null) {
+
+            imageView.setScaleX(radius * 2 / image.getWidth());
+            imageView.setScaleY(radius * 2 / image.getHeight());
+            imageView.setLayoutX(position.getX());
+            imageView.setLayoutY(position.getY());
+
+        } else {
+
+            view.setRadiusX(radius);
+            view.setRadiusY(radius);
+            view.setCenterX(radius);
+            view.setCenterY(radius);
+            view.setLayoutX(position.getX());
+            view.setLayoutY(position.getY());
+            view.setFill(startColor);
+        }
     }
 
     @Override
@@ -166,31 +199,32 @@ public class Particle implements Poolable {
         if (control != null)
             control.accept(this);
 
-        return life <= 0 || radius.x <= 0 || radius.y <= 0;
-    }
+        boolean dead = life <= 0 || radius.x <= 0 || radius.y <= 0;
 
-    /**
-     * Renders particle to g context. Takes into
-     * account the viewport origin, so if particle
-     * XY is outside the viewport it will not be seen.
-     *
-     * @param g graphics context
-     * @param viewportOrigin viewport origin
-     */
-    void render(GraphicsContext g, Point2D viewportOrigin) {
-        double alpha = life / initialLife;
+        if (!dead) {
+            double alpha = life / initialLife;
 
-        g.setGlobalAlpha(alpha);
-        g.setGlobalBlendMode(blendMode);
+            if (image != null) {
 
-        Image particleImage = image != null ? image : ParticleEmitter.getCachedImage((Color) startColor, (Color) endColor, (int)(alpha * 99));
+                imageView.setScaleX(radius.x * 2 / image.getWidth());
+                imageView.setScaleY(radius.y * 2 / image.getHeight());
+                imageView.setLayoutX(x);
+                imageView.setLayoutY(y);
+                imageView.setOpacity(alpha);
 
-        g.save();
+            } else {
 
-        g.translate(position.x - viewportOrigin.getX(), position.y - viewportOrigin.getY());
-        g.scale(radius.x * 2 / particleImage.getWidth(), radius.y * 2 / particleImage.getHeight());
-        g.drawImage(particleImage, 0, 0);
+                view.setRadiusX(radius.x);
+                view.setRadiusY(radius.y);
+                view.setCenterX(radius.x);
+                view.setCenterY(radius.y);
+                view.setLayoutX(x);
+                view.setLayoutY(y);
+                view.setOpacity(alpha);
+                view.setFill(colorAnimation.getValue(1 - alpha));
+            }
+        }
 
-        g.restore();
+        return dead;
     }
 }

@@ -50,10 +50,11 @@ public final class ParticleEmitters {
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.setNumParticles(15);
         emitter.setEmissionRate(0.5);
-        emitter.setColor(Color.rgb(230, 75, 40));
+        emitter.setStartColor(Color.rgb(255, 255, 90));
+        emitter.setEndColor(Color.rgb(230, 75, 40));
         emitter.setSize(9, 12);
         emitter.setVelocityFunction((i, x, y) -> new Point2D(rand(-0.5, 0.5) * 0.25 * 60, rand() * -1 * 60));
-        emitter.setSpawnPointFunction((i, x, y) -> new Point2D(x, y).add(new Point2D(i * (rand() - 0.5), (rand() - 1))));
+        emitter.setSpawnPointFunction((i, x, y) -> new Point2D(0, 0).add(new Point2D(i * (rand() - 0.5), (rand() - 1))));
         emitter.setScaleFunction((i, x, y) -> new Point2D(rand(-0.01, 0.01) * 10, rand() * -0.1));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(1));
         emitter.setBlendMode(BlendMode.ADD);

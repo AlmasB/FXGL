@@ -82,7 +82,7 @@ public class ParticleTextureSample extends GameApplication {
         entity = Entities.builder()
                 .at(getWidth() / 2, getHeight() / 2)
                 .with(new ParticleControl(emitter))
-                //.with(new ButterflyControl())
+                .with(new ButterflyControl())
                 .buildAndAttach();
 
 //        Entities.builder()

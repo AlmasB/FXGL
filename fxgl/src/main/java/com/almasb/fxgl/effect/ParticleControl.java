@@ -14,8 +14,6 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.util.EmptyRunnable;
-import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
 
 import java.util.Iterator;
 
@@ -26,6 +24,7 @@ import java.util.Iterator;
 public class ParticleControl extends Control {
 
     private ParticleEmitter emitter;
+    private Entity parent = new Entity();
 
     protected Array<Particle> particles = new UnorderedArray<>(256);
 
@@ -49,13 +48,22 @@ public class ParticleControl extends Control {
         if (emitter == null)
             return;
 
+        if (parent.getWorld() == null) {
+            entity.getWorld().addEntity(parent);
+        }
+
         particles.addAll(emitter.emit(position.getX(), position.getY()));
 
         for (Iterator<Particle> it = particles.iterator(); it.hasNext(); ) {
             Particle p = it.next();
             if (p.update(tpf)) {
                 it.remove();
+
+                parent.getView().removeNode(p.getView());
                 Pools.free(p);
+            } else {
+                if (p.getView().getParent() == null)
+                    parent.getView().addNode(p.getView());
             }
         }
 
@@ -66,19 +74,8 @@ public class ParticleControl extends Control {
 
     @Override
     public void onRemoved(Entity entity) {
+        // TODO: back to pool?
         particles.clear();
-    }
-
-    /**
-     * Do NOT call manually.
-     *
-     * @param g graphics context
-     * @param viewportOrigin viewport origin
-     */
-    public final void renderParticles(GraphicsContext g, Point2D viewportOrigin) {
-        for (Particle p : particles) {
-            p.render(g, viewportOrigin);
-        }
     }
 
     /**

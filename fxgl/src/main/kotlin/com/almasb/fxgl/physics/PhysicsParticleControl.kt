@@ -28,6 +28,9 @@ class PhysicsParticleControl(private val group: ParticleGroup,
     private val radiusPixels = physicsWorld.toPixels(radiusMeters.toDouble())
 
     override fun onUpdate(entity: Entity, tpf: Double) {
+        entity.setPosition(0.0, 0.0)
+
+        particles.forEach { entity.view.removeNode(it.view) }
         this.particles.clear()
 
         val centers = physicsWorld.jBox2DWorld.particleSystem.particlePositionBuffer
@@ -40,7 +43,10 @@ class PhysicsParticleControl(private val group: ParticleGroup,
 
             val pointPixels = physicsWorld.toPoint(pointPhysics)
 
-            this.particles.add(PhysicsParticle(pointPixels, radiusPixels, color))
+            val particle = PhysicsParticle(pointPixels, radiusPixels, color)
+
+            this.particles.add(particle)
+            entity.view.addNode(particle.view)
         }
 
         Pools.free(pointPhysics)
