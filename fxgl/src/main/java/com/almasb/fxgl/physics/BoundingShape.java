@@ -10,8 +10,6 @@ import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 
-import java.util.stream.Stream;
-
 /**
  * Defines bounding shapes to be used for hit boxes.
  *
@@ -84,15 +82,18 @@ public final class BoundingShape {
         if (points.length < 2)
             throw new IllegalArgumentException("Chain shape requires at least 2 points. Given points: " + points.length);
 
-        double maxX = Stream.of(points)
-                .mapToDouble(Point2D::getX)
-                .max()
-                .getAsDouble();
+        double maxX = points[0].getX();
+        double maxY = points[0].getY();
 
-        double maxY = Stream.of(points)
-                .mapToDouble(Point2D::getY)
-                .max()
-                .getAsDouble();
+        for (Point2D p : points) {
+            if (p.getX() > maxX) {
+                maxX = p.getX();
+            }
+
+            if (p.getY() > maxY) {
+                maxY = p.getY();
+            }
+        }
 
         return new BoundingShape(ShapeType.CHAIN, points, new Dimension2D(maxX, maxY));
     }
