@@ -16,6 +16,7 @@ import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.util.Consumer
 import com.almasb.fxgl.util.Optional
+import com.almasb.fxgl.util.Predicate
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import javafx.scene.input.MouseButton
@@ -240,7 +241,7 @@ class GameWorldTest {
 
         e1.view.fireEvent(event)
 
-        assertThat(gameWorld.selectedEntity.get(), `is`<Entity>(e1))
+        assertThat(gameWorld.getSelectedEntity().get(), `is`<Entity>(e1))
     }
 
     @Test
@@ -563,9 +564,9 @@ class GameWorldTest {
         assertAll(
                 Executable { assertThat(gameWorld.getSingleton(TestType.T1).get(), `is`(e1)) },
                 Executable { assertThat(gameWorld.getSingleton(TestType.T2).get(), `is`(e2)) },
-                Executable { assertThat(gameWorld.getSingleton { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T3) }.get(), `is`(e3)) },
+                Executable { assertThat(gameWorld.getSingleton (Predicate { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T3) }).get(), `is`(e3)) },
                 Executable { assertFalse(gameWorld.getSingleton(TestType.T4).isPresent) },
-                Executable { assertFalse(gameWorld.getSingleton { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T4) }.isPresent) }
+                Executable { assertFalse(gameWorld.getSingleton (Predicate { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T4) }).isPresent) }
         )
     }
 
@@ -581,7 +582,7 @@ class GameWorldTest {
 
         assertAll(
                 Executable { assertThat(gameWorld.getRandom(TestType.T1).get(), `is`(e1)) },
-                Executable { assertThat(gameWorld.getRandom { it.getComponent(TypeComponent::class.java).isType(TestType.T2) }.get(), `is`(e2)) }
+                Executable { assertThat(gameWorld.getRandom(Predicate { it.getComponent(TypeComponent::class.java).isType(TestType.T2) }).get(), `is`(e2)) }
         )
     }
 
@@ -632,7 +633,7 @@ class GameWorldTest {
 
         gameWorld.addEntity(e)
 
-        assertThat(gameWorld.getClosestEntity(e, { true }), `is`(Optional.empty()))
+        assertThat(gameWorld.getClosestEntity(e, Predicate { true }), `is`(Optional.empty()))
     }
 
     @Test
@@ -652,9 +653,9 @@ class GameWorldTest {
         gameWorld.addEntities(e1, e2, e3)
 
         assertAll(
-                Executable { assertThat(gameWorld.getClosestEntity(e1, { true }).get(), `is`(e2)) },
-                Executable { assertThat(gameWorld.getClosestEntity(e2, { true }).get(), `is`(e1)) },
-                Executable { assertThat(gameWorld.getClosestEntity(e3, { true }).get(), `is`(e2)) }
+                Executable { assertThat(gameWorld.getClosestEntity(e1, Predicate { true }).get(), `is`(e2)) },
+                Executable { assertThat(gameWorld.getClosestEntity(e2, Predicate { true }).get(), `is`(e1)) },
+                Executable { assertThat(gameWorld.getClosestEntity(e3, Predicate { true }).get(), `is`(e2)) }
         )
     }
 
@@ -673,9 +674,9 @@ class GameWorldTest {
         gameWorld.addEntities(e1, e2, e3)
 
         assertAll(
-                Executable { assertThat(gameWorld.getEntitiesFiltered { it.x > 15 }, contains(e2)) },
-                Executable { assertThat(gameWorld.getEntitiesFiltered { it.y < 30 }, containsInAnyOrder(e1, e2, e3)) },
-                Executable { assertThat(gameWorld.getEntitiesFiltered { true }, containsInAnyOrder(e1, e2, e3)) }
+                Executable { assertThat(gameWorld.getEntitiesFiltered (Predicate { it.x > 15 }), contains(e2)) },
+                Executable { assertThat(gameWorld.getEntitiesFiltered (Predicate { it.y < 30 }), containsInAnyOrder(e1, e2, e3)) },
+                Executable { assertThat(gameWorld.getEntitiesFiltered (Predicate { true }), containsInAnyOrder(e1, e2, e3)) }
         )
     }
 
@@ -697,9 +698,9 @@ class GameWorldTest {
         val result2 = Array<Entity>()
         val result3 = Array<Entity>()
 
-        gameWorld.getEntitiesFiltered(result1) { it.x > 15 }
-        gameWorld.getEntitiesFiltered(result2) { it.y < 30 }
-        gameWorld.getEntitiesFiltered(result3) { true }
+        gameWorld.getEntitiesFiltered(result1, Predicate { it.x > 15 })
+        gameWorld.getEntitiesFiltered(result2, Predicate { it.y < 30 })
+        gameWorld.getEntitiesFiltered(result3, Predicate { true })
 
         assertAll(
                 Executable { assertThat(result1, contains(e2)) },

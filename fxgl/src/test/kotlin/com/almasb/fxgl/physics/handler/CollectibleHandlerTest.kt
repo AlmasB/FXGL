@@ -29,7 +29,7 @@ class CollectibleHandlerTest {
 
     @Test
     fun `Collectible is collected`() {
-        val gameWorld = GameWorld(2)
+        val gameWorld = GameWorld()
         val physicsWorld = PhysicsWorld(600, 50.0)
 
         var count = 0
