@@ -6,23 +6,18 @@
 
 package com.almasb.fxgl.scene;
 
-import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.asset.FXGLAssets;
-import com.almasb.fxgl.core.collection.Array;
-import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.effect.ParticleControl;
-import com.almasb.fxgl.entity.*;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.EntityWorldListener;
+import com.almasb.fxgl.entity.ModuleListener;
+import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.entity.view.EntityView;
-import com.almasb.fxgl.physics.PhysicsParticleControl;
 import com.almasb.fxgl.ui.UI;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
@@ -33,11 +28,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Represents the scene that shows game objects on the screen during "play" mode.
- * Contains 3 layers. From bottom to top:
+ * Represents the scene that shows entities on the screen during "play" mode.
+ * Contains 2 layers. From bottom to top:
  * <ol>
  *     <li>Entities and their render layers (game view)</li>
- *     <li>Particles</li>
  *     <li>UI Overlay</li>
  * </ol>
  *
@@ -46,14 +40,12 @@ import java.util.List;
 public final class GameScene extends FXGLScene
         implements EntityWorldListener, ModuleListener {
 
-    private static final Logger log = Logger.get("FXGL.GameScene");
+    private static final Logger log = Logger.get(GameScene.class);
 
     /**
      * Root for entity views, it is affected by viewport movement.
      */
     private Group gameRoot = new Group();
-
-    private Array<ParticleControl> particles = new UnorderedArray<>(16);
 
     /**
      * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
@@ -77,6 +69,7 @@ public final class GameScene extends FXGLScene
     }
 
     private void initProfilerText(double x, double y) {
+        // TODO: only do this when profiling enabled?
         profilerText.setFont(FXGLAssets.UI_MONO_FONT.newFont(20));
         profilerText.setFill(Color.RED);
         profilerText.setTranslateX(x);
@@ -274,11 +267,8 @@ public final class GameScene extends FXGLScene
         log.debug("Clearing game scene");
 
         getViewport().unbind();
-        particles.clear();
         gameRoot.getChildren().clear();
-        uiRoot.getChildren().clear();
-
-        uiRoot.getChildren().add(profilerText);
+        uiRoot.getChildren().setAll(profilerText);
     }
 
     @Override
@@ -286,11 +276,6 @@ public final class GameScene extends FXGLScene
         initView(entity.getViewComponent());
 
         entity.addModuleListener(this);
-
-        entity.getControlOptional(ParticleControl.class)
-                .ifPresent(particles::add);
-        entity.getControlOptional(PhysicsParticleControl.class)
-                .ifPresent(particles::add);
     }
 
     @Override
@@ -298,11 +283,6 @@ public final class GameScene extends FXGLScene
         destroyView(entity.getViewComponent());
 
         entity.removeModuleListener(this);
-
-        entity.getControlOptional(ParticleControl.class)
-                .ifPresent(p -> particles.removeValueByIdentity(p));
-        entity.getControlOptional(PhysicsParticleControl.class)
-                .ifPresent(p -> particles.removeValueByIdentity(p));
     }
 
     private void initView(ViewComponent viewComponent) {
@@ -318,20 +298,5 @@ public final class GameScene extends FXGLScene
     private void destroyView(ViewComponent viewComponent) {
         EntityView view = viewComponent.getView();
         removeGameView(view, viewComponent.getRenderLayer());
-    }
-
-    @Override
-    public void onAdded(Control control) {
-        if (control instanceof PhysicsParticleControl) {
-            PhysicsParticleControl particleControl = (PhysicsParticleControl) control;
-            particles.add(particleControl);
-        }
-    }
-
-    @Override
-    public void onRemoved(Control control) {
-        if (control instanceof PhysicsParticleControl) {
-            particles.removeValueByIdentity((PhysicsParticleControl) control);
-        }
     }
 }
