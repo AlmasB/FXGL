@@ -59,8 +59,6 @@ class GameWorld {
     val entitiesCopy: List<Entity>
         get(): List<Entity> = ArrayList(entities)
 
-    private val query = GameWorldQuery(entities)
-
     init {
         log.debug("Game world initialized")
     }
@@ -442,7 +440,7 @@ class GameWorld {
      * @return new list containing entities that satisfy query filters
      */
     fun getEntitiesFiltered(predicate: Predicate<Entity>): List<Entity> {
-        return query.getEntitiesFiltered(predicate)
+        return entities.filter { predicate.test(it) }
     }
 
     /**
@@ -468,7 +466,14 @@ class GameWorld {
      * @return new list containing entities that satisfy query filters
      */
     fun getEntitiesByType(vararg types: Enum<*>): List<Entity> {
-        return query.getEntitiesByType(*types)
+        if (types.isEmpty())
+            return entitiesCopy
+
+        return entities.filter { isOneOfTypes(it, *types) }
+    }
+
+    private fun isOneOfTypes(entity: Entity, vararg types: Enum<*>): Boolean {
+        return types.any { entity.isType(it) }
     }
 
     /**
@@ -514,7 +519,7 @@ class GameWorld {
      * @return new list containing entities that satisfy query filters
      */
     fun getEntitiesInRange(selection: Rectangle2D): List<Entity> {
-        return query.getEntitiesInRange(selection)
+        return entities.filter { it.boundingBoxComponent.isWithin(selection) }
     }
 
     /**
@@ -545,7 +550,7 @@ class GameWorld {
      * @return new list containing entities that satisfy query filters
      */
     fun getCollidingEntities(entity: Entity): List<Entity> {
-        return query.getCollidingEntities(entity)
+        return entities.filter { it.isColliding(entity) && it !== entity }
     }
 
     /**
@@ -572,7 +577,7 @@ class GameWorld {
      * @return new list containing entities that satisfy query filters
      */
     fun getEntitiesByLayer(layer: RenderLayer): List<Entity> {
-        return query.getEntitiesByLayer(layer)
+        return entities.filter { it.renderLayer.index() == layer.index() }
     }
 
     /**
@@ -599,7 +604,7 @@ class GameWorld {
      * @return entities at given point
      */
     fun getEntitiesAt(position: Point2D): List<Entity> {
-        return query.getEntitiesAt(position)
+        return entities.filter { it.position == position }
     }
 
     /**
