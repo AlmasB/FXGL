@@ -13,7 +13,6 @@ import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.*;
-import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.physics.PhysicsParticleControl;
@@ -65,8 +64,6 @@ public final class GameScene extends FXGLScene
     private GraphicsContext particlesGC = particlesCanvas.getGraphicsContext2D();
 
     private Array<ParticleControl> particles = new UnorderedArray<>(16);
-
-    private Array<Entity> drawables = new UnorderedArray<>(128);
 
     /**
      * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
@@ -303,7 +300,7 @@ public final class GameScene extends FXGLScene
     public void onUpdate(double tpf) {
         getViewport().onUpdate(tpf);
 
-        boolean dirty = drawables.isNotEmpty() || particles.isNotEmpty();
+        boolean dirty = particles.isNotEmpty();
 
         if (dirty || wasDirty) {
             particlesGC.setGlobalAlpha(1);
@@ -313,10 +310,6 @@ public final class GameScene extends FXGLScene
             particlesGC.clearRect(0, 0, getWidth(), getHeight());
 
             wasDirty = false;
-        }
-
-        for (Entity e : drawables) {
-            e.getComponentOptional(DrawableComponent.class).ifPresent(d -> d.draw(particlesGC));
         }
 
         for (ParticleControl particle : particles) {
@@ -330,7 +323,6 @@ public final class GameScene extends FXGLScene
         log.debug("Clearing game scene");
 
         getViewport().unbind();
-        drawables.clear();
         particles.clear();
         gameRoot.getChildren().clear();
         uiRoot.getChildren().clear();
@@ -341,9 +333,6 @@ public final class GameScene extends FXGLScene
     @Override
     public void onEntityAdded(Entity entity) {
         initView(entity.getViewComponent());
-
-        entity.getComponentOptional(DrawableComponent.class)
-                .ifPresent(c -> drawables.add(entity));
 
         entity.addModuleListener(this);
 
@@ -356,9 +345,6 @@ public final class GameScene extends FXGLScene
     @Override
     public void onEntityRemoved(Entity entity) {
         destroyView(entity.getViewComponent());
-
-        entity.getComponentOptional(DrawableComponent.class)
-                .ifPresent(c -> drawables.removeValueByIdentity(entity));
 
         entity.removeModuleListener(this);
 
