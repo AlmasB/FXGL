@@ -89,11 +89,11 @@ public class ParticleSystemSample extends GameApplication {
         spinnerVelY.setPrefWidth(65);
 
         spinnerVelX.valueProperty().addListener((observable, oldValue, newValue) -> {
-            emitter.setVelocityFunction((i, x, y) -> new Point2D(newValue, spinnerVelY.getValue()));
+            emitter.setVelocityFunction(i -> new Point2D(newValue, spinnerVelY.getValue()));
         });
 
         spinnerVelY.valueProperty().addListener((observable, oldValue, newValue) -> {
-            emitter.setVelocityFunction((i, x, y) -> new Point2D(spinnerVelX.getValue(), newValue));
+            emitter.setVelocityFunction(i -> new Point2D(spinnerVelX.getValue(), newValue));
         });
 
         Spinner<Double> spinnerAccelX = new Spinner<>(-150.0, 150.0, 0.0, 10);

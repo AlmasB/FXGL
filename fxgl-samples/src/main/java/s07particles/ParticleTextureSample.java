@@ -73,8 +73,8 @@ public class ParticleTextureSample extends GameApplication {
         emitter.setNumParticles(24);
         emitter.setMaxEmissions(Integer.MAX_VALUE);
         emitter.setEmissionRate(0.1);
-        emitter.setExpireFunction((i, x, y) -> Duration.seconds(FXGLMath.random(2, 2)));
-        emitter.setVelocityFunction((i, x, y) -> Vec2.fromAngle(360 / 24 *i).toPoint2D().multiply(100));
+        emitter.setExpireFunction(i -> Duration.seconds(FXGLMath.random(2, 2)));
+        emitter.setVelocityFunction(i -> Vec2.fromAngle(360 / 24 *i).toPoint2D().multiply(100));
         emitter.setAccelerationFunction(() -> new Point2D(0, 30));
         emitter.setSourceImage(getAssetLoader().loadTexture("particleTexture2.png").multiplyColor(Color.rgb(230, 75, 40)).getImage());
         emitter.setInterpolator(Interpolators.EXPONENTIAL.EASE_OUT());

@@ -6,24 +6,19 @@
 package com.almasb.fxgl.effect;
 
 import com.almasb.fxgl.core.collection.Array;
-import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.UnorderedArray;
-import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.pool.Pools;
+import com.almasb.fxgl.util.Function;
 import com.almasb.fxgl.util.Supplier;
 import com.almasb.fxgl.util.TriFunction;
 import javafx.animation.Interpolator;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
-import javafx.scene.paint.*;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 
 import java.util.Random;
@@ -35,108 +30,9 @@ import java.util.Random;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class ParticleEmitter {
-
-    /**
-     * Caches baked images in the form: startColor -> endColor -> [Image, 0..99]
-     */
-    private static final ObjectMap<Color, ObjectMap<Color, Image[]> > IMAGE_CACHE = new ObjectMap<>();
-
-    /**
-     * Adapted from http://wecode4fun.blogspot.co.uk/2015/07/particles.html (Roland C.)
-     *
-     * Snapshot an image out of a node, consider transparency.
-     */
-    private static Image createImage(Node node) {
-        SnapshotParameters parameters = new SnapshotParameters();
-        parameters.setFill(Color.TRANSPARENT);
-
-        int imageWidth = (int) node.getBoundsInLocal().getWidth();
-        int imageHeight = (int) node.getBoundsInLocal().getHeight();
-
-        WritableImage image = new WritableImage(imageWidth, imageHeight);
-
-        Async.startFX(() -> {
-            node.snapshot(parameters, image);
-        }).await();
-
-        return image;
-    }
-
-    /**
-     * Adapted from http://wecode4fun.blogspot.co.uk/2015/07/particles.html (Roland C.)
-     *
-     * Pre-create images with various gradient colors and sizes.
-     */
-    private static Image[] preCreateImages(Color startColor, Color endColor) {
-        // get number of images
-        int count = 100;
-
-        // create linear gradient lookup image: lifespan 0 -> lifespan max
-        double width = count;
-        Stop[] stops = new Stop[] {
-                new Stop(0, Color.BLACK.deriveColor(1, 1, 1, 0.0)),
-                new Stop(0.3, endColor),
-                new Stop(0.9, startColor),
-                new Stop(1, startColor)
-        };
-
-        Rectangle rectangle = new Rectangle(width, 1,
-                new LinearGradient(0, 0, width, 0, false, CycleMethod.NO_CYCLE, stops)
-        );
-
-        Image lookupImage = createImage(rectangle);
-
-        Image[] list = new Image[count];
-
-        double radius = 10;
-
-        for (int i = 0; i < count; i++) {
-
-            // get color depending on lifespan
-            Color color = lookupImage.getPixelReader().getColor(i, 0);
-
-            // create gradient image with given color
-            Circle ball = new Circle(radius);
-
-            RadialGradient gradient = new RadialGradient(0, 0, 0, 0,
-                    radius, false, CycleMethod.NO_CYCLE,
-                    new Stop(0, color.deriveColor(1, 1, 1, 1)),
-                    new Stop(1, color.deriveColor(1, 1, 1, 0))
-            );
-
-            ball.setFill(gradient);
-
-            list[i] = createImage(ball);
-        }
-
-        return list;
-    }
-
-    /**
-     * @param index in range [0..99]
-     * @return cached image based on start, end colors and interpolation value
-     */
-    static Image getCachedImage(Color startColor, Color endColor, int index) {
-
-        ObjectMap<Color, Image[]> map = IMAGE_CACHE.get(startColor);
-        if (map == null) {
-            map = new ObjectMap<>();
-            IMAGE_CACHE.put(startColor, map);
-        }
-
-        Image[] images = map.get(endColor);
-        if (images == null) {
-            images = preCreateImages(startColor, endColor);
-            map.put(endColor, images);
-        }
-
-        return images[index];
-    }
+public final class ParticleEmitter {
 
     private Random random = FXGLMath.getRandom();
-
-    /* CONFIGURATORS */
 
     private IntegerProperty numParticles = new SimpleIntegerProperty(25);
 
@@ -147,27 +43,27 @@ public class ParticleEmitter {
     /**
      * @return number of particles being spawned per emission
      */
-    public final int getNumParticles() {
+    public int getNumParticles() {
         return numParticles.get();
     }
 
     /**
      * @param numParticles number of particles being spawned per emission
      */
-    public final void setNumParticles(int numParticles) {
+    public void setNumParticles(int numParticles) {
         this.numParticles.set(numParticles);
     }
 
     private DoubleProperty emissionRate = new SimpleDoubleProperty(1.0);
 
-    public final DoubleProperty emissionRateProperty() {
+    public DoubleProperty emissionRateProperty() {
         return emissionRate;
     }
 
     /**
      * @return emission rate effective value in [0..1]
      */
-    public final double getEmissionRate() {
+    public double getEmissionRate() {
         return emissionRate.get();
     }
 
@@ -182,17 +78,17 @@ public class ParticleEmitter {
      *
      * @param emissionRate emission rate
      */
-    public final void setEmissionRate(double emissionRate) {
+    public void setEmissionRate(double emissionRate) {
         this.emissionRate.set(emissionRate);
     }
 
     private int maxEmissions = Integer.MAX_VALUE;
 
-    public final int getMaxEmissions() {
+    public int getMaxEmissions() {
         return maxEmissions;
     }
 
-    public final void setMaxEmissions(int maxEmissions) {
+    public void setMaxEmissions(int maxEmissions) {
         this.maxEmissions = maxEmissions;
     }
 
@@ -205,15 +101,15 @@ public class ParticleEmitter {
     /**
      * @return minimum particle size
      */
-    public final double getMinSize() {
+    public double getMinSize() {
         return minSize.get();
     }
 
-    public final DoubleProperty minSizeProperty() {
+    public DoubleProperty minSizeProperty() {
         return minSize;
     }
 
-    public final void setMinSize(double minSize) {
+    public void setMinSize(double minSize) {
         this.minSize.set(minSize);
     }
 
@@ -222,15 +118,15 @@ public class ParticleEmitter {
     /**
      * @return maximum particle size
      */
-    public final double getMaxSize() {
+    public double getMaxSize() {
         return maxSize.get();
     }
 
-    public final DoubleProperty maxSizeProperty() {
+    public DoubleProperty maxSizeProperty() {
         return maxSize;
     }
 
-    public final void setMaxSize(double maxSize) {
+    public void setMaxSize(double maxSize) {
         this.maxSize.set(maxSize);
     }
 
@@ -242,7 +138,7 @@ public class ParticleEmitter {
      * @param min minimum size
      * @param max maximum size
      */
-    public final void setSize(double min, double max) {
+    public void setSize(double min, double max) {
         setMinSize(min);
         setMaxSize(max);
     }
@@ -258,60 +154,60 @@ public class ParticleEmitter {
 
     private ObjectProperty<Paint> endColor = new SimpleObjectProperty<>(Color.TRANSPARENT);
 
-    public final Paint getStartColor() {
+    public Paint getStartColor() {
         return startColor.get();
     }
 
-    public final ObjectProperty<Paint> startColorProperty() {
+    public ObjectProperty<Paint> startColorProperty() {
         return startColor;
     }
 
-    public final void setStartColor(Paint startColor) {
+    public void setStartColor(Paint startColor) {
         this.startColor.set(startColor);
     }
 
-    public final Paint getEndColor() {
+    public Paint getEndColor() {
         return endColor.get();
     }
 
-    public final ObjectProperty<Paint> endColorProperty() {
+    public ObjectProperty<Paint> endColorProperty() {
         return endColor;
     }
 
-    public final void setEndColor(Paint endColor) {
+    public void setEndColor(Paint endColor) {
         this.endColor.set(endColor);
     }
 
-    public final void setColor(Paint color) {
+    public void setColor(Paint color) {
         setStartColor(color);
         setEndColor(color);
     }
 
     private ObjectProperty<BlendMode> blendMode = new SimpleObjectProperty<>(BlendMode.SRC_OVER);
 
-    public final BlendMode getBlendMode() {
+    public BlendMode getBlendMode() {
         return blendMode.get();
     }
 
-    public final ObjectProperty<BlendMode> blendModeProperty() {
+    public ObjectProperty<BlendMode> blendModeProperty() {
         return blendMode;
     }
 
-    public final void setBlendMode(BlendMode blendMode) {
+    public void setBlendMode(BlendMode blendMode) {
         this.blendMode.set(blendMode);
     }
 
     private ObjectProperty<Interpolator> interpolator = new SimpleObjectProperty<>(Interpolator.LINEAR);
 
-    public final Interpolator getInterpolator() {
+    public Interpolator getInterpolator() {
         return interpolator.get();
     }
 
-    public final ObjectProperty<Interpolator> interpolatorProperty() {
+    public ObjectProperty<Interpolator> interpolatorProperty() {
         return interpolator;
     }
 
-    public final void setInterpolator(Interpolator interpolator) {
+    public void setInterpolator(Interpolator interpolator) {
         this.interpolator.set(interpolator);
     }
 
@@ -323,7 +219,7 @@ public class ParticleEmitter {
      *
      * @return gravity function
      */
-    public final Supplier<Point2D> getAccelerationFunction() {
+    public Supplier<Point2D> getAccelerationFunction() {
         return accelerationFunction;
     }
 
@@ -338,11 +234,11 @@ public class ParticleEmitter {
      * @param gravityFunction gravity vector supplier function
      * @defaultValue (0, 0)
      */
-    public final void setAccelerationFunction(Supplier<Point2D> gravityFunction) {
+    public void setAccelerationFunction(Supplier<Point2D> gravityFunction) {
         this.accelerationFunction = gravityFunction;
     }
 
-    private TriFunction<Integer, Double, Double, Point2D> velocityFunction = (i, x, y) -> Point2D.ZERO;
+    private Function<Integer, Point2D> velocityFunction = (i) -> Point2D.ZERO;
 
     /**
      * Set initial velocity function. Particles when spawned will use the function
@@ -350,40 +246,41 @@ public class ParticleEmitter {
      *
      * @param velocityFunction the velocity function
      */
-    public final void setVelocityFunction(TriFunction<Integer, Double, Double, Point2D> velocityFunction) {
+    public void setVelocityFunction(Function<Integer, Point2D> velocityFunction) {
         this.velocityFunction = velocityFunction;
     }
 
-    private TriFunction<Integer, Double, Double, Point2D> spawnPointFunction = (i, x, y) -> Point2D.ZERO;
+    private Function<Integer, Point2D> spawnPointFunction = (i) -> Point2D.ZERO;
 
     /**
      * Particles will use the function to obtain spawn points.
+     * These spawn points are local to the entity (to which this emitter is attached) coordinate system.
      *
      * @param spawnPointFunction supplier of spawn points
      */
-    public final void setSpawnPointFunction(TriFunction<Integer, Double, Double, Point2D> spawnPointFunction) {
+    public void setSpawnPointFunction(Function<Integer, Point2D> spawnPointFunction) {
         this.spawnPointFunction = spawnPointFunction;
     }
 
-    private TriFunction<Integer, Double, Double, Point2D> scaleFunction = (i, x, y) -> Point2D.ZERO;
+    private Function<Integer, Point2D> scaleFunction = (i) -> Point2D.ZERO;
 
     /**
      * Scale function defines how the size of particles change over time.
      *
      * @param scaleFunction scaling function
      */
-    public final void setScaleFunction(TriFunction<Integer, Double, Double, Point2D> scaleFunction) {
+    public void setScaleFunction(Function<Integer, Point2D> scaleFunction) {
         this.scaleFunction = scaleFunction;
     }
 
-    private TriFunction<Integer, Double, Double, Duration> expireFunction = (i, x, y) -> Duration.seconds(1);
+    private Function<Integer, Duration> expireFunction = (i) -> Duration.seconds(1);
 
     /**
      * Expire function is used to obtain expire time for particles.
      *
      * @param expireFunction function to supply expire time
      */
-    public final void setExpireFunction(TriFunction<Integer, Double, Double, Duration> expireFunction) {
+    public void setExpireFunction(Function<Integer, Duration> expireFunction) {
         this.expireFunction = expireFunction;
     }
 
@@ -415,7 +312,7 @@ public class ParticleEmitter {
      *
      * @return random value between 0 (incl) and 1 (excl)
      */
-    protected final double rand() {
+    private double rand() {
         return random.nextDouble();
     }
 
@@ -426,7 +323,7 @@ public class ParticleEmitter {
      * @param max max bounds
      * @return a random value between min (incl) and max (excl)
      */
-    protected final double rand(double min, double max) {
+    private double rand(double min, double max) {
         return rand() * (max - min) + min;
     }
 
@@ -477,12 +374,12 @@ public class ParticleEmitter {
         Particle particle = Pools.obtain(Particle.class);
 
         particle.init(sourceImage,
-                spawnPointFunction.apply(i, x, y),
-                velocityFunction.apply(i, x, y),
+                spawnPointFunction.apply(i).add(x, y),
+                velocityFunction.apply(i),
                 accelerationFunction.get(),
                 getRandomSize(),
-                scaleFunction.apply(i, x, y),
-                expireFunction.apply(i, x, y),
+                scaleFunction.apply(i),
+                expireFunction.apply(i),
                 getStartColor(),
                 getEndColor(),
                 getBlendMode(),
