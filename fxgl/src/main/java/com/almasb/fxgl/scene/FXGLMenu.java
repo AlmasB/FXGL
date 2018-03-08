@@ -20,6 +20,7 @@ import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.ui.FXGLScrollPane;
 import com.almasb.fxgl.ui.FXGLSpinner;
+import com.almasb.fxgl.util.BackportKt;
 import com.almasb.fxgl.util.Consumer;
 import com.almasb.fxgl.util.Language;
 import com.almasb.fxgl.util.Supplier;
@@ -47,6 +48,7 @@ import java.util.Arrays;
 
 import static com.almasb.fxgl.app.FXGL.getSettings;
 import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
+import static com.almasb.fxgl.util.BackportKt.*;
 
 /**
  * This is a base class for main/game menus. It provides several
@@ -251,7 +253,7 @@ public abstract class FXGLMenu extends FXGLScene {
         // row 0
         grid.setUserData(0);
 
-        app.getInput().getBindings().forEach((action, trigger) -> addNewInputBinding(action, trigger, grid));
+        forEach(app.getInput().getBindings(), (action, trigger) -> addNewInputBinding(action, trigger, grid));
 
         ScrollPane scroll = new FXGLScrollPane(grid);
         scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
@@ -397,12 +399,9 @@ public abstract class FXGLMenu extends FXGLScene {
         vbox.setAlignment(Pos.CENTER);
         vbox.setPrefWidth(pane.getPrefWidth() - 15);
 
-        FXGL.getSettings()
-                .getCredits()
-                .getList()
-                .stream()
-                .map(FXGL.getUIFactory()::newText)
-                .forEach(vbox.getChildren()::add);
+        for (String credit : FXGL.getSettings().getCredits().getList()) {
+            vbox.getChildren().add(FXGL.getUIFactory().newText(credit));
+        }
 
         pane.setContent(vbox);
 
@@ -471,10 +470,13 @@ public abstract class FXGLMenu extends FXGLScene {
         public MenuContent(Node... items) {
 
             if (items.length > 0) {
-                int maxW = Arrays.stream(items)
-                        .mapToInt(n -> (int) n.getLayoutBounds().getWidth())
-                        .max()
-                        .orElse(0);
+                int maxW = (int) items[0].getLayoutBounds().getWidth();
+
+                for (Node n : items) {
+                    int w = (int) n.getLayoutBounds().getWidth();
+                    if (w > maxW)
+                        maxW = w;
+                }
 
                 getChildren().add(createSeparator(maxW));
 

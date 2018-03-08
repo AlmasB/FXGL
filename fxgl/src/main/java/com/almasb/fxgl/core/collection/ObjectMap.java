@@ -11,6 +11,7 @@
 package com.almasb.fxgl.core.collection;
 
 import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.util.BackportKt;
 
 import java.util.*;
 
@@ -568,9 +569,10 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
     public Map<K, V> toMap() {
         Map<K, V> map = new HashMap<>(size);
 
-        entries().forEach(e -> {
-            map.put(e.key, e.value);
-        });
+        BackportKt.forEach(
+                entries(),
+                e -> map.put(e.key, e.value)
+        );
 
         return map;
     }

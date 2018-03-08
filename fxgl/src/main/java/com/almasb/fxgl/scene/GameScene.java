@@ -30,7 +30,7 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -272,22 +272,26 @@ public final class GameScene extends FXGLScene
      */
     private Group getRenderGroup(RenderLayer layer) {
         Integer renderLayer = layer.index();
-        Group group = gameRoot.getChildren()
-                .stream()
-                .filter(n -> (int) n.getUserData() == renderLayer)
-                .findAny()
-                .map(n -> (Group) n)
-                .orElse(new Group());
 
+        Group group = null;
 
-        if (group.getUserData() == null) {
+        for (Node n : gameRoot.getChildren()) {
+            if ((int) n.getUserData() == renderLayer) {
+                group = (Group) n;
+                break;
+            }
+        }
+
+        if (group == null) {
             log.debug("Creating render group for layer: " + layer.asString());
+
+            group = new Group();
             group.setUserData(renderLayer);
             gameRoot.getChildren().add(group);
         }
 
         List<Node> tmpGroups = new ArrayList<>(gameRoot.getChildren());
-        tmpGroups.sort(Comparator.comparingInt(g -> (int) g.getUserData()));
+        Collections.sort(tmpGroups, (g1, g2) -> (int) g1.getUserData() - (int) g2.getUserData());
 
         gameRoot.getChildren().setAll(tmpGroups);
 
