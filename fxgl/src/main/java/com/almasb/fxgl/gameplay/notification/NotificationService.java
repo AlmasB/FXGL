@@ -65,13 +65,5 @@ public interface NotificationService extends AchievementListener {
      */
     void setTextColor(Color textColor);
 
-    @Override
-    default void onAchievementEvent(AchievementEvent event) {
-        if (event.getEventType() == AchievementEvent.ACHIEVED) {
-            pushNotification("You got an achievement! " + event.getAchievement().getName());
-        } else if (event.getEventType() == AchievementProgressEvent.PROGRESS) {
-            pushNotification("Achievement " + event.getAchievement().getName() + "\n"
-                + "Progress: " + ((AchievementProgressEvent)event).getValue() + "/" + ((AchievementProgressEvent)event).getMax());
-        }
-    }
+    void onAchievementEvent(AchievementEvent event);
 }

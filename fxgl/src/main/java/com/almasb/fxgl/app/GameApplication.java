@@ -298,6 +298,12 @@ public abstract class GameApplication extends Application {
             }
 
             @Override
+            public void entered(State state) { }
+
+            @Override
+            public void beforeExit(State state) { }
+
+            @Override
             public void exited(State state) {
                 if (state instanceof SubState) {
                     getScene().getRoot().getChildren().remove(((SubState)state).getView());

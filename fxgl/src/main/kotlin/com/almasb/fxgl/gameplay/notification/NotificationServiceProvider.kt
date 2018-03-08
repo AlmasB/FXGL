@@ -8,6 +8,8 @@ package com.almasb.fxgl.gameplay.notification
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.reflect.ReflectionUtils
+import com.almasb.fxgl.gameplay.AchievementEvent
+import com.almasb.fxgl.gameplay.AchievementProgressEvent
 import com.almasb.fxgl.ui.Position
 import javafx.scene.paint.Color
 import javafx.util.Duration
@@ -45,6 +47,15 @@ class NotificationServiceProvider : NotificationService {
 
     override fun setTextColor(textColor: Color) {
         notificationView.textColor = textColor
+    }
+
+    override fun onAchievementEvent(event: AchievementEvent) {
+        if (event.eventType === AchievementEvent.ACHIEVED) {
+            pushNotification("You got an achievement! ${event.achievement.name}")
+        } else if (event.eventType === AchievementProgressEvent.PROGRESS) {
+            pushNotification("Achievement " + event.achievement.name + "\n"
+                    + "Progress: " + (event as AchievementProgressEvent).value + "/" + event.max)
+        }
     }
 
     private var showing = false
