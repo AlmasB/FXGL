@@ -128,25 +128,6 @@ public class Particle implements Poolable {
 
         imageView.setImage(image);
         colorAnimation = new AnimatedColor((Color)startColor, (Color)endColor, interpolator);
-
-        // for physics?
-        if (image != null) {
-
-            imageView.setScaleX(radius * 2 / image.getWidth());
-            imageView.setScaleY(radius * 2 / image.getHeight());
-            imageView.setLayoutX(position.getX());
-            imageView.setLayoutY(position.getY());
-
-        } else {
-
-            view.setRadiusX(radius);
-            view.setRadiusY(radius);
-            view.setCenterX(radius);
-            view.setCenterY(radius);
-            view.setLayoutX(position.getX());
-            view.setLayoutY(position.getY());
-            view.setFill(startColor);
-        }
     }
 
     @Override
@@ -211,6 +192,7 @@ public class Particle implements Poolable {
                 imageView.setLayoutX(x);
                 imageView.setLayoutY(y);
                 imageView.setOpacity(alpha);
+                imageView.setBlendMode(blendMode);
 
             } else {
 
@@ -221,7 +203,8 @@ public class Particle implements Poolable {
                 view.setLayoutX(x);
                 view.setLayoutY(y);
                 view.setOpacity(alpha);
-                view.setFill(colorAnimation.getValue(1 - alpha));
+                view.setFill(colorAnimation.getValue(progress));
+                view.setBlendMode(blendMode);
             }
         }
 

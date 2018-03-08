@@ -40,17 +40,7 @@ public class ParticleSystemSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ParticleSystemSample");
         settings.setVersion("0.1");
-
-
-
-
-
-
-    }
-
-    @Override
-    protected void initInput() {
-
+        settings.setProfilingEnabled(true);
     }
 
     @Override

@@ -76,6 +76,8 @@ public class ParticleControl extends Control {
     public void onRemoved(Entity entity) {
         // TODO: back to pool?
         particles.clear();
+
+        parent.removeFromWorld();
     }
 
     /**

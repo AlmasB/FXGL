@@ -11,7 +11,6 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.util.Function;
 import com.almasb.fxgl.util.Supplier;
-import com.almasb.fxgl.util.TriFunction;
 import javafx.animation.Interpolator;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
