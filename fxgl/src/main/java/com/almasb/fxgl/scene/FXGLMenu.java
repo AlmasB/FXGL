@@ -20,7 +20,6 @@ import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.ui.FXGLScrollPane;
 import com.almasb.fxgl.ui.FXGLSpinner;
-import com.almasb.fxgl.util.BackportKt;
 import com.almasb.fxgl.util.Consumer;
 import com.almasb.fxgl.util.Language;
 import com.almasb.fxgl.util.Supplier;
@@ -44,11 +43,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.util.Arrays;
-
 import static com.almasb.fxgl.app.FXGL.getSettings;
 import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
-import static com.almasb.fxgl.util.BackportKt.*;
+import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
  * This is a base class for main/game menus. It provides several

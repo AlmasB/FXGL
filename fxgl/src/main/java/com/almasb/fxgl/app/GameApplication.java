@@ -36,7 +36,6 @@ import com.almasb.fxgl.time.Timer;
 import com.almasb.fxgl.ui.Display;
 import com.almasb.fxgl.ui.ErrorDialog;
 import com.almasb.fxgl.ui.UIFactory;
-import com.almasb.fxgl.util.BackportKt;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;

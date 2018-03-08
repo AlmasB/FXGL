@@ -23,7 +23,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-import static com.almasb.fxgl.util.BackportKt.*;
+import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
  * Adds a game scene view to an entity.

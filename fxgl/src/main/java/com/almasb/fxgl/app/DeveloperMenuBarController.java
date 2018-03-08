@@ -11,12 +11,10 @@ import com.almasb.fxgl.devtools.Console;
 import com.almasb.fxgl.devtools.controller.ColorAdjustController;
 import com.almasb.fxgl.devtools.controller.DialogAddEntityController;
 import com.almasb.fxgl.devtools.controller.DialogEditEntityController;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.ui.InGameWindow;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
-import com.almasb.fxgl.util.BackportKt;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -27,7 +25,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import jfxtras.scene.control.window.Window;
 
-import static com.almasb.fxgl.util.BackportKt.*;
+import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

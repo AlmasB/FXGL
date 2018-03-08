@@ -8,7 +8,6 @@ package com.almasb.fxgl.gameplay.notification;
 
 import com.almasb.fxgl.gameplay.AchievementEvent;
 import com.almasb.fxgl.gameplay.AchievementListener;
-import com.almasb.fxgl.gameplay.AchievementProgressEvent;
 import com.almasb.fxgl.ui.Position;
 import javafx.scene.paint.Color;
 
