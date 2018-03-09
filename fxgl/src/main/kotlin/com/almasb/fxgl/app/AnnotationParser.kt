@@ -18,25 +18,20 @@ class AnnotationParser(val appClass: Class<out GameApplication>) {
 
     private val packageName = appClass.`package`?.name
 
-    val isDisabled = packageName.isNullOrEmpty() || packageName!!.contains("[A-Z]".toRegex())
+    val isDisabled = true
 
     private val annotationMap = hashMapOf<Class<*>, List<Class<*>>>()
 
     init {
-        log.debug("Main app package name: ${packageName ?: "NO PACKAGE"}")
+        //log.debug("Main app package name: ${packageName ?: "NO PACKAGE"}")
 
         if (isDisabled) {
-            log.warning("${appClass.simpleName} has no package or contains uppercase letters. Disabling annotations processing")
+            log.warning("Class-level annotations have been deprecated!")
         }
     }
 
     fun parse(vararg annotationClasses: Class<out Annotation>) {
-        if (!isDisabled) {
-            annotationMap.putAll(ReflectionUtils.findClasses(packageName!!, *annotationClasses))
-            annotationMap.forEach { (annotationClass, list) ->
-                log.debug("@${annotationClass.simpleName}: ${list.map { it.simpleName }}")
-            }
-        }
+
     }
 
     fun getClasses(annotationClass: Class<out Annotation>): List<Class<*>> {
