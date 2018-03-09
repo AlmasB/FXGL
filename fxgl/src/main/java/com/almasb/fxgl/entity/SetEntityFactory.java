@@ -20,6 +20,7 @@ import java.lang.annotation.Target;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface SetEntityFactory {

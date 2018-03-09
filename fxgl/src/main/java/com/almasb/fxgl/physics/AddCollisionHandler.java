@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
  * Indicates that a class that extends {@link CollisionHandler} will be automatically
  * added to physics world's collision handlers.
  */
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface AddCollisionHandler {
