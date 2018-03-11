@@ -17,6 +17,7 @@ import com.almasb.fxgl.ui.FXGLDialogFactory;
 import com.almasb.fxgl.ui.FXGLUIFactory;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.Credits;
+import com.almasb.fxgl.util.Optional;
 import javafx.scene.input.KeyCode;
 import javafx.stage.StageStyle;
 
@@ -46,6 +47,10 @@ public class ReadOnlyGameSettings {
     protected EnumSet<MenuItem> enabledMenuItems = EnumSet.noneOf(MenuItem.class);
     protected StageStyle stageStyle = StageStyle.DECORATED;
     protected boolean manualResizeEnabled = false;
+
+    /* CONFIGS */
+
+    protected Class<?> configClass = null;
 
     /* CUSTOMIZABLE SERVICES BELOW */
 
@@ -96,6 +101,8 @@ public class ReadOnlyGameSettings {
         this.singleStep = copy.singleStep;
         this.stageStyle = copy.stageStyle;
         this.manualResizeEnabled = copy.manualResizeEnabled;
+
+        this.configClass = copy.configClass;
 
         this.sceneFactory = copy.sceneFactory;
         this.dialogFactory = copy.dialogFactory;
@@ -168,6 +175,10 @@ public class ReadOnlyGameSettings {
 
     public final StageStyle getStageStyle() {
         return stageStyle;
+    }
+
+    public final Optional<Class<?>> getConfigClass() {
+        return Optional.ofNullable(configClass);
     }
 
     public final SceneFactory getSceneFactory() {

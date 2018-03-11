@@ -64,15 +64,9 @@ class FXGL private constructor() {
         @JvmStatic fun getMenuSettings() = _menuSettings
 
         private val _gameConfig by lazy {
-            val parser = AnnotationParser(internalApp.javaClass)
-            parser.parse(SetGameConfig::class.java)
-            val config = parser.getClasses(SetGameConfig::class.java)
-                    .map { gameConfigClass ->
-                        getAssetLoader().loadKV("config.kv").to(gameConfigClass)
-                    }
-                    .firstOrNull() ?: throw IllegalStateException("No class annotated @SetGameConfig was found")
-
-            config
+            getSettings().configClass
+                    .map { getAssetLoader().loadKV("config.kv").to(it) }
+                    .orElseThrow { IllegalStateException("No config class. You can set it via settings.setConfigClass()") }
         }
 
         @Suppress("UNCHECKED_CAST")

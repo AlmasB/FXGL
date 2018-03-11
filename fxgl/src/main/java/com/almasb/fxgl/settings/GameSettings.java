@@ -182,6 +182,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.stageStyle = stageStyle;
     }
 
+    public void setConfigClass(Class<?> configClass) {
+        this.configClass = configClass;
+    }
+
     /**
      * Provide a custom scene factory.
      */

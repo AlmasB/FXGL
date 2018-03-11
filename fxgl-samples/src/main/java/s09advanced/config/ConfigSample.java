@@ -6,7 +6,6 @@
 
 package s09advanced.config;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
 
@@ -17,12 +16,37 @@ import com.almasb.fxgl.settings.GameSettings;
  */
 public class ConfigSample extends GameApplication {
 
+    public static class GameConfig {
+
+        private String enemyName;
+        private int numEnemies;
+        private double lootRatio;
+        private boolean killInventoryOnDeath;
+
+        public String getEnemyName() {
+            return enemyName;
+        }
+
+        public int getNumEnemies() {
+            return numEnemies;
+        }
+
+        public double getLootRatio() {
+            return lootRatio;
+        }
+
+        public boolean isKillInventoryOnDeath() {
+            return killInventoryOnDeath;
+        }
+    }
+
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("BasicAppSample");
         settings.setVersion("0.1");
+        settings.setConfigClass(GameConfig.class);
     }
 
     @Override
