@@ -21,10 +21,6 @@ public class CollidableComponent extends BooleanComponent implements CopyableCom
         super(collidable);
     }
 
-    public CollidableComponent() {
-        this(false);
-    }
-
     @Override
     public CollidableComponent copy() {
         return new CollidableComponent(getValue());
