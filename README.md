@@ -7,8 +7,7 @@ JavaFX Game Development Framework
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.almasb/fxgl.svg)]()
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://www.javadoc.io/doc/com.github.almasb/fxgl/)
 ![CI](https://travis-ci.org/AlmasB/FXGL.svg?branch=master)
-[![Coverage](https://api.codacy.com/project/badge/Coverage/9603c2522deb42fbb9146bedfcb860b2)](https://www.codacy.com/app/AlmasB/FXGL?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AlmasB/FXGL&amp;utm_campaign=Badge_Coverage)
-[![Codacy](https://api.codacy.com/project/badge/Grade/9603c2522deb42fbb9146bedfcb860b2)](https://www.codacy.com/app/AlmasB/FXGL?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AlmasB/FXGL&amp;utm_campaign=Badge_Grade)
+[![codecov](https://codecov.io/gh/AlmasB/FXGL/branch/master/graph/badge.svg)](https://codecov.io/gh/AlmasB/FXGL)
 
 ### Why FXGL?
 
