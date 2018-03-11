@@ -6,11 +6,10 @@
 
 package com.almasb.fxgl.gameplay
 
+import com.almasb.fxgl.core.collection.PropertyChangeListener
 import javafx.beans.property.SimpleObjectProperty
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.isA
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.collection.IsMapContaining
 import org.hamcrest.collection.IsMapContaining.hasEntry
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -32,11 +31,11 @@ class GameStateTest {
 
     @Test
     fun `Test put get`() {
-        gameState.put("testBoolean", true)
-        gameState.put("testInt", 5)
-        gameState.put("testDouble", 10.5)
-        gameState.put("testString", "StringData")
-        gameState.put("testObject", Dummy("ObjectData"))
+        gameState.setValue("testBoolean", true)
+        gameState.setValue("testInt", 5)
+        gameState.setValue("testDouble", 10.5)
+        gameState.setValue("testString", "StringData")
+        gameState.setValue("testObject", Dummy("ObjectData"))
 
         assertTrue(gameState.getBoolean("testBoolean"))
         assertThat(gameState.getInt("testInt"), `is`(5))
@@ -54,8 +53,8 @@ class GameStateTest {
 
     @Test
     fun `Get all properties`() {
-        gameState.put("testInt", 1)
-        gameState.put("testString", "data")
+        gameState.setValue("testInt", 1)
+        gameState.setValue("testString", "data")
 
         val map = gameState.getProperties()
 
@@ -66,11 +65,11 @@ class GameStateTest {
 
     @Test
     fun `Test set`() {
-        gameState.put("testBoolean", true)
-        gameState.put("testInt", 5)
-        gameState.put("testDouble", 10.5)
-        gameState.put("testString", "StringData")
-        gameState.put("testObject", Dummy("ObjectData"))
+        gameState.setValue("testBoolean", true)
+        gameState.setValue("testInt", 5)
+        gameState.setValue("testDouble", 10.5)
+        gameState.setValue("testString", "StringData")
+        gameState.setValue("testObject", Dummy("ObjectData"))
 
         gameState.setValue("testBoolean", false)
         gameState.setValue("testInt", 50)
@@ -87,14 +86,6 @@ class GameStateTest {
     }
 
     @Test
-    fun `Do not allow duplicates`() {
-        assertThrows(IllegalArgumentException::class.java, {
-            gameState.put("testInt", 1)
-            gameState.put("testInt", 2)
-        })
-    }
-
-    @Test
     fun `Throw if property name not found`() {
         assertThrows(IllegalArgumentException::class.java, {
             gameState.getBoolean("notFound")
@@ -103,8 +94,8 @@ class GameStateTest {
 
     @Test
     fun `Test increment`() {
-        gameState.put("testInt", 1)
-        gameState.put("testDouble", 1.0)
+        gameState.setValue("testInt", 1)
+        gameState.setValue("testDouble", 1.0)
 
         gameState.increment("testInt", +9)
         assertThat(gameState.getInt("testInt"), `is`(10))
@@ -121,7 +112,7 @@ class GameStateTest {
 
     @Test
     fun `Test listeners`() {
-        gameState.put("testInt", 10)
+        gameState.setValue("testInt", 10)
 
         var count = 0
 
@@ -152,7 +143,7 @@ class GameStateTest {
 
     @Test
     fun `Clear`() {
-        gameState.put("testInt", 10)
+        gameState.setValue("testInt", 10)
 
         val listener = object : PropertyChangeListener<Int> {
             override fun onChange(prev: Int, now: Int) {

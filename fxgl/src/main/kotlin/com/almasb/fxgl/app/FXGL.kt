@@ -8,6 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.audio.AudioPlayer
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.event.EventBus
@@ -263,6 +264,8 @@ class FXGL private constructor() {
         private val _masterTimer by lazy { internalApp.masterTimer }
         @JvmStatic fun getMasterTimer() = _masterTimer
 
+        private val properties = PropertyMap()
+
         /**
          * @param key property key
          * @return int value
@@ -291,9 +294,9 @@ class FXGL private constructor() {
          * @param key property key
          * @return property value
          */
-        private fun getProperty(key: String) = System.getProperty("FXGL.$key")
-                ?: throw IllegalArgumentException("Key \"$key\" not found!")
+        private fun getProperty(key: String) = properties.getString(key)
 
+        // TODO: store as actual values, not as string values
         /**
          * Set an int, double, boolean or String property.
          * The value can then be retrieved with FXGL.get* methods.
@@ -302,7 +305,7 @@ class FXGL private constructor() {
          * @param value property value
          */
         @JvmStatic fun setProperty(key: String, value: Any) {
-            System.setProperty("FXGL.$key", value.toString())
+            properties.setValue(key, value.toString())
         }
 
         /**

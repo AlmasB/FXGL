@@ -49,7 +49,7 @@ import javafx.util.Duration
 
 /* VARS */
 
-fun newVar(varName: String, value: Any) = getApp().gameState.put(varName, value)
+fun newVar(varName: String, value: Any) = getApp().gameState.setValue(varName, value)
 
 fun set(varName: String, value: Any) = getApp().gameState.setValue(varName, value)
 

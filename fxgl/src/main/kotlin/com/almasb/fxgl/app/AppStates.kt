@@ -160,7 +160,7 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
 
             val vars = hashMapOf<String, Any>()
             app.initGameVars(vars)
-            vars.forEach { name, value -> app.gameState.put(name, value) }
+            vars.forEach { name, value -> app.gameState.setValue(name, value) }
 
             // we just created new game state vars, so inform achievement manager about new vars
             app.gameplay.achievementManager.rebindAchievements()
