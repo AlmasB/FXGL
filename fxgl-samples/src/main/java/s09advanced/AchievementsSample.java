@@ -3,11 +3,14 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-package s11achievements;
+package s09advanced;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.gameplay.Achievement;
+import com.almasb.fxgl.gameplay.AchievementManager;
+import com.almasb.fxgl.gameplay.AchievementStore;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
@@ -24,6 +27,15 @@ import java.util.Map;
  */
 public class AchievementsSample extends GameApplication {
 
+    public static class Achievements implements AchievementStore {
+
+        @Override
+        public void initAchievements(AchievementManager manager) {
+            manager.registerAchievement(new Achievement("Likes moving", "Move 500 pixels", "moved", 400));
+            manager.registerAchievement(new Achievement("World Traveller", "Get to the other side of the screen.", "playerX", 600));
+        }
+    }
+
     private PlayerControl playerControl;
 
     @Override
@@ -32,12 +44,8 @@ public class AchievementsSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("AchievementsSample");
         settings.setVersion("0.1");
-
-
-
+        settings.setAchievementStoreClass(Achievements.class);
         settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
-
-
     }
 
     @Override

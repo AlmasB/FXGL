@@ -361,11 +361,8 @@ public abstract class GameApplication extends Application {
      * Finds all @SetAchievementStore classes and registers achievements.
      */
     private void initAchievements() {
-        AnnotationParser parser = new AnnotationParser(this.getClass());
-        parser.parse(SetAchievementStore.class);
-
-        forEach(parser.getClasses(SetAchievementStore.class), storeClass -> {
-            AchievementStore storeObject = (AchievementStore) ReflectionUtils.newInstance(storeClass);
+        getSettings().getAchievementStoreClass().ifPresent(storeClass -> {
+            AchievementStore storeObject = ReflectionUtils.newInstance(storeClass);
             storeObject.initAchievements(getGameplay().getAchievementManager());
         });
     }

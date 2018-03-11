@@ -7,6 +7,7 @@ package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.ExceptionHandler;
+import com.almasb.fxgl.gameplay.AchievementStore;
 import com.almasb.fxgl.gameplay.notification.NotificationView;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.ui.DialogFactory;
@@ -184,6 +185,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
 
     public void setConfigClass(Class<?> configClass) {
         this.configClass = configClass;
+    }
+
+    public void setAchievementStoreClass(Class<? extends AchievementStore> achievementStoreClass) {
+        this.achievementStoreClass = achievementStoreClass;
     }
 
     /**

@@ -9,6 +9,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.ExceptionHandler;
 import com.almasb.fxgl.app.FXGLExceptionHandler;
 import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.fxgl.gameplay.AchievementStore;
 import com.almasb.fxgl.gameplay.notification.NotificationView;
 import com.almasb.fxgl.gameplay.notification.XboxNotificationView;
 import com.almasb.fxgl.scene.SceneFactory;
@@ -48,9 +49,12 @@ public class ReadOnlyGameSettings {
     protected StageStyle stageStyle = StageStyle.DECORATED;
     protected boolean manualResizeEnabled = false;
 
+    // when adding extra fields, remember to add them to copy constructor
+
     /* CONFIGS */
 
     protected Class<?> configClass = null;
+    protected Class<? extends AchievementStore> achievementStoreClass = null;
 
     /* CUSTOMIZABLE SERVICES BELOW */
 
@@ -69,8 +73,6 @@ public class ReadOnlyGameSettings {
             exceptionHandler.accept(e);
         }
     };
-
-    // when adding extra fields, remember to add them to copy constructor
 
     /**
      * Constructs game settings with default parameters.
@@ -103,6 +105,7 @@ public class ReadOnlyGameSettings {
         this.manualResizeEnabled = copy.manualResizeEnabled;
 
         this.configClass = copy.configClass;
+        this.achievementStoreClass = copy.achievementStoreClass;
 
         this.sceneFactory = copy.sceneFactory;
         this.dialogFactory = copy.dialogFactory;
@@ -179,6 +182,10 @@ public class ReadOnlyGameSettings {
 
     public final Optional<Class<?>> getConfigClass() {
         return Optional.ofNullable(configClass);
+    }
+
+    public final Optional<Class<? extends AchievementStore>> getAchievementStoreClass() {
+        return Optional.ofNullable(achievementStoreClass);
     }
 
     public final SceneFactory getSceneFactory() {

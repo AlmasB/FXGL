@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package s09advanced.config;
+package s09advanced;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
