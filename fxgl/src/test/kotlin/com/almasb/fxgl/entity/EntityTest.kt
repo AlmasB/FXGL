@@ -381,6 +381,15 @@ class EntityTest {
         val hp = HPComponent(20.0)
 
         val listener = object : ModuleListener {
+            override fun onAdded(control: Control?) {
+            }
+
+            override fun onRemoved(control: Control?) {
+            }
+
+            override fun onRemoved(component: Component?) {
+            }
+
             override fun onAdded(component: Component) {
                 (component as HPComponent).value = 10.0
             }
@@ -398,6 +407,15 @@ class EntityTest {
         val hp = HPComponent(20.0)
 
         val listener = object : ModuleListener {
+            override fun onAdded(control: Control?) {
+            }
+
+            override fun onRemoved(control: Control?) {
+            }
+
+            override fun onAdded(component: Component?) {
+            }
+
             override fun onRemoved(component: Component) {
                 (component as HPComponent).value = 0.0
             }
@@ -417,6 +435,15 @@ class EntityTest {
         val control = HPControl(0)
 
         val listener = object : ModuleListener {
+            override fun onRemoved(control: Control?) {
+            }
+
+            override fun onAdded(component: Component?) {
+            }
+
+            override fun onRemoved(component: Component?) {
+            }
+
             override fun onAdded(control: Control) {
                 (control as HPControl).value = 10
             }
@@ -435,6 +462,15 @@ class EntityTest {
         val control = HPControl()
 
         val listener = object : ModuleListener {
+            override fun onAdded(control: Control?) {
+            }
+
+            override fun onAdded(component: Component?) {
+            }
+
+            override fun onRemoved(component: Component?) {
+            }
+
             override fun onRemoved(control: Control) {
                 (control as HPControl).value = 20
             }
@@ -455,6 +491,15 @@ class EntityTest {
         val hp = HPComponent(20.0)
 
         val listener = object : ModuleListener {
+            override fun onAdded(control: Control?) {
+            }
+
+            override fun onRemoved(control: Control?) {
+            }
+
+            override fun onRemoved(component: Component?) {
+            }
+
             override fun onAdded(component: Component) {
                 (component as HPComponent).value = 0.0
             }

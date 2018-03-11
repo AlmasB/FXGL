@@ -7,15 +7,17 @@
 package com.almasb.fxgl.entity;
 
 /**
+ * Notifies when a component or a control is added / removed.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface ModuleListener {
 
-    default void onAdded(Control control) {}
+    void onAdded(Control control);
 
-    default void onRemoved(Control control) {}
+    void onRemoved(Control control);
 
-    default void onAdded(Component component) {}
+    void onAdded(Component component);
 
-    default void onRemoved(Component component) {}
+    void onRemoved(Component component);
 }

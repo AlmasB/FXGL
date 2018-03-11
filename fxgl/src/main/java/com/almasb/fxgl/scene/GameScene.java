@@ -10,7 +10,6 @@ import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityWorldListener;
-import com.almasb.fxgl.entity.ModuleListener;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.entity.view.EntityView;
@@ -37,8 +36,7 @@ import java.util.List;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class GameScene extends FXGLScene
-        implements EntityWorldListener, ModuleListener {
+public final class GameScene extends FXGLScene implements EntityWorldListener {
 
     private static final Logger log = Logger.get(GameScene.class);
 
@@ -274,15 +272,11 @@ public final class GameScene extends FXGLScene
     @Override
     public void onEntityAdded(Entity entity) {
         initView(entity.getViewComponent());
-
-        entity.addModuleListener(this);
     }
 
     @Override
     public void onEntityRemoved(Entity entity) {
         destroyView(entity.getViewComponent());
-
-        entity.removeModuleListener(this);
     }
 
     private void initView(ViewComponent viewComponent) {
