@@ -33,11 +33,6 @@ public class BBoxTest extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {
-
-    }
-
-    @Override
     protected void initGame() {
         Entity e1 = new Entity();
         e1.setPosition(new Point2D(100, 100));

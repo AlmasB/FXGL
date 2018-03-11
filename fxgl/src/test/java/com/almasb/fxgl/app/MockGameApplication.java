@@ -81,10 +81,6 @@ public class MockGameApplication extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {
-    }
-
-    @Override
     protected void initGame() {
     }
 

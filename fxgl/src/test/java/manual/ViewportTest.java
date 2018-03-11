@@ -54,9 +54,6 @@ public class ViewportTest extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         Entity entity = Entities.builder()
                 .at(100, 100)

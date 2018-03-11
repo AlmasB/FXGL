@@ -45,9 +45,6 @@ public class AudioPlayerTest extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {}
 
     @Override

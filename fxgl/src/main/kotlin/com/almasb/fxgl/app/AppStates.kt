@@ -54,8 +54,7 @@ internal constructor(private val app: GameApplication) : AppState(/* placeholder
  * State is active only once.
  */
 internal class IntroState
-internal constructor(private val app: GameApplication,
-                    sceneFactory: SceneFactory) : AppState(sceneFactory.newIntro()) {
+internal constructor(private val app: GameApplication, scene: FXGLScene) : AppState(scene) {
 
     private var introFinishedSubscriber: Subscriber? = null
     private var introFinished = false
@@ -93,8 +92,7 @@ internal constructor(private val app: GameApplication,
  * State is active during game initialization.
  */
 internal class LoadingState
-internal constructor(private val app: GameApplication,
-                            sceneFactory: SceneFactory) : AppState(sceneFactory.newLoadingScene()) {
+internal constructor(private val app: GameApplication, scene: FXGLScene) : AppState(scene) {
 
     private var loadingFinished = false
 
@@ -202,7 +200,7 @@ internal constructor(private val app: GameApplication,
  * The state in which the player will spend most of the time.
  */
 internal class PlayState
-internal constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newGameScene()) {
+internal constructor(scene: FXGLScene) : AppState(scene) {
 
     val gameState: GameState
     val gameWorld: GameWorld
@@ -253,7 +251,7 @@ internal constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newGame
  * State is active when the game is in main menu.
  */
 internal class MainMenuState
-internal constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newMainMenu(FXGL.getApp())) {
+internal constructor(scene: FXGLScene) : AppState(scene) {
 
     override fun onEnter(prevState: State) {
         if (prevState is StartupState
@@ -274,7 +272,7 @@ internal constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newMain
  * State is active when the game is in game menu.
  */
 internal class GameMenuState
-internal constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newGameMenu(FXGL.getApp())) {
+internal constructor(scene: FXGLScene) : AppState(scene) {
 
     init {
         input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)

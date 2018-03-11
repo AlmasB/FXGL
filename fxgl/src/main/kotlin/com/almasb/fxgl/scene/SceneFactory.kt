@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.scene
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.scene.intro.FXGLIntroScene
 import com.almasb.fxgl.scene.menu.FXGLDefaultMenu
@@ -38,27 +37,21 @@ open class SceneFactory {
      *
      * @return game scene
      */
-    fun newGameScene(): GameScene = GameScene(FXGL.getAppWidth(), FXGL.getAppHeight())
+    fun newGameScene(width: Int, height: Int): GameScene = GameScene(width, height)
 
     /**
      * Called to construct main menu.
      *
      * @param app game application
-     *
      * @return main menu
      */
-    open fun newMainMenu(app: GameApplication): FXGLMenu {
-        return FXGLDefaultMenu(app, MenuType.MAIN_MENU)
-    }
+    open fun newMainMenu(app: GameApplication): FXGLMenu = FXGLDefaultMenu(app, MenuType.MAIN_MENU)
 
     /**
      * Called to construct game menu.
      *
      * @param app game application
-     *
      * @return game menu
      */
-    open fun newGameMenu(app: GameApplication): FXGLMenu {
-        return FXGLDefaultMenu(app, MenuType.GAME_MENU)
-    }
+    open fun newGameMenu(app: GameApplication): FXGLMenu = FXGLDefaultMenu(app, MenuType.GAME_MENU)
 }

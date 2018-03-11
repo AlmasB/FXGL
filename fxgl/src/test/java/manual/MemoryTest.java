@@ -36,9 +36,6 @@ public class MemoryTest extends GameApplication {
     protected void initInput() {}
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {}
 
     @Override

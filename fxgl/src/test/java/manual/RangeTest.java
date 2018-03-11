@@ -71,11 +71,6 @@ public class RangeTest extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {
-
-    }
-
-    @Override
     protected void initGame() {
         spawnEntity(100, 100);
         spawnEntity(500, 300);

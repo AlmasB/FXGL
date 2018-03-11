@@ -274,15 +274,20 @@ public abstract class GameApplication extends Application {
         // STARTUP is default
         AppState initial = new StartupState(this);
 
-        AppState loading = new LoadingState(this, sceneFactory);
-        AppState play = new PlayState(sceneFactory);
+        AppState loading = new LoadingState(this, sceneFactory.newLoadingScene());
+        AppState play = new PlayState(sceneFactory.newGameScene(getWidth(), getHeight()));
 
         // reasonable hack to trigger dialog state init before intro and menus
         DialogSubState.INSTANCE.getView();
 
-        AppState intro = this.getSettings().isIntroEnabled() ? new IntroState(this, sceneFactory) : AppState.EMPTY;
-        AppState mainMenu = this.getSettings().isMenuEnabled() ? new MainMenuState(sceneFactory) : AppState.EMPTY;
-        AppState gameMenu = this.getSettings().isMenuEnabled() ? new GameMenuState(sceneFactory) : AppState.EMPTY;
+        AppState intro = getSettings().isIntroEnabled()
+                ? new IntroState(this, sceneFactory.newIntro()) : AppState.EMPTY;
+
+        AppState mainMenu = getSettings().isMenuEnabled()
+                ? new MainMenuState(sceneFactory.newMainMenu(this)) : AppState.EMPTY;
+
+        AppState gameMenu = getSettings().isMenuEnabled()
+                ? new GameMenuState(sceneFactory.newGameMenu(this)) : AppState.EMPTY;
 
         stateMachine = new AppStateMachine(loading, play, DialogSubState.INSTANCE, intro, mainMenu, gameMenu, initial);
 

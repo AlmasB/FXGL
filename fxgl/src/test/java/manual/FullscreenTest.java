@@ -26,11 +26,6 @@ public class FullscreenTest extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {
-
-    }
-
-    @Override
     protected void initGame() {
 
     }

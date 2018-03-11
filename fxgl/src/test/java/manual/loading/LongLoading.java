@@ -45,15 +45,6 @@ public class LongLoading extends GameApplication {
     protected void initInput() {}
 
     @Override
-    protected void initAssets() {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     protected void initGame() {
         try {
             Thread.sleep(3000);
