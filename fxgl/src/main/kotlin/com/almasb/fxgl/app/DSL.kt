@@ -15,6 +15,7 @@ import com.almasb.fxgl.app.FXGL.Companion.getAudioPlayer
 import com.almasb.fxgl.app.FXGL.Companion.getDisplay
 import com.almasb.fxgl.app.FXGL.Companion.getEventBus
 import com.almasb.fxgl.app.FXGL.Companion.getInput
+import com.almasb.fxgl.app.FXGL.Companion.getMasterTimer
 import com.almasb.fxgl.app.FXGL.Companion.getNotificationService
 import com.almasb.fxgl.app.FXGL.Companion.getUIFactory
 import com.almasb.fxgl.core.math.FXGLMath.random
@@ -422,3 +423,11 @@ fun rotate(node: Node, from: Double, to: Double, delay: Duration, duration: Dura
     anim.onFinished = onFinishedAction
     return anim
 }
+
+/* TIMER */
+
+fun runOnce(action: Runnable, delay: Duration) = getMasterTimer().runOnceAfter(action, delay)
+
+fun run(action: Runnable, interval: Duration) = getMasterTimer().runAtInterval(action, interval)
+
+fun run(action: Runnable, interval: Duration, limit: Int) = getMasterTimer().runAtInterval(action, interval, limit)
