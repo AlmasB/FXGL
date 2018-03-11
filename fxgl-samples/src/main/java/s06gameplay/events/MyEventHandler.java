@@ -7,12 +7,10 @@
 package s06gameplay.events;
 
 import com.almasb.fxgl.event.Handles;
-import com.almasb.fxgl.event.SetEventHandler;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@SetEventHandler
 public class MyEventHandler {
 
     @Handles(eventType = "LOW_HP")

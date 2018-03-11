@@ -379,7 +379,7 @@ class GameWorld {
      */
     fun spawn(entityName: String, data: SpawnData): Entity {
         if (entityFactory == null)
-            throw IllegalStateException("EntityFactory was not set!")
+            throw IllegalStateException("EntityFactory was not set! Call gameWorld.setEntityFactory()")
 
         val spawner = entitySpawners.get(entityName)
                 ?: throw IllegalArgumentException("EntityFactory does not have a method annotated @Spawns($entityName)")

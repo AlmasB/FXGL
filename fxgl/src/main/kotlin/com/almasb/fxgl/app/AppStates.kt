@@ -128,20 +128,9 @@ internal constructor(private val app: GameApplication,
         companion object {
             private val log = Logger.get(InitAppTask::class.java)
 
-            private val annotationParser = AnnotationParser(FXGL.getApp().javaClass)
-
             init {
-                log.debug("Parsing annotations")
-
-                annotationParser.parse(
-                        SetEntityFactory::class.java,
-                        SetEventHandler::class.java,
-                        AddCollisionHandler::class.java
-                )
-
-                annotationParser.getClasses(SetEventHandler::class.java).firstOrNull()?.let {
-                    FXGL.getEventBus().scanForHandlers(ReflectionUtils.newInstance(it))
-                }
+                log.warning("@SetEntityFactory is deprecated since 0.4.4!")
+                log.warning("@AddCollisionHandler is deprecated since 0.4.4!")
             }
         }
 
@@ -186,20 +175,12 @@ internal constructor(private val app: GameApplication,
             // we just created new game state vars, so inform achievement manager about new vars
             app.gameplay.achievementManager.rebindAchievements()
 
-            annotationParser.getClasses(SetEntityFactory::class.java).firstOrNull()?.let {
-                app.gameWorld.setEntityFactory(ReflectionUtils.newInstance(it) as EntityFactory)
-            }
-
             app.internalInitGame()
         }
 
         private fun initPhysics() {
             update("Initializing Physics", 2)
             app.initPhysics()
-
-            annotationParser.getClasses(AddCollisionHandler::class.java).forEach {
-                app.physicsWorld.addCollisionHandler(ReflectionUtils.newInstance(it) as CollisionHandler)
-            }
         }
 
         private fun initUI() {
