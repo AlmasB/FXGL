@@ -594,12 +594,6 @@ public abstract class GameApplication extends Application {
     protected void preInit() {}
 
     /**
-     * Initialize game assets, such as Texture, Sound, Music, etc.
-     */
-    @Deprecated
-    protected void initAssets() {}
-
-    /**
      * Can be overridden to provide global variables.
      *
      * @param vars map containing CVars (global variables)

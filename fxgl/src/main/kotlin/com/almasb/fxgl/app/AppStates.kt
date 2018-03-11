@@ -7,16 +7,10 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.entity.EntityFactory
 import com.almasb.fxgl.entity.GameWorld
-import com.almasb.fxgl.entity.SetEntityFactory
-import com.almasb.fxgl.event.SetEventHandler
 import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.input.UserAction
-import com.almasb.fxgl.physics.AddCollisionHandler
-import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.scene.intro.IntroFinishedEvent
@@ -96,8 +90,7 @@ internal constructor(private val app: GameApplication,
 }
 
 /**
- * Initializes game aspects: assets, game, physics, UI, etc.
- * This task is rerun every time the game application is restarted.
+ * State is active during game initialization.
  */
 internal class LoadingState
 internal constructor(private val app: GameApplication,
@@ -123,6 +116,11 @@ internal constructor(private val app: GameApplication,
         }
     }
 
+    /**
+     * Clears previous game.
+     * Initializes game, physics and UI.
+     * This task is rerun every time the game application is restarted.
+     */
     private class InitAppTask(private val app: GameApplication) : Task<Void>() {
 
         companion object {
@@ -139,7 +137,6 @@ internal constructor(private val app: GameApplication,
 
             clearPreviousGame()
 
-            initAssets()
             initGame()
             initPhysics()
             initUI()
@@ -160,13 +157,8 @@ internal constructor(private val app: GameApplication,
             app.masterTimer.clear()
         }
 
-        private fun initAssets() {
-            update("Initializing Assets", 0)
-            app.initAssets()
-        }
-
         private fun initGame() {
-            update("Initializing Game", 1)
+            update("Initializing Game", 0)
 
             val vars = hashMapOf<String, Any>()
             app.initGameVars(vars)
@@ -179,23 +171,23 @@ internal constructor(private val app: GameApplication,
         }
 
         private fun initPhysics() {
-            update("Initializing Physics", 2)
+            update("Initializing Physics", 1)
             app.initPhysics()
         }
 
         private fun initUI() {
-            update("Initializing UI", 3)
+            update("Initializing UI", 2)
             app.initUI()
         }
 
         private fun initComplete() {
-            update("Initialization Complete", 4)
+            update("Initialization Complete", 3)
         }
 
         private fun update(message: String, step: Int) {
             log.debug(message)
             updateMessage(message)
-            updateProgress(step.toLong(), 4)
+            updateProgress(step.toLong(), 3)
         }
 
         override fun failed() {
