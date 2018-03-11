@@ -11,6 +11,7 @@ package com.almasb.fxgl.event
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@Deprecated("")
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class SetEventHandler
