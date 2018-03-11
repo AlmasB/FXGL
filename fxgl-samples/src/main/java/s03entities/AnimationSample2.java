@@ -29,11 +29,14 @@ public class AnimationSample2 extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("AnimationSample2");
         settings.setVersion("0.1");
+    }
 
+    private AnimatedTexture playerTexture;
 
-
-
-
+    @Override
+    protected void preInit() {
+        playerTexture = getAssetLoader().loadTexture("bird.png")
+                .toAnimatedTexture(2, Duration.seconds(0.33));
     }
 
     @Override
@@ -55,14 +58,6 @@ public class AnimationSample2 extends GameApplication {
                 }
             }
         }, KeyCode.F);
-    }
-
-    private AnimatedTexture playerTexture;
-
-    @Override
-    protected void initAssets() {
-        playerTexture = getAssetLoader().loadTexture("bird.png")
-                .toAnimatedTexture(2, Duration.seconds(0.33));
     }
 
     @Override

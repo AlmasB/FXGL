@@ -50,11 +50,6 @@ public class FXShooterApp extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {
-
-    }
-
-    @Override
     protected void initGame() {
         initTreasure();
         initPlayer();
