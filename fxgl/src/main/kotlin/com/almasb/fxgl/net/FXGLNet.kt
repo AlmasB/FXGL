@@ -32,7 +32,7 @@ class FXGLNet : Net {
      * Loads pom.xml from GitHub server's master branch
      * and parses the "version" tag.
      */
-    override fun getLatestVersionTask() = openStreamTask(FXGL.getString("url.pom")).then {
+    override fun getLatestVersionTask() = openStreamTask(FXGL.getProperties().getString("url.pom")).then {
 
         return@then taskOf("latestVersion", {
 

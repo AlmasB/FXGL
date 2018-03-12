@@ -70,7 +70,7 @@ class Leaderboard {
         })
     }
 
-    private fun baseUrl() = FXGL.getString("url.leaderboard")
+    private fun baseUrl() = FXGL.getProperties().getString("url.leaderboard")
 
     private fun gameName() = FXGL.getSettings().title.replace(' ', '_')
 }

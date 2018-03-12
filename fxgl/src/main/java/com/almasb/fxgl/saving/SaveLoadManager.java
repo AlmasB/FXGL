@@ -33,12 +33,12 @@ public final class SaveLoadManager {
 
     private static final Logger log = Logger.get("FXGL.SaveLoadManager");
 
-    private static final String PROFILE_FILE_NAME = FXGL.getString("fs.profilename");
-    private static final String PROFILES_DIR = FXGL.getString("fs.profiledir");
-    private static final String SAVE_DIR = FXGL.getString("fs.savedir");
+    private static final String PROFILE_FILE_NAME = FXGL.getProperties().getString("fs.profilename");
+    private static final String PROFILES_DIR = FXGL.getProperties().getString("fs.profiledir");
+    private static final String SAVE_DIR = FXGL.getProperties().getString("fs.savedir");
 
-    private static final String SAVE_FILE_EXT = FXGL.getString("fs.savefile.ext");
-    private static final String DATA_FILE_EXT = FXGL.getString("fs.datafile.ext");
+    private static final String SAVE_FILE_EXT = FXGL.getProperties().getString("fs.savefile.ext");
+    private static final String DATA_FILE_EXT = FXGL.getProperties().getString("fs.datafile.ext");
 
     static {
         log.debug("Checking profiles dir: " + PROFILES_DIR);

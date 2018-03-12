@@ -103,7 +103,7 @@ public class DeveloperMenuBarController implements UIController {
 
     public void onShowBBox(ActionEvent event) {
         CheckMenuItem item = (CheckMenuItem) event.getSource();
-        FXGL.setProperty("dev.showbbox", item.isSelected());
+        FXGL.getProperties().setValue("dev.showbbox", item.isSelected());
 
         forEach(
                 app.getGameWorld().getEntitiesByComponent(ViewComponent.class),

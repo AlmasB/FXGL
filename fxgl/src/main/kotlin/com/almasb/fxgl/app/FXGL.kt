@@ -51,9 +51,13 @@ class FXGL private constructor() {
 
         private var configured = false
 
+        private val props = PropertyMap()
+
         @JvmStatic fun isDesktop() = Platform.isDesktop()
         @JvmStatic fun isAndroid() = Platform.isAndroid()
         @JvmStatic fun isIOS() = Platform.isIOS()
+
+        @JvmStatic fun getProperties() = props
 
         /**
          * @return FXGL system settings
@@ -145,10 +149,10 @@ class FXGL private constructor() {
             }
         }
 
-        private fun loadProperties(props: ResourceBundle) {
-            props.keySet().forEach { key ->
-                val value = props.getObject(key)
-                FXGL.setProperty(key, value)
+        private fun loadProperties(bundle: ResourceBundle) {
+            bundle.keySet().forEach { key ->
+                val value = bundle.getObject(key)
+                props.setValueFromString(key, value.toString())
             }
         }
 
@@ -263,50 +267,6 @@ class FXGL private constructor() {
 
         private val _masterTimer by lazy { internalApp.masterTimer }
         @JvmStatic fun getMasterTimer() = _masterTimer
-
-        private val properties = PropertyMap()
-
-        /**
-         * @param key property key
-         * @return int value
-         */
-        @JvmStatic fun getInt(key: String) = Integer.parseInt(getProperty(key))
-
-        /**
-         * @param key property key
-         * @return double value
-         */
-        @JvmStatic fun getDouble(key: String) = java.lang.Double.parseDouble(getProperty(key))
-
-        /**
-         * @param key property key
-         * @return boolean value
-         */
-        @JvmStatic fun getBoolean(key: String) = java.lang.Boolean.parseBoolean(getProperty(key))
-
-        /**
-         * @param key property key
-         * @return string value
-         */
-        @JvmStatic fun getString(key: String) = getProperty(key)
-
-        /**
-         * @param key property key
-         * @return property value
-         */
-        private fun getProperty(key: String) = properties.getString(key)
-
-        // TODO: store as actual values, not as string values
-        /**
-         * Set an int, double, boolean or String property.
-         * The value can then be retrieved with FXGL.get* methods.
-         *
-         * @param key property key
-         * @param value property value
-         */
-        @JvmStatic fun setProperty(key: String, value: Any) {
-            properties.setValue(key, value.toString())
-        }
 
         /**
          * @return a string translated to the language used by FXGL game

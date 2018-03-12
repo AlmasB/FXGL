@@ -414,7 +414,7 @@ public abstract class FXGLMenu extends FXGLScene {
         // url is a string key defined in system.properties
         Consumer<String> openBrowser = url -> {
             FXGL.getNet()
-                    .openBrowserTask(FXGL.getString(url))
+                    .openBrowserTask(FXGL.getProperties().getString(url))
                     .onFailure(error -> log.warning("Error opening browser: " + error))
                     .execute();
         };

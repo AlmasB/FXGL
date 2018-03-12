@@ -82,6 +82,28 @@ class PropertyMap {
         }
     }
 
+    /**
+     * Set a new [value] to an existing var [propertyName] or creates new var.
+     * The value is parsed from String type to an actual type, e.g. Boolean.
+     */
+    fun setValueFromString(propertyName: String, value: String) {
+        if (value == "true" || value == "false") {
+            setValue(propertyName, java.lang.Boolean.parseBoolean(value))
+        } else {
+            try {
+                val intValue = java.lang.Integer.parseInt(value)
+                setValue(propertyName, intValue)
+            } catch (e: Exception) {
+                try {
+                    val doubleValue = java.lang.Double.parseDouble(value)
+                    setValue(propertyName, doubleValue)
+                } catch (e2: Exception) {
+                    setValue(propertyName, value)
+                }
+            }
+        }
+    }
+
     fun increment(propertyName: String, value: Int) {
         intProperty(propertyName).value += value
     }

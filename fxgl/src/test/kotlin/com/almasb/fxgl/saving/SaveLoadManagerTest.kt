@@ -35,11 +35,11 @@ class SaveLoadManagerTest {
         @JvmStatic fun before() {
             FXGLMock.mock()
             // save load system relies on these to be present
-            FXGL.setProperty("fs.profiledir", "testprofiles/")
-            FXGL.setProperty("fs.profilename", "user.profile")
-            FXGL.setProperty("fs.savedir", "saves/")
-            FXGL.setProperty("fs.savefile.ext", ".sav")
-            FXGL.setProperty("fs.datafile.ext", ".dat")
+            FXGL.getProperties().setValue("fs.profiledir", "testprofiles/")
+            FXGL.getProperties().setValue("fs.profilename", "user.profile")
+            FXGL.getProperties().setValue("fs.savedir", "saves/")
+            FXGL.getProperties().setValue("fs.savefile.ext", ".sav")
+            FXGL.getProperties().setValue("fs.datafile.ext", ".dat")
 
             cleanUp()
         }

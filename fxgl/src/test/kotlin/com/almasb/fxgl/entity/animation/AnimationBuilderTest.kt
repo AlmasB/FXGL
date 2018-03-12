@@ -33,7 +33,7 @@ class AnimationBuilderTest {
 
     @BeforeEach
     fun `init`() {
-        FXGL.setProperty("dev.showbbox", false)
+        FXGL.getProperties().setValue("dev.showbbox", false)
         state = MockState()
     }
 

@@ -38,7 +38,7 @@ class FXGLTest {
         var count = 0
 
         try {
-            FXGL.getBoolean("TestBoolean")
+            FXGL.getProperties().getBoolean("TestBoolean")
         } catch (e: IllegalArgumentException) {
             count++
         }
@@ -46,7 +46,7 @@ class FXGLTest {
         assertThat(count, `is`(1))
 
         try {
-            FXGL.getInt("TestInt")
+            FXGL.getProperties().getInt("TestInt")
         } catch (e: IllegalArgumentException) {
             count++
         }
@@ -54,7 +54,7 @@ class FXGLTest {
         assertThat(count, `is`(2))
 
         try {
-            FXGL.getDouble("TestDouble")
+            FXGL.getProperties().getDouble("TestDouble")
         } catch (e: IllegalArgumentException) {
             count++
         }
@@ -62,7 +62,7 @@ class FXGLTest {
         assertThat(count, `is`(3))
 
         try {
-            FXGL.getString("TestString")
+            FXGL.getProperties().getString("TestString")
         } catch (e: IllegalArgumentException) {
             count++
         }
@@ -72,25 +72,25 @@ class FXGLTest {
 
     @Test
     fun `Property key is case sensitive`() {
-        FXGL.setProperty("UPPERCASE", "value")
+        FXGL.getProperties().setValue("UPPERCASE", "value")
 
         assertThrows(IllegalArgumentException::class.java, {
-            FXGL.getString("uppercase")
+            FXGL.getProperties().getString("uppercase")
         })
     }
 
     @Test
     fun `Set and Get property`() {
-        FXGL.setProperty("StringKey", "StringValue")
-        assertThat(FXGL.getString("StringKey"), `is`("StringValue"))
+        FXGL.getProperties().setValue("StringKey", "StringValue")
+        assertThat(FXGL.getProperties().getString("StringKey"), `is`("StringValue"))
 
-        FXGL.setProperty("KeyForInt", 1234)
-        assertThat(FXGL.getInt("KeyForInt"), `is`(1234))
+        FXGL.getProperties().setValue("KeyForInt", 1234)
+        assertThat(FXGL.getProperties().getInt("KeyForInt"), `is`(1234))
 
-        FXGL.setProperty("KeyForDouble", 4321.5)
-        assertThat(FXGL.getDouble("KeyForDouble"), `is`(4321.5))
+        FXGL.getProperties().setValue("KeyForDouble", 4321.5)
+        assertThat(FXGL.getProperties().getDouble("KeyForDouble"), `is`(4321.5))
 
-        FXGL.setProperty("KeyForBoolean", true)
-        assertThat(FXGL.getBoolean("KeyForBoolean"), `is`(true))
+        FXGL.getProperties().setValue("KeyForBoolean", true)
+        assertThat(FXGL.getProperties().getBoolean("KeyForBoolean"), `is`(true))
     }
 }

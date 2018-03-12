@@ -7,7 +7,6 @@
 package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.FXGL.Companion.getString
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.scene.CSS
@@ -52,6 +51,10 @@ class FXGLAssets {
             UI_CSS = loader.loadCSS(getString("ui.css"))
             UI_ICON_NAME = getString("ui.icon.name")
             UI_ICON = loader.loadAppIcon(UI_ICON_NAME)
+        }
+
+        private fun getString(name: String): String {
+            return FXGL.getProperties().getString(name)
         }
     }
 }

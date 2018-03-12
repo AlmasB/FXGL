@@ -45,7 +45,7 @@ internal class UpdaterTask : Runnable {
 
         updateCheckTimer = FXGL.newOfflineTimer("version.check")
 
-        val days = Duration.hours(24.0 * FXGL.getInt("version.check.days"))
+        val days = Duration.hours(24.0 * FXGL.getProperties().getInt("version.check.days"))
 
         return FXGL.isFirstRun() || updateCheckTimer.elapsed(days)
     }
@@ -71,7 +71,7 @@ internal class UpdaterTask : Runnable {
             text = "Open GitHub"
             setOnAction {
                 FXGL.getNet()
-                        .openBrowserTask(FXGL.getString("url.github"))
+                        .openBrowserTask(FXGL.getProperties().getString("url.github"))
                         .onFailureKt { log.warning("Error opening browser: $it") }
                         .execute()
             }

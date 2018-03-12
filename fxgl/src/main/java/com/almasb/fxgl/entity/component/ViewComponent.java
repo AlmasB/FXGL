@@ -44,7 +44,7 @@ public class ViewComponent extends Component {
     }
 
     private boolean showBBox() {
-        return FXGL.getBoolean("dev.showbbox");
+        return FXGL.getProperties().getBoolean("dev.showbbox");
     }
 
     /**

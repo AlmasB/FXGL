@@ -39,7 +39,7 @@ class GameWorldTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            FXGL.setProperty("dev.showbbox", false)
+            FXGL.getProperties().setValue("dev.showbbox", false)
         }
     }
 
