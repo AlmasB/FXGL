@@ -82,6 +82,17 @@ public class MarioFactory implements EntityFactory {
                 .build();
     }
 
+    @Spawns("block")
+    public Entity newBlock(SpawnData data) {
+        return Entities.builder()
+                .type(MarioType.CRUSHER_BLOCK)
+                .from(data)
+                .viewFromNodeWithBBox(new Rectangle(70, 70))
+                .with(new CollidableComponent(true))
+                .with(new CrusherControl())
+                .build();
+    }
+
     @Spawns("")
     public Entity newE(SpawnData data) {
         return Entities.builder()

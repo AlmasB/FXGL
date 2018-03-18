@@ -6,9 +6,12 @@
 
 package sandbox.tiled.mario;
 
+import com.almasb.fxgl.entity.Entity;
+
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public enum MarioType {
-    PLAYER, COIN, PLATFORM, DOOR, ENEMY, CRUSHER_BLOCK
+public abstract class FSMState {
+
+    protected abstract void onUpdate(Entity entity, double tpf);
 }
