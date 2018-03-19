@@ -20,6 +20,9 @@ public abstract class FSMControl extends Control {
         this.state = state;
     }
 
+    public FSMControl() {
+    }
+
     @Override
     public final void onUpdate(Entity entity, double tpf) {
         state.onUpdate(entity, tpf);

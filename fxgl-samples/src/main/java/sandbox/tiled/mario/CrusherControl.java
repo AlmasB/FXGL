@@ -18,13 +18,48 @@ import javafx.util.Duration;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class CrusherControl extends Control {
+public class CrusherControl extends FSMControl {
 
-    private enum CrushState {
-        PREPARING, CRUSHING, READY
-    }
+    private FSMState PREPARING = new FSMState() {
+        @Override
+        public void onUpdate(Entity entity, double tpf) {
+            entity.translateY(-tpf * crushSpeed / 3);
 
-    private CrushState state = CrushState.READY;
+            if (entity.getY() < origin.getY()) {
+                entity.setY(origin.getY());
+                setState(READY);
+                crushTimer.capture();
+            }
+        }
+    };
+
+    private FSMState CRUSHING = new FSMState() {
+        @Override
+        public void onUpdate(Entity entity, double tpf) {
+            entity.translateY(tpf * crushSpeed);
+
+            if (entity.getBottomY() > destination.getY()) {
+                entity.setY(destination.getY() - entity.getHeight());
+                setState(PREPARING);
+            }
+        }
+    };
+
+    private FSMState READY = new FSMState() {
+        @Override
+        public void onUpdate(Entity entity, double tpf) {
+            t += tpf;
+
+            timerText.setText(String.valueOf((int)t));
+
+            if (crushTimer.elapsed(Duration.seconds(3))) {
+                setState(CRUSHING);
+
+                t = 0;
+                timerText.setText("!!!");
+            }
+        }
+    };
 
     private double crushSpeed = 660;
 
@@ -44,50 +79,7 @@ public class CrusherControl extends Control {
         entity.getView().addNode(timerText);
 
         entity.setOnActive(() -> origin = entity.getPosition());
-    }
 
-    @Override
-    public void onUpdate(Entity entity, double tpf) {
-
-        switch (state) {
-            case PREPARING:
-
-
-                entity.translateY(-tpf * crushSpeed / 3);
-
-                if (entity.getY() < origin.getY()) {
-                    entity.setY(origin.getY());
-                    state = CrushState.READY;
-                    crushTimer.capture();
-                }
-
-                break;
-
-            case CRUSHING:
-
-                entity.translateY(tpf * crushSpeed);
-
-                if (entity.getBottomY() > destination.getY()) {
-                    entity.setY(destination.getY() - entity.getHeight());
-                    state = CrushState.PREPARING;
-                }
-
-                break;
-
-            case READY:
-
-                t += tpf;
-
-                timerText.setText(String.valueOf((int)t));
-
-                if (crushTimer.elapsed(Duration.seconds(3))) {
-                    state = CrushState.CRUSHING;
-
-                    t = 0;
-                    timerText.setText("!!!");
-                }
-
-                break;
-        }
+        setState(READY);
     }
 }

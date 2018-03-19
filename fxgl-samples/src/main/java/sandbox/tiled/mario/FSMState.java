@@ -9,6 +9,8 @@ package sandbox.tiled.mario;
 import com.almasb.fxgl.entity.Entity;
 
 /**
+ * TODO: interface?
+ * on enter / exit?
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public abstract class FSMState {
