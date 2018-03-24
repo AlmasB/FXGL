@@ -16,6 +16,10 @@ import javafx.scene.text.Font
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 object MockUIFactory : UIFactory {
+    override fun newWindow(): MDIWindow {
+        return MDIWindow()
+    }
+
     override fun <T : Any?> newListView(items: ObservableList<T>?): ListView<T> {
         return ListView()
     }

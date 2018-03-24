@@ -21,6 +21,10 @@ import javafx.scene.text.Text;
  */
 public interface UIFactory {
 
+    // TODO: remove defaults
+
+    MDIWindow newWindow();
+
     /**
      * @param size font size
      * @return main UI font with given size

@@ -228,3 +228,20 @@
 	-fx-shape: " ";
 	-fx-padding:0;
 }
+
+/**
+  for MDIWindow
+ */
+
+.window-titlebar {
+    -fx-glass-color: rgba(42, 42, 42, 0.9);
+    -fx-alignment: center;
+    -fx-background-color: linear-gradient(to bottom, derive(-fx-glass-color, 30%), -fx-glass-color);
+    -fx-border-color: derive(-fx-glass-color, -60%);
+    -fx-border-width: 2;
+    -fx-background-insets: 1;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-stroke: rgba(255,255,255,50);
+    -fx-fill: rgba(255,255,255,50);
+}

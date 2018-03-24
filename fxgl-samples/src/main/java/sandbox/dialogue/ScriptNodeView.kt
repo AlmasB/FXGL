@@ -47,7 +47,7 @@ class ScriptNodeView : NodeView() {
 
             textArea.text = ""
 
-            w.contentPane.children.add(textArea)
+            //w.contentPane.children.add(textArea)
 
             w.setPrefSize(600.0, 300.0)
             w.relocate(300.0, 300.0)

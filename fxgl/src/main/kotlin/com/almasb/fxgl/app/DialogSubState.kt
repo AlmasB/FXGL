@@ -22,7 +22,6 @@ import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
-import jfxtras.scene.control.window.Window
 import java.util.*
 
 /**
@@ -32,7 +31,7 @@ import java.util.*
  */
 object DialogSubState : SubState() {
 
-    private val window = Window()
+    private val window = FXGL.getUIFactory().newWindow()
     private val dialogFactory = FXGL.getSettings().dialogFactory
 
     private val states = ArrayDeque<DialogData>()
@@ -44,9 +43,8 @@ object DialogSubState : SubState() {
         (view as Pane).setPrefSize(width, height)
         (view as Pane).background = Background(BackgroundFill(Color.rgb(127, 127, 123, 0.5), null, null))
 
-        window.isResizableWindow = false
-        window.isMovable = false
-        window.background = Background(BackgroundFill(Color.BLACK, null, null))
+        window.canResize = false
+        window.canMove = false
 
         window.layoutXProperty().bind(window.widthProperty().divide(2).negate().add(width / 2))
         window.layoutYProperty().bind(window.heightProperty().divide(2).negate().add(height / 2))
@@ -217,5 +215,5 @@ object DialogSubState : SubState() {
         show("Progress", dialog)
     }
 
-    private class DialogData internal constructor(internal var title: String, internal var contentPane: Pane)
+    private class DialogData internal constructor(internal var title: String, internal var contentPane: Node)
 }

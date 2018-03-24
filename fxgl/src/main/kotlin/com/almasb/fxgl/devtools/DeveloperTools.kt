@@ -7,8 +7,10 @@
 package com.almasb.fxgl.devtools
 
 import com.almasb.fxgl.core.logging.Logger
+import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.Parent
+import javafx.scene.layout.Pane
 import jfxtras.util.NodeUtil
 
 /**
@@ -32,23 +34,34 @@ object DeveloperTools {
     }
 
     /**
-     * @return window in which [node] is located
+     * Removes the specified node from its parent.
+     *
+     * @param n the node to remove
+     *
+     * @throws IllegalArgumentException if an unsupported parent class has been
+     * specified or the parent is `null`
      */
-    //fun getWindow(node: Node) = Utils.getWindow(node)
+    fun removeFromParent(n: Node) {
+        if (n.parent is Group) {
+            (n.parent as Group).children.remove(n)
+        } else if (n.parent is Pane) {
+            (n.parent as Pane).children.remove(n)
+        } else {
+            throw IllegalArgumentException("Unsupported parent: " + n.parent)
+        }
+    }
 
     /**
-     * Remove [node] from its parent.
+     * Adds the given node to the specified parent.
      *
-     * @throws IllegalArgumentException if parent is unsupported
-     */
-    fun removeFromParent(node: Node) = NodeUtil.removeFromParent(node)
-
-    /**
-     * Add [node] to [parent].
+     * @param p parent
+     * @param n node
      *
-     * @throws IllegalArgumentException if parent is unsupported
+     * @throws IllegalArgumentException if an unsupported parent class has been
+     * specified or the parent is `null`
      */
-    fun addToParent(parent: Parent, node: Node) {
-        NodeUtil.addToParent(parent, node)
+    fun addToParent(p: Parent, n: Node) {
+        (p as? Group)?.children?.add(n)
+                ?: ((p as? Pane)?.children?.add(n) ?: throw IllegalArgumentException("Unsupported parent: $p"))
     }
 }

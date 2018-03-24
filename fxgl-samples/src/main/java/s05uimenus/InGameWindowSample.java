@@ -30,17 +30,12 @@ public class InGameWindowSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("InGameWindowSample");
         settings.setVersion("0.1");
-
-
-
-
-
     }
 
     @Override
     protected void initInput() {
         Input input = getInput();
-        input.addInputMapping(new InputMapping("Open", KeyCode.O));
+        input.addInputMapping(new InputMapping("Open", KeyCode.F));
     }
 
     @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
@@ -51,7 +46,7 @@ public class InGameWindowSample extends GameApplication {
         // 2. set properties
         window.setPrefSize(300, 200);
         window.setPosition(400, 300);
-        window.setBackgroundColor(Color.BLACK);
+        window.setBackgroundColor(Color.LIGHTBLUE);
 
         // 3. attach to game scene as UI node
         getGameScene().addUINode(window);

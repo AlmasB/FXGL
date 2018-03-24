@@ -14,6 +14,7 @@ import com.almasb.fxgl.devtools.controller.DialogEditEntityController;
 import com.almasb.fxgl.ui.InGameWindow;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
+import com.almasb.fxgl.ui.MDIWindow;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -22,7 +23,6 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import jfxtras.scene.control.window.Window;
 
 import static com.almasb.fxgl.util.BackportKt.forEach;
 
@@ -68,7 +68,7 @@ public class DeveloperMenuBarController implements UIController {
     public void openAddDialog() {
         UI ui = app.getAssetLoader().loadUI("dialog_add_entity.fxml", new DialogAddEntityController());
 
-        Window window = new InGameWindow("Add Entity", InGameWindow.WindowDecor.ALL);
+        MDIWindow window = new InGameWindow("Add Entity", InGameWindow.WindowDecor.ALL);
         window.setPrefSize(350, 300);
         window.setContentPane(new Pane(ui.getRoot()));
 
@@ -78,7 +78,7 @@ public class DeveloperMenuBarController implements UIController {
     public void openEditDialog() {
         UI ui = app.getAssetLoader().loadUI("dialog_edit_entity.fxml", new DialogEditEntityController());
 
-        Window window = new InGameWindow("Edit Entity", InGameWindow.WindowDecor.ALL);
+        MDIWindow window = new InGameWindow("Edit Entity", InGameWindow.WindowDecor.ALL);
         window.setPrefSize(380, 450);
         window.setContentPane(new Pane(ui.getRoot()));
 
@@ -93,7 +93,7 @@ public class DeveloperMenuBarController implements UIController {
             uiColorAdjust = app.getAssetLoader().loadUI("dialog_color_adjust.fxml", new ColorAdjustController());
         }
 
-        Window window = new InGameWindow("Color Adjust", InGameWindow.WindowDecor.ALL);
+        MDIWindow window = new InGameWindow("Color Adjust", InGameWindow.WindowDecor.ALL);
         window.setPrefSize(380, 450);
         window.setContentPane(new Pane(uiColorAdjust.getRoot()));
 

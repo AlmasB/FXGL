@@ -11,9 +11,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Paint;
-import jfxtras.scene.control.window.CloseIcon;
-import jfxtras.scene.control.window.MinimizeIcon;
-import jfxtras.scene.control.window.Window;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -31,7 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class InGameWindow extends Window {
+public class InGameWindow extends MDIWindow {
 
     private static final int SNAP_SIZE = 10;
 
@@ -56,16 +53,20 @@ public class InGameWindow extends Window {
      * @param decor window decor
      */
     public InGameWindow(String title, WindowDecor decor) {
-        super(title);
+        super();
+
         switch (decor) {
             case MINIMIZE:
-                getRightIcons().addAll(new MinimizeIcon(this));
+                setCanMinimize(true);
+                setCanClose(false);
                 break;
             case CLOSE:
-                getRightIcons().addAll(new CloseIcon(this));
+                setCanMinimize(false);
+                setCanClose(true);
                 break;
             case ALL:
-                getRightIcons().addAll(new MinimizeIcon(this), new CloseIcon(this));
+                setCanMinimize(true);
+                setCanClose(true);
                 break;
             case NONE:  // fallthru
             default:    // do nothing
@@ -79,6 +80,8 @@ public class InGameWindow extends Window {
         layoutYProperty().addListener(makeListenerY());
 
         windows.add(this);
+
+        setTitle(title);
     }
 
     private ChangeListener<Number> makeListenerX() {
@@ -256,9 +259,9 @@ public class InGameWindow extends Window {
         return value > min && value < max;
     }
 
-    @Override
+    //@Override
     public void close() {
-        super.close();
+        //super.close();
         windows.remove(this);
     }
 

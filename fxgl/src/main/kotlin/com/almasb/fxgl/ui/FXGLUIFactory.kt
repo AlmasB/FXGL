@@ -18,6 +18,10 @@ import javafx.scene.text.Font
  */
 class FXGLUIFactory : UIFactory {
 
+    override fun newWindow(): MDIWindow {
+        return MDIWindow()
+    }
+
     override fun newFont(size: Double): Font {
         return FXGLAssets.UI_FONT.newFont(size)
     }
