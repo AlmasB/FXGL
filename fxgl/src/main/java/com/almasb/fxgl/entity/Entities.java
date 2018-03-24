@@ -9,6 +9,8 @@ package com.almasb.fxgl.entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.core.reflect.Annotation;
+import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.parser.tiled.Layer;
 import com.almasb.fxgl.parser.tiled.TiledMap;
@@ -16,6 +18,7 @@ import com.almasb.fxgl.parser.tiled.Tileset;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.util.Named;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -23,6 +26,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Parameter;
 import java.util.List;
 
 import static com.almasb.fxgl.util.BackportKt.forEach;
@@ -264,6 +270,44 @@ public final class Entities {
         public EntityBuilder with(Control... controls) {
             for (Control c : controls)
                 entity.addControl(c);
+            return this;
+        }
+
+        @SafeVarargs
+        public final EntityBuilder with(Class<? extends Control>... controlClasses) {
+            for (Class<? extends Control> controlClass : controlClasses) {
+
+                try {
+                    for (Constructor<?> ctor : controlClass.getDeclaredConstructors()) {
+
+                        Control c;
+
+                        if (ctor.getParameterCount() == 0) {
+                            // no-arg ctor
+                            c = (Control) ctor.newInstance();
+                        } else {
+
+                            Object[] args = new Object[ctor.getParameterCount()];
+                            int i = 0;
+
+                            for (Parameter param : ctor.getParameters()) {
+                                Named a = param.getAnnotation(Named.class);
+
+                                Object value = entity.getProperty(a.value());
+
+                                args[i++] = value;
+                            }
+
+                            c = (Control) ctor.newInstance(args);
+                        }
+
+                        entity.addControl(c);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException("Couldn't create instance of " + controlClass, e);
+                }
+            }
+
             return this;
         }
 

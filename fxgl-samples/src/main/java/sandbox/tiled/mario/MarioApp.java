@@ -12,6 +12,7 @@ import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.EffectControl;
 import com.almasb.fxgl.entity.effect.WobbleEffect;
@@ -79,7 +80,7 @@ public class MarioApp extends GameApplication {
         getGameScene().getViewport().bindToEntity(player, getWidth() / 2, getHeight() / 2);
 
         getGameWorld().spawn("enemy", 470, 50);
-        getGameWorld().spawn("block", 140, 70);
+        getGameWorld().spawn("block", new SpawnData(140, 70).put("crush.speed", 770).put("player", player));
     }
 
     @Override

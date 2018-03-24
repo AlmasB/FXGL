@@ -81,7 +81,7 @@ public class MarioFactory implements EntityFactory {
         return builder(data)
                 .viewFromNodeWithBBox(new Rectangle(70, 70))
                 .with(new CollidableComponent(true))
-                .with(new CrusherControl())
+                .with(CrusherControl.class)
                 .build();
     }
 

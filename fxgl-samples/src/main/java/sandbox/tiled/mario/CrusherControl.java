@@ -7,9 +7,9 @@
 package sandbox.tiled.mario;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.time.LocalTimer;
+import com.almasb.fxgl.util.Named;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -19,6 +19,21 @@ import javafx.util.Duration;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class CrusherControl extends FSMControl {
+
+    private double crushSpeed;
+
+    private Point2D origin;
+    private Point2D destination = new Point2D(120, 70*7);
+    private LocalTimer crushTimer = FXGL.newLocalTimer();
+
+    private Text timerText;
+    private double t = 0;
+
+    public CrusherControl(@Named("crush.speed") double speed, @Named("player") Entity player) {
+        this.crushSpeed = speed;
+
+        System.out.println(player);
+    }
 
     private FSMState PREPARING = new FSMState() {
         @Override
@@ -60,15 +75,6 @@ public class CrusherControl extends FSMControl {
             }
         }
     };
-
-    private double crushSpeed = 660;
-
-    private Point2D origin;
-    private Point2D destination = new Point2D(120, 70*7);
-    private LocalTimer crushTimer = FXGL.newLocalTimer();
-
-    private Text timerText;
-    private double t = 0;
 
     @Override
     public void onAdded(Entity entity) {
