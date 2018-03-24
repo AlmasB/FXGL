@@ -11,7 +11,6 @@ import com.almasb.fxgl.devtools.Console;
 import com.almasb.fxgl.devtools.controller.ColorAdjustController;
 import com.almasb.fxgl.devtools.controller.DialogAddEntityController;
 import com.almasb.fxgl.devtools.controller.DialogEditEntityController;
-import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.ui.InGameWindow;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
@@ -104,11 +103,6 @@ public class DeveloperMenuBarController implements UIController {
     public void onShowBBox(ActionEvent event) {
         CheckMenuItem item = (CheckMenuItem) event.getSource();
         FXGL.getProperties().setValue("dev.showbbox", item.isSelected());
-
-        forEach(
-                app.getGameWorld().getEntitiesByComponent(ViewComponent.class),
-                e -> e.getComponent(ViewComponent.class).turnOnDebugBBox(item.isSelected())
-        );
     }
 
     private EventHandler<MouseEvent> clickTracker = e -> {

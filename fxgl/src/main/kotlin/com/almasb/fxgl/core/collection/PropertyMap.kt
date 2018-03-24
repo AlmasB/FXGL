@@ -9,10 +9,13 @@ package com.almasb.fxgl.core.collection
 import javafx.beans.property.*
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
+import javafx.scene.paint.Color
 import java.util.*
 
 /**
  * TODO: read only properties
+ * TODO: ? listeners for properties that don't yet exist ...
+ * maybe when listener is added if not exists, add key with value = null?
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -87,6 +90,11 @@ class PropertyMap {
      * The value is parsed from String type to an actual type, e.g. Boolean.
      */
     fun setValueFromString(propertyName: String, value: String) {
+        if (value.startsWith("#")) {
+            setValue(propertyName, Color.web(value))
+            return
+        }
+
         if (value == "true" || value == "false") {
             setValue(propertyName, java.lang.Boolean.parseBoolean(value))
         } else {

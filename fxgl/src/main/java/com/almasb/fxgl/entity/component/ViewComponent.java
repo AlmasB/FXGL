@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.core.collection.PropertyChangeListener;
 import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
@@ -18,7 +19,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -33,34 +33,6 @@ import static com.almasb.fxgl.util.BackportKt.forEach;
  */
 @CoreComponent
 public class ViewComponent extends Component {
-
-    private static Color showBBoxColor = Color.RED;
-
-    /**
-     * @param showBBoxColor the color to highlight bounding boxes
-     */
-    public static void setShowBBoxColor(Color showBBoxColor) {
-        ViewComponent.showBBoxColor = showBBoxColor;
-    }
-
-    private boolean showBBox() {
-        return FXGL.getProperties().getBoolean("dev.showbbox");
-    }
-
-    /**
-     * Turn on / off bounding box display.
-     * Useful for debugging to see the bounds of each hit box.
-     *
-     * @param on on / off flag
-     */
-    public final void turnOnDebugBBox(boolean on) {
-        if (!on) {
-            removeDebugBBox();
-            return;
-        }
-
-        addDebugBBox();
-    }
 
     /**
      * The view is not reassigned since its properties are bound
@@ -199,6 +171,10 @@ public class ViewComponent extends Component {
     private PositionComponent position;
     private RotationComponent rotation;
 
+    private PropertyChangeListener<Boolean> debugBBoxOn = (prev, on) -> {
+        turnOnDebugBBox(on);
+    };
+
     @Override
     public void onAdded(Entity entity) {
         bindView();
@@ -206,10 +182,14 @@ public class ViewComponent extends Component {
         if (showBBox()) {
             turnOnDebugBBox(true);
         }
+
+        FXGL.getProperties().addListener("dev.showbbox", debugBBoxOn);
     }
 
     @Override
     public void onRemoved(Entity entity) {
+        FXGL.getProperties().removeListener("dev.showbbox", debugBBoxOn);
+
         view.dispose();
     }
 
@@ -235,6 +215,25 @@ public class ViewComponent extends Component {
         forEach(c.getList(), this::addDebugView);
     };
 
+    private boolean showBBox() {
+        return FXGL.getProperties().getBoolean("dev.showbbox");
+    }
+
+    /**
+     * Turn on / off bounding box display.
+     * Useful for debugging to see the bounds of each hit box.
+     *
+     * @param on on / off flag
+     */
+    private void turnOnDebugBBox(boolean on) {
+        if (!on) {
+            removeDebugBBox();
+            return;
+        }
+
+        addDebugBBox();
+    }
+
     private void addDebugBBox() {
         BoundingBoxComponent bbox = getEntity().getBoundingBoxComponent();
 
@@ -259,7 +258,7 @@ public class ViewComponent extends Component {
         }
 
         if (view != null) {
-            view.setStroke(showBBoxColor);
+            view.strokeProperty().bind(FXGL.getProperties().objectProperty("dev.bboxcolor"));
 
             view.setTranslateX(hitBox.getMinX());
             view.setTranslateY(hitBox.getMinY());
