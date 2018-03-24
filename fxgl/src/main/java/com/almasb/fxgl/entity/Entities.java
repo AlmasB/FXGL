@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.parser.tiled.Layer;
@@ -32,6 +33,8 @@ import static com.almasb.fxgl.util.BackportKt.forEach;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class Entities {
+
+    private static final Logger log = Logger.get(Entities.class);
 
     private Entities() {}
 
@@ -65,6 +68,13 @@ public final class Entities {
     }
 
     /**
+     * @return new entity builder
+     */
+    public static EntityBuilder builder(Class<? extends Enum> types) {
+        return new EntityBuilder(types);
+    }
+
+    /**
      * @return new animation builder
      */
     public static AnimationBuilder animationBuilder() {
@@ -77,8 +87,41 @@ public final class Entities {
     public static class EntityBuilder {
         private Entity entity = new Entity();
 
+        private Class<? extends Enum> types = null;
+
+        private EntityBuilder() {
+        }
+
+        private EntityBuilder(Class<? extends Enum> types) {
+            this.types = types;
+        }
+
         public EntityBuilder from(SpawnData data) {
             at(data.getX(), data.getY());
+
+            if (types != null) {
+                try {
+                    String type = data.get("type").toString().toUpperCase();
+
+                    boolean found = false;
+
+                    for (Object t : types.getEnumConstants()) {
+                        if (t.toString().toUpperCase().equals(type)) {
+                            type((Enum<?>) t);
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        log.warningf("[%s] type was not found in enum %s. Spawning without type", type, types);
+                    }
+
+                } catch (IllegalArgumentException e) {
+                    // ignore if type key not found
+                }
+            }
+
             forEach(data.getData(), entry -> entity.setProperty(entry.key, entry.value));
             return this;
         }

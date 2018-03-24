@@ -42,4 +42,6 @@ open class SpawnData(val x: Double, val y: Double) {
 
         return value as T
     }
+
+    fun hasKey(key: String): Boolean = data.containsKey(key)
 }

@@ -384,6 +384,10 @@ class GameWorld {
         val spawner = entitySpawners.get(entityName)
                 ?: throw IllegalArgumentException("EntityFactory does not have a method annotated @Spawns($entityName)")
 
+        if (!data.hasKey("type")) {
+            data.put("type", entityName)
+        }
+
         val entity = spawner.apply(data)
         addEntity(entity)
         return entity
