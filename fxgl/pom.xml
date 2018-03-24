@@ -34,12 +34,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jfxtras</groupId>
-            <artifactId>jfxtras-window</artifactId>
-            <version>${jfxtras.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>

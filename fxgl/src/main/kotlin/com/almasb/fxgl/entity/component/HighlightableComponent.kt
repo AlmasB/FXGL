@@ -9,6 +9,7 @@ package com.almasb.fxgl.entity.component
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.SequentialAnimation
 import com.almasb.fxgl.app.translate
+import com.almasb.fxgl.devtools.DeveloperTools
 import com.almasb.fxgl.entity.Component
 import com.almasb.fxgl.entity.Entity
 import javafx.geometry.Point2D
@@ -17,7 +18,6 @@ import javafx.scene.Parent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.util.Duration
-import jfxtras.util.NodeUtil
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -101,7 +101,7 @@ class HighlightableComponent : Component() {
 
         view.view.setOnMouseEntered {
             if (HIGHLIGHT.scene != null) {
-                NodeUtil.removeFromParent(HIGHLIGHT)
+                DeveloperTools.removeFromParent(HIGHLIGHT)
             }
 
             HIGHLIGHT.startForView(view.view)

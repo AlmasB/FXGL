@@ -11,7 +11,6 @@ import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.layout.Pane
-import jfxtras.util.NodeUtil
 
 /**
  *
