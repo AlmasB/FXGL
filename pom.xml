@@ -85,7 +85,7 @@
         <apache.http.version>4.5.3</apache.http.version>
         <classpath.scanner.version>2.4.5</classpath.scanner.version>
         <charm.down.version>3.7.0</charm.down.version>
-        <audio.plugin.version>0.0.2-SNAPSHOT</audio.plugin.version>
+        <audio.plugin.version>0.0.2</audio.plugin.version>
 
         <!-- test dependencies -->
         <junit.jupiter.version>5.0.0</junit.jupiter.version>
