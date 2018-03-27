@@ -4,7 +4,7 @@
 
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>0.4.4-SNAPSHOT</version>
+    <version>0.5.0-SNAPSHOT</version>
     
     <packaging>pom</packaging>
 
@@ -14,7 +14,7 @@
 
     <modules>
         <!-- Main framework module -->
-        <module>fxgl</module>
+        <module>fxgl-base</module>
 
         <!-- This module shows how to use FXGL, but FXGL does not depend on it.
             Reactor order is important as nexus plugin requires the last module to be deployed,
@@ -23,7 +23,7 @@
         <module>fxgl-samples</module>
 
         <!-- Extra functionality module (on top of the main module) -->
-        <module>fxgl-extra</module>
+        <module>fxgl</module>
     </modules>
 
     <licenses>
