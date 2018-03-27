@@ -63,11 +63,21 @@ open class MDIWindow : Region() {
     private val closeButton = Button("x")
 
     private val root = Pane()
-    var contentPane: Node = StackPane()
+    var contentPane: Pane = StackPane()
         set(value) {
             field = value
 
             root.children.set(1, value)
+
+            if (value.width < width) {
+                width = value.width
+            }
+
+//            value.widthProperty().addListener { observable, oldValue, newValue ->
+//                if (width > newValue.toDouble()) {
+//                    width = newValue.toDouble()
+//                }
+//            }
         }
 
     var isMinimized = false
@@ -333,14 +343,32 @@ open class MDIWindow : Region() {
             DeveloperTools.removeFromParent(this)
         }
 
-        val box = HBox(header, minimizeButton, closeButton)
+        // TODO: redesign graphics and position
+        minimizeButton.translateY = -25.0
+        closeButton.translateX = 25.0
+        closeButton.translateY = -25.0
+
+        val box = HBox(header)
         box.translateY = -25.0
         box.styleClass.add("window-titlebar")
+
+//        box.prefWidthProperty().addListener { observable, oldValue, newValue ->
+//            println(newValue)
+//        }
+
+//        root.widthProperty().addListener { observable, oldValue, newValue ->
+//            println("Root: $newValue")
+//
+//            if ( > newValue.toDouble()) {
+//                width = newValue.toDouble()
+//            }
+//        }
 
         box.prefWidthProperty().bind(this.widthProperty())
 
         root.children.add(box)
         root.children.add(contentPane)
+        root.children.addAll(minimizeButton, closeButton)
 
         root.layoutY = 25.0
 

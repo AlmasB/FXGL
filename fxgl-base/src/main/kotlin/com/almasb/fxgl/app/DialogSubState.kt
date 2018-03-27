@@ -45,6 +45,8 @@ object DialogSubState : SubState() {
 
         window.canResize = false
         window.canMove = false
+        window.canMinimize = false
+        window.canClose = false
 
         window.layoutXProperty().bind(window.widthProperty().divide(2).negate().add(width / 2))
         window.layoutYProperty().bind(window.heightProperty().divide(2).negate().add(height / 2))
@@ -215,5 +217,5 @@ object DialogSubState : SubState() {
         show("Progress", dialog)
     }
 
-    private class DialogData internal constructor(internal var title: String, internal var contentPane: Node)
+    private class DialogData internal constructor(internal var title: String, internal var contentPane: Pane)
 }
