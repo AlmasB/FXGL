@@ -19,7 +19,6 @@ import javafx.geometry.Point2D;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@SetEntityFactory
 public class MarioFactory implements EntityFactory {
 
     @Spawns("platform")

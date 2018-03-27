@@ -6,7 +6,6 @@
 
 package sandbox.robots;
 
-import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
@@ -14,7 +13,7 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.entity.control.ExpireCleanControl;
+import com.almasb.fxgl.extra.entity.controls.ExpireCleanControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;

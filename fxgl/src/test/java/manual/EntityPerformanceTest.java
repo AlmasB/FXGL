@@ -12,7 +12,6 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.control.CircularMovementControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
@@ -92,7 +91,7 @@ public class EntityPerformanceTest extends GameApplication {
         return Entities.builder()
                 .at(FXGLMath.random() * getWidth(), FXGLMath.random() * getHeight())
                 .viewFromNode(new Rectangle(30, 30))
-                .with(new CircularMovementControl(2, 10))
+                //.with(new CircularMovementControl(2, 10))
                 .build();
     }
 

@@ -12,7 +12,7 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.entity.control.ExpireCleanControl;
+import com.almasb.fxgl.extra.entity.controls.ExpireCleanControl;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Point2D;

@@ -16,7 +16,6 @@ import javafx.scene.shape.Rectangle;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@SetEntityFactory
 public class RTSSampleFactory implements EntityFactory {
 
     @Spawns("TownHall")

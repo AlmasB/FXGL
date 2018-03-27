@@ -11,7 +11,7 @@ import com.almasb.fxgl.entity.Effect;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.TimeComponent;
-import com.almasb.fxgl.entity.control.CircularMovementControl;
+import com.almasb.fxgl.extra.entity.controls.CircularMovementControl;
 import com.almasb.fxgl.entity.control.EffectControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;

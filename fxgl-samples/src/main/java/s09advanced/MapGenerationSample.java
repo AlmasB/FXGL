@@ -6,9 +6,9 @@
 
 package s09advanced;
 
-import com.almasb.fxgl.algorithm.procedural.BiomeMapGenerator;
-import com.almasb.fxgl.algorithm.procedural.HeightMapGenerator;
-import com.almasb.fxgl.algorithm.procedural.MapGenerator;
+import com.almasb.fxgl.extra.algorithm.procedural.BiomeMapGenerator;
+import com.almasb.fxgl.extra.algorithm.procedural.HeightMapGenerator;
+import com.almasb.fxgl.extra.algorithm.procedural.MapGenerator;
 import com.almasb.fxgl.animation.AnimatedColor;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.DSLKt;
