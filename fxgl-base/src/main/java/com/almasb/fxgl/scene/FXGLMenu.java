@@ -43,8 +43,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.almasb.fxgl.app.FXGL.getSettings;
 import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
+import static com.almasb.fxgl.app.SystemPropertyKey.FXGL_VERSION;
 import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
@@ -396,7 +400,14 @@ public abstract class FXGLMenu extends FXGLScene {
         vbox.setAlignment(Pos.CENTER);
         vbox.setPrefWidth(pane.getPrefWidth() - 15);
 
-        for (String credit : FXGL.getSettings().getCredits().getList()) {
+        List<String> credits = new ArrayList<>(FXGL.getSettings().getCredits().getList());
+        credits.add("");
+        credits.add("Powered by FXGL " + FXGL.getProperties().getString(FXGL_VERSION));
+        credits.add("Author: Almas Baimagambetov");
+        credits.add("https://github.com/AlmasB/FXGL");
+        credits.add("");
+
+        for (String credit : credits) {
             vbox.getChildren().add(FXGL.getUIFactory().newText(credit));
         }
 

@@ -7,6 +7,7 @@
 package com.almasb.fxgl.scene.intro
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.SystemPropertyKey.*
 import com.almasb.fxgl.scene.IntroScene
 import javafx.animation.*
 import javafx.geometry.Point2D
@@ -101,7 +102,7 @@ class FXGLIntroScene() : IntroScene() {
     }
 
     private fun makeVersion(): Text {
-        with(Text("${com.almasb.fxgl.util.Version.getAsString()} by AlmasB")) {
+        with(Text("${FXGL.getProperties().getString(FXGL_VERSION)} by AlmasB")) {
             isVisible = false
             font = FXGL.getUIFactory().newFont(18.0)
             fill = Color.ALICEBLUE

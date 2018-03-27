@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.SystemPropertyKey.*
 import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.collection.PropertyMap
@@ -22,7 +23,6 @@ import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.ui.FXGLDisplay
 import com.almasb.fxgl.util.Consumer
-import com.almasb.fxgl.util.Version
 import com.gluonhq.charm.down.Platform
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
@@ -110,14 +110,14 @@ class FXGL private constructor() {
 
             configured = true
 
-            Version.print()
-
             internalApp = app
 
             loadSystemProperties()
             loadUserProperties()
 
-            if (FXGL.isDesktop()) {
+            logVersion()
+
+            if (isDesktop()) {
                 createRequiredDirs()
 
                 if (firstRun)
@@ -127,6 +127,12 @@ class FXGL private constructor() {
 
                 runUpdaterAndWait()
             }
+        }
+
+        private fun logVersion() {
+            log.info("FXGL-${props.getString(FXGL_VERSION)} on ${Platform.getCurrent()}")
+            log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
+            log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
         }
 
         private fun loadSystemProperties() {

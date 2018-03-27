@@ -6,9 +6,9 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.SystemPropertyKey.*
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.time.LocalTimer
-import com.almasb.fxgl.util.Version
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Dialog
@@ -81,7 +81,7 @@ internal class UpdaterTask : Runnable {
                 .getLatestVersionTask()
                 .onSuccessKt { latestVersion ->
 
-                    val currentVersion = Version.getAsString()
+                    val currentVersion = FXGL.getProperties().getString(FXGL_VERSION)
 
                     // update offline timer
                     updateCheckTimer.capture()

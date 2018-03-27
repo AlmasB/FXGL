@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.util
 
-
 import java.util.*
 
 /**
@@ -25,16 +24,7 @@ class Credits {
      * Constructs credits from given list of names.
      */
     constructor(list: List<String>) {
-        val newList = ArrayList(list)
-        with(newList) {
-            add("")
-            add("Powered by FXGL ${Version.getAsString()}")
-            add("Author: Almas Baimagambetov")
-            add("https://github.com/AlmasB/FXGL")
-            add("")
-        }
-
-        this.list = Collections.unmodifiableList(newList)
+        this.list = Collections.unmodifiableList(list)
     }
 
     /**
