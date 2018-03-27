@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-package com.almasb.fxgl.effect;
+package com.almasb.fxgl.particle;
 
 import com.almasb.fxgl.animation.AnimatedColor;
 import com.almasb.fxgl.core.math.Vec2;

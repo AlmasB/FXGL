@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.effect;
+package com.almasb.fxgl.particle;
 
 import com.almasb.fxgl.animation.Interpolators;
 import javafx.geometry.Point2D;

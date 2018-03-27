@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.physics
 
-import com.almasb.fxgl.effect.Particle
+import com.almasb.fxgl.particle.Particle
 import javafx.geometry.Point2D
 import javafx.scene.effect.BlendMode
 import javafx.scene.paint.Paint

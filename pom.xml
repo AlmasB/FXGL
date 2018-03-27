@@ -20,7 +20,7 @@
             Reactor order is important as nexus plugin requires the last module to be deployed,
             while we want the samples to be ignored. Hence samples comes 2nd and extra 3rd.
         -->
-        <module>fxgl-samples</module>
+        <!--<module>fxgl-samples</module>-->
 
         <!-- Extra functionality module (on top of the main module) -->
         <module>fxgl</module>

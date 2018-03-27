@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.effect;
+package com.almasb.fxgl.extra.ui;
 
 import javafx.scene.Parent;
 import javafx.scene.paint.Color;

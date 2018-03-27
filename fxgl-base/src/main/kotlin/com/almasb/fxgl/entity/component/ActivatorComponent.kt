@@ -9,14 +9,12 @@ package com.almasb.fxgl.entity.component
 import com.almasb.fxgl.app.fire
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityEvent
-import com.almasb.fxgl.parser.JSEvents
 
 /**
  * When added, the component is set to non-activated.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@JSEvents("onActivate", "onDeactivate")
 class ActivatorComponent
 @JvmOverloads constructor(
         var canBeDeactivated: Boolean = true,

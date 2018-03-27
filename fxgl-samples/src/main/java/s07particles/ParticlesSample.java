@@ -6,16 +6,14 @@
 package s07particles;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.effect.ParticleControl;
-import com.almasb.fxgl.effect.ParticleEmitter;
-import com.almasb.fxgl.effect.ParticleEmitters;
+import com.almasb.fxgl.particle.ParticleControl;
+import com.almasb.fxgl.particle.ParticleEmitter;
+import com.almasb.fxgl.particle.ParticleEmitters;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.MouseButton;
-import javafx.scene.paint.Color;
-import javafx.util.Duration;
 
 /**
  * Example of using particles.

@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-package com.almasb.fxgl.ui;
+package com.almasb.fxgl.extra.ui;
 
 import javafx.animation.FillTransition;
 import javafx.animation.ParallelTransition;

@@ -9,14 +9,12 @@ package com.almasb.fxgl.entity.component
 import com.almasb.fxgl.app.fire
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityEvent
-import com.almasb.fxgl.parser.JSEvents
 
 /**
  * Adds knowledge about alive / dead state to the entity.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@JSEvents("onDeath", "onRevive")
 class AliveComponent
 @JvmOverloads constructor(value: Boolean = true) : BooleanComponent(value) {
 
