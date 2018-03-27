@@ -6,10 +6,10 @@
 
 package s08ai;
 
-import com.almasb.fxgl.ai.goap.GoapAction;
-import com.almasb.fxgl.ai.goap.GoapAgent;
-import com.almasb.fxgl.ai.goap.GoapControl;
-import com.almasb.fxgl.ai.goap.State;
+import com.almasb.fxgl.extra.ai.goap.GoapAction;
+import com.almasb.fxgl.extra.ai.goap.GoapAgent;
+import com.almasb.fxgl.extra.ai.goap.GoapControl;
+import com.almasb.fxgl.extra.ai.goap.State;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;

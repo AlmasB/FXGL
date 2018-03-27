@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.ai.goap
+package com.almasb.fxgl.extra.ai.goap
 
 import java.util.*
 
