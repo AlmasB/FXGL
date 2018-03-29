@@ -122,7 +122,7 @@ public class MarioApp extends GameApplication {
 
     @Override
     protected void initGame() {
-        getGameWorld().setEntityFactory(new MarioFactory());
+        getGameWorld().addEntityFactory(new MarioFactory());
         nextLevel();
     }
 

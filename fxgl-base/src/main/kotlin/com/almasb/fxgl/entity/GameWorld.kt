@@ -189,6 +189,9 @@ class GameWorld {
 
             it.remove()
         }
+
+        entityFactories.clear()
+        entitySpawners.clear()
     }
 
     private val worldListeners = Array<EntityWorldListener>()
@@ -315,29 +318,45 @@ class GameWorld {
         }
     }
 
-    private var entityFactory: EntityFactory? = null
-
+    private val entityFactories = ObjectMap<EntityFactory, List<String>>()
     private val entitySpawners = ObjectMap<String, EntitySpawner>()
-
-    /**
-     * @return entity factory or null if not set
-     */
-    fun <T : EntityFactory> getEntityFactory(): T {
-        return entityFactory as T
-    }
 
     /**
      * Set main entity factory to be used via [GameWorld.spawn].
      *
      * @param entityFactory factory for creating entities
      */
-    fun setEntityFactory(entityFactory: EntityFactory) {
-        this.entityFactory = entityFactory
-
-        entitySpawners.clear()
+    fun addEntityFactory(entityFactory: EntityFactory) {
+        val entityNames = arrayListOf<String>()
 
         ReflectionUtils.findMethodsMapToFunctions(entityFactory, Spawns::class.java, EntitySpawner::class.java)
-                .forEach { annotation, entitySpawner -> entitySpawners.put(annotation.value, entitySpawner) }
+                .forEach { annotation, entitySpawner ->
+
+                    val entityName = annotation.value
+
+                    checkDuplicateSpawners(entityFactory, entityName)
+
+                    entitySpawners.put(entityName, entitySpawner)
+                    entityNames.add(entityName)
+                }
+
+        entityFactories.put(entityFactory, entityNames)
+    }
+
+    private fun checkDuplicateSpawners(entityFactory: EntityFactory, entityName: String) {
+        if (entitySpawners.containsKey(entityName)) {
+
+            // find the factory that already has entityName spawner
+            val factory = entityFactories.find { it.value.contains(entityName) }
+
+            throw IllegalArgumentException("Duplicated @Spawns($entityName) in $entityFactory. Already exists in $factory")
+        }
+    }
+
+    fun removeEntityFactory(entityFactory: EntityFactory) {
+        entityFactories.remove(entityFactory)?.forEach {
+            entitySpawners.remove(it)
+        }
     }
 
     fun spawn(entityName: String): Entity {
@@ -378,11 +397,11 @@ class GameWorld {
      * @return spawned entity
      */
     fun spawn(entityName: String, data: SpawnData): Entity {
-        if (entityFactory == null)
-            throw IllegalStateException("EntityFactory was not set! Call gameWorld.setEntityFactory()")
+        if (entityFactories.size() == 0)
+            throw IllegalStateException("No EntityFactory was added! Call gameWorld.addEntityFactory()")
 
         val spawner = entitySpawners.get(entityName)
-                ?: throw IllegalArgumentException("EntityFactory does not have a method annotated @Spawns($entityName)")
+                ?: throw IllegalArgumentException("No EntityFactory has a method annotated @Spawns($entityName)")
 
         if (!data.hasKey("type")) {
             data.put("type", entityName)

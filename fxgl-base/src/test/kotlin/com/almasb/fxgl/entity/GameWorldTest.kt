@@ -323,7 +323,7 @@ class GameWorldTest {
 
     @Test
     fun `Set level from Tiled map`() {
-        gameWorld.setEntityFactory(TiledMapEntityFactory())
+        gameWorld.addEntityFactory(TiledMapEntityFactory())
         gameWorld.setLevelFromMap("test_level1.json")
 
         assertThat(gameWorld.entities, containsInAnyOrder(
@@ -419,18 +419,35 @@ class GameWorldTest {
     }
 
     @Test
-    fun `Set entity factory`() {
+    fun `Add Remove factory`() {
         val factory = TestEntityFactory()
 
-        gameWorld.setEntityFactory(factory)
+        gameWorld.addEntityFactory(factory)
+        gameWorld.spawn("enemy")
 
-        assertThat(gameWorld.getEntityFactory(), `is`(factory))
+        gameWorld.removeEntityFactory(factory)
+
+        assertThrows(IllegalStateException::class.java, {
+            gameWorld.spawn("enemy")
+        })
+    }
+
+    @Test
+    fun `Cannot add factories with duplicate spawns`() {
+        val factory = TestEntityFactory()
+        val factory2 = TestEntityFactory2()
+
+        gameWorld.addEntityFactory(factory)
+
+        assertThrows(IllegalArgumentException::class.java, {
+            gameWorld.addEntityFactory(factory2)
+        })
     }
 
     @Test
     fun `Spawn without initial position`() {
         val factory = TestEntityFactory()
-        gameWorld.setEntityFactory(factory)
+        gameWorld.addEntityFactory(factory)
 
         val e = gameWorld.spawn("enemy")
 
@@ -440,7 +457,7 @@ class GameWorldTest {
     @Test
     fun `Spawn with initial position`() {
         val factory = TestEntityFactory()
-        gameWorld.setEntityFactory(factory)
+        gameWorld.addEntityFactory(factory)
 
         assertAll(
                 Executable {
@@ -458,7 +475,7 @@ class GameWorldTest {
     @Test
     fun `Spawn with initial properties`() {
         val factory = TestEntityFactory()
-        gameWorld.setEntityFactory(factory)
+        gameWorld.addEntityFactory(factory)
 
         assertAll(
                 Executable {
@@ -475,7 +492,7 @@ class GameWorldTest {
 
     @Test
     fun `Throw if factory has no such spawn method`() {
-        gameWorld.setEntityFactory(TestEntityFactory())
+        gameWorld.addEntityFactory(TestEntityFactory())
 
         assertThrows(IllegalArgumentException::class.java, {
             gameWorld.spawn("bla-bla")
@@ -977,6 +994,16 @@ class GameWorldTest {
     }
 
     class TestEntityFactory : EntityFactory {
+
+        @Spawns("enemy")
+        fun makeEnemy(data: SpawnData): Entity {
+            return Entities.builder()
+                    .from(data)
+                    .build()
+        }
+    }
+
+    class TestEntityFactory2 : EntityFactory {
 
         @Spawns("enemy")
         fun makeEnemy(data: SpawnData): Entity {
