@@ -11,11 +11,10 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.control.EffectControl;
-import com.almasb.fxgl.entity.effect.WobbleEffect;
+import com.almasb.fxgl.extra.entity.effects.WobbleEffect;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Orientation;
 import javafx.scene.input.KeyCode;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 /**

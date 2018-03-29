@@ -15,7 +15,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.EffectControl;
-import com.almasb.fxgl.entity.effect.WobbleEffect;
+import com.almasb.fxgl.extra.entity.effects.WobbleEffect;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;

@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity.effect
+package com.almasb.fxgl.extra.entity.effects
 
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.entity.Effect
