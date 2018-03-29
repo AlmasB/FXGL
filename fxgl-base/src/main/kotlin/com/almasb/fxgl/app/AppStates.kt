@@ -123,11 +123,6 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
 
         companion object {
             private val log = Logger.get(InitAppTask::class.java)
-
-            init {
-                log.warning("@SetEntityFactory is deprecated since 0.4.4!")
-                log.warning("@AddCollisionHandler is deprecated since 0.4.4!")
-            }
         }
 
         override fun call(): Void? {
