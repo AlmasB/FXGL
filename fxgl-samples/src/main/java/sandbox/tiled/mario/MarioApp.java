@@ -72,6 +72,7 @@ public class MarioApp extends GameApplication {
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new MarioFactory());
+        getGameWorld().addEntityFactory(new MarioBlockFactory());
         getGameWorld().setLevelFromMap("mario.tmx");
 
         player = getGameWorld().spawn("player", 50, 50);
