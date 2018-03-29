@@ -9,7 +9,7 @@ package manual;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.input.UserAction;
@@ -97,16 +97,16 @@ public class EntityPerformanceTest extends GameApplication {
 
     private Entity newEntity() {
         Entity e = new Entity();
-        e.addControl(new TestControl());
+        e.addComponent(new TestControl());
         return e;
     }
 
-    private static class TestControl extends Control {
+    private static class TestControl extends Component {
 
         private int i = 0;
 
         @Override
-        public void onUpdate(Entity entity, double tpf) {
+        public void onUpdate(double tpf) {
             i++;
         }
     }

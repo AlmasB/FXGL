@@ -47,7 +47,7 @@ public class EffectSample extends GameApplication {
         getInput().addAction(new UserAction("Print Line") {
             @Override
             protected void onActionBegin() {
-                player.getControl(EffectControl.class).startEffect(new SlowEffect());
+                player.getComponent(EffectControl.class).startEffect(new SlowEffect());
             }
         }, KeyCode.F);
     }

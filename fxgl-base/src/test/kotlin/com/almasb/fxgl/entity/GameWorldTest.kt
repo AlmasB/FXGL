@@ -103,17 +103,17 @@ class GameWorldTest {
     }
 
     @Test
-    fun `Removed entity keeps components and controls in that frame`() {
+    fun `Removed entity keeps components and components in that frame`() {
         val e = Entity()
         e.addComponent(EntitiesTest.TestComponent())
-        e.addControl(EntitiesTest.TestControl())
+        e.addComponent(EntitiesTest.TestControl())
 
         gameWorld.addEntity(e)
         gameWorld.removeEntity(e)
 
         assertAll(
                 Executable { assertTrue(e.components.isNotEmpty) },
-                Executable { assertTrue(e.controls.isNotEmpty) }
+                Executable { assertTrue(e.components.isNotEmpty) }
         )
     }
 
@@ -121,7 +121,7 @@ class GameWorldTest {
     fun `Removed entity is cleaned in next frame`() {
         val e = Entity()
         e.addComponent(EntitiesTest.TestComponent())
-        e.addControl(EntitiesTest.TestControl())
+        e.addComponent(EntitiesTest.TestControl())
 
         gameWorld.addEntity(e)
         gameWorld.removeEntity(e)
@@ -130,7 +130,7 @@ class GameWorldTest {
 
         assertAll(
                 Executable { assertTrue(e.components.isEmpty) },
-                Executable { assertTrue(e.controls.isEmpty) }
+                Executable { assertTrue(e.components.isEmpty) }
         )
     }
 
@@ -355,13 +355,13 @@ class GameWorldTest {
     @Test
     fun `Clear correctly cleans all entities`() {
         val e = Entity()
-        e.addControl(EntitiesTest.TestControl())
+        e.addComponent(EntitiesTest.TestControl())
         gameWorld.addEntity(e)
 
         gameWorld.onUpdate(0.0)
 
         val e2 = Entity()
-        e2.addControl(EntitiesTest.TestControl())
+        e2.addComponent(EntitiesTest.TestControl())
         gameWorld.addEntity(e2)
 
         var count = 0
@@ -378,15 +378,15 @@ class GameWorldTest {
 
         assertAll(
                 Executable { assertThat(count, `is`(2)) },
-                Executable { assertTrue(e.controls.isEmpty) },
-                Executable { assertTrue(e2.controls.isEmpty) }
+                Executable { assertTrue(e.components.isEmpty) },
+                Executable { assertTrue(e2.components.isEmpty) }
         )
     }
 
     @Test
     fun `Clear correctly cleans entity removed in previous frame`() {
         val e = Entity()
-        e.addControl(EntitiesTest.TestControl())
+        e.addComponent(EntitiesTest.TestControl())
         gameWorld.addEntity(e)
 
         gameWorld.onUpdate(0.0)
@@ -395,7 +395,7 @@ class GameWorldTest {
 
         gameWorld.clear()
 
-        assertTrue(e.controls.isEmpty)
+        assertTrue(e.components.isEmpty)
     }
 
     @Test
@@ -959,7 +959,7 @@ class GameWorldTest {
         e.addComponent(TimeComponent(0.5))
 
         val control = TimeBasedControl()
-        e.addControl(control)
+        e.addComponent(control)
 
         gameWorld.addEntity(e)
         gameWorld.onUpdate(0.016)
@@ -967,10 +967,10 @@ class GameWorldTest {
         assertTrue(control.assertPassed)
     }
 
-    private class TimeBasedControl : Control() {
+    private class TimeBasedControl : Component() {
         var assertPassed = false
 
-        override fun onUpdate(entity: Entity, tpf: Double) {
+        override fun onUpdate(tpf: Double) {
             assertThat(tpf, `is`(0.008))
             assertPassed = true
         }

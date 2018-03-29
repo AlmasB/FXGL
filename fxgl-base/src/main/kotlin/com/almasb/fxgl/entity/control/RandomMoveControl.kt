@@ -9,7 +9,7 @@ package com.almasb.fxgl.entity.control
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.Vec2
-import com.almasb.fxgl.entity.Control
+import com.almasb.fxgl.entity.Component
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.BoundingBoxComponent
 import com.almasb.fxgl.entity.component.PositionComponent
@@ -24,7 +24,7 @@ class RandomMoveControl
         var speed: Double,
         var xSeed: Double = FXGLMath.random(100, 10000).toDouble(),
         var ySeed: Double = FXGLMath.random(10000, 100000).toDouble(),
-        var bounds: Rectangle2D = FXGL.getApp().appBounds) : Control() {
+        var bounds: Rectangle2D = FXGL.getApp().appBounds) : Component() {
 
     private lateinit var position: PositionComponent
     private var bbox: BoundingBoxComponent? = null
@@ -34,12 +34,12 @@ class RandomMoveControl
     private val timer = FXGL.newLocalTimer()
     private val delay = Duration.seconds(1500 / speed)
 
-    override fun onAdded(entity: Entity) {
+    override fun onAdded() {
         nextPosition.set(position.value)
         timer.capture()
     }
 
-    override fun onUpdate(entity: Entity, tpf: Double) {
+    override fun onUpdate(tpf: Double) {
         xSeed += tpf
         ySeed += tpf
 

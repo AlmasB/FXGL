@@ -147,9 +147,9 @@ public class MarioApp extends GameApplication {
         getGameWorld().spawn("player", 350, 0);
 
         Entity player = getGameWorld().getEntitiesByType(MarioType.PLAYER).get(0);
-        playerControl = player.getControl(PlayerControl.class);
+        playerControl = player.getComponent(PlayerControl.class);
 
-        //player.addControl(new AIControl("robot.tree"));
+        //player.addComponent(new AIControl("robot.tree"));
 
         getGameScene().getViewport().setBounds(0, 0, 30*70, 11 * 70);
         getGameScene().getViewport().bindToEntity(player, 500, 0);

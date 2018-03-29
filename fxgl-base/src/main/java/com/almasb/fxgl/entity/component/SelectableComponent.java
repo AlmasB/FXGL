@@ -34,7 +34,7 @@ public class SelectableComponent extends BooleanComponent implements CopyableCom
     }
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         ViewComponent view = getEntity().getComponent(ViewComponent.class);
 
         valueProperty().addListener((o, wasSelectable, isSelectable) -> {
@@ -51,7 +51,7 @@ public class SelectableComponent extends BooleanComponent implements CopyableCom
     }
 
     @Override
-    public void onRemoved(Entity entity) {
+    public void onRemoved() {
         ViewComponent view = getEntity().getComponent(ViewComponent.class);
 
         removeSelectListener(view.getView());

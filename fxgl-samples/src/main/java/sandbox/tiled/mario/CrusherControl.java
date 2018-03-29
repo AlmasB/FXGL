@@ -37,7 +37,7 @@ public class CrusherControl extends FSMControl {
 
     private FSMState PREPARING = new FSMState() {
         @Override
-        public void onUpdate(Entity entity, double tpf) {
+        public void onUpdate(double tpf) {
             entity.translateY(-tpf * crushSpeed / 3);
 
             if (entity.getY() < origin.getY()) {
@@ -50,7 +50,7 @@ public class CrusherControl extends FSMControl {
 
     private FSMState CRUSHING = new FSMState() {
         @Override
-        public void onUpdate(Entity entity, double tpf) {
+        public void onUpdate(double tpf) {
             entity.translateY(tpf * crushSpeed);
 
             if (entity.getBottomY() > destination.getY()) {
@@ -62,7 +62,7 @@ public class CrusherControl extends FSMControl {
 
     private FSMState READY = new FSMState() {
         @Override
-        public void onUpdate(Entity entity, double tpf) {
+        public void onUpdate(double tpf) {
             t += tpf;
 
             timerText.setText(String.valueOf((int)t));
@@ -77,7 +77,7 @@ public class CrusherControl extends FSMControl {
     };
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         timerText = FXGL.getUIFactory().newText("", Color.AQUA, 28);
         timerText.setTranslateX(25);
         timerText.setTranslateY(35);

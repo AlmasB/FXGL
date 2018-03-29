@@ -33,7 +33,7 @@ abstract class GoalAction
         if (reachedGoal())
             return Status.SUCCEEDED
 
-        entity.getControl(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
+        entity.getComponent(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
         onUpdate(FXGL.getApp().tpf())
         return if (reachedGoal()) Status.SUCCEEDED else Status.RUNNING
     }

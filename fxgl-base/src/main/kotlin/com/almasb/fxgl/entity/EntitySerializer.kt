@@ -38,21 +38,7 @@ internal object EntitySerializer {
                     componentsBundle.put(b.name, b)
                 }
 
-
-        val controlsBundle = Bundle("controls")
-
-        entity.controls
-                .filterIsInstance<SerializableControl>()
-                .forEach {
-                    val b = Bundle(it.javaClass.canonicalName)
-                    it.write(b)
-
-                    controlsBundle.put(b.name, b)
-                }
-
-
         bundle.put("components", componentsBundle)
-        bundle.put("controls", controlsBundle)
     }
 
     /**
@@ -74,19 +60,6 @@ internal object EntitySerializer {
                     component.read(b)
                 else
                     log.warning("Bundle $componentsBundle does not have SerializableComponent: $component")
-            }
-        }
-
-        val controlsBundle = bundle.get<Bundle>("controls")
-
-        for (control in entity.controls) {
-            if (control is SerializableControl) {
-
-                val b = controlsBundle.get<Bundle>(control.javaClass.canonicalName)
-                if (b != null)
-                    control.read(b)
-                else
-                    log.warning("Bundle $componentsBundle does not have SerializableControl: $control")
             }
         }
     }

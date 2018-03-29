@@ -7,7 +7,7 @@
 package sandbox.scifi;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.PositionComponent;
@@ -25,7 +25,7 @@ import javafx.util.Duration;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class PlayerControl extends Control {
+public class PlayerControl extends Component {
 
     private PositionComponent position;
     private ViewComponent view;
@@ -59,12 +59,12 @@ public class PlayerControl extends Control {
     }
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         view.getView().addNode(animatedTexture);
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         if (Math.abs(physics.getVelocityX()) == 0) {
             animatedTexture.setAnimationChannel(animStand);
         } else {

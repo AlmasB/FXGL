@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.extra.ai.goap
 
-import com.almasb.fxgl.entity.Control
+import com.almasb.fxgl.entity.Component
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.PositionComponent
 import com.almasb.fxgl.entity.component.Required
@@ -21,7 +21,7 @@ import java.util.*
 @Required(PositionComponent::class)
 class GoapControl(private val agent: GoapAgent // this is the implementing class that provides our world data and listens to feedback on planning
                   , private val moveSpeed: Double,
-                  actions: Set<GoapAction>) : Control() {
+                  actions: Set<GoapAction>) : Component() {
 
     private val stateMachine = FSM()
 
@@ -55,7 +55,7 @@ class GoapControl(private val agent: GoapAgent // this is the implementing class
 
     private var tpf: Double = 0.0
 
-    override fun onUpdate(entity: Entity, tpf: Double) {
+    override fun onUpdate(tpf: Double) {
         this.tpf = tpf
         stateMachine.update(entity)
     }

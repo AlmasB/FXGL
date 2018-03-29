@@ -7,7 +7,7 @@
 package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.entity.Component;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,9 +33,9 @@ public class JavaAnonymousClassTest {
 
     @Test
     public void testAnonymousControl() {
-        assertThrows(IllegalArgumentException.class, () -> entity.addControl(new Control() {
+        assertThrows(IllegalArgumentException.class, () -> entity.addComponent(new Component() {
                 @Override
-                public void onUpdate(Entity entity, double tpf) { }
+                public void onUpdate(double tpf) { }
         }));
     }
 }

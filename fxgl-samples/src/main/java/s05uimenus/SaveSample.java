@@ -159,7 +159,7 @@ public class SaveSample extends GameApplication {
         player.getViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.BLUE)));
 
         playerControl = new PlayerControl();
-        player.addControl(playerControl);
+        player.addComponent(playerControl);
 
         enemy = new Entity();
         enemy.getTypeComponent().setValue(Type.ENEMY);

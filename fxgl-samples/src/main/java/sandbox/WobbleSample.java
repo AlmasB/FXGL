@@ -45,11 +45,11 @@ public class WobbleSample extends GameApplication {
     @Override
     protected void initInput() {
         DSLKt.onKeyDown(KeyCode.F, "asd", () -> {
-            player.getControl(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 3, 7, Orientation.VERTICAL));
+            player.getComponent(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 3, 7, Orientation.VERTICAL));
         });
 
         DSLKt.onKeyDown(KeyCode.G, "asd2", () -> {
-            player.getControl(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 2, 4, Orientation.HORIZONTAL));
+            player.getComponent(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 2, 4, Orientation.HORIZONTAL));
         });
     }
 

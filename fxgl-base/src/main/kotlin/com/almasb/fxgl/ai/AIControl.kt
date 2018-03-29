@@ -9,7 +9,7 @@ package com.almasb.fxgl.ai
 import com.almasb.fxgl.ai.btree.BehaviorTree
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.entity.Control
+import com.almasb.fxgl.entity.Component
 import com.almasb.fxgl.entity.Entity
 import java.util.*
 
@@ -19,7 +19,7 @@ import java.util.*
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class AIControl
-private constructor() : Control() {
+private constructor() : Component() {
 
     private lateinit var behaviorTree: BehaviorTree<Entity>
 
@@ -56,14 +56,14 @@ private constructor() : Control() {
         bubble.setMessage(message)
     }
 
-    override fun onAdded(entity: Entity) {
+    override fun onAdded() {
         behaviorTree.entity = entity
 
         if (FXGL.getSettings().applicationMode != ApplicationMode.RELEASE)
             entity.viewComponent.view.addNode(bubble)
     }
 
-    override fun onUpdate(entity: Entity, tpf: Double) {
+    override fun onUpdate(tpf: Double) {
         behaviorTree.step()
     }
 }

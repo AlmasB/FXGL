@@ -9,7 +9,7 @@ package sandbox.tiled.mario;
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -20,20 +20,20 @@ import javafx.util.Duration;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class EnemyControl extends Control {
+public class EnemyControl extends Component {
 
     private PhysicsComponent physics;
 
     private LocalTimer jumpTimer;
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         jumpTimer = FXGL.newLocalTimer();
         jumpTimer.capture();
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         if (jumpTimer.elapsed(Duration.seconds(3))) {
             jump();
             jumpTimer.capture();

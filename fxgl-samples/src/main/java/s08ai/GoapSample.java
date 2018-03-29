@@ -55,9 +55,9 @@ public class GoapSample extends GameApplication {
         HashSet<GoapAction> actions = initActions();
 
         GoapControl goapControl = new GoapControl(new KillerAgent(), 100, actions);
-        agent.addControl(goapControl);
+        agent.addComponent(goapControl);
 
-        guard.addControl(new GoapControl(new GuardAgent(), 125, actions));
+        guard.addComponent(new GoapControl(new GuardAgent(), 125, actions));
     }
 
     private void initObjects() {
@@ -134,7 +134,7 @@ public class GoapSample extends GameApplication {
 
         @Override
         public void actionsFinished(Entity entity) {
-            entity.removeControl(GoapControl.class);
+            entity.removeComponent(GoapControl.class);
         }
 
         @Override
@@ -178,7 +178,7 @@ public class GoapSample extends GameApplication {
 
         @Override
         public void actionsFinished(Entity entity) {
-            entity.removeControl(GoapControl.class);
+            entity.removeComponent(GoapControl.class);
         }
 
         @Override

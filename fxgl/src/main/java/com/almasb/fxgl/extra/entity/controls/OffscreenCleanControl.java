@@ -7,7 +7,7 @@
 package com.almasb.fxgl.extra.entity.controls;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.scene.Viewport;
 
@@ -16,7 +16,7 @@ import com.almasb.fxgl.scene.Viewport;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class OffscreenCleanControl extends Control {
+public class OffscreenCleanControl extends Component {
 
     private Viewport viewport;
 
@@ -25,7 +25,7 @@ public class OffscreenCleanControl extends Control {
     }
 
     @Override
-    public void onUpdate(Entity entity, double v) {
+    public void onUpdate(double v) {
         if (entity.getBoundingBoxComponent().isOutside(viewport.getVisibleArea())) {
             entity.removeFromWorld();
         }

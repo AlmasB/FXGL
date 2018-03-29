@@ -176,7 +176,7 @@ public class ViewComponent extends Component {
     };
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         bindView();
 
         if (showBBox()) {
@@ -187,7 +187,7 @@ public class ViewComponent extends Component {
     }
 
     @Override
-    public void onRemoved(Entity entity) {
+    public void onRemoved() {
         FXGL.getProperties().removeListener("dev.showbbox", debugBBoxOn);
 
         view.dispose();

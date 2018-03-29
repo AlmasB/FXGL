@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity.control
 
-import com.almasb.fxgl.entity.Control
+import com.almasb.fxgl.entity.Component
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.AttractableComponent
 
@@ -16,9 +16,9 @@ import com.almasb.fxgl.entity.component.AttractableComponent
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class AttractorControl(var force: Double,
-                       var radius: Double) : Control() {
+                       var radius: Double) : Component() {
 
-    override fun onUpdate(entity: Entity, tpf: Double) {
+    override fun onUpdate(tpf: Double) {
 
         // https://github.com/AlmasB/FXGL/issues/482
         entity.world

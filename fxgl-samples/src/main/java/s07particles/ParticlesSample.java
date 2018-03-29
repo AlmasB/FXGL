@@ -51,7 +51,7 @@ public class ParticlesSample extends GameApplication {
                 control.setOnFinished(explosion::removeFromWorld);
 
                 // 3. add control to entity
-                explosion.addControl(control);
+                explosion.addComponent(control);
 
                 // 4. add entity to game world
                 getGameWorld().addEntity(explosion);
@@ -74,7 +74,7 @@ public class ParticlesSample extends GameApplication {
                 control.setOnFinished(explosion::removeFromWorld);
 
                 // 3. add control to entity
-                explosion.addControl(control);
+                explosion.addComponent(control);
 
                 // 4. add entity to game world
                 getGameWorld().addEntity(explosion);

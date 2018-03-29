@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.extra.entity.controls;
 
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import javafx.geometry.Point2D;
 
@@ -16,7 +16,7 @@ import javafx.geometry.Point2D;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class ProjectileControl extends Control {
+public class ProjectileControl extends Component {
 
     private Point2D velocity;
     private double speed;
@@ -67,12 +67,12 @@ public class ProjectileControl extends Control {
     }
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         entity.rotateToVector(velocity);
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         entity.translate(velocity.multiply(tpf));
     }
 }

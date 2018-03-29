@@ -42,30 +42,30 @@ public class MarioApp extends GameApplication {
         getInput().addAction(new UserAction("Left") {
             @Override
             protected void onAction() {
-                player.getControl(PlayerControl.class).left();
+                player.getComponent(PlayerControl.class).left();
             }
         }, KeyCode.A);
 
         getInput().addAction(new UserAction("Right") {
             @Override
             protected void onAction() {
-                player.getControl(PlayerControl.class).right();
+                player.getComponent(PlayerControl.class).right();
             }
         }, KeyCode.D);
 
         getInput().addAction(new UserAction("Jump") {
             @Override
             protected void onAction() {
-                player.getControl(PlayerControl.class).jump();
+                player.getComponent(PlayerControl.class).jump();
             }
         }, KeyCode.W);
 
         DSLKt.onKeyDown(KeyCode.F, "asd", () -> {
-            player.getControl(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 3, 7, Orientation.VERTICAL));
+            player.getComponent(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 3, 7, Orientation.VERTICAL));
         });
 
         DSLKt.onKeyDown(KeyCode.G, "asd2", () -> {
-            player.getControl(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 2, 4, Orientation.HORIZONTAL));
+            player.getComponent(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 2, 4, Orientation.HORIZONTAL));
         });
     }
 

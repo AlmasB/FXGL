@@ -6,21 +6,21 @@
 
 package com.almasb.fxgl.entity.diff;
 
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityTest;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class InjectableControl extends Control {
+public class InjectableControl extends Component {
 
     private EntityTest.CustomDataComponent component;
 
     private EntityTest.CustomDataControl control;
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         if (component == null || !"Inject".equals(component.getData())) {
             throw new RuntimeException("Injection failed!");
         }
@@ -31,7 +31,7 @@ public class InjectableControl extends Control {
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
 
     }
 }

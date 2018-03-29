@@ -32,13 +32,14 @@ class AccumulatedUpdateControlTest {
         val e = Entity()
 
         val control = ClearControl()
+        e.addComponent(control)
 
         for (i in 1..4) {
-            control.onUpdate(e, 0.016)
+            control.onUpdate(0.016)
             assertThat(control.count, `is`(0))
         }
 
-        control.onUpdate(e, 0.016)
+        control.onUpdate(0.016)
         assertThat(control.count, `is`(999))
     }
 

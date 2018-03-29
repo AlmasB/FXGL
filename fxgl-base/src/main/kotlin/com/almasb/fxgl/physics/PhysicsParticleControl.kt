@@ -27,7 +27,7 @@ class PhysicsParticleControl(private val group: ParticleGroup,
     private val radiusMeters = physicsWorld.jBox2DWorld.particleSystem.particleRadius
     private val radiusPixels = physicsWorld.toPixels(radiusMeters.toDouble())
 
-    override fun onUpdate(entity: Entity, tpf: Double) {
+    override fun onUpdate(tpf: Double) {
         entity.setPosition(0.0, 0.0)
 
         particles.forEach { entity.view.removeNode(it.view) }
@@ -52,8 +52,8 @@ class PhysicsParticleControl(private val group: ParticleGroup,
         Pools.free(pointPhysics)
     }
 
-    override fun onRemoved(entity: Entity) {
+    override fun onRemoved() {
         physicsWorld.jBox2DWorld.destroyParticlesInGroup(group)
-        super.onRemoved(entity)
+        super.onRemoved()
     }
 }

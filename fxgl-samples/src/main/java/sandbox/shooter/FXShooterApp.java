@@ -87,7 +87,7 @@ public class FXShooterApp extends GameApplication {
 //        btn.setTranslateY(500);
 //        btn.setOnAction(e -> {
 //            player.removeControl(JSControl.class);
-//            player.addControl(new JSControl(textArea.getText()));
+//            player.addComponent(new JSControl(textArea.getText()));
 //        });
 //
 //        Pane pane = new Pane();
@@ -129,7 +129,7 @@ public class FXShooterApp extends GameApplication {
         player.addComponent(weapon);
 
         playerControl = new PlayerControl();
-        player.addControl(playerControl);
+        player.addComponent(playerControl);
 
         getGameWorld().addEntity(player);
     }
@@ -142,7 +142,7 @@ public class FXShooterApp extends GameApplication {
 
         enemy.addComponent(new CollidableComponent(true));
         enemy.addComponent(new HPComponent(5));
-        enemy.addControl(new EnemyControl(new Point2D(getWidth() / 2, getHeight() / 2)));
+        enemy.addComponent(new EnemyControl(new Point2D(getWidth() / 2, getHeight() / 2)));
 
         getGameWorld().addEntity(enemy);
     }

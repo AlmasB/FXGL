@@ -60,7 +60,7 @@ public class BoundingBoxComponent extends Component
     private PositionComponent position;
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         minXWorld.bind(minXLocal.add(position.xProperty()));
         minYWorld.bind(minYLocal.add(position.yProperty()));
 
@@ -74,7 +74,7 @@ public class BoundingBoxComponent extends Component
     }
 
     @Override
-    public void onRemoved(Entity entity) {
+    public void onRemoved() {
         hitBoxes.removeListener(onHitBoxChange);
         for (int i = 0; i < hitBoxes.size(); i++) {
             hitBoxes.get(i).unbind();

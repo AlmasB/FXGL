@@ -101,7 +101,7 @@ public enum WorkerState implements State<Entity> {
     };
 
     void changeState(Entity entity, WorkerState state) {
-        entity.getControl(FSMControl.class).changeState(state);
+        entity.getComponent(FSMControl.class).changeState(state);
     }
 
     @Override

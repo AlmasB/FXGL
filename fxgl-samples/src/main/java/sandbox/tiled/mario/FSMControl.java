@@ -6,13 +6,13 @@
 
 package sandbox.tiled.mario;
 
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public abstract class FSMControl extends Control {
+public abstract class FSMControl extends Component {
 
     private FSMState state;
 
@@ -24,8 +24,8 @@ public abstract class FSMControl extends Control {
     }
 
     @Override
-    public final void onUpdate(Entity entity, double tpf) {
-        state.onUpdate(entity, tpf);
+    public final void onUpdate(double tpf) {
+        state.onUpdate(tpf);
     }
 
     public final void setState(FSMState state) {

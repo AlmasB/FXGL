@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity.control
 
-import com.almasb.fxgl.entity.Control
+import com.almasb.fxgl.entity.Component
 import com.almasb.fxgl.entity.Entity
 
 /**
@@ -16,12 +16,12 @@ import com.almasb.fxgl.entity.Entity
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class AccumulatedUpdateControl(var numFramesToSkip: Int) : Control() {
+abstract class AccumulatedUpdateControl(var numFramesToSkip: Int) : Component() {
 
     private var ac = 0
     private var acTime = 0.0
 
-    override final fun onUpdate(entity: Entity, tpf: Double) {
+    override final fun onUpdate(tpf: Double) {
         ac++
         acTime += tpf
 

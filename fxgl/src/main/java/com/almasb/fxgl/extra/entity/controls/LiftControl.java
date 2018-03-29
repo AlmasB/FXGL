@@ -7,7 +7,7 @@
 package com.almasb.fxgl.extra.entity.controls;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.time.LocalTimer;
 import javafx.util.Duration;
@@ -17,7 +17,7 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class LiftControl extends Control {
+public class LiftControl extends Component {
 
     private LocalTimer timer;
     private Duration duration;
@@ -39,13 +39,13 @@ public class LiftControl extends Control {
     }
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         timer = FXGL.newLocalTimer();
         speed = distance / duration.toSeconds();
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         if (timer.elapsed(duration)) {
             goingUp = !goingUp;
             timer.capture();

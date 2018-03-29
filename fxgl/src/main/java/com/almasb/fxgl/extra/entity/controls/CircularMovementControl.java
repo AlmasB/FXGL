@@ -5,7 +5,7 @@
  */
 package com.almasb.fxgl.extra.entity.controls;
 
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 
 /**
@@ -13,7 +13,7 @@ import com.almasb.fxgl.entity.Entity;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class CircularMovementControl extends Control {
+public final class CircularMovementControl extends Component {
 
     private double radius;
     private double speed;
@@ -25,7 +25,7 @@ public final class CircularMovementControl extends Control {
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         double x = entity.getX() - Math.cos(t) * radius;
         double y = entity.getY() - Math.sin(t) * radius;
 

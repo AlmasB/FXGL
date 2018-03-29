@@ -4,20 +4,18 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.entity.component
+
+import com.almasb.fxgl.entity.Component
 
 /**
  * Notifies when a component or a control is added / removed.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface ModuleListener {
+interface ComponentListener {
 
-    void onAdded(Control control);
+    fun onAdded(component: Component)
 
-    void onRemoved(Control control);
-
-    void onAdded(Component component);
-
-    void onRemoved(Component component);
+    fun onRemoved(component: Component)
 }

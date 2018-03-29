@@ -6,7 +6,7 @@
 
 package common;
 
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.Required;
@@ -15,14 +15,14 @@ import com.almasb.fxgl.entity.component.Required;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)
-public class PlayerControl extends Control {
+public class PlayerControl extends Component {
 
     private PositionComponent position;
 
     private double speed = 0;
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         speed = tpf * 60;
     }
 

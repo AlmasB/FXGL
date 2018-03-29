@@ -15,5 +15,5 @@ import com.almasb.fxgl.entity.Entity;
  */
 public abstract class FSMState {
 
-    protected abstract void onUpdate(Entity entity, double tpf);
+    protected abstract void onUpdate(double tpf);
 }

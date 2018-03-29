@@ -35,11 +35,11 @@ class InjectionTest {
     fun `Component fields are injected into control`() {
         val entity = Entity()
         entity.addComponent(EntityTest.CustomDataComponent("Inject"))
-        entity.addControl(EntityTest.CustomDataControl("InjectControl"))
-        entity.addControl(InjectableControl())
+        entity.addComponent(EntityTest.CustomDataControl("InjectControl"))
+        entity.addComponent(InjectableControl())
 
         assertTrue(true)
-        assertTrue(entity.hasControl(InjectableControl::class.java))
+        assertTrue(entity.hasComponent(InjectableControl::class.java))
     }
 
     @Test
@@ -55,19 +55,19 @@ class InjectionTest {
     fun `Subtype fields are injected`() {
         val entity = Entity()
         entity.addComponent(EntityTest.CustomDataComponent("Inject"))
-        entity.addControl(EntityTest.CustomDataControl("InjectControl"))
-        entity.addControl(SubTypeInjectableControl())
+        entity.addComponent(EntityTest.CustomDataControl("InjectControl"))
+        entity.addComponent(SubTypeInjectableControl())
 
-        assertThat(entity.hasControl(SubTypeInjectableControl::class.java), `is`(true))
+        assertThat(entity.hasComponent(SubTypeInjectableControl::class.java), `is`(true))
     }
 
     @Test
     fun `Throw if component not present`() {
         val entity = Entity()
-        entity.addControl(EntityTest.CustomDataControl("InjectControl"))
+        entity.addComponent(EntityTest.CustomDataControl("InjectControl"))
 
         assertThrows(RuntimeException::class.java, {
-            entity.addControl(InjectableControl())
+            entity.addComponent(InjectableControl())
         })
     }
 
@@ -77,22 +77,19 @@ class InjectionTest {
         entity.addComponent(EntityTest.CustomDataComponent("Inject"))
 
         assertThrows(RuntimeException::class.java, {
-            entity.addControl(InjectableControl())
+            entity.addComponent(InjectableControl())
         })
     }
 
     @Test
     fun `Ignore injection if target field is not Entity`() {
         val entity = Entity()
-        entity.addControl(NameControl())
+        entity.addComponent(NameControl())
     }
 
-    class NameControl : Control() {
+    class NameControl : Component() {
 
         // we first check that type is Entity before injecting
         lateinit var name: String
-
-        override fun onUpdate(entity: Entity?, tpf: Double) {
-        }
     }
 }

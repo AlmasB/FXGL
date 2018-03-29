@@ -25,19 +25,19 @@ class InjectEntityControlTest {
         val control = InjectEntityControl()
 
         val e = Entity()
-        e.addControl(control)
+        e.addComponent(control)
 
         assertThat(control.injectEntity, `is`(e))
     }
 
-    class InjectEntityControl : Control() {
+    class InjectEntityControl : Component() {
 
         // this component is not present on the entity
         // so we test if impl ignores it
         lateinit var collidable: CollidableComponent
         lateinit var injectEntity: Entity
 
-        override fun onUpdate(entity: Entity, tpf: Double) {
+        override fun onUpdate(tpf: Double) {
         }
     }
 }

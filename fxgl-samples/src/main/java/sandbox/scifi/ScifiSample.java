@@ -178,7 +178,7 @@ public class ScifiSample extends GameApplication {
         getGameWorld().setLevelFromMap("mario" + level + ".json");
 
         Entity player = getGameWorld().getEntitiesByType(ScifiType.PLAYER).get(0);
-        playerControl = player.getControl(PlayerControl.class);
+        playerControl = player.getComponent(PlayerControl.class);
 
         getGameScene().getViewport().setBounds(0, 0, 3000, getHeight());
         getGameScene().getViewport().bindToEntity(player, 500, 0);

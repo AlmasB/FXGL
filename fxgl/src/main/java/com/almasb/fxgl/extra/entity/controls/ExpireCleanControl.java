@@ -7,7 +7,7 @@
 package com.almasb.fxgl.extra.entity.controls;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.time.TimerAction;
 import javafx.util.Duration;
@@ -18,7 +18,7 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class ExpireCleanControl extends Control {
+public class ExpireCleanControl extends Component {
 
     private Duration expire;
 
@@ -37,7 +37,7 @@ public class ExpireCleanControl extends Control {
     private TimerAction timerAction;
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         entity.activeProperty().addListener((observable, oldValue, isActive) -> {
             if (isActive) {
                 timerAction = FXGL.getMasterTimer().runOnceAfter(entity::removeFromWorld, expire);
@@ -48,7 +48,7 @@ public class ExpireCleanControl extends Control {
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         if (timerAction == null) {
             timerAction = FXGL.getMasterTimer().runOnceAfter(entity::removeFromWorld, expire);
         } else {

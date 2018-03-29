@@ -13,7 +13,7 @@ import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.particle.ParticleControl;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
@@ -96,12 +96,12 @@ public class ParticleTextureSample extends GameApplication {
 //                .buildAndAttach();
     }
 
-    private class ButterflyControl extends Control {
+    private class ButterflyControl extends Component {
 
         private double t = 0;
 
         @Override
-        public void onUpdate(Entity entity, double tpf) {
+        public void onUpdate(double tpf) {
             entity.setPosition(curveFunction().add(getWidth() / 2, getHeight() / 2));
 
             t += tpf;

@@ -7,7 +7,7 @@
 package manual;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.entity.Entities;
@@ -83,7 +83,7 @@ public class RangeTest extends GameApplication {
         player.getViewComponent().setView(new EntityView(new Rectangle(40, 40)), true);
 
         playerControl = new PlayerControl();
-        player.addControl(playerControl);
+        player.addComponent(playerControl);
 
         markers = new Entity();
 
@@ -158,14 +158,14 @@ public class RangeTest extends GameApplication {
     }
 
     @Required(PositionComponent.class)
-    public class PlayerControl extends Control {
+    public class PlayerControl extends Component {
 
         private PositionComponent position;
 
         private double speed = 0;
 
         @Override
-        public void onUpdate(Entity entity, double tpf) {
+        public void onUpdate(double tpf) {
             speed = tpf * 60;
         }
 

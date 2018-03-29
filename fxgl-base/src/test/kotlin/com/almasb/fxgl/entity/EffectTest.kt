@@ -37,12 +37,12 @@ class EffectTest {
     fun `Effect start and end`() {
         val e = Entity()
         val control = EffectControl()
-        e.addControl(control)
+        e.addComponent(control)
 
         control.startEffect(TestEffect(Duration.seconds(1.0)))
         assertThat(e.getProperty("key"), `is`(10))
 
-        control.onUpdate(e, 1.0)
+        control.onUpdate(1.0)
         assertThat(e.getProperty("key"), `is`(-10))
 
         val effect = TestEffect(Duration.seconds(1.0))
@@ -65,12 +65,12 @@ class EffectTest {
         val e = Entity()
         e.addComponent(TimeComponent(0.25))
         val control = EffectControl()
-        e.addControl(control)
+        e.addComponent(control)
 
         control.startEffect(TestEffect(Duration.seconds(1.0)))
         assertThat(e.getProperty("key"), `is`(10))
 
-        control.onUpdate(e, 1.0)
+        control.onUpdate(1.0)
         assertThat(e.getProperty("key"), `is`(-10))
     }
 
@@ -78,17 +78,17 @@ class EffectTest {
     fun `New effect replaces old effect with new duration`() {
         val e = Entity()
         val control = EffectControl()
-        e.addControl(control)
+        e.addComponent(control)
 
         control.startEffect(TestEffect(Duration.seconds(3.0)))
         assertThat(e.getProperty("key"), `is`(10))
 
-        control.onUpdate(e, 1.0)
+        control.onUpdate(1.0)
         assertThat(e.getProperty("key"), `is`(10))
 
         control.startEffect(TestEffect(Duration.seconds(1.0)))
 
-        control.onUpdate(e, 1.0)
+        control.onUpdate(1.0)
         assertThat(e.getProperty("key"), `is`(-10))
     }
 
@@ -96,7 +96,7 @@ class EffectTest {
     fun `End all effects`() {
         val e = Entity()
         val control = EffectControl()
-        e.addControl(control)
+        e.addComponent(control)
 
         control.startEffect(TestEffect(Duration.seconds(3.0)))
         control.startEffect(TestEffect2())

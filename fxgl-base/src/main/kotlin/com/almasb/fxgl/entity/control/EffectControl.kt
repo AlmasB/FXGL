@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity.control
 
-import com.almasb.fxgl.entity.Control
+import com.almasb.fxgl.entity.Component
 import com.almasb.fxgl.entity.Effect
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.TimeComponent
@@ -16,12 +16,12 @@ import com.almasb.fxgl.entity.component.TimeComponent
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class EffectControl : Control() {
+class EffectControl : Component() {
 
     private val effectTypes = arrayListOf<Class<out Effect>>()
     private val effects: MutableList<Effect> = arrayListOf()
 
-    override fun onUpdate(entity: Entity, tpf: Double) {
+    override fun onUpdate(tpf: Double) {
         val iterator = effects.iterator()
         while (iterator.hasNext()) {
             val effect = iterator.next()

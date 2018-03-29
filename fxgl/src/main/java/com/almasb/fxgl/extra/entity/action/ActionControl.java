@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.extra.entity.action;
 
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.util.Optional;
 import javafx.collections.FXCollections;
@@ -18,7 +18,7 @@ import java.util.Deque;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class ActionControl<T extends Entity> extends Control {
+public class ActionControl<T extends Entity> extends Component {
 
     private Deque<Action<T>> actions = new ArrayDeque<>();
     private ObservableList<Action<T>> actionsObservable = FXCollections.observableArrayList();
@@ -28,17 +28,17 @@ public class ActionControl<T extends Entity> extends Control {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         thisEntity = (T) entity;
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         updateActions(tpf);
     }
 
     @Override
-    public void onRemoved(Entity entity) {
+    public void onRemoved() {
         clearActions();
         thisEntity = null;
     }

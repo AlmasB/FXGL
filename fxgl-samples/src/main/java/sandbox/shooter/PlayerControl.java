@@ -6,7 +6,7 @@
 
 package sandbox.shooter;
 
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
@@ -20,9 +20,9 @@ import javafx.scene.shape.Rectangle;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class PlayerControl extends Control {
+public class PlayerControl extends Component {
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
 
     }
 
@@ -33,8 +33,8 @@ public class PlayerControl extends Control {
         bullet.getViewComponent().setView(new EntityView(new Rectangle(10, 2, Color.BLACK)), true);
 
         bullet.addComponent(new CollidableComponent(true));
-        bullet.addControl(new OffscreenCleanControl());
-        bullet.addControl(new ProjectileControl(direction, 10 * 60));
+        bullet.addComponent(new OffscreenCleanControl());
+        bullet.addComponent(new ProjectileControl(direction, 10 * 60));
 
         BulletComponent bulletData = new BulletComponent();
         bulletData.setDamage(1);

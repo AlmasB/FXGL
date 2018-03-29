@@ -9,7 +9,7 @@ package com.almasb.fxgl.particle;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.pool.Pools;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.Required;
@@ -21,7 +21,7 @@ import java.util.Iterator;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)
-public class ParticleControl extends Control {
+public class ParticleControl extends Component {
 
     private ParticleEmitter emitter;
     private Entity parent = new Entity();
@@ -44,7 +44,7 @@ public class ParticleControl extends Control {
     protected ParticleControl() {}
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         if (emitter == null)
             return;
 
@@ -73,7 +73,7 @@ public class ParticleControl extends Control {
     }
 
     @Override
-    public void onRemoved(Entity entity) {
+    public void onRemoved() {
         // TODO: back to pool?
         particles.clear();
 

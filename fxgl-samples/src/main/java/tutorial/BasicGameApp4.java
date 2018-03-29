@@ -8,7 +8,7 @@ package tutorial;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
@@ -38,14 +38,14 @@ public class BasicGameApp4 extends GameApplication {
         getInput().addAction(new UserAction("Right") {
             @Override
             protected void onAction() {
-                player.getControl(DudeControl.class).moveRight();
+                player.getComponent(DudeControl.class).moveRight();
             }
         }, KeyCode.D);
 
         getInput().addAction(new UserAction("Left") {
             @Override
             protected void onAction() {
-                player.getControl(DudeControl.class).moveLeft();
+                player.getComponent(DudeControl.class).moveLeft();
             }
         }, KeyCode.A);
     }
@@ -58,7 +58,7 @@ public class BasicGameApp4 extends GameApplication {
                 .buildAndAttach();
     }
 
-    class DudeControl extends Control {
+    class DudeControl extends Component {
 
         private int speed = 0;
 
@@ -73,12 +73,12 @@ public class BasicGameApp4 extends GameApplication {
         }
 
         @Override
-        public void onAdded(Entity entity) {
+        public void onAdded() {
             entity.setView(texture);
         }
 
         @Override
-        public void onUpdate(Entity entity, double tpf) {
+        public void onUpdate(double tpf) {
             entity.translateX(speed * tpf);
 
             if (speed == 0) {

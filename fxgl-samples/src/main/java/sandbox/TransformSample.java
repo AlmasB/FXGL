@@ -7,7 +7,7 @@
 package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.GameSettings;
@@ -56,10 +56,10 @@ public class TransformSample extends GameApplication {
                 .buildAndAttach(getGameWorld());
     }
 
-    private class RotatingControl extends Control {
+    private class RotatingControl extends Component {
 
         @Override
-        public void onUpdate(Entity entity, double tpf) {
+        public void onUpdate(double tpf) {
             // 2. specify behavior of the entity enforced by this control
             entity.rotateBy(tpf * 45);
         }

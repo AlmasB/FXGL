@@ -36,9 +36,7 @@ class EntitiesTest {
 
     class TestComponent : Component()
 
-    class TestControl : Control() {
-        override fun onUpdate(entity: Entity?, tpf: Double) {
-        }
+    class TestControl : Component() {
     }
 
     @Test
@@ -53,7 +51,7 @@ class EntitiesTest {
                 .build()
 
         assertThat(e.hasComponent(TestComponent::class.java), `is`(true))
-        assertThat(e.hasControl(TestControl::class.java), `is`(true))
+        assertThat(e.hasComponent(TestControl::class.java), `is`(true))
         assertThat(e.getProperty("hp"), `is`(40))
         assertThat(e.position, `is`(Point2D(100.0, 100.0)))
         assertThat(e.boundingBoxComponent.hitBoxesProperty().size, `is`(1))

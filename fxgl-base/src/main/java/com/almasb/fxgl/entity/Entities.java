@@ -267,49 +267,43 @@ public final class Entities {
             return this;
         }
 
-        public EntityBuilder with(Control... controls) {
-            for (Control c : controls)
-                entity.addControl(c);
-            return this;
-        }
-
-        @SafeVarargs
-        public final EntityBuilder with(Class<? extends Control>... controlClasses) {
-            for (Class<? extends Control> controlClass : controlClasses) {
-
-                try {
-                    for (Constructor<?> ctor : controlClass.getDeclaredConstructors()) {
-
-                        Control c;
-
-                        if (ctor.getParameterCount() == 0) {
-                            // no-arg ctor
-                            c = (Control) ctor.newInstance();
-                        } else {
-
-                            Object[] args = new Object[ctor.getParameterCount()];
-                            int i = 0;
-
-                            for (Parameter param : ctor.getParameters()) {
-                                Named a = param.getAnnotation(Named.class);
-
-                                Object value = entity.getProperty(a.value());
-
-                                args[i++] = value;
-                            }
-
-                            c = (Control) ctor.newInstance(args);
-                        }
-
-                        entity.addControl(c);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException("Couldn't create instance of " + controlClass, e);
-                }
-            }
-
-            return this;
-        }
+//        @SafeVarargs
+//        public final EntityBuilder with(Class<? extends Control>... controlClasses) {
+//            for (Class<? extends Control> controlClass : controlClasses) {
+//
+//                try {
+//                    for (Constructor<?> ctor : controlClass.getDeclaredConstructors()) {
+//
+//                        Control c;
+//
+//                        if (ctor.getParameterCount() == 0) {
+//                            // no-arg ctor
+//                            c = (Control) ctor.newInstance();
+//                        } else {
+//
+//                            Object[] args = new Object[ctor.getParameterCount()];
+//                            int i = 0;
+//
+//                            for (Parameter param : ctor.getParameters()) {
+//                                Named a = param.getAnnotation(Named.class);
+//
+//                                Object value = entity.getProperty(a.value());
+//
+//                                args[i++] = value;
+//                            }
+//
+//                            c = (Control) ctor.newInstance(args);
+//                        }
+//
+//                        entity.addControl(c);
+//                    }
+//                } catch (Exception e) {
+//                    throw new RuntimeException("Couldn't create instance of " + controlClass, e);
+//                }
+//            }
+//
+//            return this;
+//        }
 
         /**
          * Add a property to entity being built.

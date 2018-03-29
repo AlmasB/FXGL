@@ -21,7 +21,7 @@ public class MarioBlockFactory implements EntityFactory {
                 .from(data)
                 .viewFromNodeWithBBox(new Rectangle(70, 70))
                 .with(new CollidableComponent(true))
-                .with(CrusherControl.class)
+                .with(new CrusherControl(650, new Entity()))
                 .build();
     }
 }

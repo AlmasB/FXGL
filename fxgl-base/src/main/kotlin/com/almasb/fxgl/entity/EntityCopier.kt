@@ -32,10 +32,6 @@ internal object EntityCopier {
                     }
                 }
 
-        entity.controls
-                .filterIsInstance<CopyableControl<*>>()
-                .forEach { copy.addControl(it.copy()) }
-
         return copy
     }
 }

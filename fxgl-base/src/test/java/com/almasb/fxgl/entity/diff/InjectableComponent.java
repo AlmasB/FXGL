@@ -18,7 +18,7 @@ public class InjectableComponent extends Component {
     private EntityTest.CustomDataComponent component;
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         if (component == null || !"Inject".equals(component.getData())) {
             throw new RuntimeException("Injection failed!");
         }

@@ -536,7 +536,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         physics.body.setUserData(e);
         physics.onInitPhysics();
 
-        e.addControl(new PhysicsControl(this));
+        e.addComponent(new PhysicsControl(this));
     }
 
     private void createFixtures(Entity e) {
@@ -671,7 +671,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         ParticleGroup particleGroup = jboxWorld.createParticleGroup(def);
 
         Color color = e.getComponent(PhysicsParticleComponent.class).getColor();
-        e.addControl(new PhysicsParticleControl(particleGroup, color, this));
+        e.addComponent(new PhysicsParticleControl(particleGroup, color, this));
     }
 
     /**

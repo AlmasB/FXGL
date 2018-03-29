@@ -8,7 +8,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pools;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
@@ -21,7 +21,7 @@ import javafx.geometry.Point2D;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PhysicsComponent.class)
-public class PhysicsControl extends Control {
+public class PhysicsControl extends Component {
 
     private Body body;
 
@@ -34,12 +34,12 @@ public class PhysicsControl extends Control {
     }
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         body = entity.getComponent(PhysicsComponent.class).body;
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
 
         // these give us min world coordinates of the overall bbox
         // but they are not coordinates of the entity
@@ -67,7 +67,7 @@ public class PhysicsControl extends Control {
     }
 
     @Override
-    public void onRemoved(Entity entity) {
+    public void onRemoved() {
         Pools.free(minMeters);
     }
 
