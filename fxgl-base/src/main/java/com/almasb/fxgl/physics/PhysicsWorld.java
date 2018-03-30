@@ -535,8 +535,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
         physics.body.setUserData(e);
         physics.onInitPhysics();
-
-        e.addComponent(new PhysicsControl(this));
     }
 
     private void createFixtures(Entity e) {

@@ -9,12 +9,9 @@ package com.almasb.fxgl.physics;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.components.BoundingBoxComponent;
-import com.almasb.fxgl.entity.components.PositionComponent;
-import com.almasb.fxgl.entity.component.Required;
-import com.almasb.fxgl.entity.components.RotationComponent;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyDef;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
@@ -27,12 +24,12 @@ import java.util.List;
 /**
  * Adds physics properties to an entity.
  *
+ * This component updates position and rotation components of entities
+ * based on the physics properties.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Required(PositionComponent.class)
-@Required(RotationComponent.class)
-@Required(BoundingBoxComponent.class)
-public class PhysicsComponent extends Component {
+public final class PhysicsComponent extends Component {
 
     FixtureDef fixtureDef = new FixtureDef();
     BodyDef bodyDef = new BodyDef();
@@ -330,5 +327,60 @@ public class PhysicsComponent extends Component {
      */
     public boolean isRaycastIgnored() {
         return raycastIgnored;
+    }
+
+    private Vec2 minMeters = Pools.obtain(Vec2.class);
+
+    @Override
+    public void onUpdate(double tpf) {
+        if (body == null)
+            return;
+
+        // these give us min world coordinates of the overall bbox
+        // but they are not coordinates of the entity
+
+        minMeters.set(
+                getBody().getPosition().x - physicsWorld.toMetersF(entity.getWidth() / 2),
+                getBody().getPosition().y + physicsWorld.toMetersF(entity.getHeight() / 2)
+        );
+
+        Point2D minWorld = physicsWorld.toPoint(minMeters);
+
+        // hence we do the following, as entity.x = minXWorld - minXLocal
+
+        // we round positions so that it's easy for the rest of the world to work with
+        // snapped to pixel values
+        entity.setX(
+                Math.round(minWorld.getX() - entity.getBoundingBoxComponent().getMinXLocal())
+        );
+
+        entity.setY(
+                Math.round(minWorld.getY() - entity.getBoundingBoxComponent().getMinYLocal())
+        );
+
+        entity.setRotation(-Math.toDegrees(getBody().getAngle()));
+    }
+
+    @Override
+    public void onRemoved() {
+        Pools.free(minMeters);
+    }
+
+    /**
+     * Repositions an entity that supports physics directly in the physics world.
+     * Note: depending on how it is used, it may cause non-physical behavior.
+     *
+     * @param point point in game world coordinates (pixels)
+     */
+    public void reposition(Point2D point) {
+        double w = getEntity().getWidth();
+        double h = getEntity().getHeight();
+
+        Vec2 positionMeters = physicsWorld.toPoint(new Point2D(
+                point.getX() + w / 2,
+                point.getY() + h / 2
+        ));
+
+        getBody().setTransform(positionMeters, getBody().getAngle());
     }
 }
