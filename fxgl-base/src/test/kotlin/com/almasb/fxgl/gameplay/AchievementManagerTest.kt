@@ -6,11 +6,11 @@
 
 package com.almasb.fxgl.gameplay
 
+import com.almasb.fxgl.gameplay.achievement.Achievement
+import com.almasb.fxgl.gameplay.achievement.AchievementManager
 import com.almasb.fxgl.saving.UserProfile
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.contains
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach

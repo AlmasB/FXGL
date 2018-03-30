@@ -15,7 +15,6 @@ import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.entity.components.PositionComponent
 import com.almasb.fxgl.entity.components.SelectableComponent
 import com.almasb.fxgl.entity.components.TypeComponent
-import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.util.Consumer

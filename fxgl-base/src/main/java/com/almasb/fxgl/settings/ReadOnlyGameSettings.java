@@ -9,7 +9,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.ExceptionHandler;
 import com.almasb.fxgl.app.FXGLExceptionHandler;
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.gameplay.AchievementStore;
+import com.almasb.fxgl.gameplay.achievement.AchievementStore;
 import com.almasb.fxgl.gameplay.notification.NotificationView;
 import com.almasb.fxgl.gameplay.notification.XboxNotificationView;
 import com.almasb.fxgl.scene.SceneFactory;

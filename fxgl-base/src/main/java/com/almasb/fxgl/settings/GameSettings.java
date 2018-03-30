@@ -7,7 +7,7 @@ package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.ExceptionHandler;
-import com.almasb.fxgl.gameplay.AchievementStore;
+import com.almasb.fxgl.gameplay.achievement.AchievementStore;
 import com.almasb.fxgl.gameplay.notification.NotificationView;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.ui.DialogFactory;

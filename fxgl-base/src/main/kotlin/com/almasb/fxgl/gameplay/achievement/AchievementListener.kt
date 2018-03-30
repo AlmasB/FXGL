@@ -4,19 +4,19 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.gameplay;
+package com.almasb.fxgl.gameplay.achievement
 
 /**
- * Marks a service that wants to listen for achievement events.
+ * Listener for achievement events.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface AchievementListener {
+interface AchievementListener {
 
     /**
      * Fired on achievement event.
      *
      * @param event the event
      */
-    void onAchievementEvent(AchievementEvent event);
+    fun onAchievementEvent(event: AchievementEvent)
 }

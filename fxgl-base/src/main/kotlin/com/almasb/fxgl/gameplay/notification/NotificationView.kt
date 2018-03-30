@@ -13,7 +13,6 @@ import javafx.scene.paint.Color
 /**
  * A notification view / pane is added when a notification is pushed and is being
  * displayed.
- * Each notification lasts 3 seconds.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

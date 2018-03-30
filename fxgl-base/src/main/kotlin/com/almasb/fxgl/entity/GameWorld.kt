@@ -17,7 +17,6 @@ import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.entity.components.IrremovableComponent
 import com.almasb.fxgl.entity.components.TimeComponent
-import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.parser.tiled.TiledMap
 import com.almasb.fxgl.util.Optional
 import com.almasb.fxgl.util.Predicate

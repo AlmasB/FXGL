@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.MenuEventHandler;
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.gameplay.Achievement;
+import com.almasb.fxgl.gameplay.achievement.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.Trigger;

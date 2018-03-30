@@ -8,8 +8,8 @@ package com.almasb.fxgl.gameplay.notification
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.gameplay.AchievementEvent
-import com.almasb.fxgl.gameplay.AchievementProgressEvent
+import com.almasb.fxgl.gameplay.achievement.AchievementEvent
+import com.almasb.fxgl.gameplay.achievement.AchievementProgressEvent
 import com.almasb.fxgl.ui.Position
 import javafx.scene.paint.Color
 import javafx.util.Duration
@@ -31,23 +31,23 @@ class NotificationServiceProvider : NotificationService {
 
     private val queue = ArrayDeque<Notification>()
 
-    override fun getPosition() = notificationView.position
+    override var position: Position
+        get() = notificationView.position
+        set(value) {
+            notificationView.position = value
+        }
 
-    override fun setPosition(position: Position) {
-        notificationView.position = position
-    }
+    override var backgroundColor: Color
+        get() = notificationView.backgroundColor
+        set(value) {
+            notificationView.backgroundColor = value
+        }
 
-    override fun getBackgroundColor() = notificationView.backgroundColor
-
-    override fun setBackgroundColor(backgroundColor: Color) {
-        notificationView.backgroundColor = backgroundColor
-    }
-
-    override fun getTextColor(): Color = notificationView.textColor
-
-    override fun setTextColor(textColor: Color) {
-        notificationView.textColor = textColor
-    }
+    override var textColor: Color
+        get() = notificationView.textColor
+        set(value) {
+            notificationView.textColor = value
+        }
 
     override fun onAchievementEvent(event: AchievementEvent) {
         if (event.eventType === AchievementEvent.ACHIEVED) {

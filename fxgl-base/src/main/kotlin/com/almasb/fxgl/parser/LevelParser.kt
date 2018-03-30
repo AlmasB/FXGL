@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.parser
 
-import com.almasb.fxgl.gameplay.Level
+import com.almasb.fxgl.entity.Level
 
 /**
  *
