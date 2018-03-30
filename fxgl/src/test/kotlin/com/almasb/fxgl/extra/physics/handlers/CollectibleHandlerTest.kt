@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.physics.handler
+package com.almasb.fxgl.extra.physics.handlers
 
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld

@@ -4,11 +4,13 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.input
+package com.almasb.fxgl.input.view
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.input.view.KeyView
-import com.almasb.fxgl.input.view.MouseButtonView
+import com.almasb.fxgl.input.InputModifier
+import com.almasb.fxgl.input.KeyTrigger
+import com.almasb.fxgl.input.MouseTrigger
+import com.almasb.fxgl.input.Trigger
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.Node

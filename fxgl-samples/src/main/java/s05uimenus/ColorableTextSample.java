@@ -9,7 +9,7 @@ package s05uimenus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.KeyTrigger;
-import com.almasb.fxgl.input.TriggerView;
+import com.almasb.fxgl.input.view.TriggerView;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.FXGLTextFlow;
 import javafx.scene.input.KeyCode;

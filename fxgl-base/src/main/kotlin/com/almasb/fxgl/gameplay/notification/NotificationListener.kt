@@ -9,6 +9,8 @@ package com.almasb.fxgl.gameplay.notification
 /**
  * Listener for notification events.
  *
+ * TODO: is this not used?
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 interface NotificationListener {

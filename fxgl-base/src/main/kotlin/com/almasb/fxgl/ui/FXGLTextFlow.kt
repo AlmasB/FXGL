@@ -8,7 +8,7 @@ package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.input.Trigger
-import com.almasb.fxgl.input.TriggerView
+import com.almasb.fxgl.input.view.TriggerView
 import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.input.view.MouseButtonView
 import javafx.beans.property.ObjectProperty

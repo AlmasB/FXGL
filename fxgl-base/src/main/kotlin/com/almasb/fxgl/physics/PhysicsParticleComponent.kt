@@ -15,14 +15,14 @@ import javafx.scene.paint.Color
 
 /**
  * The difference between physics and normal particle entity is that
- * the former is managed (controlled) by the physics world, the latter
+ * the former is managed by the physics world, the latter
  * by the particle emitters.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class PhysicsParticleControl(private val group: ParticleGroup,
-                             private val color: Color,
-                             private val physicsWorld: PhysicsWorld) : ParticleControl() {
+class PhysicsParticleComponent(private val group: ParticleGroup,
+                               private val color: Color,
+                               private val physicsWorld: PhysicsWorld) : ParticleControl() {
 
     private val radiusMeters = physicsWorld.jBox2DWorld.particleSystem.particleRadius
     private val radiusPixels = physicsWorld.toPixels(radiusMeters.toDouble())
