@@ -9,7 +9,7 @@ package s09advanced;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.control.RandomMoveControl;
+import com.almasb.fxgl.extra.entity.components.RandomMoveComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
@@ -44,7 +44,7 @@ public class NoiseSample extends GameApplication {
         Entities.builder()
                 .at(100, 100)
                 .viewFromNodeWithBBox(new Rectangle(40, 40))
-                .with(new RandomMoveControl(100, 50, 350, new Rectangle2D(0, 0, X_MAX - 0, Y_MAX - 0)))
+                .with(new RandomMoveComponent(100, 50, 350, new Rectangle2D(0, 0, X_MAX - 0, Y_MAX - 0)))
                 .buildAndAttach(getGameWorld());
 
         Entities.builder()

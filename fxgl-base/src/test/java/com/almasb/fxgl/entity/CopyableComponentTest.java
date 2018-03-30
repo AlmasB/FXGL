@@ -6,7 +6,8 @@
 
 package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.entity.component.IntegerComponent;
+import com.almasb.fxgl.entity.component.CopyableComponent;
+import com.almasb.fxgl.entity.components.IntegerComponent;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;

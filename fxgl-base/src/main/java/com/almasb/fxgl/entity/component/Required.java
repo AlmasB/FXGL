@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.entity.Component;
-
 import java.lang.annotation.*;
 
 @Repeatable(RequiredComponents.class)

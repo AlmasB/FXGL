@@ -7,7 +7,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.core.pool.Poolable;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.TypeComponent;
+import com.almasb.fxgl.entity.components.TypeComponent;
 
 final class CollisionPair extends Pair<Entity> implements Poolable {
 

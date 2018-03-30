@@ -6,9 +6,8 @@
 
 package sandbox.shooter;
 
-import com.almasb.fxgl.entity.Component;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.components.PositionComponent;
 import javafx.geometry.Point2D;
 
 /**

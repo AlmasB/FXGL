@@ -13,6 +13,7 @@ import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.entity.component.*;
+import com.almasb.fxgl.entity.components.*;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.script.Script;
@@ -23,6 +24,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -679,15 +681,23 @@ public class Entity {
         componentListeners.remove(listener);
     }
 
-    private void addModule(Component module) {
-        checkRequirementsMet(module.getClass());
+    private void addModule(Component comp) {
+        checkRequirementsMet(comp.getClass());
 
-        module.setEntity(this);
+        try {
+            Method m = Component.class.getDeclaredMethod("setEntity", Entity.class);
+            m.setAccessible(true);
+            m.invoke(comp, this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        injectFields(module);
+        //comp.setEntity(this);
 
-        module.onAdded();
-        notifyModuleAdded(module);
+        injectFields(comp);
+
+        comp.onAdded();
+        notifyModuleAdded(comp);
     }
 
     @SuppressWarnings("unchecked")
@@ -722,11 +732,20 @@ public class Entity {
         }
     }
 
-    private void removeModule(Component module) {
-        notifyModuleRemoved(module);
+    private void removeModule(Component comp) {
+        notifyModuleRemoved(comp);
 
-        module.onRemoved();
-        module.setEntity(null);
+        comp.onRemoved();
+
+        try {
+            Method m = Component.class.getDeclaredMethod("setEntity", Entity.class);
+            m.setAccessible(true);
+            m.invoke(comp, new Object[1]);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        //comp.setEntity(null);
     }
 
     private <T extends Component> void notifyModuleAdded(T c) {

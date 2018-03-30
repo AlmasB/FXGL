@@ -30,13 +30,6 @@ public interface RenderLayer {
     int index();
 
     /**
-     * @return string representation of render layer
-     */
-    default String asString() {
-        return name() + "(" + index() + ")";
-    }
-
-    /**
      * Default render layer for entities with no specified
      * render layer.
      */

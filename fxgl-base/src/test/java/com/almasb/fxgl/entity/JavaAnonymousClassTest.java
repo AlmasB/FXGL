@@ -6,9 +6,7 @@
 
 package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.entity.Component;
-import com.almasb.fxgl.entity.Component;
-import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.Component;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.entity.component
 
+import com.almasb.fxgl.entity.components.RotationComponent
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -21,14 +22,14 @@ class RotationComponentTest {
 
     @Test
     fun `Creation`() {
-        val rot1 = com.almasb.fxgl.entity.component.RotationComponent(35.0)
+        val rot1 = RotationComponent(35.0)
 
         assertThat(rot1.value, `is`(35.0))
     }
 
     @Test
     fun `Copy`() {
-        val rot1 = com.almasb.fxgl.entity.component.RotationComponent(35.0)
+        val rot1 = RotationComponent(35.0)
         val rot2 = rot1.copy()
 
         assertThat(rot2.value, `is`(35.0))
@@ -37,7 +38,7 @@ class RotationComponentTest {
 
     @Test
     fun `Rotation`() {
-        val rot1 = com.almasb.fxgl.entity.component.RotationComponent(35.0)
+        val rot1 = RotationComponent(35.0)
 
         rot1.rotateBy(30.0)
         assertThat(rot1.value, `is`(65.0))
@@ -60,8 +61,8 @@ class RotationComponentTest {
 
     @Test
     fun `Equality`() {
-        val rot1 = com.almasb.fxgl.entity.component.RotationComponent(35.0)
-        val rot2 = com.almasb.fxgl.entity.component.RotationComponent(90.0)
+        val rot1 = RotationComponent(35.0)
+        val rot2 = RotationComponent(90.0)
 
         assertTrue(rot1 != rot2)
     }

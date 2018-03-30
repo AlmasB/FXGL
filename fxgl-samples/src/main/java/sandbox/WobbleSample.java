@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.control.EffectControl;
+import com.almasb.fxgl.entity.components.EffectComponent;
 import com.almasb.fxgl.extra.entity.effects.WobbleEffect;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Orientation;
@@ -45,11 +45,11 @@ public class WobbleSample extends GameApplication {
     @Override
     protected void initInput() {
         DSLKt.onKeyDown(KeyCode.F, "asd", () -> {
-            player.getComponent(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 3, 7, Orientation.VERTICAL));
+            player.getComponent(EffectComponent.class).startEffect(new WobbleEffect(Duration.seconds(3), 3, 7, Orientation.VERTICAL));
         });
 
         DSLKt.onKeyDown(KeyCode.G, "asd2", () -> {
-            player.getComponent(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 2, 4, Orientation.HORIZONTAL));
+            player.getComponent(EffectComponent.class).startEffect(new WobbleEffect(Duration.seconds(3), 2, 4, Orientation.HORIZONTAL));
         });
     }
 
@@ -61,7 +61,7 @@ public class WobbleSample extends GameApplication {
                 .at(100, 100)
                 .viewFromTexture("brick.png")
                 //.viewFromNode(new Rectangle(40, 40))
-                .with(new EffectControl())
+                .with(new EffectComponent())
                 .buildAndAttach(getGameWorld());
     }
 

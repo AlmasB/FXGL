@@ -13,9 +13,10 @@ import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.entity.component.IDComponent
-import com.almasb.fxgl.entity.component.IrremovableComponent
-import com.almasb.fxgl.entity.component.TimeComponent
+import com.almasb.fxgl.entity.component.Component
+import com.almasb.fxgl.entity.components.IDComponent
+import com.almasb.fxgl.entity.components.IrremovableComponent
+import com.almasb.fxgl.entity.components.TimeComponent
 import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.parser.tiled.TiledMap
 import com.almasb.fxgl.util.Optional

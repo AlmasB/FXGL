@@ -6,12 +6,12 @@
 
 package sandbox.shooter;
 
-import com.almasb.fxgl.entity.Component;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.extra.entity.controls.OffscreenCleanControl;
-import com.almasb.fxgl.extra.entity.controls.ProjectileControl;
+import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.entity.components.PositionComponent;
+import com.almasb.fxgl.extra.entity.components.OffscreenCleanControl;
+import com.almasb.fxgl.extra.entity.components.ProjectileControl;
 import com.almasb.fxgl.entity.view.EntityView;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;

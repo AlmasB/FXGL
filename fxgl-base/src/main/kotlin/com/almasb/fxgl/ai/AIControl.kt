@@ -9,7 +9,7 @@ package com.almasb.fxgl.ai
 import com.almasb.fxgl.ai.btree.BehaviorTree
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.entity.Component
+import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.Entity
 import java.util.*
 

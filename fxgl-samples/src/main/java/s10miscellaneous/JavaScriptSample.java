@@ -8,7 +8,7 @@ package s10miscellaneous;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.extra.entity.controls.JSControl;
+import com.almasb.fxgl.extra.entity.components.JSControl;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 

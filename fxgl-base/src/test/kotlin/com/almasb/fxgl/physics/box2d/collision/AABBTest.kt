@@ -6,18 +6,11 @@
 
 package com.almasb.fxgl.physics.box2d.collision
 
-import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.core.math.Vec2
-import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.Entities
-import com.almasb.fxgl.entity.GameWorld
-import com.almasb.fxgl.entity.component.CollidableComponent
-import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

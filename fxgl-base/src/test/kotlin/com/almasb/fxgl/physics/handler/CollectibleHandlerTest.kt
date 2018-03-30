@@ -8,7 +8,7 @@ package com.almasb.fxgl.physics.handler
 
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
-import com.almasb.fxgl.entity.component.CollidableComponent
+import com.almasb.fxgl.entity.components.CollidableComponent
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsWorld

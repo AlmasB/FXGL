@@ -9,16 +9,14 @@ package com.almasb.fxgl.entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.core.reflect.Annotation;
-import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.parser.tiled.Layer;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.parser.tiled.Tileset;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.util.Named;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -26,9 +24,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Parameter;
 import java.util.List;
 
 import static com.almasb.fxgl.util.BackportKt.forEach;

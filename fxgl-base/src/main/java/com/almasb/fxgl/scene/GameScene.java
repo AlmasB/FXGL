@@ -11,7 +11,7 @@ import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityWorldListener;
 import com.almasb.fxgl.entity.RenderLayer;
-import com.almasb.fxgl.entity.component.ViewComponent;
+import com.almasb.fxgl.entity.components.ViewComponent;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.ui.UI;
 import javafx.collections.ObservableList;
@@ -242,7 +242,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
         }
 
         if (group == null) {
-            log.debug("Creating render group for layer: " + layer.asString());
+            log.debug("Creating render group for layer: " + layer.name() + "(" + layer.index() + ")");
 
             group = new Group();
             group.setUserData(renderLayer);

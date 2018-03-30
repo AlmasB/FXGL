@@ -13,8 +13,8 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.entity.control.EffectControl;
+import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.entity.components.EffectComponent;
 import com.almasb.fxgl.extra.entity.effects.WobbleEffect;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -61,11 +61,11 @@ public class MarioApp extends GameApplication {
         }, KeyCode.W);
 
         DSLKt.onKeyDown(KeyCode.F, "asd", () -> {
-            player.getComponent(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 3, 7, Orientation.VERTICAL));
+            player.getComponent(EffectComponent.class).startEffect(new WobbleEffect(Duration.seconds(3), 3, 7, Orientation.VERTICAL));
         });
 
         DSLKt.onKeyDown(KeyCode.G, "asd2", () -> {
-            player.getComponent(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 2, 4, Orientation.HORIZONTAL));
+            player.getComponent(EffectComponent.class).startEffect(new WobbleEffect(Duration.seconds(3), 2, 4, Orientation.HORIZONTAL));
         });
     }
 

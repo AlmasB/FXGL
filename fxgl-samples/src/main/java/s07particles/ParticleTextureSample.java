@@ -13,7 +13,7 @@ import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.particle.ParticleControl;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
-import com.almasb.fxgl.entity.Component;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;

@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.entity.component
 
+import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.io.serialization.Bundle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not

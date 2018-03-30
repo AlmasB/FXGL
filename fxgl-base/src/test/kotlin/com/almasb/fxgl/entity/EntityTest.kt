@@ -9,8 +9,8 @@ package com.almasb.fxgl.entity
 import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.component.*
-import com.almasb.fxgl.entity.serialization.SerializableComponent
-import com.almasb.fxgl.entity.serialization.SerializableControl
+import com.almasb.fxgl.entity.component.SerializableComponent
+import com.almasb.fxgl.entity.components.*
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
@@ -854,7 +854,7 @@ class EntityTest {
         }
     }
 
-    class CustomDataControl constructor(var data: String) : Component(), SerializableControl {
+    class CustomDataControl constructor(var data: String) : Component(), SerializableComponent {
 
         override fun write(bundle: Bundle) {
             bundle.put("data", data)

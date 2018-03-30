@@ -8,6 +8,7 @@ package com.almasb.fxgl.entity.component
 
 import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.entity.RenderLayer
+import com.almasb.fxgl.entity.components.ViewComponent
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat

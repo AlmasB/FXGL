@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.extra.entity.components;
 
-import com.almasb.fxgl.entity.component.IntegerComponent;
+import com.almasb.fxgl.entity.components.IntegerComponent;
 
 /**
  * Represents some form of entity health based on integer values.

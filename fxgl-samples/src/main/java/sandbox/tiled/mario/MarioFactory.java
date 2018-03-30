@@ -7,8 +7,8 @@
 package sandbox.tiled.mario;
 
 import com.almasb.fxgl.entity.*;
-import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.entity.control.EffectControl;
+import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.entity.components.EffectComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -64,7 +64,7 @@ public class MarioFactory implements EntityFactory {
                 .bbox(new HitBox(BoundingShape.box(32, 42)))
                 .with(physics)
                 .with(new CollidableComponent(true))
-                .with(new PlayerControl(), new EffectControl())
+                .with(new PlayerControl(), new EffectComponent())
                 .build();
     }
 

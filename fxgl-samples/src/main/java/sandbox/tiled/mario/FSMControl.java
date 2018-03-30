@@ -6,8 +6,7 @@
 
 package sandbox.tiled.mario;
 
-import com.almasb.fxgl.entity.Component;
-import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.Component;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

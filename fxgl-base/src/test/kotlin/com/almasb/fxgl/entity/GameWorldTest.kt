@@ -8,9 +8,13 @@ package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.Array
-import com.almasb.fxgl.entity.component.IrremovableComponent
-import com.almasb.fxgl.entity.component.TimeComponent
+import com.almasb.fxgl.entity.components.IrremovableComponent
+import com.almasb.fxgl.entity.components.TimeComponent
 import com.almasb.fxgl.entity.component.*
+import com.almasb.fxgl.entity.components.IDComponent
+import com.almasb.fxgl.entity.components.PositionComponent
+import com.almasb.fxgl.entity.components.SelectableComponent
+import com.almasb.fxgl.entity.components.TypeComponent
 import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox

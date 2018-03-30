@@ -7,13 +7,12 @@
 package manual;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Component;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Required;
-import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.view.EntityView;
-import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.ViewComponent;
+import com.almasb.fxgl.entity.components.PositionComponent;
+import com.almasb.fxgl.entity.components.ViewComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;

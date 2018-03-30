@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.extra.entity.action;
 
-import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
 
 /**

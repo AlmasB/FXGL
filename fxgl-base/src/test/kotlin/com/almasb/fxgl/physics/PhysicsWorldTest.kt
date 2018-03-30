@@ -11,7 +11,7 @@ import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.entity.GameWorld
-import com.almasb.fxgl.entity.component.CollidableComponent
+import com.almasb.fxgl.entity.components.CollidableComponent
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat

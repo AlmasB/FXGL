@@ -6,6 +6,9 @@
 
 package com.almasb.fxgl.entity
 
+import com.almasb.fxgl.entity.component.Component
+import com.almasb.fxgl.entity.component.CopyableComponent
+
 /**
  *
  *

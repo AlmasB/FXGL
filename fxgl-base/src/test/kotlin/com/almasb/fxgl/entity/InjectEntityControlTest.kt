@@ -6,11 +6,10 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.entity.component.CollidableComponent
+import com.almasb.fxgl.entity.components.CollidableComponent
+import com.almasb.fxgl.entity.component.Component
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 /**

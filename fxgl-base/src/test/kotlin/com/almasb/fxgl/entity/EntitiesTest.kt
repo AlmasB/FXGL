@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
+import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import javafx.geometry.Point2D

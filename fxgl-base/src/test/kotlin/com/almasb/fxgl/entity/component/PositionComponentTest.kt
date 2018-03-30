@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity.component
 
 import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.components.PositionComponent
 import com.almasb.fxgl.io.serialization.Bundle
 import javafx.geometry.Point2D
 import org.junit.jupiter.api.BeforeEach

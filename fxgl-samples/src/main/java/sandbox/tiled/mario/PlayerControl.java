@@ -7,8 +7,7 @@
 package sandbox.tiled.mario;
 
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.entity.Component;
-import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;

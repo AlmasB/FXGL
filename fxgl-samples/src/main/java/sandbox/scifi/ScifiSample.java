@@ -15,7 +15,7 @@ import com.almasb.fxgl.particle.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
-import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.components.PositionComponent;
 import com.almasb.fxgl.entity.view.ParallaxBackgroundView;
 import com.almasb.fxgl.entity.view.ParallaxTexture;
 import com.almasb.fxgl.gameplay.qte.QTE;
