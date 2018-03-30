@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.components.EffectComponent;
+import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.extra.entity.effects.WobbleEffect;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Orientation;
