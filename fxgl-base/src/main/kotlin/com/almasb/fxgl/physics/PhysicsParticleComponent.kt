@@ -6,28 +6,43 @@
 
 package com.almasb.fxgl.physics
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.particle.ParticleControl
-import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroup
+import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef
 import javafx.scene.paint.Color
 
 /**
+ * Adds physics particle properties to an entity.
+ * By setting the definition each property can be fine-tuned.
+ *
  * The difference between physics and normal particle entity is that
  * the former is managed by the physics world, the latter
  * by the particle emitters.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class PhysicsParticleComponent(private val group: ParticleGroup,
-                               private val color: Color,
-                               private val physicsWorld: PhysicsWorld) : ParticleControl() {
+class PhysicsParticleComponent : ParticleControl() {
+
+    /**
+     * Do NOT set directly.
+     */
+    var group: ParticleGroup? = null
+
+    private val physicsWorld = FXGL.getApp().physicsWorld
 
     private val radiusMeters = physicsWorld.jBox2DWorld.particleSystem.particleRadius
     private val radiusPixels = physicsWorld.toPixels(radiusMeters.toDouble())
 
+    var definition = ParticleGroupDef()
+    var color = Color.BLACK
+
     override fun onUpdate(tpf: Double) {
+        if (group == null)
+            return
+
         entity.setPosition(0.0, 0.0)
 
         particles.forEach { entity.view.removeNode(it.view) }
@@ -37,7 +52,7 @@ class PhysicsParticleComponent(private val group: ParticleGroup,
 
         val pointPhysics = Pools.obtain(Vec2::class.java)
 
-        for (i in group.bufferIndex until group.bufferIndex + group.particleCount) {
+        for (i in group!!.bufferIndex until group!!.bufferIndex + group!!.particleCount) {
             val center = centers[i]
             pointPhysics.set(center.x - radiusMeters, center.y + radiusMeters)
 

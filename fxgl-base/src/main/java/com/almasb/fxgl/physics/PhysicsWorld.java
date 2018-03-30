@@ -666,10 +666,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         }
         def.setShape(shape);
 
-        ParticleGroup particleGroup = jboxWorld.createParticleGroup(def);
-
-        Color color = e.getComponent(PhysicsParticleComponent.class).getColor();
-        e.addComponent(new PhysicsParticleComponent(particleGroup, color, this));
+        e.getComponent(PhysicsParticleComponent.class).setGroup(jboxWorld.createParticleGroup(def));
     }
 
     /**

@@ -26,7 +26,7 @@ import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsParticleComponent;
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef;
 import com.almasb.fxgl.physics.box2d.particle.ParticleType;
-import com.almasb.fxgl.physics.handler.CollectibleHandler;
+import com.almasb.fxgl.extra.physics.handlers.CollectibleHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.ui.InGamePanel;

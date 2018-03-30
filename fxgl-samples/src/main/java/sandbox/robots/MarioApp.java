@@ -17,7 +17,7 @@ import com.almasb.fxgl.extra.entity.components.ExpireCleanControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.physics.handler.CollectibleHandler;
+import com.almasb.fxgl.extra.physics.handlers.CollectibleHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
