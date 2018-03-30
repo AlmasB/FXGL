@@ -6,198 +6,121 @@
 
 package com.almasb.fxgl.scene.intro
 
+import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.SystemPropertyKey.*
+import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.scene.IntroScene
 import javafx.animation.*
 import javafx.geometry.Point2D
 import javafx.geometry.Point3D
 import javafx.scene.Group
 import javafx.scene.canvas.Canvas
+import javafx.scene.effect.DropShadow
+import javafx.scene.effect.Light
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import javafx.util.Duration
 import java.util.*
+import javafx.scene.effect.Lighting
+import javafx.scene.effect.Light.Distant
+import javafx.scene.transform.Rotate
+
 
 /**
  * This is the default FXGL Intro animation.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGLIntroScene() : IntroScene() {
+class FXGLIntroScene : IntroScene() {
 
-    private val w: Double
-    private val h: Double
+    private val w = FXGL.getAppWidth().toDouble()
+    private val h = FXGL.getAppHeight().toDouble()
 
     private val animation: ParallelTransition
 
     init {
-        w = FXGL.getSettings().width.toDouble()
-        h = FXGL.getSettings().height.toDouble()
-
         val f = makeLetter("F")
         val x = makeLetter("X")
         val g = makeLetter("G")
         val l = makeLetter("L")
 
-        x.translateY = h + 70
-
-        g.translateX = w
-
-        l.translateX = w + 70
-        l.translateY = h
-        l.rotate = 180.0
-
         val fxglText = Group(f, x, g, l)
 
-        val poweredText = makePoweredBy()
-        val version = makeVersion()
+        val light = Light.Distant()
+        light.azimuth = -135.0
 
-        val content = Group(fxglText, poweredText, version)
+        val lighting = Lighting()
+        lighting.light = light
+        lighting.surfaceScale = 15.0
+
+        fxglText.effect = lighting
+
+        val content = Group(fxglText)
 
         contentRoot.children.addAll(Rectangle(w, h), content)
 
         val originX = w / 2 - f.layoutBounds.width * 4 / 2
         val dx = f.layoutBounds.width
 
-        val tt = TranslateTransition(Duration.seconds(1.0), f)
-        tt.toX = originX
-        tt.toY = h / 2
+        f.translateX = originX
+        x.translateX = originX + dx
+        g.translateX = originX + dx * 2
+        l.translateX = originX + dx * 3.3
 
-        val tt2 = TranslateTransition(Duration.seconds(1.0), x)
-        tt2.toX = originX + dx
-        tt2.toY = h / 2
+        val f1 = FadeTransition(Duration.seconds(0.75), f)
+        f1.toValue = 1.0
 
-        val tt3 = TranslateTransition(Duration.seconds(1.0), g)
-        tt3.toX = originX + dx * 2
-        tt3.toY = h / 2
+        val f2 = FadeTransition(Duration.seconds(1.5), x)
+        f2.toValue = 1.0
 
-        val tt4 = TranslateTransition(Duration.seconds(1.0), l)
-        tt4.toX = originX + dx * 3.3
-        tt4.toY = h / 2
+        val f3 = FadeTransition(Duration.seconds(2.25), g)
+        f3.toValue = 1.0
 
-        animation = ParallelTransition(tt, tt2, tt3, tt4)
-        animation.setOnFinished { event ->
-            poweredText.isVisible = true
-            version.isVisible = true
+        val f4 = FadeTransition(Duration.seconds(2.25), l)
+        f4.toValue = 1.0
 
-            val rt = RotateTransition(Duration.seconds(1.0), l)
-            rt.delay = Duration.seconds(0.66)
-            rt.axis = Point3D(0.0, 0.0, 1.0)
-            rt.byAngle = -180.0
-            rt.setOnFinished { e ->
-                animateParticles()
+        animation = ParallelTransition(
+                f1, f2, f3, f4
+        )
+        animation.setOnFinished {
+
+            f.effect = null
+            x.effect = null
+            g.effect = null
+            l.effect = null
+
+            val rotate = Rotate(0.0, originX, h / 2 - 150 - f.layoutBounds.height, 0.0, Point3D(0.0, 0.0, 1.0))
+            fxglText.transforms.add(rotate)
+
+            val t = Timeline(
+                    KeyFrame(Duration.seconds(0.35), KeyValue(rotate.angleProperty(), 70.0)),
+                    KeyFrame(Duration.seconds(0.75), KeyValue(rotate.angleProperty(), 30.0)),
+                    KeyFrame(Duration.seconds(1.00), KeyValue(rotate.angleProperty(), 100.0))
+            )
+
+            t.setOnFinished {
+                val t2 = TranslateTransition(Duration.seconds(1.25), fxglText)
+                t2.toY = h * 2
+                t2.interpolator = Interpolators.EXPONENTIAL.EASE_IN()
+                t2.setOnFinished {
+                    finishIntro()
+                }
+                t2.play()
             }
-            rt.play()
+
+            t.play()
         }
     }
 
-    private fun makeLetter(letter: String): Text {
-        with(Text(letter)) {
-            font = FXGL.getUIFactory().newFont(72.0)
-            fill = Color.WHITESMOKE
-            return this
-        }
-    }
-
-    private fun makeVersion(): Text {
-        with(Text("${FXGL.getProperties().getString(FXGL_VERSION)} by AlmasB")) {
-            isVisible = false
-            font = FXGL.getUIFactory().newFont(18.0)
-            fill = Color.ALICEBLUE
-            translateY = h - 5
-            return this
-        }
-    }
-
-    private fun makePoweredBy(): Text {
-        with(Text("Powered By")) {
-            isVisible = false
-            font = FXGL.getUIFactory().newFont(18.0)
-            fill = Color.WHITE
-            translateX = (w - layoutBounds.width) / 2
-            translateY = h / 2 - 80
-            return this
-        }
+    private fun makeLetter(letter: String) = Text(letter).apply {
+        font = FXGL.getUIFactory().newFont(122.0)
+        fill = Color.WHITESMOKE
+        translateY = h / 2 - 150
+        opacity = 0.0
+        effect = DropShadow(5.5, Color.BLUE)
     }
 
     override fun startIntro() = animation.play()
-
-    private fun animateParticles() {
-        val particles = ArrayList<Particle>()
-
-        val oldEffect = contentRoot.effect
-
-        contentRoot.effect = null
-        val image = contentRoot.snapshot(null, null)
-        contentRoot.effect = oldEffect
-
-        val reader = image.pixelReader
-        for (y in 0..h.toInt() - 1) {
-            for (x in 0..w.toInt() - 1) {
-                val color = reader.getColor(x, y)
-
-                if (color != Color.BLACK) {
-                    particles.add(Particle(x.toDouble(), y.toDouble()))
-                }
-            }
-        }
-
-        val canvas = Canvas(w, h)
-        val g = canvas.graphicsContext2D
-
-        contentRoot.children.setAll(canvas)
-
-        val timer = object : AnimationTimer() {
-            override fun handle(now: Long) {
-
-                if (particles.isEmpty()) {
-                    stop()
-
-                    val ft = FadeTransition(Duration.seconds(0.5), contentRoot)
-                    ft.toValue = 0.0
-                    ft.setOnFinished { e1 ->
-                        finishIntro()
-                    }
-                    ft.play()
-                }
-
-                particles.removeIf { it.life == 0.0 }
-
-                particles.filter({ p -> p.vel === Point2D.ZERO })
-                        .sortedWith(Comparator { p1, p2 -> (p1.y - p2.y).toInt() })
-                        .take(50)
-                        .forEach { p -> p.vel = Point2D(Math.random() - 0.5, Math.random() - 0.5) }
-
-                g.setGlobalAlpha(1.0)
-                g.setFill(Color.BLACK)
-                g.fillRect(0.0, 0.0, w, h)
-                g.setFill(Color.WHITE)
-
-                for (p in particles) {
-                    p.update()
-
-                    g.setGlobalAlpha(p.life)
-                    g.fillOval(p.x, p.y, 1.0, 1.0)
-                }
-            }
-        }
-        timer.start()
-    }
-
-    private class Particle(var x: Double, var y: Double) {
-        var vel = Point2D.ZERO
-        var life = 1.0
-
-        fun update() {
-            life -= 0.017 * 0.45
-
-            if (life < 0)
-                life = 0.0
-
-            x += vel.x
-            y += vel.y
-        }
-    }
 }
