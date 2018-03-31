@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.ui
+package com.almasb.fxgl.extra.ui
 
 import com.almasb.fxgl.util.Consumer
 import javafx.beans.property.SimpleStringProperty

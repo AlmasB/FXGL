@@ -483,12 +483,12 @@ class GameWorldTest {
         assertAll(
                 Executable {
                     val e1 = gameWorld.spawn("enemy", SpawnData(0.0, 0.0).put("fly", true))
-                    assertTrue(e1.getProperty<Boolean>("fly"))
+                    assertTrue(e1.getBoolean("fly"))
                 },
 
                 Executable {
                     val e1 = gameWorld.spawn("enemy", SpawnData(0.0, 0.0).put("gravity", 0.5))
-                    assertThat(e1.getProperty<Double>("gravity"), `is`(0.5))
+                    assertThat(e1.getDouble("gravity"), `is`(0.5))
                 }
         )
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.almasb.fxgl.ai.fsm;
+package com.almasb.fxgl.extra.ai.fsm;
 
 import com.almasb.fxgl.core.collection.Array;
 

@@ -52,7 +52,7 @@ class EntitiesTest {
 
         assertThat(e.hasComponent(TestComponent::class.java), `is`(true))
         assertThat(e.hasComponent(TestControl::class.java), `is`(true))
-        assertThat(e.getProperty("hp"), `is`(40))
+        assertThat(e.getInt("hp"), `is`(40))
         assertThat(e.position, `is`(Point2D(100.0, 100.0)))
         assertThat(e.boundingBoxComponent.hitBoxesProperty().size, `is`(1))
         assertThat(e.boundingBoxComponent.hitBoxesProperty()[0].name, `is`("test"))

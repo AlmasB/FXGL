@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.almasb.fxgl.ai.fsm;
+package com.almasb.fxgl.extra.ai.fsm;
 
 /**
  * A state machine manages the state transitions of its entity.

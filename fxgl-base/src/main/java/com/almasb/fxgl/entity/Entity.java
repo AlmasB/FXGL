@@ -6,9 +6,9 @@
 
 package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
@@ -48,7 +48,7 @@ public class Entity {
 
     private static final Logger log = Logger.get(Entity.class);
 
-    private ObjectMap<String, Object> properties = new ObjectMap<>();
+    private PropertyMap properties = new PropertyMap();
 
     private ObjectMap<String, Script> scripts = new ObjectMap<>();
 
@@ -536,9 +536,7 @@ public class Entity {
         updating = false;
     }
 
-    private static final Object NULL = new Object();
-
-    public ObjectMap<String, Object> getProperties() {
+    public final PropertyMap getProperties() {
         return properties;
     }
 
@@ -547,32 +545,31 @@ public class Entity {
      * @param value property value
      */
     public final void setProperty(String key, Object value) {
-        properties.put(key, value);
+        properties.setValue(key, value);
     }
 
-    /**
-     * @param key property key
-     * @return property value or null if key not present
-     */
-    @SuppressWarnings("unchecked")
-    public final <T> T getProperty(String key) {
-        Object value = properties.get(key, NULL);
-        if (value == NULL) {
-            log.warning("Access property with missing key: " + key);
-            return null;
-        }
-
-        return (T) value;
-    }
-
-    /**
-     * @param key property key
-     * @return property value or Optional.empty() if value is null or key not present
-     */
-    @SuppressWarnings("unchecked")
     public final <T> Optional<T> getPropertyOptional(String key) {
-        Object value = properties.get(key, null);
-        return Optional.ofNullable((T) value);
+        return properties.getValueOptional(key);
+    }
+
+    public final int getInt(String key) {
+        return properties.getInt(key);
+    }
+
+    public final double getDouble(String key) {
+        return properties.getDouble(key);
+    }
+
+    public final boolean getBoolean(String key) {
+        return properties.getBoolean(key);
+    }
+
+    public final String getString(String key) {
+        return properties.getString(key);
+    }
+
+    public final <T> T getObject(String key) {
+        return properties.getObject(key);
     }
 
     /**
@@ -820,17 +817,18 @@ public class Entity {
      * @return a script that handles a specific event (scriptType)
      */
     public final Optional<Script> getScriptHandler(String scriptType) {
-        if (scripts.containsKey(scriptType)) {
-            return Optional.of(scripts.get(scriptType));
-        }
-
-        return getPropertyOptional(scriptType).map(scriptFile -> {
-            Script script = FXGL.getAssetLoader().loadScript((String) scriptFile);
-
-            scripts.put(scriptType, script);
-
-            return script;
-        });
+        throw new RuntimeException();
+//        if (scripts.containsKey(scriptType)) {
+//            return Optional.of(scripts.get(scriptType));
+//        }
+//
+//        return getPropertyOptional(scriptType).map(scriptFile -> {
+//            Script script = FXGL.getAssetLoader().loadScript((String) scriptFile);
+//
+//            scripts.put(scriptType, script);
+//
+//            return script;
+//        });
     }
 
     /**

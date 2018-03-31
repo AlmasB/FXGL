@@ -6,7 +6,7 @@
 
 package sandbox.rts;
 
-import com.almasb.fxgl.ai.fsm.State;
+import com.almasb.fxgl.extra.ai.fsm.State;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entity;
 
@@ -34,7 +34,7 @@ public enum WorkerState implements State<Entity> {
     WALK() {
         @Override
         public void update(Entity entity) {
-            Entity target = entity.getProperty("target");
+            Entity target = entity.getObject("target");
 
             entity.translate(target.getPosition()
                             .subtract(entity.getPosition())
@@ -57,7 +57,7 @@ public enum WorkerState implements State<Entity> {
     GATHER_GOLD() {
         @Override
         public void enter(Entity entity) {
-            Entity target = entity.getProperty("target");
+            Entity target = entity.getObject("target");
             GoldMine mine = target.getComponent(GoldMineComponent.class).getValue();
 
             if (mine.isFull()) {
@@ -77,7 +77,7 @@ public enum WorkerState implements State<Entity> {
 
             if (backpack.getGold() == 150) {
                 entity.getView().setVisible(true);
-                Entity target = entity.getProperty("target");
+                Entity target = entity.getObject("target");
                 GoldMine mine = target.getComponent(GoldMineComponent.class).getValue();
                 mine.onEndGathering();
 

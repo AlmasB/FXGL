@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.core.collection
 
+import com.almasb.fxgl.util.Optional
 import javafx.beans.property.*
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
@@ -51,6 +52,25 @@ class PropertyMap {
      */
     fun getProperties(): Map<String, String> {
         return properties.associateBy({ it.key }, { rawValue(it.value).toString() })
+    }
+
+    fun <T> getValueOptional(propertyName: String): Optional<T> {
+        try {
+            return Optional.ofNullable(getValue(propertyName))
+        } catch (e: Exception) {
+            return Optional.empty()
+        }
+    }
+
+    fun <T> getValue(propertyName: String): T {
+        return rawValueT(get(propertyName))
+    }
+
+    private fun <T> rawValueT(valueWrapper: Any): T {
+        return when (valueWrapper) {
+            is ObservableValue<*> -> valueWrapper.value as T
+            else -> throw IllegalArgumentException("Unsupported value wrapper type: $valueWrapper")
+        }
     }
 
     private fun rawValue(valueWrapper: Any): Any {
@@ -110,6 +130,10 @@ class PropertyMap {
                 }
             }
         }
+    }
+
+    fun remove(propertyName: String) {
+        properties.remove(propertyName)
     }
 
     fun increment(propertyName: String, value: Int) {

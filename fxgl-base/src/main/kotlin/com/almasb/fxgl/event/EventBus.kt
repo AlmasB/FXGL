@@ -100,18 +100,18 @@ class EventBus {
      * @param eventType e.g. onActivate, onDeath
      */
     fun fireEntityEvent(event: EntityEvent, eventType: String) {
-        event.targetEntity.properties.keys()
-                .filter { it.startsWith(eventType) }
-                .forEach { event.setData(it.removePrefix("$eventType."), event.targetEntity.getProperty(it)) }
-
-        fireEvent(event)
-
-        event.targetEntity.getScriptHandler(eventType).ifPresent {
-            it.call<Void>(eventType, ScriptFactory.newScriptObject(event.data.toMap()
-                    // here we can populate properties common to all events, e.g. entity
-                    .plus("entity".to(event.targetEntity))
-            ))
-        }
+//        event.targetEntity.properties.keys()
+//                .filter { it.startsWith(eventType) }
+//                .forEach { event.setData(it.removePrefix("$eventType."), event.targetEntity.getProperty(it)) }
+//
+//        fireEvent(event)
+//
+//        event.targetEntity.getScriptHandler(eventType).ifPresent {
+//            it.call<Void>(eventType, ScriptFactory.newScriptObject(event.data.toMap()
+//                    // here we can populate properties common to all events, e.g. entity
+//                    .plus("entity".to(event.targetEntity))
+//            ))
+//        }
     }
 
     /**

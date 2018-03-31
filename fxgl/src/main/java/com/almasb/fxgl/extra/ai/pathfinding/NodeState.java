@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.ai.pathfinding;
+package com.almasb.fxgl.extra.ai.pathfinding;
 
 /**
  * Node state.

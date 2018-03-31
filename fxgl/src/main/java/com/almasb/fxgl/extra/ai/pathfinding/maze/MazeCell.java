@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.ai.pathfinding.maze;
+package com.almasb.fxgl.extra.ai.pathfinding.maze;
 
 /**
  * Represents a single cell in a maze.

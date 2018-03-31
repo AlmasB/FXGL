@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.almasb.fxgl.ai.fsm;
+package com.almasb.fxgl.extra.ai.fsm;
 
 /**
  * The state of a state machine defines the logic of the entities that enter, exit and last this state.

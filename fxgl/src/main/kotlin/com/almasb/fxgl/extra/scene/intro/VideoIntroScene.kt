@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.scene.intro
+package com.almasb.fxgl.extra.scene.intro
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.scene.IntroScene

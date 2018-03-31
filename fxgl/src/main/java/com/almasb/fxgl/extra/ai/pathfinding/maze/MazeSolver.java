@@ -4,10 +4,10 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.ai.pathfinding.maze;
+package com.almasb.fxgl.extra.ai.pathfinding.maze;
 
-import com.almasb.fxgl.ai.pathfinding.AStarLogic;
-import com.almasb.fxgl.ai.pathfinding.AStarNode;
+import com.almasb.fxgl.extra.ai.pathfinding.AStarLogic;
+import com.almasb.fxgl.extra.ai.pathfinding.AStarNode;
 
 import java.util.ArrayList;
 import java.util.List;

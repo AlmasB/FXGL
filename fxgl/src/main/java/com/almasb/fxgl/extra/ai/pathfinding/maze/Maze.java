@@ -4,9 +4,9 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.ai.pathfinding.maze;
+package com.almasb.fxgl.extra.ai.pathfinding.maze;
 
-import com.almasb.fxgl.ai.pathfinding.AStarGrid;
+import com.almasb.fxgl.extra.ai.pathfinding.AStarGrid;
 
 import java.util.Arrays;
 import java.util.Collections;

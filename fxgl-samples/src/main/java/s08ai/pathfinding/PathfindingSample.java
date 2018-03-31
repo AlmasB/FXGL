@@ -6,9 +6,9 @@
 
 package s08ai.pathfinding;
 
-import com.almasb.fxgl.ai.pathfinding.AStarGrid;
-import com.almasb.fxgl.ai.pathfinding.AStarNode;
-import com.almasb.fxgl.ai.pathfinding.NodeState;
+import com.almasb.fxgl.extra.ai.pathfinding.AStarGrid;
+import com.almasb.fxgl.extra.ai.pathfinding.AStarNode;
+import com.almasb.fxgl.extra.ai.pathfinding.NodeState;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.GameSettings;

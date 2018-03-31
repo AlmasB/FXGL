@@ -108,8 +108,8 @@ public class GoapSample extends GameApplication {
             State worldState = new State();
             worldState.add("playerInvincible", getGameState().getBoolean("playerInvincible"));
             worldState.add("playerAlive", getGameState().getBoolean("playerAlive"));
-            worldState.add("hasWeapon", entity.getProperty("hasWeapon"));
-            worldState.add("hasCoin", entity.getProperty("hasCoin"));
+            worldState.add("hasWeapon", entity.getBoolean("hasWeapon"));
+            worldState.add("hasCoin", entity.getBoolean("hasCoin"));
 
             return worldState;
         }

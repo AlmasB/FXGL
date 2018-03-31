@@ -6,8 +6,8 @@
 
 package sandbox.rts;
 
-import com.almasb.fxgl.ai.fsm.DefaultStateMachine;
-import com.almasb.fxgl.ai.fsm.State;
+import com.almasb.fxgl.extra.ai.fsm.DefaultStateMachine;
+import com.almasb.fxgl.extra.ai.fsm.State;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.Entity;
 
