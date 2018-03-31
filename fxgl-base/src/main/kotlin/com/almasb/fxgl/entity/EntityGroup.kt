@@ -18,7 +18,13 @@ import com.almasb.fxgl.util.Predicate
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class EntityGroup<T : Entity>(private val world: GameWorld, initialEntities: List<T>, vararg entityTypes: Enum<*>) : EntityWorldListener, Disposable {
+class EntityGroup<T : Entity>(
+
+        private val world: GameWorld,
+        initialEntities: List<T>,
+        vararg entityTypes: Enum<*>
+
+) : EntityWorldListener, Disposable {
 
     private val types: List<Enum<*>> = entityTypes.toList()
 

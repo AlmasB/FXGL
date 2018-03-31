@@ -322,8 +322,6 @@ class GameWorld {
     private val entitySpawners = ObjectMap<String, EntitySpawner>()
 
     /**
-     * Set main entity factory to be used via [GameWorld.spawn].
-     *
      * @param entityFactory factory for creating entities
      */
     fun addEntityFactory(entityFactory: EntityFactory) {
@@ -359,12 +357,19 @@ class GameWorld {
         }
     }
 
+    /**
+     * Creates an entity with given name at 0, 0 using a previously added entity factory.
+     * Adds created entity to this game world.
+     *
+     * @param entityName name of entity as specified by [Spawns]
+     * @return spawned entity
+     */
     fun spawn(entityName: String): Entity {
         return spawn(entityName, 0.0, 0.0)
     }
 
     /**
-     * Creates an entity with given name at x, y using specified entity factory.
+     * Creates an entity with given name at x, y using a previously added entity factory.
      * Adds created entity to this game world.
      *
      * @param entityName name of entity as specified by [Spawns]
@@ -376,7 +381,7 @@ class GameWorld {
     }
 
     /**
-     * Creates an entity with given name at x, y using specified entity factory.
+     * Creates an entity with given name at x, y using a previously added entity factory.
      * Adds created entity to this game world.
      *
      * @param entityName name of entity as specified by [Spawns]
@@ -389,7 +394,7 @@ class GameWorld {
     }
 
     /**
-     * Creates an entity with given name and data using specified entity factory.
+     * Creates an entity with given name and data using a previously added entity factory.
      * Adds created entity to this game world.
      *
      * @param entityName name of entity as specified by [Spawns]
@@ -414,6 +419,10 @@ class GameWorld {
 
     /* QUERIES */
 
+    /**
+     * @return a group of entities of particular type, this is preferred over querying
+     * manually if called many times
+     */
     fun <T : Entity> getGroup(vararg types: Enum<*>): EntityGroup<T> {
         return EntityGroup(this, getEntitiesByType(*types) as List<T>, *types)
     }
@@ -673,8 +682,6 @@ class GameWorld {
             return Optional.empty()
 
         array.sort { e1, e2 -> (e1.distance(entity) - e2.distance(entity)).toInt() }
-
-        //array.sort(Comparator.comparingDouble { e -> e.distance(entity) })
 
         return Optional.of(array.get(0))
     }

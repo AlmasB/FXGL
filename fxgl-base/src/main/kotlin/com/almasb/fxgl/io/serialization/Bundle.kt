@@ -34,6 +34,8 @@ class Bundle(val name: String) : Serializable {
 
     /**
      * Retrieve a value with given [key].
+     *
+     * TODO: return T?
      */
     @Suppress("UNCHECKED_CAST")
     fun <T> get(key: String): T {
