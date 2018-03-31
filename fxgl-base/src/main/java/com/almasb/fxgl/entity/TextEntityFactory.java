@@ -19,12 +19,12 @@ public interface TextEntityFactory extends EntityFactory {
     char emptyChar();
 
     /**
-     * @return width of a single character
+     * @return width of a single text character
      */
     int blockWidth();
 
     /**
-     * @return height of a single character
+     * @return height of a single text character
      */
     int blockHeight();
 }

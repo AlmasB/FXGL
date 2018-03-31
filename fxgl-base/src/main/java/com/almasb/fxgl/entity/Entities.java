@@ -26,6 +26,7 @@ import javafx.scene.paint.Color;
 
 import java.util.List;
 
+import static com.almasb.fxgl.physics.BoundingShape.box;
 import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
@@ -40,7 +41,7 @@ public final class Entities {
     private Entities() {}
 
     /**
-     * Create an entity with bounding box around the screen with given thickness.
+     * Create an entity with a bounding box around the screen with given thickness.
      *
      * @param thickness thickness of hit boxes around the screen
      * @return entity with screen bounds
@@ -49,16 +50,13 @@ public final class Entities {
         double w = FXGL.getSettings().getWidth();
         double h = FXGL.getSettings().getHeight();
 
-        Entity bounds = new Entity();
-
-        bounds.getBoundingBoxComponent().addHitBox(new HitBox("LEFT",  new Point2D(-thickness, 0), BoundingShape.box(thickness, h)));
-        bounds.getBoundingBoxComponent().addHitBox(new HitBox("RIGHT", new Point2D(w, 0), BoundingShape.box(thickness, h)));
-        bounds.getBoundingBoxComponent().addHitBox(new HitBox("TOP",   new Point2D(0, -thickness), BoundingShape.box(w, thickness)));
-        bounds.getBoundingBoxComponent().addHitBox(new HitBox("BOT",   new Point2D(0, h), BoundingShape.box(w, thickness)));
-
-        bounds.addComponent(new PhysicsComponent());
-
-        return bounds;
+        return builder()
+                .bbox(new HitBox("LEFT",  new Point2D(-thickness, 0), box(thickness, h)))
+                .bbox(new HitBox("RIGHT", new Point2D(w, 0), box(thickness, h)))
+                .bbox(new HitBox("TOP",   new Point2D(0, -thickness), box(w, thickness)))
+                .bbox(new HitBox("BOT",   new Point2D(0, h), box(w, thickness)))
+                .with(new PhysicsComponent())
+                .build();
     }
 
     /**

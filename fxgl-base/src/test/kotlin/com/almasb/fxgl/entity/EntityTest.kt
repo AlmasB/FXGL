@@ -305,7 +305,7 @@ class EntityTest {
         val control = ValueUpdateControl()
         entity.addComponent(control)
 
-        entity.setControlsEnabled(false)
+        entity.setUpdateEnabled(false)
 
         entity.update(0.017)
 
@@ -774,17 +774,16 @@ class EntityTest {
 
     /* SCRIPTS */
 
-    // TODO: refactor
-//    @Test
-//    fun `Scripts`() {
-//        assertFalse(entity.getScriptHandler("onHit").isPresent)
-//
-//        entity.setProperty("onHit", "entity_script.js")
-//
-//        val script = entity.getScriptHandler("onHit").get()
-//
-//        assertThat(script.call<String>("onHit"), `is`("EntityTest"))
-//    }
+    @Test
+    fun `Scripts`() {
+        assertFalse(entity.getScriptHandler("onHit").isPresent)
+
+        entity.setProperty("onHit", "entity_script.js")
+
+        val script = entity.getScriptHandler("onHit").get()
+
+        assertThat(script.call<String>("onHit"), `is`("EntityTest"))
+    }
 
     /* MOCK CLASSES */
 

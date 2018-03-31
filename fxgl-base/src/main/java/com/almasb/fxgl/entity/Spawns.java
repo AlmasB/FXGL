@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 public @interface Spawns {
 
     /**
-     * @return name of the entity that this method spawns
+     * @return name/type of the entity that this method spawns
      */
     String value();
 }

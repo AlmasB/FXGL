@@ -6,10 +6,10 @@
 
 package com.almasb.fxgl.entity;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.PropertyMap;
-import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.entity.component.*;
@@ -31,40 +31,40 @@ import java.util.List;
 import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
- * A generic entity in the Entity-Component-Control model.
- * During update (or control update) it is not allowed to:
+ * A generic game object.
+ * Behavior and data are added via components.
+ *
+ * During update (or component update) it is not allowed to:
  * <ul>
- *     <li>Add control</li>
- *     <li>Remove control</li>
+ *     <li>Add component</li>
+ *     <li>Remove component</li>
  * </ul>
  *
  * Entity is guaranteed to have Type, Position, Rotation, BBox, View components.
- * The best practice is to add all component and controls to an entity before attaching
- * the entity to the world and pause the (immediately) unused controls.
+ * The best practice is to add all components to an entity before attaching
+ * the entity to the world and pause the components.
+ * You can then resume components when you need them, rather than adding them later.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class Entity {
 
-    private static final Logger log = Logger.get(Entity.class);
-
     private PropertyMap properties = new PropertyMap();
-
-    private ObjectMap<String, Script> scripts = new ObjectMap<>();
 
     private ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
 
     private List<ComponentListener> componentListeners = new ArrayList<>();
 
+    private ObjectMap<String, Script> scripts = new ObjectMap<>();
+
     private GameWorld world = null;
 
     private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
-    private boolean controlsEnabled = true;
-
     private Runnable onActive = null;
     private Runnable onNotActive = null;
 
+    private boolean updateEnabled = true;
     private boolean updating = false;
 
     private TypeComponent type = new TypeComponent();
@@ -101,8 +101,10 @@ public class Entity {
     }
 
     /**
-     * Removes all controls and components.
+     * Removes all components.
      * Resets entity to its "new" state.
+     *
+     * TODO: what about core components, they should also be cleaned
      */
     void clean() {
         removeAllComponents();
@@ -111,11 +113,13 @@ public class Entity {
 
         componentListeners.clear();
 
+        scripts.clear();
+
         world = null;
         onActive = null;
         onNotActive = null;
 
-        controlsEnabled = true;
+        updateEnabled = true;
         updating = false;
 
         active.set(false);
@@ -192,6 +196,13 @@ public class Entity {
      */
     public final void setPosition(Point2D position) {
         this.position.setValue(position);
+    }
+
+    /**
+     * Set top left position of this entity in world coordinates.
+     */
+    public final void setPosition(Vec2 position) {
+        this.position.setValue(position.x, position.y);
     }
 
     /**
@@ -508,13 +519,11 @@ public class Entity {
     }
 
     /**
-     * Setting this to false will disable each control's update until this has
-     * been set back to true.
-     *
-     * @param b controls enabled flag
+     * If set to false this entity will not update (i.e. the components
+     * attached to this entity will not update).
      */
-    public final void setControlsEnabled(boolean b) {
-        controlsEnabled = b;
+    public final void setUpdateEnabled(boolean b) {
+        updateEnabled = b;
     }
 
     /**
@@ -523,13 +532,14 @@ public class Entity {
      * @param tpf time per frame
      */
     void update(double tpf) {
+        if (!updateEnabled)
+            return;
+
         updating = true;
 
-        if (controlsEnabled) {
-            for (Component c : components.values()) {
-                if (!c.isPaused()) {
-                    c.onUpdate(tpf);
-                }
+        for (Component c : components.values()) {
+            if (!c.isPaused()) {
+                c.onUpdate(tpf);
             }
         }
 
@@ -582,7 +592,7 @@ public class Entity {
 
     /**
      * Returns component of given type, or {@link Optional#empty()}
-     * if type not registered.
+     * if entity has no such component.
      *
      * @param type component type
      * @return component
@@ -593,7 +603,7 @@ public class Entity {
 
     /**
      * @param type component type
-     * @return component of given type
+     * @return component of given type or throws exception if entity has no such component
      */
     public final <T extends Component> T getComponent(Class<T> type) {
         Component component = components.get(type);
@@ -623,9 +633,14 @@ public class Entity {
      * @throws IllegalStateException if components required by the given component are missing
      */
     public final void addComponent(Component component) {
-        checkNotUpdating("Add control");
+        checkNotUpdating();
 
-        addModule(component);
+        checkRequirementsMet(component.getClass());
+
+        injectFields(component);
+
+        component.onAdded();
+        notifyModuleAdded(component);
 
         components.put(component.getClass(), component);
     }
@@ -635,11 +650,11 @@ public class Entity {
      * Core components (type, position, rotation, bbox, view) cannot be removed.
      *
      * @param type type of the component to remove
-     * @throws IllegalArgumentException if the component is required by other components / controls
+     * @throws IllegalArgumentException if the component is required by other components
      * @return true if removed, false if not found
      */
     public final boolean removeComponent(Class<? extends Component> type) {
-        checkNotUpdating("Remove control");
+        checkNotUpdating();
 
         if (isCoreComponent(type)) {
             // this is not allowed by design, hence throw
@@ -651,7 +666,7 @@ public class Entity {
 
         checkNotRequiredByAny(type);
 
-        removeModule(getComponent(type));
+        removeComponent(getComponent(type));
 
         components.remove(type);
 
@@ -664,7 +679,7 @@ public class Entity {
 
     private void removeAllComponents() {
         for (Component comp : components.values()) {
-            removeModule(comp);
+            removeComponent(comp);
         }
 
         components.clear();
@@ -678,27 +693,18 @@ public class Entity {
         componentListeners.remove(listener);
     }
 
-    private void addModule(Component comp) {
-        checkRequirementsMet(comp.getClass());
-
+    @SuppressWarnings("unchecked")
+    private void injectFields(Component component) {
         try {
             Method m = Component.class.getDeclaredMethod("setEntity", Entity.class);
             m.setAccessible(true);
-            m.invoke(comp, this);
+            m.invoke(component, this);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
         //comp.setEntity(this);
 
-        injectFields(comp);
-
-        comp.onAdded();
-        notifyModuleAdded(comp);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void injectFields(Component component) {
         forEach(
                 ReflectionUtils.findFieldsByTypeRecursive(component, Component.class),
                 field -> {
@@ -707,29 +713,9 @@ public class Entity {
                     });
                 }
         );
-
-        // TODO: remove this convention
-        injectEntityField(component);
     }
 
-    @Deprecated
-    private void injectEntityField(Component component) {
-        // check if component has conventional name
-        String controlName = component.getClass().getSimpleName();
-        if (controlName.endsWith("Control") && controlName.length() > 8) {
-            // SomeTestControl becomes someTest
-            String fieldName = controlName.substring(1, controlName.length() - 7);
-            fieldName = Character.toLowerCase(controlName.charAt(0)) + fieldName;
-
-            ReflectionUtils.getDeclaredField(fieldName, component).ifPresent(field -> {
-                // check that field type is Entity or subtype of Entity
-                if (Entity.class.isAssignableFrom(field.getType()))
-                    ReflectionUtils.inject(field, component, this);
-            });
-        }
-    }
-
-    private void removeModule(Component comp) {
+    private void removeComponent(Component comp) {
         notifyModuleRemoved(comp);
 
         comp.onRemoved();
@@ -757,9 +743,9 @@ public class Entity {
         }
     }
 
-    private void checkNotUpdating(String action) {
+    private void checkNotUpdating() {
         if (updating)
-            throw new IllegalStateException("Cannot " + action + " during updating");
+            throw new IllegalStateException("Cannot add / remove components during updating");
     }
 
     private void checkNotAnonymous(Class<?> type) {
@@ -817,25 +803,23 @@ public class Entity {
      * @return a script that handles a specific event (scriptType)
      */
     public final Optional<Script> getScriptHandler(String scriptType) {
-        throw new RuntimeException();
-//        if (scripts.containsKey(scriptType)) {
-//            return Optional.of(scripts.get(scriptType));
-//        }
-//
-//        return getPropertyOptional(scriptType).map(scriptFile -> {
-//            Script script = FXGL.getAssetLoader().loadScript((String) scriptFile);
-//
-//            scripts.put(scriptType, script);
-//
-//            return script;
-//        });
+        if (scripts.containsKey(scriptType)) {
+            return Optional.of(scripts.get(scriptType));
+        }
+
+        return getPropertyOptional(scriptType).map(scriptFile -> {
+            Script script = FXGL.getAssetLoader().loadScript((String) scriptFile);
+
+            scripts.put(scriptType, script);
+
+            return script;
+        });
     }
 
     /**
      * Creates a new instance, which is a copy of this entity.
      * For each copyable component, copy() will be invoked on the component and attached to new instance.
-     * For each copyable control, copy() will be invoked on the control and attached to new instance.
-     * Components and controls that cannot be copied, must be added manually if required.
+     * Components that cannot be copied, must be added manually if required.
      *
      * @return copy of this entity
      */
@@ -845,7 +829,7 @@ public class Entity {
 
     /**
      * Save entity state into bundle.
-     * Only serializable components and controls will be written.
+     * Only serializable components will be written.
      *
      * @param bundle the bundle to write to
      */
@@ -855,7 +839,7 @@ public class Entity {
 
     /**
      * Load entity state from a bundle.
-     * Only serializable components and controls will be read.
+     * Only serializable components will be read.
      * If an entity has a serializable type that is not present in the bundle,
      * a warning will be logged but no exception thrown.
      *
