@@ -7,7 +7,6 @@
 package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.app.DialogSubState
-import com.almasb.fxgl.core.concurrent.UIDialogHandler
 import com.almasb.fxgl.util.Consumer
 import com.almasb.fxgl.util.EmptyRunnable
 import com.almasb.fxgl.util.Predicate
@@ -100,7 +99,7 @@ class FXGLDisplay : Display {
         dialogState.showBox(message, content, *buttons)
     }
 
-    override fun showProgressBox(message: String): UIDialogHandler {
+    override fun showProgressBox(message: String): DialogBox {
         return dialogState.showProgressBox(message)
     }
 

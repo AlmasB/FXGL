@@ -7,22 +7,23 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.core.concurrent.UIDialogHandler
+import com.almasb.fxgl.core.concurrent.IOTask
+import com.almasb.fxgl.ui.DialogBox
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ProgressDialog(val message: String) : UIDialogHandler {
+class ProgressDialog(val message: String) : IOTask.UIDialogHandler {
 
-    private lateinit var handler: UIDialogHandler
+    private lateinit var dialog: DialogBox
 
     override fun show() {
-        handler = FXGL.getDisplay().showProgressBox(message)
+        dialog = FXGL.getDisplay().showProgressBox(message)
     }
 
     override fun dismiss() {
-        handler.dismiss()
+        dialog.close()
     }
 }

@@ -6,8 +6,9 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.concurrent.UIDialogHandler
+import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.ui.DialogBox
 import com.almasb.fxgl.util.Consumer
 import com.almasb.fxgl.util.EmptyRunnable
 import com.almasb.fxgl.util.Predicate
@@ -190,20 +191,16 @@ object DialogSubState : SubState() {
         show("Dialog", dialog)
     }
 
-    internal fun showProgressBox(message: String): UIDialogHandler {
+    internal fun showProgressBox(message: String): DialogBox {
         val dialog = dialogFactory.progressDialogIndeterminate(message, {
             close()
         })
 
         show("Progress", dialog)
 
-        return object : UIDialogHandler {
-            override fun show() {
-                // no-op
-            }
-
-            override fun dismiss() {
-                close()
+        return object : DialogBox {
+            override fun close() {
+                this@DialogSubState.close()
             }
         }
     }

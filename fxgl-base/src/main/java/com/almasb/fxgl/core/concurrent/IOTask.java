@@ -32,6 +32,14 @@ public abstract class IOTask<T> {
         IOTask.defaultFailAction = defaultFailAction;
     }
 
+    private static final UIDialogHandler DUMMY_DIALOG = new UIDialogHandler() {
+        @Override
+        public void show() { }
+
+        @Override
+        public void dismiss() { }
+    };
+
     private Consumer<T> successAction = (result) -> {};
     private Consumer<Throwable> failAction = defaultFailAction;
 
@@ -103,7 +111,7 @@ public abstract class IOTask<T> {
      * @param executor executor to use for async
      */
     public final void runAsyncFX(Executor executor) {
-        runAsyncFXWithDialog(executor, UIDialogHandlerKt.getNONE());
+        runAsyncFXWithDialog(executor, DUMMY_DIALOG);
     }
 
     /**
@@ -214,5 +222,12 @@ public abstract class IOTask<T> {
                 return action.call();
             }
         };
+    }
+
+    public interface UIDialogHandler {
+
+        void show();
+
+        void dismiss();
     }
 }

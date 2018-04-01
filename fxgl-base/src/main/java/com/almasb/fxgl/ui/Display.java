@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.core.concurrent.UIDialogHandler;
 import com.almasb.fxgl.util.Consumer;
 import com.almasb.fxgl.util.Predicate;
 import javafx.beans.property.DoubleProperty;
@@ -106,7 +105,7 @@ public interface Display {
      * @param message message to show
      * @return dialog handler
      */
-    UIDialogHandler showProgressBox(String message);
+    DialogBox showProgressBox(String message);
 
     /**
      * @param message message to show
