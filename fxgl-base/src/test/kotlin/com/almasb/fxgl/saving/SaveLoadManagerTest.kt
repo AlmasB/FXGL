@@ -47,7 +47,7 @@ class SaveLoadManagerTest {
         @AfterAll
         @JvmStatic fun cleanUp() {
             // ensure previous tests have been cleared
-            FS.deleteDirectoryTask("testprofiles/").execute()
+            FS.deleteDirectoryTask("testprofiles/").run()
 
             assertTrue(!Files.exists(Paths.get("testprofiles/")), "Profiles dir is present before")
         }
@@ -68,7 +68,7 @@ class SaveLoadManagerTest {
     }
 
     fun `Save new profile`() {
-        manager.saveProfileTask(UserProfile("TestApp", "TestVersion")).execute()
+        manager.saveProfileTask(UserProfile("TestApp", "TestVersion")).run()
 
         assertTrue(Files.exists(Paths.get("testprofiles/")), "Profiles dir was not created")
 
@@ -78,7 +78,7 @@ class SaveLoadManagerTest {
     }
 
     fun `Save game data`() {
-        manager.saveTask(DataFile("TestData"), SaveFile("TestSave", LocalDateTime.now())).execute()
+        manager.saveTask(DataFile("TestData"), SaveFile("TestSave", LocalDateTime.now())).run()
 
         assertTrue(Files.exists(Paths.get("testprofiles/TestProfileName/saves/TestSave.sav")), "Save file was not created")
 
@@ -86,11 +86,11 @@ class SaveLoadManagerTest {
     }
 
     fun `Load game data`() {
-        val saveFile = manager.loadLastModifiedSaveFileTask().execute()
+        val saveFile = manager.loadLastModifiedSaveFileTask().run()
 
         assertThat(saveFile, `is`(notNullValue()))
 
-        val dataFile = manager.loadTask(saveFile).execute()
+        val dataFile = manager.loadTask(saveFile).run()
 
         assertThat(dataFile, `is`(notNullValue()))
 

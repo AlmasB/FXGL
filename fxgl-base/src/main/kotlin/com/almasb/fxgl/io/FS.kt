@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.io
 
+import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.logging.Logger
 import java.io.*
 import java.nio.file.*
@@ -37,7 +38,7 @@ private constructor() {
          * @param fileName to save as
          * @return IO task
          */
-        @JvmStatic fun writeDataTask(data: Serializable, fileName: String) = voidTaskOf("writeDataTask($fileName)", {
+        @JvmStatic fun writeDataTask(data: Serializable, fileName: String) = IOTask.ofVoid("writeDataTask($fileName)", {
 
             val file = Paths.get(fileName)
 
@@ -61,7 +62,7 @@ private constructor() {
          * @return IO task
          */
         @Suppress("UNCHECKED_CAST")
-        @JvmStatic fun <T> readDataTask(fileName: String) = taskOf("readDataTask($fileName)") {
+        @JvmStatic fun <T> readDataTask(fileName: String) = IOTask.of("readDataTask($fileName)") {
 
             val file = Paths.get(fileName)
 
@@ -69,7 +70,7 @@ private constructor() {
 
             ObjectInputStream(Files.newInputStream(file)).use {
                 log.debug("Reading from: $file")
-                return@taskOf it.readObject() as T
+                return@of it.readObject() as T
             }
         }
 
@@ -81,13 +82,13 @@ private constructor() {
          * @param recursive recursive flag
          * @return IO task
          */
-        @JvmStatic fun loadFileNamesTask(dirName: String, recursive: Boolean) = taskOf("loadFileNamesTask($dirName, $recursive)") {
+        @JvmStatic fun loadFileNamesTask(dirName: String, recursive: Boolean) = IOTask.of("loadFileNamesTask($dirName, $recursive)") {
 
             val dir = Paths.get(dirName)
 
             errorIfAbsent(dir)
 
-            return@taskOf Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
+            return@of Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
                     .filter { Files.isRegularFile(it) }
                     .map { dir.relativize(it).toString().replace("\\", "/") }
                     .collect(Collectors.toList<String>())
@@ -103,13 +104,13 @@ private constructor() {
          * @param extensions file extensions to include
          * @return IO task
          */
-        @JvmStatic fun loadFileNamesTask(dirName: String, recursive: Boolean, extensions: List<FileExtension>) = taskOf("loadFileNamesTask($dirName, $recursive, $extensions)") {
+        @JvmStatic fun loadFileNamesTask(dirName: String, recursive: Boolean, extensions: List<FileExtension>) = IOTask.of("loadFileNamesTask($dirName, $recursive, $extensions)") {
 
             val dir = Paths.get(dirName)
 
             errorIfAbsent(dir)
 
-            return@taskOf Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
+            return@of Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
                     .filter { file -> Files.isRegularFile(file) && extensions.filter { "$file".endsWith(it.extension) }.isNotEmpty() }
                     .map { dir.relativize(it).toString().replace("\\", "/") }
                     .collect(Collectors.toList<String>())
@@ -123,12 +124,12 @@ private constructor() {
          * @param recursive recursive flag
          * @return IO task
          */
-        @JvmStatic fun loadDirectoryNamesTask(dirName: String, recursive: Boolean) = taskOf("loadDirectoryNamesTask($dirName, $recursive)", {
+        @JvmStatic fun loadDirectoryNamesTask(dirName: String, recursive: Boolean) = IOTask.of("loadDirectoryNamesTask($dirName, $recursive)", {
             val dir = Paths.get(dirName)
 
             errorIfAbsent(dir)
 
-            return@taskOf Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
+            return@of Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
                     .filter { Files.isDirectory(it) }
                     .map { dir.relativize(it).toString().replace("\\", "/") }
                     .filter { it.isNotEmpty() }
@@ -143,13 +144,13 @@ private constructor() {
          * @param recursive recursive flag
          * @return IO task
          */
-        @JvmStatic fun <T> loadLastModifiedFileTask(dirName: String, recursive: Boolean) = taskOf("loadLastModifiedFileTask($dirName, $recursive)") {
+        @JvmStatic fun <T> loadLastModifiedFileTask(dirName: String, recursive: Boolean) = IOTask.of("loadLastModifiedFileTask($dirName, $recursive)") {
 
             val dir = Paths.get(dirName)
 
             errorIfAbsent(dir)
 
-            return@taskOf Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
+            return@of Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
                     .filter { Files.isRegularFile(it) }
                     .sorted { file1, file2 ->
                         Files.getLastModifiedTime(file2).compareTo(Files.getLastModifiedTime(file1))
@@ -166,7 +167,7 @@ private constructor() {
          * @param fileName name of file to delete
          * @return IO task
          */
-        @JvmStatic fun deleteFileTask(fileName: String) = voidTaskOf("deleteFileTask($fileName)") {
+        @JvmStatic fun deleteFileTask(fileName: String) = IOTask.ofVoid("deleteFileTask($fileName)") {
 
             val file = Paths.get(fileName)
 
@@ -183,7 +184,7 @@ private constructor() {
          * @param dirName directory name to delete
          * @return IO task
          */
-        @JvmStatic fun deleteDirectoryTask(dirName: String) = voidTaskOf("deleteDirectoryTask($dirName)") {
+        @JvmStatic fun deleteDirectoryTask(dirName: String) = IOTask.ofVoid("deleteDirectoryTask($dirName)") {
 
             val dir = Paths.get(dirName)
 

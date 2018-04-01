@@ -7,10 +7,10 @@
 package com.almasb.fxgl.saving;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.core.concurrent.IOTask;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.io.FileExtension;
-import com.almasb.fxgl.io.IOTask;
 import com.almasb.fxgl.scene.ProgressDialog;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -93,7 +93,7 @@ public final class SaveLoadManager {
                     saveFiles.setAll(files);
                     Collections.sort(saveFiles, SaveFile.RECENT_FIRST);
                 })
-                .executeAsyncWithDialogFX(new ProgressDialog("Loading save files"));
+                .runAsyncFXWithDialog(new ProgressDialog("Loading save files"));
     }
 
     /**
@@ -250,7 +250,7 @@ public final class SaveLoadManager {
         return FS.loadFileNamesTask(saveDir(), true, Collections.singletonList(new FileExtension(SAVE_FILE_EXT)))
                 .then(fileNames -> IOTask.of("readSaveFiles", () -> {
                     return fileNames.stream()
-                            .map(name -> FS.<SaveFile>readDataTask(saveDir() + name).execute())
+                            .map(name -> FS.<SaveFile>readDataTask(saveDir() + name).run())
                             .filter(file -> file != null)
                             .collect(Collectors.toList());
                 }));

@@ -7,7 +7,7 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.io.UIDialogHandler
+import com.almasb.fxgl.core.concurrent.UIDialogHandler
 
 /**
  *

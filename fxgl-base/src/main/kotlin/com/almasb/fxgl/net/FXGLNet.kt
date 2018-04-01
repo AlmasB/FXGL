@@ -7,9 +7,7 @@
 package com.almasb.fxgl.net
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.io.IOTask
-import com.almasb.fxgl.io.taskOf
-import com.almasb.fxgl.io.voidTaskOf
+import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.util.Optional
 import javafx.beans.value.ChangeListener
 import java.io.InputStreamReader
@@ -26,7 +24,7 @@ class FXGLNet : Net {
 
     override fun downloadTask(url: String): IOTask<Path> = DownloadTask(url)
 
-    override fun openStreamTask(url: String) = taskOf("openStream($url)", { URL(url).openStream() })
+    override fun openStreamTask(url: String) = IOTask.of("openStream($url)", { URL(url).openStream() })
 
     /**
      * Loads pom.xml from GitHub server's master branch
@@ -34,17 +32,17 @@ class FXGLNet : Net {
      */
     override fun getLatestVersionTask() = openStreamTask(FXGL.getProperties().getString("url.pom")).then {
 
-        return@then taskOf("latestVersion", {
+        return@then IOTask.of("latestVersion", {
 
             InputStreamReader(it).useLines {
-                return@taskOf it.first { it.contains("<version>") }
+                return@of it.first { it.contains("<version>") }
                         .trim()
                         .removeSurrounding("<version>", "</version>")
             }
         })
     }
 
-    override fun openBrowserTask(url: String) = voidTaskOf("openBrowser($url)", { FXGL.getApp().hostServices.showDocument(url) })
+    override fun openBrowserTask(url: String) = IOTask.ofVoid("openBrowser($url)", { FXGL.getApp().hostServices.showDocument(url) })
 
     private val dummy by lazy { Server() }
     private var connectionInternal: NetworkConnection? = null
@@ -64,7 +62,7 @@ class FXGLNet : Net {
     }
 
     override fun hostMultiplayerTask(): IOTask<Server> {
-        return taskOf("Create Host", {
+        return IOTask.of("Create Host", {
             val server = Server()
             server.parsers = dummy.parsers
 
@@ -76,12 +74,12 @@ class FXGLNet : Net {
             connectionInternal?.connectionActiveProperty()?.removeListener(connectionListener)
             connectionInternal = server
 
-            return@taskOf server
+            server
         })
     }
 
     override fun connectMultiplayerTask(serverIP: String): IOTask<Client> {
-        return taskOf("Connect To Host", {
+        return IOTask.of("Connect To Host", {
             val client = Client(serverIP)
             client.parsers = dummy.parsers
 
@@ -92,7 +90,7 @@ class FXGLNet : Net {
             connectionInternal?.connectionActiveProperty()?.removeListener(connectionListener)
             connectionInternal = client
 
-            return@taskOf client
+            client
         })
     }
 }

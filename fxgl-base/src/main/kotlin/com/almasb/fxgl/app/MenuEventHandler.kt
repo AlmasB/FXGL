@@ -75,8 +75,8 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
         saveLoadManager
                 .loadLastModifiedSaveFileTask()
                 .then { saveLoadManager.loadTask(it) }
-                .onSuccessKt { app.startLoadedGame(it) }
-                .executeAsyncWithDialogFX(ProgressDialog("Loading..."))
+                .onSuccess { app.startLoadedGame(it) }
+                .runAsyncFXWithDialog(ProgressDialog("Loading..."))
     }
 
     override fun onResume() {
@@ -89,8 +89,8 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
 
         saveLoadManager
                 .saveTask(dataFile, saveFile)
-                .onSuccessKt { hasSaves.value = true }
-                .executeAsyncWithDialogFX(ProgressDialog("Saving data: $saveFileName"))
+                .onSuccess { hasSaves.value = true }
+                .runAsyncFXWithDialog(ProgressDialog("Saving data: $saveFileName"))
     }
 
     override fun onSave() {
@@ -117,8 +117,8 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
             if (yes) {
                 saveLoadManager
                         .loadTask(saveFile)
-                        .onSuccessKt { app.startLoadedGame(it) }
-                        .executeAsyncWithDialogFX(ProgressDialog("Loading: ${saveFile.name}"))
+                        .onSuccess { app.startLoadedGame(it) }
+                        .runAsyncFXWithDialog(ProgressDialog("Loading: ${saveFile.name}"))
             }
         })
     }
@@ -129,7 +129,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
             if (yes) {
                 saveLoadManager
                         .deleteSaveFileTask(saveFile)
-                        .executeAsyncWithDialogFX(ProgressDialog("Deleting: ${saveFile.name}"))
+                        .runAsyncFXWithDialog(ProgressDialog("Deleting: ${saveFile.name}"))
             }
         })
     }
@@ -240,8 +240,8 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
         // if it is empty then we are running without menus
         if (!profileName.get().isEmpty()) {
             saveLoadManager.saveProfileTask(createProfile())
-                    .onFailureKt { error -> log.warning("Failed to save profile: ${profileName.value} - $error") }
-                    .execute() // we execute synchronously to avoid incomplete save since we might be shutting down
+                    .onFailure { error -> log.warning("Failed to save profile: ${profileName.value} - $error") }
+                    .run() // we execute synchronously to avoid incomplete save since we might be shutting down
         }
     }
 
@@ -252,9 +252,9 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
         btnHost.setOnAction {
             FXGL.getNet()
                     .hostMultiplayerTask()
-                    .onSuccessKt { onNewGame() }
-                    .onFailureKt { app.display.showErrorBox(it) }
-                    .executeAsyncWithDialogFX(ProgressDialog("Hosting Game"))
+                    .onSuccess { onNewGame() }
+                    .onFailure { app.display.showErrorBox(it) }
+                    .runAsyncFXWithDialog(ProgressDialog("Hosting Game"))
         }
 
         val btnConnect = FXGL.getUIFactory().newButton("Connect...")
@@ -262,8 +262,8 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
             app.display.showInputBox("Enter Server IP", {
                 FXGL.getNet()
                         .connectMultiplayerTask(it)
-                        .onSuccessKt { onNewGame() }
-                        .executeAsyncWithDialogFX(ProgressDialog("Connecting to Game"))
+                        .onSuccess { onNewGame() }
+                        .runAsyncFXWithDialog(ProgressDialog("Connecting to Game"))
             })
         }
 
@@ -299,7 +299,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
             saveLoadManager = SaveLoadManager(name)
 
             saveLoadManager.loadProfileTask()
-                    .onSuccessKt { profile ->
+                    .onSuccess { profile ->
                         val ok = loadFromProfile(profile)
 
                         if (!ok) {
@@ -308,28 +308,28 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
                             profileName.set(name)
 
                             saveLoadManager.loadLastModifiedSaveFileTask()
-                                    .onSuccessKt { hasSaves.value = true }
-                                    .onFailureKt { hasSaves.value = false }
-                                    .executeAsyncWithDialogFX(ProgressDialog("Loading last save file"))
+                                    .onSuccess { hasSaves.value = true }
+                                    .onFailure { hasSaves.value = false }
+                                    .runAsyncFXWithDialog(ProgressDialog("Loading last save file"))
                         }
                     }
-                    .onFailureKt { error ->
+                    .onFailure { error ->
                         app.display.showErrorBox("Profile is corrupted: $name\nError: $error", { this.showProfileDialog() })
                     }
-                    .executeAsyncWithDialogFX(ProgressDialog("Loading Profile: $name"))
+                    .runAsyncFXWithDialog(ProgressDialog("Loading Profile: $name"))
         }
 
         btnDelete.setOnAction {
             val name = profilesBox.value
 
             SaveLoadManager.deleteProfileTask(name)
-                    .onSuccessKt { showProfileDialog() }
-                    .onFailureKt { error -> app.display.showErrorBox("$error", { showProfileDialog() }) }
-                    .executeAsyncWithDialogFX(ProgressDialog("Deleting profile: $name"))
+                    .onSuccess { showProfileDialog() }
+                    .onFailure { error -> app.display.showErrorBox("$error", { showProfileDialog() }) }
+                    .runAsyncFXWithDialog(ProgressDialog("Deleting profile: $name"))
         }
 
         SaveLoadManager.loadProfileNamesTask()
-                .onSuccessKt { names ->
+                .onSuccess { names ->
                     profilesBox.items.addAll(names)
 
                     if (!profilesBox.items.isEmpty()) {
@@ -338,11 +338,11 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
 
                     app.display.showBox("Select profile or create new", profilesBox, btnSelect, btnNew, btnDelete)
                 }
-                .onFailureKt { error ->
+                .onFailure { error ->
                     log.warning("$error")
 
                     app.display.showBox("Select profile or create new", profilesBox, btnSelect, btnNew, btnDelete)
                 }
-                .executeAsyncWithDialogFX(ProgressDialog("Loading profiles"))
+                .runAsyncFXWithDialog(ProgressDialog("Loading profiles"))
     }
 }

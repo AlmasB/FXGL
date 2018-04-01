@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.io.UIDialogHandler
+import com.almasb.fxgl.core.concurrent.UIDialogHandler
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.util.Consumer
 import com.almasb.fxgl.util.EmptyRunnable

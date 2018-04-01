@@ -7,7 +7,7 @@
 package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.app.DialogSubState
-import com.almasb.fxgl.io.UIDialogHandler
+import com.almasb.fxgl.core.concurrent.UIDialogHandler
 import com.almasb.fxgl.util.Consumer
 import com.almasb.fxgl.util.EmptyRunnable
 import com.almasb.fxgl.util.Predicate

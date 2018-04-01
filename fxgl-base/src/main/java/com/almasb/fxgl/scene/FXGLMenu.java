@@ -427,7 +427,7 @@ public abstract class FXGLMenu extends FXGLScene {
             FXGL.getNet()
                     .openBrowserTask(FXGL.getProperties().getString(url))
                     .onFailure(error -> log.warning("Error opening browser: " + error))
-                    .execute();
+                    .run();
         };
 
         Button btnGoogle = new Button("Google Forms");

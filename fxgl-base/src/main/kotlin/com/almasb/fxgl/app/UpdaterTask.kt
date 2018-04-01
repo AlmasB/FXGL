@@ -72,14 +72,14 @@ internal class UpdaterTask : Runnable {
             setOnAction {
                 FXGL.getNet()
                         .openBrowserTask(FXGL.getProperties().getString("url.github"))
-                        .onFailureKt { log.warning("Error opening browser: $it") }
-                        .execute()
+                        .onFailure { log.warning("Error opening browser: $it") }
+                        .run()
             }
         }
 
         FXGL.getNet()
                 .getLatestVersionTask()
-                .onSuccessKt { latestVersion ->
+                .onSuccess { latestVersion ->
 
                     val currentVersion = FXGL.getProperties().getString(FXGL_VERSION)
 
@@ -96,7 +96,7 @@ internal class UpdaterTask : Runnable {
                         button.isDisable = false
                     }
                 }
-                .onFailureKt { error ->
+                .onFailure { error ->
 
                     // not important, just log it
                     log.warning("Failed to find updates: $error")
@@ -105,7 +105,7 @@ internal class UpdaterTask : Runnable {
 
                     button.isDisable = false
                 }
-                .executeAsyncWithDialogFX()
+                .runAsyncFX()
 
         // blocking call
         dialog.showAndWait()

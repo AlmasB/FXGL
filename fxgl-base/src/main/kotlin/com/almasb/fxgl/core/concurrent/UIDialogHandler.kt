@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.io
+package com.almasb.fxgl.core.concurrent
 
 /**
  *

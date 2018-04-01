@@ -11,6 +11,7 @@ import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
+import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
@@ -117,6 +118,9 @@ class FXGL private constructor() {
 
             logVersion()
 
+            IOTask.setDefaultExecutor(getExecutor())
+            IOTask.setDefaultFailAction(getExceptionHandler())
+
             if (isDesktop()) {
                 createRequiredDirs()
 
@@ -190,23 +194,23 @@ class FXGL private constructor() {
             log.debug("Saving FXGL system data")
 
             FS.writeDataTask(internalBundle, "system/fxgl.bundle")
-                    .onFailure(Consumer { log.warning("Failed to save: $it") })
-                    .execute()
+                    .onFailure { log.warning("Failed to save: $it") }
+                    .run()
         }
 
         private fun loadSystemData() {
             log.debug("Loading FXGL system data")
 
             FS.readDataTask<Bundle>("system/fxgl.bundle")
-                    .onSuccess(Consumer {
+                    .onSuccess {
                         internalBundle = it
                         internalBundle.log()
-                    })
-                    .onFailure(Consumer {
+                    }
+                    .onFailure {
                         log.warning("Failed to load: $it")
                         loadDefaultSystemData()
-                    })
-                    .execute()
+                    }
+                    .run()
         }
 
         private fun loadDefaultSystemData() {

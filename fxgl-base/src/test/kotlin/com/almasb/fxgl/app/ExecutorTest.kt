@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.concurrent
+package com.almasb.fxgl.app
 
 import com.almasb.fxgl.app.Executor
 import com.almasb.fxgl.app.FXGLExecutor

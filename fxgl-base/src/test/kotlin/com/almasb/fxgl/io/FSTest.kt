@@ -45,14 +45,14 @@ class FSTest {
 
     @Test
     fun `Load file names from a dir`() {
-        val fileNames = FS.loadFileNamesTask("testdir", false).execute()
+        val fileNames = FS.loadFileNamesTask("testdir", false).run()
 
         assertThat(fileNames, hasItems("testfile.txt", "testfile.json"))
     }
 
     @Test
     fun `Load dir names from a dir`() {
-        val dirNames = FS.loadDirectoryNamesTask("testdir", false).execute()
+        val dirNames = FS.loadDirectoryNamesTask("testdir", false).run()
 
         assertThat(dirNames, hasItems("testsubdir"))
     }
@@ -62,7 +62,7 @@ class FSTest {
         Files.createFile(Paths.get("testdir/somefile"))
         assertTrue(Files.exists(Paths.get("testdir/somefile")))
 
-        FS.deleteFileTask("testdir/somefile").execute()
+        FS.deleteFileTask("testdir/somefile").run()
         assertFalse(Files.exists(Paths.get("testdir/somefile")))
     }
 }

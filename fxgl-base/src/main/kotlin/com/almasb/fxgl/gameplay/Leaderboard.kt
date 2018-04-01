@@ -7,9 +7,7 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.io.IOTask
-import com.almasb.fxgl.io.taskOf
-import com.almasb.fxgl.io.voidTaskOf
+import com.almasb.fxgl.core.concurrent.IOTask
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -36,7 +34,7 @@ class Leaderboard {
     }
 
     fun loadTopTask(numItems: Int): IOTask<List<ScoreData>> {
-        return taskOf("Load Top", {
+        return IOTask.of("Load Top", {
 
             val getRequest = HttpGet("${baseUrl()}top?gameName=${gameName()}")
             getRequest.addHeader("accept", "application/json")
@@ -54,8 +52,8 @@ class Leaderboard {
         })
     }
 
-    fun postNewScoreTask(data: ScoreData): IOTask<Void?> {
-        return voidTaskOf("Put New Score", {
+    fun postNewScoreTask(data: ScoreData): IOTask<*> {
+        return IOTask.ofVoid("Put New Score", {
 
             val putRequest = HttpPut("${baseUrl()}newscore?gameName=${gameName()}&name=${data.name}&score=${data.score}")
             putRequest.addHeader("accept", "application/json")

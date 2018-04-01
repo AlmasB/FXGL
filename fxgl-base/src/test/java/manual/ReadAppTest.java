@@ -45,7 +45,7 @@ public class ReadAppTest extends Application {
             FS.loadDirectoryNamesTask("./", false)
                     .onSuccess(names -> System.out.println(names))
                     .onFailure(error -> System.out.println(error))
-                    .executeAsync(executor);
+                    .runAsync(executor);
 
 //            new IOTask<String>() {
 //

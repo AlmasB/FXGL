@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.net;
 
-import com.almasb.fxgl.io.IOTask;
+import com.almasb.fxgl.core.concurrent.IOTask;
 import com.almasb.fxgl.util.Optional;
 
 import java.io.InputStream;
@@ -43,7 +43,7 @@ public interface Net {
      * @param url link to open
      * @return task that opens default browser with given url
      */
-    IOTask<Void> openBrowserTask(String url);
+    IOTask<?> openBrowserTask(String url);
 
     IOTask<Server> hostMultiplayerTask();
 
