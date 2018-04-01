@@ -127,7 +127,6 @@
                     <excludes>
                         <exclude>com/almasb/fxgl/physics/box2d/**/*</exclude>
                         <exclude>com/almasb/fxgl/ai/**/*</exclude>
-                        <exclude>com/almasb/fxgl/core/**/*</exclude>
                         <exclude>com/almasb/fxgl/devtools/**/*</exclude>
                     </excludes>
                 </configuration>
