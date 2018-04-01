@@ -9,15 +9,17 @@ package com.almasb.fxgl.core.concurrent
 import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.core.math.FXGLMath.*
 import com.almasb.fxgl.entity.Entity
+import javafx.application.Platform
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.number.IsCloseTo
 import org.hamcrest.number.IsCloseTo.closeTo
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import java.time.Duration
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 
@@ -27,6 +29,13 @@ import java.util.concurrent.ExecutorService
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class IOTaskTest {
+
+    companion object {
+        @BeforeAll
+        @JvmStatic fun before() {
+            FXGLMock.mock()
+        }
+    }
 
     @Test
     fun `Task run`() {
@@ -48,33 +57,82 @@ class IOTaskTest {
 
     @Test
     fun `Async runs in a different thread`() {
-        var count = 0
-        var threadID = -333L
+        assertTimeout(Duration.ofSeconds(1)) {
+            var count = 0
+            var threadID = -333L
 
-        val task = IOTask.of {
-            count++
+            val task = IOTask.of {
+                count++
 
-            threadID = Thread.currentThread().id
+                threadID = Thread.currentThread().id
 
-            "MyString"
+                "MyString"
+            }
+
+            var result = ""
+
+            val executor = Executor { Thread(it).run() }
+
+            val latch = CountDownLatch(1)
+
+            task.onSuccess {
+                count++
+
+                assertThat(threadID, `is`(not(-333L)))
+                assertThat(threadID, `is`(Thread.currentThread().id))
+
+                result = it
+
+                latch.countDown()
+            }
+
+            task.runAsync(executor)
+
+            latch.await()
+
+            assertThat(count, `is`(2))
+            assertThat(result, `is`("MyString"))
         }
+    }
 
-        var result = ""
+    @Test
+    fun `Async FX runs in a JavaFX UI thread`() {
+        assertTimeout(Duration.ofSeconds(1)) {
+            var count = 0
+            var threadID = -333L
 
-        val executor = Executor { Thread(it).run() }
+            val task = IOTask.of {
+                count++
 
-        task.onSuccess {
-            count++
+                threadID = Thread.currentThread().id
 
-            assertThat(threadID, `is`(not(-333L)))
-            assertThat(threadID, `is`(Thread.currentThread().id))
+                "MyString"
+            }
 
-            result = it
+            var result = ""
+
+            val executor = Executor { Thread(it).run() }
+
+            val latch = CountDownLatch(1)
+
+            task.onSuccess {
+                count++
+
+                assertThat(threadID, `is`(not(-333L)))
+                assertThat(threadID, `is`(not(Thread.currentThread().id)))
+                assertTrue(Platform.isFxApplicationThread())
+
+                result = it
+
+                latch.countDown()
+            }
+
+            task.runAsyncFX(executor)
+
+            latch.await()
+
+            assertThat(count, `is`(2))
+            assertThat(result, `is`("MyString"))
         }
-
-        task.runAsync(executor)
-
-        assertThat(count, `is`(2))
-        assertThat(result, `is`("MyString"))
     }
 }
