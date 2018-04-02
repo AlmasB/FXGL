@@ -36,5 +36,5 @@ data class SaveFile(
         override fun compare(o1: SaveFile, o2: SaveFile) = o2.dateTime.compareTo(o1.dateTime)
     }
 
-    override fun toString() = name + " " + dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm"))
+    override fun toString() = "%-25.25s %s".format(name, dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm")))
 }

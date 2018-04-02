@@ -9,6 +9,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.MenuEventHandler;
+import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.achievement.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
@@ -47,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.almasb.fxgl.app.FXGL.getSettings;
+import static com.almasb.fxgl.app.FXGL.getUIFactory;
 import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
 import static com.almasb.fxgl.app.SystemPropertyKey.FXGL_VERSION;
 import static com.almasb.fxgl.util.BackportKt.forEach;
@@ -183,8 +185,30 @@ public abstract class FXGLMenu extends FXGLScene {
 
         ListView<SaveFile> list = FXGL.getUIFactory().newListView();
 
+        final double FONT_SIZE = 16;
+
+        list.setCellFactory(param -> {
+            return new ListCell<SaveFile>() {
+                @Override
+                protected void updateItem(SaveFile item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    if (empty || item == null) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+
+                        Text text = getUIFactory().newText(item.toString());
+                        text.setFont(FXGLAssets.UI_MONO_FONT.newFont(FONT_SIZE));
+
+                        setGraphic(text);
+                    }
+                }
+            };
+        });
+
         list.setItems(listener.getSaveLoadManager().saveFiles());
-        list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
+        list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(FONT_SIZE));
 
         // this runs async
         listener.getSaveLoadManager().querySaveFiles();

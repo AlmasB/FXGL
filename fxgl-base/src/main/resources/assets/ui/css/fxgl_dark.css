@@ -83,6 +83,53 @@
     /*-fx-background-insets: 0;*/
 }
 
+.fxgl-list-view .scroll-bar {
+    -fx-background-color: rgb(96,96,96);
+    -fx-background-radius: 1.5em;
+}
+
+.fxgl-list-view .scroll-bar .track {
+    -fx-background-color: transparent;
+	-fx-border-color: transparent;
+	-fx-background-radius: 0em;
+	-fx-border-radius: 2em;
+}
+
+.fxgl-list-view .scroll-bar .track-background {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2em;
+}
+
+.fxgl-list-view .scroll-bar .thumb {
+    -fx-background-color: orange;
+	-fx-background-insets: 2, 0, 0;
+	-fx-background-radius: 2em;
+}
+
+.fxgl-list-view .scroll-bar:vertical:focused,
+.fxgl-list-view .scroll-bar:horizontal:focused {
+    -fx-background-color: transparent,rgb(96,96,96),rgb(96,96,96);
+}
+
+.fxgl-list-view .scroll-bar:vertical .increment-button, .scroll-bar:vertical .decrement-button {
+    -fx-background-color:transparent;
+	-fx-background-radius: 0em;
+	-fx-padding:0 10 0 0;
+}
+
+.fxgl-list-view .scroll-bar:horizontal .increment-button, .scroll-bar:horizontal .decrement-button {
+    -fx-background-color:transparent;
+	-fx-background-radius: 0em;
+	-fx-padding:0 0 10 0;
+}
+
+.fxgl-list-view .scroll-bar .increment-arrow,
+.fxgl-list-view .scroll-bar .decrement-arrow {
+	-fx-shape: " ";
+	-fx-padding:0;
+}
+
 /**
  * FXGLChoiceBox
  */
