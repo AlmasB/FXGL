@@ -93,6 +93,13 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
 
                 currentFrame = (currentFrame + 1) % it.sequence.size
                 counter = 0.0
+
+                // TODO: this is a quick hack, ideally we should have two modes:
+                // play and loop
+                // play would stop at last frame
+                // loop would set the 0th frame
+
+                return
             }
 
             counter += tpf
