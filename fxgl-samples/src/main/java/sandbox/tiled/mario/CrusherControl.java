@@ -8,6 +8,8 @@ package sandbox.tiled.mario;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.extra.entity.state.StateComponent;
+import com.almasb.fxgl.extra.entity.state.State;
 import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.util.Named;
 import javafx.geometry.Point2D;
@@ -18,7 +20,7 @@ import javafx.util.Duration;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class CrusherControl extends FSMControl {
+public class CrusherControl extends StateComponent {
 
     private double crushSpeed;
 
@@ -35,7 +37,7 @@ public class CrusherControl extends FSMControl {
         System.out.println(player);
     }
 
-    private FSMState PREPARING = new FSMState() {
+    private State PREPARING = new State() {
         @Override
         public void onUpdate(double tpf) {
             entity.translateY(-tpf * crushSpeed / 3);
@@ -48,7 +50,7 @@ public class CrusherControl extends FSMControl {
         }
     };
 
-    private FSMState CRUSHING = new FSMState() {
+    private State CRUSHING = new State() {
         @Override
         public void onUpdate(double tpf) {
             entity.translateY(tpf * crushSpeed);
@@ -60,7 +62,7 @@ public class CrusherControl extends FSMControl {
         }
     };
 
-    private FSMState READY = new FSMState() {
+    private State READY = new State() {
         @Override
         public void onUpdate(double tpf) {
             t += tpf;

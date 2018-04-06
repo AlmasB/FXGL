@@ -6,8 +6,12 @@
 
 package sandbox.robots.anim;
 
+import com.almasb.fxgl.animation.Interpolators;
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.extra.entity.components.OffscreenCleanControl;
+import com.almasb.fxgl.extra.entity.components.ProjectileControl;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -16,6 +20,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -63,6 +68,24 @@ public class RobotFactory implements EntityFactory {
         e.setScaleX(0);
         e.setScaleY(0);
 
+        Entities.animationBuilder()
+                .interpolator(Interpolators.BOUNCE.EASE_OUT())
+                .delay(Duration.seconds(0.25))
+                .duration(Duration.seconds(1))
+                .scale(e)
+                .from(new Point2D(0, 0))
+                .to(new Point2D(1, 1))
+                .buildAndPlay();
+
         return e;
+    }
+
+    @Spawns("rocket")
+    public Entity newRocket(SpawnData data) {
+        return Entities.builder()
+                .from(data)
+                .viewFromNodeWithBBox(DSLKt.texture("rocket.png", 73, 20))
+                .with(new OffscreenCleanControl(), new ProjectileControl(new Point2D(1, 0), 800))
+                .build();
     }
 }

@@ -23,21 +23,19 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
     private var currentFrame = 0
     private var counter = 0.0
 
-    private var playingChannel = false
+    private var looping = false
+    private var needUpdate = false
 
     var animationChannel: AnimationChannel? = null
-        set(value) {
-            if (field !== value && !playingChannel) {
-                reset()
-                field = value
-            }
-        }
+        private set
+
+    var onCycleFinished: Runnable? = null
 
     init {
         animationChannel = defaultChannel
 
         // force channel to apply settings to this texture
-        onUpdate(0.0)
+        updateImage()
 
         start(FXGL.getApp().stateMachine.playState)
     }
@@ -49,7 +47,20 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
      */
     fun playAnimationChannel(channel: AnimationChannel) {
         animationChannel = channel
-        playingChannel = true
+        looping = false
+        reset()
+    }
+
+    /**
+     * Loops given channel.
+     * Calling this again on the same channel will have no effect
+     * and the channel will not be reset,
+     * but calling with a different channel will switch to that channel.
+     */
+    fun loopAnimationChannel(channel: AnimationChannel) {
+        animationChannel = channel
+        looping = true
+        reset()
     }
 
     private lateinit var state: State
@@ -77,33 +88,53 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         started = false
     }
 
+    // play and loop
+    // play would stop at last frame
+    // loop would set the 0th frame
+
     override fun onUpdate(tpf: Double) {
+        if (!needUpdate)
+            return
+
         animationChannel?.let {
+
+            var channelDone = false
+
+            counter += tpf
 
             if (counter >= it.frameDuration) {
 
                 // frame done
+                if (it.isLastFrame(currentFrame)) {
 
-                if (currentFrame == it.sequence.size-1) {
-                    // channel done
-                    if (playingChannel) {
-                        playingChannel = false
+                    channelDone = true
+
+                    if (!looping) {
+                        // stop at last frame, do not update image
+                        needUpdate = false
+                        onCycleFinished()
+                        return
                     }
                 }
 
-                currentFrame = (currentFrame + 1) % it.sequence.size
                 counter = 0.0
+                currentFrame = it.frameAfter(currentFrame)
 
-                // TODO: this is a quick hack, ideally we should have two modes:
-                // play and loop
-                // play would stop at last frame
-                // loop would set the 0th frame
-
-                return
+                updateImage()
             }
 
-            counter += tpf
+            if (channelDone) {
+                onCycleFinished()
+            }
+        }
+    }
 
+    private fun onCycleFinished() {
+        onCycleFinished?.run()
+    }
+
+    private fun updateImage() {
+        animationChannel?.let {
             val framesPerRow = it.framesPerRow
 
             val frameWidth = it.frameWidth.toDouble()
@@ -115,14 +146,16 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
             image = it.image
             fitWidth = frameWidth
             fitHeight = frameHeight
-            viewport = Rectangle2D(col * frameWidth, row * frameHeight,
-                    frameWidth, frameHeight)
+            viewport = Rectangle2D(col * frameWidth, row * frameHeight, frameWidth, frameHeight)
         }
     }
 
     private fun reset() {
         currentFrame = 0
         counter = 0.0
+        needUpdate = true
+
+        updateImage()
     }
 
     override fun dispose() {

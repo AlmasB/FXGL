@@ -67,16 +67,16 @@ public class PlayerControl extends Component {
 
         if (onGround) {
             if (Math.abs(physics.getVelocityX()) == 0) {
-                animatedTexture.setAnimationChannel(animStand);
+                animatedTexture.loopAnimationChannel(animStand);
             } else {
-                animatedTexture.setAnimationChannel(animWalk);
+                animatedTexture.loopAnimationChannel(animWalk);
             }
         } else {
             if ((physics.getVelocityY()) < 0) {
                 animatedTexture.playAnimationChannel(animJump);
             } else {
                 // fall
-                animatedTexture.setAnimationChannel(animFall);
+                animatedTexture.loopAnimationChannel(animFall);
             }
         }
 

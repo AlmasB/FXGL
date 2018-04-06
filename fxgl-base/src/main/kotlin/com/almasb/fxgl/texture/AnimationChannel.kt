@@ -41,4 +41,11 @@ class AnimationChannel(val image: Image,
         sequence += startFrame..endFrame
         frameDuration = channelDuration.toSeconds() / sequence.size
     }
+
+    fun isLastFrame(frame: Int) = frame == sequence.size - 1
+
+    /**
+     * Returns next frame index or 0 if [frame] is last.
+     */
+    fun frameAfter(frame: Int) = (frame + 1) % sequence.size
 }

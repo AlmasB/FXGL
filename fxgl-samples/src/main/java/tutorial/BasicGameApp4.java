@@ -82,9 +82,9 @@ public class BasicGameApp4 extends GameApplication {
             entity.translateX(speed * tpf);
 
             if (speed == 0) {
-                texture.setAnimationChannel(animIdle);
+                texture.loopAnimationChannel(animIdle);
             } else {
-                texture.setAnimationChannel(animWalk);
+                texture.loopAnimationChannel(animWalk);
 
                 speed = (int) (speed * 0.9);
 

@@ -40,7 +40,7 @@ public class PlayerControl extends Component {
     @Override
     public void onUpdate(double tpf) {
 
-        texture.setAnimationChannel(isMoving() ? animWalk : animIdle);
+        texture.loopAnimationChannel(isMoving() ? animWalk : animIdle);
     }
 
     private boolean isMoving() {

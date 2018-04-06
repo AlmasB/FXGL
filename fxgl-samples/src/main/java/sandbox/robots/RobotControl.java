@@ -52,9 +52,9 @@ public class RobotControl extends Component {
     @Override
     public void onUpdate(double tpf) {
         if (entity.distance(entity.getWorld().getSingleton(MarioType.PLAYER).get()) < 300) {
-            animatedTexture.setAnimationChannel(animStand);
+            animatedTexture.loopAnimationChannel(animStand);
         } else {
-            animatedTexture.setAnimationChannel(animPassive);
+            animatedTexture.loopAnimationChannel(animPassive);
         }
     }
 }

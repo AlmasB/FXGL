@@ -17,6 +17,8 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import static com.almasb.fxgl.app.DSLKt.*;
@@ -32,7 +34,6 @@ public class RobotApp extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1000);
         settings.setHeight(800);
-        settings.setIntroEnabled(true);
     }
 
     @Override
@@ -98,23 +99,20 @@ public class RobotApp extends GameApplication {
                 robot.crouch();
             }
         }, KeyCode.S);
+
+        getInput().addAction(new UserAction("Shoot") {
+            @Override
+            protected void onActionBegin() {
+                robot.shoot();
+            }
+        }, MouseButton.PRIMARY);
     }
 
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new RobotFactory());
 
-        Entity r = spawn("robot");
-
-        Entities.animationBuilder()
-                .interpolator(Interpolators.BOUNCE.EASE_OUT())
-                .delay(Duration.seconds(0.25))
-                .duration(Duration.seconds(1))
-                .scale(r)
-                .from(new Point2D(0, 0))
-                .to(new Point2D(1, 1))
-                .buildAndPlay();
-
+        Entity r = spawn("robot", 100, 0);
         robot = r.getComponent(RobotComponent.class);
 
         spawn("platform", new SpawnData(0, getHeight()).put("width", 3000).put("height", 40));
@@ -126,6 +124,8 @@ public class RobotApp extends GameApplication {
 
         getGameScene().getViewport().bindToEntity(r, getWidth() / 2, 300);
         getGameScene().getViewport().setBounds(0, 0, 10000, getHeight() + 40);
+
+        //spawn("robot", new SpawnData(600, 0).put("color", Color.RED));
     }
 
     @Override
