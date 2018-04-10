@@ -49,7 +49,9 @@ public abstract class FXGLScene {
         // should pass thru ctor params?
         viewport = new Viewport(FXGL.getAppWidth(), FXGL.getAppHeight());
 
-        setCursor("fxgl_default.png", new Point2D(7, 6));
+        if (FXGL.isDesktop()) {
+            setCursor("fxgl_default.png", new Point2D(7, 6));
+        }
     }
 
     /**

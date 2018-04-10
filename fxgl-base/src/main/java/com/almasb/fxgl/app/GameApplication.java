@@ -111,7 +111,8 @@ public abstract class GameApplication extends Application {
 
             initMainWindow(stage);
 
-            showPreloadingStage();
+            // TODO: currently disabled until we can use primary stage to show it
+            //showPreloadingStage();
 
             log.debug("Starting FXGL");
 

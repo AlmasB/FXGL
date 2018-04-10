@@ -136,7 +136,9 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
 
             isResizable = settings.isManualResizeEnabled
 
-            initStyle(settings.stageStyle)
+            if (FXGL.isDesktop()) {
+                initStyle(settings.stageStyle)
+            }
 
             setOnCloseRequest { e ->
                 e.consume()

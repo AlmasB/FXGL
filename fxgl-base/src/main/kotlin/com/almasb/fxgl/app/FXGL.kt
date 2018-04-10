@@ -54,7 +54,11 @@ class FXGL private constructor() {
 
         private val props = PropertyMap()
 
-        @JvmStatic fun isDesktop() = Platform.isDesktop()
+        // cheap hack for now
+        @JvmStatic fun isBrowser() = System.getProperty("fxgl.isBrowser", "false") == "true"
+
+        // javafxports doesn't have "web" option, so will incorrectly default to desktop, hence the extra check
+        @JvmStatic fun isDesktop() = !isBrowser() && Platform.isDesktop()
         @JvmStatic fun isAndroid() = Platform.isAndroid()
         @JvmStatic fun isIOS() = Platform.isIOS()
 
@@ -134,7 +138,9 @@ class FXGL private constructor() {
         }
 
         private fun logVersion() {
-            log.info("FXGL-${props.getString(FXGL_VERSION)} on ${Platform.getCurrent()}")
+            val platform = "${Platform.getCurrent()}" + if (isBrowser()) " BROWSER" else ""
+
+            log.info("FXGL-${props.getString(FXGL_VERSION)} on $platform")
             log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
             log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
         }
@@ -231,7 +237,9 @@ class FXGL private constructor() {
             if (!configured)
                 throw IllegalStateException("FXGL has not been configured")
 
-            saveSystemData()
+            if (isDesktop()) {
+                saveSystemData()
+            }
         }
 
         @JvmStatic fun getExceptionHandler() = getSettings().exceptionHandler
