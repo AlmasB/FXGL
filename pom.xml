@@ -16,12 +16,6 @@
         <!-- Main framework module -->
         <module>fxgl-base</module>
 
-        <!-- This module shows how to use FXGL, but FXGL does not depend on it.
-            Reactor order is important as nexus plugin requires the last module to be deployed,
-            while we want the samples to be ignored. Hence samples comes 2nd and extra 3rd.
-        -->
-        <!--<module>fxgl-samples</module>-->
-
         <!-- Extra functionality module (on top of the main module) -->
         <module>fxgl</module>
     </modules>
@@ -83,7 +77,6 @@
         <kotlinx.version>0.22.3</kotlinx.version>
         <jackson.version>2.9.0</jackson.version>
         <apache.http.version>4.5.3</apache.http.version>
-        <classpath.scanner.version>2.4.5</classpath.scanner.version>
         <charm.down.version>3.7.0</charm.down.version>
         <audio.plugin.version>0.0.2</audio.plugin.version>
 
@@ -233,6 +226,7 @@
                     </executions>
                 </plugin>
 
+                <!-- Add kotlin sources -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
