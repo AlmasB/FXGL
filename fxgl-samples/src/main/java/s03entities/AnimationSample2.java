@@ -67,8 +67,7 @@ public class AnimationSample2 extends GameApplication {
             protected void onActionBegin() {
                 Entities.builder()
                         .at(getInput().getMousePositionWorld())
-                        .viewFromAnimatedTexture("explosion2.png", 16, Duration.seconds(1), false)
-                        .with(new ExpireCleanControl(Duration.seconds(1)))
+                        .viewFromAnimatedTexture("explosion.png", 48, Duration.seconds(0.5), false, true)
                         .buildAndAttach(getGameWorld());
             }
         }, MouseButton.PRIMARY);
@@ -83,7 +82,7 @@ public class AnimationSample2 extends GameApplication {
 
         Entities.builder()
                 .at(350, 150)
-                .viewFromAnimatedTexture("explosion2.png", 16, Duration.seconds(1.0), true)
+                .viewFromAnimatedTexture("explosion2.png", 16, Duration.seconds(1.0))
                 .buildAndAttach(getGameWorld());
     }
 

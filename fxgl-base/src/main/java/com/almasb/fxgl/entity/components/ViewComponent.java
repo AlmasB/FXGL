@@ -170,8 +170,13 @@ public class ViewComponent extends Component {
         setView(view, generateBoundingBox);
     }
 
-    public void setAnimatedTexture(String textureName, int numFrames, Duration duration, boolean loop) {
+    public void setAnimatedTexture(String textureName, int numFrames, Duration duration, boolean loop, boolean removeEntityOnFinish) {
         AnimatedTexture texture = FXGL.getAssetLoader().loadTexture(textureName).toAnimatedTexture(numFrames, duration);
+
+        if (removeEntityOnFinish) {
+            texture.setOnCycleFinished(() -> entity.removeFromWorld());
+        }
+
         if (loop) {
             texture.loop();
         } else {

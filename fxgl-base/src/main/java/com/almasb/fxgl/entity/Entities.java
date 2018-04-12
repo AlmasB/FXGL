@@ -174,8 +174,18 @@ public final class Entities {
             return this;
         }
 
+        public EntityBuilder viewFromAnimatedTexture(String textureName, int numFrames, Duration duration) {
+            entity.getViewComponent().setAnimatedTexture(textureName, numFrames, duration, true, false);
+            return this;
+        }
+
         public EntityBuilder viewFromAnimatedTexture(String textureName, int numFrames, Duration duration, boolean loop) {
-            entity.getViewComponent().setAnimatedTexture(textureName, numFrames, duration, loop);
+            entity.getViewComponent().setAnimatedTexture(textureName, numFrames, duration, loop, false);
+            return this;
+        }
+
+        public EntityBuilder viewFromAnimatedTexture(String textureName, int numFrames, Duration duration, boolean loop, boolean removeEntityOnFinish) {
+            entity.getViewComponent().setAnimatedTexture(textureName, numFrames, duration, loop, removeEntityOnFinish);
             return this;
         }
 
