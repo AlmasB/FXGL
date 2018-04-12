@@ -63,6 +63,14 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         reset()
     }
 
+    fun play() {
+        playAnimationChannel(animationChannel!!)
+    }
+
+    fun loop() {
+        loopAnimationChannel(animationChannel!!)
+    }
+
     private lateinit var state: State
 
     var started = false

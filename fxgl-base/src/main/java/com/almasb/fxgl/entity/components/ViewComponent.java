@@ -14,6 +14,7 @@ import com.almasb.fxgl.entity.component.CoreComponent;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.texture.AnimatedTexture;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
@@ -22,6 +23,7 @@ import javafx.scene.Node;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.util.Duration;
 
 import static com.almasb.fxgl.util.BackportKt.forEach;
 
@@ -166,6 +168,19 @@ public class ViewComponent extends Component {
         EntityView view = new EntityView(FXGL.getAssetLoader().loadTexture(textureName));
 
         setView(view, generateBoundingBox);
+    }
+
+    public void setAnimatedTexture(String textureName, int numFrames, Duration duration, boolean loop) {
+        AnimatedTexture texture = FXGL.getAssetLoader().loadTexture(textureName).toAnimatedTexture(numFrames, duration);
+        if (loop) {
+            texture.loop();
+        } else {
+            texture.play();
+        }
+
+        EntityView view = new EntityView(texture);
+
+        setView(view, false);
     }
 
     private PositionComponent position;

@@ -23,6 +23,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 import java.util.List;
 
@@ -170,6 +171,11 @@ public final class Entities {
 
         public EntityBuilder viewFromTextureWithBBox(String textureName) {
             entity.getViewComponent().setTexture(textureName, true);
+            return this;
+        }
+
+        public EntityBuilder viewFromAnimatedTexture(String textureName, int numFrames, Duration duration, boolean loop) {
+            entity.getViewComponent().setAnimatedTexture(textureName, numFrames, duration, loop);
             return this;
         }
 

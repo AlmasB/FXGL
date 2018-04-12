@@ -9,10 +9,12 @@ package s03entities;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.extra.entity.components.ExpireCleanControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 
 /**
@@ -36,7 +38,8 @@ public class AnimationSample2 extends GameApplication {
     @Override
     protected void preInit() {
         playerTexture = getAssetLoader().loadTexture("bird.png")
-                .toAnimatedTexture(2, Duration.seconds(0.33));
+                .toAnimatedTexture(2, Duration.seconds(0.53));
+        playerTexture.loop();
     }
 
     @Override
@@ -58,6 +61,17 @@ public class AnimationSample2 extends GameApplication {
                 }
             }
         }, KeyCode.F);
+
+        getInput().addAction(new UserAction("Explosion") {
+            @Override
+            protected void onActionBegin() {
+                Entities.builder()
+                        .at(getInput().getMousePositionWorld())
+                        .viewFromAnimatedTexture("explosion2.png", 16, Duration.seconds(1), false)
+                        .with(new ExpireCleanControl(Duration.seconds(1)))
+                        .buildAndAttach(getGameWorld());
+            }
+        }, MouseButton.PRIMARY);
     }
 
     @Override
@@ -65,6 +79,11 @@ public class AnimationSample2 extends GameApplication {
         Entities.builder()
                 .at(150, 150)
                 .viewFromNode(playerTexture)
+                .buildAndAttach(getGameWorld());
+
+        Entities.builder()
+                .at(350, 150)
+                .viewFromAnimatedTexture("explosion2.png", 16, Duration.seconds(1.0), true)
                 .buildAndAttach(getGameWorld());
     }
 
