@@ -170,9 +170,7 @@ public class ViewComponent extends Component {
         setView(view, generateBoundingBox);
     }
 
-    public void setAnimatedTexture(String textureName, int numFrames, Duration duration, boolean loop, boolean removeEntityOnFinish) {
-        AnimatedTexture texture = FXGL.getAssetLoader().loadTexture(textureName).toAnimatedTexture(numFrames, duration);
-
+    public void setAnimatedTexture(AnimatedTexture texture, boolean loop, boolean removeEntityOnFinish) {
         if (removeEntityOnFinish) {
             texture.setOnCycleFinished(() -> entity.removeFromWorld());
         }
@@ -186,6 +184,12 @@ public class ViewComponent extends Component {
         EntityView view = new EntityView(texture);
 
         setView(view, false);
+    }
+
+    public void setAnimatedTexture(String textureName, int numFrames, Duration duration, boolean loop, boolean removeEntityOnFinish) {
+        AnimatedTexture texture = FXGL.getAssetLoader().loadTexture(textureName).toAnimatedTexture(numFrames, duration);
+
+        setAnimatedTexture(texture, loop, removeEntityOnFinish);
     }
 
     private PositionComponent position;

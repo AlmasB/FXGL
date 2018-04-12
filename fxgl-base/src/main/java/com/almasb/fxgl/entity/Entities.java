@@ -17,6 +17,7 @@ import com.almasb.fxgl.parser.tiled.Tileset;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.texture.AnimatedTexture;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -171,6 +172,21 @@ public final class Entities {
 
         public EntityBuilder viewFromTextureWithBBox(String textureName) {
             entity.getViewComponent().setTexture(textureName, true);
+            return this;
+        }
+
+        public EntityBuilder viewFromAnimatedTexture(AnimatedTexture texture) {
+            entity.getViewComponent().setAnimatedTexture(texture, true, false);
+            return this;
+        }
+
+        public EntityBuilder viewFromAnimatedTexture(AnimatedTexture texture, boolean loop) {
+            entity.getViewComponent().setAnimatedTexture(texture, loop, false);
+            return this;
+        }
+
+        public EntityBuilder viewFromAnimatedTexture(AnimatedTexture texture, boolean loop, boolean removeEntityOnFinish) {
+            entity.getViewComponent().setAnimatedTexture(texture, loop, removeEntityOnFinish);
             return this;
         }
 
