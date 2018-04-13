@@ -9,9 +9,6 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.app.SystemPropertyKey.*
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.time.LocalTimer
-import javafx.scene.control.Button
-import javafx.scene.control.ButtonType
-import javafx.scene.control.Dialog
 import javafx.util.Duration
 
 /**
@@ -51,31 +48,10 @@ internal class UpdaterTask : Runnable {
     }
 
     /**
-     * Shows a blocking JavaFX dialog, while it runs an async task
-     * to connect to FXGL repo and find latest version string.
+     * Connect to FXGL repo and find latest version string.
      */
     private fun checkForUpdates() {
         log.debug("Checking for updates")
-
-        val dialog = Dialog<ButtonType>()
-        with(dialog) {
-            title = "FXGL Update"
-            dialogPane.contentText = "Checking for updates...\n \n "
-            dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL)
-        }
-
-        // Open GitHub button
-        val button = dialog.dialogPane.lookupButton(ButtonType.OK) as Button
-        with(button) {
-            isDisable = true
-            text = "Open GitHub"
-            setOnAction {
-                FXGL.getNet()
-                        .openBrowserTask(FXGL.getProperties().getString("url.github"))
-                        .onFailure { log.warning("Error opening browser: $it") }
-                        .run()
-            }
-        }
 
         FXGL.getNet()
                 .getLatestVersionTask()
@@ -87,27 +63,16 @@ internal class UpdaterTask : Runnable {
                     updateCheckTimer.capture()
 
                     if (currentVersion == latestVersion) {
-                        dialog.close()
-                    } else {
-                        dialog.dialogPane.contentText = "Just so you know\n" +
-                                "Your version:   $currentVersion\n" +
-                                "Latest version: $latestVersion"
 
-                        button.isDisable = false
+                    } else {
+                        log.info("Your current version:  $currentVersion")
+                        log.info("Latest stable version: $latestVersion")
                     }
                 }
                 .onFailure { error ->
-
                     // not important, just log it
                     log.warning("Failed to find updates: $error")
-
-                    dialog.dialogPane.contentText = "Failed to find updates: " + error
-
-                    button.isDisable = false
                 }
-                .runAsyncFX()
-
-        // blocking call
-        dialog.showAndWait()
+                .run()
     }
 }

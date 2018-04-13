@@ -23,7 +23,6 @@ import com.almasb.fxgl.scene.menu.MenuSettings
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.ui.FXGLDisplay
-import com.almasb.fxgl.util.Consumer
 import com.gluonhq.charm.down.Platform
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
@@ -133,7 +132,7 @@ class FXGL private constructor() {
                 else
                     loadSystemData()
 
-                runUpdaterAndWait()
+                runUpdaterAsync()
             }
         }
 
@@ -226,8 +225,8 @@ class FXGL private constructor() {
             internalBundle = Bundle("FXGL")
         }
 
-        private fun runUpdaterAndWait() {
-            Async.startFX { UpdaterTask().run() }.await()
+        private fun runUpdaterAsync() {
+            Async.start { UpdaterTask().run() }
         }
 
         /**
