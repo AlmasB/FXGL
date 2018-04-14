@@ -179,6 +179,14 @@ public final class AppStateMachine {
         return dialog;
     }
 
+    /**
+     * This is called only once by GameApplication.
+     */
+    void run() {
+        // appState is STARTUP
+        setState(appState);
+    }
+
     void startIntro() {
         setState(intro);
     }

@@ -29,7 +29,7 @@ import javafx.scene.input.KeyEvent
  * Active only once.
  */
 internal class StartupState
-internal constructor(private val app: GameApplication) : AppState(/* placeholder scene */ object : FXGLScene() {}) {
+internal constructor(private val app: GameApplication, scene: FXGLScene) : AppState(scene) {
 
     private val log = Logger.get(StartupState::class.java)
 

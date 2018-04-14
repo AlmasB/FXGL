@@ -15,7 +15,8 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.gameplay.*;
+import com.almasb.fxgl.gameplay.GameState;
+import com.almasb.fxgl.gameplay.Gameplay;
 import com.almasb.fxgl.gameplay.achievement.AchievementEvent;
 import com.almasb.fxgl.gameplay.achievement.AchievementStore;
 import com.almasb.fxgl.gameplay.notification.NotificationEvent;
@@ -28,8 +29,8 @@ import com.almasb.fxgl.saving.LoadEvent;
 import com.almasb.fxgl.saving.SaveEvent;
 import com.almasb.fxgl.scene.FXGLScene;
 import com.almasb.fxgl.scene.GameScene;
-import com.almasb.fxgl.scene.PreloadingScene;
 import com.almasb.fxgl.scene.SceneFactory;
+import com.almasb.fxgl.scene.StartupScene;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -46,7 +47,6 @@ import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,9 +110,6 @@ public abstract class GameApplication extends Application {
             initLogger();
 
             initMainWindow(stage);
-
-            // TODO: currently disabled until we can use primary stage to show it
-            //showPreloadingStage();
 
             log.debug("Starting FXGL");
 
@@ -200,24 +197,6 @@ public abstract class GameApplication extends Application {
         });
     }
 
-    /**
-     * Shows preloading stage with scene while FXGL is being configured.
-     */
-    private void showPreloadingStage() {
-        Stage preloadingStage = new Stage(StageStyle.UNDECORATED);
-        preloadingStage.initOwner(mainWindow.getStage());
-        preloadingStage.setScene(new PreloadingScene());
-        preloadingStage.show();
-
-        // when main stage has opened
-        mainWindow.setOnShown(() -> {
-            // close our preloader
-            preloadingStage.close();
-            // clean the reference to lambda + preloader
-            mainWindow.setOnShown(null);
-        });
-    }
-
     private void handleFatalErrorBeforeLaunch(Throwable error) {
         if (Logger.isConfigured()) {
             log.fatal("Exception during FXGL configuration:", error);
@@ -275,7 +254,8 @@ public abstract class GameApplication extends Application {
         SceneFactory sceneFactory = FXGL.getSettings().getSceneFactory();
 
         // STARTUP is default
-        AppState initial = new StartupState(this);
+        // TODO: create through scene factory
+        AppState initial = new StartupState(this, new StartupScene());
 
         AppState loading = new LoadingState(this, sceneFactory.newLoadingScene());
         AppState play = new PlayState(sceneFactory.newGameScene(getWidth(), getHeight()));
@@ -319,6 +299,8 @@ public abstract class GameApplication extends Application {
         });
 
         playState = (PlayState) stateMachine.getPlayState();
+
+        stateMachine.run();
     }
 
     private void attachEventHandlers() {

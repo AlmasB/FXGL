@@ -6,69 +6,44 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.centerText
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
-import javafx.geometry.Insets
-import javafx.geometry.Pos
 import javafx.scene.Node
-import javafx.scene.Parent
-import javafx.scene.Scene
-import javafx.scene.control.Button
-import javafx.scene.layout.Background
-import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.Pane
-import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
-import javafx.scene.text.Font
-import javafx.scene.text.Text
 import javafx.util.Duration
 
 /**
- * This is the default preloading scene which is shown while FXGL is being
- * configured and initialized.
- * Hence, this scene is purely JavaFX based.
+ * This is the default startup scene which is shown while FXGL is in startup state.
+ *
+ * TODO: properly clean this up once done using startup
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class PreloadingScene : Scene(VBox(50.0)) {
-
-    // seconds
-    private val WAIT_TIME = 10
+class StartupScene : FXGLScene() {
 
     init {
-        createContent()
+        val bg = Rectangle(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble())
+
+        val title = makeTitle()
+        centerText(title)
+
+        val symbol = makeSymbol()
+        symbol.translateX = FXGL.getAppWidth() / 2 - 53.0
+        symbol.translateY = FXGL.getAppHeight() / 2 + 45.0
+
+        contentRoot.children.addAll(bg, title, symbol)
     }
 
-    private fun createContent(): Parent {
-        val root = this.root as VBox
-
-        with(root) {
-            setPrefSize(400.0, 400.0)
-            background = Background(BackgroundFill(Color.BLACK, null, null))
-            padding = Insets(25.0)
-            alignment = Pos.CENTER
-            children.addAll(makeTitle(), makeSymbol())
-
-            return this
-        }
-    }
-
-    private fun makeTitle(): Node {
-        val text = Text("FXGL")
-
-        with(text) {
-            fill = Color.WHITE
-            font = Font.font(48.0)
-            return this
-        }
-    }
+    private fun makeTitle() = FXGL.getUIFactory().newText("FXGL", 48.0)
 
     private fun makeSymbol(): Node {
         val symbol = Pane()
-        symbol.translateX = 125.0
 
         val top = Rectangle(70.0, 5.0, Color.BLUE)
         top.arcWidth = 25.0
@@ -110,30 +85,14 @@ class PreloadingScene : Scene(VBox(50.0)) {
                 KeyValue(innerCircle.radiusProperty(), 20),
                 KeyValue(innerCircle.fillProperty(), Color.GREEN))
 
+        // TODO: use FXGL loop?
+
         val timeline = Timeline()
-        with(timeline) {
-            keyFrames.add(frame)
-            cycleCount = WAIT_TIME
-            setOnFinished {
-                showExit()
-            }
-            play()
-        }
+        timeline.cycleCount = 10
+        timeline.keyFrames.add(frame)
+        timeline.play()
 
         symbol.children.addAll(top, mid, bot, outerCircle, innerCircle, point)
         return symbol
-    }
-
-    private fun showExit() {
-        val text = Text("Taking longer than usual...")
-        text.fill = Color.WHITE
-
-        val exitBtn = Button("EXIT")
-        exitBtn.setOnAction {
-            println("User requested exit")
-            System.exit(0)
-        }
-
-        (root as VBox).children.addAll(text, exitBtn)
     }
 }
