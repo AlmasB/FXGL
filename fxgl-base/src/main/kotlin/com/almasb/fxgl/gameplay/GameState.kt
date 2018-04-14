@@ -15,8 +15,6 @@ import javafx.beans.property.SimpleObjectProperty
  * Holds game CVars as JavaFX properties and allows
  * easy manipulation.
  *
- * TODO: redesign with properties to avoid code duplication
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class GameState {

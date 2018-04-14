@@ -6,9 +6,12 @@
 
 package com.almasb.fxgl.ui
 
+import javafx.beans.binding.StringExpression
 import javafx.collections.ObservableList
 import javafx.scene.control.*
+import javafx.scene.paint.Color
 import javafx.scene.text.Font
+import javafx.scene.text.Text
 
 /**
  *
@@ -16,6 +19,26 @@ import javafx.scene.text.Font
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 object MockUIFactory : UIFactory {
+    override fun newText(message: String?): Text {
+        return Text()
+    }
+
+    override fun newText(message: String?, fontSize: Double): Text {
+        return Text()
+    }
+
+    override fun newText(message: String?, textColor: Color?, fontSize: Double): Text {
+        return Text()
+    }
+
+    override fun newText(textBinding: StringExpression?): Text {
+        return Text()
+    }
+
+    override fun newTextFlow(): FXGLTextFlow {
+        return FXGLTextFlow()
+    }
+
     override fun newWindow(): MDIWindow {
         return MDIWindow()
     }

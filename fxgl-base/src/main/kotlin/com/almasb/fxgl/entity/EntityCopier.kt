@@ -8,6 +8,7 @@ package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CopyableComponent
+import com.almasb.fxgl.entity.component.Required
 
 /**
  *
@@ -27,13 +28,28 @@ internal object EntityCopier {
             copy.boundingBoxComponent.addHitBox(it.copy())
         }
 
-        entity.components
+        // find components without requirements, add them first
+        // then the other ones
+        // this is flawed, we actually need to sort this, so that we have a correct dependency order
+        // https://github.com/AlmasB/FXGL/issues/529
+        val map = entity.components
                 .filterIsInstance<CopyableComponent<*>>()
-                .forEach {
-                    if (!copy.hasComponent(it.javaClass as Class<out Component>)) {
-                        copy.addComponent(it.copy())
-                    }
-                }
+                .groupBy { it.javaClass.getAnnotation(Required::class.java) != null }
+
+        val components1 = map[true]
+        val components2 = map[false]
+
+        components2?.forEach {
+            if (!copy.hasComponent(it.javaClass as Class<out Component>)) {
+                copy.addComponent(it.copy())
+            }
+        }
+
+        components1?.forEach {
+            if (!copy.hasComponent(it.javaClass as Class<out Component>)) {
+                copy.addComponent(it.copy())
+            }
+        }
 
         return copy
     }

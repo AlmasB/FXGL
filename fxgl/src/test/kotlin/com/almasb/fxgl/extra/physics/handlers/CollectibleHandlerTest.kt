@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.extra.physics.handlers
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.components.CollidableComponent
@@ -16,6 +17,7 @@ import com.almasb.fxgl.util.Consumer
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -28,8 +30,13 @@ class CollectibleHandlerTest {
         COLLECTOR, COLLECTIBLE
     }
 
-    // TODO: fix
-    @Disabled
+    companion object {
+        @BeforeAll
+        @JvmStatic fun before() {
+            FXGL.getProperties().setValue("dev.showbbox", false)
+        }
+    }
+
     @Test
     fun `Collectible is collected`() {
         val gameWorld = GameWorld()

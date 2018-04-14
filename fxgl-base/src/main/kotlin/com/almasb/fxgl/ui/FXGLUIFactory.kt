@@ -7,9 +7,12 @@
 package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.asset.FXGLAssets
+import javafx.beans.binding.StringExpression
 import javafx.collections.ObservableList
 import javafx.scene.control.*
+import javafx.scene.paint.Color
 import javafx.scene.text.Font
+import javafx.scene.text.Text
 
 /**
  * FXGL provider of UI factory service.
@@ -17,6 +20,30 @@ import javafx.scene.text.Font
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class FXGLUIFactory : UIFactory {
+    override fun newText(textBinding: StringExpression): Text {
+        val text = newText(textBinding.get())
+        text.textProperty().bind(textBinding)
+        return text
+    }
+
+    override fun newText(message: String, textColor: Color, fontSize: Double): Text {
+        val text = Text(message)
+        text.fill = textColor
+        text.font = newFont(fontSize)
+        return text
+    }
+
+    override fun newText(message: String, fontSize: Double): Text {
+        return newText(message, Color.WHITE, fontSize)
+    }
+
+    override fun newText(message: String): Text {
+        return newText(message, Color.WHITE, 18.0)
+    }
+
+    override fun newTextFlow(): FXGLTextFlow {
+        return FXGLTextFlow()
+    }
 
     override fun newWindow(): MDIWindow {
         return MDIWindow()

@@ -72,7 +72,7 @@ public class ParticleComponent extends Component {
 
     @Override
     public void onRemoved() {
-        // TODO: back to pool?
+        particles.forEach(Pools::free);
         particles.clear();
 
         parent.removeFromWorld();

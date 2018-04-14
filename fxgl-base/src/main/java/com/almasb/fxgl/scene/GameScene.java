@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.scene;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.entity.Entity;
@@ -60,14 +61,16 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     protected GameScene(int width, int height) {
         getContentRoot().getChildren().addAll(gameRoot, uiRoot);
 
-        initProfilerText(0, height - 120);
+        if (FXGL.getSettings().isProfilingEnabled()) {
+            initProfilerText(0, height - 120);
+        }
+
         initViewport(width, height);
 
         log.debug("Game scene initialized: " + width + "x" + height);
     }
 
     private void initProfilerText(double x, double y) {
-        // TODO: only do this when profiling enabled?
         profilerText.setFont(FXGLAssets.UI_MONO_FONT.newFont(20));
         profilerText.setFill(Color.RED);
         profilerText.setTranslateX(x);

@@ -21,8 +21,6 @@ import javafx.scene.text.Text;
  */
 public interface UIFactory {
 
-    // TODO: remove defaults
-
     MDIWindow newWindow();
 
     /**
@@ -31,26 +29,13 @@ public interface UIFactory {
      */
     Font newFont(double size);
 
-    default Text newText(String message) {
-        return newText(message, Color.WHITE, 18);
-    }
+    Text newText(String message);
 
-    default Text newText(String message, double fontSize) {
-        return newText(message, Color.WHITE, fontSize);
-    }
+    Text newText(String message, double fontSize);
 
-    default Text newText(String message, Color textColor, double fontSize) {
-        Text text = new Text(message);
-        text.setFill(textColor);
-        text.setFont(newFont(fontSize));
-        return text;
-    }
+    Text newText(String message, Color textColor, double fontSize);
 
-    default Text newText(StringExpression textBinding) {
-        Text text = newText(textBinding.get());
-        text.textProperty().bind(textBinding);
-        return text;
-    }
+    Text newText(StringExpression textBinding);
 
     Button newButton(String text);
 
@@ -66,7 +51,5 @@ public interface UIFactory {
 
     <T> ListView<T> newListView();
 
-    default FXGLTextFlow newTextFlow() {
-        return new FXGLTextFlow();
-    }
+    FXGLTextFlow newTextFlow();
 }

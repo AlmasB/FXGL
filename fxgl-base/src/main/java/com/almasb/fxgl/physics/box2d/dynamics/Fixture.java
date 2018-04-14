@@ -62,24 +62,8 @@ public final class Fixture {
             proxies[i] = new FixtureProxy();
         }
 
-        // TODO: this shouldn't be possible, right?
-        // remove in the next version
-        // here proxies.length is always == childCount
-
         if (proxies.length < childCount) {
             throw new RuntimeException("BUG Fixture()");
-
-//            FixtureProxy[] old = proxies;
-//            int newLen = JBoxUtils.max(old.length * 2, childCount);
-//            proxies = new FixtureProxy[newLen];
-//            System.arraycopy(old, 0, proxies, 0, old.length);
-//            for (int i = 0; i < newLen; i++) {
-//                if (i >= old.length) {
-//                    proxies[i] = new FixtureProxy();
-//                }
-//                proxies[i].fixture = null;
-//                proxies[i].proxyId = BroadPhase.NULL_PROXY;
-//            }
         }
     }
 
