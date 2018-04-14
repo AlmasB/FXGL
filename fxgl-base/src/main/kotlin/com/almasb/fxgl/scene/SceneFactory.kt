@@ -19,6 +19,13 @@ import com.almasb.fxgl.scene.menu.MenuType
 open class SceneFactory {
 
     /**
+     * Called to construct startup scene.
+     *
+     * @return startup scene
+     */
+    open fun newStartup(): FXGLScene = StartupScene()
+
+    /**
      * Called to construct intro scene.
      *
      * @return intro scene

@@ -254,8 +254,7 @@ public abstract class GameApplication extends Application {
         SceneFactory sceneFactory = FXGL.getSettings().getSceneFactory();
 
         // STARTUP is default
-        // TODO: create through scene factory
-        AppState initial = new StartupState(this, new StartupScene());
+        AppState initial = new StartupState(this, sceneFactory.newStartup());
 
         AppState loading = new LoadingState(this, sceneFactory.newLoadingScene());
         AppState play = new PlayState(sceneFactory.newGameScene(getWidth(), getHeight()));
