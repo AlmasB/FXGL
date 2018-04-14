@@ -13,7 +13,9 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
 
 /**
  * Example of using particles.
@@ -43,6 +45,7 @@ public class ParticlesSample extends GameApplication {
 
                 // 2. create and configure emitter + component
                 ParticleEmitter emitter = ParticleEmitters.newFireEmitter();
+                emitter.setBlendMode(BlendMode.SRC_OVER);
                 //emitter.setEndColor(Color.WHITE);
                 //emitter.setExpireFunction((i, x, y) -> Duration.seconds(5));
                 ParticleComponent component = new ParticleComponent(emitter);
@@ -80,6 +83,11 @@ public class ParticlesSample extends GameApplication {
                 getGameWorld().addEntity(explosion);
             }
         }, MouseButton.SECONDARY);
+    }
+
+    @Override
+    protected void initGame() {
+        getGameScene().setBackgroundColor(Color.BLACK);
     }
 
     public static void main(String[] args) {
