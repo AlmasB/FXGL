@@ -29,17 +29,19 @@ class Bundle(val name: String) : Serializable {
      * Store a [value] with given [key].
      */
     fun put(key: String, value: Serializable) {
-        data.put(name + "." + key, value)
+        data.put("$name.$key", value)
     }
 
     /**
      * Retrieve a value with given [key].
-     *
-     * TODO: return T?
      */
     @Suppress("UNCHECKED_CAST")
     fun <T> get(key: String): T {
-        return data[name + "." + key] as T
+        return data["$name.$key"] as T
+    }
+
+    fun exists(key: String): Boolean {
+        return data.containsKey(key)
     }
 
     /**

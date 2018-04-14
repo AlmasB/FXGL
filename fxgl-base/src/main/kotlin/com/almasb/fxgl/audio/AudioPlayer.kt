@@ -136,8 +136,7 @@ class AudioPlayer {
      * @param sound sound to play
      */
     fun playSound(sound: Sound) {
-        // TODO: remove boolean param API
-        if (!activeSounds.contains(sound, true))
+        if (!activeSounds.containsByIdentity(sound))
             activeSounds.add(sound)
 
         sound.audio.setVolume(getGlobalSoundVolume())
@@ -186,7 +185,7 @@ class AudioPlayer {
     fun playMusic(music: Music) {
         log.debug("Playing music $music")
 
-        if (!activeMusic.contains(music, true)) {
+        if (!activeMusic.containsByIdentity(music)) {
             activeMusic.add(music)
         }
 

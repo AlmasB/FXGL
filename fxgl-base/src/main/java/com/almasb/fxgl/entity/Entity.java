@@ -104,7 +104,7 @@ public class Entity {
      * Removes all components.
      * Resets entity to its "new" state.
      *
-     * TODO: what about core components, they should also be cleaned
+     * https://github.com/AlmasB/FXGL/issues/528
      */
     void clean() {
         removeAllComponents();
@@ -640,7 +640,7 @@ public class Entity {
         injectFields(component);
 
         component.onAdded();
-        notifyModuleAdded(component);
+        notifyComponentAdded(component);
 
         components.put(component.getClass(), component);
     }
@@ -716,7 +716,7 @@ public class Entity {
     }
 
     private void removeComponent(Component comp) {
-        notifyModuleRemoved(comp);
+        notifyComponentRemoved(comp);
 
         comp.onRemoved();
 
@@ -731,13 +731,13 @@ public class Entity {
         //comp.setEntity(null);
     }
 
-    private <T extends Component> void notifyModuleAdded(T c) {
+    private <T extends Component> void notifyComponentAdded(T c) {
         for (int i = 0; i < componentListeners.size(); i++) {
             componentListeners.get(i).onAdded(c);
         }
     }
 
-    private <T extends Component> void notifyModuleRemoved(T c) {
+    private <T extends Component> void notifyComponentRemoved(T c) {
         for (int i = 0; i < componentListeners.size(); i++) {
             componentListeners.get(i).onRemoved(c);
         }

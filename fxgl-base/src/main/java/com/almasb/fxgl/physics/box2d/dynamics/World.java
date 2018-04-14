@@ -108,7 +108,7 @@ public final class World {
      * @param body body to destroy
      */
     public void destroyBody(Body body) {
-        assert bodies.contains(body, true);
+        assert bodies.containsByIdentity(body);
         assertNotLocked();
 
         // Delete the attached joints.

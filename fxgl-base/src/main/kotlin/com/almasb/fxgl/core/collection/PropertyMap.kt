@@ -14,9 +14,7 @@ import javafx.scene.paint.Color
 import java.util.*
 
 /**
- * TODO: read only properties
- * TODO: ? listeners for properties that don't yet exist ...
- * maybe when listener is added if not exists, add key with value = null?
+ * Maps property (variable) names to observable JavaFX properties.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
