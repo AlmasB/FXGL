@@ -9,8 +9,8 @@ package s03entities;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.component.AttractableComponent;
-import com.almasb.fxgl.entity.control.AttractorControl;
+import com.almasb.fxgl.extra.entity.components.AttractableComponent;
+import com.almasb.fxgl.extra.entity.components.AttractorComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.MouseButton;
@@ -40,7 +40,7 @@ public class AttractorSample extends GameApplication {
                 Entities.builder()
                         .at(getInput().getMousePositionWorld())
                         .viewFromNode(new Rectangle(40, 40, Color.BLUE))
-                        .with(new AttractorControl(FXGLMath.random(30, 60), 350))
+                        .with(new AttractorComponent(FXGLMath.random(30, 60), 350))
                         .buildAndAttach();
             }
         }, MouseButton.PRIMARY);

@@ -7,13 +7,12 @@ JavaFX Game Development Framework
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.almasb/fxgl.svg)]()
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://www.javadoc.io/doc/com.github.almasb/fxgl/)
 ![CI](https://travis-ci.org/AlmasB/FXGL.svg?branch=master)
-[![Coverage](https://api.codacy.com/project/badge/Coverage/9603c2522deb42fbb9146bedfcb860b2)](https://www.codacy.com/app/AlmasB/FXGL?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AlmasB/FXGL&amp;utm_campaign=Badge_Coverage)
-[![Codacy](https://api.codacy.com/project/badge/Grade/9603c2522deb42fbb9146bedfcb860b2)](https://www.codacy.com/app/AlmasB/FXGL?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AlmasB/FXGL&amp;utm_campaign=Badge_Grade)
+[![codecov](https://codecov.io/gh/AlmasB/FXGL/branch/master/graph/badge.svg)](https://codecov.io/gh/AlmasB/FXGL)
 
 ### Why FXGL?
 
 * No native libraries, no installation, no setup required
-* "Out of the box": Java 8/9, Win/Mac/Linux/Android ([alpha](https://github.com/AlmasB/FXGL-MobileApp))
+* "Out of the box": Java 8/9, Win/Mac/Linux/Android([Sample](https://github.com/AlmasB/FXGL-MobileApp))/Web([alpha](https://github.com/AlmasB/FXGL-WebApp))
 * Simple and clean API
 * Superset of JavaFX: no need to learn new UI API
 * Brings real-world game development techniques to JavaFX
@@ -69,7 +68,7 @@ Already have `pom.xml`? Then add:
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.4.3</version>
+    <version>0.5.0</version>
 </dependency>
 ```
 
@@ -86,7 +85,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:0.4.3'
+    compile 'com.github.almasb:fxgl:0.5.0'
 }
 ```
 

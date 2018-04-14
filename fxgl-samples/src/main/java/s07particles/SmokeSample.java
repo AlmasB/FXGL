@@ -6,14 +6,15 @@
 
 package s07particles;
 
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.effect.ParticleControl;
-import com.almasb.fxgl.effect.ParticleEmitter;
-import com.almasb.fxgl.effect.ParticleEmitters;
+import com.almasb.fxgl.particle.ParticleComponent;
+import com.almasb.fxgl.particle.ParticleEmitter;
+import com.almasb.fxgl.particle.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.control.CircularMovementControl;
+import com.almasb.fxgl.extra.entity.components.CircularMovementComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
@@ -72,23 +73,23 @@ public class SmokeSample extends GameApplication {
         e.setEmissionRate(0.25);
         e.setStartColor(Color.color(0.6, 0.55, 0.5, 0.47));
         e.setEndColor(Color.BLACK);
-        e.setExpireFunction((i, x, y) -> Duration.seconds(16));
-        e.setVelocityFunction((i, x, y) -> new Point2D(FXGLMath.random() - 0.5, 0));
+        e.setExpireFunction(i -> Duration.seconds(16));
+        e.setVelocityFunction(i -> new Point2D(FXGLMath.random() - 0.5, 0));
         e.setAccelerationFunction(() -> new Point2D((FXGLMath.noise1D(7776 + getTick()) - 0.5) * 0.02, 0));
-        //e.setSpawnPointFunction((i, x, y) -> new Point2D(x + FXGLMath.noise1D(333 + getTick()) * 150 - 75, y + FXGLMath.noise1D(getTick()) * 150 - 75));
+        //e.setSpawnPointFunction(i -> new Point2D(x + FXGLMath.noise1D(333 + getTick()) * 150 - 75, y + FXGLMath.noise1D(getTick()) * 150 - 75));
 
 //        Entities.builder()
 //                .at(getWidth() / 2, getHeight() - 100)
-//                .with(new ParticleControl(e), new RandomMoveControl(2))
+//                .with(new ParticleComponent(e), new RandomMoveControl(2))
 //                .buildAndAttach(getGameWorld());
 
 
         emitter = ParticleEmitters.newFireEmitter();
         emitter.setSize(5, 15);
-        emitter.setVelocityFunction((i, x, y) -> new Point2D(FXGLMath.random() - 0.5, -FXGLMath.random() * 3));
+        emitter.setVelocityFunction(i -> new Point2D(FXGLMath.random() - 0.5, -FXGLMath.random() * 3));
         emitter.setAccelerationFunction(() -> new Point2D(0, 0.05));
-        emitter.setExpireFunction((i, x, y) -> Duration.seconds(3));
-        emitter.setScaleFunction((i, x, y) -> new Point2D(FXGLMath.random(0, 0.01), FXGLMath.random(-0.05, 0.05)));
+        emitter.setExpireFunction(i -> Duration.seconds(3));
+        emitter.setScaleFunction(i -> new Point2D(FXGLMath.random(0, 0.01), FXGLMath.random(-0.05, 0.05)));
         emitter.setStartColor(Color.YELLOW);
         emitter.setEndColor(Color.RED);
         //emitter.setBlendMode(BlendMode.SRC_OVER);
@@ -97,7 +98,7 @@ public class SmokeSample extends GameApplication {
 
         entity = Entities.builder()
                 .at(getWidth() / 2, getHeight() / 2)
-                .with(new ParticleControl(emitter))
+                .with(new ParticleComponent(emitter))
                 .buildAndAttach(getGameWorld());
 
 
@@ -105,7 +106,7 @@ public class SmokeSample extends GameApplication {
         Entities.builder()
                 .at(250, 250)
                 .viewFromNode(new Rectangle(40, 40, Color.BLUE))
-                .with(new CircularMovementControl(10, 25))
+                .with(new CircularMovementComponent(10, 25))
                 .buildAndAttach(getGameWorld());
     }
 
@@ -115,7 +116,7 @@ public class SmokeSample extends GameApplication {
     protected void initUI() {
         debug = getUIFactory().newText("");
 
-        getUIFactory().centerText(debug);
+        DSLKt.centerText(debug);
 
         getGameScene().addUINode(debug);
     }

@@ -4,7 +4,8 @@
 
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>0.4.3</version>
+    <version>0.5.0-SNAPSHOT</version>
+    
     <packaging>pom</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -13,16 +14,10 @@
 
     <modules>
         <!-- Main framework module -->
-        <module>fxgl</module>
-
-        <!-- This module shows how to use FXGL, but FXGL does not depend on it.
-            Reactor order is important as nexus plugin requires the last module to be deployed,
-            while we want the samples to be ignored. Hence samples comes 2nd and extra 3rd.
-        -->
-        <module>fxgl-samples</module>
+        <module>fxgl-base</module>
 
         <!-- Extra functionality module (on top of the main module) -->
-        <module>fxgl-extra</module>
+        <module>fxgl</module>
     </modules>
 
     <licenses>
@@ -80,13 +75,13 @@
         <!-- dependencies -->
         <kotlin.version>1.2.30</kotlin.version>
         <kotlinx.version>0.22.3</kotlinx.version>
-        <jfxtras.version>8.0-r5</jfxtras.version>
         <jackson.version>2.9.0</jackson.version>
         <apache.http.version>4.5.3</apache.http.version>
-        <classpath.scanner.version>2.4.5</classpath.scanner.version>
+        <charm.down.version>3.7.0</charm.down.version>
+        <audio.plugin.version>0.0.2</audio.plugin.version>
 
         <!-- test dependencies -->
-        <junit.jupiter.version>5.0.0</junit.jupiter.version>
+        <junit.jupiter.version>5.1.1</junit.jupiter.version>
         <junit.platform.version>1.0.0</junit.platform.version>
         <hamcrest.version>1.3</hamcrest.version>
     </properties>
@@ -231,6 +226,7 @@
                     </executions>
                 </plugin>
 
+                <!-- Add kotlin sources -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>

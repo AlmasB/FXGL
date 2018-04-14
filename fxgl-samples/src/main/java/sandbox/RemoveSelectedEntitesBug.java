@@ -9,7 +9,7 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.SelectableComponent;
+import com.almasb.fxgl.entity.components.SelectableComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.texture.ColoredTexture;
 import javafx.scene.Cursor;

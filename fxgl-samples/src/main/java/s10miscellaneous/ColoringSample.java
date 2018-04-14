@@ -6,6 +6,7 @@
 
 package s10miscellaneous;
 
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.settings.GameSettings;
@@ -139,7 +140,7 @@ public class ColoringSample extends GameApplication {
         hbox3.setTranslateY(450);
 
         Text t = getUIFactory().newText("Texture v Texture Blend", Color.WHITE, 24);
-        getUIFactory().centerText(t, getWidth() / 2, getHeight() - 150);
+        DSLKt.centerText(t, getWidth() / 2, getHeight() - 150);
 
         getGameScene().addUINodes(hbox, hbox2, hbox3, t);
     }

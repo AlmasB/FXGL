@@ -6,15 +6,14 @@
 
 package sandbox.shooter;
 
-import com.almasb.fxgl.entity.Control;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.components.PositionComponent;
 import javafx.geometry.Point2D;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class EnemyControl extends Control {
+public class EnemyControl extends Component {
 
     private Point2D target;
 
@@ -23,7 +22,7 @@ public class EnemyControl extends Control {
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         Point2D position = entity.getComponent(PositionComponent.class).getValue();
 
         entity.getComponent(PositionComponent.class).translate(target.subtract(position).normalize().multiply(60 * tpf));

@@ -31,19 +31,19 @@ public class RESTClientSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        onKeyDown(KeyCode.Q, "Get Top", () -> {
-            getGameplay().getLeaderboard()
-                    .loadTopTask(5)
-                    .onSuccess(scores -> scores.forEach(System.out::println))
-                    .executeAsyncWithDialogFX(new ProgressDialog("Connecting to FXGL server"));
-        });
-
-        onKeyDown(KeyCode.E, "Put New Score", () -> {
-            getGameplay().getLeaderboard()
-                    .postNewScoreTask(new ScoreData("AlmasB", 9999))
-                    .onSuccess(n -> System.out.println("Success put"))
-                    .executeAsyncWithDialogFX(new ProgressDialog("Uploading to FXGL server"));
-        });
+//        onKeyDown(KeyCode.Q, "Get Top", () -> {
+//            getGameplay().getLeaderboard()
+//                    .loadTopTask(5)
+//                    .onSuccess(scores -> scores.forEach(System.out::println))
+//                    .executeAsyncWithDialogFX(new ProgressDialog("Connecting to FXGL server"));
+//        });
+//
+//        onKeyDown(KeyCode.E, "Put New Score", () -> {
+//            getGameplay().getLeaderboard()
+//                    .postNewScoreTask(new ScoreData("AlmasB", 9999))
+//                    .onSuccess(n -> System.out.println("Success put"))
+//                    .executeAsyncWithDialogFX(new ProgressDialog("Uploading to FXGL server"));
+//        });
     }
 
     public static void main(String[] args) {

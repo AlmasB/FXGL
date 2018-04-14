@@ -12,7 +12,7 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.entity.control.ExpireCleanControl;
+import com.almasb.fxgl.extra.entity.components.ExpireCleanComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Point2D;
@@ -132,7 +132,7 @@ public class UnoSample extends GameApplication {
                     player.removeCard(cardEntity);
                     playerHandChanged = true;
 
-                    currentCard.addControl(new ExpireCleanControl(Duration.seconds(0.5)));
+                    currentCard.addComponent(new ExpireCleanComponent(Duration.seconds(0.5)));
 
                     currentCard = cardEntity;
                     currentCard.setRenderLayer(RenderLayer.BACKGROUND);
@@ -168,7 +168,7 @@ public class UnoSample extends GameApplication {
 
             // can we avoid calls like this?
             if (card.getComponent(CardComponent.class).getValue().canUseOn(currentCard.getComponent(CardComponent.class).getValue())) {
-                currentCard.addControl(new ExpireCleanControl(Duration.seconds(0.5)));
+                currentCard.addComponent(new ExpireCleanComponent(Duration.seconds(0.5)));
 
                 enemy.removeCard(card);
                 card.setPosition(new Point2D(350, 225));
@@ -188,7 +188,7 @@ public class UnoSample extends GameApplication {
                 Entity draw = spawn(deck.drawCard(), 0, -150);
 
                 if (draw.getComponent(CardComponent.class).getValue().canUseOn(currentCard.getComponent(CardComponent.class).getValue())) {
-                    currentCard.addControl(new ExpireCleanControl(Duration.seconds(0.5)));
+                    currentCard.addComponent(new ExpireCleanComponent(Duration.seconds(0.5)));
 
                     draw.setPosition(new Point2D(350, 225));
 

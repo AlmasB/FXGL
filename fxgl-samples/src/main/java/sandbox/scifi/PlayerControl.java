@@ -7,11 +7,10 @@
 package sandbox.scifi;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.Control;
-import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.ViewComponent;
+import com.almasb.fxgl.entity.components.PositionComponent;
+import com.almasb.fxgl.entity.components.ViewComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
@@ -25,7 +24,7 @@ import javafx.util.Duration;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class PlayerControl extends Control {
+public class PlayerControl extends Component {
 
     private PositionComponent position;
     private ViewComponent view;
@@ -52,30 +51,30 @@ public class PlayerControl extends Control {
         animStand = new AnimationChannel(animatedTexture.getImage(), 4, 32, 42, Duration.seconds(1), 1, 1);
         animJump = new AnimationChannel(animatedTexture.getImage(), 4, 32, 42, Duration.seconds(0.75), 1, 1);;
 
-        animatedTexture.setAnimationChannel(animStand);
+        animatedTexture.loopAnimationChannel(animStand);
         animatedTexture.start(FXGL.getApp().getStateMachine().getPlayState());
 
         jumpTimer = FXGL.newLocalTimer();
     }
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         view.getView().addNode(animatedTexture);
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         if (Math.abs(physics.getVelocityX()) == 0) {
-            animatedTexture.setAnimationChannel(animStand);
+            animatedTexture.loopAnimationChannel(animStand);
         } else {
-            animatedTexture.setAnimationChannel(animWalk);
+            animatedTexture.loopAnimationChannel(animWalk);
         }
 
         if (Math.abs(physics.getVelocityX()) < 140)
             physics.setVelocityX(0);
 
         if (Math.abs(physics.getVelocityY()) != 0) {
-            animatedTexture.setAnimationChannel(animJump);
+            animatedTexture.loopAnimationChannel(animJump);
         }
     }
 

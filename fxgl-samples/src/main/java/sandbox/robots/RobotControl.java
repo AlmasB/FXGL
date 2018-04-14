@@ -7,10 +7,9 @@
 package sandbox.robots;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.Control;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.ViewComponent;
+import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.components.PositionComponent;
+import com.almasb.fxgl.entity.components.ViewComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
@@ -20,7 +19,7 @@ import javafx.util.Duration;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class RobotControl extends Control {
+public class RobotControl extends Component {
 
     private PositionComponent position;
     private ViewComponent view;
@@ -46,16 +45,16 @@ public class RobotControl extends Control {
     }
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         view.getView().addNode(animatedTexture);
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         if (entity.distance(entity.getWorld().getSingleton(MarioType.PLAYER).get()) < 300) {
-            animatedTexture.setAnimationChannel(animStand);
+            animatedTexture.loopAnimationChannel(animStand);
         } else {
-            animatedTexture.setAnimationChannel(animPassive);
+            animatedTexture.loopAnimationChannel(animPassive);
         }
     }
 }

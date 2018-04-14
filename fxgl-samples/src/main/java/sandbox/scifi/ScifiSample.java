@@ -7,14 +7,15 @@
 package sandbox.scifi;
 
 import com.almasb.fxgl.animation.Animation;
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.effect.ParticleControl;
-import com.almasb.fxgl.effect.ParticleEmitter;
-import com.almasb.fxgl.effect.ParticleEmitters;
+import com.almasb.fxgl.particle.ParticleComponent;
+import com.almasb.fxgl.particle.ParticleEmitter;
+import com.almasb.fxgl.particle.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
-import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.components.PositionComponent;
 import com.almasb.fxgl.entity.view.ParallaxBackgroundView;
 import com.almasb.fxgl.entity.view.ParallaxTexture;
 import com.almasb.fxgl.gameplay.qte.QTE;
@@ -25,7 +26,7 @@ import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsParticleComponent;
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef;
 import com.almasb.fxgl.physics.box2d.particle.ParticleType;
-import com.almasb.fxgl.physics.handler.CollectibleHandler;
+import com.almasb.fxgl.extra.physics.handlers.CollectibleHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.ui.InGamePanel;
@@ -177,7 +178,7 @@ public class ScifiSample extends GameApplication {
         getGameWorld().setLevelFromMap("mario" + level + ".json");
 
         Entity player = getGameWorld().getEntitiesByType(ScifiType.PLAYER).get(0);
-        playerControl = player.getControl(PlayerControl.class);
+        playerControl = player.getComponent(PlayerControl.class);
 
         getGameScene().getViewport().setBounds(0, 0, 3000, getHeight());
         getGameScene().getViewport().bindToEntity(player, 500, 0);
@@ -205,7 +206,7 @@ public class ScifiSample extends GameApplication {
 
         getGameScene().addUINode(anim);
 
-        Animation<?> anim2 = getUIFactory().fadeOut(anim, Duration.seconds(1.75));
+        Animation<?> anim2 = DSLKt.fadeOut(anim, Duration.seconds(1.75));
         anim2.setOnFinished(() -> {
             getGameScene().removeUINode(anim);
 
@@ -226,7 +227,7 @@ public class ScifiSample extends GameApplication {
         emitter.setSourceImage(getAssetLoader().loadTexture("rain.png").multiplyColor(Color.LIGHTBLUE).getImage());
 
         Entity rain = Entities.builder()
-                .with(new ParticleControl(emitter))
+                .with(new ParticleComponent(emitter))
                 .buildAndAttach(getGameWorld());
 
         rain.getPositionComponent().xProperty().bind(getGameScene().getViewport().xProperty());

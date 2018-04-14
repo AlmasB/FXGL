@@ -7,8 +7,8 @@
 package sandbox.tiled.mario;
 
 import com.almasb.fxgl.entity.*;
-import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.entity.control.EffectControl;
+import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -20,17 +20,19 @@ import javafx.scene.shape.Rectangle;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@SetEntityFactory
 public class MarioFactory implements EntityFactory {
+
+    private static Entities.EntityBuilder builder(SpawnData data) {
+        return Entities.builder(MarioType.class)
+                .from(data);
+    }
 
     @Spawns("enemy")
     public Entity newEnemy(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
 
-        return Entities.builder()
-                .type(MarioType.ENEMY)
-                .from(data)
+        return builder(data)
                 .viewFromNodeWithBBox(new Rectangle(30, 30, Color.RED))
                 .with(physics)
                 .with(new EnemyControl())
@@ -39,9 +41,7 @@ public class MarioFactory implements EntityFactory {
 
     @Spawns("platform")
     public Entity newPlatform(SpawnData data) {
-        return Entities.builder()
-                .type(MarioType.PLATFORM)
-                .from(data)
+        return builder(data)
                 .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .with(new PhysicsComponent())
                 .build();
@@ -49,9 +49,7 @@ public class MarioFactory implements EntityFactory {
 
     @Spawns("door")
     public Entity newDoor(SpawnData data) {
-        return Entities.builder()
-                .type(MarioType.DOOR)
-                .from(data)
+        return builder(data)
                 .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .with(new CollidableComponent(true))
                 .build();
@@ -62,21 +60,17 @@ public class MarioFactory implements EntityFactory {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
 
-        return Entities.builder()
-                .type(MarioType.PLAYER)
-                .from(data)
+        return builder(data)
                 .bbox(new HitBox(BoundingShape.box(32, 42)))
                 .with(physics)
                 .with(new CollidableComponent(true))
-                .with(new PlayerControl(), new EffectControl())
+                .with(new PlayerControl(), new EffectComponent())
                 .build();
     }
 
     @Spawns("coin")
     public Entity newCoin(SpawnData data) {
-        return Entities.builder()
-                .type(MarioType.COIN)
-                .from(data)
+        return builder(data)
                 .viewFromNodeWithBBox(new Circle(data.<Integer>get("width") / 2, Color.GOLD))
                 .with(new CollidableComponent(true))
                 .build();

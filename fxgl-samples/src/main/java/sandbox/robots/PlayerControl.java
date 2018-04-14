@@ -7,10 +7,9 @@
 package sandbox.robots;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.Control;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.ViewComponent;
+import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.components.PositionComponent;
+import com.almasb.fxgl.entity.components.ViewComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
@@ -20,7 +19,7 @@ import javafx.util.Duration;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class PlayerControl extends Control {
+public class PlayerControl extends Component {
 
     private PositionComponent position;
     private ViewComponent view;
@@ -58,26 +57,26 @@ public class PlayerControl extends Control {
     }
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         view.getView().addNode(animatedTexture);
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         boolean onGround = physics.isOnGround();
 
         if (onGround) {
             if (Math.abs(physics.getVelocityX()) == 0) {
-                animatedTexture.setAnimationChannel(animStand);
+                animatedTexture.loopAnimationChannel(animStand);
             } else {
-                animatedTexture.setAnimationChannel(animWalk);
+                animatedTexture.loopAnimationChannel(animWalk);
             }
         } else {
             if ((physics.getVelocityY()) < 0) {
                 animatedTexture.playAnimationChannel(animJump);
             } else {
                 // fall
-                animatedTexture.setAnimationChannel(animFall);
+                animatedTexture.loopAnimationChannel(animFall);
             }
         }
 

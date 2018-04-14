@@ -3,14 +3,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>fxgl-framework</artifactId>
-        <groupId>com.github.almasb</groupId>
-        <version>0.4.3</version>
-    </parent>
+
+    <groupId>com.github.almasb</groupId>
+    <artifactId>fxgl-samples</artifactId>
+    <version>0.5.0</version>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>fxgl-samples</artifactId>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <source.version>1.8</source.version>
+        <fxgl.version>0.5.0-SNAPSHOT</fxgl.version>
+
+        <!-- plugins -->
+        <maven.compiler.version>3.7.0</maven.compiler.version>
+
+        <!-- dependencies -->
+        <kotlin.version>1.2.30</kotlin.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -31,34 +40,46 @@
             <!-- Compile java -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.version}</version>
+                <configuration>
+                    <source>${source.version}</source>
+                    <target>${source.version}</target>
+                </configuration>
             </plugin>
 
             <!-- Compile kotlin -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-            </plugin>
-
-            <!-- Create sources.jar -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-
-            <!-- Create javadoc.jar -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
-
-            <!-- Skip this module from deploying -->
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>${sonatype.nexus.staging.version}</version>
-                <configuration>
-                    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
-                </configuration>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src/main/kotlin</source>
+                                <source>src/main/java</source>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>process-test-sources</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src/test/kotlin</source>
+                                <source>src/test/java</source>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

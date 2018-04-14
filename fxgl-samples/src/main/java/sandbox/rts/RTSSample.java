@@ -49,6 +49,8 @@ public class RTSSample extends GameApplication {
 
     @Override
     protected void initGame() {
+        getGameWorld().addEntityFactory(new RTSSampleFactory());
+
         getGameWorld().spawn("TownHall", 500, 100);
         getGameWorld().spawn("GoldMine", 100, 100);
         getGameWorld().spawn("GoldMine", 500, 400);

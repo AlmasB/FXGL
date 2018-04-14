@@ -8,9 +8,9 @@ package s07particles;
 import com.almasb.fxgl.animation.EasingInterpolator;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.effect.ParticleControl;
-import com.almasb.fxgl.effect.ParticleEmitter;
-import com.almasb.fxgl.effect.ParticleEmitters;
+import com.almasb.fxgl.particle.ParticleComponent;
+import com.almasb.fxgl.particle.ParticleEmitter;
+import com.almasb.fxgl.particle.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.GameSettings;
@@ -40,17 +40,7 @@ public class ParticleSystemSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ParticleSystemSample");
         settings.setVersion("0.1");
-
-
-
-
-
-
-    }
-
-    @Override
-    protected void initInput() {
-
+        settings.setProfilingEnabled(true);
     }
 
     @Override
@@ -63,7 +53,7 @@ public class ParticleSystemSample extends GameApplication {
 
         particleEntity = Entities.builder()
                 .at((getWidth() - 300) / 2, getHeight() / 2)
-                .with(new ParticleControl(emitter))
+                .with(new ParticleComponent(emitter))
                 .buildAndAttach();
     }
 
@@ -89,11 +79,11 @@ public class ParticleSystemSample extends GameApplication {
         spinnerVelY.setPrefWidth(65);
 
         spinnerVelX.valueProperty().addListener((observable, oldValue, newValue) -> {
-            emitter.setVelocityFunction((i, x, y) -> new Point2D(newValue, spinnerVelY.getValue()));
+            emitter.setVelocityFunction(i -> new Point2D(newValue, spinnerVelY.getValue()));
         });
 
         spinnerVelY.valueProperty().addListener((observable, oldValue, newValue) -> {
-            emitter.setVelocityFunction((i, x, y) -> new Point2D(spinnerVelX.getValue(), newValue));
+            emitter.setVelocityFunction(i -> new Point2D(spinnerVelX.getValue(), newValue));
         });
 
         Spinner<Double> spinnerAccelX = new Spinner<>(-150.0, 150.0, 0.0, 10);

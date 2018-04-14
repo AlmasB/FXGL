@@ -8,7 +8,7 @@ package sandbox.rts;
 
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.*;
-import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.components.CollidableComponent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -16,7 +16,6 @@ import javafx.scene.shape.Rectangle;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@SetEntityFactory
 public class RTSSampleFactory implements EntityFactory {
 
     @Spawns("TownHall")

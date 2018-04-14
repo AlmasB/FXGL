@@ -6,10 +6,10 @@
 
 package s08ai;
 
-import com.almasb.fxgl.ai.goap.GoapAction;
-import com.almasb.fxgl.ai.goap.GoapAgent;
-import com.almasb.fxgl.ai.goap.GoapControl;
-import com.almasb.fxgl.ai.goap.State;
+import com.almasb.fxgl.extra.ai.goap.GoapAction;
+import com.almasb.fxgl.extra.ai.goap.GoapAgent;
+import com.almasb.fxgl.extra.ai.goap.GoapControl;
+import com.almasb.fxgl.extra.ai.goap.State;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
@@ -55,9 +55,9 @@ public class GoapSample extends GameApplication {
         HashSet<GoapAction> actions = initActions();
 
         GoapControl goapControl = new GoapControl(new KillerAgent(), 100, actions);
-        agent.addControl(goapControl);
+        agent.addComponent(goapControl);
 
-        guard.addControl(new GoapControl(new GuardAgent(), 125, actions));
+        guard.addComponent(new GoapControl(new GuardAgent(), 125, actions));
     }
 
     private void initObjects() {
@@ -108,8 +108,8 @@ public class GoapSample extends GameApplication {
             State worldState = new State();
             worldState.add("playerInvincible", getGameState().getBoolean("playerInvincible"));
             worldState.add("playerAlive", getGameState().getBoolean("playerAlive"));
-            worldState.add("hasWeapon", entity.getProperty("hasWeapon"));
-            worldState.add("hasCoin", entity.getProperty("hasCoin"));
+            worldState.add("hasWeapon", entity.getBoolean("hasWeapon"));
+            worldState.add("hasCoin", entity.getBoolean("hasCoin"));
 
             return worldState;
         }
@@ -134,7 +134,7 @@ public class GoapSample extends GameApplication {
 
         @Override
         public void actionsFinished(Entity entity) {
-            entity.removeControl(GoapControl.class);
+            entity.removeComponent(GoapControl.class);
         }
 
         @Override
@@ -178,7 +178,7 @@ public class GoapSample extends GameApplication {
 
         @Override
         public void actionsFinished(Entity entity) {
-            entity.removeControl(GoapControl.class);
+            entity.removeComponent(GoapControl.class);
         }
 
         @Override

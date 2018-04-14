@@ -6,7 +6,7 @@
 
 package sandbox.rts;
 
-import com.almasb.fxgl.entity.component.ObjectComponent;
+import com.almasb.fxgl.entity.components.ObjectComponent;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

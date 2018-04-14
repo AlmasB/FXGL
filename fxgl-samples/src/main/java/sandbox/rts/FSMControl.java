@@ -6,15 +6,15 @@
 
 package sandbox.rts;
 
-import com.almasb.fxgl.ai.fsm.DefaultStateMachine;
-import com.almasb.fxgl.ai.fsm.State;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.extra.ai.fsm.DefaultStateMachine;
+import com.almasb.fxgl.extra.ai.fsm.State;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.Entity;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class FSMControl<T extends Entity> extends Control {
+public class FSMControl<T extends Entity> extends Component {
 
     private DefaultStateMachine<T, State<T>> fsm;
 
@@ -23,12 +23,12 @@ public class FSMControl<T extends Entity> extends Control {
     }
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onAdded() {
         fsm.setOwner((T) entity);
     }
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    public void onUpdate(double tpf) {
         fsm.update();
     }
 

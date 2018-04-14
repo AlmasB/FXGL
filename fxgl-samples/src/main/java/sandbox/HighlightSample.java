@@ -6,10 +6,11 @@
 
 package sandbox;
 
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.HighlightableComponent;
+import com.almasb.fxgl.extra.entity.components.HighlightableComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
@@ -72,7 +73,7 @@ public class HighlightSample extends GameApplication {
 
         text.setEffect(ds);
 
-        getUIFactory().centerText(text);
+        DSLKt.centerText(text);
 
         getGameScene().addUINode(text);
     }

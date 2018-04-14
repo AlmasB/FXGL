@@ -7,7 +7,7 @@
 package sandbox.scifi;
 
 import com.almasb.fxgl.entity.*;
-import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -19,7 +19,6 @@ import javafx.geometry.Point2D;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@SetEntityFactory
 public class ScifiFactory implements EntityFactory {
 
     @Spawns("platform")

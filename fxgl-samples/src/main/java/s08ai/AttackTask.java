@@ -22,9 +22,9 @@ public class AttackTask extends SingleAction {
         Entity player = ((BehaviorSample) FXGL.getApp()).player;
 
         if (player.distance(getEntity()) < 100) {
-            getEntity().getControl(AIControl.class).setBubbleMessage("Attack");
+            getEntity().getComponent(AIControl.class).setBubbleMessage("Attack");
         } else {
-            getEntity().getControl(AIControl.class).setBubbleMessage("Chase");
+            getEntity().getComponent(AIControl.class).setBubbleMessage("Chase");
             double speed = tpf * 60 * 5;
 
             Point2D vector = player.getPosition()

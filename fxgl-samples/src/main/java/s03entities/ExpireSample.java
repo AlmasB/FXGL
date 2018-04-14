@@ -8,7 +8,7 @@ package s03entities;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.control.ExpireCleanControl;
+import com.almasb.fxgl.extra.entity.components.ExpireCleanComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -39,7 +39,7 @@ public class ExpireSample extends GameApplication {
         Entities.builder()
                 .at(100, 100)
                 .viewFromNode(new Rectangle(40, 40))
-                .with(new ExpireCleanControl(Duration.seconds(2)).animateOpacity())
+                .with(new ExpireCleanComponent(Duration.seconds(2)).animateOpacity())
                 .buildAndAttach(getGameWorld());
     }
 

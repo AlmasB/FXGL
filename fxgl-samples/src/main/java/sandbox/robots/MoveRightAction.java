@@ -22,7 +22,7 @@ public class MoveRightAction extends GoalAction {
 
     @Override
     public void onUpdate(double tpf) {
-        getEntity().getControl(PlayerControl.class).right();
+        getEntity().getComponent(PlayerControl.class).right();
     }
 
     @Override

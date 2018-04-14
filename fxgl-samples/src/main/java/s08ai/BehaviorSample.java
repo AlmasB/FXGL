@@ -82,7 +82,7 @@ public class BehaviorSample extends GameApplication {
                 .with(new PlayerControl())
                 .buildAndAttach(getGameWorld());
 
-        playerControl = player.getControl(PlayerControl.class);
+        playerControl = player.getComponent(PlayerControl.class);
 
         Entities.builder()
                 .at(400, 100)

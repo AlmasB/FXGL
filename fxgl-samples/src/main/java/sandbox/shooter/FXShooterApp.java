@@ -8,7 +8,7 @@ package sandbox.shooter;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.Input;
@@ -50,11 +50,6 @@ public class FXShooterApp extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {
-
-    }
-
-    @Override
     protected void initGame() {
         initTreasure();
         initPlayer();
@@ -91,8 +86,8 @@ public class FXShooterApp extends GameApplication {
 //        Button btn = FXGL.getUIFactory().newButton("Execute");
 //        btn.setTranslateY(500);
 //        btn.setOnAction(e -> {
-//            player.removeControl(JSControl.class);
-//            player.addControl(new JSControl(textArea.getText()));
+//            player.removeControl(JSComponent.class);
+//            player.addComponent(new JSComponent(textArea.getText()));
 //        });
 //
 //        Pane pane = new Pane();
@@ -134,7 +129,7 @@ public class FXShooterApp extends GameApplication {
         player.addComponent(weapon);
 
         playerControl = new PlayerControl();
-        player.addControl(playerControl);
+        player.addComponent(playerControl);
 
         getGameWorld().addEntity(player);
     }
@@ -147,7 +142,7 @@ public class FXShooterApp extends GameApplication {
 
         enemy.addComponent(new CollidableComponent(true));
         enemy.addComponent(new HPComponent(5));
-        enemy.addControl(new EnemyControl(new Point2D(getWidth() / 2, getHeight() / 2)));
+        enemy.addComponent(new EnemyControl(new Point2D(getWidth() / 2, getHeight() / 2)));
 
         getGameWorld().addEntity(enemy);
     }

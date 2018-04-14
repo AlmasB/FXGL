@@ -43,12 +43,11 @@ public class EventsSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("EventsSample");
         settings.setVersion("0.1");
+    }
 
-
-
-
-
-
+    @Override
+    protected void preInit() {
+        getEventBus().scanForHandlers(new MyEventHandler());
     }
 
     @Override

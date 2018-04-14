@@ -6,19 +6,18 @@
 
 package sandbox.robots;
 
-import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
-import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.entity.control.ExpireCleanControl;
+import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.extra.entity.components.ExpireCleanComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.physics.handler.CollectibleHandler;
+import com.almasb.fxgl.extra.physics.handlers.CollectibleHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -110,7 +109,7 @@ public class MarioApp extends GameApplication {
                         .at(getInput().getMousePositionWorld())
                         .viewFromNodeWithBBox(new Rectangle(40, 40))
                         .with(new CollidableComponent(true))
-                        .with(new ExpireCleanControl(Duration.seconds(2)).animateOpacity())
+                        .with(new ExpireCleanComponent(Duration.seconds(2)).animateOpacity())
                         .buildAndAttach();
             }
         }, MouseButton.PRIMARY);
@@ -123,6 +122,7 @@ public class MarioApp extends GameApplication {
 
     @Override
     protected void initGame() {
+        getGameWorld().addEntityFactory(new MarioFactory());
         nextLevel();
     }
 
@@ -147,9 +147,9 @@ public class MarioApp extends GameApplication {
         getGameWorld().spawn("player", 350, 0);
 
         Entity player = getGameWorld().getEntitiesByType(MarioType.PLAYER).get(0);
-        playerControl = player.getControl(PlayerControl.class);
+        playerControl = player.getComponent(PlayerControl.class);
 
-        //player.addControl(new AIControl("robot.tree"));
+        //player.addComponent(new AIControl("robot.tree"));
 
         getGameScene().getViewport().setBounds(0, 0, 30*70, 11 * 70);
         getGameScene().getViewport().bindToEntity(player, 500, 0);

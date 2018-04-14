@@ -8,9 +8,8 @@ package s03entities;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.time.LocalTimer;
 import javafx.scene.shape.Rectangle;
@@ -45,13 +44,13 @@ public class TimerControlSample extends GameApplication {
                 .buildAndAttach(getGameWorld());
     }
 
-    private class LiftControl extends Control {
+    private class LiftControl extends Component {
 
         private LocalTimer timer = FXGL.newLocalTimer();
         private boolean goingUp = false;
 
         @Override
-        public void onUpdate(Entity entity, double tpf) {
+        public void onUpdate(double tpf) {
             // 1. check if timer elapsed
             if (timer.elapsed(Duration.seconds(2))) {
                 // 2. perform logic

@@ -7,12 +7,12 @@
 package s03entities;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Effect;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.TimeComponent;
-import com.almasb.fxgl.entity.control.CircularMovementControl;
-import com.almasb.fxgl.entity.control.EffectControl;
+import com.almasb.fxgl.entity.components.TimeComponent;
+import com.almasb.fxgl.extra.entity.components.CircularMovementComponent;
+import com.almasb.fxgl.extra.entity.effect.Effect;
+import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
@@ -47,7 +47,7 @@ public class EffectSample extends GameApplication {
         getInput().addAction(new UserAction("Print Line") {
             @Override
             protected void onActionBegin() {
-                player.getControl(EffectControl.class).startEffect(new SlowEffect());
+                player.getComponent(EffectComponent.class).startEffect(new SlowEffect());
             }
         }, KeyCode.F);
     }
@@ -58,7 +58,7 @@ public class EffectSample extends GameApplication {
                 .at(100, 100)
                 .viewFromNode(new Rectangle(40, 40))
                 .with(new TimeComponent(1.0))
-                .with(new CircularMovementControl(10, 10), new EffectControl())
+                .with(new CircularMovementComponent(10, 10), new EffectComponent())
                 .buildAndAttach(getGameWorld());
     }
 

@@ -12,9 +12,10 @@ import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.entity.control.EffectControl;
-import com.almasb.fxgl.entity.effect.WobbleEffect;
+import com.almasb.fxgl.entity.SpawnData;
+import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.extra.entity.effect.EffectComponent;
+import com.almasb.fxgl.extra.entity.effects.WobbleEffect;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
@@ -41,36 +42,38 @@ public class MarioApp extends GameApplication {
         getInput().addAction(new UserAction("Left") {
             @Override
             protected void onAction() {
-                player.getControl(PlayerControl.class).left();
+                player.getComponent(PlayerControl.class).left();
             }
         }, KeyCode.A);
 
         getInput().addAction(new UserAction("Right") {
             @Override
             protected void onAction() {
-                player.getControl(PlayerControl.class).right();
+                player.getComponent(PlayerControl.class).right();
             }
         }, KeyCode.D);
 
         getInput().addAction(new UserAction("Jump") {
             @Override
             protected void onAction() {
-                player.getControl(PlayerControl.class).jump();
+                player.getComponent(PlayerControl.class).jump();
             }
         }, KeyCode.W);
 
         DSLKt.onKeyDown(KeyCode.F, "asd", () -> {
-            player.getControl(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 3, 7, Orientation.VERTICAL));
+            player.getComponent(EffectComponent.class).startEffect(new WobbleEffect(Duration.seconds(3), 3, 7, Orientation.VERTICAL));
         });
 
         DSLKt.onKeyDown(KeyCode.G, "asd2", () -> {
-            player.getControl(EffectControl.class).startEffect(new WobbleEffect(Duration.seconds(3), 2, 4, Orientation.HORIZONTAL));
+            player.getComponent(EffectComponent.class).startEffect(new WobbleEffect(Duration.seconds(3), 2, 4, Orientation.HORIZONTAL));
         });
     }
 
     @Override
     protected void initGame() {
-        getGameWorld().setLevelFromMap("sewers.tmx");
+        getGameWorld().addEntityFactory(new MarioFactory());
+        getGameWorld().addEntityFactory(new MarioBlockFactory());
+        getGameWorld().setLevelFromMap("mario.tmx");
 
         player = getGameWorld().spawn("player", 50, 50);
 
@@ -78,6 +81,7 @@ public class MarioApp extends GameApplication {
         getGameScene().getViewport().bindToEntity(player, getWidth() / 2, getHeight() / 2);
 
         getGameWorld().spawn("enemy", 470, 50);
+        getGameWorld().spawn("block", new SpawnData(140, 70).put("crush.speed", 770).put("player", player));
     }
 
     @Override

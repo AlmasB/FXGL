@@ -9,8 +9,8 @@ package s03entities;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.action.Action;
-import com.almasb.fxgl.entity.action.ActionControl;
+import com.almasb.fxgl.extra.entity.action.Action;
+import com.almasb.fxgl.extra.entity.action.ActionComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
@@ -48,9 +48,9 @@ public class EntityActionSample extends GameApplication {
             @Override
             protected void onActionBegin() {
 
-                entity.getControl(ActionControl.class).clearActions();
+                entity.getComponent(ActionComponent.class).clearActions();
 
-                entity.getControl(ActionControl.class)
+                entity.getComponent(ActionComponent.class)
                         .addAction(new MoveAction(getInput().getMouseXWorld(), getInput().getMouseYWorld()));
             }
         }, MouseButton.PRIMARY);
@@ -58,7 +58,7 @@ public class EntityActionSample extends GameApplication {
         getInput().addAction(new UserAction("Queue Move Action") {
             @Override
             protected void onActionBegin() {
-                entity.getControl(ActionControl.class)
+                entity.getComponent(ActionComponent.class)
                         .addAction(new MoveAction(getInput().getMouseXWorld(), getInput().getMouseYWorld()));
             }
         }, MouseButton.SECONDARY);
@@ -68,7 +68,7 @@ public class EntityActionSample extends GameApplication {
             protected void onActionBegin() {
                 Action<?> a = actionsView.getSelectionModel().getSelectedItem();
                 if (a != null) {
-                    entity.getControl(ActionControl.class).removeAction(a);
+                    entity.getComponent(ActionComponent.class).removeAction(a);
                 }
             }
         }, KeyCode.F);
@@ -79,7 +79,7 @@ public class EntityActionSample extends GameApplication {
         entity = Entities.builder()
                 .at(400, 300)
                 .viewFromNode(new Rectangle(40, 40))
-                .with(new ActionControl<Entity>())
+                .with(new ActionComponent<Entity>())
                 .buildAndAttach(getGameWorld());
     }
 
@@ -87,12 +87,12 @@ public class EntityActionSample extends GameApplication {
 
     @Override
     protected void initUI() {
-        actionsView = getUIFactory().newListView(entity.getControl(ActionControl.class)
+        actionsView = getUIFactory().newListView(entity.getComponent(ActionComponent.class)
                 .actionsProperty());
 
 //        actionsView.getSelectionModel().selectedItemProperty().addListener((o, old, newValue) -> {
 //            if (newValue != null) {
-//                entity.getControl(ActionControl.class).removeAction(newValue);
+//                entity.getComponent(ActionComponent.class).removeAction(newValue);
 //            }
 //        });
 
@@ -115,7 +115,7 @@ public class EntityActionSample extends GameApplication {
         }
 
         @Override
-        public void onUpdate(Entity entity, double tpf) {
+        public void onUpdate(Entity e, double tpf) {
             speed = 150 * tpf;
 
             entity.translateTowards(new Point2D(x, y), speed);

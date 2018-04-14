@@ -14,6 +14,6 @@ import com.almasb.fxgl.ai.SingleAction;
 public class IdleAction extends SingleAction {
     @Override
     public void onUpdate(double tpf) {
-        getEntity().getControl(PlayerControl.class).stop();
+        getEntity().getComponent(PlayerControl.class).stop();
     }
 }

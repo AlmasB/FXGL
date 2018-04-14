@@ -11,7 +11,6 @@ import com.almasb.fxgl.entity.*;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@SetEntityFactory
 public class UnoFactory implements EntityFactory {
 
     @Spawns("Card")

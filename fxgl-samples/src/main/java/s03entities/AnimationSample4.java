@@ -8,6 +8,7 @@ package s03entities;
 
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.animation.ParallelAnimation;
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.GameSettings;
@@ -59,9 +60,9 @@ public class AnimationSample4 extends GameApplication {
 
         getGameScene().addUINodes(rect1, rect2, rect3);
 
-        Animation<?> anim1 = getUIFactory().translate(rect1, new Point2D(100, 50), Duration.seconds(1));
-        Animation<?> anim2 = getUIFactory().translate(rect2, new Point2D(100, 100), Duration.seconds(1.5));
-        Animation<?> anim3 = getUIFactory().translate(rect3, new Point2D(100, 150), Duration.seconds(0.4));
+        Animation<?> anim1 = DSLKt.translate(rect1, new Point2D(100, 50), Duration.seconds(1));
+        Animation<?> anim2 = DSLKt.translate(rect2, new Point2D(100, 100), Duration.seconds(1.5));
+        Animation<?> anim3 = DSLKt.translate(rect3, new Point2D(100, 150), Duration.seconds(0.4));
 
         ParallelAnimation anim = new ParallelAnimation(anim1, anim2, anim3);
         //SequentialAnimation anim = new SequentialAnimation(anim1, anim2, anim3);

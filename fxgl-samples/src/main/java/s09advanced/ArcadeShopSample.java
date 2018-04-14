@@ -7,8 +7,8 @@
 package s09advanced;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.gameplay.ArcadeShopItem;
-import com.almasb.fxgl.gameplay.ArcadeShopState;
+import com.almasb.fxgl.extra.gameplay.ArcadeShopItem;
+import com.almasb.fxgl.extra.gameplay.ArcadeShopState;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;

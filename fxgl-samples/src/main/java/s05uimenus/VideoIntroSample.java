@@ -9,7 +9,7 @@ package s05uimenus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.scene.IntroScene;
 import com.almasb.fxgl.scene.SceneFactory;
-import com.almasb.fxgl.scene.intro.VideoIntroScene;
+import com.almasb.fxgl.extra.scene.intro.VideoIntroScene;
 import com.almasb.fxgl.settings.GameSettings;
 import org.jetbrains.annotations.NotNull;
 

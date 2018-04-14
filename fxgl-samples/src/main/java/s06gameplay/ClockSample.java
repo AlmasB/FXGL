@@ -6,6 +6,7 @@
 
 package s06gameplay;
 
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.gameplay.rpg.InGameClock;
 import com.almasb.fxgl.settings.GameSettings;
@@ -61,7 +62,7 @@ public class ClockSample extends GameApplication {
 
     @Override
     protected void initUI() {
-        getUIFactory().centerText(clock.textView());
+        DSLKt.centerText(clock.textView());
 
         getGameScene().addUINode(clock.textView());
     }

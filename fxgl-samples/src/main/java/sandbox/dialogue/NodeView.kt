@@ -16,7 +16,6 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.Line
 import javafx.scene.shape.QuadCurve
-import jfxtras.scene.control.window.Window
 
 /**
  *

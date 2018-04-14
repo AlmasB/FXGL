@@ -10,10 +10,10 @@ import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.effect.ParticleControl;
-import com.almasb.fxgl.effect.ParticleEmitter;
-import com.almasb.fxgl.effect.ParticleEmitters;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.particle.ParticleComponent;
+import com.almasb.fxgl.particle.ParticleEmitter;
+import com.almasb.fxgl.particle.ParticleEmitters;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
@@ -73,16 +73,16 @@ public class ParticleTextureSample extends GameApplication {
         emitter.setNumParticles(24);
         emitter.setMaxEmissions(Integer.MAX_VALUE);
         emitter.setEmissionRate(0.1);
-        emitter.setExpireFunction((i, x, y) -> Duration.seconds(FXGLMath.random(2, 2)));
-        emitter.setVelocityFunction((i, x, y) -> Vec2.fromAngle(360 / 24 *i).toPoint2D().multiply(100));
+        emitter.setExpireFunction(i -> Duration.seconds(FXGLMath.random(2, 2)));
+        emitter.setVelocityFunction(i -> Vec2.fromAngle(360 / 24 *i).toPoint2D().multiply(100));
         emitter.setAccelerationFunction(() -> new Point2D(0, 30));
         emitter.setSourceImage(getAssetLoader().loadTexture("particleTexture2.png").multiplyColor(Color.rgb(230, 75, 40)).getImage());
         emitter.setInterpolator(Interpolators.EXPONENTIAL.EASE_OUT());
 
         entity = Entities.builder()
                 .at(getWidth() / 2, getHeight() / 2)
-                .with(new ParticleControl(emitter))
-                //.with(new ButterflyControl())
+                .with(new ParticleComponent(emitter))
+                .with(new ButterflyControl())
                 .buildAndAttach();
 
 //        Entities.builder()
@@ -96,12 +96,12 @@ public class ParticleTextureSample extends GameApplication {
 //                .buildAndAttach();
     }
 
-    private class ButterflyControl extends Control {
+    private class ButterflyControl extends Component {
 
         private double t = 0;
 
         @Override
-        public void onUpdate(Entity entity, double tpf) {
+        public void onUpdate(double tpf) {
             entity.setPosition(curveFunction().add(getWidth() / 2, getHeight() / 2));
 
             t += tpf;
