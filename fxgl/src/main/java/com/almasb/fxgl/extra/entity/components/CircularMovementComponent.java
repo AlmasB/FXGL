@@ -8,17 +8,17 @@ package com.almasb.fxgl.extra.entity.components;
 import com.almasb.fxgl.entity.component.Component;
 
 /**
- * Control that moves entity in a circle.
+ * Moves entity in a circle.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class CircularMovementControl extends Component {
+public final class CircularMovementComponent extends Component {
 
     private double radius;
     private double speed;
     private double t = 0.0;
 
-    public CircularMovementControl(double speed, double radius) {
+    public CircularMovementComponent(double speed, double radius) {
         this.radius = radius;
         this.speed = speed;
     }

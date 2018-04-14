@@ -13,7 +13,7 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.components.CollidableComponent;
-import com.almasb.fxgl.extra.entity.components.ExpireCleanControl;
+import com.almasb.fxgl.extra.entity.components.ExpireCleanComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -109,7 +109,7 @@ public class MarioApp extends GameApplication {
                         .at(getInput().getMousePositionWorld())
                         .viewFromNodeWithBBox(new Rectangle(40, 40))
                         .with(new CollidableComponent(true))
-                        .with(new ExpireCleanControl(Duration.seconds(2)).animateOpacity())
+                        .with(new ExpireCleanComponent(Duration.seconds(2)).animateOpacity())
                         .buildAndAttach();
             }
         }, MouseButton.PRIMARY);

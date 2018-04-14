@@ -10,8 +10,8 @@ import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
-import com.almasb.fxgl.extra.entity.components.OffscreenCleanControl;
-import com.almasb.fxgl.extra.entity.components.ProjectileControl;
+import com.almasb.fxgl.extra.entity.components.OffscreenCleanComponent;
+import com.almasb.fxgl.extra.entity.components.ProjectileComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -85,7 +85,7 @@ public class RobotFactory implements EntityFactory {
         return Entities.builder()
                 .from(data)
                 .viewFromNodeWithBBox(DSLKt.texture("rocket.png", 73, 20))
-                .with(new OffscreenCleanControl(), new ProjectileControl(new Point2D(1, 0), 800))
+                .with(new OffscreenCleanComponent(), new ProjectileComponent(new Point2D(1, 0), 800))
                 .build();
     }
 }

@@ -11,13 +11,13 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.scene.Viewport;
 
 /**
- * A control that keeps an entity within the viewport.
+ * A component that keeps an entity within the viewport.
  * Entities with physics enabled are not supported.
- * Do NOT use this control if viewport is bound to an entity.
+ * Do NOT use this component if viewport is bound to an entity.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class KeepOnScreenControl extends Component {
+public class KeepOnScreenComponent extends Component {
 
     private Viewport viewport;
 
@@ -28,7 +28,7 @@ public class KeepOnScreenControl extends Component {
      * @param horizontally keep on screen in X axis
      * @param vertically keep on screen in Y axis
      */
-    public KeepOnScreenControl(boolean horizontally, boolean vertically) {
+    public KeepOnScreenComponent(boolean horizontally, boolean vertically) {
         this.horizontally = horizontally;
         this.vertically = vertically;
     }

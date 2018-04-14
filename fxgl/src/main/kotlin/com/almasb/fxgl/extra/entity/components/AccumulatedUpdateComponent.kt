@@ -9,7 +9,7 @@ package com.almasb.fxgl.extra.entity.components
 import com.almasb.fxgl.entity.component.Component
 
 /**
- * A control that skips given number of frames.
+ * Skips given number of frames.
  * If number of frames to skip is 0 then [onAccumulatedUpdate] is called every frame.
  * If number of frames to skip is 1 then [onAccumulatedUpdate] is called every 2nd frame, etc.
  *

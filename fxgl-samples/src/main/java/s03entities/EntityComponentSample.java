@@ -12,23 +12,18 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 
 /**
- * This sample shows how to create custom controls for entities.
+ * This sample shows how to create custom components for entities.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class EntityControlSample extends GameApplication {
+public class EntityComponentSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("EntityControlSample");
+        settings.setTitle("EntityComponentSample");
         settings.setVersion("0.1");
-
-
-
-
-
     }
 
     @Override
@@ -36,17 +31,17 @@ public class EntityControlSample extends GameApplication {
         Entities.builder()
                 .at(400, 300)
                 .viewFromNode(new Rectangle(40, 40))
-                // 3. add a new instance of control to entity
-                .with(new RotatingControl())
+                // 3. add a new instance of component to entity
+                .with(new RotatingComponent())
                 .buildAndAttach(getGameWorld());
     }
 
-    // 1. create class that extends Control
-    private class RotatingControl extends Component {
+    // 1. create class that extends Component
+    private class RotatingComponent extends Component {
 
         @Override
         public void onUpdate(double tpf) {
-            // 2. specify behavior of the entity enforced by this control
+            // 2. specify behavior of the entity enforced by this component
             entity.rotateBy(tpf * 45);
         }
     }

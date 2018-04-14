@@ -10,8 +10,7 @@ import com.almasb.fxgl.entity.Entity;
 
 /**
  * A single entity action.
- * Unlike a {@link Control} the action is finished after its execution,
- * a control is active during the entity lifetime (or until removed).
+ * The action is finished after its execution.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

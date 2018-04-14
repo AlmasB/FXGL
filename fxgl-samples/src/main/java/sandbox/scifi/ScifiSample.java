@@ -9,7 +9,7 @@ package sandbox.scifi;
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.particle.ParticleControl;
+import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
@@ -227,7 +227,7 @@ public class ScifiSample extends GameApplication {
         emitter.setSourceImage(getAssetLoader().loadTexture("rain.png").multiplyColor(Color.LIGHTBLUE).getImage());
 
         Entity rain = Entities.builder()
-                .with(new ParticleControl(emitter))
+                .with(new ParticleComponent(emitter))
                 .buildAndAttach(getGameWorld());
 
         rain.getPositionComponent().xProperty().bind(getGameScene().getViewport().xProperty());

@@ -86,8 +86,8 @@ public class FXShooterApp extends GameApplication {
 //        Button btn = FXGL.getUIFactory().newButton("Execute");
 //        btn.setTranslateY(500);
 //        btn.setOnAction(e -> {
-//            player.removeControl(JSControl.class);
-//            player.addComponent(new JSControl(textArea.getText()));
+//            player.removeControl(JSComponent.class);
+//            player.addComponent(new JSComponent(textArea.getText()));
 //        });
 //
 //        Pane pane = new Pane();

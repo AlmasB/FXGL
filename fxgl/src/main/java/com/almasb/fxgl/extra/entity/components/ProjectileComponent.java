@@ -10,17 +10,17 @@ import com.almasb.fxgl.entity.component.Component;
 import javafx.geometry.Point2D;
 
 /**
- * Generic projectile control.
+ * Generic projectile component.
  * Automatically rotates the entity based on velocity direction.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class ProjectileControl extends Component {
+public class ProjectileComponent extends Component {
 
     private Point2D velocity;
     private double speed;
 
-    public ProjectileControl(Point2D direction, double speed) {
+    public ProjectileComponent(Point2D direction, double speed) {
         this.velocity = direction.normalize().multiply(speed);
         this.speed = speed;
     }

@@ -10,8 +10,8 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.entity.components.PositionComponent;
-import com.almasb.fxgl.extra.entity.components.OffscreenCleanControl;
-import com.almasb.fxgl.extra.entity.components.ProjectileControl;
+import com.almasb.fxgl.extra.entity.components.OffscreenCleanComponent;
+import com.almasb.fxgl.extra.entity.components.ProjectileComponent;
 import com.almasb.fxgl.entity.view.EntityView;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -33,8 +33,8 @@ public class PlayerControl extends Component {
         bullet.getViewComponent().setView(new EntityView(new Rectangle(10, 2, Color.BLACK)), true);
 
         bullet.addComponent(new CollidableComponent(true));
-        bullet.addComponent(new OffscreenCleanControl());
-        bullet.addComponent(new ProjectileControl(direction, 10 * 60));
+        bullet.addComponent(new OffscreenCleanComponent());
+        bullet.addComponent(new ProjectileComponent(direction, 10 * 60));
 
         BulletComponent bulletData = new BulletComponent();
         bulletData.setDamage(1);

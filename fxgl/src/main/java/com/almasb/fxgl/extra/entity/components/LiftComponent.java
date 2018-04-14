@@ -12,11 +12,11 @@ import com.almasb.fxgl.time.LocalTimer;
 import javafx.util.Duration;
 
 /**
- * Lift control.
+ * Moves the entity up and down.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class LiftControl extends Component {
+public class LiftComponent extends Component {
 
     private LocalTimer timer;
     private Duration duration;
@@ -25,13 +25,13 @@ public class LiftControl extends Component {
     private double speed;
 
     /**
-     * Constructs lift control (moving vertically).
+     * Constructs lift component (moving vertically).
      *
      * @param duration duration going (one way)
      * @param distance the distance entity travels (one way)
      * @param goingUp if true, entity starts going up, otherwise down
      */
-    public LiftControl(Duration duration, double distance, boolean goingUp) {
+    public LiftComponent(Duration duration, double distance, boolean goingUp) {
         this.duration = duration;
         this.distance = distance;
         this.goingUp = goingUp;

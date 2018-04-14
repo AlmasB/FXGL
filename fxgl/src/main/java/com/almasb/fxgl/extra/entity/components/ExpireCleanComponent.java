@@ -17,7 +17,7 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class ExpireCleanControl extends Component {
+public class ExpireCleanComponent extends Component {
 
     private Duration expire;
 
@@ -25,11 +25,11 @@ public class ExpireCleanControl extends Component {
 
     /**
      * The expire duration timer starts when the entity is attached to the world,
-     * so it does not start immediately when this control is created.
+     * so it does not start immediately when this component is created.
      *
      * @param expire the duration after entity is removed from the world
      */
-    public ExpireCleanControl(Duration expire) {
+    public ExpireCleanComponent(Duration expire) {
         this.expire = expire;
     }
 
@@ -69,9 +69,9 @@ public class ExpireCleanControl extends Component {
     /**
      * Enables diminishing opacity over time.
      *
-     * @return this control
+     * @return this component
      */
-    public ExpireCleanControl animateOpacity() {
+    public ExpireCleanComponent animateOpacity() {
         animate = true;
         return this;
     }

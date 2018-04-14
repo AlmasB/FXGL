@@ -9,12 +9,12 @@ package s07particles;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.particle.ParticleControl;
+import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.extra.entity.components.CircularMovementControl;
+import com.almasb.fxgl.extra.entity.components.CircularMovementComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
@@ -80,7 +80,7 @@ public class SmokeSample extends GameApplication {
 
 //        Entities.builder()
 //                .at(getWidth() / 2, getHeight() - 100)
-//                .with(new ParticleControl(e), new RandomMoveControl(2))
+//                .with(new ParticleComponent(e), new RandomMoveControl(2))
 //                .buildAndAttach(getGameWorld());
 
 
@@ -98,7 +98,7 @@ public class SmokeSample extends GameApplication {
 
         entity = Entities.builder()
                 .at(getWidth() / 2, getHeight() / 2)
-                .with(new ParticleControl(emitter))
+                .with(new ParticleComponent(emitter))
                 .buildAndAttach(getGameWorld());
 
 
@@ -106,7 +106,7 @@ public class SmokeSample extends GameApplication {
         Entities.builder()
                 .at(250, 250)
                 .viewFromNode(new Rectangle(40, 40, Color.BLUE))
-                .with(new CircularMovementControl(10, 25))
+                .with(new CircularMovementComponent(10, 25))
                 .buildAndAttach(getGameWorld());
     }
 

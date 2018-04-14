@@ -11,11 +11,11 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.script.Script;
 
 /**
- * Control that runs scripted entity behavior from a javascript file.
+ * Runs scripted entity behavior from a javascript file.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class JSControl extends Component {
+public class JSComponent extends Component {
 
     private Script script;
 
@@ -24,7 +24,7 @@ public class JSControl extends Component {
      *
      * @param scriptFileName javascript source
      */
-    public JSControl(String scriptFileName) {
+    public JSComponent(String scriptFileName) {
         this.script = FXGL.getAssetLoader().loadScript(scriptFileName);
     }
 

@@ -11,20 +11,20 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.scene.Viewport;
 
 /**
- * Control that removes an entity if it is outside of the visible area of the viewport.
+ * Removes an entity if it is outside of the visible area of the viewport.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class OffscreenCleanControl extends Component {
+public class OffscreenCleanComponent extends Component {
 
     private Viewport viewport;
 
-    public OffscreenCleanControl() {
+    public OffscreenCleanComponent() {
         viewport = FXGL.getApp().getGameScene().getViewport();
     }
 
     @Override
-    public void onUpdate(double v) {
+    public void onUpdate(double tpf) {
         if (entity.getBoundingBoxComponent().isOutside(viewport.getVisibleArea())) {
             entity.removeFromWorld();
         }

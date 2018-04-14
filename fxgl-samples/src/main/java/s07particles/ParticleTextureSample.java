@@ -10,7 +10,7 @@ import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.particle.ParticleControl;
+import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
 import com.almasb.fxgl.entity.component.Component;
@@ -81,7 +81,7 @@ public class ParticleTextureSample extends GameApplication {
 
         entity = Entities.builder()
                 .at(getWidth() / 2, getHeight() / 2)
-                .with(new ParticleControl(emitter))
+                .with(new ParticleComponent(emitter))
                 .with(new ButterflyControl())
                 .buildAndAttach();
 

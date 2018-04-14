@@ -8,7 +8,7 @@ package s07particles;
 
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.particle.ParticleControl;
+import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
@@ -47,7 +47,7 @@ public class RainSample extends GameApplication {
         emitter.setSourceImage(getAssetLoader().loadTexture("rain.png").multiplyColor(Color.RED).getImage());
 
         Entities.builder()
-                .with(new ParticleControl(emitter))
+                .with(new ParticleComponent(emitter))
                 .buildAndAttach(getGameWorld());
 
         // example - set color
@@ -58,7 +58,7 @@ public class RainSample extends GameApplication {
 
         Entities.builder()
                 .at(getWidth() / 2, 0)
-                .with(new ParticleControl(emitter2))
+                .with(new ParticleComponent(emitter2))
                 .buildAndAttach(getGameWorld());
     }
 

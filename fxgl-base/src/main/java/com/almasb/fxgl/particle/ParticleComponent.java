@@ -12,7 +12,6 @@ import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.PositionComponent;
-import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.util.EmptyRunnable;
 
 import java.util.Iterator;
@@ -20,8 +19,7 @@ import java.util.Iterator;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Required(PositionComponent.class)
-public class ParticleControl extends Component {
+public class ParticleComponent extends Component {
 
     private ParticleEmitter emitter;
     private Entity parent = new Entity();
@@ -33,15 +31,15 @@ public class ParticleControl extends Component {
     private Runnable onFinished = EmptyRunnable.INSTANCE;
 
     /**
-     * Constructs particle control with specified emitter.
+     * Constructs particle component with specified emitter.
      *
      * @param emitter particle emitter
      */
-    public ParticleControl(ParticleEmitter emitter) {
+    public ParticleComponent(ParticleEmitter emitter) {
         this.emitter = emitter;
     }
 
-    protected ParticleControl() {}
+    protected ParticleComponent() {}
 
     @Override
     public void onUpdate(double tpf) {
@@ -81,7 +79,7 @@ public class ParticleControl extends Component {
     }
 
     /**
-     * @return particle emitter attached to control
+     * @return particle emitter attached to component
      */
     public final ParticleEmitter getEmitter() {
         return emitter;

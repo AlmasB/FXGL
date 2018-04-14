@@ -9,7 +9,7 @@ package com.almasb.fxgl.physics
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.core.pool.Pools
-import com.almasb.fxgl.particle.ParticleControl
+import com.almasb.fxgl.particle.ParticleComponent
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroup
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef
 import javafx.scene.paint.Color
@@ -24,7 +24,7 @@ import javafx.scene.paint.Color
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class PhysicsParticleComponent : ParticleControl() {
+class PhysicsParticleComponent : ParticleComponent() {
 
     /**
      * Do NOT set directly.

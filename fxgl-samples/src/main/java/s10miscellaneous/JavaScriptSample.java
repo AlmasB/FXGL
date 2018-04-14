@@ -8,7 +8,7 @@ package s10miscellaneous;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.extra.entity.components.JSControl;
+import com.almasb.fxgl.extra.entity.components.JSComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 
@@ -32,13 +32,13 @@ public class JavaScriptSample extends GameApplication {
         Entities.builder()
                 .at(100, 100)
                 .viewFromNode(new Rectangle(40, 40))
-                .with(new JSControl("spin_control.js"))
+                .with(new JSComponent("spin_control.js"))
                 .buildAndAttach(getGameWorld());
 
         Entities.builder()
                 .at(180, 100)
                 .viewFromNode(new Rectangle(40, 40))
-                .with(new JSControl("ccw_spin_control.js"))
+                .with(new JSComponent("ccw_spin_control.js"))
                 .buildAndAttach(getGameWorld());
 
         getAssetLoader().loadScript("sample.js").call("sample");

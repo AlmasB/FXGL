@@ -8,7 +8,7 @@ package s07particles;
 import com.almasb.fxgl.animation.EasingInterpolator;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.particle.ParticleControl;
+import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
@@ -53,7 +53,7 @@ public class ParticleSystemSample extends GameApplication {
 
         particleEntity = Entities.builder()
                 .at((getWidth() - 300) / 2, getHeight() / 2)
-                .with(new ParticleControl(emitter))
+                .with(new ParticleComponent(emitter))
                 .buildAndAttach();
     }
 
