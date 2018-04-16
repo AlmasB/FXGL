@@ -81,15 +81,17 @@ public class BasicGameApp4 extends GameApplication {
         public void onUpdate(double tpf) {
             entity.translateX(speed * tpf);
 
-            if (speed == 0) {
-                texture.loopAnimationChannel(animIdle);
-            } else {
-                texture.loopAnimationChannel(animWalk);
+            if (speed != 0) {
+
+                if (texture.getAnimationChannel() == animIdle) {
+                    texture.loopAnimationChannel(animWalk);
+                }
 
                 speed = (int) (speed * 0.9);
 
                 if (FXGLMath.abs(speed) < 1) {
                     speed = 0;
+                    texture.loopAnimationChannel(animIdle);
                 }
             }
         }
