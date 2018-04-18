@@ -8,14 +8,19 @@ package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.devtools.DeveloperTools
+import javafx.animation.KeyFrame
+import javafx.animation.KeyValue
+import javafx.animation.Timeline
+import javafx.beans.binding.Bindings
 import javafx.scene.Cursor
 import javafx.scene.Node
-import javafx.scene.control.Button
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
+import javafx.scene.shape.Line
+import javafx.util.Duration
 
 /**
- * Adapted from jfxtras-window
+ * Adapted from jfxtras-window.
  *
  * TODO: clean up
  *
@@ -53,14 +58,73 @@ open class MDIWindow : Region() {
     private var RESIZE_RIGHT: Boolean = false
 
     private var prevHeight = 0.0
-
-
+    
     // CUSTOM
 
     private val header = FXGL.getUIFactory().newTextFlow()
 
-    private val minimizeButton = Button("-")
-    private val closeButton = Button("x")
+    private val minimizeButton = makeMinimizeButton()
+    private val closeButton = makeCloseButton()
+
+    private var animationFinished = true
+
+    private fun makeMinimizeButton(): Node {
+        val pane = Pane()
+        pane.translateY = 1.0
+
+        val size = 20.0
+        val offset = 3.0
+
+        val line1 = Line(offset, size / 2 + 1, size, size / 2 + 1)
+        val line2 = Line(size, offset, offset, size)
+
+        line1.strokeWidth = 2.0
+        line2.strokeWidth = 2.0
+
+        val stroke = Bindings.`when`(pane.hoverProperty()).then(Color.BLUE).otherwise(Color.WHITE)
+
+        line1.strokeProperty().bind(
+                stroke
+        )
+
+        line2.strokeProperty().bind(
+                stroke
+        )
+
+        line2.isVisible = false
+
+        pane.children.addAll(line1, line2)
+
+        return pane
+    }
+
+    private fun makeCloseButton(): Node {
+        val pane = Pane()
+        pane.translateY = 1.0
+
+        val size = 22.0
+        val offset = 3.0
+
+        val line1 = Line(offset, offset, size, size)
+        val line2 = Line(size, offset, offset, size)
+
+        line1.strokeWidth = 2.0
+        line2.strokeWidth = 2.0
+
+        val stroke = Bindings.`when`(pane.hoverProperty()).then(Color.RED).otherwise(Color.WHITE)
+
+        line1.strokeProperty().bind(
+                stroke
+        )
+
+        line2.strokeProperty().bind(
+                stroke
+        )
+
+        pane.children.addAll(line1, line2)
+
+        return pane
+    }
 
     private val root = Pane()
     var contentPane: Pane = StackPane()
@@ -72,12 +136,6 @@ open class MDIWindow : Region() {
             if (value.width < width) {
                 width = value.width
             }
-
-//            value.widthProperty().addListener { observable, oldValue, newValue ->
-//                if (width > newValue.toDouble()) {
-//                    width = newValue.toDouble()
-//                }
-//            }
         }
 
     var isMinimized = false
@@ -329,42 +387,43 @@ open class MDIWindow : Region() {
 
         children.add(root)
 
-        minimizeButton.setOnAction {
+        minimizeButton.setOnMouseClicked {
+            if (!animationFinished)
+                return@setOnMouseClicked
+
             isMinimized = !isMinimized
 
             if (control.prefHeight > 0.0) {
                 prevHeight = control.prefHeight
             }
 
-            control.prefHeight = if (isMinimized) 0.0 else prevHeight
+            val animation = Timeline()
+            animation.keyFrames.add(KeyFrame(Duration.seconds(0.25), KeyValue(
+                    control.prefHeightProperty(), if (isMinimized) 0.0 else prevHeight
+            )))
+
+            animation.setOnFinished { animationFinished = true }
+
+            animation.play()
+
+            animationFinished = false
         }
 
-        closeButton.setOnAction {
+        closeButton.setOnMouseClicked {
             DeveloperTools.removeFromParent(this)
         }
 
-        // TODO: redesign graphics and position
-        minimizeButton.translateY = -25.0
-        closeButton.translateX = 25.0
-        closeButton.translateY = -25.0
+        minimizeButton.translateY = -20.0
+        closeButton.translateY = -22.0
 
         val box = HBox(header)
         box.translateY = -25.0
         box.styleClass.add("window-titlebar")
 
-//        box.prefWidthProperty().addListener { observable, oldValue, newValue ->
-//            println(newValue)
-//        }
-
-//        root.widthProperty().addListener { observable, oldValue, newValue ->
-//            println("Root: $newValue")
-//
-//            if ( > newValue.toDouble()) {
-//                width = newValue.toDouble()
-//            }
-//        }
-
         box.prefWidthProperty().bind(this.widthProperty())
+
+        closeButton.translateXProperty().bind(box.prefWidthProperty().subtract(27.0))
+        minimizeButton.translateXProperty().bind(box.prefWidthProperty().subtract(54.0))
 
         root.children.add(box)
         root.children.add(contentPane)
