@@ -273,7 +273,13 @@ class GameWorld {
 
         map.layers.filter { it.type == "objectgroup" }
                 .flatMap { it.objects }
-                .forEach { obj -> spawn(obj.type, SpawnData(obj)) }
+                .forEach { obj ->
+                    val data = SpawnData(obj)
+
+                    data.put("tilesets", map.tilesets)
+
+                    spawn(obj.type, data)
+                }
     }
 
     /**

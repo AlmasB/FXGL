@@ -58,7 +58,7 @@ open class MDIWindow : Region() {
     private var RESIZE_RIGHT: Boolean = false
 
     private var prevHeight = 0.0
-    
+
     // CUSTOM
 
     private val header = FXGL.getUIFactory().newTextFlow()

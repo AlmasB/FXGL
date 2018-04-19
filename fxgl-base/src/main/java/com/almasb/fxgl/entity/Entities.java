@@ -123,6 +123,43 @@ public final class Entities {
                 }
             }
 
+            // TODO: cleanup
+            if (data.hasKey("gid") && data.hasKey("tilesets")) {
+                int gid = data.get("gid");
+
+                if (gid != 0) {
+
+                    System.out.println(gid + " " + data.getX() + " " + data.getY());
+
+                    Tileset tileset = findTileset(gid, data.get("tilesets"));
+
+                    // we offset because data is encoded as continuous
+                    gid -= tileset.getFirstgid();
+
+                    // image source
+                    int tilex = gid % tileset.getColumns();
+                    int tiley = gid / tileset.getColumns();
+
+                    // image destination
+                    //int x = i % layer.getWidth();
+                    //int y = i / layer.getWidth();
+
+                    int w = tileset.getTilewidth();
+                    int h = tileset.getTileheight();
+
+                    WritableImage buffer = new WritableImage(w, h);
+
+                    Image sourceImage = loadTilesetImage(tileset);
+
+                    buffer.getPixelWriter().setPixels(0, 0,
+                            w, h, sourceImage.getPixelReader(),
+                            tilex * w + tileset.getMargin() + tilex * tileset.getSpacing(),
+                            tiley * h + tileset.getMargin() + tiley * tileset.getSpacing());
+
+                    viewFromNode(new ImageView(buffer));
+                }
+            }
+
             forEach(data.getData(), entry -> entity.setProperty(entry.key, entry.value));
             return this;
         }

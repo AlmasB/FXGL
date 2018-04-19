@@ -21,12 +21,16 @@ open class SpawnData(val x: Double, val y: Double) {
 
     constructor(position: Point2D) : this(position.x, position.y)
 
-    constructor(tiledObject: TiledObject) : this(tiledObject.x.toDouble(), tiledObject.y.toDouble()) {
+    constructor(tiledObject: TiledObject) : this(tiledObject.x.toDouble(),
+            // it appears that if object has non-zero gid then its y is flipped
+            (tiledObject.y - if (tiledObject.gid == 0) 0 else tiledObject.height).toDouble()) {
+
         put("type", tiledObject.type)
         put("width", tiledObject.width)
         put("height", tiledObject.height)
         put("rotation", tiledObject.rotation)
         put("id", tiledObject.id)
+        put("gid", tiledObject.gid)
 
         tiledObject.properties.forEach { put(it.key, it.value) }
     }

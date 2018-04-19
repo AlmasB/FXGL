@@ -210,6 +210,7 @@ class TMXParser {
         obj.y = start.getInt("y")
         obj.width = start.getInt("width")
         obj.height = start.getInt("height")
+        obj.gid = start.getInt("gid")
 
         (layer.objects as MutableList).add(obj)
     }
@@ -223,7 +224,7 @@ class TMXParser {
 // these retrieve the value if exists or return a default
 
 private fun StartElement.getInt(attrName: String): Int {
-    return this.getString(attrName).toIntOrNull() ?: 0
+    return this.getString(attrName).toIntOrNull() ?: this.getFloat(attrName).toInt()
 }
 
 private fun StartElement.getFloat(attrName: String): Float {
