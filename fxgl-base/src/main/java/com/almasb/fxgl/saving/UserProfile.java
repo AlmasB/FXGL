@@ -53,6 +53,7 @@ public class UserProfile implements Serializable {
     }
 
     /**
+     * TODO: log here
      * Stores a bundle in the user profile. Bundles with same
      * name are not allowed.
      *
@@ -67,7 +68,7 @@ public class UserProfile implements Serializable {
     }
 
     /**
-     *
+     * TODO: log here
      * @param name bundle name
      * @return bundle with given name
      */

@@ -19,6 +19,8 @@ import com.almasb.fxgl.gameplay.notification.NotificationServiceProvider
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.net.FXGLNet
+import com.almasb.fxgl.saving.LoadEvent
+import com.almasb.fxgl.saving.SaveEvent
 import com.almasb.fxgl.scene.menu.MenuSettings
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
@@ -26,6 +28,7 @@ import com.almasb.fxgl.ui.FXGLDisplay
 import com.gluonhq.charm.down.Platform
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
+import javafx.event.EventHandler
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -134,6 +137,10 @@ class FXGL private constructor() {
 
                 runUpdaterAsync()
             }
+
+            // TODO: redesign where save / load listeners should be
+            _eventBus.addEventHandler(SaveEvent.ANY, EventHandler { _menuSettings.save(it.profile) })
+            _eventBus.addEventHandler(LoadEvent.ANY, EventHandler { _menuSettings.load(it.profile) })
         }
 
         private fun logVersion() {
