@@ -248,26 +248,6 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
-     * Get the skew vector such that dot(skew_vec, other) == cross(vec, other).
-     *
-     * @return new vector
-     */
-    public Vec2 skew() {
-        return new Vec2(-y, x);
-    }
-
-    /**
-     * Get the skew vector such that dot(skew_vec, other) == cross(vec, other);
-     * does not alter this vector.
-     *
-     * @param out the out vector to alter
-     */
-    public void skew(Vec2 out) {
-        out.x = -y;
-        out.y = x;
-    }
-
-    /**
      * @return new vector counter clockwise perpendicular to this
      */
     public Vec2 perpendicularCCW() {
@@ -303,30 +283,48 @@ public final class Vec2 implements Serializable, Poolable {
         return (x * x + y * y);
     }
 
+    /**
+     * @return distance between this and other Vec2 taken as points
+     */
     public double distance(Vec2 other) {
         return distance(other.x, other.y);
     }
 
+    /**
+     * @return distance between this and other Point2D taken as points
+     */
     public double distance(Point2D other) {
         return distance(other.getX(), other.getY());
     }
 
+    /**
+     * @return distance between this and other point
+     */
     public double distance(double otherX, double otherY) {
         double dx = otherX - x;
         double dy = otherY - y;
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    /**
+     * @return distance squared between this and other point
+     */
     public double distanceSquared(double otherX, double otherY) {
         double dx = otherX - x;
         double dy = otherY - y;
         return dx * dx + dy * dy;
     }
 
+    /**
+     * @return true if distance between this and other point is less than given
+     */
     public boolean distanceLessThanOrEqual(double otherX, double otherY, double distance) {
         return distanceSquared(otherX, otherY) <= distance * distance;
     }
 
+    /**
+     * @return true if distance between this and other point is greater than given
+     */
     public boolean distanceGreaterThanOrEqual(double otherX, double otherY, double distance) {
         return distanceSquared(otherX, otherY) >= distance * distance;
     }
