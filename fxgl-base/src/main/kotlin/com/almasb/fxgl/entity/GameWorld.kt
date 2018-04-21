@@ -122,6 +122,12 @@ class GameWorld {
         }
     }
 
+    fun removeEntities(entitiesToRemove: Collection<Entity>) {
+        for (e in entitiesToRemove) {
+            removeEntity(e)
+        }
+    }
+
     private fun canRemove(entity: Entity): Boolean {
         return !entity.hasComponent(IrremovableComponent::class.java)
     }

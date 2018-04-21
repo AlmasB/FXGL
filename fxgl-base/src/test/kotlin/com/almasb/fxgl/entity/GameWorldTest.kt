@@ -138,12 +138,23 @@ class GameWorldTest {
     }
 
     @Test
-    fun `Remove multiple entities`() {
+    fun `Remove multiple entities by passing entities as varag)`() {
         val e = Entity()
         val e2 = Entity()
 
         gameWorld.addEntities(e, e2)
         gameWorld.removeEntities(e, e2)
+
+        assertThat(gameWorld.entities, not(containsInAnyOrder(e, e2)))
+    }
+
+    @Test
+    fun `Remove multiple entities by passing entities as collection`() {
+        val e = Entity()
+        val e2 = Entity()
+
+        gameWorld.addEntities(e, e2)
+        gameWorld.removeEntities(listOf(e, e2))
 
         assertThat(gameWorld.entities, not(containsInAnyOrder(e, e2)))
     }
