@@ -47,6 +47,7 @@ public class ReadOnlyGameSettings {
     protected Credits credits = new Credits(Collections.emptyList());
     protected EnumSet<MenuItem> enabledMenuItems = EnumSet.noneOf(MenuItem.class);
     protected StageStyle stageStyle = StageStyle.DECORATED;
+    protected String appIcon = "fxgl_icon.png";
     protected boolean manualResizeEnabled = false;
 
     // when adding extra fields, remember to add them to copy constructor
@@ -102,6 +103,7 @@ public class ReadOnlyGameSettings {
         this.enabledMenuItems = copy.enabledMenuItems;
         this.singleStep = copy.singleStep;
         this.stageStyle = copy.stageStyle;
+        this.appIcon = copy.appIcon;
         this.manualResizeEnabled = copy.manualResizeEnabled;
 
         this.configClass = copy.configClass;
@@ -178,6 +180,10 @@ public class ReadOnlyGameSettings {
 
     public final StageStyle getStageStyle() {
         return stageStyle;
+    }
+
+    public final String getAppIcon() {
+        return appIcon;
     }
 
     public final Optional<Class<?>> getConfigClass() {

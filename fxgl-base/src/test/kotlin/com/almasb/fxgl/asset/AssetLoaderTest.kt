@@ -202,15 +202,6 @@ class AssetLoaderTest {
     }
 
     @Test
-    fun loadAppIcon() {
-        val icon = assetLoader.loadAppIcon("ic_test.png")
-
-        assertThat(icon, `is`(notNullValue()))
-        assertThat(icon.width, `is`(48.0))
-        assertThat(icon.height, `is`(48.0))
-    }
-
-    @Test
     fun loadBehaviorTree() {
         val tree = assetLoader.loadBehaviorTree<Entity>("test.tree")
 
@@ -235,7 +226,6 @@ class AssetLoaderTest {
                 "css/test.css",
                 "cursors/test_cursor.png",
                 "fonts/test.ttf",
-                "icons/ic_test.png",
                 "test_ui.fxml"
                 ))
     }

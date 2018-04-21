@@ -89,7 +89,6 @@ class AssetLoader {
     private val UI_DIR = ASSETS_DIR + "ui/"
     private val CSS_DIR = UI_DIR + "css/"
     private val FONTS_DIR = UI_DIR + "fonts/"
-    private val ICON_DIR = UI_DIR + "icons/"
     private val CURSORS_DIR = UI_DIR + "cursors/"
 
     private val log = Logger.get(javaClass)
@@ -490,22 +489,6 @@ class AssetLoader {
                 cachedAssets.put(FONTS_DIR + name, fontFactory)
                 return fontFactory
             }
-        } catch (e: Exception) {
-            throw loadFailed(name, e)
-        }
-    }
-
-    /**
-     * Loads an app icon from /assets/ui/icons/.
-     * Either returns a valid image or throws an exception in case of errors.
-     *
-     * @param name image name without the /assets/ui/icons/, e.g. "app_icon.png"
-     * @return app icon image
-     * @throws IllegalArgumentException if asset not found or loading error
-     */
-    fun loadAppIcon(name: String): Image {
-        try {
-            getStream(ICON_DIR + name).use { return Image(it) }
         } catch (e: Exception) {
             throw loadFailed(name, e)
         }

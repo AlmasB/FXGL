@@ -183,6 +183,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.stageStyle = stageStyle;
     }
 
+    public void setAppIcon(String appIcon) {
+        this.appIcon = appIcon;
+    }
+
     public void setConfigClass(Class<?> configClass) {
         this.configClass = configClass;
     }
