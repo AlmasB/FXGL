@@ -196,7 +196,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
     }
 
     fun fixAspectRatio() {
-        app.mainWindow.fixAspectRatio()
+        app.fixAspectRatio()
     }
 
     override fun profileNameProperty(): ReadOnlyStringProperty {
