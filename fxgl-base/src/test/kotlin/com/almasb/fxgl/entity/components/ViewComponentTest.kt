@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity.component
+package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.entity.RenderLayer

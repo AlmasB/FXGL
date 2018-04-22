@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity.component
+package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.entity.components.RotationComponent
 import javafx.geometry.Point2D
