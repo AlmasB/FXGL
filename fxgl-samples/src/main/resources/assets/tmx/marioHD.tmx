@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="212" height="10" tilewidth="70" tileheight="70" infinite="0" nextobjectid="27">
+ <tileset firstgid="1" name="tiles_spritesheet" tilewidth="70" tileheight="70" spacing="2" tilecount="156" columns="12">
+  <image source="../textures/tiles_spritesheet.png" width="914" height="936"/>
+ </tileset>
+ <layer name="tiles" width="212" height="10">
+  <data encoding="base64" compression="zlib">
+   eJztmM0NgzAMhX3tAB2AFbpBL5V65c6ZLtBdyrYYAZKVJi6ENFbC+6QnIuI/IllWIAIA1Mwzcs9n5z4BOBNv1ovVed656r68dXvNBwAAAHDxzSQASqZhXZT9G813EO0pwX0FnJWpl66sD+k9tZWt8wZzCZTKQ6zlLFp7aVgke6qEGVNCjRLrelPn/9f3/IqbKm9MnDurXdbuLAr9B0spirDf65MzXu06cl4W5xzKaVHLkEF9hP1en5zxateR87I451BOi1pGpprk1Q==
+  </data>
+ </layer>
+ <objectgroup name="objects">
+  <object id="2" type="platform" x="0" y="560" width="1750" height="140"/>
+  <object id="3" type="platform" x="1820" y="560" width="770" height="140"/>
+  <object id="4" type="platform" x="2730" y="560" width="1260" height="140"/>
+  <object id="6" type="platform" x="4130" y="560" width="5180" height="140"/>
+  <object id="7" type="platform" x="9450" y="560" width="910" height="140"/>
+  <object id="8" type="platform" x="10430" y="560" width="1960" height="140"/>
+  <object id="9" type="platform" x="12460" y="560" width="350" height="140"/>
+  <object id="10" type="platform" x="12880" y="560" width="1960" height="140"/>
+  <object id="12" type="platform" x="1470" y="420" width="210" height="70"/>
+  <object id="13" type="platform" x="700" y="350" width="70" height="70"/>
+  <object id="14" type="platform" x="840" y="350" width="70" height="70"/>
+  <object id="15" type="platform" x="980" y="350" width="70" height="70"/>
+  <object id="16" type="platform" x="1120" y="350" width="70" height="70"/>
+  <object id="17" type="platform" x="1260" y="350" width="70" height="70"/>
+ </objectgroup>
+ <objectgroup name="enemies">
+  <object id="18" type="enemy" x="2030" y="490" width="70" height="70">
+   <properties>
+    <property name="subType" value="plant"/>
+   </properties>
+  </object>
+  <object id="19" type="enemy" x="2940" y="70" width="70" height="70">
+   <properties>
+    <property name="subType" value="plant"/>
+   </properties>
+  </object>
+  <object id="20" type="enemy" x="3850" y="490" width="70" height="70">
+   <properties>
+    <property name="subType" value="plant"/>
+   </properties>
+  </object>
+  <object id="21" type="enemy" x="5670" y="490" width="70" height="70">
+   <properties>
+    <property name="subType" value="plant"/>
+   </properties>
+  </object>
+  <object id="22" type="enemy" x="7210" y="490" width="70" height="70">
+   <properties>
+    <property name="subType" value="plant"/>
+   </properties>
+  </object>
+  <object id="23" type="enemy" x="9450" y="490" width="70" height="70">
+   <properties>
+    <property name="subType" value="plant"/>
+   </properties>
+  </object>
+  <object id="24" type="enemy" x="9240" y="490" width="70" height="70">
+   <properties>
+    <property name="subType" value="plant"/>
+   </properties>
+  </object>
+  <object id="25" type="enemy" x="11830" y="490" width="70" height="70">
+   <properties>
+    <property name="subType" value="plant"/>
+   </properties>
+  </object>
+  <object id="26" type="enemy" x="13720" y="490" width="70" height="70">
+   <properties>
+    <property name="subType" value="plant"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

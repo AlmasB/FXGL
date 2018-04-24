@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="212" height="15" tilewidth="16" tileheight="16" infinite="0" nextobjectid="2">
+ <tileset firstgid="1" name="SuperMarioBros" tilewidth="16" tileheight="16" tilecount="44" columns="11">
+  <image source="../textures/tiles.png" width="176" height="64"/>
+ </tileset>
+ <layer name="background" width="212" height="15">
+  <data encoding="base64" compression="zlib">
+   eJztl3lPwzAMxTtukChF4hj3NQbf/xNipEayTA7nasP6/vhpVeI4L57f0q26rlsBAAAAO8wesU8cFMiRmwf6oT8nz2EDZzwijokTxVldOU0OXx7oh/6a+k+JswT9GkJnTMlV8vuCfuivwXkF/Tn0M+8/FRcBXLE59Yld69Jj5voR2/yuMYyE4i4b0ApAywwd/ARACYYOfpqCpbyXLhnppVQ/XTFqaZX9aN7H+WeNfa+JmwqxGkqczeVj13+rXvEs88Scxxc/OJ5DyN6NWSu1pdbb5qVUP90Sa+JOsf4+QWtNQh54IB6V+mVsi7RWf4PNE7Z+lPptvavt5dLaNX6S+qWffu+kJ4bvjnomXojXRN0xvaC9K0Ie4PMh/aFcc/fylPWPwecJPib1u3rX1c9Gf+57BF/v85Lc31Z/6af1yBt7ttXf5HonPgLf6Yb4ZGwdWmT8lo1p7woetxF78nmNfhNbQn8KNv1z1T/FSwPbU45L/b7eleNSv+yNWP1mfchLtt8CWX/pOeOhL/Zsq/83+IOpYYkcqDHqsHTgp/bq+V/4AejoZxw=
+  </data>
+ </layer>
+ <layer name="walls" width="212" height="15">
+  <data encoding="base64" compression="zlib">
+   eJztl9sOwiAQRPmCyoOXGvXBJ/3/LxSTkqzIwna5VNs5yUSSdgldZwIYAwAAAAAAAAAAALAOhqUX0IldRty7Jf2ZW8utxz8bJsWerw07CQBQhjXIEwA1sAZ56sFWzqVbJsySNk97olaEfvTncfrbgoPTscG7Emp8G5dj7m41CMbhPFK4u5XHMuMcoXc1Pqb3TU2/Y1nS5unkNDqdlfVLksvAxekqnGvOu+CTWCYkfox5t/dZi8uSZg3vPelG1HKPmoN0r8hlAHlqTyoTKU9y3s3Vlp4jaH0qS5o8jZPuZPwLSL2NPC2LJBMxX6a8m6st/Z98fS5L0v2V4jP0MOk8PaEv1egNely3n9D/ylNjjtJ51qAt9eEFMpJNjw==
+  </data>
+ </layer>
+ <objectgroup name="objects">
+  <object id="1" type="platform" x="0" y="208" width="544" height="32"/>
+ </objectgroup>
+</map>
