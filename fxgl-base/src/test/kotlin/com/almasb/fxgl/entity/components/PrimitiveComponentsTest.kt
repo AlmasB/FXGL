@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.entity.components
 
+import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.components.PositionComponent
 import com.almasb.fxgl.io.serialization.Bundle
@@ -47,6 +48,61 @@ class PrimitiveComponentsTest {
     }
 
     @Test
+    fun `Integer`() {
+        val c = SimpleIntegerComponent()
+
+        assertThat(c.value, `is`(0))
+        assertThat(c.valueProperty().value, `is`(0))
+
+        c.value = 22
+        assertThat(c.value, `is`(22))
+
+        val bundle = Bundle("")
+        c.write(bundle)
+
+        c.value = 33
+        c.read(bundle)
+
+        assertThat(c.value, `is`(22))
+
+        assertThat(c.toString(), `is`("SimpleIntegerComponent[value=22]"))
+    }
+
+    @Test
+    fun `String`() {
+        val c = SimpleStringComponent()
+
+        assertThat(c.value, `is`(""))
+        assertThat(c.valueProperty().value, `is`(""))
+
+        c.value = "hi"
+        assertThat(c.value, `is`("hi"))
+
+        val bundle = Bundle("")
+        c.write(bundle)
+
+        c.value = "hey"
+        c.read(bundle)
+
+        assertThat(c.value, `is`("hi"))
+
+        assertThat(c.toString(), `is`("SimpleStringComponent[value=hi]"))
+    }
+
+    @Test
+    fun `Object`() {
+        val c = SimpleObjectComponent()
+
+        assertThat(c.value, `is`(Vec2()))
+        assertThat(c.valueProperty().value, `is`(Vec2()))
+
+        c.value = Vec2(1.5, 33.0)
+        assertThat(c.value, `is`(Vec2(1.5, 33.0)))
+
+        assertThat(c.toString(), `is`("SimpleObjectComponent[value=(1.5,33.0)]"))
+    }
+
+    @Test
     fun `Collidable`() {
         val c = CollidableComponent(false)
 
@@ -62,4 +118,7 @@ class PrimitiveComponentsTest {
     }
 
     class SimpleBooleanComponent : BooleanComponent()
+    class SimpleIntegerComponent : IntegerComponent()
+    class SimpleStringComponent : StringComponent()
+    class SimpleObjectComponent : ObjectComponent<Vec2>(Vec2())
 }
