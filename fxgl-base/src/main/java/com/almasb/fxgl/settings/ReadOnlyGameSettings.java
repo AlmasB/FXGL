@@ -52,6 +52,10 @@ public class ReadOnlyGameSettings {
 
     // when adding extra fields, remember to add them to copy constructor
 
+    /* EXPERIMENTAL */
+
+    protected boolean experimentalTiledLargeMap = false;
+
     /* CONFIGS */
 
     protected Class<?> configClass = null;
@@ -116,6 +120,8 @@ public class ReadOnlyGameSettings {
         this.exceptionHandler = copy.exceptionHandler;
 
         this.exceptionHandlerWrapper = copy.exceptionHandlerWrapper;
+
+        this.experimentalTiledLargeMap = copy.experimentalTiledLargeMap;
     }
 
     public final String getTitle() {
@@ -212,6 +218,10 @@ public class ReadOnlyGameSettings {
 
     public final ExceptionHandler getExceptionHandler() {
         return exceptionHandlerWrapper;
+    }
+
+    public final boolean isExperimentalTiledLargeMap() {
+        return experimentalTiledLargeMap;
     }
 
     @Override

@@ -230,6 +230,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.exceptionHandler = exceptionHandler;
     }
 
+    public void experimentalTiledLargeMap(boolean b) {
+        this.experimentalTiledLargeMap = b;
+    }
+
     /**
      * @return a read only copy of settings
      */
