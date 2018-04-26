@@ -12,6 +12,7 @@ import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.parser.tiled.Layer;
+import com.almasb.fxgl.parser.tiled.TiledLayerView;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.parser.tiled.Tileset;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -271,8 +272,10 @@ public final class Entities {
             entity.getViewComponent().setRenderLayer(renderLayer);
 
             // https://github.com/AlmasB/FXGL/issues/474
-            //entity.xProperty().bind(FXGL.getApp().getGameScene().getViewport().xProperty());
-            //entity.yProperty().bind(FXGL.getApp().getGameScene().getViewport().yProperty());
+            if (FXGL.getSettings().isExperimentalTiledLargeMap()) {
+                entity.xProperty().bind(FXGL.getApp().getGameScene().getViewport().xProperty());
+                entity.yProperty().bind(FXGL.getApp().getGameScene().getViewport().yProperty());
+            }
             return this;
         }
 
@@ -280,8 +283,9 @@ public final class Entities {
             Layer layer = map.getLayerByName(layerName);
 
             // https://github.com/AlmasB/FXGL/issues/474
-
-            //return new TiledLayerView(map, layer);
+            if (FXGL.getSettings().isExperimentalTiledLargeMap()) {
+                return new TiledLayerView(map, layer);
+            }
 
             WritableImage buffer = new WritableImage(
                     layer.getWidth() * map.getTilewidth(),

@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.entity.components.IrremovableComponent
 import com.almasb.fxgl.entity.components.TimeComponent
@@ -42,7 +43,7 @@ class GameWorldTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            FXGL.getProperties().setValue("dev.showbbox", false)
+            FXGLMock.mock()
         }
     }
 
