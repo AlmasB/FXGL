@@ -414,6 +414,20 @@ class GameWorld {
      * @return spawned entity
      */
     fun spawn(entityName: String, data: SpawnData): Entity {
+        val entity = create(entityName, data)
+        addEntity(entity)
+        return entity
+    }
+
+    /**
+     * Creates an entity with given name and data using a previously added entity factory.
+     * Does NOT add created entity to the game world.
+     *
+     * @param entityName name of entity as specified by [Spawns]
+     * @param data spawn data, such as x, y and any extra info
+     * @return created entity
+     */
+    fun create(entityName: String, data: SpawnData): Entity {
         if (entityFactories.size() == 0)
             throw IllegalStateException("No EntityFactory was added! Call gameWorld.addEntityFactory()")
 
@@ -424,9 +438,7 @@ class GameWorld {
             data.put("type", entityName)
         }
 
-        val entity = spawner.apply(data)
-        addEntity(entity)
-        return entity
+        return spawner.apply(data)
     }
 
     /* QUERIES */

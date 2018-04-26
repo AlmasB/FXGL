@@ -20,6 +20,7 @@ import com.almasb.fxgl.app.FXGL.Companion.getNotificationService
 import com.almasb.fxgl.app.FXGL.Companion.getUIFactory
 import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.pool.Pools
+import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityEvent
 import com.almasb.fxgl.entity.SpawnData
@@ -162,6 +163,19 @@ fun spawn(entityName: String, x: Double, y: Double): Entity = getApp().gameWorld
 fun spawn(entityName: String, position: Point2D): Entity = getApp().gameWorld.spawn(entityName, position)
 
 fun spawn(entityName: String, data: SpawnData): Entity = getApp().gameWorld.spawn(entityName, data)
+
+/**
+ * Spawns given [entityName] with a fade in animation.
+ */
+fun spawnFadeIn(entityName: String, data: SpawnData, duration: Duration): Entity {
+    val e = getApp().gameWorld.create(entityName, data)
+
+    fadeIn(e.view, duration).startInPlayState()
+
+    getApp().gameWorld.addEntity(e)
+
+    return e
+}
 
 fun byID(name: String, id: Int): Optional<Entity> = getApp().gameWorld.getEntityByID(name, id)
 
