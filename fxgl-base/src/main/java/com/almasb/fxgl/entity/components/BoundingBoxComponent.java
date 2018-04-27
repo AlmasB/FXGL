@@ -375,41 +375,7 @@ public class BoundingBoxComponent extends Component
      * @return collision result
      */
     public final CollisionResult checkCollision(BoundingBoxComponent other) {
-        boolean checkRotation = getEntity().hasComponent(RotationComponent.class)
-                && other.getEntity().hasComponent(RotationComponent.class);
-
-        for (int i = 0; i < hitBoxes.size(); i++) {
-            HitBox box1 = hitBoxes.get(i);
-
-            for (int j = 0; j < other.hitBoxes.size(); j++) {
-                HitBox box2 = other.hitBoxes.get(j);
-
-                boolean collision;
-
-                if (checkRotation) {
-                    double angle1 = getEntity().getComponent(RotationComponent.class).getValue();
-                    double angle2 = other.getEntity().getComponent(RotationComponent.class).getValue();
-
-                    if (angle1 == 0 && angle2 == 0) {
-                        collision = checkCollision(box1, box2);
-                    } else {
-                        collision = checkCollision(box1, box2, angle1, angle2);
-                    }
-                } else {
-                    collision = checkCollision(box1, box2);
-                }
-
-                if (collision) {
-
-                    CollisionResult result = Pools.obtain(CollisionResult.class);
-                    result.init(box1, box2);
-
-                    return result;
-                }
-            }
-        }
-
-        return CollisionResult.NO_COLLISION;
+        return checkCollisionInternal(other, true);
     }
 
     /**
@@ -418,10 +384,7 @@ public class BoundingBoxComponent extends Component
      * @param other bbox of other entity
      * @return {@link CollisionResult#NO_COLLISION} if no collision, else {@link CollisionResult#COLLISION}
      */
-    private CollisionResult checkCollisionInternal(BoundingBoxComponent other) {
-        boolean checkRotation = getEntity().hasComponent(RotationComponent.class)
-                && other.getEntity().hasComponent(RotationComponent.class);
-
+    private CollisionResult checkCollisionInternal(BoundingBoxComponent other, boolean reportBoxes) {
         for (int i = 0; i < hitBoxes.size(); i++) {
             HitBox box1 = hitBoxes.get(i);
 
@@ -430,21 +393,24 @@ public class BoundingBoxComponent extends Component
 
                 boolean collision;
 
-                if (checkRotation) {
-                    double angle1 = getEntity().getComponent(RotationComponent.class).getValue();
-                    double angle2 = other.getEntity().getComponent(RotationComponent.class).getValue();
+                double angle1 = getEntity().getRotation();
+                double angle2 = other.getEntity().getRotation();
 
-                    if (angle1 == 0 && angle2 == 0) {
-                        collision = checkCollision(box1, box2);
-                    } else {
-                        collision = checkCollision(box1, box2, angle1, angle2);
-                    }
-                } else {
+                if (angle1 == 0 && angle2 == 0) {
                     collision = checkCollision(box1, box2);
+                } else {
+                    collision = checkCollision(box1, box2, angle1, angle2);
                 }
 
                 if (collision) {
-                    return CollisionResult.COLLISION;
+                    if (reportBoxes) {
+                        CollisionResult result = Pools.obtain(CollisionResult.class);
+                        result.init(box1, box2);
+
+                        return result;
+                    } else {
+                        return CollisionResult.COLLISION;
+                    }
                 }
             }
         }
@@ -458,7 +424,7 @@ public class BoundingBoxComponent extends Component
      * their hit boxes, in current frame
      */
     public final boolean isCollidingWith(BoundingBoxComponent other) {
-        return checkCollisionInternal(other) != CollisionResult.NO_COLLISION;
+        return checkCollisionInternal(other, false) != CollisionResult.NO_COLLISION;
     }
 
     /**
