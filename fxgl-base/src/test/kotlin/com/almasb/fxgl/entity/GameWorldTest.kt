@@ -245,8 +245,11 @@ class GameWorldTest {
     fun `Selected entity`() {
         val e1 = Entity()
         val e2 = Entity()
-        e1.addComponent(SelectableComponent(true))
-        e2.addComponent(SelectableComponent(true))
+
+        val c = SelectableComponent(true)
+
+        e1.addComponent(c)
+        e2.addComponent(c.copy())
 
         gameWorld.addEntities(e1, e2)
 
@@ -271,6 +274,18 @@ class GameWorldTest {
         e1.view.fireEvent(event)
 
         assertThat(gameWorld.getSelectedEntity().get(), `is`(e2))
+
+        // now enable
+
+        e1.getComponent(SelectableComponent::class.java).value = true
+
+        e1.view.fireEvent(event)
+
+        assertThat(gameWorld.getSelectedEntity().get(), `is`(e1))
+
+        e1.removeComponent(SelectableComponent::class.java)
+
+        assertFalse(gameWorld.getSelectedEntity().isPresent)
     }
 
     @Test
