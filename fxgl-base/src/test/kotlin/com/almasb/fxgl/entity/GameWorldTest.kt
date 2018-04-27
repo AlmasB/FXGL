@@ -286,6 +286,14 @@ class GameWorldTest {
         e1.removeComponent(SelectableComponent::class.java)
 
         assertFalse(gameWorld.getSelectedEntity().isPresent)
+
+        val c3 = SelectableComponent(false)
+
+        e1.addComponent(c3)
+
+        e1.view.fireEvent(event)
+
+        assertFalse(gameWorld.getSelectedEntity().isPresent)
     }
 
     @Test
