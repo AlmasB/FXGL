@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.entity.components;
 
-import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.entity.component.CopyableComponent;
 import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.entity.view.EntityView;
@@ -18,16 +17,6 @@ import com.almasb.fxgl.entity.view.EntityView;
  */
 @Required(ViewComponent.class)
 public class SelectableComponent extends BooleanComponent implements CopyableComponent<SelectableComponent> {
-
-//    private ReadOnlyBooleanWrapper selected = new ReadOnlyBooleanWrapper(false);
-//
-//    public ReadOnlyBooleanProperty selectedProperty() {
-//        return selected.getReadOnlyProperty();
-//    }
-//
-//    public boolean isSelected() {
-//        return selected.get();
-//    }
 
     public SelectableComponent(boolean value) {
         super(value);
@@ -59,17 +48,16 @@ public class SelectableComponent extends BooleanComponent implements CopyableCom
 
     private void attachSelectListener(EntityView view) {
         view.setOnMousePressed(e -> {
-            //selected.set(true);
-            ((GameWorld) getEntity().getWorld()).selectedEntityProperty().set(getEntity());
+            getEntity().getWorld().selectedEntityProperty().set(getEntity());
         });
     }
 
     private void removeSelectListener(EntityView view) {
         view.setOnMousePressed(null);
 
-        ((GameWorld) getEntity().getWorld()).getSelectedEntity().ifPresent(e -> {
+        getEntity().getWorld().getSelectedEntity().ifPresent(e -> {
             if (e == getEntity()) {
-                ((GameWorld) getEntity().getWorld()).selectedEntityProperty().set(null);
+                getEntity().getWorld().selectedEntityProperty().set(null);
             }
         });
     }

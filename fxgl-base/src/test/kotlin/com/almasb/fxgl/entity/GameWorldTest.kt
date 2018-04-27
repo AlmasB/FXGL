@@ -244,9 +244,11 @@ class GameWorldTest {
     @Test
     fun `Selected entity`() {
         val e1 = Entity()
+        val e2 = Entity()
         e1.addComponent(SelectableComponent(true))
+        e2.addComponent(SelectableComponent(true))
 
-        gameWorld.addEntity(e1)
+        gameWorld.addEntities(e1, e2)
 
         val event = MouseEvent(MouseEvent.MOUSE_PRESSED, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 0,
                 false,
@@ -256,7 +258,19 @@ class GameWorldTest {
 
         e1.view.fireEvent(event)
 
-        assertThat(gameWorld.getSelectedEntity().get(), `is`<Entity>(e1))
+        assertThat(gameWorld.getSelectedEntity().get(), `is`(e1))
+
+        e2.view.fireEvent(event)
+
+        assertThat(gameWorld.getSelectedEntity().get(), `is`(e2))
+
+        // now disable selectable
+
+        e1.getComponent(SelectableComponent::class.java).value = false
+
+        e1.view.fireEvent(event)
+
+        assertThat(gameWorld.getSelectedEntity().get(), `is`(e2))
     }
 
     @Test

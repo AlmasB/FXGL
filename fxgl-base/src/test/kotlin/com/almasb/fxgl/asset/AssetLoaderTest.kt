@@ -102,6 +102,7 @@ class AssetLoaderTest {
         //assertThat(sound.clip, `is`(notNullValue()))
     }
 
+    // TODO: use junit5 syntax for OS
     @Test
     fun loadMusic() {
         // setting up potentially missing libavformat for jfxmedia is an overkill, so just skip

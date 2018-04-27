@@ -99,7 +99,7 @@ class PositionComponentTest {
 
     @Test
     fun `Copy`() {
-        position.value = Point2D(33.0, -33.0)
+        position = PositionComponent(Point2D(33.0, -33.0))
         val copy = position.copy()
 
         assertThat(copy.value, `is`(Point2D(33.0, -33.0)))
