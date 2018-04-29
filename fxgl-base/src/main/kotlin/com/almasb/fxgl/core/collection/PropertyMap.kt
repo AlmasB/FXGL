@@ -31,6 +31,8 @@ class PropertyMap {
      */
     private val properties = ObjectMap<String, Any>(32)
 
+    fun keys(): Set<String> = properties.keys().toSet()
+
     /**
      * @return true if a property with [propertyName] exists
      */
