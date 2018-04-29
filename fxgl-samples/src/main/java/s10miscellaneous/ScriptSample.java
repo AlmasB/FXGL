@@ -12,6 +12,7 @@ import com.almasb.fxgl.devtools.DeveloperWASDControl;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityEvent;
+import com.almasb.fxgl.entity.components.ScriptComponent;
 import com.almasb.fxgl.extra.entity.components.ActivatorComponent;
 import com.almasb.fxgl.extra.entity.components.AliveComponent;
 import com.almasb.fxgl.entity.components.IDComponent;
@@ -78,6 +79,7 @@ public class ScriptSample extends GameApplication {
                 .viewFromNodeWithBBox(new Rectangle(30, 30, Color.RED))
                 .with(new AliveComponent(true))
                 .with(new ActivatorComponent(), new IDComponent("wanderer", 0))
+                .with(new ScriptComponent())
                 .with("onActivate", "first_script.js")
                 .with("onActivate.name", "wanderer")
                 .with("onActivate.id", 0)
@@ -90,17 +92,18 @@ public class ScriptSample extends GameApplication {
                 .viewFromNodeWithBBox(new Rectangle(30, 30, Color.RED))
                 .with(new AliveComponent(true))
                 .with(new ActivatorComponent(), new IDComponent("wanderer", 1))
+                .with(new ScriptComponent())
                 .with("onActivate", "second_script.js")
                 .with("onActivate.name", "wanderer")
                 .with("onActivate.id", 1)
                 .buildAndAttach(getGameWorld());
     }
 
-    @Handles(eventType = "ACTIVATE")
-    public void handle(EntityEvent event) {
-
-        System.out.println("Called in Java" + event.getData("name"));
-    }
+//    @Handles(eventType = "ACTIVATE")
+//    public void handle(EntityEvent event) {
+//
+//        System.out.println("Called in Java" + event.getData("name"));
+//    }
 
     public static void main(String[] args) {
         launch(args);

@@ -9,6 +9,7 @@ package sandbox.tiledtest;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.extra.entity.components.ActivatorComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
@@ -52,6 +53,17 @@ public class SuperMarioBrosApp extends GameApplication {
                 player.getComponent(MarioComponent.class).jump();
             }
         }, KeyCode.W);
+
+        getInput().addAction(new UserAction("Activate") {
+            @Override
+            protected void onActionBegin() {
+                getGameWorld().getCollidingEntities(player)
+                        .stream()
+                        .filter(e -> e.hasComponent(ActivatorComponent.class))
+                        .map(e -> e.getComponent(ActivatorComponent.class))
+                        .forEach(c -> c.activate(player));
+            }
+        }, KeyCode.F);
     }
 
     @Override
@@ -82,6 +94,15 @@ public class SuperMarioBrosApp extends GameApplication {
 
                 } else {
                     System.out.println("DEAD");
+                }
+            }
+        });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EType.PLAYER, EType.CRATE) {
+            @Override
+            protected void onCollisionBegin(Entity pc, Entity crate) {
+                if (pc.getY() > crate.getBottomY()) {
+                    crate.getComponent(CrateComponent.class).bump();
                 }
             }
         });

@@ -8,6 +8,8 @@ package sandbox.tiledtest;
 
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.entity.components.ScriptComponent;
+import com.almasb.fxgl.extra.entity.components.ActivatorComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -27,6 +29,37 @@ public class TiledFactory implements EntityFactory {
                 .type(EType.PLATFORM)
                 .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .with(new PhysicsComponent())
+                .build();
+    }
+
+    @Spawns("crate")
+    public Entity newCrate(SpawnData data) {
+        return Entities.builder()
+                .from(data)
+                .type(EType.CRATE)
+                .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
+                .with(new PhysicsComponent(), new CrateComponent(), new CollidableComponent(true))
+                .build();
+    }
+
+    @Spawns("coin")
+    public Entity newCoin(SpawnData data) {
+        return Entities.builder()
+                .from(data)
+                .type(EType.COIN)
+                .viewFromTexture("coin.png")
+                //.bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
+                //.with(new PhysicsComponent(), new CrateComponent(), new CollidableComponent(true))
+                .build();
+    }
+
+    @Spawns("lock")
+    public Entity newLock(SpawnData data) {
+        return Entities.builder()
+                .from(data)
+                .type(EType.LOCK)
+                .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
+                .with(new ScriptComponent(), new ActivatorComponent(), new CollidableComponent(true))
                 .build();
     }
 

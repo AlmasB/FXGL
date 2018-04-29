@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="212" height="10" tilewidth="70" tileheight="70" infinite="0" nextobjectid="27">
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="212" height="10" tilewidth="70" tileheight="70" infinite="0" nextobjectid="34">
  <tileset firstgid="1" name="tiles_spritesheet" tilewidth="70" tileheight="70" spacing="2" tilecount="156" columns="12">
   <image source="../textures/tiles_spritesheet.png" width="914" height="936"/>
  </tileset>
  <layer name="tiles" width="212" height="10">
   <data encoding="base64" compression="zlib">
-   eJztmM0NgzAMhX3tAB2AFbpBL5V65c6ZLtBdyrYYAZKVJi6ENFbC+6QnIuI/IllWIAIA1Mwzcs9n5z4BOBNv1ovVed656r68dXvNBwAAAHDxzSQASqZhXZT9G813EO0pwX0FnJWpl66sD+k9tZWt8wZzCZTKQ6zlLFp7aVgke6qEGVNCjRLrelPn/9f3/IqbKm9MnDurXdbuLAr9B0spirDf65MzXu06cl4W5xzKaVHLkEF9hP1en5zxateR87I451BOi1pGpprk1Q==
+   eJzt2NsJgCAYhmFvG6ABWqENummA7r2uBdqltu0PCsLS7ICSvQ98JOUJQX5IKQAAcKaXdBJ98M6M3o1293eNAQDAdFSTgC8rJJnje+n5BP5uvku5ZFDuO+XLt95Ql/BV9aa9rUXrXRqXvHWngFRVkmZpm7XI9h/szagb/a+OCTlf6nlyXjHO2bZmjL2MAdLe6H91TMj5Us+T84pxzrY1Y+xlAoSF37M=
   </data>
  </layer>
  <objectgroup name="objects">
@@ -23,6 +23,17 @@
   <object id="15" type="platform" x="980" y="350" width="70" height="70"/>
   <object id="16" type="platform" x="1120" y="350" width="70" height="70"/>
   <object id="17" type="platform" x="1260" y="350" width="70" height="70"/>
+  <object id="27" type="crate" gid="73" x="2170" y="280" width="70" height="70"/>
+  <object id="28" type="crate" gid="73" x="770" y="420" width="70" height="70"/>
+  <object id="29" type="crate" gid="73" x="910" y="420" width="70" height="70"/>
+  <object id="30" type="crate" gid="73" x="1050" y="420" width="70" height="70"/>
+  <object id="31" type="crate" gid="73" x="1190" y="420" width="70" height="70"/>
+  <object id="32" type="crate" gid="73" x="1540" y="280" width="70" height="70"/>
+  <object id="33" type="lock" gid="98" x="1540" y="420" width="70" height="70">
+   <properties>
+    <property name="onActivate" value="first_script.js"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup name="enemies">
   <object id="18" type="enemy" x="2030" y="490" width="70" height="70">
