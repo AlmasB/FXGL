@@ -356,12 +356,26 @@ class EntityTest {
         assertFalse(entity.getPropertyOptional<Any>("no_key").isPresent)
     }
 
-//    @Test
-//    fun `Get property returns null if value is null`() {
-//        entity.setProperty("lastTime", null)
-//
-//        assertThat(entity.getProperty<Any>("lastTime"), nullValue())
-//    }
+    @Test
+    fun `Get String`() {
+        entity.setProperty("weaponName", "Mystic Sword")
+
+        assertThat(entity.getString("weaponName"), `is`("Mystic Sword"))
+    }
+
+    @Test
+    fun `Get Object`() {
+        entity.setProperty("vec2", Vec2())
+
+        assertThat(entity.getObject<Vec2>("vec2"), `is`(Vec2()))
+    }
+
+    @Test
+    fun `Set position`() {
+        entity.setPosition(Vec2(10.0, 10.0))
+        
+        assertThat(entity.position, `is`(Point2D(10.0, 10.0)))
+    }
 
     @Test
     fun `Get property optional returns empty if key not found`() {

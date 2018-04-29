@@ -163,12 +163,13 @@ public final class Entities {
             }
 
             // TODO: is this a good place for adding components
-            if (data.hasKey("name")) {
-                String name = data.get("name");
-                int id = data.hasKey("eid") ? data.<Integer>get("eid") : 0;
-
-                with(new IDComponent(name, id));
-            }
+            // TODO: data _always_ has key "name"
+//            if (data.hasKey("name")) {
+//                String name = data.get("name");
+//                int id = data.hasKey("eid") ? data.<Integer>get("eid") : 0;
+//
+//                with(new IDComponent(name, id));
+//            }
 
             forEach(data.getData(), entry -> entity.setProperty(entry.key, entry.value));
             return this;
