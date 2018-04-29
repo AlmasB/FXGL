@@ -40,9 +40,9 @@ class ActivatorComponent
             isActivated = true
             numTimesActivated++
 
-            val event = EntityEvent(EntityEvent.ACTIVATE, caller, entity)
+            val event = EntityEvent("onActivate", caller, entity)
 
-            fire(event, "onActivate")
+            fire(event)
 
             if (!canBeDeactivated) {
                 isActivated = false

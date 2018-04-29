@@ -221,7 +221,8 @@ fun free(instance: Any) = Pools.free(instance)
 
 fun fire(event: Event) = getEventBus().fireEvent(event)
 
-fun fire(event: EntityEvent, eventType: String) = getEventBus().fireEntityEvent(event, eventType)
+// TODO:
+//fun fire(event: EntityEvent, eventType: String) = getEventBus().fireEntityEvent(event, eventType)
 
 /* NOTIFICATIONS */
 

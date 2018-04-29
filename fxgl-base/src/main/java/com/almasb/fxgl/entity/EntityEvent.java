@@ -24,18 +24,20 @@ public final class EntityEvent extends Event {
 
     public static final EventType<EntityEvent> ANY = new EventType<>(Event.ANY, "ENTITY_EVENT");
 
-    public static final EventType<EntityEvent> ACTIVATE = new EventType<>(ANY, "ACTIVATE");
-    public static final EventType<EntityEvent> DEATH = new EventType<>(ANY, "DEATH");
-    public static final EventType<EntityEvent> REVIVE = new EventType<>(ANY, "REVIVE");
-
     private ObjectMap<String, Object> data = new ObjectMap<>();
+
+    private Entity triggerEntity;
+    private Entity targetEntity;
+
+    private String name;
+
+    public String getName() {
+        return name;
+    }
 
     public ObjectMap<String, Object> getData() {
         return data;
     }
-
-    private Entity triggerEntity;
-    private Entity targetEntity;
 
     /**
      * @return entity that triggered this event
@@ -55,28 +57,40 @@ public final class EntityEvent extends Event {
     }
 
     /**
+     * Constructs entity event with given type and trigger entity.
+     * Target entity is set to trigger entity.
+     *
+     * @param name event name
+     * @param triggerEntity trigger entity
+     */
+    public EntityEvent(String name, Entity triggerEntity) {
+        this(name, triggerEntity, triggerEntity);
+    }
+
+    /**
      * Constructs entity event with given type, trigger entity and the entity being
      * targeted by the event.
      *
-     * @param eventType type
+     * @param name event name
      * @param triggerEntity trigger entity
      * @param targetEntity target entity
      */
-    public EntityEvent(@NamedArg("eventType") EventType<? extends Event> eventType, Entity triggerEntity, Entity targetEntity) {
-        super(eventType);
+    public EntityEvent(String name, Entity triggerEntity, Entity targetEntity) {
+        super(ANY);
+        this.name = name;
         this.triggerEntity = triggerEntity;
         this.targetEntity = targetEntity;
     }
 
-    /**
-     * Constructs entity event with given type and trigger entity.
-     * Target entity is set to trigger entity.
-     *
-     * @param eventType type
-     * @param triggerEntity trigger entity
-     */
-    public EntityEvent(@NamedArg("eventType") EventType<? extends Event> eventType, Entity triggerEntity) {
+    public EntityEvent(EventType<? extends Event> eventType, Entity triggerEntity) {
         this(eventType, triggerEntity, triggerEntity);
+    }
+
+    public EntityEvent(EventType<? extends Event> eventType, Entity triggerEntity, Entity targetEntity) {
+        super(eventType);
+        this.name = eventType.getName();
+        this.triggerEntity = triggerEntity;
+        this.targetEntity = targetEntity;
     }
 
     private static final Object NULL = new Object();
@@ -85,7 +99,7 @@ public final class EntityEvent extends Event {
      * @param key property key
      * @param value property value
      */
-    public final void setData(String key, Object value) {
+    public void setData(String key, Object value) {
         data.put(key, value);
     }
 
@@ -94,7 +108,7 @@ public final class EntityEvent extends Event {
      * @return property value or null if key not present
      */
     @SuppressWarnings("unchecked")
-    public final <T> T getData(String key) {
+    public <T> T getData(String key) {
         Object value = data.get(key, NULL);
         if (value == NULL) {
             return null;
@@ -108,7 +122,7 @@ public final class EntityEvent extends Event {
      * @return property value or Optional.empty() if value is null or key not present
      */
     @SuppressWarnings("unchecked")
-    public final <T> Optional<T> getDataOptional(String key) {
+    public <T> Optional<T> getDataOptional(String key) {
         Object value = data.get(key, null);
         return Optional.ofNullable((T) value);
     }

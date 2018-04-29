@@ -10,6 +10,7 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.entity.EntityEvent
+import com.almasb.fxgl.entity.components.ScriptComponent
 import com.almasb.fxgl.script.ScriptFactory
 import javafx.event.Event
 import javafx.event.EventHandler
@@ -91,27 +92,18 @@ class EventBus {
         log.debug("Firing event: $event")
 
         eventHandlers.fireEvent(event)
+
+        if (event is EntityEvent) {
+            fireEntityEvent(event)
+        }
     }
 
     /**
      * Fires the given entity event both as normal Event
      * and via script handlers.
-     *
-     * @param eventType e.g. onActivate, onDeath
      */
-    fun fireEntityEvent(event: EntityEvent, eventType: String) {
-//        event.targetEntity.properties.keys()
-//                .filter { it.startsWith(eventType) }
-//                .forEach { event.setData(it.removePrefix("$eventType."), event.targetEntity.getProperty(it)) }
-//
-//        fireEvent(event)
-//
-//        event.targetEntity.getScriptHandler(eventType).ifPresent {
-//            it.call<Void>(eventType, ScriptFactory.newScriptObject(event.data.toMap()
-//                    // here we can populate properties common to all events, e.g. entity
-//                    .plus("entity".to(event.targetEntity))
-//            ))
-//        }
+    private fun fireEntityEvent(event: EntityEvent) {
+        event.targetEntity.getComponent(ScriptComponent::class.java).fireScriptEvent(event)
     }
 
     /**
