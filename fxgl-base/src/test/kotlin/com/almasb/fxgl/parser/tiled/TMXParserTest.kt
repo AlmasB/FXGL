@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.parser.tiled
 
+import javafx.scene.paint.Color
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -90,9 +91,9 @@ class TMXParserTest {
         assertThat(obj1.height, `is`(336))
         assertThat(obj1.properties.size, `is`(4))
 
-        assertThat(obj1.properties["collidable"] as String, `is`("true"))
-        assertThat(obj1.properties["someColor"] as String, `is`("#ff55ff00"))
-        assertThat(obj1.properties["someInt"] as String, `is`("33"))
+        assertThat(obj1.properties["collidable"] as Boolean, `is`(true))
+        assertThat(obj1.properties["someColor"] as Color, `is`(Color.web("#ff55ff00")))
+        assertThat(obj1.properties["someInt"] as Int, `is`(33))
         assertThat(obj1.properties["someString"] as String, `is`("Text Here"))
 
         assertThat(obj2.id, `is`(2))

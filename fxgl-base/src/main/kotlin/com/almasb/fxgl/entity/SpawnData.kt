@@ -25,6 +25,7 @@ open class SpawnData(val x: Double, val y: Double) {
             // it appears that if object has non-zero gid then its y is flipped
             (tiledObject.y - if (tiledObject.gid == 0) 0 else tiledObject.height).toDouble()) {
 
+        put("name", tiledObject.name)
         put("type", tiledObject.type)
         put("width", tiledObject.width)
         put("height", tiledObject.height)

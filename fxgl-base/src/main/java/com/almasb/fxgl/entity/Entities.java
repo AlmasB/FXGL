@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.components.IDComponent;
 import com.almasb.fxgl.parser.tiled.Layer;
 import com.almasb.fxgl.parser.tiled.TiledLayerView;
 import com.almasb.fxgl.parser.tiled.TiledMap;
@@ -159,6 +160,14 @@ public final class Entities {
 
                     viewFromNode(new ImageView(buffer));
                 }
+            }
+
+            // TODO: is this a good place for adding components
+            if (data.hasKey("name")) {
+                String name = data.get("name");
+                int id = data.hasKey("eid") ? data.<Integer>get("eid") : 0;
+
+                with(new IDComponent(name, id));
             }
 
             forEach(data.getData(), entry -> entity.setProperty(entry.key, entry.value));
