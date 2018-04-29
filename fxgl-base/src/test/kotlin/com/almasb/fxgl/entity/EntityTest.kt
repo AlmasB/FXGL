@@ -373,7 +373,7 @@ class EntityTest {
     @Test
     fun `Set position`() {
         entity.setPosition(Vec2(10.0, 10.0))
-        
+
         assertThat(entity.position, `is`(Point2D(10.0, 10.0)))
     }
 

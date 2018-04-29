@@ -6,17 +6,18 @@
 
 package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
-import com.almasb.fxgl.entity.component.*;
+import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.component.ComponentListener;
+import com.almasb.fxgl.entity.component.CoreComponent;
+import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.entity.components.*;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.io.serialization.Bundle;
-import com.almasb.fxgl.script.Script;
 import com.almasb.fxgl.util.Optional;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
@@ -24,10 +25,11 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.almasb.fxgl.core.reflect.ReflectionUtils.callInaccessible;
+import static com.almasb.fxgl.core.reflect.ReflectionUtils.getMethod;
 import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
@@ -691,15 +693,22 @@ public class Entity {
 
     @SuppressWarnings("unchecked")
     private void injectFields(Component component) {
-        try {
-            Method m = Component.class.getDeclaredMethod("setEntity", Entity.class);
-            m.setAccessible(true);
-            m.invoke(component, this);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        // component.setEntity(this);
+        callInaccessible(component, getMethod(Component.class, "setEntity", Entity.class), this);
 
-        //comp.setEntity(this);
+
+//        try {
+//
+//
+//
+//            Method m = Component.class.getDeclaredMethod("setEntity", Entity.class);
+//            m.setAccessible(true);
+//            m.invoke(component, this);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+
+
 
         forEach(
                 ReflectionUtils.findFieldsByTypeRecursive(component, Component.class),
@@ -711,20 +720,14 @@ public class Entity {
         );
     }
 
-    private void removeComponent(Component comp) {
-        notifyComponentRemoved(comp);
+    private void removeComponent(Component component) {
+        notifyComponentRemoved(component);
 
-        comp.onRemoved();
+        component.onRemoved();
 
-        try {
-            Method m = Component.class.getDeclaredMethod("setEntity", Entity.class);
-            m.setAccessible(true);
-            m.invoke(comp, new Object[1]);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        //comp.setEntity(null);
+        // component.setEntity(null);
+        // new Object[1] because it's varargs, so we pass an array of 1 param, which is null
+        callInaccessible(component, getMethod(Component.class, "setEntity", Entity.class), new Object[1]);
     }
 
     private <T extends Component> void notifyComponentAdded(T c) {
