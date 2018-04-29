@@ -211,4 +211,8 @@ public final class ReflectionUtils {
             throw new ReflectionException(e);
         }
     }
+
+    public static boolean isAnonymousClass(Class<?> type) {
+        return type.isAnonymousClass() || type.getCanonicalName() == null;
+    }
 }

@@ -811,6 +811,10 @@ class EntityTest {
     }
 
     private inner class ControlRemovingControl : Component() {
+        override fun onAdded() {
+            entity.addComponent(TestControl())
+        }
+
         override fun onUpdate(tpf: Double) {
             entity.removeComponent(TestControl::class.java)
         }
