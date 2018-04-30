@@ -65,7 +65,7 @@ class ViewComponentTest {
 
     @Test
     fun `Setting a view does not affect render layer`() {
-        val layer1 = object : RenderLayer {
+        val layer1 = object : RenderLayer() {
             override fun index(): Int {
                 return 10
             }

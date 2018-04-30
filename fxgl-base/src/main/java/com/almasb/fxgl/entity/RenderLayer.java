@@ -13,27 +13,13 @@ package com.almasb.fxgl.entity;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface RenderLayer {
-
-    /**
-     * Returns a human readable name for this layer.
-     *
-     * @return layer name
-     */
-    String name();
-
-    /**
-     * Returns index value for this layer.
-     *
-     * @return layer index
-     */
-    int index();
+public class RenderLayer {
 
     /**
      * Default render layer for entities with no specified
      * render layer.
      */
-    RenderLayer DEFAULT = new RenderLayer() {
+    public static final RenderLayer DEFAULT = new RenderLayer() {
         @Override
         public String name() {
             return "DEFAULT";
@@ -48,7 +34,7 @@ public interface RenderLayer {
     /**
      * Note: this is the highest layer that can be used.
      */
-    RenderLayer TOP = new RenderLayer() {
+    public static final RenderLayer TOP = new RenderLayer() {
         @Override
         public String name() {
             return "TOP";
@@ -63,7 +49,7 @@ public interface RenderLayer {
     /**
      * Note: this is the lowest layer that can be used.
      */
-    RenderLayer BOTTOM = new RenderLayer() {
+    public static final RenderLayer BOTTOM = new RenderLayer() {
         @Override
         public String name() {
             return "BOTTOM";
@@ -79,7 +65,7 @@ public interface RenderLayer {
      * Convenience render layer for background.
      * Note: value of 1000 leaves some scope for using parallax backgrounds.
      */
-    RenderLayer BACKGROUND = new RenderLayer() {
+    public static final RenderLayer BACKGROUND = new RenderLayer() {
         @Override
         public String name() {
             return "BACKGROUND";
@@ -90,4 +76,35 @@ public interface RenderLayer {
             return 1000;
         }
     };
+
+    private String name;
+    private int index;
+
+    @Deprecated
+    public RenderLayer() {
+
+    }
+
+    public RenderLayer(String name, int index) {
+        this.name = name;
+        this.index = index;
+    }
+
+    /**
+     * Returns a human readable name for this layer.
+     *
+     * @return layer name
+     */
+    public String name() {
+        return name;
+    }
+
+    /**
+     * Returns index value for this layer.
+     *
+     * @return layer index
+     */
+    public int index() {
+        return index;
+    }
 }

@@ -943,7 +943,7 @@ class GameWorldTest {
 
     @Test
     fun `By layer List`() {
-        val layer = object : RenderLayer {
+        val layer = object : RenderLayer() {
             override fun name(): String {
                 return "TEST"
             }
@@ -971,7 +971,7 @@ class GameWorldTest {
 
     @Test
     fun `By layer Array`() {
-        val layer = object : RenderLayer {
+        val layer = object : RenderLayer() {
             override fun name(): String {
                 return "TEST"
             }
