@@ -19,63 +19,23 @@ public class RenderLayer {
      * Default render layer for entities with no specified
      * render layer.
      */
-    public static final RenderLayer DEFAULT = new RenderLayer() {
-        @Override
-        public String name() {
-            return "DEFAULT";
-        }
-
-        @Override
-        public int index() {
-            return 100000;
-        }
-    };
+    public static final RenderLayer DEFAULT = new RenderLayer("DEFAULT", 100000);
 
     /**
      * Note: this is the highest layer that can be used.
      */
-    public static final RenderLayer TOP = new RenderLayer() {
-        @Override
-        public String name() {
-            return "TOP";
-        }
-
-        @Override
-        public int index() {
-            return Integer.MAX_VALUE;
-        }
-    };
+    public static final RenderLayer TOP = new RenderLayer("TOP", Integer.MAX_VALUE);
 
     /**
      * Note: this is the lowest layer that can be used.
      */
-    public static final RenderLayer BOTTOM = new RenderLayer() {
-        @Override
-        public String name() {
-            return "BOTTOM";
-        }
-
-        @Override
-        public int index() {
-            return Integer.MIN_VALUE;
-        }
-    };
+    public static final RenderLayer BOTTOM = new RenderLayer("BOTTOM", Integer.MIN_VALUE);
 
     /**
      * Convenience render layer for background.
      * Note: value of 1000 leaves some scope for using parallax backgrounds.
      */
-    public static final RenderLayer BACKGROUND = new RenderLayer() {
-        @Override
-        public String name() {
-            return "BACKGROUND";
-        }
-
-        @Override
-        public int index() {
-            return 1000;
-        }
-    };
+    public static final RenderLayer BACKGROUND = new RenderLayer("BACKGROUND", 1000);
 
     private String name;
     private int index;
@@ -83,6 +43,10 @@ public class RenderLayer {
     @Deprecated
     public RenderLayer() {
 
+    }
+
+    public RenderLayer(int index) {
+        this("NoName", index);
     }
 
     public RenderLayer(String name, int index) {
@@ -106,5 +70,10 @@ public class RenderLayer {
      */
     public int index() {
         return index;
+    }
+
+    @Override
+    public String toString() {
+        return name + "(" + index + ")";
     }
 }

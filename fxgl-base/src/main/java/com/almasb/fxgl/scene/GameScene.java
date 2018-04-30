@@ -245,7 +245,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
         }
 
         if (group == null) {
-            log.debug("Creating render group for layer: " + layer.name() + "(" + layer.index() + ")");
+            log.debug("Creating render group for layer: " + layer);
 
             group = new Group();
             group.setUserData(renderLayer);
