@@ -6,12 +6,10 @@
 
 package com.almasb.fxgl.io
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.logging.Logger
-import java.io.*
-import java.nio.file.*
-import java.nio.file.attribute.BasicFileAttributes
-import java.util.stream.Collectors
+import java.io.Serializable
 
 /**
  * A collection of static methods to access IO via IO tasks.
@@ -25,10 +23,10 @@ private constructor() {
 
         private val log = Logger.get(FS::class.java)
 
-        private fun errorIfAbsent(path: Path) {
-            if (!Files.exists(path)) {
-                throw FileNotFoundException("Path $path does not exist")
-            }
+        private val fs = if (FXGL.isAndroid() || FXGL.isAndroid()) MobileFSService() else DesktopFSService()
+
+        init {
+            log.debug("Loaded ${fs.javaClass.simpleName}")
         }
 
         /**
@@ -39,19 +37,7 @@ private constructor() {
          * @return IO task
          */
         @JvmStatic fun writeDataTask(data: Serializable, fileName: String) = IOTask.ofVoid("writeDataTask($fileName)", {
-
-            val file = Paths.get(fileName)
-
-            // if file.parent is null we will use current dir, which exists
-            if (file.parent != null && !Files.exists(file.parent)) {
-                log.debug("Creating directories to: ${file.parent}")
-                Files.createDirectories(file.parent)
-            }
-
-            ObjectOutputStream(Files.newOutputStream(file)).use {
-                log.debug("Writing to: $file")
-                it.writeObject(data)
-            }
+            fs.writeData(data, fileName)
         })
 
         /**
@@ -61,17 +47,8 @@ private constructor() {
          *
          * @return IO task
          */
-        @Suppress("UNCHECKED_CAST")
-        @JvmStatic fun <T> readDataTask(fileName: String) = IOTask.of("readDataTask($fileName)") {
-
-            val file = Paths.get(fileName)
-
-            errorIfAbsent(file)
-
-            ObjectInputStream(Files.newInputStream(file)).use {
-                log.debug("Reading from: $file")
-                return@of it.readObject() as T
-            }
+        @JvmStatic fun <T> readDataTask(fileName: String): IOTask<T> = IOTask.of("readDataTask($fileName)") {
+            fs.readData<T>(fileName)
         }
 
         /**
@@ -82,16 +59,9 @@ private constructor() {
          * @param recursive recursive flag
          * @return IO task
          */
-        @JvmStatic fun loadFileNamesTask(dirName: String, recursive: Boolean) = IOTask.of("loadFileNamesTask($dirName, $recursive)") {
-
-            val dir = Paths.get(dirName)
-
-            errorIfAbsent(dir)
-
-            return@of Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
-                    .filter { Files.isRegularFile(it) }
-                    .map { dir.relativize(it).toString().replace("\\", "/") }
-                    .collect(Collectors.toList<String>())
+        @JvmStatic fun loadFileNamesTask(dirName: String, recursive: Boolean): IOTask<List<String>>
+                = IOTask.of("loadFileNamesTask($dirName, $recursive)") {
+            fs.loadFileNames(dirName, recursive)
         }
 
         /**
@@ -104,16 +74,9 @@ private constructor() {
          * @param extensions file extensions to include
          * @return IO task
          */
-        @JvmStatic fun loadFileNamesTask(dirName: String, recursive: Boolean, extensions: List<FileExtension>) = IOTask.of("loadFileNamesTask($dirName, $recursive, $extensions)") {
-
-            val dir = Paths.get(dirName)
-
-            errorIfAbsent(dir)
-
-            return@of Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
-                    .filter { file -> Files.isRegularFile(file) && extensions.filter { "$file".endsWith(it.extension) }.isNotEmpty() }
-                    .map { dir.relativize(it).toString().replace("\\", "/") }
-                    .collect(Collectors.toList<String>())
+        @JvmStatic fun loadFileNamesTask(dirName: String, recursive: Boolean, extensions: List<FileExtension>): IOTask<List<String>>
+                = IOTask.of("loadFileNamesTask($dirName, $recursive, $extensions)") {
+            fs.loadFileNames(dirName, recursive, extensions)
         }
 
         /**
@@ -124,16 +87,9 @@ private constructor() {
          * @param recursive recursive flag
          * @return IO task
          */
-        @JvmStatic fun loadDirectoryNamesTask(dirName: String, recursive: Boolean) = IOTask.of("loadDirectoryNamesTask($dirName, $recursive)", {
-            val dir = Paths.get(dirName)
-
-            errorIfAbsent(dir)
-
-            return@of Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
-                    .filter { Files.isDirectory(it) }
-                    .map { dir.relativize(it).toString().replace("\\", "/") }
-                    .filter { it.isNotEmpty() }
-                    .collect(Collectors.toList<String>())
+        @JvmStatic fun loadDirectoryNamesTask(dirName: String, recursive: Boolean): IOTask<List<String>>
+                = IOTask.of("loadDirectoryNamesTask($dirName, $recursive)", {
+            fs.loadDirectoryNames(dirName, recursive)
         })
 
         /**
@@ -144,21 +100,9 @@ private constructor() {
          * @param recursive recursive flag
          * @return IO task
          */
-        @JvmStatic fun <T> loadLastModifiedFileTask(dirName: String, recursive: Boolean) = IOTask.of("loadLastModifiedFileTask($dirName, $recursive)") {
-
-            val dir = Paths.get(dirName)
-
-            errorIfAbsent(dir)
-
-            return@of Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
-                    .filter { Files.isRegularFile(it) }
-                    .sorted { file1, file2 ->
-                        Files.getLastModifiedTime(file2).compareTo(Files.getLastModifiedTime(file1))
-                    }
-                    .findFirst()
-                    .map { dir.relativize(it).toString().replace("\\", "/") }
-                    .orElseThrow { FileNotFoundException("No files found in $dir") }
-
+        @JvmStatic fun <T> loadLastModifiedFileTask(dirName: String, recursive: Boolean): IOTask<T>
+                = IOTask.of("loadLastModifiedFileTask($dirName, $recursive)") {
+            fs.loadLastModifiedFileName(dirName, recursive)
         }.then { fileName -> readDataTask<T>(dirName + fileName) }
 
         /**
@@ -167,15 +111,8 @@ private constructor() {
          * @param fileName name of file to delete
          * @return IO task
          */
-        @JvmStatic fun deleteFileTask(fileName: String) = IOTask.ofVoid("deleteFileTask($fileName)") {
-
-            val file = Paths.get(fileName)
-
-            errorIfAbsent(file)
-
-            log.debug("Deleting file: $file")
-
-            Files.delete(file)
+        @JvmStatic fun deleteFileTask(fileName: String): IOTask<Void> = IOTask.ofVoid("deleteFileTask($fileName)") {
+            fs.deleteFile(fileName)
         }
 
         /**
@@ -184,31 +121,8 @@ private constructor() {
          * @param dirName directory name to delete
          * @return IO task
          */
-        @JvmStatic fun deleteDirectoryTask(dirName: String) = IOTask.ofVoid("deleteDirectoryTask($dirName)") {
-
-            val dir = Paths.get(dirName)
-
-            errorIfAbsent(dir)
-
-            Files.walkFileTree(dir, object : SimpleFileVisitor<Path>() {
-                override fun visitFile(file: Path, p1: BasicFileAttributes): FileVisitResult {
-                    log.debug("Deleting file: $file")
-
-                    Files.delete(file)
-                    return FileVisitResult.CONTINUE
-                }
-
-                override fun postVisitDirectory(directory: Path, e: IOException?): FileVisitResult {
-                    if (e == null) {
-                        log.debug("Deleting directory: $directory")
-
-                        Files.delete(directory)
-                        return FileVisitResult.CONTINUE
-                    } else {
-                        throw e
-                    }
-                }
-            })
+        @JvmStatic fun deleteDirectoryTask(dirName: String): IOTask<Void> = IOTask.ofVoid("deleteDirectoryTask($dirName)") {
+            fs.deleteDirectory(dirName)
         }
     }
 }

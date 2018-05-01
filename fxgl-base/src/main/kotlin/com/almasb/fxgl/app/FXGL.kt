@@ -191,6 +191,7 @@ class FXGL private constructor() {
 
             val systemDir = Paths.get("system/")
 
+            // TODO: all FS operations must to through FS. for cross-platform
             if (!Files.exists(systemDir)) {
                 firstRun = true
 

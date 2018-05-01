@@ -44,6 +44,7 @@ public final class SaveLoadManager {
         log.debug("Checking profiles dir: " + PROFILES_DIR);
 
         try {
+            // TODO: all FS operations must to through FS. for cross-platform
             Path dir = Paths.get("./" + PROFILES_DIR);
 
             if (!Files.exists(dir)) {
