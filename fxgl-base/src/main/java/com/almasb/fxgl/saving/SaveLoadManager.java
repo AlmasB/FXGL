@@ -17,9 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.FileNotFoundException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,24 +41,31 @@ public final class SaveLoadManager {
     static {
         log.debug("Checking profiles dir: " + PROFILES_DIR);
 
-        try {
-            // TODO: all FS operations must to through FS. for cross-platform
-            Path dir = Paths.get("./" + PROFILES_DIR);
+        if (!FS.exists(PROFILES_DIR)) {
+            log.debug("Creating non-existent profiles dir");
 
-            if (!Files.exists(dir)) {
-                log.debug("Creating non-existent profiles dir");
-                Files.createDirectories(dir);
-
-                Path readmeFile = Paths.get("./" + PROFILES_DIR + "Readme.txt");
-
-                Files.write(readmeFile, Collections.singletonList(
-                        "This directory contains user profiles."
-                ));
-            }
-        } catch (Exception e) {
-            log.warning("Failed to create profiles dir: " + e);
-            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+            FS.createDirectoryTask(PROFILES_DIR)
+                    .onFailure(e -> {
+                        log.warning("Failed to create profiles dir: " + e);
+                        Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+                    })
+                    .run();
         }
+
+            // TODO: refactor
+
+//            Path dir = Paths.get("./" + PROFILES_DIR);
+//
+//            if (!Files.exists(dir)) {
+//                log.debug("Creating non-existent profiles dir");
+//                Files.createDirectories(dir);
+//
+//                Path readmeFile = Paths.get("./" + PROFILES_DIR + "Readme.txt");
+//
+//                Files.write(readmeFile, Collections.singletonList(
+//                        "This directory contains user profiles."
+//                ));
+//            }
     }
 
     private final String profileName;
@@ -149,18 +154,26 @@ public final class SaveLoadManager {
                     @Override
                     protected Void onExecute() throws Exception {
 
-                        Path dir = Paths.get(saveDir());
-
-                        if (!Files.exists(dir)) {
+                        if (!FS.exists(saveDir())) {
                             log.debug("Creating non-existent saves dir");
-                            Files.createDirectory(dir);
 
-                            Path readmeFile = Paths.get(saveDir() + "Readme.txt");
-
-                            Files.write(readmeFile, Collections.singletonList(
-                                    "This directory contains save files."
-                            ));
+                            FS.createDirectoryTask(saveDir()).run();
                         }
+
+
+                        // TODO: refactor
+//                        Path dir = Paths.get(saveDir());
+//
+//                        if (!Files.exists(dir)) {
+//                            log.debug("Creating non-existent saves dir");
+//                            Files.createDirectory(dir);
+//
+//                            Path readmeFile = Paths.get(saveDir() + "Readme.txt");
+//
+//                            Files.write(readmeFile, Collections.singletonList(
+//                                    "This directory contains save files."
+//                            ));
+//                        }
 
                         return null;
                     }
@@ -211,12 +224,15 @@ public final class SaveLoadManager {
     public boolean saveFileExists(String saveFileName) {
         log.debug("Checking if save file exists: " + saveFileName);
 
-        try {
-            return Files.exists(Paths.get(saveDir() + saveFileName + SAVE_FILE_EXT));
-        } catch (Exception e) {
-            log.warning("Failed to check if file exists: " + e);
-            return false;
-        }
+        return FS.exists(saveDir() + saveFileName + SAVE_FILE_EXT);
+
+
+//        try {
+//            return Files.exists(Paths.get(saveDir() + saveFileName + SAVE_FILE_EXT));
+//        } catch (Exception e) {
+//            log.warning("Failed to check if file exists: " + e);
+//            return false;
+//        }
     }
 
     /**

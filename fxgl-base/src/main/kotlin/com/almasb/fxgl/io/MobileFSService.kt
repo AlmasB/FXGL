@@ -25,6 +25,15 @@ internal class MobileFSService : FSService {
     //private val rootStorage = File(System.getProperty("user.dir") + "/")
     private val rootStorage = storage.privateStorage.orElseThrow { RuntimeException("No private storage present") }
 
+    override fun exists(pathName: String): Boolean {
+        return toFile(pathName).exists()
+    }
+
+    override fun createDirectory(dirName: String) {
+        val dir = toFile(dirName)
+        dir.mkdirs()
+    }
+
     override fun writeData(data: Serializable, fileName: String) {
         val file = toFile(fileName)
 

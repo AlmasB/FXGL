@@ -21,6 +21,16 @@ internal class DesktopFSService : FSService {
 
     private val log = Logger.get(javaClass)
 
+    override fun exists(pathName: String): Boolean {
+        return Files.exists(Paths.get(pathName))
+    }
+
+    override fun createDirectory(dirName: String) {
+        val dir = Paths.get(dirName)
+
+        Files.createDirectories(dir)
+    }
+
     override fun writeData(data: Serializable, fileName: String) {
         val file = Paths.get(fileName)
 

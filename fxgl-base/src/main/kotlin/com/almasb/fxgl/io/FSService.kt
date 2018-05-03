@@ -17,6 +17,8 @@ import java.io.Serializable
  */
 interface FSService {
 
+    fun exists(pathName: String): Boolean
+
     fun writeData(data: Serializable, fileName: String)
 
     fun <T> readData(fileName: String): T
@@ -30,6 +32,8 @@ interface FSService {
     fun loadLastModifiedFileName(dirName: String, recursive: Boolean): String
 
     fun deleteFile(fileName: String)
+
+    fun createDirectory(dirName: String)
 
     fun deleteDirectory(dirName: String)
 }

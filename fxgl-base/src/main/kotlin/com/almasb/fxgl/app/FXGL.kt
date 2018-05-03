@@ -29,9 +29,9 @@ import com.gluonhq.charm.down.Platform
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import javafx.event.EventHandler
+import java.io.File
 import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
+
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -127,14 +127,14 @@ class FXGL private constructor() {
             IOTask.setDefaultExecutor(getExecutor())
             IOTask.setDefaultFailAction(getExceptionHandler())
 
+            createRequiredDirs()
+
+            if (firstRun)
+                loadDefaultSystemData()
+            else
+                loadSystemData()
+
             if (isDesktop()) {
-                createRequiredDirs()
-
-                if (firstRun)
-                    loadDefaultSystemData()
-                else
-                    loadSystemData()
-
                 runUpdaterAsync()
             }
 
@@ -188,19 +188,27 @@ class FXGL private constructor() {
         @JvmStatic fun isFirstRun() = firstRun
 
         private fun createRequiredDirs() {
+            if (FS.exists("system/"))
+                return
 
-            val systemDir = Paths.get("system/")
+            firstRun = true
 
-            // TODO: all FS operations must to through FS. for cross-platform
-            if (!Files.exists(systemDir)) {
-                firstRun = true
+            FS.createDirectoryTask("system/").run()
 
-                Files.createDirectories(systemDir)
 
-                val readmeFile = Paths.get("system/Readme.txt")
-
-                Files.write(readmeFile, "This directory contains FXGL system data files.".lines())
-            }
+            // TODO: refactor
+//
+//            val systemDir = File(System.getProperty("user.dir") + "/system/")
+//
+//            if (!systemDir.exists()) {
+//
+//
+//                systemDir.mkdirs()
+//
+//                val readmeFile =  File(System.getProperty("user.dir") + "/system/Readme.txt")
+//
+//                Files.write(readmeFile, "This directory contains FXGL system data files.".lines())
+//            }
         }
 
         private fun saveSystemData() {

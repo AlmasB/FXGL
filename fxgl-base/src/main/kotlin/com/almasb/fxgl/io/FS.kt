@@ -12,6 +12,8 @@ import com.almasb.fxgl.core.logging.Logger
 import java.io.Serializable
 
 /**
+ * TODO: other methods for creating text files, etc.
+ *
  * A collection of static methods to access IO via IO tasks.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -28,6 +30,17 @@ private constructor() {
         init {
             log.debug("Loaded ${fs.javaClass.simpleName}")
         }
+
+        @JvmStatic fun exists(pathName: String): Boolean {
+            return fs.exists(pathName)
+        }
+
+        /**
+         * Creates [dirName] directory, creating required parent directories if necessary.
+         */
+        @JvmStatic fun createDirectoryTask(dirName: String): IOTask<Void> = IOTask.ofVoid("createDirectoryTask($dirName)", {
+            fs.createDirectory(dirName)
+        })
 
         /**
          * Writes data to file, creating required directories.
