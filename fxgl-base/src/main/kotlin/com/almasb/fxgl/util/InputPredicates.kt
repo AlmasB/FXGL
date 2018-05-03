@@ -15,6 +15,6 @@ class InputPredicates {
 
     companion object {
 
-        @JvmField val ALPHANUM = Predicate<String> { input -> input.matches("^[\\pL\\pN]+$".toRegex()) }
+        @JvmField val ALPHANUM = Predicate<String> { input -> input.matches("^[\\p{L}\\p{N}]+$".toRegex()) }
     }
 }
