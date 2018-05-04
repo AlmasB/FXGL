@@ -13,8 +13,6 @@ import java.io.File
 import java.io.Serializable
 
 /**
- * TODO: other methods for creating text files, etc.
- *
  * A collection of static methods to access IO via IO tasks.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)

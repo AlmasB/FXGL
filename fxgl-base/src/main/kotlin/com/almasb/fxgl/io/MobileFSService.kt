@@ -12,7 +12,6 @@ import com.gluonhq.charm.down.plugins.StorageService
 import java.io.*
 
 /**
- * TODO: extract common code from DesktopService
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -68,8 +67,6 @@ internal class MobileFSService : FSService {
         val dir = toFile(dirName)
 
         checkExists(dir)
-
-        // TODO: test
 
         return dir.walkTopDown()
                 .maxDepth(if (recursive) Int.MAX_VALUE else 1)

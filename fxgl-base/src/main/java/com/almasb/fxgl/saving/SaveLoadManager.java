@@ -145,23 +145,14 @@ public final class SaveLoadManager {
                         if (!FS.exists(saveDir())) {
                             log.debug("Creating non-existent saves dir");
 
-                            FS.createDirectoryTask(saveDir()).run();
+                            FS.createDirectoryTask(saveDir())
+                                    .then(n -> FS.writeDataTask(Collections.singletonList("This directory contains save files."), saveDir() + "Readme.txt"))
+                                    .onFailure(e -> {
+                                        log.warning("Failed to create saves dir: " + e);
+                                        Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+                                    })
+                                    .run();
                         }
-
-
-                        // TODO: refactor
-//                        Path dir = Paths.get(saveDir());
-//
-//                        if (!Files.exists(dir)) {
-//                            log.debug("Creating non-existent saves dir");
-//                            Files.createDirectory(dir);
-//
-//                            Path readmeFile = Paths.get(saveDir() + "Readme.txt");
-//
-//                            Files.write(readmeFile, Collections.singletonList(
-//                                    "This directory contains save files."
-//                            ));
-//                        }
 
                         return null;
                     }
@@ -213,14 +204,6 @@ public final class SaveLoadManager {
         log.debug("Checking if save file exists: " + saveFileName);
 
         return FS.exists(saveDir() + saveFileName + SAVE_FILE_EXT);
-
-
-//        try {
-//            return Files.exists(Paths.get(saveDir() + saveFileName + SAVE_FILE_EXT));
-//        } catch (Exception e) {
-//            log.warning("Failed to check if file exists: " + e);
-//            return false;
-//        }
     }
 
     /**
