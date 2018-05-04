@@ -9,6 +9,7 @@ package com.almasb.fxgl.io
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.logging.Logger
+import java.io.File
 import java.io.Serializable
 
 /**
@@ -116,7 +117,7 @@ private constructor() {
         @JvmStatic fun <T> loadLastModifiedFileTask(dirName: String, recursive: Boolean): IOTask<T>
                 = IOTask.of("loadLastModifiedFileTask($dirName, $recursive)") {
             fs.loadLastModifiedFileName(dirName, recursive)
-        }.then { fileName -> readDataTask<T>(dirName + fileName) }
+        }.then { fileName -> readDataTask<T>(normalize(dirName) + fileName) }
 
         /**
          * Delete file [fileName].
@@ -137,5 +138,8 @@ private constructor() {
         @JvmStatic fun deleteDirectoryTask(dirName: String): IOTask<Void> = IOTask.ofVoid("deleteDirectoryTask($dirName)") {
             fs.deleteDirectory(dirName)
         }
+
+        private fun normalize(dirName: String): String
+                = if (dirName.endsWith(File.separatorChar)) dirName else dirName + File.separatorChar
     }
 }
