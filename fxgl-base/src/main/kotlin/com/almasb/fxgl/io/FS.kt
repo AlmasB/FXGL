@@ -25,7 +25,7 @@ private constructor() {
 
         private val log = Logger.get(FS::class.java)
 
-        private val fs = if (FXGL.isAndroid() || FXGL.isIOS()) MobileFSService() else DesktopFSService()
+        private val fs = if (FXGL.isMobile()) MobileFSService() else DesktopFSService()
 
         init {
             log.debug("Loaded ${fs.javaClass.simpleName}")

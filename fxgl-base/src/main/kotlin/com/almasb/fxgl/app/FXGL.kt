@@ -61,6 +61,7 @@ class FXGL private constructor() {
 
         // javafxports doesn't have "web" option, so will incorrectly default to desktop, hence the extra check
         @JvmStatic fun isDesktop() = !isBrowser() && Platform.isDesktop()
+        @JvmStatic fun isMobile() = isAndroid() || isIOS()
         @JvmStatic fun isAndroid() = Platform.isAndroid()
         @JvmStatic fun isIOS() = Platform.isIOS()
 
