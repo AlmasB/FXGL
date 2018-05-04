@@ -21,6 +21,8 @@ interface FSService {
 
     fun writeData(data: Serializable, fileName: String)
 
+    fun writeData(text: List<String>, fileName: String)
+
     fun <T> readData(fileName: String): T
 
     fun loadFileNames(dirName: String, recursive: Boolean): List<String>

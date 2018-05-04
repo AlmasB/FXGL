@@ -46,6 +46,12 @@ internal class DesktopFSService : FSService {
         }
     }
 
+    override fun writeData(text: List<String>, fileName: String) {
+        val file = Paths.get(fileName)
+
+        Files.write(file, text)
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun <T> readData(fileName: String): T {
         val file = Paths.get(fileName)

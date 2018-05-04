@@ -54,6 +54,10 @@ private constructor() {
             fs.writeData(data, fileName)
         })
 
+        @JvmStatic fun writeDataTask(text: List<String>, fileName: String) = IOTask.ofVoid("writeDataTask($fileName)", {
+            fs.writeData(text, fileName)
+        })
+
         /**
          * Loads data from file into an object.
          *

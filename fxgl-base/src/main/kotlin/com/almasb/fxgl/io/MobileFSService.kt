@@ -48,6 +48,12 @@ internal class MobileFSService : FSService {
         }
     }
 
+    override fun writeData(text: List<String>, fileName: String) {
+        val file = toFile(fileName)
+
+        file.writeText(text.joinToString("\n"))
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun <T> readData(fileName: String): T {
         val file = toFile(fileName)

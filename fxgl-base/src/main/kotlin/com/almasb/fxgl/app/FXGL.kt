@@ -29,7 +29,6 @@ import com.gluonhq.charm.down.Platform
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import javafx.event.EventHandler
-import java.io.File
 import java.io.IOException
 
 import java.util.*
@@ -194,22 +193,13 @@ class FXGL private constructor() {
 
             firstRun = true
 
-            FS.createDirectoryTask("system/").run()
-
-
-            // TODO: refactor
-//
-//            val systemDir = File(System.getProperty("user.dir") + "/system/")
-//
-//            if (!systemDir.exists()) {
-//
-//
-//                systemDir.mkdirs()
-//
-//                val readmeFile =  File(System.getProperty("user.dir") + "/system/Readme.txt")
-//
-//                Files.write(readmeFile, "This directory contains FXGL system data files.".lines())
-//            }
+            FS.createDirectoryTask("system/")
+                    .then { FS.writeDataTask(listOf("This directory contains FXGL system data files."), "system/Readme.txt") }
+                    .onFailure { e ->
+                        log.warning("Failed to create system dir: $e")
+                        Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e)
+                    }
+                    .run()
         }
 
         private fun saveSystemData() {

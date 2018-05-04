@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.almasb.fxgl.app.SystemPropertyKey.*;
+
 /**
  * Convenient access to saving and loading game data.
  *
@@ -29,14 +31,14 @@ import java.util.stream.Collectors;
  */
 public final class SaveLoadManager {
 
-    private static final Logger log = Logger.get("FXGL.SaveLoadManager");
+    private static final Logger log = Logger.get(SaveLoadManager.class);
 
-    private static final String PROFILE_FILE_NAME = FXGL.getProperties().getString("fs.profilename");
-    private static final String PROFILES_DIR = FXGL.getProperties().getString("fs.profiledir");
-    private static final String SAVE_DIR = FXGL.getProperties().getString("fs.savedir");
+    private static final String PROFILE_FILE_NAME = FXGL.getProperties().getString(FS_PROFILENAME);
+    private static final String PROFILES_DIR = FXGL.getProperties().getString(FS_PROFILEDIR);
+    private static final String SAVE_DIR = FXGL.getProperties().getString(FS_SAVEDIR);
 
-    private static final String SAVE_FILE_EXT = FXGL.getProperties().getString("fs.savefile.ext");
-    private static final String DATA_FILE_EXT = FXGL.getProperties().getString("fs.datafile.ext");
+    private static final String SAVE_FILE_EXT = FXGL.getProperties().getString(FS_SAVEFILE_EXT);
+    private static final String DATA_FILE_EXT = FXGL.getProperties().getString(FS_DATAFILE_EXT);
 
     static {
         log.debug("Checking profiles dir: " + PROFILES_DIR);
@@ -45,27 +47,13 @@ public final class SaveLoadManager {
             log.debug("Creating non-existent profiles dir");
 
             FS.createDirectoryTask(PROFILES_DIR)
+                    .then(n -> FS.writeDataTask(Collections.singletonList("This directory contains user profiles."), PROFILES_DIR + "Readme.txt"))
                     .onFailure(e -> {
                         log.warning("Failed to create profiles dir: " + e);
                         Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
                     })
                     .run();
         }
-
-            // TODO: refactor
-
-//            Path dir = Paths.get("./" + PROFILES_DIR);
-//
-//            if (!Files.exists(dir)) {
-//                log.debug("Creating non-existent profiles dir");
-//                Files.createDirectories(dir);
-//
-//                Path readmeFile = Paths.get("./" + PROFILES_DIR + "Readme.txt");
-//
-//                Files.write(readmeFile, Collections.singletonList(
-//                        "This directory contains user profiles."
-//                ));
-//            }
     }
 
     private final String profileName;
