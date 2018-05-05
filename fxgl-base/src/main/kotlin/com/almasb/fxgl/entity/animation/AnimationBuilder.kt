@@ -12,8 +12,7 @@ import com.almasb.fxgl.entity.components.ColorComponent
 import com.almasb.fxgl.util.EmptyRunnable
 import javafx.animation.Interpolator
 import javafx.util.Duration
-
-import java.util.Arrays
+import java.util.*
 
 /**
  * A convenient builder for standard (translate, rotate, scale) animations.

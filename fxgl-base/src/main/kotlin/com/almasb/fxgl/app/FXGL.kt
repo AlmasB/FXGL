@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.SystemPropertyKey.*
+import com.almasb.fxgl.app.SystemPropertyKey.FXGL_VERSION
 import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.collection.PropertyMap
@@ -30,7 +30,6 @@ import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import javafx.event.EventHandler
 import java.io.IOException
-
 import java.util.*
 import java.util.concurrent.Callable
 

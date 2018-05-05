@@ -21,9 +21,7 @@ import com.almasb.fxgl.app.FXGL.Companion.getUIFactory
 import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.EntityEvent
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler

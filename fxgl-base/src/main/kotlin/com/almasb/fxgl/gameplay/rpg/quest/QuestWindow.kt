@@ -6,12 +6,6 @@
 
 package com.almasb.fxgl.gameplay.rpg.quest
 
-import javafx.animation.ScaleTransition
-import javafx.scene.control.ScrollPane
-import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
-import javafx.util.Duration
-
 /**
  *
  *

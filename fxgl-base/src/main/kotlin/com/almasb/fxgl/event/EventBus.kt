@@ -11,7 +11,6 @@ import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.entity.EntityEvent
 import com.almasb.fxgl.entity.components.ScriptComponent
-import com.almasb.fxgl.script.ScriptFactory
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType

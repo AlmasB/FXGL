@@ -8,24 +8,18 @@ package com.almasb.fxgl.scene.intro
 
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.SystemPropertyKey.*
-import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.scene.IntroScene
 import javafx.animation.*
-import javafx.geometry.Point2D
 import javafx.geometry.Point3D
 import javafx.scene.Group
-import javafx.scene.canvas.Canvas
 import javafx.scene.effect.DropShadow
 import javafx.scene.effect.Light
+import javafx.scene.effect.Lighting
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
-import javafx.util.Duration
-import java.util.*
-import javafx.scene.effect.Lighting
-import javafx.scene.effect.Light.Distant
 import javafx.scene.transform.Rotate
+import javafx.util.Duration
 
 
 /**

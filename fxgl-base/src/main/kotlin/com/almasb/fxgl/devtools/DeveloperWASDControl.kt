@@ -8,8 +8,8 @@ package com.almasb.fxgl.devtools
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.component.Component
-import com.almasb.fxgl.entity.components.PositionComponent
 import com.almasb.fxgl.entity.component.Required
+import com.almasb.fxgl.entity.components.PositionComponent
 import com.almasb.fxgl.input.UserAction
 import javafx.scene.input.KeyCode
 

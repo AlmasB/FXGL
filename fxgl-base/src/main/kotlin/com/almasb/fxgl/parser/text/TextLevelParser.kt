@@ -11,7 +11,6 @@ import com.almasb.fxgl.app.tryCatchRoot
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.entity.*
-import com.almasb.fxgl.entity.Level
 import com.almasb.fxgl.parser.LevelParser
 import java.util.*
 

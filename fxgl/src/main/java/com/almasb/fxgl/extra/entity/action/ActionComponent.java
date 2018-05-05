@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.extra.entity.action;
 
-import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

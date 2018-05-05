@@ -23,11 +23,9 @@ import com.almasb.fxgl.physics.box2d.collision.Manifold;
 import com.almasb.fxgl.physics.box2d.collision.shapes.*;
 import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
-import com.almasb.fxgl.physics.box2d.particle.ParticleGroup;
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
 
 import java.util.Iterator;
 

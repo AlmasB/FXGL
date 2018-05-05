@@ -8,7 +8,10 @@ package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.core.pool.Pool
 import com.almasb.fxgl.core.pool.Pools
-import com.almasb.fxgl.entity.component.*
+import com.almasb.fxgl.entity.component.Component
+import com.almasb.fxgl.entity.component.CopyableComponent
+import com.almasb.fxgl.entity.component.CoreComponent
+import com.almasb.fxgl.entity.component.SerializableComponent
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.physics.CollisionResult
 import com.almasb.fxgl.physics.HitBox
@@ -20,8 +23,7 @@ import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
-
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Component that adds bounding box information to an entity.

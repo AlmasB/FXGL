@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.entity.component.Component;
-
 /**
  * Marks a component as copyable.
  *
