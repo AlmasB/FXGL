@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.tryCatchRoot
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.collection.UnorderedArray
@@ -438,7 +439,13 @@ class GameWorld {
             data.put("type", entityName)
         }
 
-        return spawner.apply(data)
+        return tryCatchRoot { spawner.apply(data) }
+
+//        try {
+//            return spawner.apply(data)
+//        } catch (e: Exception) {
+//            throw ReflectionUtils.getRootCause(e)
+//        }
     }
 
     /* QUERIES */

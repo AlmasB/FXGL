@@ -20,6 +20,7 @@ import com.almasb.fxgl.app.FXGL.Companion.getNotificationService
 import com.almasb.fxgl.app.FXGL.Companion.getUIFactory
 import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.pool.Pools
+import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityEvent
@@ -27,10 +28,7 @@ import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.texture.Texture
-import com.almasb.fxgl.util.BiConsumer
-import com.almasb.fxgl.util.Consumer
-import com.almasb.fxgl.util.EmptyRunnable
-import com.almasb.fxgl.util.Optional
+import com.almasb.fxgl.util.*
 import javafx.beans.property.*
 import javafx.event.Event
 import javafx.geometry.Point2D
@@ -446,3 +444,27 @@ fun runOnce(action: Runnable, delay: Duration) = getMasterTimer().runOnceAfter(a
 fun run(action: Runnable, interval: Duration) = getMasterTimer().runAtInterval(action, interval)
 
 fun run(action: Runnable, interval: Duration, limit: Int) = getMasterTimer().runAtInterval(action, interval, limit)
+
+/* EXTENSIONS */
+
+/**
+ * Calls [func], if exception occurs in [func] the root cause is thrown.
+ */
+fun <T> tryCatchRoot(func: Supplier<T>): T {
+    try {
+        return func.get()
+    } catch (e: Exception) {
+        throw ReflectionUtils.getRootCause(e)
+    }
+}
+
+/**
+ * Calls [func], if exception occurs in [func] the root cause is thrown.
+ */
+fun <T> tryCatchRoot(func: () -> T): T {
+    try {
+        return func.invoke()
+    } catch (e: Exception) {
+        throw ReflectionUtils.getRootCause(e)
+    }
+}
