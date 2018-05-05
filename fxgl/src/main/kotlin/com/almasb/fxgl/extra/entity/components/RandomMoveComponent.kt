@@ -55,8 +55,8 @@ class RandomMoveComponent
     }
 
     private fun updateNextPosition() {
-        val maxX = bounds.maxX - (bbox?.width ?: 0.0)
-        val maxY = bounds.maxY - (bbox?.height ?: 0.0)
+        val maxX = bounds.maxX - (bbox?.getWidth() ?: 0.0)
+        val maxY = bounds.maxY - (bbox?.getHeight() ?: 0.0)
 
         val x = FXGLMath.map(FXGLMath.noise1D(xSeed) * 1.0, 0.0, 1.0, bounds.minX, maxX).toFloat()
         val y = FXGLMath.map(FXGLMath.noise1D(ySeed) * 1.0, 0.0, 1.0, bounds.minY, maxY).toFloat()

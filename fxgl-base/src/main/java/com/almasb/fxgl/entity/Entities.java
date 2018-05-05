@@ -11,12 +11,10 @@ import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.entity.components.IDComponent;
 import com.almasb.fxgl.parser.tiled.Layer;
 import com.almasb.fxgl.parser.tiled.TiledLayerView;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.parser.tiled.Tileset;
-import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;
@@ -427,11 +425,13 @@ public final class Entities {
      * @return tileset
      */
     private static Tileset findTileset(int gid, List<Tileset> tilesets) {
-        return tilesets.stream()
-                .filter(tileset ->
-                        gid >= tileset.getFirstgid() && gid < tileset.getFirstgid() + tileset.getTilecount())
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Tileset for gid=" + gid + " not found"));
+        for (Tileset tileset : tilesets) {
+            if (gid >= tileset.getFirstgid() && gid < tileset.getFirstgid() + tileset.getTilecount()) {
+                return tileset;
+            }
+
+        }
+        throw new IllegalArgumentException("Tileset for gid=" + gid + " not found");
     }
 
     private static Image loadTilesetImage(Tileset tileset) {

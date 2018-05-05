@@ -18,13 +18,15 @@ import javafx.collections.ObservableList;
 
 import java.io.FileNotFoundException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.almasb.fxgl.app.SystemPropertyKey.*;
 
 /**
+ * TODO: use async instead of javafx.application.Platform
+ *
  * Convenient access to saving and loading game data.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -237,10 +239,15 @@ public final class SaveLoadManager {
 
         return FS.loadFileNamesTask(saveDir(), true, Collections.singletonList(new FileExtension(SAVE_FILE_EXT)))
                 .then(fileNames -> IOTask.of("readSaveFiles", () -> {
-                    return fileNames.stream()
-                            .map(name -> FS.<SaveFile>readDataTask(saveDir() + name).run())
-                            .filter(file -> file != null)
-                            .collect(Collectors.toList());
+
+                    List<SaveFile> list = new ArrayList<>();
+                    for (String name : fileNames) {
+                        SaveFile file = FS.<SaveFile>readDataTask(saveDir() + name).run();
+                        if (file != null) {
+                            list.add(file);
+                        }
+                    }
+                    return list;
                 }));
     }
 
@@ -257,10 +264,8 @@ public final class SaveLoadManager {
                 throw new FileNotFoundException("No save files found");
             }
 
-            return files.stream()
-                    .sorted(SaveFile.RECENT_FIRST)
-                    .findFirst()
-                    .get();
+            Collections.sort(files, SaveFile.RECENT_FIRST);
+            return files.get(0);
         }));
     }
 }

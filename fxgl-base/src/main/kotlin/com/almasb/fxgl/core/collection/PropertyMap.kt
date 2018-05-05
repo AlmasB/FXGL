@@ -6,7 +6,9 @@
 
 package com.almasb.fxgl.core.collection
 
+import com.almasb.fxgl.util.BiConsumer
 import com.almasb.fxgl.util.Optional
+import com.almasb.fxgl.util.forEach
 import javafx.beans.property.*
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
@@ -193,10 +195,10 @@ class PropertyMap {
 
     @Suppress("UNCHECKED_CAST")
     fun clear() {
-        listeners.forEach { key, listener ->
+        forEach(listeners, BiConsumer { key, listener ->
             // clean up all non-removed JavaFX listeners
             (get(key.propertyName) as ObservableValue<Any>).removeListener(listener as ChangeListener<Any>)
-        }
+        })
         listeners.clear()
 
         properties.clear()

@@ -113,10 +113,10 @@ class AnimationBuilder {
     fun color(entities: List<Entity>): ColorAnimationBuilder {
         this.entities = entities
 
-        val dontHaveColor = this.entities.stream().anyMatch { e -> !e.hasComponent(ColorComponent::class.java) }
-
-        if (dontHaveColor) {
-            throw IllegalArgumentException("All entities must have ColorComponent")
+        for (e in entities) {
+            if (!e.hasComponent(ColorComponent::class.java)) {
+                throw IllegalArgumentException("All entities must have ColorComponent")
+            }
         }
 
         return ColorAnimationBuilder(this)

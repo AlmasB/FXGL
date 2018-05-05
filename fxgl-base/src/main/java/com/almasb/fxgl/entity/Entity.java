@@ -24,6 +24,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -398,9 +399,16 @@ public class Entity {
 
         checkNotDuplicate(type);
 
-        Required[] required = type.getAnnotationsByType(Required.class);
+        List<Required> requiredList = new ArrayList<>();
 
-        for (Required r : required) {
+        Annotation[] annotations = type.getAnnotations();
+        for (Annotation a : annotations) {
+            if (a.annotationType().equals(Required.class)) {
+                requiredList.add((Required) a);
+            }
+        }
+
+        for (Required r : requiredList) {
             if (!hasComponent(r.value())) {
                 throw new IllegalStateException("Required component: [" + r.value().getSimpleName() + "] for: " + type.getSimpleName() + " is missing");
             }
@@ -429,7 +437,16 @@ public class Entity {
      * Fails with IAE if [requiringType] has a dependency on [type].
      */
     private void checkNotRequiredBy(Class<? extends Component> requiringType, Class<? extends Component> type) {
-        for (Required required : requiringType.getAnnotationsByType(Required.class)) {
+        List<Required> requiredList = new ArrayList<>();
+
+        Annotation[] annotations = requiringType.getAnnotations();
+        for (Annotation a : annotations) {
+            if (a.annotationType().equals(Required.class)) {
+                requiredList.add((Required) a);
+            }
+        }
+
+        for (Required required : requiredList) {
             if (required.value().equals(type)) {
                 throw new IllegalArgumentException("Required component: [" + required.value().getSimpleName() + "] by: " + requiringType.getSimpleName());
             }

@@ -76,9 +76,13 @@ public class AStarLogic {
                 if (open.isEmpty())
                     return Collections.emptyList();
 
-                current = open.stream()
-                        .reduce((n1, n2) -> n2.getFCost() < n1.getFCost() ? n2 : n1)
-                        .get();
+                AStarNode acc = open.get(0);
+
+                for (AStarNode a : open) {
+                    acc = a.getFCost() < acc.getFCost() ? a : acc;
+                }
+
+                current = acc;
             }
         }
 

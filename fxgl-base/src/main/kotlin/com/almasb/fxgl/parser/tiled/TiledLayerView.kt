@@ -344,10 +344,13 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
     }
 
     private fun findTileset(gid: Int, tilesets: List<Tileset>): Tileset {
-        return tilesets.stream()
-                .filter { tileset -> gid >= tileset.firstgid && gid < tileset.firstgid + tileset.tilecount }
-                .findAny()
-                .orElseThrow { IllegalArgumentException("Tileset for gid=$gid not found") }
+        for (tileset in tilesets) {
+            if (gid >= tileset.firstgid && gid < tileset.firstgid + tileset.tilecount) {
+                return tileset;
+            }
+        }
+
+        throw IllegalArgumentException("Tileset for gid=$gid not found");
     }
 
     private fun loadTilesetImage(tileset: Tileset): Image {

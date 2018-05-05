@@ -14,6 +14,8 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.scene.intro.IntroFinishedEvent
+import com.almasb.fxgl.util.BiConsumer
+import com.almasb.fxgl.util.forEach
 import javafx.concurrent.Task
 import javafx.event.EventHandler
 import javafx.scene.input.KeyEvent
@@ -155,7 +157,7 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
 
             val vars = hashMapOf<String, Any>()
             app.initGameVars(vars)
-            vars.forEach { name, value -> app.gameState.setValue(name, value) }
+            forEach(vars, BiConsumer { name, value -> app.gameState.setValue(name, value) })
 
             // we just created new game state vars, so inform achievement manager about new vars
             app.gameplay.achievementManager.rebindAchievements()
