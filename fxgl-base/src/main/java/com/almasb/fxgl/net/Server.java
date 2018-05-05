@@ -182,8 +182,9 @@ public final class Server extends NetworkConnection {
                             break;
                         }
 
-                        parsers.getOrDefault(data.getClass(), d -> {
-                        }).parse((Serializable) data);
+                        if (parsers.containsKey(data.getClass())) {
+                            parsers.get(data.getClass()).parse((Serializable) data);
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -238,8 +239,9 @@ public final class Server extends NetworkConnection {
                             break;
                         }
 
-                        parsers.getOrDefault(data.getClass(), d -> {
-                        }).parse((Serializable) data);
+                        if (parsers.containsKey(data.getClass())) {
+                            parsers.get(data.getClass()).parse((Serializable) data);
+                        }
                     }
                 }
             } catch (Exception e) {

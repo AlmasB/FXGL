@@ -168,8 +168,9 @@ public final class Client extends NetworkConnection {
                         break;
                     }
 
-                    parsers.getOrDefault(data.getClass(), d -> {
-                    }).parse((Serializable) data);
+                    if (parsers.containsKey(data.getClass())) {
+                        parsers.get(data.getClass()).parse((Serializable) data);
+                    }
                 }
             } catch (Exception e) {
                 log.warning("Exception during TCP connection execution: " + e.getMessage());
@@ -213,8 +214,9 @@ public final class Client extends NetworkConnection {
                             break;
                         }
 
-                        parsers.getOrDefault(data.getClass(), d -> {
-                        }).parse((Serializable) data);
+                        if (parsers.containsKey(data.getClass())) {
+                            parsers.get(data.getClass()).parse((Serializable) data);
+                        }
                     }
                 }
             } catch (Exception e) {

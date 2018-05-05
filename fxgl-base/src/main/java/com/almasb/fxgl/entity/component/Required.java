@@ -8,7 +8,6 @@ package com.almasb.fxgl.entity.component;
 
 import java.lang.annotation.*;
 
-@Repeatable(RequiredComponents.class)
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Required {

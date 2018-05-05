@@ -12,9 +12,12 @@ import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.PositionComponent;
+import com.almasb.fxgl.util.BackportKt;
 import com.almasb.fxgl.util.EmptyRunnable;
 
 import java.util.Iterator;
+
+import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -72,7 +75,7 @@ public class ParticleComponent extends Component {
 
     @Override
     public void onRemoved() {
-        particles.forEach(Pools::free);
+        forEach(particles, Pools::free);
         particles.clear();
 
         parent.removeFromWorld();
