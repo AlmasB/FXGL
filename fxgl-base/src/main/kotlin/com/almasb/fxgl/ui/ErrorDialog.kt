@@ -18,39 +18,65 @@ class ErrorDialog(val error: Throwable) {
     private val dialog: Dialog<ButtonType>
 
     init {
-        val label = Label("Exception stacktrace:")
-        val sw = StringWriter()
-        val pw = PrintWriter(sw)
-        error.printStackTrace(pw)
-        pw.close()
-
-        val textArea = TextArea(sw.toString())
-        textArea.isEditable = false
-        textArea.isWrapText = true
-        textArea.setPrefSize(600.0, 600.0)
-        textArea.maxWidth = java.lang.Double.MAX_VALUE
-        textArea.maxHeight = java.lang.Double.MAX_VALUE
-
-        GridPane.setVgrow(textArea, Priority.ALWAYS)
-        GridPane.setHgrow(textArea, Priority.ALWAYS)
-
         val root = GridPane()
         root.isVisible = false
-        root.maxWidth = java.lang.Double.MAX_VALUE
-        root.add(label, 0, 0)
-        root.add(textArea, 0, 1)
+        root.add(Label("Exception stacktrace:"), 0, 0)
+        root.add(makeStackTraceArea(), 0, 1)
 
-        dialog = Dialog<ButtonType>()
-        dialog.title = "Uncaught Exception"
+        dialog = Dialog()
+        dialog.title = "Error Reporter"
         dialog.initModality(Modality.APPLICATION_MODAL)
 
         val dialogPane = dialog.dialogPane
         dialogPane.buttonTypes.addAll(ButtonType.OK)
-        dialogPane.contentText = error.toString()
+        dialogPane.content = makeErrorMessageArea()
         dialogPane.expandableContent = root
     }
 
     fun showAndWait() {
         dialog.showAndWait()
+    }
+
+    private fun makeErrorMessageArea() = TextArea(makeErrorMessage()).apply {
+        isEditable = false
+    }
+
+    private fun makeErrorMessage(): String {
+        val name: String
+        val line: String
+
+        if (error.stackTrace.isEmpty()) {
+            name = "Empty stack trace"
+            line = "Empty stack trace"
+        } else {
+            val trace = error.stackTrace.first()
+            name = trace.className.substringAfterLast('.') + "." + trace.methodName + "()"
+            line = trace.toString().substringAfter('(').substringBefore(')')
+        }
+
+        return "Message:  ${error.message}\n" +
+                "Type:  ${error.javaClass.simpleName}\n" +
+                "Method:  $name\n" +
+                "Line:  $line"
+    }
+
+    private fun makeStackTraceArea() = TextArea(makeStackTrace()).apply {
+        isEditable = false
+        isWrapText = true
+
+        // guesstimate size
+        setPrefSize((text.split('\n').maxBy { it.length }?.length ?: 60) * 6.5, (text.count { it == '\n' } + 1) * 20.0)
+
+        GridPane.setVgrow(this, Priority.ALWAYS)
+        GridPane.setHgrow(this, Priority.ALWAYS)
+    }
+
+    private fun makeStackTrace(): String {
+        val sw = StringWriter()
+        val pw = PrintWriter(sw)
+        error.printStackTrace(pw)
+        pw.close()
+
+        return sw.toString()
     }
 }
