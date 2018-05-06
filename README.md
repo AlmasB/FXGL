@@ -12,7 +12,7 @@ JavaFX Game Development Framework
 ### Why FXGL?
 
 * No native libraries, no installation, no setup required
-* "Out of the box": Java 8/9, Win/Mac/Linux/Android([Sample](https://github.com/AlmasB/FXGL-MobileApp))/Web([alpha](https://github.com/AlmasB/FXGL-WebApp))
+* "Out of the box": Java 8/9, Win/Mac/Linux/Android 5.0+([Sample](https://github.com/AlmasB/FXGL-MobileApp))/iOS([alpha](https://github.com/AlmasB/FXGL-MobileApp))/Web([alpha](https://github.com/AlmasB/FXGL-WebApp))
 * Simple and clean API
 * Superset of JavaFX: no need to learn new UI API
 * Brings real-world game development techniques to JavaFX
@@ -64,11 +64,11 @@ public class BasicGameApp extends GameApplication {
 
 Already have `pom.xml`? Then add:
 
-```maven
+```
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.5.0</version>
+    <version>0.5.1</version>
 </dependency>
 ```
 
@@ -79,13 +79,13 @@ Already have `pom.xml`? Then add:
 
 Already have `build.gradle`? Then add:
 
-```gradle
+```
 repositories {
     jcenter()
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:0.5.0'
+    compile 'com.github.almasb:fxgl:0.5.1'
 }
 ```
 
