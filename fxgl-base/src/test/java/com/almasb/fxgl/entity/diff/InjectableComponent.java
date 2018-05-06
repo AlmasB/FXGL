@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.entity.diff;
 
-import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.EntityTest;
+import com.almasb.fxgl.entity.component.Component;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

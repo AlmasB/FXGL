@@ -11,7 +11,6 @@ import com.almasb.fxgl.core.math.FXGLMath.*
 import com.almasb.fxgl.entity.Entity
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.number.IsCloseTo
 import org.hamcrest.number.IsCloseTo.closeTo
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

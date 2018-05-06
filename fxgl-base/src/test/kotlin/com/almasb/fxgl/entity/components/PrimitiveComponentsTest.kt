@@ -7,17 +7,12 @@
 package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.core.math.Vec2
-import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.components.PositionComponent
 import com.almasb.fxgl.io.serialization.Bundle
-import javafx.geometry.Point2D
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.function.Executable
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 /**
  *

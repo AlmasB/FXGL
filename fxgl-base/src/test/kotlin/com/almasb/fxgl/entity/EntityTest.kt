@@ -9,7 +9,6 @@ package com.almasb.fxgl.entity
 import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.component.*
-import com.almasb.fxgl.entity.component.SerializableComponent
 import com.almasb.fxgl.entity.components.*
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.physics.BoundingShape

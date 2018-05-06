@@ -8,8 +8,8 @@ package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.core.math.Vec2
-import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.Entities
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.components.CollidableComponent
 import javafx.geometry.Point2D

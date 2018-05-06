@@ -6,16 +6,20 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.util.Consumer
-import com.almasb.fxgl.util.Predicate
-import org.hamcrest.CoreMatchers.*
-import org.hamcrest.MatcherAssert.*
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class RenderLayerTest {
+
+    @Test
+    fun `Creation`() {
+        val layer = RenderLayer(500)
+
+        assertThat(layer.index(), `is`(500))
+        assertThat(layer.toString(), `is`("NoName(500)"))
+    }
 
     @Test
     fun `Predefined layers`() {

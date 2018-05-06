@@ -9,12 +9,9 @@ package com.almasb.fxgl.input
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
 /**

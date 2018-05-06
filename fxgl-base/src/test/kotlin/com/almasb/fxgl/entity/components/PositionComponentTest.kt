@@ -7,16 +7,14 @@
 package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.components.PositionComponent
 import com.almasb.fxgl.io.serialization.Bundle
 import javafx.geometry.Point2D
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 
 class PositionComponentTest {

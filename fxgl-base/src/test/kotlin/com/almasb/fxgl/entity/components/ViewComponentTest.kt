@@ -10,14 +10,11 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.app.SystemPropertyKey
 import com.almasb.fxgl.entity.RenderLayer
-import com.almasb.fxgl.entity.components.ViewComponent
 import javafx.scene.Node
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.contains
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach

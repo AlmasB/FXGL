@@ -8,8 +8,8 @@ package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.util.Consumer
 import com.almasb.fxgl.util.Predicate
-import org.hamcrest.CoreMatchers.*
-import org.hamcrest.MatcherAssert.*
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

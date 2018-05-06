@@ -7,13 +7,8 @@
 package com.almasb.fxgl.physics
 
 import javafx.beans.property.SimpleDoubleProperty
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.hasItems
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
 /**
