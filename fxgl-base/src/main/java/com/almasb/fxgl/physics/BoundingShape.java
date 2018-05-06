@@ -97,4 +97,24 @@ public final class BoundingShape {
 
         return new BoundingShape(ShapeType.CHAIN, points, new Dimension2D(maxX, maxY));
     }
+
+    public static BoundingShape polygon(Point2D... points) {
+        if (points.length < 3)
+            throw new IllegalArgumentException("Polygon shape requires at least 3 points. Given points: " + points.length);
+
+        double maxX = points[0].getX();
+        double maxY = points[0].getY();
+
+        for (Point2D p : points) {
+            if (p.getX() > maxX) {
+                maxX = p.getX();
+            }
+
+            if (p.getY() > maxY) {
+                maxY = p.getY();
+            }
+        }
+
+        return new BoundingShape(ShapeType.POLYGON, points, new Dimension2D(maxX, maxY));
+    }
 }

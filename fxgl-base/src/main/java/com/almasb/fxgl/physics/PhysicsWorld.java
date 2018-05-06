@@ -25,6 +25,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef;
 import javafx.geometry.Bounds;
+import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 
 import java.util.Iterator;
@@ -569,8 +570,23 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
                 case POLYGON:
                     PolygonShape polygonShape = new PolygonShape();
-                    polygonShape.setAsBox(toMetersF(w / 2), toMetersF(h / 2),
-                            new Vec2(toMetersF(boundsCenterLocal.getX()), -toMetersF(boundsCenterLocal.getY())), 0);
+
+                    if (boundingShape.data instanceof Dimension2D) {
+                        polygonShape.setAsBox(toMetersF(w / 2), toMetersF(h / 2),
+                                new Vec2(toMetersF(boundsCenterLocal.getX()), -toMetersF(boundsCenterLocal.getY())), 0);
+                    } else {
+                        Point2D[] points = (Point2D[]) boundingShape.data;
+
+                        Vec2[] vertices = new Vec2[points.length];
+
+                        for (int i = 0; i < vertices.length; i++) {
+                            vertices[i] = toVector(points[i].subtract(boundsCenterLocal))
+                                    .subLocal(toVector(bbox.getCenterLocal()));
+                        }
+
+                        polygonShape.set(vertices, vertices.length);
+                    }
+
                     b2Shape = polygonShape;
                     break;
 
