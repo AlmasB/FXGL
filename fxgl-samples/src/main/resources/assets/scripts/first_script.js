@@ -15,7 +15,7 @@ function onActivate(event) {
 
 function moveEntity(event) {
     byID(event.name, event.id).ifPresent(function(e) {
-        e.setY(e.getY() + 20)
+        e.removeFromWorld()
     });
 }
 

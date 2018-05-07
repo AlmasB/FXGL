@@ -84,8 +84,8 @@ public class RealPhysicsSample extends GameApplication {
 
                 // 3. set hit box to specify bounding shape
                 tri.getBoundingBoxComponent()
-                        .addHitBox(new HitBox(BoundingShape.polygon(new Point2D(0, 0), new Point2D(40, 0), new Point2D(0, 40))));
-                tri.getViewComponent().setView(new Polygon(0, 0, 40, 0, 0, 40));
+                        .addHitBox(new HitBox(BoundingShape.polygon(new Point2D(0, 40), new Point2D(20, 0), new Point2D(40, 40))));
+                tri.getViewComponent().setView(new Polygon(0, 40, 20, 0, 40, 40));
 
                 getGameWorld().addEntity(tri);
             }
