@@ -14,9 +14,6 @@ import com.almasb.fxgl.entity.component.Required;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Required(PositionComponent.class)
-@Required(TypeComponent.class)
-@Required(BoundingBoxComponent.class)
 public class CollidableComponent extends BooleanComponent implements CopyableComponent<CollidableComponent> {
     public CollidableComponent(boolean collidable) {
         super(collidable);

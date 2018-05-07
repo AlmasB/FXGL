@@ -33,5 +33,7 @@ fun main(args: Array<String>) {
 
     lines.add("}\n")
 
-    Files.write(javaFile, lines, StandardOpenOption.CREATE)
+    Files.deleteIfExists(javaFile)
+
+    Files.write(javaFile, lines, StandardOpenOption.CREATE_NEW)
 }

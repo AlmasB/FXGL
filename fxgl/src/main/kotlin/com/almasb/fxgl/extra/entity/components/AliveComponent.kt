@@ -30,9 +30,9 @@ class AliveComponent
         if (isAlive()) {
             value = false
 
-            val event = EntityEvent(EntityEvent.DEATH, killer, entity)
+            val event = EntityEvent("onDeath", killer, entity)
 
-            fire(event, "onDeath")
+            fire(event)
         }
     }
 
@@ -44,9 +44,9 @@ class AliveComponent
         if (isDead()) {
             value = true
 
-            val event = EntityEvent(EntityEvent.REVIVE, entity, entity)
+            val event = EntityEvent("onRevive", entity, entity)
 
-            fire(event, "onRevive")
+            fire(event)
         }
     }
 
@@ -58,9 +58,9 @@ class AliveComponent
         if (isDead()) {
             value = true
 
-            val event = EntityEvent(EntityEvent.REVIVE, caller, entity)
+            val event = EntityEvent("onRevive", caller, entity)
 
-            fire(event, "onRevive")
+            fire(event)
         }
     }
 }

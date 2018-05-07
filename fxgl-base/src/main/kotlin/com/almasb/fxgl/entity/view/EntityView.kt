@@ -79,9 +79,10 @@ open class EntityView : Parent, Disposable {
         // we only call dispose to let children to do manual cleanup
         // but we do not remove them from the parent
         // which would have been done by now by JavaFX
-        children.stream()
-                .filter { n -> n is Disposable }
-                .map { n -> n as Disposable }
-                .forEach { it.dispose() }
+        for (n in children) {
+            if (n is Disposable) {
+                n.dispose();
+            }
+        }
     }
 }

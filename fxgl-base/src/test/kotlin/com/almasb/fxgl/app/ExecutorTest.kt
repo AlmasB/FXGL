@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.Executor
-import com.almasb.fxgl.app.FXGLExecutor
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
@@ -17,6 +15,7 @@ import org.junit.jupiter.api.Assertions.assertTimeout
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import java.time.Duration.ofSeconds
 import java.util.concurrent.CountDownLatch
 
@@ -56,6 +55,7 @@ class ExecutorTest {
     }
 
     @Test
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     fun `Test schedule runs after given delay`() {
         assertTimeout(ofSeconds(2)) {
             val now = System.currentTimeMillis()

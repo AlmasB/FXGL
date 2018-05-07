@@ -9,7 +9,6 @@ package com.almasb.fxgl.entity
 import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.component.*
-import com.almasb.fxgl.entity.component.SerializableComponent
 import com.almasb.fxgl.entity.components.*
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.physics.BoundingShape
@@ -356,12 +355,26 @@ class EntityTest {
         assertFalse(entity.getPropertyOptional<Any>("no_key").isPresent)
     }
 
-//    @Test
-//    fun `Get property returns null if value is null`() {
-//        entity.setProperty("lastTime", null)
-//
-//        assertThat(entity.getProperty<Any>("lastTime"), nullValue())
-//    }
+    @Test
+    fun `Get String`() {
+        entity.setProperty("weaponName", "Mystic Sword")
+
+        assertThat(entity.getString("weaponName"), `is`("Mystic Sword"))
+    }
+
+    @Test
+    fun `Get Object`() {
+        entity.setProperty("vec2", Vec2())
+
+        assertThat(entity.getObject<Vec2>("vec2"), `is`(Vec2()))
+    }
+
+    @Test
+    fun `Set position`() {
+        entity.setPosition(Vec2(10.0, 10.0))
+
+        assertThat(entity.position, `is`(Point2D(10.0, 10.0)))
+    }
 
     @Test
     fun `Get property optional returns empty if key not found`() {
@@ -772,16 +785,17 @@ class EntityTest {
 
     /* SCRIPTS */
 
-    @Test
-    fun `Scripts`() {
-        assertFalse(entity.getScriptHandler("onHit").isPresent)
-
-        entity.setProperty("onHit", "entity_script.js")
-
-        val script = entity.getScriptHandler("onHit").get()
-
-        assertThat(script.call<String>("onHit"), `is`("EntityTest"))
-    }
+    // TODO:
+//    @Test
+//    fun `Scripts`() {
+//        assertFalse(entity.getScriptHandler("onHit").isPresent)
+//
+//        entity.setProperty("onHit", "entity_script.js")
+//
+//        val script = entity.getScriptHandler("onHit").get()
+//
+//        assertThat(script.call<String>("onHit"), `is`("EntityTest"))
+//    }
 
     /* MOCK CLASSES */
 
@@ -796,6 +810,10 @@ class EntityTest {
     }
 
     private inner class ControlRemovingControl : Component() {
+        override fun onAdded() {
+            entity.addComponent(TestControl())
+        }
+
         override fun onUpdate(tpf: Double) {
             entity.removeComponent(TestControl::class.java)
         }

@@ -292,8 +292,9 @@ public class BoundingBoxComponentTest {
         Bundle bundle = new Bundle("BBOXTest");
         bbox.write(bundle);
 
+        Entity e2 = new Entity();
         // read
-        BoundingBoxComponent bbox2 = new BoundingBoxComponent();
+        BoundingBoxComponent bbox2 = e2.getBoundingBoxComponent();
         bbox2.read(bundle);
 
         assertThat(bbox2.getWidth(), is(30.0));

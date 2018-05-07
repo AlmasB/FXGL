@@ -12,10 +12,11 @@ import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.util.*
 
 /**
@@ -99,14 +100,12 @@ class AssetLoaderTest {
         val sound = assetLoader.loadSound("intro.wav")
 
         assertThat(sound, `is`(notNullValue()))
-        //assertThat(sound.clip, `is`(notNullValue()))
     }
 
     @Test
+    // setting up potentially missing libavformat for jfxmedia is an overkill, so just skip
+    @DisabledOnOs(OS.LINUX)
     fun loadMusic() {
-        // setting up potentially missing libavformat for jfxmedia is an overkill, so just skip
-        assumeFalse(System.getProperty("os.name").contains("Linux"))
-
         val music = assetLoader.loadMusic("intro.mp3")
 
         assertThat(music, `is`(notNullValue()))
@@ -202,15 +201,6 @@ class AssetLoaderTest {
     }
 
     @Test
-    fun loadAppIcon() {
-        val icon = assetLoader.loadAppIcon("ic_test.png")
-
-        assertThat(icon, `is`(notNullValue()))
-        assertThat(icon.width, `is`(48.0))
-        assertThat(icon.height, `is`(48.0))
-    }
-
-    @Test
     fun loadBehaviorTree() {
         val tree = assetLoader.loadBehaviorTree<Entity>("test.tree")
 
@@ -235,7 +225,6 @@ class AssetLoaderTest {
                 "css/test.css",
                 "cursors/test_cursor.png",
                 "fonts/test.ttf",
-                "icons/ic_test.png",
                 "test_ui.fxml"
                 ))
     }

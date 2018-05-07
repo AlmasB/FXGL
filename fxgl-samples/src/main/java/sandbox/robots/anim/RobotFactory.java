@@ -49,6 +49,7 @@ public class RobotFactory implements EntityFactory {
     public Entity newRobot(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setFixtureDef(new FixtureDef().friction(0).density(0.25f));
+        //physics.setRaycastIgnored(true);
 
         BodyDef bd = new BodyDef();
         bd.setFixedRotation(true);
@@ -86,6 +87,15 @@ public class RobotFactory implements EntityFactory {
                 .from(data)
                 .viewFromNodeWithBBox(DSLKt.texture("rocket.png", 73, 20))
                 .with(new OffscreenCleanComponent(), new ProjectileComponent(new Point2D(1, 0), 800))
+                .build();
+    }
+
+    @Spawns("coin")
+    public Entity newCoin(SpawnData data) {
+        return Entities.builder()
+                .from(data)
+                .viewFromTextureWithBBox("coin.png")
+                .with(new PhysicsComponent())
                 .build();
     }
 }

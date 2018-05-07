@@ -17,48 +17,43 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.FileNotFoundException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static com.almasb.fxgl.app.SystemPropertyKey.*;
 
 /**
+ * TODO: use async instead of javafx.application.Platform
+ *
  * Convenient access to saving and loading game data.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class SaveLoadManager {
 
-    private static final Logger log = Logger.get("FXGL.SaveLoadManager");
+    private static final Logger log = Logger.get(SaveLoadManager.class);
 
-    private static final String PROFILE_FILE_NAME = FXGL.getProperties().getString("fs.profilename");
-    private static final String PROFILES_DIR = FXGL.getProperties().getString("fs.profiledir");
-    private static final String SAVE_DIR = FXGL.getProperties().getString("fs.savedir");
+    private static final String PROFILE_FILE_NAME = FXGL.getProperties().getString(FS_PROFILENAME);
+    private static final String PROFILES_DIR = FXGL.getProperties().getString(FS_PROFILEDIR);
+    private static final String SAVE_DIR = FXGL.getProperties().getString(FS_SAVEDIR);
 
-    private static final String SAVE_FILE_EXT = FXGL.getProperties().getString("fs.savefile.ext");
-    private static final String DATA_FILE_EXT = FXGL.getProperties().getString("fs.datafile.ext");
+    private static final String SAVE_FILE_EXT = FXGL.getProperties().getString(FS_SAVEFILE_EXT);
+    private static final String DATA_FILE_EXT = FXGL.getProperties().getString(FS_DATAFILE_EXT);
 
     static {
         log.debug("Checking profiles dir: " + PROFILES_DIR);
 
-        try {
-            Path dir = Paths.get("./" + PROFILES_DIR);
+        if (!FS.exists(PROFILES_DIR)) {
+            log.debug("Creating non-existent profiles dir");
 
-            if (!Files.exists(dir)) {
-                log.debug("Creating non-existent profiles dir");
-                Files.createDirectories(dir);
-
-                Path readmeFile = Paths.get("./" + PROFILES_DIR + "Readme.txt");
-
-                Files.write(readmeFile, Collections.singletonList(
-                        "This directory contains user profiles."
-                ));
-            }
-        } catch (Exception e) {
-            log.warning("Failed to create profiles dir: " + e);
-            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+            FS.createDirectoryTask(PROFILES_DIR)
+                    .then(n -> FS.writeDataTask(Collections.singletonList("This directory contains user profiles."), PROFILES_DIR + "Readme.txt"))
+                    .onFailure(e -> {
+                        log.warning("Failed to create profiles dir: " + e);
+                        Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+                    })
+                    .run();
         }
     }
 
@@ -148,17 +143,16 @@ public final class SaveLoadManager {
                     @Override
                     protected Void onExecute() throws Exception {
 
-                        Path dir = Paths.get(saveDir());
-
-                        if (!Files.exists(dir)) {
+                        if (!FS.exists(saveDir())) {
                             log.debug("Creating non-existent saves dir");
-                            Files.createDirectory(dir);
 
-                            Path readmeFile = Paths.get(saveDir() + "Readme.txt");
-
-                            Files.write(readmeFile, Collections.singletonList(
-                                    "This directory contains save files."
-                            ));
+                            FS.createDirectoryTask(saveDir())
+                                    .then(n -> FS.writeDataTask(Collections.singletonList("This directory contains save files."), saveDir() + "Readme.txt"))
+                                    .onFailure(e -> {
+                                        log.warning("Failed to create saves dir: " + e);
+                                        Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+                                    })
+                                    .run();
                         }
 
                         return null;
@@ -210,12 +204,7 @@ public final class SaveLoadManager {
     public boolean saveFileExists(String saveFileName) {
         log.debug("Checking if save file exists: " + saveFileName);
 
-        try {
-            return Files.exists(Paths.get(saveDir() + saveFileName + SAVE_FILE_EXT));
-        } catch (Exception e) {
-            log.warning("Failed to check if file exists: " + e);
-            return false;
-        }
+        return FS.exists(saveDir() + saveFileName + SAVE_FILE_EXT);
     }
 
     /**
@@ -249,10 +238,15 @@ public final class SaveLoadManager {
 
         return FS.loadFileNamesTask(saveDir(), true, Collections.singletonList(new FileExtension(SAVE_FILE_EXT)))
                 .then(fileNames -> IOTask.of("readSaveFiles", () -> {
-                    return fileNames.stream()
-                            .map(name -> FS.<SaveFile>readDataTask(saveDir() + name).run())
-                            .filter(file -> file != null)
-                            .collect(Collectors.toList());
+
+                    List<SaveFile> list = new ArrayList<>();
+                    for (String name : fileNames) {
+                        SaveFile file = FS.<SaveFile>readDataTask(saveDir() + name).run();
+                        if (file != null) {
+                            list.add(file);
+                        }
+                    }
+                    return list;
                 }));
     }
 
@@ -269,10 +263,8 @@ public final class SaveLoadManager {
                 throw new FileNotFoundException("No save files found");
             }
 
-            return files.stream()
-                    .sorted(SaveFile.RECENT_FIRST)
-                    .findFirst()
-                    .get();
+            Collections.sort(files, SaveFile.RECENT_FIRST);
+            return files.get(0);
         }));
     }
 }

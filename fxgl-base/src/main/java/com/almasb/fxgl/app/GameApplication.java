@@ -9,7 +9,6 @@ import com.almasb.fxgl.app.listener.ExitListener;
 import com.almasb.fxgl.app.listener.StateListener;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
-import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.logging.*;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.devtools.profiling.Profiler;
@@ -30,7 +29,6 @@ import com.almasb.fxgl.saving.SaveEvent;
 import com.almasb.fxgl.scene.FXGLScene;
 import com.almasb.fxgl.scene.GameScene;
 import com.almasb.fxgl.scene.SceneFactory;
-import com.almasb.fxgl.scene.StartupScene;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -44,7 +42,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
-import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Stage;
 
@@ -55,7 +52,7 @@ import java.util.Map;
 import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
- * To use FXGL extend this class and implement necessary methods.
+ * To use FXGL, extend this class and implement necessary methods.
  * The initialization process can be seen below (irrelevant phases are omitted):
  * <p>
  * <ol>
@@ -92,10 +89,6 @@ public abstract class GameApplication extends Application {
     private ReadOnlyGameSettings settings;
     private AppStateMachine stateMachine;
 
-    MainWindow getMainWindow() {
-        return mainWindow;
-    }
-
     /**
      * This is the main entry point as run by the JavaFX platform.
      */
@@ -111,42 +104,9 @@ public abstract class GameApplication extends Application {
 
             initMainWindow(stage);
 
-            log.debug("Starting FXGL");
+            initFXGL();
 
-            new Thread(new FXGLStartTask(), "FXGL Launcher Thread").start();
-
-        } catch (Exception e) {
-            handleFatalErrorBeforeLaunch(e);
-        }
-    }
-
-    private class FXGLStartTask extends Task<Void> {
-
-        @Override
-        protected Void call() {
-
-            // after this call all FXGL.* calls are valid.
-            FXGL.configure(GameApplication.this);
-
-            log.debug("FXGL started");
-            log.debug("Logging game settings\n" + settings.toString());
-
-            initFatalExceptionHandler();
-
-            log.debug("Configuring GameApplication");
-
-            long start = System.nanoTime();
-
-            initStateMachine();
-            attachEventHandlers();
-
-            log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
-
-            return null;
-        }
-
-        @Override
-        protected void succeeded() {
+            // all configurations are done, show window
             mainWindow.initAndShow();
 
             // these things need to be called early before the main loop
@@ -158,11 +118,9 @@ public abstract class GameApplication extends Application {
             System.gc();
 
             startMainLoop();
-        }
 
-        @Override
-        protected void failed() {
-            handleFatalErrorBeforeLaunch(getException());
+        } catch (Exception e) {
+            handleFatalError(e);
         }
     }
 
@@ -197,36 +155,34 @@ public abstract class GameApplication extends Application {
         });
     }
 
-    private void handleFatalErrorBeforeLaunch(Throwable error) {
-        if (Logger.isConfigured()) {
-            log.fatal("Exception during FXGL configuration:", error);
-            log.fatal("FXGL will now exit");
+    private void initFXGL() {
+        log.debug("Starting FXGL");
 
-            Logger.close();
-        } else {
-            System.out.println("Exception during FXGL configuration:");
-            error.printStackTrace();
-            System.out.println("FXGL will now exit");
-        }
+        // after this call all FXGL.* calls are valid.
+        FXGL.configure(GameApplication.this);
 
-        // we can't assume we are running on JavaFX Application thread
-        Async.startFX(() -> {
-            // block with error dialog so that user can read the error
-            new ErrorDialog(error).showAndWait();
-        }).await();
+        log.debug("FXGL started");
+        log.debug("Logging game settings\n" + settings);
 
-        // we don't know what exactly has been initialized
-        // so to avoid the process hanging just shut down the JVM
-        System.exit(-1);
+        initFatalExceptionHandler();
+
+        log.debug("Configuring GameApplication");
+
+        long start = System.nanoTime();
+
+        initStateMachine();
+        attachEventHandlers();
+
+        log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
 
     private void initFatalExceptionHandler() {
-        Thread.setDefaultUncaughtExceptionHandler((t, error) -> handleFatalErrorAfterLaunch(error));
+        Thread.setDefaultUncaughtExceptionHandler((t, error) -> handleFatalError(error));
     }
 
     private boolean handledOnce = false;
 
-    private void handleFatalErrorAfterLaunch(Throwable error) {
+    private void handleFatalError(Throwable error) {
         if (handledOnce) {
             // just ignore to avoid spamming dialogs
             return;
@@ -234,8 +190,14 @@ public abstract class GameApplication extends Application {
 
         handledOnce = true;
 
-        log.fatal("Uncaught Exception:", error);
-        log.fatal("Application will now exit");
+        if (Logger.isConfigured()) {
+            log.fatal("Uncaught Exception:", error);
+            log.fatal("Application will now exit");
+        } else {
+            System.out.println("Uncaught Exception:");
+            error.printStackTrace();
+            System.out.println("Application will now exit");
+        }
 
         // stop main loop from running as we cannot continue
         stopMainLoop();
@@ -244,8 +206,17 @@ public abstract class GameApplication extends Application {
         // block with error dialog so that user can read the error
         new ErrorDialog(error).showAndWait();
 
-        // exit normally
-        exit();
+        if (mainLoop != null) {
+            // exit normally
+            exit();
+        } else {
+            if (Logger.isConfigured()) {
+                Logger.close();
+            }
+
+            // we failed during launch, so abnormal exit
+            System.exit(-1);
+        }
     }
 
     private void initStateMachine() {
@@ -519,6 +490,10 @@ public abstract class GameApplication extends Application {
 
     void setScene(FXGLScene scene) {
         mainWindow.setScene(scene);
+    }
+
+    void fixAspectRatio() {
+        mainWindow.fixAspectRatio();
     }
 
     boolean saveScreenshot() {

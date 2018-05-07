@@ -7,11 +7,12 @@
 package com.almasb.fxgl.extra.ai.pathfinding.maze;
 
 import com.almasb.fxgl.extra.ai.pathfinding.AStarGrid;
+import com.almasb.fxgl.extra.ai.pathfinding.AStarNode;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A 2d maze.
@@ -85,10 +86,13 @@ public class Maze {
             }
         }
 
-        return new MazeSolver().getPath(grid.getGrid(), grid.getNode(startX, startY), grid.getNode(targetX, targetY))
-                .stream()
-                .map(node -> (MazeCell) node.getUserData())
-                .collect(Collectors.toList());
+        List<MazeCell> list = new ArrayList<>();
+        List<AStarNode> nodes = new MazeSolver().getPath(grid.getGrid(), grid.getNode(startX, startY), grid.getNode(targetX, targetY));
+        for (AStarNode node : nodes) {
+            MazeCell cell = (MazeCell) node.getUserData();
+            list.add(cell);
+        }
+        return list;
     }
 
     private void generateMaze(int cx, int cy) {

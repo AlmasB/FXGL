@@ -7,11 +7,8 @@
 package com.almasb.fxgl.script
 
 import com.almasb.fxgl.script.js.JS
-import java.nio.file.Files
-import java.nio.file.Path
 
 /**
- *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -22,9 +19,9 @@ class ScriptFactory {
             return JS(scriptCode)
         }
 
-        @JvmStatic fun fromFile(file: Path): Script {
-            return JS(Files.readAllLines(file).joinToString("\n", "", "\n"))
-        }
+//        @JvmStatic fun fromFile(file: Path): Script {
+//            return JS(Files.readAllLines(file).joinToString("\n", "", "\n"))
+//        }
 
         private val cacheParser: JS by lazy { JS("") }
 

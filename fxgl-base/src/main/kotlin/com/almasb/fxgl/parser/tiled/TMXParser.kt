@@ -7,6 +7,7 @@
 package com.almasb.fxgl.parser.tiled
 
 import com.almasb.fxgl.core.logging.Logger
+import javafx.scene.paint.Color
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -210,20 +211,57 @@ class TMXParser {
         obj.y = start.getInt("y")
         obj.width = start.getInt("width")
         obj.height = start.getInt("height")
+        obj.gid = start.getInt("gid")
 
         (layer.objects as MutableList).add(obj)
     }
 
     private fun parseObjectProperty(obj: TiledObject, start: StartElement) {
-        (obj.properties as MutableMap)[start.getString("name")] = start.getString("value")
-        (obj.propertytypes as MutableMap)[start.getString("name")] = start.getString("type")
+        val propName = start.getString("name")
+        val propType = start.getString("type")
+
+        (obj.propertytypes as MutableMap)[propName] = propType
+
+        (obj.properties as MutableMap)[propName] = when (propType) {
+            "int" -> {
+                start.getInt("value")
+            }
+
+            "bool" -> {
+                start.getBoolean("value")
+            }
+
+            "float" -> {
+                start.getFloat("value")
+            }
+
+            "string", "" -> {
+                start.getString("value")
+            }
+
+            "color" -> {
+                start.getColor("value")
+            }
+
+            else -> {
+                throw RuntimeException("Unknown property type: $propType for $propName")
+            }
+        }
     }
 }
 
 // these retrieve the value if exists or return a default
 
+private fun StartElement.getColor(attrName: String): Color {
+    return Color.web(this.getString(attrName))
+}
+
+private fun StartElement.getBoolean(attrName: String): Boolean {
+    return this.getString(attrName).toBoolean()
+}
+
 private fun StartElement.getInt(attrName: String): Int {
-    return this.getString(attrName).toIntOrNull() ?: 0
+    return this.getString(attrName).toIntOrNull() ?: this.getFloat(attrName).toInt()
 }
 
 private fun StartElement.getFloat(attrName: String): Float {

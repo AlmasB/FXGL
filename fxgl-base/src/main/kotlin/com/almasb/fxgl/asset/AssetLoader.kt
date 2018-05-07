@@ -8,6 +8,7 @@ package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.ai.btree.BehaviorTree
 import com.almasb.fxgl.ai.btree.utils.BehaviorTreeParser
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.core.collection.ObjectMap
@@ -25,6 +26,7 @@ import com.almasb.fxgl.ui.UIController
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.gluonhq.charm.down.Services
 import com.gluonhq.charm.down.plugins.AudioService
+import com.gluonhq.charm.down.plugins.audio.Audio
 import com.gluonhq.charm.down.plugins.audio.AudioType
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
@@ -89,12 +91,47 @@ class AssetLoader {
     private val UI_DIR = ASSETS_DIR + "ui/"
     private val CSS_DIR = UI_DIR + "css/"
     private val FONTS_DIR = UI_DIR + "fonts/"
-    private val ICON_DIR = UI_DIR + "icons/"
     private val CURSORS_DIR = UI_DIR + "cursors/"
 
     private val log = Logger.get(javaClass)
 
-    private val audioService = Services.get(AudioService::class.java).orElseThrow { RuntimeException("No AudioService present") }
+    private val audioService = audioService()
+
+    private fun audioService(): AudioService {
+        return if (!FXGL.isIOS())
+            Services.get(AudioService::class.java).orElseThrow { RuntimeException("No AudioService present") }
+        else
+            // ios audio service is not implemented yet, so just mock
+            object : AudioService {
+                override fun unloadAudio(audio: Audio) {
+                }
+
+                override fun loadAudio(audio: AudioType, fileName: String): Audio {
+                    return object : Audio(AudioType.MUSIC, fileName) {
+                        override fun play() {
+                        }
+
+                        override fun setVolume(p0: Double) {
+                        }
+
+                        override fun stop() {
+                        }
+
+                        override fun pause() {
+                        }
+
+                        override fun setOnFinished(p0: Runnable?) {
+                        }
+
+                        override fun setLooping(p0: Boolean) {
+                        }
+
+                        override fun dispose() {
+                        }
+                    }
+                }
+            }
+    }
 
     private val cachedAssets = ObjectMap<String, Any>()
 
@@ -490,22 +527,6 @@ class AssetLoader {
                 cachedAssets.put(FONTS_DIR + name, fontFactory)
                 return fontFactory
             }
-        } catch (e: Exception) {
-            throw loadFailed(name, e)
-        }
-    }
-
-    /**
-     * Loads an app icon from /assets/ui/icons/.
-     * Either returns a valid image or throws an exception in case of errors.
-     *
-     * @param name image name without the /assets/ui/icons/, e.g. "app_icon.png"
-     * @return app icon image
-     * @throws IllegalArgumentException if asset not found or loading error
-     */
-    fun loadAppIcon(name: String): Image {
-        try {
-            getStream(ICON_DIR + name).use { return Image(it) }
         } catch (e: Exception) {
             throw loadFailed(name, e)
         }

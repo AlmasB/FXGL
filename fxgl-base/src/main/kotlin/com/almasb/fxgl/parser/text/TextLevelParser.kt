@@ -7,10 +7,10 @@
 package com.almasb.fxgl.parser.text
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.tryCatchRoot
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.entity.*
-import com.almasb.fxgl.entity.Level
 import com.almasb.fxgl.parser.LevelParser
 import java.util.*
 
@@ -85,8 +85,10 @@ class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
                 val c = line[j]
                 val producer = producers[c]
                 if (producer != null) {
-                    val e = producer.apply(SpawnData(j.toDouble() * entityFactory.blockWidth(), i.toDouble() * entityFactory.blockHeight()))
+
+                    val e = tryCatchRoot { producer.apply(SpawnData(j.toDouble() * entityFactory.blockWidth(), i.toDouble() * entityFactory.blockHeight())) }
                     entities.add(e)
+
                 } else if (c != emptyChar) {
                     log.warning("No producer found for character: " + c)
                 }

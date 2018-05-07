@@ -20,16 +20,13 @@ import com.almasb.fxgl.app.FXGL.Companion.getNotificationService
 import com.almasb.fxgl.app.FXGL.Companion.getUIFactory
 import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.pool.Pools
+import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.EntityEvent
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.texture.Texture
-import com.almasb.fxgl.util.BiConsumer
-import com.almasb.fxgl.util.Consumer
-import com.almasb.fxgl.util.EmptyRunnable
-import com.almasb.fxgl.util.Optional
+import com.almasb.fxgl.util.*
 import javafx.beans.property.*
 import javafx.event.Event
 import javafx.geometry.Point2D
@@ -163,6 +160,19 @@ fun spawn(entityName: String, position: Point2D): Entity = getApp().gameWorld.sp
 
 fun spawn(entityName: String, data: SpawnData): Entity = getApp().gameWorld.spawn(entityName, data)
 
+/**
+ * Spawns given [entityName] with a fade in animation.
+ */
+fun spawnFadeIn(entityName: String, data: SpawnData, duration: Duration): Entity {
+    val e = getApp().gameWorld.create(entityName, data)
+
+    fadeIn(e.view, duration).startInPlayState()
+
+    getApp().gameWorld.addEntity(e)
+
+    return e
+}
+
 fun byID(name: String, id: Int): Optional<Entity> = getApp().gameWorld.getEntityByID(name, id)
 
 /* PHYSICS */
@@ -207,7 +217,8 @@ fun free(instance: Any) = Pools.free(instance)
 
 fun fire(event: Event) = getEventBus().fireEvent(event)
 
-fun fire(event: EntityEvent, eventType: String) = getEventBus().fireEntityEvent(event, eventType)
+// TODO:
+//fun fire(event: EntityEvent, eventType: String) = getEventBus().fireEntityEvent(event, eventType)
 
 /* NOTIFICATIONS */
 
@@ -431,3 +442,27 @@ fun runOnce(action: Runnable, delay: Duration) = getMasterTimer().runOnceAfter(a
 fun run(action: Runnable, interval: Duration) = getMasterTimer().runAtInterval(action, interval)
 
 fun run(action: Runnable, interval: Duration, limit: Int) = getMasterTimer().runAtInterval(action, interval, limit)
+
+/* EXTENSIONS */
+
+/**
+ * Calls [func], if exception occurs in [func] the root cause is thrown.
+ */
+fun <T> tryCatchRoot(func: Supplier<T>): T {
+    try {
+        return func.get()
+    } catch (e: Exception) {
+        throw ReflectionUtils.getRootCause(e)
+    }
+}
+
+/**
+ * Calls [func], if exception occurs in [func] the root cause is thrown.
+ */
+fun <T> tryCatchRoot(func: () -> T): T {
+    try {
+        return func.invoke()
+    } catch (e: Exception) {
+        throw ReflectionUtils.getRootCause(e)
+    }
+}

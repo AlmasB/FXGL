@@ -40,8 +40,6 @@ public final class SystemPropertyKey {
 
     public static final String UI_FONT = "ui.font";
 
-    public static final String UI_ICON_NAME = "ui.icon.name";
-
     public static final String UI_MONO_FONT = "ui.mono.font";
 
     public static final String URL_GITHUB = "url.github";

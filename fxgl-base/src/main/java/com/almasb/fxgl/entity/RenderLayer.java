@@ -13,81 +13,67 @@ package com.almasb.fxgl.entity;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface RenderLayer {
+public class RenderLayer {
+
+    /**
+     * Default render layer for entities with no specified
+     * render layer.
+     */
+    public static final RenderLayer DEFAULT = new RenderLayer("DEFAULT", 100000);
+
+    /**
+     * Note: this is the highest layer that can be used.
+     */
+    public static final RenderLayer TOP = new RenderLayer("TOP", Integer.MAX_VALUE);
+
+    /**
+     * Note: this is the lowest layer that can be used.
+     */
+    public static final RenderLayer BOTTOM = new RenderLayer("BOTTOM", Integer.MIN_VALUE);
+
+    /**
+     * Convenience render layer for background.
+     * Note: value of 1000 leaves some scope for using parallax backgrounds.
+     */
+    public static final RenderLayer BACKGROUND = new RenderLayer("BACKGROUND", 1000);
+
+    private String name;
+    private int index;
+
+    @Deprecated
+    public RenderLayer() {
+
+    }
+
+    public RenderLayer(int index) {
+        this("NoName", index);
+    }
+
+    public RenderLayer(String name, int index) {
+        this.name = name;
+        this.index = index;
+    }
 
     /**
      * Returns a human readable name for this layer.
      *
      * @return layer name
      */
-    String name();
+    public String name() {
+        return name;
+    }
 
     /**
      * Returns index value for this layer.
      *
      * @return layer index
      */
-    int index();
+    public int index() {
+        return index;
+    }
 
-    /**
-     * Default render layer for entities with no specified
-     * render layer.
-     */
-    RenderLayer DEFAULT = new RenderLayer() {
-        @Override
-        public String name() {
-            return "DEFAULT";
-        }
-
-        @Override
-        public int index() {
-            return 100000;
-        }
-    };
-
-    /**
-     * Note: this is the highest layer that can be used.
-     */
-    RenderLayer TOP = new RenderLayer() {
-        @Override
-        public String name() {
-            return "TOP";
-        }
-
-        @Override
-        public int index() {
-            return Integer.MAX_VALUE;
-        }
-    };
-
-    /**
-     * Note: this is the lowest layer that can be used.
-     */
-    RenderLayer BOTTOM = new RenderLayer() {
-        @Override
-        public String name() {
-            return "BOTTOM";
-        }
-
-        @Override
-        public int index() {
-            return Integer.MIN_VALUE;
-        }
-    };
-
-    /**
-     * Convenience render layer for background.
-     * Note: value of 1000 leaves some scope for using parallax backgrounds.
-     */
-    RenderLayer BACKGROUND = new RenderLayer() {
-        @Override
-        public String name() {
-            return "BACKGROUND";
-        }
-
-        @Override
-        public int index() {
-            return 1000;
-        }
-    };
+    @Override
+    public String toString() {
+        return name + "(" + index + ")";
+    }
 }

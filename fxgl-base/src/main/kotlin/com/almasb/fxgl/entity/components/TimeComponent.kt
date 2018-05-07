@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.entity.components
 
-import com.almasb.fxgl.entity.components.DoubleComponent
-
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

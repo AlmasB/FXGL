@@ -27,6 +27,14 @@ public final class ReflectionUtils {
 
     private ReflectionUtils() {}
 
+    public static Method getMethod(Class<?> instanceClass, String methodName, Class<?>... paramTypes) {
+        try {
+            return instanceClass.getDeclaredMethod(methodName, paramTypes);
+        } catch (Exception e) {
+            throw new ReflectionException("Cannot get declared method <" + methodName + ">", e);
+        }
+    }
+
     public static <A extends java.lang.annotation.Annotation> Map<A, Method>
         findMethods(Object instance, Class<A> annotationClass) {
 
@@ -75,6 +83,12 @@ public final class ReflectionUtils {
         );
 
         return map;
+    }
+
+    public static <T> T callInaccessible(Object instance, Method method, Object... args) {
+        method.setAccessible(true);
+
+        return call(instance, method, args);
     }
 
     @SuppressWarnings("unchecked")
@@ -196,5 +210,19 @@ public final class ReflectionUtils {
         } catch (Exception e) {
             throw new ReflectionException(e);
         }
+    }
+
+    public static boolean isAnonymousClass(Class<?> type) {
+        return type.isAnonymousClass() || type.getCanonicalName() == null;
+    }
+
+    public static Throwable getRootCause(Throwable e) {
+        Throwable cause;
+        Throwable result = e;
+
+        while (null != (cause = result.getCause())  && (result != cause) ) {
+            result = cause;
+        }
+        return result;
     }
 }

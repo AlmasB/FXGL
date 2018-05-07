@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.tryCatchRoot
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.collection.UnorderedArray
@@ -117,6 +118,12 @@ class GameWorld {
     }
 
     fun removeEntities(vararg entitiesToRemove: Entity) {
+        for (e in entitiesToRemove) {
+            removeEntity(e)
+        }
+    }
+
+    fun removeEntities(entitiesToRemove: Collection<Entity>) {
         for (e in entitiesToRemove) {
             removeEntity(e)
         }
@@ -273,7 +280,13 @@ class GameWorld {
 
         map.layers.filter { it.type == "objectgroup" }
                 .flatMap { it.objects }
-                .forEach { obj -> spawn(obj.type, SpawnData(obj)) }
+                .forEach { obj ->
+                    val data = SpawnData(obj)
+
+                    data.put("tilesets", map.tilesets)
+
+                    spawn(obj.type, data)
+                }
     }
 
     /**
@@ -402,6 +415,20 @@ class GameWorld {
      * @return spawned entity
      */
     fun spawn(entityName: String, data: SpawnData): Entity {
+        val entity = create(entityName, data)
+        addEntity(entity)
+        return entity
+    }
+
+    /**
+     * Creates an entity with given name and data using a previously added entity factory.
+     * Does NOT add created entity to the game world.
+     *
+     * @param entityName name of entity as specified by [Spawns]
+     * @param data spawn data, such as x, y and any extra info
+     * @return created entity
+     */
+    fun create(entityName: String, data: SpawnData): Entity {
         if (entityFactories.size() == 0)
             throw IllegalStateException("No EntityFactory was added! Call gameWorld.addEntityFactory()")
 
@@ -412,9 +439,13 @@ class GameWorld {
             data.put("type", entityName)
         }
 
-        val entity = spawner.apply(data)
-        addEntity(entity)
-        return entity
+        return tryCatchRoot { spawner.apply(data) }
+
+//        try {
+//            return spawner.apply(data)
+//        } catch (e: Exception) {
+//            throw ReflectionUtils.getRootCause(e)
+//        }
     }
 
     /* QUERIES */

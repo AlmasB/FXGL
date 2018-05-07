@@ -18,9 +18,11 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -38,12 +40,6 @@ public class RealPhysicsSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("RealPhysicsSample");
         settings.setVersion("0.1");
-
-
-
-
-
-
     }
 
     @Override
@@ -80,6 +76,20 @@ public class RealPhysicsSample extends GameApplication {
                 getGameWorld().addEntity(ball);
             }
         }, MouseButton.SECONDARY);
+
+        input.addAction(new UserAction("Spawn Triangle") {
+            @Override
+            protected void onActionBegin() {
+                Entity tri = createPhysicsEntity();
+
+                // 3. set hit box to specify bounding shape
+                tri.getBoundingBoxComponent()
+                        .addHitBox(new HitBox(BoundingShape.polygon(new Point2D(0, 40), new Point2D(20, 0), new Point2D(40, 40))));
+                tri.getViewComponent().setView(new Polygon(0, 40, 20, 0, 40, 40));
+
+                getGameWorld().addEntity(tri);
+            }
+        }, KeyCode.E);
     }
 
     @Override

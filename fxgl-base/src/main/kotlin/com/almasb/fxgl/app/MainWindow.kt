@@ -159,7 +159,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
                 this@MainWindow.onShown?.run()
             }
 
-            icons.add(FXGLAssets.UI_ICON)
+            icons.add(image(settings.appIcon))
 
             if (settings.isFullScreenAllowed) {
                 fullScreenExitHint = ""

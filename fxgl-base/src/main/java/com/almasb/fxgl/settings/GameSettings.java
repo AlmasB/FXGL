@@ -183,6 +183,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.stageStyle = stageStyle;
     }
 
+    public void setAppIcon(String appIcon) {
+        this.appIcon = appIcon;
+    }
+
     public void setConfigClass(Class<?> configClass) {
         this.configClass = configClass;
     }
@@ -224,6 +228,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
      */
     public void setExceptionHandler(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
+    }
+
+    public void experimentalTiledLargeMap(boolean b) {
+        this.experimentalTiledLargeMap = b;
     }
 
     /**

@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.SystemPropertyKey.*
+import com.almasb.fxgl.app.SystemPropertyKey.FXGL_VERSION
 import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.collection.PropertyMap
@@ -19,6 +19,8 @@ import com.almasb.fxgl.gameplay.notification.NotificationServiceProvider
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.net.FXGLNet
+import com.almasb.fxgl.saving.LoadEvent
+import com.almasb.fxgl.saving.SaveEvent
 import com.almasb.fxgl.scene.menu.MenuSettings
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
@@ -26,9 +28,8 @@ import com.almasb.fxgl.ui.FXGLDisplay
 import com.gluonhq.charm.down.Platform
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
+import javafx.event.EventHandler
 import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -58,6 +59,7 @@ class FXGL private constructor() {
 
         // javafxports doesn't have "web" option, so will incorrectly default to desktop, hence the extra check
         @JvmStatic fun isDesktop() = !isBrowser() && Platform.isDesktop()
+        @JvmStatic fun isMobile() = isAndroid() || isIOS()
         @JvmStatic fun isAndroid() = Platform.isAndroid()
         @JvmStatic fun isIOS() = Platform.isIOS()
 
@@ -124,16 +126,20 @@ class FXGL private constructor() {
             IOTask.setDefaultExecutor(getExecutor())
             IOTask.setDefaultFailAction(getExceptionHandler())
 
+            createRequiredDirs()
+
+            if (firstRun)
+                loadDefaultSystemData()
+            else
+                loadSystemData()
+
             if (isDesktop()) {
-                createRequiredDirs()
-
-                if (firstRun)
-                    loadDefaultSystemData()
-                else
-                    loadSystemData()
-
                 runUpdaterAsync()
             }
+
+            // TODO: redesign where save / load listeners should be
+            _eventBus.addEventHandler(SaveEvent.ANY, EventHandler { _menuSettings.save(it.profile) })
+            _eventBus.addEventHandler(LoadEvent.ANY, EventHandler { _menuSettings.load(it.profile) })
         }
 
         private fun logVersion() {
@@ -181,18 +187,18 @@ class FXGL private constructor() {
         @JvmStatic fun isFirstRun() = firstRun
 
         private fun createRequiredDirs() {
+            if (FS.exists("system/"))
+                return
 
-            val systemDir = Paths.get("system/")
+            firstRun = true
 
-            if (!Files.exists(systemDir)) {
-                firstRun = true
-
-                Files.createDirectories(systemDir)
-
-                val readmeFile = Paths.get("system/Readme.txt")
-
-                Files.write(readmeFile, "This directory contains FXGL system data files.".lines())
-            }
+            FS.createDirectoryTask("system/")
+                    .then { FS.writeDataTask(listOf("This directory contains FXGL system data files."), "system/Readme.txt") }
+                    .onFailure { e ->
+                        log.warning("Failed to create system dir: $e")
+                        Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e)
+                    }
+                    .run()
         }
 
         private fun saveSystemData() {

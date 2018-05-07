@@ -6,11 +6,7 @@
 
 package com.almasb.fxgl.parser
 
-import com.almasb.fxgl.entity.SpawnSymbol
-import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.EntitySpawner
-import com.almasb.fxgl.entity.SpawnData
-import com.almasb.fxgl.entity.TextEntityFactory
+import com.almasb.fxgl.entity.*
 import com.almasb.fxgl.parser.text.TextLevelParser
 import javafx.geometry.Point2D
 import org.hamcrest.BaseMatcher

@@ -11,7 +11,6 @@ import com.almasb.fxgl.util.Predicate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A* grid containing A* nodes.
@@ -144,9 +143,12 @@ public class AStarGrid {
      * if no such node exists
      */
     public final Optional<AStarNode> getRandomNode(Predicate<AStarNode> predicate) {
-        List<AStarNode> filtered = getNodes().stream()
-                .filter(predicate::test)
-                .collect(Collectors.toList());
+        List<AStarNode> filtered = new ArrayList<>();
+        for (AStarNode aStarNode : getNodes()) {
+            if (predicate.test(aStarNode)) {
+                filtered.add(aStarNode);
+            }
+        }
 
         if (filtered.isEmpty())
             return Optional.empty();

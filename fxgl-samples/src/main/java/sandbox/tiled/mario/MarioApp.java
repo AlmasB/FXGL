@@ -73,11 +73,11 @@ public class MarioApp extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new MarioFactory());
         getGameWorld().addEntityFactory(new MarioBlockFactory());
-        getGameWorld().setLevelFromMap("mario.tmx");
+        getGameWorld().setLevelFromMap("mario1n.tmx");
 
         player = getGameWorld().spawn("player", 50, 50);
 
-        getGameScene().getViewport().setBounds(-1500, 0, 1500, getHeight());
+        getGameScene().getViewport().setBounds(0, 0, 15000, getHeight());
         getGameScene().getViewport().bindToEntity(player, getWidth() / 2, getHeight() / 2);
 
         getGameWorld().spawn("enemy", 470, 50);

@@ -13,7 +13,6 @@ import java.io.Serializable;
  * @param <T>
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@FunctionalInterface
 public interface DataParser<T extends Serializable> {
 
     /**

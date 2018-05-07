@@ -12,8 +12,7 @@ import com.almasb.fxgl.entity.components.ColorComponent
 import com.almasb.fxgl.util.EmptyRunnable
 import javafx.animation.Interpolator
 import javafx.util.Duration
-
-import java.util.Arrays
+import java.util.*
 
 /**
  * A convenient builder for standard (translate, rotate, scale) animations.
@@ -113,10 +112,10 @@ class AnimationBuilder {
     fun color(entities: List<Entity>): ColorAnimationBuilder {
         this.entities = entities
 
-        val dontHaveColor = this.entities.stream().anyMatch { e -> !e.hasComponent(ColorComponent::class.java) }
-
-        if (dontHaveColor) {
-            throw IllegalArgumentException("All entities must have ColorComponent")
+        for (e in entities) {
+            if (!e.hasComponent(ColorComponent::class.java)) {
+                throw IllegalArgumentException("All entities must have ColorComponent")
+            }
         }
 
         return ColorAnimationBuilder(this)

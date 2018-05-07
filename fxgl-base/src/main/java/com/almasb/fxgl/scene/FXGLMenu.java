@@ -11,12 +11,12 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.MenuEventHandler;
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.gameplay.achievement.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
+import com.almasb.fxgl.gameplay.achievement.Achievement;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.Trigger;
-import com.almasb.fxgl.input.view.TriggerView;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.input.view.TriggerView;
 import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.ui.FXGLScrollPane;
@@ -47,9 +47,7 @@ import javafx.stage.StageStyle;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.almasb.fxgl.app.FXGL.getSettings;
-import static com.almasb.fxgl.app.FXGL.getUIFactory;
-import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
+import static com.almasb.fxgl.app.FXGL.*;
 import static com.almasb.fxgl.app.SystemPropertyKey.FXGL_VERSION;
 import static com.almasb.fxgl.util.BackportKt.forEach;
 

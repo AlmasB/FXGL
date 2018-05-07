@@ -12,9 +12,9 @@ import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.parser.tiled.Layer;
+import com.almasb.fxgl.parser.tiled.TiledLayerView;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.parser.tiled.Tileset;
-import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;
@@ -122,6 +122,52 @@ public final class Entities {
                     // ignore if type key not found
                 }
             }
+
+            // TODO: cleanup
+            if (data.hasKey("gid") && data.hasKey("tilesets")) {
+                int gid = data.get("gid");
+
+                if (gid != 0) {
+
+                    System.out.println(gid + " " + data.getX() + " " + data.getY());
+
+                    Tileset tileset = findTileset(gid, data.get("tilesets"));
+
+                    // we offset because data is encoded as continuous
+                    gid -= tileset.getFirstgid();
+
+                    // image source
+                    int tilex = gid % tileset.getColumns();
+                    int tiley = gid / tileset.getColumns();
+
+                    // image destination
+                    //int x = i % layer.getWidth();
+                    //int y = i / layer.getWidth();
+
+                    int w = tileset.getTilewidth();
+                    int h = tileset.getTileheight();
+
+                    WritableImage buffer = new WritableImage(w, h);
+
+                    Image sourceImage = loadTilesetImage(tileset);
+
+                    buffer.getPixelWriter().setPixels(0, 0,
+                            w, h, sourceImage.getPixelReader(),
+                            tilex * w + tileset.getMargin() + tilex * tileset.getSpacing(),
+                            tiley * h + tileset.getMargin() + tiley * tileset.getSpacing());
+
+                    viewFromNode(new ImageView(buffer));
+                }
+            }
+
+            // TODO: is this a good place for adding components
+            // TODO: data _always_ has key "name"
+//            if (data.hasKey("name")) {
+//                String name = data.get("name");
+//                int id = data.hasKey("eid") ? data.<Integer>get("eid") : 0;
+//
+//                with(new IDComponent(name, id));
+//            }
 
             forEach(data.getData(), entry -> entity.setProperty(entry.key, entry.value));
             return this;
@@ -234,8 +280,10 @@ public final class Entities {
             entity.getViewComponent().setRenderLayer(renderLayer);
 
             // https://github.com/AlmasB/FXGL/issues/474
-            //entity.xProperty().bind(FXGL.getApp().getGameScene().getViewport().xProperty());
-            //entity.yProperty().bind(FXGL.getApp().getGameScene().getViewport().yProperty());
+            if (FXGL.getSettings().isExperimentalTiledLargeMap()) {
+                entity.xProperty().bind(FXGL.getApp().getGameScene().getViewport().xProperty());
+                entity.yProperty().bind(FXGL.getApp().getGameScene().getViewport().yProperty());
+            }
             return this;
         }
 
@@ -243,8 +291,9 @@ public final class Entities {
             Layer layer = map.getLayerByName(layerName);
 
             // https://github.com/AlmasB/FXGL/issues/474
-
-            //return new TiledLayerView(map, layer);
+            if (FXGL.getSettings().isExperimentalTiledLargeMap()) {
+                return new TiledLayerView(map, layer);
+            }
 
             WritableImage buffer = new WritableImage(
                     layer.getWidth() * map.getTilewidth(),
@@ -376,11 +425,13 @@ public final class Entities {
      * @return tileset
      */
     private static Tileset findTileset(int gid, List<Tileset> tilesets) {
-        return tilesets.stream()
-                .filter(tileset ->
-                        gid >= tileset.getFirstgid() && gid < tileset.getFirstgid() + tileset.getTilecount())
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Tileset for gid=" + gid + " not found"));
+        for (Tileset tileset : tilesets) {
+            if (gid >= tileset.getFirstgid() && gid < tileset.getFirstgid() + tileset.getTilecount()) {
+                return tileset;
+            }
+
+        }
+        throw new IllegalArgumentException("Tileset for gid=" + gid + " not found");
     }
 
     private static Image loadTilesetImage(Tileset tileset) {

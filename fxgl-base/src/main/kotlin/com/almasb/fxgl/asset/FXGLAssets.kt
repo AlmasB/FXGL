@@ -11,7 +11,6 @@ import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.ui.FontFactory
-import javafx.scene.image.Image
 
 /**
  * Stores internal assets, i.e. provided by FXGL.
@@ -33,8 +32,6 @@ class FXGLAssets {
         @JvmField val UI_MONO_FONT: FontFactory
 
         @JvmField val UI_CSS: CSS
-        @JvmField val UI_ICON_NAME: String
-        @JvmField val UI_ICON: Image
 
         init {
             log.debug("Loading FXGLAssets")
@@ -49,8 +46,6 @@ class FXGLAssets {
             UI_FONT = loader.loadFont(getString("ui.font"))
             UI_MONO_FONT = loader.loadFont(getString("ui.mono.font"))
             UI_CSS = loader.loadCSS(getString("ui.css"))
-            UI_ICON_NAME = getString("ui.icon.name")
-            UI_ICON = loader.loadAppIcon(UI_ICON_NAME)
         }
 
         private fun getString(name: String): String {

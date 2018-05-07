@@ -6,15 +6,10 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.core.collection.Array
-import com.almasb.fxgl.entity.components.IrremovableComponent
-import com.almasb.fxgl.entity.components.TimeComponent
-import com.almasb.fxgl.entity.component.*
-import com.almasb.fxgl.entity.components.IDComponent
-import com.almasb.fxgl.entity.components.PositionComponent
-import com.almasb.fxgl.entity.components.SelectableComponent
-import com.almasb.fxgl.entity.components.TypeComponent
+import com.almasb.fxgl.entity.component.Component
+import com.almasb.fxgl.entity.components.*
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.util.Consumer
@@ -42,7 +37,7 @@ class GameWorldTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            FXGL.getProperties().setValue("dev.showbbox", false)
+            FXGLMock.mock()
         }
     }
 
@@ -138,12 +133,23 @@ class GameWorldTest {
     }
 
     @Test
-    fun `Remove multiple entities`() {
+    fun `Remove multiple entities by passing entities as varag)`() {
         val e = Entity()
         val e2 = Entity()
 
         gameWorld.addEntities(e, e2)
         gameWorld.removeEntities(e, e2)
+
+        assertThat(gameWorld.entities, not(containsInAnyOrder(e, e2)))
+    }
+
+    @Test
+    fun `Remove multiple entities by passing entities as collection`() {
+        val e = Entity()
+        val e2 = Entity()
+
+        gameWorld.addEntities(e, e2)
+        gameWorld.removeEntities(listOf(e, e2))
 
         assertThat(gameWorld.entities, not(containsInAnyOrder(e, e2)))
     }
@@ -232,9 +238,14 @@ class GameWorldTest {
     @Test
     fun `Selected entity`() {
         val e1 = Entity()
-        e1.addComponent(SelectableComponent(true))
+        val e2 = Entity()
 
-        gameWorld.addEntity(e1)
+        val c = SelectableComponent(true)
+
+        e1.addComponent(c)
+        e2.addComponent(c.copy())
+
+        gameWorld.addEntities(e1, e2)
 
         val event = MouseEvent(MouseEvent.MOUSE_PRESSED, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 0,
                 false,
@@ -244,7 +255,39 @@ class GameWorldTest {
 
         e1.view.fireEvent(event)
 
-        assertThat(gameWorld.getSelectedEntity().get(), `is`<Entity>(e1))
+        assertThat(gameWorld.getSelectedEntity().get(), `is`(e1))
+
+        e2.view.fireEvent(event)
+
+        assertThat(gameWorld.getSelectedEntity().get(), `is`(e2))
+
+        // now disable selectable
+
+        e1.getComponent(SelectableComponent::class.java).value = false
+
+        e1.view.fireEvent(event)
+
+        assertThat(gameWorld.getSelectedEntity().get(), `is`(e2))
+
+        // now enable
+
+        e1.getComponent(SelectableComponent::class.java).value = true
+
+        e1.view.fireEvent(event)
+
+        assertThat(gameWorld.getSelectedEntity().get(), `is`(e1))
+
+        e1.removeComponent(SelectableComponent::class.java)
+
+        assertFalse(gameWorld.getSelectedEntity().isPresent)
+
+        val c3 = SelectableComponent(false)
+
+        e1.addComponent(c3)
+
+        e1.view.fireEvent(event)
+
+        assertFalse(gameWorld.getSelectedEntity().isPresent)
     }
 
     @Test
@@ -894,7 +937,7 @@ class GameWorldTest {
 
     @Test
     fun `By layer List`() {
-        val layer = object : RenderLayer {
+        val layer = object : RenderLayer() {
             override fun name(): String {
                 return "TEST"
             }
@@ -922,7 +965,7 @@ class GameWorldTest {
 
     @Test
     fun `By layer Array`() {
-        val layer = object : RenderLayer {
+        val layer = object : RenderLayer() {
             override fun name(): String {
                 return "TEST"
             }

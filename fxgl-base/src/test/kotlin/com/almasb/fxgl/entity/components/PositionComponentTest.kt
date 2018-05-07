@@ -4,19 +4,17 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity.component
+package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.components.PositionComponent
 import com.almasb.fxgl.io.serialization.Bundle
 import javafx.geometry.Point2D
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 
 class PositionComponentTest {
@@ -99,7 +97,7 @@ class PositionComponentTest {
 
     @Test
     fun `Copy`() {
-        position.value = Point2D(33.0, -33.0)
+        position = PositionComponent(Point2D(33.0, -33.0))
         val copy = position.copy()
 
         assertThat(copy.value, `is`(Point2D(33.0, -33.0)))

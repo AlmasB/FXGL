@@ -47,9 +47,14 @@ public class ReadOnlyGameSettings {
     protected Credits credits = new Credits(Collections.emptyList());
     protected EnumSet<MenuItem> enabledMenuItems = EnumSet.noneOf(MenuItem.class);
     protected StageStyle stageStyle = StageStyle.DECORATED;
+    protected String appIcon = "fxgl_icon.png";
     protected boolean manualResizeEnabled = false;
 
     // when adding extra fields, remember to add them to copy constructor
+
+    /* EXPERIMENTAL */
+
+    protected boolean experimentalTiledLargeMap = false;
 
     /* CONFIGS */
 
@@ -102,6 +107,7 @@ public class ReadOnlyGameSettings {
         this.enabledMenuItems = copy.enabledMenuItems;
         this.singleStep = copy.singleStep;
         this.stageStyle = copy.stageStyle;
+        this.appIcon = copy.appIcon;
         this.manualResizeEnabled = copy.manualResizeEnabled;
 
         this.configClass = copy.configClass;
@@ -114,6 +120,8 @@ public class ReadOnlyGameSettings {
         this.exceptionHandler = copy.exceptionHandler;
 
         this.exceptionHandlerWrapper = copy.exceptionHandlerWrapper;
+
+        this.experimentalTiledLargeMap = copy.experimentalTiledLargeMap;
     }
 
     public final String getTitle() {
@@ -180,6 +188,10 @@ public class ReadOnlyGameSettings {
         return stageStyle;
     }
 
+    public final String getAppIcon() {
+        return appIcon;
+    }
+
     public final Optional<Class<?>> getConfigClass() {
         return Optional.ofNullable(configClass);
     }
@@ -206,6 +218,10 @@ public class ReadOnlyGameSettings {
 
     public final ExceptionHandler getExceptionHandler() {
         return exceptionHandlerWrapper;
+    }
+
+    public final boolean isExperimentalTiledLargeMap() {
+        return experimentalTiledLargeMap;
     }
 
     @Override
