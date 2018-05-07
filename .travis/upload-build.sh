@@ -3,12 +3,13 @@
 mkdir upload
 cd upload
 
-git config user.email "$UP_USER_EMAIL"
-git config user.name "up-server"
-
 git clone --quiet https://github.com/AlmasB/builds
 
 cd builds
+
+git config user.email "$UP_USER_EMAIL"
+git config user.name "up-server"
+
 cp ../../fxgl/target/*-uber.jar fxgl/
 
 git add fxgl/
