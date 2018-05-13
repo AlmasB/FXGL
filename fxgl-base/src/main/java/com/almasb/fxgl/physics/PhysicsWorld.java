@@ -30,6 +30,8 @@ import javafx.geometry.Point2D;
 
 import java.util.Iterator;
 
+import static com.almasb.fxgl.util.BackportKt.forEach;
+
 /**
  * Manages physics entities, collision handling and performs the physics tick.
  * <p>
@@ -273,11 +275,29 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
         // https://github.com/AlmasB/FXGL/issues/491
         // check sensors
+
+        // add sensors via Phys component and keep id, so that we can find when fired
         if (contact.getFixtureA().isSensor()) {
-            e1.getComponent(PhysicsComponent.class).groundedList.add(e2);
+
+            System.out.println(e1);
+
+            HitBox box = (HitBox) contact.getFixtureA().getUserData();
+
+            SensorCollisionHandler h = e1.getComponent(PhysicsComponent.class).sensorHandlers.get(box);
+            h.onCollisionBegin(e2);
+
+            //e1.getComponent(PhysicsComponent.class).groundedList.add(e2);
             return;
         } else if (contact.getFixtureB().isSensor()) {
-            e2.getComponent(PhysicsComponent.class).groundedList.add(e1);
+
+            System.out.println(e2);
+
+            HitBox box = (HitBox) contact.getFixtureB().getUserData();
+
+            SensorCollisionHandler h = e2.getComponent(PhysicsComponent.class).sensorHandlers.get(box);
+            h.onCollisionBegin(e1);
+
+            //e2.getComponent(PhysicsComponent.class).groundedList.add(e1);
             return;
         }
 
@@ -317,10 +337,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         // https://github.com/AlmasB/FXGL/issues/491
         // check sensors
         if (contact.getFixtureA().isSensor()) {
-            e1.getComponent(PhysicsComponent.class).groundedList.remove(e2);
+            //e1.getComponent(PhysicsComponent.class).groundedList.remove(e2);
             return;
         } else if (contact.getFixtureB().isSensor()) {
-            e2.getComponent(PhysicsComponent.class).groundedList.remove(e1);
+            //e2.getComponent(PhysicsComponent.class).groundedList.remove(e1);
             return;
         }
 
@@ -508,16 +528,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param e physics entity
      */
     private void createBody(Entity e) {
-        BoundingBoxComponent bbox = e.getBoundingBoxComponent();
         PhysicsComponent physics = e.getComponent(PhysicsComponent.class);
-
-        double w = bbox.getWidth();
-        double h = bbox.getHeight();
 
         // if position is 0, 0 then probably not set, so set ourselves
         if (physics.bodyDef.getPosition().x == 0 && physics.bodyDef.getPosition().y == 0) {
-            physics.bodyDef.getPosition().set(toMetersF(bbox.getMinXWorld() + w / 2),
-                    toMetersF(appHeight - (bbox.getMinYWorld() + h / 2)));
+            physics.bodyDef.getPosition().set(toPoint(e.getCenter()));
         }
 
         if (physics.bodyDef.getAngle() == 0) {
@@ -528,10 +543,52 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
         createFixtures(e);
 
+
+
+
+
+
+
+
+
+        // TODO:
+
         if (physics.isGenerateGroundSensor()) {
             createGroundSensor(e);
         }
 
+        if (physics.sensorHandlers.isNotEmpty()) {
+            forEach(physics.sensorHandlers, entry -> {
+
+                Point2D entityCenter = e.getCenter();
+
+                HitBox box = entry.key;
+                Bounds bounds = box.translate(e.getX(), e.getY());
+
+                // take world center bounds and subtract from entity center (all in pixels) to get local center
+                Point2D boundsCenterWorld = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
+                Point2D boundsCenterLocal = boundsCenterWorld.subtract(entityCenter);
+
+                double sensorWidth = bounds.getWidth();
+                double sensorHeight = bounds.getHeight();
+
+                // center with respect to entity center
+                //Point2D sensorCenterLocal = new Point2D(e.getWidth() / 2 - sensorWidth / 2, e.getHeight() / 2 - sensorHeight / 2);
+
+                PolygonShape polygonShape = new PolygonShape();
+                polygonShape.setAsBox(toMetersF(sensorWidth / 2), toMetersF(sensorHeight / 2),
+                        new Vec2(toMetersF(boundsCenterLocal.getX()), -toMetersF(boundsCenterLocal.getY())), 0);
+
+                FixtureDef fd = new FixtureDef()
+                        .sensor(true)
+                        .shape(polygonShape);
+
+                Fixture f = e.getComponent(PhysicsComponent.class).body.createFixture(fd);
+                f.setUserData(entry.key);
+            });
+        }
+
+        // TODO: setEntity()
         physics.body.setUserData(e);
         physics.onInitPhysics();
     }
@@ -539,90 +596,124 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     private void createFixtures(Entity e) {
         BoundingBoxComponent bbox = e.getBoundingBoxComponent();
         PhysicsComponent physics = e.getComponent(PhysicsComponent.class);
-        PositionComponent position = e.getPositionComponent();
 
-        Point2D entityCenter = bbox.getCenterWorld();
+        // TODO: same fixture def for every fixture?
+        FixtureDef fd = physics.fixtureDef;
 
         for (HitBox box : bbox.hitBoxesProperty()) {
-            Bounds bounds = box.translate(position.getX(), position.getY());
-
-            // take world center bounds and subtract from entity center (all in pixels) to get local center
-            Point2D boundsCenterWorld = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
-            Point2D boundsCenterLocal = boundsCenterWorld.subtract(entityCenter);
-
-            double w = bounds.getWidth();
-            double h = bounds.getHeight();
-
-            FixtureDef fd = physics.fixtureDef;
-
-            Shape b2Shape;
-            BoundingShape boundingShape = box.getShape();
-
-            switch (boundingShape.type) {
-                case CIRCLE:
-
-                    CircleShape circleShape = new CircleShape();
-                    circleShape.setRadius(toMetersF(w / 2));
-                    circleShape.m_p.set(toMetersF(boundsCenterLocal.getX()), -toMetersF(boundsCenterLocal.getY()));
-
-                    b2Shape = circleShape;
-                    break;
-
-                case POLYGON:
-                    PolygonShape polygonShape = new PolygonShape();
-
-                    if (boundingShape.data instanceof Dimension2D) {
-                        polygonShape.setAsBox(toMetersF(w / 2), toMetersF(h / 2),
-                                new Vec2(toMetersF(boundsCenterLocal.getX()), -toMetersF(boundsCenterLocal.getY())), 0);
-                    } else {
-                        Point2D[] points = (Point2D[]) boundingShape.data;
-
-                        Vec2[] vertices = new Vec2[points.length];
-
-                        for (int i = 0; i < vertices.length; i++) {
-                            vertices[i] = toVector(points[i].subtract(boundsCenterLocal))
-                                    .subLocal(toVector(bbox.getCenterLocal()));
-                        }
-
-                        polygonShape.set(vertices, vertices.length);
-                    }
-
-                    b2Shape = polygonShape;
-                    break;
-
-                case CHAIN:
-
-                    if (physics.body.getType() != BodyType.STATIC) {
-                        throw new IllegalArgumentException("BoundingShape.chain() can only be used with static objects");
-                    }
-
-                    Point2D[] points = (Point2D[]) boundingShape.data;
-
-                    Vec2[] vertices = new Vec2[points.length];
-
-                    for (int i = 0; i < vertices.length; i++) {
-                        vertices[i] = toVector(points[i].subtract(boundsCenterLocal))
-                                .subLocal(toVector(bbox.getCenterLocal()));
-                    }
-
-                    ChainShape chainShape = new ChainShape();
-                    chainShape.createLoop(vertices, vertices.length);
-                    b2Shape = chainShape;
-                    break;
-
-                case EDGE:
-                default:
-                    log.warning("Unsupported hit box shape");
-                    throw new UnsupportedOperationException("Using unsupported shape: " + boundingShape.type);
-            }
+            Shape b2Shape = createShape(box, e);
 
             // we use definitions from user, but override shape
             fd.setShape(b2Shape);
 
             Fixture fixture = physics.body.createFixture(fd);
+
+            // TODO: setHitBox()?
             fixture.setUserData(box);
         }
     }
+
+    private Shape createShape(HitBox box, Entity e) {
+        Bounds bounds = box.translate(e.getX(), e.getY());
+
+        // take world center bounds and subtract from entity center (all in pixels) to get local center
+        // because box2d operates on vector offsets from the body center, also in local coordinates
+        Point2D boundsCenterWorld = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
+        Point2D boundsCenterLocal = boundsCenterWorld.subtract(e.getCenter());
+
+        double w = bounds.getWidth();
+        double h = bounds.getHeight();
+
+        BoundingShape boundingShape = box.getShape();
+
+        switch (boundingShape.type) {
+            case CIRCLE:
+                return circle(w, boundsCenterLocal);
+
+            case POLYGON:
+
+                if (boundingShape.data instanceof Dimension2D) {
+                    return polygonAsBox(w, h, boundsCenterLocal);
+                } else {
+                    return polygon((Point2D[]) boundingShape.data, boundsCenterLocal, e.getBoundingBoxComponent().getCenterLocal());
+                }
+
+            case CHAIN:
+
+                if (e.getComponent(PhysicsComponent.class).body.getType() != BodyType.STATIC) {
+                    throw new IllegalArgumentException("BoundingShape.chain() can only be used with BodyType.STATIC");
+                }
+
+                return chain((Point2D[]) boundingShape.data, boundsCenterLocal, e.getBoundingBoxComponent().getCenterLocal());
+
+            case EDGE:
+            default:
+                log.warning("Unsupported hit box shape");
+                throw new UnsupportedOperationException("Using unsupported shape: " + boundingShape.type);
+        }
+    }
+
+    /**
+     * @param w circle diameter
+     * @param boundsCenterLocal center of bounds in local coordinates
+     * @return circle shape
+     */
+    private Shape circle(double w, Point2D boundsCenterLocal) {
+        CircleShape shape = new CircleShape();
+        shape.setRadius(toMetersF(w / 2));
+        shape.center.set(toVector(boundsCenterLocal));
+
+        return shape;
+    }
+
+    private Shape polygonAsBox(double w, double h, Point2D boundsCenterLocal) {
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(toMetersF(w / 2), toMetersF(h / 2), toVector(boundsCenterLocal), 0);
+
+        return shape;
+    }
+
+    private Shape polygon(Point2D[] points, Point2D boundsCenterLocal, Point2D bboxCenterLocal) {
+
+        Vec2[] vertices = new Vec2[points.length];
+
+        for (int i = 0; i < vertices.length; i++) {
+            vertices[i] = toVector(points[i].subtract(boundsCenterLocal)).subLocal(toVector(bboxCenterLocal));
+        }
+
+        PolygonShape shape = new PolygonShape();
+        shape.set(vertices);
+
+        return shape;
+    }
+
+    private Shape chain(Point2D[] points, Point2D boundsCenterLocal, Point2D bboxCenterLocal) {
+
+        Vec2[] vertices = new Vec2[points.length];
+
+        for (int i = 0; i < vertices.length; i++) {
+            vertices[i] = toVector(points[i].subtract(boundsCenterLocal)).subLocal(toVector(bboxCenterLocal));
+        }
+
+        ChainShape shape = new ChainShape();
+        shape.createLoop(vertices, vertices.length);
+
+        return shape;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private void createGroundSensor(Entity e) {
         // 3 is a good ratio of entity width, since we don't want to occupy the full width

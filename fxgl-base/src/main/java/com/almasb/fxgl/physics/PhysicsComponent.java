@@ -7,6 +7,7 @@
 package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pools;
@@ -95,6 +96,12 @@ public final class PhysicsComponent extends Component {
      */
     public boolean isGenerateGroundSensor() {
         return generateGroundSensor;
+    }
+
+    public ObjectMap<HitBox, SensorCollisionHandler> sensorHandlers = new ObjectMap<>();
+
+    public void addSensor(HitBox box, SensorCollisionHandler handler) {
+        sensorHandlers.put(box, handler);
     }
 
     /**
