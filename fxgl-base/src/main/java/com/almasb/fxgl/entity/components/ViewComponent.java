@@ -14,12 +14,14 @@ import com.almasb.fxgl.entity.component.CoreComponent;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -237,6 +239,8 @@ public class ViewComponent extends Component {
         debugBBox.getChildren().clear();
 
         forEach(c.getList(), this::addDebugView);
+
+        // TODO: listen for sensors
     };
 
     private boolean showBBox() {
@@ -267,6 +271,10 @@ public class ViewComponent extends Component {
         // generate view for current
         forEach(bbox.hitBoxesProperty(), this::addDebugView);
 
+        entity.getComponentOptional(PhysicsComponent.class).ifPresent(p -> {
+            forEach(p.getSensorHandlers().keys(), this::addDebugViewSensor);
+        });
+
         getView().addNode(debugBBox);
     }
 
@@ -283,6 +291,29 @@ public class ViewComponent extends Component {
 
         if (view != null) {
             view.strokeProperty().bind(FXGL.getProperties().objectProperty("dev.bboxcolor"));
+
+            view.setTranslateX(hitBox.getMinX());
+            view.setTranslateY(hitBox.getMinY());
+
+            debugBBox.getChildren().add(view);
+        }
+    }
+
+    private void addDebugViewSensor(HitBox hitBox) {
+        Shape view = null;
+
+        if (hitBox.getShape().isCircle()) {
+            double radius = hitBox.getWidth() / 2;
+            view = new Circle(radius, radius, radius, null);
+
+        } else if (hitBox.getShape().isRectangle()) {
+            view = new Rectangle(hitBox.getWidth(), hitBox.getHeight(), null);
+        }
+
+        if (view != null) {
+            view.strokeProperty().setValue(Color.YELLOW);
+            // TODO: refactor to use an assignable color
+            //view.strokeProperty().bind(FXGL.getProperties().objectProperty("dev.bboxcolor"));
 
             view.setTranslateX(hitBox.getMinX());
             view.setTranslateY(hitBox.getMinY());

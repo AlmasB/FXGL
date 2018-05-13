@@ -83,10 +83,12 @@ public final class PhysicsComponent extends Component {
 
     /**
      * Force this entity to create a ground sensor, so that {@link #isOnGround()} can be used.
+     * Deprecated: Use addGroundSensor()
      *
      * @param generate flag
      * @defaultValue false
      */
+    @Deprecated
     public void setGenerateGroundSensor(boolean generate) {
         generateGroundSensor = generate;
     }
@@ -94,14 +96,43 @@ public final class PhysicsComponent extends Component {
     /**
      * @return does this entity have a ground sensor
      */
+    @Deprecated
     public boolean isGenerateGroundSensor() {
         return generateGroundSensor;
     }
 
-    public ObjectMap<HitBox, SensorCollisionHandler> sensorHandlers = new ObjectMap<>();
+    private ObjectMap<HitBox, SensorCollisionHandler> sensorHandlers = new ObjectMap<>();
+
+    public ObjectMap<HitBox, SensorCollisionHandler> getSensorHandlers() {
+        return sensorHandlers;
+    }
+
+    public void addGroundSensor(HitBox box) {
+        sensorHandlers.put(box, new SensorCollisionHandler() {
+            @Override
+            protected void onCollisionBegin(Entity other) {
+                groundedList.add(other);
+            }
+
+            @Override
+            protected void onCollision(Entity other) {
+
+            }
+
+            @Override
+            protected void onCollisionEnd(Entity other) {
+                groundedList.remove(other);
+            }
+        });
+    }
 
     public void addSensor(HitBox box, SensorCollisionHandler handler) {
         sensorHandlers.put(box, handler);
+    }
+
+    public void removeSensor(HitBox box) {
+        // TODO: but we didn't remove the fixture
+        sensorHandlers.remove(box);
     }
 
     /**

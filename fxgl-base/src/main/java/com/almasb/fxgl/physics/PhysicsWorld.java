@@ -273,31 +273,23 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
         Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
 
-        // https://github.com/AlmasB/FXGL/issues/491
-        // check sensors
+        // check sensors first
+        // TODO: refactor
 
-        // add sensors via Phys component and keep id, so that we can find when fired
         if (contact.getFixtureA().isSensor()) {
-
-            System.out.println(e1);
-
             HitBox box = (HitBox) contact.getFixtureA().getUserData();
 
-            SensorCollisionHandler h = e1.getComponent(PhysicsComponent.class).sensorHandlers.get(box);
+            SensorCollisionHandler h = e1.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
             h.onCollisionBegin(e2);
 
-            //e1.getComponent(PhysicsComponent.class).groundedList.add(e2);
             return;
         } else if (contact.getFixtureB().isSensor()) {
 
-            System.out.println(e2);
-
             HitBox box = (HitBox) contact.getFixtureB().getUserData();
 
-            SensorCollisionHandler h = e2.getComponent(PhysicsComponent.class).sensorHandlers.get(box);
+            SensorCollisionHandler h = e2.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
             h.onCollisionBegin(e1);
 
-            //e2.getComponent(PhysicsComponent.class).groundedList.add(e1);
             return;
         }
 
@@ -334,13 +326,22 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
         Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
 
-        // https://github.com/AlmasB/FXGL/issues/491
-        // check sensors
+        // check sensors first
+
         if (contact.getFixtureA().isSensor()) {
-            //e1.getComponent(PhysicsComponent.class).groundedList.remove(e2);
+            HitBox box = (HitBox) contact.getFixtureA().getUserData();
+
+            SensorCollisionHandler h = e1.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
+            h.onCollisionEnd(e2);
+
             return;
         } else if (contact.getFixtureB().isSensor()) {
-            //e2.getComponent(PhysicsComponent.class).groundedList.remove(e1);
+
+            HitBox box = (HitBox) contact.getFixtureB().getUserData();
+
+            SensorCollisionHandler h = e2.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
+            h.onCollisionEnd(e1);
+
             return;
         }
 
@@ -543,50 +544,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
         createFixtures(e);
 
-
-
-
-
-
-
-
-
-        // TODO:
-
         if (physics.isGenerateGroundSensor()) {
             createGroundSensor(e);
         }
 
-        if (physics.sensorHandlers.isNotEmpty()) {
-            forEach(physics.sensorHandlers, entry -> {
-
-                Point2D entityCenter = e.getCenter();
-
-                HitBox box = entry.key;
-                Bounds bounds = box.translate(e.getX(), e.getY());
-
-                // take world center bounds and subtract from entity center (all in pixels) to get local center
-                Point2D boundsCenterWorld = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
-                Point2D boundsCenterLocal = boundsCenterWorld.subtract(entityCenter);
-
-                double sensorWidth = bounds.getWidth();
-                double sensorHeight = bounds.getHeight();
-
-                // center with respect to entity center
-                //Point2D sensorCenterLocal = new Point2D(e.getWidth() / 2 - sensorWidth / 2, e.getHeight() / 2 - sensorHeight / 2);
-
-                PolygonShape polygonShape = new PolygonShape();
-                polygonShape.setAsBox(toMetersF(sensorWidth / 2), toMetersF(sensorHeight / 2),
-                        new Vec2(toMetersF(boundsCenterLocal.getX()), -toMetersF(boundsCenterLocal.getY())), 0);
-
-                FixtureDef fd = new FixtureDef()
-                        .sensor(true)
-                        .shape(polygonShape);
-
-                Fixture f = e.getComponent(PhysicsComponent.class).body.createFixture(fd);
-                f.setUserData(entry.key);
-            });
-        }
+        createSensors(e);
 
         // TODO: setEntity()
         physics.body.setUserData(e);
@@ -611,6 +573,25 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
             // TODO: setHitBox()?
             fixture.setUserData(box);
         }
+    }
+
+    private void createSensors(Entity e) {
+        PhysicsComponent physics = e.getComponent(PhysicsComponent.class);
+
+        if (physics.getSensorHandlers().isEmpty())
+            return;
+
+        forEach(physics.getSensorHandlers().keys(), box -> {
+
+            Shape polygonShape = createShape(box, e);
+
+            FixtureDef fd = new FixtureDef()
+                    .sensor(true)
+                    .shape(polygonShape);
+
+            Fixture f = physics.body.createFixture(fd);
+            f.setUserData(box);
+        });
     }
 
     private Shape createShape(HitBox box, Entity e) {
@@ -701,39 +682,16 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         return shape;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // TODO: remove this in 0.6
     private void createGroundSensor(Entity e) {
         // 3 is a good ratio of entity width, since we don't want to occupy the full width
         // if we want to ban "ledge" jumps
         double sensorWidth = e.getWidth() / 3;
         double sensorHeight = 5;
 
-        // center with respect to entity center
-        Point2D sensorCenterLocal = new Point2D(0, e.getHeight() / 2 - sensorHeight / 2);
-
-        PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(toMetersF(sensorWidth / 2), toMetersF(sensorHeight / 2),
-                new Vec2(toMetersF(sensorCenterLocal.getX()), -toMetersF(sensorCenterLocal.getY())), 0);
-
-        // https://github.com/AlmasB/FXGL/issues/491
-        FixtureDef fd = new FixtureDef()
-                .sensor(true)
-                .shape(polygonShape);
-
-        e.getComponent(PhysicsComponent.class).body.createFixture(fd);
+        // assumes that origin of entity's main hit box is at 0,0
+        e.getComponent(PhysicsComponent.class).addGroundSensor(new HitBox("GROUND_SENSOR", new Point2D(e.getWidth() / 2, e.getHeight()).add(-sensorWidth / 2, -sensorHeight / 2),
+                BoundingShape.box(sensorWidth, sensorHeight)));
     }
 
     private void createPhysicsParticles(Entity e) {

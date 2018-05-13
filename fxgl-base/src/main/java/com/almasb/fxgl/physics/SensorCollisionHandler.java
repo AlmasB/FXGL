@@ -13,22 +13,6 @@ import com.almasb.fxgl.entity.Entity;
  */
 public abstract class SensorCollisionHandler {
 
-    private Object otherType;
-
-    public final Object getOtherType() {
-        return otherType;
-    }
-
-    /**
-     * The order of types determines the order of entities in callbacks.
-     *
-     * @param a entity type of the first entity
-     * @param b entity type of the second entity
-     */
-    public SensorCollisionHandler(Object otherType) {
-        this.otherType = otherType;
-    }
-
     /**
      * Called when entities A and B have just collided and weren't colliding in the last tick.
      */
