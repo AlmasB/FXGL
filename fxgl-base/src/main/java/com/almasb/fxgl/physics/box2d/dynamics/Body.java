@@ -245,7 +245,6 @@ public final class Body {
         world.assertNotLocked();
 
         assert (fixture.getBody() == this);
-        assert (fixtures.size() > 0);
         assert fixtures.contains(fixture);
 
         fixtures.remove(fixture);
