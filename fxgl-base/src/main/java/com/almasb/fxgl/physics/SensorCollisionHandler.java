@@ -25,6 +25,7 @@ public abstract class SensorCollisionHandler {
      */
     protected void onCollision(Entity other) {
         // no default implementation
+        // TODO: not implemented
     }
 
     /**

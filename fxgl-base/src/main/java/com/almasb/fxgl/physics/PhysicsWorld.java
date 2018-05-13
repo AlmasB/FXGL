@@ -270,8 +270,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     @Override
     public void beginContact(Contact contact) {
-        Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
-        Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
+        Entity e1 = contact.getFixtureA().getBody().getEntity();
+        Entity e2 = contact.getFixtureB().getBody().getEntity();
 
         // check sensors first
         // TODO: refactor
@@ -323,8 +323,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     @Override
     public void endContact(Contact contact) {
-        Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
-        Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
+        Entity e1 = contact.getFixtureA().getBody().getEntity();
+        Entity e2 = contact.getFixtureB().getBody().getEntity();
 
         // check sensors first
 
@@ -550,8 +550,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
         createSensors(e);
 
-        // TODO: setEntity()
-        physics.body.setUserData(e);
+        physics.body.setEntity(e);
         physics.onInitPhysics();
     }
 

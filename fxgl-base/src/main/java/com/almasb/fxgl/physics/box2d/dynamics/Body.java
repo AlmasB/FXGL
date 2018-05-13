@@ -7,6 +7,7 @@
 package com.almasb.fxgl.physics.box2d.dynamics;
 
 import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.BroadPhase;
 import com.almasb.fxgl.physics.box2d.collision.shapes.MassData;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
@@ -69,9 +70,6 @@ public final class Body {
     public final Vec2 m_force = new Vec2();
     public float m_torque = 0;
 
-    //public Body m_prev = null;
-    //public Body m_next = null;
-
     public float m_mass, m_invMass;
 
     // Rotational inertia about the center of mass.
@@ -86,12 +84,10 @@ public final class Body {
 
     private Object userData;
 
+    private Entity entity;
+
     Body(BodyDef bd, World world) {
-        assert (bd.getPosition().isValid());
-        assert (bd.getLinearVelocity().isValid());
-        assert (bd.getGravityScale() >= 0.0f);
-        assert (bd.getAngularDamping() >= 0.0f);
-        assert (bd.getLinearDamping() >= 0.0f);
+        checkValid(bd);
 
         this.world = world;
         userData = bd.getUserData();
@@ -140,6 +136,37 @@ public final class Body {
             m_mass = 0f;
             m_invMass = 0f;
         }
+    }
+
+    private void checkValid(BodyDef def) {
+        if (!def.getPosition().isValid())
+            throw new IllegalArgumentException("Position is invalid");
+
+        if (!def.getLinearVelocity().isValid())
+            throw new IllegalArgumentException("Linear velocity is invalid");
+
+        if (def.getGravityScale() < 0)
+            throw new IllegalArgumentException("Gravity scale is invalid");
+
+        if (def.getAngularDamping() < 0)
+            throw new IllegalArgumentException("Angular damping is invalid");
+
+        if (def.getLinearDamping() < 0)
+            throw new IllegalArgumentException("Linear damping is invalid");
+    }
+
+    /**
+     * Set entity to which this body belongs.
+     */
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+
+    /**
+     * @return entity to which this body belongs
+     */
+    public Entity getEntity() {
+        return entity;
     }
 
     /**
@@ -1002,13 +1029,6 @@ public final class Body {
     public ContactEdge getContactList() {
         return m_contactList;
     }
-
-    /**
-     * Get the next body in the world's body list.
-     **/
-//    public Body getNext() {
-//        return m_next;
-//    }
 
     /**
      * Get the user data pointer that was provided in the body definition.
