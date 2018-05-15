@@ -50,13 +50,6 @@ public class JBoxSettings {
     public static final float SINCOS_LUT_PRECISION = .00011f;
     public static final int SINCOS_LUT_LENGTH = (int) Math.ceil(Math.PI * 2 / SINCOS_LUT_PRECISION);
 
-    /**
-     * Use if the table's precision is large (eg .006 or greater). Although it is more expensive, it
-     * greatly increases accuracy. Look in the JBoxUtils source for some test results on the accuracy
-     * and speed of lerp vs non lerp.
-     */
-    public static boolean SINCOS_LUT_LERP = false;
-
     // Collision
 
     /**

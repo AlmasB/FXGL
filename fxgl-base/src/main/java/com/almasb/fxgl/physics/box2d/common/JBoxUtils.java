@@ -39,7 +39,7 @@ public class JBoxUtils {
     public static final float TWOPI = (float) (Math.PI * 2);
     public static final float HALF_PI = PI / 2;
 
-    public static final float[] sinLUT = new float[JBoxSettings.SINCOS_LUT_LENGTH];
+    private static final float[] sinLUT = new float[JBoxSettings.SINCOS_LUT_LENGTH];
 
     static {
         for (int i = 0; i < JBoxSettings.SINCOS_LUT_LENGTH; i++) {
@@ -62,33 +62,10 @@ public class JBoxUtils {
             x += TWOPI;
         }
 
-        if (JBoxSettings.SINCOS_LUT_LERP) {
-
-            x /= JBoxSettings.SINCOS_LUT_PRECISION;
-
-            final int index = (int) x;
-
-            if (index != 0) {
-                x %= index;
-            }
-
-            // the next index is 0
-            if (index == JBoxSettings.SINCOS_LUT_LENGTH - 1) {
-                return ((1 - x) * sinLUT[index] + x * sinLUT[0]);
-            } else {
-                return ((1 - x) * sinLUT[index] + x * sinLUT[index + 1]);
-            }
-
-        } else {
-            return sinLUT[round(x / JBoxSettings.SINCOS_LUT_PRECISION) % JBoxSettings.SINCOS_LUT_LENGTH];
-        }
+        return sinLUT[round(x / JBoxSettings.SINCOS_LUT_PRECISION) % JBoxSettings.SINCOS_LUT_LENGTH];
     }
 
     public static final int floor(final float x) {
-        return fastFloor(x);
-    }
-
-    public static final int fastFloor(final float x) {
         int y = (int) x;
         if (x < y) {
             return y - 1;
@@ -136,11 +113,7 @@ public class JBoxUtils {
         return min;
     }
 
-    public static final float atan2(final float y, final float x) {
-        return fastAtan2(y, x);
-    }
-
-    public static final float fastAtan2(float y, float x) {
+    public static final float atan2(float y, float x) {
         if (x == 0.0f) {
             if (y > 0.0f) return HALF_PI;
             if (y == 0.0f) return 0.0f;
