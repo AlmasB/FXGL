@@ -5,6 +5,7 @@
  */
 package com.almasb.fxgl.physics.box2d.collision;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.collision.Distance.DistanceProxy;
 import com.almasb.fxgl.physics.box2d.collision.Distance.SimplexCache;
@@ -220,7 +221,7 @@ public class TimeOfImpact {
 
                     float s = fcn.evaluate(indexes[0], indexes[1], t);
 
-                    if (JBoxUtils.abs(s - target) < tolerance) {
+                    if (FXGLMath.abs(s - target) < tolerance) {
                         // t2 holds a tentative value for t1
                         t2 = t;
                         break;

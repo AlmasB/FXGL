@@ -5,6 +5,7 @@
  */
 package com.almasb.fxgl.physics.box2d.collision.broadphase;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeCallback;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeRayCastCallback;
@@ -193,8 +194,8 @@ public class DynamicTree implements BroadPhaseStrategy {
         // v is perpendicular to the segment.
         vx = -1f * ry;
         vy = 1f * rx;
-        absVx = JBoxUtils.abs(vx);
-        absVy = JBoxUtils.abs(vy);
+        absVx = FXGLMath.abs(vx);
+        absVy = FXGLMath.abs(vy);
 
         // Separating axis for segment (Gino, p80).
         // |dot(v, p1 - c)| > dot(|v|, h)
@@ -239,7 +240,7 @@ public class DynamicTree implements BroadPhaseStrategy {
             hy = (nodeAABB.upperBound.y - nodeAABB.lowerBound.y) * .5f;
             tempx = p1x - cx;
             tempy = p1y - cy;
-            float separation = JBoxUtils.abs(vx * tempx + vy * tempy) - (absVx * hx + absVy * hy);
+            float separation = FXGLMath.abs(vx * tempx + vy * tempy) - (absVx * hx + absVy * hy);
             if (separation > 0.0f) {
                 continue;
             }
@@ -341,7 +342,7 @@ public class DynamicTree implements BroadPhaseStrategy {
 
             DynamicTreeNode child1 = node.child1;
             DynamicTreeNode child2 = node.child2;
-            int balance = JBoxUtils.abs(child2.height - child1.height);
+            int balance = FXGLMath.absShift31(child2.height - child1.height);
             maxBalance = JBoxUtils.max(maxBalance, balance);
         }
 

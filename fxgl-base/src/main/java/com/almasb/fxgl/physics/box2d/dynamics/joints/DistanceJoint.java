@@ -28,6 +28,7 @@
 
 package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
@@ -333,6 +334,6 @@ public class DistanceJoint extends Joint {
         pool.pushVec2(3);
         pool.pushRot(2);
 
-        return JBoxUtils.abs(C) < JBoxSettings.linearSlop;
+        return FXGLMath.abs(C) < JBoxSettings.linearSlop;
     }
 }

@@ -111,29 +111,9 @@ public final class World {
         assert bodies.containsByIdentity(body);
         assertNotLocked();
 
-        // Delete the attached joints.
-        JointEdge je = body.m_jointList;
-        while (je != null) {
-            JointEdge je0 = je;
-            je = je.next;
-            if (destructionListener != null) {
-                destructionListener.onDestroy(je0.joint);
-            }
+        destroyAttachedJoints(body);
 
-            destroyJoint(je0.joint);
-
-            body.m_jointList = je;
-        }
-        body.m_jointList = null;
-
-        // Delete the attached contacts.
-        ContactEdge ce = body.m_contactList;
-        while (ce != null) {
-            ContactEdge ce0 = ce;
-            ce = ce.next;
-            contactManager.destroy(ce0.contact);
-        }
-        body.m_contactList = null;
+        body.destroyAttachedContacts();
 
         for (Fixture f : body.getFixtures()) {
             if (destructionListener != null) {
@@ -150,6 +130,24 @@ public final class World {
 
         bodies.removeValueByIdentity(body);
         // jbox2dTODO djm recycle body
+    }
+
+    private void destroyAttachedJoints(Body body) {
+        JointEdge je = body.m_jointList;
+        while (je != null) {
+            JointEdge je0 = je;
+            je = je.next;
+
+            if (destructionListener != null) {
+                destructionListener.onDestroy(je0.joint);
+            }
+
+            destroyJoint(je0.joint);
+
+            body.m_jointList = je;
+        }
+
+        body.m_jointList = null;
     }
 
     /**
@@ -353,7 +351,7 @@ public final class World {
             dtInverse = step.inv_dt;
         }
 
-        if (getAutoClearForces()) {
+        if (isAutoClearForces()) {
             clearForces();
         }
 
@@ -1408,7 +1406,7 @@ public final class World {
     /**
      * @return the flag that controls automatic clearing of forces after each time step
      */
-    public boolean getAutoClearForces() {
+    public boolean isAutoClearForces() {
         return autoClearForces;
     }
 

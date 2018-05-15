@@ -858,7 +858,7 @@ public final class Body {
         }
     }
 
-    private void destroyAttachedContacts() {
+    void destroyAttachedContacts() {
         // Delete the attached contacts.
         ContactEdge ce = m_contactList;
         while (ce != null) {

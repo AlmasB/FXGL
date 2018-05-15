@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.physics.box2d.dynamics;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactImpulse;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
@@ -308,7 +309,7 @@ class Island {
 
             float rotation = h * w;
             if (rotation * rotation > JBoxSettings.maxRotationSquared) {
-                float ratio = JBoxSettings.maxRotation / JBoxUtils.abs(rotation);
+                float ratio = JBoxSettings.maxRotation / FXGLMath.abs(rotation);
                 w *= ratio;
             }
 
@@ -457,7 +458,7 @@ class Island {
 
             float rotation = h * w;
             if (rotation * rotation > JBoxSettings.maxRotationSquared) {
-                float ratio = JBoxSettings.maxRotation / JBoxUtils.abs(rotation);
+                float ratio = JBoxSettings.maxRotation / FXGLMath.abs(rotation);
                 w *= ratio;
             }
 

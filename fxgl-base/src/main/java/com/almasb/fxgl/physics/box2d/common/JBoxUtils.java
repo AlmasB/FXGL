@@ -28,6 +28,7 @@
 
 package com.almasb.fxgl.physics.box2d.common;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 
 /**
@@ -47,11 +48,11 @@ public class JBoxUtils {
     }
 
     public static final float sin(float x) {
-        if (JBoxSettings.SINCOS_LUT_ENABLED) {
-            return sinLUT(x);
-        } else {
-            return (float) StrictMath.sin(x);
-        }
+        return sinLUT(x);
+    }
+
+    public static final float cos(float x) {
+        return sinLUT(HALF_PI - x);
     }
 
     public static final float sinLUT(float x) {
@@ -79,37 +80,12 @@ public class JBoxUtils {
             }
 
         } else {
-            return sinLUT[JBoxUtils.round(x / JBoxSettings.SINCOS_LUT_PRECISION) % JBoxSettings.SINCOS_LUT_LENGTH];
+            return sinLUT[round(x / JBoxSettings.SINCOS_LUT_PRECISION) % JBoxSettings.SINCOS_LUT_LENGTH];
         }
-    }
-
-    public static final float cos(float x) {
-        if (JBoxSettings.SINCOS_LUT_ENABLED) {
-            return sinLUT(HALF_PI - x);
-        } else {
-            return (float) StrictMath.cos(x);
-        }
-    }
-
-    public static final float abs(final float x) {
-        if (JBoxSettings.FAST_ABS) {
-            return x > 0 ? x : -x;
-        } else {
-            return StrictMath.abs(x);
-        }
-    }
-
-    public static final int abs(int x) {
-        int y = x >> 31;
-        return (x ^ y) - y;
     }
 
     public static final int floor(final float x) {
-        if (JBoxSettings.FAST_FLOOR) {
-            return fastFloor(x);
-        } else {
-            return (int) StrictMath.floor(x);
-        }
+        return fastFloor(x);
     }
 
     public static final int fastFloor(final float x) {
@@ -121,11 +97,7 @@ public class JBoxUtils {
     }
 
     public static final int round(final float x) {
-        if (JBoxSettings.FAST_ROUND) {
-            return floor(x + .5f);
-        } else {
-            return StrictMath.round(x);
-        }
+        return floor(x + .5f);
     }
 
     public final static float max(final float a, final float b) {
@@ -165,11 +137,7 @@ public class JBoxUtils {
     }
 
     public static final float atan2(final float y, final float x) {
-        if (JBoxSettings.FAST_ATAN2) {
-            return fastAtan2(y, x);
-        } else {
-            return (float) StrictMath.atan2(y, x);
-        }
+        return fastAtan2(y, x);
     }
 
     public static final float fastAtan2(float y, float x) {
@@ -180,7 +148,7 @@ public class JBoxUtils {
         }
         float atan;
         final float z = y / x;
-        if (abs(z) < 1.0f) {
+        if (FXGLMath.abs(z) < 1.0f) {
             atan = z / (1.0f + 0.28f * z * z);
             if (x < 0.0f) {
                 if (y < 0.0f) return atan - PI;
