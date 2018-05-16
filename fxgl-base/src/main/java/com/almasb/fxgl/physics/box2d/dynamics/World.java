@@ -198,15 +198,23 @@ public final class World {
 
         // If the joint prevents collisions, then flag any contacts for filtering.
         if (!def.collideConnected) {
-            ContactEdge edge = bodyB.getContactList();
-            while (edge != null) {
+
+            for (ContactEdge edge : bodyB.getContactEdges()) {
                 if (edge.other == bodyA) {
                     // Flag the contact for filtering at the next time step (where either body is awake).
                     edge.contact.flagForFiltering();
                 }
-
-                edge = edge.next;
             }
+
+//            ContactEdge edge = bodyB.getContactList();
+//            while (edge != null) {
+//                if (edge.other == bodyA) {
+//                    // Flag the contact for filtering at the next time step (where either body is awake).
+//                    edge.contact.flagForFiltering();
+//                }
+//
+//                edge = edge.next;
+//            }
         }
 
         return j;
@@ -283,15 +291,23 @@ public final class World {
 
         // If the joint prevents collisions, then flag any contacts for filtering.
         if (!collideConnected) {
-            ContactEdge edge = bodyB.getContactList();
-            while (edge != null) {
+
+            for (ContactEdge edge : bodyB.getContactEdges()) {
                 if (edge.other == bodyA) {
                     // Flag the contact for filtering at the next time step (where either body is awake).
                     edge.contact.flagForFiltering();
                 }
-
-                edge = edge.next;
             }
+
+//            ContactEdge edge = bodyB.getContactList();
+//            while (edge != null) {
+//                if (edge.other == bodyA) {
+//                    // Flag the contact for filtering at the next time step (where either body is awake).
+//                    edge.contact.flagForFiltering();
+//                }
+//
+//                edge = edge.next;
+//            }
         }
     }
 
@@ -424,7 +440,7 @@ public final class World {
                 }
 
                 // Search all contacts connected to this body.
-                for (ContactEdge ce = b.m_contactList; ce != null; ce = ce.next) {
+                for (ContactEdge ce : b.getContactEdges()) {
                     Contact contact = ce.contact;
 
                     // Has this contact already been added to an island?
@@ -694,7 +710,8 @@ public final class World {
             for (int i = 0; i < 2; ++i) {
                 Body body = tempBodies[i];
                 if (body.getType() == BodyType.DYNAMIC) {
-                    for (ContactEdge ce = body.m_contactList; ce != null; ce = ce.next) {
+
+                    for (ContactEdge ce : body.getContactEdges()) {
                         if (island.m_bodyCount == island.m_bodyCapacity) {
                             break;
                         }
@@ -787,7 +804,7 @@ public final class World {
                 body.synchronizeFixtures();
 
                 // Invalidate all contact TOIs on this displaced body.
-                for (ContactEdge ce = body.m_contactList; ce != null; ce = ce.next) {
+                for (ContactEdge ce : body.getContactEdges()) {
                     ce.contact.m_flags &= ~(Contact.TOI_FLAG | Contact.ISLAND_FLAG);
                 }
             }

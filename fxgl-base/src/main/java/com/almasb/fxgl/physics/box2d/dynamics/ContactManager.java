@@ -106,8 +106,8 @@ class ContactManager implements PairCallback {
         // TODO_ERIN use a hash table to remove a potential bottleneck when both
         // bodies have a lot of contacts.
         // Does a contact already exist?
-        ContactEdge edge = bodyB.getContactList();
-        while (edge != null) {
+
+        for (ContactEdge edge : bodyB.getContactEdges()) {
             if (edge.other == bodyA) {
                 Fixture fA = edge.contact.getFixtureA();
                 Fixture fB = edge.contact.getFixtureB();
@@ -124,9 +124,29 @@ class ContactManager implements PairCallback {
                     return;
                 }
             }
-
-            edge = edge.next;
         }
+
+//        ContactEdge edge = bodyB.getContactList();
+//        while (edge != null) {
+//            if (edge.other == bodyA) {
+//                Fixture fA = edge.contact.getFixtureA();
+//                Fixture fB = edge.contact.getFixtureB();
+//                int iA = edge.contact.getChildIndexA();
+//                int iB = edge.contact.getChildIndexB();
+//
+//                if (fA == fixtureA && iA == indexA && fB == fixtureB && iB == indexB) {
+//                    // A contact already exists.
+//                    return;
+//                }
+//
+//                if (fA == fixtureB && iA == indexB && fB == fixtureA && iB == indexA) {
+//                    // A contact already exists.
+//                    return;
+//                }
+//            }
+//
+//            edge = edge.next;
+//        }
 
         // Does a joint override collision? is at least one body dynamic?
         if (!bodyB.shouldCollide(bodyA)) {
@@ -166,23 +186,38 @@ class ContactManager implements PairCallback {
         c.m_nodeA.contact = c;
         c.m_nodeA.other = bodyB;
 
-        c.m_nodeA.prev = null;
-        c.m_nodeA.next = bodyA.m_contactList;
-        if (bodyA.m_contactList != null) {
-            bodyA.m_contactList.prev = c.m_nodeA;
-        }
-        bodyA.m_contactList = c.m_nodeA;
+
+
+        bodyA.getContactEdges().insert(0, c.m_nodeA);
+
+//        c.m_nodeA.prev = null;
+//        c.m_nodeA.next = bodyA.m_contactList;
+//        if (bodyA.m_contactList != null) {
+//            bodyA.m_contactList.prev = c.m_nodeA;
+//        }
+//        bodyA.m_contactList = c.m_nodeA;
+
+
+
+
 
         // Connect to body B
         c.m_nodeB.contact = c;
         c.m_nodeB.other = bodyA;
 
-        c.m_nodeB.prev = null;
-        c.m_nodeB.next = bodyB.m_contactList;
-        if (bodyB.m_contactList != null) {
-            bodyB.m_contactList.prev = c.m_nodeB;
-        }
-        bodyB.m_contactList = c.m_nodeB;
+
+        bodyB.getContactEdges().insert(0, c.m_nodeB);
+
+//        c.m_nodeB.prev = null;
+//        c.m_nodeB.next = bodyB.m_contactList;
+//        if (bodyB.m_contactList != null) {
+//            bodyB.m_contactList.prev = c.m_nodeB;
+//        }
+//        bodyB.m_contactList = c.m_nodeB;
+
+
+
+
 
         // wake up the bodies
         if (!fixtureA.isSensor() && !fixtureB.isSensor()) {
@@ -221,30 +256,34 @@ class ContactManager implements PairCallback {
         }
 
         // Remove from body 1
-        if (c.m_nodeA.prev != null) {
-            c.m_nodeA.prev.next = c.m_nodeA.next;
-        }
+        bodyA.getContactEdges().removeValueByIdentity(c.m_nodeA);
 
-        if (c.m_nodeA.next != null) {
-            c.m_nodeA.next.prev = c.m_nodeA.prev;
-        }
-
-        if (c.m_nodeA == bodyA.m_contactList) {
-            bodyA.m_contactList = c.m_nodeA.next;
-        }
+//        if (c.m_nodeA.prev != null) {
+//            c.m_nodeA.prev.next = c.m_nodeA.next;
+//        }
+//
+//        if (c.m_nodeA.next != null) {
+//            c.m_nodeA.next.prev = c.m_nodeA.prev;
+//        }
+//
+//        if (c.m_nodeA == bodyA.m_contactList) {
+//            bodyA.m_contactList = c.m_nodeA.next;
+//        }
 
         // Remove from body 2
-        if (c.m_nodeB.prev != null) {
-            c.m_nodeB.prev.next = c.m_nodeB.next;
-        }
+        bodyB.getContactEdges().removeValueByIdentity(c.m_nodeB);
 
-        if (c.m_nodeB.next != null) {
-            c.m_nodeB.next.prev = c.m_nodeB.prev;
-        }
-
-        if (c.m_nodeB == bodyB.m_contactList) {
-            bodyB.m_contactList = c.m_nodeB.next;
-        }
+//        if (c.m_nodeB.prev != null) {
+//            c.m_nodeB.prev.next = c.m_nodeB.next;
+//        }
+//
+//        if (c.m_nodeB.next != null) {
+//            c.m_nodeB.next.prev = c.m_nodeB.prev;
+//        }
+//
+//        if (c.m_nodeB == bodyB.m_contactList) {
+//            bodyB.m_contactList = c.m_nodeB.next;
+//        }
 
         // Call the factory.
         pushContact(c);

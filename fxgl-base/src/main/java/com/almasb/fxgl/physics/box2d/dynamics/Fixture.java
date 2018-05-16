@@ -193,16 +193,26 @@ public final class Fixture {
      */
     public void refilter() {
         // Flag associated contacts for filtering.
-        ContactEdge edge = body.getContactList();
-        while (edge != null) {
+
+        for (ContactEdge edge : body.getContactEdges()) {
             Contact contact = edge.contact;
             Fixture fixtureA = contact.getFixtureA();
             Fixture fixtureB = contact.getFixtureB();
             if (fixtureA == this || fixtureB == this) {
                 contact.flagForFiltering();
             }
-            edge = edge.next;
         }
+
+//        ContactEdge edge = body.getContactList();
+//        while (edge != null) {
+//            Contact contact = edge.contact;
+//            Fixture fixtureA = contact.getFixtureA();
+//            Fixture fixtureB = contact.getFixtureB();
+//            if (fixtureA == this || fixtureB == this) {
+//                contact.flagForFiltering();
+//            }
+//            edge = edge.next;
+//        }
 
         World world = body.getWorld();
 

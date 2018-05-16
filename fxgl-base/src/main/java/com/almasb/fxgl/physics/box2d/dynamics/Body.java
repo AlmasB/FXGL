@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.physics.box2d.dynamics;
 
+import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.BroadPhase;
@@ -43,7 +44,11 @@ public final class Body {
     private List<Fixture> fixtures = new ArrayList<>();
 
     public JointEdge m_jointList = null;
-    public ContactEdge m_contactList = null;
+
+    //public ContactEdge m_contactList = null;
+
+    private Array<ContactEdge> contactEdges = new Array<>();
+
 
     public int m_flags = 0;
 
@@ -250,10 +255,9 @@ public final class Body {
         fixtures.remove(fixture);
 
         // Destroy any contacts associated with the fixture.
-        ContactEdge edge = m_contactList;
-        while (edge != null) {
+
+        for (ContactEdge edge : contactEdges) {
             Contact c = edge.contact;
-            edge = edge.next;
 
             Fixture fixtureA = c.getFixtureA();
             Fixture fixtureB = c.getFixtureB();
@@ -263,6 +267,20 @@ public final class Body {
                 world.getContactManager().destroy(c);
             }
         }
+
+//        ContactEdge edge = m_contactList;
+//        while (edge != null) {
+//            Contact c = edge.contact;
+//            edge = edge.next;
+//
+//            Fixture fixtureA = c.getFixtureA();
+//            Fixture fixtureB = c.getFixtureB();
+//
+//            if (fixture == fixtureA || fixture == fixtureB) {
+//                // This destroys the contact and removes it from this body's contact list.
+//                world.getContactManager().destroy(c);
+//            }
+//        }
 
         if ((m_flags & e_activeFlag) == e_activeFlag) {
             BroadPhase broadPhase = world.getContactManager().broadPhase;
@@ -860,13 +878,20 @@ public final class Body {
 
     void destroyAttachedContacts() {
         // Delete the attached contacts.
-        ContactEdge ce = m_contactList;
-        while (ce != null) {
-            ContactEdge ce0 = ce;
-            ce = ce.next;
-            world.getContactManager().destroy(ce0.contact);
+
+        for (ContactEdge ce : contactEdges) {
+            world.getContactManager().destroy(ce.contact);
         }
-        m_contactList = null;
+
+        contactEdges.clear();
+
+//        ContactEdge ce = m_contactList;
+//        while (ce != null) {
+//            ContactEdge ce0 = ce;
+//            ce = ce.next;
+//            world.getContactManager().destroy(ce0.contact);
+//        }
+//        m_contactList = null;
     }
 
     /**
@@ -1025,8 +1050,12 @@ public final class Body {
      * Note: this list changes during the time step and you may miss some collisions if you don't
      * use ContactListener.
      */
-    public ContactEdge getContactList() {
-        return m_contactList;
+//    public ContactEdge getContactList() {
+//        return m_contactList;
+//    }
+
+    public Array<ContactEdge> getContactEdges() {
+        return contactEdges;
     }
 
     /**
