@@ -757,7 +757,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         Point2D point = null;
 
         if (raycastCallback.getFixture() != null)
-            entity = (Entity) raycastCallback.getFixture().getBody().getUserData();
+            entity = raycastCallback.getFixture().getBody().getEntity();
 
         if (raycastCallback.getPoint() != null)
             point = toPoint(raycastCallback.getPoint());
