@@ -268,20 +268,6 @@ public final class Body {
             }
         }
 
-//        ContactEdge edge = m_contactList;
-//        while (edge != null) {
-//            Contact c = edge.contact;
-//            edge = edge.next;
-//
-//            Fixture fixtureA = c.getFixtureA();
-//            Fixture fixtureB = c.getFixtureB();
-//
-//            if (fixture == fixtureA || fixture == fixtureB) {
-//                // This destroys the contact and removes it from this body's contact list.
-//                world.getContactManager().destroy(c);
-//            }
-//        }
-
         if ((m_flags & e_activeFlag) == e_activeFlag) {
             BroadPhase broadPhase = world.getContactManager().broadPhase;
             fixture.destroyProxies(broadPhase);
@@ -877,21 +863,11 @@ public final class Body {
     }
 
     void destroyAttachedContacts() {
-        // Delete the attached contacts.
-
         for (ContactEdge ce : contactEdges) {
             world.getContactManager().destroy(ce.contact);
         }
 
         contactEdges.clear();
-
-//        ContactEdge ce = m_contactList;
-//        while (ce != null) {
-//            ContactEdge ce0 = ce;
-//            ce = ce.next;
-//            world.getContactManager().destroy(ce0.contact);
-//        }
-//        m_contactList = null;
     }
 
     /**

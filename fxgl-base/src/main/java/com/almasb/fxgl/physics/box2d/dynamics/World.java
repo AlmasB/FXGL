@@ -205,16 +205,6 @@ public final class World {
                     edge.contact.flagForFiltering();
                 }
             }
-
-//            ContactEdge edge = bodyB.getContactList();
-//            while (edge != null) {
-//                if (edge.other == bodyA) {
-//                    // Flag the contact for filtering at the next time step (where either body is awake).
-//                    edge.contact.flagForFiltering();
-//                }
-//
-//                edge = edge.next;
-//            }
         }
 
         return j;
@@ -298,16 +288,6 @@ public final class World {
                     edge.contact.flagForFiltering();
                 }
             }
-
-//            ContactEdge edge = bodyB.getContactList();
-//            while (edge != null) {
-//                if (edge.other == bodyA) {
-//                    // Flag the contact for filtering at the next time step (where either body is awake).
-//                    edge.contact.flagForFiltering();
-//                }
-//
-//                edge = edge.next;
-//            }
         }
     }
 

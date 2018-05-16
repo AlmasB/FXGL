@@ -25,14 +25,4 @@ public class ContactEdge {
      * the contact
      */
     public Contact contact = null;
-
-//    /**
-//     * the previous contact edge in the body's contact list
-//     */
-//    public ContactEdge prev = null;
-//
-//    /**
-//     * the next contact edge in the body's contact list
-//     */
-//    public ContactEdge next = null;
 }
