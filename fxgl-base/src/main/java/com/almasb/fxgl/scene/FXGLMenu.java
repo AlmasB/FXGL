@@ -254,12 +254,13 @@ public abstract class FXGLMenu extends FXGLScene {
 
         app.getGameState().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
 
+        String playtime = app.getGameplay().getStats().getPlaytimeHours() + "H "
+                + app.getGameplay().getStats().getPlaytimeMinutes() + "M "
+                + app.getGameplay().getStats().getPlaytimeSeconds() + "S";
+
         return new MenuContent(
                 new HBox(25, getUIFactory().newText(localizedStringProperty("menu.difficulty").concat(":")), difficultySpinner),
-                getUIFactory().newText(localizedStringProperty("menu.playtime")+": "
-                        + app.getGameplay().getStats().getPlaytimeHours() + "H "
-                        + app.getGameplay().getStats().getPlaytimeMinutes() + "M "
-                        + app.getGameplay().getStats().getPlaytimeSeconds() + "S")
+                new HBox(25, getUIFactory().newText(localizedStringProperty("menu.playtime").concat(":")), getUIFactory().newText(playtime))
                 );
 
     }
