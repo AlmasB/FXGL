@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.extra.scene.menu
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.scene.FXGLMenu
 import com.almasb.fxgl.scene.menu.MenuType
@@ -14,6 +15,7 @@ import javafx.animation.Interpolator
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
+import javafx.beans.binding.StringBinding
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -90,9 +92,9 @@ class Warcraft3Menu(app: GameApplication, menuType: MenuType) : FXGLMenu(app, me
             strokeType = StrokeType.OUTSIDE
         }
 
-        val itemContinue = createActionButton("CONTINUE", { fireContinue() })
-        val itemNewGame = createActionButton("NEW GAME", { fireNewGame() })
-        val itemExit = createActionButton("EXIT", { fireExit() })
+        val itemContinue = createActionButton(FXGL.localizedStringProperty("menu.continue"), { fireContinue() })
+        val itemNewGame = createActionButton(FXGL.localizedStringProperty("menu.newGame"), { fireNewGame() })
+        val itemExit = createActionButton(FXGL.localizedStringProperty("menu.exit"), { fireExit() })
 
         val vbox = VBox(10.0, itemContinue, itemNewGame, itemExit)
         vbox.alignment = Pos.CENTER
@@ -106,6 +108,15 @@ class Warcraft3Menu(app: GameApplication, menuType: MenuType) : FXGLMenu(app, me
 
     override fun createActionButton(name: String, action: Runnable): Button {
         with(FXGLButton(name)) {
+            onAction = EventHandler { action.run() }
+            return this
+        }
+    }
+
+    override fun createActionButton(name: StringBinding, action: Runnable): Button {
+        val btn = FXGLButton(name.value)
+        btn.textProperty().bind(name)
+        with(btn) {
             onAction = EventHandler { action.run() }
             return this
         }

@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.ui;
 
+import javafx.beans.binding.StringBinding;
 import javafx.beans.binding.StringExpression;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
@@ -38,6 +39,8 @@ public interface UIFactory {
     Text newText(StringExpression textBinding);
 
     Button newButton(String text);
+
+    Button newButton(StringBinding text);
 
     <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items);
 

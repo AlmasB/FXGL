@@ -11,6 +11,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.util.Supplier;
+import javafx.beans.binding.StringBinding;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -81,14 +82,14 @@ public class CCTRMenu extends FXGLMenu {
 
         double distance = midY - 50;
 
-        Button btnContinue = createActionButton("CONTINUE", this::fireContinue);
-        Button btn1 = createActionButton("NEW GAME", this::fireNewGame);
-        Button btn2 = createContentButton("LOAD", this::createContentLoad);
-        Button btn3 = createContentButton("OPTIONS", () -> new MenuContent(makeOptionsMenu()));
-        Button btn4 = createContentButton("EXTRA", () -> new MenuContent(makeExtraMenu()));
-        Button btn5 = createActionButton("ONLINE", this::fireMultiplayer);
-        Button btn6 = createActionButton("LOGOUT", this::fireLogout);
-        Button btn7 = createActionButton("EXIT", this::fireExit);
+        Button btnContinue = createActionButton(FXGL.localizedStringProperty("menu.continue"), this::fireContinue);
+        Button btn1 = createActionButton(FXGL.localizedStringProperty("menu.newGame"), this::fireNewGame);
+        Button btn2 = createContentButton(FXGL.localizedStringProperty("menu.load"), this::createContentLoad);
+        Button btn3 = createContentButton(FXGL.localizedStringProperty("menu.options"), () -> new MenuContent(makeOptionsMenu()));
+        Button btn4 = createContentButton(FXGL.localizedStringProperty("menu.extra"), () -> new MenuContent(makeExtraMenu()));
+        Button btn5 = createActionButton(FXGL.localizedStringProperty("menu.online"), this::fireMultiplayer);
+        Button btn6 = createActionButton(FXGL.localizedStringProperty("menu.logout"), this::fireLogout);
+        Button btn7 = createActionButton(FXGL.localizedStringProperty("menu.exit"), this::fireExit);
 
         Group group = new Group(btnContinue, btn1, btn2, btn3, btn4, btn5, btn6, btn7);
 
@@ -131,12 +132,12 @@ public class CCTRMenu extends FXGLMenu {
 
         double distance = midY - 50;
 
-        Button btnContinue = createActionButton("RESUME", this::fireResume);
-        Button btn1 = createActionButton("SAVE", this::fireSave);
-        Button btn2 = createContentButton("LOAD", this::createContentLoad);
-        Button btn3 = createContentButton("OPTIONS", () -> new MenuContent(makeOptionsMenu()));
-        Button btn4 = createContentButton("EXTRA", () -> new MenuContent(makeExtraMenu()));
-        Button btn5 = createActionButton("MAIN MENU", this::fireExitToMainMenu);
+        Button btnContinue = createActionButton(FXGL.localizedStringProperty("menu.resume"), this::fireResume);
+        Button btn1 = createActionButton(FXGL.localizedStringProperty("menu.save"), this::fireSave);
+        Button btn2 = createContentButton(FXGL.localizedStringProperty("menu.load"), this::createContentLoad);
+        Button btn3 = createContentButton(FXGL.localizedStringProperty("menu.options"), () -> new MenuContent(makeOptionsMenu()));
+        Button btn4 = createContentButton(FXGL.localizedStringProperty("menu.extra"), () -> new MenuContent(makeExtraMenu()));
+        Button btn5 = createActionButton(FXGL.localizedStringProperty("menu.mainMenu"), this::fireExitToMainMenu);
 
         Group group = new Group(btnContinue, btn1, btn2, btn3, btn4, btn5);
 
@@ -163,17 +164,17 @@ public class CCTRMenu extends FXGLMenu {
     }
 
     private VBox makeOptionsMenu() {
-        Button btnGameplay = createContentButton("GAMEPLAY", this::createContentGameplay);
-        Button btnControls = createContentButton("CONTROLS", this::createContentControls);
-        Button btnVideo = createContentButton("VIDEO", this::createContentVideo);
-        Button btnAudio = createContentButton("AUDIO", this::createContentAudio);
+        Button btnGameplay = createContentButton(FXGL.localizedStringProperty("menu.gameplay"), this::createContentGameplay);
+        Button btnControls = createContentButton(FXGL.localizedStringProperty("menu.controls"), this::createContentControls);
+        Button btnVideo = createContentButton(FXGL.localizedStringProperty("menu.video"), this::createContentVideo);
+        Button btnAudio = createContentButton(FXGL.localizedStringProperty("menu.audio"), this::createContentAudio);
 
         return new VBox(10, btnGameplay, btnControls, btnVideo, btnAudio);
     }
 
     private VBox makeExtraMenu() {
-        Button btnCredits = createContentButton("CREDITS", this::createContentCredits);
-        Button btnTrophies = createContentButton("TROPHIES", this::createContentAchievements);
+        Button btnCredits = createContentButton(FXGL.localizedStringProperty("menu.credits"), this::createContentCredits);
+        Button btnTrophies = createContentButton(FXGL.localizedStringProperty("menu.trophies"), this::createContentAchievements);
 
         return new VBox(10, btnCredits, btnTrophies);
     }
@@ -198,6 +199,20 @@ public class CCTRMenu extends FXGLMenu {
     }
 
     /**
+     * Creates a new button with given name that performs given action on click/press.
+     *
+     * @param name  button name (with binding)
+     * @param action button action
+     * @return new button
+     */
+    @Override
+    protected final Button createActionButton(StringBinding name, Runnable action) {
+        Button btn = FXGL.getUIFactory().newButton(name);
+        btn.setOnAction(e -> action.run());
+        return btn;
+    }
+
+    /**
      * Creates a new button with given name that sets given content on click/press.
      *
      * @param name  button name
@@ -207,6 +222,22 @@ public class CCTRMenu extends FXGLMenu {
     @SuppressWarnings("unchecked")
     @Override
     protected final Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
+        Button btn = FXGL.getUIFactory().newButton(name);
+        btn.setUserData(contentSupplier);
+        btn.setOnAction(e -> switchMenuContentTo(((Supplier<MenuContent>)btn.getUserData()).get()));
+        return btn;
+    }
+
+    /**
+     * Creates a new button with given name that sets given content on click/press.
+     *
+     * @param name  button name (with binding)
+     * @param contentSupplier content supplier
+     * @return new button
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    protected final Button createContentButton(StringBinding name, Supplier<MenuContent> contentSupplier) {
         Button btn = FXGL.getUIFactory().newButton(name);
         btn.setUserData(contentSupplier);
         btn.setOnAction(e -> switchMenuContentTo(((Supplier<MenuContent>)btn.getUserData()).get()));

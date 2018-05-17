@@ -88,7 +88,7 @@ public final class SaveLoadManager {
                     saveFiles.setAll(files);
                     Collections.sort(saveFiles, SaveFile.RECENT_FIRST);
                 })
-                .runAsyncFXWithDialog(new ProgressDialog("Loading save files"));
+                .runAsyncFXWithDialog(new ProgressDialog(FXGL.getLocalizedString("menu.loadingSaveFiles")));
     }
 
     /**
