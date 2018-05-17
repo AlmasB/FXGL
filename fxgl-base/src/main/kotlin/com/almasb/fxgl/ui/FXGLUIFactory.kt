@@ -7,6 +7,7 @@
 package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.asset.FXGLAssets
+import javafx.beans.binding.StringBinding
 import javafx.beans.binding.StringExpression
 import javafx.collections.ObservableList
 import javafx.scene.control.*
@@ -55,6 +56,12 @@ class FXGLUIFactory : UIFactory {
 
     override fun newButton(text: String): Button {
         return FXGLButton(text)
+    }
+
+    override fun newButton(text: StringBinding): Button {
+        val btn = FXGLButton(text.value)
+        btn.textProperty().bind(text)
+        return btn
     }
 
     override fun <T> newChoiceBox(items: ObservableList<T>): ChoiceBox<T> {

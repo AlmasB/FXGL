@@ -210,7 +210,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
         MenuButton btnRestore = new MenuButton("menu.restore");
         btnRestore.setOnAction(e -> {
-            app.getDisplay().showConfirmationBox("Settings will be restored to default", yes -> {
+            app.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.settingsRestore"), yes -> {
                 if (yes) {
                     switchMenuContentTo(EMPTY);
                     listener.restoreDefaultSettings();

@@ -105,7 +105,7 @@ public abstract class FXGLMenu extends FXGLScene {
                 getContentRoot().getChildren().remove(getContentRoot().getChildren().size() - 1);
             }
 
-            getContentRoot().getChildren().add(createProfileView("Profile: " + newName));
+            getContentRoot().getChildren().add(createProfileView(FXGL.getLocalizedString("profile.profile")+": " + newName));
         });
     }
 
@@ -211,8 +211,7 @@ public abstract class FXGLMenu extends FXGLScene {
         // this runs async
         listener.getSaveLoadManager().querySaveFiles();
 
-        Button btnLoad = FXGL.getUIFactory().newButton("LOAD");
-        btnLoad.textProperty().bind(localizedStringProperty("menu.load"));
+        Button btnLoad = FXGL.getUIFactory().newButton(localizedStringProperty("menu.load"));
         btnLoad.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
 
         btnLoad.setOnAction(e -> {
@@ -221,8 +220,7 @@ public abstract class FXGLMenu extends FXGLScene {
             fireLoad(saveFile);
         });
 
-        Button btnDelete = FXGL.getUIFactory().newButton("DELETE");
-        btnDelete.textProperty().bind(localizedStringProperty("menu.delete"));
+        Button btnDelete = FXGL.getUIFactory().newButton(localizedStringProperty("menu.delete"));
         btnDelete.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
 
         btnDelete.setOnAction(e -> {
@@ -251,7 +249,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         return new MenuContent(
                 new HBox(25, FXGL.getUIFactory().newText(localizedStringProperty("menu.difficulty").concat(":")), difficultySpinner),
-                FXGL.getUIFactory().newText("PLAYTIME: "
+                FXGL.getUIFactory().newText(FXGL.localizedStringProperty("menu.playtime")+": "
                         + app.getGameplay().getStats().getPlaytimeHours() + "H "
                         + app.getGameplay().getStats().getPlaytimeMinutes() + "M "
                         + app.getGameplay().getStats().getPlaytimeSeconds() + "S")
@@ -298,7 +296,7 @@ public abstract class FXGLMenu extends FXGLScene {
             Rectangle rect = new Rectangle(250, 100);
             rect.setStroke(Color.AZURE);
 
-            Text text = FXGL.getUIFactory().newText("PRESS ANY KEY", 24);
+            Text text = FXGL.getUIFactory().newText(FXGL.getLocalizedString("menu.pressAnyKey"), 24);
 
             Stage stage = new Stage(StageStyle.TRANSPARENT);
             stage.initModality(Modality.WINDOW_MODAL);
@@ -356,7 +354,7 @@ public abstract class FXGLMenu extends FXGLScene {
         VBox vbox = new VBox();
 
         if (getSettings().isManualResizeEnabled()) {
-            Button btnFixRatio = FXGL.getUIFactory().newButton("Fix Ratio");
+            Button btnFixRatio = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("menu.fixRatio"));
             btnFixRatio.setOnAction(e -> {
                 listener.fixAspectRatio();
             });
@@ -369,7 +367,7 @@ public abstract class FXGLMenu extends FXGLScene {
             cbFullScreen.setSelected(false);
             cbFullScreen.selectedProperty().bindBidirectional(FXGL.getMenuSettings().fullScreenProperty());
 
-            vbox.getChildren().add(new HBox(25, FXGL.getUIFactory().newText("Fullscreen: "), cbFullScreen));
+            vbox.getChildren().add(new HBox(25, FXGL.getUIFactory().newText(FXGL.getLocalizedString("menu.fullscreen")+": "), cbFullScreen));
         }
 
         return new MenuContent(
@@ -387,14 +385,14 @@ public abstract class FXGLMenu extends FXGLScene {
         Slider sliderMusic = new Slider(0, 1, 1);
         sliderMusic.valueProperty().bindBidirectional(app.getAudioPlayer().globalMusicVolumeProperty());
 
-        Text textMusic = FXGL.getUIFactory().newText("Music Volume: ");
+        Text textMusic = FXGL.getUIFactory().newText(FXGL.localizedStringProperty("menu.music.volume").concat(": "));
         Text percentMusic = FXGL.getUIFactory().newText("");
         percentMusic.textProperty().bind(sliderMusic.valueProperty().multiply(100).asString("%.0f"));
 
         Slider sliderSound = new Slider(0, 1, 1);
         sliderSound.valueProperty().bindBidirectional(app.getAudioPlayer().globalSoundVolumeProperty());
 
-        Text textSound = FXGL.getUIFactory().newText("Sound Volume: ");
+        Text textSound = FXGL.getUIFactory().newText(FXGL.localizedStringProperty("menu.sound.volume").concat(": "));
         Text percentSound = FXGL.getUIFactory().newText("");
         percentSound.textProperty().bind(sliderSound.valueProperty().multiply(100).asString("%.0f"));
 
@@ -424,8 +422,8 @@ public abstract class FXGLMenu extends FXGLScene {
 
         List<String> credits = new ArrayList<>(FXGL.getSettings().getCredits().getList());
         credits.add("");
-        credits.add("Powered by FXGL " + FXGL.getProperties().getString(FXGL_VERSION));
-        credits.add("Author: Almas Baimagambetov");
+        credits.add(FXGL.getLocalizedString("credits.poweredBy")+" FXGL " + FXGL.getProperties().getString(FXGL_VERSION));
+        credits.add(FXGL.getLocalizedString("credits.author")+": Almas Baimagambetov");
         credits.add("https://github.com/AlmasB/FXGL");
         credits.add("");
 
@@ -448,7 +446,7 @@ public abstract class FXGLMenu extends FXGLScene {
         Consumer<String> openBrowser = url -> {
             FXGL.getNet()
                     .openBrowserTask(FXGL.getProperties().getString(url))
-                    .onFailure(error -> log.warning("Error opening browser: " + error))
+                    .onFailure(error -> log.warning(FXGL.getLocalizedString("menu.errorOpeningBrowser")+": " + error))
                     .run();
         };
 
@@ -459,7 +457,7 @@ public abstract class FXGLMenu extends FXGLScene {
         btnSurveyMonkey.setOnAction(e -> openBrowser.accept("url.surveymonkey"));
 
         VBox vbox = new VBox(15,
-                FXGL.getUIFactory().newText("Choose your feedback method", Color.WHEAT, 18),
+                FXGL.getUIFactory().newText(FXGL.getLocalizedString("menu.chooseFeedback"), Color.WHEAT, 18),
                 btnGoogle,
                 btnSurveyMonkey);
         vbox.setAlignment(Pos.CENTER);
