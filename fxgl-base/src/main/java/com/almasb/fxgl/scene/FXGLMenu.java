@@ -105,7 +105,7 @@ public abstract class FXGLMenu extends FXGLScene {
                 getContentRoot().getChildren().remove(getContentRoot().getChildren().size() - 1);
             }
 
-            getContentRoot().getChildren().add(createProfileView(FXGL.getLocalizedString("profile.profile")+": " + newName));
+            getContentRoot().getChildren().add(createProfileView(getLocalizedString("profile.profile")+": " + newName));
         });
     }
 
@@ -249,7 +249,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         return new MenuContent(
                 new HBox(25, FXGL.getUIFactory().newText(localizedStringProperty("menu.difficulty").concat(":")), difficultySpinner),
-                FXGL.getUIFactory().newText(FXGL.localizedStringProperty("menu.playtime")+": "
+                FXGL.getUIFactory().newText(localizedStringProperty("menu.playtime")+": "
                         + app.getGameplay().getStats().getPlaytimeHours() + "H "
                         + app.getGameplay().getStats().getPlaytimeMinutes() + "M "
                         + app.getGameplay().getStats().getPlaytimeSeconds() + "S")
@@ -296,7 +296,7 @@ public abstract class FXGLMenu extends FXGLScene {
             Rectangle rect = new Rectangle(250, 100);
             rect.setStroke(Color.AZURE);
 
-            Text text = FXGL.getUIFactory().newText(FXGL.getLocalizedString("menu.pressAnyKey"), 24);
+            Text text = FXGL.getUIFactory().newText(getLocalizedString("menu.pressAnyKey"), 24);
 
             Stage stage = new Stage(StageStyle.TRANSPARENT);
             stage.initModality(Modality.WINDOW_MODAL);
@@ -354,7 +354,7 @@ public abstract class FXGLMenu extends FXGLScene {
         VBox vbox = new VBox();
 
         if (getSettings().isManualResizeEnabled()) {
-            Button btnFixRatio = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("menu.fixRatio"));
+            Button btnFixRatio = FXGL.getUIFactory().newButton(localizedStringProperty("menu.fixRatio"));
             btnFixRatio.setOnAction(e -> {
                 listener.fixAspectRatio();
             });
@@ -367,7 +367,7 @@ public abstract class FXGLMenu extends FXGLScene {
             cbFullScreen.setSelected(false);
             cbFullScreen.selectedProperty().bindBidirectional(FXGL.getMenuSettings().fullScreenProperty());
 
-            vbox.getChildren().add(new HBox(25, FXGL.getUIFactory().newText(FXGL.getLocalizedString("menu.fullscreen")+": "), cbFullScreen));
+            vbox.getChildren().add(new HBox(25, FXGL.getUIFactory().newText(getLocalizedString("menu.fullscreen")+": "), cbFullScreen));
         }
 
         return new MenuContent(
@@ -385,14 +385,14 @@ public abstract class FXGLMenu extends FXGLScene {
         Slider sliderMusic = new Slider(0, 1, 1);
         sliderMusic.valueProperty().bindBidirectional(app.getAudioPlayer().globalMusicVolumeProperty());
 
-        Text textMusic = FXGL.getUIFactory().newText(FXGL.localizedStringProperty("menu.music.volume").concat(": "));
+        Text textMusic = FXGL.getUIFactory().newText(localizedStringProperty("menu.music.volume").concat(": "));
         Text percentMusic = FXGL.getUIFactory().newText("");
         percentMusic.textProperty().bind(sliderMusic.valueProperty().multiply(100).asString("%.0f"));
 
         Slider sliderSound = new Slider(0, 1, 1);
         sliderSound.valueProperty().bindBidirectional(app.getAudioPlayer().globalSoundVolumeProperty());
 
-        Text textSound = FXGL.getUIFactory().newText(FXGL.localizedStringProperty("menu.sound.volume").concat(": "));
+        Text textSound = FXGL.getUIFactory().newText(localizedStringProperty("menu.sound.volume").concat(": "));
         Text percentSound = FXGL.getUIFactory().newText("");
         percentSound.textProperty().bind(sliderSound.valueProperty().multiply(100).asString("%.0f"));
 
@@ -422,8 +422,8 @@ public abstract class FXGLMenu extends FXGLScene {
 
         List<String> credits = new ArrayList<>(FXGL.getSettings().getCredits().getList());
         credits.add("");
-        credits.add(FXGL.getLocalizedString("credits.poweredBy")+" FXGL " + FXGL.getProperties().getString(FXGL_VERSION));
-        credits.add(FXGL.getLocalizedString("credits.author")+": Almas Baimagambetov");
+        credits.add(getLocalizedString("credits.poweredBy")+" FXGL " + FXGL.getProperties().getString(FXGL_VERSION));
+        credits.add(getLocalizedString("credits.author")+": Almas Baimagambetov");
         credits.add("https://github.com/AlmasB/FXGL");
         credits.add("");
 
@@ -446,7 +446,7 @@ public abstract class FXGLMenu extends FXGLScene {
         Consumer<String> openBrowser = url -> {
             FXGL.getNet()
                     .openBrowserTask(FXGL.getProperties().getString(url))
-                    .onFailure(error -> log.warning(FXGL.getLocalizedString("menu.errorOpeningBrowser")+": " + error))
+                    .onFailure(error -> log.warning(getLocalizedString("menu.errorOpeningBrowser")+": " + error))
                     .run();
         };
 
@@ -457,7 +457,7 @@ public abstract class FXGLMenu extends FXGLScene {
         btnSurveyMonkey.setOnAction(e -> openBrowser.accept("url.surveymonkey"));
 
         VBox vbox = new VBox(15,
-                FXGL.getUIFactory().newText(FXGL.getLocalizedString("menu.chooseFeedback"), Color.WHEAT, 18),
+                FXGL.getUIFactory().newText(getLocalizedString("menu.chooseFeedback"), Color.WHEAT, 18),
                 btnGoogle,
                 btnSurveyMonkey);
         vbox.setAlignment(Pos.CENTER);
