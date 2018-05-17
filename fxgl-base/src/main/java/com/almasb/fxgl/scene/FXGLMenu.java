@@ -446,7 +446,7 @@ public abstract class FXGLMenu extends FXGLScene {
         Consumer<String> openBrowser = url -> {
             getNet()
                     .openBrowserTask(getProperties().getString(url))
-                    .onFailure(error -> log.warning(getLocalizedString("menu.errorOpeningBrowser")+": " + error))
+                    .onFailure(error -> log.warning("Error opening browser: " + error))
                     .run();
         };
 
