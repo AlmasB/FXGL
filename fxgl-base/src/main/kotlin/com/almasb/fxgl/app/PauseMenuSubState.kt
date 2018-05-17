@@ -99,13 +99,13 @@ internal object PauseMenuSubState : SubState() {
     }
 
     private fun createContent(): Parent {
-        val btnResume = FXGL.getUIFactory().newButton("RESUME")
+        val btnResume = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("menu.resume"))
         btnResume.setOnAction {
             requestHide()
             unlockSwitch()
         }
 
-        val btnExit = FXGL.getUIFactory().newButton("EXIT")
+        val btnExit = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("menu.exit"))
         btnExit.setOnAction {
             FXGL.getApp().exit()
         }

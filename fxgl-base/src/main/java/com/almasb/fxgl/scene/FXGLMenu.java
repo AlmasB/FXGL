@@ -25,6 +25,7 @@ import com.almasb.fxgl.util.Consumer;
 import com.almasb.fxgl.util.Language;
 import com.almasb.fxgl.util.Supplier;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -128,10 +129,16 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     protected abstract Button createActionButton(String name, Runnable action);
+    protected abstract Button createActionButton(StringBinding name, Runnable action);
 
     protected Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
         return createActionButton(name, () -> switchMenuContentTo(contentSupplier.get()));
     }
+
+    protected Button createContentButton(StringBinding name, Supplier<MenuContent> contentSupplier) {
+        return createActionButton(name, () -> switchMenuContentTo(contentSupplier.get()));
+    }
+
 
     /**
      * @return full version string
