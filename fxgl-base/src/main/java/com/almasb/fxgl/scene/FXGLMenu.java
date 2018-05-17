@@ -422,8 +422,8 @@ public abstract class FXGLMenu extends FXGLScene {
 
         List<String> credits = new ArrayList<>(getSettings().getCredits().getList());
         credits.add("");
-        credits.add(getLocalizedString("credits.poweredBy")+" FXGL " + getProperties().getString(FXGL_VERSION));
-        credits.add(getLocalizedString("credits.author")+": Almas Baimagambetov");
+        credits.add("Powered by FXGL " + getProperties().getString(FXGL_VERSION));
+        credits.add("Author: Almas Baimagambetov");
         credits.add("https://github.com/AlmasB/FXGL");
         credits.add("");
 
