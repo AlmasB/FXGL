@@ -241,7 +241,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
         // if it is empty then we are running without menus
         if (!profileName.get().isEmpty()) {
             saveLoadManager.saveProfileTask(createProfile())
-                    .onFailure { error -> log.warning(FXGL.getLocalizedString("profile.failedToSave")+": ${profileName.value} - $error") }
+                    .onFailure { error -> "Failed to save profile: ${profileName.value} - $error" }
                     .run() // we execute synchronously to avoid incomplete save since we might be shutting down
         }
     }
