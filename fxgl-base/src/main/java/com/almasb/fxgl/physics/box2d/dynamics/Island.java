@@ -366,7 +366,7 @@ class Island {
                     continue;
                 }
 
-                if ((b.m_flags & Body.e_autoSleepFlag) == 0
+                if (!b.isSleepingAllowed()
                         || b.m_angularVelocity * b.m_angularVelocity > angTolSqr
                         || Vec2.dot(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
                     b.setSleepTime(0);

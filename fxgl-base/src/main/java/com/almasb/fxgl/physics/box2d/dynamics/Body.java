@@ -30,13 +30,6 @@ import java.util.List;
  * @author Daniel Murphy
  */
 public final class Body {
-    public static final int e_islandFlag = 0x0001;
-    public static final int e_awakeFlag = 0x0002;
-    public static final int e_autoSleepFlag = 0x0004;
-    public static final int e_bulletFlag = 0x0008;
-    public static final int e_fixedRotationFlag = 0x0010;
-    public static final int e_activeFlag = 0x0020;
-    public static final int e_toiFlag = 0x0040;
 
     private final World world;
     private BodyType type;
@@ -45,12 +38,23 @@ public final class Body {
 
     public JointEdge m_jointList = null;
 
-    //public ContactEdge m_contactList = null;
-
     private Array<ContactEdge> contactEdges = new Array<>();
 
+    private boolean isInIsland = false;
 
-    public int m_flags = 0;
+    void setInIsland(boolean inIsland) {
+        isInIsland = inIsland;
+    }
+
+    boolean isInIsland() {
+        return isInIsland;
+    }
+
+    private boolean isBullet = false;
+    private boolean isFixedRotation = false;
+    private boolean isAutoSleep = false;
+    private boolean isAwake = false;
+    private boolean isActive = false;
 
     public int m_islandIndex;
 
@@ -98,19 +102,19 @@ public final class Body {
         userData = bd.getUserData();
 
         if (bd.isBullet()) {
-            m_flags |= e_bulletFlag;
+            isBullet = true;
         }
         if (bd.isFixedRotation()) {
-            m_flags |= e_fixedRotationFlag;
+            isFixedRotation = true;
         }
         if (bd.isAllowSleep()) {
-            m_flags |= e_autoSleepFlag;
+            isAutoSleep = true;
         }
         if (bd.isAwake()) {
-            m_flags |= e_awakeFlag;
+            isAwake = true;
         }
         if (bd.isActive()) {
-            m_flags |= e_activeFlag;
+            isActive = true;
         }
 
         m_xf.p.set(bd.getPosition());
@@ -196,7 +200,7 @@ public final class Body {
 
         Fixture fixture = new Fixture(this, def);
 
-        if ((m_flags & e_activeFlag) == e_activeFlag) {
+        if (isActive()) {
             BroadPhase broadPhase = world.getContactManager().broadPhase;
             fixture.createProxies(broadPhase, m_xf);
         }
@@ -259,16 +263,13 @@ public final class Body {
         for (ContactEdge edge : contactEdges) {
             Contact c = edge.contact;
 
-            Fixture fixtureA = c.getFixtureA();
-            Fixture fixtureB = c.getFixtureB();
-
-            if (fixture == fixtureA || fixture == fixtureB) {
+            if (fixture == c.getFixtureA() || fixture == c.getFixtureB()) {
                 // This destroys the contact and removes it from this body's contact list.
                 world.getContactManager().destroy(c);
             }
         }
 
-        if ((m_flags & e_activeFlag) == e_activeFlag) {
+        if (isActive()) {
             BroadPhase broadPhase = world.getContactManager().broadPhase;
             fixture.destroyProxies(broadPhase);
         }
@@ -563,7 +564,7 @@ public final class Body {
 
         m_invMass = 1.0f / m_mass;
 
-        if (massData.I > 0 && (m_flags & e_fixedRotationFlag) == 0) {
+        if (massData.I > 0 && !isFixedRotation) {
             m_I = massData.I - m_mass * Vec2.dot(massData.center, massData.center);
             assert (m_I > 0);
             m_invI = 1.0f / m_I;
@@ -610,8 +611,6 @@ public final class Body {
             return;
         }
 
-        assert (type == BodyType.DYNAMIC);
-
         // Accumulate mass over all fixtures.
         final Vec2 localCenter = world.getPool().popVec2();
         localCenter.setZero();
@@ -640,7 +639,7 @@ public final class Body {
             m_invMass = 1.0f;
         }
 
-        if (m_I > 0.0f && (m_flags & e_fixedRotationFlag) == 0) {
+        if (m_I > 0.0f && !isFixedRotation) {
             // Center the inertia about the center of mass.
             m_I -= m_mass * Vec2.dot(localCenter, localCenter);
             assert (m_I > 0.0f);
@@ -874,18 +873,14 @@ public final class Body {
      * @return is this body treated like a bullet for continuous collision detection?
      **/
     public boolean isBullet() {
-        return (m_flags & e_bulletFlag) == e_bulletFlag;
+        return isBullet;
     }
 
     /**
      * Should this body be treated like a bullet for continuous collision detection?
      **/
     public void setBullet(boolean flag) {
-        if (flag) {
-            m_flags |= e_bulletFlag;
-        } else {
-            m_flags &= ~e_bulletFlag;
-        }
+        isBullet = flag;
     }
 
     /**
@@ -896,9 +891,9 @@ public final class Body {
      */
     public void setSleepingAllowed(boolean flag) {
         if (flag) {
-            m_flags |= e_autoSleepFlag;
+            isAutoSleep = true;
         } else {
-            m_flags &= ~e_autoSleepFlag;
+            isAutoSleep = false;
             setAwake(true);
         }
     }
@@ -907,7 +902,7 @@ public final class Body {
      * @return whether this body is allowed to sleep
      */
     public boolean isSleepingAllowed() {
-        return (m_flags & e_autoSleepFlag) == e_autoSleepFlag;
+        return isAutoSleep;
     }
 
     /**
@@ -918,12 +913,12 @@ public final class Body {
      */
     public void setAwake(boolean flag) {
         if (flag) {
-            if ((m_flags & e_awakeFlag) == 0) {
-                m_flags |= e_awakeFlag;
+            if (!isAwake) {
+                isAwake = true;
                 sleepTime = 0.0f;
             }
         } else {
-            m_flags &= ~e_awakeFlag;
+            isAwake = false;
             sleepTime = 0.0f;
             m_linearVelocity.setZero();
             m_angularVelocity = 0.0f;
@@ -938,7 +933,7 @@ public final class Body {
      * @return true if the body is awake.
      */
     public boolean isAwake() {
-        return (m_flags & e_awakeFlag) == e_awakeFlag;
+        return isAwake;
     }
 
     /**
@@ -963,7 +958,7 @@ public final class Body {
         }
 
         if (flag) {
-            m_flags |= e_activeFlag;
+            isActive = true;
 
             // Create all proxies.
             BroadPhase broadPhase = world.getContactManager().broadPhase;
@@ -973,7 +968,7 @@ public final class Body {
 
             // Contacts are created the next time step.
         } else {
-            m_flags &= ~e_activeFlag;
+            isActive = false;
 
             // Destroy all proxies.
             BroadPhase broadPhase = world.getContactManager().broadPhase;
@@ -989,7 +984,7 @@ public final class Body {
      * @return the active state of the body
      */
     public boolean isActive() {
-        return (m_flags & e_activeFlag) == e_activeFlag;
+        return isActive;
     }
 
     /**
@@ -998,11 +993,7 @@ public final class Body {
      * @param flag fixed rotation flag
      */
     public void setFixedRotation(boolean flag) {
-        if (flag) {
-            m_flags |= e_fixedRotationFlag;
-        } else {
-            m_flags &= ~e_fixedRotationFlag;
-        }
+        isFixedRotation = flag;
 
         resetMassData();
     }
@@ -1011,7 +1002,7 @@ public final class Body {
      * @return does this body have fixed rotation
      */
     public boolean isFixedRotation() {
-        return (m_flags & e_fixedRotationFlag) == e_fixedRotationFlag;
+        return isFixedRotation;
     }
 
     /**
@@ -1026,10 +1017,6 @@ public final class Body {
      * Note: this list changes during the time step and you may miss some collisions if you don't
      * use ContactListener.
      */
-//    public ContactEdge getContactList() {
-//        return m_contactList;
-//    }
-
     public Array<ContactEdge> getContactEdges() {
         return contactEdges;
     }

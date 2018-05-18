@@ -368,7 +368,7 @@ public final class World {
 
         // Clear all the island flags.
         for (Body b : bodies) {
-            b.m_flags &= ~Body.e_islandFlag;
+            b.setInIsland(false);
         }
         for (Contact c = contactManager.contactList; c != null; c = c.m_next) {
             c.m_flags &= ~Contact.ISLAND_FLAG;
@@ -384,7 +384,7 @@ public final class World {
         }
 
         for (Body seed : bodies) {
-            if ((seed.m_flags & Body.e_islandFlag) == Body.e_islandFlag) {
+            if (seed.isInIsland()) {
                 continue;
             }
 
@@ -401,7 +401,7 @@ public final class World {
             island.clear();
             int stackCount = 0;
             stack[stackCount++] = seed;
-            seed.m_flags |= Body.e_islandFlag;
+            seed.setInIsland(true);
 
             // Perform a depth first search (DFS) on the constraint graph.
             while (stackCount > 0) {
@@ -446,13 +446,13 @@ public final class World {
                     Body other = ce.other;
 
                     // Was the other body already added to this island?
-                    if ((other.m_flags & Body.e_islandFlag) == Body.e_islandFlag) {
+                    if (other.isInIsland()) {
                         continue;
                     }
 
                     assert (stackCount < stackSize);
                     stack[stackCount++] = other;
-                    other.m_flags |= Body.e_islandFlag;
+                    other.setInIsland(true);
                 }
 
                 // Search all joints connect to this body.
@@ -471,13 +471,13 @@ public final class World {
                     island.add(je.joint);
                     je.joint.m_islandFlag = true;
 
-                    if ((other.m_flags & Body.e_islandFlag) == Body.e_islandFlag) {
+                    if (other.isInIsland()) {
                         continue;
                     }
 
                     assert (stackCount < stackSize);
                     stack[stackCount++] = other;
-                    other.m_flags |= Body.e_islandFlag;
+                    other.setInIsland(true);
                 }
             }
             island.solve(step, gravity, allowSleep);
@@ -487,7 +487,7 @@ public final class World {
                 // Allow static bodies to participate in other islands.
                 Body b = island.m_bodies[i];
                 if (b.getType() == BodyType.STATIC) {
-                    b.m_flags &= ~Body.e_islandFlag;
+                    b.setInIsland(false);
                 }
             }
         }
@@ -495,7 +495,7 @@ public final class World {
         // Synchronize fixtures, check for out of range bodies.
         for (Body b : bodies) {
             // If a body was not in an island then it did not move.
-            if ((b.m_flags & Body.e_islandFlag) == 0) {
+            if (!b.isInIsland()) {
                 continue;
             }
 
@@ -526,7 +526,7 @@ public final class World {
 
         if (stepComplete) {
             for (Body b : bodies) {
-                b.m_flags &= ~Body.e_islandFlag;
+                b.setInIsland(false);
                 b.m_sweep.alpha0 = 0.0f;
             }
 
@@ -680,8 +680,8 @@ public final class World {
             island.add(bB);
             island.add(minContact);
 
-            bA.m_flags |= Body.e_islandFlag;
-            bB.m_flags |= Body.e_islandFlag;
+            bA.setInIsland(true);
+            bB.setInIsland(true);
             minContact.m_flags |= Contact.ISLAND_FLAG;
 
             // Get contacts on bodyA and bodyB.
@@ -722,7 +722,7 @@ public final class World {
 
                         // Tentatively advance the body to the TOI.
                         backup1.set(other.m_sweep);
-                        if ((other.m_flags & Body.e_islandFlag) == 0) {
+                        if (!other.isInIsland()) {
                             other.advance(minAlpha);
                         }
 
@@ -748,12 +748,12 @@ public final class World {
                         island.add(contact);
 
                         // Has the other body already been added to the island?
-                        if ((other.m_flags & Body.e_islandFlag) != 0) {
+                        if (other.isInIsland()) {
                             continue;
                         }
 
                         // Add the other body to the island.
-                        other.m_flags |= Body.e_islandFlag;
+                        other.setInIsland(true);
 
                         if (other.getType() != BodyType.STATIC) {
                             other.setAwake(true);
@@ -775,7 +775,7 @@ public final class World {
             // Reset island flags and synchronize broad-phase proxies.
             for (int i = 0; i < island.m_bodyCount; ++i) {
                 Body body = island.m_bodies[i];
-                body.m_flags &= ~Body.e_islandFlag;
+                body.setInIsland(false);
 
                 if (body.getType() != BodyType.DYNAMIC) {
                     continue;
