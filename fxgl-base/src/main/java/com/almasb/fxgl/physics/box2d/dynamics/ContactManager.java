@@ -186,11 +186,6 @@ class ContactManager implements PairCallback {
     }
 
     void destroy(Contact c) {
-        Fixture fixtureA = c.getFixtureA();
-        Fixture fixtureB = c.getFixtureB();
-        Body bodyA = fixtureA.getBody();
-        Body bodyB = fixtureB.getBody();
-
         if (contactListener != null && c.isTouching()) {
             contactListener.endContact(c);
         }
@@ -207,6 +202,9 @@ class ContactManager implements PairCallback {
         if (c == contactList) {
             contactList = c.m_next;
         }
+
+        Body bodyA = c.getFixtureA().getBody();
+        Body bodyB = c.getFixtureB().getBody();
 
         // Remove from body 1
         bodyA.getContactEdges().removeValueByIdentity(c.m_nodeA);

@@ -11,7 +11,6 @@ import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.BroadPhase;
 import com.almasb.fxgl.physics.box2d.collision.shapes.MassData;
-import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Sweep;
@@ -187,8 +186,6 @@ public final class Body {
 
     /**
      * Creates a fixture and attach it to this body.
-     * Use this function if you need to set some fixture parameters, like friction.
-     * Otherwise you can create the fixture directly from a shape.
      * If the density is non-zero, this function automatically updates the mass of the body.
      * Contacts are not created until the next time step.
      * Note: This function is locked during callbacks.
@@ -217,26 +214,6 @@ public final class Body {
         world.notifyNewFixture();
 
         return fixture;
-    }
-
-    private final FixtureDef fixDef = new FixtureDef();
-
-    /**
-     * Creates a fixture from a shape and attach it to this body.
-     * This is a convenience function.
-     * Use FixtureDef if you need to set parameters like friction, restitution, user data, or filtering.
-     * If the density is non-zero, this function automatically updates the mass of the body.
-     * Note: this function is locked during callbacks.
-     *
-     *
-     * @param shape the shape to be cloned.
-     * @param density the shape density (set to zero for static bodies).
-     */
-    public Fixture createFixture(Shape shape, float density) {
-        fixDef.setShape(shape);
-        fixDef.setDensity(density);
-
-        return createFixture(fixDef);
     }
 
     /**
@@ -861,12 +838,41 @@ public final class Body {
         }
     }
 
+    void destroyAttachedJoints() {
+        JointEdge je = m_jointList;
+        while (je != null) {
+            JointEdge je0 = je;
+            je = je.next;
+
+            world.notifyJointToBeDestroyed(je0.joint);
+
+            world.destroyJoint(je0.joint);
+
+            m_jointList = je;
+        }
+
+        m_jointList = null;
+    }
+
     void destroyAttachedContacts() {
         for (ContactEdge ce : contactEdges) {
             world.getContactManager().destroy(ce.contact);
         }
 
         contactEdges.clear();
+    }
+
+    void destroyAttachedFixtures() {
+        for (Fixture f : fixtures) {
+            world.notifyFixtureToBeDestroyed(f);
+
+            f.destroyProxies(world.getContactManager().broadPhase);
+            f.destroy();
+
+            // jbox2dTODO djm recycle fixtures (here or in that destroy method)
+        }
+
+        fixtures.clear();
     }
 
     /**

@@ -111,43 +111,14 @@ public final class World {
         assert bodies.containsByIdentity(body);
         assertNotLocked();
 
-        destroyAttachedJoints(body);
+        body.destroyAttachedJoints();
 
         body.destroyAttachedContacts();
 
-        for (Fixture f : body.getFixtures()) {
-            if (destructionListener != null) {
-                destructionListener.onDestroy(f);
-            }
-
-            f.destroyProxies(contactManager.broadPhase);
-            f.destroy();
-
-            // jbox2dTODO djm recycle fixtures (here or in that destroy method)
-        }
-
-        body.getFixtures().clear();
+        body.destroyAttachedFixtures();
 
         bodies.removeValueByIdentity(body);
         // jbox2dTODO djm recycle body
-    }
-
-    private void destroyAttachedJoints(Body body) {
-        JointEdge je = body.m_jointList;
-        while (je != null) {
-            JointEdge je0 = je;
-            je = je.next;
-
-            if (destructionListener != null) {
-                destructionListener.onDestroy(je0.joint);
-            }
-
-            destroyJoint(je0.joint);
-
-            body.m_jointList = je;
-        }
-
-        body.m_jointList = null;
     }
 
     /**
@@ -1429,6 +1400,18 @@ public final class World {
 
     void notifyNewFixture() {
         newFixture = true;
+    }
+
+    void notifyFixtureToBeDestroyed(Fixture f) {
+        if (destructionListener != null) {
+            destructionListener.onDestroy(f);
+        }
+    }
+
+    void notifyJointToBeDestroyed(Joint joint) {
+        if (destructionListener != null) {
+            destructionListener.onDestroy(joint);
+        }
     }
 
     /**
