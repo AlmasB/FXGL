@@ -57,6 +57,7 @@ The project uses the following guidelines:
 * Consistent naming conventions (no [Hungarian notation](https://en.wikipedia.org/wiki/Hungarian_notation)).
 * Javadoc on public and protected API (where appropriate).
 * Keep access to fields and methods as restricted as you can.
+* When using text in UI, use localization (e.g. english.properties).
 * Short license header in each new file and `@author`.
 
 Code quality reports are available from [Codacy](https://www.codacy.com/app/AlmasB/FXGL/dashboard).
