@@ -159,7 +159,7 @@ class Island {
     public int m_contactCapacity;
     public int m_jointCapacity;
 
-    public void init(int bodyCapacity, int contactCapacity, int jointCapacity, ContactListener listener) {
+    void init(int bodyCapacity, int contactCapacity, int jointCapacity, ContactListener listener) {
         m_bodyCapacity = bodyCapacity;
         m_contactCapacity = contactCapacity;
         m_jointCapacity = jointCapacity;
@@ -200,7 +200,7 @@ class Island {
         }
     }
 
-    public void clear() {
+    void clear() {
         m_bodyCount = 0;
         m_contactCount = 0;
         m_jointCount = 0;
@@ -210,7 +210,7 @@ class Island {
     private final SolverData solverData = new SolverData();
     private final ContactSolverDef solverDef = new ContactSolverDef();
 
-    public void solve(TimeStep step, Vec2 gravity, boolean allowSleep) {
+    void solve(TimeStep step, Vec2 gravity, boolean allowSleep) {
         float h = step.dt;
 
         // Integrate velocities and apply damping. Initialize the body state.
@@ -229,9 +229,9 @@ class Island {
             if (b.getType() == BodyType.DYNAMIC) {
                 // Integrate velocities.
                 // v += h * (b.m_gravityScale * gravity + b.m_invMass * b.m_force);
-                v.x += h * (b.getGravityScale() * gravity.x + b.m_invMass * b.m_force.x);
-                v.y += h * (b.getGravityScale() * gravity.y + b.m_invMass * b.m_force.y);
-                w += h * b.m_invI * b.m_torque;
+                v.x += h * (b.getGravityScale() * gravity.x + b.m_invMass * b.getForce().x);
+                v.y += h * (b.getGravityScale() * gravity.y + b.m_invMass * b.getForce().y);
+                w += h * b.m_invI * b.getTorque();
 
                 // Apply damping.
                 // ODE: dv/dt + c * v = 0
@@ -389,7 +389,7 @@ class Island {
     private final ContactSolver toiContactSolver = new ContactSolver();
     private final ContactSolverDef toiSolverDef = new ContactSolverDef();
 
-    public void solveTOI(TimeStep subStep, int toiIndexA, int toiIndexB) {
+    void solveTOI(TimeStep subStep, int toiIndexA, int toiIndexB) {
         assert (toiIndexA < m_bodyCount);
         assert (toiIndexB < m_bodyCount);
 
@@ -488,19 +488,19 @@ class Island {
         report(toiContactSolver.m_velocityConstraints);
     }
 
-    public void add(Body body) {
+    void add(Body body) {
         assert (m_bodyCount < m_bodyCapacity);
         body.m_islandIndex = m_bodyCount;
         m_bodies[m_bodyCount] = body;
         ++m_bodyCount;
     }
 
-    public void add(Contact contact) {
+    void add(Contact contact) {
         assert (m_contactCount < m_contactCapacity);
         m_contacts[m_contactCount++] = contact;
     }
 
-    public void add(Joint joint) {
+    void add(Joint joint) {
         assert (m_jointCount < m_jointCapacity);
         m_joints[m_jointCount++] = joint;
     }
