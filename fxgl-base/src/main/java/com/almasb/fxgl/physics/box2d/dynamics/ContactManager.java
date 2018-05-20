@@ -145,8 +145,6 @@ class ContactManager implements PairCallback {
         // Contact creation may swap fixtures.
         fixtureA = c.getFixtureA();
         fixtureB = c.getFixtureB();
-        indexA = c.getChildIndexA();
-        indexB = c.getChildIndexB();
         bodyA = fixtureA.getBody();
         bodyB = fixtureB.getBody();
 
@@ -263,9 +261,7 @@ class ContactManager implements PairCallback {
                 continue;
             }
 
-            int proxyIdA = fixtureA.getProxyId(indexA);
-            int proxyIdB = fixtureB.getProxyId(indexB);
-            boolean overlap = broadPhase.testOverlap(proxyIdA, proxyIdB);
+            boolean overlap = fixtureA.testProxyOverlap(fixtureB, indexA, indexB);
 
             // Here we destroy contacts that cease to overlap in the broad-phase.
             if (!overlap) {

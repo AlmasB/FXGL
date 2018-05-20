@@ -154,9 +154,22 @@ class FixtureDef {
      * The shape, this must be set. The shape will be cloned, so you can create the shape on the
      * stack.
      */
-    lateinit var shape: Shape
+    var shape: Shape? = null
 
     var userData: Any? = null
+
+    fun copy(): FixtureDef {
+        val def = FixtureDef()
+        def.friction = friction
+        def.restitution = restitution
+        def.density = density
+        def.isSensor = isSensor
+        def.filter.set(filter)
+        def.shape = shape!!.clone()
+        def.userData = userData
+
+        return def
+    }
 
     /* FLUENT API */
 

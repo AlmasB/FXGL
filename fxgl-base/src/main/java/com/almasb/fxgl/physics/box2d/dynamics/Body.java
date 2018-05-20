@@ -837,12 +837,8 @@ public final class Body {
         destroyAttachedContacts();
 
         // Touch the proxies so that new contacts will be created (when appropriate)
-        BroadPhase broadPhase = world.getContactManager().broadPhase;
         for (Fixture f : fixtures) {
-            int proxyCount = f.getProxyCount();
-            for (int i = 0; i < proxyCount; ++i) {
-                broadPhase.touchProxy(f.getProxyId(i));
-            }
+            f.touchProxies();
         }
     }
 
