@@ -54,7 +54,7 @@ public class RobotFactory implements EntityFactory {
         BodyDef bd = new BodyDef();
         bd.setFixedRotation(true);
 
-        physics.setGenerateGroundSensor(true);
+        physics.addGroundSensor(new HitBox("ground", new Point2D(275 / 2 - 40/2, 275 / 2 - 210/2 + 230 - 5/2), BoundingShape.box(40, 5)));
         physics.setBodyDef(bd);
         physics.setBodyType(BodyType.DYNAMIC);
 

@@ -13,6 +13,7 @@ import com.almasb.fxgl.extra.entity.components.ActivatorComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.physics.SensorCollisionHandler;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
@@ -85,6 +86,23 @@ public class TiledFactory implements EntityFactory {
     public Entity newPlayer(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
+
+        physics.addSensor(new HitBox(BoundingShape.box(50, 10)), new SensorCollisionHandler() {
+            @Override
+            protected void onCollisionBegin(Entity other) {
+                System.out.println("begin");
+            }
+
+            @Override
+            protected void onCollision(Entity other) {
+                System.out.println("collision");
+            }
+
+            @Override
+            protected void onCollisionEnd(Entity other) {
+                System.out.println("end");
+            }
+        });
 
         return Entities.builder()
                 .from(data)

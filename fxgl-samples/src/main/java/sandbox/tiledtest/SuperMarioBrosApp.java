@@ -11,6 +11,9 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.extra.entity.components.ActivatorComponent;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.input.virtual.VirtualButton;
+import com.almasb.fxgl.input.virtual.VirtualControllerOverlay;
+import com.almasb.fxgl.input.virtual.VirtualControllerStyle;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
@@ -38,21 +41,21 @@ public class SuperMarioBrosApp extends GameApplication {
             protected void onAction() {
                 player.getComponent(MarioComponent.class).left();
             }
-        }, KeyCode.A);
+        }, KeyCode.A, VirtualButton.X);
 
         getInput().addAction(new UserAction("Right") {
             @Override
             protected void onAction() {
                 player.getComponent(MarioComponent.class).right();
             }
-        }, KeyCode.D);
+        }, KeyCode.D, VirtualButton.B);
 
         getInput().addAction(new UserAction("Jump") {
             @Override
             protected void onActionBegin() {
                 player.getComponent(MarioComponent.class).jump();
             }
-        }, KeyCode.W);
+        }, KeyCode.W, VirtualButton.Y);
 
         getInput().addAction(new UserAction("Activate") {
             @Override
@@ -63,7 +66,7 @@ public class SuperMarioBrosApp extends GameApplication {
                         .map(e -> e.getComponent(ActivatorComponent.class))
                         .forEach(c -> c.activate(player));
             }
-        }, KeyCode.F);
+        }, KeyCode.F, VirtualButton.A);
     }
 
     @Override
@@ -110,7 +113,10 @@ public class SuperMarioBrosApp extends GameApplication {
 
     @Override
     protected void initUI() {
+        VirtualControllerOverlay vcOverlay = new VirtualControllerOverlay(VirtualControllerStyle.XBOX);
+        vcOverlay.setTranslateY(500);
 
+        getGameScene().addUINodes( vcOverlay);
     }
 
     public static void main(String[] args) {

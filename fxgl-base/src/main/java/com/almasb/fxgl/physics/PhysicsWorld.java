@@ -273,6 +273,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         Entity e1 = contact.getFixtureA().getBody().getEntity();
         Entity e2 = contact.getFixtureB().getBody().getEntity();
 
+        // TODO: we do not have sensor collision(), ony begin() and end()
+
         // check sensors first
         // TODO: refactor
 
