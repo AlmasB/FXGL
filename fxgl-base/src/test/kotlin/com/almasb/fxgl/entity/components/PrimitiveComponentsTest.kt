@@ -39,7 +39,7 @@ class PrimitiveComponentsTest {
 
         assertTrue(c.value)
 
-        assertThat(c.toString(), `is`("SimpleBooleanComponent[value=true]"))
+        assertThat(c.toString(), `is`("SimpleBoolean(true)"))
     }
 
     @Test
@@ -60,7 +60,7 @@ class PrimitiveComponentsTest {
 
         assertThat(c.value, `is`(22))
 
-        assertThat(c.toString(), `is`("SimpleIntegerComponent[value=22]"))
+        assertThat(c.toString(), `is`("SimpleInteger(22)"))
     }
 
     @Test
@@ -81,7 +81,7 @@ class PrimitiveComponentsTest {
 
         assertThat(c.value, `is`("hi"))
 
-        assertThat(c.toString(), `is`("SimpleStringComponent[value=hi]"))
+        assertThat(c.toString(), `is`("SimpleString(hi)"))
     }
 
     @Test
@@ -94,7 +94,7 @@ class PrimitiveComponentsTest {
         c.value = Vec2(1.5, 33.0)
         assertThat(c.value, `is`(Vec2(1.5, 33.0)))
 
-        assertThat(c.toString(), `is`("SimpleObjectComponent[value=(1.5,33.0)]"))
+        assertThat(c.toString(), `is`("SimpleObject((1.5,33.0))"))
     }
 
     @Test
@@ -109,7 +109,7 @@ class PrimitiveComponentsTest {
 
         assertFalse(c === c2)
         assertTrue(c2.value)
-        assertThat(c.toString(), `is`("CollidableComponent[value=true]"))
+        assertThat(c.toString(), `is`("Collidable(true)"))
     }
 
     class SimpleBooleanComponent : BooleanComponent()

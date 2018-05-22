@@ -31,7 +31,7 @@ abstract class BooleanComponent
         value = bundle.get("value")
     }
 
-    override fun toString() = "${javaClass.simpleName}[value=$value]"
+    override fun toString() = "${javaClass.simpleName.substringBefore("Component")}($value)"
 }
 
 /**
@@ -56,7 +56,7 @@ abstract class IntegerComponent
         value = bundle.get("value")
     }
 
-    override fun toString() = "${javaClass.simpleName}[value=$value]"
+    override fun toString() = "${javaClass.simpleName.substringBefore("Component")}($value)"
 }
 
 /**
@@ -81,7 +81,7 @@ abstract class DoubleComponent
         value = bundle.get("value")
     }
 
-    override fun toString() = "${javaClass.simpleName}[value=$value]"
+    override fun toString() = "${javaClass.simpleName.substringBefore("Component")}($value)"
 }
 
 /**
@@ -106,7 +106,7 @@ abstract class StringComponent
         value = bundle.get("value")
     }
 
-    override fun toString() = "${javaClass.simpleName}[value=$value]"
+    override fun toString() = "${javaClass.simpleName.substringBefore("Component")}($value)"
 }
 
 /**
@@ -122,5 +122,5 @@ abstract class ObjectComponent<T>(initialValue: T) : Component() {
 
     fun valueProperty() = property
 
-    override fun toString() = "${javaClass.simpleName}[value=$value]"
+    override fun toString() = "${javaClass.simpleName.substringBefore("Component")}($value)"
 }

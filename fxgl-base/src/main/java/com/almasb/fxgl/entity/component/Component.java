@@ -59,4 +59,17 @@ public abstract class Component {
     public void onRemoved() {
 
     }
+
+    @Override
+    public String toString() {
+        String simpleName = getClass().getSimpleName();
+
+        int index = simpleName.indexOf("Component");
+
+        if (index != -1) {
+            simpleName = simpleName.substring(0, index);
+        }
+
+        return simpleName + "()";
+    }
 }
