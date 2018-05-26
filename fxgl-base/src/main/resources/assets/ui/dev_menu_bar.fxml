@@ -26,6 +26,7 @@
     <Menu text="View">
         <MenuItem text="Color Adjust" onAction="#openColorAdjustDialog" />
         <CheckMenuItem text="Show BBox" onAction="#onShowBBox" />
+        <CheckMenuItem text="Show Position" onAction="#onShowPosition" />
         <CheckMenuItem text="Track Clicks" onAction="#onTrackClicks" />
     </Menu>
 

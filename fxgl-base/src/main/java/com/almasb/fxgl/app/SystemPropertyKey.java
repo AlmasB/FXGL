@@ -10,6 +10,8 @@ public final class SystemPropertyKey {
 
     public static final String DEV_SHOWBBOX = "dev.showbbox";
 
+    public static final String DEV_SHOWPOSITION = "dev.showposition";
+
     public static final String FS_DATAFILE_EXT = "fs.datafile.ext";
 
     public static final String FS_PROFILEDIR = "fs.profiledir";
