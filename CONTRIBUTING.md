@@ -58,6 +58,7 @@ The project uses the following guidelines:
 * Javadoc on public and protected API (where appropriate).
 * Keep access to fields and methods as restricted as you can.
 * When using text in UI, use localization (e.g. english.properties).
+* Use BackportKt if you need to access Java 8 API.
 * Short license header in each new file and `@author`.
 
 Code quality reports are available from [Codacy](https://www.codacy.com/app/AlmasB/FXGL/dashboard).
