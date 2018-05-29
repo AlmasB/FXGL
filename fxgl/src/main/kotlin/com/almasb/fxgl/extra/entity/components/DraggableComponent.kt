@@ -33,6 +33,7 @@ class DraggableComponent : Component() {
     private val onRelease = EventHandler<MouseEvent> { isDragging = false }
 
     override fun onAdded() {
+        // TODO: care is needed if other components modify input handlers
         entity.view.onMousePressed = onPress
         entity.view.onMouseReleased = onRelease
     }
@@ -41,7 +42,7 @@ class DraggableComponent : Component() {
         if (!isDragging)
             return
 
-        entity.setPosition(FXGL.getInput().getMouseXWorld() - offsetX, FXGL.getInput().getMouseYWorld() - offsetX)
+        entity.setPosition(FXGL.getInput().getMouseXWorld() - offsetX, FXGL.getInput().getMouseYWorld() - offsetY)
     }
 
     override fun onRemoved() {

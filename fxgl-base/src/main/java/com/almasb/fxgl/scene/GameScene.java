@@ -133,7 +133,11 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     }
 
     private void addDebugView(Entity e) {
+        Text textPos = new Text("");
+        textPos.textProperty().bind(e.xProperty().asString("(%.0f, ").concat(e.yProperty().asString("%.0f)")));
+
         EntityView view = new EntityView(new Circle(2.5));
+        view.addNode(textPos);
         view.translateXProperty().bind(e.xProperty());
         view.translateYProperty().bind(e.yProperty());
         addGameView(view, RenderLayer.TOP);
