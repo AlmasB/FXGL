@@ -6,23 +6,14 @@
 
 package sandbox;
 
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.input.virtual.VirtualButton;
 import com.almasb.fxgl.input.virtual.VirtualControllerOverlay;
 import com.almasb.fxgl.input.virtual.VirtualControllerStyle;
+import com.almasb.fxgl.input.virtual.VirtualPauseButtonOverlay;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.texture.Texture;
-import javafx.beans.binding.Bindings;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
-
-import static com.almasb.fxgl.app.DSLKt.*;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -57,14 +48,13 @@ public class VirtualControllerSample extends GameApplication {
 
     @Override
     protected void initUI() {
-
-        Texture t = texture("brick.png");
-        t.setTranslateX(getWidth() - 150);
-        t.setTranslateY(50);
+        VirtualPauseButtonOverlay btn = new VirtualPauseButtonOverlay();
+        btn.setTranslateX(getWidth() - 100);
+        btn.setTranslateY(50);
 
         VirtualControllerOverlay vcOverlay = new VirtualControllerOverlay(VirtualControllerStyle.XBOX);
         vcOverlay.setTranslateY(600);
 
-        getGameScene().addUINodes(t, vcOverlay);
+        getGameScene().addUINodes(btn, vcOverlay);
     }
 }
