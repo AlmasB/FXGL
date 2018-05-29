@@ -8,13 +8,10 @@ package com.almasb.fxgl.input.virtual
 
 import com.almasb.fxgl.app.FXGL
 import javafx.scene.Parent
-import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.StrokeType
-
-
 
 /**
  *
@@ -46,8 +43,8 @@ class VirtualPauseButtonOverlay : Parent() {
         children.addAll(bg, rect1, rect2)
 
         setOnMousePressed {
-            FXGL.getInput().mockKeyPress(KeyCode.ESCAPE);
-            FXGL.getInput().mockKeyRelease(KeyCode.ESCAPE);
+            FXGL.getInput().mockKeyPress(FXGL.getSettings().menuKey)
+            FXGL.getInput().mockKeyRelease(FXGL.getSettings().menuKey)
         }
     }
 }
