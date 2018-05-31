@@ -367,6 +367,14 @@ class Input : UserProfileSavable {
 
     /* MOCKING */
 
+    internal fun mockKeyPressEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
+        fireEvent(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
+    }
+
+    internal fun mockKeyRleaseEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
+        fireEvent(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
+    }
+
     private fun makeKeyEvent(key: KeyCode, eventType: EventType<KeyEvent>, modifier: InputModifier) =
         KeyEvent(eventType, "", key.toString(), key,
                 modifier == InputModifier.SHIFT,

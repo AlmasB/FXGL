@@ -43,8 +43,13 @@ class VirtualPauseButtonOverlay : Parent() {
         children.addAll(bg, rect1, rect2)
 
         setOnMousePressed {
-            FXGL.getInput().mockKeyPress(FXGL.getSettings().menuKey)
-            FXGL.getInput().mockKeyRelease(FXGL.getSettings().menuKey)
+            if (FXGL.getSettings().isMenuEnabled) {
+                FXGL.getInput().mockKeyPressEvent(FXGL.getSettings().menuKey)
+                FXGL.getInput().mockKeyRleaseEvent(FXGL.getSettings().menuKey)
+            } else {
+                FXGL.getInput().mockKeyPress(FXGL.getSettings().menuKey)
+                FXGL.getInput().mockKeyRelease(FXGL.getSettings().menuKey)
+            }
         }
     }
 }
