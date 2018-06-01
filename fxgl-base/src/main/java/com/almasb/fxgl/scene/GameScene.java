@@ -7,9 +7,7 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.SystemPropertyKey;
 import com.almasb.fxgl.asset.FXGLAssets;
-import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.entity.Entity;
@@ -18,7 +16,6 @@ import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.ui.UI;
-import com.almasb.fxgl.util.BackportKt;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -32,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.almasb.fxgl.app.SystemPropertyKey.*;
+import static com.almasb.fxgl.app.SystemPropertyKey.DEV_SHOWPOSITION;
 import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
@@ -300,7 +297,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
         }
 
         List<Node> tmpGroups = new ArrayList<>(gameRoot.getChildren());
-        Collections.sort(tmpGroups, (g1, g2) -> (int) g1.getUserData() - (int) g2.getUserData());
+        Collections.sort(tmpGroups, (g1, g2) -> Integer.compare((int) g1.getUserData(), (int) g2.getUserData()));
 
         gameRoot.getChildren().setAll(tmpGroups);
 
