@@ -24,6 +24,7 @@ public class VirtualControllerSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(450);
         settings.setHeight(800);
+        settings.setMenuEnabled(true);
     }
 
     @Override
