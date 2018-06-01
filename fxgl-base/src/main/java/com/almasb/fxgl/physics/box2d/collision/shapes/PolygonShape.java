@@ -356,6 +356,10 @@ public final class PolygonShape extends Shape {
         massData.I += massData.mass * (Vec2.dot(massData.center, massData.center));
     }
 
+    public void set(Vec2[] vertices) {
+        setImpl(vertices, vertices.length);
+    }
+
     /**
      * Create a convex hull from the given array of points. The count must be in the range [3,
      * JBoxSettings.maxPolygonVertices].

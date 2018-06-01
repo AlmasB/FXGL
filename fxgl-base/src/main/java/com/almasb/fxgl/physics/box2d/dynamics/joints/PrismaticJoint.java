@@ -5,6 +5,7 @@
  */
 package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.common.*;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
@@ -445,7 +446,7 @@ public class PrismaticJoint extends Joint {
         if (m_enableLimit) {
 
             float jointTranslation = Vec2.dot(m_axis, d);
-            if (JBoxUtils.abs(m_upperTranslation - m_lowerTranslation) < 2.0f * JBoxSettings.linearSlop) {
+            if (FXGLMath.abs(m_upperTranslation - m_lowerTranslation) < 2.0f * JBoxSettings.linearSlop) {
                 m_limitState = LimitState.EQUAL;
             } else if (jointTranslation <= m_lowerTranslation) {
                 if (m_limitState != LimitState.AT_LOWER) {
@@ -680,19 +681,19 @@ public class PrismaticJoint extends Joint {
         C1.x = Vec2.dot(perp, d);
         C1.y = aB - aA - m_referenceAngle;
 
-        float linearError = JBoxUtils.abs(C1.x);
-        float angularError = JBoxUtils.abs(C1.y);
+        float linearError = FXGLMath.abs(C1.x);
+        float angularError = FXGLMath.abs(C1.y);
 
         boolean active = false;
         float C2 = 0.0f;
         if (m_enableLimit) {
             float translation = Vec2.dot(axis, d);
-            if (JBoxUtils.abs(m_upperTranslation - m_lowerTranslation) < 2.0f * JBoxSettings.linearSlop) {
+            if (FXGLMath.abs(m_upperTranslation - m_lowerTranslation) < 2.0f * JBoxSettings.linearSlop) {
                 // Prevent large angular corrections
                 C2 =
                         JBoxUtils.clamp(translation, -JBoxSettings.maxLinearCorrection,
                                 JBoxSettings.maxLinearCorrection);
-                linearError = JBoxUtils.max(linearError, JBoxUtils.abs(translation));
+                linearError = JBoxUtils.max(linearError, FXGLMath.abs(translation));
                 active = true;
             } else if (translation <= m_lowerTranslation) {
                 // Prevent large linear corrections and allow some slop.

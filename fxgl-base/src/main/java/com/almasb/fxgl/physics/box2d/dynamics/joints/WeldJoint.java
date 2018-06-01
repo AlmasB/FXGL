@@ -8,6 +8,7 @@
  */
 package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.common.*;
 import com.almasb.fxgl.physics.box2d.dynamics.SolverData;
@@ -368,7 +369,7 @@ public class WeldJoint extends Joint {
             float C2 = aB - aA - m_referenceAngle;
 
             positionError = C1.length();
-            angularError = JBoxUtils.abs(C2);
+            angularError = FXGLMath.abs(C2);
 
             final Vec3 C = pool.popVec3();
             final Vec3 impulse = pool.popVec3();

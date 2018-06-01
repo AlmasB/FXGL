@@ -117,4 +117,9 @@ public final class BoundingShape {
 
         return new BoundingShape(ShapeType.POLYGON, points, new Dimension2D(maxX, maxY));
     }
+
+    @Override
+    public String toString() {
+        return type.toString();
+    }
 }

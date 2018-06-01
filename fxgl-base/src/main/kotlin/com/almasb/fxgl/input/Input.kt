@@ -7,6 +7,7 @@
 package com.almasb.fxgl.input
 
 import com.almasb.fxgl.core.logging.Logger
+import com.almasb.fxgl.input.virtual.VirtualButton
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
@@ -265,6 +266,8 @@ class Input : UserProfileSavable {
      */
     fun isHeld(button: MouseButton): Boolean = buttons.getOrDefault(button, false)
 
+    private val virtualButtons = hashMapOf<VirtualButton, KeyCode>()
+
     /**
      * Bind given action to a mouse button with special modifier key.
      */
@@ -284,6 +287,14 @@ class Input : UserProfileSavable {
             throw IllegalArgumentException("Cannot bind to illegal key: $key")
 
         addBinding(action, KeyTrigger(key, modifier))
+    }
+
+    @JvmOverloads fun addAction(action: UserAction, key: KeyCode, virtualButton: VirtualButton) {
+        if (ILLEGAL_KEYS.contains(key))
+            throw IllegalArgumentException("Cannot bind to illegal key: $key")
+
+        addBinding(action, KeyTrigger(key, InputModifier.NONE))
+        addVirtualButton(virtualButton, key)
     }
 
     private fun addBinding(action: UserAction, trigger: Trigger) {
@@ -306,6 +317,10 @@ class Input : UserProfileSavable {
         triggerNames[action]?.value = trigger.toString()
 
         log.debug("Registered new binding: $action - $trigger")
+    }
+
+    private fun addVirtualButton(virtualButton: VirtualButton, key: KeyCode) {
+        virtualButtons[virtualButton] = key
     }
 
     /**
@@ -340,7 +355,25 @@ class Input : UserProfileSavable {
         return false
     }
 
+    /* VIRTUAL */
+
+    internal fun pressVirtual(virtualButton: VirtualButton) {
+        virtualButtons[virtualButton]?.let { mockKeyPress(it) }
+    }
+
+    internal fun releaseVirtual(virtualButton: VirtualButton) {
+        virtualButtons[virtualButton]?.let { mockKeyRelease(it) }
+    }
+
     /* MOCKING */
+
+    internal fun mockKeyPressEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
+        fireEvent(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
+    }
+
+    internal fun mockKeyRleaseEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
+        fireEvent(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
+    }
 
     private fun makeKeyEvent(key: KeyCode, eventType: EventType<KeyEvent>, modifier: InputModifier) =
         KeyEvent(eventType, "", key.toString(), key,

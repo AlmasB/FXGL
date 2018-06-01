@@ -20,6 +20,8 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 
 import java.util.HashMap;
 
+import static com.almasb.fxgl.physics.box2d.common.JBoxSettings.CONTACT_STACK_INIT_SIZE;
+
 /**
  * Provides object pooling for all objects used in the engine. Objects retrieved from here should
  * only be used temporarily, and then pushed back (with the exception of arrays).
@@ -42,7 +44,7 @@ public class DefaultWorldPool implements IWorldPool {
     private final IWorldPool world = this;
 
     private final MutableStack<Contact> pcstack =
-            new MutableStack<Contact>(JBoxSettings.CONTACT_STACK_INIT_SIZE) {
+            new MutableStack<Contact>(CONTACT_STACK_INIT_SIZE) {
                 protected Contact newInstance() {
                     return new PolygonContact(world);
                 }
@@ -53,7 +55,7 @@ public class DefaultWorldPool implements IWorldPool {
             };
 
     private final MutableStack<Contact> ccstack =
-            new MutableStack<Contact>(JBoxSettings.CONTACT_STACK_INIT_SIZE) {
+            new MutableStack<Contact>(CONTACT_STACK_INIT_SIZE) {
                 protected Contact newInstance() {
                     return new CircleContact(world);
                 }
@@ -64,7 +66,7 @@ public class DefaultWorldPool implements IWorldPool {
             };
 
     private final MutableStack<Contact> cpstack =
-            new MutableStack<Contact>(JBoxSettings.CONTACT_STACK_INIT_SIZE) {
+            new MutableStack<Contact>(CONTACT_STACK_INIT_SIZE) {
                 protected Contact newInstance() {
                     return new PolygonAndCircleContact(world);
                 }
@@ -75,7 +77,7 @@ public class DefaultWorldPool implements IWorldPool {
             };
 
     private final MutableStack<Contact> ecstack =
-            new MutableStack<Contact>(JBoxSettings.CONTACT_STACK_INIT_SIZE) {
+            new MutableStack<Contact>(CONTACT_STACK_INIT_SIZE) {
                 protected Contact newInstance() {
                     return new EdgeAndCircleContact(world);
                 }
@@ -86,7 +88,7 @@ public class DefaultWorldPool implements IWorldPool {
             };
 
     private final MutableStack<Contact> epstack =
-            new MutableStack<Contact>(JBoxSettings.CONTACT_STACK_INIT_SIZE) {
+            new MutableStack<Contact>(CONTACT_STACK_INIT_SIZE) {
                 protected Contact newInstance() {
                     return new EdgeAndPolygonContact(world);
                 }
@@ -97,7 +99,7 @@ public class DefaultWorldPool implements IWorldPool {
             };
 
     private final MutableStack<Contact> chcstack =
-            new MutableStack<Contact>(JBoxSettings.CONTACT_STACK_INIT_SIZE) {
+            new MutableStack<Contact>(CONTACT_STACK_INIT_SIZE) {
                 protected Contact newInstance() {
                     return new ChainAndCircleContact(world);
                 }
@@ -108,7 +110,7 @@ public class DefaultWorldPool implements IWorldPool {
             };
 
     private final MutableStack<Contact> chpstack =
-            new MutableStack<Contact>(JBoxSettings.CONTACT_STACK_INIT_SIZE) {
+            new MutableStack<Contact>(CONTACT_STACK_INIT_SIZE) {
                 protected Contact newInstance() {
                     return new ChainAndPolygonContact(world);
                 }

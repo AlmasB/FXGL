@@ -87,13 +87,9 @@ public abstract class Contact {
         m_next = null;
 
         m_nodeA.contact = null;
-        m_nodeA.prev = null;
-        m_nodeA.next = null;
         m_nodeA.other = null;
 
         m_nodeB.contact = null;
-        m_nodeB.prev = null;
-        m_nodeB.next = null;
         m_nodeB.other = null;
 
         m_toiCount = 0;

@@ -8,6 +8,7 @@ package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.asset.FXGLAssets;
+import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityWorldListener;
@@ -19,6 +20,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
@@ -26,6 +28,9 @@ import javafx.scene.transform.Scale;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.almasb.fxgl.app.SystemPropertyKey.DEV_SHOWPOSITION;
+import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
  * Represents the scene that shows entities on the screen during "play" mode.
@@ -58,6 +63,8 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
         return profilerText;
     }
 
+    private ObjectMap<Entity, EntityView> debugPositions = new ObjectMap<>();
+
     protected GameScene(int width, int height) {
         getContentRoot().getChildren().addAll(gameRoot, uiRoot);
 
@@ -66,6 +73,8 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
         }
 
         initViewport(width, height);
+
+        addDebugListener();
 
         log.debug("Game scene initialized: " + width + "x" + height);
     }
@@ -96,6 +105,41 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
         rotate.pivotYProperty().bind(viewport.yProperty().add(h / 2));
         rotate.angleProperty().bind(viewport.angleProperty().negate());
         gameRoot.getTransforms().add(rotate);
+    }
+
+    private void addDebugListener() {
+        FXGL.getProperties().<Boolean>addListener(DEV_SHOWPOSITION, (prev, show) -> {
+            if (show) {
+                forEach(FXGL.getApp().getGameWorld().getEntities(), e -> {
+
+                    addDebugView(e);
+
+                });
+
+            } else {
+                forEach(debugPositions, entry -> {
+                    EntityView view = entry.value;
+                    view.translateXProperty().unbind();
+                    view.translateYProperty().unbind();
+                    removeGameView(view, RenderLayer.TOP);
+                });
+
+                debugPositions.clear();
+            }
+        });
+    }
+
+    private void addDebugView(Entity e) {
+        Text textPos = new Text("");
+        textPos.textProperty().bind(e.xProperty().asString("(%.0f, ").concat(e.yProperty().asString("%.0f)")));
+
+        EntityView view = new EntityView(new Circle(2.5));
+        view.addNode(textPos);
+        view.translateXProperty().bind(e.xProperty());
+        view.translateYProperty().bind(e.yProperty());
+        addGameView(view, RenderLayer.TOP);
+
+        debugPositions.put(e, view);
     }
 
 //    /**
@@ -253,7 +297,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
         }
 
         List<Node> tmpGroups = new ArrayList<>(gameRoot.getChildren());
-        Collections.sort(tmpGroups, (g1, g2) -> (int) g1.getUserData() - (int) g2.getUserData());
+        Collections.sort(tmpGroups, (g1, g2) -> Integer.compare((int) g1.getUserData(), (int) g2.getUserData()));
 
         gameRoot.getChildren().setAll(tmpGroups);
 
@@ -275,11 +319,24 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     @Override
     public void onEntityAdded(Entity entity) {
         initView(entity.getViewComponent());
+
+        if (FXGL.getProperties().getBoolean(DEV_SHOWPOSITION)) {
+            addDebugView(entity);
+        }
     }
 
     @Override
     public void onEntityRemoved(Entity entity) {
         destroyView(entity.getViewComponent());
+
+        EntityView debugView = debugPositions.get(entity);
+        if (debugView != null) {
+            debugView.translateXProperty().unbind();
+            debugView.translateYProperty().unbind();
+            removeGameView(debugView, RenderLayer.TOP);
+
+            debugPositions.remove(entity);
+        }
     }
 
     private void initView(ViewComponent viewComponent) {

@@ -4,7 +4,7 @@
 
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>0.5.1</version>
+    <version>0.5.2-SNAPSHOT</version>
     
     <packaging>pom</packaging>
 
@@ -73,7 +73,7 @@
         <build.helper.version>3.0.0</build.helper.version>
 
         <!-- dependencies -->
-        <kotlin.version>1.2.30</kotlin.version>
+        <kotlin.version>1.2.41</kotlin.version>
         <kotlinx.version>0.22.3</kotlinx.version>
         <jackson.version>2.9.0</jackson.version>
         <apache.http.version>4.5.3</apache.http.version>

@@ -26,6 +26,7 @@ import javafx.scene.Node;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
@@ -832,6 +833,21 @@ public class Entity {
 
     @Override
     public String toString() {
-        return "Entity(" + components + ")";
+        // we want core components to be shown first for readability
+        List<String> coreComponentsAsString = new ArrayList<>(components.size());
+        List<String> otherComponentsAsString = new ArrayList<>(components.size());
+
+        forEach(components.values(), c -> {
+            if (isCoreComponent(c.getClass())) {
+                coreComponentsAsString.add(c.toString());
+            } else {
+                otherComponentsAsString.add(c.toString());
+            }
+        });
+
+        Collections.sort(coreComponentsAsString);
+        Collections.sort(otherComponentsAsString);
+
+        return "Entity(" + coreComponentsAsString + otherComponentsAsString + ")";
     }
 }

@@ -12,6 +12,7 @@ import com.almasb.fxgl.settings.MenuItem;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.util.Supplier;
 import javafx.animation.FadeTransition;
+import javafx.beans.binding.StringBinding;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -210,7 +211,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
         MenuButton btnRestore = new MenuButton("menu.restore");
         btnRestore.setOnAction(e -> {
-            app.getDisplay().showConfirmationBox("Settings will be restored to default", yes -> {
+            app.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.settingsRestore"), yes -> {
                 if (yes) {
                     switchMenuContentTo(EMPTY);
                     listener.restoreDefaultSettings();
@@ -324,6 +325,14 @@ public class FXGLDefaultMenu extends FXGLMenu {
     @Override
     protected Button createActionButton(String name, Runnable action) {
         MenuButton btn = new MenuButton(name);
+        btn.addEventHandler(ActionEvent.ACTION, event -> action.run());
+
+        return btn;
+    }
+
+    @Override
+    protected Button createActionButton(StringBinding name, Runnable action) {
+        MenuButton btn = new MenuButton(name.getValue());
         btn.addEventHandler(ActionEvent.ACTION, event -> action.run());
 
         return btn;

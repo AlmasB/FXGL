@@ -28,7 +28,7 @@ class EdgeCallback : RayCastCallback {
         private set
 
     override fun reportFixture(fixture: Fixture, point: Vec2, normal: Vec2?, fraction: Float): Float {
-        val e = fixture.getBody().userData as Entity
+        val e = fixture.body.entity
         if (e.getComponent(PhysicsComponent::class.java).isRaycastIgnored)
             return 1.0f
 

@@ -447,4 +447,9 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
         }
         return BoundingBoxComponent(*list.toTypedArray())
     }
+
+    override fun toString(): String {
+        // lowercase, so that it gets sorted after Position, Rotation, Type, View
+        return "bbox($hitBoxes)"
+    }
 }

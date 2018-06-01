@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.physics.box2d.common;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 
 import java.io.Serializable;
@@ -179,8 +180,8 @@ public class Mat22 implements Serializable {
      * @return Absolute value matrix
      */
     public final Mat22 abs() {
-        return new Mat22(JBoxUtils.abs(ex.x), JBoxUtils.abs(ey.x), JBoxUtils.abs(ex.y),
-                JBoxUtils.abs(ey.y));
+        return new Mat22(FXGLMath.abs(ex.x), FXGLMath.abs(ey.x), FXGLMath.abs(ex.y),
+                FXGLMath.abs(ey.y));
     }
 
     /* djm: added */
@@ -200,10 +201,10 @@ public class Mat22 implements Serializable {
 
     /* djm created */
     public static void absToOut(final Mat22 R, final Mat22 out) {
-        out.ex.x = JBoxUtils.abs(R.ex.x);
-        out.ex.y = JBoxUtils.abs(R.ex.y);
-        out.ey.x = JBoxUtils.abs(R.ey.x);
-        out.ey.y = JBoxUtils.abs(R.ey.y);
+        out.ex.x = FXGLMath.abs(R.ex.x);
+        out.ex.y = FXGLMath.abs(R.ex.y);
+        out.ey.x = FXGLMath.abs(R.ey.x);
+        out.ey.y = FXGLMath.abs(R.ey.y);
     }
 
     /**

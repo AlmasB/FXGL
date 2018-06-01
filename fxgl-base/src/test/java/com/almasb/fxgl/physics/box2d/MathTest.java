@@ -10,6 +10,8 @@ package com.almasb.fxgl.physics.box2d;
  * @author Daniel Murphy
  */
 public class MathTest {
+
+    // TODO: refactor
 //
 //    private final static int MAX = (int) (Float.MAX_VALUE / 1000);
 //    private final static int RAND_ITERS = 100;
@@ -45,7 +47,7 @@ public class MathTest {
 //
 //        for (int i = 0; i < RAND_ITERS; i++) {
 //            float a = r.nextFloat() * MAX - MAX / 2;
-//            assertEquals(Math.abs(a), JBoxUtils.abs(a));
+//            assertEquals(Math.abs(a), FXGLMath.abs(a));
 //        }
 //    }
 //

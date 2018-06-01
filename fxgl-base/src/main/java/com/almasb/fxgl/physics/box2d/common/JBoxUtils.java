@@ -28,6 +28,7 @@
 
 package com.almasb.fxgl.physics.box2d.common;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 
 /**
@@ -38,7 +39,7 @@ public class JBoxUtils {
     public static final float TWOPI = (float) (Math.PI * 2);
     public static final float HALF_PI = PI / 2;
 
-    public static final float[] sinLUT = new float[JBoxSettings.SINCOS_LUT_LENGTH];
+    private static final float[] sinLUT = new float[JBoxSettings.SINCOS_LUT_LENGTH];
 
     static {
         for (int i = 0; i < JBoxSettings.SINCOS_LUT_LENGTH; i++) {
@@ -47,11 +48,11 @@ public class JBoxUtils {
     }
 
     public static final float sin(float x) {
-        if (JBoxSettings.SINCOS_LUT_ENABLED) {
-            return sinLUT(x);
-        } else {
-            return (float) StrictMath.sin(x);
-        }
+        return sinLUT(x);
+    }
+
+    public static final float cos(float x) {
+        return sinLUT(HALF_PI - x);
     }
 
     public static final float sinLUT(float x) {
@@ -61,58 +62,10 @@ public class JBoxUtils {
             x += TWOPI;
         }
 
-        if (JBoxSettings.SINCOS_LUT_LERP) {
-
-            x /= JBoxSettings.SINCOS_LUT_PRECISION;
-
-            final int index = (int) x;
-
-            if (index != 0) {
-                x %= index;
-            }
-
-            // the next index is 0
-            if (index == JBoxSettings.SINCOS_LUT_LENGTH - 1) {
-                return ((1 - x) * sinLUT[index] + x * sinLUT[0]);
-            } else {
-                return ((1 - x) * sinLUT[index] + x * sinLUT[index + 1]);
-            }
-
-        } else {
-            return sinLUT[JBoxUtils.round(x / JBoxSettings.SINCOS_LUT_PRECISION) % JBoxSettings.SINCOS_LUT_LENGTH];
-        }
-    }
-
-    public static final float cos(float x) {
-        if (JBoxSettings.SINCOS_LUT_ENABLED) {
-            return sinLUT(HALF_PI - x);
-        } else {
-            return (float) StrictMath.cos(x);
-        }
-    }
-
-    public static final float abs(final float x) {
-        if (JBoxSettings.FAST_ABS) {
-            return x > 0 ? x : -x;
-        } else {
-            return StrictMath.abs(x);
-        }
-    }
-
-    public static final int abs(int x) {
-        int y = x >> 31;
-        return (x ^ y) - y;
+        return sinLUT[round(x / JBoxSettings.SINCOS_LUT_PRECISION) % JBoxSettings.SINCOS_LUT_LENGTH];
     }
 
     public static final int floor(final float x) {
-        if (JBoxSettings.FAST_FLOOR) {
-            return fastFloor(x);
-        } else {
-            return (int) StrictMath.floor(x);
-        }
-    }
-
-    public static final int fastFloor(final float x) {
         int y = (int) x;
         if (x < y) {
             return y - 1;
@@ -121,11 +74,7 @@ public class JBoxUtils {
     }
 
     public static final int round(final float x) {
-        if (JBoxSettings.FAST_ROUND) {
-            return floor(x + .5f);
-        } else {
-            return StrictMath.round(x);
-        }
+        return floor(x + .5f);
     }
 
     public final static float max(final float a, final float b) {
@@ -164,15 +113,7 @@ public class JBoxUtils {
         return min;
     }
 
-    public static final float atan2(final float y, final float x) {
-        if (JBoxSettings.FAST_ATAN2) {
-            return fastAtan2(y, x);
-        } else {
-            return (float) StrictMath.atan2(y, x);
-        }
-    }
-
-    public static final float fastAtan2(float y, float x) {
+    public static final float atan2(float y, float x) {
         if (x == 0.0f) {
             if (y > 0.0f) return HALF_PI;
             if (y == 0.0f) return 0.0f;
@@ -180,7 +121,7 @@ public class JBoxUtils {
         }
         float atan;
         final float z = y / x;
-        if (abs(z) < 1.0f) {
+        if (FXGLMath.abs(z) < 1.0f) {
             atan = z / (1.0f + 0.28f * z * z);
             if (x < 0.0f) {
                 if (y < 0.0f) return atan - PI;
@@ -206,4 +147,86 @@ public class JBoxUtils {
     public final static float distance(Vec2 v1, Vec2 v2) {
         return sqrt(distanceSquared(v1, v2));
     }
+
+    // from Body
+
+//    /**
+//     * Get the world coordinates of a point given the local coordinates.
+//     *
+//     * @param localPoint a point on the body measured relative the the body's origin.
+//     * @return the same point expressed in world coordinates.
+//     */
+//    public Vec2 getWorldPoint(Vec2 localPoint) {
+//        Vec2 v = new Vec2();
+//        getWorldPointToOut(localPoint, v);
+//        return v;
+//    }
+//
+
+//
+//    /**
+//     * Get the world coordinates of a vector given the local coordinates.
+//     *
+//     * @param localVector a vector fixed in the body.
+//     * @return the same vector expressed in world coordinates.
+//     */
+//    public Vec2 getWorldVector(Vec2 localVector) {
+//        Vec2 out = new Vec2();
+//        getWorldVectorToOut(localVector, out);
+//        return out;
+//    }
+//
+//
+//    /**
+//     * Gets a local vector given a world vector.
+//     *
+//     * @param worldVector vector in world coordinates.
+//     * @return the corresponding local vector.
+//     */
+//    public Vec2 getLocalVector(Vec2 worldVector) {
+//        Vec2 out = new Vec2();
+//        getLocalVectorToOut(worldVector, out);
+//        return out;
+//    }
+//
+//
+//    public void getLocalVectorToOutUnsafe(Vec2 worldVector, Vec2 out) {
+//        Rotation.mulTransUnsafe(m_xf.q, worldVector, out);
+//    }
+//
+//    /**
+//     * Get the world linear velocity of a world point attached to this body.
+//     *
+//     * @param worldPoint point in world coordinates.
+//     * @return the world velocity of a point.
+//     */
+//    public Vec2 getLinearVelocityFromWorldPoint(Vec2 worldPoint) {
+//        Vec2 out = new Vec2();
+//        getLinearVelocityFromWorldPointToOut(worldPoint, out);
+//        return out;
+//    }
+//
+//    public void getLinearVelocityFromWorldPointToOut(Vec2 worldPoint, Vec2 out) {
+//        final float tempX = worldPoint.x - m_sweep.c.x;
+//        final float tempY = worldPoint.y - m_sweep.c.y;
+//        out.x = -m_angularVelocity * tempY + m_linearVelocity.x;
+//        out.y = m_angularVelocity * tempX + m_linearVelocity.y;
+//    }
+//
+//    /**
+//     * Get the world velocity of a local point.
+//     *
+//     * @param localPoint point in local coordinates.
+//     * @return the world velocity of a point.
+//     */
+//    public Vec2 getLinearVelocityFromLocalPoint(Vec2 localPoint) {
+//        Vec2 out = new Vec2();
+//        getLinearVelocityFromLocalPointToOut(localPoint, out);
+//        return out;
+//    }
+//
+//    public void getLinearVelocityFromLocalPointToOut(Vec2 localPoint, Vec2 out) {
+//        getWorldPointToOut(localPoint, out);
+//        getLinearVelocityFromWorldPointToOut(out, out);
+//    }
 }

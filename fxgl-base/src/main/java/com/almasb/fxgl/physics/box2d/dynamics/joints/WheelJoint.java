@@ -5,6 +5,7 @@
  */
 package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
@@ -475,6 +476,6 @@ public class WheelJoint extends Joint {
         // data.positions[m_indexB].c = cB;
         data.positions[m_indexB].a = aB;
 
-        return JBoxUtils.abs(C) <= JBoxSettings.linearSlop;
+        return FXGLMath.abs(C) <= JBoxSettings.linearSlop;
     }
 }

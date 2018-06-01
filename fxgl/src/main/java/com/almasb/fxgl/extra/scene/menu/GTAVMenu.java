@@ -10,6 +10,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.util.Supplier;
+import javafx.beans.binding.StringBinding;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -102,6 +103,9 @@ public class GTAVMenu extends FXGLMenu {
         ToggleButton tb1 = new ToggleButton("MAIN MENU");
         ToggleButton tb2 = new ToggleButton("OPTIONS");
         ToggleButton tb3 = new ToggleButton("EXTRA");
+        tb1.textProperty().bind(FXGL.localizedStringProperty("menu.mainMenu"));
+        tb2.textProperty().bind(FXGL.localizedStringProperty("menu.options"));
+        tb3.textProperty().bind(FXGL.localizedStringProperty("menu.extra"));
         tb1.setFont(FXGL.getUIFactory().newFont(18));
         tb2.setFont(FXGL.getUIFactory().newFont(18));
         tb3.setFont(FXGL.getUIFactory().newFont(18));
@@ -130,11 +134,11 @@ public class GTAVMenu extends FXGLMenu {
     }
 
     private VBox createMenuBodyMainMenu() {
-        Button btnContinue = createActionButton("CONTINUE", this::fireContinue);
-        Button btnNew = createActionButton("NEW GAME", this::fireNewGame);
-        Button btnLoad = createContentButton("LOAD GAME", this::createContentLoad);
-        Button btnLogout = createActionButton("LOGOUT", this::fireLogout);
-        Button btnExit = createActionButton("EXIT", this::fireExit);
+        Button btnContinue = createActionButton(FXGL.localizedStringProperty("menu.continue"), this::fireContinue);
+        Button btnNew = createActionButton(FXGL.localizedStringProperty("menu.newGame"), this::fireNewGame);
+        Button btnLoad = createContentButton(FXGL.localizedStringProperty("menu.load"), this::createContentLoad);
+        Button btnLogout = createActionButton(FXGL.localizedStringProperty("menu.logout"), this::fireLogout);
+        Button btnExit = createActionButton(FXGL.localizedStringProperty("menu.exit"), this::fireExit);
 
         btnContinue.disableProperty().bind(listener.hasSavesProperty().not());
 
@@ -142,26 +146,26 @@ public class GTAVMenu extends FXGLMenu {
     }
 
     private VBox createMenuBodyGameMenu() {
-        Button btnResume = createActionButton("RESUME", this::fireResume);
-        Button btnSave = createActionButton("SAVE", this::fireSave);
-        Button btnLoad = createContentButton("LOAD", this::createContentLoad);
-        Button btnExit = createActionButton("EXIT", this::fireExitToMainMenu);
+        Button btnResume = createActionButton(FXGL.localizedStringProperty("menu.resume"), this::fireResume);
+        Button btnSave = createActionButton(FXGL.localizedStringProperty("menu.save"), this::fireSave);
+        Button btnLoad = createContentButton(FXGL.localizedStringProperty("menu.load"), this::createContentLoad);
+        Button btnExit = createActionButton(FXGL.localizedStringProperty("menu.exit"), this::fireExitToMainMenu);
 
         return new VBox(10, btnResume, btnSave, btnLoad, btnExit);
     }
 
     private VBox makeOptionsMenu() {
-        Button btnGameplay = createContentButton("GAMEPLAY", this::createContentGameplay);
-        Button btnControls = createContentButton("CONTROLS", this::createContentControls);
-        Button btnVideo = createContentButton("VIDEO", this::createContentVideo);
-        Button btnAudio = createContentButton("AUDIO", this::createContentAudio);
+        Button btnGameplay = createContentButton(FXGL.localizedStringProperty("menu.gameplay"), this::createContentGameplay);
+        Button btnControls = createContentButton(FXGL.localizedStringProperty("menu.controls"), this::createContentControls);
+        Button btnVideo = createContentButton(FXGL.localizedStringProperty("menu.video"), this::createContentVideo);
+        Button btnAudio = createContentButton(FXGL.localizedStringProperty("menu.audio"), this::createContentAudio);
 
         return new VBox(10, btnGameplay, btnControls, btnVideo, btnAudio);
     }
 
     private VBox makeExtraMenu() {
-        Button btnCredits = createContentButton("CREDITS", this::createContentCredits);
-        Button btnTrophies = createContentButton("TROPHIES", this::createContentAchievements);
+        Button btnCredits = createContentButton(FXGL.localizedStringProperty("menu.credits"), this::createContentCredits);
+        Button btnTrophies = createContentButton(FXGL.localizedStringProperty("menu.trophies"), this::createContentAchievements);
 
         return new VBox(10, btnCredits, btnTrophies);
     }
@@ -180,6 +184,19 @@ public class GTAVMenu extends FXGLMenu {
     }
 
     /**
+     * Creates a new button with given name that performs given action on click/press.
+     *
+     * @param name  button name (with binding)
+     * @param action button action
+     * @return new button
+     */
+    protected final Button createActionButton(StringBinding name, Runnable action) {
+        Button btn = FXGL.getUIFactory().newButton(name);
+        btn.setOnAction(e -> action.run());
+        return btn;
+    }
+
+    /**
      * Creates a new button with given name that sets given content on click/press.
      *
      * @param name  button name
@@ -188,6 +205,21 @@ public class GTAVMenu extends FXGLMenu {
      */
     @SuppressWarnings("unchecked")
     protected final Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
+        Button btn = FXGL.getUIFactory().newButton(name);
+        btn.setUserData(contentSupplier);
+        btn.setOnAction(e -> switchMenuContentTo(((Supplier<MenuContent>)btn.getUserData()).get()));
+        return btn;
+    }
+
+    /**
+     * Creates a new button with given name that sets given content on click/press.
+     *
+     * @param name  button name (with binding)
+     * @param contentSupplier content supplier
+     * @return new button
+     */
+    @SuppressWarnings("unchecked")
+    protected final Button createContentButton(StringBinding name, Supplier<MenuContent> contentSupplier) {
         Button btn = FXGL.getUIFactory().newButton(name);
         btn.setUserData(contentSupplier);
         btn.setOnAction(e -> switchMenuContentTo(((Supplier<MenuContent>)btn.getUserData()).get()));

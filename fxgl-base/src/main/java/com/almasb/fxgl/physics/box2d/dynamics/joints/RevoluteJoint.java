@@ -5,6 +5,7 @@
  */
 package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.common.*;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
@@ -148,7 +149,7 @@ public class RevoluteJoint extends Joint {
 
         if (m_enableLimit && !fixedRotation) {
             float jointAngle = aB - aA - m_referenceAngle;
-            if (JBoxUtils.abs(m_upperAngle - m_lowerAngle) < 2.0f * JBoxSettings.angularSlop) {
+            if (FXGLMath.abs(m_upperAngle - m_lowerAngle) < 2.0f * JBoxSettings.angularSlop) {
                 m_limitState = LimitState.EQUAL;
             } else if (jointAngle <= m_lowerAngle) {
                 if (m_limitState != LimitState.AT_LOWER) {
@@ -352,7 +353,7 @@ public class RevoluteJoint extends Joint {
                         JBoxUtils.clamp(angle - m_lowerAngle, -JBoxSettings.maxAngularCorrection,
                                 JBoxSettings.maxAngularCorrection);
                 limitImpulse = -m_motorMass * C;
-                angularError = JBoxUtils.abs(C);
+                angularError = FXGLMath.abs(C);
             } else if (m_limitState == LimitState.AT_LOWER) {
                 float C = angle - m_lowerAngle;
                 angularError = -C;

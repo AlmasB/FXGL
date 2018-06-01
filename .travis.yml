@@ -19,7 +19,7 @@ after_success:
   -DprojectToken=$CODACY_PROJECT_TOKEN -DapiToken=$CODACY_PROJECT_TOKEN -DcodacyApiBaseUrl=https://api.codacy.com/
 - if [ "$TRAVIS_BRANCH" != "master" ]; then openssl aes-256-cbc -pass pass:$ENC_PASSWORD
   -in .travis/sign.asc.enc -out .travis/sign.asc -d; gpg -q --fast-import .travis/sign.asc;
-  mvn deploy --settings .travis.settings.xml -DskipTests=true; fi
+  mvn deploy --settings .travis.settings.xml -DskipTests=true; chmod +x .travis/upload-build.sh; .travis/upload-build.sh; fi
 notifications:
   email:
     recipients:
@@ -41,3 +41,5 @@ env:
   - secure: B+A8Cj6g3VEDXRa1DiKLWNxS4SF+5PnKIdElzqGPQ6Nx9tCr0wkQfM/DoXvUHj87YSSlTsIughSGQ/kdYH59g9ZvvaBAvNBldMQSYPnRasYWE8J25ktcwb4Acm0RXKU8jqDHdFkPOzKBxyyeKsIndclPR0gIZZbOGXoPu+hlmB8=
   - secure: iLIk/h78/PMfPtEdcWcidRsBRDs1NdyAzHkPU+riNTvSAYcHhYKKpAck+Gub8LCQevlMVm6g4i1uT8ux7XJrE5rM90mpUP5V5510/4bW4oz+OmFDQLrXGFqh9glL5GxuVrFuDORsuIEPFRlyJ9yo8PLkk0DofCozy4awxv7QDgo=
   - secure: D+l91agoVIm73W9rPnJAR18BqIgxNvGxpCb2SBSzoZGHGBXTFrkffFBqYRJNeFe618h6YrRFYB1LvxFYfj5nKshKeHBjBA5kd29RA7fgcUNZYNJgqswOzpzwJNe9/Itq4Mda5u+m2aw1thYQ3D7GWRQ1Diu1JSRtM2N/3ts4cVA=
+  - secure: Qm+NVyIxVTLbQmx9wD/JNdMyXHrdMmMqpGeIre8vq7PvA6F6NjVrzUbIYVIdspcxUtP8zrpLlhRQK62Ut6a5+CItNzj0hwf7lyHfErwePa+XmV7e/xrI0S6uD8dz/OKg4w2tIcwYvkHmCF/bAEV4IOXbFQRDaijNsOdS4z3azl8=
+  - secure: OgSQVEHW9uu0A+qmRcJjrhfRRV1Ui8VQUPqYL37W0zqzxXFnLjEqGEGZjzCbc7IQSsiOmp//5xt729izSSBZamsQOAIgns8LR9CxM+tvRIQXxZNKLmRzD2aPKAkvmTPKarRYV8AC3y/aVOV6UIBT5DBr24uZGopRXU9NUeca1vQ=

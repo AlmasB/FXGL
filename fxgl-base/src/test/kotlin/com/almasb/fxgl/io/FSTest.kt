@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.nio.file.Files.*
 import java.nio.file.Paths.get as path
@@ -110,6 +111,7 @@ class FSTest {
         assertThat(dirNames2, containsInAnyOrder("testsubdir", "testsubdir/testsubsubdir"))
     }
 
+    @Disabled
     @Test
     fun `Load last modified file`() {
         FS.writeDataTask("a", "testdir/file.a").run()

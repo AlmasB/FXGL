@@ -182,9 +182,8 @@ public class Array<T> implements Iterable<T> {
     }
 
     public void insert(int index, T value) {
-        // it was index > size, but now index >= size
-        checkRange(index);
-
+        if (index > size)
+            throw new IndexOutOfBoundsException("index can't be > size: " + index + " > " + size);
 
         T[] items = this.items;
         if (size == items.length)

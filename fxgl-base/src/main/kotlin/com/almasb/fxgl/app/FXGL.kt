@@ -299,7 +299,12 @@ class FXGL private constructor() {
 
             val bundle = getAssetLoader().loadResourceBundle("languages/$langName.properties")
 
-            return bundle.getString(key)
+            try {
+                return bundle.getString(key)
+            } catch (e: Exception) {
+                log.warning("$key is not localized for language ${_menuSettings.getLanguage()}")
+                return "MISSING!"
+            }
         }
 
         /**

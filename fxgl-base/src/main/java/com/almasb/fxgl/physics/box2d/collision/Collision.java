@@ -125,8 +125,8 @@ public final class Collision {
         // float distSqr = d.x * d.x + d.y * d.y;
 
         // after inline:
-        Vec2 circle1p = circle1.m_p;
-        Vec2 circle2p = circle2.m_p;
+        Vec2 circle1p = circle1.center;
+        Vec2 circle2p = circle2.center;
         float pAx = (xfA.q.c * circle1p.x - xfA.q.s * circle1p.y) + xfA.p.x;
         float pAy = (xfA.q.s * circle1p.x + xfA.q.c * circle1p.y) + xfA.p.y;
         float pBx = (xfB.q.c * circle2p.x - xfB.q.s * circle2p.y) + xfB.p.x;
@@ -172,7 +172,7 @@ public final class Collision {
         // final float cLocalx = cLocal.x;
         // final float cLocaly = cLocal.y;
         // after inline:
-        final Vec2 circlep = circle.m_p;
+        final Vec2 circlep = circle.center;
         final Rotation xfBq = xfB.q;
         final Rotation xfAq = xfA.q;
         final float cx = (xfBq.c * circlep.x - xfBq.s * circlep.y) + xfB.p.x;
@@ -633,7 +633,7 @@ public final class Collision {
 
         // Compute circle in frame of edge
         // Vec2 Q = MulT(xfA, Mul(xfB, circleB.m_p));
-        Transform.mulToOutUnsafe(xfB, circleB.m_p, temp);
+        Transform.mulToOutUnsafe(xfB, circleB.center, temp);
         Transform.mulTransToOutUnsafe(xfA, temp, Q);
 
         final Vec2 A = edgeA.m_vertex1;
@@ -680,7 +680,7 @@ public final class Collision {
             manifold.localPoint.set(P);
             // manifold.points[0].id.key = 0;
             manifold.points[0].id.set(cf);
-            manifold.points[0].localPoint.set(circleB.m_p);
+            manifold.points[0].localPoint.set(circleB.center);
             return;
         }
 
@@ -715,7 +715,7 @@ public final class Collision {
             manifold.localPoint.set(P);
             // manifold.points[0].id.key = 0;
             manifold.points[0].id.set(cf);
-            manifold.points[0].localPoint.set(circleB.m_p);
+            manifold.points[0].localPoint.set(circleB.center);
             return;
         }
 
@@ -747,7 +747,7 @@ public final class Collision {
         manifold.localPoint.set(A);
         // manifold.points[0].id.key = 0;
         manifold.points[0].id.set(cf);
-        manifold.points[0].localPoint.set(circleB.m_p);
+        manifold.points[0].localPoint.set(circleB.center);
     }
 
     private final EPCollider collider = new EPCollider();

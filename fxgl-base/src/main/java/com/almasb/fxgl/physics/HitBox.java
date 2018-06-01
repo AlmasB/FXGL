@@ -311,4 +311,9 @@ public final class HitBox implements Serializable {
     public HitBox copy() {
         return new HitBox(name, new Point2D(bounds.getMinX(), bounds.getMinY()), shape);
     }
+
+    @Override
+    public String toString() {
+        return "HitBox(" + name + "," + shape + ")";
+    }
 }

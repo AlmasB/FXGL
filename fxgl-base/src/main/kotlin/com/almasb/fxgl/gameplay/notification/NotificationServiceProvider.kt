@@ -51,10 +51,10 @@ class NotificationServiceProvider : NotificationService {
 
     override fun onAchievementEvent(event: AchievementEvent) {
         if (event.eventType === AchievementEvent.ACHIEVED) {
-            pushNotification("You got an achievement! ${event.achievement.name}")
+            pushNotification(FXGL.getLocalizedString("achievement.receive")+" ${event.achievement.name}")
         } else if (event.eventType === AchievementProgressEvent.PROGRESS) {
-            pushNotification("Achievement " + event.achievement.name + "\n"
-                    + "Progress: " + (event as AchievementProgressEvent).value + "/" + event.max)
+            pushNotification(FXGL.getLocalizedString("achievement.achievement") + " " + event.achievement.name + "\n"
+                    + FXGL.getLocalizedString("achievement.progress") + ": " + (event as AchievementProgressEvent).value + "/" + event.max)
         }
     }
 

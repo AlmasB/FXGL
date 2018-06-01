@@ -20,7 +20,7 @@ import com.almasb.fxgl.physics.box2d.common.Transform;
  */
 public final class CircleShape extends Shape {
 
-    public final Vec2 m_p = new Vec2();
+    public final Vec2 center = new Vec2();
 
     public CircleShape() {
         super(ShapeType.CIRCLE, 0);
@@ -29,8 +29,8 @@ public final class CircleShape extends Shape {
     @Override
     public Shape clone() {
         CircleShape shape = new CircleShape();
-        shape.m_p.x = m_p.x;
-        shape.m_p.y = m_p.y;
+        shape.center.x = center.x;
+        shape.center.y = center.y;
         shape.setRadius(this.getRadius());
         return shape;
     }
@@ -49,8 +49,8 @@ public final class CircleShape extends Shape {
         // return Vec2.dot(d, d) <= radius * radius;
         final Rotation q = transform.q;
         final Vec2 tp = transform.p;
-        float centerx = -(q.c * m_p.x - q.s * m_p.y + tp.x - p.x);
-        float centery = -(q.s * m_p.x + q.c * m_p.y + tp.y - p.y);
+        float centerx = -(q.c * center.x - q.s * center.y + tp.x - p.x);
+        float centery = -(q.s * center.x + q.c * center.y + tp.y - p.y);
 
         return centerx * centerx + centery * centery <= getRadius() * getRadius();
     }
@@ -58,8 +58,8 @@ public final class CircleShape extends Shape {
     @Override
     public float computeDistanceToOut(Transform xf, Vec2 p, int childIndex, Vec2 normalOut) {
         final Rotation xfq = xf.q;
-        float centerx = xfq.c * m_p.x - xfq.s * m_p.y + xf.p.x;
-        float centery = xfq.s * m_p.x + xfq.c * m_p.y + xf.p.y;
+        float centerx = xfq.c * center.x - xfq.s * center.y + xf.p.x;
+        float centery = xfq.s * center.x + xfq.c * center.y + xf.p.y;
         float dx = p.x - centerx;
         float dy = p.y - centery;
         float d1 = JBoxUtils.sqrt(dx * dx + dy * dy);
@@ -83,8 +83,8 @@ public final class CircleShape extends Shape {
 
         // Rot.mulToOutUnsafe(transform.q, m_p, position);
         // position.addLocal(transform.p);
-        final float positionx = tq.c * m_p.x - tq.s * m_p.y + tp.x;
-        final float positiony = tq.s * m_p.x + tq.c * m_p.y + tp.y;
+        final float positionx = tq.c * center.x - tq.s * center.y + tp.x;
+        final float positiony = tq.s * center.x + tq.c * center.y + tp.y;
 
         final float sx = inputp1.x - positionx;
         final float sy = inputp1.y - positiony;
@@ -125,8 +125,8 @@ public final class CircleShape extends Shape {
     public void computeAABB(final AABB aabb, final Transform transform, int childIndex) {
         final Rotation tq = transform.q;
         final Vec2 tp = transform.p;
-        final float px = tq.c * m_p.x - tq.s * m_p.y + tp.x;
-        final float py = tq.s * m_p.x + tq.c * m_p.y + tp.y;
+        final float px = tq.c * center.x - tq.s * center.y + tp.x;
+        final float py = tq.s * center.x + tq.c * center.y + tp.y;
 
         aabb.lowerBound.x = px - getRadius();
         aabb.lowerBound.y = py - getRadius();
@@ -137,51 +137,11 @@ public final class CircleShape extends Shape {
     @Override
     public void computeMass(final MassData massData, final float density) {
         massData.mass = density * JBoxSettings.PI * getRadius() * getRadius();
-        massData.center.x = m_p.x;
-        massData.center.y = m_p.y;
+        massData.center.x = center.x;
+        massData.center.y = center.y;
 
         // inertia about the local origin
         // massData.I = massData.mass * (0.5f * radius * radius + Vec2.dot(m_p, m_p));
-        massData.I = massData.mass * (0.5f * getRadius() * getRadius() + (m_p.x * m_p.x + m_p.y * m_p.y));
-    }
-
-    /**
-     * Get the supporting vertex index in the given direction.
-     *
-     * @param d
-     * @return
-     */
-    public int getSupport(final Vec2 d) {
-        return 0;
-    }
-
-    /**
-     * Get the supporting vertex in the given direction.
-     *
-     * @param d
-     * @return
-     */
-    public Vec2 getSupportVertex(final Vec2 d) {
-        return m_p;
-    }
-
-    /**
-     * Get the vertex count.
-     *
-     * @return
-     */
-    public int getVertexCount() {
-        return 1;
-    }
-
-    /**
-     * Get a vertex by index.
-     *
-     * @param index
-     * @return
-     */
-    public Vec2 getVertex(final int index) {
-        assert (index == 0);
-        return m_p;
+        massData.I = massData.mass * (0.5f * getRadius() * getRadius() + (center.x * center.x + center.y * center.y));
     }
 }

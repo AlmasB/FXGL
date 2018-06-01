@@ -92,6 +92,14 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
         return size;
     }
 
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    public boolean isNotEmpty() {
+        return size > 0;
+    }
+
     /** Returns the old value associated with the specified key, or null. */
     public V put(K key, V value) {
         if (key == null) throw new IllegalArgumentException("key cannot be null.");
