@@ -45,7 +45,7 @@ class FXGLAssets {
 
             UI_FONT = loader.loadFont(getString("ui.font"))
             UI_MONO_FONT = loader.loadFont(getString("ui.mono.font"))
-            UI_CSS = loader.loadCSS(getString("ui.css"))
+            UI_CSS = loader.loadCSS(FXGL.getSettings().css)
         }
 
         private fun getString(name: String): String {

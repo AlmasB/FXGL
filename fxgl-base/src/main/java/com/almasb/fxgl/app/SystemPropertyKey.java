@@ -4,8 +4,6 @@ package com.almasb.fxgl.app;
 
 public final class SystemPropertyKey {
 
-    public static final String ASSET_CACHE_SIZE = "asset.cache.size";
-
     public static final String DEV_BBOXCOLOR = "dev.bboxcolor";
 
     public static final String DEV_SHOWBBOX = "dev.showbbox";
@@ -37,8 +35,6 @@ public final class SystemPropertyKey {
     public static final String SOUND_MENU_SELECT = "sound.menu.select";
 
     public static final String SOUND_NOTIFICATION = "sound.notification";
-
-    public static final String UI_CSS = "ui.css";
 
     public static final String UI_FONT = "ui.font";
 

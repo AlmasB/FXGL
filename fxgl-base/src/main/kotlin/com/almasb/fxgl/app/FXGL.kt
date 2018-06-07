@@ -156,6 +156,8 @@ class FXGL private constructor() {
 
         /**
          * Load user defined properties to override FXGL system properties.
+         * // TODO: this should go and we should auto generate SystemPropertyKey into
+         * // FXGL.getSystemSettings().getURLPom() ... with correct types
          */
         private fun loadUserProperties() {
             // services are not ready yet, so load manually

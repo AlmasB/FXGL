@@ -187,6 +187,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.appIcon = appIcon;
     }
 
+    public void setCSS(String css) {
+        this.css = css;
+    }
+
     public void setConfigClass(Class<?> configClass) {
         this.configClass = configClass;
     }
