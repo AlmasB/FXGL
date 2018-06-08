@@ -440,12 +440,6 @@ class GameWorld {
         }
 
         return tryCatchRoot { spawner.apply(data) }
-
-//        try {
-//            return spawner.apply(data)
-//        } catch (e: Exception) {
-//            throw ReflectionUtils.getRootCause(e)
-//        }
     }
 
     /* QUERIES */
