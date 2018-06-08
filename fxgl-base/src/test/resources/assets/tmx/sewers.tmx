@@ -22,7 +22,7 @@
     <property name="someString" value="Text Here"/>
    </properties>
   </object>
-  <object id="2" name="name2" type="type2" x="504" y="0" width="360" height="168"/>
+  <object id="2" name="name2" type="type2" x="504" y="0" width="360" height="168" rotation="31"/>
  </objectgroup>
  <objectgroup name="Group2">
   <object id="3" name="no name" x="240" y="504" width="120" height="120"/>

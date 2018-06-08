@@ -89,6 +89,7 @@ class TMXParserTest {
         assertThat(obj1.y, `is`(0))
         assertThat(obj1.width, `is`(72))
         assertThat(obj1.height, `is`(336))
+        assertThat(obj1.rotation, `is`(0.0f))
         assertThat(obj1.properties.size, `is`(4))
 
         assertThat(obj1.properties["collidable"] as Boolean, `is`(true))
@@ -103,6 +104,7 @@ class TMXParserTest {
         assertThat(obj2.y, `is`(0))
         assertThat(obj2.width, `is`(360))
         assertThat(obj2.height, `is`(168))
+        assertThat(obj2.rotation, `is`(31.0f))
 
         val layer4 = map.layers[3]
 

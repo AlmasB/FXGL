@@ -209,6 +209,7 @@ class TMXParser {
         obj.id = start.getInt("id")
         obj.x = start.getInt("x")
         obj.y = start.getInt("y")
+        obj.rotation = start.getFloat("rotation")
         obj.width = start.getInt("width")
         obj.height = start.getInt("height")
         obj.gid = start.getInt("gid")

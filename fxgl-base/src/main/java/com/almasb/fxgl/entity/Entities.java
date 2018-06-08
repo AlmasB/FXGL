@@ -160,6 +160,11 @@ public final class Entities {
                 }
             }
 
+            if (data.hasKey("rotation")) {
+                float rotation = data.get("rotation");
+                entity.setRotation(rotation);
+            }
+
             // TODO: is this a good place for adding components
             // TODO: data _always_ has key "name"
 //            if (data.hasKey("name")) {
