@@ -234,6 +234,20 @@ fun showConfirm(message: String, callback: Consumer<Boolean>) = getDisplay().sho
 
 /* UI */
 
+fun addUINode(node: Node) {
+    getApp().gameScene.addUINode(node)
+}
+
+fun addUINode(node: Node, x: Double, y: Double) {
+    node.translateX = x
+    node.translateY = y
+    getApp().gameScene.addUINode(node)
+}
+
+fun removeUINode(node: Node) {
+    getApp().gameScene.removeUINode(node)
+}
+
 fun addVarText(x: Double, y: Double, varName: String): Text {
     return getUIFactory().newText(getip(varName).asString())
             .apply {
