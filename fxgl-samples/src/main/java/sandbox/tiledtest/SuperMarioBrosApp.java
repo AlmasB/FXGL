@@ -60,11 +60,12 @@ public class SuperMarioBrosApp extends GameApplication {
         getInput().addAction(new UserAction("Activate") {
             @Override
             protected void onActionBegin() {
-                getGameWorld().getCollidingEntities(player)
-                        .stream()
-                        .filter(e -> e.hasComponent(ActivatorComponent.class))
-                        .map(e -> e.getComponent(ActivatorComponent.class))
-                        .forEach(c -> c.activate(player));
+                spawn("bullet", player.getPosition());
+//                getGameWorld().getCollidingEntities(player)
+//                        .stream()
+//                        .filter(e -> e.hasComponent(ActivatorComponent.class))
+//                        .map(e -> e.getComponent(ActivatorComponent.class))
+//                        .forEach(c -> c.activate(player));
             }
         }, KeyCode.F, VirtualButton.A);
     }

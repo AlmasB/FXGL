@@ -10,5 +10,5 @@ package sandbox.tiledtest;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public enum  EType {
-    PLAYER, PLATFORM, ENEMY, CRATE, COIN, LOCK
+    PLAYER, PLATFORM, ENEMY, CRATE, COIN, LOCK, BULLET
 }
