@@ -5,7 +5,7 @@
 JavaFX Game Development Framework
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.almasb/fxgl.svg)]()
-[![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://www.javadoc.io/doc/com.github.almasb/fxgl/)
+[![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://www.javadoc.io/doc/com.github.almasb/fxgl-base/)
 ![CI](https://travis-ci.org/AlmasB/FXGL.svg?branch=master)
 [![codecov](https://codecov.io/gh/AlmasB/FXGL/branch/master/graph/badge.svg)](https://codecov.io/gh/AlmasB/FXGL)
 
@@ -52,6 +52,9 @@ public class BasicGameApp extends GameApplication {
 ## Getting Started
 
 * [Wiki & Written tutorials](https://github.com/AlmasB/FXGL/wiki)
+* API Documentation
+  * [Base](https://www.javadoc.io/doc/com.github.almasb/fxgl-base/)
+  * [Extras](https://www.javadoc.io/doc/com.github.almasb/fxgl/)
 * [YouTube tutorials](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
 * [Sample code demos](fxgl-samples)
 * [Game demos](https://github.com/AlmasB/FXGLGames) (src)
