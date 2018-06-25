@@ -61,10 +61,6 @@ public final class Fixture {
         for (int i = 0; i < childCount; i++) {
             proxies[i] = new FixtureProxy();
         }
-
-        if (proxies.length < childCount) {
-            throw new RuntimeException("BUG Fixture()");
-        }
     }
 
     /**
