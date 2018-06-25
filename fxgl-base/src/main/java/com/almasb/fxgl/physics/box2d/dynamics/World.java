@@ -325,7 +325,7 @@ public final class World {
     }
 
     private final Island island = new Island();
-    private Body[] stack = new Body[10]; // jbox2dTODO djm find a good initial stack number;
+    private Body[] stack = new Body[10];
 
     private void solve(TimeStep step) {
         // update previous transforms
