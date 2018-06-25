@@ -858,7 +858,33 @@ public final class Body {
         }
     }
 
-    void destroyAttachedContacts() {
+    void destroy() {
+        destroyAttachedJoints();
+
+        destroyAttachedContacts();
+
+        destroyFixtures();
+    }
+
+    private void destroyAttachedJoints() {
+        JointEdge je = this.m_jointList;
+        while (je != null) {
+            JointEdge je0 = je;
+            je = je.next;
+
+            if (world.getDestructionListener() != null) {
+                world.getDestructionListener().onDestroy(je0.joint);
+            }
+
+            world.destroyJoint(je0.joint);
+
+            this.m_jointList = je;
+        }
+
+        this.m_jointList = null;
+    }
+
+    private void destroyAttachedContacts() {
         // Delete the attached contacts.
         ContactEdge ce = m_contactList;
         while (ce != null) {
@@ -867,6 +893,21 @@ public final class Body {
             world.getContactManager().destroy(ce0.contact);
         }
         m_contactList = null;
+    }
+
+    private void destroyFixtures() {
+        for (Fixture f : getFixtures()) {
+            if (world.getDestructionListener() != null) {
+                world.getDestructionListener().onDestroy(f);
+            }
+
+            f.destroyProxies(world.getContactManager().broadPhase);
+            f.destroy();
+
+            // jbox2dTODO djm recycle fixtures (here or in that destroy method)
+        }
+
+        getFixtures().clear();
     }
 
     /**
