@@ -45,8 +45,7 @@ class EventTrigger<out T : Event>
     private val timer = FXGL.newLocalTimer()
 
     init {
-        if (limit <= 0)
-            throw IllegalArgumentException("Trigger limit must be non-negative and non-zero")
+        require(limit > 0) { "Trigger limit must be non-negative and non-zero" }
     }
 
     fun reachedLimit() = timesFired == limit

@@ -41,8 +41,7 @@ class ScrollingBackgroundView
         if (orientation == Orientation.HORIZONTAL) {
             translateXProperty().addListener { _, _, x ->
 
-                if (x.toInt() < 0)
-                    throw IllegalStateException("Background x cannot be < 0")
+                check(x.toInt() >= 0) { "Background x cannot be < 0" }
 
                 sx = (x.toDouble() * speed) % image.width
                 redraw()
@@ -52,8 +51,7 @@ class ScrollingBackgroundView
         } else {
             translateYProperty().addListener { _, _, y ->
 
-                if (y.toInt() < 0)
-                    throw IllegalStateException("Background y cannot be < 0")
+                check(y.toInt() >= 0) { "Background y cannot be < 0" }
 
                 sy = (y.toDouble() * speed) % image.height
                 redraw()

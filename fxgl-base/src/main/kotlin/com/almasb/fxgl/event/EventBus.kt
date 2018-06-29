@@ -119,8 +119,8 @@ class EventBus {
             // method is marked @Handles
             if (annotation != null) {
 
-                if (method.parameterTypes.isEmpty() || method.parameterTypes.size > 1) {
-                    throw IllegalArgumentException("Method ${method.name} must have a single parameter of type Event or subtype")
+                require(method.parameterTypes.size == 1){
+                    "Method ${method.name} must have a single parameter of type Event or subtype"
                 }
 
                 val eventClass: Class<*> = if (annotation.eventClass == Event::class) {

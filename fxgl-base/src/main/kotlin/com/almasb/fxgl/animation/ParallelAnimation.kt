@@ -41,8 +41,7 @@ class ParallelAnimation(var cycleCount: Int = 1, vararg animations: Animation<*>
     private var checkDelay = true
 
     init {
-        if (animations.isEmpty())
-            throw IllegalArgumentException("Animation list is empty!")
+        require(animations.isNotEmpty()){ "Animation list is empty!" }
     }
 
     /**

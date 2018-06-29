@@ -239,8 +239,7 @@ class FXGL private constructor() {
          * Destructs FXGL.
          */
         @JvmStatic protected fun destroy() {
-            if (!configured)
-                throw IllegalStateException("FXGL has not been configured")
+            check(configured) { "FXGL has not been configured" }
 
             if (isDesktop()) {
                 saveSystemData()

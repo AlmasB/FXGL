@@ -283,26 +283,21 @@ class Input : UserProfileSavable {
      * @throws IllegalArgumentException if action with same name exists or key is in use
      */
     @JvmOverloads fun addAction(action: UserAction, key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
-        if (ILLEGAL_KEYS.contains(key))
-            throw IllegalArgumentException("Cannot bind to illegal key: $key")
+        require(!ILLEGAL_KEYS.contains(key)) { "Cannot bind to illegal key: $key" }
 
         addBinding(action, KeyTrigger(key, modifier))
     }
 
     @JvmOverloads fun addAction(action: UserAction, key: KeyCode, virtualButton: VirtualButton) {
-        if (ILLEGAL_KEYS.contains(key))
-            throw IllegalArgumentException("Cannot bind to illegal key: $key")
+        require(!ILLEGAL_KEYS.contains(key)) { "Cannot bind to illegal key: $key" }
 
         addBinding(action, KeyTrigger(key, InputModifier.NONE))
         addVirtualButton(virtualButton, key)
     }
 
     private fun addBinding(action: UserAction, trigger: Trigger) {
-        if (bindings.containsKey(action))
-            throw IllegalArgumentException("Action with name \"${action.name}\" already exists")
-
-        if (bindings.containsValue(trigger))
-            throw IllegalArgumentException("Trigger $trigger is already bound")
+        require(!bindings.containsKey(action)) { """Action with name "${action.name}" already exists""" }
+        require(!bindings.containsValue(trigger)){ "Trigger $trigger is already bound" }
 
         bindings[action] = trigger
 

@@ -665,8 +665,9 @@ class AssetLoader {
      * @throws IllegalArgumentException if directory does not start with "/assets/" or was not found
      */
     fun loadFileNames(directory: String): List<String> {
-        if (!directory.startsWith(ASSETS_DIR))
-            throw IllegalArgumentException("Directory must start with: $ASSETS_DIR Provided: $directory")
+        require(directory.startsWith(ASSETS_DIR)) {
+            "Directory must start with: $ASSETS_DIR Provided: $directory"
+        }
 
         try {
             val url = javaClass.getResource(directory)

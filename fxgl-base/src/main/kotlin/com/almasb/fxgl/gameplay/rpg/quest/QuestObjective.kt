@@ -50,9 +50,7 @@ constructor(
     fun getState() = state.get()
 
     private fun setState(state: QuestState) {
-        if (state == QuestState.ACTIVE) {
-            throw IllegalArgumentException("Quest objective cannot be reactivated!")
-        }
+        require(state != QuestState.ACTIVE) { "Quest objective cannot be reactivated!" }
 
         clean()
         this.state.set(state)

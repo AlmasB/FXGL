@@ -30,8 +30,7 @@ class Quest(val name: String, val objectives: List<QuestObjective>) {
     fun getState() = state.get()
 
     init {
-        if (objectives.isEmpty())
-            throw IllegalArgumentException("Quest must have at least 1 objective")
+        require(objectives.isNotEmpty()) { "Quest must have at least 1 objective" }
 
         val failedBinding = objectives.map { it.stateProperty() }
                 .foldRight(Bindings.createBooleanBinding(Callable { false }), { state, binding ->

@@ -105,14 +105,10 @@ open class Texture : ImageView, Disposable {
         val maxX = area.maxX.toInt()
         val maxY = area.maxY.toInt()
 
-        if (minX < 0)
-            throw IllegalArgumentException("minX value of sub-texture cannot be negative")
-        if (minY < 0)
-            throw IllegalArgumentException("minY value of sub-texture cannot be negative")
-        if (maxX > image.width)
-            throw IllegalArgumentException("maxX value of sub-texture cannot be greater than image width")
-        if (maxY > image.height)
-            throw IllegalArgumentException("maxY value of sub-texture cannot be greater than image height")
+        require(minX >= 0) { "minX value of sub-texture cannot be negative" }
+        require(minY >= 0) { "minY value of sub-texture cannot be negative" }
+        require(maxX <= image.width) { "maxX value of sub-texture cannot be greater than image width" }
+        require(maxY <= image.height) { "maxY value of sub-texture cannot be greater than image height" }
 
         val pixelReader = image.pixelReader
         val image = WritableImage(maxX - minX, maxY - minY)
@@ -329,9 +325,7 @@ open class Texture : ImageView, Disposable {
      * @return new texture using a blended image of this texture
      */
     fun blend(background: Node, blendMode: BlendMode): Texture {
-        if (background.parent != null) {
-            throw IllegalArgumentException("The blend background must not be attached to a parent.")
-        }
+        require(background.parent == null) { "The blend background must not be attached to a parent." }
 
         val w = image.width.toInt()
         val h = image.height.toInt()
