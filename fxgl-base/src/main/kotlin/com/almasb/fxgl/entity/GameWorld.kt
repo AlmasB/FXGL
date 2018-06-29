@@ -70,8 +70,7 @@ class GameWorld {
      * @param entity the entity to add to world
      */
     fun addEntity(entity: Entity) {
-        if (entity.isActive)
-            throw IllegalArgumentException("Entity is already attached to world")
+        require(!entity.isActive){ "Entity is already attached to world" }
 
         waitingList.add(entity)
         entities.add(entity)
@@ -104,8 +103,7 @@ class GameWorld {
         if (!canRemove(entity))
             return
 
-        if (entity.world !== this)
-            throw IllegalArgumentException("Attempted to remove entity not attached to this world")
+        require(entity.world === this) { "Attempted to remove entity not attached to this world" }
 
         entities.remove(entity)
 
@@ -429,8 +427,7 @@ class GameWorld {
      * @return created entity
      */
     fun create(entityName: String, data: SpawnData): Entity {
-        if (entityFactories.size() == 0)
-            throw IllegalStateException("No EntityFactory was added! Call gameWorld.addEntityFactory()")
+        check(entityFactories.isNotEmpty) { "No EntityFactory was added! Call gameWorld.addEntityFactory()" }
 
         val spawner = entitySpawners.get(entityName)
                 ?: throw IllegalArgumentException("No EntityFactory has a method annotated @Spawns($entityName)")

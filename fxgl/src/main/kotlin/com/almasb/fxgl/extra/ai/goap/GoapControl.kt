@@ -78,9 +78,7 @@ class GoapControl(private val agent: GoapAgent // this is the implementing class
      * False if it is not there yet.
      */
     private fun moveAgent(nextAction: GoapAction): Boolean {
-        if (nextAction.target == null) {
-            throw IllegalArgumentException("GoapAction: $nextAction has no target")
-        }
+        requireNotNull(nextAction.target){ "GoapAction: $nextAction has no target" }
 
         val targetPosition = nextAction.target!!.getComponent(PositionComponent::class.java)
                 ?: throw IllegalArgumentException("GoapAction: $nextAction has target without PositionComponent")

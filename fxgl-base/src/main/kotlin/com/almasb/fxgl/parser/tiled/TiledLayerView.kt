@@ -48,8 +48,7 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
 
         viewport.xProperty().addListener { _, _, x ->
 
-            if (x.toInt() < 0)
-                throw IllegalStateException("Background x cannot be < 0")
+            check(x.toInt() >= 0) { "Background x cannot be < 0" }
 
             sx = x.toDouble()
             redraw()
@@ -57,8 +56,7 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
 
         viewport.yProperty().addListener { _, _, y ->
 
-            if (y.toInt() < 0)
-                throw IllegalStateException("Background y cannot be < 0")
+            check(y.toInt() >= 0) { "Background y cannot be < 0" }
 
             sy = y.toDouble()
             redraw()
@@ -346,7 +344,7 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
     private fun findTileset(gid: Int, tilesets: List<Tileset>): Tileset {
         for (tileset in tilesets) {
             if (gid >= tileset.firstgid && gid < tileset.firstgid + tileset.tilecount) {
-                return tileset;
+                return tileset
             }
         }
 
