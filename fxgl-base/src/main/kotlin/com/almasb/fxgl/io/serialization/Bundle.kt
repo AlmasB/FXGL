@@ -20,7 +20,7 @@ class Bundle(val name: String) : Serializable {
     companion object {
         private val serialVersionUID = 1L
 
-        private val log = Logger.get(Bundle::class.java)
+        private val log = Logger.get<Bundle>()
     }
 
     private val data = HashMap<String, Any>()

@@ -31,7 +31,7 @@ private const val TILED_VERSION_LATEST = "1.1.2"
 
 class TMXParser {
 
-    private val log = Logger.get(TMXParser::class.java)
+    private val log = Logger.get<TMXParser>()
 
     fun parse(inputStream: InputStream): TiledMap {
         try {

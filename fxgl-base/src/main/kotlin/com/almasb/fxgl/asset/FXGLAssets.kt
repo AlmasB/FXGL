@@ -21,7 +21,7 @@ import com.almasb.fxgl.ui.FontFactory
 class FXGLAssets {
 
     companion object {
-        private val log = Logger.get(FXGLAssets::class.java)
+        private val log = Logger.get<FXGLAssets>()
 
         @JvmField val SOUND_NOTIFICATION: Sound
         @JvmField val SOUND_MENU_SELECT: Sound

@@ -98,6 +98,7 @@ private constructor(private val name: String) {
             return Logger(name)
         }
 
+        inline fun <reified T> get() = get(T::class.java)
         @JvmStatic fun get(caller: Class<*>): Logger {
             return get(caller.simpleName)
         }

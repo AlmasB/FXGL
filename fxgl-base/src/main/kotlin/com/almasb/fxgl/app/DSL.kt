@@ -208,7 +208,6 @@ fun rand() = random()
 fun rand(min: Int, max: Int) = random(min, max)
 
 /* POOLING */
-
 fun <T> obtain(type: Class<T>): T = Pools.obtain(type)
 
 fun free(instance: Any) = Pools.free(instance)
