@@ -385,20 +385,6 @@ class AssetLoader {
     }
 
     /**
-     * Loads JSON file with given name from /assets/json/ and parses into an object of type T.
-     * Either returns a valid parsed object or throws exception in case of errors.
-     *
-     * The tileset sprite sheets must be located in /assets/textures/
-     *
-     * @param name JSON file name, e.g. level_data.json
-     * @return parsed object
-     * @throws IllegalArgumentException if asset not found or loading error
-     */
-    inline fun <reified T : Any> loadJSON(name: String): T {
-        return loadJSON(name, T::class.java)
-    }
-
-    /**
      * Loads TMX (Tiled Map Editor) file with given name from /assets/tmx/ and parses into
      * a TiledMap.
      * Either returns a valid parsed object or throws exception in case of errors.

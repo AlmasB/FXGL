@@ -110,7 +110,6 @@ class KVFile {
         }
     }
 
-    inline fun <reified T> to() = to(T::class.java)
     /**
      * Converts an instance of KVFile to instance of the data
      * structure and populates its fields with appropriate values.

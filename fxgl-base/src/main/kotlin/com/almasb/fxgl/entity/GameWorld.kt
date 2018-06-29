@@ -256,7 +256,7 @@ class GameWorld {
      */
     fun setLevelFromMap(mapFileName: String) {
         if (mapFileName.endsWith(".json")) {
-            setLevelFromMap(FXGL.getAssetLoader().loadJSON<TiledMap>(mapFileName))
+            setLevelFromMap(FXGL.getAssetLoader().loadJSON(mapFileName, TiledMap::class.java))
         } else if (mapFileName.endsWith(".tmx")) {
             setLevelFromMap(FXGL.getAssetLoader().loadTMX(mapFileName))
         } else {
@@ -484,11 +484,6 @@ class GameWorld {
     fun getEntitiesByComponent(type: Class<out Component>): List<Entity> {
         return entities.filter { it.hasComponent(type) }
     }
-
-    /**
-     * @return array of entities that have given component
-     */
-    inline fun <reified T: Component> getEntitiesByComponent() = getEntitiesByComponent(T::class.java)
 
     /**
      * Returns a list of entities which are filtered by
@@ -725,7 +720,7 @@ class GameWorld {
      * @return entity that matches the query or [Optional.empty]
      */
     fun getEntityByID(name: String, id: Int): Optional<Entity> {
-        for (e in getEntitiesByComponent<IDComponent>()) {
+        for (e in getEntitiesByComponent(IDComponent::class.java)) {
             val idComponent = e.getComponent(IDComponent::class.java)
             if (idComponent.name == name && idComponent.id == id) {
                 return Optional.of(e)

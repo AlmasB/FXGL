@@ -20,7 +20,7 @@ class AttractorComponent(var force: Double,
 
         // https://github.com/AlmasB/FXGL/issues/482
         entity.world
-                .getEntitiesByComponent<AttractableComponent>()
+                .getEntitiesByComponent(AttractableComponent::class.java)
                 .filter { it.distance(entity) <= radius }
                 .forEach {
                     val finalForce = force - it.getComponent(AttractableComponent::class.java).value
