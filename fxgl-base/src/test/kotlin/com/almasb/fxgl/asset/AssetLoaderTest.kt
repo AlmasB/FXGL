@@ -130,7 +130,7 @@ class AssetLoaderTest {
 
         assertThat(kv, `is`(notNullValue()))
 
-        val charInfo = kv.to(CharInfo::class.java)
+        val charInfo = kv.`to`(CharInfo::class.java)
 
         assertThat(charInfo, `is`(notNullValue()))
         assertThat(charInfo.hp, `is`(50))
