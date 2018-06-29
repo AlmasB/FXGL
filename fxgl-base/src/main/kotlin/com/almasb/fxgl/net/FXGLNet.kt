@@ -57,6 +57,7 @@ class FXGLNet : Net {
         return Optional.ofNullable(connectionInternal)
     }
 
+
     override fun <T : Serializable> addDataParser(cl: Class<T>, parser: DataParser<T>) {
         dummy.addParser(cl, parser)
     }

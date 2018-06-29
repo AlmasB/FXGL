@@ -36,7 +36,7 @@ import javafx.scene.input.KeyEvent
 internal class StartupState
 internal constructor(private val app: GameApplication, scene: FXGLScene) : AppState(scene) {
 
-    private val log = Logger.get(StartupState::class.java)
+    private val log = Logger.get<StartupState>()
 
     override fun onUpdate(tpf: Double) {
         log.debug("STARTUP")
@@ -127,7 +127,7 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
     private class InitAppTask(private val app: GameApplication) : Task<Void>() {
 
         companion object {
-            private val log = Logger.get(InitAppTask::class.java)
+            private val log = Logger.get<InitAppTask>()
         }
 
         override fun call(): Void? {

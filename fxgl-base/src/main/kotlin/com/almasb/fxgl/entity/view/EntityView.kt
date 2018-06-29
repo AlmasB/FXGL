@@ -22,7 +22,7 @@ import javafx.scene.shape.Circle
 open class EntityView : Parent, Disposable {
 
     companion object {
-        protected val log = Logger.get(EntityView::class.java)
+        protected val log = Logger.get<EntityView>()
     }
 
     /**

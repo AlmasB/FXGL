@@ -52,7 +52,7 @@ class EffectTest {
         control.startEffect(effect)
         assertThat(e.getInt("key"), `is`(10))
 
-        control.endEffect(TestEffect::class.java)
+        control.endEffect<TestEffect>()
         assertThat(e.getInt("key"), `is`(-10))
     }
 

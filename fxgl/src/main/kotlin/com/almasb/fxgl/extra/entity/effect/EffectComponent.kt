@@ -63,6 +63,7 @@ class EffectComponent : Component() {
         endEffect(effect.javaClass)
     }
 
+    inline fun <reified T :  Effect> endEffect() = endEffect(T::class.java)
     fun endEffect(effectClass: Class<out Effect>) {
         effectTypes.remove(effectClass)
 

@@ -37,6 +37,7 @@ import java.io.*
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.nio.file.Files.readAllLines
 import java.nio.file.Paths
 import java.util.*
 import java.util.stream.Collectors
@@ -381,6 +382,20 @@ class AssetLoader {
         getStream(JSON_DIR + name).use {
             return jsonMapper.readValue(it, type)
         }
+    }
+
+    /**
+     * Loads JSON file with given name from /assets/json/ and parses into an object of type T.
+     * Either returns a valid parsed object or throws exception in case of errors.
+     *
+     * The tileset sprite sheets must be located in /assets/textures/
+     *
+     * @param name JSON file name, e.g. level_data.json
+     * @return parsed object
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    inline fun <reified T : Any> loadJSON(name: String): T {
+        return loadJSON(name, T::class.java)
     }
 
     /**

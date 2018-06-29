@@ -84,6 +84,7 @@ fun texture(assetName: String, width: Double, height: Double): Texture = getAsse
 
 fun text(assetName: String) = getAssetLoader().loadText(assetName)
 
+inline fun <reified T : Any> jsonAs(name: String): T = jsonAs(name, T::class.java)
 fun <T : Any> jsonAs(name: String, type: Class<T>): T = getAssetLoader().loadJSON(name, type)
 
 /* AUDIO */
@@ -208,7 +209,7 @@ fun rand() = random()
 fun rand(min: Int, max: Int) = random(min, max)
 
 /* POOLING */
-
+inline fun <reified T> obtain(): T = obtain(T::class.java)
 fun <T> obtain(type: Class<T>): T = Pools.obtain(type)
 
 fun free(instance: Any) = Pools.free(instance)
