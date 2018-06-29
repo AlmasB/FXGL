@@ -356,7 +356,7 @@ class GameWorld {
         if (entitySpawners.containsKey(entityName)) {
 
             // find the factory that already has entityName spawner
-            val factory = entityFactories.find { it.value.contains(entityName) }
+            val factory = entityFactories.find { entityName in it.value }
 
             throw IllegalArgumentException("Duplicated @Spawns($entityName) in $entityFactory. Already exists in $factory")
         }

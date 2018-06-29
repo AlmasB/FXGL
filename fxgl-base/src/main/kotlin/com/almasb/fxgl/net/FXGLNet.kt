@@ -35,7 +35,7 @@ class FXGLNet : Net {
         return@then IOTask.of("latestVersion", {
 
             InputStreamReader(it).useLines {
-                return@of it.first { it.contains("<version>") }
+                return@of it.first { "<version>" in it}
                         .trim()
                         .removeSurrounding("<version>", "</version>")
             }
