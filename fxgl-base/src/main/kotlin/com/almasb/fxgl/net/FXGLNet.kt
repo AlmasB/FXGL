@@ -10,7 +10,6 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.util.Optional
 import javafx.beans.value.ChangeListener
-import java.io.InputStreamReader
 import java.io.Serializable
 import java.net.URL
 import java.nio.file.Path
@@ -33,8 +32,7 @@ class FXGLNet : Net {
     override fun getLatestVersionTask() = openStreamTask(FXGL.getProperties().getString("url.pom")).then {
 
         return@then IOTask.of("latestVersion", {
-
-            InputStreamReader(it).useLines {
+            it.reader().useLines {
                 return@of it.first { "<version>" in it}
                         .trim()
                         .removeSurrounding("<version>", "</version>")

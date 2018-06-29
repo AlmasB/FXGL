@@ -9,7 +9,7 @@ package com.almasb.fxgl.extra.algorithm
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.math.FXGLMath
 import javafx.geometry.Rectangle2D
-import java.util.*
+import java.util.Random
 
 /**
  *

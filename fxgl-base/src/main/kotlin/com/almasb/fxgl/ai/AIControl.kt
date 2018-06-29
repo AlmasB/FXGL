@@ -11,7 +11,6 @@ import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.Component
-import java.util.*
 
 /**
  * Allows attaching a behavior tree to a game entity.
@@ -49,7 +48,7 @@ private constructor() : Component() {
 
     companion object {
 
-        private val parsedTreesCache = HashMap<String, BehaviorTree<Entity> >()
+        private val parsedTreesCache = hashMapOf<String, BehaviorTree<Entity> >()
     }
 
     fun setBubbleMessage(message: String) {

@@ -9,7 +9,6 @@ package com.almasb.fxgl.saving
 import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 /**
  * Data structure for save files.

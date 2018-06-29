@@ -8,7 +8,6 @@ package com.almasb.fxgl.parser.tiled
 
 import com.almasb.fxgl.core.logging.Logger
 import javafx.scene.paint.Color
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.nio.ByteBuffer
@@ -170,7 +169,7 @@ class TMXParser {
                     "zlib" -> {
                         val baos = ByteArrayOutputStream()
 
-                        InflaterInputStream(ByteArrayInputStream(bytes)).use {
+                        InflaterInputStream(bytes.inputStream()).use {
                             it.copyTo(baos)
                         }
 
@@ -180,7 +179,7 @@ class TMXParser {
                     "gzip" -> {
                         val baos = ByteArrayOutputStream()
 
-                        GZIPInputStream(ByteArrayInputStream(bytes)).use {
+                        GZIPInputStream(bytes.inputStream()).use {
                             it.copyTo(baos)
                         }
 

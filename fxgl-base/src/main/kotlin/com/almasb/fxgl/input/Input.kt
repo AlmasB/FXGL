@@ -24,7 +24,6 @@ import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.input.*
 import java.lang.reflect.Method
-import java.util.*
 
 class Input : UserProfileSavable {
 
