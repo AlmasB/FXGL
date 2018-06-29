@@ -13,7 +13,7 @@ import javafx.beans.property.*
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.scene.paint.Color
-import java.util.*
+import java.util.Objects
 
 /**
  * Maps property (variable) names to observable JavaFX properties.
@@ -118,14 +118,14 @@ class PropertyMap {
         }
 
         if (value == "true" || value == "false") {
-            setValue(propertyName, java.lang.Boolean.parseBoolean(value))
+            setValue(propertyName, value.toBoolean())
         } else {
             try {
-                val intValue = java.lang.Integer.parseInt(value)
+                val intValue = value.toInt()
                 setValue(propertyName, intValue)
             } catch (e: Exception) {
                 try {
-                    val doubleValue = java.lang.Double.parseDouble(value)
+                    val doubleValue = value.toDouble()
                     setValue(propertyName, doubleValue)
                 } catch (e2: Exception) {
                     setValue(propertyName, value)

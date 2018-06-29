@@ -430,7 +430,7 @@ class AssetLoader {
 
         try {
             getStream(PROPERTIES_DIR + name).use {
-                val bundle = PropertyResourceBundle(InputStreamReader(it, StandardCharsets.UTF_8))
+                val bundle = PropertyResourceBundle(it.reader(StandardCharsets.UTF_8))
                 cachedAssets.put(PROPERTIES_DIR + name, bundle)
                 return bundle
             }
@@ -616,15 +616,7 @@ class AssetLoader {
      */
     private fun readAllLines(name: String): List<String> {
         try {
-            BufferedReader(InputStreamReader(getStream(name))).use {
-                val result = ArrayList<String>()
-
-                while (true) {
-                    val line = it.readLine() ?: break
-                    result.add(line)
-                }
-                return result
-            }
+            return getStream(name).bufferedReader().readLines()
         } catch (e: Exception) {
             throw loadFailed(name, e)
         }

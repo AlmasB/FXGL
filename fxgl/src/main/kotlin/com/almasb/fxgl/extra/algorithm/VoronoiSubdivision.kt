@@ -14,7 +14,6 @@ import com.almasb.fxgl.extra.algorithm.voronoi.Voronoi
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import javafx.scene.shape.Polygon
-import java.util.*
 
 /**
  * Polygonal 2D space subdivision using Voronoi diagram.

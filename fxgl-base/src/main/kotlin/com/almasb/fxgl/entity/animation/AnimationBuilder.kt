@@ -12,7 +12,6 @@ import com.almasb.fxgl.entity.components.ColorComponent
 import com.almasb.fxgl.util.EmptyRunnable
 import javafx.animation.Interpolator
 import javafx.util.Duration
-import java.util.*
 
 /**
  * A convenient builder for standard (translate, rotate, scale) animations.
@@ -79,7 +78,7 @@ class AnimationBuilder {
     }
 
     fun rotate(vararg entities: Entity): RotationAnimationBuilder {
-        return rotate(Arrays.asList(*entities))
+        return rotate(entities.toList())
     }
 
     fun rotate(entities: List<Entity>): RotationAnimationBuilder {
@@ -88,7 +87,7 @@ class AnimationBuilder {
     }
 
     fun translate(vararg entities: Entity): TranslationAnimationBuilder {
-        return translate(Arrays.asList(*entities))
+        return translate(entities.toList())
     }
 
     fun translate(entities: List<Entity>): TranslationAnimationBuilder {
@@ -97,7 +96,7 @@ class AnimationBuilder {
     }
 
     fun scale(vararg entities: Entity): ScaleAnimationBuilder {
-        return scale(Arrays.asList(*entities))
+        return scale(entities.toList())
     }
 
     fun scale(entities: List<Entity>): ScaleAnimationBuilder {
@@ -106,7 +105,7 @@ class AnimationBuilder {
     }
 
     fun color(vararg entities: Entity): ColorAnimationBuilder {
-        return color(Arrays.asList(*entities))
+        return color(entities.toList())
     }
 
     fun color(entities: List<Entity>): ColorAnimationBuilder {

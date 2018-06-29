@@ -13,7 +13,7 @@ import com.almasb.fxgl.gameplay.achievement.AchievementProgressEvent
 import com.almasb.fxgl.ui.Position
 import javafx.scene.paint.Color
 import javafx.util.Duration
-import java.util.*
+import java.util.ArrayDeque
 
 /**
  * https://github.com/AlmasB/FXGL/issues/404

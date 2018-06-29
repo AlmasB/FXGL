@@ -23,7 +23,7 @@ import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
-import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Component that adds bounding box information to an entity.

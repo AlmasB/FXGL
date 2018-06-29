@@ -16,7 +16,6 @@ import javafx.geometry.Rectangle2D
 import javafx.scene.SnapshotParameters
 import javafx.scene.paint.Color
 import javafx.util.Duration
-import java.util.*
 
 /**
  * Note: this effect destroys the original entity view (along with its reference) and only records
