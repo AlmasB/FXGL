@@ -25,14 +25,14 @@ class ScriptComponent : Component() {
     private val scripts = ObjectMap<String, Script>()
 
     fun fireScriptEvent(event: EntityEvent) {
-        getScriptHandler(event.name).ifPresent {
+        getScriptHandler(event.name).ifPresent { script ->
 
             entity.properties.keys()
                     .filter { it.startsWith(event.name) }
                     .forEach { event.setData(it.removePrefix("${event.name}."), event.targetEntity.getPropertyOptional<Any>(it).get()) }
 
 
-            it.call<Void>(event.name, ScriptFactory.newScriptObject(event.data.toMap()
+            script.call<Void>(event.name, ScriptFactory.newScriptObject(event.data.toMap()
                     // here we can populate properties common to all events, e.g. entity
                     .plus("entity" to entity)
             ))

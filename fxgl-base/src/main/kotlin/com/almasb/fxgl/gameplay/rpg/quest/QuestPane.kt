@@ -37,5 +37,5 @@ class QuestPane(width: Double, height: Double) : VBox() {
         FXGL.getApp().gameplay.questManager.questsProperty().addListener(changeListener)
     }
 
-    private fun getView(quest: Quest) = children.map { it as QuestView }.filter { it.quest === quest }.firstOrNull()
+    private fun getView(quest: Quest) = children.map { it as QuestView }.firstOrNull { it.quest === quest }
 }

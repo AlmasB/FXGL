@@ -31,6 +31,6 @@ class TiledMap(var width: Int = 0,
                var type: String = "",
                var infinite: Boolean = false) {
 
-    fun getLayerByName(name: String) = layers.filter { it.name == name }.firstOrNull()
+    fun getLayerByName(name: String) = layers.firstOrNull { it.name == name }
             ?: throw IllegalArgumentException("Layer with name=$name not found")
 }

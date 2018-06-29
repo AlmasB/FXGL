@@ -70,7 +70,7 @@ class GameWorld {
      * @param entity the entity to add to world
      */
     fun addEntity(entity: Entity) {
-        require(!entity.isActive){ "Entity is already attached to world" }
+        require(!entity.isActive) { "Entity is already attached to world" }
 
         waitingList.add(entity)
         entities.add(entity)
@@ -538,15 +538,11 @@ class GameWorld {
      */
     fun getEntitiesByType(result: Array<Entity>, vararg types: Enum<*>) {
         if (types.size == 0) {
-            for (i in entities.indices) {
-                val e = entities[i]
-                result.add(e)
-            }
+            entities.forEach { result.add(it) }
             return
         }
 
-        for (i in entities.indices) {
-            val e = entities[i]
+        for (e in entities) {
             if (isOfType(e, *types)) {
                 result.add(e)
             }
@@ -554,13 +550,7 @@ class GameWorld {
     }
 
     private fun isOfType(e: Entity, vararg types: Enum<*>): Boolean {
-        for (type in types) {
-            if (e.isType(type)) {
-                return true
-            }
-        }
-
-        return false
+        return types.any { e.isType(it) }
     }
 
     /**
@@ -586,8 +576,7 @@ class GameWorld {
      * @param maxY max y
      */
     fun getEntitiesInRange(result: Array<Entity>, minX: Double, minY: Double, maxX: Double, maxY: Double) {
-        for (i in entities.indices) {
-            val e = entities[i]
+        for (e in entities) {
             if (e.boundingBoxComponent.isWithin(minX, minY, maxX, maxY)) {
                 result.add(e)
             }
@@ -616,8 +605,7 @@ class GameWorld {
     fun getCollidingEntities(result: Array<Entity>, entity: Entity) {
         val entityBBox = entity.boundingBoxComponent
 
-        for (i in entities.indices) {
-            val e = entities[i]
+        for (e in entities) {
             if (e.boundingBoxComponent.isCollidingWith(entityBBox) && e !== entity) {
                 result.add(e)
             }
@@ -641,9 +629,7 @@ class GameWorld {
      * @param layer render layer
      */
     fun getEntitiesByLayer(result: Array<Entity>, layer: RenderLayer) {
-        for (i in entities.indices) {
-            val e = entities[i]
-
+        for (e in entities) {
             if (e.renderLayer.index() == layer.index()) {
                 result.add(e)
             }
@@ -668,9 +654,7 @@ class GameWorld {
      * @param position point in the world
      */
     fun getEntitiesAt(result: Array<Entity>, position: Point2D) {
-        for (i in entities.indices) {
-            val e = entities[i]
-
+        for (e in entities) {
             if (e.position == position) {
                 result.add(e)
             }
@@ -704,7 +688,7 @@ class GameWorld {
             return Optional.empty()
 
         array.sort { e1, e2 -> (e1.distance(entity) - e2.distance(entity)).toInt() }
-
+        
         return Optional.of(array.get(0))
     }
 

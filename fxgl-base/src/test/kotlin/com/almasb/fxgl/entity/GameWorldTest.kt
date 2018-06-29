@@ -714,7 +714,6 @@ class GameWorldTest {
         e3.y = 10.0
 
         gameWorld.addEntities(e1, e2, e3)
-
         assertAll(
                 Executable { assertThat(gameWorld.getClosestEntity(e1, Predicate { true }).get(), `is`(e2)) },
                 Executable { assertThat(gameWorld.getClosestEntity(e2, Predicate { true }).get(), `is`(e1)) },

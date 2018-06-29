@@ -114,28 +114,24 @@ class Viewport
     }
 
     fun bindToFit(xMargin: Double, yMargin: Double, vararg entities: Entity) {
-        val minBindingX = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
+        val boundingComponents = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
                 .map { it.getComponent(BoundingBoxComponent::class.java) }
-                .map { it.minXWorldProperty() }
-                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE), { min, x -> Bindings.min(min, x) })
+
+        val minBindingX = boundingComponents.map { it.minXWorldProperty() }
+                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE)) { min, x -> Bindings.min(min, x) }
                 .subtract(xMargin)
 
-        val minBindingY = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
-                .map { it.getComponent(BoundingBoxComponent::class.java) }
+        val minBindingY = boundingComponents
                 .map { it.minYWorldProperty() }
-                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE), { min, y -> Bindings.min(min, y) })
+                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE)) { min, y -> Bindings.min(min, y) }
                 .subtract(yMargin)
 
-        val maxBindingX = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
-                .map { it.getComponent(BoundingBoxComponent::class.java) }
-                .map { it.maxXWorldProperty() }
-                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE), { max, x -> Bindings.max(max, x) })
+        val maxBindingX = boundingComponents.map { it.maxXWorldProperty() }
+                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE)) { max, x -> Bindings.max(max, x) }
                 .add(xMargin)
 
-        val maxBindingY = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
-                .map { it.getComponent(BoundingBoxComponent::class.java) }
-                .map { it.maxYWorldProperty() }
-                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE), { max, y -> Bindings.max(max, y) })
+        val maxBindingY = boundingComponents.map { it.maxYWorldProperty() }
+                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE)) { max, y -> Bindings.max(max, y) }
                 .add(yMargin)
 
         val widthBinding = maxBindingX.subtract(minBindingX)
