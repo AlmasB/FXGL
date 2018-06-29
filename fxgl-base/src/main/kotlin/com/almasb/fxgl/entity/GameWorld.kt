@@ -687,8 +687,8 @@ class GameWorld {
         if (array.size() == 0)
             return Optional.empty()
 
-        array.sortedBy { it.distance(entity).toInt() }
-
+        array.sort { e1, e2 -> (e1.distance(entity) - e2.distance(entity)).toInt() }
+        
         return Optional.of(array.get(0))
     }
 
