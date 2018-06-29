@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.logging.Logger
 import java.io.*
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
+import java.util.*
 import java.util.stream.Collectors
 
 /**
@@ -64,6 +65,8 @@ internal class DesktopFSService : FSService {
         }
     }
 
+
+
     override fun loadFileNames(dirName: String, recursive: Boolean): List<String> {
         val dir = Paths.get(dirName)
 
@@ -81,7 +84,7 @@ internal class DesktopFSService : FSService {
         checkExists(dir)
 
         return Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
-                .filter { file -> Files.isRegularFile(file) && extensions.filter { "$file".endsWith(it.extension) }.isNotEmpty() }
+                .filter { file -> Files.isRegularFile(file) && extensions.any { "$file".endsWith(it.extension) } }
                 .map { dir.relativize(it).toString().replace("\\", "/") }
                 .collect(Collectors.toList<String>())
     }

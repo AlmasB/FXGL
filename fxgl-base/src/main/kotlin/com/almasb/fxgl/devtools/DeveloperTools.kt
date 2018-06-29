@@ -27,7 +27,7 @@ object DeveloperTools {
         log.debug("Counting children for $node")
 
         when (node) {
-            is Parent -> return node.childrenUnmodifiable.size + node.childrenUnmodifiable.map { getChildrenSize(it) }.sum()
+            is Parent -> return node.childrenUnmodifiable.size + node.childrenUnmodifiable.sumBy { getChildrenSize(it) }
             else      -> return 0
         }
     }

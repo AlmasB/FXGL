@@ -82,7 +82,7 @@ internal class MobileFSService : FSService {
 
         return dir.walkTopDown()
                 .maxDepth(if (recursive) Int.MAX_VALUE else 1)
-                .filter { file -> file.isFile && extensions.filter { "$file".endsWith(it.extension) }.isNotEmpty() }
+                .filter { file -> file.isFile && extensions.any { "$file".endsWith(it.extension) } }
                 .map { it.relativeTo(dir).toString().replace("\\", "/") }
                 .toList()
     }

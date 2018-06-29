@@ -213,7 +213,7 @@ class Input : UserProfileSavable {
 
     @Suppress("NON_EXHAUSTIVE_WHEN")
     private fun handleReleased(event: InputEvent) {
-        bindings.filter({ binding ->
+        bindings.filter{ binding ->
             if (event is KeyEvent) {
                 when (event.code) {
                     KeyCode.CONTROL -> return@filter binding.value.getModifier() == InputModifier.CTRL
@@ -223,7 +223,7 @@ class Input : UserProfileSavable {
             }
 
             isTriggered(binding.value, event)
-        })
+        }
         .forEach {
             currentActions.remove(it.key)
 

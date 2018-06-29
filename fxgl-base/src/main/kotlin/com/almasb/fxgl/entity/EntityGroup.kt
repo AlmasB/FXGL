@@ -49,11 +49,9 @@ class EntityGroup<T : Entity>(
     fun forEach(filter: Predicate<T>, action: Consumer<T>) {
         update()
 
-        entities.filter { filter.test(it) }.forEach {
-            if (it.isActive) {
-                action.accept(it)
-            }
-        }
+        entities.asSequence().filter(filter::test)
+                .filter { it.isActive }
+                .forEach(action::accept)
     }
 
     private fun update() {

@@ -33,14 +33,14 @@ class Quest(val name: String, val objectives: List<QuestObjective>) {
         require(objectives.isNotEmpty()) { "Quest must have at least 1 objective" }
 
         val failedBinding = objectives.map { it.stateProperty() }
-                .foldRight(Bindings.createBooleanBinding(Callable { false }), { state, binding ->
+                .foldRight(Bindings.createBooleanBinding(Callable { false })) { state, binding ->
                     state.isEqualTo(QuestState.FAILED).or(binding)
-                })
+                }
 
         val completedBinding = objectives.map { it.stateProperty() }
-                .foldRight(Bindings.createBooleanBinding(Callable { true }), { state, binding ->
+                .foldRight(Bindings.createBooleanBinding(Callable { true })) { state, binding ->
                     state.isEqualTo(QuestState.COMPLETED).and(binding)
-                })
+                }
 
         val intermediateBinding = Bindings.`when`(completedBinding).then(QuestState.COMPLETED).otherwise(QuestState.ACTIVE)
         val finalBinding = Bindings.`when`(failedBinding).then(QuestState.FAILED).otherwise(intermediateBinding)
