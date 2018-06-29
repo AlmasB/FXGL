@@ -241,7 +241,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
      * @param scene the scene
      */
     fun setScene(scene: FXGLScene) {
-        if (!scenes.contains(scene)) {
+        if (scene !in scenes) {
             registerScene(scene)
         }
 

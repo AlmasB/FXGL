@@ -170,7 +170,7 @@ object VoronoiSubdivision {
         // terminating condition to avoid being stuck in loop
         // in case of miscalculation
         // shouldn't happen in normal scenario
-        if (corners.contains(next)) {
+        if (next in corners) {
             log.warning("Failed to find next edge. Left: $edges")
             return null
         }
