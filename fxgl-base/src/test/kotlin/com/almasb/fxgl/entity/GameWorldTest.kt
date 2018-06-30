@@ -385,6 +385,13 @@ class GameWorldTest {
     }
 
     @Test
+    fun `Fail if unknown Tiled map format`() {
+        assertThrows(IllegalArgumentException::class.java, {
+            gameWorld.setLevelFromMap("level1.map")
+        })
+    }
+
+    @Test
     fun `Clear removes all entities`() {
         val e = Entity()
         e.addComponent(IrremovableComponent())
