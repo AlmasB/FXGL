@@ -29,19 +29,17 @@ class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
     })
 
     companion object {
-        private val log = Logger.get("FXGL.TextLevelParser")
+        private val log = Logger.get<TextLevelParser>()
     }
 
-    private val producers = HashMap<Char, EntitySpawner>()
+    private val producers = hashMapOf<Char, EntitySpawner>()
 
     /**
      * The empty (ignored) character.
      */
-    val emptyChar: Char
+    val emptyChar: Char = entityFactory.emptyChar()
 
     init {
-        emptyChar = entityFactory.emptyChar()
-
         ReflectionUtils.findMethodsMapToFunctions(entityFactory, SpawnSymbol::class.java, EntitySpawner::class.java)
                 .forEach { producers.put(it.key.value, it.value) }
     }
@@ -56,7 +54,7 @@ class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
      * @param y row position of character
      */
     fun addEntityProducer(character: Char, producer: EntitySpawner) {
-        producers.put(character, producer)
+        producers[character] = producer
     }
 
     /**
@@ -68,20 +66,18 @@ class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
      * @return parsed Level
      */
     override fun parse(levelFileName: String): Level {
-        val assetLoader = FXGL.getAssetLoader()
-        val lines = assetLoader.loadText(levelFileName)
+        val lines = FXGL.getAssetLoader().loadText(levelFileName)
 
         val entities = ArrayList<Entity>()
 
         var maxWidth = 0
 
-        for (i in lines.indices) {
-            val line = lines[i]
+        lines.forEachIndexed { i, line ->
+
             if (line.length > maxWidth)
                 maxWidth = line.length
 
-            for (j in 0 until line.length) {
-                val c = line[j]
+            line.forEachIndexed { j, c ->
                 val producer = producers[c]
                 if (producer != null) {
 
@@ -89,7 +85,7 @@ class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
                     entities.add(e)
 
                 } else if (c != emptyChar) {
-                    log.warning("No producer found for character: " + c)
+                    log.warning("No producer found for character: $c")
                 }
             }
         }
