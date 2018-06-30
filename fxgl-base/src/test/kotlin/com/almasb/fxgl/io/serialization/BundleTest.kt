@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.io.serialization
 
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -23,5 +24,16 @@ class BundleTest {
         val s: String? = bundle.get<String>("None")
 
         assertTrue(s == null)
+    }
+
+    @Test
+    fun `exists`() {
+        val bundle = Bundle("Test")
+
+        assertFalse(bundle.exists("key"))
+
+        bundle.put("key", "someValue")
+
+        assertTrue(bundle.exists("key"))
     }
 }

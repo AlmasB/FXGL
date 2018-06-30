@@ -40,7 +40,7 @@ class Bundle(val name: String) : Serializable {
     }
 
     fun exists(key: String): Boolean {
-        return data.containsKey(key)
+        return data.containsKey("$name.$key")
     }
 
     /**
