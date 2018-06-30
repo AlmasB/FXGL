@@ -106,7 +106,7 @@ internal class DesktopFSService : FSService {
         return Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
                 .filter { Files.isRegularFile(it) }
                 .sorted { file1, file2 ->
-                    Files.getLastModifiedTime(file2).compareTo(Files.getLastModifiedTime(file1))
+                    (file2.toFile().lastModified() - file1.toFile().lastModified()).toInt()
                 }
                 .findFirst()
                 .map { dir.relativize(it).toString().replace("\\", "/") }

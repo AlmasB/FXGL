@@ -111,7 +111,6 @@ class FSTest {
         assertThat(dirNames2, containsInAnyOrder("testsubdir", "testsubdir/testsubsubdir"))
     }
 
-    @Disabled
     @Test
     fun `Load last modified file`() {
         FS.writeDataTask("a", "testdir/file.a").run()
