@@ -17,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
-import java.util.*
 
 /**
  *
@@ -118,7 +117,7 @@ class AssetLoaderTest {
         for (i in TEXT_ASSETS.indices) {
             val textAsset = TEXT_ASSETS[i]
             val actualLines = assetLoader.loadText(textAsset)
-            val expectedLines = Arrays.asList(*TEXT_DATA[i].split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+            val expectedLines = TEXT_DATA[i].split("\n".toRegex()).dropLastWhile { it.isEmpty() }
 
             assertThat(actualLines, `is`(expectedLines))
         }

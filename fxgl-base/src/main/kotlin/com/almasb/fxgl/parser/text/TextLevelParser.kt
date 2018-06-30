@@ -12,7 +12,6 @@ import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.entity.*
 import com.almasb.fxgl.parser.LevelParser
-import java.util.*
 
 /**
  * Parser for levels represented by plain text.

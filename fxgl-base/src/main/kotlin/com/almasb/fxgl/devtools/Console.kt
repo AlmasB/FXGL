@@ -191,9 +191,9 @@ class Console : Pane() {
             val varType = gameState.getType(varName)
 
             when (varType) {
-                SimpleBooleanProperty::class.java -> gameState.setValue(varName, java.lang.Boolean.parseBoolean(varValue))
-                SimpleIntegerProperty::class.java -> gameState.setValue(varName, java.lang.Integer.parseInt(varValue))
-                SimpleDoubleProperty::class.java -> gameState.setValue(varName, java.lang.Double.parseDouble(varValue))
+                SimpleBooleanProperty::class.java -> gameState.setValue(varName, varValue.toBoolean())
+                SimpleIntegerProperty::class.java -> gameState.setValue(varName, varValue.toInt())
+                SimpleDoubleProperty::class.java -> gameState.setValue(varName, varValue.toDouble())
                 SimpleStringProperty::class.java -> gameState.setValue(varName, varValue)
                 else -> pushMessage("Unknown property type: $varType")
             }

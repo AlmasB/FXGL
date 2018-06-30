@@ -8,7 +8,6 @@ package com.almasb.fxgl.io.serialization
 
 import com.almasb.fxgl.core.logging.Logger
 import java.io.Serializable
-import java.util.*
 
 /**
  * Bundle is used to store values mapped with certain keys.
@@ -23,7 +22,7 @@ class Bundle(val name: String) : Serializable {
         private val log = Logger.get<Bundle>()
     }
 
-    private val data = HashMap<String, Any>()
+    private val data = hashMapOf<String, Any>()
 
     /**
      * Store a [value] with given [key].
