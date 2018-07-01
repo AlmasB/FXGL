@@ -368,9 +368,26 @@ class GameWorldTest {
     }
 
     @Test
-    fun `Set level from Tiled map`() {
+    fun `Set level from Tiled map json`() {
         gameWorld.addEntityFactory(TiledMapEntityFactory())
         gameWorld.setLevelFromMap("test_level1.json")
+
+        assertThat(gameWorld.entities, containsInAnyOrder(
+                // this is "layer" entity
+                EntityMatcher(0, 0),
+
+                // these are "object" entities
+                EntityMatcher(0, 736),
+                EntityMatcher(160, 608),
+                EntityMatcher(1472, 608),
+                EntityMatcher(352, 640)
+        ))
+    }
+
+    @Test
+    fun `Set level from Tiled map tmx`() {
+        gameWorld.addEntityFactory(TiledMapEntityFactory())
+        gameWorld.setLevelFromMap("test_level1.tmx")
 
         assertThat(gameWorld.entities, containsInAnyOrder(
                 // this is "layer" entity
@@ -944,15 +961,7 @@ class GameWorldTest {
 
     @Test
     fun `By layer List`() {
-        val layer = object : RenderLayer() {
-            override fun name(): String {
-                return "TEST"
-            }
-
-            override fun index(): Int {
-                return 0
-            }
-        }
+        val layer = RenderLayer("TEST", 0)
 
         val e1 = Entity()
         e1.renderLayer = layer
@@ -972,15 +981,7 @@ class GameWorldTest {
 
     @Test
     fun `By layer Array`() {
-        val layer = object : RenderLayer() {
-            override fun name(): String {
-                return "TEST"
-            }
-
-            override fun index(): Int {
-                return 0
-            }
-        }
+        val layer = RenderLayer("TEST", 0)
 
         val e1 = Entity()
         e1.renderLayer = layer
