@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="24" tileheight="24" infinite="0" nextobjectid="4">
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="24" tileheight="24" infinite="0" nextobjectid="5">
  <tileset firstgid="1" name="sewer_tileset" tilewidth="24" tileheight="24" tilecount="72" columns="8">
   <image source="sewer_tileset.png" trans="ff00ff" width="192" height="217"/>
  </tileset>
@@ -23,6 +23,9 @@
    </properties>
   </object>
   <object id="2" name="name2" type="type2" x="504" y="0" width="360" height="168" rotation="31"/>
+  <object id="4" name="polygon_name" type="no_type" x="696" y="504">
+   <polygon points="0,0 120,-72 192,48 24,48"/>
+  </object>
  </objectgroup>
  <objectgroup name="Group2">
   <object id="3" name="no name" x="240" y="504" width="120" height="120"/>

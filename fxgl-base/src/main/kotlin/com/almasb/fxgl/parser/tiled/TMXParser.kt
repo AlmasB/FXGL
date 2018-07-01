@@ -8,6 +8,7 @@ package com.almasb.fxgl.parser.tiled
 
 import com.almasb.fxgl.core.logging.Logger
 import javafx.scene.paint.Color
+import javafx.scene.shape.Polygon
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.nio.ByteBuffer
@@ -86,6 +87,10 @@ class TMXParser {
 
                         "property" -> {
                             parseObjectProperty(currentObject, start)
+                        }
+
+                        "polygon" -> {
+                            parseObjectPolygon(currentObject, start)
                         }
                     }
                 }
@@ -247,6 +252,20 @@ class TMXParser {
                 throw RuntimeException("Unknown property type: $propType for $propName")
             }
         }
+    }
+
+    private fun parseObjectPolygon(obj: TiledObject, start: StartElement) {
+        val data = start.getString("points")
+
+        val points = data.split(" +".toRegex())
+                .flatMap { it.split(",") }
+                .map { it.toDouble() }
+                .toDoubleArray()
+
+        // TODO: use pure data structure instead of Node
+        val polygon = Polygon(*points)
+
+        (obj.properties as MutableMap)["polygon"] = polygon
     }
 }
 

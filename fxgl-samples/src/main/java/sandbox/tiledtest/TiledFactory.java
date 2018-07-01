@@ -20,6 +20,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -136,6 +137,20 @@ public class TiledFactory implements EntityFactory {
                 .viewFromNodeWithBBox(new Rectangle(25, 25, Color.BLUE))
                 .with(physics, new CollidableComponent(true))
                 .with(new ExpireCleanComponent(Duration.seconds(1)))
+                .build();
+    }
+
+    @Spawns("polygon")
+    public Entity newPolygon(SpawnData data) {
+
+        Polygon polygon = data.get("polygon");
+
+        return Entities.builder()
+                .type(EType.PLATFORM)
+                .from(data)
+                .bbox(new HitBox(BoundingShape.polygonFromDoubles(polygon.getPoints())))
+                .viewFromNode(polygon)
+                .with(new PhysicsComponent())
                 .build();
     }
 }
