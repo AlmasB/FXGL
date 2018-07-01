@@ -13,6 +13,7 @@ import com.almasb.fxgl.input.virtual.VirtualControllerOverlay;
 import com.almasb.fxgl.input.virtual.VirtualControllerStyle;
 import com.almasb.fxgl.input.virtual.VirtualPauseButtonOverlay;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 
 /**
@@ -24,7 +25,6 @@ public class VirtualControllerSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(450);
         settings.setHeight(800);
-        settings.setMenuEnabled(true);
     }
 
     @Override
@@ -54,6 +54,8 @@ public class VirtualControllerSample extends GameApplication {
         btn.setTranslateY(50);
 
         VirtualControllerOverlay vcOverlay = new VirtualControllerOverlay(VirtualControllerStyle.XBOX);
+
+        //Node dpad = vcOverlay.getButtons();
         vcOverlay.setTranslateY(600);
 
         getGameScene().addUINodes(btn, vcOverlay);
