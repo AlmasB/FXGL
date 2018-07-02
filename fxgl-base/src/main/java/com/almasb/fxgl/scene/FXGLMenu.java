@@ -6,7 +6,6 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.MenuEventHandler;
 import com.almasb.fxgl.asset.FXGLAssets;
@@ -108,6 +107,10 @@ public abstract class FXGLMenu extends FXGLScene {
 
             getContentRoot().getChildren().add(createProfileView(getLocalizedString("profile.profile")+": " + newName));
         });
+    }
+
+    public void onUpdate(double tpf) {
+        // no default implementation
     }
 
     /**

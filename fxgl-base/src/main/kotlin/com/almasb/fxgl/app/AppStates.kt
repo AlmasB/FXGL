@@ -12,10 +12,7 @@ import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.PhysicsWorld
-import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.GameScene
-import com.almasb.fxgl.scene.IntroScene
-import com.almasb.fxgl.scene.LoadingScene
+import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.scene.intro.IntroFinishedEvent
 import com.almasb.fxgl.util.BiConsumer
 import com.almasb.fxgl.util.forEach
@@ -253,6 +250,8 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
 internal class MainMenuState
 internal constructor(scene: FXGLScene) : AppState(scene) {
 
+    private val menuScene = scene as FXGLMenu
+
     override fun onEnter(prevState: State) {
         if (prevState is StartupState
                 || prevState is IntroState
@@ -265,6 +264,10 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
         } else {
             throw IllegalArgumentException("Entered MainMenu from illegal state: " + prevState)
         }
+    }
+
+    override fun onUpdate(tpf: Double) {
+        menuScene.onUpdate(tpf)
     }
 }
 

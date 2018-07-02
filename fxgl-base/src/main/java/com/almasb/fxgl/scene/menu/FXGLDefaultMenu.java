@@ -7,15 +7,21 @@ package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.particle.ParticleEmitter;
+import com.almasb.fxgl.particle.ParticleEmitters;
+import com.almasb.fxgl.particle.ParticleSystem;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.settings.MenuItem;
+import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.util.Supplier;
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.StringBinding;
 import javafx.event.ActionEvent;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -26,7 +32,9 @@ import javafx.util.Duration;
 
 import java.util.EnumSet;
 
+import static com.almasb.fxgl.app.DSLKt.texture;
 import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
+import static com.almasb.fxgl.core.math.FXGLMath.random;
 
 /**
  * This is the default FXGL menu used if the users
@@ -36,6 +44,8 @@ import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class FXGLDefaultMenu extends FXGLMenu {
+
+    private ParticleSystem particleSystem = new ParticleSystem();
 
     public FXGLDefaultMenu(GameApplication app, MenuType type) {
         super(app, type);
@@ -53,7 +63,26 @@ public class FXGLDefaultMenu extends FXGLMenu {
         contentRoot.setTranslateX(menuX * 2 + 200);
         contentRoot.setTranslateY(menuY);
 
-        menuRoot.getChildren().add(menu);
+        // particle smoke
+        Texture t = texture("particles/smoke.png", 128, 128).brighter().brighter();
+
+        ParticleEmitter emitter = ParticleEmitters.newFireEmitter();
+        emitter.setBlendMode(BlendMode.SRC_OVER);
+        emitter.setSourceImage(t.getImage());
+        emitter.setSize(150, 220);
+        emitter.setNumParticles(10);
+        emitter.setEmissionRate(0.01);
+        emitter.setVelocityFunction((i) -> new Point2D(random() * 2.5, -random() * random(80, 120)));
+        emitter.setExpireFunction((i) -> Duration.seconds(random(4, 7)));
+        emitter.setScaleFunction((i) -> new Point2D(0.15, 0.10));
+        emitter.setSpawnPointFunction((i) -> new Point2D(random(0, app.getWidth() - 200), 120));
+
+        particleSystem.addParticleEmitter(emitter, 0, app.getHeight());
+
+        // TODO: rename, as this is not same as contentRoot
+        getContentRoot().getChildren().add(3, particleSystem.getPane());
+
+        menuRoot.getChildren().addAll(menu);
         contentRoot.getChildren().add(EMPTY);
 
         activeProperty().addListener((observable, wasActive, isActive) -> {
@@ -64,6 +93,11 @@ public class FXGLDefaultMenu extends FXGLMenu {
                 switchMenuContentTo(EMPTY);
             }
         });
+    }
+
+    @Override
+    public void onUpdate(double tpf) {
+        particleSystem.onUpdate(tpf);
     }
 
     @Override
@@ -295,6 +329,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
         private MenuContent cachedContent = null;
 
         MenuButton(String stringKey) {
+            this.setStyle("-fx-background-color: transparent");
             textProperty().bind(localizedStringProperty(stringKey));
         }
 
