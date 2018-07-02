@@ -14,6 +14,9 @@ import javafx.util.Duration;
 
 import java.util.Random;
 
+import static com.almasb.fxgl.app.DSLKt.image;
+import static com.almasb.fxgl.core.math.FXGLMath.random;
+
 /**
  * Holds configuration of predefined particle emitters.
  *
@@ -58,6 +61,25 @@ public final class ParticleEmitters {
         emitter.setScaleFunction(i -> new Point2D(rand(-0.01, 0.01) * 10, rand() * -0.1));
         emitter.setExpireFunction(i -> Duration.seconds(1));
         emitter.setBlendMode(BlendMode.ADD);
+
+        return emitter;
+    }
+
+    /**
+     * @param width emitter width
+     * @return new emitter with fire configuration
+     */
+    public static ParticleEmitter newFireEmitter(int width) {
+        ParticleEmitter emitter = new ParticleEmitter();
+        emitter.setNumParticles((width / 32) + 1);
+        emitter.setEmissionRate(0.05);
+        emitter.setSize(16, 32);
+        emitter.setVelocityFunction((i) -> new Point2D(random(-1, 1) * 2.5, -random() * random(10, 30)));
+        emitter.setSpawnPointFunction((i) -> new Point2D(random(0, width-32), 0));
+        emitter.setScaleFunction((i) -> new Point2D(0.15, 0.10));
+        emitter.setExpireFunction(i -> Duration.seconds(rand(4, 7)));
+        emitter.setBlendMode(BlendMode.ADD);
+        emitter.setSourceImage(image("particles/fire.png", 32, 32));
 
         return emitter;
     }
