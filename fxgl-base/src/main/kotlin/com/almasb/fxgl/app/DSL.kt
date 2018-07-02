@@ -78,6 +78,8 @@ fun inc(varName: String, value: Double) = getApp().gameState.increment(varName, 
 
 fun image(assetName: String): Image = getAssetLoader().loadImage(assetName)
 
+fun image(assetName: String, width: Double, height: Double): Image = texture(assetName, width, height).image
+
 fun texture(assetName: String): Texture = getAssetLoader().loadTexture(assetName)
 
 fun texture(assetName: String, width: Double, height: Double): Texture = getAssetLoader().loadTexture(assetName, width, height)
