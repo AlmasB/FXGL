@@ -51,6 +51,11 @@ public class ReadOnlyGameSettings {
     protected String css = "fxgl_dark.css";
     protected boolean manualResizeEnabled = false;
 
+    protected String fontUI = "VarelaRound-Regular.ttf";
+    protected String fontMono = "lucida_console.ttf";
+    protected String fontText = "Courier-Prime.ttf";
+    protected String fontGame = "Abel-Regular.ttf";
+
     // when adding extra fields, remember to add them to copy constructor
 
     /* EXPERIMENTAL */
@@ -111,6 +116,11 @@ public class ReadOnlyGameSettings {
         this.appIcon = copy.appIcon;
         this.css = copy.css;
         this.manualResizeEnabled = copy.manualResizeEnabled;
+
+        this.fontUI = copy.fontUI;
+        this.fontGame = copy.fontGame;
+        this.fontMono = copy.fontMono;
+        this.fontText = copy.fontText;
 
         this.configClass = copy.configClass;
         this.achievementStoreClass = copy.achievementStoreClass;
@@ -196,6 +206,22 @@ public class ReadOnlyGameSettings {
 
     public final String getCSS() {
         return css;
+    }
+
+    public final String getFontGame() {
+        return fontGame;
+    }
+
+    public final String getFontMono() {
+        return fontMono;
+    }
+
+    public final String getFontText() {
+        return fontText;
+    }
+
+    public final String getFontUI() {
+        return fontUI;
     }
 
     public final Optional<Class<?>> getConfigClass() {

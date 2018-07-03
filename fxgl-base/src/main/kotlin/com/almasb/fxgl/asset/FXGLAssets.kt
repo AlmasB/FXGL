@@ -30,6 +30,8 @@ class FXGLAssets {
 
         @JvmField val UI_FONT: FontFactory
         @JvmField val UI_MONO_FONT: FontFactory
+        @JvmField val UI_GAME_FONT: FontFactory
+        @JvmField val UI_TEXT_FONT: FontFactory
 
         @JvmField val UI_CSS: CSS
 
@@ -37,14 +39,17 @@ class FXGLAssets {
             log.debug("Loading FXGLAssets")
 
             val loader = FXGL.getAssetLoader()
+            val settings = FXGL.getSettings()
 
             SOUND_NOTIFICATION = loader.loadSound(getString("sound.notification"))
             SOUND_MENU_SELECT = loader.loadSound(getString("sound.menu.select"))
             SOUND_MENU_BACK = loader.loadSound(getString("sound.menu.back"))
             SOUND_MENU_PRESS = loader.loadSound(getString("sound.menu.press"))
 
-            UI_FONT = loader.loadFont(getString("ui.font"))
-            UI_MONO_FONT = loader.loadFont(getString("ui.mono.font"))
+            UI_FONT = loader.loadFont(settings.fontUI)
+            UI_MONO_FONT = loader.loadFont(settings.fontMono)
+            UI_TEXT_FONT = loader.loadFont(settings.fontText)
+            UI_GAME_FONT = loader.loadFont(settings.fontGame)
             UI_CSS = loader.loadCSS(FXGL.getSettings().css)
         }
 

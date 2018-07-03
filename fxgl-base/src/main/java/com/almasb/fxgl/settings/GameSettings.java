@@ -191,6 +191,28 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.css = css;
     }
 
+    /**
+     * Set font to be used in UI controls.
+     * The font will be loaded from "/assets/ui/fonts".
+     *
+     * @param fontUI font name
+     */
+    public void setFontUI(String fontUI) {
+        this.fontUI = fontUI;
+    }
+
+    public void setFontMono(String fontMono) {
+        this.fontMono = fontMono;
+    }
+
+    public void setFontText(String fontText) {
+        this.fontText = fontText;
+    }
+
+    public void setFontGame(String fontGame) {
+        this.fontGame = fontGame;
+    }
+
     public void setConfigClass(Class<?> configClass) {
         this.configClass = configClass;
     }
