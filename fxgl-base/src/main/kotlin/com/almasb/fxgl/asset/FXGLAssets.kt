@@ -41,20 +41,16 @@ class FXGLAssets {
             val loader = FXGL.getAssetLoader()
             val settings = FXGL.getSettings()
 
-            SOUND_NOTIFICATION = loader.loadSound(getString("sound.notification"))
-            SOUND_MENU_SELECT = loader.loadSound(getString("sound.menu.select"))
-            SOUND_MENU_BACK = loader.loadSound(getString("sound.menu.back"))
-            SOUND_MENU_PRESS = loader.loadSound(getString("sound.menu.press"))
+            SOUND_NOTIFICATION = loader.loadSound(settings.soundNotification)
+            SOUND_MENU_SELECT = loader.loadSound(settings.soundMenuSelect)
+            SOUND_MENU_BACK = loader.loadSound(settings.soundMenuBack)
+            SOUND_MENU_PRESS = loader.loadSound(settings.soundMenuPress)
 
             UI_FONT = loader.loadFont(settings.fontUI)
             UI_MONO_FONT = loader.loadFont(settings.fontMono)
             UI_TEXT_FONT = loader.loadFont(settings.fontText)
             UI_GAME_FONT = loader.loadFont(settings.fontGame)
             UI_CSS = loader.loadCSS(FXGL.getSettings().css)
-        }
-
-        private fun getString(name: String): String {
-            return FXGL.getProperties().getString(name)
         }
     }
 }

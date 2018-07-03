@@ -213,6 +213,35 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.fontGame = fontGame;
     }
 
+    public void setPixelsPerMeter(double pixelsPerMeter) {
+        this.pixelsPerMeter = pixelsPerMeter;
+    }
+
+    public void setSoundNotification(String soundNotification) {
+        this.soundNotification = soundNotification;
+    }
+
+    public void setSoundMenuBack(String soundMenuBack) {
+        this.soundMenuBack = soundMenuBack;
+    }
+
+    public void setSoundMenuPress(String soundMenuPress) {
+        this.soundMenuPress = soundMenuPress;
+    }
+
+    public void setSoundMenuSelect(String soundMenuSelect) {
+        this.soundMenuSelect = soundMenuSelect;
+    }
+
+    /**
+     * Set how many real seconds are in 24 game hours, default = 60.
+     *
+     * @param seconds
+     */
+    public void setSecondsIn24h(int seconds) {
+        this.secondsIn24h = seconds;
+    }
+
     public void setConfigClass(Class<?> configClass) {
         this.configClass = configClass;
     }

@@ -209,7 +209,7 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
     init {
         gameState = GameState()
         gameWorld = GameWorld()
-        physicsWorld = PhysicsWorld(FXGL.getAppHeight(), FXGL.getProperties().getDouble("physics.ppm"))
+        physicsWorld = PhysicsWorld(FXGL.getAppHeight(), FXGL.getSettings().pixelsPerMeter)
 
         gameWorld.addWorldListener(physicsWorld)
         gameWorld.addWorldListener(gameScene)
