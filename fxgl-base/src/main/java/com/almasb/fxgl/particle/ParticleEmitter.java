@@ -31,6 +31,7 @@ import java.util.Random;
  */
 public final class ParticleEmitter {
 
+    // TODO: use static import
     private Random random = FXGLMath.getRandom();
 
     private IntegerProperty numParticles = new SimpleIntegerProperty(25);

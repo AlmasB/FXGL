@@ -352,6 +352,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
     private static class MenuBox extends VBox {
 
+        // TODO: cleanup, enable animations for GameMenu
         MenuBox(int width, MenuButton... items) {
 
             for (MenuButton item : items) {
