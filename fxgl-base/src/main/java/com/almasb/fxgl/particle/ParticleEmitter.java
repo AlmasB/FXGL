@@ -210,6 +210,20 @@ public final class ParticleEmitter {
         this.interpolator.set(interpolator);
     }
 
+    private BooleanProperty allowParticleRotation = new SimpleBooleanProperty(false);
+
+    public boolean isAllowParticleRotation() {
+        return allowParticleRotation.get();
+    }
+
+    public BooleanProperty allowParticleRotationProperty() {
+        return allowParticleRotation;
+    }
+
+    public void setAllowParticleRotation(boolean allowParticleRotation) {
+        this.allowParticleRotation.set(allowParticleRotation);
+    }
+
     /* FUNCTION CONFIGURATORS */
 
     private Supplier<Point2D> accelerationFunction = () -> Point2D.ZERO;
@@ -382,7 +396,8 @@ public final class ParticleEmitter {
                 getStartColor(),
                 getEndColor(),
                 getBlendMode(),
-                getInterpolator());
+                getInterpolator(),
+                isAllowParticleRotation());
 
         return particle;
     }
