@@ -37,7 +37,6 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -279,7 +278,7 @@ public abstract class FXGLMenu extends FXGLScene {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(10, 10, 10, 10));
-        grid.getColumnConstraints().add(new ColumnConstraints(100, 100, 100, Priority.ALWAYS, HPos.LEFT, true));
+        grid.getColumnConstraints().add(new ColumnConstraints(200, 200, 200, Priority.ALWAYS, HPos.LEFT, true));
         grid.getRowConstraints().add(new RowConstraints(40, 40, 40, Priority.ALWAYS, VPos.CENTER, true));
 
         // row 0
@@ -517,10 +516,8 @@ public abstract class FXGLMenu extends FXGLScene {
                         maxW = w;
                 }
 
-                getChildren().add(createSeparator(maxW));
-
                 for (Node item : items) {
-                    getChildren().addAll(item, createSeparator(maxW));
+                    getChildren().addAll(item);
                 }
             }
 
@@ -531,17 +528,6 @@ public abstract class FXGLMenu extends FXGLScene {
                     onClose();
                 }
             });
-        }
-
-        private Line createSeparator(int width) {
-            if (width < 5) {
-                width = 200;
-            }
-
-            Line sep = new Line();
-            sep.setEndX(width);
-            sep.setStroke(Color.DARKGREY);
-            return sep;
         }
 
         private Runnable onOpen = null;
