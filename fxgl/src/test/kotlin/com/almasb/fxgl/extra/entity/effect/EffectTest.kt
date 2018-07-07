@@ -22,13 +22,6 @@ import org.junit.jupiter.api.Test
  */
 class EffectTest {
 
-    companion object {
-        @BeforeAll
-        @JvmStatic fun before() {
-            FXGL.getProperties().setValue("dev.showbbox", false)
-        }
-    }
-
     @Test
     fun `Effect start and end`() {
         val e = Entity()

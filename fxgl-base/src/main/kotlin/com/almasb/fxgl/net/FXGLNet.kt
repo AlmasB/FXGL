@@ -7,6 +7,7 @@
 package com.almasb.fxgl.net
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.SystemConfig
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.util.Optional
 import javafx.beans.value.ChangeListener
@@ -29,7 +30,7 @@ class FXGLNet : Net {
      * Loads pom.xml from GitHub server's master branch
      * and parses the "version" tag.
      */
-    override fun getLatestVersionTask() = openStreamTask(FXGL.getProperties().getString("url.pom")).then {
+    override fun getLatestVersionTask() = openStreamTask(SystemConfig.urlPOM).then {
 
         return@then IOTask.of("latestVersion", {
             it.reader().useLines {

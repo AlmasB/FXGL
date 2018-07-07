@@ -7,6 +7,7 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.SystemConfig
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JavaType
@@ -68,7 +69,7 @@ class Leaderboard {
         })
     }
 
-    private fun baseUrl() = FXGL.getProperties().getString("url.leaderboard")
+    private fun baseUrl() = SystemConfig.urlLeaderboard
 
     private fun gameName() = FXGL.getSettings().title.replace(' ', '_')
 }

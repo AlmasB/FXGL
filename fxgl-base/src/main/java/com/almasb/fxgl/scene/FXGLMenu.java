@@ -5,9 +5,7 @@
  */
 package com.almasb.fxgl.scene;
 
-import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.MenuEventHandler;
+import com.almasb.fxgl.app.*;
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.GameDifficulty;
@@ -47,7 +45,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.almasb.fxgl.app.FXGL.*;
-import static com.almasb.fxgl.app.SystemPropertyKey.FXGL_VERSION;
 import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
@@ -432,7 +429,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         List<String> credits = new ArrayList<>(getSettings().getCredits().getList());
         credits.add("");
-        credits.add("Powered by FXGL " + getProperties().getString(FXGL_VERSION));
+        credits.add("Powered by FXGL " + FXGL.getVersion());
         credits.add("Author: Almas Baimagambetov");
         credits.add("https://github.com/AlmasB/FXGL");
         credits.add("");
@@ -455,16 +452,16 @@ public abstract class FXGLMenu extends FXGLScene {
         // url is a string key defined in system.properties
         Consumer<String> openBrowser = url -> {
             getNet()
-                    .openBrowserTask(getProperties().getString(url))
+                    .openBrowserTask(url)
                     .onFailure(error -> log.warning("Error opening browser: " + error))
                     .run();
         };
 
         Button btnGoogle = new Button("Google Forms");
-        btnGoogle.setOnAction(e -> openBrowser.accept("url.googleforms"));
+        btnGoogle.setOnAction(e -> openBrowser.accept(SystemConfig.INSTANCE.getUrlGoogleForms()));
 
         Button btnSurveyMonkey = new Button("Survey Monkey");
-        btnSurveyMonkey.setOnAction(e -> openBrowser.accept("url.surveymonkey"));
+        btnSurveyMonkey.setOnAction(e -> openBrowser.accept(SystemConfig.INSTANCE.getUrlGoogleForms()));
 
         VBox vbox = new VBox(15,
                 getUIFactory().newText(getLocalizedString("menu.chooseFeedback"), Color.WHEAT, 18),

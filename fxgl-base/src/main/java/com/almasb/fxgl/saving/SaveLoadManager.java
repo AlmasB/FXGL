@@ -7,6 +7,7 @@
 package com.almasb.fxgl.saving;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.app.SystemConfig;
 import com.almasb.fxgl.core.concurrent.IOTask;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.io.FS;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.almasb.fxgl.app.SystemPropertyKey.*;
+import static com.almasb.fxgl.app.SystemConfig.INSTANCE;
 
 /**
  * TODO: use async instead of javafx.application.Platform
@@ -34,12 +35,12 @@ public final class SaveLoadManager {
 
     private static final Logger log = Logger.get(SaveLoadManager.class);
 
-    private static final String PROFILE_FILE_NAME = FXGL.getProperties().getString(FS_PROFILENAME);
-    private static final String PROFILES_DIR = FXGL.getProperties().getString(FS_PROFILEDIR);
-    private static final String SAVE_DIR = FXGL.getProperties().getString(FS_SAVEDIR);
+    private static final String PROFILE_FILE_NAME = INSTANCE.getProfileName();
+    private static final String PROFILES_DIR = INSTANCE.getProfileDir();
+    private static final String SAVE_DIR = INSTANCE.getSaveDir();
 
-    private static final String SAVE_FILE_EXT = FXGL.getProperties().getString(FS_SAVEFILE_EXT);
-    private static final String DATA_FILE_EXT = FXGL.getProperties().getString(FS_DATAFILE_EXT);
+    private static final String SAVE_FILE_EXT = INSTANCE.getSaveFileExt();
+    private static final String DATA_FILE_EXT = INSTANCE.getDataFileExt();
 
     static {
         log.debug("Checking profiles dir: " + PROFILES_DIR);
