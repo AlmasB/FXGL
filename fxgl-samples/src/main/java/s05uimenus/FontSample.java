@@ -6,7 +6,6 @@
 
 package s05uimenus;
 
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.entity.Entities;
@@ -20,7 +19,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import static com.almasb.fxgl.app.DSLKt.*;
+import static com.almasb.fxgl.app.DSLKt.addUINode;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -91,13 +90,11 @@ public class FontSample extends GameApplication {
                 "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n" +
                 "SOFTWARE.");
 
-        //text.setFont(Font.font(16));
         text.setFont(fontText);
 
         VBox box = new VBox(text);
         box.setPadding(new Insets(10));
 
-        // TODO: Bug? NONE doesn't work
         InGameWindow window = new InGameWindow("", InGameWindow.WindowDecor.NONE);
         window.setContentPane(box);
         window.setCanResize(false);

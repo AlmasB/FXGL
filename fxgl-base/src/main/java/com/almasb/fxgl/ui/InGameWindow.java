@@ -68,9 +68,12 @@ public class InGameWindow extends MDIWindow {
                 setCanMinimize(true);
                 setCanClose(true);
                 break;
-            case NONE:  // fallthru
-            default:    // do nothing
+            case NONE:
+                setCanMinimize(false);
+                setCanClose(false);
                 break;
+            default:
+                throw new IllegalArgumentException("Unknown decor: " + decor);
         }
 
         appW = FXGL.getSettings().getWidth();
