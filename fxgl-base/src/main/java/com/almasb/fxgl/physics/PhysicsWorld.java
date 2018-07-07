@@ -434,6 +434,9 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     private boolean isIgnored(Entity e1, Entity e2) {
+        if (!e1.hasComponent(CollidableComponent.class) || !e2.hasComponent(CollidableComponent.class))
+            return false;
+
         CollidableComponent c1 = e1.getComponent(CollidableComponent.class);
 
         for (Serializable t1 : c1.getIgnoredTypes()) {
