@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.util
 
-import java.util.Collections
+import java.util.*
 
 /**
  * Simple data structure to contain a list of credits.

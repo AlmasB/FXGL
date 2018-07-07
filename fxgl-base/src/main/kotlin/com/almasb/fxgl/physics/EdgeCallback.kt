@@ -7,7 +7,6 @@
 package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.core.math.Vec2
-import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.physics.box2d.callbacks.RayCastCallback
 import com.almasb.fxgl.physics.box2d.dynamics.Fixture
 

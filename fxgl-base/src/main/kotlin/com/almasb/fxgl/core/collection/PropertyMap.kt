@@ -13,7 +13,7 @@ import javafx.beans.property.*
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.scene.paint.Color
-import java.util.Objects
+import java.util.*
 
 /**
  * Maps property (variable) names to observable JavaFX properties.

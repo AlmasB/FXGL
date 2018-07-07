@@ -8,8 +8,6 @@ package com.almasb.fxgl.particle
 
 import javafx.geometry.Point2D
 import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
 
 /**
  * A particle system to use when not in game,

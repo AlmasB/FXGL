@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.app.FXGL.Companion.getLocalizedString
-import com.almasb.fxgl.app.FXGL.Companion.localizedStringProperty
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.ProgressDialog

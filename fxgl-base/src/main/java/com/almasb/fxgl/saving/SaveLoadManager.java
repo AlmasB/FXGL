@@ -7,7 +7,6 @@
 package com.almasb.fxgl.saving;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.SystemConfig;
 import com.almasb.fxgl.core.concurrent.IOTask;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.io.FS;

@@ -8,7 +8,6 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.audio.AudioPlayer
-import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.logging.Logger
