@@ -12,10 +12,7 @@ import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.PhysicsWorld
-import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.GameScene
-import com.almasb.fxgl.scene.IntroScene
-import com.almasb.fxgl.scene.LoadingScene
+import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.scene.intro.IntroFinishedEvent
 import com.almasb.fxgl.util.BiConsumer
 import com.almasb.fxgl.util.forEach
@@ -36,7 +33,7 @@ import javafx.scene.input.KeyEvent
 internal class StartupState
 internal constructor(private val app: GameApplication, scene: FXGLScene) : AppState(scene) {
 
-    private val log = Logger.get(StartupState::class.java)
+    private val log = Logger.get<StartupState>()
 
     override fun onUpdate(tpf: Double) {
         log.debug("STARTUP")
@@ -127,7 +124,7 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
     private class InitAppTask(private val app: GameApplication) : Task<Void>() {
 
         companion object {
-            private val log = Logger.get(InitAppTask::class.java)
+            private val log = Logger.get<InitAppTask>()
         }
 
         override fun call(): Void? {
@@ -212,7 +209,7 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
     init {
         gameState = GameState()
         gameWorld = GameWorld()
-        physicsWorld = PhysicsWorld(FXGL.getAppHeight(), FXGL.getProperties().getDouble("physics.ppm"))
+        physicsWorld = PhysicsWorld(FXGL.getAppHeight(), FXGL.getSettings().pixelsPerMeter)
 
         gameWorld.addWorldListener(physicsWorld)
         gameWorld.addWorldListener(gameScene)
@@ -253,6 +250,8 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
 internal class MainMenuState
 internal constructor(scene: FXGLScene) : AppState(scene) {
 
+    private val menuScene = scene as FXGLMenu
+
     override fun onEnter(prevState: State) {
         if (prevState is StartupState
                 || prevState is IntroState
@@ -265,6 +264,10 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
         } else {
             throw IllegalArgumentException("Entered MainMenu from illegal state: " + prevState)
         }
+    }
+
+    override fun onUpdate(tpf: Double) {
+        menuScene.onUpdate(tpf)
     }
 }
 

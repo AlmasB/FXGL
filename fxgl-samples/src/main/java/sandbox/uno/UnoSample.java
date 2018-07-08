@@ -55,6 +55,8 @@ public class UnoSample extends GameApplication {
 
     @Override
     protected void initGame() {
+        getGameWorld().addEntityFactory(new UnoFactory());
+
         player = new Hand();
         enemy = new Hand();
 

@@ -7,6 +7,7 @@
 package com.almasb.fxgl.parser.tiled
 
 import javafx.scene.paint.Color
+import javafx.scene.shape.Polygon
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -32,7 +33,7 @@ class TMXParserTest {
         assertThat(map.height, `is`(64))
         assertThat(map.tilewidth, `is`(24))
         assertThat(map.tileheight, `is`(24))
-        assertThat(map.nextobjectid, `is`(4))
+        assertThat(map.nextobjectid, `is`(5))
         assertThat(map.orientation, `is`("orthogonal"))
         assertThat(map.renderorder, `is`("right-down"))
         assertFalse(map.infinite)
@@ -89,6 +90,7 @@ class TMXParserTest {
         assertThat(obj1.y, `is`(0))
         assertThat(obj1.width, `is`(72))
         assertThat(obj1.height, `is`(336))
+        assertThat(obj1.rotation, `is`(0.0f))
         assertThat(obj1.properties.size, `is`(4))
 
         assertThat(obj1.properties["collidable"] as Boolean, `is`(true))
@@ -103,6 +105,12 @@ class TMXParserTest {
         assertThat(obj2.y, `is`(0))
         assertThat(obj2.width, `is`(360))
         assertThat(obj2.height, `is`(168))
+        assertThat(obj2.rotation, `is`(31.0f))
+
+        val obj4 = layer3.objects[2]
+
+        assertThat(obj4.id, `is`(4))
+        assertThat((obj4.properties["polygon"] as Polygon).points, `is`(Polygon(0.0, 0.0, 120.0, -72.0, 192.0, 48.0, 24.0, 48.0).points))
 
         val layer4 = map.layers[3]
 

@@ -34,8 +34,9 @@ class AchievementManager : UserProfileSavable {
      * @param a the achievement
      */
     fun registerAchievement(a: Achievement) {
-        if (achievements.find { it.name == a.name } != null)
-            throw IllegalArgumentException("Achievement with name \"${a.name}\" exists")
+        require(achievements.none { it.name == a.name }) {
+            """Achievement with name "${a.name}" exists"""
+        }
 
         achievements.add(a)
         log.debug("Registered new achievement \"${a.name}\"")

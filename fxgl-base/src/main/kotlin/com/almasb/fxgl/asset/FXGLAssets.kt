@@ -21,7 +21,7 @@ import com.almasb.fxgl.ui.FontFactory
 class FXGLAssets {
 
     companion object {
-        private val log = Logger.get(FXGLAssets::class.java)
+        private val log = Logger.get<FXGLAssets>()
 
         @JvmField val SOUND_NOTIFICATION: Sound
         @JvmField val SOUND_MENU_SELECT: Sound
@@ -30,6 +30,8 @@ class FXGLAssets {
 
         @JvmField val UI_FONT: FontFactory
         @JvmField val UI_MONO_FONT: FontFactory
+        @JvmField val UI_GAME_FONT: FontFactory
+        @JvmField val UI_TEXT_FONT: FontFactory
 
         @JvmField val UI_CSS: CSS
 
@@ -37,19 +39,18 @@ class FXGLAssets {
             log.debug("Loading FXGLAssets")
 
             val loader = FXGL.getAssetLoader()
+            val settings = FXGL.getSettings()
 
-            SOUND_NOTIFICATION = loader.loadSound(getString("sound.notification"))
-            SOUND_MENU_SELECT = loader.loadSound(getString("sound.menu.select"))
-            SOUND_MENU_BACK = loader.loadSound(getString("sound.menu.back"))
-            SOUND_MENU_PRESS = loader.loadSound(getString("sound.menu.press"))
+            SOUND_NOTIFICATION = loader.loadSound(settings.soundNotification)
+            SOUND_MENU_SELECT = loader.loadSound(settings.soundMenuSelect)
+            SOUND_MENU_BACK = loader.loadSound(settings.soundMenuBack)
+            SOUND_MENU_PRESS = loader.loadSound(settings.soundMenuPress)
 
-            UI_FONT = loader.loadFont(getString("ui.font"))
-            UI_MONO_FONT = loader.loadFont(getString("ui.mono.font"))
-            UI_CSS = loader.loadCSS(getString("ui.css"))
-        }
-
-        private fun getString(name: String): String {
-            return FXGL.getProperties().getString(name)
+            UI_FONT = loader.loadFont(settings.fontUI)
+            UI_MONO_FONT = loader.loadFont(settings.fontMono)
+            UI_TEXT_FONT = loader.loadFont(settings.fontText)
+            UI_GAME_FONT = loader.loadFont(settings.fontGame)
+            UI_CSS = loader.loadCSS(FXGL.getSettings().css)
         }
     }
 }

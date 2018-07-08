@@ -5,10 +5,7 @@
  */
 package com.almasb.fxgl.scene;
 
-import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.MenuEventHandler;
+import com.almasb.fxgl.app.*;
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.GameDifficulty;
@@ -38,7 +35,6 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -49,7 +45,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.almasb.fxgl.app.FXGL.*;
-import static com.almasb.fxgl.app.SystemPropertyKey.FXGL_VERSION;
 import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
@@ -108,6 +103,10 @@ public abstract class FXGLMenu extends FXGLScene {
 
             getContentRoot().getChildren().add(createProfileView(getLocalizedString("profile.profile")+": " + newName));
         });
+    }
+
+    public void onUpdate(double tpf) {
+        // no default implementation
     }
 
     /**
@@ -276,7 +275,7 @@ public abstract class FXGLMenu extends FXGLScene {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(10, 10, 10, 10));
-        grid.getColumnConstraints().add(new ColumnConstraints(100, 100, 100, Priority.ALWAYS, HPos.LEFT, true));
+        grid.getColumnConstraints().add(new ColumnConstraints(200, 200, 200, Priority.ALWAYS, HPos.LEFT, true));
         grid.getRowConstraints().add(new RowConstraints(40, 40, 40, Priority.ALWAYS, VPos.CENTER, true));
 
         // row 0
@@ -430,7 +429,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         List<String> credits = new ArrayList<>(getSettings().getCredits().getList());
         credits.add("");
-        credits.add("Powered by FXGL " + getProperties().getString(FXGL_VERSION));
+        credits.add("Powered by FXGL " + FXGL.getVersion());
         credits.add("Author: Almas Baimagambetov");
         credits.add("https://github.com/AlmasB/FXGL");
         credits.add("");
@@ -453,16 +452,16 @@ public abstract class FXGLMenu extends FXGLScene {
         // url is a string key defined in system.properties
         Consumer<String> openBrowser = url -> {
             getNet()
-                    .openBrowserTask(getProperties().getString(url))
+                    .openBrowserTask(url)
                     .onFailure(error -> log.warning("Error opening browser: " + error))
                     .run();
         };
 
         Button btnGoogle = new Button("Google Forms");
-        btnGoogle.setOnAction(e -> openBrowser.accept("url.googleforms"));
+        btnGoogle.setOnAction(e -> openBrowser.accept(SystemConfig.INSTANCE.getUrlGoogleForms()));
 
         Button btnSurveyMonkey = new Button("Survey Monkey");
-        btnSurveyMonkey.setOnAction(e -> openBrowser.accept("url.surveymonkey"));
+        btnSurveyMonkey.setOnAction(e -> openBrowser.accept(SystemConfig.INSTANCE.getUrlGoogleForms()));
 
         VBox vbox = new VBox(15,
                 getUIFactory().newText(getLocalizedString("menu.chooseFeedback"), Color.WHEAT, 18),
@@ -514,10 +513,8 @@ public abstract class FXGLMenu extends FXGLScene {
                         maxW = w;
                 }
 
-                getChildren().add(createSeparator(maxW));
-
                 for (Node item : items) {
-                    getChildren().addAll(item, createSeparator(maxW));
+                    getChildren().addAll(item);
                 }
             }
 
@@ -528,17 +525,6 @@ public abstract class FXGLMenu extends FXGLScene {
                     onClose();
                 }
             });
-        }
-
-        private Line createSeparator(int width) {
-            if (width < 5) {
-                width = 200;
-            }
-
-            Line sep = new Line();
-            sep.setEndX(width);
-            sep.setStroke(Color.DARKGREY);
-            return sep;
         }
 
         private Runnable onOpen = null;

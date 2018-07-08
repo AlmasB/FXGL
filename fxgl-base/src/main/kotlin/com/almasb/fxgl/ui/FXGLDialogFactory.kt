@@ -184,7 +184,7 @@ class FXGLDialogFactory : DialogFactory {
 //            pw.close()
 //
 //            try {
-//                Files.write(Paths.get("LastException.log"), Arrays.asList(*sw.toString().split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()))
+//                Files.write(Paths.get("LastException.log"), sw.toString().split("\n".toRegex()).dropLastWhile { it.isEmpty() })
 //                DialogSubState.showMessageBox("Log has been saved as LastException.log")
 //            } catch (ex: Exception) {
 //                DialogSubState.showMessageBox("Failed to save log file")

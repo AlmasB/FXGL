@@ -77,11 +77,8 @@ internal class QTEProvider : QTE {
      * @param keys what keys need to be pressed
      */
     override fun start(callback: Consumer<Boolean>, duration: Duration, vararg keys: KeyCode) {
-        if (keys.isEmpty())
-            throw IllegalArgumentException("At least 1 key must be specified")
-
-        if (qteKeys.isNotEmpty())
-            throw IllegalStateException("Cannot start more than 1 QTE at a time")
+        require(keys.isNotEmpty()) { "At least 1 key must be specified" }
+        require(qteKeys.isEmpty()) { "Cannot start more than 1 QTE at a time" }
 
         this.callback = callback
 

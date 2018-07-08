@@ -7,10 +7,10 @@
 package com.almasb.fxgl.net
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.SystemConfig
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.util.Optional
 import javafx.beans.value.ChangeListener
-import java.io.InputStreamReader
 import java.io.Serializable
 import java.net.URL
 import java.nio.file.Path
@@ -30,12 +30,11 @@ class FXGLNet : Net {
      * Loads pom.xml from GitHub server's master branch
      * and parses the "version" tag.
      */
-    override fun getLatestVersionTask() = openStreamTask(FXGL.getProperties().getString("url.pom")).then {
+    override fun getLatestVersionTask() = openStreamTask(SystemConfig.urlPOM).then {
 
         return@then IOTask.of("latestVersion", {
-
-            InputStreamReader(it).useLines {
-                return@of it.first { it.contains("<version>") }
+            it.reader().useLines {
+                return@of it.first { "<version>" in it}
                         .trim()
                         .removeSurrounding("<version>", "</version>")
             }
@@ -56,6 +55,7 @@ class FXGLNet : Net {
     override fun getConnection(): Optional<NetworkConnection> {
         return Optional.ofNullable(connectionInternal)
     }
+
 
     override fun <T : Serializable> addDataParser(cl: Class<T>, parser: DataParser<T>) {
         dummy.addParser(cl, parser)

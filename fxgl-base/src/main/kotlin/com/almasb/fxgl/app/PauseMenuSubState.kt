@@ -61,9 +61,7 @@ internal object PauseMenuSubState : SubState() {
     }
 
     override fun onEnter(prevState: State) {
-        if (prevState !is PlayState) {
-            throw IllegalArgumentException("Entered PauseState from illegal state $prevState")
-        }
+        require(prevState is PlayState) { "Entered PauseState from illegal state $prevState" }
 
         animation.onFinished = EmptyRunnable
         animation.start(this)

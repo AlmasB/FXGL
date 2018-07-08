@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.almasb.fxgl.app.SystemPropertyKey.DEV_SHOWPOSITION;
 import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
@@ -108,7 +107,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     }
 
     private void addDebugListener() {
-        FXGL.getProperties().<Boolean>addListener(DEV_SHOWPOSITION, (prev, show) -> {
+        FXGL.getSystemConfig().getDevShowPosition().addListener((o, prev, show) -> {
             if (show) {
                 forEach(FXGL.getApp().getGameWorld().getEntities(), e -> {
 
@@ -320,7 +319,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     public void onEntityAdded(Entity entity) {
         initView(entity.getViewComponent());
 
-        if (FXGL.getProperties().getBoolean(DEV_SHOWPOSITION)) {
+        if (FXGL.getSystemConfig().getDevShowPosition().getValue()) {
             addDebugView(entity);
         }
     }

@@ -108,14 +108,9 @@ public final class World {
      * @param body body to destroy
      */
     public void destroyBody(Body body) {
-        assert bodies.containsByIdentity(body);
         assertNotLocked();
 
-        body.destroyAttachedJoints();
-
-        body.destroyAttachedContacts();
-
-        body.destroyAttachedFixtures();
+        body.destroy();
 
         bodies.removeValueByIdentity(body);
         // jbox2dTODO djm recycle body
@@ -169,12 +164,14 @@ public final class World {
 
         // If the joint prevents collisions, then flag any contacts for filtering.
         if (!def.collideConnected) {
-
-            for (ContactEdge edge : bodyB.getContactEdges()) {
+            ContactEdge edge = bodyB.getContactList();
+            while (edge != null) {
                 if (edge.other == bodyA) {
                     // Flag the contact for filtering at the next time step (where either body is awake).
                     edge.contact.flagForFiltering();
                 }
+
+                edge = edge.next;
             }
         }
 
@@ -252,12 +249,14 @@ public final class World {
 
         // If the joint prevents collisions, then flag any contacts for filtering.
         if (!collideConnected) {
-
-            for (ContactEdge edge : bodyB.getContactEdges()) {
+            ContactEdge edge = bodyB.getContactList();
+            while (edge != null) {
                 if (edge.other == bodyA) {
                     // Flag the contact for filtering at the next time step (where either body is awake).
                     edge.contact.flagForFiltering();
                 }
+
+                edge = edge.next;
             }
         }
     }
@@ -326,7 +325,7 @@ public final class World {
     }
 
     private final Island island = new Island();
-    private Body[] stack = new Body[10]; // jbox2dTODO djm find a good initial stack number;
+    private Body[] stack = new Body[10];
 
     private void solve(TimeStep step) {
         // update previous transforms
@@ -339,7 +338,7 @@ public final class World {
 
         // Clear all the island flags.
         for (Body b : bodies) {
-            b.setInIsland(false);
+            b.m_flags &= ~Body.e_islandFlag;
         }
         for (Contact c = contactManager.contactList; c != null; c = c.m_next) {
             c.m_flags &= ~Contact.ISLAND_FLAG;
@@ -355,7 +354,7 @@ public final class World {
         }
 
         for (Body seed : bodies) {
-            if (seed.isInIsland()) {
+            if ((seed.m_flags & Body.e_islandFlag) == Body.e_islandFlag) {
                 continue;
             }
 
@@ -372,7 +371,7 @@ public final class World {
             island.clear();
             int stackCount = 0;
             stack[stackCount++] = seed;
-            seed.setInIsland(true);
+            seed.m_flags |= Body.e_islandFlag;
 
             // Perform a depth first search (DFS) on the constraint graph.
             while (stackCount > 0) {
@@ -391,7 +390,7 @@ public final class World {
                 }
 
                 // Search all contacts connected to this body.
-                for (ContactEdge ce : b.getContactEdges()) {
+                for (ContactEdge ce = b.m_contactList; ce != null; ce = ce.next) {
                     Contact contact = ce.contact;
 
                     // Has this contact already been added to an island?
@@ -417,13 +416,13 @@ public final class World {
                     Body other = ce.other;
 
                     // Was the other body already added to this island?
-                    if (other.isInIsland()) {
+                    if ((other.m_flags & Body.e_islandFlag) == Body.e_islandFlag) {
                         continue;
                     }
 
                     assert (stackCount < stackSize);
                     stack[stackCount++] = other;
-                    other.setInIsland(true);
+                    other.m_flags |= Body.e_islandFlag;
                 }
 
                 // Search all joints connect to this body.
@@ -442,13 +441,13 @@ public final class World {
                     island.add(je.joint);
                     je.joint.m_islandFlag = true;
 
-                    if (other.isInIsland()) {
+                    if ((other.m_flags & Body.e_islandFlag) == Body.e_islandFlag) {
                         continue;
                     }
 
                     assert (stackCount < stackSize);
                     stack[stackCount++] = other;
-                    other.setInIsland(true);
+                    other.m_flags |= Body.e_islandFlag;
                 }
             }
             island.solve(step, gravity, allowSleep);
@@ -458,7 +457,7 @@ public final class World {
                 // Allow static bodies to participate in other islands.
                 Body b = island.m_bodies[i];
                 if (b.getType() == BodyType.STATIC) {
-                    b.setInIsland(false);
+                    b.m_flags &= ~Body.e_islandFlag;
                 }
             }
         }
@@ -466,7 +465,7 @@ public final class World {
         // Synchronize fixtures, check for out of range bodies.
         for (Body b : bodies) {
             // If a body was not in an island then it did not move.
-            if (!b.isInIsland()) {
+            if ((b.m_flags & Body.e_islandFlag) == 0) {
                 continue;
             }
 
@@ -497,7 +496,7 @@ public final class World {
 
         if (stepComplete) {
             for (Body b : bodies) {
-                b.setInIsland(false);
+                b.m_flags &= ~Body.e_islandFlag;
                 b.m_sweep.alpha0 = 0.0f;
             }
 
@@ -651,8 +650,8 @@ public final class World {
             island.add(bB);
             island.add(minContact);
 
-            bA.setInIsland(true);
-            bB.setInIsland(true);
+            bA.m_flags |= Body.e_islandFlag;
+            bB.m_flags |= Body.e_islandFlag;
             minContact.m_flags |= Contact.ISLAND_FLAG;
 
             // Get contacts on bodyA and bodyB.
@@ -661,8 +660,7 @@ public final class World {
             for (int i = 0; i < 2; ++i) {
                 Body body = tempBodies[i];
                 if (body.getType() == BodyType.DYNAMIC) {
-
-                    for (ContactEdge ce : body.getContactEdges()) {
+                    for (ContactEdge ce = body.m_contactList; ce != null; ce = ce.next) {
                         if (island.m_bodyCount == island.m_bodyCapacity) {
                             break;
                         }
@@ -693,7 +691,7 @@ public final class World {
 
                         // Tentatively advance the body to the TOI.
                         backup1.set(other.m_sweep);
-                        if (!other.isInIsland()) {
+                        if ((other.m_flags & Body.e_islandFlag) == 0) {
                             other.advance(minAlpha);
                         }
 
@@ -719,12 +717,12 @@ public final class World {
                         island.add(contact);
 
                         // Has the other body already been added to the island?
-                        if (other.isInIsland()) {
+                        if ((other.m_flags & Body.e_islandFlag) != 0) {
                             continue;
                         }
 
                         // Add the other body to the island.
-                        other.setInIsland(true);
+                        other.m_flags |= Body.e_islandFlag;
 
                         if (other.getType() != BodyType.STATIC) {
                             other.setAwake(true);
@@ -746,7 +744,7 @@ public final class World {
             // Reset island flags and synchronize broad-phase proxies.
             for (int i = 0; i < island.m_bodyCount; ++i) {
                 Body body = island.m_bodies[i];
-                body.setInIsland(false);
+                body.m_flags &= ~Body.e_islandFlag;
 
                 if (body.getType() != BodyType.DYNAMIC) {
                     continue;
@@ -755,7 +753,7 @@ public final class World {
                 body.synchronizeFixtures();
 
                 // Invalidate all contact TOIs on this displaced body.
-                for (ContactEdge ce : body.getContactEdges()) {
+                for (ContactEdge ce = body.m_contactList; ce != null; ce = ce.next) {
                     ce.contact.m_flags &= ~(Contact.TOI_FLAG | Contact.ISLAND_FLAG);
                 }
             }
@@ -862,9 +860,10 @@ public final class World {
      *
      * @see #setAutoClearForces(boolean)
      */
-    private void clearForces() {
+    public void clearForces() {
         for (Body body : bodies) {
-            body.clearForces();
+            body.m_force.setZero();
+            body.m_torque = 0.0f;
         }
     }
 
@@ -1399,18 +1398,6 @@ public final class World {
 
     void notifyNewFixture() {
         newFixture = true;
-    }
-
-    void notifyFixtureToBeDestroyed(Fixture f) {
-        if (destructionListener != null) {
-            destructionListener.onDestroy(f);
-        }
-    }
-
-    void notifyJointToBeDestroyed(Joint joint) {
-        if (destructionListener != null) {
-            destructionListener.onDestroy(joint);
-        }
     }
 
     /**

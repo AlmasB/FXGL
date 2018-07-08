@@ -83,6 +83,11 @@ public class Particle implements Poolable {
     private BlendMode blendMode;
 
     /**
+     * Allow view rotation based on velocity.
+     */
+    private boolean allowRotation;
+
+    /**
      * Image from which the particle is created.
      * If the image is null, the particle is a software generated shape.
      */
@@ -98,12 +103,35 @@ public class Particle implements Poolable {
 
     private Consumer<Particle> control = null;
 
-    public Particle(Point2D position, Point2D vel, Point2D acceleration, double radius, Point2D scale, Duration expireTime, Paint startColor, Paint endColor, BlendMode blendMode) {
-        this(null, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode);
+    public Particle(
+            Point2D position,
+            Point2D vel,
+            Point2D acceleration,
+            double radius,
+            Point2D scale,
+            Duration expireTime,
+            Paint startColor,
+            Paint endColor,
+            BlendMode blendMode,
+            boolean allowRotation) {
+
+        this(null, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode, allowRotation);
     }
 
-    public Particle(Image image, Point2D position, Point2D vel, Point2D acceleration, double radius, Point2D scale, Duration expireTime, Paint startColor, Paint endColor, BlendMode blendMode) {
-        init(image, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode, Interpolator.LINEAR);
+    public Particle(
+            Image image,
+            Point2D position,
+            Point2D vel,
+            Point2D acceleration,
+            double radius,
+            Point2D scale,
+            Duration expireTime,
+            Paint startColor,
+            Paint endColor,
+            BlendMode blendMode,
+            boolean allowRotation) {
+
+        init(image, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode, Interpolator.LINEAR, allowRotation);
     }
 
     public Particle() {
@@ -111,7 +139,20 @@ public class Particle implements Poolable {
         reset();
     }
 
-    public final void init(Image image, Point2D position, Point2D vel, Point2D acceleration, double radius, Point2D scale, Duration expireTime, Paint startColor, Paint endColor, BlendMode blendMode, Interpolator interpolator) {
+    public final void init(
+            Image image,
+            Point2D position,
+            Point2D vel,
+            Point2D acceleration,
+            double radius,
+            Point2D scale,
+            Duration expireTime,
+            Paint startColor,
+            Paint endColor,
+            BlendMode blendMode,
+            Interpolator interpolator,
+            boolean allowRotation) {
+
         this.image = image;
         this.startPosition.set(position);
         this.position.set(position);
@@ -125,6 +166,7 @@ public class Particle implements Poolable {
         this.initialLife = expireTime.toSeconds();
         this.life = initialLife;
         this.interpolator = interpolator;
+        this.allowRotation = allowRotation;
 
         imageView.setImage(image);
         colorAnimation = new AnimatedColor((Color)startColor, (Color)endColor, interpolator);
@@ -158,6 +200,8 @@ public class Particle implements Poolable {
         this.control = control;
     }
 
+    private Vec2 moveVector = new Vec2();
+
     /**
      * @return true if particle died
      */
@@ -170,6 +214,8 @@ public class Particle implements Poolable {
         // s = s0 + v0*t + 0.5*a*t^2
         double x = startPosition.x + velocity.x * t + 0.5 * acceleration.x * t * t;
         double y = startPosition.y + velocity.y * t + 0.5 * acceleration.y * t * t;
+
+        moveVector.set((float)x - position.x, (float)y - position.y);
 
         position.set((float) x, (float) y);
 
@@ -194,6 +240,10 @@ public class Particle implements Poolable {
                 imageView.setOpacity(alpha);
                 imageView.setBlendMode(blendMode);
 
+                if (allowRotation) {
+                    imageView.setRotate(moveVector.angle());
+                }
+
             } else {
 
                 view.setRadiusX(radius.x);
@@ -205,6 +255,10 @@ public class Particle implements Poolable {
                 view.setOpacity(alpha);
                 view.setFill(colorAnimation.getValue(progress));
                 view.setBlendMode(blendMode);
+
+                if (allowRotation) {
+                    view.setRotate(moveVector.angle());
+                }
             }
         }
 

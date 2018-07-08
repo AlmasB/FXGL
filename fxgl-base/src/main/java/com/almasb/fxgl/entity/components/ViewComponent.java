@@ -7,7 +7,6 @@
 package com.almasb.fxgl.entity.components;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.core.collection.PropertyChangeListener;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.CoreComponent;
@@ -18,6 +17,7 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -197,7 +197,7 @@ public class ViewComponent extends Component {
     private PositionComponent position;
     private RotationComponent rotation;
 
-    private PropertyChangeListener<Boolean> debugBBoxOn = (prev, on) -> {
+    private ChangeListener<Boolean> debugBBoxOn = (o, prev, on) -> {
         turnOnDebugBBox(on);
     };
 
@@ -209,12 +209,12 @@ public class ViewComponent extends Component {
             turnOnDebugBBox(true);
         }
 
-        FXGL.getProperties().addListener("dev.showbbox", debugBBoxOn);
+        FXGL.getSystemConfig().getDevShowBBox().addListener(debugBBoxOn);
     }
 
     @Override
     public void onRemoved() {
-        FXGL.getProperties().removeListener("dev.showbbox", debugBBoxOn);
+        FXGL.getSystemConfig().getDevShowBBox().removeListener(debugBBoxOn);
 
         view.dispose();
     }
@@ -244,7 +244,7 @@ public class ViewComponent extends Component {
     };
 
     private boolean showBBox() {
-        return FXGL.getProperties().getBoolean("dev.showbbox");
+        return FXGL.getSystemConfig().getDevShowBBox().getValue();
     }
 
     /**
@@ -290,7 +290,7 @@ public class ViewComponent extends Component {
         }
 
         if (view != null) {
-            view.strokeProperty().bind(FXGL.getProperties().objectProperty("dev.bboxcolor"));
+            view.strokeProperty().bind(FXGL.getSystemConfig().getDevBBoxColor());
 
             view.setTranslateX(hitBox.getMinX());
             view.setTranslateY(hitBox.getMinY());

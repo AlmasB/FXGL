@@ -8,7 +8,6 @@ package com.almasb.fxgl.parser
 
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.util.Predicate
-import java.util.*
 
 /**
  * Represents a simple key value file, similar to java.util.Properties.
@@ -61,7 +60,7 @@ class KVFile {
 
     private val validEntry = Predicate<Array<String>> { kv ->
         if (kv.size != 2) {
-            log.warning("Syntax error: " + Arrays.toString(kv))
+            log.warning("Syntax error: " + kv.contentToString())
             return@Predicate false
         }
 
@@ -94,13 +93,13 @@ class KVFile {
         field.isAccessible = true
 
         when (field.type.simpleName) {
-            "int" -> field.setInt(instance, Integer.parseInt(value))
-            "short" -> field.setShort(instance, java.lang.Short.parseShort(value))
-            "long" -> field.setLong(instance, java.lang.Long.parseLong(value))
-            "byte" -> field.setByte(instance, java.lang.Byte.parseByte(value))
-            "double" -> field.setDouble(instance, java.lang.Double.parseDouble(value))
-            "float" -> field.setFloat(instance, java.lang.Float.parseFloat(value))
-            "boolean" -> field.setBoolean(instance, java.lang.Boolean.parseBoolean(value))
+            "int" -> field.setInt(instance, value.toInt())
+            "short" -> field.setShort(instance, value.toShort())
+            "long" -> field.setLong(instance, value.toLong())
+            "byte" -> field.setByte(instance, value.toByte())
+            "double" -> field.setDouble(instance, value.toDouble())
+            "float" -> field.setFloat(instance, value.toFloat())
+            "boolean" -> field.setBoolean(instance, value.toBoolean())
             "char" -> field.setChar(instance, if (value.length > 0) value[0] else ' ')
             "String" -> field.set(instance, value)
             else -> {

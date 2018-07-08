@@ -8,7 +8,7 @@ package com.almasb.fxgl.parser.tiled
 
 import com.almasb.fxgl.core.logging.Logger
 import javafx.scene.paint.Color
-import java.io.ByteArrayInputStream
+import javafx.scene.shape.Polygon
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.nio.ByteBuffer
@@ -31,7 +31,7 @@ private const val TILED_VERSION_LATEST = "1.1.2"
 
 class TMXParser {
 
-    private val log = Logger.get(TMXParser::class.java)
+    private val log = Logger.get<TMXParser>()
 
     fun parse(inputStream: InputStream): TiledMap {
         try {
@@ -87,6 +87,10 @@ class TMXParser {
 
                         "property" -> {
                             parseObjectProperty(currentObject, start)
+                        }
+
+                        "polygon" -> {
+                            parseObjectPolygon(currentObject, start)
                         }
                     }
                 }
@@ -170,7 +174,7 @@ class TMXParser {
                     "zlib" -> {
                         val baos = ByteArrayOutputStream()
 
-                        InflaterInputStream(ByteArrayInputStream(bytes)).use {
+                        InflaterInputStream(bytes.inputStream()).use {
                             it.copyTo(baos)
                         }
 
@@ -180,7 +184,7 @@ class TMXParser {
                     "gzip" -> {
                         val baos = ByteArrayOutputStream()
 
-                        GZIPInputStream(ByteArrayInputStream(bytes)).use {
+                        GZIPInputStream(bytes.inputStream()).use {
                             it.copyTo(baos)
                         }
 
@@ -209,6 +213,7 @@ class TMXParser {
         obj.id = start.getInt("id")
         obj.x = start.getInt("x")
         obj.y = start.getInt("y")
+        obj.rotation = start.getFloat("rotation")
         obj.width = start.getInt("width")
         obj.height = start.getInt("height")
         obj.gid = start.getInt("gid")
@@ -247,6 +252,20 @@ class TMXParser {
                 throw RuntimeException("Unknown property type: $propType for $propName")
             }
         }
+    }
+
+    private fun parseObjectPolygon(obj: TiledObject, start: StartElement) {
+        val data = start.getString("points")
+
+        val points = data.split(" +".toRegex())
+                .flatMap { it.split(",") }
+                .map { it.toDouble() }
+                .toDoubleArray()
+
+        // TODO: use pure data structure instead of Node
+        val polygon = Polygon(*points)
+
+        (obj.properties as MutableMap)["polygon"] = polygon
     }
 }
 

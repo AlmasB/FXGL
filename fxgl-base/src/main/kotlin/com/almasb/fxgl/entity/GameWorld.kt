@@ -70,8 +70,7 @@ class GameWorld {
      * @param entity the entity to add to world
      */
     fun addEntity(entity: Entity) {
-        if (entity.isActive)
-            throw IllegalArgumentException("Entity is already attached to world")
+        require(!entity.isActive){ "Entity is already attached to world" }
 
         waitingList.add(entity)
         entities.add(entity)
@@ -104,8 +103,7 @@ class GameWorld {
         if (!canRemove(entity))
             return
 
-        if (entity.world !== this)
-            throw IllegalArgumentException("Attempted to remove entity not attached to this world")
+        require(entity.world === this) { "Attempted to remove entity not attached to this world" }
 
         entities.remove(entity)
 
@@ -186,17 +184,14 @@ class GameWorld {
         }
 
         // entities list does not contain "not active" entities, so we do full clean
-        val it = entities.iterator()
-        while (it.hasNext()) {
-            val e = it.next()
-
+        // also we copy since during removal notification components may remove other entities
+        entitiesCopy.forEach { e ->
             e.markForRemoval()
             notifyEntityRemoved(e)
             e.clean()
-
-            it.remove()
         }
 
+        entities.clear()
         entityFactories.clear()
         entitySpawners.clear()
     }
@@ -358,7 +353,7 @@ class GameWorld {
         if (entitySpawners.containsKey(entityName)) {
 
             // find the factory that already has entityName spawner
-            val factory = entityFactories.find { it.value.contains(entityName) }
+            val factory = entityFactories.find { entityName in it.value }
 
             throw IllegalArgumentException("Duplicated @Spawns($entityName) in $entityFactory. Already exists in $factory")
         }
@@ -429,8 +424,7 @@ class GameWorld {
      * @return created entity
      */
     fun create(entityName: String, data: SpawnData): Entity {
-        if (entityFactories.size() == 0)
-            throw IllegalStateException("No EntityFactory was added! Call gameWorld.addEntityFactory()")
+        check(entityFactories.isNotEmpty) { "No EntityFactory was added! Call gameWorld.addEntityFactory()" }
 
         val spawner = entitySpawners.get(entityName)
                 ?: throw IllegalArgumentException("No EntityFactory has a method annotated @Spawns($entityName)")
@@ -440,12 +434,6 @@ class GameWorld {
         }
 
         return tryCatchRoot { spawner.apply(data) }
-
-//        try {
-//            return spawner.apply(data)
-//        } catch (e: Exception) {
-//            throw ReflectionUtils.getRootCause(e)
-//        }
     }
 
     /* QUERIES */

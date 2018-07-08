@@ -30,13 +30,6 @@ class CollectibleHandlerTest {
         COLLECTOR, COLLECTIBLE
     }
 
-    companion object {
-        @BeforeAll
-        @JvmStatic fun before() {
-            FXGL.getProperties().setValue("dev.showbbox", false)
-        }
-    }
-
     @Test
     fun `Collectible is collected`() {
         val gameWorld = GameWorld()

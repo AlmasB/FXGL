@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="212" height="10" tilewidth="70" tileheight="70" infinite="0" nextobjectid="35">
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="212" height="10" tilewidth="70" tileheight="70" infinite="0" nextobjectid="36">
  <tileset firstgid="1" name="tiles_spritesheet" tilewidth="70" tileheight="70" spacing="2" tilecount="156" columns="12">
   <image source="../textures/tiles_spritesheet.png" width="914" height="936"/>
  </tileset>
@@ -40,6 +40,9 @@
    <properties>
     <property name="eid" type="int" value="0"/>
    </properties>
+  </object>
+  <object id="35" name="polygon_name" type="polygon" x="200" y="300">
+   <polygon points="0,0 120,-72 192,48 24,48"/>
   </object>
  </objectgroup>
  <objectgroup name="enemies">

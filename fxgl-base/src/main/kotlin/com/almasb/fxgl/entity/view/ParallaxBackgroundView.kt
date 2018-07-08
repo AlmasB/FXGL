@@ -32,8 +32,7 @@ class ParallaxBackgroundView
         if (orientation == Orientation.HORIZONTAL) {
             translateXProperty().addListener { _, _, x ->
 
-                if (x.toInt() < 0)
-                    throw IllegalStateException("Background x cannot be < 0")
+                check(x.toInt() >= 0) { "Background x cannot be < 0" }
 
                 textures.forEach { it.sx = x.toDouble() * it.speed % it.texture.image.width }
 
@@ -44,8 +43,7 @@ class ParallaxBackgroundView
         } else {
             translateYProperty().addListener { _, _, y ->
 
-                if (y.toInt() < 0)
-                    throw IllegalStateException("Background y cannot be < 0")
+                check(y.toInt() >= 0) { "Background y cannot be < 0" }
 
                 textures.forEach { it.sy = y.toDouble() * it.speed % it.texture.image.height }
 

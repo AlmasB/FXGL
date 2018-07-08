@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.extra.ai.goap
 
-import java.util.*
-
 /**
  * A lightweight version of GameState.
  *

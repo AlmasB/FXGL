@@ -48,7 +48,21 @@ public class ReadOnlyGameSettings {
     protected EnumSet<MenuItem> enabledMenuItems = EnumSet.noneOf(MenuItem.class);
     protected StageStyle stageStyle = StageStyle.DECORATED;
     protected String appIcon = "fxgl_icon.png";
+    protected String css = "fxgl_dark.css";
     protected boolean manualResizeEnabled = false;
+
+    protected String fontUI = "VarelaRound-Regular.ttf";
+    protected String fontMono = "lucida_console.ttf";
+    protected String fontText = "Courier-Prime.ttf";
+    protected String fontGame = "Abel-Regular.ttf";
+
+    protected String soundNotification = "core/notification.wav";
+    protected String soundMenuBack = "menu/back.wav";
+    protected String soundMenuPress = "menu/press.wav";
+    protected String soundMenuSelect = "menu/select.wav";
+
+    protected double pixelsPerMeter = 50.0;
+    protected int secondsIn24h = 60;
 
     // when adding extra fields, remember to add them to copy constructor
 
@@ -108,7 +122,13 @@ public class ReadOnlyGameSettings {
         this.singleStep = copy.singleStep;
         this.stageStyle = copy.stageStyle;
         this.appIcon = copy.appIcon;
+        this.css = copy.css;
         this.manualResizeEnabled = copy.manualResizeEnabled;
+
+        this.fontUI = copy.fontUI;
+        this.fontGame = copy.fontGame;
+        this.fontMono = copy.fontMono;
+        this.fontText = copy.fontText;
 
         this.configClass = copy.configClass;
         this.achievementStoreClass = copy.achievementStoreClass;
@@ -120,6 +140,14 @@ public class ReadOnlyGameSettings {
         this.exceptionHandler = copy.exceptionHandler;
 
         this.exceptionHandlerWrapper = copy.exceptionHandlerWrapper;
+
+        this.soundNotification = copy.soundNotification;
+        this.soundMenuBack = copy.soundMenuBack;
+        this.soundMenuPress = copy.soundMenuPress;
+        this.soundMenuSelect = copy.soundMenuSelect;
+
+        this.pixelsPerMeter = copy.pixelsPerMeter;
+        this.secondsIn24h = copy.secondsIn24h;
 
         this.experimentalTiledLargeMap = copy.experimentalTiledLargeMap;
     }
@@ -190,6 +218,50 @@ public class ReadOnlyGameSettings {
 
     public final String getAppIcon() {
         return appIcon;
+    }
+
+    public final String getCSS() {
+        return css;
+    }
+
+    public final String getFontGame() {
+        return fontGame;
+    }
+
+    public final String getFontMono() {
+        return fontMono;
+    }
+
+    public final String getFontText() {
+        return fontText;
+    }
+
+    public final String getFontUI() {
+        return fontUI;
+    }
+
+    public final String getSoundNotification() {
+        return soundNotification;
+    }
+
+    public final String getSoundMenuSelect() {
+        return soundMenuSelect;
+    }
+
+    public final String getSoundMenuBack() {
+        return soundMenuBack;
+    }
+
+    public final String getSoundMenuPress() {
+        return soundMenuPress;
+    }
+
+    public final double getPixelsPerMeter() {
+        return pixelsPerMeter;
+    }
+
+    public final int getSecondsIn24h() {
+        return secondsIn24h;
     }
 
     public final Optional<Class<?>> getConfigClass() {

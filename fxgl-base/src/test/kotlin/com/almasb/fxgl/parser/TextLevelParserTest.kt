@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.parser
 
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.entity.*
 import com.almasb.fxgl.parser.text.TextLevelParser
 import javafx.geometry.Point2D
@@ -15,6 +16,7 @@ import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.Description
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
 /**
@@ -24,13 +26,18 @@ import org.junit.jupiter.api.Test
  */
 class TextLevelParserTest {
 
-    private enum class EntityType {
-        TYPE1, TYPE2, TYPE3
-    }
-
     companion object {
+        @BeforeAll
+        @JvmStatic fun before() {
+            FXGLMock.mock()
+        }
+
         private val BLOCK_WIDTH = 40
         private val BLOCK_HEIGHT = 40
+    }
+
+    private enum class EntityType {
+        TYPE1, TYPE2, TYPE3
     }
 
     @Test
@@ -63,6 +70,8 @@ class TextLevelParserTest {
                 e
             })
         }
+
+        assertThat(parser.emptyChar, `is`('0'))
 
         val level = parser.parse("test_level.txt")
 

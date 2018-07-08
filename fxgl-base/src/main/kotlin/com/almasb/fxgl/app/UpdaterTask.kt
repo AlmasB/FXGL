@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.SystemPropertyKey.FXGL_VERSION
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.time.LocalTimer
 import javafx.util.Duration
@@ -42,7 +41,7 @@ internal class UpdaterTask : Runnable {
 
         updateCheckTimer = FXGL.newOfflineTimer("version.check")
 
-        val days = Duration.hours(24.0 * FXGL.getProperties().getInt("version.check.days"))
+        val days = Duration.hours(24.0 * SystemConfig.versionCheckDays)
 
         return FXGL.isFirstRun() || updateCheckTimer.elapsed(days)
     }
@@ -57,7 +56,7 @@ internal class UpdaterTask : Runnable {
                 .getLatestVersionTask()
                 .onSuccess { latestVersion ->
 
-                    val currentVersion = FXGL.getProperties().getString(FXGL_VERSION)
+                    val currentVersion = FXGL.getVersion()
 
                     // update offline timer
                     updateCheckTimer.capture()

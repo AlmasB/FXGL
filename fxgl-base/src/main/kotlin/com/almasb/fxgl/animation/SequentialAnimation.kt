@@ -42,8 +42,7 @@ class SequentialAnimation
     private var animationIndex = 0
 
     init {
-        if (animations.isEmpty())
-            throw IllegalArgumentException("Animation list is empty!")
+        require(animations.isNotEmpty()){ "Animation list is empty!" }
     }
 
     /**

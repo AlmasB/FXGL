@@ -6,10 +6,8 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.SystemPropertyKey.FXGL_VERSION
 import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.audio.AudioPlayer
-import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.logging.Logger
@@ -29,15 +27,12 @@ import com.gluonhq.charm.down.Platform
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import javafx.event.EventHandler
-import java.io.IOException
 import java.util.*
 import java.util.concurrent.Callable
 
 /**
- * Represents the entire FXGL infrastructure.
- * Can be used to pass internal properties (key-value pair) around.
- * The properties are NOT to be used in gameplay.
- * Can be used for communication between non-related parts.
+ * Represents the entire FXGL infrastructure and enables access
+ * to various subsystems.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -48,11 +43,13 @@ class FXGL private constructor() {
 
         private lateinit var internalBundle: Bundle
 
+        private lateinit var version: String
+
         private val log = Logger.get("FXGL")
 
         private var configured = false
 
-        private val props = PropertyMap()
+        @JvmStatic fun getVersion() = version
 
         // cheap hack for now
         @JvmStatic fun isBrowser() = System.getProperty("fxgl.isBrowser", "false") == "true"
@@ -63,7 +60,7 @@ class FXGL private constructor() {
         @JvmStatic fun isAndroid() = Platform.isAndroid()
         @JvmStatic fun isIOS() = Platform.isIOS()
 
-        @JvmStatic fun getProperties() = props
+        @JvmStatic fun getSystemConfig() = SystemConfig
 
         /**
          * @return FXGL system settings
@@ -118,9 +115,6 @@ class FXGL private constructor() {
 
             internalApp = app
 
-            loadSystemProperties()
-            loadUserProperties()
-
             logVersion()
 
             IOTask.setDefaultExecutor(getExecutor())
@@ -145,36 +139,12 @@ class FXGL private constructor() {
         private fun logVersion() {
             val platform = "${Platform.getCurrent()}" + if (isBrowser()) " BROWSER" else ""
 
-            log.info("FXGL-${props.getString(FXGL_VERSION)} on $platform")
+            val bundle = ResourceBundle.getBundle("com.almasb.fxgl.app.system")
+            version = bundle.getString("fxgl.version")
+
+            log.info("FXGL-$version on $platform")
             log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
             log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
-        }
-
-        private fun loadSystemProperties() {
-            loadProperties(ResourceBundle.getBundle("com.almasb.fxgl.app.system"))
-        }
-
-        /**
-         * Load user defined properties to override FXGL system properties.
-         */
-        private fun loadUserProperties() {
-            // services are not ready yet, so load manually
-            try {
-                FXGL::class.java.getResource("/assets/properties/system.properties").openStream().use {
-                    loadProperties(PropertyResourceBundle(it))
-                }
-            } catch (npe: NullPointerException) {
-                // user properties file not found
-            } catch (e: IOException) {
-                log.warning("Loading user properties failed: $e")
-            }
-        }
-
-        private fun loadProperties(bundle: ResourceBundle) {
-            bundle.keySet().forEach { key ->
-                val value = bundle.getObject(key)
-                props.setValueFromString(key, value.toString())
-            }
         }
 
         private var firstRun = false
@@ -239,8 +209,7 @@ class FXGL private constructor() {
          * Destructs FXGL.
          */
         @JvmStatic protected fun destroy() {
-            if (!configured)
-                throw IllegalStateException("FXGL has not been configured")
+            check(configured) { "FXGL has not been configured" }
 
             if (isDesktop()) {
                 saveSystemData()

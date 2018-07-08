@@ -187,6 +187,61 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.appIcon = appIcon;
     }
 
+    public void setCSS(String css) {
+        this.css = css;
+    }
+
+    /**
+     * Set font to be used in UI controls.
+     * The font will be loaded from "/assets/ui/fonts".
+     *
+     * @param fontUI font name
+     */
+    public void setFontUI(String fontUI) {
+        this.fontUI = fontUI;
+    }
+
+    public void setFontMono(String fontMono) {
+        this.fontMono = fontMono;
+    }
+
+    public void setFontText(String fontText) {
+        this.fontText = fontText;
+    }
+
+    public void setFontGame(String fontGame) {
+        this.fontGame = fontGame;
+    }
+
+    public void setPixelsPerMeter(double pixelsPerMeter) {
+        this.pixelsPerMeter = pixelsPerMeter;
+    }
+
+    public void setSoundNotification(String soundNotification) {
+        this.soundNotification = soundNotification;
+    }
+
+    public void setSoundMenuBack(String soundMenuBack) {
+        this.soundMenuBack = soundMenuBack;
+    }
+
+    public void setSoundMenuPress(String soundMenuPress) {
+        this.soundMenuPress = soundMenuPress;
+    }
+
+    public void setSoundMenuSelect(String soundMenuSelect) {
+        this.soundMenuSelect = soundMenuSelect;
+    }
+
+    /**
+     * Set how many real seconds are in 24 game hours, default = 60.
+     *
+     * @param seconds
+     */
+    public void setSecondsIn24h(int seconds) {
+        this.secondsIn24h = seconds;
+    }
+
     public void setConfigClass(Class<?> configClass) {
         this.configClass = configClass;
     }

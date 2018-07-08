@@ -11,7 +11,6 @@ package com.almasb.fxgl.physics.box2d.dynamics.joints;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.dynamics.SolverData;
 import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;

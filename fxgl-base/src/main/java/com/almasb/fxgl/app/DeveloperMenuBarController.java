@@ -24,7 +24,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
-import static com.almasb.fxgl.app.SystemPropertyKey.*;
 import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
@@ -103,12 +102,12 @@ public class DeveloperMenuBarController implements UIController {
 
     public void onShowBBox(ActionEvent event) {
         CheckMenuItem item = (CheckMenuItem) event.getSource();
-        FXGL.getProperties().setValue(DEV_SHOWBBOX, item.isSelected());
+        FXGL.getSystemConfig().getDevShowBBox().setValue(item.isSelected());
     }
 
     public void onShowPosition(ActionEvent event) {
         CheckMenuItem item = (CheckMenuItem) event.getSource();
-        FXGL.getProperties().setValue(DEV_SHOWPOSITION, item.isSelected());
+        FXGL.getSystemConfig().getDevShowPosition().setValue(item.isSelected());
     }
 
     private EventHandler<MouseEvent> clickTracker = e -> {

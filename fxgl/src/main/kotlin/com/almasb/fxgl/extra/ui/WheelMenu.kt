@@ -35,8 +35,7 @@ class WheelMenu(vararg itemNames: String) : Parent() {
     var selectionHandler: Consumer<String>? = null
 
     init {
-        if (itemNames.size > 4)
-            throw IllegalArgumentException("Max number of items is 4")
+        require(itemNames.size <= 4) { "Max number of items is 4" }
 
         val handler = javafx.event.EventHandler<MouseEvent> { event ->
             selectedItem.set((event.getSource() as QuarterCircle).text.text)

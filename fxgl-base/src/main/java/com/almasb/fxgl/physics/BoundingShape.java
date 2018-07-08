@@ -10,6 +10,8 @@ import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 
+import java.util.List;
+
 /**
  * Defines bounding shapes to be used for hit boxes.
  *
@@ -96,6 +98,32 @@ public final class BoundingShape {
         }
 
         return new BoundingShape(ShapeType.CHAIN, points, new Dimension2D(maxX, maxY));
+    }
+
+    public static BoundingShape polygon(List<Point2D> points) {
+        return polygon(points.toArray(new Point2D[0]));
+    }
+
+    public static BoundingShape polygonFromDoubles(List<Double> points) {
+        double[] array = new double[points.size()];
+
+        for (int i = 0; i < points.size(); i++) {
+            array[i] = points.get(i);
+        }
+
+        return polygon(array);
+    }
+
+    public static BoundingShape polygon(double... points) {
+        Point2D[] array = new Point2D[points.length / 2];
+        for (int i = 0; i < array.length; i++) {
+            double x = points[i*2];
+            double y = points[i*2+1];
+
+            array[i] = new Point2D(x, y);
+        }
+
+        return polygon(array);
     }
 
     public static BoundingShape polygon(Point2D... points) {

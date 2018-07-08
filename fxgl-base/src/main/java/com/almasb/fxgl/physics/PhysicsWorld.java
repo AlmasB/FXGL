@@ -15,8 +15,8 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityWorldListener;
 import com.almasb.fxgl.entity.components.BoundingBoxComponent;
 import com.almasb.fxgl.entity.components.CollidableComponent;
-import com.almasb.fxgl.entity.components.PositionComponent;
 import com.almasb.fxgl.entity.components.TypeComponent;
+import com.almasb.fxgl.physics.box2d.callbacks.ContactFilter;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactImpulse;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.collision.Manifold;
@@ -28,6 +28,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 import static com.almasb.fxgl.util.BackportKt.forEach;
@@ -151,6 +152,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         initCollisionPool();
         initContactListener();
         initParticles();
+
+        jboxWorld.setContactFilter(new CollisionFilterCallback());
 
         log.debugf("Physics world initialized: appHeight=%d, physics.ppm=%.1f",
                 appHeight, ppm);
@@ -408,6 +411,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
                     continue;
                 }
 
+                // check if e1 ignores e2, or e2 ignores e1
+                if (isIgnored(e1, e2))
+                    continue;
+
                 // check if colliding
                 CollisionResult result = e1.getBoundingBoxComponent().checkCollision(e2.getBoundingBoxComponent());
 
@@ -424,6 +431,29 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         }
 
         collidables.clear();
+    }
+
+    private boolean isIgnored(Entity e1, Entity e2) {
+        if (!e1.hasComponent(CollidableComponent.class) || !e2.hasComponent(CollidableComponent.class))
+            return false;
+
+        CollidableComponent c1 = e1.getComponent(CollidableComponent.class);
+
+        for (Serializable t1 : c1.getIgnoredTypes()) {
+            if (e2.isType(t1)) {
+                return true;
+            }
+        }
+
+        CollidableComponent c2 = e2.getComponent(CollidableComponent.class);
+
+        for (Serializable t2 : c2.getIgnoredTypes()) {
+            if (e1.isType(t2)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void collisionBeginFor(CollisionHandler handler, Entity e1, Entity e2, HitBox a, HitBox b) {
@@ -836,5 +866,19 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      */
     public Point2D toPoint(Vec2 p) {
         return new Point2D(toPixels(p.x), toPixels(toMeters(appHeight) - p.y));
+    }
+
+    private class CollisionFilterCallback extends ContactFilter {
+
+        @Override
+        public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
+            Entity e1 = fixtureA.getBody().getEntity();
+            Entity e2 = fixtureB.getBody().getEntity();
+
+            if (areCollidable(e1, e2) && isIgnored(e1, e2))
+                return false;
+
+            return super.shouldCollide(fixtureA, fixtureB);
+        }
     }
 }

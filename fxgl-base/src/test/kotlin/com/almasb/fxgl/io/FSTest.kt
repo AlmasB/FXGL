@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import java.nio.file.Files.*
 import java.nio.file.Paths.get as path
 
@@ -111,10 +112,14 @@ class FSTest {
         assertThat(dirNames2, containsInAnyOrder("testsubdir", "testsubdir/testsubsubdir"))
     }
 
-    @Disabled
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     @Test
     fun `Load last modified file`() {
         FS.writeDataTask("a", "testdir/file.a").run()
+
+        // this is to make sure that even on Unix systems we have a difference in timestamps
+        Thread.sleep(1000)
+
         FS.writeDataTask("b", "testdir/file.b").run()
 
         val data = FS.loadLastModifiedFileTask<String>("testdir", false).run()

@@ -229,9 +229,9 @@ class Island {
             if (b.getType() == BodyType.DYNAMIC) {
                 // Integrate velocities.
                 // v += h * (b.m_gravityScale * gravity + b.m_invMass * b.m_force);
-                v.x += h * (b.getGravityScale() * gravity.x + b.m_invMass * b.getForce().x);
-                v.y += h * (b.getGravityScale() * gravity.y + b.m_invMass * b.getForce().y);
-                w += h * b.m_invI * b.getTorque();
+                v.x += h * (b.getGravityScale() * gravity.x + b.m_invMass * b.m_force.x);
+                v.y += h * (b.getGravityScale() * gravity.y + b.m_invMass * b.m_force.y);
+                w += h * b.m_invI * b.m_torque;
 
                 // Apply damping.
                 // ODE: dv/dt + c * v = 0

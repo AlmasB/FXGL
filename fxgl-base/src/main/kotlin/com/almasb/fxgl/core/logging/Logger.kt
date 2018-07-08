@@ -32,8 +32,7 @@ private constructor(private val name: String) {
         @JvmStatic fun isConfigured(): Boolean = configured
 
         @JvmStatic fun configure(config: LoggerConfig) {
-            if (configured)
-                throw IllegalStateException("Logger already configured")
+            check(!configured){ "Logger already configured" }
 
             this.config = config.copy()
             configured = true
@@ -99,13 +98,13 @@ private constructor(private val name: String) {
             return Logger(name)
         }
 
+        inline fun <reified T> get() = get(T::class.java)
         @JvmStatic fun get(caller: Class<*>): Logger {
             return get(caller.simpleName)
         }
 
         @JvmStatic fun close() {
-            if (closed)
-                throw IllegalStateException("Logger already closed")
+            check(!closed) { "Logger already closed" }
 
             outputs.forEach(LoggerOutput::close)
             closed = true

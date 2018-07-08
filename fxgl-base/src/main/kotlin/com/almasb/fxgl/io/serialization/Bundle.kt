@@ -8,7 +8,6 @@ package com.almasb.fxgl.io.serialization
 
 import com.almasb.fxgl.core.logging.Logger
 import java.io.Serializable
-import java.util.*
 
 /**
  * Bundle is used to store values mapped with certain keys.
@@ -20,10 +19,10 @@ class Bundle(val name: String) : Serializable {
     companion object {
         private val serialVersionUID = 1L
 
-        private val log = Logger.get(Bundle::class.java)
+        private val log = Logger.get<Bundle>()
     }
 
-    private val data = HashMap<String, Any>()
+    private val data = hashMapOf<String, Any>()
 
     /**
      * Store a [value] with given [key].
@@ -41,7 +40,7 @@ class Bundle(val name: String) : Serializable {
     }
 
     fun exists(key: String): Boolean {
-        return data.containsKey(key)
+        return data.containsKey("$name.$key")
     }
 
     /**

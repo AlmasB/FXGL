@@ -20,13 +20,6 @@ import org.junit.jupiter.api.Test
  */
 class AccumulatedUpdateControlTest {
 
-    companion object {
-        @BeforeAll
-        @JvmStatic fun before() {
-            FXGL.getProperties().setValue("dev.showbbox", false)
-        }
-    }
-
     @Test
     fun `Component updates every 5 frames`() {
         val e = Entity()

@@ -12,6 +12,7 @@ import com.almasb.fxgl.app.FXGL.Companion.getUIFactory
 import com.almasb.fxgl.input.virtual.VirtualButton.*
 import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
+import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.layout.StackPane
@@ -24,13 +25,15 @@ import javafx.scene.shape.Polygon
  * 1. QTE events can't use virtual controller
  * 2. Trigger Views should have common base code
  * 3. Virtual controller buttons can't be rebound in menu
- * 4. provide a group for dpad and a group for buttons
  * 5. implement remaining controller styles
  * 6. PS and other styles have different layout and buttons, e.g. Square Triangle ...
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class VirtualControllerOverlay(val style: VirtualControllerStyle) : Parent() {
+
+    val dpad: Node
+    val buttons: Node
 
     init {
         val offset = 45.0
@@ -40,7 +43,7 @@ class VirtualControllerOverlay(val style: VirtualControllerStyle) : Parent() {
         val left = makeButtonDpad(LEFT)
         val right = makeButtonDpad(RIGHT)
 
-        val dpadCenter = Point2D(100 -45.0, 100.0)
+        val dpadCenter = Point2D(100 - 45.0, 100.0)
 
         up.translateX = dpadCenter.x
         up.translateY = dpadCenter.y - offset
@@ -54,12 +57,14 @@ class VirtualControllerOverlay(val style: VirtualControllerStyle) : Parent() {
         right.translateX = dpadCenter.x + offset
         right.translateY = dpadCenter.y
 
+        dpad = Group(up, down, left, right)
+
         val buttonA = makeButton(A, Color.GREEN)
         val buttonB = makeButton(B, Color.RED)
         val buttonX = makeButton(X, Color.BLUE)
         val buttonY = makeButton(Y, Color.YELLOW)
 
-        val buttonsCenter = Point2D(FXGL.getAppWidth() - 100.0, 100.0)
+        val buttonsCenter = Point2D(100.0 - 45.0, 100.0)
 
         buttonA.translateX = buttonsCenter.x
         buttonA.translateY = buttonsCenter.y + offset
@@ -73,7 +78,10 @@ class VirtualControllerOverlay(val style: VirtualControllerStyle) : Parent() {
         buttonY.translateX = buttonsCenter.x
         buttonY.translateY = buttonsCenter.y - offset
 
-        children.addAll(up, down, left, right, buttonA, buttonB, buttonX, buttonY)
+        buttons = Group(buttonA, buttonB, buttonX, buttonY)
+        buttons.translateX = FXGL.getAppWidth() - 155.0
+
+        children.addAll(dpad, buttons)
 
         opacity = 0.7
     }

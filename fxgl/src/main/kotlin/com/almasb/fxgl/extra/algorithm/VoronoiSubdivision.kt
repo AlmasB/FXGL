@@ -14,7 +14,6 @@ import com.almasb.fxgl.extra.algorithm.voronoi.Voronoi
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import javafx.scene.shape.Polygon
-import java.util.*
 
 /**
  * Polygonal 2D space subdivision using Voronoi diagram.
@@ -171,7 +170,7 @@ object VoronoiSubdivision {
         // terminating condition to avoid being stuck in loop
         // in case of miscalculation
         // shouldn't happen in normal scenario
-        if (corners.contains(next)) {
+        if (next in corners) {
             log.warning("Failed to find next edge. Left: $edges")
             return null
         }

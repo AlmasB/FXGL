@@ -22,7 +22,7 @@ private constructor() {
 
     companion object {
 
-        private val log = Logger.get(FS::class.java)
+        private val log = Logger.get<FS>()
 
         private val fs = if (FXGL.isMobile()) MobileFSService() else DesktopFSService()
 

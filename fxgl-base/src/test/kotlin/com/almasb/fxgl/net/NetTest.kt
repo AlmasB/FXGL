@@ -22,13 +22,6 @@ class NetTest {
 
     private lateinit var net: Net
 
-    companion object {
-        @BeforeAll
-        @JvmStatic fun before() {
-            FXGL.getProperties().setValue("url.pom", "https://raw.githubusercontent.com/AlmasB/FXGL/master/pom.xml")
-        }
-    }
-
     @BeforeEach
     fun setUp() {
         net = FXGLNet()

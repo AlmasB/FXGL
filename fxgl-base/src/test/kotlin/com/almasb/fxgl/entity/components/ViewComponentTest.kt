@@ -8,7 +8,6 @@ package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.app.SystemPropertyKey
 import com.almasb.fxgl.entity.RenderLayer
 import javafx.scene.Node
 import javafx.scene.paint.Color
@@ -56,8 +55,8 @@ class ViewComponentTest {
     // TODO: complete
     @Test
     fun `Debug view`() {
-        FXGL.getProperties().setValue(SystemPropertyKey.DEV_SHOWBBOX, true)
-        FXGL.getProperties().setValue(SystemPropertyKey.DEV_BBOXCOLOR, Color.BLUE)
+        //FXGL.getProperties().setValue(SystemPropertyKey.DEV_SHOWBBOX, true)
+        //FXGL.getProperties().setValue(SystemPropertyKey.DEV_BBOXCOLOR, Color.BLUE)
     }
 
     @Test

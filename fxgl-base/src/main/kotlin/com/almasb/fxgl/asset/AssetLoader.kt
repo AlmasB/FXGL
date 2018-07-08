@@ -33,7 +33,9 @@ import javafx.scene.Parent
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
-import java.io.*
+import java.io.IOException
+import java.io.InputStream
+import java.io.ObjectInputStream
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -430,7 +432,7 @@ class AssetLoader {
 
         try {
             getStream(PROPERTIES_DIR + name).use {
-                val bundle = PropertyResourceBundle(InputStreamReader(it, StandardCharsets.UTF_8))
+                val bundle = PropertyResourceBundle(it.reader(StandardCharsets.UTF_8))
                 cachedAssets.put(PROPERTIES_DIR + name, bundle)
                 return bundle
             }
@@ -616,15 +618,7 @@ class AssetLoader {
      */
     private fun readAllLines(name: String): List<String> {
         try {
-            BufferedReader(InputStreamReader(getStream(name))).use {
-                val result = ArrayList<String>()
-
-                while (true) {
-                    val line = it.readLine() ?: break
-                    result.add(line)
-                }
-                return result
-            }
+            return getStream(name).bufferedReader().readLines()
         } catch (e: Exception) {
             throw loadFailed(name, e)
         }
@@ -665,8 +659,9 @@ class AssetLoader {
      * @throws IllegalArgumentException if directory does not start with "/assets/" or was not found
      */
     fun loadFileNames(directory: String): List<String> {
-        if (!directory.startsWith(ASSETS_DIR))
-            throw IllegalArgumentException("Directory must start with: $ASSETS_DIR Provided: $directory")
+        require(directory.startsWith(ASSETS_DIR)) {
+            "Directory must start with: $ASSETS_DIR Provided: $directory"
+        }
 
         try {
             val url = javaClass.getResource(directory)

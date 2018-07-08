@@ -7,26 +7,43 @@ package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.particle.ParticleEmitter;
+import com.almasb.fxgl.particle.ParticleEmitters;
+import com.almasb.fxgl.particle.ParticleSystem;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.settings.MenuItem;
+import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.util.Supplier;
 import javafx.animation.FadeTransition;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
+import javafx.scene.paint.*;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.EnumSet;
 
+import static com.almasb.fxgl.app.DSLKt.texture;
 import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
+import static com.almasb.fxgl.core.math.FXGLMath.noise1D;
+import static com.almasb.fxgl.core.math.FXGLMath.random;
 
 /**
  * This is the default FXGL menu used if the users
@@ -36,6 +53,8 @@ import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class FXGLDefaultMenu extends FXGLMenu {
+
+    private ParticleSystem particleSystem;
 
     public FXGLDefaultMenu(GameApplication app, MenuType type) {
         super(app, type);
@@ -50,10 +69,29 @@ public class FXGLDefaultMenu extends FXGLMenu {
         menuRoot.setTranslateX(menuX);
         menuRoot.setTranslateY(menuY);
 
-        contentRoot.setTranslateX(menuX * 2 + 200);
+        contentRoot.setTranslateX(app.getWidth() - 500);
         contentRoot.setTranslateY(menuY);
 
-        menuRoot.getChildren().add(menu);
+        // particle smoke
+        Texture t = texture("particles/smoke.png", 128, 128).brighter().brighter();
+
+        ParticleEmitter emitter = ParticleEmitters.newFireEmitter();
+        emitter.setBlendMode(BlendMode.SRC_OVER);
+        emitter.setSourceImage(t.getImage());
+        emitter.setSize(150, 220);
+        emitter.setNumParticles(10);
+        emitter.setEmissionRate(0.01);
+        emitter.setVelocityFunction((i) -> new Point2D(random() * 2.5, -random() * random(80, 120)));
+        emitter.setExpireFunction((i) -> Duration.seconds(random(4, 7)));
+        emitter.setScaleFunction((i) -> new Point2D(0.15, 0.10));
+        emitter.setSpawnPointFunction((i) -> new Point2D(random(0, app.getWidth() - 200), 120));
+
+        particleSystem.addParticleEmitter(emitter, 0, app.getHeight());
+
+        // TODO: rename, as this is not same as contentRoot
+        getContentRoot().getChildren().add(3, particleSystem.getPane());
+
+        menuRoot.getChildren().addAll(menu);
         contentRoot.getChildren().add(EMPTY);
 
         activeProperty().addListener((observable, wasActive, isActive) -> {
@@ -66,6 +104,21 @@ public class FXGLDefaultMenu extends FXGLMenu {
         });
     }
 
+    private ObjectProperty<Color> titleColor;
+    private double t = 0;
+
+    @Override
+    public void onUpdate(double tpf) {
+        double frequency = 1.7;
+
+        t += tpf * frequency;
+
+        particleSystem.onUpdate(tpf);
+
+        Color color = Color.color(1, 1, 1, noise1D(t));
+        titleColor.set(color);
+    }
+
     @Override
     protected Node createBackground(double width, double height) {
         Rectangle bg = new Rectangle(width, height);
@@ -75,17 +128,54 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
     @Override
     protected Node createTitleView(String title) {
-        Text text = FXGL.getUIFactory().newText(title, 50);
+        titleColor = new SimpleObjectProperty<>(Color.WHITE);
 
-        Rectangle bg = new Rectangle(text.getLayoutBounds().getWidth() + 20, 60, null);
+        Text text = FXGL.getUIFactory().newText(title.substring(0, 1), 50);
+        text.setFill(null);
+        text.strokeProperty().bind(titleColor);
+        text.setStrokeWidth(1.5);
+
+        Text text2 = FXGL.getUIFactory().newText(title.substring(1, title.length()), 50);
+        text2.setFill(null);
+        text2.setStroke(titleColor.getValue());
+        text2.setStrokeWidth(1.5);
+
+        double textWidth = text.getLayoutBounds().getWidth() + text2.getLayoutBounds().getWidth();
+
+        Rectangle bg = new Rectangle(textWidth + 30, 65, null);
         bg.setStroke(Color.WHITE);
-        bg.setStrokeWidth(2);
+        bg.setStrokeWidth(4);
+        bg.setArcWidth(25);
+        bg.setArcHeight(25);
+
+        ParticleEmitter emitter = ParticleEmitters.newExplosionEmitter(50);
+
+        Texture t = texture("particles/trace_horizontal.png", 64, 64);
+
+        emitter.setBlendMode(BlendMode.ADD);
+        emitter.setSourceImage(t.getImage());
+        emitter.setMaxEmissions(Integer.MAX_VALUE);
+        emitter.setSize(18, 22);
+        emitter.setNumParticles(2);
+        emitter.setEmissionRate(0.2);
+        emitter.setVelocityFunction((i) -> i % 2 == 0 ? new Point2D(random(-10, 0), random(0, 0)) : new Point2D(random(0, 10), random(0, 0)));
+        emitter.setExpireFunction((i) -> Duration.seconds(random(4, 6)));
+        emitter.setScaleFunction((i) -> new Point2D(-0.03, -0.03));
+        emitter.setSpawnPointFunction((i) -> new Point2D(random(0, 0), random(0, 0)));
+        emitter.setAccelerationFunction(() -> new Point2D(random(-1, 1), random(0, 0)));
+
+        HBox box = new HBox(text, text2);
+        box.setAlignment(Pos.CENTER);
 
         StackPane titleRoot = new StackPane();
-        titleRoot.getChildren().addAll(bg, text);
+        titleRoot.getChildren().addAll(bg, box);
 
-        titleRoot.setTranslateX(app.getWidth() / 2 - (text.getLayoutBounds().getWidth() + 20) / 2);
+        titleRoot.setTranslateX(app.getWidth() / 2 - (textWidth + 30) / 2);
         titleRoot.setTranslateY(50);
+
+        particleSystem = new ParticleSystem();
+        particleSystem.addParticleEmitter(emitter, app.getWidth() / 2 - 30, titleRoot.getTranslateY() + 34);
+
         return titleRoot;
     }
 
@@ -261,12 +351,9 @@ public class FXGLDefaultMenu extends FXGLMenu {
     }
 
     private static class MenuBox extends VBox {
-        private int width;
 
+        // TODO: cleanup, enable animations for GameMenu
         MenuBox(int width, MenuButton... items) {
-            this.width = width;
-
-            getChildren().add(createSeparator(width));
 
             for (MenuButton item : items) {
                 add(item);
@@ -275,14 +362,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
         void add(MenuButton item) {
             item.setParent(this);
-            getChildren().addAll(item, createSeparator(width));
-        }
-
-        private Line createSeparator(int width) {
-            Line sep = new Line();
-            sep.setEndX(width);
-            sep.setStroke(Color.DARKGREY);
-            return sep;
+            getChildren().addAll(item);
         }
 
         double getLayoutHeight() {
@@ -290,12 +370,41 @@ public class FXGLDefaultMenu extends FXGLMenu {
         }
     }
 
-    private class MenuButton extends FXGLButton {
+    private class MenuButton extends Pane {
         private MenuBox parent;
         private MenuContent cachedContent = null;
 
+        private Polygon p = new Polygon(0,0, 220,0, 250,35, 0,35);
+        private FXGLButton btn;
+
         MenuButton(String stringKey) {
-            textProperty().bind(localizedStringProperty(stringKey));
+            btn = new FXGLButton();
+            btn.setAlignment(Pos.CENTER_LEFT);
+            btn.setStyle("-fx-background-color: transparent");
+            btn.textProperty().bind(localizedStringProperty(stringKey));
+
+            p.setMouseTransparent(true);
+
+            Paint g = new LinearGradient(0, 1, 1, 0.2, true, CycleMethod.NO_CYCLE,
+                    new Stop(0.6, Color.color(1, 0.8, 0, 0.34)),
+                    new Stop(0.85, Color.color(1, 0.8, 0, 0.74)),
+                    new Stop(1, Color.WHITE));
+
+            p.fillProperty().bind(
+                    Bindings.when(btn.pressedProperty()).then((Paint) Color.color(1, 0.8, 0, 0.75)).otherwise(g)
+            );
+
+            p.setStroke(Color.color(0.1, 0.1, 0.1, 0.15));
+            p.setEffect(new GaussianBlur());
+
+            // TODO: hover and/or focused?
+            p.visibleProperty().bind(btn.hoverProperty());
+
+            getChildren().addAll(btn, p);
+        }
+
+        public void setOnAction(EventHandler<ActionEvent> e) {
+            btn.setOnAction(e);
         }
 
         public void setParent(MenuBox menu) {
@@ -304,7 +413,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
         public void setMenuContent(Supplier<MenuContent> contentSupplier) {
 
-            this.addEventHandler(ActionEvent.ACTION, event -> {
+            btn.addEventHandler(ActionEvent.ACTION, event -> {
                 if (cachedContent == null)
                     cachedContent = contentSupplier.get();
 
@@ -318,7 +427,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
             back.addEventHandler(ActionEvent.ACTION, event -> switchMenuTo(MenuButton.this.parent));
 
-            this.addEventHandler(ActionEvent.ACTION, event -> switchMenuTo(menu));
+            btn.addEventHandler(ActionEvent.ACTION, event -> switchMenuTo(menu));
         }
     }
 
@@ -327,7 +436,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
         MenuButton btn = new MenuButton(name);
         btn.addEventHandler(ActionEvent.ACTION, event -> action.run());
 
-        return btn;
+        return btn.btn;
     }
 
     @Override
@@ -335,6 +444,6 @@ public class FXGLDefaultMenu extends FXGLMenu {
         MenuButton btn = new MenuButton(name.getValue());
         btn.addEventHandler(ActionEvent.ACTION, event -> action.run());
 
-        return btn;
+        return btn.btn;
     }
 }

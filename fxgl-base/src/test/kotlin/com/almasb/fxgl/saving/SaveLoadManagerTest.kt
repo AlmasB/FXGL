@@ -34,12 +34,6 @@ class SaveLoadManagerTest {
         @BeforeAll
         @JvmStatic fun before() {
             FXGLMock.mock()
-            // save load system relies on these to be present
-            FXGL.getProperties().setValue("fs.profiledir", "testprofiles/")
-            FXGL.getProperties().setValue("fs.profilename", "user.profile")
-            FXGL.getProperties().setValue("fs.savedir", "saves/")
-            FXGL.getProperties().setValue("fs.savefile.ext", ".sav")
-            FXGL.getProperties().setValue("fs.datafile.ext", ".dat")
 
             cleanUp()
         }
@@ -47,9 +41,9 @@ class SaveLoadManagerTest {
         @AfterAll
         @JvmStatic fun cleanUp() {
             // ensure previous tests have been cleared
-            FS.deleteDirectoryTask("testprofiles/").run()
+            FS.deleteDirectoryTask("profiles/").run()
 
-            assertTrue(!Files.exists(Paths.get("testprofiles/")), "Profiles dir is present before")
+            assertTrue(!Files.exists(Paths.get("profiles/")), "Profiles dir is present before")
         }
     }
 
@@ -70,19 +64,19 @@ class SaveLoadManagerTest {
     fun `Save new profile`() {
         manager.saveProfileTask(UserProfile("TestApp", "TestVersion")).run()
 
-        assertTrue(Files.exists(Paths.get("testprofiles/")), "Profiles dir was not created")
+        assertTrue(Files.exists(Paths.get("profiles/")), "Profiles dir was not created")
 
-        assertTrue(Files.exists(Paths.get("testprofiles/TestProfileName/user.profile")), "Profile file was not created")
+        assertTrue(Files.exists(Paths.get("profiles/TestProfileName/user.profile")), "Profile file was not created")
 
-        assertTrue(Files.exists(Paths.get("testprofiles/TestProfileName/saves/")), "Saves dir was not created")
+        assertTrue(Files.exists(Paths.get("profiles/TestProfileName/saves/")), "Saves dir was not created")
     }
 
     fun `Save game data`() {
         manager.saveTask(DataFile("TestData"), SaveFile("TestSave", LocalDateTime.now())).run()
 
-        assertTrue(Files.exists(Paths.get("testprofiles/TestProfileName/saves/TestSave.sav")), "Save file was not created")
+        assertTrue(Files.exists(Paths.get("profiles/TestProfileName/saves/TestSave.sav")), "Save file was not created")
 
-        assertTrue(Files.exists(Paths.get("testprofiles/TestProfileName/saves/TestSave.dat")), "Data file was not created")
+        assertTrue(Files.exists(Paths.get("profiles/TestProfileName/saves/TestSave.dat")), "Data file was not created")
     }
 
     fun `Load game data`() {
