@@ -179,9 +179,8 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
         minXWorld.bind(minXLocal.add(position.xProperty()))
         minYWorld.bind(minYLocal.add(position.yProperty()))
 
-        // TODO: use minXWorld
-        maxXWorld.bind(minXLocal.add(position.xProperty()).add(width))
-        maxYWorld.bind(minYLocal.add(position.yProperty()).add(height))
+        maxXWorld.bind(minXWorld.add(width))
+        maxYWorld.bind(minYWorld.add(height))
 
         for (i in hitBoxes.indices) {
             hitBoxes[i].bindX(position.xProperty())
