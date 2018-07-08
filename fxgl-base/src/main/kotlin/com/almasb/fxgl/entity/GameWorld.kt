@@ -184,17 +184,14 @@ class GameWorld {
         }
 
         // entities list does not contain "not active" entities, so we do full clean
-        val it = entities.iterator()
-        while (it.hasNext()) {
-            val e = it.next()
-
+        // also we copy since during removal notification components may remove other entities
+        entitiesCopy.forEach { e ->
             e.markForRemoval()
             notifyEntityRemoved(e)
             e.clean()
-
-            it.remove()
         }
 
+        entities.clear()
         entityFactories.clear()
         entitySpawners.clear()
     }
