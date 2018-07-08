@@ -5,6 +5,7 @@
  */
 package com.almasb.fxgl.particle;
 
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.math.FXGLMath;
@@ -22,6 +23,8 @@ import javafx.util.Duration;
 
 import java.util.Random;
 
+import static com.almasb.fxgl.app.DSLKt.random;
+
 /**
  * A general particle emitter.
  * The configuration is done via setters, which allow
@@ -30,9 +33,6 @@ import java.util.Random;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class ParticleEmitter {
-
-    // TODO: use static import
-    private Random random = FXGLMath.getRandom();
 
     private IntegerProperty numParticles = new SimpleIntegerProperty(25);
 
@@ -147,7 +147,7 @@ public final class ParticleEmitter {
      * @return random size between min and max size
      */
     private double getRandomSize() {
-        return rand(getMinSize(), getMaxSize());
+        return random(getMinSize(), getMaxSize());
     }
 
     private ObjectProperty<Paint> startColor = new SimpleObjectProperty<>(Color.TRANSPARENT);
@@ -320,26 +320,6 @@ public final class ParticleEmitter {
      * Number of times particles have been emitted.
      */
     private int emissions = 0;
-
-    /**
-     * Returns a value in [0..1).
-     *
-     * @return random value between 0 (incl) and 1 (excl)
-     */
-    private double rand() {
-        return random.nextDouble();
-    }
-
-    /**
-     * Returns a value in [min..max).
-     *
-     * @param min min bounds
-     * @param max max bounds
-     * @return a random value between min (incl) and max (excl)
-     */
-    private double rand(double min, double max) {
-        return rand() * (max - min) + min;
-    }
 
     private Array<Particle> emissionParticles = new UnorderedArray<>(getNumParticles());
 

@@ -31,10 +31,8 @@ import java.util.*
 import java.util.concurrent.Callable
 
 /**
- * Represents the entire FXGL infrastructure.
- * Can be used to pass internal properties (key-value pair) around.
- * The properties are NOT to be used in gameplay.
- * Can be used for communication between non-related parts.
+ * Represents the entire FXGL infrastructure and enables access
+ * to various subsystems.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

@@ -18,7 +18,7 @@ import com.almasb.fxgl.app.FXGL.Companion.getInput
 import com.almasb.fxgl.app.FXGL.Companion.getMasterTimer
 import com.almasb.fxgl.app.FXGL.Companion.getNotificationService
 import com.almasb.fxgl.app.FXGL.Companion.getUIFactory
-import com.almasb.fxgl.core.math.FXGLMath.random
+import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.entity.Entity
@@ -205,9 +205,11 @@ fun onCollisionEnd(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, En
 
 /* MATH */
 
-fun rand() = random()
+fun random() = FXGLMath.random()
 
-fun rand(min: Int, max: Int) = random(min, max)
+fun random(min: Int, max: Int) = FXGLMath.random(min, max)
+
+fun random(min: Double, max: Double) = FXGLMath.random(min, max)
 
 /* POOLING */
 fun <T> obtain(type: Class<T>): T = Pools.obtain(type)
@@ -217,9 +219,6 @@ fun free(instance: Any) = Pools.free(instance)
 /* EVENTS */
 
 fun fire(event: Event) = getEventBus().fireEvent(event)
-
-// TODO:
-//fun fire(event: EntityEvent, eventType: String) = getEventBus().fireEntityEvent(event, eventType)
 
 /* NOTIFICATIONS */
 
