@@ -12,13 +12,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <source.version>1.8</source.version>
-        <fxgl.version>0.5.3-SNAPSHOT</fxgl.version>
+        <fxgl.version>0.5.4-SNAPSHOT</fxgl.version>
 
         <!-- plugins -->
         <maven.compiler.version>3.7.0</maven.compiler.version>
 
         <!-- dependencies -->
-        <kotlin.version>1.2.41</kotlin.version>
+        <kotlin.version>1.2.51</kotlin.version>
     </properties>
 
     <dependencies>
