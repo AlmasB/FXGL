@@ -227,6 +227,16 @@ public final class ParticleEmitter {
 
     /* FUNCTION CONFIGURATORS */
 
+    private Function<Double, Point2D> parametricEquation = null;
+
+    public Function<Double, Point2D> getParametricEquation() {
+        return parametricEquation;
+    }
+
+    public void setParametricEquation(Function<Double, Point2D> parametricEquation) {
+        this.parametricEquation = parametricEquation;
+    }
+
     private Supplier<Point2D> accelerationFunction = () -> Point2D.ZERO;
 
     /**
@@ -378,7 +388,8 @@ public final class ParticleEmitter {
                 getEndColor(),
                 getBlendMode(),
                 getInterpolator(),
-                isAllowParticleRotation());
+                isAllowParticleRotation(),
+                getParametricEquation());
 
         return particle;
     }

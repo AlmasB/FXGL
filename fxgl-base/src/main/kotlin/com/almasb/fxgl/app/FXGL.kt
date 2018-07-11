@@ -43,13 +43,13 @@ class FXGL private constructor() {
 
         private lateinit var internalBundle: Bundle
 
-        private lateinit var version: String
+        private lateinit var _version: String
 
         private val log = Logger.get("FXGL")
 
         private var configured = false
 
-        @JvmStatic fun getVersion() = version
+        @JvmStatic fun getVersion() = _version
 
         // cheap hack for now
         @JvmStatic fun isBrowser() = System.getProperty("fxgl.isBrowser", "false") == "true"
@@ -140,9 +140,9 @@ class FXGL private constructor() {
             val platform = "${Platform.getCurrent()}" + if (isBrowser()) " BROWSER" else ""
 
             val bundle = ResourceBundle.getBundle("com.almasb.fxgl.app.system")
-            version = bundle.getString("fxgl.version")
+            _version = bundle.getString("fxgl.version")
 
-            log.info("FXGL-$version on $platform")
+            log.info("FXGL-$_version on $platform")
             log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
             log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
         }

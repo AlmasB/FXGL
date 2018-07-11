@@ -19,5 +19,5 @@ import javafx.util.Duration
  */
 internal class PhysicsParticle(position: Point2D, radius: Double, color: Paint)
     : Particle(position, Point2D.ZERO, Point2D.ZERO, radius, Point2D.ZERO,
-        Duration.seconds(10.0), color, color, BlendMode.SRC_OVER, false) {
+        Duration.seconds(10.0), color, color, BlendMode.SRC_OVER, false, null) {
 }

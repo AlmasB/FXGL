@@ -9,6 +9,7 @@ import com.almasb.fxgl.animation.AnimatedColor;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Poolable;
 import com.almasb.fxgl.util.Consumer;
+import com.almasb.fxgl.util.Function;
 import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -88,6 +89,11 @@ public class Particle implements Poolable {
     private boolean allowRotation;
 
     /**
+     * Controls the particle position based on the equation.
+     */
+    private Function<Double, Point2D> equation;
+
+    /**
      * Image from which the particle is created.
      * If the image is null, the particle is a software generated shape.
      */
@@ -113,9 +119,10 @@ public class Particle implements Poolable {
             Paint startColor,
             Paint endColor,
             BlendMode blendMode,
-            boolean allowRotation) {
+            boolean allowRotation,
+            Function<Double, Point2D> equation) {
 
-        this(null, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode, allowRotation);
+        this(null, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode, allowRotation, equation);
     }
 
     public Particle(
@@ -129,9 +136,10 @@ public class Particle implements Poolable {
             Paint startColor,
             Paint endColor,
             BlendMode blendMode,
-            boolean allowRotation) {
+            boolean allowRotation,
+            Function<Double, Point2D> equation) {
 
-        init(image, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode, Interpolator.LINEAR, allowRotation);
+        init(image, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode, Interpolator.LINEAR, allowRotation, equation);
     }
 
     public Particle() {
@@ -151,7 +159,8 @@ public class Particle implements Poolable {
             Paint endColor,
             BlendMode blendMode,
             Interpolator interpolator,
-            boolean allowRotation) {
+            boolean allowRotation,
+            Function<Double, Point2D> equation) {
 
         this.image = image;
         this.startPosition.set(position);
@@ -167,6 +176,7 @@ public class Particle implements Poolable {
         this.life = initialLife;
         this.interpolator = interpolator;
         this.allowRotation = allowRotation;
+        this.equation = equation;
 
         imageView.setImage(image);
         colorAnimation = new AnimatedColor((Color)startColor, (Color)endColor, interpolator);
@@ -187,6 +197,8 @@ public class Particle implements Poolable {
         initialLife = 0;
         life = 0;
         interpolator = Interpolator.LINEAR;
+        allowRotation = false;
+        equation = null;
 
         control = null;
     }
@@ -211,9 +223,19 @@ public class Particle implements Poolable {
         // interpolate time based on progress
         double t = interpolator.interpolate(0, initialLife, progress);
 
-        // s = s0 + v0*t + 0.5*a*t^2
-        double x = startPosition.x + velocity.x * t + 0.5 * acceleration.x * t * t;
-        double y = startPosition.y + velocity.y * t + 0.5 * acceleration.y * t * t;
+        double x;
+        double y;
+
+        if (equation == null) {
+
+            // s = s0 + v0*t + 0.5*a*t^2
+            x = startPosition.x + velocity.x * t + 0.5 * acceleration.x * t * t;
+            y = startPosition.y + velocity.y * t + 0.5 * acceleration.y * t * t;
+        } else {
+            Point2D newPos = equation.apply(t);
+            x = newPos.getX();
+            y = newPos.getY();
+        }
 
         moveVector.set((float)x - position.x, (float)y - position.y);
 
