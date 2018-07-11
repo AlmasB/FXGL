@@ -233,8 +233,8 @@ public class Particle implements Poolable {
             y = startPosition.y + velocity.y * t + 0.5 * acceleration.y * t * t;
         } else {
             Point2D newPos = equation.apply(t);
-            x = newPos.getX();
-            y = newPos.getY();
+            x = startPosition.x + newPos.getX();
+            y = startPosition.y + newPos.getY();
         }
 
         moveVector.set((float)x - position.x, (float)y - position.y);
