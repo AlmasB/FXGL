@@ -58,23 +58,26 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
 internal class IntroState
 internal constructor(private val app: GameApplication, scene: FXGLScene) : AppState(scene) {
 
+    private val introScene = scene as IntroScene
+
     private var introFinishedSubscriber: Subscriber? = null
     private var introFinished = false
 
     override fun onEnter(prevState: State) {
-        if (prevState is StartupState) {
-            introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, EventHandler {
-                introFinished = true
-            })
-
-            (scene as IntroScene).startIntro()
-
-        } else {
-            throw IllegalArgumentException("Entered IntroState from illegal state: " + prevState)
+        check(prevState is StartupState) {
+            "Entered IntroState from illegal state: $prevState"
         }
+
+        introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, EventHandler {
+            introFinished = true
+        })
+
+        (scene as IntroScene).startIntro()
     }
 
     override fun onUpdate(tpf: Double) {
+        introScene.onUpdate(tpf)
+
         if (introFinished) {
             if (FXGL.getSettings().isMenuEnabled) {
                 app.stateMachine.startMainMenu()
