@@ -693,4 +693,12 @@ public final class FXGLMath {
 
         return noise;
     }
+
+    /**
+     * Simplex noise 3d.
+     * @return a value in [-1,1]
+     */
+    public static double noise3D(double x, double y, double z) {
+        return SimplexNoise.noise(x, y, z);
+    }
 }
