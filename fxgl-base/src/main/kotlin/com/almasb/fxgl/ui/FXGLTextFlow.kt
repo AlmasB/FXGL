@@ -12,6 +12,7 @@ import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.input.view.MouseButtonView
 import com.almasb.fxgl.input.view.TriggerView
 import javafx.beans.property.ObjectProperty
+import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.scene.Node
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
@@ -85,16 +86,21 @@ class FXGLTextFlow : TextFlow() {
     /**
      * Bound trigger, auto updates.
      */
-    fun append(triggerProperty: ObjectProperty<Trigger>, color: Color): FXGLTextFlow {
+    fun append(triggerProperty: ReadOnlyObjectProperty<Trigger>, color: Color): FXGLTextFlow {
         val view = TriggerView(triggerProperty.value, color)
         view.triggerProperty().bind(triggerProperty)
         return append(view)
     }
 
-    fun append(triggerProperty: ObjectProperty<Trigger>, color: Color, size: Double): FXGLTextFlow {
+    fun append(triggerProperty: ReadOnlyObjectProperty<Trigger>, color: Color, size: Double): FXGLTextFlow {
         val view = TriggerView(triggerProperty.value, color, size)
         view.triggerProperty().bind(triggerProperty)
         return append(view)
+    }
+
+    fun appendBoundTrigger(actionName: String, color: Color, size: Double): FXGLTextFlow {
+        val triggerProperty = FXGL.getInput().triggerProperty(FXGL.getInput().getActionByName(actionName))
+        return append(triggerProperty, color, size)
     }
 
     fun append(node: Node): FXGLTextFlow {
