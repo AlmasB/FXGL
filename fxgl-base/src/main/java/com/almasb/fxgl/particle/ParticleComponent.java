@@ -13,6 +13,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.PositionComponent;
 import com.almasb.fxgl.util.EmptyRunnable;
+import javafx.scene.Node;
 
 import java.util.Iterator;
 
@@ -78,6 +79,10 @@ public class ParticleComponent extends Component {
         particles.clear();
 
         parent.removeFromWorld();
+    }
+
+    public final Node getParticlesPane() {
+        return entity.getView();
     }
 
     /**
