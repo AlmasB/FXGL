@@ -63,7 +63,6 @@ public class ParticleEquationSample extends GameApplication {
 
             indices.put(p, index);
 
-            // TODO: hide accessors
             double x = p.position.x;
             double y = p.position.y;
 

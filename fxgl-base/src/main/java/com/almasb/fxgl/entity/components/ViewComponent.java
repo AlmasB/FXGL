@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity.components;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.app.SystemConfig;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.CoreComponent;
@@ -240,7 +241,7 @@ public class ViewComponent extends Component {
 
         forEach(c.getList(), this::addDebugView);
 
-        // TODO: listen for sensors
+        // https://github.com/AlmasB/FXGL/issues/573
     };
 
     private boolean showBBox() {
@@ -311,9 +312,7 @@ public class ViewComponent extends Component {
         }
 
         if (view != null) {
-            view.strokeProperty().setValue(Color.YELLOW);
-            // TODO: refactor to use an assignable color
-            //view.strokeProperty().bind(FXGL.getProperties().objectProperty("dev.bboxcolor"));
+            view.strokeProperty().bind(SystemConfig.INSTANCE.getDevSensorColor());
 
             view.setTranslateX(hitBox.getMinX());
             view.setTranslateY(hitBox.getMinY());

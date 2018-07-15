@@ -262,7 +262,7 @@ class TMXParser {
                 .map { it.toDouble() }
                 .toDoubleArray()
 
-        // TODO: use pure data structure instead of Node
+        // https://github.com/AlmasB/FXGL/issues/575
         val polygon = Polygon(*points)
 
         (obj.properties as MutableMap)["polygon"] = polygon

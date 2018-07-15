@@ -52,13 +52,6 @@ class ViewComponentTest {
         assertThat(v2.renderLayer, `is`(RenderLayer.BACKGROUND))
     }
 
-    // TODO: complete
-    @Test
-    fun `Debug view`() {
-        //FXGL.getProperties().setValue(SystemPropertyKey.DEV_SHOWBBOX, true)
-        //FXGL.getProperties().setValue(SystemPropertyKey.DEV_BBOXCOLOR, Color.BLUE)
-    }
-
     @Test
     fun `Setting a view does not affect render layer`() {
         val layer1 = object : RenderLayer() {

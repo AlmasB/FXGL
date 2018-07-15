@@ -65,6 +65,7 @@ object SystemConfig {
     // DYNAMIC - can be modified at runtime
 
     val devBBoxColor = SimpleObjectProperty<Color>(Color.web("#ff0000"))
+    val devSensorColor = SimpleObjectProperty<Color>(Color.YELLOW)
     val devShowBBox = SimpleBooleanProperty(false)
     val devShowPosition = SimpleBooleanProperty(false)
 }

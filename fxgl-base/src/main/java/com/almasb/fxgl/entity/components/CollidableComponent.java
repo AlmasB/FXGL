@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity.components;
 
 import com.almasb.fxgl.entity.component.CopyableComponent;
+import com.almasb.fxgl.util.BackportKt;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,7 +40,9 @@ public class CollidableComponent extends BooleanComponent implements CopyableCom
 
     @Override
     public CollidableComponent copy() {
-        // TODO: copy ignored types also
-        return new CollidableComponent(getValue());
+        CollidableComponent cc = new CollidableComponent(getValue());
+        BackportKt.forEach(ignoredTypes, cc::addIgnoredType);
+
+        return cc;
     }
 }

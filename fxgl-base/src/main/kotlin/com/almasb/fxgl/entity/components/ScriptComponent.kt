@@ -15,8 +15,7 @@ import com.almasb.fxgl.script.ScriptFactory
 import com.almasb.fxgl.util.Optional
 
 /**
- * TODO: listen for script handling changes, e.g. on property onActivate
- * if a different value was set to onActivate
+ * https://github.com/AlmasB/FXGL/issues/572
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

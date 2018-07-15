@@ -101,6 +101,7 @@ public class FontSample extends GameApplication {
         window.setBackgroundColor(Color.color(0.95, 0.95, 0.95));
 
         // TODO: why do we have setPosition() and also can set via add ui node?
+        // we use setLayout() internally, any difference to translate()?
         window.setPosition(x, y);
 
         addUINode(window, 0, 0);

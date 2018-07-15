@@ -38,7 +38,6 @@ public class CrateComponent extends Component {
                 .to(new Point2D(0, 0))
                 .buildAndPlay();
 
-        // TODO: spawnFadeIn
         spawnFadeIn("coin", new SpawnData(entity.getX(), entity.getY()), Duration.seconds(1));
     }
 }

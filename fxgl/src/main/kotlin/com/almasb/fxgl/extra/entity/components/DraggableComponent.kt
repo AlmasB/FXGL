@@ -33,7 +33,7 @@ class DraggableComponent : Component() {
     private val onRelease = EventHandler<MouseEvent> { isDragging = false }
 
     override fun onAdded() {
-        // TODO: care is needed if other components modify input handlers
+        // https://github.com/AlmasB/FXGL/issues/569
         entity.view.onMousePressed = onPress
         entity.view.onMouseReleased = onRelease
     }
