@@ -31,12 +31,6 @@ class GameSettingsTest {
         }
     }
 
-    @Test
-    fun `Settings are unmodifiable`() {
-        val settings = FXGL.getSettings()
-        assertFalse(settings is GameSettings)
-    }
-
     /**
      * This is linked to [com.almasb.fxgl.app.MockGameApplication] and its
      * initSettings().
@@ -63,13 +57,13 @@ class GameSettingsTest {
         assertThat(settings.height, `is`(500))
         assertThat(settings.title, `is`("Test"))
         assertThat(settings.version, `is`("0.99"))
-        assertThat(settings.introEnabled, `is`(false))
-        assertThat(settings.menuEnabled, `is`(false))
-        assertThat(settings.fullScreenAllowed, `is`(false))
-        assertThat(settings.profilingEnabled, `is`(false))
-        assertThat(settings.closeConfirmation, `is`(false))
+        assertThat(settings.isIntroEnabled, `is`(false))
+        assertThat(settings.isMenuEnabled, `is`(false))
+        assertThat(settings.isFullScreenAllowed, `is`(false))
+        assertThat(settings.isProfilingEnabled, `is`(false))
+        assertThat(settings.isCloseConfirmation, `is`(false))
         assertThat(settings.menuKey, `is`(KeyCode.ENTER))
         assertThat(settings.credits.list, hasItems("TestCredit1", "TestCredit2"))
-        assertThat(settings.appMode, `is`(ApplicationMode.RELEASE))
+        assertThat(settings.applicationMode, `is`(ApplicationMode.RELEASE))
     }
 }
