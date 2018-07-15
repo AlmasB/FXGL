@@ -29,6 +29,7 @@ class FSTest {
 
             createFile(path("testdir/testfile.txt"))
             createFile(path("testdir/testfile.json"))
+            createFile(path("testdir/testsubdir/testfile2.json"))
 
             assertTrue(exists(path("testdir/testsubdir/testsubsubdir")), "test dir is not present before")
             assertTrue(exists(path("testdir/testfile.txt")), "test file is not present before")
@@ -43,6 +44,7 @@ class FSTest {
             deleteIfExists(path("testdir/testfile.json"))
             deleteIfExists(path("testdir/file.a"))
             deleteIfExists(path("testdir/file.b"))
+            deleteIfExists(path("testdir/testsubdir/testfile2.json"))
             deleteIfExists(path("testdir/testsubdir"))
             deleteIfExists(path("testdir/somefile"))
             deleteIfExists(path("testdir/somedir"))
@@ -95,10 +97,9 @@ class FSTest {
 
         assertThat(fileNames, containsInAnyOrder("testfile.txt", "testfile.json"))
 
-        // TODO:
-//        val fileNames2 = FS.loadFileNamesTask("testdir", true).run()
-//
-//        assertThat(fileNames2, containsInAnyOrder("testfile.txt", "testfile.json"))
+        val fileNames2 = FS.loadFileNamesTask("testdir", true).run()
+
+        assertThat(fileNames2, containsInAnyOrder("testfile.txt", "testfile.json", "testsubdir/testfile2.json"))
     }
 
     @Test
