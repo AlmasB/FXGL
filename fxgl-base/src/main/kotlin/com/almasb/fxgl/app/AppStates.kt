@@ -280,7 +280,13 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
 internal class GameMenuState
 internal constructor(scene: FXGLScene) : AppState(scene) {
 
+    private val menuScene = scene as FXGLMenu
+
     init {
         input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
+    }
+
+    override fun onUpdate(tpf: Double) {
+        menuScene.onUpdate(tpf)
     }
 }

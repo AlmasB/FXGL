@@ -197,7 +197,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
     protected MenuBox createMenuBodyMainMenu() {
         log.debug("createMenuBodyMainMenu()");
 
-        MenuBox box = new MenuBox(200);
+        MenuBox box = new MenuBox();
 
         EnumSet<MenuItem> enabledItems = app.getSettings().getEnabledMenuItems();
 
@@ -249,7 +249,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
     protected MenuBox createMenuBodyGameMenu() {
         log.debug("createMenuBodyGameMenu()");
 
-        MenuBox box = new MenuBox(200);
+        MenuBox box = new MenuBox();
 
         EnumSet<MenuItem> enabledItems = app.getSettings().getEnabledMenuItems();
 
@@ -309,7 +309,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
             });
         });
 
-        return new MenuBox(200, itemGameplay, itemControls, itemVideo, itemAudio, btnRestore);
+        return new MenuBox(itemGameplay, itemControls, itemVideo, itemAudio, btnRestore);
     }
 
     protected MenuBox createExtraMenu() {
@@ -324,7 +324,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
         MenuButton itemFeedback = new MenuButton("menu.feedback");
         itemFeedback.setMenuContent(this::createContentFeedback);
 
-        return new MenuBox(200, itemAchievements, itemCredits, itemFeedback);
+        return new MenuBox(itemAchievements, itemCredits, itemFeedback);
     }
 
     @Override
@@ -352,8 +352,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
     private static class MenuBox extends VBox {
 
-        // TODO: cleanup, enable animations for GameMenu
-        MenuBox(int width, MenuButton... items) {
+        MenuBox(MenuButton... items) {
 
             for (MenuButton item : items) {
                 add(item);
