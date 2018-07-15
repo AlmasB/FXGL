@@ -131,7 +131,6 @@ class FXGL private constructor() {
                 runUpdaterAsync()
             }
 
-            // TODO: redesign where save / load listeners should be
             _eventBus.addEventHandler(SaveEvent.ANY, EventHandler { _menuSettings.save(it.profile) })
             _eventBus.addEventHandler(LoadEvent.ANY, EventHandler { _menuSettings.load(it.profile) })
         }

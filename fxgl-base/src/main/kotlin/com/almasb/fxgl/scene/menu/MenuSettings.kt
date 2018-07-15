@@ -22,9 +22,6 @@ import javafx.beans.property.SimpleObjectProperty
  */
 class MenuSettings : UserProfileSavable {
 
-    // TODO: can we merge these and SystemConfig and Settings
-    // SystemConfig readonly can be just in ReadOnlySettings
-
     private val language = SimpleObjectProperty<Language>(Language.ENGLISH)
 
     fun setLanguage(language: Language) {
