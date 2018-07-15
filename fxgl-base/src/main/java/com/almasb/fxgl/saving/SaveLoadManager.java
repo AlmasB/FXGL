@@ -7,12 +7,12 @@
 package com.almasb.fxgl.saving;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.concurrent.IOTask;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.io.FileExtension;
 import com.almasb.fxgl.scene.ProgressDialog;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -24,8 +24,6 @@ import java.util.List;
 import static com.almasb.fxgl.app.SystemConfig.INSTANCE;
 
 /**
- * TODO: use async instead of javafx.application.Platform
- *
  * Convenient access to saving and loading game data.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -121,7 +119,7 @@ public final class SaveLoadManager {
         return FS.writeDataTask(saveFile, saveDir() + saveFile.getName() + SAVE_FILE_EXT)
                 .then(n -> FS.writeDataTask(dataFile, saveDir() + saveFile.getName() + DATA_FILE_EXT))
                 .then(n -> IOTask.ofVoid("updateSaves", () -> {
-                    Platform.runLater(() -> {
+                    Async.startFX(() -> {
                         saveFiles.add(saveFile);
                         Collections.sort(saveFiles, SaveFile.RECENT_FIRST);
                     });
@@ -193,7 +191,7 @@ public final class SaveLoadManager {
         return FS.deleteFileTask(saveDir() + saveFile.getName() + SAVE_FILE_EXT)
                 .then(n -> FS.deleteFileTask(saveDir() + saveFile.getName() + DATA_FILE_EXT))
                 .then(n -> IOTask.ofVoid("updateSaves", () -> {
-                    Platform.runLater(() -> saveFiles.remove(saveFile));
+                    Async.startFX(() -> saveFiles.remove(saveFile));
                 }));
     }
 
