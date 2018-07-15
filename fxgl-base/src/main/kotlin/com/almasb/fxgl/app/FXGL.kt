@@ -20,6 +20,8 @@ import com.almasb.fxgl.net.FXGLNet
 import com.almasb.fxgl.saving.LoadEvent
 import com.almasb.fxgl.saving.SaveEvent
 import com.almasb.fxgl.scene.menu.MenuSettings
+import com.almasb.fxgl.settings.GameSettings
+import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.ui.FXGLDisplay
@@ -63,7 +65,7 @@ class FXGL private constructor() {
         /**
          * @return FXGL system settings
          */
-        @JvmStatic fun getSettings() = internalApp.settings
+        @JvmStatic fun getSettings(): ReadOnlyGameSettings = if (configured) internalApp.settings else GameSettings().toReadOnly()
 
         private val _menuSettings = MenuSettings()
 
