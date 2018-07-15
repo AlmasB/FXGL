@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.almasb.fxgl.app.SystemConfig.INSTANCE;
-
 /**
  * Convenient access to saving and loading game data.
  *
@@ -32,12 +30,12 @@ public final class SaveLoadManager {
 
     private static final Logger log = Logger.get(SaveLoadManager.class);
 
-    private static final String PROFILE_FILE_NAME = INSTANCE.getProfileName();
-    private static final String PROFILES_DIR = INSTANCE.getProfileDir();
-    private static final String SAVE_DIR = INSTANCE.getSaveDir();
+    private static final String PROFILE_FILE_NAME = FXGL.getSettings().getProfileName();
+    private static final String PROFILES_DIR = FXGL.getSettings().getProfileDir();
+    private static final String SAVE_DIR = FXGL.getSettings().getSaveDir();
 
-    private static final String SAVE_FILE_EXT = INSTANCE.getSaveFileExt();
-    private static final String DATA_FILE_EXT = INSTANCE.getDataFileExt();
+    private static final String SAVE_FILE_EXT = FXGL.getSettings().getSaveFileExt();
+    private static final String DATA_FILE_EXT = FXGL.getSettings().getDataFileExt();
 
     static {
         log.debug("Checking profiles dir: " + PROFILES_DIR);

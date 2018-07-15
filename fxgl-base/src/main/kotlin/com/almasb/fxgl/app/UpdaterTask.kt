@@ -41,7 +41,7 @@ internal class UpdaterTask : Runnable {
 
         updateCheckTimer = FXGL.newOfflineTimer("version.check")
 
-        val days = Duration.hours(24.0 * SystemConfig.versionCheckDays)
+        val days = Duration.hours(24.0 * FXGL.getSettings().versionCheckDays)
 
         return FXGL.isFirstRun() || updateCheckTimer.elapsed(days)
     }

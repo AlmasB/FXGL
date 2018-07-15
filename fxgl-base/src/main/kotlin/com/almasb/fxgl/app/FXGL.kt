@@ -60,8 +60,6 @@ class FXGL private constructor() {
         @JvmStatic fun isAndroid() = Platform.isAndroid()
         @JvmStatic fun isIOS() = Platform.isIOS()
 
-        @JvmStatic fun getSystemConfig() = SystemConfig
-
         /**
          * @return FXGL system settings
          */

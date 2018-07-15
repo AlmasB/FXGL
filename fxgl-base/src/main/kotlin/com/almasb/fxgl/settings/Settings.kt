@@ -20,7 +20,10 @@ import com.almasb.fxgl.ui.FXGLUIFactory
 import com.almasb.fxgl.ui.UIFactory
 import com.almasb.fxgl.util.Credits
 import com.almasb.fxgl.util.Optional
+import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.input.KeyCode
+import javafx.scene.paint.Color
 import javafx.stage.StageStyle
 import java.util.*
 
@@ -185,7 +188,39 @@ class GameSettings(
                 title,
                 version,
                 width,
-                height, isFullScreenAllowed, isManualResizeEnabled, isIntroEnabled, isMenuEnabled, isProfilingEnabled, isCloseConfirmation, isSingleStep, applicationMode, menuKey, credits, enabledMenuItems, stageStyle, appIcon, css, fontUI, fontMono, fontText, fontGame, soundNotification, soundMenuBack, soundMenuPress, soundMenuSelect, pixelsPerMeter, secondsIn24h, isExperimentalTiledLargeMap)
+                height,
+                isFullScreenAllowed,
+                isManualResizeEnabled,
+                isIntroEnabled,
+                isMenuEnabled,
+                isProfilingEnabled,
+                isCloseConfirmation,
+                isSingleStep,
+                applicationMode,
+                menuKey,
+                credits,
+                enabledMenuItems,
+                stageStyle,
+                appIcon,
+                css,
+                fontUI,
+                fontMono,
+                fontText,
+                fontGame,
+                soundNotification,
+                soundMenuBack,
+                soundMenuPress,
+                soundMenuSelect,
+                pixelsPerMeter,
+                secondsIn24h,
+                isExperimentalTiledLargeMap,
+                configClass,
+                achievementStoreClass,
+                sceneFactory,
+                dialogFactory,
+                uiFactory,
+                notificationViewFactory,
+                exceptionHandler)
     }
 }
 
@@ -193,14 +228,14 @@ class GameSettings(
 /**
  * A copy of GameSettings with public getters only.
  */
-class ReadOnlyGameSettings(
+class ReadOnlyGameSettings internal constructor(
         /**
          * Set title of the game. This will be shown as the
          * window header if the game isn't fullscreen.
          */
-        val title: String = "Untitled",
+        val title: String,
 
-        val version: String = "0.0",
+        val version: String,
 
         /**
          * Set target width. If the screen width is smaller,
@@ -209,7 +244,7 @@ class ReadOnlyGameSettings(
          *
          * All the game logic must use target width and height.
          */
-        val width: Int = 800,
+        val width: Int,
 
         /**
          * Set target height. If the screen height is smaller,
@@ -218,30 +253,30 @@ class ReadOnlyGameSettings(
          *
          * All the game logic must use target width and height.
          */
-        val height: Int = 600,
+        val height: Int,
 
         /**
          * Setting to true will allow the game to be able to enter full screen
          * from the menu.
          */
-        val isFullScreenAllowed: Boolean = false,
+        val isFullScreenAllowed: Boolean,
 
         /**
          * If enabled, users can drag the corner of the main window
          * to resize it and the game.
          */
-        val isManualResizeEnabled: Boolean = false,
+        val isManualResizeEnabled: Boolean,
 
         /**
          * If set to true, the intro video/animation will
          * be played before the start of the game.
          */
-        val isIntroEnabled: Boolean = false,
+        val isIntroEnabled: Boolean,
 
         /**
          * Setting to true enables main and game menu.
          */
-        val isMenuEnabled: Boolean = false,
+        val isMenuEnabled: Boolean,
 
         /**
          * Setting to true will enable profiler that reports on performance
@@ -249,95 +284,150 @@ class ReadOnlyGameSettings(
          * Also shows render and performance FPS in the bottom left corner
          * when the application is run.
          */
-        val isProfilingEnabled: Boolean = false,
+        val isProfilingEnabled: Boolean,
 
         /**
          * Setting to false will disable asking for confirmation on exit.
          * This is useful for faster compile -> run -> exit.
          */
-        val isCloseConfirmation: Boolean = false,
+        val isCloseConfirmation: Boolean,
 
-        val isSingleStep: Boolean = false,
+        val isSingleStep: Boolean,
 
         /**
          * Sets application run mode. See [ApplicationMode] for more info.
          */
-        val applicationMode: ApplicationMode = ApplicationMode.DEVELOPER,
+        val applicationMode: ApplicationMode,
 
         /**
          * Set the key that will trigger in-game menu.
          */
-        val menuKey: KeyCode = KeyCode.ESCAPE,
+        val menuKey: KeyCode,
 
         /**
          * Set additional credits.
          */
-        val credits: Credits = Credits(emptyList()),
-        val enabledMenuItems: EnumSet<MenuItem> = EnumSet.noneOf(MenuItem::class.java),
-        val stageStyle: StageStyle = StageStyle.DECORATED,
-        val appIcon: String = "fxgl_icon.png",
+        val credits: Credits,
+        val enabledMenuItems: EnumSet<MenuItem>,
+        val stageStyle: StageStyle,
+        val appIcon: String,
 
         @get:JvmName("getCSS")
-        val css: String = "fxgl_dark.css",
+        val css: String,
 
         /**
          * Set font to be used in UI controls.
          * The font will be loaded from "/assets/ui/fonts".
          */
-        val fontUI: String = "varelaRound-Regular.ttf",
-        val fontMono: String = "lucida_console.ttf",
-        val fontText: String = "Courier-Prime.ttf",
-        val fontGame: String = "Abel-Regular.ttf",
+        val fontUI: String,
+        val fontMono: String,
+        val fontText: String,
+        val fontGame: String,
 
-        val soundNotification: String = "core/notification.wav",
-        val soundMenuBack: String = "menu/back.wav",
-        val soundMenuPress: String = "menu/press.wav",
-        val soundMenuSelect: String = "menu/select.wav",
+        val soundNotification: String,
+        val soundMenuBack: String,
+        val soundMenuPress: String,
+        val soundMenuSelect: String,
 
-        val pixelsPerMeter: Double = 50.0,
+        val pixelsPerMeter: Double,
 
         /**
          * Set how many real seconds are in 24 game hours, default = 60.
          */
-        val secondsIn24h: Int = 60,
+        val secondsIn24h: Int,
 
         /* EXPERIMENTAL */
 
-        val isExperimentalTiledLargeMap: Boolean = false,
+        val isExperimentalTiledLargeMap: Boolean,
 
         /* CONFIGS */
 
-        private val configClassInternal: Class<*>? = null,
-        private val achievementStoreClassInternal: Class<out AchievementStore>? = null,
+        private val configClassInternal: Class<*>?,
+        private val achievementStoreClassInternal: Class<out AchievementStore>?,
 
         /* CUSTOMIZABLE SERVICES BELOW */
 
         /**
          * Provide a custom scene factory.
          */
-        val sceneFactory: SceneFactory = SceneFactory(),
+        val sceneFactory: SceneFactory,
 
         /**
          * Provide a custom dialog factory.
          */
-        val dialogFactory: DialogFactory = FXGLDialogFactory(),
+        val dialogFactory: DialogFactory,
 
         /**
          * Provide a custom UI factory.
          */
         @get:JvmName("getUIFactory")
-        val uiFactory: UIFactory = FXGLUIFactory(),
+        val uiFactory: UIFactory,
 
         /**
          * Provide a custom notification service.
          */
-        val notificationViewFactory: Class<out NotificationView> = XboxNotificationView::class.java,
+        val notificationViewFactory: Class<out NotificationView>,
 
         /**
          * Provide a custom exception handler.
          */
-        private val exceptionHandlerInternal: ExceptionHandler = FXGLExceptionHandler()
+        private val exceptionHandlerInternal: ExceptionHandler
 ) {
+
+    /* STATIC - cannot be modified at runtime */
+
+    /**
+     * where to look for latest stable project POM
+     */
+    val urlPOM = "https://raw.githubusercontent.com/AlmasB/FXGL/master/pom.xml"
+
+    /**
+     * project GitHub repo
+     */
+    val urlGithub = "https://github.com/AlmasB/FXGL"
+
+    /**
+     * link to Heroku leaderboard server
+     */
+    val urlLeaderboard = "http://fxgl-top.herokuapp.com/"
+
+    /**
+     * link to google forms feedback
+     */
+    val urlGoogleForms = "https://goo.gl/forms/6wrMnOBxTE1fEpOy2"
+
+    /**
+     * how often to check for updates
+     */
+    val versionCheckDays = 7
+
+    /**
+     * profiles are saved in this directory
+     */
+    val profileDir = "profiles/"
+
+    /**
+     * profile data is saved as this file
+     */
+    val profileName = "user.profile"
+
+    /**
+     * save files are saved in this directory
+     */
+    val saveDir = "saves/"
+
+    val saveFileExt = ".sav"
+
+    val dataFileExt = ".dat"
+
+    // DYNAMIC - can be modified at runtime
+
+    val devBBoxColor = SimpleObjectProperty<Color>(Color.web("#ff0000"))
+    val devSensorColor = SimpleObjectProperty<Color>(Color.YELLOW)
+    val devShowBBox = SimpleBooleanProperty(false)
+    val devShowPosition = SimpleBooleanProperty(false)
+
+    // WRAPPERS
 
     private val exceptionHandlerWrapper: ExceptionHandler = object : ExceptionHandler {
         private val log = Logger.get("ExceptionHandler")

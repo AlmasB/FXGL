@@ -107,7 +107,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     }
 
     private void addDebugListener() {
-        FXGL.getSystemConfig().getDevShowPosition().addListener((o, prev, show) -> {
+        FXGL.getSettings().getDevShowPosition().addListener((o, prev, show) -> {
             if (show) {
                 forEach(FXGL.getApp().getGameWorld().getEntities(), e -> {
 
@@ -319,7 +319,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     public void onEntityAdded(Entity entity) {
         initView(entity.getViewComponent());
 
-        if (FXGL.getSystemConfig().getDevShowPosition().getValue()) {
+        if (FXGL.getSettings().getDevShowPosition().getValue()) {
             addDebugView(entity);
         }
     }

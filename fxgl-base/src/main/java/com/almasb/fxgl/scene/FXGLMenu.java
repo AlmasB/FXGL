@@ -458,10 +458,10 @@ public abstract class FXGLMenu extends FXGLScene {
         };
 
         Button btnGoogle = new Button("Google Forms");
-        btnGoogle.setOnAction(e -> openBrowser.accept(SystemConfig.INSTANCE.getUrlGoogleForms()));
+        btnGoogle.setOnAction(e -> openBrowser.accept(FXGL.getSettings().getUrlGoogleForms()));
 
         Button btnSurveyMonkey = new Button("Survey Monkey");
-        btnSurveyMonkey.setOnAction(e -> openBrowser.accept(SystemConfig.INSTANCE.getUrlGoogleForms()));
+        btnSurveyMonkey.setOnAction(e -> openBrowser.accept(FXGL.getSettings().getUrlGoogleForms()));
 
         VBox vbox = new VBox(15,
                 getUIFactory().newText(getLocalizedString("menu.chooseFeedback"), Color.WHEAT, 18),

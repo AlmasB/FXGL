@@ -7,7 +7,6 @@
 package com.almasb.fxgl.entity.components;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.SystemConfig;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.CoreComponent;
@@ -210,12 +209,12 @@ public class ViewComponent extends Component {
             turnOnDebugBBox(true);
         }
 
-        FXGL.getSystemConfig().getDevShowBBox().addListener(debugBBoxOn);
+        FXGL.getSettings().getDevShowBBox().addListener(debugBBoxOn);
     }
 
     @Override
     public void onRemoved() {
-        FXGL.getSystemConfig().getDevShowBBox().removeListener(debugBBoxOn);
+        FXGL.getSettings().getDevShowBBox().removeListener(debugBBoxOn);
 
         view.dispose();
     }
@@ -245,7 +244,7 @@ public class ViewComponent extends Component {
     };
 
     private boolean showBBox() {
-        return FXGL.getSystemConfig().getDevShowBBox().getValue();
+        return FXGL.getSettings().getDevShowBBox().getValue();
     }
 
     /**
@@ -291,7 +290,7 @@ public class ViewComponent extends Component {
         }
 
         if (view != null) {
-            view.strokeProperty().bind(FXGL.getSystemConfig().getDevBBoxColor());
+            view.strokeProperty().bind(FXGL.getSettings().getDevBBoxColor());
 
             view.setTranslateX(hitBox.getMinX());
             view.setTranslateY(hitBox.getMinY());
@@ -312,7 +311,7 @@ public class ViewComponent extends Component {
         }
 
         if (view != null) {
-            view.strokeProperty().bind(SystemConfig.INSTANCE.getDevSensorColor());
+            view.strokeProperty().bind(FXGL.getSettings().getDevSensorColor());
 
             view.setTranslateX(hitBox.getMinX());
             view.setTranslateY(hitBox.getMinY());

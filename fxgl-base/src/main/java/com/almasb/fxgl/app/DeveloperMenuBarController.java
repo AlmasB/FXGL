@@ -102,12 +102,12 @@ public class DeveloperMenuBarController implements UIController {
 
     public void onShowBBox(ActionEvent event) {
         CheckMenuItem item = (CheckMenuItem) event.getSource();
-        FXGL.getSystemConfig().getDevShowBBox().setValue(item.isSelected());
+        FXGL.getSettings().getDevShowBBox().setValue(item.isSelected());
     }
 
     public void onShowPosition(ActionEvent event) {
         CheckMenuItem item = (CheckMenuItem) event.getSource();
-        FXGL.getSystemConfig().getDevShowPosition().setValue(item.isSelected());
+        FXGL.getSettings().getDevShowPosition().setValue(item.isSelected());
     }
 
     private EventHandler<MouseEvent> clickTracker = e -> {
