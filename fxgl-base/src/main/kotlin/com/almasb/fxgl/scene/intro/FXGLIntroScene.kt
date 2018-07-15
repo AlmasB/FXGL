@@ -8,19 +8,24 @@ package com.almasb.fxgl.scene.intro
 
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.texture
+import com.almasb.fxgl.core.collection.ObjectMap
+import com.almasb.fxgl.core.math.FXGLMath
+import com.almasb.fxgl.core.math.FXGLMath.*
+import com.almasb.fxgl.core.math.Vec2
+import com.almasb.fxgl.particle.Particle
+import com.almasb.fxgl.particle.ParticleEmitters
+import com.almasb.fxgl.particle.ParticleSystem
 import com.almasb.fxgl.scene.IntroScene
 import javafx.animation.*
 import javafx.geometry.Point3D
 import javafx.scene.Group
-import javafx.scene.effect.DropShadow
-import javafx.scene.effect.Light
-import javafx.scene.effect.Lighting
+import javafx.scene.effect.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import javafx.scene.transform.Rotate
 import javafx.util.Duration
-
 
 /**
  * This is the default FXGL Intro animation.
@@ -34,7 +39,49 @@ class FXGLIntroScene : IntroScene() {
 
     private val animation: ParallelTransition
 
+    private val particleSystem = ParticleSystem()
+
+    private val indices = ObjectMap<Particle, Double>()
+
     init {
+        val emitter = ParticleEmitters.newFireEmitter()
+        emitter.isAllowParticleRotation = true
+        emitter.blendMode = BlendMode.SRC_OVER
+
+        emitter.setVelocityFunction { i -> randomPoint2D().multiply(1.5) }
+
+        emitter.setSourceImage(texture("particles/explosion.png", 32.0, 32.0).brighter().brighter().saturate().getImage())
+        emitter.setSize(1.5, 8.5)
+        emitter.numParticles = 15
+        emitter.emissionRate = 1.0
+        emitter.setExpireFunction { Duration.seconds(random(3, 7).toDouble()) }
+        emitter.setControl { p ->
+
+            val index = indices.get(p, random(0.001, 3.05))
+
+            indices.put(p, index)
+
+            val x = p.position.x.toDouble()
+            val y = p.position.y.toDouble()
+
+            val noiseValue = FXGLMath.noise3D(x / 300, y / 300, (1 - p.life) * index)
+            var angle = toDegrees((noiseValue + 1) * Math.PI * 1.5)
+
+            angle %= 360.0
+
+            if (randomBoolean(0.35)) {
+                angle = map(angle, 0.0, 360.0, -100.0, 50.0)
+            }
+
+            val v = Vec2.fromAngle(angle).normalizeLocal().mulLocal(random(0.05, 0.35))
+
+            p.acceleration.set(v)
+        }
+
+        particleSystem.pane.effect = GaussianBlur(3.0)
+        particleSystem.addParticleEmitter(emitter, 0.0 - 50.0, h + 50.0)
+
+
         val f = makeLetter("F")
         val x = makeLetter("X")
         val g = makeLetter("G")
@@ -53,7 +100,7 @@ class FXGLIntroScene : IntroScene() {
 
         val content = Group(fxglText)
 
-        contentRoot.children.addAll(Rectangle(w, h), content)
+        contentRoot.children.addAll(Rectangle(w, h), content, particleSystem.pane)
 
         val originX = w / 2 - f.layoutBounds.width * 4 / 2
         val dx = f.layoutBounds.width
@@ -114,6 +161,10 @@ class FXGLIntroScene : IntroScene() {
         translateY = h / 2 - 150
         opacity = 0.0
         effect = DropShadow(5.5, Color.BLUE)
+    }
+
+    override fun onUpdate(tpf: Double) {
+        particleSystem.onUpdate(tpf)
     }
 
     override fun startIntro() = animation.play()

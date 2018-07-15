@@ -33,17 +33,17 @@ public class Particle implements Poolable {
     /**
      * Current position.
      */
-    private Vec2 position = new Vec2();
+    public final Vec2 position = new Vec2();
 
     /**
      * Pixels per second.
      */
-    private Vec2 velocity = new Vec2();
+    public final Vec2 velocity = new Vec2();
 
     /**
      * Pixels per second^2.
      */
-    private Vec2 acceleration = new Vec2();
+    public final Vec2 acceleration = new Vec2();
 
     /**
      * Interpolator for current position given velocity and acceleration.
@@ -66,7 +66,7 @@ public class Particle implements Poolable {
      * Current life.
      * When life <= 0, the particle dies.
      */
-    private double life;
+    public double life;
 
     /**
      * Color used when rendering at life == initialLife.
@@ -110,6 +110,7 @@ public class Particle implements Poolable {
     private Consumer<Particle> control = null;
 
     public Particle(
+            Consumer<Particle> control,
             Point2D position,
             Point2D vel,
             Point2D acceleration,
@@ -122,10 +123,11 @@ public class Particle implements Poolable {
             boolean allowRotation,
             Function<Double, Point2D> equation) {
 
-        this(null, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode, allowRotation, equation);
+        this(control, null, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode, allowRotation, equation);
     }
 
     public Particle(
+            Consumer<Particle> control,
             Image image,
             Point2D position,
             Point2D vel,
@@ -139,7 +141,7 @@ public class Particle implements Poolable {
             boolean allowRotation,
             Function<Double, Point2D> equation) {
 
-        init(image, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode, Interpolator.LINEAR, allowRotation, equation);
+        init(control, image, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode, Interpolator.LINEAR, allowRotation, equation);
     }
 
     public Particle() {
@@ -148,6 +150,7 @@ public class Particle implements Poolable {
     }
 
     public final void init(
+            Consumer<Particle> control,
             Image image,
             Point2D position,
             Point2D vel,
@@ -177,6 +180,7 @@ public class Particle implements Poolable {
         this.interpolator = interpolator;
         this.allowRotation = allowRotation;
         this.equation = equation;
+        this.control = control;
 
         imageView.setImage(image);
         colorAnimation = new AnimatedColor((Color)startColor, (Color)endColor, interpolator);
@@ -203,15 +207,6 @@ public class Particle implements Poolable {
         control = null;
     }
 
-    /**
-     * Set a direct controller to this particle.
-     *
-     * @param control particle control
-     */
-    public void setControl(Consumer<Particle> control) {
-        this.control = control;
-    }
-
     private Vec2 moveVector = new Vec2();
 
     /**
@@ -226,15 +221,23 @@ public class Particle implements Poolable {
         double x;
         double y;
 
-        if (equation == null) {
+        if (control != null) {
+            control.accept(this);
 
-            // s = s0 + v0*t + 0.5*a*t^2
-            x = startPosition.x + velocity.x * t + 0.5 * acceleration.x * t * t;
-            y = startPosition.y + velocity.y * t + 0.5 * acceleration.y * t * t;
+            velocity.addLocal(acceleration);
+            x = position.x + velocity.x;
+            y = position.y + velocity.y;
+
         } else {
-            Point2D newPos = equation.apply(t);
-            x = startPosition.x + newPos.getX();
-            y = startPosition.y + newPos.getY();
+            if (equation == null) {
+                // s = s0 + v0*t + 0.5*a*t^2
+                x = startPosition.x + velocity.x * t + 0.5 * acceleration.x * t * t;
+                y = startPosition.y + velocity.y * t + 0.5 * acceleration.y * t * t;
+            } else {
+                Point2D newPos = equation.apply(t);
+                x = startPosition.x + newPos.getX();
+                y = startPosition.y + newPos.getY();
+            }
         }
 
         moveVector.set((float)x - position.x, (float)y - position.y);
@@ -244,9 +247,6 @@ public class Particle implements Poolable {
         radius.addLocal(scale);
 
         life -= tpf;
-
-        if (control != null)
-            control.accept(this);
 
         boolean dead = life <= 0 || radius.x <= 0 || radius.y <= 0;
 
