@@ -32,7 +32,6 @@ import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
-import com.almasb.fxgl.time.FPSCounter;
 import com.almasb.fxgl.time.Timer;
 import com.almasb.fxgl.ui.Display;
 import com.almasb.fxgl.ui.ErrorDialog;
@@ -40,11 +39,8 @@ import com.almasb.fxgl.ui.UIFactory;
 import com.gluonhq.charm.down.Services;
 import com.gluonhq.charm.down.plugins.LifecycleEvent;
 import com.gluonhq.charm.down.plugins.LifecycleService;
-import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyIntegerWrapper;
-import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Stage;
 
@@ -92,6 +88,21 @@ public abstract class GameApplication extends Application {
     private ReadOnlyGameSettings settings;
     private AppStateMachine stateMachine;
 
+    private LoopRunner loop = new LoopRunner(this::loop);
+
+    private void loop(double tpf) {
+        long frameStart = System.nanoTime();
+
+        stateMachine.onUpdate(tpf);
+
+        if (getSettings().isProfilingEnabled()) {
+            long frameTook = System.nanoTime() - frameStart;
+
+            profiler.update(loop.getFPS(), frameTook);
+            profiler.render(getGameScene().getProfilerText());
+        }
+    }
+
     /**
      * This is the main entry point as run by the JavaFX platform.
      */
@@ -120,7 +131,7 @@ public abstract class GameApplication extends Application {
             // attempt to clean any garbage we generated before main loop
             System.gc();
 
-            startMainLoop();
+            loop.start();
 
         } catch (Exception e) {
             handleFatalError(e);
@@ -151,16 +162,16 @@ public abstract class GameApplication extends Application {
         mainWindow = new MainWindow(stage, settings);
         stage.iconifiedProperty().addListener((o, wasMinimized, isMinimized) -> {
             if (isMinimized) {
-                pauseMainLoop();
+                loop.pause();
             } else {
-                resumeMainLoop();
+                loop.resume();
             }
         });
 
         if (FXGL.isMobile()) {
             Services.get(LifecycleService.class).ifPresent(service -> {
-                service.addListener(LifecycleEvent.PAUSE, this::pauseMainLoop);
-                service.addListener(LifecycleEvent.RESUME, this::resumeMainLoop);
+                service.addListener(LifecycleEvent.PAUSE, loop::pause);
+                service.addListener(LifecycleEvent.RESUME, loop::resume);
             });
         }
     }
@@ -210,13 +221,13 @@ public abstract class GameApplication extends Application {
         }
 
         // stop main loop from running as we cannot continue
-        stopMainLoop();
+        loop.stop();
 
         // assume we are running on JavaFX Application thread
         // block with error dialog so that user can read the error
         new ErrorDialog(error).showAndWait();
 
-        if (mainLoop != null) {
+        if (loop.isStarted()) {
             // exit normally
             exit();
         } else {
@@ -345,78 +356,11 @@ public abstract class GameApplication extends Application {
         }
     }
 
-    private AnimationTimer mainLoop;
-
-    private void startMainLoop() {
-        log.debug("Starting main loop");
-
-        mainLoop = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                tpf = tpfCompute(now);
-
-                // if we are not in play state run as normal
-                if (!(getStateMachine().isInPlay() && getSettings().isSingleStep())) {
-                    stepLoop();
-                }
-            }
-        };
-        mainLoop.start();
-    }
-
-    private void resumeMainLoop() {
-        if (mainLoop != null) {
-            mainLoop.start();
-        }
-    }
-
-    private void pauseMainLoop() {
-        if (mainLoop != null) {
-            mainLoop.stop();
-            fpsCounter.reset();
-        }
-    }
-
     /**
-     * Only called in exceptional cases, e.g. uncaught (unchecked) exception.
+     * Can be used when settings.setSingleStep() is true.
      */
-    private void stopMainLoop() {
-        if (mainLoop != null) {
-            log.debug("Stopping main loop");
-            mainLoop.stop();
-        }
-    }
-
     protected final void stepLoop() {
-        long frameStart = System.nanoTime();
-
-        tick.set(tick.get() + 1);
-        stateMachine.onUpdate(tpf);
-
-        if (getSettings().isProfilingEnabled()) {
-            long frameTook = System.nanoTime() - frameStart;
-
-            profiler.update(fps.get(), frameTook);
-            profiler.render(getGameScene().getProfilerText());
-        }
-    }
-
-    private ReadOnlyLongWrapper tick = new ReadOnlyLongWrapper();
-    private ReadOnlyIntegerWrapper fps = new ReadOnlyIntegerWrapper();
-
-    private double tpf;
-
-    private FPSCounter fpsCounter = new FPSCounter();
-
-    private double tpfCompute(long now) {
-        fps.set(fpsCounter.update(now));
-
-        // assume that fps is at least 5 to avoid subtle bugs
-        // disregard minor fluctuations > 55 for smoother experience
-        if (fps.get() < 5 || fps.get() > 55)
-            fps.set(60);
-
-        return 1.0 / fps.get();
+        playState.step(loop.tpf());
     }
 
     private Profiler profiler;
@@ -649,7 +593,7 @@ public abstract class GameApplication extends Application {
      * @return time per frame for current frame
      */
     public final double tpf() {
-        return tpf;
+        return loop.tpf();
     }
 
     public final AppStateMachine getStateMachine() {
@@ -724,10 +668,13 @@ public abstract class GameApplication extends Application {
     }
 
     /**
+     * TODO: Will be removed in 0.6.
+     *
      * @return current tick (frame)
      */
+    @Deprecated
     public final long getTick() {
-        return tick.get();
+        return -1;
     }
 
     public final EventBus getEventBus() {

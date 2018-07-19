@@ -233,6 +233,14 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
     }
 
     override fun onUpdate(tpf: Double) {
+        // if single step is configured, then step() will be called manually
+        if (FXGL.getSettings().isSingleStep)
+            return
+
+        step(tpf)
+    }
+
+    fun step(tpf: Double) {
         gameWorld.onUpdate(tpf)
         physicsWorld.onUpdate(tpf)
         gameScene.onUpdate(tpf)
