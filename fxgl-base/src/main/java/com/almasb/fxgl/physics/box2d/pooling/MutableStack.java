@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-package com.almasb.fxgl.physics.box2d.pooling.normal;
+package com.almasb.fxgl.physics.box2d.pooling;
 
 import com.almasb.fxgl.physics.box2d.pooling.IDynamicStack;
 

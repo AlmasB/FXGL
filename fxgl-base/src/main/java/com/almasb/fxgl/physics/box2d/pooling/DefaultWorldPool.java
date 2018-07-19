@@ -6,7 +6,7 @@
 /**
  * Created at 3:26:14 AM Jan 11, 2011
  */
-package com.almasb.fxgl.physics.box2d.pooling.normal;
+package com.almasb.fxgl.physics.box2d.pooling;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
@@ -18,8 +18,6 @@ import com.almasb.fxgl.physics.box2d.common.Mat33;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Vec3;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.*;
-import com.almasb.fxgl.physics.box2d.pooling.IDynamicStack;
-import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 
 import java.util.HashMap;
 
