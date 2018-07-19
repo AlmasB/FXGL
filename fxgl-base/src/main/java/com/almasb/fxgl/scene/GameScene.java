@@ -65,6 +65,8 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     private ObjectMap<Entity, EntityView> debugPositions = new ObjectMap<>();
 
     protected GameScene(int width, int height) {
+        super(width, height);
+
         getContentRoot().getChildren().addAll(gameRoot, uiRoot);
 
         if (FXGL.getSettings().isProfilingEnabled()) {
@@ -307,6 +309,9 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
         getViewport().onUpdate(tpf);
     }
 
+    /**
+     * Unbinds viewport, clears game views and UI nodes.
+     */
     public void clear() {
         log.debug("Clearing game scene");
 
