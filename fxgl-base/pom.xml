@@ -57,6 +57,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.gluonhq</groupId>
+            <artifactId>charm-down-plugin-lifecycle</artifactId>
+            <version>${charm.down.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-plugin-audio</artifactId>
             <version>${audio.plugin.version}</version>

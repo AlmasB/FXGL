@@ -37,6 +37,9 @@ import com.almasb.fxgl.time.Timer;
 import com.almasb.fxgl.ui.Display;
 import com.almasb.fxgl.ui.ErrorDialog;
 import com.almasb.fxgl.ui.UIFactory;
+import com.gluonhq.charm.down.Services;
+import com.gluonhq.charm.down.plugins.LifecycleEvent;
+import com.gluonhq.charm.down.plugins.LifecycleService;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -153,6 +156,13 @@ public abstract class GameApplication extends Application {
                 resumeMainLoop();
             }
         });
+
+        if (FXGL.isMobile()) {
+            Services.get(LifecycleService.class).ifPresent(service -> {
+                service.addListener(LifecycleEvent.PAUSE, this::pauseMainLoop);
+                service.addListener(LifecycleEvent.RESUME, this::resumeMainLoop);
+            });
+        }
     }
 
     private void initFXGL() {
