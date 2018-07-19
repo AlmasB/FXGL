@@ -278,12 +278,14 @@ public abstract class GameApplication extends Application {
         getEventBus().addEventHandler(AchievementEvent.ANY, e -> getNotificationService().onAchievementEvent(e));
 
         getEventBus().addEventHandler(SaveEvent.ANY, e -> {
+            settings.save(e.getProfile());
             getAudioPlayer().save(e.getProfile());
             getInput().save(e.getProfile());
             getGameplay().save(e.getProfile());
         });
 
         getEventBus().addEventHandler(LoadEvent.ANY, e -> {
+            settings.load(e.getProfile());
             getAudioPlayer().load(e.getProfile());
             getInput().load(e.getProfile());
             getGameplay().load(e.getProfile());

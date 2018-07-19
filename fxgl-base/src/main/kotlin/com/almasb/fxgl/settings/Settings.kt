@@ -13,13 +13,19 @@ import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.gameplay.achievement.AchievementStore
 import com.almasb.fxgl.gameplay.notification.NotificationView
 import com.almasb.fxgl.gameplay.notification.XboxNotificationView
+import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.saving.UserProfile
+import com.almasb.fxgl.saving.UserProfileSavable
 import com.almasb.fxgl.scene.SceneFactory
 import com.almasb.fxgl.ui.DialogFactory
 import com.almasb.fxgl.ui.FXGLDialogFactory
 import com.almasb.fxgl.ui.FXGLUIFactory
 import com.almasb.fxgl.ui.UIFactory
 import com.almasb.fxgl.util.Credits
+import com.almasb.fxgl.util.Language
 import com.almasb.fxgl.util.Optional
+import javafx.beans.property.BooleanProperty
+import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.input.KeyCode
@@ -372,7 +378,7 @@ class ReadOnlyGameSettings internal constructor(
          * Provide a custom exception handler.
          */
         private val exceptionHandlerInternal: ExceptionHandler
-) {
+) : UserProfileSavable {
 
     /* STATIC - cannot be modified at runtime */
 
@@ -427,6 +433,9 @@ class ReadOnlyGameSettings internal constructor(
     val devShowBBox = SimpleBooleanProperty(false)
     val devShowPosition = SimpleBooleanProperty(false)
 
+    val language = SimpleObjectProperty<Language>(Language.ENGLISH)
+    val fullScreen = SimpleBooleanProperty(false)
+
     // WRAPPERS
 
     private val exceptionHandlerWrapper: ExceptionHandler = object : ExceptionHandler {
@@ -445,6 +454,19 @@ class ReadOnlyGameSettings internal constructor(
 
     val achievementStoreClass: Optional<Class<out AchievementStore>>
         get() = Optional.ofNullable(achievementStoreClassInternal)
+
+    override fun save(profile: UserProfile) {
+        val bundle = Bundle("menusettings")
+
+        bundle.put("fullscreen", fullScreen.value)
+
+        profile.putBundle(bundle)
+    }
+
+    override fun load(profile: UserProfile) {
+        val bundle = profile.getBundle("menusettings")
+        fullScreen.value = bundle.get("fullscreen")
+    }
 
     override fun toString(): String {
         return "Title: " + title + '\n'.toString() +

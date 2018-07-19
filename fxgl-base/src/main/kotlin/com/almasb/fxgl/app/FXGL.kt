@@ -17,9 +17,6 @@ import com.almasb.fxgl.gameplay.notification.NotificationServiceProvider
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.net.FXGLNet
-import com.almasb.fxgl.saving.LoadEvent
-import com.almasb.fxgl.saving.SaveEvent
-import com.almasb.fxgl.scene.menu.MenuSettings
 import com.almasb.fxgl.settings.GameSettings
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.time.LocalTimer
@@ -28,7 +25,6 @@ import com.almasb.fxgl.ui.FXGLDisplay
 import com.gluonhq.charm.down.Platform
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
-import javafx.event.EventHandler
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -66,10 +62,6 @@ class FXGL private constructor() {
          * @return FXGL system settings
          */
         @JvmStatic fun getSettings(): ReadOnlyGameSettings = if (configured) internalApp.settings else GameSettings().toReadOnly()
-
-        private val _menuSettings = MenuSettings()
-
-        @JvmStatic fun getMenuSettings() = _menuSettings
 
         private val _gameConfig by lazy {
             getSettings().configClass
@@ -130,9 +122,6 @@ class FXGL private constructor() {
             if (isDesktop()) {
                 runUpdaterAsync()
             }
-
-            _eventBus.addEventHandler(SaveEvent.ANY, EventHandler { _menuSettings.save(it.profile) })
-            _eventBus.addEventHandler(LoadEvent.ANY, EventHandler { _menuSettings.load(it.profile) })
         }
 
         private fun logVersion() {
@@ -263,14 +252,14 @@ class FXGL private constructor() {
          * @return a string translated to the language used by FXGL game
          */
         @JvmStatic fun getLocalizedString(key: String): String {
-            val langName = _menuSettings.getLanguage().resourceBundleName()
+            val langName = getSettings().language.value.resourceBundleName()
 
             val bundle = getAssetLoader().loadResourceBundle("languages/$langName.properties")
 
             try {
                 return bundle.getString(key)
             } catch (e: Exception) {
-                log.warning("$key is not localized for language ${_menuSettings.getLanguage()}")
+                log.warning("$key is not localized for language ${getSettings().language.value}")
                 return "MISSING!"
             }
         }
@@ -279,7 +268,7 @@ class FXGL private constructor() {
          * @return binding to a string translated to the language used by FXGL game
          */
         @JvmStatic fun localizedStringProperty(key: String): StringBinding {
-            return Bindings.createStringBinding(Callable { getLocalizedString(key) }, _menuSettings.languageProperty())
+            return Bindings.createStringBinding(Callable { getLocalizedString(key) }, getSettings().language)
         }
     }
 }

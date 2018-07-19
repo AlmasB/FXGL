@@ -356,7 +356,7 @@ public abstract class FXGLMenu extends FXGLScene {
         ChoiceBox<Language> languageBox = getUIFactory().newChoiceBox(FXCollections.observableArrayList(Language.values()));
         languageBox.setValue(Language.ENGLISH);
 
-        getMenuSettings().languageProperty().bind(languageBox.valueProperty());
+        getSettings().getLanguage().bind(languageBox.valueProperty());
 
         VBox vbox = new VBox();
 
@@ -372,7 +372,7 @@ public abstract class FXGLMenu extends FXGLScene {
         if (getSettings().isFullScreenAllowed()) {
             CheckBox cbFullScreen = getUIFactory().newCheckBox();
             cbFullScreen.setSelected(false);
-            cbFullScreen.selectedProperty().bindBidirectional(getMenuSettings().fullScreenProperty());
+            cbFullScreen.selectedProperty().bindBidirectional(getSettings().getFullScreen());
 
             vbox.getChildren().add(new HBox(25, getUIFactory().newText(getLocalizedString("menu.fullscreen")+": "), cbFullScreen));
         }

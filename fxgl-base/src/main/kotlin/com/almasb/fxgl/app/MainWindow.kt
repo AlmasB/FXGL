@@ -167,7 +167,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
                 fullScreenExitKeyCombination = KeyCombination.NO_MATCH
             }
 
-            FXGL.getMenuSettings().fullScreenProperty().addListener { _, _, fullscreenNow ->
+            FXGL.getSettings().fullScreen.addListener { _, _, fullscreenNow ->
                 isFullScreen = fullscreenNow
             }
 
