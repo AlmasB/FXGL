@@ -128,9 +128,6 @@ public abstract class GameApplication extends Application {
             // this is called once per application lifetime
             runPreInit();
 
-            // attempt to clean any garbage we generated before main loop
-            System.gc();
-
             loop.start();
 
         } catch (Exception e) {
