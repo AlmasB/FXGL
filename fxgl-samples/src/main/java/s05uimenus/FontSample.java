@@ -95,7 +95,8 @@ public class FontSample extends GameApplication {
         VBox box = new VBox(text);
         box.setPadding(new Insets(10));
 
-        InGameWindow window = new InGameWindow("", InGameWindow.WindowDecor.NONE);
+        InGameWindow window = new InGameWindow("", InGameWindow.WindowDecor.MINIMIZE);
+        window.setPrefSize(770, 400);
         window.setContentPane(box);
         window.setCanResize(false);
         window.setBackgroundColor(Color.color(0.95, 0.95, 0.95));
