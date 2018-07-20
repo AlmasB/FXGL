@@ -55,12 +55,6 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
         return hasSaves.readOnlyProperty
     }
 
-    init {
-        app.addExitListener {
-            saveProfile()
-        }
-    }
-
     fun generateDefaultProfile() {
         log.debug("generateDefaultProfile()")
 

@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.app.listener.ExitListener;
 import com.almasb.fxgl.app.listener.StateListener;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
@@ -44,11 +43,7 @@ import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-
-import static com.almasb.fxgl.util.BackportKt.forEach;
 
 /**
  * To use FXGL, extend this class and implement necessary methods.
@@ -401,7 +396,9 @@ public abstract class GameApplication extends Application {
     protected final void exit() {
         log.debug("Exiting game application");
 
-        forEach(exitListeners, l -> l.onExit());
+        if (getSettings().isMenuEnabled()) {
+            menuHandler.saveProfile();
+        }
 
         log.debug("Shutting down background threads");
         getExecutor().shutdownNow();
@@ -451,16 +448,6 @@ public abstract class GameApplication extends Application {
 
     boolean saveScreenshot() {
         return mainWindow.saveScreenshot();
-    }
-
-    private List<ExitListener> exitListeners = new ArrayList<>();
-
-    public final void addExitListener(ExitListener listener) {
-        exitListeners.add(listener);
-    }
-
-    public final void removeExitListener(ExitListener listener) {
-        exitListeners.remove(listener);
     }
 
     private PlayState playState;
