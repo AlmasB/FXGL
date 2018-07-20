@@ -218,7 +218,7 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
         gameWorld.addWorldListener(gameScene)
 
         if (FXGL.getSettings().isMenuEnabled) {
-            input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
+            input.addEventHandler(KeyEvent.ANY, FXGL.getMenuHandler())
         } else {
             input.addAction(object : UserAction("Pause") {
                 override fun onActionBegin() {
@@ -268,7 +268,7 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
                 || prevState is IntroState
                 || prevState is GameMenuState) {
 
-            val menuHandler = FXGL.getApp().menuListener as MenuEventHandler
+            val menuHandler = FXGL.getMenuHandler()
 
             if (!menuHandler.isProfileSelected())
                 menuHandler.showProfileDialog()
@@ -291,7 +291,7 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
     private val menuScene = scene as FXGLMenu
 
     init {
-        input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
+        input.addEventHandler(KeyEvent.ANY, FXGL.getMenuHandler())
     }
 
     override fun onUpdate(tpf: Double) {

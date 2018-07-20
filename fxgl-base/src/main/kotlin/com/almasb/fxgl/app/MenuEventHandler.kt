@@ -190,7 +190,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
     }
 
     fun fixAspectRatio() {
-        app.fixAspectRatio()
+        FXGL.fixAspectRatio()
     }
 
     override fun profileNameProperty(): ReadOnlyStringProperty {

@@ -94,14 +94,14 @@ class InGameClock(secondsIn24h: Int) : StateListener {
 
     fun start() {
         if (!started) {
-            FXGL.getApp().addPlayStateListener(this)
+            FXGL.getApp().stateMachine.playState.addStateListener(this)
             started = true
         }
     }
 
     fun stop() {
         if (started) {
-            FXGL.getApp().removePlayStateListener(this)
+            FXGL.getApp().stateMachine.playState.removeStateListener(this)
             started = false
         }
     }

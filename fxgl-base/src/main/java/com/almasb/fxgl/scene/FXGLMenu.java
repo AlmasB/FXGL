@@ -85,7 +85,7 @@ public abstract class FXGLMenu extends FXGLScene {
     public FXGLMenu(GameApplication app, MenuType type) {
         this.app = app;
         this.type = type;
-        this.listener = (MenuEventHandler) app.getMenuListener();
+        this.listener = FXGL.getMenuHandler();
 
         getContentRoot().getChildren().addAll(
                 createBackground(app.getWidth(), app.getHeight()),

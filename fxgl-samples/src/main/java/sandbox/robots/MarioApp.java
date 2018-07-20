@@ -97,7 +97,7 @@ public class MarioApp extends GameApplication {
         getInput().addAction(new UserAction("Enter") {
             @Override
             protected void onActionBegin() {
-                stepLoop();
+                //stepLoop();
             }
         }, KeyCode.L);
 
