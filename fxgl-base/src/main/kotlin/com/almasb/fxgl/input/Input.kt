@@ -162,6 +162,10 @@ class Input : UserProfileSavable {
         }
     }
 
+    fun onMouseEvent(eventData: MouseEventData) {
+        onMouseEvent(eventData.event, eventData.viewport, eventData.scaleRatioX, eventData.scaleRatioY)
+    }
+
     /**
      * Called on mouse event.
      *

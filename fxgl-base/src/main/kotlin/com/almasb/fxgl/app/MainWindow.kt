@@ -2,16 +2,23 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.core.logging.Logger
+import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.Viewport
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.embed.swing.SwingFXUtils
+import javafx.event.Event
+import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.input.KeyCombination
+import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
 import javafx.stage.Screen
 import javafx.stage.Stage
 import java.nio.file.Files
@@ -240,6 +247,22 @@ internal class MainWindow(
 
     fun getCurrentScene(): FXGLScene {
         return currentScene.value
+    }
+
+    fun addKeyHandler(handler: (KeyEvent) -> Unit) {
+        fxScene.addEventHandler(KeyEvent.ANY, handler)
+    }
+
+    fun addMouseHandler(handler: (MouseEventData) -> Unit) {
+        fxScene.addEventHandler(MouseEvent.ANY, {
+            handler(MouseEventData(it, getCurrentScene().viewport, scaleRatioX.value, scaleRatioY.value))
+        })
+    }
+
+    fun addGlobalHandler(handler: (Event) -> Unit) {
+        fxScene.addEventHandler(EventType.ROOT, {
+            handler(it.copyFor(null, null))
+        })
     }
 
     /**

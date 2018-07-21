@@ -102,108 +102,103 @@ private constructor(
         logVersion()
     }
 
-    private fun doPostInit() {
+    private fun initLoopStartSequence() {
         log.debug("Initializing FXGL")
 
         val start = System.nanoTime()
 
-        val sceneFactory = settings.sceneFactory
-        val startupScene = sceneFactory.newStartup()
+        val startupScene = settings.sceneFactory.newStartup()
 
         // get window up ASAP
         mainWindow = MainWindow(stage, startupScene, settings)
         mainWindow.show()
 
+        initFatalExceptionHandler()
 
+        // give control back to FX thread while we do heavy init stuff
 
+        Async.start {
+            IOTask.setDefaultExecutor(_executor)
+            IOTask.setDefaultFailAction(settings.exceptionHandler)
 
+            isFirstRun = !FS.exists("system/")
 
-
-
-
-
-
-
-        IOTask.setDefaultExecutor(_executor)
-        IOTask.setDefaultFailAction(settings.exceptionHandler)
-
-        isFirstRun = !FS.exists("system/")
-
-        if (isFirstRun) {
-            createRequiredDirs()
-            loadDefaultSystemData()
-        } else {
-            loadSystemData()
-        }
-
-        if (isDesktop()) {
-            runUpdaterAsync()
-        }
-
-
-
-
-
-
-        stage.iconifiedProperty().addListener { _, _, isMinimized ->
-            if (isMinimized) {
-                loop.pause()
+            if (isFirstRun) {
+                createRequiredDirs()
+                loadDefaultSystemData()
             } else {
-                loop.resume()
+                loadSystemData()
+            }
+
+            if (isDesktop()) {
+                runUpdaterAsync()
+            }
+
+            initStateMachine(startupScene)
+
+            attachPauseResumeListener()
+            attachEventHandlers()
+
+            // finish init on FX thread
+            Async.startFX {
+                mainWindow.addKeyHandler {
+                    stateMachine.currentState.input.onKeyEvent(it)
+                }
+
+                mainWindow.addMouseHandler {
+                    stateMachine.currentState.input.onMouseEvent(it)
+                }
+
+                // reroute any events to current state input
+                mainWindow.addGlobalHandler {
+                    stateMachine.currentState.input.fireEvent(it)
+                }
+
+                // these things need to be called early before the main loop
+                // so that menus can correctly display input controls, etc.
+                // this is called once per application lifetime
+                runPreInit()
+
+                log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
+
+                loop.start()
             }
         }
+    }
 
+    private fun loadVersion(): String {
+        return ResourceBundle.getBundle("com.almasb.fxgl.app.system").getString("fxgl.version")
+    }
+
+    private fun logVersion() {
+        val platform = "${Platform.getCurrent()}" + if (isBrowser()) " BROWSER" else ""
+
+        log.info("FXGL-$version on $platform")
+        log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
+        log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
+    }
+
+    private fun attachPauseResumeListener() {
         if (FXGL.isMobile()) {
             Services.get(LifecycleService::class.java).ifPresent { service ->
                 service.addListener(LifecycleEvent.PAUSE) { loop.pause() }
                 service.addListener(LifecycleEvent.RESUME) { loop.resume() }
             }
+        } else {
+            stage.iconifiedProperty().addListener { _, _, isMinimized ->
+                if (isMinimized) {
+                    loop.pause()
+                } else {
+                    loop.resume()
+                }
+            }
         }
+    }
 
-
-        //    private val keyHandler = EventHandler<KeyEvent> {
-//        FXGL.getApp().stateMachine.currentState.input.onKeyEvent(it)
-//    }
-//
-//    private val mouseHandler = EventHandler<MouseEvent> { e ->
-//        currentScene.value?.let {
-//            FXGL.getApp().stateMachine.currentState.input.onMouseEvent(e, it.viewport, scaleRatioX.value, scaleRatioY.value)
-//        }
-//    }
-//
-//    private val genericHandler = EventHandler<Event> {
-//        FXGL.getApp().stateMachine.currentState.input.fireEvent(it.copyFor(null, null))
-//    }
-
-        // main key event handler
-//        fxScene.addEventHandler(KeyEvent.ANY, keyHandler)
-//
-//        // main mouse event handler
-//        fxScene.addEventHandler(MouseEvent.ANY, mouseHandler)
-//
-//        // reroute any events to current state input
-//        fxScene.addEventHandler(EventType.ROOT, genericHandler)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        initFatalExceptionHandler()
-
-
-
+    private fun initStateMachine(startupScene: FXGLScene) {
         log.debug("Initializing state machine and application states")
 
-
+        val sceneFactory = settings.sceneFactory
 
         // STARTUP is default
         val initial = StartupState(app, startupScene)
@@ -214,27 +209,18 @@ private constructor(
         // reasonable hack to trigger dialog state init before intro and menus
         DialogSubState.view
 
-        val intro = if (settings.isIntroEnabled)
-            IntroState(app, sceneFactory.newIntro())
-        else
-            AppState.EMPTY
+        val intro = if (settings.isIntroEnabled) IntroState(app, sceneFactory.newIntro()) else AppState.EMPTY
 
-        val mainMenu = if (settings.isMenuEnabled)
-            MainMenuState(sceneFactory.newMainMenu(app))
-        else
-            AppState.EMPTY
+        val mainMenu = if (settings.isMenuEnabled) MainMenuState(sceneFactory.newMainMenu(app)) else AppState.EMPTY
 
-        val gameMenu = if (settings.isMenuEnabled)
-            GameMenuState(sceneFactory.newGameMenu(app))
-        else
-            AppState.EMPTY
+        val gameMenu = if (settings.isMenuEnabled) GameMenuState(sceneFactory.newGameMenu(app)) else AppState.EMPTY
 
         stateMachine = AppStateMachine(loading, play, DialogSubState, intro, mainMenu, gameMenu, initial)
 
         stateMachine.addListener(object : StateChangeListener {
             override fun beforeEnter(state: State) {
                 if (state is AppState) {
-                    setScene(state.scene)
+                    mainWindow.setScene(state.scene)
                 } else if (state is SubState) {
                     getScene().root.children.add(state.view)
                 }
@@ -251,42 +237,7 @@ private constructor(
             }
         })
 
-
-
         playState = stateMachine.playState as PlayState
-
-        attachEventHandlers()
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // these things need to be called early before the main loop
-        // so that menus can correctly display input controls, etc.
-        // this is called once per application lifetime
-        runPreInit()
-
-        log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
-    }
-
-    private fun loadVersion(): String {
-        return ResourceBundle.getBundle("com.almasb.fxgl.app.system").getString("fxgl.version")
-    }
-
-    private fun logVersion() {
-        val platform = "${Platform.getCurrent()}" + if (isBrowser()) " BROWSER" else ""
-
-        log.info("FXGL-$version on $platform")
-        log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
-        log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
 
     private fun createRequiredDirs() {
@@ -439,8 +390,7 @@ private constructor(
         }
 
         @JvmStatic protected fun startLoop() {
-            engine.doPostInit()
-            engine.loop.start()
+            engine.initLoopStartSequence()
         }
 
         @JvmStatic fun exit() {
@@ -509,10 +459,6 @@ private constructor(
 
         internal fun getScene(): FXGLScene {
             return engine.mainWindow.getCurrentScene()
-        }
-
-        internal fun setScene(scene: FXGLScene) {
-            engine.mainWindow.setScene(scene)
         }
 
         internal fun fixAspectRatio() {
