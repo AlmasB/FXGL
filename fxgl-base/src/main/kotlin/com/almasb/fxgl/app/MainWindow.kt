@@ -9,14 +9,9 @@ import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.embed.swing.SwingFXUtils
-import javafx.event.Event
-import javafx.event.EventHandler
-import javafx.event.EventType
+import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.input.KeyCombination
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
-import javafx.scene.layout.Pane
 import javafx.stage.Screen
 import javafx.stage.Stage
 import java.nio.file.Files
@@ -29,49 +24,45 @@ import javax.imageio.ImageIO
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSettings) {
+internal class MainWindow(
+
+        /**
+         * Primary stage.
+         */
+        val stage: Stage,
+
+        /**
+         * The starting scene which is used when the window is created.
+         */
+        scene: FXGLScene,
+
+        private val settings: ReadOnlyGameSettings) {
 
     private val log = Logger.get(javaClass)
 
     private val fxScene: Scene
 
-    private val currentScene = ReadOnlyObjectWrapper<FXGLScene>()
+    private val currentScene = ReadOnlyObjectWrapper<FXGLScene>(scene)
+
+    private val scenes = arrayListOf<FXGLScene>()
 
     private val scaledWidth: DoubleProperty = SimpleDoubleProperty()
     private val scaledHeight: DoubleProperty = SimpleDoubleProperty()
     private val scaleRatioX: DoubleProperty = SimpleDoubleProperty()
     private val scaleRatioY: DoubleProperty = SimpleDoubleProperty()
 
-    private val keyHandler = EventHandler<KeyEvent> {
-        FXGL.getApp().stateMachine.currentState.input.onKeyEvent(it)
-    }
-
-    private val mouseHandler = EventHandler<MouseEvent> { e ->
-        currentScene.value?.let {
-            FXGL.getApp().stateMachine.currentState.input.onMouseEvent(e, it.viewport, scaleRatioX.value, scaleRatioY.value)
-        }
-    }
-
-    private val genericHandler = EventHandler<Event> {
-        FXGL.getApp().stateMachine.currentState.input.fireEvent(it.copyFor(null, null))
-    }
-
-    var onShown: Runnable? = null
-
     init {
-        fxScene = createScene()
+        fxScene = createScene(scene.root)
 
-        // main key event handler
-        fxScene.addEventHandler(KeyEvent.ANY, keyHandler)
+        setScene(scene)
 
-        // main mouse event handler
-        fxScene.addEventHandler(MouseEvent.ANY, mouseHandler)
-
-        // reroute any events to current state input
-        fxScene.addEventHandler(EventType.ROOT, genericHandler)
+        initStage()
     }
 
-    private fun createScene(): Scene {
+    /**
+     * Construct the only JavaFX scene with computed size based on user settings.
+     */
+    private fun createScene(root: Parent): Scene {
         log.debug("Creating a JavaFX scene")
 
         var newW = settings.width.toDouble()
@@ -100,7 +91,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
         newW = newW.toInt().toDouble()
         newH = newH.toInt().toDouble()
 
-        val scene = Scene(Pane(), newW, newH)
+        val scene = Scene(root, newW, newH)
 
         scaledWidth.set(newW)
         scaledHeight.set(newH)
@@ -112,17 +103,6 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
         log.debug("Scaled ratio: (${scaleRatioX.value}, ${scaleRatioY.value})")
 
         return scene
-    }
-
-    /**
-     * Must be called on FX thread.
-     */
-    fun initAndShow() {
-        // we call this late so that all scenes have been initialized
-        // and computed their width / height
-        initStage()
-
-        show()
     }
 
     /**
@@ -153,10 +133,6 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
                 } else {
                     FXGL.getApp().exit()
                 }
-            }
-
-            setOnShown {
-                this@MainWindow.onShown?.run()
             }
 
             icons.add(image(settings.appIcon))
@@ -194,7 +170,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
     private var windowBorderWidth = 0.0
     private var windowBorderHeight = 0.0
 
-    private fun show() {
+    fun show() {
         log.debug("Opening main window")
 
         stage.show()
@@ -232,8 +208,6 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
         log.debug("Stage size: ${stage.width} x ${stage.height}")
     }
 
-    private val scenes = arrayListOf<FXGLScene>()
-
     /**
      * Set current FXGL scene.
      * The scene will be immediately displayed.
@@ -245,7 +219,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
             registerScene(scene)
         }
 
-        currentScene.value?.activeProperty()?.set(false)
+        currentScene.value.activeProperty().set(false)
 
         currentScene.set(scene)
         scene.activeProperty().set(true)

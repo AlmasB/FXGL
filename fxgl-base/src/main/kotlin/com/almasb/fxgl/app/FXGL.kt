@@ -107,6 +107,21 @@ private constructor(
 
         val start = System.nanoTime()
 
+        val sceneFactory = settings.sceneFactory
+        val startupScene = sceneFactory.newStartup()
+
+        // get window up ASAP
+        mainWindow = MainWindow(stage, startupScene, settings)
+        mainWindow.show()
+
+
+
+
+
+
+
+
+
 
 
         IOTask.setDefaultExecutor(_executor)
@@ -130,9 +145,54 @@ private constructor(
 
 
 
-        mainWindow = MainWindow(stage, settings)
+        stage.iconifiedProperty().addListener { _, _, isMinimized ->
+            if (isMinimized) {
+                loop.pause()
+            } else {
+                loop.resume()
+            }
+        }
 
-        initMainWindow(stage)
+        if (FXGL.isMobile()) {
+            Services.get(LifecycleService::class.java).ifPresent { service ->
+                service.addListener(LifecycleEvent.PAUSE) { loop.pause() }
+                service.addListener(LifecycleEvent.RESUME) { loop.resume() }
+            }
+        }
+
+
+        //    private val keyHandler = EventHandler<KeyEvent> {
+//        FXGL.getApp().stateMachine.currentState.input.onKeyEvent(it)
+//    }
+//
+//    private val mouseHandler = EventHandler<MouseEvent> { e ->
+//        currentScene.value?.let {
+//            FXGL.getApp().stateMachine.currentState.input.onMouseEvent(e, it.viewport, scaleRatioX.value, scaleRatioY.value)
+//        }
+//    }
+//
+//    private val genericHandler = EventHandler<Event> {
+//        FXGL.getApp().stateMachine.currentState.input.fireEvent(it.copyFor(null, null))
+//    }
+
+        // main key event handler
+//        fxScene.addEventHandler(KeyEvent.ANY, keyHandler)
+//
+//        // main mouse event handler
+//        fxScene.addEventHandler(MouseEvent.ANY, mouseHandler)
+//
+//        // reroute any events to current state input
+//        fxScene.addEventHandler(EventType.ROOT, genericHandler)
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -140,7 +200,59 @@ private constructor(
         initFatalExceptionHandler()
 
 
-        stateMachine = initStateMachine()
+
+        log.debug("Initializing state machine and application states")
+
+
+
+        // STARTUP is default
+        val initial = StartupState(app, startupScene)
+
+        val loading = LoadingState(app, sceneFactory.newLoadingScene())
+        val play = PlayState(sceneFactory.newGameScene(app.width, app.height))
+
+        // reasonable hack to trigger dialog state init before intro and menus
+        DialogSubState.view
+
+        val intro = if (settings.isIntroEnabled)
+            IntroState(app, sceneFactory.newIntro())
+        else
+            AppState.EMPTY
+
+        val mainMenu = if (settings.isMenuEnabled)
+            MainMenuState(sceneFactory.newMainMenu(app))
+        else
+            AppState.EMPTY
+
+        val gameMenu = if (settings.isMenuEnabled)
+            GameMenuState(sceneFactory.newGameMenu(app))
+        else
+            AppState.EMPTY
+
+        stateMachine = AppStateMachine(loading, play, DialogSubState, intro, mainMenu, gameMenu, initial)
+
+        stateMachine.addListener(object : StateChangeListener {
+            override fun beforeEnter(state: State) {
+                if (state is AppState) {
+                    setScene(state.scene)
+                } else if (state is SubState) {
+                    getScene().root.children.add(state.view)
+                }
+            }
+
+            override fun entered(state: State) {}
+
+            override fun beforeExit(state: State) {}
+
+            override fun exited(state: State) {
+                if (state is SubState) {
+                    getScene().root.children.remove(state.view)
+                }
+            }
+        })
+
+
+
         playState = stateMachine.playState as PlayState
 
         attachEventHandlers()
@@ -155,8 +267,7 @@ private constructor(
 
 
 
-        // all configurations are done, show window
-        mainWindow.initAndShow()
+
 
         // these things need to be called early before the main loop
         // so that menus can correctly display input controls, etc.
@@ -222,81 +333,8 @@ private constructor(
         Async.start { UpdaterTask().run() }
     }
 
-    private fun initMainWindow(stage: Stage) {
-        stage.iconifiedProperty().addListener { _, _, isMinimized ->
-            if (isMinimized) {
-                loop.pause()
-            } else {
-                loop.resume()
-            }
-        }
-
-        if (FXGL.isMobile()) {
-            Services.get(LifecycleService::class.java).ifPresent { service ->
-                service.addListener(LifecycleEvent.PAUSE) { loop.pause() }
-                service.addListener(LifecycleEvent.RESUME) { loop.resume() }
-            }
-        }
-    }
-
     private fun initFatalExceptionHandler() {
         Thread.setDefaultUncaughtExceptionHandler { _, error -> handleFatalError(error) }
-    }
-
-    private fun initStateMachine(): AppStateMachine {
-        log.debug("Initializing state machine and application states")
-
-        val sceneFactory = settings.sceneFactory
-
-        // STARTUP is default
-        val initial = StartupState(app, sceneFactory.newStartup())
-
-        val loading = LoadingState(app, sceneFactory.newLoadingScene())
-        val play = PlayState(sceneFactory.newGameScene(app.width, app.height))
-
-        // reasonable hack to trigger dialog state init before intro and menus
-        DialogSubState.view
-
-        val intro = if (settings.isIntroEnabled)
-            IntroState(app, sceneFactory.newIntro())
-        else
-            AppState.EMPTY
-
-        val mainMenu = if (settings.isMenuEnabled)
-            MainMenuState(sceneFactory.newMainMenu(app))
-        else
-            AppState.EMPTY
-
-        val gameMenu = if (settings.isMenuEnabled)
-            GameMenuState(sceneFactory.newGameMenu(app))
-        else
-            AppState.EMPTY
-
-        val stateMachine = AppStateMachine(loading, play, DialogSubState, intro, mainMenu, gameMenu, initial)
-
-        stateMachine.addListener(object : StateChangeListener {
-            override fun beforeEnter(state: State) {
-                if (state is AppState) {
-                    setScene(state.scene)
-                } else if (state is SubState) {
-                    getScene().root.children.add(state.view)
-                }
-            }
-
-            override fun entered(state: State) {}
-
-            override fun beforeExit(state: State) {}
-
-            override fun exited(state: State) {
-                if (state is SubState) {
-                    getScene().root.children.remove(state.view)
-                }
-            }
-        })
-
-        stateMachine.run()
-
-        return stateMachine
     }
 
     private fun attachEventHandlers() {
