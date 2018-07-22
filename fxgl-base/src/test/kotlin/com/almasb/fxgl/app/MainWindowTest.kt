@@ -77,9 +77,9 @@ class MainWindowTest {
 
         assertThat(window.stage, `is`(stage))
 
-        assertTrue(stage.isShowing)
-        assertTrue(stage.width >= 1200)
-        assertTrue(stage.height >= 600)
+        assertTrue(stage.isShowing, "Window is not showing")
+        assertTrue(stage.width >= 1200, "Window is not at least 1200 wide")
+        assertTrue(stage.height >= 600, "Window is not at least 600 high")
 
         assertThat(stage.scene.root, `is`<Parent>(scene.root))
     }
@@ -103,13 +103,13 @@ class MainWindowTest {
         stage.width = 900.0
 
         window.fixAspectRatio()
-        assertTrue(stage.height >= 450)
+        assertTrue(stage.height >= 450, "Window aspect ratio was not fixed to 900x450")
     }
 
     fun `Save screenshot`() {
         val ok = window.saveScreenshot("testScreen.png")
 
-        assertTrue(ok)
+        assertTrue(ok, "Failed to save screenshot")
 
         Files.deleteIfExists(Paths.get("testScreen.png"))
     }
