@@ -16,6 +16,7 @@ import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.scene.image.Image
 import javafx.scene.input.KeyCombination
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
@@ -265,25 +266,39 @@ internal class MainWindow(
         })
     }
 
+    fun takeScreenshot(): Image = fxScene.snapshot(null)
+
     /**
-     * Saves a screenshot of the current scene into a ".png" file.
+     * Saves a screenshot of the current scene into a ".png" file,
+     * named by title + version + time.
      *
      * @return true if the screenshot was saved successfully, false otherwise
      */
     fun saveScreenshot(): Boolean {
-        val fxImage = fxScene.snapshot(null)
-
         var fileName = "./" + settings.title + settings.version + LocalDateTime.now()
         fileName = fileName.replace(":", "_")
+
+        return saveScreenshot(fileName)
+    }
+
+    /**
+     * Saves a screenshot of the current scene into a ".png" [fileName].
+     *
+     * @return true if the screenshot was saved successfully, false otherwise
+     */
+    fun saveScreenshot(fileName: String): Boolean {
+        val fxImage = takeScreenshot()
 
         val img = SwingFXUtils.fromFXImage(fxImage, null)
 
         try {
-            Files.newOutputStream(Paths.get(fileName + ".png")).use {
+            val name = if (fileName.endsWith(".png")) fileName else "$fileName.png"
+
+            Files.newOutputStream(Paths.get(name)).use {
                 return ImageIO.write(img, "png", it)
             }
         } catch (e: Exception) {
-            log.warning("saveScreenshot() failed: $e")
+            log.warning("saveScreenshot($fileName.png) failed: $e")
             return false
         }
     }
