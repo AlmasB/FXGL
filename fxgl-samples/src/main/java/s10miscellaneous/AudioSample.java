@@ -7,7 +7,6 @@
 package s10miscellaneous;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
@@ -35,29 +34,29 @@ public class AudioSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        getInput().addAction(new UserAction("Left") {
-            @Override
-            protected void onActionBegin() {
-                FXGLAssets.SOUND_NOTIFICATION.setBalance(-1.0);
-                getAudioPlayer().playSound(FXGLAssets.SOUND_NOTIFICATION);
-            }
-        }, KeyCode.A);
-
-        getInput().addAction(new UserAction("Right") {
-            @Override
-            protected void onActionBegin() {
-                FXGLAssets.SOUND_NOTIFICATION.setBalance(1.0);
-                getAudioPlayer().playSound(FXGLAssets.SOUND_NOTIFICATION);
-            }
-        }, KeyCode.D);
-
-        getInput().addAction(new UserAction("Mid") {
-            @Override
-            protected void onActionBegin() {
-                FXGLAssets.SOUND_NOTIFICATION.setBalance(0.0);
-                getAudioPlayer().playSound(FXGLAssets.SOUND_NOTIFICATION);
-            }
-        }, KeyCode.S);
+//        getInput().addAction(new UserAction("Left") {
+//            @Override
+//            protected void onActionBegin() {
+//                FXGLAssets.SOUND_NOTIFICATION.setBalance(-1.0);
+//                getAudioPlayer().playSound(FXGLAssets.SOUND_NOTIFICATION);
+//            }
+//        }, KeyCode.A);
+//
+//        getInput().addAction(new UserAction("Right") {
+//            @Override
+//            protected void onActionBegin() {
+//                FXGLAssets.SOUND_NOTIFICATION.setBalance(1.0);
+//                getAudioPlayer().playSound(FXGLAssets.SOUND_NOTIFICATION);
+//            }
+//        }, KeyCode.D);
+//
+//        getInput().addAction(new UserAction("Mid") {
+//            @Override
+//            protected void onActionBegin() {
+//                FXGLAssets.SOUND_NOTIFICATION.setBalance(0.0);
+//                getAudioPlayer().playSound(FXGLAssets.SOUND_NOTIFICATION);
+//            }
+//        }, KeyCode.S);
     }
 
     public static void main(String[] args) {

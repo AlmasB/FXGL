@@ -18,6 +18,7 @@ import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.ui.FXGLScrollPane;
 import com.almasb.fxgl.ui.FXGLSpinner;
+import com.almasb.fxgl.ui.FontType;
 import com.almasb.fxgl.util.Consumer;
 import com.almasb.fxgl.util.Language;
 import com.almasb.fxgl.util.Supplier;
@@ -203,7 +204,7 @@ public abstract class FXGLMenu extends FXGLScene {
                     } else {
 
                         Text text = getUIFactory().newText(item.toString());
-                        text.setFont(FXGLAssets.UI_MONO_FONT.newFont(FONT_SIZE));
+                        text.setFont(getUIFactory().newFont(FontType.MONO, FONT_SIZE));
 
                         setGraphic(text);
                     }

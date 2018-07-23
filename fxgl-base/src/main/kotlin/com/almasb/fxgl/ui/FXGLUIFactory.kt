@@ -6,7 +6,9 @@
 
 package com.almasb.fxgl.ui
 
-import com.almasb.fxgl.asset.FXGLAssets
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.ui.FontType.*
+import com.almasb.fxgl.ui.FontType.UI
 import javafx.beans.binding.StringBinding
 import javafx.beans.binding.StringExpression
 import javafx.collections.ObservableList
@@ -51,7 +53,14 @@ class FXGLUIFactory : UIFactory {
     }
 
     override fun newFont(size: Double): Font {
-        return FXGLAssets.UI_FONT.newFont(size)
+        return newFont(UI, size)
+    }
+
+    override fun newFont(type: FontType, size: Double): Font = when (type) {
+        UI -> FXGL.getAssetLoader().loadFont(FXGL.getSettings().fontUI).newFont(size)
+        MONO -> FXGL.getAssetLoader().loadFont(FXGL.getSettings().fontMono).newFont(size)
+        GAME -> FXGL.getAssetLoader().loadFont(FXGL.getSettings().fontGame).newFont(size)
+        TEXT -> FXGL.getAssetLoader().loadFont(FXGL.getSettings().fontText).newFont(size)
     }
 
     override fun newButton(text: String): Button {

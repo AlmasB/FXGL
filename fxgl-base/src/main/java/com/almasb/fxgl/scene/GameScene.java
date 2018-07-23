@@ -15,6 +15,7 @@ import com.almasb.fxgl.entity.EntityWorldListener;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.almasb.fxgl.entity.view.EntityView;
+import com.almasb.fxgl.ui.FontType;
 import com.almasb.fxgl.ui.UI;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
@@ -81,7 +82,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     }
 
     private void initProfilerText(double x, double y) {
-        profilerText.setFont(FXGLAssets.UI_MONO_FONT.newFont(20));
+        profilerText.setFont(FXGL.getUIFactory().newFont(FontType.MONO, 20.0));
         profilerText.setFill(Color.RED);
         profilerText.setTranslateX(x);
         profilerText.setTranslateY(y);

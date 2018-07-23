@@ -30,6 +30,8 @@ public interface UIFactory {
      */
     Font newFont(double size);
 
+    Font newFont(FontType type, double size);
+
     Text newText(String message);
 
     Text newText(String message, double fontSize);

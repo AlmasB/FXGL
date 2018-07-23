@@ -1,6 +1,5 @@
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.FXGLScene
@@ -242,7 +241,7 @@ internal class MainWindow(
      */
     private fun registerScene(scene: FXGLScene) {
         scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
-        scene.appendCSS(FXGLAssets.UI_CSS)
+        scene.appendCSS(FXGL.getAssetLoader().loadCSS(settings.css))
         scenes.add(scene)
     }
 

@@ -8,7 +8,6 @@ package sandbox.robots.anim;
 
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.PositionComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
@@ -125,7 +124,6 @@ public class RobotComponent extends StateComponent {
         @Override
         protected void onExit() {
             // TODO: play land audio
-            FXGL.getAudioPlayer().playSound(FXGLAssets.SOUND_MENU_BACK);
         }
     };
 

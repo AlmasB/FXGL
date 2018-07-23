@@ -7,7 +7,7 @@
 package sandbox.dialogue
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.asset.FXGLAssets
+import com.almasb.fxgl.ui.FontType
 import com.almasb.fxgl.ui.InGameWindow
 import javafx.scene.control.Button
 import javafx.scene.control.TextArea
@@ -43,7 +43,7 @@ class ScriptNodeView : NodeView() {
 
             // TODO: color script
             //textArea.textFormatter
-            textArea.font = FXGLAssets.UI_MONO_FONT.newFont(16.0)
+            textArea.font = FXGL.getUIFactory().newFont(FontType.MONO, 16.0)
 
             textArea.text = ""
 
