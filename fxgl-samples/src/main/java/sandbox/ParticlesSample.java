@@ -6,12 +6,9 @@
 
 package sandbox;
 
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.extra.entity.components.RandomMoveComponent;
 import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
@@ -21,14 +18,11 @@ import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.app.DSLKt.*;
+import static com.almasb.fxgl.app.DSLKt.texture;
 import static com.almasb.fxgl.core.math.FXGLMath.random;
-import static com.almasb.fxgl.core.math.FXGLMath.randomPoint2D;
-import static com.almasb.fxgl.core.math.FXGLMath.randomVec2;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

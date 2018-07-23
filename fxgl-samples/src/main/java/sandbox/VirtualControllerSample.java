@@ -13,7 +13,6 @@ import com.almasb.fxgl.input.virtual.VirtualControllerOverlay;
 import com.almasb.fxgl.input.virtual.VirtualControllerStyle;
 import com.almasb.fxgl.input.virtual.VirtualPauseButtonOverlay;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 
 /**

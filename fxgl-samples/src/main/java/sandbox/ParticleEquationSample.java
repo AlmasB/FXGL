@@ -1,11 +1,8 @@
 package sandbox;
 
-import com.almasb.fxgl.animation.Interpolators;
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.core.math.SimplexNoise;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
@@ -14,14 +11,10 @@ import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.animation.Interpolator;
-import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.app.DSLKt.image;
 import static com.almasb.fxgl.app.DSLKt.texture;
 import static com.almasb.fxgl.core.math.FXGLMath.*;
 

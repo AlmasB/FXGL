@@ -6,9 +6,7 @@
 
 package s05uimenus;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.settings.GameSettings;

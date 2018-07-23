@@ -6,10 +6,7 @@
 
 package sandbox.dialogue
 
-import com.almasb.fxgl.app.FXGL
 import javafx.scene.control.TextField
-import javafx.scene.layout.HBox
-import javafx.scene.paint.Color
 
 /**
  *

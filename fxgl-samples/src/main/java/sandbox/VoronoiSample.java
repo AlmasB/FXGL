@@ -6,8 +6,8 @@
 
 package sandbox;
 
-import com.almasb.fxgl.extra.algorithm.VoronoiSubdivision;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.extra.algorithm.VoronoiSubdivision;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.beans.property.SimpleDoubleProperty;

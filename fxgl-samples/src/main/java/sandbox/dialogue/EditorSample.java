@@ -6,13 +6,8 @@
 
 package sandbox.dialogue;
 
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.core.concurrent.Async;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.input.MouseButton;
-import javafx.scene.shape.Line;
 
 /**
  * WIP basics of a dialogue editor

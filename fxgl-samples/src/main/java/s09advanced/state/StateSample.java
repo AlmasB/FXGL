@@ -6,7 +6,6 @@
 
 package s09advanced.state;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.devtools.DeveloperWASDControl;
 import com.almasb.fxgl.entity.Entities;

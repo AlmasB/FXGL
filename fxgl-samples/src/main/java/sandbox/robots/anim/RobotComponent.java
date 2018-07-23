@@ -6,9 +6,7 @@
 
 package sandbox.robots.anim;
 
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.PositionComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.almasb.fxgl.extra.entity.state.State;
@@ -20,7 +18,8 @@ import com.almasb.fxgl.time.LocalTimer;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.app.DSLKt.*;
+import static com.almasb.fxgl.app.DSLKt.spawn;
+import static com.almasb.fxgl.app.DSLKt.texture;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

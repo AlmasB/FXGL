@@ -8,8 +8,8 @@ package s03entities;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.time.LocalTimer;
 import javafx.scene.shape.Rectangle;
