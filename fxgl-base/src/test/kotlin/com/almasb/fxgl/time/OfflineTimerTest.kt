@@ -26,6 +26,9 @@ class OfflineTimerTest {
         val bundle = Bundle("testbundle")
         val timer = OfflineTimer("test", bundle)
 
+        // no previous data, so any duration will return true
+        assertTrue(timer.elapsed(Duration.seconds(1.0)))
+
         timer.capture()
 
         assertFalse(timer.elapsed(Duration.millis(500.0)))
