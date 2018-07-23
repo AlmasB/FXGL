@@ -6,11 +6,9 @@
 
 package com.almasb.fxgl.entity.components
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.entity.RenderLayer
 import javafx.scene.Node
-import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat

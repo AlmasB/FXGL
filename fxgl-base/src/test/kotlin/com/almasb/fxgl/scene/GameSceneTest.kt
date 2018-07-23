@@ -6,19 +6,14 @@
 
 package com.almasb.fxgl.scene
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.ui.UI
 import com.almasb.fxgl.ui.UIController
 import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Rectangle
-import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.containsInAnyOrder
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
