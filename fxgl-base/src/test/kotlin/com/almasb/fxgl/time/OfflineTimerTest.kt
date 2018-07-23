@@ -33,7 +33,7 @@ class OfflineTimerTest {
 
         assertFalse(timer.elapsed(Duration.millis(500.0)))
 
-        Thread.sleep(500)
+        Thread.sleep(1000)
 
         assertTrue(timer.elapsed(Duration.millis(500.0)))
     }
