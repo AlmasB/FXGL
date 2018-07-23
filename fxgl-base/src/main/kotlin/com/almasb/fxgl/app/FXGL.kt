@@ -571,7 +571,7 @@ private constructor(
          * @param name unique name for timer
          * @return new instance on each call
          */
-        @JvmStatic fun newOfflineTimer(name: String): LocalTimer = OfflineTimer(name)
+        @JvmStatic fun newOfflineTimer(name: String): LocalTimer = OfflineTimer(name, getSystemBundle())
 
         // TODO: do these belong here?
 
