@@ -11,7 +11,6 @@ import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.input.view.MouseButtonView
 import com.almasb.fxgl.input.view.TriggerView
-import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.scene.Node
 import javafx.scene.input.KeyCode

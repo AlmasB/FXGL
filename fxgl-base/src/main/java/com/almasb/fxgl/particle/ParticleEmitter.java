@@ -5,10 +5,8 @@
  */
 package com.almasb.fxgl.particle;
 
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
-import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.util.Consumer;
 import com.almasb.fxgl.util.Function;
@@ -21,8 +19,6 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
-
-import java.util.Random;
 
 import static com.almasb.fxgl.app.DSLKt.random;
 

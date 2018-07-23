@@ -6,7 +6,6 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.asset.FXGLAssets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;

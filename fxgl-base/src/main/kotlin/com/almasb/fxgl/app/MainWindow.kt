@@ -3,7 +3,6 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.Viewport
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
@@ -11,7 +10,6 @@ import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.Event
-import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.scene.Parent
 import javafx.scene.Scene

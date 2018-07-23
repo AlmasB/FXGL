@@ -7,7 +7,6 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.entity.Entity;

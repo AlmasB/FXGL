@@ -5,8 +5,10 @@
  */
 package com.almasb.fxgl.scene;
 
-import com.almasb.fxgl.app.*;
-import com.almasb.fxgl.asset.FXGLAssets;
+import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.MenuEventHandler;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.gameplay.achievement.Achievement;

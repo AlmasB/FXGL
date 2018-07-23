@@ -5,8 +5,6 @@
  */
 package com.almasb.fxgl.physics.box2d.pooling;
 
-import com.almasb.fxgl.physics.box2d.pooling.IDynamicStack;
-
 public abstract class MutableStack<E> implements IDynamicStack<E> {
 
     private E[] stack;

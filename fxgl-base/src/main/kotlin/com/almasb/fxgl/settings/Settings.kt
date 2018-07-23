@@ -24,8 +24,6 @@ import com.almasb.fxgl.ui.UIFactory
 import com.almasb.fxgl.util.Credits
 import com.almasb.fxgl.util.Language
 import com.almasb.fxgl.util.Optional
-import javafx.beans.property.BooleanProperty
-import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.input.KeyCode
