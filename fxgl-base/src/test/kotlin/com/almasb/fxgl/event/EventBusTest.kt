@@ -52,6 +52,21 @@ class EventBusTest {
                     eventBus.fireEvent(Event(EventType.ROOT))
 
                     assertThat(count, `is`(1))
+                },
+
+                Executable {
+                    // add again and remove, but this time using unsubscribe
+                    val sub = eventBus.addEventHandler(EventType.ROOT, handler)
+
+                    eventBus.fireEvent(Event(EventType.ROOT))
+
+                    assertThat(count, `is`(2))
+
+                    sub.unsubscribe()
+
+                    eventBus.fireEvent(Event(EventType.ROOT))
+
+                    assertThat(count, `is`(2))
                 }
         )
     }
