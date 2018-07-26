@@ -19,8 +19,8 @@ import javafx.util.Duration
 import java.lang.reflect.Modifier
 
 /**
- * FXGL event dispatcher that uses JavaFX event system to delegate method calls.
- * Manages event dispatching, listening and handling.
+ * FXGL event dispatcher that uses JavaFX event system.
+ * Allows firing events and listening for events.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -81,11 +81,10 @@ class EventBus {
     }
 
     /**
-     * Post (fire) given event. All listening parties will be notified.
+     * Fire given event.
+     * All listening parties will be notified.
      * Events will be handled on the same thread that fired the event,
      * i.e. synchronous.
-     *
-     * @param event the event
      */
     fun fireEvent(event: Event) {
         log.debug("Firing event: $event")
