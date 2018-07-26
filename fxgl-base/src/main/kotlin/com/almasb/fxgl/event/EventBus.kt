@@ -32,7 +32,7 @@ class EventBus {
 
     private val eventHandlers = Group()
 
-    fun onUpdate(tpf: Double) {
+    internal fun onUpdate(tpf: Double) {
         updateTriggers(tpf)
     }
 
@@ -62,6 +62,8 @@ class EventBus {
      */
     fun <T : Event> addEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>): Subscriber {
         eventHandlers.addEventHandler(eventType, eventHandler)
+
+        @Suppress("UNCHECKED_CAST")
         return Subscriber(this, eventType, eventHandler as EventHandler<in Event>)
     }
 

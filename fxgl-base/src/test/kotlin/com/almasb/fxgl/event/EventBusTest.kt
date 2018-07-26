@@ -74,6 +74,7 @@ class EventBusTest {
     @Test
     fun `Test handler scan syntax`() {
         eventBus.scanForHandlers(validObject)
+        eventBus.scanForHandlers(validObject2)
 
         var count = 0
 
@@ -125,6 +126,14 @@ class EventBusTest {
 
     object validObject {
         @Handles(eventType = "ANY")
+        fun handles(event: TestEvent) {
+            // cures unused variable warnings
+            event.eventType
+        }
+    }
+
+    object validObject2 {
+        @Handles(eventType = "ANY", eventClass = TestEvent::class)
         fun handles(event: TestEvent) {
             // cures unused variable warnings
             event.eventType
