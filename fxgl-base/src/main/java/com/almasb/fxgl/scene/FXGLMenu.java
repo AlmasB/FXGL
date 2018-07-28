@@ -9,6 +9,7 @@ import com.almasb.fxgl.app.*;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.gameplay.achievement.Achievement;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
@@ -31,7 +32,6 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -135,7 +135,6 @@ public abstract class FXGLMenu extends FXGLScene {
     protected Button createContentButton(StringBinding name, Supplier<MenuContent> contentSupplier) {
         return createActionButton(name, () -> switchMenuContentTo(contentSupplier.get()));
     }
-
 
     /**
      * @return full version string
@@ -299,13 +298,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         PressAnyKeyState() {
             getInput().addEventHandler(KeyEvent.KEY_PRESSED, e -> {
-
-                // ignore illegal keys,
-                // but they may be part of a different event
-                // which is correctly processed further because code will be different
-                if (e.getCode() == KeyCode.CONTROL
-                        || e.getCode() == KeyCode.SHIFT
-                        || e.getCode() == KeyCode.ALT)
+                if (Input.isIllegal(e.getCode()))
                     return;
 
                 boolean rebound = FXGL.getInput().rebind(actionContext, e.getCode(), InputModifier.from(e));
@@ -316,7 +309,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
             getInput().addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
 
-                boolean rebound = app.getInput().rebind(actionContext, e.getButton(), InputModifier.from(e));
+                boolean rebound = FXGL.getInput().rebind(actionContext, e.getButton(), InputModifier.from(e));
 
                 if (rebound)
                     FXGL.getStateMachine().popState();
