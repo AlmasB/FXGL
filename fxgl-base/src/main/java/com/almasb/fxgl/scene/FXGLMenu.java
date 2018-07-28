@@ -5,10 +5,7 @@
  */
 package com.almasb.fxgl.scene;
 
-import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.MenuEventHandler;
+import com.almasb.fxgl.app.*;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.gameplay.achievement.Achievement;
@@ -32,17 +29,15 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -296,6 +291,53 @@ public abstract class FXGLMenu extends FXGLScene {
         return new MenuContent(hbox);
     }
 
+    private PressAnyKeyState pressAnyKeyState = new PressAnyKeyState();
+
+    private class PressAnyKeyState extends SubState {
+
+        private UserAction actionContext;
+
+        PressAnyKeyState() {
+            getInput().addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+
+                // ignore illegal keys,
+                // but they may be part of a different event
+                // which is correctly processed further because code will be different
+                if (e.getCode() == KeyCode.CONTROL
+                        || e.getCode() == KeyCode.SHIFT
+                        || e.getCode() == KeyCode.ALT)
+                    return;
+
+                boolean rebound = FXGL.getInput().rebind(actionContext, e.getCode(), InputModifier.from(e));
+
+                if (rebound)
+                    FXGL.getStateMachine().popState();
+            });
+
+            getInput().addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+
+                boolean rebound = app.getInput().rebind(actionContext, e.getButton(), InputModifier.from(e));
+
+                if (rebound)
+                    FXGL.getStateMachine().popState();
+            });
+
+            Rectangle rect = new Rectangle(250, 100);
+            rect.setStroke(Color.color(0.85, 0.9, 0.9, 0.95));
+            rect.setStrokeWidth(10);
+            rect.setArcWidth(15);
+            rect.setArcHeight(15);
+
+            Text text = getUIFactory().newText(getLocalizedString("menu.pressAnyKey"), 24);
+
+            StackPane pane = new StackPane(rect, text);
+            pane.setTranslateX(FXGL.getAppWidth() / 2 - 125);
+            pane.setTranslateY(FXGL.getAppHeight() / 2 - 50);
+
+            getChildren().add(pane);
+        }
+    }
+
     private void addNewInputBinding(UserAction action, Trigger trigger, GridPane grid) {
         Text actionName = getUIFactory().newText(action.getName(), Color.WHITE, 18.0);
 
@@ -303,39 +345,8 @@ public abstract class FXGLMenu extends FXGLScene {
         triggerView.triggerProperty().bind(app.getInput().triggerProperty(action));
 
         triggerView.setOnMouseClicked(event -> {
-            Rectangle rect = new Rectangle(250, 100);
-            rect.setStroke(Color.AZURE);
-
-            Text text = getUIFactory().newText(getLocalizedString("menu.pressAnyKey"), 24);
-
-            Stage stage = new Stage(StageStyle.TRANSPARENT);
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(getRoot().getScene().getWindow());
-
-            Scene scene = new Scene(new StackPane(rect, text));
-            scene.setOnKeyPressed(e -> {
-                // ignore illegal keys, however they may be part of a different event
-                // which is correctly processed further because code will be different
-                if (e.getCode() == KeyCode.CONTROL
-                        || e.getCode() == KeyCode.SHIFT
-                        || e.getCode() == KeyCode.ALT)
-                    return;
-
-                boolean rebound = app.getInput().rebind(action, e.getCode(), InputModifier.from(e));
-
-                if (rebound)
-                    stage.close();
-            });
-            scene.setOnMouseClicked(e -> {
-
-                boolean rebound = app.getInput().rebind(action, e.getButton(), InputModifier.from(e));
-
-                if (rebound)
-                    stage.close();
-            });
-
-            stage.setScene(scene);
-            stage.show();
+            pressAnyKeyState.actionContext = action;
+            FXGL.getStateMachine().pushState(pressAnyKeyState);
         });
 
         HBox hBox = new HBox();
