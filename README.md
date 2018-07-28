@@ -2,6 +2,8 @@
 
 ## About
 
+<img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_logo.png" width="128" />
+
 JavaFX Game Development Framework
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.almasb/fxgl.svg)]()
