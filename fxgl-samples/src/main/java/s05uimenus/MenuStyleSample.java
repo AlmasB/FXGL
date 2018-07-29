@@ -8,7 +8,6 @@ package s05uimenus;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.extra.scene.menu.GTAVMenu;
-import com.almasb.fxgl.extra.scene.menu.Warcraft3Menu;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.menu.MenuType;
@@ -32,7 +31,7 @@ public class MenuStyleSample extends GameApplication {
 
         @Override
         public FXGLMenu newMainMenu(GameApplication app) {
-            return new Warcraft3Menu(app, MenuType.MAIN_MENU);
+            return new GTAVMenu(app, MenuType.MAIN_MENU);
         }
 
         @Override
