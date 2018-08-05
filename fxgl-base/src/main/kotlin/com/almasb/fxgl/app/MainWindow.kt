@@ -184,6 +184,12 @@ internal class MainWindow(
         windowBorderWidth = stage.width - scaledWidth.value
         windowBorderHeight = stage.height - scaledHeight.value
 
+        // this is a hack to estimate platform offsets on ubuntu and potentially other Linux os
+        // because for some reason javafx does not create a stage to contain scene of given size
+        if (windowBorderHeight < 0.5 && System.getProperty("os.name").contains("nux")) {
+            windowBorderHeight = 35.0
+        }
+
         scaledWidth.bind(stage.widthProperty().subtract(
                 Bindings.`when`(stage.fullScreenProperty()).then(0).otherwise(windowBorderWidth)
         ))
