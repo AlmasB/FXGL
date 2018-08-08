@@ -18,7 +18,7 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AnimationBuilder {
+class EntityAnimationBuilder {
 
     var duration = Duration.seconds(1.0)
         private set
@@ -43,36 +43,36 @@ class AnimationBuilder {
     internal lateinit var entities: List<Entity>
         private set
 
-    fun duration(duration: Duration): AnimationBuilder {
+    fun duration(duration: Duration): EntityAnimationBuilder {
         this.duration = duration
         return this
     }
 
-    fun delay(delay: Duration): AnimationBuilder {
+    fun delay(delay: Duration): EntityAnimationBuilder {
         this.delay = delay
         return this
     }
 
-    fun repeat(times: Int): AnimationBuilder {
+    fun repeat(times: Int): EntityAnimationBuilder {
         this.times = times
         return this
     }
 
-    fun repeatInfinitely(): AnimationBuilder {
+    fun repeatInfinitely(): EntityAnimationBuilder {
         return repeat(Integer.MAX_VALUE)
     }
 
-    fun onFinished(onFinished: Runnable): AnimationBuilder {
+    fun onFinished(onFinished: Runnable): EntityAnimationBuilder {
         this.onFinished = onFinished
         return this
     }
 
-    fun interpolator(interpolator: Interpolator): AnimationBuilder {
+    fun interpolator(interpolator: Interpolator): EntityAnimationBuilder {
         this.interpolator = interpolator
         return this
     }
 
-    fun autoReverse(autoReverse: Boolean): AnimationBuilder {
+    fun autoReverse(autoReverse: Boolean): EntityAnimationBuilder {
         this.isAutoReverse = autoReverse
         return this
     }

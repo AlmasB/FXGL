@@ -17,7 +17,7 @@ import javafx.scene.shape.Shape
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class TranslationAnimationBuilder(private val animationBuilder: AnimationBuilder) {
+class TranslationAnimationBuilder(private val animationBuilder: EntityAnimationBuilder) {
 
     private var path: Shape? = null
     private var fromPoint = Point2D.ZERO

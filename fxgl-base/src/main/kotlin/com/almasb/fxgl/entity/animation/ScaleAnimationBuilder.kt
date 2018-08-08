@@ -15,7 +15,7 @@ import javafx.geometry.Point2D
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ScaleAnimationBuilder(private val animationBuilder: AnimationBuilder) {
+class ScaleAnimationBuilder(private val animationBuilder: EntityAnimationBuilder) {
 
     private var startScale = Point2D(1.0, 1.0)
     private var endScale = Point2D(1.0, 1.0)

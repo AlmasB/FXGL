@@ -9,36 +9,80 @@ package com.almasb.fxgl.animation
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.State
 import com.almasb.fxgl.app.listener.StateListener
-import com.almasb.fxgl.entity.animation.AnimationBuilder
+import com.almasb.fxgl.entity.animation.EntityAnimationBuilder
+import com.almasb.fxgl.util.Consumer
 import com.almasb.fxgl.util.EmptyRunnable
+import javafx.animation.Interpolator
 import javafx.util.Duration
+
+open class AnimationBuilder
+@JvmOverloads constructor(
+        var duration: Duration = Duration.seconds(1.0),
+        var delay: Duration = Duration.ZERO,
+        var interpolator: Interpolator = Interpolator.LINEAR,
+        var times: Int = 1,
+        var onFinished: Runnable = EmptyRunnable,
+        var isAutoReverse: Boolean = false) {
+
+    fun duration(duration: Duration): AnimationBuilder {
+        this.duration = duration
+        return this
+    }
+
+    fun delay(delay: Duration): AnimationBuilder {
+        this.delay = delay
+        return this
+    }
+
+    fun interpolator(interpolator: Interpolator): AnimationBuilder {
+        this.interpolator = interpolator
+        return this
+    }
+
+    fun repeat(times: Int): AnimationBuilder {
+        this.times = times
+        return this
+    }
+
+    fun repeatInfinitely(): AnimationBuilder {
+        return repeat(Integer.MAX_VALUE)
+    }
+
+    fun onFinished(onFinished: Runnable): AnimationBuilder {
+        this.onFinished = onFinished
+        return this
+    }
+
+    fun autoReverse(autoReverse: Boolean): AnimationBuilder {
+        this.isAutoReverse = autoReverse
+        return this
+    }
+
+    open fun <T> build(animatedValue: AnimatedValue<T>, onProgress: Consumer<T>): Animation<T> {
+        return object : Animation<T>(this, animatedValue) {
+            override fun onProgress(value: T) {
+                onProgress.accept(value)
+            }
+        }
+    }
+}
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class Animation<T>
-@JvmOverloads constructor(val delay: Duration = Duration.ZERO,
-                          val duration: Duration,
-                          var cycleCount: Int = 1,
-                          val animatedValue: AnimatedValue<T>): StateListener {
+abstract class Animation<T>(
+        val builder: AnimationBuilder,
+        val animatedValue: AnimatedValue<T>): StateListener {
 
-    constructor(animationBuilder: AnimationBuilder, animatedValue: AnimatedValue<T>) : this(animationBuilder.delay,
-            animationBuilder.duration,
-            animationBuilder.times,
-            animatedValue) {
-        onFinished = animationBuilder.onFinished
-        isAutoReverse = animationBuilder.isAutoReverse
-    }
-
-    var isAutoReverse = false
-    var onFinished: Runnable = EmptyRunnable
+    var isAutoReverse: Boolean = builder.isAutoReverse
+    var onFinished: Runnable = builder.onFinished
 
     private var time = 0.0
 
     // for single cycle
-    private var endTime = duration.toSeconds()
+    private var endTime = builder.duration.toSeconds()
 
     private var count = 0
 
@@ -55,6 +99,10 @@ abstract class Animation<T>
         private set
 
     private var checkDelay = true
+
+    private val delay = builder.delay
+
+    private val cycleCount = builder.times
 
     /**
      * State in which we are animating.

@@ -14,7 +14,7 @@ import javafx.scene.paint.Color
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ColorAnimationBuilder(private val animationBuilder: AnimationBuilder) {
+class ColorAnimationBuilder(private val animationBuilder: EntityAnimationBuilder) {
 
     private var startColor = Color.TRANSPARENT
     private var endColor = Color.TRANSPARENT

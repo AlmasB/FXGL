@@ -39,7 +39,7 @@ class AnimationBuilderTest {
     fun `Translate`() {
         val e = Entity()
 
-        val anim = AnimationBuilder()
+        val anim = EntityAnimationBuilder()
                 .duration(Duration.millis(150.0))
                 .translate(e)
                 .from(Point2D(0.0, 0.0))
@@ -61,7 +61,7 @@ class AnimationBuilderTest {
 
         val curve = QuadCurve(0.0, 0.0, 100.0, 200.0, 300.0, 300.0)
 
-        val anim = AnimationBuilder()
+        val anim = EntityAnimationBuilder()
                 .duration(Duration.millis(150.0))
                 .translate(e)
                 .alongPath(curve)
@@ -82,7 +82,7 @@ class AnimationBuilderTest {
 
         val curve = CubicCurve(0.0, 0.0, 20.0, 30.0, 100.0, 200.0, 300.0, 300.0)
 
-        val anim = AnimationBuilder()
+        val anim = EntityAnimationBuilder()
                 .duration(Duration.millis(150.0))
                 .translate(e)
                 .alongPath(curve)
@@ -104,7 +104,7 @@ class AnimationBuilderTest {
 
             val curve = Circle()
 
-            AnimationBuilder()
+            EntityAnimationBuilder()
                     .duration(Duration.millis(150.0))
                     .translate(e)
                     .alongPath(curve)
@@ -116,7 +116,7 @@ class AnimationBuilderTest {
     fun `Rotate`() {
         val e = Entity()
 
-        val anim = AnimationBuilder()
+        val anim = EntityAnimationBuilder()
                 .duration(Duration.millis(150.0))
                 .rotate(e)
                 .rotateFrom(0.0)
@@ -136,7 +136,7 @@ class AnimationBuilderTest {
     fun `Scale`() {
         val e = Entity()
 
-        val anim = AnimationBuilder()
+        val anim = EntityAnimationBuilder()
                 .duration(Duration.millis(150.0))
                 .scale(e)
                 .from(Point2D(1.0, 1.0))
@@ -160,7 +160,7 @@ class AnimationBuilderTest {
 
         val endColor = Color.color(0.5, 0.2, 0.33, 0.5)
 
-        val anim = AnimationBuilder()
+        val anim = EntityAnimationBuilder()
                 .duration(Duration.millis(100.0))
                 .color(e)
                 .fromColor(Color.AQUA)
