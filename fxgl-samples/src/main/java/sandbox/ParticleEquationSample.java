@@ -45,7 +45,7 @@ public class ParticleEquationSample extends GameApplication {
         emitter.setVelocityFunction(i -> randomPoint2D().multiply(1.5));
         //emitter.setVelocityFunction(i -> new Point2D(1, -1).multiply(0.5));
 
-        emitter.setSourceImage(texture("particles/explosion03.png", 32, 32).brighter().brighter().saturate().getImage());
+        emitter.setSourceImage(texture("particles/light_01.png", 32, 32).brighter().brighter().saturate().getImage());
         emitter.setSize(1.5, 8.5);
         emitter.setNumParticles(15);
         emitter.setEmissionRate(1);
