@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity.animation
 
 
+import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.components.ColorComponent
 import com.almasb.fxgl.util.EmptyRunnable
@@ -20,23 +21,9 @@ import javafx.util.Duration
  */
 class EntityAnimationBuilder {
 
-    var duration = Duration.seconds(1.0)
-        private set
+    val animationBuilder = AnimationBuilder()
 
-    var delay = Duration.ZERO
-        private set
-
-    var interpolator = Interpolator.LINEAR
-        private set
-
-    var times = 1
-        private set
-
-    var onFinished: Runnable = EmptyRunnable
-        private set
-
-    var isAutoReverse = false
-        private set
+    // TODO: provide these directly to sub animation builders
 
     // guaranteed to be initialized before access by specific animation builder
     // see rotate(), scale(), translate(), etc. below
@@ -44,17 +31,22 @@ class EntityAnimationBuilder {
         private set
 
     fun duration(duration: Duration): EntityAnimationBuilder {
-        this.duration = duration
+        animationBuilder.duration(duration)
         return this
     }
 
     fun delay(delay: Duration): EntityAnimationBuilder {
-        this.delay = delay
+        animationBuilder.delay(delay)
+        return this
+    }
+
+    fun interpolator(interpolator: Interpolator): EntityAnimationBuilder {
+        animationBuilder.interpolator(interpolator)
         return this
     }
 
     fun repeat(times: Int): EntityAnimationBuilder {
-        this.times = times
+        animationBuilder.repeat(times)
         return this
     }
 
@@ -63,17 +55,12 @@ class EntityAnimationBuilder {
     }
 
     fun onFinished(onFinished: Runnable): EntityAnimationBuilder {
-        this.onFinished = onFinished
-        return this
-    }
-
-    fun interpolator(interpolator: Interpolator): EntityAnimationBuilder {
-        this.interpolator = interpolator
+        animationBuilder.onFinished(onFinished)
         return this
     }
 
     fun autoReverse(autoReverse: Boolean): EntityAnimationBuilder {
-        this.isAutoReverse = autoReverse
+        animationBuilder.autoReverse(autoReverse)
         return this
     }
 

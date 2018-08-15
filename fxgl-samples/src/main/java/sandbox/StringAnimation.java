@@ -8,6 +8,7 @@ package sandbox;
 
 import com.almasb.fxgl.animation.AnimatedValue;
 import com.almasb.fxgl.animation.Animation;
+import com.almasb.fxgl.animation.AnimationBuilder;
 import javafx.animation.Interpolator;
 import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
@@ -18,15 +19,18 @@ import org.jetbrains.annotations.NotNull;
 public class StringAnimation extends Animation<String> {
 
     public StringAnimation(String s) {
-        super(Duration.seconds(1), new AnimatedValue<String>("", s) {
-            @Override
-            public String animate(String val1, String val2, double progress, @NotNull Interpolator interpolator) {
-                if (progress < 0.5)
-                    return val1;
-                else
-                    return val2;
-            }
-        });
+
+//        new AnimatedValue<String>("", s) {
+//            @Override
+//            public String animate(String val1, String val2, double progress, @NotNull Interpolator interpolator) {
+//                if (progress < 0.5)
+//                    return val1;
+//                else
+//                    return val2;
+//            }
+//        }
+
+        super(new AnimationBuilder().duration(Duration.seconds(4)), new AnimatedString("", s, Interpolator.EASE_IN));
     }
 
     @Override
@@ -44,9 +48,9 @@ public class StringAnimation extends Animation<String> {
         public String animate(String val1, String val2, double progress, @NotNull Interpolator interpolator) {
             double t = interpolator.interpolate(0.0, 1.0, progress);
 
-            int endIndex = 0;
+            int endIndex = (int) (t * val2.length());
 
-            return
+            return val2.substring(0, endIndex);
         }
     }
 

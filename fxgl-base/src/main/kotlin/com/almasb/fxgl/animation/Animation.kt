@@ -59,6 +59,8 @@ open class AnimationBuilder
     }
 
     open fun <T> build(animatedValue: AnimatedValue<T>, onProgress: Consumer<T>): Animation<T> {
+        animatedValue.interpolator = this.interpolator
+
         return object : Animation<T>(this, animatedValue) {
             override fun onProgress(value: T) {
                 onProgress.accept(value)
@@ -102,7 +104,7 @@ abstract class Animation<T>(
 
     private val delay = builder.delay
 
-    private val cycleCount = builder.times
+    var cycleCount = builder.times
 
     /**
      * State in which we are animating.

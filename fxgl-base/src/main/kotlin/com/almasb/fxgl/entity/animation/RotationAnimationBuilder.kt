@@ -8,6 +8,7 @@ package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.animation.AnimatedValue
 import com.almasb.fxgl.animation.Animation
+import com.almasb.fxgl.util.Consumer
 
 /**
  *
@@ -30,12 +31,10 @@ class RotationAnimationBuilder(private val animationBuilder: EntityAnimationBuil
     }
 
     fun build(): Animation<*> {
-        return object : Animation<Double>(animationBuilder, AnimatedValue<Double>(startAngle, endAngle, animationBuilder.interpolator)) {
-
-            override fun onProgress(value: Double) {
-                animationBuilder.entities.forEach { it.rotation = value }
-            }
-        }
+        return animationBuilder.animationBuilder.build(
+                AnimatedValue<Double>(startAngle, endAngle),
+                Consumer { value -> animationBuilder.entities.forEach { it.rotation = value } }
+                )
     }
 
     fun buildAndPlay(): Animation<*> {
