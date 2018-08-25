@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.animation.*
+import com.almasb.fxgl.util.Consumer
 import javafx.geometry.Point2D
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
@@ -17,7 +18,7 @@ import javafx.scene.shape.Shape
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class TranslationAnimationBuilder(private val animationBuilder: AnimationBuilder) {
+class TranslationAnimationBuilder(private val animationBuilder: EntityAnimationBuilder) {
 
     private var path: Shape? = null
     private var fromPoint = Point2D.ZERO
@@ -48,16 +49,14 @@ class TranslationAnimationBuilder(private val animationBuilder: AnimationBuilder
             }
         }
 
-        return makeAnim(AnimatedPoint2D(fromPoint, toPoint, animationBuilder.interpolator))
+        return makeAnim(AnimatedPoint2D(fromPoint, toPoint))
     }
 
     private fun makeAnim(animValue: AnimatedValue<Point2D>): Animation<Point2D> {
-        return object : Animation<Point2D>(animationBuilder, animValue) {
-
-            override fun onProgress(value: Point2D) {
-                animationBuilder.entities.forEach { it.position = value }
-            }
-        }
+        return animationBuilder.animationBuilder.build(
+                animValue,
+                Consumer { value -> animationBuilder.entities.forEach { it.position = value } }
+        )
     }
 
     fun buildAndPlay(): Animation<*> {

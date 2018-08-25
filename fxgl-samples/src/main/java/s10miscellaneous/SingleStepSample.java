@@ -34,7 +34,7 @@ public class SingleStepSample extends GameApplication {
     @Override
     protected void initInput() {
         DSLKt.onKeyDown(KeyCode.ENTER, "update", () -> {
-            stepLoop();
+            //stepLoop();
         });
     }
 

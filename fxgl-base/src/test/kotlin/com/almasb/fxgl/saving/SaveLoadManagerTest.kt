@@ -6,9 +6,7 @@
 
 package com.almasb.fxgl.saving
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.io.FS
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -40,8 +38,9 @@ class SaveLoadManagerTest {
 
         @AfterAll
         @JvmStatic fun cleanUp() {
+
             // ensure previous tests have been cleared
-            FS.deleteDirectoryTask("profiles/").run()
+            Paths.get("profiles/").toFile().deleteRecursively()
 
             assertTrue(!Files.exists(Paths.get("profiles/")), "Profiles dir is present before")
         }

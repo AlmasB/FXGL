@@ -7,7 +7,6 @@
 package com.almasb.fxgl.audio
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.gameplay.notification.NotificationEvent
@@ -57,7 +56,7 @@ class AudioPlayer {
     }
 
     fun onNotificationEvent(event: NotificationEvent) {
-        playSound(FXGLAssets.SOUND_NOTIFICATION)
+        playSound(FXGL.getSettings().soundNotification)
     }
 
     fun getGlobalMusicVolume(): Double {

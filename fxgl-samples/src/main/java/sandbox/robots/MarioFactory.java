@@ -15,7 +15,6 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyDef;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.geometry.Point2D;
-import javafx.scene.shape.Rectangle;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

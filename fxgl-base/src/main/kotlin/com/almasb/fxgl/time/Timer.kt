@@ -18,54 +18,49 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 class Timer {
 
-    /**
-     * List for all timer based actions.
-     */
     private val timerActions = CopyOnWriteArrayList<TimerAction>()
 
     /**
-     * @return time in seconds accumulated in this state
+     * @return time in seconds accumulated by this timer
      */
     var now = 0.0
         private set
 
+    /**
+     * Call this to drive (advance) the timer.
+     *
+     * @param tpf time per frame by which to advance this timer
+     */
     fun update(tpf: Double) {
         now += tpf
 
-        val iter = timerActions.iterator()
-        while (iter.hasNext()) {
-            val action = iter.next()
+        timerActions.forEach {
+            it.update(tpf)
 
-            action.update(tpf)
-
-            if (action.isExpired) {
-                timerActions.remove(action)
-            }
+            if (it.isExpired)
+                timerActions.remove(it)
         }
     }
 
     /**
-     * The Runnable action will be scheduled to start at given interval.
+     * The Runnable [action] will be scheduled to start at given [interval].
      * The action will start for the first time after given interval.
+     * The action will be scheduled unlimited number of times unless user cancels it
+     * via the returned action object.
      *
-     * Note: the scheduled action will not start while the game is paused.
-     *
-     * @param action   the action
-     * @param interval time
+     * @return timer action
      */
     fun runAtInterval(action: Runnable, interval: Duration): TimerAction {
         return runAtInterval(action, interval, Int.MAX_VALUE)
     }
 
     /**
-     * The Runnable action will be scheduled to start at given interval.
+     * The Runnable [action] will be scheduled to start at given [interval].
      * The action will start for the first time after given interval.
+     * The action will be scheduled [limit] number of times unless user cancels it
+     * via the returned action object.
      *
-     * Note: the scheduled action will not start while the game is paused.
-     *
-     * @param action   the action
-     * @param interval time
-     * @param limit number of times to run
+     * @return timer action
      */
     fun runAtInterval(action: Runnable, interval: Duration, limit: Int): TimerAction {
         val act = TimerAction(interval, action, limit)
@@ -74,18 +69,13 @@ class Timer {
     }
 
     /**
-     * The Runnable action will be scheduled for execution iff
-     * whileCondition is initially true. If that's the case
-     * then the Runnable action will be scheduled to start at given interval.
-     * The action will start for the first time after given interval
+     * The Runnable [action] will be scheduled to start at given [interval].
+     * The Runnable action will be scheduled IFF
+     * [whileCondition] is initially true.
+     * The action will start for the first time after given interval.
+     * The action will be removed from schedule when [whileCondition] becomes "false".
      *
-     * The action will be removed from schedule when whileCondition becomes `false`.
-     *
-     * Note: the scheduled action will not start while the game is paused
-     *
-     * @param action         action to execute
-     * @param interval       interval between executions
-     * @param whileCondition condition
+     * @return timer action
      */
     fun runAtIntervalWhile(action: Runnable, interval: Duration, whileCondition: ReadOnlyBooleanProperty): TimerAction {
         if (!whileCondition.get()) {
@@ -104,31 +94,34 @@ class Timer {
     }
 
     /**
-     * The Runnable action will be executed once after given delay
+     * The Runnable [action] will be scheduled to run once after given [delay].
+     * The action can be cancelled before it starts via the returned action object.
      *
-     *
-     * Note: the scheduled action will not start while the game is paused
-     *
-     * @param action action to execute
-     * @param delay  delay after which to execute
+     * @return timer action
      */
     fun runOnceAfter(action: Runnable, delay: Duration): TimerAction {
         return runAtInterval(action, delay, 1)
     }
 
+    /**
+     * The Runnable [action] will be scheduled to run once after given [delay].
+     * The action can be cancelled before it starts via the returned action object.
+     *
+     * @return timer action
+     */
     fun runOnceAfter(action: () -> Unit, delay: Duration): TimerAction {
         return runOnceAfter(Runnable(action), delay)
     }
 
     /**
-     * Remove all actions.
+     * Remove all scheduled actions.
      */
     fun clear() {
         timerActions.clear()
     }
 
     /**
-     * Simple timer to capture current time and check if certain time has passed.
+     * Constructs a local timer is driven by this timer.
      */
     fun newLocalTimer(): LocalTimer = object : LocalTimer {
         private var time = 0.0

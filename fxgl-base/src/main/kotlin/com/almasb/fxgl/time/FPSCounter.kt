@@ -18,7 +18,7 @@ package com.almasb.fxgl.time
 internal class FPSCounter {
 
     companion object {
-        private val MAX_SAMPLES = 100
+        private const val MAX_SAMPLES = 100
     }
 
     private val frameTimes = LongArray(MAX_SAMPLES)

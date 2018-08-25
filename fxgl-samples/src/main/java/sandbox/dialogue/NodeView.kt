@@ -7,15 +7,13 @@
 package sandbox.dialogue
 
 import com.almasb.fxgl.app.FXGL
-import javafx.geometry.Insets
-import javafx.geometry.Point2D
-import javafx.geometry.Pos
 import javafx.scene.Node
-import javafx.scene.layout.*
+import javafx.scene.layout.Background
+import javafx.scene.layout.BackgroundFill
+import javafx.scene.layout.Pane
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.CubicCurve
-import javafx.scene.shape.Line
-import javafx.scene.shape.QuadCurve
 
 /**
  *

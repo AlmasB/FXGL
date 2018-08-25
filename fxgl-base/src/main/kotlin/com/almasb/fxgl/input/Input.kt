@@ -27,9 +27,13 @@ import java.lang.reflect.Method
 
 class Input : UserProfileSavable {
 
-    private val ILLEGAL_KEYS = arrayOf(KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.ALT)
+    companion object {
+        private val ILLEGAL_KEYS = arrayOf(KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.ALT)
 
-    private val log = Logger.get(javaClass)
+        private val log = Logger.get<Input>()
+
+        @JvmStatic fun isIllegal(key: KeyCode) = key in ILLEGAL_KEYS
+    }
 
     /**
      * Cursor point in game coordinate space.
@@ -162,6 +166,10 @@ class Input : UserProfileSavable {
         }
     }
 
+    fun onMouseEvent(eventData: MouseEventData) {
+        onMouseEvent(eventData.event, eventData.viewport, eventData.scaleRatioX, eventData.scaleRatioY)
+    }
+
     /**
      * Called on mouse event.
      *
@@ -282,13 +290,13 @@ class Input : UserProfileSavable {
      * @throws IllegalArgumentException if action with same name exists or key is in use
      */
     @JvmOverloads fun addAction(action: UserAction, key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
-        require(key !in ILLEGAL_KEYS) { "Cannot bind to illegal key: $key" }
+        require(!isIllegal(key)) { "Cannot bind to illegal key: $key" }
 
         addBinding(action, KeyTrigger(key, modifier))
     }
 
     @JvmOverloads fun addAction(action: UserAction, key: KeyCode, virtualButton: VirtualButton) {
-        require(key !in ILLEGAL_KEYS) { "Cannot bind to illegal key: $key" }
+        require(!isIllegal(key)) { "Cannot bind to illegal key: $key" }
 
         addBinding(action, KeyTrigger(key, InputModifier.NONE))
         addVirtualButton(virtualButton, key)

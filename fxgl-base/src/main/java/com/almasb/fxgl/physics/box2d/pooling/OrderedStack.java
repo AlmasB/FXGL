@@ -6,7 +6,7 @@
 /**
  * Created at 12:52:04 AM Jan 20, 2011
  */
-package com.almasb.fxgl.physics.box2d.pooling.normal;
+package com.almasb.fxgl.physics.box2d.pooling;
 
 /**
  * @author Daniel Murphy

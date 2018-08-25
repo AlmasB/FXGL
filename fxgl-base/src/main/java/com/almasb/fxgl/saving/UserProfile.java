@@ -53,7 +53,7 @@ public class UserProfile implements Serializable {
     }
 
     /**
-     * TODO: log here
+     * https://github.com/AlmasB/FXGL/issues/576
      * Stores a bundle in the user profile. Bundles with same
      * name are not allowed.
      *
@@ -68,7 +68,7 @@ public class UserProfile implements Serializable {
     }
 
     /**
-     * TODO: log here
+     * https://github.com/AlmasB/FXGL/issues/576
      * @param name bundle name
      * @return bundle with given name
      */

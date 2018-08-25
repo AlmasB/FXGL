@@ -59,7 +59,7 @@ public class CollisionFilterSample extends GameApplication {
 
             System.out.println(i);
 
-            // TODO: integrate with box2d world
+            // TODO: integrate with box2d world, b2CollisionFlags ?
             if (i == 0) {
                 collidable.addIgnoredType(EType.PLAYER);
                 collidable2.addIgnoredType(EType.PLAYER);

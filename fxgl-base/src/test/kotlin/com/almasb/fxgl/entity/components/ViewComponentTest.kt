@@ -6,11 +6,9 @@
 
 package com.almasb.fxgl.entity.components
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.entity.RenderLayer
 import javafx.scene.Node
-import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -50,13 +48,6 @@ class ViewComponentTest {
 
         assertThat(v2.view.nodes, contains<Node>(rect))
         assertThat(v2.renderLayer, `is`(RenderLayer.BACKGROUND))
-    }
-
-    // TODO: complete
-    @Test
-    fun `Debug view`() {
-        //FXGL.getProperties().setValue(SystemPropertyKey.DEV_SHOWBBOX, true)
-        //FXGL.getProperties().setValue(SystemPropertyKey.DEV_BBOXCOLOR, Color.BLUE)
     }
 
     @Test

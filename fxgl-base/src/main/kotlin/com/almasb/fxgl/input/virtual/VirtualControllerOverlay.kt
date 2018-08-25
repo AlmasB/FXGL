@@ -21,12 +21,7 @@ import javafx.scene.shape.Circle
 import javafx.scene.shape.Polygon
 
 /**
- * TODO:
- * 1. QTE events can't use virtual controller
- * 2. Trigger Views should have common base code
- * 3. Virtual controller buttons can't be rebound in menu
- * 5. implement remaining controller styles
- * 6. PS and other styles have different layout and buttons, e.g. Square Triangle ...
+ *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

@@ -8,10 +8,10 @@ package s07particles;
 
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
-import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.paint.Color;
 

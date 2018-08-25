@@ -15,7 +15,9 @@ class FXGLMock {
 
     companion object {
         @JvmStatic fun mock() {
-            FXGL.configure(MockGameApplication.get())
+            val app = MockGameApplication.get()
+
+            FXGL.configure(app, app.settings, app.stage)
         }
     }
 }

@@ -6,14 +6,14 @@
 
 package s08ai;
 
-import com.almasb.fxgl.extra.ai.goap.GoapAction;
-import com.almasb.fxgl.extra.ai.goap.GoapAgent;
-import com.almasb.fxgl.extra.ai.goap.GoapControl;
-import com.almasb.fxgl.extra.ai.goap.State;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.extra.ai.goap.GoapAction;
+import com.almasb.fxgl.extra.ai.goap.GoapAgent;
+import com.almasb.fxgl.extra.ai.goap.GoapControl;
+import com.almasb.fxgl.extra.ai.goap.State;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.text.Text;
 

@@ -9,12 +9,13 @@ package com.almasb.fxgl.entity.animation
 import com.almasb.fxgl.animation.AnimatedColor
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.entity.components.ColorComponent
+import com.almasb.fxgl.util.Consumer
 import javafx.scene.paint.Color
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ColorAnimationBuilder(private val animationBuilder: AnimationBuilder) {
+class ColorAnimationBuilder(private val animationBuilder: EntityAnimationBuilder) {
 
     private var startColor = Color.TRANSPARENT
     private var endColor = Color.TRANSPARENT
@@ -30,14 +31,12 @@ class ColorAnimationBuilder(private val animationBuilder: AnimationBuilder) {
     }
 
     fun build(): Animation<*> {
-        return object : Animation<Color>(animationBuilder, AnimatedColor(startColor, endColor, animationBuilder.interpolator)) {
-
-            override fun onProgress(value: Color) {
-                animationBuilder.entities
+        return animationBuilder.animationBuilder.build(
+                AnimatedColor(startColor, endColor),
+                Consumer { value -> animationBuilder.entities
                         .map { it.getComponent(ColorComponent::class.java) }
-                        .forEach { it.value = value }
-            }
-        }
+                        .forEach { it.value = value } }
+        )
     }
 
     fun buildAndPlay(): Animation<*> {

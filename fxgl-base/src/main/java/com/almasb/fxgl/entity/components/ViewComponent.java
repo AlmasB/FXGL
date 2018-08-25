@@ -21,7 +21,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -209,12 +208,12 @@ public class ViewComponent extends Component {
             turnOnDebugBBox(true);
         }
 
-        FXGL.getSystemConfig().getDevShowBBox().addListener(debugBBoxOn);
+        FXGL.getSettings().getDevShowBBox().addListener(debugBBoxOn);
     }
 
     @Override
     public void onRemoved() {
-        FXGL.getSystemConfig().getDevShowBBox().removeListener(debugBBoxOn);
+        FXGL.getSettings().getDevShowBBox().removeListener(debugBBoxOn);
 
         view.dispose();
     }
@@ -240,11 +239,11 @@ public class ViewComponent extends Component {
 
         forEach(c.getList(), this::addDebugView);
 
-        // TODO: listen for sensors
+        // https://github.com/AlmasB/FXGL/issues/573
     };
 
     private boolean showBBox() {
-        return FXGL.getSystemConfig().getDevShowBBox().getValue();
+        return FXGL.getSettings().getDevShowBBox().getValue();
     }
 
     /**
@@ -290,7 +289,7 @@ public class ViewComponent extends Component {
         }
 
         if (view != null) {
-            view.strokeProperty().bind(FXGL.getSystemConfig().getDevBBoxColor());
+            view.strokeProperty().bind(FXGL.getSettings().getDevBBoxColor());
 
             view.setTranslateX(hitBox.getMinX());
             view.setTranslateY(hitBox.getMinY());
@@ -311,9 +310,7 @@ public class ViewComponent extends Component {
         }
 
         if (view != null) {
-            view.strokeProperty().setValue(Color.YELLOW);
-            // TODO: refactor to use an assignable color
-            //view.strokeProperty().bind(FXGL.getProperties().objectProperty("dev.bboxcolor"));
+            view.strokeProperty().bind(FXGL.getSettings().getDevSensorColor());
 
             view.setTranslateX(hitBox.getMinX());
             view.setTranslateY(hitBox.getMinY());

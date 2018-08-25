@@ -7,7 +7,6 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.entity.Entity;
@@ -15,6 +14,7 @@ import com.almasb.fxgl.entity.EntityWorldListener;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.almasb.fxgl.entity.view.EntityView;
+import com.almasb.fxgl.ui.FontType;
 import com.almasb.fxgl.ui.UI;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
@@ -65,6 +65,8 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     private ObjectMap<Entity, EntityView> debugPositions = new ObjectMap<>();
 
     protected GameScene(int width, int height) {
+        super(width, height);
+
         getContentRoot().getChildren().addAll(gameRoot, uiRoot);
 
         if (FXGL.getSettings().isProfilingEnabled()) {
@@ -79,7 +81,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     }
 
     private void initProfilerText(double x, double y) {
-        profilerText.setFont(FXGLAssets.UI_MONO_FONT.newFont(20));
+        profilerText.setFont(FXGL.getUIFactory().newFont(FontType.MONO, 20.0));
         profilerText.setFill(Color.RED);
         profilerText.setTranslateX(x);
         profilerText.setTranslateY(y);
@@ -107,7 +109,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     }
 
     private void addDebugListener() {
-        FXGL.getSystemConfig().getDevShowPosition().addListener((o, prev, show) -> {
+        FXGL.getSettings().getDevShowPosition().addListener((o, prev, show) -> {
             if (show) {
                 forEach(FXGL.getApp().getGameWorld().getEntities(), e -> {
 
@@ -307,6 +309,9 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
         getViewport().onUpdate(tpf);
     }
 
+    /**
+     * Unbinds viewport, clears game views and UI nodes.
+     */
     public void clear() {
         log.debug("Clearing game scene");
 
@@ -319,7 +324,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     public void onEntityAdded(Entity entity) {
         initView(entity.getViewComponent());
 
-        if (FXGL.getSystemConfig().getDevShowPosition().getValue()) {
+        if (FXGL.getSettings().getDevShowPosition().getValue()) {
             addDebugView(entity);
         }
     }

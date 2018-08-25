@@ -7,9 +7,9 @@
 package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 

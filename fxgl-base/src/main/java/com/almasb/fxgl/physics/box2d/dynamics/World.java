@@ -29,8 +29,8 @@ import com.almasb.fxgl.physics.box2d.dynamics.joints.Joint;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.JointDef;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.JointEdge;
 import com.almasb.fxgl.physics.box2d.particle.*;
+import com.almasb.fxgl.physics.box2d.pooling.DefaultWorldPool;
 import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
-import com.almasb.fxgl.physics.box2d.pooling.normal.DefaultWorldPool;
 
 /**
  * The world class manages all physics entities, dynamic simulation, and asynchronous queries.

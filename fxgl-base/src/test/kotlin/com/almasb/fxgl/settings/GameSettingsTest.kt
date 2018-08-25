@@ -13,7 +13,6 @@ import javafx.scene.input.KeyCode
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
@@ -29,12 +28,6 @@ class GameSettingsTest {
         @JvmStatic fun before() {
             FXGLMock.mock()
         }
-    }
-
-    @Test
-    fun `Settings are unmodifiable`() {
-        val settings = FXGL.getSettings()
-        assertFalse(settings is GameSettings)
     }
 
     /**
@@ -63,13 +56,13 @@ class GameSettingsTest {
         assertThat(settings.height, `is`(500))
         assertThat(settings.title, `is`("Test"))
         assertThat(settings.version, `is`("0.99"))
-        assertThat(settings.introEnabled, `is`(false))
-        assertThat(settings.menuEnabled, `is`(false))
-        assertThat(settings.fullScreenAllowed, `is`(false))
-        assertThat(settings.profilingEnabled, `is`(false))
-        assertThat(settings.closeConfirmation, `is`(false))
+        assertThat(settings.isIntroEnabled, `is`(false))
+        assertThat(settings.isMenuEnabled, `is`(false))
+        assertThat(settings.isFullScreenAllowed, `is`(false))
+        assertThat(settings.isProfilingEnabled, `is`(false))
+        assertThat(settings.isCloseConfirmation, `is`(false))
         assertThat(settings.menuKey, `is`(KeyCode.ENTER))
         assertThat(settings.credits.list, hasItems("TestCredit1", "TestCredit2"))
-        assertThat(settings.appMode, `is`(ApplicationMode.RELEASE))
+        assertThat(settings.applicationMode, `is`(ApplicationMode.RELEASE))
     }
 }

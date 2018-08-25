@@ -6,9 +6,7 @@
 
 package com.almasb.fxgl.net
 
-import com.almasb.fxgl.app.FXGL
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable

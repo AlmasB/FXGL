@@ -7,6 +7,7 @@
 package com.almasb.fxgl.time
 
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -34,8 +35,17 @@ class FPSCounterTest {
             counter.update(count)
         }
 
-        val fps = counter.update(count + 16_666_666)
+        count += 16_666_666
+
+        var fps = counter.update(count)
 
         assertThat(fps, `is`(60))
+
+        counter.reset()
+
+        count += 16_666_666
+        fps = counter.update(count)
+
+        assertThat(fps, `is`(not(60)))
     }
 }

@@ -7,16 +7,13 @@
 package sandbox.tiledtest;
 
 import com.almasb.fxgl.animation.Interpolators;
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.CollidableComponent;
-import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.app.DSLKt.spawn;
 import static com.almasb.fxgl.app.DSLKt.spawnFadeIn;
 
 /**
@@ -38,7 +35,6 @@ public class CrateComponent extends Component {
                 .to(new Point2D(0, 0))
                 .buildAndPlay();
 
-        // TODO: spawnFadeIn
         spawnFadeIn("coin", new SpawnData(entity.getX(), entity.getY()), Duration.seconds(1));
     }
 }

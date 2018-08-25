@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity.animation
 
 
+import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.components.ColorComponent
 import com.almasb.fxgl.util.EmptyRunnable
@@ -18,62 +19,48 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AnimationBuilder {
+class EntityAnimationBuilder {
 
-    var duration = Duration.seconds(1.0)
-        private set
+    val animationBuilder = AnimationBuilder()
 
-    var delay = Duration.ZERO
-        private set
-
-    var interpolator = Interpolator.LINEAR
-        private set
-
-    var times = 1
-        private set
-
-    var onFinished: Runnable = EmptyRunnable
-        private set
-
-    var isAutoReverse = false
-        private set
+    // TODO: provide these directly to sub animation builders
 
     // guaranteed to be initialized before access by specific animation builder
     // see rotate(), scale(), translate(), etc. below
     internal lateinit var entities: List<Entity>
         private set
 
-    fun duration(duration: Duration): AnimationBuilder {
-        this.duration = duration
+    fun duration(duration: Duration): EntityAnimationBuilder {
+        animationBuilder.duration(duration)
         return this
     }
 
-    fun delay(delay: Duration): AnimationBuilder {
-        this.delay = delay
+    fun delay(delay: Duration): EntityAnimationBuilder {
+        animationBuilder.delay(delay)
         return this
     }
 
-    fun repeat(times: Int): AnimationBuilder {
-        this.times = times
+    fun interpolator(interpolator: Interpolator): EntityAnimationBuilder {
+        animationBuilder.interpolator(interpolator)
         return this
     }
 
-    fun repeatInfinitely(): AnimationBuilder {
+    fun repeat(times: Int): EntityAnimationBuilder {
+        animationBuilder.repeat(times)
+        return this
+    }
+
+    fun repeatInfinitely(): EntityAnimationBuilder {
         return repeat(Integer.MAX_VALUE)
     }
 
-    fun onFinished(onFinished: Runnable): AnimationBuilder {
-        this.onFinished = onFinished
+    fun onFinished(onFinished: Runnable): EntityAnimationBuilder {
+        animationBuilder.onFinished(onFinished)
         return this
     }
 
-    fun interpolator(interpolator: Interpolator): AnimationBuilder {
-        this.interpolator = interpolator
-        return this
-    }
-
-    fun autoReverse(autoReverse: Boolean): AnimationBuilder {
-        this.isAutoReverse = autoReverse
+    fun autoReverse(autoReverse: Boolean): EntityAnimationBuilder {
+        animationBuilder.autoReverse(autoReverse)
         return this
     }
 

@@ -3,9 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-package com.almasb.fxgl.physics.box2d.pooling.normal;
-
-import com.almasb.fxgl.physics.box2d.pooling.IDynamicStack;
+package com.almasb.fxgl.physics.box2d.pooling;
 
 public abstract class MutableStack<E> implements IDynamicStack<E> {
 

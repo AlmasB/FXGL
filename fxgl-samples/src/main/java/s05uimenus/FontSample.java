@@ -7,10 +7,10 @@
 package s05uimenus;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.ui.FontType;
 import com.almasb.fxgl.ui.InGameWindow;
 import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;
@@ -40,7 +40,7 @@ public class FontSample extends GameApplication {
     }
 
     private void addExampleFontUI(int x, int y) {
-        Font fontUI = FXGLAssets.UI_FONT.newFont(20);
+        Font fontUI = getUIFactory().newFont(FontType.UI, 14.0);
 
         Text text = new Text("This is UI_FONT: Lives: 3, Ammo: 99");
         text.setFont(fontUI);
@@ -49,7 +49,7 @@ public class FontSample extends GameApplication {
     }
 
     private void addExampleFontGame(int x, int y) {
-        Font fontGame = FXGLAssets.UI_GAME_FONT.newFont(20);
+        Font fontGame = getUIFactory().newFont(FontType.GAME, 20.0);
 
         Text text = new Text("This is GAME_FONT: Blue Rectangle");
         text.setFont(fontGame);
@@ -66,7 +66,7 @@ public class FontSample extends GameApplication {
     }
 
     private void addExampleFontText(int x, int y) {
-        Font fontText = FXGLAssets.UI_TEXT_FONT.newFont(16);
+        Font fontText = getUIFactory().newFont(FontType.TEXT, 16.0);
 
         Text text = new Text("This is TEXT_FONT: The MIT License (MIT)\n" +
                 "\n" +
@@ -95,19 +95,21 @@ public class FontSample extends GameApplication {
         VBox box = new VBox(text);
         box.setPadding(new Insets(10));
 
-        InGameWindow window = new InGameWindow("", InGameWindow.WindowDecor.NONE);
+        InGameWindow window = new InGameWindow("", InGameWindow.WindowDecor.MINIMIZE);
+        window.setPrefSize(770, 400);
         window.setContentPane(box);
         window.setCanResize(false);
         window.setBackgroundColor(Color.color(0.95, 0.95, 0.95));
 
         // TODO: why do we have setPosition() and also can set via add ui node?
+        // we use setLayout() internally, any difference to translate()?
         window.setPosition(x, y);
 
         addUINode(window, 0, 0);
     }
 
     private void addExampleFontMono(int x, int y) {
-        Font fontMono = FXGLAssets.UI_MONO_FONT.newFont(18);
+        Font fontMono = getUIFactory().newFont(FontType.MONO, 18);
 
         Text text = new Text("This is MONO_FONT: var e = new Entity();");
         text.setFont(fontMono);

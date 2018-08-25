@@ -1,7 +1,7 @@
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.core.logging.Logger
+import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import javafx.beans.binding.Bindings
@@ -10,13 +10,13 @@ import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.Event
-import javafx.event.EventHandler
 import javafx.event.EventType
+import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.scene.image.Image
 import javafx.scene.input.KeyCombination
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.Pane
 import javafx.stage.Screen
 import javafx.stage.Stage
 import java.nio.file.Files
@@ -29,49 +29,45 @@ import javax.imageio.ImageIO
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSettings) {
+internal class MainWindow(
+
+        /**
+         * Primary stage.
+         */
+        val stage: Stage,
+
+        /**
+         * The starting scene which is used when the window is created.
+         */
+        scene: FXGLScene,
+
+        private val settings: ReadOnlyGameSettings) {
 
     private val log = Logger.get(javaClass)
 
     private val fxScene: Scene
 
-    private val currentScene = ReadOnlyObjectWrapper<FXGLScene>()
+    private val currentScene = ReadOnlyObjectWrapper<FXGLScene>(scene)
+
+    private val scenes = arrayListOf<FXGLScene>()
 
     private val scaledWidth: DoubleProperty = SimpleDoubleProperty()
     private val scaledHeight: DoubleProperty = SimpleDoubleProperty()
     private val scaleRatioX: DoubleProperty = SimpleDoubleProperty()
     private val scaleRatioY: DoubleProperty = SimpleDoubleProperty()
 
-    private val keyHandler = EventHandler<KeyEvent> {
-        FXGL.getApp().stateMachine.currentState.input.onKeyEvent(it)
-    }
-
-    private val mouseHandler = EventHandler<MouseEvent> { e ->
-        currentScene.value?.let {
-            FXGL.getApp().stateMachine.currentState.input.onMouseEvent(e, it.viewport, scaleRatioX.value, scaleRatioY.value)
-        }
-    }
-
-    private val genericHandler = EventHandler<Event> {
-        FXGL.getApp().stateMachine.currentState.input.fireEvent(it.copyFor(null, null))
-    }
-
-    var onShown: Runnable? = null
-
     init {
-        fxScene = createScene()
+        fxScene = createScene(scene.root)
 
-        // main key event handler
-        fxScene.addEventHandler(KeyEvent.ANY, keyHandler)
+        setScene(scene)
 
-        // main mouse event handler
-        fxScene.addEventHandler(MouseEvent.ANY, mouseHandler)
-
-        // reroute any events to current state input
-        fxScene.addEventHandler(EventType.ROOT, genericHandler)
+        initStage()
     }
 
-    private fun createScene(): Scene {
+    /**
+     * Construct the only JavaFX scene with computed size based on user settings.
+     */
+    private fun createScene(root: Parent): Scene {
         log.debug("Creating a JavaFX scene")
 
         var newW = settings.width.toDouble()
@@ -100,7 +96,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
         newW = newW.toInt().toDouble()
         newH = newH.toInt().toDouble()
 
-        val scene = Scene(Pane(), newW, newH)
+        val scene = Scene(root, newW, newH)
 
         scaledWidth.set(newW)
         scaledHeight.set(newH)
@@ -112,17 +108,6 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
         log.debug("Scaled ratio: (${scaleRatioX.value}, ${scaleRatioY.value})")
 
         return scene
-    }
-
-    /**
-     * Must be called on FX thread.
-     */
-    fun initAndShow() {
-        // we call this late so that all scenes have been initialized
-        // and computed their width / height
-        initStage()
-
-        show()
     }
 
     /**
@@ -155,10 +140,6 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
                 }
             }
 
-            setOnShown {
-                this@MainWindow.onShown?.run()
-            }
-
             icons.add(image(settings.appIcon))
 
             if (settings.isFullScreenAllowed) {
@@ -167,7 +148,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
                 fullScreenExitKeyCombination = KeyCombination.NO_MATCH
             }
 
-            FXGL.getMenuSettings().fullScreenProperty().addListener { _, _, fullscreenNow ->
+            FXGL.getSettings().fullScreen.addListener { _, _, fullscreenNow ->
                 isFullScreen = fullscreenNow
             }
 
@@ -194,7 +175,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
     private var windowBorderWidth = 0.0
     private var windowBorderHeight = 0.0
 
-    private fun show() {
+    fun show() {
         log.debug("Opening main window")
 
         stage.show()
@@ -202,6 +183,12 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
         // platform offsets
         windowBorderWidth = stage.width - scaledWidth.value
         windowBorderHeight = stage.height - scaledHeight.value
+
+        // this is a hack to estimate platform offsets on ubuntu and potentially other Linux os
+        // because for some reason javafx does not create a stage to contain scene of given size
+        if (windowBorderHeight < 0.5 && System.getProperty("os.name").contains("nux")) {
+            windowBorderHeight = 35.0
+        }
 
         scaledWidth.bind(stage.widthProperty().subtract(
                 Bindings.`when`(stage.fullScreenProperty()).then(0).otherwise(windowBorderWidth)
@@ -232,8 +219,6 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
         log.debug("Stage size: ${stage.width} x ${stage.height}")
     }
 
-    private val scenes = arrayListOf<FXGLScene>()
-
     /**
      * Set current FXGL scene.
      * The scene will be immediately displayed.
@@ -245,7 +230,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
             registerScene(scene)
         }
 
-        currentScene.value?.activeProperty()?.set(false)
+        currentScene.value.activeProperty().set(false)
 
         currentScene.set(scene)
         scene.activeProperty().set(true)
@@ -260,7 +245,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
      */
     private fun registerScene(scene: FXGLScene) {
         scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
-        scene.appendCSS(FXGLAssets.UI_CSS)
+        scene.appendCSS(FXGL.getAssetLoader().loadCSS(settings.css))
         scenes.add(scene)
     }
 
@@ -268,25 +253,55 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
         return currentScene.value
     }
 
+    fun addKeyHandler(handler: (KeyEvent) -> Unit) {
+        fxScene.addEventHandler(KeyEvent.ANY, handler)
+    }
+
+    fun addMouseHandler(handler: (MouseEventData) -> Unit) {
+        fxScene.addEventHandler(MouseEvent.ANY, {
+            handler(MouseEventData(it, getCurrentScene().viewport, scaleRatioX.value, scaleRatioY.value))
+        })
+    }
+
+    fun addGlobalHandler(handler: (Event) -> Unit) {
+        fxScene.addEventHandler(EventType.ROOT, {
+            handler(it.copyFor(null, null))
+        })
+    }
+
+    fun takeScreenshot(): Image = fxScene.snapshot(null)
+
     /**
-     * Saves a screenshot of the current scene into a ".png" file.
+     * Saves a screenshot of the current scene into a ".png" file,
+     * named by title + version + time.
      *
      * @return true if the screenshot was saved successfully, false otherwise
      */
     fun saveScreenshot(): Boolean {
-        val fxImage = fxScene.snapshot(null)
-
         var fileName = "./" + settings.title + settings.version + LocalDateTime.now()
         fileName = fileName.replace(":", "_")
+
+        return saveScreenshot(fileName)
+    }
+
+    /**
+     * Saves a screenshot of the current scene into a ".png" [fileName].
+     *
+     * @return true if the screenshot was saved successfully, false otherwise
+     */
+    fun saveScreenshot(fileName: String): Boolean {
+        val fxImage = takeScreenshot()
 
         val img = SwingFXUtils.fromFXImage(fxImage, null)
 
         try {
-            Files.newOutputStream(Paths.get(fileName + ".png")).use {
+            val name = if (fileName.endsWith(".png")) fileName else "$fileName.png"
+
+            Files.newOutputStream(Paths.get(name)).use {
                 return ImageIO.write(img, "png", it)
             }
         } catch (e: Exception) {
-            log.warning("saveScreenshot() failed: $e")
+            log.warning("saveScreenshot($fileName.png) failed: $e")
             return false
         }
     }

@@ -8,6 +8,7 @@ package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.animation.AnimatedPoint2D
 import com.almasb.fxgl.animation.Animation
+import com.almasb.fxgl.util.Consumer
 import javafx.geometry.Point2D
 
 /**
@@ -15,7 +16,7 @@ import javafx.geometry.Point2D
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ScaleAnimationBuilder(private val animationBuilder: AnimationBuilder) {
+class ScaleAnimationBuilder(private val animationBuilder: EntityAnimationBuilder) {
 
     private var startScale = Point2D(1.0, 1.0)
     private var endScale = Point2D(1.0, 1.0)
@@ -31,15 +32,13 @@ class ScaleAnimationBuilder(private val animationBuilder: AnimationBuilder) {
     }
 
     fun build(): Animation<*> {
-        return object : Animation<Point2D>(animationBuilder, AnimatedPoint2D(startScale, endScale, animationBuilder.interpolator)) {
-
-            override fun onProgress(value: Point2D) {
-                animationBuilder.entities.forEach {
+        return animationBuilder.animationBuilder.build(
+                AnimatedPoint2D(startScale, endScale),
+                Consumer { value -> animationBuilder.entities.forEach {
                     it.setScaleX(value.x)
                     it.setScaleY(value.y)
-                }
-            }
-        }
+                } }
+        )
     }
 
     fun buildAndPlay(): Animation<*> {

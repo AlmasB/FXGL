@@ -118,8 +118,7 @@ class NineSliceTextureBuilder(val texture: Texture) {
         val w = width - left.width - right.width
         val h = height - top.height - bot.height
 
-        if (w < 0 || h < 0)
-            throw IllegalArgumentException("Too small")
+        check(w > 0 && h > 0) { "Too small" }
 
         // TODO: cleanup
 

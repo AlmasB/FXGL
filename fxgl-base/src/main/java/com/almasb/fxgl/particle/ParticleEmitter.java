@@ -5,11 +5,10 @@
  */
 package com.almasb.fxgl.particle;
 
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
-import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.pool.Pools;
+import com.almasb.fxgl.util.Consumer;
 import com.almasb.fxgl.util.Function;
 import com.almasb.fxgl.util.Supplier;
 import javafx.animation.Interpolator;
@@ -20,8 +19,6 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
-
-import java.util.Random;
 
 import static com.almasb.fxgl.app.DSLKt.random;
 
@@ -227,6 +224,30 @@ public final class ParticleEmitter {
 
     /* FUNCTION CONFIGURATORS */
 
+    private Consumer<Particle> control = null;
+
+    public Consumer<Particle> getControl() {
+        return control;
+    }
+
+    /**
+     * Set control function to override velocity and acceleration
+     * of each particle.
+     */
+    public void setControl(Consumer<Particle> control) {
+        this.control = control;
+    }
+
+    private Function<Double, Point2D> parametricEquation = null;
+
+    public Function<Double, Point2D> getParametricEquation() {
+        return parametricEquation;
+    }
+
+    public void setParametricEquation(Function<Double, Point2D> parametricEquation) {
+        this.parametricEquation = parametricEquation;
+    }
+
     private Supplier<Point2D> accelerationFunction = () -> Point2D.ZERO;
 
     /**
@@ -367,7 +388,8 @@ public final class ParticleEmitter {
     private Particle emit(int i, double x, double y) {
         Particle particle = Pools.obtain(Particle.class);
 
-        particle.init(sourceImage,
+        particle.init(getControl(),
+                sourceImage,
                 spawnPointFunction.apply(i).add(x, y),
                 velocityFunction.apply(i),
                 accelerationFunction.get(),
@@ -378,7 +400,8 @@ public final class ParticleEmitter {
                 getEndColor(),
                 getBlendMode(),
                 getInterpolator(),
-                isAllowParticleRotation());
+                isAllowParticleRotation(),
+                getParametricEquation());
 
         return particle;
     }

@@ -2,6 +2,8 @@
 
 ## About
 
+<img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_logo.png" width="128" />
+
 JavaFX Game Development Framework
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.almasb/fxgl.svg)]()
@@ -12,10 +14,10 @@ JavaFX Game Development Framework
 ### Why FXGL?
 
 * No native libraries, no installation, no setup required
-* "Out of the box": Java 8/9, Win/Mac/Linux/Android 5.0+([Sample](https://github.com/AlmasB/FXGL-MobileApp))/iOS([alpha](https://github.com/AlmasB/FXGL-MobileApp))/Web([alpha](https://github.com/AlmasB/FXGL-WebApp))
-* Simple and clean API
+* "Out of the box": Java 8/9/10, Win/Mac/Linux/Android 5.0+([Sample](https://github.com/AlmasB/FXGL-MobileApp))/iOS([alpha](https://github.com/AlmasB/FXGL-MobileApp))/Web([alpha](https://github.com/AlmasB/FXGL-WebApp))
+* Simple and clean API, higher level than other engines
 * Superset of JavaFX: no need to learn new UI API
-* Brings real-world game development techniques to JavaFX
+* Real-world game development techniques: Entity-Component, Event System, Scripting, etc.
 * Games are easily packaged into a single executable .jar
 
 ### Good for:

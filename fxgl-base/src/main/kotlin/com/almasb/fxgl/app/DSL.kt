@@ -9,6 +9,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.animation.AnimatedPoint2D
 import com.almasb.fxgl.animation.AnimatedValue
 import com.almasb.fxgl.animation.Animation
+import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.app.FXGL.Companion.getApp
 import com.almasb.fxgl.app.FXGL.Companion.getAssetLoader
 import com.almasb.fxgl.app.FXGL.Companion.getAudioPlayer
@@ -310,7 +311,7 @@ fun translate(node: Node, from: Point2D, to: Point2D, delay: Duration, duration:
 }
 
 fun translate(node: Node, from: Point2D, to: Point2D, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    val anim = object : Animation<Point2D>(delay, duration, 1, AnimatedPoint2D(from, to)) {
+    val anim = object : Animation<Point2D>(AnimationBuilder(duration, delay, onFinished = onFinishedAction), AnimatedPoint2D(from, to)) {
 
         override fun onProgress(value: Point2D) {
             node.translateX = value.x
@@ -334,12 +335,11 @@ fun fadeIn(node: Node, delay: Duration, duration: Duration): Animation<*> {
 }
 
 fun fadeIn(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    val anim = object : Animation<Double>(delay, duration, 1, AnimatedValue(0.0, 1.0)) {
+    val anim = object : Animation<Double>(AnimationBuilder(duration, delay, onFinished = onFinishedAction), AnimatedValue(0.0, 1.0)) {
         override fun onProgress(value: Double) {
             node.opacity = value
         }
     }
-    anim.onFinished = onFinishedAction
     return anim
 }
 
@@ -415,14 +415,13 @@ fun scale(node: Node, from: Point2D, to: Point2D, delay: Duration, duration: Dur
 }
 
 fun scale(node: Node, from: Point2D, to: Point2D, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    val anim = object : Animation<Point2D>(delay, duration, 1, AnimatedPoint2D(from, to)) {
+    val anim = object : Animation<Point2D>(AnimationBuilder(duration, delay, onFinished = onFinishedAction), AnimatedPoint2D(from, to)) {
 
         override fun onProgress(value: Point2D) {
             node.scaleX = value.x
             node.scaleY = value.y
         }
     }
-    anim.onFinished = onFinishedAction
     return anim
 }
 
@@ -439,13 +438,12 @@ fun rotate(node: Node, from: Double, to: Double, delay: Duration, duration: Dura
 }
 
 fun rotate(node: Node, from: Double, to: Double, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    val anim = object : Animation<Double>(delay, duration, 1, AnimatedValue(from, to)) {
+    val anim = object : Animation<Double>(AnimationBuilder(duration, delay, onFinished = onFinishedAction), AnimatedValue(from, to)) {
 
         override fun onProgress(value: Double) {
             node.rotate = value
         }
     }
-    anim.onFinished = onFinishedAction
     return anim
 }
 

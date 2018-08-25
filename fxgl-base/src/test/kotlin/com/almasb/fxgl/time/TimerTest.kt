@@ -92,6 +92,11 @@ class TimerTest {
 
         timer.update(1.0)
         assertThat(count, `is`(2))
+
+        condition.value = true
+
+        timer.update(1.0)
+        assertThat(count, `is`(2))
     }
 
     @Test

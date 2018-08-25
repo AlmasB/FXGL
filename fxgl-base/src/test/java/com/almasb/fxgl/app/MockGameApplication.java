@@ -6,6 +6,7 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.ui.MockUIFactory;
 import com.almasb.fxgl.util.Credits;
 import javafx.application.Application;
@@ -23,16 +24,21 @@ public class MockGameApplication extends GameApplication {
 
     private static MockGameApplication INSTANCE;
 
+
+    public Stage stage;
+    public ReadOnlyGameSettings settings;
+
     public static MockGameApplication get() {
         if (INSTANCE == null) {
-            mockStage();
+            Stage stage = mockStage();
 
             GameSettings settings = new GameSettings();
 
             MockGameApplication app = new MockGameApplication();
             app.initSettings(settings);
 
-            app.injectSettings(settings.toReadOnly());
+            app.stage = stage;
+            app.settings = settings.toReadOnly();
 
             INSTANCE = app;
         }

@@ -6,10 +6,10 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.*;
-import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.gameplay.achievement.Achievement;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
@@ -18,6 +18,7 @@ import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.ui.FXGLScrollPane;
 import com.almasb.fxgl.ui.FXGLSpinner;
+import com.almasb.fxgl.ui.FontType;
 import com.almasb.fxgl.util.Consumer;
 import com.almasb.fxgl.util.Language;
 import com.almasb.fxgl.util.Supplier;
@@ -29,17 +30,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +83,7 @@ public abstract class FXGLMenu extends FXGLScene {
     public FXGLMenu(GameApplication app, MenuType type) {
         this.app = app;
         this.type = type;
-        this.listener = (MenuEventHandler) app.getMenuListener();
+        this.listener = FXGL.getMenuHandler();
 
         getContentRoot().getChildren().addAll(
                 createBackground(app.getWidth(), app.getHeight()),
@@ -137,7 +135,6 @@ public abstract class FXGLMenu extends FXGLScene {
     protected Button createContentButton(StringBinding name, Supplier<MenuContent> contentSupplier) {
         return createActionButton(name, () -> switchMenuContentTo(contentSupplier.get()));
     }
-
 
     /**
      * @return full version string
@@ -203,7 +200,7 @@ public abstract class FXGLMenu extends FXGLScene {
                     } else {
 
                         Text text = getUIFactory().newText(item.toString());
-                        text.setFont(FXGLAssets.UI_MONO_FONT.newFont(FONT_SIZE));
+                        text.setFont(getUIFactory().newFont(FontType.MONO, FONT_SIZE));
 
                         setGraphic(text);
                     }
@@ -293,6 +290,47 @@ public abstract class FXGLMenu extends FXGLScene {
         return new MenuContent(hbox);
     }
 
+    private PressAnyKeyState pressAnyKeyState = new PressAnyKeyState();
+
+    private class PressAnyKeyState extends SubState {
+
+        private UserAction actionContext;
+
+        PressAnyKeyState() {
+            getInput().addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+                if (Input.isIllegal(e.getCode()))
+                    return;
+
+                boolean rebound = FXGL.getInput().rebind(actionContext, e.getCode(), InputModifier.from(e));
+
+                if (rebound)
+                    FXGL.getStateMachine().popState();
+            });
+
+            getInput().addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+
+                boolean rebound = FXGL.getInput().rebind(actionContext, e.getButton(), InputModifier.from(e));
+
+                if (rebound)
+                    FXGL.getStateMachine().popState();
+            });
+
+            Rectangle rect = new Rectangle(250, 100);
+            rect.setStroke(Color.color(0.85, 0.9, 0.9, 0.95));
+            rect.setStrokeWidth(10);
+            rect.setArcWidth(15);
+            rect.setArcHeight(15);
+
+            Text text = getUIFactory().newText(getLocalizedString("menu.pressAnyKey"), 24);
+
+            StackPane pane = new StackPane(rect, text);
+            pane.setTranslateX(FXGL.getAppWidth() / 2 - 125);
+            pane.setTranslateY(FXGL.getAppHeight() / 2 - 50);
+
+            getChildren().add(pane);
+        }
+    }
+
     private void addNewInputBinding(UserAction action, Trigger trigger, GridPane grid) {
         Text actionName = getUIFactory().newText(action.getName(), Color.WHITE, 18.0);
 
@@ -300,39 +338,8 @@ public abstract class FXGLMenu extends FXGLScene {
         triggerView.triggerProperty().bind(app.getInput().triggerProperty(action));
 
         triggerView.setOnMouseClicked(event -> {
-            Rectangle rect = new Rectangle(250, 100);
-            rect.setStroke(Color.AZURE);
-
-            Text text = getUIFactory().newText(getLocalizedString("menu.pressAnyKey"), 24);
-
-            Stage stage = new Stage(StageStyle.TRANSPARENT);
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(getRoot().getScene().getWindow());
-
-            Scene scene = new Scene(new StackPane(rect, text));
-            scene.setOnKeyPressed(e -> {
-                // ignore illegal keys, however they may be part of a different event
-                // which is correctly processed further because code will be different
-                if (e.getCode() == KeyCode.CONTROL
-                        || e.getCode() == KeyCode.SHIFT
-                        || e.getCode() == KeyCode.ALT)
-                    return;
-
-                boolean rebound = app.getInput().rebind(action, e.getCode(), InputModifier.from(e));
-
-                if (rebound)
-                    stage.close();
-            });
-            scene.setOnMouseClicked(e -> {
-
-                boolean rebound = app.getInput().rebind(action, e.getButton(), InputModifier.from(e));
-
-                if (rebound)
-                    stage.close();
-            });
-
-            stage.setScene(scene);
-            stage.show();
+            pressAnyKeyState.actionContext = action;
+            FXGL.getStateMachine().pushState(pressAnyKeyState);
         });
 
         HBox hBox = new HBox();
@@ -356,7 +363,7 @@ public abstract class FXGLMenu extends FXGLScene {
         ChoiceBox<Language> languageBox = getUIFactory().newChoiceBox(FXCollections.observableArrayList(Language.values()));
         languageBox.setValue(Language.ENGLISH);
 
-        getMenuSettings().languageProperty().bind(languageBox.valueProperty());
+        getSettings().getLanguage().bind(languageBox.valueProperty());
 
         VBox vbox = new VBox();
 
@@ -372,7 +379,7 @@ public abstract class FXGLMenu extends FXGLScene {
         if (getSettings().isFullScreenAllowed()) {
             CheckBox cbFullScreen = getUIFactory().newCheckBox();
             cbFullScreen.setSelected(false);
-            cbFullScreen.selectedProperty().bindBidirectional(getMenuSettings().fullScreenProperty());
+            cbFullScreen.selectedProperty().bindBidirectional(getSettings().getFullScreen());
 
             vbox.getChildren().add(new HBox(25, getUIFactory().newText(getLocalizedString("menu.fullscreen")+": "), cbFullScreen));
         }
@@ -458,10 +465,10 @@ public abstract class FXGLMenu extends FXGLScene {
         };
 
         Button btnGoogle = new Button("Google Forms");
-        btnGoogle.setOnAction(e -> openBrowser.accept(SystemConfig.INSTANCE.getUrlGoogleForms()));
+        btnGoogle.setOnAction(e -> openBrowser.accept(FXGL.getSettings().getUrlGoogleForms()));
 
         Button btnSurveyMonkey = new Button("Survey Monkey");
-        btnSurveyMonkey.setOnAction(e -> openBrowser.accept(SystemConfig.INSTANCE.getUrlGoogleForms()));
+        btnSurveyMonkey.setOnAction(e -> openBrowser.accept(FXGL.getSettings().getUrlGoogleForms()));
 
         VBox vbox = new VBox(15,
                 getUIFactory().newText(getLocalizedString("menu.chooseFeedback"), Color.WHEAT, 18),

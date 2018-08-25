@@ -7,7 +7,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>0.5.3</version>
+        <version>0.5.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>fxgl-base</artifactId>
@@ -53,6 +53,12 @@
         <dependency>
             <groupId>com.gluonhq</groupId>
             <artifactId>charm-down-plugin-storage-desktop</artifactId>
+            <version>${charm.down.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.gluonhq</groupId>
+            <artifactId>charm-down-plugin-lifecycle</artifactId>
             <version>${charm.down.version}</version>
         </dependency>
 

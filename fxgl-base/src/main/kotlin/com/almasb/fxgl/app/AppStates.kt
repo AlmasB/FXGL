@@ -58,23 +58,26 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
 internal class IntroState
 internal constructor(private val app: GameApplication, scene: FXGLScene) : AppState(scene) {
 
+    private val introScene = scene as IntroScene
+
     private var introFinishedSubscriber: Subscriber? = null
     private var introFinished = false
 
     override fun onEnter(prevState: State) {
-        if (prevState is StartupState) {
-            introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, EventHandler {
-                introFinished = true
-            })
-
-            (scene as IntroScene).startIntro()
-
-        } else {
-            throw IllegalArgumentException("Entered IntroState from illegal state: " + prevState)
+        check(prevState is StartupState) {
+            "Entered IntroState from illegal state: $prevState"
         }
+
+        introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, EventHandler {
+            introFinished = true
+        })
+
+        (scene as IntroScene).startIntro()
     }
 
     override fun onUpdate(tpf: Double) {
+        introScene.onUpdate(tpf)
+
         if (introFinished) {
             if (FXGL.getSettings().isMenuEnabled) {
                 app.stateMachine.startMainMenu()
@@ -215,7 +218,7 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
         gameWorld.addWorldListener(gameScene)
 
         if (FXGL.getSettings().isMenuEnabled) {
-            input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
+            input.addEventHandler(KeyEvent.ANY, FXGL.getMenuHandler())
         } else {
             input.addAction(object : UserAction("Pause") {
                 override fun onActionBegin() {
@@ -230,6 +233,14 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
     }
 
     override fun onUpdate(tpf: Double) {
+        // if single step is configured, then step() will be called manually
+        if (FXGL.getSettings().isSingleStep)
+            return
+
+        step(tpf)
+    }
+
+    fun step(tpf: Double) {
         gameWorld.onUpdate(tpf)
         physicsWorld.onUpdate(tpf)
         gameScene.onUpdate(tpf)
@@ -257,7 +268,7 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
                 || prevState is IntroState
                 || prevState is GameMenuState) {
 
-            val menuHandler = FXGL.getApp().menuListener as MenuEventHandler
+            val menuHandler = FXGL.getMenuHandler()
 
             if (!menuHandler.isProfileSelected())
                 menuHandler.showProfileDialog()
@@ -277,7 +288,13 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
 internal class GameMenuState
 internal constructor(scene: FXGLScene) : AppState(scene) {
 
+    private val menuScene = scene as FXGLMenu
+
     init {
-        input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
+        input.addEventHandler(KeyEvent.ANY, FXGL.getMenuHandler())
+    }
+
+    override fun onUpdate(tpf: Double) {
+        menuScene.onUpdate(tpf)
     }
 }

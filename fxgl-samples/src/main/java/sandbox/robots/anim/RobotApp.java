@@ -6,10 +6,7 @@
 
 package sandbox.robots.anim;
 
-import com.almasb.fxgl.animation.Interpolators;
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.SpawnData;
@@ -17,18 +14,14 @@ import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.RaycastResult;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.texture.Texture;
-import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.util.Duration;
 
-import static com.almasb.fxgl.app.DSLKt.*;
+import static com.almasb.fxgl.app.DSLKt.spawn;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

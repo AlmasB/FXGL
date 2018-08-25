@@ -6,9 +6,9 @@
 
 package sandbox.rts;
 
-import com.almasb.fxgl.extra.ai.fsm.State;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.extra.ai.fsm.State;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

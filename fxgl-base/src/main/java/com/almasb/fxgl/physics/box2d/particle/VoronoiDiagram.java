@@ -8,7 +8,7 @@ package com.almasb.fxgl.physics.box2d.particle;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
-import com.almasb.fxgl.physics.box2d.pooling.normal.MutableStack;
+import com.almasb.fxgl.physics.box2d.pooling.MutableStack;
 
 public class VoronoiDiagram {
     public static class Generator {

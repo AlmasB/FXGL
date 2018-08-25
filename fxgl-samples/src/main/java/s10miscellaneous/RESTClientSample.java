@@ -7,12 +7,7 @@
 package s10miscellaneous;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.gameplay.ScoreData;
-import com.almasb.fxgl.scene.ProgressDialog;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.input.KeyCode;
-
-import static com.almasb.fxgl.app.DSLKt.onKeyDown;
 
 /**
  * Shows to how to access FXGL server that keeps leaderboard info.

@@ -9,7 +9,7 @@ package com.almasb.fxgl.time
 import javafx.util.Duration
 
 /**
- *
+ * A local timer to capture current time and check if certain time has passed.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

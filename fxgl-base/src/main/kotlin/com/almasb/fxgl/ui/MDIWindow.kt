@@ -393,6 +393,9 @@ open class MDIWindow : Region() {
 
             isMinimized = !isMinimized
 
+            if (isMinimized)
+                contentPane.isVisible = false
+
             if (control.prefHeight > 0.0) {
                 prevHeight = control.prefHeight
             }
@@ -402,7 +405,12 @@ open class MDIWindow : Region() {
                     control.prefHeightProperty(), if (isMinimized) 0.0 else prevHeight
             )))
 
-            animation.setOnFinished { animationFinished = true }
+            animation.setOnFinished {
+                if (!isMinimized)
+                    contentPane.isVisible = true
+
+                animationFinished = true
+            }
 
             animation.play()
 

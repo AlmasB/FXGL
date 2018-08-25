@@ -38,6 +38,10 @@ public abstract class FXGLScene {
     private Viewport viewport;
 
     public FXGLScene() {
+        this(FXGL.getAppWidth(), FXGL.getAppHeight());
+    }
+
+    public FXGLScene(int width, int height) {
         root = new Pane();
         root.setBackground(null);
 
@@ -47,7 +51,7 @@ public abstract class FXGLScene {
         root.getChildren().addAll(contentRoot);
 
         // should pass thru ctor params?
-        viewport = new Viewport(FXGL.getAppWidth(), FXGL.getAppHeight());
+        viewport = new Viewport(width, height);
 
         if (FXGL.isDesktop()) {
             setCursor("fxgl_default.png", new Point2D(7, 6));

@@ -7,8 +7,8 @@
 package com.almasb.fxgl.devtools
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.core.collection.ObjectMap
+import com.almasb.fxgl.ui.FontType
 import com.almasb.fxgl.util.Consumer
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
@@ -69,7 +69,7 @@ class Console : Pane() {
             translateY = 50.0
             prefWidth = FXGL.getApp().width - 50.0 - 50.0
             prefHeight = FXGL.getApp().height - 100.0 - 100.0
-            font = FXGLAssets.UI_MONO_FONT.newFont(14.0)
+            font = FXGL.getUIFactory().newFont(FontType.MONO, 14.0)
             isEditable = false
             isFocusTraversable = false
 

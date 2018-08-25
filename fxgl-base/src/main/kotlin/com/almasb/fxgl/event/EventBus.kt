@@ -19,8 +19,8 @@ import javafx.util.Duration
 import java.lang.reflect.Modifier
 
 /**
- * FXGL event dispatcher that uses JavaFX event system to delegate method calls.
- * Manages event dispatching, listening and handling.
+ * FXGL event dispatcher that uses JavaFX event system.
+ * Allows firing events and listening for events.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -30,13 +30,9 @@ class EventBus {
 
     private val eventTriggers = UnorderedArray<EventTrigger<*>>(32)
 
-    private val eventHandlers = object : Group() {
-        override fun toString(): String {
-            return "FXGL.EventBus"
-        }
-    }
+    private val eventHandlers = Group()
 
-    fun onUpdate(tpf: Double) {
+    internal fun onUpdate(tpf: Double) {
         updateTriggers(tpf)
     }
 
@@ -66,6 +62,8 @@ class EventBus {
      */
     fun <T : Event> addEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>): Subscriber {
         eventHandlers.addEventHandler(eventType, eventHandler)
+
+        @Suppress("UNCHECKED_CAST")
         return Subscriber(this, eventType, eventHandler as EventHandler<in Event>)
     }
 
@@ -81,11 +79,10 @@ class EventBus {
     }
 
     /**
-     * Post (fire) given event. All listening parties will be notified.
+     * Fire given event.
+     * All listening parties will be notified.
      * Events will be handled on the same thread that fired the event,
      * i.e. synchronous.
-     *
-     * @param event the event
      */
     fun fireEvent(event: Event) {
         log.debug("Firing event: $event")
