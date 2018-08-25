@@ -403,14 +403,9 @@ private constructor(
             log.debug("Shutting down background threads")
             getExecutor().shutdownNow()
 
-            if (getSettings().isProfilingEnabled) {
-                engine.profiler!!.print()
-            }
+            engine.profiler?.print()
 
-            // TODO: why check for isDesktop?
-            if (isDesktop()) {
-                engine.saveSystemData()
-            }
+            engine.saveSystemData()
 
             log.debug("Closing logger and exiting JavaFX")
 
