@@ -306,7 +306,7 @@ private constructor(
             getGameplay().load(e.getProfile())
         })
 
-        getEventBus().scanForHandlers(this)
+        getEventBus().scanForHandlers(app)
     }
 
     private fun runPreInit() {
@@ -327,7 +327,7 @@ private constructor(
         app.initInput()
 
         // 3. scan for annotated methods and register them too
-        getInput().scanForUserActions(this)
+        getInput().scanForUserActions(app)
 
         generateDefaultProfile()
 
