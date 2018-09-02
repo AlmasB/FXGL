@@ -21,6 +21,7 @@
         <module>fxgl-core</module>
         <module>fxgl-time</module>
         <module>fxgl-net</module>
+        <module>fxgl-events</module>
     </modules>
 
     <licenses>

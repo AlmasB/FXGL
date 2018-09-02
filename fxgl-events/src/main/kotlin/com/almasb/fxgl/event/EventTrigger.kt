@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.event
 
-import com.almasb.fxgl.app.FXGL
 import javafx.event.Event
 import javafx.util.Duration
 
@@ -41,29 +40,29 @@ class EventTrigger<out T : Event>
          */
         val interval: Duration = Duration.ZERO) {
 
-    private var timesFired = 0
-    private val timer = FXGL.newLocalTimer()
-
-    init {
-        require(limit > 0) { "Trigger limit must be non-negative and non-zero" }
-    }
-
-    fun reachedLimit() = timesFired == limit
-
-    /**
-     * Triggers (fires) the event created by trigger's event producer.
-     */
-    fun fire() {
-        if (!reachedLimit()) {
-            FXGL.getEventBus().fireEvent(eventProducer.produce())
-            timesFired++
-        }
-    }
-
-    internal fun onUpdate(tpf: Double) {
-        if (eventCondition.isTrue() && (timer.elapsed(interval) || timesFired == 0)) {
-            fire()
-            timer.capture()
-        }
-    }
+//    private var timesFired = 0
+//    private val timer = FXGL.newLocalTimer()
+//
+//    init {
+//        require(limit > 0) { "Trigger limit must be non-negative and non-zero" }
+//    }
+//
+//    fun reachedLimit() = timesFired == limit
+//
+//    /**
+//     * Triggers (fires) the event created by trigger's event producer.
+//     */
+//    fun fire() {
+//        if (!reachedLimit()) {
+//            //FXGL.getEventBus().fireEvent(eventProducer.produce())
+//            timesFired++
+//        }
+//    }
+//
+//    internal fun onUpdate(tpf: Double) {
+//        if (eventCondition.isTrue() && (timer.elapsed(interval) || timesFired == 0)) {
+//            fire()
+//            timer.capture()
+//        }
+//    }
 }

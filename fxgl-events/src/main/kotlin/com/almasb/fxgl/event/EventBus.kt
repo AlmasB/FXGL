@@ -6,16 +6,12 @@
 
 package com.almasb.fxgl.event
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.entity.EntityEvent
-import com.almasb.fxgl.entity.components.ScriptComponent
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.scene.Group
-import javafx.util.Duration
 import java.lang.reflect.Modifier
 
 /**
@@ -32,21 +28,21 @@ class EventBus {
 
     private val eventHandlers = Group()
 
-    internal fun onUpdate(tpf: Double) {
+    fun onUpdate(tpf: Double) {
         updateTriggers(tpf)
     }
 
     private fun updateTriggers(tpf: Double) {
-        val it = eventTriggers.iterator()
-        while (it.hasNext()) {
-            val trigger = it.next()
-
-            trigger.onUpdate(tpf)
-
-            if (trigger.reachedLimit()) {
-                it.remove()
-            }
-        }
+//        val it = eventTriggers.iterator()
+//        while (it.hasNext()) {
+//            val trigger = it.next()
+//
+//            trigger.onUpdate(tpf)
+//
+//            if (trigger.reachedLimit()) {
+//                it.remove()
+//            }
+//        }
     }
 
     fun addEventTrigger(trigger: EventTrigger<*>) {
@@ -74,10 +70,6 @@ class EventBus {
         eventHandlers.removeEventHandler(eventType, eventHandler)
     }
 
-    fun fireDelayedEvent(event: Event, delay: Duration) {
-        FXGL.getMasterTimer().runOnceAfter({ fireEvent(event) }, delay)
-    }
-
     /**
      * Fire given event.
      * All listening parties will be notified.
@@ -89,18 +81,18 @@ class EventBus {
 
         eventHandlers.fireEvent(event)
 
-        if (event is EntityEvent) {
-            fireEntityEvent(event)
-        }
+//        if (event is EntityEvent) {
+//            fireEntityEvent(event)
+//        }
     }
 
     /**
      * Fires the given entity event both as normal Event
      * and via script handlers.
      */
-    private fun fireEntityEvent(event: EntityEvent) {
-        event.targetEntity.getComponent(ScriptComponent::class.java).fireScriptEvent(event)
-    }
+//    private fun fireEntityEvent(event: EntityEvent) {
+//        event.targetEntity.getComponent(ScriptComponent::class.java).fireScriptEvent(event)
+//    }
 
     /**
      * Scan an object for public methods marked @Handles
