@@ -23,6 +23,7 @@
         <module>fxgl-net</module>
         <module>fxgl-events</module>
         <module>fxgl-io</module>
+        <module>fxgl-script</module>
     </modules>
 
     <licenses>

@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.script.js
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.script.Script
 import jdk.nashorn.api.scripting.JSObject
 import javax.script.*
@@ -40,16 +39,17 @@ class JS(val scriptCode: String) : Script {
 
         init {
             manager.put("HOME_DIR", JS::class.java.getResource("/assets/scripts/"))
-            manager.put("FXGL", FXGL.Companion)
-            manager.put("APP", FXGL.getApp())
+            //manager.put("FXGL", FXGL.Companion)
+            //manager.put("APP", FXGL.getApp())
 
             scriptEngine = manager.getEngineByName("nashorn")
 
             val global = SimpleScriptContext()
             global.setBindings(scriptEngine.createBindings(), ScriptContext.GLOBAL_SCOPE)
 
+            // TODO:
             // evaluate our library code in global context
-            scriptEngine.eval(FXGL.getAssetLoader().loadScriptRaw("FXGL.js"))
+            //scriptEngine.eval(FXGL.getAssetLoader().loadScriptRaw("FXGL.js"))
 
             engine = scriptEngine as Invocable
         }
