@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.net
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.util.Optional
 import javafx.beans.value.ChangeListener
@@ -29,18 +28,18 @@ class FXGLNet : Net {
      * Loads pom.xml from GitHub server's master branch
      * and parses the "version" tag.
      */
-    override fun getLatestVersionTask() = openStreamTask(FXGL.getSettings().urlPOM).then {
+//    override fun getLatestVersionTask() = openStreamTask(FXGL.getSettings().urlPOM).then {
+//
+//        return@then IOTask.of("latestVersion", {
+//            it.reader().useLines {
+//                return@of it.first { "<version>" in it}
+//                        .trim()
+//                        .removeSurrounding("<version>", "</version>")
+//            }
+//        })
+//    }
 
-        return@then IOTask.of("latestVersion", {
-            it.reader().useLines {
-                return@of it.first { "<version>" in it}
-                        .trim()
-                        .removeSurrounding("<version>", "</version>")
-            }
-        })
-    }
-
-    override fun openBrowserTask(url: String) = IOTask.ofVoid("openBrowser($url)", { FXGL.getApp().hostServices.showDocument(url) })
+    //override fun openBrowserTask(url: String) = IOTask.ofVoid("openBrowser($url)", { FXGL.getApp().hostServices.showDocument(url) })
 
     private val dummy by lazy { Server() }
     private var connectionInternal: NetworkConnection? = null

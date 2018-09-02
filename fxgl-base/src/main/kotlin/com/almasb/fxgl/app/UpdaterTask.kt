@@ -52,8 +52,7 @@ internal class UpdaterTask : Runnable {
     private fun checkForUpdates() {
         log.debug("Checking for updates")
 
-        FXGL.getNet()
-                .getLatestVersionTask()
+        getLatestVersionTask()
                 .onSuccess { latestVersion ->
 
                     val currentVersion = FXGL.getVersion()
@@ -74,4 +73,14 @@ internal class UpdaterTask : Runnable {
                 }
                 .run()
     }
+
+    private fun getLatestVersionTask() = FXGL.getNet()
+            .openStreamTask(FXGL.getSettings().urlPOM)
+            .thenWrap {
+                it.reader().useLines {
+                    it.first { "<version>" in it}
+                            .trim()
+                            .removeSurrounding("<version>", "</version>")
+                }
+            }
 }

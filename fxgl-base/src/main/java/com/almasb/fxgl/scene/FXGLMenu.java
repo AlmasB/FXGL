@@ -456,27 +456,28 @@ public abstract class FXGLMenu extends FXGLScene {
     protected final MenuContent createContentFeedback() {
         log.debug("createContentFeedback()");
 
-        // url is a string key defined in system.properties
-        Consumer<String> openBrowser = url -> {
-            getNet()
-                    .openBrowserTask(url)
-                    .onFailure(error -> log.warning("Error opening browser: " + error))
-                    .run();
-        };
+//        // url is a string key defined in system.properties
+//        Consumer<String> openBrowser = url -> {
+//            getNet()
+//                    .openBrowserTask(url)
+//                    .onFailure(error -> log.warning("Error opening browser: " + error))
+//                    .run();
+//        };
+//
+//        Button btnGoogle = new Button("Google Forms");
+//        btnGoogle.setOnAction(e -> openBrowser.accept(FXGL.getSettings().getUrlGoogleForms()));
+//
+//        Button btnSurveyMonkey = new Button("Survey Monkey");
+//        btnSurveyMonkey.setOnAction(e -> openBrowser.accept(FXGL.getSettings().getUrlGoogleForms()));
+//
+//        VBox vbox = new VBox(15,
+//                getUIFactory().newText(getLocalizedString("menu.chooseFeedback"), Color.WHEAT, 18),
+//                btnGoogle,
+//                btnSurveyMonkey);
+//        vbox.setAlignment(Pos.CENTER);
 
-        Button btnGoogle = new Button("Google Forms");
-        btnGoogle.setOnAction(e -> openBrowser.accept(FXGL.getSettings().getUrlGoogleForms()));
-
-        Button btnSurveyMonkey = new Button("Survey Monkey");
-        btnSurveyMonkey.setOnAction(e -> openBrowser.accept(FXGL.getSettings().getUrlGoogleForms()));
-
-        VBox vbox = new VBox(15,
-                getUIFactory().newText(getLocalizedString("menu.chooseFeedback"), Color.WHEAT, 18),
-                btnGoogle,
-                btnSurveyMonkey);
-        vbox.setAlignment(Pos.CENTER);
-
-        return new MenuContent(vbox);
+        // TODO:
+        return new MenuContent(new VBox());
     }
 
     /**

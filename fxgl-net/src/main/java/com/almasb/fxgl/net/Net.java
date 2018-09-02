@@ -37,13 +37,13 @@ public interface Net {
     /**
      * @return task that loads latest FXGL version from the server as string
      */
-    IOTask<String> getLatestVersionTask();
+    //IOTask<String> getLatestVersionTask();
 
-    /**
-     * @param url link to open
-     * @return task that opens default browser with given url
-     */
-    IOTask<?> openBrowserTask(String url);
+//    /**
+//     * @param url link to open
+//     * @return task that opens default browser with given url
+//     */
+//    IOTask<?> openBrowserTask(String url);
 
     IOTask<Server> hostMultiplayerTask();
 

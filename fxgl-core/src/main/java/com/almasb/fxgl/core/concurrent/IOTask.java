@@ -190,6 +190,10 @@ public abstract class IOTask<T> {
         return of(name, () -> mapper.apply(onExecute()).onExecute());
     }
 
+    public final <R> IOTask<R> thenWrap(Function<T, R> mapper) {
+        return then(t -> of(() -> mapper.apply(t)));
+    }
+
     private void succeed(T result) {
         successAction.accept(result);
     }
