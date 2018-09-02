@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.scene.menu.MenuType;
-import com.almasb.fxgl.util.Supplier;
+import com.almasb.fxgl.core.util.Supplier;
 import javafx.beans.binding.StringBinding;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;

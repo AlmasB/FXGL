@@ -24,7 +24,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
-import static com.almasb.fxgl.util.BackportKt.forEach;
+import static com.almasb.fxgl.core.util.BackportKt.forEach;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

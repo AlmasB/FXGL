@@ -7,7 +7,7 @@
 package com.almasb.fxgl.parser
 
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.util.Predicate
+import com.almasb.fxgl.core.util.Predicate
 
 /**
  * Represents a simple key value file, similar to java.util.Properties.

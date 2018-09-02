@@ -7,7 +7,7 @@
 package com.almasb.fxgl.net;
 
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.util.Consumer;
+import com.almasb.fxgl.core.util.Consumer;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 

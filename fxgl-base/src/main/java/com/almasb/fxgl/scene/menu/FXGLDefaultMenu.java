@@ -14,7 +14,7 @@ import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.settings.MenuItem;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FXGLButton;
-import com.almasb.fxgl.util.Supplier;
+import com.almasb.fxgl.core.util.Supplier;
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;

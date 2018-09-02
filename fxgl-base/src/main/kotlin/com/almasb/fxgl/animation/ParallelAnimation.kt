@@ -9,7 +9,7 @@ package com.almasb.fxgl.animation
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.State
 import com.almasb.fxgl.app.listener.StateListener
-import com.almasb.fxgl.util.EmptyRunnable
+import com.almasb.fxgl.core.util.EmptyRunnable
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

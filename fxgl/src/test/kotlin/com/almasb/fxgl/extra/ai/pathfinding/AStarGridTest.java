@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.extra.ai.pathfinding;
 
-import com.almasb.fxgl.util.Optional;
+import com.almasb.fxgl.core.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

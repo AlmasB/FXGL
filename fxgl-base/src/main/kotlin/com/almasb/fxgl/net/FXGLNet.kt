@@ -8,7 +8,7 @@ package com.almasb.fxgl.net
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.concurrent.IOTask
-import com.almasb.fxgl.util.Optional
+import com.almasb.fxgl.core.util.Optional
 import javafx.beans.value.ChangeListener
 import java.io.Serializable
 import java.net.URL

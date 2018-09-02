@@ -11,7 +11,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.extra.entity.state.State;
 import com.almasb.fxgl.extra.entity.state.StateComponent;
 import com.almasb.fxgl.time.LocalTimer;
-import com.almasb.fxgl.util.Named;
+import com.almasb.fxgl.core.util.Named;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;

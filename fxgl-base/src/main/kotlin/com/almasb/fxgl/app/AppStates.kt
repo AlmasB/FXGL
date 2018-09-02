@@ -14,8 +14,8 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.scene.intro.IntroFinishedEvent
-import com.almasb.fxgl.util.BiConsumer
-import com.almasb.fxgl.util.forEach
+import com.almasb.fxgl.core.util.BiConsumer
+import com.almasb.fxgl.core.util.forEach
 import javafx.concurrent.Task
 import javafx.event.EventHandler
 import javafx.scene.input.KeyEvent

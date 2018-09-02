@@ -8,7 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.time.FPSCounter
-import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.core.util.Consumer
 import javafx.animation.AnimationTimer
 
 /**

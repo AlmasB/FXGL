@@ -12,7 +12,7 @@ import com.almasb.fxgl.entity.EntityEvent
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.script.Script
 import com.almasb.fxgl.script.ScriptFactory
-import com.almasb.fxgl.util.Optional
+import com.almasb.fxgl.core.util.Optional
 
 /**
  * https://github.com/AlmasB/FXGL/issues/572

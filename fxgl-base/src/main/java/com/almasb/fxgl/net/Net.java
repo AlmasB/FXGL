@@ -7,7 +7,7 @@
 package com.almasb.fxgl.net;
 
 import com.almasb.fxgl.core.concurrent.IOTask;
-import com.almasb.fxgl.util.Optional;
+import com.almasb.fxgl.core.util.Optional;
 
 import java.io.InputStream;
 import java.io.Serializable;

@@ -9,7 +9,7 @@ package com.almasb.fxgl.devtools
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.ui.FontType
-import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.core.util.Consumer
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty

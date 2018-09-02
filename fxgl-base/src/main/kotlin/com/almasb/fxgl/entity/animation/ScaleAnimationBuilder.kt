@@ -8,7 +8,7 @@ package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.animation.AnimatedPoint2D
 import com.almasb.fxgl.animation.Animation
-import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.core.util.Consumer
 import javafx.geometry.Point2D
 
 /**

@@ -12,9 +12,9 @@ import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.*
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
-import com.almasb.fxgl.util.Consumer
-import com.almasb.fxgl.util.Optional
-import com.almasb.fxgl.util.Predicate
+import com.almasb.fxgl.core.util.Consumer
+import com.almasb.fxgl.core.util.Optional
+import com.almasb.fxgl.core.util.Predicate
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import javafx.scene.input.MouseButton

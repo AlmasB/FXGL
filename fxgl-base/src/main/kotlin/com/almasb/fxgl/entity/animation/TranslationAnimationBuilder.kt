@@ -7,7 +7,7 @@
 package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.animation.*
-import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.core.util.Consumer
 import javafx.geometry.Point2D
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve

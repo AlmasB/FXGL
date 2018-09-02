@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.util.Consumer;
+import com.almasb.fxgl.core.util.Consumer;
 
 /**
  * A consumer for handling exceptions.

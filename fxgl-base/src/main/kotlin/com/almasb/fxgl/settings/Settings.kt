@@ -21,9 +21,9 @@ import com.almasb.fxgl.ui.DialogFactory
 import com.almasb.fxgl.ui.FXGLDialogFactory
 import com.almasb.fxgl.ui.FXGLUIFactory
 import com.almasb.fxgl.ui.UIFactory
-import com.almasb.fxgl.util.Credits
-import com.almasb.fxgl.util.Language
-import com.almasb.fxgl.util.Optional
+import com.almasb.fxgl.core.util.Credits
+import com.almasb.fxgl.core.util.Language
+import com.almasb.fxgl.core.util.Optional
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.input.KeyCode

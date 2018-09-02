@@ -8,8 +8,8 @@ package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.core.Disposable
 import com.almasb.fxgl.core.collection.Array
-import com.almasb.fxgl.util.Consumer
-import com.almasb.fxgl.util.Predicate
+import com.almasb.fxgl.core.util.Consumer
+import com.almasb.fxgl.core.util.Predicate
 
 /**
  * A group of entities of particular types.

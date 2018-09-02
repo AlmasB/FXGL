@@ -27,7 +27,7 @@ import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.texture.Texture
-import com.almasb.fxgl.util.*
+import com.almasb.fxgl.core.util.*
 import javafx.beans.property.*
 import javafx.event.Event
 import javafx.geometry.Point2D

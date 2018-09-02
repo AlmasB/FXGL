@@ -26,7 +26,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.util.BackportKt.forEach;
+import static com.almasb.fxgl.core.util.BackportKt.forEach;
 
 /**
  * Adds a game scene view to an entity.

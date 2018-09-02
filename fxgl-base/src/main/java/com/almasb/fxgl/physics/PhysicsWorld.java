@@ -31,7 +31,7 @@ import javafx.geometry.Point2D;
 import java.io.Serializable;
 import java.util.Iterator;
 
-import static com.almasb.fxgl.util.BackportKt.forEach;
+import static com.almasb.fxgl.core.util.BackportKt.forEach;
 
 /**
  * Manages physics entities, collision handling and performs the physics tick.

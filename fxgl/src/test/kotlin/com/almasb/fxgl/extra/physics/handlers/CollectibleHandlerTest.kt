@@ -6,19 +6,16 @@
 
 package com.almasb.fxgl.extra.physics.handlers
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.components.CollidableComponent
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsWorld
-import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.core.util.Consumer
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 /**

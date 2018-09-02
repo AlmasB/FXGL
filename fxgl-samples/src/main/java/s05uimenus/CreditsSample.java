@@ -9,7 +9,7 @@ package s05uimenus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.MenuItem;
-import com.almasb.fxgl.util.Credits;
+import com.almasb.fxgl.core.util.Credits;
 
 import java.util.ArrayList;
 import java.util.EnumSet;

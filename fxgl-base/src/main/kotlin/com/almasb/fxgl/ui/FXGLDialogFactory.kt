@@ -8,9 +8,9 @@ package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGL.Companion.localizedStringProperty
-import com.almasb.fxgl.util.Consumer
-import com.almasb.fxgl.util.EmptyRunnable
-import com.almasb.fxgl.util.Predicate
+import com.almasb.fxgl.core.util.Consumer
+import com.almasb.fxgl.core.util.EmptyRunnable
+import com.almasb.fxgl.core.util.Predicate
 import javafx.beans.property.DoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.geometry.Insets

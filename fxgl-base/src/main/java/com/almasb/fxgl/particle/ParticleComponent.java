@@ -12,12 +12,12 @@ import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.PositionComponent;
-import com.almasb.fxgl.util.EmptyRunnable;
+import com.almasb.fxgl.core.util.EmptyRunnable;
 import javafx.scene.Node;
 
 import java.util.Iterator;
 
-import static com.almasb.fxgl.util.BackportKt.forEach;
+import static com.almasb.fxgl.core.util.BackportKt.forEach;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)

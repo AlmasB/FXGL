@@ -29,7 +29,7 @@ import javafx.util.Duration;
 import java.util.List;
 
 import static com.almasb.fxgl.physics.BoundingShape.box;
-import static com.almasb.fxgl.util.BackportKt.forEach;
+import static com.almasb.fxgl.core.util.BackportKt.forEach;
 
 /**
  * Helper class with static convenience methods.

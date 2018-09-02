@@ -10,7 +10,6 @@ package com.almasb.fxgl.entity.animation
 import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.components.ColorComponent
-import com.almasb.fxgl.util.EmptyRunnable
 import javafx.animation.Interpolator
 import javafx.util.Duration
 

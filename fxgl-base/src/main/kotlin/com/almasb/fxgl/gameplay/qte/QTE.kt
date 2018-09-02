@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.gameplay.qte
 
-import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.core.util.Consumer
 import javafx.scene.input.KeyCode
 import javafx.util.Duration
 

@@ -19,9 +19,9 @@ import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.ui.FXGLScrollPane;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import com.almasb.fxgl.ui.FontType;
-import com.almasb.fxgl.util.Consumer;
-import com.almasb.fxgl.util.Language;
-import com.almasb.fxgl.util.Supplier;
+import com.almasb.fxgl.core.util.Consumer;
+import com.almasb.fxgl.core.util.Language;
+import com.almasb.fxgl.core.util.Supplier;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.collections.FXCollections;
@@ -43,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.almasb.fxgl.app.FXGL.*;
-import static com.almasb.fxgl.util.BackportKt.forEach;
+import static com.almasb.fxgl.core.util.BackportKt.forEach;
 
 /**
  * This is a base class for main/game menus. It provides several

@@ -8,7 +8,7 @@ package com.almasb.fxgl.gameplay.qte
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.SubState
-import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.core.util.Consumer
 import javafx.event.EventHandler
 import javafx.geometry.Pos.CENTER
 import javafx.scene.input.KeyCode

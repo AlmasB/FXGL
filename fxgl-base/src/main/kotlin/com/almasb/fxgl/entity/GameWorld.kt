@@ -19,8 +19,8 @@ import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.entity.components.IrremovableComponent
 import com.almasb.fxgl.entity.components.TimeComponent
 import com.almasb.fxgl.parser.tiled.TiledMap
-import com.almasb.fxgl.util.Optional
-import com.almasb.fxgl.util.Predicate
+import com.almasb.fxgl.core.util.Optional
+import com.almasb.fxgl.core.util.Predicate
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Point2D

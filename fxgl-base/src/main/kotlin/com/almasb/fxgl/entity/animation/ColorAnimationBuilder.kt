@@ -9,7 +9,7 @@ package com.almasb.fxgl.entity.animation
 import com.almasb.fxgl.animation.AnimatedColor
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.entity.components.ColorComponent
-import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.core.util.Consumer
 import javafx.scene.paint.Color
 
 /**

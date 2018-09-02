@@ -7,7 +7,7 @@
 package com.almasb.fxgl.entity.components;
 
 import com.almasb.fxgl.entity.component.CopyableComponent;
-import com.almasb.fxgl.util.BackportKt;
+import com.almasb.fxgl.core.util.BackportKt;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -7,7 +7,7 @@
 package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.core.collection.ObjectMap;
-import com.almasb.fxgl.util.Optional;
+import com.almasb.fxgl.core.util.Optional;
 import javafx.event.Event;
 import javafx.event.EventType;
 

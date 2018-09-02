@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.extra.ai.pathfinding;
 
-import com.almasb.fxgl.util.Optional;
-import com.almasb.fxgl.util.Predicate;
+import com.almasb.fxgl.core.util.Optional;
+import com.almasb.fxgl.core.util.Predicate;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -33,7 +33,7 @@ import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.fxgl.ui.FXGLDisplay
-import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.core.util.Consumer
 import com.gluonhq.charm.down.Platform
 import com.gluonhq.charm.down.Services
 import com.gluonhq.charm.down.plugins.LifecycleEvent

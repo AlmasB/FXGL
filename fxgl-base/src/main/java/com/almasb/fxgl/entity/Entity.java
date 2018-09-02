@@ -17,7 +17,7 @@ import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.entity.components.*;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.io.serialization.Bundle;
-import com.almasb.fxgl.util.Optional;
+import com.almasb.fxgl.core.util.Optional;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
-import static com.almasb.fxgl.util.BackportKt.forEach;
+import static com.almasb.fxgl.core.util.BackportKt.forEach;
 
 /**
  * A generic game object.

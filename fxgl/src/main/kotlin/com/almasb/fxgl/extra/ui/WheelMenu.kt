@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.extra.ui
 
-import com.almasb.fxgl.util.Consumer
+import com.almasb.fxgl.core.util.Consumer
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.Parent
 import javafx.scene.effect.DropShadow

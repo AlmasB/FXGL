@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.gameplay.cutscene
 
-import com.almasb.fxgl.util.EmptyRunnable
-import com.almasb.fxgl.util.Supplier
+import com.almasb.fxgl.core.util.EmptyRunnable
+import com.almasb.fxgl.core.util.Supplier
 
 /**
  *
