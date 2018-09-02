@@ -16,48 +16,54 @@
             <!-- Compile java -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.version}</version>
-                <configuration>
-                    <source>${source.version}</source>
-                    <target>${source.version}</target>
-                </configuration>
             </plugin>
 
             <!-- Compile kotlin -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
+            </plugin>
+
+            <!-- Generate test coverage reports -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <configuration>
+                    <destFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</destFile>
+                    <dataFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</dataFile>
+
+                    <!-- Ignore 3rd party code and developer tools -->
+
+                    <excludes>
+                        <exclude>com/almasb/fxgl/physics/box2d/**/*</exclude>
+                        <exclude>com/almasb/fxgl/ai/**/*</exclude>
+                        <exclude>com/almasb/fxgl/devtools/**/*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>compile</id>
-                        <phase>process-sources</phase>
+                        <id>jacoco-initialize</id>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>prepare-agent</goal>
                         </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <source>src/main/kotlin</source>
-                                <source>src/main/java</source>
-                            </sourceDirs>
-                        </configuration>
                     </execution>
                     <execution>
-                        <id>test-compile</id>
-                        <phase>process-test-sources</phase>
+                        <id>jacoco-site</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>test-compile</goal>
+                            <goal>report</goal>
                         </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <source>src/test/kotlin</source>
-                                <source>src/test/java</source>
-                            </sourceDirs>
-                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
 </project>
