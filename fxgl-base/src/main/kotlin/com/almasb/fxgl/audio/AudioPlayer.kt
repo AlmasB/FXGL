@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.gameplay.notification.NotificationEvent
-import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty

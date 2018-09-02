@@ -21,7 +21,7 @@ import com.almasb.fxgl.gameplay.notification.NotificationEvent
 import com.almasb.fxgl.gameplay.notification.NotificationServiceProvider
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.io.FS
-import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.net.FXGLNet
 import com.almasb.fxgl.saving.LoadEvent
 import com.almasb.fxgl.saving.SaveEvent

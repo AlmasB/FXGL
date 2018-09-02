@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.time
 
-import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.core.serialization.Bundle
 import javafx.util.Duration
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

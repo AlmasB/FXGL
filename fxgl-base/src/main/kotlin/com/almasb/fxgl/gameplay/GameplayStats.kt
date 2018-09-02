@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.gameplay
 
-import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
 import javafx.beans.property.ReadOnlyLongProperty

@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.io.serialization.SerializableType;
+import com.almasb.fxgl.core.serialization.SerializableType;
 
 /**
  * Marks a component as serializable.

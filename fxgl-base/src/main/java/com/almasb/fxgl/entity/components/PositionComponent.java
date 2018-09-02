@@ -11,7 +11,7 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.CopyableComponent;
 import com.almasb.fxgl.entity.component.CoreComponent;
 import com.almasb.fxgl.entity.component.SerializableComponent;
-import com.almasb.fxgl.io.serialization.Bundle;
+import com.almasb.fxgl.core.serialization.Bundle;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;

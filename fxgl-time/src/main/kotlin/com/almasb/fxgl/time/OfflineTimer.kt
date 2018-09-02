@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.time
 
-import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.core.serialization.Bundle
 import javafx.util.Duration
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit

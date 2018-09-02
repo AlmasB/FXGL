@@ -9,7 +9,7 @@ package com.almasb.fxgl.gameplay.achievement
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.PropertyChangeListener
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
 import javafx.collections.FXCollections

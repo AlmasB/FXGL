@@ -19,6 +19,7 @@
         <!-- Extra functionality module (on top of the main module) -->
         <module>fxgl</module>
         <module>fxgl-core</module>
+        <module>fxgl-time</module>
     </modules>
 
     <licenses>

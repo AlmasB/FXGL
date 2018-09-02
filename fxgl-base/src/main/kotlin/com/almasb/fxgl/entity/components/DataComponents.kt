@@ -2,7 +2,7 @@ package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.SerializableComponent
-import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.core.serialization.Bundle
 import javafx.beans.property.*
 
 /**

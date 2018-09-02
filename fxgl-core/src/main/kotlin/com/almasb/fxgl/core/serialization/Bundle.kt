@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.io.serialization
+package com.almasb.fxgl.core.serialization
 
 import com.almasb.fxgl.core.logging.Logger
 import java.io.Serializable

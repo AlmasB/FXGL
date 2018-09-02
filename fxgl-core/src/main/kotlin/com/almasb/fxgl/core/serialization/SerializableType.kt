@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.io.serialization
+package com.almasb.fxgl.core.serialization
 
 /**
  * Marks a type as serializable.

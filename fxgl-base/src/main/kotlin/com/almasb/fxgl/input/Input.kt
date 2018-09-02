@@ -8,7 +8,7 @@ package com.almasb.fxgl.input
 
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.input.virtual.VirtualButton
-import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
 import com.almasb.fxgl.scene.Viewport

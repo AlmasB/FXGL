@@ -7,7 +7,7 @@
 package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.core.serialization.Bundle
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat

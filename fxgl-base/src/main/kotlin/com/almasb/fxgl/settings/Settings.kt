@@ -13,7 +13,7 @@ import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.gameplay.achievement.AchievementStore
 import com.almasb.fxgl.gameplay.notification.NotificationView
 import com.almasb.fxgl.gameplay.notification.XboxNotificationView
-import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
 import com.almasb.fxgl.scene.SceneFactory

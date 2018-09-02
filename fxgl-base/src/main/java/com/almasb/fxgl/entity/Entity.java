@@ -16,7 +16,7 @@ import com.almasb.fxgl.entity.component.CoreComponent;
 import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.entity.components.*;
 import com.almasb.fxgl.entity.view.EntityView;
-import com.almasb.fxgl.io.serialization.Bundle;
+import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.core.util.Optional;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;

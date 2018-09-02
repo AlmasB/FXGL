@@ -7,7 +7,7 @@
 package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.core.math.Vec2
-import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.core.serialization.Bundle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
