@@ -9,12 +9,24 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>fxgl-core</artifactId>
+    <artifactId>fxgl-io</artifactId>
 
     <dependencies>
         <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-core</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.gluonhq</groupId>
-            <artifactId>charm-down-core</artifactId>
+            <artifactId>charm-down-plugin-storage</artifactId>
+            <version>${charm.down.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.gluonhq</groupId>
+            <artifactId>charm-down-plugin-storage-desktop</artifactId>
             <version>${charm.down.version}</version>
         </dependency>
     </dependencies>

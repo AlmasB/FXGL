@@ -22,6 +22,7 @@
         <module>fxgl-time</module>
         <module>fxgl-net</module>
         <module>fxgl-events</module>
+        <module>fxgl-io</module>
     </modules>
 
     <licenses>

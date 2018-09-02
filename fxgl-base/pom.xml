@@ -22,6 +22,12 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-io</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-events</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
@@ -54,18 +60,6 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${apache.http.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.gluonhq</groupId>
-            <artifactId>charm-down-plugin-storage</artifactId>
-            <version>${charm.down.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.gluonhq</groupId>
-            <artifactId>charm-down-plugin-storage-desktop</artifactId>
-            <version>${charm.down.version}</version>
         </dependency>
 
         <dependency>
