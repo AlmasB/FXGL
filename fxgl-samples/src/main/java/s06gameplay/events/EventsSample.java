@@ -7,7 +7,7 @@
 package s06gameplay.events;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityEvent;
 import com.almasb.fxgl.event.EventTrigger;

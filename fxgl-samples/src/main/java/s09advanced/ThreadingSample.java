@@ -8,7 +8,7 @@ package s09advanced;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.concurrent.Task;
 import javafx.scene.shape.Rectangle;

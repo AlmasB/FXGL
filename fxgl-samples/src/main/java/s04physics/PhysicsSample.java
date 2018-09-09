@@ -6,7 +6,7 @@
 package s04physics;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.input.Input;

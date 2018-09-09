@@ -9,7 +9,7 @@ package s10miscellaneous;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.input.Input;

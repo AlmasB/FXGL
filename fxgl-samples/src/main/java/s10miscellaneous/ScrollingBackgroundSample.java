@@ -7,7 +7,7 @@
 package s10miscellaneous;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.view.ScrollingBackgroundView;
 import com.almasb.fxgl.input.UserAction;

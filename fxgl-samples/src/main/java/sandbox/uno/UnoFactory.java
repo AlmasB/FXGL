@@ -7,6 +7,7 @@
 package sandbox.uno;
 
 import com.almasb.fxgl.entity.*;
+import com.almasb.fxgl.util.Entities;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

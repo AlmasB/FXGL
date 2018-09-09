@@ -24,6 +24,8 @@
         <module>fxgl-events</module>
         <module>fxgl-io</module>
         <module>fxgl-script</module>
+        <module>fxgl-entity</module>
+        <module>fxgl-animation</module>
     </modules>
 
     <licenses>

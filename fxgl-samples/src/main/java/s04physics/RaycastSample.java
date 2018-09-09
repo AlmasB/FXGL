@@ -7,7 +7,7 @@
 package s04physics;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.RaycastResult;

@@ -7,7 +7,6 @@
 package sandbox.robots.anim;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.components.PositionComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.almasb.fxgl.extra.entity.state.State;
 import com.almasb.fxgl.extra.entity.state.StateComponent;

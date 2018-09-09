@@ -457,24 +457,3 @@ fun run(action: Runnable, interval: Duration, limit: Int) = getMasterTimer().run
 
 /* EXTENSIONS */
 
-/**
- * Calls [func], if exception occurs in [func] the root cause is thrown.
- */
-fun <T> tryCatchRoot(func: Supplier<T>): T {
-    try {
-        return func.get()
-    } catch (e: Exception) {
-        throw ReflectionUtils.getRootCause(e)
-    }
-}
-
-/**
- * Calls [func], if exception occurs in [func] the root cause is thrown.
- */
-fun <T> tryCatchRoot(func: () -> T): T {
-    try {
-        return func.invoke()
-    } catch (e: Exception) {
-        throw ReflectionUtils.getRootCause(e)
-    }
-}

@@ -11,14 +11,6 @@
 
     <artifactId>fxgl-script</artifactId>
 
-    <!--<dependencies>-->
-        <!--<dependency>-->
-            <!--<groupId>com.github.almasb</groupId>-->
-            <!--<artifactId>fxgl-core</artifactId>-->
-            <!--<version>${fxgl.version}</version>-->
-        <!--</dependency>-->
-    <!--</dependencies>-->
-
     <build>
         <plugins>
             <!-- Compile java -->

@@ -6,7 +6,7 @@
 package s09advanced;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.gameplay.achievement.Achievement;
 import com.almasb.fxgl.gameplay.achievement.AchievementManager;

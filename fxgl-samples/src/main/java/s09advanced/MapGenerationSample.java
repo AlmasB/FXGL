@@ -12,7 +12,7 @@ import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.collection.Grid;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.extra.algorithm.procedural.BiomeMapGenerator;
 import com.almasb.fxgl.extra.algorithm.procedural.HeightMapGenerator;
 import com.almasb.fxgl.extra.algorithm.procedural.MapGenerator;

@@ -9,6 +9,7 @@ package sandbox.rts;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.util.Entities;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;

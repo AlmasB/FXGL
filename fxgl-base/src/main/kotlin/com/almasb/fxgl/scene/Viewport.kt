@@ -11,7 +11,6 @@ import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.components.BoundingBoxComponent
-import com.almasb.fxgl.entity.components.PositionComponent
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty

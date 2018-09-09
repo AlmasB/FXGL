@@ -10,7 +10,7 @@ import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.components.CollidableComponent;

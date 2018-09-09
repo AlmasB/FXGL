@@ -7,6 +7,7 @@
 package s06gameplay.levelparsing;
 
 import com.almasb.fxgl.entity.*;
+import com.almasb.fxgl.util.Entities;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 

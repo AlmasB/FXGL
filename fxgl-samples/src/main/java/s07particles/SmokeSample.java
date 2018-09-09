@@ -9,7 +9,7 @@ package s07particles;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.extra.entity.components.CircularMovementComponent;
 import com.almasb.fxgl.input.UserAction;

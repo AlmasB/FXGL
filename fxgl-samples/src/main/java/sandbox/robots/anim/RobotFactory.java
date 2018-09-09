@@ -18,6 +18,7 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyDef;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
+import com.almasb.fxgl.util.Entities;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;

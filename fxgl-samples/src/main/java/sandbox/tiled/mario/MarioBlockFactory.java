@@ -8,6 +8,7 @@ package sandbox.tiled.mario;
 
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.util.Entities;
 import javafx.scene.shape.Rectangle;
 
 /**

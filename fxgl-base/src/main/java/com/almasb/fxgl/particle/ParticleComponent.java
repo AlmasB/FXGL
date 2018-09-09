@@ -11,7 +11,6 @@ import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.entity.components.PositionComponent;
 import com.almasb.fxgl.core.util.EmptyRunnable;
 import javafx.scene.Node;
 

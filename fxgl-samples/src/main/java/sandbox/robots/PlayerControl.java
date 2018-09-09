@@ -8,7 +8,6 @@ package sandbox.robots;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.entity.components.PositionComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;

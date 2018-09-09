@@ -34,6 +34,18 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-animation</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-entity</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-events</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
