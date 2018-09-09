@@ -8,7 +8,7 @@ package com.almasb.fxgl.extra.entity.effects
 
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.view.EntityView
+import com.almasb.fxgl.entity.EntityView
 import com.almasb.fxgl.extra.entity.effect.Effect
 import com.almasb.fxgl.texture.Texture
 import javafx.geometry.Orientation

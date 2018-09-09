@@ -4,7 +4,9 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity
+package com.almasb.fxgl.entity.level
+
+import com.almasb.fxgl.entity.Entity
 
 /**
  * Represents a game level.

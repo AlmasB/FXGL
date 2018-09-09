@@ -6,15 +6,7 @@
 
 package com.almasb.fxgl.entity.components
 
-import com.almasb.fxgl.entity.RenderLayer
-import javafx.scene.Node
-import javafx.scene.shape.Rectangle
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.contains
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 
 class ViewComponentTest {
 

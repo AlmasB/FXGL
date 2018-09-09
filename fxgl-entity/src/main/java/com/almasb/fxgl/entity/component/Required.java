@@ -11,6 +11,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Adds a new dependency to this component on the provided component.
+ * When this component is added to an entity and the provided component is missing,
+ * an exception will be thrown.
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Required {

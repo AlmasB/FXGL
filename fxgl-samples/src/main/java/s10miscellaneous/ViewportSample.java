@@ -13,7 +13,7 @@ import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.parser.text.TextLevelParser;
+import com.almasb.fxgl.parser.level.text.TextLevelParser;
 import com.almasb.fxgl.scene.Viewport;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.animation.KeyFrame;

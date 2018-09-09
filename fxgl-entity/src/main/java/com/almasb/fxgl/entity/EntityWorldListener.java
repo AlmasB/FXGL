@@ -24,7 +24,7 @@ public interface EntityWorldListener {
      * Called after entity was removed from the world
      * but before entity has been cleaned.
      * This allows other parties to free resources before
-     * doing final entity clean.
+     * entity clean.
      *
      * @param entity the entity
      */

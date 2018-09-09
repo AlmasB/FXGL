@@ -6,22 +6,22 @@
 
 package com.almasb.fxgl.entity;
 
+import com.almasb.fxgl.core.View;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.core.util.EmptyRunnable;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.ComponentListener;
 import com.almasb.fxgl.entity.component.CoreComponent;
 import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.entity.components.*;
-import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.core.util.Optional;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -57,12 +57,10 @@ public class Entity {
 
     private List<ComponentListener> componentListeners = new ArrayList<>();
 
-    private GameWorld world = null;
-
     private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
-    private Runnable onActive = null;
-    private Runnable onNotActive = null;
+    private Runnable onActive = EmptyRunnable.INSTANCE;
+    private Runnable onNotActive = EmptyRunnable.INSTANCE;
 
     private boolean updateEnabled = true;
     private boolean updating = false;
@@ -71,6 +69,8 @@ public class Entity {
     private TransformComponent transform = new TransformComponent();
     private BoundingBoxComponent bbox = new BoundingBoxComponent();
     private ViewComponent view = new ViewComponent();
+
+    private GameWorld world = null;
 
     public Entity() {
         addComponent(type);
@@ -91,10 +91,9 @@ public class Entity {
      *
      * @param world the world to which entity is being attached
      */
-    final void init(GameWorld world) {
+    void init(GameWorld world) {
         this.world = world;
-        if (onActive != null)
-            onActive.run();
+        onActive.run();
         active.set(true);
     }
 
@@ -112,8 +111,8 @@ public class Entity {
         componentListeners.clear();
 
         world = null;
-        onActive = null;
-        onNotActive = null;
+        onActive = EmptyRunnable.INSTANCE;
+        onNotActive = EmptyRunnable.INSTANCE;
 
         updateEnabled = true;
         updating = false;
@@ -130,8 +129,7 @@ public class Entity {
     }
 
     /**
-     * If set to false this entity will not update (i.e. the components
-     * attached to this entity will not update).
+     * If set to false, the components attached to this entity will not update.
      */
     public final void setUpdateEnabled(boolean b) {
         updateEnabled = b;
@@ -161,8 +159,7 @@ public class Entity {
      * Sets entity to be not active.
      */
     void markForRemoval() {
-        if (onNotActive != null)
-            onNotActive.run();
+        onNotActive.run();
         active.set(false);
     }
 
@@ -342,7 +339,7 @@ public class Entity {
 
     @SuppressWarnings("unchecked")
     private void injectFields(Component component) {
-        // component.setEntity(this);
+        // equivalent to component.setEntity(this);
         callInaccessible(component, getMethod(Component.class, "setEntity", Entity.class), this);
 
         forEach(
@@ -360,7 +357,7 @@ public class Entity {
 
         component.onRemoved();
 
-        // component.setEntity(null);
+        // equivalent to component.setEntity(null);
         // new Object[1] because it's varargs, so we pass an array of 1 param, which is null
         callInaccessible(component, getMethod(Component.class, "setEntity", Entity.class), new Object[1]);
     }
@@ -532,7 +529,7 @@ public class Entity {
 
     // TYPE END
 
-    // POSITION BEGIN
+    // TRANSFORM BEGIN
 
     /**
      * @return top left point of this entity in world coordinates
@@ -653,10 +650,6 @@ public class Entity {
         return transform.distance(other.transform);
     }
 
-    // POSITION END
-
-    // ROTATION BEGIN
-
     /**
      * @return rotation angle
      */
@@ -701,7 +694,23 @@ public class Entity {
         transform.rotateToVector(vector);
     }
 
-    // ROTATION END
+    public final void setScaleX(double scaleX) {
+        transform.setScaleX(scaleX);
+    }
+
+    public final void setScaleY(double scaleY) {
+        transform.setScaleY(scaleY);
+    }
+
+    public final void setZ(double z) {
+        transform.setZ(z);
+    }
+
+    public final double getZ() {
+        return transform.getZ();
+    }
+
+    // TRANSFORM END
 
     // BBOX BEGIN
 
@@ -768,53 +777,12 @@ public class Entity {
 
     // VIEW BEGIN
 
-//    public final EntityView getView() {
-//        return this.view.getView();
-//    }
-//
-//    public final void setView(Node view) {
-//        this.view.setView(view);
-//    }
-//
-//    /**
-//     * Set view from texture.
-//     *
-//     * @param textureName name of texture
-//     */
-//    public final void setViewFromTexture(String textureName) {
-//        this.view.setTexture(textureName);
-//    }
-//
-//    /**
-//     * Set view from texture and generate bbox from it.
-//     *
-//     * @param textureName name of texture
-//     */
-//    public final void setViewFromTextureWithBBox(String textureName) {
-//        this.view.setTexture(textureName, true);
-//    }
-//
-//    /**
-//     * Set view and generate bounding boxes from view.
-//     */
-//    public final void setViewWithBBox(Node view) {
-//        this.view.setView(view, true);
-//    }
-//
-//    public final RenderLayer getRenderLayer() {
-//        return this.view.getRenderLayer();
-//    }
-//
-//    public final void setRenderLayer(RenderLayer layer) {
-//        this.view.setRenderLayer(layer);
-//    }
-
-    public final void setScaleX(double scaleX) {
-        transform.setScaleX(scaleX);
+    public final View getView() {
+        return this.view.getView();
     }
 
-    public final void setScaleY(double scaleY) {
-        transform.setScaleY(scaleY);
+    public final void setView(View view) {
+        this.view.setView(view);
     }
 
     // VIEW END

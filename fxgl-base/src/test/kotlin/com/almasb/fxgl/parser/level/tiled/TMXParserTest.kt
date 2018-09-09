@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.parser.tiled
+package com.almasb.fxgl.parser.level.tiled
 
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon

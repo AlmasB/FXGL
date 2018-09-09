@@ -8,7 +8,7 @@ package com.almasb.fxgl.parser
 
 import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.entity.*
-import com.almasb.fxgl.parser.text.TextLevelParser
+import com.almasb.fxgl.parser.level.text.TextLevelParser
 import javafx.geometry.Point2D
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.`is`

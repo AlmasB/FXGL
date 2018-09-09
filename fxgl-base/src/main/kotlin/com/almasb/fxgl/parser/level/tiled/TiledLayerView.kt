@@ -4,11 +4,11 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.parser.tiled
+package com.almasb.fxgl.parser.level.tiled
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.math.FXGLMath
-import com.almasb.fxgl.entity.view.EntityView
+import com.almasb.fxgl.entity.EntityView
 import com.almasb.fxgl.texture.ColoredTexture
 import javafx.geometry.Rectangle2D
 import javafx.scene.image.Image

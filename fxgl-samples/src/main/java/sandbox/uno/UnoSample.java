@@ -10,7 +10,6 @@ import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.extra.entity.components.ExpireCleanComponent;
 import com.almasb.fxgl.settings.GameSettings;

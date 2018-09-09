@@ -8,9 +8,8 @@ package sandbox.robots.anim;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.entity.view.EntityView;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.RaycastResult;
 import com.almasb.fxgl.settings.GameSettings;

@@ -11,7 +11,6 @@ import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.view.ParallaxBackgroundView;
 import com.almasb.fxgl.entity.view.ParallaxTexture;
 import com.almasb.fxgl.extra.physics.handlers.CollectibleHandler;

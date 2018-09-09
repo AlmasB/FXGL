@@ -11,7 +11,7 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.view.EntityView;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;

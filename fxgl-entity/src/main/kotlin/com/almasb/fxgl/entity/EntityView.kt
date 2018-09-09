@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity.view
+package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.core.Disposable
 import com.almasb.fxgl.core.View

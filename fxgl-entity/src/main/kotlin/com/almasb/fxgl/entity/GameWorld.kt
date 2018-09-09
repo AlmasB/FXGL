@@ -19,6 +19,7 @@ import com.almasb.fxgl.entity.components.IrremovableComponent
 import com.almasb.fxgl.entity.components.TimeComponent
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.core.util.Predicate
+import com.almasb.fxgl.entity.level.Level
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Point2D

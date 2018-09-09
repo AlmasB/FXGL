@@ -4,29 +4,22 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.parser.text
+package com.almasb.fxgl.parser.level.text
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.tryCatchRoot
+import com.almasb.fxgl.core.util.tryCatchRoot
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.entity.*
-import com.almasb.fxgl.parser.LevelParser
+import com.almasb.fxgl.entity.level.Level
+import com.almasb.fxgl.entity.level.LevelParser
+import java.io.InputStream
 
 /**
  * Parser for levels represented by plain text.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
-
-    constructor(emptyChar: Char, blockWidth: Int, blockHeight: Int) : this(object : TextEntityFactory {
-        override fun emptyChar() = emptyChar
-
-        override fun blockWidth() = blockWidth
-
-        override fun blockHeight() = blockHeight
-    })
+class TextLevelParser : LevelParser {
 
     companion object {
         private val log = Logger.get<TextLevelParser>()
@@ -37,11 +30,11 @@ class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
     /**
      * The empty (ignored) character.
      */
-    val emptyChar: Char = entityFactory.emptyChar()
+
 
     init {
         ReflectionUtils.findMethodsMapToFunctions(entityFactory, SpawnSymbol::class.java, EntitySpawner::class.java)
-                .forEach { producers.put(it.key.value, it.value) }
+                .forEach { producers[it.key.value] = it.value }
     }
 
     /**
@@ -57,16 +50,21 @@ class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
         producers[character] = producer
     }
 
+    override fun parse(stream: InputStream, factory: EntityFactory): Level {
+        return parse(stream.reader().readLines(), factory)
+    }
+
     /**
-     * Parses a file with given [levelFileName] into a Level object.
+     * Parses a file with given lines into a Level object.
      * The file must be located under "assets/text/". Only
      * the name of the file without the "assets/text/" is required.
      * It will be loaded by assetLoader.loadText() method.
      *
      * @return parsed Level
      */
-    override fun parse(levelFileName: String): Level {
-        val lines = FXGL.getAssetLoader().loadText(levelFileName)
+    override fun parse(lines: List<String>, factory: EntityFactory): Level {
+        val emptyChar: Char = factory.emptyChar()
+
 
         val entities = ArrayList<Entity>()
 

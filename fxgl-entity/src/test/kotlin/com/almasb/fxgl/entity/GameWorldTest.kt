@@ -14,10 +14,9 @@ import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.core.util.Predicate
+import com.almasb.fxgl.entity.level.Level
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
-import javafx.scene.input.MouseButton
-import javafx.scene.input.MouseEvent
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
@@ -26,7 +25,6 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable

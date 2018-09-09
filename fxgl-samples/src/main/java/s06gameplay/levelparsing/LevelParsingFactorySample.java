@@ -7,8 +7,8 @@
 package s06gameplay.levelparsing;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Level;
-import com.almasb.fxgl.parser.text.TextLevelParser;
+import com.almasb.fxgl.entity.level.Level;
+import com.almasb.fxgl.parser.level.text.TextLevelParser;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**

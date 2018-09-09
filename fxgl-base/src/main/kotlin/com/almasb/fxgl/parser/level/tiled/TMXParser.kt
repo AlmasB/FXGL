@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.parser.tiled
+package com.almasb.fxgl.parser.level.tiled
 
 import com.almasb.fxgl.core.logging.Logger
 import javafx.scene.paint.Color

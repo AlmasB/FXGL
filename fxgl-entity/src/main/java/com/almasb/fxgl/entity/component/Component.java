@@ -9,6 +9,8 @@ package com.almasb.fxgl.entity.component;
 import com.almasb.fxgl.entity.Entity;
 
 /**
+ * A component is used to add data and behavior to an entity.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public abstract class Component {
@@ -17,6 +19,9 @@ public abstract class Component {
 
     private boolean paused = false;
 
+    /**
+     * @return entity to which this component is attached
+     */
     public final Entity getEntity() {
         return entity;
     }
@@ -45,7 +50,7 @@ public abstract class Component {
     }
 
     /**
-     * Called each frame.
+     * Called each frame when not paused.
      *
      * @param tpf time per frame
      */
