@@ -10,9 +10,6 @@ import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.ExceptionHandler
 import com.almasb.fxgl.app.FXGLExceptionHandler
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.gameplay.achievement.AchievementStore
-import com.almasb.fxgl.gameplay.notification.NotificationView
-import com.almasb.fxgl.gameplay.notification.XboxNotificationView
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
@@ -155,7 +152,7 @@ class GameSettings(
         /* CONFIGS */
 
         var configClass: Class<*>? = null,
-        var achievementStoreClass: Class<out AchievementStore>? = null,
+        //var achievementStoreClass: Class<out AchievementStore>? = null,
 
         /* CUSTOMIZABLE SERVICES BELOW */
 
@@ -179,7 +176,7 @@ class GameSettings(
         /**
          * Provide a custom notification service.
          */
-        var notificationViewFactory: Class<out NotificationView> = XboxNotificationView::class.java,
+        //var notificationViewFactory: Class<out NotificationView> = XboxNotificationView::class.java,
 
         /**
          * Provide a custom exception handler.
@@ -219,11 +216,11 @@ class GameSettings(
                 secondsIn24h,
                 isExperimentalTiledLargeMap,
                 configClass,
-                achievementStoreClass,
+                //achievementStoreClass,
                 sceneFactory,
                 dialogFactory,
                 uiFactory,
-                notificationViewFactory,
+                //notificationViewFactory,
                 exceptionHandler)
     }
 }
@@ -347,7 +344,7 @@ class ReadOnlyGameSettings internal constructor(
         /* CONFIGS */
 
         private val configClassInternal: Class<*>?,
-        private val achievementStoreClassInternal: Class<out AchievementStore>?,
+        //private val achievementStoreClassInternal: Class<out AchievementStore>?,
 
         /* CUSTOMIZABLE SERVICES BELOW */
 
@@ -370,7 +367,7 @@ class ReadOnlyGameSettings internal constructor(
         /**
          * Provide a custom notification service.
          */
-        val notificationViewFactory: Class<out NotificationView>,
+        //val notificationViewFactory: Class<out NotificationView>,
 
         /**
          * Provide a custom exception handler.
@@ -450,8 +447,8 @@ class ReadOnlyGameSettings internal constructor(
     val configClass: Optional<Class<*>>
         get() = Optional.ofNullable(configClassInternal)
 
-    val achievementStoreClass: Optional<Class<out AchievementStore>>
-        get() = Optional.ofNullable(achievementStoreClassInternal)
+//    val achievementStoreClass: Optional<Class<out AchievementStore>>
+//        get() = Optional.ofNullable(achievementStoreClassInternal)
 
     override fun save(profile: UserProfile) {
         val bundle = Bundle("menusettings")
@@ -482,7 +479,7 @@ class ReadOnlyGameSettings internal constructor(
                 "Scene Factory: " + sceneFactory.javaClass + '\n'.toString() +
                 "Dialog Factory: " + dialogFactory.javaClass + '\n'.toString() +
                 "UI Factory: " + uiFactory.javaClass + '\n'.toString() +
-                "Notification Service: " + notificationViewFactory + '\n'.toString() +
+                //"Notification Service: " + notificationViewFactory + '\n'.toString() +
                 "Exception Handler: " + exceptionHandlerInternal.javaClass
     }
 }

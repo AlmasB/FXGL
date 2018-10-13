@@ -33,8 +33,8 @@ class TextLevelParser : LevelParser {
 
 
     init {
-        ReflectionUtils.findMethodsMapToFunctions(entityFactory, SpawnSymbol::class.java, EntitySpawner::class.java)
-                .forEach { producers[it.key.value] = it.value }
+//        ReflectionUtils.findMethodsMapToFunctions(entityFactory, SpawnSymbol::class.java, EntitySpawner::class.java)
+//                .forEach { producers[it.key.value] = it.value }
     }
 
     /**
@@ -63,31 +63,32 @@ class TextLevelParser : LevelParser {
      * @return parsed Level
      */
     override fun parse(lines: List<String>, factory: EntityFactory): Level {
-        val emptyChar: Char = factory.emptyChar()
-
-
-        val entities = ArrayList<Entity>()
-
-        var maxWidth = 0
-
-        lines.forEachIndexed { i, line ->
-
-            if (line.length > maxWidth)
-                maxWidth = line.length
-
-            line.forEachIndexed { j, c ->
-                val producer = producers[c]
-                if (producer != null) {
-
-                    val e = tryCatchRoot { producer.apply(SpawnData(j.toDouble() * entityFactory.blockWidth(), i.toDouble() * entityFactory.blockHeight())) }
-                    entities.add(e)
-
-                } else if (c != emptyChar) {
-                    log.warning("No producer found for character: $c")
-                }
-            }
-        }
-
-        return Level(maxWidth * entityFactory.blockWidth(), lines.size * entityFactory.blockHeight(), entities)
+        return Level(-1, -1, listOf())
+//        val emptyChar: Char = factory.emptyChar()
+//
+//
+//        val entities = ArrayList<Entity>()
+//
+//        var maxWidth = 0
+//
+//        lines.forEachIndexed { i, line ->
+//
+//            if (line.length > maxWidth)
+//                maxWidth = line.length
+//
+//            line.forEachIndexed { j, c ->
+//                val producer = producers[c]
+//                if (producer != null) {
+//
+//                    val e = tryCatchRoot { producer.apply(SpawnData(j.toDouble() * entityFactory.blockWidth(), i.toDouble() * entityFactory.blockHeight())) }
+//                    entities.add(e)
+//
+//                } else if (c != emptyChar) {
+//                    log.warning("No producer found for character: $c")
+//                }
+//            }
+//        }
+//
+//        return Level(maxWidth * entityFactory.blockWidth(), lines.size * entityFactory.blockHeight(), entities)
     }
 }

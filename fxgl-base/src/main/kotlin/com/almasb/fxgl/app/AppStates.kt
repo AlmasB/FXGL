@@ -163,7 +163,7 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
             forEach(vars, BiConsumer { name, value -> app.gameState.setValue(name, value) })
 
             // we just created new game state vars, so inform achievement manager about new vars
-            app.gameplay.achievementManager.rebindAchievements()
+            //app.gameplay.achievementManager.rebindAchievements()
 
             app.internalInitGame()
         }

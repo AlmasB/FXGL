@@ -7,10 +7,6 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.devtools.Console;
-import com.almasb.fxgl.devtools.controller.ColorAdjustController;
-import com.almasb.fxgl.devtools.controller.DialogAddEntityController;
-import com.almasb.fxgl.devtools.controller.DialogEditEntityController;
 import com.almasb.fxgl.ui.InGameWindow;
 import com.almasb.fxgl.ui.MDIWindow;
 import com.almasb.fxgl.ui.UI;
@@ -66,38 +62,38 @@ public class DeveloperMenuBarController implements UIController {
     }
 
     public void openAddDialog() {
-        UI ui = app.getAssetLoader().loadUI("dialog_add_entity.fxml", new DialogAddEntityController());
-
-        MDIWindow window = new InGameWindow("Add Entity", InGameWindow.WindowDecor.ALL);
-        window.setPrefSize(350, 300);
-        window.setContentPane(new Pane(ui.getRoot()));
-
-        app.getGameScene().addUINode(window);
+//        UI ui = app.getAssetLoader().loadUI("dialog_add_entity.fxml", new DialogAddEntityController());
+//
+//        MDIWindow window = new InGameWindow("Add Entity", InGameWindow.WindowDecor.ALL);
+//        window.setPrefSize(350, 300);
+//        window.setContentPane(new Pane(ui.getRoot()));
+//
+//        app.getGameScene().addUINode(window);
     }
 
     public void openEditDialog() {
-        UI ui = app.getAssetLoader().loadUI("dialog_edit_entity.fxml", new DialogEditEntityController());
-
-        MDIWindow window = new InGameWindow("Edit Entity", InGameWindow.WindowDecor.ALL);
-        window.setPrefSize(380, 450);
-        window.setContentPane(new Pane(ui.getRoot()));
-
-        app.getGameScene().addUINode(window);
+//        UI ui = app.getAssetLoader().loadUI("dialog_edit_entity.fxml", new DialogEditEntityController());
+//
+//        MDIWindow window = new InGameWindow("Edit Entity", InGameWindow.WindowDecor.ALL);
+//        window.setPrefSize(380, 450);
+//        window.setContentPane(new Pane(ui.getRoot()));
+//
+//        app.getGameScene().addUINode(window);
     }
 
     //private ColorAdjustController colorAdjustController = null;
     private UI uiColorAdjust = null;
 
     public void openColorAdjustDialog() {
-        if (uiColorAdjust == null) {
-            uiColorAdjust = app.getAssetLoader().loadUI("dialog_color_adjust.fxml", new ColorAdjustController());
-        }
-
-        MDIWindow window = new InGameWindow("Color Adjust", InGameWindow.WindowDecor.ALL);
-        window.setPrefSize(380, 450);
-        window.setContentPane(new Pane(uiColorAdjust.getRoot()));
-
-        app.getGameScene().addUINode(window);
+//        if (uiColorAdjust == null) {
+//            uiColorAdjust = app.getAssetLoader().loadUI("dialog_color_adjust.fxml", new ColorAdjustController());
+//        }
+//
+//        MDIWindow window = new InGameWindow("Color Adjust", InGameWindow.WindowDecor.ALL);
+//        window.setPrefSize(380, 450);
+//        window.setContentPane(new Pane(uiColorAdjust.getRoot()));
+//
+//        app.getGameScene().addUINode(window);
     }
 
     public void onShowBBox(ActionEvent event) {
@@ -130,17 +126,17 @@ public class DeveloperMenuBarController implements UIController {
         }
     }
 
-    private Console console = null;
+    //private Console console = null;
 
     public void openConsole() {
-        if (console == null) {
-            console = new Console();
-        }
-
-        if (console.isOpen()) {
-            console.close();
-        } else {
-            console.open();
-        }
+//        if (console == null) {
+//            console = new Console();
+//        }
+//
+//        if (console.isOpen()) {
+//            console.close();
+//        } else {
+//            console.open();
+//        }
     }
 }

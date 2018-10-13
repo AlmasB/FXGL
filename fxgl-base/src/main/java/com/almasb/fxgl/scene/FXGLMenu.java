@@ -8,7 +8,6 @@ package com.almasb.fxgl.scene;
 import com.almasb.fxgl.app.*;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.GameDifficulty;
-import com.almasb.fxgl.gameplay.achievement.Achievement;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.Trigger;
@@ -488,19 +487,19 @@ public abstract class FXGLMenu extends FXGLScene {
 
         MenuContent content = new MenuContent();
 
-        for (Achievement a : app.getGameplay().getAchievementManager().getAchievements()) {
-            CheckBox checkBox = new CheckBox();
-            checkBox.setDisable(true);
-            checkBox.selectedProperty().bind(a.achievedProperty());
-
-            Text text = getUIFactory().newText(a.getName());
-            Tooltip.install(text, new Tooltip(a.getDescription()));
-
-            HBox box = new HBox(25, text, checkBox);
-            box.setAlignment(Pos.CENTER_RIGHT);
-
-            content.getChildren().add(box);
-        }
+//        for (Achievement a : app.getGameplay().getAchievementManager().getAchievements()) {
+//            CheckBox checkBox = new CheckBox();
+//            checkBox.setDisable(true);
+//            checkBox.selectedProperty().bind(a.achievedProperty());
+//
+//            Text text = getUIFactory().newText(a.getName());
+//            Tooltip.install(text, new Tooltip(a.getDescription()));
+//
+//            HBox box = new HBox(25, text, checkBox);
+//            box.setAlignment(Pos.CENTER_RIGHT);
+//
+//            content.getChildren().add(box);
+//        }
 
         return content;
     }

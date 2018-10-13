@@ -12,7 +12,6 @@ import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.gameplay.GameState;
 import com.almasb.fxgl.gameplay.Gameplay;
-import com.almasb.fxgl.gameplay.notification.NotificationService;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.net.Net;
 import com.almasb.fxgl.physics.PhysicsWorld;
@@ -360,9 +359,9 @@ public abstract class GameApplication extends Application {
         return FXGL.getExecutor();
     }
 
-    public final NotificationService getNotificationService() {
-        return FXGL.getNotificationService();
-    }
+//    public final NotificationService getNotificationService() {
+//        return FXGL.getNotificationService();
+//    }
 
     public final Net getNet() {
         return FXGL.getNet();

@@ -28,7 +28,7 @@ public class ParticleComponent extends Component {
 
     protected Array<Particle> particles = new UnorderedArray<>(256);
 
-    private PositionComponent position;
+    //private PositionComponent position;
 
     private Runnable onFinished = EmptyRunnable.INSTANCE;
 
@@ -52,20 +52,20 @@ public class ParticleComponent extends Component {
             entity.getWorld().addEntity(parent);
         }
 
-        particles.addAll(emitter.emit(position.getX(), position.getY()));
+        //particles.addAll(emitter.emit(position.getX(), position.getY()));
 
-        for (Iterator<Particle> it = particles.iterator(); it.hasNext(); ) {
-            Particle p = it.next();
-            if (p.update(tpf)) {
-                it.remove();
-
-                parent.getView().removeNode(p.getView());
-                Pools.free(p);
-            } else {
-                if (p.getView().getParent() == null)
-                    parent.getView().addNode(p.getView());
-            }
-        }
+//        for (Iterator<Particle> it = particles.iterator(); it.hasNext(); ) {
+//            Particle p = it.next();
+//            if (p.update(tpf)) {
+//                it.remove();
+//
+//                parent.getView().removeNode(p.getView());
+//                Pools.free(p);
+//            } else {
+//                if (p.getView().getParent() == null)
+//                    parent.getView().addNode(p.getView());
+//            }
+//        }
 
         if (particles.isEmpty() && emitter.isFinished()) {
             onFinished.run();
@@ -80,9 +80,9 @@ public class ParticleComponent extends Component {
         parent.removeFromWorld();
     }
 
-    public final Node getParticlesPane() {
-        return entity.getView();
-    }
+//    public final Node getParticlesPane() {
+//        return entity.getView();
+//    }
 
     /**
      * @return particle emitter attached to component

@@ -26,7 +26,9 @@ import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.almasb.fxgl.core.util.BackportKt.forEach;
 
@@ -60,6 +62,10 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     public Text getProfilerText() {
         return profilerText;
     }
+
+
+    private List<Entity> entities = new ArrayList<>();
+
 
     private ObjectMap<Entity, EntityView> debugPositions = new ObjectMap<>();
 
@@ -117,29 +123,29 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
                 });
 
             } else {
-                forEach(debugPositions, entry -> {
-                    EntityView view = entry.value;
-                    view.translateXProperty().unbind();
-                    view.translateYProperty().unbind();
-                    removeGameView(view, RenderLayer.TOP);
-                });
-
-                debugPositions.clear();
+//                forEach(debugPositions, entry -> {
+//                    EntityView view = entry.value;
+//                    view.translateXProperty().unbind();
+//                    view.translateYProperty().unbind();
+//                    removeGameView(view, RenderLayer.TOP);
+//                });
+//
+//                debugPositions.clear();
             }
         });
     }
 
     private void addDebugView(Entity e) {
-        Text textPos = new Text("");
-        textPos.textProperty().bind(e.xProperty().asString("(%.0f, ").concat(e.yProperty().asString("%.0f)")));
-
-        EntityView view = new EntityView(new Circle(2.5));
-        view.addNode(textPos);
-        view.translateXProperty().bind(e.xProperty());
-        view.translateYProperty().bind(e.yProperty());
-        addGameView(view, RenderLayer.TOP);
-
-        debugPositions.put(e, view);
+//        Text textPos = new Text("");
+//        textPos.textProperty().bind(e.xProperty().asString("(%.0f, ").concat(e.yProperty().asString("%.0f)")));
+//
+//        EntityView view = new EntityView(new Circle(2.5));
+//        view.addNode(textPos);
+//        view.translateXProperty().bind(e.xProperty());
+//        view.translateYProperty().bind(e.yProperty());
+//        addGameView(view, RenderLayer.TOP);
+//
+//        debugPositions.put(e, view);
     }
 
 //    /**
@@ -225,22 +231,22 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
      *
      * @param view view to add
      */
-    public void addGameView(EntityView view, RenderLayer layer) {
-        getRenderGroup(layer).getChildren().add(view);
-    }
-
-    public void addGameView(EntityView view) {
-        getRenderGroup(RenderLayer.DEFAULT).getChildren().add(view);
-    }
+//    public void addGameView(EntityView view, RenderLayer layer) {
+//        getRenderGroup(layer).getChildren().add(view);
+//    }
+//
+//    public void addGameView(EntityView view) {
+//        getRenderGroup(RenderLayer.DEFAULT).getChildren().add(view);
+//    }
 
     /**
      * Remove a view from the game root.
      *
      * @param view view to remove
      */
-    public void removeGameView(EntityView view, RenderLayer layer) {
-        getRenderGroup(layer).getChildren().remove(view);
-    }
+//    public void removeGameView(EntityView view, RenderLayer layer) {
+//        getRenderGroup(layer).getChildren().remove(view);
+//    }
 
     /**
      * Removes all nodes from the game view layer.
@@ -267,41 +273,13 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
         uiRoot.setMouseTransparent(b);
     }
 
-    /**
-     * Returns render group for entity based on entity's
-     * render layer. If no such group exists, a new group
-     * will be created for that layer and placed
-     * in the scene graph according to its layer index.
-     *
-     * @param layer render layer
-     * @return render group
-     */
-    private Group getRenderGroup(RenderLayer layer) {
-        Integer renderLayer = layer.index();
+    private void sortZ() {
+        List<Entity> tmpE = new ArrayList<>(entities);
+        tmpE.sort(Comparator.comparingInt(Entity::getZ));
 
-        Group group = null;
-
-        for (Node n : gameRoot.getChildren()) {
-            if ((int) n.getUserData() == renderLayer) {
-                group = (Group) n;
-                break;
-            }
-        }
-
-        if (group == null) {
-            log.debug("Creating render group for layer: " + layer);
-
-            group = new Group();
-            group.setUserData(renderLayer);
-            gameRoot.getChildren().add(group);
-        }
-
-        List<Node> tmpGroups = new ArrayList<>(gameRoot.getChildren());
-        Collections.sort(tmpGroups, (g1, g2) -> Integer.compare((int) g1.getUserData(), (int) g2.getUserData()));
-
-        gameRoot.getChildren().setAll(tmpGroups);
-
-        return group;
+        gameRoot.getChildren().setAll(
+                tmpE.stream().map(e -> e.getViewComponent().getParent()).collect(Collectors.toList())
+        );
     }
 
     public void onUpdate(double tpf) {
@@ -321,6 +299,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
 
     @Override
     public void onEntityAdded(Entity entity) {
+        entities.add(entity);
         initView(entity.getViewComponent());
 
         if (FXGL.getSettings().getDevShowPosition().getValue()) {
@@ -330,30 +309,31 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
 
     @Override
     public void onEntityRemoved(Entity entity) {
+        entities.remove(entity);
         destroyView(entity.getViewComponent());
 
-        EntityView debugView = debugPositions.get(entity);
-        if (debugView != null) {
-            debugView.translateXProperty().unbind();
-            debugView.translateYProperty().unbind();
-            removeGameView(debugView, RenderLayer.TOP);
-
-            debugPositions.remove(entity);
-        }
+//        EntityView debugView = debugPositions.get(entity);
+//        if (debugView != null) {
+//            debugView.translateXProperty().unbind();
+//            debugView.translateYProperty().unbind();
+//            removeGameView(debugView, RenderLayer.TOP);
+//
+//            debugPositions.remove(entity);
+//        }
     }
 
     private void initView(ViewComponent viewComponent) {
-        EntityView view = viewComponent.getView();
-        addGameView(view, viewComponent.getRenderLayer());
-
-        viewComponent.renderLayerProperty().addListener((o, oldLayer, newLayer) -> {
-            getRenderGroup(oldLayer).getChildren().remove(view);
-            getRenderGroup(newLayer).getChildren().add(view);
-        });
+//        EntityView view = viewComponent.getView();
+//        addGameView(view, viewComponent.getRenderLayer());
+//
+//        viewComponent.renderLayerProperty().addListener((o, oldLayer, newLayer) -> {
+//            getRenderGroup(oldLayer).getChildren().remove(view);
+//            getRenderGroup(newLayer).getChildren().add(view);
+//        });
     }
 
     private void destroyView(ViewComponent viewComponent) {
-        EntityView view = viewComponent.getView();
-        removeGameView(view, viewComponent.getRenderLayer());
+//        EntityView view = viewComponent.getView();
+//        removeGameView(view, viewComponent.getRenderLayer());
     }
 }

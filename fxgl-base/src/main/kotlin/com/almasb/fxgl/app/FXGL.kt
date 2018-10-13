@@ -12,13 +12,8 @@ import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.devtools.profiling.Profiler
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
-import com.almasb.fxgl.gameplay.achievement.AchievementEvent
-import com.almasb.fxgl.gameplay.achievement.AchievementStore
-import com.almasb.fxgl.gameplay.notification.NotificationEvent
-import com.almasb.fxgl.gameplay.notification.NotificationServiceProvider
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.core.serialization.Bundle
@@ -77,7 +72,7 @@ private constructor(
 
     private val loop = LoopRunner(Consumer { loop(it) })
 
-    private var profiler: Profiler? = null
+    //private var profiler: Profiler? = null
 
     private val _gameConfig by lazy {
         settings.configClass
@@ -94,7 +89,7 @@ private constructor(
     private val _executor by lazy { FXGLExecutor() }
     private val _net by lazy { FXGLNet() }
     private val _gameplay by lazy { Gameplay() }
-    private val _notificationService by lazy { NotificationServiceProvider() }
+    private val _notificationService: Any by lazy { TODO() }
 
     init {
         version = loadVersion()
@@ -289,8 +284,8 @@ private constructor(
     }
 
     private fun attachEventHandlers() {
-        getEventBus().addEventHandler(NotificationEvent.ANY, EventHandler { e -> getAudioPlayer().onNotificationEvent(e) })
-        getEventBus().addEventHandler(AchievementEvent.ANY, EventHandler { e -> getNotificationService().onAchievementEvent(e) })
+        //getEventBus().addEventHandler(NotificationEvent.ANY, EventHandler { e -> getAudioPlayer().onNotificationEvent(e) })
+        //getEventBus().addEventHandler(AchievementEvent.ANY, EventHandler { e -> getNotificationService().onAchievementEvent(e) })
 
         getEventBus().addEventHandler(SaveEvent.ANY, EventHandler { e ->
             settings.save(e.getProfile())
@@ -313,7 +308,7 @@ private constructor(
         log.debug("Running preInit()")
 
         if (getSettings().isProfilingEnabled) {
-            profiler = Profiler()
+            //profiler = Profiler()
         }
 
         initAchievements()
@@ -338,10 +333,10 @@ private constructor(
      * Finds all @SetAchievementStore classes and registers achievements.
      */
     private fun initAchievements() {
-        getSettings().achievementStoreClass.ifPresent { storeClass ->
-            val storeObject = ReflectionUtils.newInstance<AchievementStore>(storeClass as Class<AchievementStore>)
-            storeObject.initAchievements(getGameplay().achievementManager)
-        }
+//        getSettings().achievementStoreClass.ifPresent { storeClass ->
+//            val storeObject = ReflectionUtils.newInstance<AchievementStore>(storeClass as Class<AchievementStore>)
+//            storeObject.initAchievements(getGameplay().achievementManager)
+//        }
     }
 
     private fun generateDefaultProfile() {
@@ -358,8 +353,8 @@ private constructor(
         if (getSettings().isProfilingEnabled) {
             val frameTook = System.nanoTime() - frameStart
 
-            profiler?.update(loop.fps, frameTook)
-            profiler?.render(getGameScene().profilerText)
+            //profiler?.update(loop.fps, frameTook)
+            //profiler?.render(getGameScene().profilerText)
         }
     }
 
@@ -403,7 +398,7 @@ private constructor(
             log.debug("Shutting down background threads")
             getExecutor().shutdownNow()
 
-            engine.profiler?.print()
+            //engine.profiler?.print()
 
             engine.saveSystemData()
 

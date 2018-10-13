@@ -64,7 +64,7 @@ internal object PauseMenuSubState : SubState() {
         require(prevState is PlayState) { "Entered PauseState from illegal state $prevState" }
 
         animation.onFinished = EmptyRunnable
-        animation.start(this)
+        //animation.start(this)
     }
 
     internal fun requestShow() {
@@ -84,7 +84,7 @@ internal object PauseMenuSubState : SubState() {
             animation.onFinished = Runnable {
                 FXGL.getApp().stateMachine.popState()
             }
-            animation.startReverse(this)
+            //animation.startReverse(this)
         }
     }
 

@@ -7,7 +7,6 @@
 package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.devtools.DeveloperTools
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
@@ -418,7 +417,7 @@ open class MDIWindow : Region() {
         }
 
         closeButton.setOnMouseClicked {
-            DeveloperTools.removeFromParent(this)
+            //DeveloperTools.removeFromParent(this)
         }
 
         minimizeButton.translateY = -20.0

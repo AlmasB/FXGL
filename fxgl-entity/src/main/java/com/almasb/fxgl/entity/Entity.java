@@ -702,11 +702,11 @@ public class Entity {
         transform.setScaleY(scaleY);
     }
 
-    public final void setZ(double z) {
+    public final void setZ(int z) {
         transform.setZ(z);
     }
 
-    public final double getZ() {
+    public final int getZ() {
         return transform.getZ();
     }
 

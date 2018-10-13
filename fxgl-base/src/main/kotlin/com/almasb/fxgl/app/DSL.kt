@@ -169,7 +169,7 @@ fun spawn(entityName: String, data: SpawnData): Entity = getApp().gameWorld.spaw
 fun spawnFadeIn(entityName: String, data: SpawnData, duration: Duration): Entity {
     val e = getApp().gameWorld.create(entityName, data)
 
-    fadeIn(e.view, duration).startInPlayState()
+    //fadeIn(e.view, duration).startInPlayState()
 
     getApp().gameWorld.addEntity(e)
 
@@ -223,7 +223,7 @@ fun fire(event: Event) = getEventBus().fireEvent(event)
 
 /* NOTIFICATIONS */
 
-fun notify(message: String) = getNotificationService().pushNotification(message)
+//fun notify(message: String) = getNotificationService().pushNotification(message)
 
 /* DIALOGS */
 

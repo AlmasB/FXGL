@@ -3,8 +3,7 @@ package com.almasb.fxgl.entity.components
 import com.almasb.fxgl.core.View
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.*
 import javafx.scene.Group
 
 /**
@@ -16,6 +15,8 @@ class ViewComponent
 @JvmOverloads constructor(initialView: View? = null): Component() {
 
     val parent = Group()
+
+    val z: ReadOnlyIntegerProperty = ReadOnlyIntegerWrapper(0)
 
     private val propView: ObjectProperty<View> = SimpleObjectProperty<View>(initialView)
 
@@ -29,6 +30,8 @@ class ViewComponent
     override fun onAdded() {
         parent.translateXProperty().bind(entity.xProperty().subtract(entity.transformComponent.positionOriginXProperty()))
         parent.translateYProperty().bind(entity.yProperty().subtract(entity.transformComponent.positionOriginYProperty()))
+
+        (z as ReadOnlyIntegerWrapper).bind(entity.transformComponent.zProperty())
 
         // TODO: bind rotation and origin
     }

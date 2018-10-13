@@ -6,7 +6,9 @@ import com.almasb.fxgl.entity.component.CopyableComponent
 import com.almasb.fxgl.entity.component.CoreComponent
 import com.almasb.fxgl.entity.component.SerializableComponent
 import javafx.beans.property.DoubleProperty
+import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Point2D
 
 
@@ -27,7 +29,7 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
 
     private val propX: DoubleProperty = SimpleDoubleProperty(x)
     private val propY: DoubleProperty = SimpleDoubleProperty(y)
-    private val propZ: DoubleProperty = SimpleDoubleProperty(0.0)
+    private val propZ: IntegerProperty = SimpleIntegerProperty(0)
     private val propAngle: DoubleProperty = SimpleDoubleProperty(angle)
     private val propScaleX: DoubleProperty = SimpleDoubleProperty(scaleX)
     private val propScaleY: DoubleProperty = SimpleDoubleProperty(scaleY)
@@ -46,7 +48,7 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         get() = propY.value
         set(value) { propY.value = value }
 
-    var z: Double
+    var z: Int
         get() = propZ.value
         set(value) { propZ.value = value }
 

@@ -9,7 +9,6 @@ package com.almasb.fxgl.audio
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.gameplay.notification.NotificationEvent
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import javafx.beans.property.DoubleProperty
@@ -55,9 +54,9 @@ class AudioPlayer {
         return globalSoundVolume
     }
 
-    fun onNotificationEvent(event: NotificationEvent) {
-        playSound(FXGL.getSettings().soundNotification)
-    }
+//    fun onNotificationEvent(event: NotificationEvent) {
+//        playSound(FXGL.getSettings().soundNotification)
+//    }
 
     fun getGlobalMusicVolume(): Double {
         return globalMusicVolumeProperty().get()

@@ -58,8 +58,8 @@ private constructor() : Component() {
     override fun onAdded() {
         behaviorTree.entity = entity
 
-        if (FXGL.getSettings().applicationMode != ApplicationMode.RELEASE)
-            entity.viewComponent.view.addNode(bubble)
+//        if (FXGL.getSettings().applicationMode != ApplicationMode.RELEASE)
+//            entity.viewComponent.view.addNode(bubble)
     }
 
     override fun onUpdate(tpf: Double) {

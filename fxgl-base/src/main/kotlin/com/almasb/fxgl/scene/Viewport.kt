@@ -94,8 +94,7 @@ class Viewport
      * @param distY distance in Y between origin and entity
      */
     fun bindToEntity(entity: Entity, distX: Double, distY: Double) {
-        val position = entity.getComponentOptional(PositionComponent::class.java)
-                .orElseThrow{ IllegalArgumentException("Cannot bind to entity without PositionComponent") }
+        val position = entity.transformComponent
 
         // origin X Y with no bounds
         val bx = position.xProperty().add(-distX)

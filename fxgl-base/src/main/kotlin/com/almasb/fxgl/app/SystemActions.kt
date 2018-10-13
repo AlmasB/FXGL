@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.devtools.DeveloperTools
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.UserAction
@@ -37,7 +36,7 @@ object SystemActions {
         override fun onActionBegin() {
             val ok = FXGL.saveScreenshot()
 
-            FXGL.getNotificationService().pushNotification(if (ok) FXGL.getLocalizedString("dev.screenshotSaved") else FXGL.getLocalizedString("dev.screenshotFailed"))
+            //FXGL.getNotificationService().pushNotification(if (ok) FXGL.getLocalizedString("dev.screenshotSaved") else FXGL.getLocalizedString("dev.screenshotFailed"))
         }
     }
 
@@ -65,7 +64,7 @@ object SystemActions {
 
     private fun sysdump() = object : UserAction("System info dump") {
         override fun onActionBegin() {
-            log.infof("Scene graph size: %d", DeveloperTools.getChildrenSize(FXGL.getApp().gameScene.root))
+            //log.infof("Scene graph size: %d", DeveloperTools.getChildrenSize(FXGL.getApp().gameScene.root))
         }
     }
 
