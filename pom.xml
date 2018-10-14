@@ -74,9 +74,9 @@
         <maven.compiler.version>3.8.0</maven.compiler.version>
         <maven.enforcer.version>3.0.0-M1</maven.enforcer.version>
         <maven.source.version>3.0.1</maven.source.version>
-        <maven.javadoc.version>3.0.1</maven.javadoc.version>
+        <maven.javadoc.version>3.0.0-M1</maven.javadoc.version>
         <maven.shade.version>3.0.0</maven.shade.version>
-        <jacoco.version>0.8.1</jacoco.version>
+        <jacoco.version>0.8.2</jacoco.version>
         <maven.surefire.version>2.19</maven.surefire.version>
         <build.helper.version>3.0.0</build.helper.version>
 
@@ -211,41 +211,42 @@
                 </plugin>
 
                 <!-- Create javadoc.jar -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven.javadoc.version}</version>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                            <configuration> <!-- add this to disable checking -->
-                                <additionalJOption>-Xdoclint:none</additionalJOption>
-                                <!-- leave only errors and warning -->
-                                <quiet>true</quiet>
-                                <tags>
-                                    <tag>
-                                        <name>defaultValue</name>
-                                        <placement>a</placement>
-                                        <head>Default Value:</head>
-                                    </tag>
-                                    <tag>
-                                        <name>implNote</name>
-                                        <placement>a</placement>
-                                        <head>Implementation Note:</head>
-                                    </tag>
-                                    <tag>
-                                        <name>warning</name>
-                                        <placement>a</placement>
-                                        <head>Warning:</head>
-                                    </tag>
-                                </tags>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
+                <!--<plugin>-->
+                    <!--<groupId>org.apache.maven.plugins</groupId>-->
+                    <!--<artifactId>maven-javadoc-plugin</artifactId>-->
+                    <!--<version>${maven.javadoc.version}</version>-->
+                    <!--<executions>-->
+                        <!--<execution>-->
+                            <!--<id>attach-javadocs</id>-->
+                            <!--<goals>-->
+                                <!--<goal>jar</goal>-->
+                            <!--</goals>-->
+                            <!--<configuration> &lt;!&ndash; add this to disable checking &ndash;&gt;-->
+                                <!--<additionalparam>-Xdoclint:none</additionalparam>-->
+
+                                <!--&lt;!&ndash; leave only errors and warning &ndash;&gt;-->
+                                <!--<quiet>true</quiet>-->
+                                <!--<tags>-->
+                                    <!--<tag>-->
+                                        <!--<name>defaultValue</name>-->
+                                        <!--<placement>a</placement>-->
+                                        <!--<head>Default Value:</head>-->
+                                    <!--</tag>-->
+                                    <!--<tag>-->
+                                        <!--<name>implNote</name>-->
+                                        <!--<placement>a</placement>-->
+                                        <!--<head>Implementation Note:</head>-->
+                                    <!--</tag>-->
+                                    <!--<tag>-->
+                                        <!--<name>warning</name>-->
+                                        <!--<placement>a</placement>-->
+                                        <!--<head>Warning:</head>-->
+                                    <!--</tag>-->
+                                <!--</tags>-->
+                            <!--</configuration>-->
+                        <!--</execution>-->
+                    <!--</executions>-->
+                <!--</plugin>-->
 
                 <!-- Add kotlin sources -->
                 <plugin>
