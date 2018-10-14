@@ -10,9 +10,9 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.entity.animation.EntityAnimationBuilder;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.parser.level.tiled.Tileset;
 import com.almasb.fxgl.physics.HitBox;
@@ -75,9 +75,9 @@ public final class Entities {
     /**
      * @return new animation builder
      */
-    public static EntityAnimationBuilder animationBuilder() {
-        return new EntityAnimationBuilder();
-    }
+//    public static EntityAnimationBuilder animationBuilder() {
+//        return new EntityAnimationBuilder();
+//    }
 
     /**
      * Provides fluent API for building entities.
@@ -204,24 +204,24 @@ public final class Entities {
         }
 
         public EntityBuilder viewFromNode(Node view) {
-            entity.getViewComponent().setView(view);
+            entity.getViewComponent().setView(new EntityView(view));
             return this;
         }
-
-        public EntityBuilder viewFromNodeWithBBox(Node view) {
-            entity.getViewComponent().setView(view, true);
-            return this;
-        }
-
-        public EntityBuilder viewFromTexture(String textureName) {
-            entity.getViewComponent().setTexture(textureName);
-            return this;
-        }
-
-        public EntityBuilder viewFromTextureWithBBox(String textureName) {
-            entity.getViewComponent().setTexture(textureName, true);
-            return this;
-        }
+//
+//        public EntityBuilder viewFromNodeWithBBox(Node view) {
+//            entity.getViewComponent().setView(view, true);
+//            return this;
+//        }
+//
+//        public EntityBuilder viewFromTexture(String textureName) {
+//            entity.getViewComponent().setTexture(textureName);
+//            return this;
+//        }
+//
+//        public EntityBuilder viewFromTextureWithBBox(String textureName) {
+//            entity.getViewComponent().setTexture(textureName, true);
+//            return this;
+//        }
 
         public EntityBuilder viewFromAnimatedTexture(AnimatedTexture texture) {
             //entity.getViewComponent().setAnimatedTexture(texture, true, false);
@@ -238,25 +238,25 @@ public final class Entities {
             return this;
         }
 
-        public EntityBuilder viewFromAnimatedTexture(String textureName, int numFrames, Duration duration) {
-            entity.getViewComponent().setAnimatedTexture(textureName, numFrames, duration, true, false);
-            return this;
-        }
-
-        public EntityBuilder viewFromAnimatedTexture(String textureName, int numFrames, Duration duration, boolean loop) {
-            entity.getViewComponent().setAnimatedTexture(textureName, numFrames, duration, loop, false);
-            return this;
-        }
-
-        public EntityBuilder viewFromAnimatedTexture(String textureName, int numFrames, Duration duration, boolean loop, boolean removeEntityOnFinish) {
-            entity.getViewComponent().setAnimatedTexture(textureName, numFrames, duration, loop, removeEntityOnFinish);
-            return this;
-        }
-
-        public EntityBuilder renderLayer(RenderLayer layer) {
-            entity.getViewComponent().setRenderLayer(layer);
-            return this;
-        }
+//        public EntityBuilder viewFromAnimatedTexture(String textureName, int numFrames, Duration duration) {
+//            entity.getViewComponent().setAnimatedTexture(textureName, numFrames, duration, true, false);
+//            return this;
+//        }
+//
+//        public EntityBuilder viewFromAnimatedTexture(String textureName, int numFrames, Duration duration, boolean loop) {
+//            entity.getViewComponent().setAnimatedTexture(textureName, numFrames, duration, loop, false);
+//            return this;
+//        }
+//
+//        public EntityBuilder viewFromAnimatedTexture(String textureName, int numFrames, Duration duration, boolean loop, boolean removeEntityOnFinish) {
+//            entity.getViewComponent().setAnimatedTexture(textureName, numFrames, duration, loop, removeEntityOnFinish);
+//            return this;
+//        }
+//
+//        public EntityBuilder renderLayer(RenderLayer layer) {
+//            entity.getViewComponent().setRenderLayer(layer);
+//            return this;
+//        }
 
 //        /**
 //         * Generates view from tiles with {@link RenderLayer#DEFAULT}.

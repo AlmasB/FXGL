@@ -63,7 +63,7 @@ public class ExpireCleanComponent extends Component {
     private void updateOpacity(double tpf) {
         time += tpf;
 
-        getEntity().getView().setOpacity(time >= expire.toSeconds() ? 0 : 1 - time / expire.toSeconds());
+        getEntity().getView().getNode().setOpacity(time >= expire.toSeconds() ? 0 : 1 - time / expire.toSeconds());
     }
 
     /**
