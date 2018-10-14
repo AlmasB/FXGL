@@ -39,7 +39,7 @@ class FileOutput
 
             val readmeFile = Paths.get("${logDirectory}Readme.txt")
 
-            Files.write(readmeFile, "This directory contains $baseFileName log files.".lines())
+            Files.write(readmeFile, listOf("This directory contains $baseFileName log files."))
         }
 
         val logs = Files.walk(logDir, 1)

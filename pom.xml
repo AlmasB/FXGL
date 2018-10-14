@@ -65,13 +65,13 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <source.version>1.8</source.version>
+        <source.version>11</source.version>
         <fxgl.version>${project.version}</fxgl.version>
 
         <!-- plugins -->
         <maven.gpg.version>1.6</maven.gpg.version>
         <sonatype.nexus.staging.version>1.6.7</sonatype.nexus.staging.version>
-        <maven.compiler.version>3.7.0</maven.compiler.version>
+        <maven.compiler.version>3.8.0</maven.compiler.version>
         <maven.enforcer.version>3.0.0-M1</maven.enforcer.version>
         <maven.source.version>3.0.1</maven.source.version>
         <maven.javadoc.version>3.0.1</maven.javadoc.version>
@@ -81,6 +81,7 @@
         <build.helper.version>3.0.0</build.helper.version>
 
         <!-- dependencies -->
+        <jfx.version>11</jfx.version>
         <kotlin.version>1.2.51</kotlin.version>
         <kotlinx.version>0.23.4</kotlinx.version>
         <jackson.version>2.9.0</jackson.version>
@@ -173,26 +174,26 @@
                 </plugin>
 
                 <!-- Force check on compiler 1.8.0-101+ -->
-                <plugin>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>${maven.enforcer.version}</version>
-                    <executions>
-                        <execution>
-                            <id>enforce-all</id>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                            <configuration>
-                                <rules>
-                                    <DependencyConvergence/>
-                                    <requireJavaVersion>
-                                        <version>[1.8.0-101,)</version>
-                                    </requireJavaVersion>
-                                </rules>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
+                <!--<plugin>-->
+                    <!--<artifactId>maven-enforcer-plugin</artifactId>-->
+                    <!--<version>${maven.enforcer.version}</version>-->
+                    <!--<executions>-->
+                        <!--<execution>-->
+                            <!--<id>enforce-all</id>-->
+                            <!--<goals>-->
+                                <!--<goal>enforce</goal>-->
+                            <!--</goals>-->
+                            <!--<configuration>-->
+                                <!--<rules>-->
+                                    <!--<DependencyConvergence/>-->
+                                    <!--<requireJavaVersion>-->
+                                        <!--<version>[1.8.0-101,)</version>-->
+                                    <!--</requireJavaVersion>-->
+                                <!--</rules>-->
+                            <!--</configuration>-->
+                        <!--</execution>-->
+                    <!--</executions>-->
+                <!--</plugin>-->
 
                 <!-- Create sources.jar -->
                 <plugin>

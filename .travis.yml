@@ -5,9 +5,6 @@ cache:
   directories:
   - "~/.m2"
 jdk:
-- oraclejdk8
-- oraclejdk9
-- oraclejdk10
 - oraclejdk11
 before_script:
 - export DISPLAY=:99.0
