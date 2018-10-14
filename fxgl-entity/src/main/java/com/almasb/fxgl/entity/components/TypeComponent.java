@@ -10,7 +10,6 @@ import com.almasb.fxgl.entity.component.CopyableComponent;
 import com.almasb.fxgl.entity.component.CoreComponent;
 import com.almasb.fxgl.entity.component.SerializableComponent;
 import com.almasb.fxgl.core.serialization.Bundle;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
@@ -60,12 +59,12 @@ public class TypeComponent extends ObjectComponent<Serializable>
     }
 
     @Override
-    public void write(@NotNull Bundle bundle) {
+    public void write(Bundle bundle) {
         bundle.put("value", getValue());
     }
 
     @Override
-    public void read(@NotNull Bundle bundle) {
+    public void read(Bundle bundle) {
         setValue(bundle.get("value"));
     }
 

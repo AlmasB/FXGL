@@ -9,7 +9,6 @@ package com.almasb.fxgl.entity.components;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.SerializableComponent;
 import com.almasb.fxgl.core.serialization.Bundle;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Adds ID to an entity, so it can be uniquely identified.
@@ -71,13 +70,13 @@ public class IDComponent extends Component implements SerializableComponent {
     }
 
     @Override
-    public void write(@NotNull Bundle bundle) {
+    public void write(Bundle bundle) {
         bundle.put("name", name);
         bundle.put("id", id);
     }
 
     @Override
-    public void read(@NotNull Bundle bundle) {
+    public void read(Bundle bundle) {
         name = bundle.get("name");
         id = bundle.get("id");
     }
