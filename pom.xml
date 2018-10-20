@@ -84,7 +84,7 @@
 
         <!-- dependencies -->
         <jfx.version>11</jfx.version>
-        <kotlin.version>1.2.51</kotlin.version>
+        <kotlin.version>1.2.71</kotlin.version>
         <kotlinx.version>0.23.4</kotlinx.version>
         <jackson.version>2.9.0</jackson.version>
         <apache.http.version>4.5.3</apache.http.version>
