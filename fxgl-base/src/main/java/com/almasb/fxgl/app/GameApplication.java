@@ -74,10 +74,10 @@ public abstract class GameApplication {
             if (System.getProperty("javafx.platform") == null)
                 System.setProperty("javafx.platform", "Desktop");
 
-            ReadOnlyGameSettings settings = instance.takeUserSettings();
+            var settings = instance.takeUserSettings();
 
             instance.initLogger(settings);
-            
+
         } catch (Exception e) {
             FXGL.handleFatalError(e);
         }
@@ -129,7 +129,7 @@ public abstract class GameApplication {
     }
 
     private ReadOnlyGameSettings takeUserSettings() {
-        GameSettings localSettings = new GameSettings();
+        var localSettings = new GameSettings();
         initSettings(localSettings);
         return localSettings.toReadOnly();
     }
