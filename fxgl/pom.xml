@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-base</artifactId>
+            <artifactId>fxgl-engine</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 

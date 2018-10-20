@@ -10,7 +10,7 @@
         <version>0.5.5-SNAPSHOT</version>
     </parent>
 
-    <artifactId>fxgl-base</artifactId>
+    <artifactId>fxgl-engine</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
