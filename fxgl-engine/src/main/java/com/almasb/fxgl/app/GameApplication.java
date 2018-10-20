@@ -60,16 +60,10 @@ public abstract class GameApplication {
 
     private static final Logger log = Logger.get(GameApplication.class);
 
-    private static GameApplication instance;
-
-    static GameApplication getInstance() {
-        return instance;
-    }
-
     public static void launch(String[] args) {
-        instance = newInstance();
-
         try {
+            var instance = newInstance();
+
             // this will be set automatically by javafxports on mobile
             if (System.getProperty("javafx.platform") == null)
                 System.setProperty("javafx.platform", "Desktop");
@@ -78,14 +72,16 @@ public abstract class GameApplication {
 
             instance.initLogger(settings);
 
+            FXGLApplication.launchFX(instance, settings, args);
         } catch (Exception e) {
-            FXGL.handleFatalError(e);
+            System.out.println("Error during launch:");
+            e.printStackTrace();
+            System.out.println("Application will now exit");
+            System.exit(-1);
         }
-
-        FXApplication.main(args);
     }
 
-    private static GameApplication newInstance() {
+    private static GameApplication newInstance() throws Exception {
         // instantiate GameApp using JFX strategy
         // Figure out the right class to call
         StackTraceElement[] cause = Thread.currentThread().getStackTrace();
@@ -110,22 +106,14 @@ public abstract class GameApplication {
             throw new RuntimeException("Error: unable to determine GameApplication class");
         }
 
-        try {
-            Class theClass = Class.forName(callingClassName, false, Thread.currentThread().getContextClassLoader());
-            if (GameApplication.class.isAssignableFrom(theClass)) {
-                Class<? extends GameApplication> appClass = theClass;
-
-                return appClass.getDeclaredConstructor().newInstance();
-
-            } else {
-                throw new RuntimeException("Error: " + theClass
-                        + " is not a subclass of GameApplication");
-            }
-        } catch (RuntimeException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+        Class theClass = Class.forName(callingClassName, false, Thread.currentThread().getContextClassLoader());
+        if (!GameApplication.class.isAssignableFrom(theClass)) {
+            throw new RuntimeException("Error: " + theClass + " is not a subclass of GameApplication");
         }
+
+        Class<? extends GameApplication> appClass = theClass;
+
+        return appClass.getDeclaredConstructor().newInstance();
     }
 
     private ReadOnlyGameSettings takeUserSettings() {

@@ -11,14 +11,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <source.version>1.8</source.version>
+        <source.version>11</source.version>
         <fxgl.version>0.5.5-SNAPSHOT</fxgl.version>
 
         <!-- plugins -->
-        <maven.compiler.version>3.7.0</maven.compiler.version>
+        <maven.compiler.version>3.8.0</maven.compiler.version>
 
         <!-- dependencies -->
-        <kotlin.version>1.2.51</kotlin.version>
+        <kotlin.version>1.2.71</kotlin.version>
     </properties>
 
     <dependencies>

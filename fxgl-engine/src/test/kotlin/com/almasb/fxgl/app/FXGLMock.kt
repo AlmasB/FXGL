@@ -17,7 +17,7 @@ class FXGLMock {
         @JvmStatic fun mock() {
             val app = MockGameApplication.get()
 
-            FXGL.configure(app, app.settings, app.stage)
+            FXGL.engine = Engine(app, app.settings, app.stage)
         }
     }
 }
