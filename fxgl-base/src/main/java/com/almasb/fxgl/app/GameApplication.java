@@ -22,9 +22,7 @@ import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.time.Timer;
 import com.almasb.fxgl.ui.Display;
 import com.almasb.fxgl.ui.UIFactory;
-import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
-import javafx.stage.Stage;
 
 import java.util.Map;
 
@@ -58,28 +56,75 @@ import java.util.Map;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class GameApplication extends Application {
+public abstract class GameApplication {
 
     private static final Logger log = Logger.get(GameApplication.class);
 
-    /**
-     * This is the main entry point as run by the JavaFX platform.
-     */
-    @Override
-    public final void start(Stage stage) {
+    private static GameApplication instance;
+
+    static GameApplication getInstance() {
+        return instance;
+    }
+
+    public static void launch(String[] args) {
+        instance = newInstance();
+
         try {
             // this will be set automatically by javafxports on mobile
             if (System.getProperty("javafx.platform") == null)
                 System.setProperty("javafx.platform", "Desktop");
 
-            ReadOnlyGameSettings settings = takeUserSettings();
+            ReadOnlyGameSettings settings = instance.takeUserSettings();
 
-            initLogger(settings);
-
-            startFXGL(settings, stage);
-
+            instance.initLogger(settings);
+            
         } catch (Exception e) {
             FXGL.handleFatalError(e);
+        }
+
+        FXApplication.main(args);
+    }
+
+    private static GameApplication newInstance() {
+        // instantiate GameApp using JFX strategy
+        // Figure out the right class to call
+        StackTraceElement[] cause = Thread.currentThread().getStackTrace();
+
+        boolean foundThisMethod = false;
+        String callingClassName = null;
+        for (StackTraceElement se : cause) {
+            // Skip entries until we get to the entry for this class
+            String className = se.getClassName();
+            String methodName = se.getMethodName();
+            if (foundThisMethod) {
+                callingClassName = className;
+                break;
+            } else if (GameApplication.class.getName().equals(className)
+                    && "launch".equals(methodName)) {
+
+                foundThisMethod = true;
+            }
+        }
+
+        if (callingClassName == null) {
+            throw new RuntimeException("Error: unable to determine GameApplication class");
+        }
+
+        try {
+            Class theClass = Class.forName(callingClassName, false, Thread.currentThread().getContextClassLoader());
+            if (GameApplication.class.isAssignableFrom(theClass)) {
+                Class<? extends GameApplication> appClass = theClass;
+
+                return appClass.getDeclaredConstructor().newInstance();
+
+            } else {
+                throw new RuntimeException("Error: " + theClass
+                        + " is not a subclass of GameApplication");
+            }
+        } catch (RuntimeException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
     }
 
@@ -101,20 +146,7 @@ public abstract class GameApplication extends Application {
         log.debug("Logging settings\n" + settings);
     }
 
-    private void startFXGL(ReadOnlyGameSettings settings, Stage stage) {
-        log.debug("Starting FXGL");
-
-        FXGL.configure(this, settings, stage);
-        FXGL.startLoop();
-    }
-
     /* CALLBACKS BEGIN */
-
-    @Override
-    public final void init() {}
-
-    @Override
-    public final void stop() {}
 
     /**
      * Initialize app settings.
