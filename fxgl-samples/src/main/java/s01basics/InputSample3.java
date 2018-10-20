@@ -31,7 +31,7 @@ public class InputSample3 extends GameApplication {
         // to manual checks, because they can be altered via menu controls
 
         if (getInput().isHeld(KeyCode.F)) {
-            System.out.println("Tick: " + getTick());
+            System.out.println("F is held");
         }
     }
 

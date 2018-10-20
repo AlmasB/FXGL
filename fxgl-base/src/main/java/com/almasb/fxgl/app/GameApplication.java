@@ -329,16 +329,6 @@ public abstract class GameApplication extends Application {
         return new Rectangle2D(0, 0, getWidth(), getHeight());
     }
 
-    /**
-     * TODO: Will be removed in 0.6.
-     *
-     * @return current tick (frame)
-     */
-    @Deprecated
-    public final long getTick() {
-        return -1;
-    }
-
     public final EventBus getEventBus() {
         return FXGL.getEventBus();
     }
