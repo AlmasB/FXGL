@@ -6,6 +6,9 @@
 
 package com.almasb.fxgl.app
 
+import org.hamcrest.MatcherAssert
+import org.hamcrest.MatcherAssert.*
+import org.hamcrest.Matchers
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -22,6 +25,15 @@ class FXGLTest {
         @JvmStatic fun before() {
             FXGLMock.mock()
         }
+    }
+
+    @Test
+    fun `Load version`() {
+        val app = MockGameApplication.get()
+        
+        val engine = Engine(app, app.settings, app.stage)
+
+        assertTrue(engine.version.matches("\\d\\.\\d\\.\\d.*".toRegex()))
     }
 
     @Test
