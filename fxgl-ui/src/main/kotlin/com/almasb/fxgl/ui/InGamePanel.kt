@@ -7,7 +7,6 @@
 package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.animation.Interpolators
-import com.almasb.fxgl.app.FXGL
 import javafx.animation.TranslateTransition
 import javafx.geometry.HorizontalDirection
 import javafx.scene.layout.Pane
@@ -25,17 +24,13 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class InGamePanel(val direction: HorizontalDirection = HorizontalDirection.LEFT) : Pane() {
-
-    private val panelWidth: Double
-    private val panelHeight: Double
+class InGamePanel(val panelWidth: Double,
+                  val panelHeight: Double,
+                  val direction: HorizontalDirection = HorizontalDirection.LEFT) : Pane() {
 
     private var open = false
 
     init {
-        panelWidth = FXGL.getSettings().width.toDouble() / 3
-        panelHeight = FXGL.getSettings().height.toDouble() - 8
-
         val outerBorder = Rectangle(panelWidth, panelHeight,
                 Color.color(0.5, 0.5, 0.5, 0.5)
         )

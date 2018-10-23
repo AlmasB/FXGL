@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.ui
 
-import com.almasb.fxgl.app.FXGL
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
@@ -60,7 +59,7 @@ open class MDIWindow : Region() {
 
     // CUSTOM
 
-    private val header = FXGL.getUIFactory().newTextFlow()
+    private val header = FXGLUIConfig.getUIFactory().newTextFlow()
 
     private val minimizeButton = makeMinimizeButton()
     private val closeButton = makeCloseButton()

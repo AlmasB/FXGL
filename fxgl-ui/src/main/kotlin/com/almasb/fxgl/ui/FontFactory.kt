@@ -13,7 +13,7 @@ import javafx.scene.text.Font
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FontFactory internal constructor(private val font: Font) {
+class FontFactory constructor(private val font: Font) {
 
     /**
      * Construct new native JavaFX font with given size.

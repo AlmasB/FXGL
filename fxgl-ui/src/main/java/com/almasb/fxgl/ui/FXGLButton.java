@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.app.FXGL;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
@@ -23,18 +22,20 @@ public class FXGLButton extends Button {
     public FXGLButton(String text) {
         super(text);
         getStyleClass().setAll("fxgl_button");
-        setFont(FXGL.getUIFactory().newFont(22));
+        setFont(FXGLUIConfig.getUIFactory().newFont(22));
         setAlignment(Pos.CENTER);
         setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
 
 
-                FXGL.getAudioPlayer().playSound(FXGL.getSettings().getSoundMenuPress());
+                //FXGL.getAudioPlayer().playSound(FXGL.getSettings().getSoundMenuPress());
                 fire();
             }
         });
-        setOnMouseEntered(e -> FXGL.getAudioPlayer().playSound(FXGL.getSettings().getSoundMenuSelect()));
-        setOnMouseClicked(e -> FXGL.getAudioPlayer().playSound(FXGL.getSettings().getSoundMenuPress()));
+
+        // TODO:
+        //setOnMouseEntered(e -> FXGL.getAudioPlayer().playSound(FXGL.getSettings().getSoundMenuSelect()));
+        //setOnMouseClicked(e -> FXGL.getAudioPlayer().playSound(FXGL.getSettings().getSoundMenuPress()));
     }
 
     @Override

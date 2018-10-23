@@ -6,13 +6,12 @@
 
 package com.almasb.fxgl.ui
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.FXGL.Companion.localizedStringProperty
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.core.util.Predicate
 import javafx.beans.property.DoubleProperty
 import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableStringValue
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -34,7 +33,7 @@ import javafx.scene.text.Text
 class FXGLDialogFactory : DialogFactory {
 
     private fun createMessage(message: String): Text {
-        return FXGL.getUIFactory().newText(message)
+        return FXGLUIConfig.getUIFactory().newText(message)
     }
 
     /**
@@ -56,7 +55,7 @@ class FXGLDialogFactory : DialogFactory {
     override fun messageDialog(message: String, callback: Runnable): Pane {
         val text = createMessage(message)
 
-        val btnOK = FXGL.getUIFactory().newButton("")
+        val btnOK = FXGLUIConfig.getUIFactory().newButton("")
         btnOK.textProperty().bind(localizedStringProperty("dialog.ok"))
         btnOK.setOnAction {
             callback.run()
@@ -101,7 +100,7 @@ class FXGLDialogFactory : DialogFactory {
 
         val field = TextField()
         field.maxWidth = Math.max(text.layoutBounds.width, 200.0)
-        field.font = FXGL.getUIFactory().newFont(18.0)
+        field.font = FXGLUIConfig.getUIFactory().newFont(18.0)
 
         val btnOK = FXGLButton("")
         btnOK.textProperty().bind(localizedStringProperty("dialog.ok"))
@@ -126,9 +125,9 @@ class FXGLDialogFactory : DialogFactory {
 
         val field = TextField()
         field.maxWidth = Math.max(text.layoutBounds.width, 200.0)
-        field.font = FXGL.getUIFactory().newFont(18.0)
+        field.font = FXGLUIConfig.getUIFactory().newFont(18.0)
 
-        val btnOK = FXGL.getUIFactory().newButton("")
+        val btnOK = FXGLUIConfig.getUIFactory().newButton("")
         btnOK.textProperty().bind(localizedStringProperty("dialog.ok"))
 
         field.textProperty().addListener {
@@ -140,7 +139,7 @@ class FXGLDialogFactory : DialogFactory {
             callback.accept(field.text)
         }
 
-        val btnCancel = FXGL.getUIFactory().newButton("")
+        val btnCancel = FXGLUIConfig.getUIFactory().newButton("")
         btnCancel.textProperty().bind(localizedStringProperty("dialog.cancel"))
         btnCancel.setOnAction {
             callback.accept("")
@@ -258,5 +257,9 @@ class FXGLDialogFactory : DialogFactory {
         vbox.setAlignment(Pos.CENTER)
 
         return wrap(vbox)
+    }
+
+    private fun localizedStringProperty(key: String): ObservableStringValue {
+        TODO()
     }
 }

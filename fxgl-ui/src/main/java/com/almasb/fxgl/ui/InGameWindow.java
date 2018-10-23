@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.app.FXGL;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -76,8 +75,12 @@ public class InGameWindow extends MDIWindow {
                 throw new IllegalArgumentException("Unknown decor: " + decor);
         }
 
-        appW = FXGL.getSettings().getWidth();
-        appH = FXGL.getSettings().getHeight();
+        appW = 800;
+        appH = 800;
+
+        // TODO:
+        //appW = FXGL.getSettings().getWidth();
+        //appH = FXGL.getSettings().getHeight();
 
         layoutXProperty().addListener(makeListenerX());
         layoutYProperty().addListener(makeListenerY());

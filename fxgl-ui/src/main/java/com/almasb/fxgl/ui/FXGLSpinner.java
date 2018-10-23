@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.app.FXGL;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Spinner;
 
@@ -18,6 +17,6 @@ public class FXGLSpinner<T> extends Spinner<T> {
     public FXGLSpinner(ObservableList<T> items) {
         super(items);
         getStyleClass().setAll("fxgl-spinner");
-        getEditor().setFont(FXGL.getUIFactory().newFont(18));
+        getEditor().setFont(FXGLUIConfig.getUIFactory().newFont(18));
     }
 }

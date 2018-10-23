@@ -28,6 +28,7 @@
 
         <!-- Extra functionality module (on top of the main module) -->
         <module>fxgl</module>
+        <module>fxgl-ui</module>
     </modules>
 
     <licenses>
