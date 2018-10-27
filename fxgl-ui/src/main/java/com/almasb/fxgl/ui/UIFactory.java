@@ -22,6 +22,8 @@ import javafx.scene.text.Text;
  */
 public interface UIFactory {
 
+    void registerFontFactory(FontType type, FontFactory fontFactory);
+
     MDIWindow newWindow();
 
     /**

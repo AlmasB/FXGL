@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.ui
 
-import com.almasb.fxgl.ui.FontType.*
 import com.almasb.fxgl.ui.FontType.UI
 import javafx.beans.binding.StringBinding
 import javafx.beans.binding.StringExpression
@@ -22,6 +21,13 @@ import javafx.scene.text.Text
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class FXGLUIFactory : UIFactory {
+
+    private val fontFactories = hashMapOf<FontType, FontFactory>()
+
+    override fun registerFontFactory(type: FontType, fontFactory: FontFactory) {
+        fontFactories[type] = fontFactory
+    }
+
     override fun newText(textBinding: StringExpression): Text {
         val text = newText(textBinding.get())
         text.textProperty().bind(textBinding)
@@ -55,13 +61,8 @@ class FXGLUIFactory : UIFactory {
         return newFont(UI, size)
     }
 
-    override fun newFont(type: FontType, size: Double): Font = when (type) {
-        else -> TODO()
-//        UI -> FXGL.getAssetLoader().loadFont(FXGL.getSettings().fontUI).newFont(size)
-//        MONO -> FXGL.getAssetLoader().loadFont(FXGL.getSettings().fontMono).newFont(size)
-//        GAME -> FXGL.getAssetLoader().loadFont(FXGL.getSettings().fontGame).newFont(size)
-//        TEXT -> FXGL.getAssetLoader().loadFont(FXGL.getSettings().fontText).newFont(size)
-    }
+    override fun newFont(type: FontType, size: Double): Font
+            = fontFactories[type]?.newFont(size) ?: throw IllegalStateException("No font factory found for $type")
 
     override fun newButton(text: String): Button {
         return FXGLButton(text)

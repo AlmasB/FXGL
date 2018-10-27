@@ -17,6 +17,7 @@ import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.fxgl.ui.FXGLUIConfig
+import com.almasb.fxgl.ui.FontType
 import com.gluonhq.charm.down.Platform
 import com.gluonhq.charm.down.Services
 import com.gluonhq.charm.down.plugins.LifecycleEvent
@@ -103,6 +104,17 @@ internal class Engine(
     internal fun startLoop() {
         val start = System.nanoTime()
 
+        log.debug("Registering font factories")
+
+        settings.uiFactory.registerFontFactory(FontType.UI, assetLoader.loadFont(settings.fontUI))
+        settings.uiFactory.registerFontFactory(FontType.GAME, assetLoader.loadFont(settings.fontGame))
+        settings.uiFactory.registerFontFactory(FontType.MONO, assetLoader.loadFont(settings.fontMono))
+        settings.uiFactory.registerFontFactory(FontType.TEXT, assetLoader.loadFont(settings.fontText))
+
+        log.debug("Setting UI factory")
+
+        FXGLUIConfig.setUIFactory(settings.uiFactory)
+
         val startupScene = settings.sceneFactory.newStartup()
 
         // get window up ASAP
@@ -116,9 +128,7 @@ internal class Engine(
         Async.start {
             IOTask.setDefaultExecutor(executor)
             IOTask.setDefaultFailAction(settings.exceptionHandler)
-
-            FXGLUIConfig.setUIFactory(settings.uiFactory)
-
+            
             isFirstRun = !FS.exists("system/")
 
             if (isFirstRun) {

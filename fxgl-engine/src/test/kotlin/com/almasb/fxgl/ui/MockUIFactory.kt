@@ -20,6 +20,9 @@ import javafx.scene.text.Text
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 object MockUIFactory : UIFactory {
+    override fun registerFontFactory(type: FontType?, fontFactory: FontFactory?) {
+    }
+
     override fun newFont(type: FontType?, size: Double): Font {
         return Font.font(size)
     }
