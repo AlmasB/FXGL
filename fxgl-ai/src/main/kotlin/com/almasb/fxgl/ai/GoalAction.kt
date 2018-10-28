@@ -8,7 +8,6 @@ package com.almasb.fxgl.ai
 
 import com.almasb.fxgl.ai.btree.LeafTask
 import com.almasb.fxgl.ai.btree.Task
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.Entity
 
 /**
@@ -34,7 +33,7 @@ abstract class GoalAction
             return Status.SUCCEEDED
 
         entity.getComponent(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
-        onUpdate(FXGL.getApp().tpf())
+        //onUpdate(FXGL.getApp().tpf())
         return if (reachedGoal()) Status.SUCCEEDED else Status.RUNNING
     }
 

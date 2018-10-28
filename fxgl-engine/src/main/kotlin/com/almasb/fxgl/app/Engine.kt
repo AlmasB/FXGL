@@ -128,7 +128,7 @@ internal class Engine(
         Async.start {
             IOTask.setDefaultExecutor(executor)
             IOTask.setDefaultFailAction(settings.exceptionHandler)
-            
+
             isFirstRun = !FS.exists("system/")
 
             if (isFirstRun) {

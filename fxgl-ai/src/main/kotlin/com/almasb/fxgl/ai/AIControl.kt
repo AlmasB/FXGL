@@ -7,8 +7,7 @@
 package com.almasb.fxgl.ai
 
 import com.almasb.fxgl.ai.btree.BehaviorTree
-import com.almasb.fxgl.app.ApplicationMode
-import com.almasb.fxgl.app.FXGL
+
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.Component
 
@@ -22,7 +21,7 @@ private constructor() : Component() {
 
     private lateinit var behaviorTree: BehaviorTree<Entity>
 
-    val bubble = AIBubble()
+    //val bubble = AIBubble()
 
     /**
      * Constructs AI control with given [behaviorTree].
@@ -39,7 +38,9 @@ private constructor() : Component() {
         var tree = parsedTreesCache[treeName]
 
         if (tree == null) {
-            tree = FXGL.getAssetLoader().loadBehaviorTree(treeName)
+
+            tree = TODO()
+            //tree = FXGL.getAssetLoader().loadBehaviorTree(treeName)
             parsedTreesCache[treeName] = tree
         }
 
@@ -52,7 +53,7 @@ private constructor() : Component() {
     }
 
     fun setBubbleMessage(message: String) {
-        bubble.setMessage(message)
+        //bubble.setMessage(message)
     }
 
     override fun onAdded() {

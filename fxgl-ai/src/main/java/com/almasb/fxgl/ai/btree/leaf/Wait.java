@@ -21,7 +21,6 @@ import com.almasb.fxgl.ai.btree.Task;
 import com.almasb.fxgl.ai.btree.annotation.TaskAttribute;
 import com.almasb.fxgl.ai.utils.random.ConstantFloatDistribution;
 import com.almasb.fxgl.ai.utils.random.FloatDistribution;
-import com.almasb.fxgl.app.FXGL;
 
 /** {@code Wait} is a leaf that keeps running for the specified amount of time then succeeds.
  * 
@@ -66,14 +65,17 @@ public class Wait<E> extends LeafTask<E> {
 	@Override
 	public void start () {
 		timeout = seconds.nextFloat();
-        startTime = (float) FXGL.getMasterTimer().getNow();
+
+		// TODO:
+		//startTime = (float) FXGL.getMasterTimer().getNow();
 	}
 
 	/** Executes this {@code Wait} task.
 	 * @return {@link Status#SUCCEEDED} if the specified timeout has expired; {@link Status#RUNNING} otherwise. */
 	@Override
 	public Status execute () {
-		return FXGL.getMasterTimer().getNow() - startTime < timeout ? Status.RUNNING : Status.SUCCEEDED;
+		return Status.SUCCEEDED;
+	    //return FXGL.getMasterTimer().getNow() - startTime < timeout ? Status.RUNNING : Status.SUCCEEDED;
 	}
 
 	@Override
