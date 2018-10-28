@@ -11,7 +11,7 @@ import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
 import com.almasb.fxgl.particle.ParticleSystem;
 import com.almasb.fxgl.scene.FXGLMenu;
-import com.almasb.fxgl.settings.MenuItem;
+import com.almasb.fxgl.app.MenuItem;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.core.util.Supplier;

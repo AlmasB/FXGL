@@ -7,7 +7,7 @@
 package s01basics;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.app.GameSettings;
 
 /**
  * This is an example of a minimalistic FXGL game application.

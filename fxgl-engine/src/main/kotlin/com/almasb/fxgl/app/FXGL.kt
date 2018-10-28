@@ -8,7 +8,6 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.time.Timer

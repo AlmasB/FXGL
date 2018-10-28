@@ -14,7 +14,6 @@ import com.almasb.fxgl.net.FXGLNet
 import com.almasb.fxgl.saving.LoadEvent
 import com.almasb.fxgl.saving.SaveEvent
 import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.fxgl.ui.FXGLUIConfig
 import com.almasb.fxgl.ui.FontType

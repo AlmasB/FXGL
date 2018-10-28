@@ -1,6 +1,5 @@
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

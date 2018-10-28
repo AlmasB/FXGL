@@ -7,7 +7,7 @@
 package manual;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.app.GameSettings;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)

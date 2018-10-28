@@ -13,7 +13,7 @@ import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.app.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 

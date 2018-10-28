@@ -14,7 +14,7 @@
 //import com.almasb.fxgl.entity.EntityView;
 //import com.almasb.fxgl.input.Input;
 //import com.almasb.fxgl.input.UserAction;
-//import com.almasb.fxgl.settings.GameSettings;
+//import com.almasb.fxgl.app.GameSettings;
 //import javafx.scene.input.KeyCode;
 //import javafx.scene.paint.Color;
 //import javafx.scene.shape.Rectangle;

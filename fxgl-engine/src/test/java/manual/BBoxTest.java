@@ -10,7 +10,7 @@
 //import com.almasb.fxgl.entity.Entity;
 //import com.almasb.fxgl.physics.BoundingShape;
 //import com.almasb.fxgl.physics.HitBox;
-//import com.almasb.fxgl.settings.GameSettings;
+//import com.almasb.fxgl.app.GameSettings;
 //import javafx.geometry.Point2D;
 //import javafx.scene.paint.Color;
 //import javafx.scene.shape.Rectangle;

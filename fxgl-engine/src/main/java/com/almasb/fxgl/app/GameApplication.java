@@ -17,8 +17,6 @@ import com.almasb.fxgl.net.Net;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.fxgl.scene.GameScene;
-import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.time.Timer;
 import com.almasb.fxgl.ui.Display;
 import com.almasb.fxgl.ui.UIFactory;

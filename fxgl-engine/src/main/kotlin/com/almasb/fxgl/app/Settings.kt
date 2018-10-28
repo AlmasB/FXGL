@@ -4,11 +4,8 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.settings
+package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.ApplicationMode
-import com.almasb.fxgl.app.ExceptionHandler
-import com.almasb.fxgl.app.FXGLExceptionHandler
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
@@ -27,6 +24,24 @@ import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
 import javafx.stage.StageStyle
 import java.util.*
+
+enum class MenuItem {
+
+    /**
+     * Enables CONTINUE, SAVE, LOAD.
+     */
+    SAVE_LOAD,
+
+    /**
+     * Enables EXTRA -> CREDITS, TROPHIES
+     */
+    EXTRA,
+
+    /**
+     * Enables ONLINE (multiplayer).
+     */
+    ONLINE
+}
 
 /**
  * Data structure for variables that are initialised before the application (game) starts.

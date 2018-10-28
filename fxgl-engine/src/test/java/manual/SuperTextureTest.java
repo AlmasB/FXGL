@@ -36,7 +36,7 @@
 //import com.almasb.fxgl.physics.CollisionHandler;
 //import com.almasb.fxgl.physics.HitBox;
 //import com.almasb.fxgl.physics.PhysicsWorld;
-//import com.almasb.fxgl.settings.GameSettings;
+//import com.almasb.fxgl.app.GameSettings;
 //import javafx.geometry.BoundingBox;
 //import javafx.geometry.HorizontalDirection;
 //import javafx.geometry.VerticalDirection;

@@ -10,7 +10,7 @@
 //import com.almasb.fxgl.app.GameApplication;
 //import com.almasb.fxgl.util.Entities;
 //import com.almasb.fxgl.input.UserAction;
-//import com.almasb.fxgl.settings.GameSettings;
+//import com.almasb.fxgl.app.GameSettings;
 //import javafx.scene.input.MouseButton;
 //import javafx.scene.shape.Rectangle;
 //

@@ -3,7 +3,6 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
