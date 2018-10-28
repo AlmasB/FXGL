@@ -48,21 +48,38 @@ public abstract class GameApplication {
         try {
             var instance = newInstance();
 
-            // this will be set automatically by javafxports on mobile
-            if (System.getProperty("javafx.platform") == null)
-                System.setProperty("javafx.platform", "Desktop");
-
-            var settings = instance.takeUserSettings();
-
-            instance.initLogger(settings);
-
-            FXGLApplication.launchFX(instance, settings, args);
+            launch(instance, args);
         } catch (Exception e) {
             System.out.println("Error during launch:");
             e.printStackTrace();
             System.out.println("Application will now exit");
             System.exit(-1);
         }
+    }
+
+    public static void launch(Class<? extends GameApplication> appClass, String[] args) {
+        try {
+            var instance = appClass.getDeclaredConstructor().newInstance();
+
+            launch(instance, args);
+        } catch (Exception e) {
+            System.out.println("Error during launch:");
+            e.printStackTrace();
+            System.out.println("Application will now exit");
+            System.exit(-1);
+        }
+    }
+
+    private static void launch(GameApplication app, String[] args) {
+        // this will be set automatically by javafxports on mobile
+        if (System.getProperty("javafx.platform") == null)
+            System.setProperty("javafx.platform", "Desktop");
+
+        var settings = app.takeUserSettings();
+
+        app.initLogger(settings);
+
+        FXGLApplication.launchFX(app, settings, args);
     }
 
     private static GameApplication newInstance() throws Exception {
