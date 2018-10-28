@@ -37,7 +37,7 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         // force channel to apply settings to this texture
         updateImage()
 
-        start(FXGL.getApp().stateMachine.playState)
+        start(FXGL.getStateMachine().playState)
     }
 
     /**

@@ -85,8 +85,8 @@ public abstract class FXGLMenu extends FXGLScene {
         this.listener = FXGL.getMenuHandler();
 
         getContentRoot().getChildren().addAll(
-                createBackground(app.getWidth(), app.getHeight()),
-                createTitleView(app.getSettings().getTitle()),
+                createBackground(FXGL.getAppWidth(), FXGL.getAppHeight()),
+                createTitleView(FXGL.getSettings().getTitle()),
                 createVersionView(makeVersionString()),
                 menuRoot, contentRoot);
 
@@ -139,9 +139,9 @@ public abstract class FXGLMenu extends FXGLScene {
      * @return full version string
      */
     private String makeVersionString() {
-        return "v" + app.getSettings().getVersion()
-                + (app.getSettings().getApplicationMode() == ApplicationMode.RELEASE
-                ? "" : "-" + app.getSettings().getApplicationMode());
+        return "v" + FXGL.getSettings().getVersion()
+                + (FXGL.getSettings().getApplicationMode() == ApplicationMode.RELEASE
+                ? "" : "-" + FXGL.getSettings().getApplicationMode());
     }
 
     /**
@@ -247,11 +247,11 @@ public abstract class FXGLMenu extends FXGLScene {
                 new FXGLSpinner<>(FXCollections.observableArrayList(GameDifficulty.values()));
         difficultySpinner.increment();
 
-        app.getGameState().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
+        FXGL.getGameState().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
 
-        String playtime = app.getGameplay().getStats().getPlaytimeHours() + "H "
-                + app.getGameplay().getStats().getPlaytimeMinutes() + "M "
-                + app.getGameplay().getStats().getPlaytimeSeconds() + "S";
+        String playtime = FXGL.getGameplay().getStats().getPlaytimeHours() + "H "
+                + FXGL.getGameplay().getStats().getPlaytimeMinutes() + "M "
+                + FXGL.getGameplay().getStats().getPlaytimeSeconds() + "S";
 
         return new MenuContent(
                 new HBox(25, getUIFactory().newText(localizedStringProperty("menu.difficulty").concat(":")), difficultySpinner),
@@ -277,11 +277,11 @@ public abstract class FXGLMenu extends FXGLScene {
         // row 0
         grid.setUserData(0);
 
-        forEach(app.getInput().getBindings(), (action, trigger) -> addNewInputBinding(action, trigger, grid));
+        forEach(FXGL.getInput().getBindings(), (action, trigger) -> addNewInputBinding(action, trigger, grid));
 
         ScrollPane scroll = new FXGLScrollPane(grid);
         scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-        scroll.setMaxHeight(app.getHeight() / 2.5);
+        scroll.setMaxHeight(FXGL.getAppHeight() / 2.5);
 
         HBox hbox = new HBox(scroll);
         hbox.setAlignment(Pos.CENTER);
@@ -334,7 +334,7 @@ public abstract class FXGLMenu extends FXGLScene {
         Text actionName = getUIFactory().newText(action.getName(), Color.WHITE, 18.0);
 
         TriggerView triggerView = new TriggerView(trigger);
-        triggerView.triggerProperty().bind(app.getInput().triggerProperty(action));
+        triggerView.triggerProperty().bind(FXGL.getInput().triggerProperty(action));
 
         triggerView.setOnMouseClicked(event -> {
             pressAnyKeyState.actionContext = action;
@@ -396,14 +396,14 @@ public abstract class FXGLMenu extends FXGLScene {
         log.debug("createContentAudio()");
 
         Slider sliderMusic = new Slider(0, 1, 1);
-        sliderMusic.valueProperty().bindBidirectional(app.getAudioPlayer().globalMusicVolumeProperty());
+        sliderMusic.valueProperty().bindBidirectional(FXGL.getAudioPlayer().globalMusicVolumeProperty());
 
         Text textMusic = getUIFactory().newText(localizedStringProperty("menu.music.volume").concat(": "));
         Text percentMusic = getUIFactory().newText("");
         percentMusic.textProperty().bind(sliderMusic.valueProperty().multiply(100).asString("%.0f"));
 
         Slider sliderSound = new Slider(0, 1, 1);
-        sliderSound.valueProperty().bindBidirectional(app.getAudioPlayer().globalSoundVolumeProperty());
+        sliderSound.valueProperty().bindBidirectional(FXGL.getAudioPlayer().globalSoundVolumeProperty());
 
         Text textSound = getUIFactory().newText(localizedStringProperty("menu.sound.volume").concat(": "));
         Text percentSound = getUIFactory().newText("");
@@ -425,8 +425,8 @@ public abstract class FXGLMenu extends FXGLScene {
         log.debug("createContentCredits()");
 
         ScrollPane pane = new FXGLScrollPane();
-        pane.setPrefWidth(app.getWidth() * 3 / 5);
-        pane.setPrefHeight(app.getHeight() / 2);
+        pane.setPrefWidth(FXGL.getAppWidth() * 3 / 5);
+        pane.setPrefHeight(FXGL.getAppHeight() / 2);
         pane.setStyle("-fx-background:black;");
 
         VBox vbox = new VBox();
@@ -487,7 +487,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         MenuContent content = new MenuContent();
 
-//        for (Achievement a : app.getGameplay().getAchievementManager().getAchievements()) {
+//        for (Achievement a : FXGL.getGameplay().getAchievementManager().getAchievements()) {
 //            CheckBox checkBox = new CheckBox();
 //            checkBox.setDisable(true);
 //            checkBox.selectedProperty().bind(a.achievedProperty());

@@ -53,10 +53,10 @@ object SystemActions {
             }
 
             if (devBarOpen) {
-                FXGL.getApp().gameScene.removeUI(devUI)
+                FXGL.getGameScene().removeUI(devUI)
                 devBarOpen = false
             } else {
-                FXGL.getApp().gameScene.addUI(devUI)
+                FXGL.getGameScene().addUI(devUI)
                 devBarOpen = true
             }
         }

@@ -39,11 +39,11 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
         log.debug("STARTUP")
 
         // Start -> (Intro) -> (Menu) -> Game
-        if (app.settings.isIntroEnabled) {
-            app.stateMachine.startIntro()
+        if (FXGL.getSettings().isIntroEnabled) {
+            FXGL.getStateMachine().startIntro()
         } else {
-            if (app.settings.isMenuEnabled) {
-                app.stateMachine.startMainMenu()
+            if (FXGL.getSettings().isMenuEnabled) {
+                FXGL.getStateMachine().startMainMenu()
             } else {
                 app.startNewGame()
             }
@@ -80,7 +80,7 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
 
         if (introFinished) {
             if (FXGL.getSettings().isMenuEnabled) {
-                app.stateMachine.startMainMenu()
+                FXGL.getStateMachine().startMainMenu()
             } else {
                 FXGL.getApp().startNewGame()
             }
@@ -114,7 +114,7 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
 
     override fun onUpdate(tpf: Double) {
         if (loadingFinished) {
-            app.stateMachine.startPlay()
+            FXGL.getStateMachine().startPlay()
             loadingFinished = false
         }
     }
@@ -147,12 +147,12 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
 
         private fun clearPreviousGame() {
             log.debug("Clearing previous game")
-            app.gameWorld.clear()
-            app.physicsWorld.clear()
-            app.physicsWorld.clearCollisionHandlers()
-            app.gameScene.clear()
-            app.gameState.clear()
-            app.masterTimer.clear()
+            FXGL.getGameWorld().clear()
+            FXGL.getPhysicsWorld().clear()
+            FXGL.getPhysicsWorld().clearCollisionHandlers()
+            FXGL.getGameScene().clear()
+            FXGL.getGameState().clear()
+            FXGL.getMasterTimer().clear()
         }
 
         private fun initGame() {
@@ -160,7 +160,7 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
 
             val vars = hashMapOf<String, Any>()
             app.initGameVars(vars)
-            forEach(vars, BiConsumer { name, value -> app.gameState.setValue(name, value) })
+            forEach(vars, BiConsumer { name, value -> FXGL.getGameState().setValue(name, value) })
 
             // we just created new game state vars, so inform achievement manager about new vars
             //app.gameplay.achievementManager.rebindAchievements()

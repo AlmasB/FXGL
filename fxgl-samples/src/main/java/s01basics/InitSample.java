@@ -12,6 +12,8 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.app.GameSettings;
 import javafx.scene.shape.Rectangle;
 
+import static com.almasb.fxgl.app.FXGL.*;
+
 /**
  * Shows how to init a basic game object and attach it to the world
  * using fluent API.

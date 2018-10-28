@@ -47,33 +47,33 @@ import javafx.util.Duration
 
 /* VARS */
 
-fun newVar(varName: String, value: Any) = getApp().gameState.setValue(varName, value)
+fun newVar(varName: String, value: Any) = FXGL.getGameState().setValue(varName, value)
 
-fun set(varName: String, value: Any) = getApp().gameState.setValue(varName, value)
+fun set(varName: String, value: Any) = FXGL.getGameState().setValue(varName, value)
 
-fun geti(varName: String): Int = getApp().gameState.getInt(varName)
+fun geti(varName: String): Int = FXGL.getGameState().getInt(varName)
 
-fun getd(varName: String): Double = getApp().gameState.getDouble(varName)
+fun getd(varName: String): Double = FXGL.getGameState().getDouble(varName)
 
-fun getb(varName: String): Boolean = getApp().gameState.getBoolean(varName)
+fun getb(varName: String): Boolean = FXGL.getGameState().getBoolean(varName)
 
-fun gets(varName: String): String = getApp().gameState.getString(varName)
+fun gets(varName: String): String = FXGL.getGameState().getString(varName)
 
-fun <T> geto(varName: String): T = getApp().gameState.getObject(varName)
+fun <T> geto(varName: String): T = FXGL.getGameState().getObject(varName)
 
-fun getip(varName: String): IntegerProperty = getApp().gameState.intProperty(varName)
+fun getip(varName: String): IntegerProperty = FXGL.getGameState().intProperty(varName)
 
-fun getdp(varName: String): DoubleProperty = getApp().gameState.doubleProperty(varName)
+fun getdp(varName: String): DoubleProperty = FXGL.getGameState().doubleProperty(varName)
 
-fun getbp(varName: String): BooleanProperty = getApp().gameState.booleanProperty(varName)
+fun getbp(varName: String): BooleanProperty = FXGL.getGameState().booleanProperty(varName)
 
-fun getsp(varName: String): StringProperty = getApp().gameState.stringProperty(varName)
+fun getsp(varName: String): StringProperty = FXGL.getGameState().stringProperty(varName)
 
-fun <T> getop(varName: String): ObjectProperty<T> = getApp().gameState.objectProperty(varName)
+fun <T> getop(varName: String): ObjectProperty<T> = FXGL.getGameState().objectProperty(varName)
 
-fun inc(varName: String, value: Int) = getApp().gameState.increment(varName, value)
+fun inc(varName: String, value: Int) = FXGL.getGameState().increment(varName, value)
 
-fun inc(varName: String, value: Double) = getApp().gameState.increment(varName, value)
+fun inc(varName: String, value: Double) = FXGL.getGameState().increment(varName, value)
 
 /* ASSET LOADING */
 
@@ -155,33 +155,33 @@ fun onBtnUp(btn: MouseButton, actionName: String, action: Runnable) {
 
 /* GAME WORLD */
 
-fun spawn(entityName: String): Entity = getApp().gameWorld.spawn(entityName)
+fun spawn(entityName: String): Entity = FXGL.getGameWorld().spawn(entityName)
 
-fun spawn(entityName: String, x: Double, y: Double): Entity = getApp().gameWorld.spawn(entityName, x, y)
+fun spawn(entityName: String, x: Double, y: Double): Entity = FXGL.getGameWorld().spawn(entityName, x, y)
 
-fun spawn(entityName: String, position: Point2D): Entity = getApp().gameWorld.spawn(entityName, position)
+fun spawn(entityName: String, position: Point2D): Entity = FXGL.getGameWorld().spawn(entityName, position)
 
-fun spawn(entityName: String, data: SpawnData): Entity = getApp().gameWorld.spawn(entityName, data)
+fun spawn(entityName: String, data: SpawnData): Entity = FXGL.getGameWorld().spawn(entityName, data)
 
 /**
  * Spawns given [entityName] with a fade in animation.
  */
 fun spawnFadeIn(entityName: String, data: SpawnData, duration: Duration): Entity {
-    val e = getApp().gameWorld.create(entityName, data)
+    val e = FXGL.getGameWorld().create(entityName, data)
 
     //fadeIn(e.view, duration).startInPlayState()
 
-    getApp().gameWorld.addEntity(e)
+    FXGL.getGameWorld().addEntity(e)
 
     return e
 }
 
-fun byID(name: String, id: Int): Optional<Entity> = getApp().gameWorld.getEntityByID(name, id)
+fun byID(name: String, id: Int): Optional<Entity> = FXGL.getGameWorld().getEntityByID(name, id)
 
 /* PHYSICS */
 
 fun onCollisionBegin(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entity>) {
-    getApp().physicsWorld.addCollisionHandler(object : CollisionHandler(typeA, typeB) {
+    FXGL.getPhysicsWorld().addCollisionHandler(object : CollisionHandler(typeA, typeB) {
         override fun onCollisionBegin(a: Entity, b: Entity) {
             action.accept(a, b)
         }
@@ -189,7 +189,7 @@ fun onCollisionBegin(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, 
 }
 
 fun onCollision(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entity>) {
-    getApp().physicsWorld.addCollisionHandler(object : CollisionHandler(typeA, typeB) {
+    FXGL.getPhysicsWorld().addCollisionHandler(object : CollisionHandler(typeA, typeB) {
         override fun onCollision(a: Entity, b: Entity) {
             action.accept(a, b)
         }
@@ -197,7 +197,7 @@ fun onCollision(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entit
 }
 
 fun onCollisionEnd(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entity>) {
-    getApp().physicsWorld.addCollisionHandler(object : CollisionHandler(typeA, typeB) {
+    FXGL.getPhysicsWorld().addCollisionHandler(object : CollisionHandler(typeA, typeB) {
         override fun onCollisionEnd(a: Entity, b: Entity) {
             action.accept(a, b)
         }
@@ -236,17 +236,17 @@ fun showConfirm(message: String, callback: Consumer<Boolean>) = getDisplay().sho
 /* UI */
 
 fun addUINode(node: Node) {
-    getApp().gameScene.addUINode(node)
+    FXGL.getGameScene().addUINode(node)
 }
 
 fun addUINode(node: Node, x: Double, y: Double) {
     node.translateX = x
     node.translateY = y
-    getApp().gameScene.addUINode(node)
+    FXGL.getGameScene().addUINode(node)
 }
 
 fun removeUINode(node: Node) {
-    getApp().gameScene.removeUINode(node)
+    FXGL.getGameScene().removeUINode(node)
 }
 
 fun addVarText(x: Double, y: Double, varName: String): Text {
@@ -255,7 +255,7 @@ fun addVarText(x: Double, y: Double, varName: String): Text {
                 translateX = x
                 translateY = y
             }
-            .also { getApp().gameScene.addUINode(it) }
+            .also { FXGL.getGameScene().addUINode(it) }
 }
 
 fun centerTextX(text: Text, minX: Double, maxX: Double) {

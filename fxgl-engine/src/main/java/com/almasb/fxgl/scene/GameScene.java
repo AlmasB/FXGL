@@ -116,7 +116,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener {
     private void addDebugListener() {
         FXGL.getSettings().getDevShowPosition().addListener((o, prev, show) -> {
             if (show) {
-                forEach(FXGL.getApp().getGameWorld().getEntities(), e -> {
+                forEach(FXGL.getGameWorld().getEntities(), e -> {
 
                     addDebugView(e);
 

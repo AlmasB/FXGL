@@ -20,7 +20,7 @@ public class OffscreenCleanComponent extends Component {
     private Viewport viewport;
 
     public OffscreenCleanComponent() {
-        viewport = FXGL.getApp().getGameScene().getViewport();
+        viewport = FXGL.getGameScene().getViewport();
     }
 
     @Override

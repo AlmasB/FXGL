@@ -35,7 +35,7 @@ public class KeepOnScreenComponent extends Component {
 
     @Override
     public void onAdded() {
-        viewport = FXGL.getApp().getGameScene().getViewport();
+        viewport = FXGL.getGameScene().getViewport();
     }
 
     @Override

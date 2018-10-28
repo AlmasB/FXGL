@@ -55,9 +55,9 @@ public class DeveloperMenuBarController implements UIController {
     }
 
     public void onExit() {
-        app.getDisplay().showConfirmationBox("Exit?", yes -> {
+        FXGL.getDisplay().showConfirmationBox("Exit?", yes -> {
             if (yes)
-                app.exit();
+                FXGL.exit();
         });
     }
 
@@ -107,13 +107,13 @@ public class DeveloperMenuBarController implements UIController {
     }
 
     private EventHandler<MouseEvent> clickTracker = e -> {
-        log.info("World XY: " + app.getInput().getMousePositionWorld() + ", UI XY: " + app.getInput().getMousePositionUI());
-        log.info("Entities clicked: ");
-
-        forEach(
-                app.getGameWorld().getEntitiesInRange(new Rectangle2D(app.getInput().getMouseXWorld(), app.getInput().getMouseYWorld(), 1, 1)),
-                entity -> log.info(entity.toString())
-        );
+//        log.info("World XY: " + app.getInput().getMousePositionWorld() + ", UI XY: " + app.getInput().getMousePositionUI());
+//        log.info("Entities clicked: ");
+//
+//        forEach(
+//                app.getGameWorld().getEntitiesInRange(new Rectangle2D(app.getInput().getMouseXWorld(), app.getInput().getMouseYWorld(), 1, 1)),
+//                entity -> log.info(entity.toString())
+//        );
     };
 
     public void onTrackClicks(ActionEvent event) {

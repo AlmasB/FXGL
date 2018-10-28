@@ -404,7 +404,7 @@ public final class Entities {
          * @return entity
          */
         public Entity buildAndAttach() {
-            return buildAndAttach(FXGL.getApp().getGameWorld());
+            return buildAndAttach(FXGL.getGameWorld());
         }
 
         /**

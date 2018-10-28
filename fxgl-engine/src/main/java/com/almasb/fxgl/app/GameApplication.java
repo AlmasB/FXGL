@@ -232,7 +232,7 @@ public abstract class GameApplication {
     protected final void startNewGame() {
         log.debug("Starting new game");
         loadDataFile = DataFile.getEMPTY();
-        getStateMachine().startLoad();
+        FXGL.getStateMachine().startLoad();
     }
 
     /**
@@ -243,7 +243,7 @@ public abstract class GameApplication {
     void startLoadedGame(DataFile dataFile) {
         log.debug("Starting loaded game");
         loadDataFile = dataFile;
-        getStateMachine().startLoad();
+        FXGL.getStateMachine().startLoad();
     }
 
     /**
@@ -258,128 +258,5 @@ public abstract class GameApplication {
         }
     }
 
-    /**
-     * Exit the application.
-     */
-    protected void exit() {
-        FXGL.exit();
-    }
-
     /* CALLBACKS END */
-
-    /* CONVENIENCE GETTERS */
-
-    /**
-     * @return time per frame for current frame
-     */
-    public final double tpf() {
-        return FXGL.tpf();
-    }
-
-    public final AppStateMachine getStateMachine() {
-        return FXGL.getStateMachine();
-    }
-
-    public final GameState getGameState() {
-        return FXGL.getGameState();
-    }
-
-    public final GameWorld getGameWorld() {
-        return FXGL.getGameWorld();
-    }
-
-    public final PhysicsWorld getPhysicsWorld() {
-        return FXGL.getPhysicsWorld();
-    }
-
-    public final GameScene getGameScene() {
-        return FXGL.getGameScene();
-    }
-
-    /**
-     * @return play state input
-     */
-    public final Input getInput() {
-        return FXGL.getInput();
-    }
-
-    /**
-     * @return play state timer
-     */
-    public final Timer getMasterTimer() {
-        return FXGL.getMasterTimer();
-    }
-
-    public final Gameplay getGameplay() {
-        return FXGL.getGameplay();
-    }
-
-    public final <T> T getGameConfig() {
-        return FXGL.getGameConfig();
-    }
-
-    /**
-     * @return read only copy of game settings
-     */
-    public final ReadOnlyGameSettings getSettings() {
-        return FXGL.getSettings();
-    }
-
-    /**
-     * @return target width as set by GameSettings
-     */
-    public final int getWidth() {
-        return getSettings().getWidth();
-    }
-
-    /**
-     * @return target height as set by GameSettings
-     */
-    public final int getHeight() {
-        return getSettings().getHeight();
-    }
-
-    /**
-     * @return app bounds as set by GameSettings
-     * @apiNote equivalent to new Rectangle2D(0, 0, getWidth(), getHeight())
-     */
-    public final Rectangle2D getAppBounds() {
-        return new Rectangle2D(0, 0, getWidth(), getHeight());
-    }
-
-    public final EventBus getEventBus() {
-        return FXGL.getEventBus();
-    }
-
-    public final Display getDisplay() {
-        return FXGL.getDisplay();
-    }
-
-    public final AudioPlayer getAudioPlayer() {
-        return FXGL.getAudioPlayer();
-    }
-
-    public final AssetLoader getAssetLoader() {
-        return FXGL.getAssetLoader();
-    }
-
-    public final Executor getExecutor() {
-        return FXGL.getExecutor();
-    }
-
-//    public final NotificationService getNotificationService() {
-//        return FXGL.getNotificationService();
-//    }
-
-    public final Net getNet() {
-        return FXGL.getNet();
-    }
-
-    public final ExceptionHandler getExceptionHandler() {
-        return FXGL.getExceptionHandler();
-    }
-
-    public final UIFactory getUIFactory() {
-        return FXGL.getUIFactory();
-    }
 }

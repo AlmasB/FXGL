@@ -117,13 +117,13 @@ object DialogSubState : SubState() {
         savedEffect = scene.effect
         scene.effect = bgBlur
 
-        FXGL.getApp().stateMachine.pushState(this)
+        FXGL.getStateMachine().pushState(this)
     }
 
     private fun closeInScene(scene: FXGLScene) {
         scene.effect = savedEffect
 
-        FXGL.getApp().stateMachine.popState()
+        FXGL.getStateMachine().popState()
     }
 
     internal fun showMessageBox(message: String, callback: Runnable) {

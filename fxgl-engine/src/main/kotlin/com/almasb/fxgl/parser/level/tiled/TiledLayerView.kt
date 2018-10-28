@@ -41,7 +41,7 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
     private val box = Box(0, 0, FXGL.getAppWidth(), FXGL.getAppHeight())
 
     init {
-        val viewport = FXGL.getApp().gameScene.viewport
+        val viewport = FXGL.getGameScene().viewport
 
         buffer = WritableImage(box.w, box.h)
         transparentBuffer = ColoredTexture(box.w, box.h, Color.TRANSPARENT).image
@@ -69,7 +69,7 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
 
     private fun redraw() {
 
-        val area = FXGL.getApp().gameScene.viewport.visibleArea
+        val area = FXGL.getGameScene().viewport.visibleArea
         val writer = buffer.pixelWriter
 
         box.set(area)
@@ -173,7 +173,7 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
     }
 
     private fun redraw2() {
-        val area = FXGL.getApp().gameScene.viewport.visibleArea
+        val area = FXGL.getGameScene().viewport.visibleArea
         val writer = buffer.pixelWriter
 
         box.set(area)

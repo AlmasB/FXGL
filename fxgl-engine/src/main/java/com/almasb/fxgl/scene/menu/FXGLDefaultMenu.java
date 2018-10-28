@@ -64,12 +64,12 @@ public class FXGLDefaultMenu extends FXGLMenu {
                 : createMenuBodyGameMenu();
 
         double menuX = 50;
-        double menuY = app.getHeight() / 2 - menu.getLayoutHeight() / 2;
+        double menuY = FXGL.getAppHeight() / 2 - menu.getLayoutHeight() / 2;
 
         menuRoot.setTranslateX(menuX);
         menuRoot.setTranslateY(menuY);
 
-        contentRoot.setTranslateX(app.getWidth() - 500);
+        contentRoot.setTranslateX(FXGL.getAppWidth() - 500);
         contentRoot.setTranslateY(menuY);
 
         // particle smoke
@@ -84,9 +84,9 @@ public class FXGLDefaultMenu extends FXGLMenu {
         emitter.setVelocityFunction((i) -> new Point2D(random() * 2.5, -random() * random(80, 120)));
         emitter.setExpireFunction((i) -> Duration.seconds(random(4, 7)));
         emitter.setScaleFunction((i) -> new Point2D(0.15, 0.10));
-        emitter.setSpawnPointFunction((i) -> new Point2D(random(0, app.getWidth() - 200), 120));
+        emitter.setSpawnPointFunction((i) -> new Point2D(random(0, FXGL.getAppWidth() - 200), 120));
 
-        particleSystem.addParticleEmitter(emitter, 0, app.getHeight());
+        particleSystem.addParticleEmitter(emitter, 0, FXGL.getAppHeight());
 
         // TODO: rename, as this is not same as contentRoot
         getContentRoot().getChildren().add(3, particleSystem.getPane());
@@ -170,11 +170,11 @@ public class FXGLDefaultMenu extends FXGLMenu {
         StackPane titleRoot = new StackPane();
         titleRoot.getChildren().addAll(bg, box);
 
-        titleRoot.setTranslateX(app.getWidth() / 2 - (textWidth + 30) / 2);
+        titleRoot.setTranslateX(FXGL.getAppWidth() / 2 - (textWidth + 30) / 2);
         titleRoot.setTranslateY(50);
 
         particleSystem = new ParticleSystem();
-        particleSystem.addParticleEmitter(emitter, app.getWidth() / 2 - 30, titleRoot.getTranslateY() + 34);
+        particleSystem.addParticleEmitter(emitter, FXGL.getAppWidth() / 2 - 30, titleRoot.getTranslateY() + 34);
 
         return titleRoot;
     }
@@ -182,15 +182,15 @@ public class FXGLDefaultMenu extends FXGLMenu {
     @Override
     protected Node createVersionView(String version) {
         Text view = FXGL.getUIFactory().newText(version);
-        view.setTranslateY(app.getHeight() - 2);
+        view.setTranslateY(FXGL.getAppHeight() - 2);
         return view;
     }
 
     @Override
     protected Node createProfileView(String profileName) {
         Text view = FXGL.getUIFactory().newText(profileName);
-        view.setTranslateY(app.getHeight() - 2);
-        view.setTranslateX(app.getWidth() - view.getLayoutBounds().getWidth());
+        view.setTranslateY(FXGL.getAppHeight() - 2);
+        view.setTranslateX(FXGL.getAppWidth() - view.getLayoutBounds().getWidth());
         return view;
     }
 
@@ -199,7 +199,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
         MenuBox box = new MenuBox();
 
-        EnumSet<MenuItem> enabledItems = app.getSettings().getEnabledMenuItems();
+        EnumSet<MenuItem> enabledItems = FXGL.getSettings().getEnabledMenuItems();
 
         if (enabledItems.contains(MenuItem.SAVE_LOAD)) {
             MenuButton itemContinue = new MenuButton("menu.continue");
@@ -251,7 +251,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
         MenuBox box = new MenuBox();
 
-        EnumSet<MenuItem> enabledItems = app.getSettings().getEnabledMenuItems();
+        EnumSet<MenuItem> enabledItems = FXGL.getSettings().getEnabledMenuItems();
 
         MenuButton itemResume = new MenuButton("menu.resume");
         itemResume.setOnAction(e -> fireResume());
@@ -301,7 +301,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
         MenuButton btnRestore = new MenuButton("menu.restore");
         btnRestore.setOnAction(e -> {
-            app.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.settingsRestore"), yes -> {
+            FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.settingsRestore"), yes -> {
                 if (yes) {
                     switchMenuContentTo(EMPTY);
                     listener.restoreDefaultSettings();

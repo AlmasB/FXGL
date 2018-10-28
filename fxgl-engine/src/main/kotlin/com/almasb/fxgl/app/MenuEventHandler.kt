@@ -74,7 +74,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
     }
 
     override fun onResume() {
-        app.stateMachine.startPlay()
+        FXGL.getStateMachine().startPlay()
     }
 
     private fun doSave(saveFileName: String) {
@@ -88,13 +88,13 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
     }
 
     override fun onSave() {
-        app.display.showInputBoxWithCancel(FXGL.getLocalizedString("menu.enterSaveName"), InputPredicates.ALPHANUM, Consumer { saveFileName ->
+        FXGL.getDisplay().showInputBoxWithCancel(FXGL.getLocalizedString("menu.enterSaveName"), InputPredicates.ALPHANUM, Consumer { saveFileName ->
 
             if (saveFileName.isEmpty())
                 return@Consumer
 
             if (saveLoadManager.saveFileExists(saveFileName)) {
-                app.display.showConfirmationBox(FXGL.getLocalizedString("menu.overwrite")+" [$saveFileName]?", { yes ->
+                FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.overwrite")+" [$saveFileName]?", { yes ->
 
                     if (yes)
                         doSave(saveFileName)
@@ -106,7 +106,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
     }
 
     override fun onLoad(saveFile: SaveFile) {
-        app.display.showConfirmationBox(FXGL.getLocalizedString("menu.loadSave")+" [${saveFile.name}]?\n"+FXGL.getLocalizedString("menu.unsavedProgress"), { yes ->
+        FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.loadSave")+" [${saveFile.name}]?\n"+FXGL.getLocalizedString("menu.unsavedProgress"), { yes ->
 
             if (yes) {
                 saveLoadManager
@@ -118,7 +118,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
     }
 
     override fun onDelete(saveFile: SaveFile) {
-        app.display.showConfirmationBox(FXGL.getLocalizedString("menu.deleteSave")+"[${saveFile.name}]?", { yes ->
+        FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.deleteSave")+"[${saveFile.name}]?", { yes ->
 
             if (yes) {
                 saveLoadManager
@@ -129,7 +129,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
     }
 
     override fun onLogout() {
-        app.display.showConfirmationBox(FXGL.getLocalizedString("menu.logOut"), { yes ->
+        FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.logOut"), { yes ->
 
             if (yes) {
                 saveProfile()
@@ -143,18 +143,18 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
     }
 
     override fun onExit() {
-        app.display.showConfirmationBox(getLocalizedString("dialog.exitGame"), { yes ->
+        FXGL.getDisplay().showConfirmationBox(getLocalizedString("dialog.exitGame"), { yes ->
 
             if (yes)
-                app.exit()
+                FXGL.exit()
         })
     }
 
     override fun onExitToMainMenu() {
-        app.display.showConfirmationBox(FXGL.getLocalizedString("menu.exitMainMenu")+"\n"+FXGL.getLocalizedString("menu.unsavedProgress"), { yes ->
+        FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.exitMainMenu")+"\n"+FXGL.getLocalizedString("menu.unsavedProgress"), { yes ->
 
             if (yes) {
-                app.stateMachine.startMainMenu()
+                FXGL.getStateMachine().startMainMenu()
             }
         })
     }
@@ -171,13 +171,13 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
 
         if (canSwitchGameMenu) {
             // we only care if menu key was pressed in one of these states
-            if (app.stateMachine.isInGameMenu()) {
+            if (FXGL.getStateMachine().isInGameMenu()) {
                 canSwitchGameMenu = false
                 onResume()
 
-            } else if (app.stateMachine.isInPlay()) {
+            } else if (FXGL.getStateMachine().isInPlay()) {
                 canSwitchGameMenu = false
-                app.stateMachine.startGameMenu()
+                FXGL.getStateMachine().startGameMenu()
 
             }
         }
@@ -203,9 +203,9 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
     fun createProfile(): UserProfile {
         log.debug("Creating default profile")
 
-        val profile = UserProfile(app.settings.title, app.settings.version)
+        val profile = UserProfile(FXGL.getSettings().title, FXGL.getSettings().version)
 
-        app.eventBus.fireEvent(SaveEvent(profile))
+        FXGL.getEventBus().fireEvent(SaveEvent(profile))
 
         return profile
     }
@@ -214,10 +214,10 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
      * @return true if loaded successfully, false if couldn't load
      */
     fun loadFromProfile(profile: UserProfile): Boolean {
-        if (!profile.isCompatible(app.settings.title, app.settings.version))
+        if (!profile.isCompatible(FXGL.getSettings().title, FXGL.getSettings().version))
             return false
 
-        app.eventBus.fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
+        FXGL.getEventBus().fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
         return true
     }
 
@@ -227,7 +227,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
     override fun restoreDefaultSettings() {
         log.debug("restoreDefaultSettings()")
 
-        app.eventBus.fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
+        FXGL.getEventBus().fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
     }
 
     fun saveProfile() {
@@ -247,13 +247,13 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
             FXGL.getNet()
                     .hostMultiplayerTask()
                     .onSuccess { onNewGame() }
-                    .onFailure { app.display.showErrorBox(it) }
+                    .onFailure { FXGL.getDisplay().showErrorBox(it) }
                     .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("multiplayer.hosting")))
         }
 
         val btnConnect = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("multiplayer.connect"))
         btnConnect.setOnAction {
-            app.display.showInputBox(FXGL.getLocalizedString("multiplayer.enterIp"), {
+            FXGL.getDisplay().showInputBox(FXGL.getLocalizedString("multiplayer.enterIp"), {
                 FXGL.getNet()
                         .connectMultiplayerTask(it)
                         .onSuccess { onNewGame() }
@@ -261,7 +261,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
             })
         }
 
-        app.display.showBox(FXGL.getLocalizedString("multiplayer.options"), FXGL.getUIFactory().newText(""), btnHost, btnConnect)
+        FXGL.getDisplay().showBox(FXGL.getLocalizedString("multiplayer.options"), FXGL.getUIFactory().newText(""), btnHost, btnConnect)
     }
 
     /**
@@ -278,7 +278,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
         btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull)
 
         btnNew.setOnAction {
-            app.display.showInputBox(FXGL.getLocalizedString("profile.new"), InputPredicates.ALPHANUM, Consumer { name ->
+            FXGL.getDisplay().showInputBox(FXGL.getLocalizedString("profile.new"), InputPredicates.ALPHANUM, Consumer { name ->
                 profileName.set(name)
                 hasSaves.value = false
                 saveLoadManager = SaveLoadManager(name)
@@ -297,7 +297,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
                         val ok = loadFromProfile(profile)
 
                         if (!ok) {
-                            app.display.showErrorBox(FXGL.getLocalizedString("profile.corrupted")+": $name", { showProfileDialog() })
+                            FXGL.getDisplay().showErrorBox(FXGL.getLocalizedString("profile.corrupted")+": $name", { showProfileDialog() })
                         } else {
                             profileName.set(name)
 
@@ -308,7 +308,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
                         }
                     }
                     .onFailure { error ->
-                        app.display.showErrorBox(FXGL.getLocalizedString("profile.corrupted")+(": $name\nError: $error"), { this.showProfileDialog() })
+                        FXGL.getDisplay().showErrorBox(FXGL.getLocalizedString("profile.corrupted")+(": $name\nError: $error"), { this.showProfileDialog() })
                     }
                     .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("profile.loadingProfile")+": $name"))
         }
@@ -318,7 +318,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
 
             SaveLoadManager.deleteProfileTask(name)
                     .onSuccess { showProfileDialog() }
-                    .onFailure { error -> app.display.showErrorBox("$error", { showProfileDialog() }) }
+                    .onFailure { error -> FXGL.getDisplay().showErrorBox("$error", { showProfileDialog() }) }
                     .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("profile.deletingProfile")+": $name"))
         }
 
@@ -330,12 +330,12 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
                         profilesBox.selectionModel.selectFirst()
                     }
 
-                    app.display.showBox(FXGL.getLocalizedString("profile.selectOrCreate"), profilesBox, btnSelect, btnNew, btnDelete)
+                    FXGL.getDisplay().showBox(FXGL.getLocalizedString("profile.selectOrCreate"), profilesBox, btnSelect, btnNew, btnDelete)
                 }
                 .onFailure { error ->
                     log.warning("$error")
 
-                    app.display.showBox(FXGL.getLocalizedString("profile.selectOrCreate"), profilesBox, btnSelect, btnNew, btnDelete)
+                    FXGL.getDisplay().showBox(FXGL.getLocalizedString("profile.selectOrCreate"), profilesBox, btnSelect, btnNew, btnDelete)
                 }
                 .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("profile.loadingProfiles")))
     }

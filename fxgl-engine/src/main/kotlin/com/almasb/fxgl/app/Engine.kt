@@ -199,7 +199,7 @@ internal class Engine(
         val initial = StartupState(app, startupScene)
 
         val loading = LoadingState(app, sceneFactory.newLoadingScene())
-        val play = PlayState(sceneFactory.newGameScene(app.width, app.height))
+        val play = PlayState(sceneFactory.newGameScene(settings.width, settings.height))
 
         // reasonable hack to trigger dialog state init before intro and menus
         DialogSubState.view

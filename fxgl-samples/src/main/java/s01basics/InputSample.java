@@ -12,6 +12,8 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.app.GameSettings;
 import javafx.scene.input.KeyCode;
 
+import static com.almasb.fxgl.app.FXGL.*;
+
 /**
  * Shows how to use input service and bind actions to triggers.
  */

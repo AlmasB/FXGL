@@ -131,11 +131,11 @@ internal class MainWindow(
                     if (canShowCloseDialog()) {
                         FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("dialog.exitGame"), { yes ->
                             if (yes)
-                                FXGL.getApp().exit()
+                                FXGL.exit()
                         })
                     }
                 } else {
-                    FXGL.getApp().exit()
+                    FXGL.exit()
                 }
             }
 
@@ -160,15 +160,15 @@ internal class MainWindow(
      * @return true if can show close dialog
      */
     private fun canShowCloseDialog(): Boolean {
-        val state = FXGL.getApp().stateMachine.currentState
+        val state = FXGL.getStateMachine().currentState
 
         // do not allow close dialog if
         // 1. a dialog is shown
         // 2. we are loading a game
         // 3. we are showing intro
         return (state !== DialogSubState
-                && state !== FXGL.getApp().stateMachine.loadingState
-                && (!FXGL.getApp().settings.isIntroEnabled || state !== FXGL.getApp().stateMachine.introState))
+                && state !== FXGL.getStateMachine().loadingState
+                && (!FXGL.getSettings().isIntroEnabled || state !== FXGL.getStateMachine().introState))
     }
 
     private var windowBorderWidth = 0.0

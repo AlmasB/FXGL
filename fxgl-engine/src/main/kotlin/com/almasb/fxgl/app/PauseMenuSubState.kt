@@ -74,7 +74,7 @@ internal object PauseMenuSubState : SubState() {
     internal fun requestShow() {
         if (canSwitchGameMenu) {
             canSwitchGameMenu = false
-            FXGL.getApp().stateMachine.pushState(this)
+            FXGL.getStateMachine().pushState(this)
         }
     }
 
@@ -86,7 +86,7 @@ internal object PauseMenuSubState : SubState() {
             canSwitchGameMenu = false
 
             animation.onFinished = Runnable {
-                FXGL.getApp().stateMachine.popState()
+                FXGL.getStateMachine().popState()
             }
             animation.startReverse()
         }
@@ -109,7 +109,7 @@ internal object PauseMenuSubState : SubState() {
 
         val btnExit = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("menu.exit"))
         btnExit.setOnAction {
-            FXGL.getApp().exit()
+            FXGL.exit()
         }
 
         val vbox = VBox(15.0, btnResume, btnExit)

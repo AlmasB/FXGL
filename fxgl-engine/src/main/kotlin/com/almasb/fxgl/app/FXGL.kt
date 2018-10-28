@@ -72,9 +72,9 @@ private constructor() {
          */
         @JvmStatic fun getApp() = engine.app
 
-        @JvmStatic fun getAppWidth() = getApp().width
+        @JvmStatic fun getAppWidth() = engine.settings.width
 
-        @JvmStatic fun getAppHeight() = getApp().height
+        @JvmStatic fun getAppHeight() = engine.settings.height
 
         /**
          * @return instance of the running game application cast to the actual type
