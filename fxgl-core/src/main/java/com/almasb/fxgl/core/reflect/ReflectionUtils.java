@@ -225,4 +225,41 @@ public final class ReflectionUtils {
         }
         return result;
     }
+
+    public static <T> Class<? extends T> getCallingClass(Class<T> callerSupertype, String callingMethodName) {
+        try {
+
+            // Figure out the right class to call
+            StackTraceElement[] cause = Thread.currentThread().getStackTrace();
+
+            boolean foundThisMethod = false;
+            String callingClassName = null;
+            for (StackTraceElement se : cause) {
+                // Skip entries until we get to the entry for this class
+                String className = se.getClassName();
+                String methodName = se.getMethodName();
+                if (foundThisMethod) {
+                    callingClassName = className;
+                    break;
+                } else if (callerSupertype.getName().equals(className)
+                        && callingMethodName.equals(methodName)) {
+
+                    foundThisMethod = true;
+                }
+            }
+
+            if (callingClassName == null) {
+                throw new ReflectionException("Error: unable to determine calling class name");
+            }
+
+            Class<?> theClass = Class.forName(callingClassName, false, Thread.currentThread().getContextClassLoader());
+            if (!callerSupertype.isAssignableFrom(theClass)) {
+                throw new ReflectionException("Error: " + theClass + " is not a subclass of " + callerSupertype);
+            }
+
+            return (Class<? extends T>) theClass;
+        } catch (Exception e) {
+            throw new ReflectionException(e);
+        }
+    }
 }

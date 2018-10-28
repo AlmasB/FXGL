@@ -6,6 +6,7 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.logging.*;
+import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.saving.DataFile;
 
 import java.util.Map;
@@ -59,7 +60,7 @@ public abstract class GameApplication {
 
     public static void launch(Class<? extends GameApplication> appClass, String[] args) {
         try {
-            var instance = appClass.getDeclaredConstructor().newInstance();
+            var instance = ReflectionUtils.newInstance(appClass);
 
             launch(instance, args);
         } catch (Exception e) {
@@ -82,39 +83,11 @@ public abstract class GameApplication {
         FXGLApplication.launchFX(app, settings, args);
     }
 
-    private static GameApplication newInstance() throws Exception {
-        // instantiate GameApp using JFX strategy
-        // Figure out the right class to call
-        StackTraceElement[] cause = Thread.currentThread().getStackTrace();
+    private static GameApplication newInstance() {
+        Class<? extends GameApplication> appClass =
+                ReflectionUtils.getCallingClass(GameApplication.class, "launch");
 
-        boolean foundThisMethod = false;
-        String callingClassName = null;
-        for (StackTraceElement se : cause) {
-            // Skip entries until we get to the entry for this class
-            String className = se.getClassName();
-            String methodName = se.getMethodName();
-            if (foundThisMethod) {
-                callingClassName = className;
-                break;
-            } else if (GameApplication.class.getName().equals(className)
-                    && "launch".equals(methodName)) {
-
-                foundThisMethod = true;
-            }
-        }
-
-        if (callingClassName == null) {
-            throw new RuntimeException("Error: unable to determine GameApplication class");
-        }
-
-        Class theClass = Class.forName(callingClassName, false, Thread.currentThread().getContextClassLoader());
-        if (!GameApplication.class.isAssignableFrom(theClass)) {
-            throw new RuntimeException("Error: " + theClass + " is not a subclass of GameApplication");
-        }
-
-        Class<? extends GameApplication> appClass = theClass;
-
-        return appClass.getDeclaredConstructor().newInstance();
+        return ReflectionUtils.newInstance(appClass);
     }
 
     private ReadOnlyGameSettings takeUserSettings() {
