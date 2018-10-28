@@ -8,6 +8,9 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.core.util.Credits
+import com.almasb.fxgl.core.util.Language
+import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
 import com.almasb.fxgl.scene.SceneFactory
@@ -15,9 +18,6 @@ import com.almasb.fxgl.ui.DialogFactory
 import com.almasb.fxgl.ui.FXGLDialogFactory
 import com.almasb.fxgl.ui.FXGLUIFactory
 import com.almasb.fxgl.ui.UIFactory
-import com.almasb.fxgl.core.util.Credits
-import com.almasb.fxgl.core.util.Language
-import com.almasb.fxgl.core.util.Optional
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.input.KeyCode

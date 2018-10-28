@@ -8,11 +8,11 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.app.FXGL.Companion.getLocalizedString
 import com.almasb.fxgl.core.logging.Logger
+import com.almasb.fxgl.core.util.Consumer
+import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
-import com.almasb.fxgl.core.util.Consumer
-import com.almasb.fxgl.core.util.InputPredicates
 import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.ReadOnlyBooleanWrapper
 import javafx.beans.property.ReadOnlyStringProperty

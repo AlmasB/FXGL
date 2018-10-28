@@ -6,7 +6,6 @@
   ~ See LICENSE for details.
   -->
 
-<?import com.almasb.fxgl.devtools.DeveloperPane?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ScrollPane?>
 <ScrollPane xmlns="http://javafx.com/javafx/8.0.60"

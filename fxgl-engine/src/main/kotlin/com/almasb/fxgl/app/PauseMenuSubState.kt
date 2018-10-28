@@ -8,8 +8,8 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
-import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.core.util.EmptyRunnable
+import com.almasb.fxgl.input.UserAction
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Parent

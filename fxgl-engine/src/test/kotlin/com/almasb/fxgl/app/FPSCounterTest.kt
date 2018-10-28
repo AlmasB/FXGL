@@ -6,12 +6,6 @@
 
 package com.almasb.fxgl.app
 
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.not
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-
 /**
  * TODO:
  *

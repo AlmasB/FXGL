@@ -7,20 +7,14 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.ui.InGameWindow;
-import com.almasb.fxgl.ui.MDIWindow;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-
-import static com.almasb.fxgl.core.util.BackportKt.forEach;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

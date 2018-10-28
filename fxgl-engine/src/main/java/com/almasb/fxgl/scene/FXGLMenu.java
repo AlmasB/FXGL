@@ -7,6 +7,8 @@ package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.*;
 import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.fxgl.core.util.Language;
+import com.almasb.fxgl.core.util.Supplier;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputModifier;
@@ -18,9 +20,6 @@ import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.ui.FXGLScrollPane;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import com.almasb.fxgl.ui.FontType;
-import com.almasb.fxgl.core.util.Consumer;
-import com.almasb.fxgl.core.util.Language;
-import com.almasb.fxgl.core.util.Supplier;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.collections.FXCollections;

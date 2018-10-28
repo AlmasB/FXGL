@@ -7,14 +7,14 @@ package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.MenuItem;
+import com.almasb.fxgl.core.util.Supplier;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
 import com.almasb.fxgl.particle.ParticleSystem;
 import com.almasb.fxgl.scene.FXGLMenu;
-import com.almasb.fxgl.app.MenuItem;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FXGLButton;
-import com.almasb.fxgl.core.util.Supplier;
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;

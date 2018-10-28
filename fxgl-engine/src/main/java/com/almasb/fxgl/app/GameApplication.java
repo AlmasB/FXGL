@@ -5,22 +5,8 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.asset.AssetLoader;
-import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.core.logging.*;
-import com.almasb.fxgl.entity.GameWorld;
-import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.gameplay.GameState;
-import com.almasb.fxgl.gameplay.Gameplay;
-import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.net.Net;
-import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;
-import com.almasb.fxgl.scene.GameScene;
-import com.almasb.fxgl.time.Timer;
-import com.almasb.fxgl.ui.Display;
-import com.almasb.fxgl.ui.UIFactory;
-import javafx.geometry.Rectangle2D;
 
 import java.util.Map;
 

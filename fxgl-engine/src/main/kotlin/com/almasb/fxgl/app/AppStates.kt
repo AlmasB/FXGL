@@ -7,6 +7,8 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.logging.Logger
+import com.almasb.fxgl.core.util.BiConsumer
+import com.almasb.fxgl.core.util.forEach
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.gameplay.GameState
@@ -14,8 +16,6 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.scene.intro.IntroFinishedEvent
-import com.almasb.fxgl.core.util.BiConsumer
-import com.almasb.fxgl.core.util.forEach
 import javafx.concurrent.Task
 import javafx.event.EventHandler
 import javafx.scene.input.KeyEvent
