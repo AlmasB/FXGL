@@ -135,7 +135,7 @@ abstract class Animation<T>(
     }
 
     override fun onUpdate(tpf: Double) {
-        if (isPaused)
+        if (isPaused || !isAnimating)
             return
 
         if (checkDelay) {
