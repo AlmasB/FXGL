@@ -104,6 +104,7 @@ Download the latest uber jar from [Releases](https://github.com/AlmasB/FXGL/rele
 * University of Nottingham, UK
 * Walton High School, USA
 * Zealand Institute of Business and Technology, Denmark
+* Federal Institute of Education, Science and Technology of Rio Grande do Sul, Brazil
 
 If your institution wants to use / is using FXGL, drop me an email to discuss how FXGL can aid your course.
 
