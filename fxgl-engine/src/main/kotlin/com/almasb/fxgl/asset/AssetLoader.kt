@@ -12,7 +12,7 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.core.collection.ObjectMap
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import com.almasb.fxgl.parser.KVFile
 import com.almasb.fxgl.parser.level.tiled.TMXParser
 import com.almasb.fxgl.parser.level.tiled.TiledMap

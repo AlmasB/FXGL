@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.io
 
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import java.io.*
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes

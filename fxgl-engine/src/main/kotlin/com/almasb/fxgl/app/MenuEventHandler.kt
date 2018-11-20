@@ -7,7 +7,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.app.FXGL.Companion.getLocalizedString
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.saving.*

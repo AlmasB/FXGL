@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.core.serialization
 
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import java.io.Serializable
 
 /**

@@ -7,7 +7,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
-import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.sslogger.Logger;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.core.pool.Pools;

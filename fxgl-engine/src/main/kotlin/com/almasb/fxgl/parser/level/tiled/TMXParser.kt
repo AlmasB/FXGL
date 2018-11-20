@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.parser.level.tiled
 
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
 import java.io.ByteArrayOutputStream

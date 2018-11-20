@@ -4,7 +4,7 @@ import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.event.EventBus

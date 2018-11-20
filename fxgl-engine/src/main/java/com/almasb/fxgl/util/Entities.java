@@ -7,7 +7,7 @@
 package com.almasb.fxgl.util;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.sslogger.Logger;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityView;

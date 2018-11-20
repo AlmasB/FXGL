@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import com.almasb.fxgl.entity.component.SerializableComponent
 import com.almasb.fxgl.core.serialization.Bundle
 

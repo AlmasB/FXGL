@@ -9,7 +9,7 @@ package com.almasb.fxgl.saving;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.concurrent.IOTask;
-import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.sslogger.Logger;
 import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.io.FileExtension;
 import com.almasb.fxgl.scene.ProgressDialog;

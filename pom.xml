@@ -159,6 +159,7 @@
                                     <source>src/main/kotlin</source>
                                     <source>src/main/java</source>
                                 </sourceDirs>
+                                <jvmTarget>1.8</jvmTarget>
                             </configuration>
                         </execution>
                         <execution>

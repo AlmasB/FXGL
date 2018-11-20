@@ -5,7 +5,7 @@
  */
 package com.almasb.fxgl.saving;
 
-import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.sslogger.Logger;
 import com.almasb.fxgl.core.serialization.Bundle;
 
 import java.io.Serializable;

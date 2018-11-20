@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.parser.level.text
 
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import com.almasb.fxgl.entity.EntityFactory
 import com.almasb.fxgl.entity.EntitySpawner
 import com.almasb.fxgl.entity.level.Level

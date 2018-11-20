@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.util.BiConsumer
 import com.almasb.fxgl.core.util.forEach
 import com.almasb.fxgl.entity.GameWorld

@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.sslogger.Logger;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
 import javafx.event.ActionEvent;

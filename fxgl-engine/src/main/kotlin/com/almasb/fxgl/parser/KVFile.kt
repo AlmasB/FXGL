@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.parser
 
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.util.Predicate
 
 /**

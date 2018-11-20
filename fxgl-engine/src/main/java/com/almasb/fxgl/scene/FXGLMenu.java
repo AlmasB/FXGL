@@ -6,7 +6,7 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.*;
-import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.sslogger.Logger;
 import com.almasb.fxgl.core.util.Language;
 import com.almasb.fxgl.core.util.Supplier;
 import com.almasb.fxgl.gameplay.GameDifficulty;

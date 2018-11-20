@@ -1,6 +1,6 @@
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.FXGLScene
 import javafx.beans.binding.Bindings

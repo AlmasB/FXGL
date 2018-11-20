@@ -7,7 +7,7 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.collection.Array;
-import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.sslogger.Logger;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

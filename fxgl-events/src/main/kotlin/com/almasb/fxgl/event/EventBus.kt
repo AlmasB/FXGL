@@ -7,7 +7,7 @@
 package com.almasb.fxgl.event
 
 import com.almasb.fxgl.core.collection.UnorderedArray
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType

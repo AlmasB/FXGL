@@ -7,7 +7,7 @@
 package com.almasb.fxgl.extra.algorithm
 
 import com.almasb.fxgl.core.collection.Array
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.extra.algorithm.voronoi.GraphEdge
 import com.almasb.fxgl.extra.algorithm.voronoi.Voronoi

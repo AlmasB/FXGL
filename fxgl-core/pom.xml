@@ -38,6 +38,12 @@
             <artifactId>charm-down-core</artifactId>
             <version>${charm.down.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>sslogger</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -657,14 +657,6 @@ public final class FXGLMath {
     }
 
     /**
-     * @param points the spline passes through these points
-     * @return a closed bezier spline
-     */
-    public static BezierSpline closedBezierSpline(Vec2[] points) {
-        return ClosedBezierSplineFactory.newBezierSpline(points);
-    }
-
-    /**
      * @param t current time * frequency (lower frequency -> smoother output)
      * @return perlin noise in 1D quality in [0..1)
      */

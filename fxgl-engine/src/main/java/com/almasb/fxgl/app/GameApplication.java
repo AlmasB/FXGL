@@ -5,9 +5,9 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.core.logging.*;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.saving.DataFile;
+import com.almasb.sslogger.*;
 
 import java.util.Map;
 

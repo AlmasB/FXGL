@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.net;
 
-import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.sslogger.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;

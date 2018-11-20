@@ -7,7 +7,7 @@
 package com.almasb.fxgl.io
 
 import com.almasb.fxgl.core.concurrent.IOTask
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import com.gluonhq.charm.down.Platform
 import java.io.File
 import java.io.Serializable

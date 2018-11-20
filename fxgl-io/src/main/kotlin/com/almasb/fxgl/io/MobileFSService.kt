@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.io
 
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import com.gluonhq.charm.down.Services
 import com.gluonhq.charm.down.plugins.StorageService
 import java.io.*

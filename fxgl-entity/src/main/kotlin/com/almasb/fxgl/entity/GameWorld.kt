@@ -10,7 +10,7 @@ import com.almasb.fxgl.core.util.tryCatchRoot
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.collection.UnorderedArray
-import com.almasb.fxgl.core.logging.Logger
+import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.entity.component.Component
