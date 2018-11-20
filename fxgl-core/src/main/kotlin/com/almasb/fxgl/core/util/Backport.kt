@@ -21,7 +21,3 @@ fun <K, V> forEach(map: Map<K, V>, function: BiConsumer<K, V>) {
 fun <T> forEach(iterable: Iterable<T>, function: Consumer<T>) {
     iterable.forEach { function.accept(it) }
 }
-
-fun max(iterable: Iterable<Double>) {
-
-}
