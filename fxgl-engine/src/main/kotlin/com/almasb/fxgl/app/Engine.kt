@@ -300,8 +300,6 @@ internal class Engine(
             FXGL.getInput().load(e.getProfile())
             FXGL.getGameplay().load(e.getProfile())
         })
-
-        FXGL.getEventBus().scanForHandlers(app)
     }
 
     private fun runPreInit() {

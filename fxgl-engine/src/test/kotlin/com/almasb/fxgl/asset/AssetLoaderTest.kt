@@ -46,8 +46,6 @@ class AssetLoaderTest {
             "tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet\n" +
             "rci eget eros faucibus tincidunt")
 
-    private val JS_DATA = "function test() {\n" + "    return \"JSTest\";\n" + "}\n"
-
     private lateinit var assetLoader: AssetLoader
 
     companion object {
@@ -137,13 +135,6 @@ class AssetLoaderTest {
         assertThat(charInfo.mana, `is`(30.0))
         assertThat(charInfo.name, `is`("TestName"))
         assertThat(charInfo.killable, `is`(true))
-    }
-
-    @Test
-    fun loadScriptRaw() {
-        val script = assetLoader.loadScriptRaw("test.js")
-
-        assertThat(script, `is`(JS_DATA))
     }
 
     @Test

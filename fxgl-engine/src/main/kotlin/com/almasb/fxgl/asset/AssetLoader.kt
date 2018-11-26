@@ -17,8 +17,6 @@ import com.almasb.fxgl.parser.KVFile
 import com.almasb.fxgl.parser.level.tiled.TMXParser
 import com.almasb.fxgl.parser.level.tiled.TiledMap
 import com.almasb.fxgl.scene.CSS
-import com.almasb.fxgl.script.Script
-import com.almasb.fxgl.script.ScriptFactory
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.ui.FontFactory
 import com.almasb.fxgl.ui.UI
@@ -398,23 +396,6 @@ class AssetLoader {
         getStream(TMX_DIR + name).use {
             return TMXParser().parse(it)
         }
-    }
-
-    /**
-     * Loads script with given name from /assets/scripts/ as a single string.
-     * Either returns loaded string or throws exception in case of errors.
-     *
-     * @param name script file without the /assets/scripts/, e.g. "skill_heal.js"
-     * @return script as a String
-     * @throws IllegalArgumentException if asset not found or loading error
-     */
-    fun loadScriptRaw(name: String): String {
-        return readAllLines(SCRIPTS_DIR + name).joinToString("\n", "", "\n")
-    }
-
-    fun loadScript(name: String): Script {
-        val code = loadScriptRaw(name)
-        return ScriptFactory.fromCode(code)
     }
 
     /**
