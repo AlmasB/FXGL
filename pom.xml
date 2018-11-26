@@ -13,10 +13,6 @@
     <url>http://almasb.github.io/FXGL/</url>
 
     <modules>
-        <!-- Main framework module -->
-        <module>fxgl-engine</module>
-
-        <!-- submodules -->
         <module>fxgl-core</module>
         <module>fxgl-time</module>
         <module>fxgl-net</module>
@@ -26,8 +22,6 @@
         <module>fxgl-animation</module>
         <module>fxgl-ui</module>
         <module>fxgl-ai</module>
-
-        <!-- Extra functionality module (on top of the main module) -->
         <module>fxgl</module>
     </modules>
 

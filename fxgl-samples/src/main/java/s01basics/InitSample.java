@@ -7,7 +7,6 @@
 package s01basics;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.util.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.app.GameSettings;
 import javafx.scene.shape.Rectangle;
@@ -41,12 +40,12 @@ public class InitSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        // 2. create entity and attach to world using fluent API
-        player = Entities.builder()
-                .type(Type.PLAYER)
-                .at(100, 100)
-                .viewFromNode(new Rectangle(40, 40))
-                .buildAndAttach(getGameWorld());
+//        // 2. create entity and attach to world using fluent API
+//        player = Entities.builder()
+//                .type(Type.PLAYER)
+//                .at(100, 100)
+//                .viewFromNode(new Rectangle(40, 40))
+//                .buildAndAttach(getGameWorld());
     }
 
     public static void main(String[] args) {
