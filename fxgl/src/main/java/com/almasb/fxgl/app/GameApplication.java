@@ -8,6 +8,8 @@ package com.almasb.fxgl.app;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.sslogger.*;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 import java.util.Map;
 
@@ -51,10 +53,7 @@ public abstract class GameApplication {
 
             launch(instance, args);
         } catch (Exception e) {
-            System.out.println("Error during launch:");
-            e.printStackTrace();
-            System.out.println("Application will now exit");
-            System.exit(-1);
+            printErrorAndExit(e);
         }
     }
 
@@ -64,10 +63,7 @@ public abstract class GameApplication {
 
             launch(instance, args);
         } catch (Exception e) {
-            System.out.println("Error during launch:");
-            e.printStackTrace();
-            System.out.println("Application will now exit");
-            System.exit(-1);
+            printErrorAndExit(e);
         }
     }
 
@@ -84,10 +80,16 @@ public abstract class GameApplication {
     }
 
     private static GameApplication newInstance() {
-        Class<? extends GameApplication> appClass =
-                ReflectionUtils.getCallingClass(GameApplication.class, "launch");
+        var appClass = ReflectionUtils.getCallingClass(GameApplication.class, "launch");
 
         return ReflectionUtils.newInstance(appClass);
+    }
+
+    private static void printErrorAndExit(Exception e) {
+        System.out.println("Error during launch:");
+        e.printStackTrace();
+        System.out.println("Application will now exit");
+        System.exit(-1);
     }
 
     private ReadOnlyGameSettings takeUserSettings() {
@@ -107,8 +109,6 @@ public abstract class GameApplication {
         log.debug("Logger initialized");
         log.debug("Logging settings\n" + settings);
     }
-
-    /* CALLBACKS BEGIN */
 
     /**
      * Initialize app settings.
@@ -234,5 +234,27 @@ public abstract class GameApplication {
         }
     }
 
-    /* CALLBACKS END */
+    public static final class FXGLApplication extends Application {
+
+        private static GameApplication app;
+        private static ReadOnlyGameSettings settings;
+
+        /**
+         * This is the main entry point as run by the JavaFX platform.
+         */
+        @Override
+        public void start(Stage stage) {
+            var engine = new Engine(app, settings, stage);
+
+            FXGL.engine = engine;
+
+            engine.startLoop();
+        }
+
+        static void launchFX(GameApplication app, ReadOnlyGameSettings settings, String[] args) {
+            FXGLApplication.app = app;
+            FXGLApplication.settings = settings;
+            launch(args);
+        }
+    }
 }
