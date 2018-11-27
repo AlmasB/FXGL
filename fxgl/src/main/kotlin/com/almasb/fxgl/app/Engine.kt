@@ -61,14 +61,6 @@ internal class Engine(
 
     internal val loop = LoopRunner(Consumer { loop(it) })
 
-    //private var profiler: Profiler? = null
-
-//    internal val gameConfig by lazy {
-//        settings.configClass
-//                .map { FXGL.getAssetLoader().loadKV("config.kv").to(it) }
-//                .orElseThrow { IllegalStateException("No config class. You can set it via settings.setConfigClass()") }
-//    }
-
     /* SUBSYSTEMS */
 
     internal val assetLoader by lazy { AssetLoader() }
@@ -78,7 +70,6 @@ internal class Engine(
     internal val executor by lazy { FXGLExecutor() }
     internal val net by lazy { FXGLNet() }
     internal val gameplay by lazy { Gameplay() }
-    internal val notificationService: Any by lazy { TODO() }
 
     init {
         log.debug("Initializing FXGL")
@@ -100,6 +91,7 @@ internal class Engine(
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
 
+    // TODO: run this and then test if dirs/files are created, window open, etc.
     fun startLoop() {
         val start = System.nanoTime()
 
@@ -284,19 +276,14 @@ internal class Engine(
     }
 
     private fun attachEventHandlers() {
-        //getEventBus().addEventHandler(NotificationEvent.ANY, EventHandler { e -> getAudioPlayer().onNotificationEvent(e) })
-        //getEventBus().addEventHandler(AchievementEvent.ANY, EventHandler { e -> getNotificationService().onAchievementEvent(e) })
-
         FXGL.getEventBus().addEventHandler(SaveEvent.ANY, EventHandler { e ->
             settings.save(e.getProfile())
-            //FXGL.getAudioPlayer().save(e.getProfile())
             FXGL.getInput().save(e.getProfile())
             FXGL.getGameplay().save(e.getProfile())
         })
 
         FXGL.getEventBus().addEventHandler(LoadEvent.ANY, EventHandler { e ->
             settings.load(e.getProfile())
-            //FXGL.getAudioPlayer().load(e.getProfile())
             FXGL.getInput().load(e.getProfile())
             FXGL.getGameplay().load(e.getProfile())
         })
@@ -304,12 +291,6 @@ internal class Engine(
 
     private fun runPreInit() {
         log.debug("Running preInit()")
-
-        if (FXGL.getSettings().isProfilingEnabled) {
-            //profiler = Profiler()
-        }
-
-        initAchievements()
 
         if (FXGL.isDesktop()) {
             // 1. register system actions
@@ -327,16 +308,6 @@ internal class Engine(
         app.preInit()
     }
 
-    /**
-     * Finds all @SetAchievementStore classes and registers achievements.
-     */
-    private fun initAchievements() {
-//        getSettings().achievementStoreClass.ifPresent { storeClass ->
-//            val storeObject = ReflectionUtils.newInstance<AchievementStore>(storeClass as Class<AchievementStore>)
-//            storeObject.initAchievements(getGameplay().achievementManager)
-//        }
-    }
-
     private fun generateDefaultProfile() {
         if (FXGL.getSettings().isMenuEnabled) {
             menuHandler.generateDefaultProfile()
@@ -347,13 +318,6 @@ internal class Engine(
         val frameStart = System.nanoTime()
 
         stateMachine.onUpdate(tpf)
-
-        if (FXGL.getSettings().isProfilingEnabled) {
-            val frameTook = System.nanoTime() - frameStart
-
-            //profiler?.update(loop.fps, frameTook)
-            //profiler?.render(getGameScene().profilerText)
-        }
     }
 
     /**
@@ -411,8 +375,6 @@ internal class Engine(
 
         log.debug("Shutting down background threads")
         executor.shutdownNow()
-
-        //engine.profiler?.print()
 
         saveSystemData()
 

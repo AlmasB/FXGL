@@ -98,8 +98,6 @@ private constructor() {
         @JvmStatic fun getExceptionHandler() = getSettings().exceptionHandler
         @JvmStatic fun getUIFactory() = getSettings().uiFactory
 
-        @JvmStatic fun getNotificationService() = engine.notificationService
-
         @JvmStatic fun getAssetLoader() = engine.assetLoader
 
         @JvmStatic fun getEventBus() = engine.eventBus
