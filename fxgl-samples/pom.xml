@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl</artifactId>
-            <version>0.5.5-SNAPSHOT</version>
+            <version>${fxgl.version}</version>
         </dependency>
     </dependencies>
 
