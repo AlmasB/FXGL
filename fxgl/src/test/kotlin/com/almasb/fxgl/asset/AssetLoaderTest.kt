@@ -7,14 +7,12 @@
 package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
@@ -189,15 +187,6 @@ class AssetLoaderTest {
         assertThat(font.family, `is`("Elektra"))
         assertThat(font.name, `is`("Elektra"))
         assertThat(font.size, `is`(18.0))
-    }
-
-    // TODO:
-    @Disabled
-    @Test
-    fun loadBehaviorTree() {
-        val tree = assetLoader.loadBehaviorTree<Entity>("test.tree")
-
-        assertThat(tree, `is`(notNullValue()))
     }
 
     @Test

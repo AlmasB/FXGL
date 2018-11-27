@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.asset
 
-import com.almasb.fxgl.ai.btree.BehaviorTree
-import com.almasb.fxgl.ai.btree.utils.BehaviorTreeParser
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
@@ -510,23 +508,6 @@ class AssetLoader {
                 cachedAssets.put(FONTS_DIR + name, fontFactory)
                 return fontFactory
             }
-        } catch (e: Exception) {
-            throw loadFailed(name, e)
-        }
-    }
-
-    /**
-     * Loads a behavior tree from /assets/ai/.
-     * Either returns a valid behavior tree or throws an exception in case of errors.
-     *
-     * @param name tree name without the /assets/ai/, e.g. "patrol.tree"
-     * @param  tree type
-     * @return loaded and parsed behavior tree
-     * @throws IllegalArgumentException if asset not found or loading error
-     */
-    fun <T> loadBehaviorTree(name: String): BehaviorTree<T> {
-        try {
-            getStream(AI_DIR + name).use { return BehaviorTreeParser<T>().parse(it, null) }
         } catch (e: Exception) {
             throw loadFailed(name, e)
         }
