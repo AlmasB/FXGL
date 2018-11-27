@@ -29,8 +29,6 @@ class Gameplay : UserProfileSavable {
 //
 //    val cutsceneManager: CutsceneManager by lazy { CutsceneManager() }
 
-    val leaderboard: Leaderboard by lazy { Leaderboard() }
-
     override fun save(profile: UserProfile) {
         stats.save(profile)
         //achievementManager.save(profile)

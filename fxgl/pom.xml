@@ -102,12 +102,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${apache.http.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.gluonhq</groupId>
             <artifactId>charm-down-plugin-lifecycle</artifactId>
             <version>${charm.down.version}</version>
