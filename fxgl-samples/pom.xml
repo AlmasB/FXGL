@@ -30,10 +30,17 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-e</artifactId>
+            <artifactId>fxgl</artifactId>
             <version>0.5.5-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>oss.sonatype.org-snapshot</id>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
