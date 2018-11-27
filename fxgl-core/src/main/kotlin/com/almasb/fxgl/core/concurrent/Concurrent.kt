@@ -1,10 +1,10 @@
 package com.almasb.fxgl.core.concurrent
 
 import javafx.application.Platform
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
 
@@ -15,7 +15,7 @@ import java.util.concurrent.CountDownLatch
 
 class Coroutine<T>(private val func: Callable<T>) : Async<T>() {
 
-    private val deferred: Deferred<T> = async(CommonPool) {
+    private val deferred: Deferred<T> = GlobalScope.async {
         func.call()
     }
 
