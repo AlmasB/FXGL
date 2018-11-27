@@ -121,21 +121,6 @@ class AssetLoaderTest {
     }
 
     @Test
-    fun loadKV() {
-        val kv = assetLoader.loadKV("test.kv")
-
-        assertThat(kv, `is`(notNullValue()))
-
-        val charInfo = kv.`to`(CharInfo::class.java)
-
-        assertThat(charInfo, `is`(notNullValue()))
-        assertThat(charInfo.hp, `is`(50))
-        assertThat(charInfo.mana, `is`(30.0))
-        assertThat(charInfo.name, `is`("TestName"))
-        assertThat(charInfo.killable, `is`(true))
-    }
-
-    @Test
     fun loadResourceBundle() {
         val resourceBundle = assetLoader.loadResourceBundle("test.properties")
 

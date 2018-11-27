@@ -63,11 +63,11 @@ internal class Engine(
 
     //private var profiler: Profiler? = null
 
-    internal val gameConfig by lazy {
-        settings.configClass
-                .map { FXGL.getAssetLoader().loadKV("config.kv").to(it) }
-                .orElseThrow { IllegalStateException("No config class. You can set it via settings.setConfigClass()") }
-    }
+//    internal val gameConfig by lazy {
+//        settings.configClass
+//                .map { FXGL.getAssetLoader().loadKV("config.kv").to(it) }
+//                .orElseThrow { IllegalStateException("No config class. You can set it via settings.setConfigClass()") }
+//    }
 
     /* SUBSYSTEMS */
 

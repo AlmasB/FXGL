@@ -64,8 +64,8 @@ private constructor() {
          */
         @JvmStatic fun getSettings(): ReadOnlyGameSettings = engine.settings
 
-        @Suppress("UNCHECKED_CAST")
-        @JvmStatic fun <T> getGameConfig(): T = engine.gameConfig as T
+//        @Suppress("UNCHECKED_CAST")
+//        @JvmStatic fun <T> getGameConfig(): T = engine.gameConfig as T
 
         /**
          * @return instance of the running game application

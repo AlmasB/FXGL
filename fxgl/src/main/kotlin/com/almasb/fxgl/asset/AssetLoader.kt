@@ -11,7 +11,6 @@ import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.sslogger.Logger
-import com.almasb.fxgl.parser.KVFile
 import com.almasb.fxgl.entity.level.tiled.TMXParser
 import com.almasb.fxgl.entity.level.tiled.TiledMap
 import com.almasb.fxgl.scene.CSS
@@ -336,18 +335,6 @@ class AssetLoader {
         val text = readAllLines(TEXT_DIR + name)
         cachedAssets.put(TEXT_DIR + name, text)
         return text
-    }
-
-    /**
-     * Loads KVFile with given name from /assets/kv/.
-     * Either returns a valid KVFile or throws exception in case of errors.
-     *
-     * @param name KVFile name without the /assets/kv/, .e.g "settings.kv"
-     * @return kv file
-     * @throws IllegalArgumentException if asset not found or loading error
-     */
-    fun loadKV(name: String): KVFile {
-        return KVFile(readAllLines(KV_DIR + name))
     }
 
     /**
