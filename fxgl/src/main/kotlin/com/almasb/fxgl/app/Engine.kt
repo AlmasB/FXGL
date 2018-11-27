@@ -289,14 +289,14 @@ internal class Engine(
 
         FXGL.getEventBus().addEventHandler(SaveEvent.ANY, EventHandler { e ->
             settings.save(e.getProfile())
-            FXGL.getAudioPlayer().save(e.getProfile())
+            //FXGL.getAudioPlayer().save(e.getProfile())
             FXGL.getInput().save(e.getProfile())
             FXGL.getGameplay().save(e.getProfile())
         })
 
         FXGL.getEventBus().addEventHandler(LoadEvent.ANY, EventHandler { e ->
             settings.load(e.getProfile())
-            FXGL.getAudioPlayer().load(e.getProfile())
+            //FXGL.getAudioPlayer().load(e.getProfile())
             FXGL.getInput().load(e.getProfile())
             FXGL.getGameplay().load(e.getProfile())
         })

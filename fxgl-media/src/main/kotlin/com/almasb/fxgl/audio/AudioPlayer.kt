@@ -6,11 +6,11 @@
 
 package com.almasb.fxgl.audio
 
-import com.almasb.fxgl.app.FXGL
+
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.fxgl.saving.UserProfile
+
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Point2D
@@ -97,7 +97,7 @@ class AudioPlayer {
      * *                    i.e. if dist > maxDistance then sound balance is set to max (1.0) in that direction
      */
     fun playPositionalSound(assetName: String, soundPosition: Point2D, earPosition: Point2D, maxDistance: Double) {
-        playPositionalSound(FXGL.getAssetLoader().loadSound(assetName), soundPosition, earPosition, maxDistance)
+        //playPositionalSound(FXGL.getAssetLoader().loadSound(assetName), soundPosition, earPosition, maxDistance)
     }
 
     /**
@@ -125,7 +125,7 @@ class AudioPlayer {
      * @param assetName name of the sound file
      */
     fun playSound(assetName: String) {
-        playSound(FXGL.getAssetLoader().loadSound(assetName))
+        //playSound(FXGL.getAssetLoader().loadSound(assetName))
     }
 
     /**
@@ -168,11 +168,12 @@ class AudioPlayer {
      * @return the music object that is played in a loop
      */
     fun loopBGM(bgmName: String): Music {
-        val music = FXGL.getAssetLoader().loadMusic(bgmName)
-        music.cycleCount = Integer.MAX_VALUE
-        music.audio.setLooping(true)
-        playMusic(music)
-        return music
+        return TODO()
+//        val music = FXGL.getAssetLoader().loadMusic(bgmName)
+//        music.cycleCount = Integer.MAX_VALUE
+//        music.audio.setLooping(true)
+//        playMusic(music)
+//        return music
     }
 
     /**
@@ -197,7 +198,8 @@ class AudioPlayer {
      * @param assetName name of the music file
      */
     fun playMusic(assetName: String) {
-        playMusic(FXGL.getAssetLoader().loadMusic(assetName))
+        // TODO: extract this to DSL
+        //playMusic(FXGL.getAssetLoader().loadMusic(assetName))
     }
 
     /**
@@ -266,23 +268,23 @@ class AudioPlayer {
 //        activeMusic.forEach { it.stop() }
 //    }
 
-    fun save(profile: UserProfile) {
-        log.debug("Saving data to profile")
-
-        val bundle = Bundle("audio")
-        bundle.put("musicVolume", getGlobalMusicVolume())
-        bundle.put("soundVolume", getGlobalSoundVolume())
-
-        bundle.log()
-        profile.putBundle(bundle)
-    }
-
-    fun load(profile: UserProfile) {
-        log.debug("Loading data from profile")
-        val bundle = profile.getBundle("audio")
-        bundle.log()
-
-        setGlobalMusicVolume(bundle.get<Double>("musicVolume"))
-        setGlobalSoundVolume(bundle.get<Double>("soundVolume"))
-    }
+//    fun save(profile: UserProfile) {
+//        log.debug("Saving data to profile")
+//
+//        val bundle = Bundle("audio")
+//        bundle.put("musicVolume", getGlobalMusicVolume())
+//        bundle.put("soundVolume", getGlobalSoundVolume())
+//
+//        bundle.log()
+//        profile.putBundle(bundle)
+//    }
+//
+//    fun load(profile: UserProfile) {
+//        log.debug("Loading data from profile")
+//        val bundle = profile.getBundle("audio")
+//        bundle.log()
+//
+//        setGlobalMusicVolume(bundle.get<Double>("musicVolume"))
+//        setGlobalSoundVolume(bundle.get<Double>("soundVolume"))
+//    }
 }

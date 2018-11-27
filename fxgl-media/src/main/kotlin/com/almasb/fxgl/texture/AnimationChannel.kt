@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.texture
 
-import com.almasb.fxgl.app.FXGL
 import javafx.scene.image.Image
 import javafx.util.Duration
 
@@ -23,14 +22,14 @@ class AnimationChannel(val image: Image,
                        startFrame: Int,
                        endFrame: Int) {
 
-    constructor(assetName: String,
-                framesPerRow: Int,
-                frameWidth: Int,
-                frameHeight: Int,
-                channelDuration: Duration,
-                startFrame: Int,
-                endFrame: Int) : this(FXGL.getAssetLoader().loadTexture(assetName).image,
-                    framesPerRow, frameWidth, frameHeight, channelDuration, startFrame, endFrame)
+//    constructor(assetName: String,
+//                framesPerRow: Int,
+//                frameWidth: Int,
+//                frameHeight: Int,
+//                channelDuration: Duration,
+//                startFrame: Int,
+//                endFrame: Int) : this(FXGL.getAssetLoader().loadTexture(assetName).image,
+//                    framesPerRow, frameWidth, frameHeight, channelDuration, startFrame, endFrame)
 
     internal val sequence = arrayListOf<Int>()
 

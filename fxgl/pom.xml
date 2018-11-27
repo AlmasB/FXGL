@@ -79,6 +79,12 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-media</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-events</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
@@ -117,18 +123,6 @@
             <groupId>com.gluonhq</groupId>
             <artifactId>charm-down-plugin-lifecycle</artifactId>
             <version>${charm.down.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-plugin-audio</artifactId>
-            <version>${audio.plugin.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-plugin-audio-desktop</artifactId>
-            <version>${audio.plugin.version}</version>
         </dependency>
     </dependencies>
 

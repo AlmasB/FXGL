@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.texture
 
-import com.almasb.fxgl.app.FXGL
 import javafx.geometry.HorizontalDirection
 import javafx.geometry.Rectangle2D
 import javafx.geometry.VerticalDirection
@@ -19,7 +18,7 @@ import javafx.scene.image.Image
  */
 class NineSliceTextureBuilder(val texture: Texture) {
 
-    constructor(textureName: String) : this(FXGL.getAssetLoader().loadTexture(textureName))
+    //constructor(textureName: String) : this(FXGL.getAssetLoader().loadTexture(textureName))
 
     constructor(image: Image) : this(Texture(image))
 

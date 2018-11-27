@@ -6,9 +6,6 @@
 
 package com.almasb.fxgl.texture
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.State
-import com.almasb.fxgl.app.StateListener
 import javafx.geometry.Rectangle2D
 
 /**
@@ -18,7 +15,7 @@ import javafx.geometry.Rectangle2D
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel.image), StateListener {
+class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel.image) {
 
     private var currentFrame = 0
     private var counter = 0.0
@@ -37,7 +34,7 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         // force channel to apply settings to this texture
         updateImage()
 
-        start(FXGL.getStateMachine().playState)
+        //start(FXGL.getStateMachine().playState)
     }
 
     /**
@@ -71,36 +68,36 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         loopAnimationChannel(animationChannel!!)
     }
 
-    private lateinit var state: State
-
-    var started = false
-        private set
-
-    fun start(state: State) {
-        if (started) {
-            return
-        }
-
-        this.state = state
-        state.addStateListener(this)
-        started = true
-    }
-
-    fun stop() {
-        if (!started) {
-            return
-        }
-
-        state.removeStateListener(this)
-        reset()
-        started = false
-    }
+//    private lateinit var state: State
+//
+//    var started = false
+//        private set
+//
+//    fun start(state: State) {
+//        if (started) {
+//            return
+//        }
+//
+//        this.state = state
+//        state.addStateListener(this)
+//        started = true
+//    }
+//
+//    fun stop() {
+//        if (!started) {
+//            return
+//        }
+//
+//        state.removeStateListener(this)
+//        reset()
+//        started = false
+//    }
 
     // play and loop
     // play would stop at last frame
     // loop would set the 0th frame
 
-    override fun onUpdate(tpf: Double) {
+    fun onUpdate(tpf: Double) {
         if (!needUpdate)
             return
 
@@ -167,7 +164,7 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
     }
 
     override fun dispose() {
-        stop()
+        //stop()
         super.dispose()
     }
 }
