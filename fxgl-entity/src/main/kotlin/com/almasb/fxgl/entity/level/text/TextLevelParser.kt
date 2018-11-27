@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.parser.level.text
+package com.almasb.fxgl.entity.level.text
 
 import com.almasb.sslogger.Logger
 import com.almasb.fxgl.entity.EntityFactory

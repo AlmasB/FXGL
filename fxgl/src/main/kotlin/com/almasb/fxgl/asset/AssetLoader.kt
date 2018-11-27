@@ -12,8 +12,8 @@ import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.sslogger.Logger
 import com.almasb.fxgl.parser.KVFile
-import com.almasb.fxgl.parser.level.tiled.TMXParser
-import com.almasb.fxgl.parser.level.tiled.TiledMap
+import com.almasb.fxgl.entity.level.tiled.TMXParser
+import com.almasb.fxgl.entity.level.tiled.TiledMap
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.ui.FontFactory
