@@ -24,14 +24,14 @@ class FXGLTest {
         }
     }
 
-    @Test
-    fun `Load version`() {
-        val app = MockGameApplication.get()
-
-        val engine = Engine(app, app.settings, app.stage)
-
-        assertTrue(engine.version.matches("\\d\\.\\d\\.\\d.*".toRegex()))
-    }
+//    @Test
+//    fun `Load version`() {
+//        val app = MockGameApplication.get()
+//
+//        val engine = Engine(app, app.settings, app.stage)
+//
+//        assertTrue(engine.version.matches("\\d\\.\\d\\.\\d.*".toRegex()))
+//    }
 
     @Test
     fun `GameApplication subclass is a singleton across FXGL`() {
