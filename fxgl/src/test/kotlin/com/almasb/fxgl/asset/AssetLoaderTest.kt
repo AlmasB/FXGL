@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.asset
 
+import com.almasb.fxgl.app.AssetLoader
 import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*

@@ -4,9 +4,8 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.asset
+package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.core.collection.ObjectMap
