@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.input
 
-import com.almasb.fxgl.scene.Viewport
+import javafx.geometry.Point2D
 import javafx.scene.input.MouseEvent
 
 /**
@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent
  */
 class MouseEventData(
         val event: MouseEvent,
-        val viewport: Viewport,
+        val viewportOrigin: Point2D,
         val scaleRatioX: Double,
         val scaleRatioY: Double
 )

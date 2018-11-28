@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.Event
 import javafx.event.EventType
+import javafx.geometry.Point2D
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.image.Image
@@ -258,7 +259,7 @@ internal class MainWindow(
 
     fun addMouseHandler(handler: (MouseEventData) -> Unit) {
         fxScene.addEventHandler(MouseEvent.ANY, {
-            handler(MouseEventData(it, getCurrentScene().viewport, scaleRatioX.value, scaleRatioY.value))
+            handler(MouseEventData(it, Point2D(getCurrentScene().viewport.getX(), getCurrentScene().viewport.getY()), scaleRatioX.value, scaleRatioY.value))
         })
     }
 

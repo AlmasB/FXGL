@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.input.view
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.KeyTrigger
 import com.almasb.fxgl.input.MouseTrigger
@@ -55,9 +54,9 @@ class TriggerView
 
             val modifierView = KeyView(modifierKey, color, size)
 
-            val hbox = HBox(modifierView, FXGL.getUIFactory().newText("+", color, size), view)
-
-            children.setAll(hbox)
+//            val hbox = HBox(modifierView, FXGL.getUIFactory().newText("+", color, size), view)
+//
+//            children.setAll(hbox)
         } else {
             children.setAll(view)
         }

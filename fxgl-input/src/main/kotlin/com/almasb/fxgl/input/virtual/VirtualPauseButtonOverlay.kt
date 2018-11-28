@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.input.virtual
 
-import com.almasb.fxgl.app.FXGL
 import javafx.scene.Parent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
@@ -42,14 +41,14 @@ class VirtualPauseButtonOverlay : Parent() {
 
         children.addAll(bg, rect1, rect2)
 
-        setOnMousePressed {
-            if (FXGL.getSettings().isMenuEnabled) {
-                FXGL.getInput().mockKeyPressEvent(FXGL.getSettings().menuKey)
-                FXGL.getInput().mockKeyRleaseEvent(FXGL.getSettings().menuKey)
-            } else {
-                FXGL.getInput().mockKeyPress(FXGL.getSettings().menuKey)
-                FXGL.getInput().mockKeyRelease(FXGL.getSettings().menuKey)
-            }
-        }
+//        setOnMousePressed {
+//            if (FXGL.getSettings().isMenuEnabled) {
+//                FXGL.getInput().mockKeyPressEvent(FXGL.getSettings().menuKey)
+//                FXGL.getInput().mockKeyRleaseEvent(FXGL.getSettings().menuKey)
+//            } else {
+//                FXGL.getInput().mockKeyPress(FXGL.getSettings().menuKey)
+//                FXGL.getInput().mockKeyRelease(FXGL.getSettings().menuKey)
+//            }
+//        }
     }
 }

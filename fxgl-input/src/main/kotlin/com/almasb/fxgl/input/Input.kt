@@ -9,9 +9,6 @@ package com.almasb.fxgl.input
 import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.input.virtual.VirtualButton
-import com.almasb.fxgl.saving.UserProfile
-import com.almasb.fxgl.saving.UserProfileSavable
-import com.almasb.fxgl.scene.Viewport
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.ReadOnlyStringProperty
@@ -25,7 +22,7 @@ import javafx.scene.Group
 import javafx.scene.input.*
 import java.lang.reflect.Method
 
-class Input : UserProfileSavable {
+class Input {
 
     companion object {
         private val ILLEGAL_KEYS = arrayOf(KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.ALT)
@@ -167,7 +164,7 @@ class Input : UserProfileSavable {
     }
 
     fun onMouseEvent(eventData: MouseEventData) {
-        onMouseEvent(eventData.event, eventData.viewport, eventData.scaleRatioX, eventData.scaleRatioY)
+        onMouseEvent(eventData.event, eventData.viewportOrigin, eventData.scaleRatioX, eventData.scaleRatioY)
     }
 
     /**
@@ -177,7 +174,7 @@ class Input : UserProfileSavable {
      * @param viewport current viewport where the even occurred
      * @param scaleRatio scale ratio of the display where the event occurred
      */
-    fun onMouseEvent(mouseEvent: MouseEvent, viewport: Viewport, scaleRatioX: Double, scaleRatioY: Double) {
+    fun onMouseEvent(mouseEvent: MouseEvent, viewportOrigin: Point2D, scaleRatioX: Double, scaleRatioY: Double) {
         if (!registerInput)
             return
 
@@ -192,8 +189,8 @@ class Input : UserProfileSavable {
         sceneX = mouseEvent.sceneX
         sceneY = mouseEvent.sceneY
 
-        gameX = sceneX / scaleRatioX + viewport.getX()
-        gameY = sceneY / scaleRatioY + viewport.getY()
+        gameX = sceneX / scaleRatioX + viewportOrigin.x
+        gameY = sceneY / scaleRatioY + viewportOrigin.y
     }
 
     private fun isTriggered(trigger: Trigger, fxEvent: InputEvent): Boolean {
@@ -522,57 +519,57 @@ class Input : UserProfileSavable {
             }
         }
     }
-
-    override fun save(profile: UserProfile) {
-        log.debug("Saving data to profile")
-
-        val bundle = Bundle("input")
-        bindings.forEach { bundle.put(it.key.toString(), it.value.toString()) }
-
-        bundle.log()
-        profile.putBundle(bundle)
-    }
-
-    override fun load(profile: UserProfile) {
-        log.debug("Loading data from profile")
-
-        val bundle = profile.getBundle("input")
-        bundle.log()
-
-        for (binding in bindings) {
-
-            val action = binding.key
-
-            // if binding is not present in bundle, then we added some new binding thru code
-            // it will be saved on next serialization and will be found in bundle
-            var triggerName: String? = bundle.get<String>("$action")
-            if (triggerName == null)
-                continue
-
-            var modifierName = "NONE"
-
-            val plusIndex = triggerName.indexOf("+")
-            if (plusIndex != -1) {
-                modifierName = triggerName.substring(0, plusIndex)
-                triggerName = triggerName.substring(plusIndex + 1)
-            }
-
-            // if triggerName was CTRL+A, we end up with:
-            // triggerName = A
-            // modifierName = CTRL
-
-            try {
-                val key = KeyCode.getKeyCode(triggerName)
-                rebind(action, key, InputModifier.valueOf(modifierName))
-            } catch (ignored: Exception) {
-                try {
-                    val btn = MouseTrigger.buttonFromString(triggerName)
-                    rebind(action, btn, InputModifier.valueOf(modifierName))
-                } catch (e: Exception) {
-                    log.warning("Undefined trigger name: " + triggerName)
-                    throw IllegalArgumentException("Corrupt or incompatible user profile: " + e.message)
-                }
-            }
-        }
-    }
+//
+//    fun save(profile: UserProfile) {
+//        log.debug("Saving data to profile")
+//
+//        val bundle = Bundle("input")
+//        bindings.forEach { bundle.put(it.key.toString(), it.value.toString()) }
+//
+//        bundle.log()
+//        profile.putBundle(bundle)
+//    }
+//
+//    fun load(profile: UserProfile) {
+//        log.debug("Loading data from profile")
+//
+//        val bundle = profile.getBundle("input")
+//        bundle.log()
+//
+//        for (binding in bindings) {
+//
+//            val action = binding.key
+//
+//            // if binding is not present in bundle, then we added some new binding thru code
+//            // it will be saved on next serialization and will be found in bundle
+//            var triggerName: String? = bundle.get<String>("$action")
+//            if (triggerName == null)
+//                continue
+//
+//            var modifierName = "NONE"
+//
+//            val plusIndex = triggerName.indexOf("+")
+//            if (plusIndex != -1) {
+//                modifierName = triggerName.substring(0, plusIndex)
+//                triggerName = triggerName.substring(plusIndex + 1)
+//            }
+//
+//            // if triggerName was CTRL+A, we end up with:
+//            // triggerName = A
+//            // modifierName = CTRL
+//
+//            try {
+//                val key = KeyCode.getKeyCode(triggerName)
+//                rebind(action, key, InputModifier.valueOf(modifierName))
+//            } catch (ignored: Exception) {
+//                try {
+//                    val btn = MouseTrigger.buttonFromString(triggerName)
+//                    rebind(action, btn, InputModifier.valueOf(modifierName))
+//                } catch (e: Exception) {
+//                    log.warning("Undefined trigger name: " + triggerName)
+//                    throw IllegalArgumentException("Corrupt or incompatible user profile: " + e.message)
+//                }
+//            }
+//        }
+//    }
 }

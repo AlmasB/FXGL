@@ -6,9 +6,6 @@
 
 package com.almasb.fxgl.input.virtual
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.FXGL.Companion.getInput
-import com.almasb.fxgl.app.FXGL.Companion.getUIFactory
 import com.almasb.fxgl.input.virtual.VirtualButton.*
 import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
@@ -74,7 +71,7 @@ class VirtualControllerOverlay(val style: VirtualControllerStyle) : Parent() {
         buttonY.translateY = buttonsCenter.y - offset
 
         buttons = Group(buttonA, buttonB, buttonX, buttonY)
-        buttons.translateX = FXGL.getAppWidth() - 155.0
+        //buttons.translateX = FXGL.getAppWidth() - 155.0
 
         children.addAll(dpad, buttons)
 
@@ -109,11 +106,11 @@ class VirtualControllerOverlay(val style: VirtualControllerStyle) : Parent() {
         root.children.addAll(bg, triangle)
 
         root.setOnMousePressed {
-            getInput().pressVirtual(virtualButton)
+            //getInput().pressVirtual(virtualButton)
         }
 
         root.setOnMouseReleased {
-            getInput().releaseVirtual(virtualButton)
+            //getInput().releaseVirtual(virtualButton)
         }
 
         return root
@@ -125,21 +122,21 @@ class VirtualControllerOverlay(val style: VirtualControllerStyle) : Parent() {
         val bg0 = Circle(25.0, color.darker())
         val bg1 = Circle(18.0, Color.TRANSPARENT)
 
-        val text = getUIFactory().newText(virtualButton.toString(), Color.WHITE, 26.0)
-
-        root.children.addAll(bg0, bg1, text)
-
-        bg1.fillProperty().bind(
-                Bindings.`when`(root.pressedProperty()).then(color).otherwise(Color.TRANSPARENT)
-        )
-
-        root.setOnMousePressed {
-            getInput().pressVirtual(virtualButton)
-        }
-
-        root.setOnMouseReleased {
-            getInput().releaseVirtual(virtualButton)
-        }
+//        val text = getUIFactory().newText(virtualButton.toString(), Color.WHITE, 26.0)
+//
+//        root.children.addAll(bg0, bg1, text)
+//
+//        bg1.fillProperty().bind(
+//                Bindings.`when`(root.pressedProperty()).then(color).otherwise(Color.TRANSPARENT)
+//        )
+//
+//        root.setOnMousePressed {
+//            getInput().pressVirtual(virtualButton)
+//        }
+//
+//        root.setOnMouseReleased {
+//            getInput().releaseVirtual(virtualButton)
+//        }
 
         return root
     }
