@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.core.concurrent.Executor
+import com.almasb.fxgl.core.concurrent.FXGLExecutor
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not

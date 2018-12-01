@@ -4,9 +4,8 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.app
+package com.almasb.fxgl.core.concurrent
 
-import com.almasb.fxgl.core.concurrent.Async
 import javafx.util.Duration
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -18,8 +17,10 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class FXGLExecutor : Executor {
 
-    private val service = Executors.newCachedThreadPool(FXGLThreadFactory)
-    private val schedulerService = Executors.newScheduledThreadPool(2)
+    companion object {
+        val service = Executors.newCachedThreadPool(FXGLThreadFactory)
+        private val schedulerService = Executors.newScheduledThreadPool(2)
+    }
 
     override fun execute(task: Runnable) {
         service.submit(task)

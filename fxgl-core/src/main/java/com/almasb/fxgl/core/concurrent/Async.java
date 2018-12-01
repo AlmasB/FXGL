@@ -23,7 +23,7 @@ public abstract class Async<T> {
      * @return an async object
      */
     public static <T> Async<T> start(Callable<T> func) {
-        return new Coroutine<T>(func);
+        return new Coroutine<T>(func, FXGLExecutor.Companion.getService());
     }
 
     /**

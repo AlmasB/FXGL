@@ -3,7 +3,6 @@
  */
 module fxgl.core {
     requires kotlin.stdlib;
-    requires kotlinx.coroutines.core;
     requires javafx.graphics;
     requires transitive sslogger.main;
 

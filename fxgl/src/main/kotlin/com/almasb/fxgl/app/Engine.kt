@@ -2,6 +2,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.concurrent.Async
+import com.almasb.fxgl.core.concurrent.FXGLExecutor
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.serialization.Bundle
@@ -182,51 +183,46 @@ internal class Engine(
     private fun initStateMachine(startupScene: FXGLScene) {
         log.debug("Initializing state machine and application states")
 
+        val sceneFactory = settings.sceneFactory
 
-        try {
-            val sceneFactory = settings.sceneFactory
+        // STARTUP is default
+        val initial = StartupState(startupScene)
 
-            // STARTUP is default
-            val initial = StartupState(startupScene)
+        val loading = LoadingState(app, sceneFactory.newLoadingScene())
+        val play = PlayState(sceneFactory.newGameScene(settings.width, settings.height))
 
-            val loading = LoadingState(app, sceneFactory.newLoadingScene())
-            val play = PlayState(sceneFactory.newGameScene(settings.width, settings.height))
+        // we need dialog state before intro and menus
+        val dialog = DialogSubState()
 
-            // we need dialog state before intro and menus
-            val dialog = DialogSubState()
+        val intro = if (settings.isIntroEnabled) IntroState(sceneFactory.newIntro()) else AppState.EMPTY
 
-            val intro = if (settings.isIntroEnabled) IntroState(sceneFactory.newIntro()) else AppState.EMPTY
+        val mainMenu = if (settings.isMenuEnabled) MainMenuState(sceneFactory.newMainMenu()) else AppState.EMPTY
 
-            val mainMenu = if (settings.isMenuEnabled) MainMenuState(sceneFactory.newMainMenu()) else AppState.EMPTY
+        val gameMenu = if (settings.isMenuEnabled) GameMenuState(sceneFactory.newGameMenu()) else AppState.EMPTY
 
-            val gameMenu = if (settings.isMenuEnabled) GameMenuState(sceneFactory.newGameMenu()) else AppState.EMPTY
+        stateMachine = AppStateMachine(loading, play, dialog, intro, mainMenu, gameMenu, initial)
 
-            stateMachine = AppStateMachine(loading, play, dialog, intro, mainMenu, gameMenu, initial)
-
-            stateMachine.addListener(object : StateChangeListener {
-                override fun beforeEnter(state: State) {
-                    if (state is AppState) {
-                        mainWindow.setScene(state.scene)
-                    } else if (state is SubState) {
-                        FXGL.getScene().root.children.add(state.view)
-                    }
+        stateMachine.addListener(object : StateChangeListener {
+            override fun beforeEnter(state: State) {
+                if (state is AppState) {
+                    mainWindow.setScene(state.scene)
+                } else if (state is SubState) {
+                    FXGL.getScene().root.children.add(state.view)
                 }
+            }
 
-                override fun entered(state: State) {}
+            override fun entered(state: State) {}
 
-                override fun beforeExit(state: State) {}
+            override fun beforeExit(state: State) {}
 
-                override fun exited(state: State) {
-                    if (state is SubState) {
-                        FXGL.getScene().root.children.remove(state.view)
-                    }
+            override fun exited(state: State) {
+                if (state is SubState) {
+                    FXGL.getScene().root.children.remove(state.view)
                 }
-            })
+            }
+        })
 
-            playState = stateMachine.playState as PlayState
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        playState = stateMachine.playState as PlayState
 
         log.debug("State machine initialized")
     }
