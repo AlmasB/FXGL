@@ -27,7 +27,7 @@ import java.time.LocalDateTime
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class MenuEventHandler(private val app: GameApplication) : MenuEventListener, EventHandler<KeyEvent> {
+class MenuEventHandler(private val app: GameApplication) : MenuEventListener {
 
     private val log = Logger.get(javaClass)
 
@@ -169,36 +169,6 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
                 FXGL.getStateMachine().startMainMenu()
             }
         })
-    }
-
-    /* MENU KEY HANDLER */
-
-    private var canSwitchGameMenu = true
-
-    private fun onMenuKey(pressed: Boolean) {
-        if (!pressed) {
-            canSwitchGameMenu = true
-            return
-        }
-
-        if (canSwitchGameMenu) {
-            // we only care if menu key was pressed in one of these states
-            if (FXGL.getStateMachine().isInGameMenu()) {
-                canSwitchGameMenu = false
-                onResume()
-
-            } else if (FXGL.getStateMachine().isInPlay()) {
-                canSwitchGameMenu = false
-                FXGL.getStateMachine().startGameMenu()
-
-            }
-        }
-    }
-
-    override fun handle(event: KeyEvent) {
-        if (event.code == FXGL.getSettings().menuKey) {
-            onMenuKey(event.eventType == KeyEvent.KEY_PRESSED)
-        }
     }
 
     fun fixAspectRatio() {

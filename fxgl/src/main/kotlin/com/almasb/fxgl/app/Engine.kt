@@ -9,6 +9,7 @@ import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
+import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.net.FXGLNet
 import com.almasb.fxgl.saving.LoadEvent
@@ -23,6 +24,7 @@ import com.gluonhq.charm.down.Services
 import com.gluonhq.charm.down.plugins.LifecycleEvent
 import com.gluonhq.charm.down.plugins.LifecycleService
 import javafx.event.EventHandler
+import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import java.lang.Exception
 import java.util.*
@@ -224,7 +226,52 @@ internal class Engine(
 
         playState = stateMachine.playState as PlayState
 
+        if (FXGL.getSettings().isMenuEnabled) {
+            play.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
+            gameMenu.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
+        } else {
+            play.input.addAction(object : UserAction("Pause") {
+                override fun onActionBegin() {
+                    PauseMenuSubState.requestShow()
+                }
+
+                override fun onActionEnd() {
+                    PauseMenuSubState.unlockSwitch()
+                }
+            }, FXGL.getSettings().menuKey)
+        }
+
         log.debug("State machine initialized")
+    }
+
+    private object menuKeyHandler : EventHandler<KeyEvent> {
+        private var canSwitchGameMenu = true
+
+        private fun onMenuKey(pressed: Boolean) {
+            if (!pressed) {
+                canSwitchGameMenu = true
+                return
+            }
+
+            if (canSwitchGameMenu) {
+                // we only care if menu key was pressed in one of these states
+                if (FXGL.getStateMachine().isInGameMenu()) {
+                    canSwitchGameMenu = false
+                    FXGL.getStateMachine().startPlay()
+
+                } else if (FXGL.getStateMachine().isInPlay()) {
+                    canSwitchGameMenu = false
+                    FXGL.getStateMachine().startGameMenu()
+
+                }
+            }
+        }
+
+        override fun handle(event: KeyEvent) {
+            if (event.code == FXGL.getSettings().menuKey) {
+                onMenuKey(event.eventType == KeyEvent.KEY_PRESSED)
+            }
+        }
     }
 
     private fun createRequiredDirs() {

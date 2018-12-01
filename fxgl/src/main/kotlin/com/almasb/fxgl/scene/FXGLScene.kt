@@ -16,7 +16,8 @@ import javafx.scene.transform.Scale
 /**
  * Base class for all FXGL scenes.
  */
-abstract class FXGLScene @JvmOverloads constructor(width: Int = FXGL.getAppWidth(), height: Int = FXGL.getAppHeight()) {
+abstract class FXGLScene
+@JvmOverloads constructor(width: Int = FXGL.getAppWidth(), height: Int = FXGL.getAppHeight()) {
 
     /**
      * Top-level root node.

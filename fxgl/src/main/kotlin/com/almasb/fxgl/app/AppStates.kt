@@ -224,20 +224,6 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
 
         gameWorld.addWorldListener(physicsWorld)
         gameWorld.addWorldListener(gameScene)
-
-        if (FXGL.getSettings().isMenuEnabled) {
-            input.addEventHandler(KeyEvent.ANY, FXGL.getMenuHandler())
-        } else {
-            input.addAction(object : UserAction("Pause") {
-                override fun onActionBegin() {
-                    PauseMenuSubState.requestShow()
-                }
-
-                override fun onActionEnd() {
-                    PauseMenuSubState.unlockSwitch()
-                }
-            }, FXGL.getSettings().menuKey)
-        }
     }
 
     override fun onUpdate(tpf: Double) {
@@ -297,10 +283,6 @@ internal class GameMenuState
 internal constructor(scene: FXGLScene) : AppState(scene) {
 
     private val menuScene = scene as FXGLMenu
-
-    init {
-        input.addEventHandler(KeyEvent.ANY, FXGL.getMenuHandler())
-    }
 
     override fun onUpdate(tpf: Double) {
         menuScene.onUpdate(tpf)
