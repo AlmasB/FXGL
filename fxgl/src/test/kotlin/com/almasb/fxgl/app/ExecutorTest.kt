@@ -12,6 +12,7 @@ import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTimeout
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -29,7 +30,15 @@ import java.util.concurrent.CountDownLatch
  */
 class ExecutorTest {
 
-    private lateinit var executor: Executor
+    companion object {
+        private lateinit var executor: Executor
+
+        @AfterAll
+        @JvmStatic
+        fun `tearDown`() {
+            executor.shutdownNow()
+        }
+    }
 
     @BeforeEach
     fun `init`() {
@@ -76,10 +85,5 @@ class ExecutorTest {
             // allow +-200ms error
             assertTrue(diff > 800 && diff < 1200)
         }
-    }
-
-    @AfterEach
-    fun `tearDown`() {
-        executor.shutdownNow()
     }
 }
