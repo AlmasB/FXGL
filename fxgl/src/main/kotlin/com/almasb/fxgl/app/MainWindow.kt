@@ -167,7 +167,7 @@ internal class MainWindow(
         // 1. a dialog is shown
         // 2. we are loading a game
         // 3. we are showing intro
-        return (state !== DialogSubState
+        return (state !== FXGL.getStateMachine().dialogState
                 && state !== FXGL.getStateMachine().loadingState
                 && (!FXGL.getSettings().isIntroEnabled || state !== FXGL.getStateMachine().introState))
     }

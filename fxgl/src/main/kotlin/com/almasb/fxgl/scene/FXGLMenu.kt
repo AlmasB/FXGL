@@ -66,7 +66,7 @@ import javafx.event.EventHandler
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-abstract class FXGLMenu(protected val app: GameApplication, protected val type: MenuType) : FXGLScene() {
+abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
     companion object {
         val log = Logger.get("FXGL.Menu")
@@ -84,7 +84,7 @@ abstract class FXGLMenu(protected val app: GameApplication, protected val type: 
     init {
         this.listener = FXGL.getMenuHandler()
 
-        menuContentRoot.children.addAll(
+        contentRoot.children.addAll(
                 createBackground(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble()),
                 createTitleView(FXGL.getSettings().title),
                 createVersionView(makeVersionString()),
@@ -95,10 +95,10 @@ abstract class FXGLMenu(protected val app: GameApplication, protected val type: 
         listener.profileNameProperty().addListener { o, oldName, newName ->
             if (!oldName.isEmpty()) {
                 // remove last node which *should* be profile view
-                menuContentRoot.children.removeAt(menuContentRoot.children.size - 1)
+                contentRoot.children.removeAt(contentRoot.children.size - 1)
             }
 
-            menuContentRoot.children.add(createProfileView(getLocalizedString("profile.profile") + ": " + newName))
+            contentRoot.children.add(createProfileView(getLocalizedString("profile.profile") + ": " + newName))
         }
     }
 

@@ -49,16 +49,14 @@ open class SceneFactory {
     /**
      * Called to construct main menu.
      *
-     * @param app game application
      * @return main menu
      */
-    open fun newMainMenu(app: GameApplication): FXGLMenu = FXGLDefaultMenu(app, MenuType.MAIN_MENU)
+    open fun newMainMenu(): FXGLMenu = FXGLDefaultMenu(MenuType.MAIN_MENU)
 
     /**
      * Called to construct game menu.
      *
-     * @param app game application
      * @return game menu
      */
-    open fun newGameMenu(app: GameApplication): FXGLMenu = FXGLDefaultMenu(app, MenuType.GAME_MENU)
+    open fun newGameMenu(): FXGLMenu = FXGLDefaultMenu(MenuType.GAME_MENU)
 }

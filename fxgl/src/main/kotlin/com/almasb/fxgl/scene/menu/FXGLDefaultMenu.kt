@@ -54,7 +54,7 @@ import com.almasb.fxgl.core.math.FXGLMath.random
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGLDefaultMenu(app: GameApplication, type: MenuType) : FXGLMenu(app, type) {
+class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
     private var particleSystem: ParticleSystem? = null
 
@@ -62,7 +62,6 @@ class FXGLDefaultMenu(app: GameApplication, type: MenuType) : FXGLMenu(app, type
     private var t = 0.0
 
     init {
-
         val menu = if (type === MenuType.MAIN_MENU)
             createMenuBodyMainMenu()
         else
@@ -93,8 +92,7 @@ class FXGLDefaultMenu(app: GameApplication, type: MenuType) : FXGLMenu(app, type
 
         particleSystem!!.addParticleEmitter(emitter, 0.0, FXGL.getAppHeight().toDouble())
 
-        // TODO: rename, as this is not same as menuContentRoot
-        menuContentRoot.children.add(3, particleSystem!!.pane)
+        contentRoot.children.add(3, particleSystem!!.pane)
 
         menuRoot.children.addAll(menu)
         menuContentRoot.children.add(EMPTY)

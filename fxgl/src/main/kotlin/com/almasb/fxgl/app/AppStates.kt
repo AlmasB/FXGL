@@ -32,7 +32,7 @@ import javafx.scene.input.KeyEvent
  * Active only once.
  */
 internal class StartupState
-internal constructor(private val app: GameApplication, scene: FXGLScene) : AppState(scene) {
+internal constructor(scene: FXGLScene) : AppState(scene) {
 
     private val log = Logger.get<StartupState>()
 
@@ -59,7 +59,7 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
  * State is active only once.
  */
 internal class IntroState
-internal constructor(private val app: GameApplication, scene: FXGLScene) : AppState(scene) {
+internal constructor(scene: FXGLScene) : AppState(scene) {
 
     private val introScene = scene as IntroScene
 

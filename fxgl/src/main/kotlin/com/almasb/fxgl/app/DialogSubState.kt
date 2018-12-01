@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.core.util.Predicate
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.ui.DialogBox
+import com.almasb.fxgl.ui.Display
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Button
@@ -29,7 +30,7 @@ import java.util.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object DialogSubState : SubState() {
+class DialogSubState : SubState(), Display {
 
     private val window = FXGL.getUIFactory().newWindow()
     private val dialogFactory = FXGL.getSettings().dialogFactory
@@ -126,7 +127,11 @@ object DialogSubState : SubState() {
         FXGL.getStateMachine().popState()
     }
 
-    internal fun showMessageBox(message: String, callback: Runnable) {
+    override fun showMessageBox(message: String) {
+        showMessageBox(message, EmptyRunnable)
+    }
+
+    override fun showMessageBox(message: String, callback: Runnable) {
         val dialog = dialogFactory.messageDialog(message, {
             close()
             callback.run()
@@ -135,7 +140,7 @@ object DialogSubState : SubState() {
         show("Message", dialog)
     }
 
-    internal fun showConfirmationBox(message: String, resultCallback: Consumer<Boolean>) {
+    override fun showConfirmationBox(message: String, resultCallback: Consumer<Boolean>) {
         val dialog = dialogFactory.confirmationDialog(message, {
             close()
             resultCallback.accept(it)
@@ -144,7 +149,11 @@ object DialogSubState : SubState() {
         show("Confirm", dialog)
     }
 
-    internal fun showInputBox(message: String, filter: Predicate<String>, resultCallback: Consumer<String>) {
+    override fun showInputBox(message: String, resultCallback: Consumer<String>) {
+        showInputBox(message, Predicate { true }, resultCallback)
+    }
+
+    override fun showInputBox(message: String, filter: Predicate<String>, resultCallback: Consumer<String>) {
         val dialog = dialogFactory.inputDialog(message, filter, Consumer {
             close()
             resultCallback.accept(it)
@@ -153,7 +162,7 @@ object DialogSubState : SubState() {
         show("Input", dialog)
     }
 
-    internal fun showInputBoxWithCancel(message: String, filter: Predicate<String>, resultCallback: Consumer<String>) {
+    override fun showInputBoxWithCancel(message: String, filter: Predicate<String>, resultCallback: Consumer<String>) {
         val dialog = dialogFactory.inputDialogWithCancel(message, filter, Consumer {
             close()
             resultCallback.accept(it)
@@ -162,7 +171,7 @@ object DialogSubState : SubState() {
         show("Input", dialog)
     }
 
-    internal fun showErrorBox(error: Throwable) {
+    override fun showErrorBox(error: Throwable) {
         showErrorBox(error, EmptyRunnable)
     }
 
@@ -175,7 +184,7 @@ object DialogSubState : SubState() {
         show("Error", dialog)
     }
 
-    internal fun showErrorBox(errorMessage: String, callback: Runnable) {
+    override fun showErrorBox(errorMessage: String, callback: Runnable) {
         val dialog = dialogFactory.errorDialog(errorMessage, {
             close()
             callback.run()
@@ -184,13 +193,13 @@ object DialogSubState : SubState() {
         show("Error", dialog)
     }
 
-    internal fun showBox(message: String, content: Node, vararg buttons: Button) {
+    override fun showBox(message: String, content: Node, vararg buttons: Button) {
         val dialog = dialogFactory.customDialog(message, content, Runnable { close() }, *buttons)
 
         show("Dialog", dialog)
     }
 
-    internal fun showProgressBox(message: String): DialogBox {
+    override fun showProgressBox(message: String): DialogBox {
         val dialog = dialogFactory.progressDialogIndeterminate(message, {
             close()
         })
@@ -204,7 +213,7 @@ object DialogSubState : SubState() {
         }
     }
 
-    internal fun showProgressBox(message: String, observable: DoubleProperty, callback: Runnable) {
+    override fun showProgressBox(message: String, observable: DoubleProperty, callback: Runnable) {
         val dialog = dialogFactory.progressDialog(message, observable, {
             close()
             callback.run()

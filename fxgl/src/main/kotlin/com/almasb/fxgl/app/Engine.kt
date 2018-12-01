@@ -13,6 +13,7 @@ import com.almasb.fxgl.net.FXGLNet
 import com.almasb.fxgl.saving.LoadEvent
 import com.almasb.fxgl.saving.SaveEvent
 import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.ui.Display
 import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.fxgl.ui.FXGLUIConfig
 import com.almasb.fxgl.ui.FontType
@@ -22,6 +23,7 @@ import com.gluonhq.charm.down.plugins.LifecycleEvent
 import com.gluonhq.charm.down.plugins.LifecycleService
 import javafx.event.EventHandler
 import javafx.stage.Stage
+import java.lang.Exception
 import java.util.*
 
 /**
@@ -65,7 +67,7 @@ internal class Engine(
     internal val assetLoader by lazy { AssetLoader() }
     internal val eventBus by lazy { EventBus() }
     internal val audioPlayer by lazy { AudioPlayer() }
-    internal val display by lazy { FXGLDisplay() }
+    internal val display by lazy { stateMachine.dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
     internal val net by lazy { FXGLNet() }
     internal val gameplay by lazy { Gameplay() }
@@ -180,46 +182,53 @@ internal class Engine(
     private fun initStateMachine(startupScene: FXGLScene) {
         log.debug("Initializing state machine and application states")
 
-        val sceneFactory = settings.sceneFactory
 
-        // STARTUP is default
-        val initial = StartupState(app, startupScene)
+        try {
+            val sceneFactory = settings.sceneFactory
 
-        val loading = LoadingState(app, sceneFactory.newLoadingScene())
-        val play = PlayState(sceneFactory.newGameScene(settings.width, settings.height))
+            // STARTUP is default
+            val initial = StartupState(startupScene)
 
-        // reasonable hack to trigger dialog state init before intro and menus
-        DialogSubState.view
+            val loading = LoadingState(app, sceneFactory.newLoadingScene())
+            val play = PlayState(sceneFactory.newGameScene(settings.width, settings.height))
 
-        val intro = if (settings.isIntroEnabled) IntroState(app, sceneFactory.newIntro()) else AppState.EMPTY
+            // we need dialog state before intro and menus
+            val dialog = DialogSubState()
 
-        val mainMenu = if (settings.isMenuEnabled) MainMenuState(sceneFactory.newMainMenu(app)) else AppState.EMPTY
+            val intro = if (settings.isIntroEnabled) IntroState(sceneFactory.newIntro()) else AppState.EMPTY
 
-        val gameMenu = if (settings.isMenuEnabled) GameMenuState(sceneFactory.newGameMenu(app)) else AppState.EMPTY
+            val mainMenu = if (settings.isMenuEnabled) MainMenuState(sceneFactory.newMainMenu()) else AppState.EMPTY
 
-        stateMachine = AppStateMachine(loading, play, DialogSubState, intro, mainMenu, gameMenu, initial)
+            val gameMenu = if (settings.isMenuEnabled) GameMenuState(sceneFactory.newGameMenu()) else AppState.EMPTY
 
-        stateMachine.addListener(object : StateChangeListener {
-            override fun beforeEnter(state: State) {
-                if (state is AppState) {
-                    mainWindow.setScene(state.scene)
-                } else if (state is SubState) {
-                    FXGL.getScene().root.children.add(state.view)
+            stateMachine = AppStateMachine(loading, play, dialog, intro, mainMenu, gameMenu, initial)
+
+            stateMachine.addListener(object : StateChangeListener {
+                override fun beforeEnter(state: State) {
+                    if (state is AppState) {
+                        mainWindow.setScene(state.scene)
+                    } else if (state is SubState) {
+                        FXGL.getScene().root.children.add(state.view)
+                    }
                 }
-            }
 
-            override fun entered(state: State) {}
+                override fun entered(state: State) {}
 
-            override fun beforeExit(state: State) {}
+                override fun beforeExit(state: State) {}
 
-            override fun exited(state: State) {
-                if (state is SubState) {
-                    FXGL.getScene().root.children.remove(state.view)
+                override fun exited(state: State) {
+                    if (state is SubState) {
+                        FXGL.getScene().root.children.remove(state.view)
+                    }
                 }
-            }
-        })
+            })
 
-        playState = stateMachine.playState as PlayState
+            playState = stateMachine.playState as PlayState
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        log.debug("State machine initialized")
     }
 
     private fun createRequiredDirs() {
@@ -263,7 +272,7 @@ internal class Engine(
     }
 
     private fun initFatalExceptionHandler() {
-        Thread.setDefaultUncaughtExceptionHandler { _, error -> FXGL.handleFatalError(error) }
+        Thread.setDefaultUncaughtExceptionHandler { _, error -> handleFatalError(error) }
     }
 
     private fun attachEventHandlers() {
