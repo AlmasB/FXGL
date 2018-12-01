@@ -200,40 +200,6 @@ public abstract class GameApplication {
         throw new UnsupportedOperationException("Default implementation is not available");
     }
 
-    private DataFile loadDataFile = DataFile.getEMPTY();
-
-    /**
-     * (Re-)initializes the user application as new and starts the game.
-     */
-    protected final void startNewGame() {
-        log.debug("Starting new game");
-        loadDataFile = DataFile.getEMPTY();
-        FXGL.getStateMachine().startLoad();
-    }
-
-    /**
-     * (Re-)initializes the user application from the given data file and starts the game.
-     *
-     * @param dataFile save data to load from
-     */
-    void startLoadedGame(DataFile dataFile) {
-        log.debug("Starting loaded game");
-        loadDataFile = dataFile;
-        FXGL.getStateMachine().startLoad();
-    }
-
-    /**
-     * Callback to finalize init game.
-     * The data file to load will be set before this call.
-     */
-    void internalInitGame() {
-        if (loadDataFile == DataFile.getEMPTY()) {
-            initGame();
-        } else {
-            loadState(loadDataFile);
-        }
-    }
-
     public static final class FXGLApplication extends Application {
 
         private static GameApplication app;

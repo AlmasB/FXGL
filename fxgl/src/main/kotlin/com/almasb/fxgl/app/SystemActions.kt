@@ -40,7 +40,7 @@ object SystemActions {
 
     private fun restartGame() = object : UserAction("Restart") {
         override fun onActionBegin() {
-            FXGL.getApp().startNewGame()
+            //FXGL.getApp().startNewGame()
         }
     }
 }

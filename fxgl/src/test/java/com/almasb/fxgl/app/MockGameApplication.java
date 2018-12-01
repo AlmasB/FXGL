@@ -76,7 +76,6 @@ public class MockGameApplication extends GameApplication {
         settings.setApplicationMode(ApplicationMode.RELEASE);
 
         // mock
-        settings.setExceptionHandler(MockExceptionHandler.INSTANCE);
         settings.setUIFactory(MockUIFactory.INSTANCE);
     }
 

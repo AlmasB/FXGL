@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.time.LocalTimer
@@ -27,6 +28,10 @@ private constructor() {
     companion object {
 
         internal lateinit var engine: Engine
+
+        private val _propertyMap = PropertyMap()
+
+        @JvmStatic fun getPropertyMap() = _propertyMap
 
         @JvmStatic fun exit() {
             engine.exit()
@@ -95,7 +100,6 @@ private constructor() {
 
         @JvmStatic fun getMenuHandler() = engine.menuHandler
 
-        @JvmStatic fun getExceptionHandler() = getSettings().exceptionHandler
         @JvmStatic fun getUIFactory() = getSettings().uiFactory
 
         @JvmStatic fun getAssetLoader() = engine.assetLoader

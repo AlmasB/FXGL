@@ -14,6 +14,7 @@ import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.PhysicsWorld
+import com.almasb.fxgl.saving.DataFile
 import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.scene.intro.IntroFinishedEvent
 import javafx.concurrent.Task
@@ -45,7 +46,9 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
             if (FXGL.getSettings().isMenuEnabled) {
                 FXGL.getStateMachine().startMainMenu()
             } else {
-                app.startNewGame()
+                // TODO: fix hack
+                FXGL.getPropertyMap().setValue("dataFile", DataFile.EMPTY)
+                FXGL.getStateMachine().startLoad()
             }
         }
     }
@@ -82,7 +85,9 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
             if (FXGL.getSettings().isMenuEnabled) {
                 FXGL.getStateMachine().startMainMenu()
             } else {
-                FXGL.getApp().startNewGame()
+                // TODO: fix hack
+                FXGL.getPropertyMap().setValue("dataFile", DataFile.EMPTY)
+                FXGL.getStateMachine().startLoad()
             }
         }
     }
@@ -162,10 +167,13 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
             app.initGameVars(vars)
             forEach(vars, BiConsumer { name, value -> FXGL.getGameState().setValue(name, value) })
 
-            // we just created new game state vars, so inform achievement manager about new vars
-            //app.gameplay.achievementManager.rebindAchievements()
+            val loadDataFile = FXGL.getPropertyMap().getValue<DataFile>("dataFile")
 
-            app.internalInitGame()
+            if (loadDataFile === DataFile.EMPTY) {
+                app.initGame()
+            } else {
+                app.loadState(loadDataFile)
+            }
         }
 
         private fun initPhysics() {

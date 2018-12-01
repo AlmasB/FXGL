@@ -62,14 +62,26 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
     }
 
     override fun onNewGame() {
-        app.startNewGame()
+        startNewGame()
+    }
+
+    private fun startNewGame() {
+        log.debug("Starting new game")
+        startLoadedGame(DataFile.EMPTY)
+    }
+
+    private fun startLoadedGame(dataFile: DataFile) {
+        log.debug("Starting loaded game")
+        // TODO: fix hack
+        FXGL.getPropertyMap().setValue("dataFile", dataFile)
+        FXGL.getStateMachine().startLoad()
     }
 
     override fun onContinue() {
         saveLoadManager
                 .loadLastModifiedSaveFileTask()
                 .then { saveLoadManager.loadTask(it) }
-                .onSuccess { app.startLoadedGame(it) }
+                .onSuccess { startLoadedGame(it) }
                 .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("menu.loading")+"..."))
     }
 
@@ -111,7 +123,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
             if (yes) {
                 saveLoadManager
                         .loadTask(saveFile)
-                        .onSuccess { app.startLoadedGame(it) }
+                        .onSuccess { startLoadedGame(it) }
                         .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("menu.loading")+": ${saveFile.name}"))
             }
         })

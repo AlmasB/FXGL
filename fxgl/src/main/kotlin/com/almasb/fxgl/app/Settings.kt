@@ -186,17 +186,7 @@ class GameSettings(
          */
         @get:JvmName("getUIFactory")
         @set:JvmName("setUIFactory")
-        var uiFactory: UIFactory = FXGLUIFactory(),
-
-        /**
-         * Provide a custom notification service.
-         */
-        //var notificationViewFactory: Class<out NotificationView> = XboxNotificationView::class.java,
-
-        /**
-         * Provide a custom exception handler.
-         */
-        var exceptionHandler: ExceptionHandler = FXGLExceptionHandler()
+        var uiFactory: UIFactory = FXGLUIFactory()
 ) {
 
     fun toReadOnly(): ReadOnlyGameSettings {
@@ -234,9 +224,7 @@ class GameSettings(
                 //achievementStoreClass,
                 sceneFactory,
                 dialogFactory,
-                uiFactory,
-                //notificationViewFactory,
-                exceptionHandler)
+                uiFactory)
     }
 }
 
@@ -377,17 +365,7 @@ class ReadOnlyGameSettings internal constructor(
          * Provide a custom UI factory.
          */
         @get:JvmName("getUIFactory")
-        val uiFactory: UIFactory,
-
-        /**
-         * Provide a custom notification service.
-         */
-        //val notificationViewFactory: Class<out NotificationView>,
-
-        /**
-         * Provide a custom exception handler.
-         */
-        private val exceptionHandlerInternal: ExceptionHandler
+        val uiFactory: UIFactory
 ) : UserProfileSavable {
 
     /* STATIC - cannot be modified at runtime */
@@ -448,22 +426,8 @@ class ReadOnlyGameSettings internal constructor(
 
     // WRAPPERS
 
-    private val exceptionHandlerWrapper: ExceptionHandler = object : ExceptionHandler {
-        private val log = Logger.get("ExceptionHandler")
-
-        override fun accept(e: Throwable) {
-            log.warning("Caught Exception: ", e)
-            exceptionHandlerInternal.accept(e)
-        }
-    }
-
-    val exceptionHandler = exceptionHandlerWrapper
-
     val configClass: Optional<Class<*>>
         get() = Optional.ofNullable(configClassInternal)
-
-//    val achievementStoreClass: Optional<Class<out AchievementStore>>
-//        get() = Optional.ofNullable(achievementStoreClassInternal)
 
     override fun save(profile: UserProfile) {
         val bundle = Bundle("menusettings")
@@ -493,8 +457,6 @@ class ReadOnlyGameSettings internal constructor(
                 "Stage Style: " + stageStyle + '\n'.toString() +
                 "Scene Factory: " + sceneFactory.javaClass + '\n'.toString() +
                 "Dialog Factory: " + dialogFactory.javaClass + '\n'.toString() +
-                "UI Factory: " + uiFactory.javaClass + '\n'.toString() +
-                //"Notification Service: " + notificationViewFactory + '\n'.toString() +
-                "Exception Handler: " + exceptionHandlerInternal.javaClass
+                "UI Factory: " + uiFactory.javaClass + '\n'.toString()
     }
 }

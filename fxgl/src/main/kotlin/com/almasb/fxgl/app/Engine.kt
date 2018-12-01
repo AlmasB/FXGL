@@ -117,7 +117,7 @@ internal class Engine(
 
         Async.start {
             IOTask.setDefaultExecutor(executor)
-            IOTask.setDefaultFailAction(settings.exceptionHandler)
+            IOTask.setDefaultFailAction { display.showErrorBox(it) }
 
             isFirstRun = !FS.exists("system/")
 
@@ -126,10 +126,6 @@ internal class Engine(
                 loadDefaultSystemData()
             } else {
                 loadSystemData()
-            }
-
-            if (FXGL.isDesktop()) {
-                runUpdaterAsync()
             }
 
             initStateMachine(startupScene)
@@ -264,10 +260,6 @@ internal class Engine(
 
         // populate with default info
         bundle = Bundle("FXGL")
-    }
-
-    private fun runUpdaterAsync() {
-        Async.start { UpdaterTask().run() }
     }
 
     private fun initFatalExceptionHandler() {
