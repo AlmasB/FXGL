@@ -132,11 +132,11 @@ internal class MainWindow(
                     if (canShowCloseDialog()) {
                         FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("dialog.exitGame"), { yes ->
                             if (yes)
-                                FXGL.exit()
+                                FXGL.getGameController().exit()
                         })
                     }
                 } else {
-                    FXGL.exit()
+                    FXGL.getGameController().exit()
                 }
             }
 

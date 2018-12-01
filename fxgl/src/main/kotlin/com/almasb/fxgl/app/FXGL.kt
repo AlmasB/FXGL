@@ -27,15 +27,14 @@ private constructor() {
 
     companion object {
 
+        // TODO: effectively private?
         internal lateinit var engine: Engine
 
         private val _propertyMap = PropertyMap()
 
         @JvmStatic fun getPropertyMap() = _propertyMap
 
-        @JvmStatic fun exit() {
-            engine.exit()
-        }
+        @JvmStatic fun getGameController(): GameController = engine
 
         @JvmStatic fun handleFatalError(error: Throwable) {
             engine.handleFatalError(error)
@@ -44,12 +43,6 @@ private constructor() {
         internal fun getScene(): FXGLScene {
             return engine.mainWindow.getCurrentScene()
         }
-
-        internal fun fixAspectRatio() {
-            engine.mainWindow.fixAspectRatio()
-        }
-
-        @JvmStatic fun saveScreenshot() = engine.mainWindow.saveScreenshot()
 
         /* STATIC ACCESSORS */
 
@@ -68,9 +61,6 @@ private constructor() {
          * @return FXGL system settings
          */
         @JvmStatic fun getSettings(): ReadOnlyGameSettings = engine.settings
-
-//        @Suppress("UNCHECKED_CAST")
-//        @JvmStatic fun <T> getGameConfig(): T = engine.gameConfig as T
 
         /**
          * @return instance of the running game application
@@ -97,8 +87,6 @@ private constructor() {
          * @return FXGL system data bundle
          */
         @JvmStatic fun getSystemBundle() = engine.bundle
-
-        @JvmStatic fun getMenuHandler() = engine.menuHandler
 
         @JvmStatic fun getUIFactory() = getSettings().uiFactory
 

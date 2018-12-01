@@ -109,7 +109,7 @@ internal object PauseMenuSubState : SubState() {
 
         val btnExit = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("menu.exit"))
         btnExit.setOnAction {
-            FXGL.exit()
+            FXGL.getGameController().exit()
         }
 
         val vbox = VBox(15.0, btnResume, btnExit)

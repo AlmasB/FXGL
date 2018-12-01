@@ -12,9 +12,9 @@ import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.net.FXGLNet
-import com.almasb.fxgl.saving.LoadEvent
-import com.almasb.fxgl.saving.SaveEvent
+import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.ui.Display
 import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.fxgl.ui.FXGLUIConfig
@@ -26,7 +26,7 @@ import com.gluonhq.charm.down.plugins.LifecycleService
 import javafx.event.EventHandler
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
-import java.lang.Exception
+import java.time.LocalDateTime
 import java.util.*
 
 /**
@@ -37,7 +37,7 @@ internal class Engine(
         internal val app: GameApplication,
         internal val settings: ReadOnlyGameSettings,
         private val stage: Stage
-) {
+) : GameController {
 
     private val log = Logger.get(javaClass)
 
@@ -55,13 +55,6 @@ internal class Engine(
     internal lateinit var mainWindow: MainWindow
     internal lateinit var stateMachine: AppStateMachine
     internal lateinit var playState: PlayState
-
-    internal val menuHandler: MenuEventHandler by lazy {
-
-        require(settings.isMenuEnabled) { "Menus are not enabled" }
-
-        MenuEventHandler(app)
-    }
 
     internal val loop = LoopRunner(Consumer { loop(it) })
 
@@ -353,13 +346,11 @@ internal class Engine(
 
     private fun generateDefaultProfile() {
         if (FXGL.getSettings().isMenuEnabled) {
-            menuHandler.generateDefaultProfile()
+            //menuHandler.generateDefaultProfile()
         }
     }
 
     private fun loop(tpf: Double) {
-        val frameStart = System.nanoTime()
-
         stateMachine.onUpdate(tpf)
     }
 
@@ -409,11 +400,76 @@ internal class Engine(
         }
     }
 
-    internal fun exit() {
+    // GAME CONTROLLER CALLBACKS
+
+    override fun startNewGame() {
+        log.debug("Starting new game")
+        startLoadedGame(DataFile.EMPTY)
+    }
+
+    private fun startLoadedGame(dataFile: DataFile) {
+        log.debug("Starting loaded game")
+        // TODO: fix hack
+        FXGL.getPropertyMap().setValue("dataFile", dataFile)
+        stateMachine.startLoad()
+    }
+
+    private val saveLoadManager: SaveLoadManager = TODO()
+
+    override fun gotoMainMenu() {
+        stateMachine.startMainMenu()
+    }
+
+    override fun gotoGameMenu() {
+        stateMachine.startGameMenu()
+    }
+
+    override fun gotoPlay() {
+        stateMachine.startPlay()
+    }
+
+    override fun saveGame(fileName: String) {
+        doSave(fileName)
+    }
+
+    private fun doSave(saveFileName: String) {
+        val dataFile = app.saveState()
+        val saveFile = SaveFile(saveFileName, LocalDateTime.now())
+
+        saveLoadManager
+                .saveTask(dataFile, saveFile)
+                //.onSuccess { hasSaves.value = true }
+                .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("menu.savingData")+": $saveFileName"))
+    }
+
+    override fun loadGame(saveFile: SaveFile) {
+        saveLoadManager
+                .loadTask(saveFile)
+                .onSuccess { startLoadedGame(it) }
+                .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("menu.loading")+": ${saveFile.name}"))
+    }
+
+    override fun loadGameFromLastSave() {
+        saveLoadManager
+                .loadLastModifiedSaveFileTask()
+                .then { saveLoadManager.loadTask(it) }
+                .onSuccess { startLoadedGame(it) }
+                .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("menu.loading")+"..."))
+    }
+
+    override fun saveScreenshot(): Boolean {
+        return mainWindow.saveScreenshot()
+    }
+
+    override fun fixAspectRatio() {
+        mainWindow.fixAspectRatio()
+    }
+
+    override fun exit() {
         log.debug("Exiting FXGL")
 
         if (settings.isMenuEnabled) {
-            menuHandler.saveProfile()
+            //menuHandler.saveProfile()
         }
 
         log.debug("Shutting down background threads")
@@ -426,5 +482,4 @@ internal class Engine(
         Logger.close()
         javafx.application.Platform.exit()
     }
-
 }

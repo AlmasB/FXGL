@@ -258,17 +258,8 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
     private val menuScene = scene as FXGLMenu
 
     override fun onEnter(prevState: State) {
-        if (prevState is StartupState
-                || prevState is IntroState
-                || prevState is GameMenuState) {
-
-            val menuHandler = FXGL.getMenuHandler()
-
-            if (!menuHandler.isProfileSelected())
-                menuHandler.showProfileDialog()
-        } else {
-            throw IllegalArgumentException("Entered MainMenu from illegal state: " + prevState)
-        }
+        // TODO: if not selected or always?
+        menuScene.showProfileDialog()
     }
 
     override fun onUpdate(tpf: Double) {
