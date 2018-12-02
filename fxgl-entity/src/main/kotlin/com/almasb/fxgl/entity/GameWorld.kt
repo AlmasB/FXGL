@@ -6,22 +6,20 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.core.util.tryCatchRoot
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.collection.UnorderedArray
-import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.reflect.ReflectionUtils
+import com.almasb.fxgl.core.util.Optional
+import com.almasb.fxgl.core.util.Predicate
+import com.almasb.fxgl.core.util.tryCatchRoot
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.entity.components.IrremovableComponent
 import com.almasb.fxgl.entity.components.TimeComponent
-import com.almasb.fxgl.core.util.Optional
-import com.almasb.fxgl.core.util.Predicate
 import com.almasb.fxgl.entity.level.Level
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.SimpleObjectProperty
+import com.almasb.sslogger.Logger
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 
@@ -34,24 +32,22 @@ import javafx.geometry.Rectangle2D
 class GameWorld {
 
     companion object {
-        private const val INITIAL_CAPACITY = 32
-
         private val log = Logger.get("GameWorld")
     }
 
-    private val updateList = Array<Entity>(INITIAL_CAPACITY)
+    private val updateList = Array<Entity>()
 
     /**
      * List of entities added to the update list in the next tick.
      */
-    private val waitingList = UnorderedArray<Entity>(INITIAL_CAPACITY)
+    private val waitingList = UnorderedArray<Entity>()
 
     /**
      * List of entities in the world.
      *
      * @return direct list of entities in the world (do NOT modify)
      */
-    val entities = ArrayList<Entity>(INITIAL_CAPACITY)
+    val entities = ArrayList<Entity>()
 
     /**
      * @return shallow copy of the entities list (new list)
@@ -206,31 +202,11 @@ class GameWorld {
     }
 
     private fun notifyEntityAdded(e: Entity) {
-        for (i in 0 until worldListeners.size()) {
-            worldListeners.get(i).onEntityAdded(e)
-        }
+        worldListeners.forEach { it.onEntityAdded(e) }
     }
 
     private fun notifyEntityRemoved(e: Entity) {
-        for (i in 0 until worldListeners.size()) {
-            worldListeners.get(i).onEntityRemoved(e)
-        }
-    }
-
-    private val selectedEntity = SimpleObjectProperty<Entity>()
-
-    /**
-     * @return last selected (clicked on by mouse) entity
-     */
-    fun getSelectedEntity(): Optional<Entity> {
-        return Optional.ofNullable(selectedEntity.get())
-    }
-
-    /**
-     * @return selected entity property
-     */
-    fun selectedEntityProperty(): ObjectProperty<Entity> {
-        return selectedEntity
+        worldListeners.forEach { it.onEntityRemoved(e) }
     }
 
     /**
@@ -446,19 +422,27 @@ class GameWorld {
         return EntityGroup(this, getEntitiesByType(*types) as List<T>, *types)
     }
 
+    fun getSingleton(type: Enum<*>): Entity {
+        return getSingleton(Predicate { it.isType(type) })
+    }
+
+    fun getSingleton(predicate: Predicate<Entity>): Entity {
+        return entities.find { predicate.test(it) } ?: throw RuntimeException("No entity found satisfying the predicate")
+    }
+
     /**
      * Useful for singleton type entities, e.g. Player.
      *
      * @return first occurrence matching given type
      */
-    fun getSingleton(type: Enum<*>): Optional<Entity> {
-        return getSingleton(Predicate { it.isType(type) })
+    fun getSingletonOptional(type: Enum<*>): Optional<Entity> {
+        return getSingletonOptional(Predicate { it.isType(type) })
     }
 
     /**
      * @return first occurrence matching given predicate
      */
-    fun getSingleton(predicate: Predicate<Entity>): Optional<Entity> {
+    fun getSingletonOptional(predicate: Predicate<Entity>): Optional<Entity> {
         return Optional.ofNullable(entities.find { predicate.test(it) })
     }
 
@@ -485,7 +469,6 @@ class GameWorld {
     /**
      * Returns a list of entities which are filtered by
      * given predicate.
-     * Warning: object allocation.
      *
      * @param predicate filter
      * @return new list containing entities that satisfy query filters
@@ -495,23 +478,7 @@ class GameWorld {
     }
 
     /**
-     * GC-friendly version of [.getEntitiesFiltered].
-     *
-     * @param result the array to collect entities
-     * @param predicate filter
-     */
-    fun getEntitiesFiltered(result: Array<Entity>, predicate: Predicate<Entity>) {
-        for (i in entities.indices) {
-            val e = entities[i]
-            if (predicate.test(e)) {
-                result.add(e)
-            }
-        }
-    }
-
-    /**
      * If called with no arguments, all entities are returned.
-     * Warning: object allocation.
      *
      * @param types entity types
      * @return new list containing entities that satisfy query filters
@@ -528,39 +495,6 @@ class GameWorld {
     }
 
     /**
-     * GC-friendly version of [.getEntitiesByType].
-     *
-     * @param result the array to collect entities
-     * @param types entity types
-     */
-    fun getEntitiesByType(result: Array<Entity>, vararg types: Enum<*>) {
-        if (types.size == 0) {
-            for (i in entities.indices) {
-                val e = entities[i]
-                result.add(e)
-            }
-            return
-        }
-
-        for (i in entities.indices) {
-            val e = entities[i]
-            if (isOfType(e, *types)) {
-                result.add(e)
-            }
-        }
-    }
-
-    private fun isOfType(e: Entity, vararg types: Enum<*>): Boolean {
-        for (type in types) {
-            if (e.isType(type)) {
-                return true
-            }
-        }
-
-        return false
-    }
-
-    /**
      * Returns a list of entities
      * which are partially or entirely
      * in the specified rectangular selection.
@@ -571,24 +505,6 @@ class GameWorld {
      */
     fun getEntitiesInRange(selection: Rectangle2D): List<Entity> {
         return entities.filter { it.boundingBoxComponent.isWithin(selection) }
-    }
-
-    /**
-     * GC-friendly version of [.getEntitiesInRange].
-     *
-     * @param result the array to collect entities
-     * @param minX min x
-     * @param minY min y
-     * @param maxX max x
-     * @param maxY max y
-     */
-    fun getEntitiesInRange(result: Array<Entity>, minX: Double, minY: Double, maxX: Double, maxY: Double) {
-        for (i in entities.indices) {
-            val e = entities[i]
-            if (e.boundingBoxComponent.isWithin(minX, minY, maxX, maxY)) {
-                result.add(e)
-            }
-        }
     }
 
     /**
@@ -605,49 +521,6 @@ class GameWorld {
     }
 
     /**
-     * GC-friendly version of [.getCollidingEntities].
-     *
-     * @param result the array to collect entities
-     * @param entity the entity
-     */
-    fun getCollidingEntities(result: Array<Entity>, entity: Entity) {
-        val entityBBox = entity.boundingBoxComponent
-
-        for (i in entities.indices) {
-            val e = entities[i]
-            if (e.boundingBoxComponent.isCollidingWith(entityBBox) && e !== entity) {
-                result.add(e)
-            }
-        }
-    }
-
-//    /**
-//     * Returns a list of entities which have the given render layer index.
-//     *
-//     * @param layer render layer
-//     * @return new list containing entities that satisfy query filters
-//     */
-//    fun getEntitiesByLayer(layer: RenderLayer): List<Entity> {
-//        return entities.filter { it.renderLayer.index() == layer.index() }
-//    }
-//
-//    /**
-//     * GC-friendly version of [.getEntitiesByLayer].
-//     *
-//     * @param result the array to collect entities
-//     * @param layer render layer
-//     */
-//    fun getEntitiesByLayer(result: Array<Entity>, layer: RenderLayer) {
-//        for (i in entities.indices) {
-//            val e = entities[i]
-//
-//            if (e.renderLayer.index() == layer.index()) {
-//                result.add(e)
-//            }
-//        }
-//    }
-
-    /**
      * Returns a list of entities at given position.
      * The position x and y must equal to entity's position x and y.
      *
@@ -659,50 +532,23 @@ class GameWorld {
     }
 
     /**
-     * GC-friendly version of [.getEntitiesAt].
-     *
-     * @param result the array to collect entities
-     * @param position point in the world
-     */
-    fun getEntitiesAt(result: Array<Entity>, position: Point2D) {
-        for (i in entities.indices) {
-            val e = entities[i]
-
-            if (e.position == position) {
-                result.add(e)
-            }
-        }
-    }
-
-    /**
      * Returns the closest entity to the given entity with given
      * filter. The given
      * entity itself is never returned.
      *
-     *
      * If there no entities satisfying the requirement, [Optional.empty]
      * is returned.
-     * Warning: object allocation.
      *
      * @param entity selected entity
      * @param filter requirements
      * @return closest entity to selected entity with type
      */
     fun getClosestEntity(entity: Entity, filter: Predicate<Entity>): Optional<Entity> {
-        val array = UnorderedArray<Entity>(64)
-
-        for (e in entities) {
-            if (filter.test(e) && e !== entity) {
-                array.add(e)
-            }
-        }
-
-        if (array.size() == 0)
-            return Optional.empty()
-
-        array.sort { e1, e2 -> (e1.distance(entity) - e2.distance(entity)).toInt() }
-
-        return Optional.of(array.get(0))
+        return Optional.ofNullable(
+                entities.filter { filter.test(it) && it !== entity }
+                        .sortedBy { entity.distance(it) }
+                        .firstOrNull()
+        )
     }
 
     /**
@@ -717,13 +563,12 @@ class GameWorld {
      * @return entity that matches the query or [Optional.empty]
      */
     fun getEntityByID(name: String, id: Int): Optional<Entity> {
-        for (e in getEntitiesByComponent(IDComponent::class.java)) {
-            val idComponent = e.getComponent(IDComponent::class.java)
-            if (idComponent.name == name && idComponent.id == id) {
-                return Optional.of(e)
-            }
-        }
+        return Optional.ofNullable(
+                getEntitiesByComponent(IDComponent::class.java).find {
+                    val idComponent = it.getComponent(IDComponent::class.java)
 
-        return Optional.empty()
+                    return@find idComponent.name == name && idComponent.id == id
+                }
+        )
     }
 }

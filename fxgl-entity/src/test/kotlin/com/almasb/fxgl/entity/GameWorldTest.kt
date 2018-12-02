@@ -589,70 +589,29 @@ class GameWorldTest {
         )
     }
 
-    @Test
-    fun `By Type Array`() {
-        val e1 = Entity()
-        e1.type = TestType.T1
-
-        val e2 = Entity()
-        e2.type = TestType.T2
-
-        val e3 = Entity()
-        e3.type = TestType.T3
-
-        gameWorld.addEntities(e1, e2, e3)
-
-        val result1 = Array<Entity>()
-        val result2 = Array<Entity>()
-        val result3 = Array<Entity>()
-
-        gameWorld.getEntitiesByType(result1, TestType.T1)
-        gameWorld.getEntitiesByType(result2, TestType.T2)
-        gameWorld.getEntitiesByType(result3, TestType.T2, TestType.T3)
-
-        assertAll(
-                Executable { assertThat(result1, contains(e1)) },
-                Executable { assertThat(result2, contains(e2)) },
-                Executable { assertThat(result3, containsInAnyOrder(e2, e3)) }
-        )
-    }
-
-    @Test
-    fun `Given no args, byType returns all entities`() {
-        val e = Entity()
-        val e2 = Entity()
-
-        gameWorld.addEntities(e, e2)
-
-        val result = Array<Entity>()
-        gameWorld.getEntitiesByType(result)
-
-        assertThat(result, containsInAnyOrder(e, e2))
-    }
-
-    @Test
-    fun `Singleton`() {
-        val e1 = Entity()
-        e1.type = TestType.T1
-
-        val e2 = Entity()
-        e2.type = TestType.T2
-
-        val e3 = Entity()
-        e3.type = TestType.T3
-
-        val e4 = Entity()
-
-        gameWorld.addEntities(e1, e2, e3, e4)
-
-        assertAll(
-                Executable { assertThat(gameWorld.getSingleton(TestType.T1).get(), `is`(e1)) },
-                Executable { assertThat(gameWorld.getSingleton(TestType.T2).get(), `is`(e2)) },
-                Executable { assertThat(gameWorld.getSingleton (Predicate { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T3) }).get(), `is`(e3)) },
-                Executable { assertFalse(gameWorld.getSingleton(TestType.T4).isPresent) },
-                Executable { assertFalse(gameWorld.getSingleton (Predicate { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T4) }).isPresent) }
-        )
-    }
+//    @Test
+//    fun `Singleton`() {
+//        val e1 = Entity()
+//        e1.type = TestType.T1
+//
+//        val e2 = Entity()
+//        e2.type = TestType.T2
+//
+//        val e3 = Entity()
+//        e3.type = TestType.T3
+//
+//        val e4 = Entity()
+//
+//        gameWorld.addEntities(e1, e2, e3, e4)
+//
+//        assertAll(
+//                Executable { assertThat(gameWorld.getSingleton(TestType.T1).get(), `is`(e1)) },
+//                Executable { assertThat(gameWorld.getSingleton(TestType.T2).get(), `is`(e2)) },
+//                Executable { assertThat(gameWorld.getSingleton (Predicate { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T3) }).get(), `is`(e3)) },
+//                Executable { assertFalse(gameWorld.getSingleton(TestType.T4).isPresent) },
+//                Executable { assertFalse(gameWorld.getSingleton (Predicate { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T4) }).isPresent) }
+//        )
+//    }
 
     @Test
     fun `Random returns the single item present`() {
@@ -691,22 +650,6 @@ class GameWorldTest {
         })
 
         assertThat(count, `is`(2))
-    }
-
-    @Test
-    fun `Array based queries append to array`() {
-        val e = Entity()
-        val e2 = Entity()
-        val e3 = Entity()
-
-        gameWorld.addEntities(e, e2, e3)
-
-        val result = Array<Entity>()
-        result.add(e3)
-
-        gameWorld.getEntitiesByType(result)
-
-        assertThat(result, containsInAnyOrder(e, e2, e3, e3))
     }
 
     @Test
@@ -765,35 +708,6 @@ class GameWorldTest {
     }
 
     @Test
-    fun `Filtered entities Array`() {
-        val e1 = Entity()
-        e1.x = 10.0
-        e1.y = 10.0
-
-        val e2 = Entity()
-        e2.x = 20.0
-        e2.y = 10.0
-
-        val e3 = Entity()
-
-        gameWorld.addEntities(e1, e2, e3)
-
-        val result1 = Array<Entity>()
-        val result2 = Array<Entity>()
-        val result3 = Array<Entity>()
-
-        gameWorld.getEntitiesFiltered(result1, Predicate { it.x > 15 })
-        gameWorld.getEntitiesFiltered(result2, Predicate { it.y < 30 })
-        gameWorld.getEntitiesFiltered(result3, Predicate { true })
-
-        assertAll(
-                Executable { assertThat(result1, contains(e2)) },
-                Executable { assertThat(result2, containsInAnyOrder(e1, e2, e3)) },
-                Executable { assertThat(result3, containsInAnyOrder(e1, e2, e3)) }
-        )
-    }
-
-    @Test
     fun `Get entities at List`() {
         val e1 = Entity()
         e1.x = 10.0
@@ -812,34 +726,6 @@ class GameWorldTest {
         assertAll(
                 Executable { assertThat(gameWorld.getEntitiesAt(Point2D(10.0, 10.0)), containsInAnyOrder(e1, e2)) },
                 Executable { assertThat(gameWorld.getEntitiesAt(Point2D(100.0, 10.0)), contains(e3)) }
-        )
-    }
-
-    @Test
-    fun `Get entities at Array`() {
-        val e1 = Entity()
-        e1.x = 10.0
-        e1.y = 10.0
-
-        val e2 = Entity()
-        e2.x = 10.0
-        e2.y = 10.0
-
-        val e3 = Entity()
-        e3.x = 100.0
-        e3.y = 10.0
-
-        gameWorld.addEntities(e1, e2, e3)
-
-        val result1 = Array<Entity>()
-        val result2 = Array<Entity>()
-
-        gameWorld.getEntitiesAt(result1, Point2D(10.0, 10.0))
-        gameWorld.getEntitiesAt(result2, Point2D(100.0, 10.0))
-
-        assertAll(
-                Executable { assertThat(result1, containsInAnyOrder(e1, e2)) },
-                Executable { assertThat(result2, contains(e3)) }
         )
     }
 
@@ -884,31 +770,6 @@ class GameWorldTest {
     }
 
     @Test
-    fun `By range Array`() {
-        val e1 = Entity()
-        e1.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(20.0, 20.0)))
-
-        val e2 = Entity()
-        e2.x = 100.0
-        e2.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(20.0, 20.0)))
-
-        val e3 = Entity()
-
-        gameWorld.addEntities(e1, e2, e3)
-
-        val result1 = Array<Entity>()
-        val result2 = Array<Entity>()
-
-        gameWorld.getEntitiesInRange(result1, 0.0, 0.0, 100.0, 100.0)
-        gameWorld.getEntitiesInRange(result2, 90.0, 0.0, 90 + 20.0, 20.0)
-
-        assertAll(
-                Executable { assertThat(result1, contains(e1)) },
-                Executable { assertThat(result2, contains(e2)) }
-        )
-    }
-
-    @Test
     fun `Get colliding entities`() {
         val e1 = Entity()
         e1.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(20.0, 20.0)))
@@ -927,80 +788,6 @@ class GameWorldTest {
                 Executable { assertTrue(gameWorld.getCollidingEntities(e3).isEmpty()) }
         )
     }
-
-    @Test
-    fun `Get colliding entities Array`() {
-        val e1 = Entity()
-        e1.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(20.0, 20.0)))
-
-        val e2 = Entity()
-        e2.x = 10.0
-        e2.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(20.0, 20.0)))
-
-        val e3 = Entity()
-
-        gameWorld.addEntities(e1, e2, e3)
-
-        val result1 = Array<Entity>()
-        val result2 = Array<Entity>()
-        val result3 = Array<Entity>()
-
-        gameWorld.getCollidingEntities(result1, e1)
-        gameWorld.getCollidingEntities(result2, e2)
-        gameWorld.getCollidingEntities(result3, e3)
-
-        assertAll(
-                Executable { assertThat(result1, contains(e2)) },
-                Executable { assertThat(result2, contains(e1)) },
-                Executable { assertTrue(result3.isEmpty) }
-        )
-    }
-
-//    @Test
-//    fun `By layer List`() {
-//        val layer = RenderLayer("TEST", 0)
-//
-//        val e1 = Entity()
-//        e1.renderLayer = layer
-//
-//        val e2 = Entity()
-//        e2.x = 10.0
-//
-//        val e3 = Entity()
-//
-//        gameWorld.addEntities(e1, e2, e3)
-//
-//        assertAll(
-//                Executable { assertThat(gameWorld.getEntitiesByLayer(layer), contains(e1)) },
-//                Executable { assertThat(gameWorld.getEntitiesByLayer(RenderLayer.DEFAULT), contains(e2, e3)) }
-//        )
-//    }
-//
-//    @Test
-//    fun `By layer Array`() {
-//        val layer = RenderLayer("TEST", 0)
-//
-//        val e1 = Entity()
-//        e1.renderLayer = layer
-//
-//        val e2 = Entity()
-//        e2.x = 10.0
-//
-//        val e3 = Entity()
-//
-//        gameWorld.addEntities(e1, e2, e3)
-//
-//        val result1 = Array<Entity>()
-//        val result2 = Array<Entity>()
-//
-//        gameWorld.getEntitiesByLayer(result1, layer)
-//        gameWorld.getEntitiesByLayer(result2, RenderLayer.DEFAULT)
-//
-//        assertAll(
-//                Executable { assertThat(result1, contains(e1)) },
-//                Executable { assertThat(result2, contains(e2, e3)) }
-//        )
-//    }
 
     /* SPECIAL CASES */
 

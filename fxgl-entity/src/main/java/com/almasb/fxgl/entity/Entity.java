@@ -330,9 +330,7 @@ public class Entity {
     }
 
     private void removeAllComponents() {
-        for (Component comp : components.values()) {
-            removeComponent(comp);
-        }
+        forEach(components.values(), this::removeComponent);
 
         components.clear();
     }
@@ -363,15 +361,11 @@ public class Entity {
     }
 
     private <T extends Component> void notifyComponentAdded(T c) {
-        for (int i = 0; i < componentListeners.size(); i++) {
-            componentListeners.get(i).onAdded(c);
-        }
+        forEach(componentListeners, l -> l.onAdded(c));
     }
 
     private <T extends Component> void notifyComponentRemoved(T c) {
-        for (int i = 0; i < componentListeners.size(); i++) {
-            componentListeners.get(i).onRemoved(c);
-        }
+        forEach(componentListeners, l -> l.onRemoved(c));
     }
 
     private void checkNotUpdating() {
