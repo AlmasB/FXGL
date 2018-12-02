@@ -91,12 +91,6 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-net</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-input</artifactId>
             <version>${fxgl.version}</version>
         </dependency>

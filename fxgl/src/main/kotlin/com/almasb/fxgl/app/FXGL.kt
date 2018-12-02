@@ -100,8 +100,6 @@ private constructor() {
 
         @JvmStatic fun getExecutor() = engine.executor
 
-        @JvmStatic fun getNet() = engine.net
-
         @JvmStatic fun getGameplay() = engine.gameplay
 
         /**

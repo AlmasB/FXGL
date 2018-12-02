@@ -11,7 +11,6 @@ import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
-import com.almasb.fxgl.net.FXGLNet
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.scene.ProgressDialog
@@ -69,7 +68,6 @@ internal class Engine(
     internal val audioPlayer by lazy { AudioPlayer() }
     internal val display by lazy { stateMachine.dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
-    internal val net by lazy { FXGLNet() }
     internal val gameplay by lazy { Gameplay() }
 
     private val profileName = SimpleStringProperty("no-profile")
