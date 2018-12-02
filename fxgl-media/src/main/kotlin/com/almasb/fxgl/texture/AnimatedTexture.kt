@@ -33,8 +33,6 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
 
         // force channel to apply settings to this texture
         updateImage()
-
-        //start(FXGL.getStateMachine().playState)
     }
 
     /**
@@ -60,44 +58,29 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         reset()
     }
 
-    fun play() {
+    fun play(): AnimatedTexture {
         playAnimationChannel(animationChannel!!)
+        return this
     }
 
-    fun loop() {
+    fun loop(): AnimatedTexture {
         loopAnimationChannel(animationChannel!!)
+        return this
     }
 
-//    private lateinit var state: State
-//
-//    var started = false
-//        private set
-//
-//    fun start(state: State) {
-//        if (started) {
-//            return
-//        }
-//
-//        this.state = state
-//        state.addStateListener(this)
-//        started = true
-//    }
-//
-//    fun stop() {
-//        if (!started) {
-//            return
-//        }
-//
-//        state.removeStateListener(this)
-//        reset()
-//        started = false
-//    }
+    fun stop() {
+        currentFrame = 0
+        counter = 0.0
+        needUpdate = false
+
+        updateImage()
+    }
 
     // play and loop
     // play would stop at last frame
     // loop would set the 0th frame
 
-    fun onUpdate(tpf: Double) {
+    override fun onUpdate(tpf: Double) {
         if (!needUpdate)
             return
 
@@ -161,10 +144,5 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         needUpdate = true
 
         updateImage()
-    }
-
-    override fun dispose() {
-        //stop()
-        super.dispose()
     }
 }

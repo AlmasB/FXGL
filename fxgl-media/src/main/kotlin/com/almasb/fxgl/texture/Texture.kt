@@ -7,6 +7,7 @@
 package com.almasb.fxgl.texture
 
 import com.almasb.fxgl.core.Disposable
+import com.almasb.fxgl.core.View
 import com.almasb.fxgl.core.concurrent.Async
 import javafx.geometry.HorizontalDirection
 import javafx.geometry.Rectangle2D
@@ -27,7 +28,7 @@ import javafx.util.Duration
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @apiNote This is essentially a wrapper around [javafx.scene.image.ImageView]
  */
-open class Texture : ImageView, Disposable {
+open class Texture : ImageView, View {
 
     /**
      * Constructs new texture from given image.
@@ -351,6 +352,13 @@ open class Texture : ImageView, Disposable {
         fitWidth = other.fitWidth
         fitHeight = other.fitHeight
         image = other.image
+    }
+
+    override fun onUpdate(tpf: Double) {
+    }
+
+    override fun getNode(): Node {
+        return this
     }
 
     override fun dispose() {

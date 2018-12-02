@@ -5,6 +5,8 @@ import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
 import javafx.beans.property.*
 import javafx.scene.Group
+import javafx.scene.Node
+import javafx.scene.layout.Pane
 
 /**
  *
@@ -12,7 +14,7 @@ import javafx.scene.Group
  */
 @CoreComponent
 class ViewComponent
-@JvmOverloads constructor(initialView: View? = null): Component() {
+@JvmOverloads constructor(initialView: View = EmptyView): Component() {
 
     val parent = Group()
 
@@ -36,5 +38,24 @@ class ViewComponent
         // TODO: bind rotation and origin
     }
 
+    override fun onUpdate(tpf: Double) {
+        view.onUpdate(tpf)
+    }
+
+    override fun onRemoved() {
+        view.dispose()
+    }
     //fun addClickListener
+}
+
+private object EmptyView : View {
+    override fun onUpdate(tpf: Double) {
+    }
+
+    override fun getNode(): Node {
+        return Pane()
+    }
+
+    override fun dispose() {
+    }
 }

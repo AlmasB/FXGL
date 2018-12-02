@@ -6,20 +6,14 @@
 
 package com.almasb.fxgl.scene
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.EntityView
 import com.almasb.fxgl.entity.EntityWorldListener
 import com.almasb.fxgl.entity.components.ViewComponent
-import com.almasb.fxgl.ui.FontType
 import com.almasb.fxgl.ui.UI
 import com.almasb.sslogger.Logger
 import javafx.collections.ObservableList
 import javafx.scene.Group
 import javafx.scene.Node
-import javafx.scene.paint.Color
-import javafx.scene.text.Text
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
 import java.util.*
@@ -66,8 +60,6 @@ internal constructor(width: Int, height: Int) : FXGLScene(width, height), Entity
 
         initViewport(width.toDouble(), height.toDouble())
 
-        addDebugListener()
-
         log.debug("Game scene initialized: " + width + "x" + height)
     }
 
@@ -88,18 +80,6 @@ internal constructor(width: Int, height: Int) : FXGLScene(width, height), Entity
         rotate.pivotYProperty().bind(viewport.yProperty().add(h / 2))
         rotate.angleProperty().bind(viewport.angleProperty().negate())
         gameRoot.transforms.add(rotate)
-    }
-
-    private fun addDebugListener() {
-        FXGL.getSettings().devShowPosition.addListener { o, prev, show ->
-            if (show!!) {
-                //forEach<Entity>(FXGL.getGameWorld().entities) { e -> addDebugView(e) }
-            }
-        }
-    }
-
-    private fun addDebugView(e: Entity) {
-
     }
 
     /**
