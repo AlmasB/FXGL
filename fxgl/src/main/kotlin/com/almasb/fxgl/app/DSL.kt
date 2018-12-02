@@ -178,6 +178,19 @@ fun spawnFadeIn(entityName: String, data: SpawnData, duration: Duration): Entity
 
 fun byID(name: String, id: Int): Optional<Entity> = FXGL.getGameWorld().getEntityByID(name, id)
 
+/**
+ * @param mapFileName name of the .json file or the .tmx file
+ */
+fun setLevelFromMap(mapFileName: String) {
+//    if (mapFileName.endsWith(".json")) {
+//        setLevelFromMap(FXGL.getAssetLoader().loadJSON(mapFileName, TiledMap::class.java))
+//    } else if (mapFileName.endsWith(".tmx")) {
+//        setLevelFromMap(FXGL.getAssetLoader().loadTMX(mapFileName))
+//    } else {
+//        throw IllegalArgumentException("Unknown Tiled map format")
+//    }
+}
+
 /* PHYSICS */
 
 fun onCollisionBegin(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entity>) {
