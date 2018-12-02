@@ -152,10 +152,15 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         emitter.setSize(18.0, 22.0)
         emitter.numParticles = 2
         emitter.emissionRate = 0.2
-        emitter.setVelocityFunction { i -> if (i!! % 2 == 0) Point2D(random(-10, 0).toDouble(), random(0, 0).toDouble()) else Point2D(random(0, 10).toDouble(), random(0, 0).toDouble()) }
-        emitter.setExpireFunction { i -> Duration.seconds(random(4, 6).toDouble()) }
-        emitter.setScaleFunction { i -> Point2D(-0.03, -0.03) }
-        emitter.setSpawnPointFunction { i -> Point2D(random(0, 0).toDouble(), random(0, 0).toDouble()) }
+        emitter.setVelocityFunction { i ->
+            if (i!! % 2 == 0)
+                Point2D(random(-10, 0).toDouble(), random(0, 0).toDouble())
+            else
+                Point2D(random(0, 10).toDouble(), random(0, 0).toDouble())
+        }
+        emitter.setExpireFunction { Duration.seconds(random(4, 6).toDouble()) }
+        emitter.setScaleFunction { Point2D(-0.03, -0.03) }
+        emitter.setSpawnPointFunction { Point2D(random(0, 0).toDouble(), random(0, 0).toDouble()) }
         emitter.setAccelerationFunction { Point2D(random(-1, 1).toDouble(), random(0, 0).toDouble()) }
 
         val box = HBox(text, text2)
@@ -186,50 +191,20 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         return view
     }
 
-    internal fun createMenuBodyMainMenu(): MenuBox {
+    private fun createMenuBodyMainMenu(): MenuBox {
         log.debug("createMenuBodyMainMenu()")
 
         val box = MenuBox()
 
         val enabledItems = FXGL.getSettings().enabledMenuItems
 
-        if (enabledItems.contains(MenuItem.SAVE_LOAD)) {
-            val itemContinue = MenuButton("menu.continue")
-            itemContinue.setOnAction(EventHandler{ e -> fireContinue() })
-            box.add(itemContinue)
-
-            //itemContinue.disableProperty().bind(listener.hasSavesProperty().not())
-        }
-
         val itemNewGame = MenuButton("menu.newGame")
         itemNewGame.setOnAction(EventHandler{ e -> fireNewGame() })
         box.add(itemNewGame)
 
-        if (enabledItems.contains(MenuItem.SAVE_LOAD)) {
-            val itemLoad = MenuButton("menu.load")
-            itemLoad.setMenuContent(Supplier { this.createContentLoad() })
-            box.add(itemLoad)
-        }
-
         val itemOptions = MenuButton("menu.options")
         itemOptions.setChild(createOptionsMenu())
         box.add(itemOptions)
-
-        if (enabledItems.contains(MenuItem.EXTRA)) {
-            val itemExtra = MenuButton("menu.extra")
-            itemExtra.setChild(createExtraMenu())
-            box.add(itemExtra)
-        }
-
-        if (enabledItems.contains(MenuItem.ONLINE)) {
-            val itemMultiplayer = MenuButton("menu.online")
-            itemMultiplayer.setOnAction(EventHandler{ e -> fireMultiplayer() })
-            box.add(itemMultiplayer)
-        }
-
-        val itemLogout = MenuButton("menu.logout")
-        itemLogout.setOnAction(EventHandler{ e -> fireLogout() })
-        box.add(itemLogout)
 
         val itemExit = MenuButton("menu.exit")
         itemExit.setOnAction(EventHandler{ e -> fireExit() })
@@ -238,7 +213,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         return box
     }
 
-    internal fun createMenuBodyGameMenu(): MenuBox {
+    private fun createMenuBodyGameMenu(): MenuBox {
         log.debug("createMenuBodyGameMenu()")
 
         val box = MenuBox()
@@ -277,7 +252,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         return box
     }
 
-    internal fun createOptionsMenu(): MenuBox {
+    private fun createOptionsMenu(): MenuBox {
         log.debug("createOptionsMenu()")
 
         val itemGameplay = MenuButton("menu.gameplay")

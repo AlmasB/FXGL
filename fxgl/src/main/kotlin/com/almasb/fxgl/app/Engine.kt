@@ -8,7 +8,6 @@ import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.event.EventBus
-import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.saving.*
@@ -68,7 +67,6 @@ internal class Engine(
     internal val audioPlayer by lazy { AudioPlayer() }
     internal val display by lazy { stateMachine.dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
-    internal val gameplay by lazy { Gameplay() }
 
     private val profileName = SimpleStringProperty("no-profile")
 
@@ -328,14 +326,10 @@ internal class Engine(
     private fun attachEventHandlers() {
         FXGL.getEventBus().addEventHandler(SaveEvent.ANY, EventHandler { e ->
             settings.save(e.getProfile())
-            //FXGL.getInput().save(e.getProfile())
-            FXGL.getGameplay().save(e.getProfile())
         })
 
         FXGL.getEventBus().addEventHandler(LoadEvent.ANY, EventHandler { e ->
             settings.load(e.getProfile())
-            //FXGL.getInput().load(e.getProfile())
-            FXGL.getGameplay().load(e.getProfile())
         })
     }
 

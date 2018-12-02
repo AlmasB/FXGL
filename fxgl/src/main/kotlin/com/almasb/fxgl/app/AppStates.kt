@@ -238,8 +238,6 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
 
         FXGL.getApp().onUpdate(tpf)
         FXGL.getApp().onPostUpdate(tpf)
-
-        FXGL.getGameplay().stats.onUpdate(tpf)
     }
 }
 
@@ -250,11 +248,6 @@ internal class MainMenuState
 internal constructor(scene: FXGLScene) : AppState(scene) {
 
     private val menuScene = scene as FXGLMenu
-
-    override fun onEnter(prevState: State) {
-        // TODO: if not selected or always?
-        menuScene.showProfileDialog()
-    }
 
     override fun onUpdate(tpf: Double) {
         menuScene.onUpdate(tpf)

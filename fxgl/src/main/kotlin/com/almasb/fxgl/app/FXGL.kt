@@ -100,8 +100,6 @@ private constructor() {
 
         @JvmStatic fun getExecutor() = engine.executor
 
-        @JvmStatic fun getGameplay() = engine.gameplay
-
         /**
          * @return time per frame (in this frame)
          */

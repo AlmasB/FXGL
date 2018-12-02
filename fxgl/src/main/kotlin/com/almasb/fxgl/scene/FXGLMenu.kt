@@ -181,58 +181,59 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
      */
     protected fun createContentLoad(): MenuContent {
         log.debug("createContentLoad()")
-
-        val list = getUIFactory().newListView<SaveFile>()
-
-        val FONT_SIZE = 16.0
-
-        list.setCellFactory { param ->
-            object : ListCell<SaveFile>() {
-                override fun updateItem(item: SaveFile?, empty: Boolean) {
-                    super.updateItem(item, empty)
-
-                    if (empty || item == null) {
-                        text = null
-                        graphic = null
-                    } else {
-
-                        val text = getUIFactory().newText(item.toString())
-                        text.font = getUIFactory().newFont(FontType.MONO, FONT_SIZE)
-
-                        graphic = text
-                    }
-                }
-            }
-        }
-
-        list.setItems(saveLoadManager.saveFiles())
-        list.prefHeightProperty().bind(Bindings.size(list.items).multiply(FONT_SIZE))
-
-        // this runs async
-        //listener.getSaveLoadManager().querySaveFiles()
-
-        val btnLoad = getUIFactory().newButton(localizedStringProperty("menu.load"))
-        btnLoad.disableProperty().bind(list.selectionModel.selectedItemProperty().isNull)
-
-        btnLoad.setOnAction { e ->
-            val saveFile = list.selectionModel.selectedItem
-
-            fireLoad(saveFile)
-        }
-
-        val btnDelete = getUIFactory().newButton(localizedStringProperty("menu.delete"))
-        btnDelete.disableProperty().bind(list.selectionModel.selectedItemProperty().isNull)
-
-        btnDelete.setOnAction { e ->
-            val saveFile = list.selectionModel.selectedItem
-
-            fireDelete(saveFile)
-        }
-
-        val hbox = HBox(50.0, btnLoad, btnDelete)
-        hbox.setAlignment(Pos.CENTER)
-
-        return MenuContent(list, hbox)
+//
+//        val list = getUIFactory().newListView<SaveFile>()
+//
+//        val FONT_SIZE = 16.0
+//
+//        list.setCellFactory { param ->
+//            object : ListCell<SaveFile>() {
+//                override fun updateItem(item: SaveFile?, empty: Boolean) {
+//                    super.updateItem(item, empty)
+//
+//                    if (empty || item == null) {
+//                        text = null
+//                        graphic = null
+//                    } else {
+//
+//                        val text = getUIFactory().newText(item.toString())
+//                        text.font = getUIFactory().newFont(FontType.MONO, FONT_SIZE)
+//
+//                        graphic = text
+//                    }
+//                }
+//            }
+//        }
+//
+//        list.setItems(saveLoadManager.saveFiles())
+//        list.prefHeightProperty().bind(Bindings.size(list.items).multiply(FONT_SIZE))
+//
+//        // this runs async
+//        //listener.getSaveLoadManager().querySaveFiles()
+//
+//        val btnLoad = getUIFactory().newButton(localizedStringProperty("menu.load"))
+//        btnLoad.disableProperty().bind(list.selectionModel.selectedItemProperty().isNull)
+//
+//        btnLoad.setOnAction { e ->
+//            val saveFile = list.selectionModel.selectedItem
+//
+//            fireLoad(saveFile)
+//        }
+//
+//        val btnDelete = getUIFactory().newButton(localizedStringProperty("menu.delete"))
+//        btnDelete.disableProperty().bind(list.selectionModel.selectedItemProperty().isNull)
+//
+//        btnDelete.setOnAction { e ->
+//            val saveFile = list.selectionModel.selectedItem
+//
+//            fireDelete(saveFile)
+//        }
+//
+//        val hbox = HBox(50.0, btnLoad, btnDelete)
+//        hbox.setAlignment(Pos.CENTER)
+//
+//        return MenuContent(list, hbox)
+        return MenuContent()
     }
 
     /**
@@ -241,18 +242,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun createContentGameplay(): MenuContent {
         log.debug("createContentGameplay()")
 
-        val difficultySpinner = FXGLSpinner(FXCollections.observableArrayList(*GameDifficulty.values()))
-        difficultySpinner.increment()
-
-        FXGL.getGameState().gameDifficultyProperty().bind(difficultySpinner.valueProperty())
-
-        val playtime = (FXGL.getGameplay().stats.getPlaytimeHours().toString() + "H "
-                + FXGL.getGameplay().stats.getPlaytimeMinutes() + "M "
-                + FXGL.getGameplay().stats.getPlaytimeSeconds() + "S")
-
         return MenuContent(
-                HBox(25.0, getUIFactory().newText(localizedStringProperty("menu.difficulty").concat(":")), difficultySpinner),
-                HBox(25.0, getUIFactory().newText(localizedStringProperty("menu.playtime").concat(":")), getUIFactory().newText(playtime))
         )
     }
 
@@ -530,92 +520,6 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         menuContentRoot.children.add(node)
     }
 
-    /**
-     * Show profile dialog so that user selects existing or creates new profile.
-     * The dialog is only dismissed when profile is chosen either way.
-     */
-    fun showProfileDialog() {
-        val profilesBox = FXGL.getUIFactory().newChoiceBox(FXCollections.observableArrayList<String>())
-
-        val btnNew = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("multiplayer.new"))
-        val btnSelect = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("multiplayer.select"))
-        btnSelect.disableProperty().bind(profilesBox.valueProperty().isNull)
-        val btnDelete = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("menu.delete"))
-        btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull)
-
-//        btnNew.setOnAction {
-//            FXGL.getDisplay().showInputBox(FXGL.getLocalizedString("profile.new"), InputPredicates.ALPHANUM, Consumer { name ->
-//                profileName.set(name)
-//                hasSaves.value = false
-//                saveLoadManager = SaveLoadManager(name)
-//
-//                saveProfile()
-//            })
-//        }
-//
-//        btnSelect.setOnAction {
-//            val name = profilesBox.value
-//
-//            saveLoadManager = SaveLoadManager(name)
-//
-//            saveLoadManager.loadProfileTask()
-//                    .onSuccess { profile ->
-//                        val ok = loadFromProfile(profile)
-//
-//                        if (!ok) {
-//                            FXGL.getDisplay().showErrorBox(FXGL.getLocalizedString("profile.corrupted")+": $name", { showProfileDialog() })
-//                        } else {
-//                            profileName.set(name)
-//
-//                            saveLoadManager.loadLastModifiedSaveFileTask()
-//                                    .onSuccess { hasSaves.value = true }
-//                                    .onFailure { hasSaves.value = false }
-//                                    .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("menu.loadingLast")))
-//                        }
-//                    }
-//                    .onFailure { error ->
-//                        FXGL.getDisplay().showErrorBox(FXGL.getLocalizedString("profile.corrupted")+(": $name\nError: $error"), { this.showProfileDialog() })
-//                    }
-//                    .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("profile.loadingProfile")+": $name"))
-//        }
-
-        btnDelete.setOnAction {
-            val name = profilesBox.value
-
-            SaveLoadManager.deleteProfileTask(name)
-                    .onSuccess { showProfileDialog() }
-                    .onFailure { error -> FXGL.getDisplay().showErrorBox("$error", { showProfileDialog() }) }
-                    .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("profile.deletingProfile")+": $name"))
-        }
-
-        SaveLoadManager.loadProfileNamesTask()
-                .onSuccess { names ->
-                    profilesBox.items.addAll(names)
-
-                    if (!profilesBox.items.isEmpty()) {
-                        profilesBox.selectionModel.selectFirst()
-                    }
-
-                    FXGL.getDisplay().showBox(FXGL.getLocalizedString("profile.selectOrCreate"), profilesBox, btnSelect, btnNew, btnDelete)
-                }
-                .onFailure { error ->
-                    log.warning("$error")
-
-                    FXGL.getDisplay().showBox(FXGL.getLocalizedString("profile.selectOrCreate"), profilesBox, btnSelect, btnNew, btnDelete)
-                }
-                .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("profile.loadingProfiles")))
-    }
-
-
-
-
-
-
-
-
-
-
-    private lateinit var saveLoadManager: SaveLoadManager
 //
 //    override fun getSaveLoadManager(): SaveLoadManager {
 //        return saveLoadManager
@@ -718,32 +622,6 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         log.debug("fireResume()")
 
         controller.gotoPlay()
-    }
-
-    /**
-     * Can only be fired from main menu.
-     * Logs out the user profile.
-     */
-    protected fun fireLogout() {
-        log.debug("fireLogout()")
-
-        switchMenuContentTo(EMPTY)
-
-        FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.logOut")) { yes ->
-
-            if (yes) {
-                controller.saveProfile()
-                showProfileDialog()
-            }
-        }
-    }
-
-    /**
-     * Call multiplayer access in main menu.
-     * Currently not supported.
-     */
-    protected fun fireMultiplayer() {
-        log.debug("TODO: fireMultiplayer()")
     }
 
     protected fun fireExit() {
