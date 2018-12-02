@@ -6,8 +6,9 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.saving.DataFile
 import com.almasb.fxgl.saving.SaveFile
+import com.almasb.fxgl.saving.UserProfile
+import javafx.beans.property.StringProperty
 
 /**
  *
@@ -29,10 +30,17 @@ interface GameController {
 
     fun loadGameFromLastSave()
 
+    fun saveProfile()
+
+    fun loadFromProfile(profile: UserProfile): Boolean
+
     fun exit()
 
+    fun profileNameProperty(): StringProperty
 
     fun saveScreenshot(): Boolean
 
     fun fixAspectRatio()
+
+    fun restoreDefaultProfileSettings()
 }

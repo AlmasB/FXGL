@@ -6,20 +6,18 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.util.BiConsumer
 import com.almasb.fxgl.core.util.forEach
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.gameplay.GameState
-import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.saving.DataFile
 import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.scene.intro.IntroFinishedEvent
+import com.almasb.sslogger.Logger
 import javafx.concurrent.Task
 import javafx.event.EventHandler
-import javafx.scene.input.KeyEvent
 
 /**
  * All app states.
@@ -44,11 +42,9 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
             FXGL.getStateMachine().startIntro()
         } else {
             if (FXGL.getSettings().isMenuEnabled) {
-                FXGL.getStateMachine().startMainMenu()
+                FXGL.getGameController().gotoMainMenu()
             } else {
-                // TODO: fix hack
-                FXGL.getPropertyMap().setValue("dataFile", DataFile.EMPTY)
-                FXGL.getStateMachine().startLoad()
+                FXGL.getGameController().startNewGame()
             }
         }
     }
@@ -83,11 +79,9 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
 
         if (introFinished) {
             if (FXGL.getSettings().isMenuEnabled) {
-                FXGL.getStateMachine().startMainMenu()
+                FXGL.getGameController().gotoMainMenu()
             } else {
-                // TODO: fix hack
-                FXGL.getPropertyMap().setValue("dataFile", DataFile.EMPTY)
-                FXGL.getStateMachine().startLoad()
+                FXGL.getGameController().startNewGame()
             }
         }
     }
@@ -105,9 +99,10 @@ internal class LoadingState
 internal constructor(private val app: GameApplication, scene: FXGLScene) : AppState(scene) {
 
     private var loadingFinished = false
+    internal var dataFile = DataFile.EMPTY
 
     override fun onEnter(prevState: State) {
-        val initTask = InitAppTask(app)
+        val initTask = InitAppTask(app, dataFile)
         initTask.setOnSucceeded {
             loadingFinished = true
         }
@@ -119,7 +114,7 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
 
     override fun onUpdate(tpf: Double) {
         if (loadingFinished) {
-            FXGL.getStateMachine().startPlay()
+            FXGL.getGameController().gotoPlay()
             loadingFinished = false
         }
     }
@@ -129,7 +124,8 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
      * Initializes game, physics and UI.
      * This task is rerun every time the game application is restarted.
      */
-    private class InitAppTask(private val app: GameApplication) : Task<Void>() {
+    private class InitAppTask(private val app: GameApplication,
+                              private val dataFile: DataFile) : Task<Void>() {
 
         companion object {
             private val log = Logger.get<InitAppTask>()
@@ -167,12 +163,10 @@ internal constructor(private val app: GameApplication, scene: FXGLScene) : AppSt
             app.initGameVars(vars)
             forEach(vars, BiConsumer { name, value -> FXGL.getGameState().setValue(name, value) })
 
-            val loadDataFile = FXGL.getPropertyMap().getValue<DataFile>("dataFile")
-
-            if (loadDataFile === DataFile.EMPTY) {
+            if (dataFile === DataFile.EMPTY) {
                 app.initGame()
             } else {
-                app.loadState(loadDataFile)
+                app.loadState(dataFile)
             }
         }
 
@@ -273,9 +267,7 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
 internal class GameMenuState
 internal constructor(scene: FXGLScene) : AppState(scene) {
 
-    private val menuScene = scene as FXGLMenu
-
     override fun onUpdate(tpf: Double) {
-        menuScene.onUpdate(tpf)
+        scene.onUpdate(tpf)
     }
 }

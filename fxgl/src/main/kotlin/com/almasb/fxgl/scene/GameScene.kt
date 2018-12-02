@@ -204,7 +204,7 @@ internal constructor(width: Int, height: Int) : FXGLScene(width, height), Entity
         )
     }
 
-    fun onUpdate(tpf: Double) {
+    override fun onUpdate(tpf: Double) {
         viewport.onUpdate(tpf)
     }
 

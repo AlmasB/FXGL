@@ -6,17 +6,18 @@
 
 package com.almasb.fxgl.scene.menu
 
-
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.GameApplication
+import com.almasb.fxgl.app.FXGL.Companion.localizedStringProperty
 import com.almasb.fxgl.app.MenuItem
+import com.almasb.fxgl.app.texture
+import com.almasb.fxgl.core.math.FXGLMath.noise1D
+import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.util.Supplier
-import com.almasb.fxgl.particle.ParticleEmitter
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
 import com.almasb.fxgl.scene.FXGLMenu
-import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.ui.FXGLButton
+import com.almasb.sslogger.Logger
 import javafx.animation.FadeTransition
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
@@ -37,15 +38,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.*
 import javafx.scene.shape.Polygon
 import javafx.scene.shape.Rectangle
-import javafx.scene.text.Text
 import javafx.util.Duration
-
-import java.util.EnumSet
-
-import com.almasb.fxgl.app.FXGL.Companion.localizedStringProperty
-import com.almasb.fxgl.app.texture
-import com.almasb.fxgl.core.math.FXGLMath.noise1D
-import com.almasb.fxgl.core.math.FXGLMath.random
 
 /**
  * This is the default FXGL menu used if the users
@@ -55,6 +48,10 @@ import com.almasb.fxgl.core.math.FXGLMath.random
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
+
+    companion object {
+        private val log = Logger.get("FXGL.DefaultMenu")
+    }
 
     private var particleSystem: ParticleSystem? = null
 
@@ -190,7 +187,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     }
 
     internal fun createMenuBodyMainMenu(): MenuBox {
-        FXGLMenu.log.debug("createMenuBodyMainMenu()")
+        log.debug("createMenuBodyMainMenu()")
 
         val box = MenuBox()
 
@@ -201,7 +198,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             itemContinue.setOnAction(EventHandler{ e -> fireContinue() })
             box.add(itemContinue)
 
-            itemContinue.disableProperty().bind(listener.hasSavesProperty().not())
+            //itemContinue.disableProperty().bind(listener.hasSavesProperty().not())
         }
 
         val itemNewGame = MenuButton("menu.newGame")
@@ -242,7 +239,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     }
 
     internal fun createMenuBodyGameMenu(): MenuBox {
-        FXGLMenu.log.debug("createMenuBodyGameMenu()")
+        log.debug("createMenuBodyGameMenu()")
 
         val box = MenuBox()
 
@@ -281,7 +278,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     }
 
     internal fun createOptionsMenu(): MenuBox {
-        FXGLMenu.log.debug("createOptionsMenu()")
+        log.debug("createOptionsMenu()")
 
         val itemGameplay = MenuButton("menu.gameplay")
         itemGameplay.setMenuContent(Supplier { this.createContentGameplay() })
@@ -299,7 +296,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.settingsRestore")) { yes ->
                 if (yes!!) {
                     switchMenuContentTo(EMPTY)
-                    listener.restoreDefaultSettings()
+                    //listener.restoreDefaultSettings()
                 }
             }
         })
@@ -308,7 +305,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     }
 
     private fun createExtraMenu(): MenuBox {
-        FXGLMenu.log.debug("createExtraMenu()")
+        log.debug("createExtraMenu()")
 
         val itemAchievements = MenuButton("menu.trophies")
         itemAchievements.setMenuContent(Supplier { this.createContentAchievements() })

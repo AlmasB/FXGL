@@ -84,6 +84,10 @@ abstract class FXGLScene
         }
     }
 
+    open fun onUpdate(tpf: Double) {
+        // no default implementation
+    }
+
     /**
      * Removes any effects applied to the scene.
      */

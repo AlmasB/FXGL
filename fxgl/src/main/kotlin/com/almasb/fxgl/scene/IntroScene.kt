@@ -34,8 +34,4 @@ abstract class IntroScene : FXGLScene() {
      * Starts the intro animation / video.
      */
     abstract fun startIntro()
-
-    open fun onUpdate(tpf: Double) {
-        // no default implementation
-    }
 }

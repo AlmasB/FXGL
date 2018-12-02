@@ -72,7 +72,7 @@ import javafx.event.EventHandler
 abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
     companion object {
-        val log = Logger.get("FXGL.Menu")
+        private val log = Logger.get("FXGL.Menu")
     }
 
     protected val controller: GameController = FXGL.getGameController()
@@ -93,18 +93,14 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         // we don't data-bind the name because menu subclasses
         // might use some fancy UI without Text / Label
-//        listener.profileNameProperty().addListener { o, oldName, newName ->
-//            if (!oldName.isEmpty()) {
-//                // remove last node which *should* be profile view
-//                contentRoot.children.removeAt(contentRoot.children.size - 1)
-//            }
-//
-//            contentRoot.children.add(createProfileView(getLocalizedString("profile.profile") + ": " + newName))
-//        }
-    }
+        controller.profileNameProperty().addListener { o, oldName, newName ->
+            if (!oldName.isEmpty()) {
+                // remove last node which *should* be profile view
+                contentRoot.children.removeAt(contentRoot.children.size - 1)
+            }
 
-    open fun onUpdate(tpf: Double) {
-        // no default implementation
+            contentRoot.children.add(createProfileView(getLocalizedString("profile.profile") + ": " + newName))
+        }
     }
 
     /**
@@ -365,7 +361,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         if (getSettings().isManualResizeEnabled) {
             val btnFixRatio = getUIFactory().newButton(localizedStringProperty("menu.fixRatio"))
-            btnFixRatio.setOnAction { e -> listener.fixAspectRatio() }
+            btnFixRatio.setOnAction { e -> controller.fixAspectRatio() }
 
             vbox.children.add(btnFixRatio)
         }
@@ -547,41 +543,41 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         val btnDelete = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("menu.delete"))
         btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull)
 
-        btnNew.setOnAction {
-            FXGL.getDisplay().showInputBox(FXGL.getLocalizedString("profile.new"), InputPredicates.ALPHANUM, Consumer { name ->
-                profileName.set(name)
-                hasSaves.value = false
-                saveLoadManager = SaveLoadManager(name)
-
-                saveProfile()
-            })
-        }
-
-        btnSelect.setOnAction {
-            val name = profilesBox.value
-
-            saveLoadManager = SaveLoadManager(name)
-
-            saveLoadManager.loadProfileTask()
-                    .onSuccess { profile ->
-                        val ok = loadFromProfile(profile)
-
-                        if (!ok) {
-                            FXGL.getDisplay().showErrorBox(FXGL.getLocalizedString("profile.corrupted")+": $name", { showProfileDialog() })
-                        } else {
-                            profileName.set(name)
-
-                            saveLoadManager.loadLastModifiedSaveFileTask()
-                                    .onSuccess { hasSaves.value = true }
-                                    .onFailure { hasSaves.value = false }
-                                    .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("menu.loadingLast")))
-                        }
-                    }
-                    .onFailure { error ->
-                        FXGL.getDisplay().showErrorBox(FXGL.getLocalizedString("profile.corrupted")+(": $name\nError: $error"), { this.showProfileDialog() })
-                    }
-                    .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("profile.loadingProfile")+": $name"))
-        }
+//        btnNew.setOnAction {
+//            FXGL.getDisplay().showInputBox(FXGL.getLocalizedString("profile.new"), InputPredicates.ALPHANUM, Consumer { name ->
+//                profileName.set(name)
+//                hasSaves.value = false
+//                saveLoadManager = SaveLoadManager(name)
+//
+//                saveProfile()
+//            })
+//        }
+//
+//        btnSelect.setOnAction {
+//            val name = profilesBox.value
+//
+//            saveLoadManager = SaveLoadManager(name)
+//
+//            saveLoadManager.loadProfileTask()
+//                    .onSuccess { profile ->
+//                        val ok = loadFromProfile(profile)
+//
+//                        if (!ok) {
+//                            FXGL.getDisplay().showErrorBox(FXGL.getLocalizedString("profile.corrupted")+": $name", { showProfileDialog() })
+//                        } else {
+//                            profileName.set(name)
+//
+//                            saveLoadManager.loadLastModifiedSaveFileTask()
+//                                    .onSuccess { hasSaves.value = true }
+//                                    .onFailure { hasSaves.value = false }
+//                                    .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("menu.loadingLast")))
+//                        }
+//                    }
+//                    .onFailure { error ->
+//                        FXGL.getDisplay().showErrorBox(FXGL.getLocalizedString("profile.corrupted")+(": $name\nError: $error"), { this.showProfileDialog() })
+//                    }
+//                    .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("profile.loadingProfile")+": $name"))
+//        }
 
         btnDelete.setOnAction {
             val name = profilesBox.value
@@ -625,16 +621,6 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 //        return saveLoadManager
 //    }
 //
-//    /**
-//     * Stores the default profile data. This is used to restore default settings.
-//     */
-//    private lateinit var defaultProfile: UserProfile
-//
-//    /**
-//     * Stores current selected profile name for this game.
-//     */
-//    private val profileName = ReadOnlyStringWrapper("")
-//
 //    fun isProfileSelected() = profileName.value.isNotEmpty()
 //
 //    private val hasSaves = ReadOnlyBooleanWrapper(false)
@@ -642,14 +628,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 //    override fun hasSavesProperty(): ReadOnlyBooleanProperty {
 //        return hasSaves.readOnlyProperty
 //    }
-//
-//    fun generateDefaultProfile() {
-//        log.debug("generateDefaultProfile()")
-//
-//        defaultProfile = createProfile()
-//    }
-//
-//
+
 //    override fun onDelete(saveFile: SaveFile) {
 //        FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.deleteSave")+"[${saveFile.name}]?", { yes ->
 //
@@ -660,90 +639,6 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 //            }
 //        })
 //    }
-//
-//    override fun onLogout() {
-//        FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.logOut"), { yes ->
-//
-//            if (yes) {
-//                saveProfile()
-//                showProfileDialog()
-//            }
-//        })
-//    }
-//
-//    fun fixAspectRatio() {
-//        FXGL.fixAspectRatio()
-//    }
-//
-//    override fun profileNameProperty(): ReadOnlyStringProperty {
-//        return profileName.readOnlyProperty
-//    }
-//
-//    /**
-//     * @return user profile with current settings
-//     */
-//    fun createProfile(): UserProfile {
-//        log.debug("Creating default profile")
-//
-//        val profile = UserProfile(FXGL.getSettings().title, FXGL.getSettings().version)
-//
-//        FXGL.getEventBus().fireEvent(SaveEvent(profile))
-//
-//        return profile
-//    }
-//
-//    /**
-//     * @return true if loaded successfully, false if couldn't load
-//     */
-//    fun loadFromProfile(profile: UserProfile): Boolean {
-//        if (!profile.isCompatible(FXGL.getSettings().title, FXGL.getSettings().version))
-//            return false
-//
-//        FXGL.getEventBus().fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
-//        return true
-//    }
-//
-//    /**
-//     * Restores default settings, e.g. audio, video, controls.
-//     */
-//    override fun restoreDefaultSettings() {
-//        log.debug("restoreDefaultSettings()")
-//
-//        FXGL.getEventBus().fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
-//    }
-//
-//    fun saveProfile() {
-//        // if it is empty then we are running without menus
-//        if (!profileName.get().isEmpty()) {
-//            saveLoadManager.saveProfileTask(createProfile())
-//                    .onFailure { error -> "Failed to save profile: ${profileName.value} - $error" }
-//                    .run() // we execute synchronously to avoid incomplete save since we might be shutting down
-//        }
-//    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Can only be fired from main menu.
@@ -761,7 +656,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireContinue() {
         log.debug("fireContinue()")
 
-        listener.onContinue()
+        controller.loadGameFromLastSave()
     }
 
     /**
@@ -812,7 +707,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireDelete(fileName: SaveFile) {
         log.debug("fireDelete()")
 
-        listener.onDelete(fileName)
+        //listener.onDelete(fileName)
     }
 
     /**
@@ -834,7 +729,13 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         switchMenuContentTo(EMPTY)
 
-        listener.onLogout()
+        FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.logOut")) { yes ->
+
+            if (yes) {
+                controller.saveProfile()
+                showProfileDialog()
+            }
+        }
     }
 
     /**

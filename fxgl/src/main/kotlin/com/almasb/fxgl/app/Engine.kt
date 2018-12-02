@@ -23,6 +23,8 @@ import com.gluonhq.charm.down.Platform
 import com.gluonhq.charm.down.Services
 import com.gluonhq.charm.down.plugins.LifecycleEvent
 import com.gluonhq.charm.down.plugins.LifecycleService
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
 import javafx.event.EventHandler
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
@@ -56,6 +58,8 @@ internal class Engine(
     internal lateinit var stateMachine: AppStateMachine
     internal lateinit var playState: PlayState
 
+    private lateinit var loadState: LoadingState
+
     internal val loop = LoopRunner(Consumer { loop(it) })
 
     /* SUBSYSTEMS */
@@ -67,6 +71,15 @@ internal class Engine(
     internal val executor by lazy { FXGLExecutor() }
     internal val net by lazy { FXGLNet() }
     internal val gameplay by lazy { Gameplay() }
+
+    private val profileName = SimpleStringProperty("no-profile")
+
+    /**
+     * Stores the default profile data. This is used to restore default settings.
+     */
+    private lateinit var defaultProfile: UserProfile
+
+    private lateinit var saveLoadManager: SaveLoadManager
 
     init {
         log.debug("Initializing FXGL")
@@ -90,6 +103,8 @@ internal class Engine(
 
     // TODO: run this and then test if dirs/files are created, window open, etc.
     fun startLoop() {
+        saveLoadManager = SaveLoadManager(profileName.value)
+
         val start = System.nanoTime()
 
         log.debug("Registering font factories")
@@ -218,6 +233,7 @@ internal class Engine(
         })
 
         playState = stateMachine.playState as PlayState
+        loadState = loading
 
         if (FXGL.getSettings().isMenuEnabled) {
             play.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
@@ -345,9 +361,9 @@ internal class Engine(
     }
 
     private fun generateDefaultProfile() {
-        if (FXGL.getSettings().isMenuEnabled) {
-            //menuHandler.generateDefaultProfile()
-        }
+        log.debug("generateDefaultProfile()")
+
+        defaultProfile = createProfile()
     }
 
     private fun loop(tpf: Double) {
@@ -404,17 +420,15 @@ internal class Engine(
 
     override fun startNewGame() {
         log.debug("Starting new game")
-        startLoadedGame(DataFile.EMPTY)
+        loadState.dataFile = DataFile.EMPTY
+        stateMachine.startLoad()
     }
 
     private fun startLoadedGame(dataFile: DataFile) {
         log.debug("Starting loaded game")
-        // TODO: fix hack
-        FXGL.getPropertyMap().setValue("dataFile", dataFile)
+        loadState.dataFile = dataFile
         stateMachine.startLoad()
     }
-
-    private val saveLoadManager: SaveLoadManager = TODO()
 
     override fun gotoMainMenu() {
         stateMachine.startMainMenu()
@@ -463,6 +477,46 @@ internal class Engine(
 
     override fun fixAspectRatio() {
         mainWindow.fixAspectRatio()
+    }
+
+    override fun saveProfile() {
+        saveLoadManager.saveProfileTask(createProfile())
+                .onFailure { error -> "Failed to save profile: ${profileName.value} - $error" }
+                .run() // we execute synchronously to avoid incomplete save since we might be shutting down
+    }
+
+    /**
+     * @return true if loaded successfully, false if couldn't load
+     */
+    override fun loadFromProfile(profile: UserProfile): Boolean {
+        if (!profile.isCompatible(FXGL.getSettings().title, FXGL.getSettings().version))
+            return false
+
+        FXGL.getEventBus().fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
+        return true
+    }
+
+    override fun profileNameProperty(): StringProperty {
+        return profileName
+    }
+
+    override fun restoreDefaultProfileSettings() {
+        log.debug("restoreDefaultSettings()")
+
+        FXGL.getEventBus().fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
+    }
+
+    /**
+     * @return user profile with current settings
+     */
+    private fun createProfile(): UserProfile {
+        log.debug("Creating default profile")
+
+        val profile = UserProfile(FXGL.getSettings().title, FXGL.getSettings().version)
+
+        FXGL.getEventBus().fireEvent(SaveEvent(profile))
+
+        return profile
     }
 
     override fun exit() {
