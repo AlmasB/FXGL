@@ -53,14 +53,7 @@ internal constructor(width: Int, height: Int) : FXGLScene(width, height), Entity
      */
     private val uiRoot = Group()
 
-    val profilerText = Text()
-
-
     private val entities = ArrayList<Entity>()
-
-
-    private val debugPositions = ObjectMap<Entity, EntityView>()
-
 
     /**
      * @return unmodifiable list of UI nodes
@@ -69,27 +62,13 @@ internal constructor(width: Int, height: Int) : FXGLScene(width, height), Entity
         get() = uiRoot.childrenUnmodifiable
 
     init {
-
         contentRoot.children.addAll(gameRoot, uiRoot)
-
-        if (FXGL.getSettings().isProfilingEnabled) {
-            initProfilerText(0.0, (height - 120).toDouble())
-        }
 
         initViewport(width.toDouble(), height.toDouble())
 
         addDebugListener()
 
         log.debug("Game scene initialized: " + width + "x" + height)
-    }
-
-    private fun initProfilerText(x: Double, y: Double) {
-        profilerText.font = FXGL.getUIFactory().newFont(FontType.MONO, 20.0)
-        profilerText.fill = Color.RED
-        profilerText.translateX = x
-        profilerText.translateY = y
-
-        uiRoot.children.add(profilerText)
     }
 
     private fun initViewport(w: Double, h: Double) {
@@ -216,27 +195,23 @@ internal constructor(width: Int, height: Int) : FXGLScene(width, height), Entity
 
         viewport.unbind()
         gameRoot.children.clear()
-        uiRoot.children.setAll(profilerText)
     }
 
     override fun onEntityAdded(entity: Entity) {
         entities.add(entity)
         initView(entity.viewComponent)
-
-        if (FXGL.getSettings().devShowPosition.value!!) {
-            addDebugView(entity)
-        }
     }
 
     override fun onEntityRemoved(entity: Entity) {
         entities.remove(entity)
         destroyView(entity.viewComponent)
-
     }
 
     private fun initView(viewComponent: ViewComponent) {
-
+        gameRoot.children += viewComponent.parent
     }
 
-    private fun destroyView(viewComponent: ViewComponent) {}
+    private fun destroyView(viewComponent: ViewComponent) {
+        gameRoot.children -= viewComponent.parent
+    }
 }
