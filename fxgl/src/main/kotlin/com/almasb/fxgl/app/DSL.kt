@@ -113,6 +113,12 @@ fun onKeyDown(key: KeyCode, actionName: String, action: Runnable) {
     }, key)
 }
 
+private var actionCounter = 0
+
+fun onKey(key: KeyCode, action: Runnable) {
+    onKey(key, "action${actionCounter++}", action)
+}
+
 fun onKey(key: KeyCode, actionName: String, action: Runnable) {
     getInput().addAction(object : UserAction(actionName) {
         override fun onAction() {

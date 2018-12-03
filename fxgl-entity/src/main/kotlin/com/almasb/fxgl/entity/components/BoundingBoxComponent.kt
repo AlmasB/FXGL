@@ -306,6 +306,31 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
                 box2.minYWorld <= box1.maxYWorld
     }
 
+    private fun checkCollision(box1: HitBox, box2: HitBox,
+                               transform1: TransformComponent,
+                               transform2: TransformComponent): Boolean {
+
+        val center1 = transform1.scaleOrigin
+        val center2 = transform2.scaleOrigin
+
+        // compute local min and max, then convert to world coord
+        val minXWorldNew1 = center1.x - (center1.x - box1.minX) * transform1.scaleX + transform1.x
+        val maxXWorldNew1 = center1.x - (center1.x - box1.maxX) * transform1.scaleX + transform1.x
+
+
+
+        val minXWorldNew2 = center2.x - (center2.x - box2.minX) * transform2.scaleX + transform2.x
+        val maxXWorldNew2 = center2.x - (center2.x - box2.maxX) * transform2.scaleX + transform2.x
+
+        //println("" + minXWorldNew1 + "," + maxXWorldNew1 +" : " + "" + minXWorldNew2 + "," + maxXWorldNew2)
+
+
+        return maxXWorldNew2 >= minXWorldNew1 &&
+                box2.maxYWorld >= box1.minYWorld &&
+                minXWorldNew2 <= maxXWorldNew1 &&
+                box2.minYWorld <= box1.maxYWorld
+    }
+
     private fun checkCollision(box1: HitBox, box2: HitBox, angle1: Double, angle2: Double): Boolean {
         return SAT.isColliding(box1, box2, angle1, angle2)
     }

@@ -24,8 +24,8 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         SerializableComponent,
         CopyableComponent<TransformComponent> {
 
-    constructor(p: Point2D) : this(p.x, p.y, 0.0, 0.0, 0.0)
-    constructor() : this(0.0, 0.0, 0.0, 0.0, 0.0)
+    constructor(p: Point2D) : this(p.x, p.y, 0.0, 1.0, 1.0)
+    constructor() : this(0.0, 0.0, 0.0, 1.0, 1.0)
 
     private val propX: DoubleProperty = SimpleDoubleProperty(x)
     private val propY: DoubleProperty = SimpleDoubleProperty(y)
@@ -37,8 +37,8 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     private val propPositionOriginX = SimpleDoubleProperty(0.0)
     private val propPositionOriginY = SimpleDoubleProperty(0.0)
 
-    private val rotationOrigin = Point2D.ZERO
-    private val scaleOrigin = Point2D.ZERO
+    private val propScaleOriginX = SimpleDoubleProperty(0.0)
+    private val propScaleOriginY = SimpleDoubleProperty(0.0)
 
     var x: Double
         get() = propX.value
@@ -76,7 +76,12 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         get() = propPositionOriginY.value
         set(value) { propPositionOriginY.value = value }
 
-
+    var scaleOrigin: Point2D
+        get() = Point2D(propScaleOriginX.value, propScaleOriginY.value)
+        set(value) {
+            propScaleOriginX.value = value.x
+            propScaleOriginY.value = value.y
+        }
 
 
     fun xProperty() = propX
@@ -90,6 +95,9 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
 
     fun positionOriginXProperty() = propPositionOriginX
     fun positionOriginYProperty() = propPositionOriginY
+
+    fun scaleOriginXProperty() = propScaleOriginX
+    fun scaleOriginYProperty() = propScaleOriginY
 
     fun setPosition(x: Double, y: Double) {
         this.x = x

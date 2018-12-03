@@ -7,6 +7,7 @@ import javafx.beans.property.*
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.layout.Pane
+import javafx.scene.transform.Scale
 
 /**
  *
@@ -32,6 +33,18 @@ class ViewComponent
     override fun onAdded() {
         parent.translateXProperty().bind(entity.xProperty().subtract(entity.transformComponent.positionOriginXProperty()))
         parent.translateYProperty().bind(entity.yProperty().subtract(entity.transformComponent.positionOriginYProperty()))
+
+        val scale = Scale()
+        scale.xProperty().bind(entity.transformComponent.scaleXProperty())
+        scale.yProperty().bind(entity.transformComponent.scaleYProperty())
+
+        scale.pivotXProperty().bind(entity.transformComponent.scaleOriginXProperty())
+        scale.pivotYProperty().bind(entity.transformComponent.scaleOriginYProperty())
+
+        parent.transforms.add(scale)
+        //parent.scaleXProperty().bind(entity.transformComponent.scaleXProperty())
+        //parent.scaleYProperty().bind(entity.transformComponent.scaleYProperty())
+
 
         (z as ReadOnlyIntegerWrapper).bind(entity.transformComponent.zProperty())
 
