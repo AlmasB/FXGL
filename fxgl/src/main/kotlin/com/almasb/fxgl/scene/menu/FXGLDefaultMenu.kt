@@ -6,10 +6,13 @@
 
 package com.almasb.fxgl.scene.menu
 
+import com.almasb.fxgl.animation.Animation
+import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGL.Companion.localizedStringProperty
 import com.almasb.fxgl.app.MenuItem
 import com.almasb.fxgl.app.texture
+import com.almasb.fxgl.app.translate
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
 import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.util.Supplier
@@ -104,7 +107,33 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         }
     }
 
+    private val animations = arrayListOf<Animation<*>>()
+
+    override fun onEnter() {
+        animations.clear()
+        
+        val menuBox = menuRoot.children[0] as MenuBox
+
+        menuBox.children.forEachIndexed { index, node ->
+
+            node.translateX = -250.0
+
+            val animation = translate(node, Point2D(-250.0, 0.0), Point2D(0.0, 0.0),
+                    Duration.seconds(index * 0.07),
+                    Duration.seconds(0.66))
+
+            animations += animation
+
+            animation.animatedValue.interpolator = Interpolators.EXPONENTIAL.EASE_OUT()
+
+            animation.stop()
+            animation.start()
+        }
+    }
+
     override fun onUpdate(tpf: Double) {
+        animations.forEach { it.onUpdate(tpf) }
+
         val frequency = 1.7
 
         t += tpf * frequency

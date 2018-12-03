@@ -249,8 +249,16 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
 
     private val menuScene = scene as FXGLMenu
 
+    override fun onEnter(prevState: State) {
+        menuScene.onEnter()
+    }
+
     override fun onUpdate(tpf: Double) {
         menuScene.onUpdate(tpf)
+    }
+
+    override fun onExit() {
+        menuScene.onExit()
     }
 }
 
@@ -260,7 +268,17 @@ internal constructor(scene: FXGLScene) : AppState(scene) {
 internal class GameMenuState
 internal constructor(scene: FXGLScene) : AppState(scene) {
 
+    private val menuScene = scene as FXGLMenu
+
+    override fun onEnter(prevState: State) {
+        menuScene.onEnter()
+    }
+
     override fun onUpdate(tpf: Double) {
-        scene.onUpdate(tpf)
+        menuScene.onUpdate(tpf)
+    }
+
+    override fun onExit() {
+        menuScene.onExit()
     }
 }

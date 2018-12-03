@@ -103,6 +103,14 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         }
     }
 
+    open fun onEnter() {
+
+    }
+
+    open fun onExit() {
+
+    }
+
     /**
      * Switches current active menu body to given.
      *

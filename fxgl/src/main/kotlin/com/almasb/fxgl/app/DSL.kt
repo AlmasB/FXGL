@@ -6,10 +6,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.animation.AnimatedPoint2D
-import com.almasb.fxgl.animation.AnimatedValue
-import com.almasb.fxgl.animation.Animation
-import com.almasb.fxgl.animation.AnimationBuilder
+import com.almasb.fxgl.animation.*
 import com.almasb.fxgl.app.FXGL.Companion.getAssetLoader
 import com.almasb.fxgl.app.FXGL.Companion.getAudioPlayer
 import com.almasb.fxgl.app.FXGL.Companion.getDisplay
@@ -316,6 +313,51 @@ fun centerTextBind(text: Text, x: Double, y: Double) {
         text.translateY = y - bounds.height / 2
     }
 }
+
+fun translate(e: Entity, to: Point2D, duration: Duration) {
+    translate(object : Animatable {
+        override fun xProperty(): DoubleProperty {
+            return e.xProperty()
+        }
+
+        override fun yProperty(): DoubleProperty {
+            return e.yProperty()
+        }
+
+        override fun scaleXProperty(): DoubleProperty {
+            return e.transformComponent.scaleXProperty()
+        }
+
+        override fun scaleYProperty(): DoubleProperty {
+            return e.transformComponent.scaleYProperty()
+        }
+
+        override fun rotationProperty(): DoubleProperty {
+            return e.transformComponent.angleProperty()
+        }
+
+        override fun opacityProperty(): DoubleProperty {
+            return e.viewComponent.opacity
+        }
+    }, to, duration)
+}
+
+fun translate(a: Animatable, to: Point2D, duration: Duration) {
+    val anim = object : Animation<Point2D>(AnimationBuilder(duration), AnimatedPoint2D(Point2D(a.xProperty().value, a.yProperty().value), to)) {
+
+        override fun onProgress(value: Point2D) {
+            a.xProperty().value = value.x
+            a.yProperty().value = value.y
+        }
+    }
+
+    FXGL.getStateMachine().playState.addStateListener {
+        anim.onUpdate(it)
+    }
+
+    anim.start()
+}
+
 
 fun translate(node: Node, to: Point2D, duration: Duration): Animation<*> {
     return translate(node, Point2D(node.translateX, node.translateY), to, Duration.ZERO, duration)

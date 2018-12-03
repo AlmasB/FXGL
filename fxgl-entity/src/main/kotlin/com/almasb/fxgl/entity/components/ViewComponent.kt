@@ -21,6 +21,9 @@ class ViewComponent
 
     val z: ReadOnlyIntegerProperty = ReadOnlyIntegerWrapper(0)
 
+    @get:JvmName("opacityProperty")
+    val opacity = SimpleDoubleProperty(1.0)
+
     private val propView: ObjectProperty<View> = SimpleObjectProperty<View>(initialView)
 
     var view: View
@@ -29,6 +32,10 @@ class ViewComponent
             parent.children.setAll(value.node)
             propView.value = value
         }
+
+    init {
+        parent.opacityProperty().bind(opacity)
+    }
 
     override fun onAdded() {
         parent.translateXProperty().bind(entity.xProperty().subtract(entity.transformComponent.positionOriginXProperty()))
