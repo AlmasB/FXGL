@@ -11,18 +11,13 @@ import com.almasb.fxgl.app.*
 import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.util.Language
 import com.almasb.fxgl.core.util.Supplier
-import com.almasb.fxgl.gameplay.GameDifficulty
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.TriggerView
 import com.almasb.fxgl.saving.SaveFile
-import com.almasb.fxgl.scene.menu.MenuType
 import com.almasb.fxgl.ui.FXGLScrollPane
-import com.almasb.fxgl.ui.FXGLSpinner
-import com.almasb.fxgl.ui.FontType
-import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import javafx.collections.FXCollections
 import javafx.geometry.HPos
@@ -46,7 +41,6 @@ import com.almasb.fxgl.app.FXGL.Companion.getLocalizedString
 import com.almasb.fxgl.app.FXGL.Companion.localizedStringProperty
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.InputPredicates
-import com.almasb.fxgl.saving.SaveLoadManager
 import javafx.event.EventHandler
 
 /**

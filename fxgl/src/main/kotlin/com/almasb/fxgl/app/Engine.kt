@@ -98,7 +98,6 @@ internal class Engine(
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
 
-    // TODO: run this and then test if dirs/files are created, window open, etc.
     fun startLoop() {
         saveLoadManager = SaveLoadManager(profileName.value)
 
@@ -202,8 +201,9 @@ internal class Engine(
         // we need dialog state before intro and menus
         dialogState = DialogSubState()
 
-        if (settings.isIntroEnabled)
+        if (settings.isIntroEnabled) {
             intro = sceneFactory.newIntro()
+        }
 
         if (settings.isMenuEnabled) {
             mainMenu = sceneFactory.newMainMenu()
@@ -233,8 +233,37 @@ internal class Engine(
         loadState = loading
 
         if (FXGL.getSettings().isMenuEnabled) {
+            val menuKeyHandler = object : EventHandler<KeyEvent> {
+                private var canSwitchGameMenu = true
+
+                private fun onMenuKey(pressed: Boolean) {
+                    if (!pressed) {
+                        canSwitchGameMenu = true
+                        return
+                    }
+
+                    if (canSwitchGameMenu) {
+                        // we only care if menu key was pressed in one of these states
+                        if (stateMachine.currentState === gameMenu) {
+                            canSwitchGameMenu = false
+                            gotoPlay()
+
+                        } else if (stateMachine.currentState === playState) {
+                            canSwitchGameMenu = false
+                            gotoGameMenu()
+                        }
+                    }
+                }
+
+                override fun handle(event: KeyEvent) {
+                    if (event.code == FXGL.getSettings().menuKey) {
+                        onMenuKey(event.eventType == KeyEvent.KEY_PRESSED)
+                    }
+                }
+            }
+
             play.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
-            gameMenu?.input?.addEventHandler(KeyEvent.ANY, menuKeyHandler)
+            gameMenu!!.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
         } else {
             play.input.addAction(object : UserAction("Pause") {
                 override fun onActionBegin() {
@@ -248,36 +277,6 @@ internal class Engine(
         }
 
         log.debug("State machine initialized")
-    }
-
-    private object menuKeyHandler : EventHandler<KeyEvent> {
-        private var canSwitchGameMenu = true
-
-        private fun onMenuKey(pressed: Boolean) {
-            if (!pressed) {
-                canSwitchGameMenu = true
-                return
-            }
-
-            if (canSwitchGameMenu) {
-                // we only care if menu key was pressed in one of these states
-//                if (FXGL.getStateMachine().isInGameMenu()) {
-//                    canSwitchGameMenu = false
-//                    FXGL.engine.gotoPlay()
-//
-//                } else if (FXGL.getStateMachine().isInPlay()) {
-//                    canSwitchGameMenu = false
-//                    FXGL.engine.gotoGameMenu()
-//
-//                }
-            }
-        }
-
-        override fun handle(event: KeyEvent) {
-            if (event.code == FXGL.getSettings().menuKey) {
-                onMenuKey(event.eventType == KeyEvent.KEY_PRESSED)
-            }
-        }
     }
 
     private fun createRequiredDirs() {

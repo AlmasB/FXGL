@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.scene.menu
+package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
@@ -18,8 +18,6 @@ import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.util.Supplier
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
-import com.almasb.fxgl.scene.FXGLMenu
-import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.ui.FXGLButton
 import com.almasb.sslogger.Logger
 import javafx.animation.FadeTransition

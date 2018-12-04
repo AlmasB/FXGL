@@ -6,11 +6,6 @@
 
 package com.almasb.fxgl.scene
 
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.scene.intro.FXGLIntroScene
-import com.almasb.fxgl.scene.menu.FXGLDefaultMenu
-import com.almasb.fxgl.scene.menu.MenuType
-
 /**
  * Factory for scenes used in FXGL.
  *

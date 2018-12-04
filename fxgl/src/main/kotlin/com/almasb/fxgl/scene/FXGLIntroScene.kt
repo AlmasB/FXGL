@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.scene.intro
+package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.FXGL
@@ -16,9 +16,7 @@ import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.particle.Particle
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
-import com.almasb.fxgl.scene.IntroScene
 import javafx.animation.*
-import javafx.beans.property.SimpleDoubleProperty
 import javafx.scene.Group
 import javafx.scene.effect.*
 import javafx.scene.paint.Color

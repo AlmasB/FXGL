@@ -44,7 +44,8 @@ class SceneMachine(start: FXGLScene) {
 
         // new state
         appState.value = newState
-        log.debug("" + prevState + " -> " + newState)
+
+        log.debug("$prevState -> $newState")
 
         appState.value.enter(prevState)
     }
@@ -60,7 +61,7 @@ class SceneMachine(start: FXGLScene) {
         val prevState = currentState
         prevState.input.clearAll()
 
-        log.debug("" + prevState + " -> " + newState)
+        log.debug("$prevState -> $newState")
 
         // new state
         subStates.add(newState)
@@ -80,8 +81,6 @@ class SceneMachine(start: FXGLScene) {
 
         subStates.removeAt(subStates.size - 1)
 
-        log.debug("" + currentState + " <- " + prevState)
+        log.debug("$currentState <- $prevState")
     }
-
-
 }

@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.scene.menu
+package com.almasb.fxgl.scene
 
 /**
  *

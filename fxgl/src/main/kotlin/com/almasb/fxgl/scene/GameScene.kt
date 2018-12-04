@@ -98,8 +98,6 @@ internal constructor(width: Int, height: Int) : FXGLScene(width, height), Entity
         gameRoot.transforms.add(rotate)
     }
 
-
-
     override fun onUpdate(tpf: Double) {
         // if single step is configured, then step() will be called manually
         if (FXGL.getSettings().isSingleStep)
@@ -119,19 +117,6 @@ internal constructor(width: Int, height: Int) : FXGLScene(width, height), Entity
         //FXGL.getApp().onUpdate(tpf)
         //FXGL.getApp().onPostUpdate(tpf)
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Add a node to the UI overlay.
