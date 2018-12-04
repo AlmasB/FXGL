@@ -103,14 +103,6 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         }
     }
 
-    open fun onEnter() {
-
-    }
-
-    open fun onExit() {
-
-    }
-
     /**
      * Switches current active menu body to given.
      *
@@ -283,7 +275,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         return MenuContent(hbox)
     }
 
-    private inner class PressAnyKeyState internal constructor() : SubState() {
+    private inner class PressAnyKeyState internal constructor() : SubScene() {
 
         internal var actionContext: UserAction? = null
 

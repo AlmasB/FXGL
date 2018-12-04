@@ -8,6 +8,7 @@ package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.centerText
+import com.almasb.sslogger.Logger
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
@@ -26,6 +27,8 @@ import javafx.util.Duration
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class StartupScene : FXGLScene() {
+
+    private val log = Logger.get(javaClass)
 
     init {
         val bg = Rectangle(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble())
@@ -94,5 +97,20 @@ class StartupScene : FXGLScene() {
 
         symbol.children.addAll(top, mid, bot, outerCircle, innerCircle, point)
         return symbol
+    }
+
+    override fun onUpdate(tpf: Double) {
+        log.debug("STARTUP")
+
+        // Start -> (Intro) -> (Menu) -> Game
+        if (FXGL.getSettings().isIntroEnabled) {
+            //FXGL.getStateMachine().startIntro()
+        } else {
+            if (FXGL.getSettings().isMenuEnabled) {
+                FXGL.getGameController().gotoMainMenu()
+            } else {
+                FXGL.getGameController().startNewGame()
+            }
+        }
     }
 }

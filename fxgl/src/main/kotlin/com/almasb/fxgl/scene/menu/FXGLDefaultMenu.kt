@@ -19,6 +19,7 @@ import com.almasb.fxgl.core.util.Supplier
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
 import com.almasb.fxgl.scene.FXGLMenu
+import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.ui.FXGLButton
 import com.almasb.sslogger.Logger
 import javafx.animation.FadeTransition
@@ -109,9 +110,9 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
     private val animations = arrayListOf<Animation<*>>()
 
-    override fun onEnter() {
+    override fun onEnter(prevState: Scene) {
         animations.clear()
-        
+
         val menuBox = menuRoot.children[0] as MenuBox
 
         menuBox.children.forEachIndexed { index, node ->

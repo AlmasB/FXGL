@@ -351,9 +351,9 @@ fun translate(a: Animatable, to: Point2D, duration: Duration) {
         }
     }
 
-    FXGL.getStateMachine().playState.addStateListener {
-        anim.onUpdate(it)
-    }
+//    FXGL.getStateMachine().playState.addStateListener {
+//        anim.onUpdate(it)
+//    }
 
     anim.start()
 }

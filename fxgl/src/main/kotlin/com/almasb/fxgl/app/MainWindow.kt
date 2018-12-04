@@ -163,13 +163,14 @@ internal class MainWindow(
     private fun canShowCloseDialog(): Boolean {
         val state = FXGL.getStateMachine().currentState
 
+        return true
         // do not allow close dialog if
         // 1. a dialog is shown
         // 2. we are loading a game
         // 3. we are showing intro
-        return (state !== FXGL.getStateMachine().dialogState
-                && state !== FXGL.getStateMachine().loadingState
-                && (!FXGL.getSettings().isIntroEnabled || state !== FXGL.getStateMachine().introState))
+//        return (state !== FXGL.getStateMachine().dialogState
+//                && state !== FXGL.getStateMachine().loadingState
+//                && (!FXGL.getSettings().isIntroEnabled || state !== FXGL.getStateMachine().introState))
     }
 
     private var windowBorderWidth = 0.0

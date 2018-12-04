@@ -7,7 +7,6 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.scene.intro.IntroFinishedEvent
 
 /**
  * Intro animation / video played before game starts
@@ -20,6 +19,22 @@ import com.almasb.fxgl.scene.intro.IntroFinishedEvent
  */
 abstract class IntroScene : FXGLScene() {
 
+    private var introFinished = false
+
+    override fun onEnter(prevState: Scene) {
+        startIntro()
+    }
+
+    override fun onUpdate(tpf: Double) {
+        if (introFinished) {
+            if (FXGL.getSettings().isMenuEnabled) {
+                FXGL.getGameController().gotoMainMenu()
+            } else {
+                FXGL.getGameController().startNewGame()
+            }
+        }
+    }
+
     /**
      * Closes intro and initializes the next game state, whether it's a menu or game.
      *
@@ -27,7 +42,7 @@ abstract class IntroScene : FXGLScene() {
      * the game won't proceed to next state.
      */
     protected fun finishIntro() {
-        FXGL.getEventBus().fireEvent(IntroFinishedEvent())
+        introFinished = true
     }
 
     /**

@@ -2,6 +2,8 @@ package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.texture
+import com.almasb.fxgl.input.Input
+import com.almasb.fxgl.time.Timer
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleBooleanProperty
@@ -17,7 +19,7 @@ import javafx.scene.transform.Scale
  * Base class for all FXGL scenes.
  */
 abstract class FXGLScene
-@JvmOverloads constructor(width: Int = FXGL.getAppWidth(), height: Int = FXGL.getAppHeight()) {
+@JvmOverloads constructor(width: Int = FXGL.getAppWidth(), height: Int = FXGL.getAppHeight()) : Scene() {
 
     /**
      * Top-level root node.
@@ -53,6 +55,8 @@ abstract class FXGLScene
     val height: Double
         get() = root.prefHeight
 
+
+
     /**
      * @return currently applied effect or null if no effect is applied
      */
@@ -84,9 +88,20 @@ abstract class FXGLScene
         }
     }
 
-    open fun onUpdate(tpf: Double) {
-        // no default implementation
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Removes any effects applied to the scene.

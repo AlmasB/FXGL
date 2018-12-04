@@ -10,6 +10,8 @@ import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.input.UserAction
+import com.almasb.fxgl.scene.Scene
+import com.almasb.fxgl.scene.SubScene
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Parent
@@ -25,7 +27,7 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal object PauseMenuSubState : SubState() {
+internal object PauseMenuSubState : SubScene() {
 
     private val masker = Rectangle(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble(), Color.color(0.0, 0.0, 0.0, 0.25))
     private val content: Pane
@@ -60,9 +62,7 @@ internal object PauseMenuSubState : SubState() {
         animation.animatedValue.interpolator = Interpolators.BACK.EASE_OUT()
     }
 
-    override fun onEnter(prevState: State) {
-        require(prevState is PlayState) { "Entered PauseState from illegal state $prevState" }
-
+    override fun onEnter(prevState: Scene) {
         animation.onFinished = EmptyRunnable
         animation.start()
     }

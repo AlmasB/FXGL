@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.core.util.Predicate
 import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.DialogBox
 import com.almasb.fxgl.ui.Display
 import javafx.beans.property.DoubleProperty
@@ -30,7 +31,7 @@ import java.util.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DialogSubState : SubState(), Display {
+class DialogSubState : SubScene(), Display {
 
     private val window = FXGL.getUIFactory().newWindow()
     private val dialogFactory = FXGL.getSettings().dialogFactory

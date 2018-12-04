@@ -6,9 +6,13 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
+import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.components.ViewComponent
+import com.almasb.fxgl.gameplay.GameState
+import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.ui.UI
 import com.almasb.sslogger.Logger
 import javafx.collections.ObservableList
@@ -55,12 +59,24 @@ internal constructor(width: Int, height: Int) : FXGLScene(width, height), Entity
     val uiNodes: ObservableList<Node>
         get() = uiRoot.childrenUnmodifiable
 
+    val gameState: GameState
+    val gameWorld: GameWorld
+    val physicsWorld: PhysicsWorld
+
     init {
         contentRoot.children.addAll(gameRoot, uiRoot)
 
         initViewport(width.toDouble(), height.toDouble())
 
         log.debug("Game scene initialized: " + width + "x" + height)
+
+
+        gameState = GameState()
+        gameWorld = GameWorld()
+        physicsWorld = PhysicsWorld(FXGL.getAppHeight(), FXGL.getSettings().pixelsPerMeter)
+
+        gameWorld.addWorldListener(physicsWorld)
+        gameWorld.addWorldListener(this)
     }
 
     private fun initViewport(w: Double, h: Double) {
@@ -81,6 +97,41 @@ internal constructor(width: Int, height: Int) : FXGLScene(width, height), Entity
         rotate.angleProperty().bind(viewport.angleProperty().negate())
         gameRoot.transforms.add(rotate)
     }
+
+
+
+    override fun onUpdate(tpf: Double) {
+        // if single step is configured, then step() will be called manually
+        if (FXGL.getSettings().isSingleStep)
+            return
+
+        step(tpf)
+    }
+
+    fun step(tpf: Double) {
+        gameWorld.onUpdate(tpf)
+        physicsWorld.onUpdate(tpf)
+        viewport.onUpdate(tpf)
+
+        FXGL.getEventBus().onUpdate(tpf)
+        FXGL.getAudioPlayer().onUpdate(tpf)
+
+        //FXGL.getApp().onUpdate(tpf)
+        //FXGL.getApp().onPostUpdate(tpf)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Add a node to the UI overlay.
@@ -161,10 +212,6 @@ internal constructor(width: Int, height: Int) : FXGLScene(width, height), Entity
         gameRoot.children.setAll(
                 tmpE.map { e -> e.viewComponent.parent }
         )
-    }
-
-    override fun onUpdate(tpf: Double) {
-        viewport.onUpdate(tpf)
     }
 
     /**

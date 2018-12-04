@@ -108,7 +108,7 @@ private constructor() {
         @JvmStatic fun getGameState() = engine.playState.gameState
         @JvmStatic fun getGameWorld() = engine.playState.gameWorld
         @JvmStatic fun getPhysicsWorld() = engine.playState.physicsWorld
-        @JvmStatic fun getGameScene() = engine.playState.gameScene
+        @JvmStatic fun getGameScene() = engine.playState
 
         /**
          * @return play state input

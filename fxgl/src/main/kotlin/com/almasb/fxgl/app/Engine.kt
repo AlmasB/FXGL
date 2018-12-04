@@ -11,8 +11,7 @@ import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.saving.*
-import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.ProgressDialog
+import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.ui.Display
 import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.fxgl.ui.FXGLUIConfig
@@ -23,6 +22,7 @@ import com.gluonhq.charm.down.plugins.LifecycleEvent
 import com.gluonhq.charm.down.plugins.LifecycleService
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
+import javafx.collections.ListChangeListener
 import javafx.event.EventHandler
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
@@ -53,10 +53,11 @@ internal class Engine(
     internal lateinit var bundle: Bundle
 
     internal lateinit var mainWindow: MainWindow
-    internal lateinit var stateMachine: AppStateMachine
-    internal lateinit var playState: PlayState
+    internal lateinit var stateMachine: SceneMachine
+    internal lateinit var playState: GameScene
 
-    private lateinit var loadState: LoadingState
+    private lateinit var loadState: LoadingScene
+    private lateinit var dialogState: DialogSubState
 
     internal val loop = LoopRunner(Consumer { loop(it) })
 
@@ -65,7 +66,7 @@ internal class Engine(
     internal val assetLoader by lazy { AssetLoader() }
     internal val eventBus by lazy { EventBus() }
     internal val audioPlayer by lazy { AudioPlayer() }
-    internal val display by lazy { stateMachine.dialogState as Display }
+    internal val display by lazy { dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
 
     private val profileName = SimpleStringProperty("no-profile")
@@ -186,54 +187,54 @@ internal class Engine(
         }
     }
 
+    private var intro: FXGLScene? = null
+    private var mainMenu: FXGLScene? = null
+    private var gameMenu: FXGLScene? = null
+
     private fun initStateMachine(startupScene: FXGLScene) {
         log.debug("Initializing state machine and application states")
 
         val sceneFactory = settings.sceneFactory
 
-        // STARTUP is default
-        val initial = StartupState(startupScene)
-
-        val loading = LoadingState(app, sceneFactory.newLoadingScene())
-        val play = PlayState(sceneFactory.newGameScene(settings.width, settings.height))
+        val loading = sceneFactory.newLoadingScene()
+        val play = sceneFactory.newGameScene(settings.width, settings.height)
 
         // we need dialog state before intro and menus
-        val dialog = DialogSubState()
+        dialogState = DialogSubState()
 
-        val intro = if (settings.isIntroEnabled) IntroState(sceneFactory.newIntro()) else AppState.EMPTY
+        if (settings.isIntroEnabled)
+            intro = sceneFactory.newIntro()
 
-        val mainMenu = if (settings.isMenuEnabled) MainMenuState(sceneFactory.newMainMenu()) else AppState.EMPTY
+        if (settings.isMenuEnabled) {
+            mainMenu = sceneFactory.newMainMenu()
+            gameMenu = sceneFactory.newGameMenu()
+        }
 
-        val gameMenu = if (settings.isMenuEnabled) GameMenuState(sceneFactory.newGameMenu()) else AppState.EMPTY
+        stateMachine = SceneMachine(startupScene)
 
-        stateMachine = AppStateMachine(loading, play, dialog, intro, mainMenu, gameMenu, initial)
+        stateMachine.currentFXGLSceneProperty().addListener { _, oldScene, newScene ->
+            mainWindow.setScene(newScene)
+        }
 
-        stateMachine.addListener(object : StateChangeListener {
-            override fun beforeEnter(state: State) {
-                if (state is AppState) {
-                    mainWindow.setScene(state.scene)
-                } else if (state is SubState) {
-                    FXGL.getScene().root.children.add(state.view)
-                }
-            }
+        stateMachine.subScenesProperty().addListener(ListChangeListener {
+            while (it.next()) {
+                if (it.wasAdded()) {
+                    mainWindow.getCurrentScene().root
+                            .children.addAll(it.addedSubList.map { it.view })
 
-            override fun entered(state: State) {}
-
-            override fun beforeExit(state: State) {}
-
-            override fun exited(state: State) {
-                if (state is SubState) {
-                    FXGL.getScene().root.children.remove(state.view)
+                } else if (it.wasRemoved()) {
+                    mainWindow.getCurrentScene().root
+                            .children.removeAll(it.removed.map { it.view })
                 }
             }
         })
 
-        playState = stateMachine.playState as PlayState
+        playState = play
         loadState = loading
 
         if (FXGL.getSettings().isMenuEnabled) {
             play.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
-            gameMenu.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
+            gameMenu?.input?.addEventHandler(KeyEvent.ANY, menuKeyHandler)
         } else {
             play.input.addAction(object : UserAction("Pause") {
                 override fun onActionBegin() {
@@ -260,15 +261,15 @@ internal class Engine(
 
             if (canSwitchGameMenu) {
                 // we only care if menu key was pressed in one of these states
-                if (FXGL.getStateMachine().isInGameMenu()) {
-                    canSwitchGameMenu = false
-                    FXGL.getStateMachine().startPlay()
-
-                } else if (FXGL.getStateMachine().isInPlay()) {
-                    canSwitchGameMenu = false
-                    FXGL.getStateMachine().startGameMenu()
-
-                }
+//                if (FXGL.getStateMachine().isInGameMenu()) {
+//                    canSwitchGameMenu = false
+//                    FXGL.engine.gotoPlay()
+//
+//                } else if (FXGL.getStateMachine().isInPlay()) {
+//                    canSwitchGameMenu = false
+//                    FXGL.engine.gotoGameMenu()
+//
+//                }
             }
         }
 
@@ -413,25 +414,25 @@ internal class Engine(
     override fun startNewGame() {
         log.debug("Starting new game")
         loadState.dataFile = DataFile.EMPTY
-        stateMachine.startLoad()
+        stateMachine.setState(loadState)
     }
 
     private fun startLoadedGame(dataFile: DataFile) {
         log.debug("Starting loaded game")
         loadState.dataFile = dataFile
-        stateMachine.startLoad()
+        stateMachine.setState(loadState)
     }
 
     override fun gotoMainMenu() {
-        stateMachine.startMainMenu()
+        stateMachine.setState(mainMenu!!)
     }
 
     override fun gotoGameMenu() {
-        stateMachine.startGameMenu()
+        stateMachine.setState(gameMenu!!)
     }
 
     override fun gotoPlay() {
-        stateMachine.startPlay()
+        stateMachine.setState(playState)
     }
 
     override fun saveGame(fileName: String) {
