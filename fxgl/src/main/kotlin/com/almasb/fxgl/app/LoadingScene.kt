@@ -63,7 +63,7 @@ open class LoadingScene : FXGLScene() {
      *
      * @param task the loading task
      */
-    fun bind(task: Task<*>) {
+    open fun bind(task: Task<*>) {
         progress.progressProperty().bind(task.progressProperty())
         text.textProperty().bind(task.messageProperty())
     }
