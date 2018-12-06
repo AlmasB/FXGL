@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.app.GameScene
 import com.almasb.fxgl.ui.UI
 import com.almasb.fxgl.ui.UIController
 import javafx.scene.Node

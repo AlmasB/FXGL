@@ -4,9 +4,10 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.scene
+package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.Scene
 
 /**
  * Intro animation / video played before game starts

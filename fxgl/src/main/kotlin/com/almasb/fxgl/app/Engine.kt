@@ -422,6 +422,10 @@ internal class Engine(
         stateMachine.setState(loadState)
     }
 
+    override fun gotoIntro() {
+        stateMachine.setState(intro!!)
+    }
+
     override fun gotoMainMenu() {
         stateMachine.setState(mainMenu!!)
     }

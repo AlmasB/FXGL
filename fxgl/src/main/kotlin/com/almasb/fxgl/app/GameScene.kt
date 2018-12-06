@@ -4,15 +4,15 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.scene
+package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.components.ViewComponent
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.physics.PhysicsWorld
+import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.ui.UI
 import com.almasb.sslogger.Logger
 import javafx.collections.ObservableList

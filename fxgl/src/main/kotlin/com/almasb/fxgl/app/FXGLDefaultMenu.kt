@@ -4,20 +4,18 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.scene
+package com.almasb.fxgl.app
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGL.Companion.localizedStringProperty
-import com.almasb.fxgl.app.MenuItem
-import com.almasb.fxgl.app.texture
-import com.almasb.fxgl.app.translate
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
 import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.util.Supplier
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
+import com.almasb.fxgl.scene.MenuType
+import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.ui.FXGLButton
 import com.almasb.sslogger.Logger
 import javafx.animation.FadeTransition
@@ -363,7 +361,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
     internal inner class MenuButton internal constructor(stringKey: String) : Pane() {
         private var parent: MenuBox? = null
-        private var cachedContent: FXGLMenu.MenuContent? = null
+        private var cachedContent: MenuContent? = null
 
         private val p = Polygon(0.0, 0.0, 220.0, 0.0, 250.0, 35.0, 0.0, 35.0)
         val btn: FXGLButton
@@ -402,7 +400,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             parent = menu
         }
 
-        fun setMenuContent(contentSupplier: Supplier<FXGLMenu.MenuContent>) {
+        fun setMenuContent(contentSupplier: Supplier<MenuContent>) {
 
             btn.addEventHandler(ActionEvent.ACTION) { event ->
                 if (cachedContent == null)

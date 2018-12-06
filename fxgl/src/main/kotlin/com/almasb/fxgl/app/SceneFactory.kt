@@ -4,7 +4,10 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.scene
+package com.almasb.fxgl.app
+
+import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.MenuType
 
 /**
  * Factory for scenes used in FXGL.

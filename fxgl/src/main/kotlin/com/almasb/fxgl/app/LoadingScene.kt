@@ -4,14 +4,13 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.scene
+package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.app.centerTextBind
 import com.almasb.fxgl.core.util.BiConsumer
 import com.almasb.fxgl.core.util.forEach
 import com.almasb.fxgl.saving.DataFile
+import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.Scene
 import com.almasb.sslogger.Logger
 import javafx.concurrent.Task
 import javafx.scene.control.ProgressBar
@@ -128,24 +127,24 @@ open class LoadingScene : FXGLScene() {
             update("Initializing Game", 0)
 
             val vars = hashMapOf<String, Any>()
-            //app.initGameVars(vars)
+            app.initGameVars(vars)
             forEach(vars, BiConsumer { name, value -> FXGL.getGameState().setValue(name, value) })
 
             if (dataFile === DataFile.EMPTY) {
-                //app.initGame()
+                app.initGame()
             } else {
-                //app.loadState(dataFile)
+                app.loadState(dataFile)
             }
         }
 
         private fun initPhysics() {
             update("Initializing Physics", 1)
-            //app.initPhysics()
+            app.initPhysics()
         }
 
         private fun initUI() {
             update("Initializing UI", 2)
-            //app.initUI()
+            app.initUI()
         }
 
         private fun initComplete() {

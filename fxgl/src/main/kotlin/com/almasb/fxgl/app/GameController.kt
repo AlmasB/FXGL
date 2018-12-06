@@ -18,6 +18,8 @@ interface GameController {
 
     fun startNewGame()
 
+    fun gotoIntro()
+
     fun gotoMainMenu()
 
     fun gotoGameMenu()

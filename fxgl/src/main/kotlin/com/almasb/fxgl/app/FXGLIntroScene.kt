@@ -4,11 +4,9 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.scene
+package com.almasb.fxgl.app
 
 import com.almasb.fxgl.animation.Interpolators
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.texture
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.FXGLMath.*
@@ -265,6 +263,8 @@ class FXGLIntroScene : IntroScene() {
     }
 
     override fun onUpdate(tpf: Double) {
+        super.onUpdate(tpf)
+
         particleSystem.onUpdate(tpf)
     }
 
