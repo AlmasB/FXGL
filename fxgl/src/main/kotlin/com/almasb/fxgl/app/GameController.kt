@@ -8,6 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.saving.SaveFile
 import com.almasb.fxgl.saving.UserProfile
+import com.almasb.fxgl.scene.SubScene
 import javafx.beans.property.StringProperty
 
 /**
@@ -45,4 +46,8 @@ interface GameController {
     fun fixAspectRatio()
 
     fun restoreDefaultProfileSettings()
+
+    fun pushSubScene(subScene: SubScene)
+
+    fun popSubScene()
 }

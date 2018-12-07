@@ -71,10 +71,10 @@ internal object PauseMenuSubState : SubScene() {
         animation.onUpdate(tpf)
     }
 
-    internal fun requestShow() {
+    internal fun requestShow(onShow: () -> Unit) {
         if (canSwitchGameMenu) {
             canSwitchGameMenu = false
-            FXGL.getStateMachine().pushState(this)
+            onShow()
         }
     }
 
@@ -86,7 +86,7 @@ internal object PauseMenuSubState : SubScene() {
             canSwitchGameMenu = false
 
             animation.onFinished = Runnable {
-                FXGL.getStateMachine().popState()
+                FXGL.getGameController().popSubScene()
             }
             animation.startReverse()
         }

@@ -40,10 +40,6 @@ private constructor() {
             engine.handleFatalError(error)
         }
 
-        internal fun getScene(): FXGLScene {
-            return engine.mainWindow.getCurrentScene()
-        }
-
         /* STATIC ACCESSORS */
 
         @JvmStatic fun getVersion() = engine.version
@@ -76,8 +72,6 @@ private constructor() {
          */
         @Suppress("UNCHECKED_CAST")
         @JvmStatic fun <T : GameApplication> getAppCast() = getApp() as T
-
-        @JvmStatic fun getStateMachine() = engine.stateMachine
 
         /**
          * Note: the system bundle is saved on exit and loaded on init.

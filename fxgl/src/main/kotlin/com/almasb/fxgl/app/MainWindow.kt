@@ -3,16 +3,18 @@ package com.almasb.fxgl.app
 import com.almasb.sslogger.Logger
 import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.scene.Scene
 import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.collections.FXCollections
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.Event
 import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.scene.Parent
-import javafx.scene.Scene
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCombination
 import javafx.scene.input.KeyEvent
@@ -45,9 +47,9 @@ internal class MainWindow(
 
     private val log = Logger.get(javaClass)
 
-    private val fxScene: Scene
+    private val fxScene: javafx.scene.Scene
 
-    private val currentScene = ReadOnlyObjectWrapper<FXGLScene>(scene)
+    val currentFXGLScene = ReadOnlyObjectWrapper<FXGLScene>(scene)
 
     private val scenes = arrayListOf<FXGLScene>()
 
@@ -56,18 +58,36 @@ internal class MainWindow(
     private val scaleRatioX: DoubleProperty = SimpleDoubleProperty()
     private val scaleRatioY: DoubleProperty = SimpleDoubleProperty()
 
+    private val subScenes = FXCollections.observableArrayList<SubScene>()
+
+    val currentState: Scene
+        get() = if (subScenes.isEmpty()) currentFXGLScene.value else subScenes.last()
+
     init {
         fxScene = createScene(scene.root)
 
         setScene(scene)
 
         initStage()
+
+        addKeyHandler {
+            currentState.input.onKeyEvent(it)
+        }
+
+        addMouseHandler {
+            currentState.input.onMouseEvent(it)
+        }
+
+        // reroute any events to current state input
+        addGlobalHandler {
+            currentState.input.fireEvent(it)
+        }
     }
 
     /**
      * Construct the only JavaFX scene with computed size based on user settings.
      */
-    private fun createScene(root: Parent): Scene {
+    private fun createScene(root: Parent): javafx.scene.Scene {
         log.debug("Creating a JavaFX scene")
 
         var newW = settings.width.toDouble()
@@ -96,7 +116,7 @@ internal class MainWindow(
         newW = newW.toInt().toDouble()
         newH = newH.toInt().toDouble()
 
-        val scene = Scene(root, newW, newH)
+        val scene = javafx.scene.Scene(root, newW, newH)
 
         scaledWidth.set(newW)
         scaledHeight.set(newH)
@@ -157,12 +177,87 @@ internal class MainWindow(
         }
     }
 
+    internal fun onUpdate(tpf: Double) {
+        currentState.update(tpf)
+    }
+
+    /**
+     * Set current FXGL scene.
+     * The scene will be immediately displayed.
+     *
+     * @param scene the scene
+     */
+    fun setScene(scene: FXGLScene) {
+        if (!subScenes.isEmpty()) {
+            // TODO: why is this limitation?
+            log.warning("Cannot change states with active substates")
+            return
+        }
+
+        val prevState = currentFXGLScene.value
+
+        prevState.exit()
+
+        // new state
+        currentFXGLScene.value = scene
+
+        log.debug("$prevState -> $scene")
+
+        currentFXGLScene.value.enter(prevState)
+
+
+        if (scene !in scenes) {
+            registerScene(scene)
+        }
+
+        currentFXGLScene.value.activeProperty().set(false)
+
+        currentFXGLScene.set(scene)
+        scene.activeProperty().set(true)
+
+        fxScene.root = scene.root
+    }
+
+    fun pushState(newState: SubScene) {
+        log.debug("Push state: $newState")
+
+        // substate, so prevState does not exit
+        val prevState = currentState
+        prevState.input.clearAll()
+
+        log.debug("$prevState -> $newState")
+
+        // new state
+        subScenes.add(newState)
+
+        // push view
+        getCurrentScene().root.children.add(newState.view)
+
+        newState.enter(prevState)
+    }
+
+    fun popState() {
+        if (subScenes.isEmpty()) {
+            throw IllegalStateException("Cannot pop state: Substates are empty!")
+        }
+
+        val prevState = subScenes.last()
+        log.debug("Pop state: $prevState")
+
+        prevState.exit()
+
+        subScenes.removeAt(subScenes.size - 1)
+
+        // pop view
+        getCurrentScene().root.children.remove(prevState.view)
+
+        log.debug("$currentState <- $prevState")
+    }
+
     /**
      * @return true if can show close dialog
      */
     private fun canShowCloseDialog(): Boolean {
-        val state = FXGL.getStateMachine().currentState
-
         return true
         // do not allow close dialog if
         // 1. a dialog is shown
@@ -221,25 +316,6 @@ internal class MainWindow(
     }
 
     /**
-     * Set current FXGL scene.
-     * The scene will be immediately displayed.
-     *
-     * @param scene the scene
-     */
-    fun setScene(scene: FXGLScene) {
-        if (scene !in scenes) {
-            registerScene(scene)
-        }
-
-        currentScene.value.activeProperty().set(false)
-
-        currentScene.set(scene)
-        scene.activeProperty().set(true)
-
-        fxScene.root = scene.root
-    }
-
-    /**
      * Register an FXGL scene to be managed by display settings.
      *
      * @param scene the scene
@@ -251,7 +327,7 @@ internal class MainWindow(
     }
 
     fun getCurrentScene(): FXGLScene {
-        return currentScene.value
+        return currentFXGLScene.value
     }
 
     fun addKeyHandler(handler: (KeyEvent) -> Unit) {

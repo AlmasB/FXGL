@@ -283,14 +283,14 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
                 val rebound = FXGL.getInput().rebind(actionContext!!, e.getCode(), InputModifier.from(e))
 
                 if (rebound)
-                    FXGL.getStateMachine().popState()
+                    controller.popSubScene()
             })
 
             input.addEventHandler(MouseEvent.MOUSE_PRESSED, EventHandler { e ->
                 val rebound = FXGL.getInput().rebind(actionContext!!, e.getButton(), InputModifier.from(e))
 
                 if (rebound)
-                    FXGL.getStateMachine().popState()
+                    controller.popSubScene()
             })
 
             val rect = Rectangle(250.0, 100.0)
@@ -317,7 +317,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         triggerView.setOnMouseClicked { event ->
             pressAnyKeyState.actionContext = action
-            FXGL.getStateMachine().pushState(pressAnyKeyState)
+            controller.pushSubScene(pressAnyKeyState)
         }
 
         val hBox = HBox()

@@ -14,6 +14,7 @@ import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.DialogBox
 import com.almasb.fxgl.ui.Display
 import javafx.beans.property.DoubleProperty
+import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.effect.BoxBlur
@@ -31,7 +32,9 @@ import java.util.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DialogSubState : SubScene(), Display {
+class DialogSubState(
+        private val currentSceneProperty: ReadOnlyObjectProperty<FXGLScene>
+) : SubScene(), Display {
 
     private val window = FXGL.getUIFactory().newWindow()
     private val dialogFactory = FXGL.getSettings().dialogFactory
@@ -96,7 +99,7 @@ class DialogSubState : SubScene(), Display {
 
     private fun show() {
         if (!isShowing) {
-            openInScene(FXGL.getScene())
+            openInScene(currentSceneProperty.value)
 
             view.requestFocus()
         }
@@ -104,7 +107,7 @@ class DialogSubState : SubScene(), Display {
 
     private fun close() {
         if (states.isEmpty()) {
-            closeInScene(FXGL.getScene())
+            closeInScene(currentSceneProperty.value)
         } else {
             val data = states.pop()
             window.title = data.title
@@ -119,13 +122,13 @@ class DialogSubState : SubScene(), Display {
         savedEffect = scene.effect
         scene.effect = bgBlur
 
-        FXGL.getStateMachine().pushState(this)
+        FXGL.getGameController().pushSubScene(this)
     }
 
     private fun closeInScene(scene: FXGLScene) {
         scene.effect = savedEffect
 
-        FXGL.getStateMachine().popState()
+        FXGL.getGameController().popSubScene()
     }
 
     override fun showMessageBox(message: String) {

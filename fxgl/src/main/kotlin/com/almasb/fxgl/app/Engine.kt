@@ -22,7 +22,6 @@ import com.gluonhq.charm.down.plugins.LifecycleEvent
 import com.gluonhq.charm.down.plugins.LifecycleService
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
-import javafx.collections.ListChangeListener
 import javafx.event.EventHandler
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
@@ -53,11 +52,13 @@ internal class Engine(
     internal lateinit var bundle: Bundle
 
     internal lateinit var mainWindow: MainWindow
-    internal lateinit var stateMachine: SceneMachine
     internal lateinit var playState: GameScene
 
     private lateinit var loadState: LoadingScene
     private lateinit var dialogState: DialogSubState
+    private var intro: FXGLScene? = null
+    private var mainMenu: FXGLScene? = null
+    private var gameMenu: FXGLScene? = null
 
     internal val loop = LoopRunner(Consumer { loop(it) })
 
@@ -137,26 +138,13 @@ internal class Engine(
                 loadSystemData()
             }
 
-            initStateMachine(startupScene)
+            initStateMachine()
 
             attachPauseResumeListener()
             attachEventHandlers()
 
             // finish init on FX thread
             Async.startFX {
-                mainWindow.addKeyHandler {
-                    stateMachine.currentState.input.onKeyEvent(it)
-                }
-
-                mainWindow.addMouseHandler {
-                    stateMachine.currentState.input.onMouseEvent(it)
-                }
-
-                // reroute any events to current state input
-                mainWindow.addGlobalHandler {
-                    stateMachine.currentState.input.fireEvent(it)
-                }
-
                 // these things need to be called early before the main loop
                 // so that menus can correctly display input controls, etc.
                 // this is called once per application lifetime
@@ -186,20 +174,16 @@ internal class Engine(
         }
     }
 
-    private var intro: FXGLScene? = null
-    private var mainMenu: FXGLScene? = null
-    private var gameMenu: FXGLScene? = null
-
-    private fun initStateMachine(startupScene: FXGLScene) {
+    private fun initStateMachine() {
         log.debug("Initializing state machine and application states")
 
         val sceneFactory = settings.sceneFactory
 
-        val loading = sceneFactory.newLoadingScene()
-        val play = sceneFactory.newGameScene(settings.width, settings.height)
+        loadState = sceneFactory.newLoadingScene()
+        playState = sceneFactory.newGameScene(settings.width, settings.height)
 
         // we need dialog state before intro and menus
-        dialogState = DialogSubState()
+        dialogState = DialogSubState(mainWindow.currentFXGLScene)
 
         if (settings.isIntroEnabled) {
             intro = sceneFactory.newIntro()
@@ -210,29 +194,7 @@ internal class Engine(
             gameMenu = sceneFactory.newGameMenu()
         }
 
-        stateMachine = SceneMachine(startupScene)
-
-        stateMachine.currentFXGLSceneProperty().addListener { _, oldScene, newScene ->
-            mainWindow.setScene(newScene)
-        }
-
-        stateMachine.subScenesProperty().addListener(ListChangeListener {
-            while (it.next()) {
-                if (it.wasAdded()) {
-                    mainWindow.getCurrentScene().root
-                            .children.addAll(it.addedSubList.map { it.view })
-
-                } else if (it.wasRemoved()) {
-                    mainWindow.getCurrentScene().root
-                            .children.removeAll(it.removed.map { it.view })
-                }
-            }
-        })
-
-        playState = play
-        loadState = loading
-
-        if (FXGL.getSettings().isMenuEnabled) {
+        if (settings.isMenuEnabled) {
             val menuKeyHandler = object : EventHandler<KeyEvent> {
                 private var canSwitchGameMenu = true
 
@@ -244,11 +206,11 @@ internal class Engine(
 
                     if (canSwitchGameMenu) {
                         // we only care if menu key was pressed in one of these states
-                        if (stateMachine.currentState === gameMenu) {
+                        if (mainWindow.currentState === gameMenu) {
                             canSwitchGameMenu = false
                             gotoPlay()
 
-                        } else if (stateMachine.currentState === playState) {
+                        } else if (mainWindow.currentState === playState) {
                             canSwitchGameMenu = false
                             gotoGameMenu()
                         }
@@ -256,24 +218,26 @@ internal class Engine(
                 }
 
                 override fun handle(event: KeyEvent) {
-                    if (event.code == FXGL.getSettings().menuKey) {
+                    if (event.code == settings.menuKey) {
                         onMenuKey(event.eventType == KeyEvent.KEY_PRESSED)
                     }
                 }
             }
 
-            play.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
+            playState.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
             gameMenu!!.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
         } else {
-            play.input.addAction(object : UserAction("Pause") {
+            playState.input.addAction(object : UserAction("Pause") {
                 override fun onActionBegin() {
-                    PauseMenuSubState.requestShow()
+                    PauseMenuSubState.requestShow {
+                        mainWindow.pushState(PauseMenuSubState)
+                    }
                 }
 
                 override fun onActionEnd() {
                     PauseMenuSubState.unlockSwitch()
                 }
-            }, FXGL.getSettings().menuKey)
+            }, settings.menuKey)
         }
 
         log.debug("State machine initialized")
@@ -359,14 +323,7 @@ internal class Engine(
     }
 
     private fun loop(tpf: Double) {
-        stateMachine.onUpdate(tpf)
-    }
-
-    /**
-     * Can be used when settings.setSingleStep() is true.
-     */
-    protected fun stepLoop() {
-        playState.step(loop.tpf)
+        mainWindow.onUpdate(tpf)
     }
 
     private var handledOnce = false
@@ -413,29 +370,29 @@ internal class Engine(
     override fun startNewGame() {
         log.debug("Starting new game")
         loadState.dataFile = DataFile.EMPTY
-        stateMachine.setState(loadState)
+        mainWindow.setScene(loadState)
     }
 
     private fun startLoadedGame(dataFile: DataFile) {
         log.debug("Starting loaded game")
         loadState.dataFile = dataFile
-        stateMachine.setState(loadState)
+        mainWindow.setScene(loadState)
     }
 
     override fun gotoIntro() {
-        stateMachine.setState(intro!!)
+        mainWindow.setScene(intro!!)
     }
 
     override fun gotoMainMenu() {
-        stateMachine.setState(mainMenu!!)
+        mainWindow.setScene(mainMenu!!)
     }
 
     override fun gotoGameMenu() {
-        stateMachine.setState(gameMenu!!)
+        mainWindow.setScene(gameMenu!!)
     }
 
     override fun gotoPlay() {
-        stateMachine.setState(playState)
+        mainWindow.setScene(playState)
     }
 
     override fun saveGame(fileName: String) {
@@ -513,6 +470,14 @@ internal class Engine(
         FXGL.getEventBus().fireEvent(SaveEvent(profile))
 
         return profile
+    }
+
+    override fun pushSubScene(subScene: SubScene) {
+        mainWindow.pushState(subScene)
+    }
+
+    override fun popSubScene() {
+        mainWindow.popState()
     }
 
     override fun exit() {
