@@ -145,7 +145,7 @@ internal class Engine(
                 loadSystemData()
             }
 
-            initStateMachine()
+            initAppScenes()
 
             attachPauseResumeListener()
             attachEventHandlers()
@@ -181,8 +181,8 @@ internal class Engine(
         }
     }
 
-    private fun initStateMachine() {
-        log.debug("Initializing state machine and application states")
+    private fun initAppScenes() {
+        log.debug("Initializing application scenes")
 
         val sceneFactory = settings.sceneFactory
 
@@ -251,7 +251,7 @@ internal class Engine(
             }, settings.menuKey)
         }
 
-        log.debug("State machine initialized")
+        log.debug("Application scenes initialized")
     }
 
     private fun createRequiredDirs() {
@@ -311,17 +311,10 @@ internal class Engine(
     private fun runPreInit() {
         log.debug("Running preInit()")
 
-        if (FXGL.isDesktop()) {
-            // 1. register system actions
-            SystemActions.bind(FXGL.getInput())
-        }
-
         // 2. register user actions
         app.initInput()
 
         generateDefaultProfile()
-
-        app.preInit()
     }
 
     private fun generateDefaultProfile() {

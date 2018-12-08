@@ -133,13 +133,6 @@ public abstract class GameApplication {
     protected void initInput() {}
 
     /**
-     * This is called after core services are initialized
-     * but before any game init.
-     * Called only once per application lifetime.
-     */
-    protected void preInit() {}
-
-    /**
      * Can be overridden to provide global variables.
      *
      * @param vars map containing CVars (global variables)
