@@ -194,28 +194,24 @@ internal class MainWindow(
             return
         }
 
-        val prevState = currentFXGLScene.value
-
-        prevState.exit()
-
-        // new state
-        currentFXGLScene.value = scene
-
-        log.debug("$prevState -> $scene")
-
-        currentFXGLScene.value.enter(prevState)
-
-
         if (scene !in scenes) {
             registerScene(scene)
         }
 
+        val prevState = currentFXGLScene.value
+
+        prevState.exit()
+
         currentFXGLScene.value.activeProperty().set(false)
 
-        currentFXGLScene.set(scene)
+        // new state
+        currentFXGLScene.value = scene
+        fxScene.root = scene.root
         scene.activeProperty().set(true)
 
-        fxScene.root = scene.root
+        log.debug("$prevState -> $scene")
+
+        currentFXGLScene.value.enter(prevState)
     }
 
     fun pushState(newState: SubScene) {
