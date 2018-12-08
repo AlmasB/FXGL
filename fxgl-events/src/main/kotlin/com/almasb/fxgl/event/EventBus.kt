@@ -24,10 +24,6 @@ class EventBus {
 
     private val eventHandlers = Group()
 
-    fun onUpdate(tpf: Double) {
-
-    }
-
     /**
      * Register event handler for event type.
      */

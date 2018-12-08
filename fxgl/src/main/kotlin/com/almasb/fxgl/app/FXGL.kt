@@ -49,10 +49,15 @@ private constructor() {
         @JvmStatic fun getSettings(): ReadOnlyGameSettings = engine.settings
 
         /**
+         * @return instance of the running game application
+         */
+        @JvmStatic fun getApp() = engine.app
+
+        /**
          * @return instance of the running game application cast to the actual type
          */
         @Suppress("UNCHECKED_CAST")
-        @JvmStatic fun <T : GameApplication> getApp() = engine.app as T
+        @JvmStatic fun <T : GameApplication> getAppCast() = engine.app as T
 
         @JvmStatic fun getAppWidth() = engine.settings.width
 

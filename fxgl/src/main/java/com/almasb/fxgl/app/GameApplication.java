@@ -169,16 +169,6 @@ public abstract class GameApplication {
     protected void onUpdate(double tpf) {}
 
     /**
-     * Called after main loop tick has been completed in Play state.
-     * It can be used to de-register callbacks / listeners
-     * and call various methods that otherwise might interfere
-     * with main loop.
-     *
-     * @param tpf time per frame (same as main update tpf)
-     */
-    protected void onPostUpdate(double tpf) {}
-
-    /**
      * Called when MenuEvent.SAVE occurs.
      *
      * @return data with required info about current state

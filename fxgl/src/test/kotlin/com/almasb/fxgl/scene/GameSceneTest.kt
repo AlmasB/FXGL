@@ -25,50 +25,50 @@ import org.junit.jupiter.api.Test
  */
 class GameSceneTest {
 
-    private lateinit var gameScene: GameScene
-
-    @BeforeEach
-    fun setUp() {
-        gameScene = GameScene(800, 600)
-    }
-
-    @Test
-    fun `Add and remove UI node `() {
-        val rect = Rectangle()
-
-        gameScene.addUINode(rect)
-
-        assertThat(gameScene.uiNodes, containsInAnyOrder<Node>(rect))
-
-        gameScene.removeUINode(rect)
-
-        assertTrue(gameScene.uiNodes.isEmpty())
-
-        gameScene.addUINode(rect)
-
-        assertThat(gameScene.uiNodes, containsInAnyOrder<Node>(rect))
-
-        gameScene.clearUINodes()
-
-        assertTrue(gameScene.uiNodes.isEmpty())
-    }
-
-    @Test
-    fun `Add and remove UI`() {
-        val pane = Pane()
-        val controller = object : UIController {
-            override fun init() {
-            }
-        }
-
-        val ui = UI(pane, controller)
-
-        gameScene.addUI(ui)
-
-        assertThat(gameScene.uiNodes, containsInAnyOrder<Node>(pane))
-
-        gameScene.removeUI(ui)
-
-        assertTrue(gameScene.uiNodes.isEmpty())
-    }
+//    private lateinit var gameScene: GameScene
+//
+//    @BeforeEach
+//    fun setUp() {
+//        gameScene = GameScene(800, 600)
+//    }
+//
+//    @Test
+//    fun `Add and remove UI node `() {
+//        val rect = Rectangle()
+//
+//        gameScene.addUINode(rect)
+//
+//        assertThat(gameScene.uiNodes, containsInAnyOrder<Node>(rect))
+//
+//        gameScene.removeUINode(rect)
+//
+//        assertTrue(gameScene.uiNodes.isEmpty())
+//
+//        gameScene.addUINode(rect)
+//
+//        assertThat(gameScene.uiNodes, containsInAnyOrder<Node>(rect))
+//
+//        gameScene.clearUINodes()
+//
+//        assertTrue(gameScene.uiNodes.isEmpty())
+//    }
+//
+//    @Test
+//    fun `Add and remove UI`() {
+//        val pane = Pane()
+//        val controller = object : UIController {
+//            override fun init() {
+//            }
+//        }
+//
+//        val ui = UI(pane, controller)
+//
+//        gameScene.addUI(ui)
+//
+//        assertThat(gameScene.uiNodes, containsInAnyOrder<Node>(pane))
+//
+//        gameScene.removeUI(ui)
+//
+//        assertTrue(gameScene.uiNodes.isEmpty())
+//    }
 }

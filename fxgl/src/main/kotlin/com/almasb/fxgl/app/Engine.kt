@@ -7,9 +7,12 @@ import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Consumer
+import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
+import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
+import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.ui.Display
@@ -183,7 +186,11 @@ internal class Engine(
         val sceneFactory = settings.sceneFactory
 
         loadState = sceneFactory.newLoadingScene()
-        playState = sceneFactory.newGameScene(settings.width, settings.height)
+        playState = GameScene(settings.width, settings.height,
+                GameState(),
+                GameWorld(),
+                PhysicsWorld(settings.height, settings.pixelsPerMeter)
+        )
 
         // we need dialog state before intro and menus
         dialogState = DialogSubState(mainWindow.currentFXGLScene)
@@ -327,6 +334,8 @@ internal class Engine(
 
     private fun loop(tpf: Double) {
         mainWindow.onUpdate(tpf)
+
+        audioPlayer.onUpdate(tpf)
     }
 
     private var handledOnce = false

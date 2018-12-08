@@ -33,10 +33,12 @@ import java.util.*
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class GameScene
-internal constructor(width: Int, height: Int) : FXGLScene(width, height), EntityWorldListener {
+internal constructor(width: Int, height: Int,
+                     val gameState: GameState,
+                     val gameWorld: GameWorld,
+                     val physicsWorld: PhysicsWorld) : FXGLScene(width, height), EntityWorldListener {
 
     companion object {
-
         private val log = Logger.get(GameScene::class.java)
     }
 
@@ -59,21 +61,12 @@ internal constructor(width: Int, height: Int) : FXGLScene(width, height), Entity
     val uiNodes: ObservableList<Node>
         get() = uiRoot.childrenUnmodifiable
 
-    val gameState: GameState
-    val gameWorld: GameWorld
-    val physicsWorld: PhysicsWorld
-
     init {
         contentRoot.children.addAll(gameRoot, uiRoot)
 
         initViewport(width.toDouble(), height.toDouble())
 
         log.debug("Game scene initialized: " + width + "x" + height)
-
-
-        gameState = GameState()
-        gameWorld = GameWorld()
-        physicsWorld = PhysicsWorld(FXGL.getAppHeight(), FXGL.getSettings().pixelsPerMeter)
 
         gameWorld.addWorldListener(physicsWorld)
         gameWorld.addWorldListener(this)
@@ -111,11 +104,7 @@ internal constructor(width: Int, height: Int) : FXGLScene(width, height), Entity
         physicsWorld.onUpdate(tpf)
         viewport.onUpdate(tpf)
 
-        FXGL.getEventBus().onUpdate(tpf)
-        FXGL.getAudioPlayer().onUpdate(tpf)
-
-        //FXGL.getApp().onUpdate(tpf)
-        //FXGL.getApp().onPostUpdate(tpf)
+        FXGL.getApp().onUpdate(tpf)
     }
 
     /**

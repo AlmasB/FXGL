@@ -38,13 +38,6 @@ open class SceneFactory {
     open fun newLoadingScene(): LoadingScene = LoadingScene()
 
     /**
-     * Called to construct game scene.
-     *
-     * @return game scene
-     */
-    fun newGameScene(width: Int, height: Int): GameScene = GameScene(width, height)
-
-    /**
      * Called to construct main menu.
      *
      * @return main menu
