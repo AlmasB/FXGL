@@ -1,5 +1,6 @@
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.dsl.image
 import com.almasb.sslogger.Logger
 import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.FXGLScene

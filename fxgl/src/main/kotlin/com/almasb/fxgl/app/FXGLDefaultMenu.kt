@@ -10,8 +10,10 @@ import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.FXGL.Companion.localizedStringProperty
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
-import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.util.Supplier
+import com.almasb.fxgl.dsl.random
+import com.almasb.fxgl.dsl.texture
+import com.almasb.fxgl.dsl.translate
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
 import com.almasb.fxgl.scene.MenuType

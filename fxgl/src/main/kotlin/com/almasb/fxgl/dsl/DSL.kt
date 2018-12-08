@@ -4,9 +4,10 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.app
+package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.animation.*
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGL.Companion.getAssetLoader
 import com.almasb.fxgl.app.FXGL.Companion.getAudioPlayer
 import com.almasb.fxgl.app.FXGL.Companion.getDisplay

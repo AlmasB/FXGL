@@ -9,6 +9,8 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.core.util.EmptyRunnable
+import com.almasb.fxgl.dsl.texture
+import com.almasb.fxgl.dsl.translate
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene

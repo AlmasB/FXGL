@@ -20,7 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.app.DSLKt.random;
+import static com.almasb.fxgl.dsl.DSLKt.random;
 
 /**
  * A general particle emitter.

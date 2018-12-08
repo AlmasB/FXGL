@@ -13,8 +13,8 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.app.DSLKt.image;
-import static com.almasb.fxgl.app.DSLKt.random;
+import static com.almasb.fxgl.dsl.DSLKt.image;
+import static com.almasb.fxgl.dsl.DSLKt.random;
 
 /**
  * Holds configuration of predefined particle emitters.

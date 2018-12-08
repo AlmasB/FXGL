@@ -1,9 +1,7 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.texture
-import com.almasb.fxgl.input.Input
-import com.almasb.fxgl.time.Timer
+import com.almasb.fxgl.dsl.texture
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleBooleanProperty

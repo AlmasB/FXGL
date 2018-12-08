@@ -6,8 +6,8 @@
 
 package s01basics;
 
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.dsl.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.EntityView;
@@ -24,8 +24,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.app.DSLKt.*;
-import static com.almasb.fxgl.app.DSLKt.texture;
+import static com.almasb.fxgl.dsl.DSLKt.*;
+import static com.almasb.fxgl.dsl.DSLKt.texture;
 import static com.almasb.fxgl.app.FXGL.*;
 
 /**
@@ -103,6 +103,9 @@ public class InitSample extends GameApplication {
         getGameWorld().addEntity(player2);
 
         translate(player, new Point2D(560, 300), Duration.seconds(2));
+
+        //Entity e3 = Entities.builder()
+
 
 //        // 2. create entity and attach to world using fluent API
 //        player = Entities.builder()

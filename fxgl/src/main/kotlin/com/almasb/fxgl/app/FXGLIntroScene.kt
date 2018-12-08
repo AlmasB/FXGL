@@ -11,6 +11,8 @@ import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.FXGLMath.*
 import com.almasb.fxgl.core.math.Vec2
+import com.almasb.fxgl.dsl.random
+import com.almasb.fxgl.dsl.texture
 import com.almasb.fxgl.particle.Particle
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
