@@ -267,21 +267,6 @@ class InputTest {
         assertThat((trigger as MouseTrigger).button, `is`(MouseButton.MIDDLE))
     }
 
-    @Test
-    fun testAddInputMapping() {
-        assertThat(input.bindings.size, `is`(0))
-
-        input.addInputMapping(InputMapping("TestAction", KeyCode.A))
-
-        input.scanForUserActions(this)
-
-        assertThat(input.bindings.size, `is`(1))
-
-        val trigger = input.bindings.values.single()
-
-        assertTrue(trigger is KeyTrigger)
-        assertThat((trigger as KeyTrigger).key, `is`(KeyCode.A))
-    }
 
     @Test
     fun `Trigger name by action`() {
@@ -385,8 +370,4 @@ class InputTest {
 //        )
 //    }
 
-    @OnUserAction(name = "TestAction", type = ActionType.ON_ACTION_BEGIN)
-    fun onCall() {
-
-    }
 }

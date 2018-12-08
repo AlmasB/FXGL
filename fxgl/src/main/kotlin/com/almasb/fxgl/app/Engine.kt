@@ -4,9 +4,7 @@ import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.FXGLExecutor
 import com.almasb.fxgl.core.concurrent.IOTask
-import com.almasb.sslogger.Logger
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.GameState
@@ -14,11 +12,14 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.saving.*
-import com.almasb.fxgl.scene.*
+import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.ProgressDialog
+import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.Display
 import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.fxgl.ui.FXGLUIConfig
 import com.almasb.fxgl.ui.FontType
+import com.almasb.sslogger.Logger
 import com.gluonhq.charm.down.Platform
 import com.gluonhq.charm.down.Services
 import com.gluonhq.charm.down.plugins.LifecycleEvent
@@ -317,9 +318,6 @@ internal class Engine(
 
         // 2. register user actions
         app.initInput()
-
-        // 3. scan for annotated methods and register them too
-        FXGL.getInput().scanForUserActions(app)
 
         generateDefaultProfile()
 

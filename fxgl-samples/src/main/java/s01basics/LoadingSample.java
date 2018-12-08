@@ -10,7 +10,9 @@ import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.*;
 import com.almasb.fxgl.core.math.FXGLMath;
+import javafx.concurrent.Task;
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
@@ -52,15 +54,6 @@ public class LoadingSample extends GameApplication {
     }
 
     @Override
-    protected void initPhysics() {
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     protected void initUI() {
         try {
             Thread.sleep(4000);
@@ -71,39 +64,32 @@ public class LoadingSample extends GameApplication {
 
     public class MyLoadingScene extends LoadingScene {
 
-        private List<Animation<?>> animations = new ArrayList<>();
+        private Rectangle r = new Rectangle(40, 0, null);
 
         public MyLoadingScene() {
 
             getContentRoot().getChildren().clear();
 
-            for (int i = 0; i < 3; i++) {
-                Rectangle r = new Rectangle(40, 40);
+            r.setStroke(Color.BLACK);
 
-                r.setTranslateX(FXGLMath.random(FXGL.getAppWidth()));
-                r.setTranslateY(FXGLMath.random(2));
+            r.setTranslateX(FXGLMath.random(FXGL.getAppWidth()));
+            r.setTranslateY(FXGLMath.random(2));
 
-                var a = DSLKt.translate(r,
-                        new Point2D(r.getTranslateX(), r.getTranslateY()),
-                        new Point2D(FXGLMath.random(FXGL.getAppWidth()), FXGL.getAppHeight()),
-                        Duration.seconds(4.5));
 
-                a.getAnimatedValue().setInterpolator(Interpolators.ELASTIC.EASE_OUT());
 
-                animations.add(a);
+            getContentRoot().getChildren().addAll(r);
+        }
 
-                getContentRoot().getChildren().addAll(r);
-            }
-
-            animations.forEach(a -> a.start());
+        @Override
+        public void bind(@NotNull Task<?> task) {
+            task.progressProperty().addListener((observable, oldValue, progress) -> {
+                r.setHeight(FXGL.getAppHeight() * progress.doubleValue());
+            });
         }
 
         @Override
         protected void onUpdate(double tpf) {
-
             super.onUpdate(tpf);
-
-            animations.forEach(a -> a.onUpdate(tpf));
         }
     }
 

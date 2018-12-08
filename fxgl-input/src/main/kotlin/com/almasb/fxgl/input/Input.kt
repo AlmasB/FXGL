@@ -6,9 +6,8 @@
 
 package com.almasb.fxgl.input
 
-import com.almasb.sslogger.Logger
-import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.input.virtual.VirtualButton
+import com.almasb.sslogger.Logger
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.ReadOnlyStringProperty
@@ -20,7 +19,6 @@ import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.input.*
-import java.lang.reflect.Method
 
 class Input {
 
@@ -460,65 +458,6 @@ class Input {
         mockButtonRelease(button, getMouseXWorld(), getMouseYWorld(), inputModifier)
     }
 
-    /* INPUT MAPPINGS */
-
-    private val inputMappings = HashMap<String, InputMapping>()
-
-    /**
-     * Add input mapping. The actual implementation needs to be specified by
-     * {@link OnUserAction} annotation.
-     *
-     * @param mapping the mapping
-     */
-    fun addInputMapping(inputMapping: InputMapping) {
-        inputMappings.put(inputMapping.actionName, inputMapping)
-    }
-
-    /**
-     * Given an object, scans its methods for {@link OnUserAction} annotation
-     * and creates UserActions from its data.
-     *
-     * @param instance the class instance to scan
-     */
-    fun scanForUserActions(instance: Any) {
-        val map = HashMap<String, HashMap<ActionType, Method> >()
-
-        for (method in instance.javaClass.declaredMethods) {
-            val action = method.getAnnotation(OnUserAction::class.java)
-            if (action != null) {
-                val mapping = map[action.name] ?: hashMapOf()
-                if (mapping.isEmpty()) {
-                    map[action.name] = mapping
-                }
-
-                mapping[action.type] = method
-            }
-        }
-
-        map.forEach { (name, mapping) ->
-            val action = object : UserAction(name) {
-                override fun onActionBegin() {
-                    mapping[ActionType.ON_ACTION_BEGIN]?.invoke(instance)
-                }
-
-                override fun onAction() {
-                    mapping[ActionType.ON_ACTION]?.invoke(instance)
-                }
-
-                override fun onActionEnd() {
-                    mapping[ActionType.ON_ACTION_END]?.invoke(instance)
-                }
-            }
-
-            val inputMapping: InputMapping = inputMappings[name] ?: throw IllegalStateException("No input mapping found for action $name")
-
-            if (inputMapping.isKeyTrigger()) {
-                addAction(action, inputMapping.getKeyTrigger(), inputMapping.modifier)
-            } else {
-                addAction(action, inputMapping.getButtonTrigger(), inputMapping.modifier)
-            }
-        }
-    }
 //
 //    fun save(profile: UserProfile) {
 //        log.debug("Saving data to profile")
