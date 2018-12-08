@@ -79,19 +79,15 @@ public class InitSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = new Entity();
-        player.setType(Type.PLAYER);
-        player.setPosition(100, 100);
-        player.setView(new EntityView(new Rectangle(40, 40)));
-        player.addComponent(new CollidableComponent(true));
-        player.getBoundingBoxComponent().addHitBox(new HitBox(BoundingShape.box(40, 40)));
+        player = Entities.builder()
+                .type(Type.PLAYER)
+                .at(100, 150)
+                .viewWithBBox("brick.png")
+                .with(new CollidableComponent(true), new DeveloperWASDControl())
+                .buildAndAttach();
 
         player.getTransformComponent().scaleOriginXProperty().setValue(40);
         player.getTransformComponent().scaleOriginYProperty().setValue(40);
-
-        player.addComponent(new DeveloperWASDControl());
-
-        getGameWorld().addEntity(player);
 
         Entity player2 = new Entity();
         player2.setType(Type.NPC);
@@ -103,16 +99,6 @@ public class InitSample extends GameApplication {
         getGameWorld().addEntity(player2);
 
         translate(player, new Point2D(560, 300), Duration.seconds(2));
-
-        //Entity e3 = Entities.builder()
-
-
-//        // 2. create entity and attach to world using fluent API
-//        player = Entities.builder()
-//                .type(Type.PLAYER)
-//                .at(100, 100)
-//                .viewFromNode(new Rectangle(40, 40))
-//                .buildAndAttach(getGameWorld());
     }
 
     @Override

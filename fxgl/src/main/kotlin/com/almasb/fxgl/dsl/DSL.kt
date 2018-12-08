@@ -22,6 +22,7 @@ import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
@@ -42,6 +43,8 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+
+// TODO: move to FXGL, so FXGL will become DSL
 
 /* VARS */
 
