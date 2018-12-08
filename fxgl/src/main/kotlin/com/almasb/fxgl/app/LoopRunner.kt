@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app
 
 import com.almasb.sslogger.Logger
-import com.almasb.fxgl.core.util.Consumer
 import javafx.animation.AnimationTimer
 
 /**
@@ -15,7 +14,7 @@ import javafx.animation.AnimationTimer
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class LoopRunner(val runnable: Consumer<Double>) {
+internal class LoopRunner(val runnable: (Double) -> Unit) {
 
     private val log = Logger.get<LoopRunner>()
 
@@ -84,7 +83,7 @@ internal class LoopRunner(val runnable: Consumer<Double>) {
     }
 
     private fun frame() {
-        runnable.accept(tpf)
+        runnable(tpf)
     }
 
     /**

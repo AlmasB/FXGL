@@ -6,9 +6,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.input.Input
-import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.time.Timer
@@ -30,15 +28,7 @@ private constructor() {
         // TODO: effectively private?
         internal lateinit var engine: Engine
 
-        private val _propertyMap = PropertyMap()
-
-        @JvmStatic fun getPropertyMap() = _propertyMap
-
         @JvmStatic fun getGameController(): GameController = engine
-
-        @JvmStatic fun handleFatalError(error: Throwable) {
-            engine.handleFatalError(error)
-        }
 
         /* STATIC ACCESSORS */
 
@@ -59,19 +49,14 @@ private constructor() {
         @JvmStatic fun getSettings(): ReadOnlyGameSettings = engine.settings
 
         /**
-         * @return instance of the running game application
+         * @return instance of the running game application cast to the actual type
          */
-        @JvmStatic fun getApp() = engine.app
+        @Suppress("UNCHECKED_CAST")
+        @JvmStatic fun <T : GameApplication> getApp() = engine.app as T
 
         @JvmStatic fun getAppWidth() = engine.settings.width
 
         @JvmStatic fun getAppHeight() = engine.settings.height
-
-        /**
-         * @return instance of the running game application cast to the actual type
-         */
-        @Suppress("UNCHECKED_CAST")
-        @JvmStatic fun <T : GameApplication> getAppCast() = getApp() as T
 
         /**
          * Note: the system bundle is saved on exit and loaded on init.
@@ -97,7 +82,7 @@ private constructor() {
         /**
          * @return time per frame (in this frame)
          */
-        @JvmStatic fun tpf() = engine.loop.tpf
+        @JvmStatic fun tpf() = engine.tpf
 
         @JvmStatic fun getGameState() = engine.playState.gameState
         @JvmStatic fun getGameWorld() = engine.playState.gameWorld

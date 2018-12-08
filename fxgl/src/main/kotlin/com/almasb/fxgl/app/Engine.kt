@@ -51,7 +51,7 @@ internal class Engine(
 
     internal lateinit var bundle: Bundle
 
-    internal lateinit var mainWindow: MainWindow
+    private lateinit var mainWindow: MainWindow
     internal lateinit var playState: GameScene
 
     private lateinit var loadState: LoadingScene
@@ -60,7 +60,10 @@ internal class Engine(
     private var mainMenu: FXGLScene? = null
     private var gameMenu: FXGLScene? = null
 
-    internal val loop = LoopRunner(Consumer { loop(it) })
+    private val loop = LoopRunner { loop(it) }
+
+    val tpf: Double
+        get() = loop.tpf
 
     /* SUBSYSTEMS */
 
@@ -328,7 +331,7 @@ internal class Engine(
 
     private var handledOnce = false
 
-    internal fun handleFatalError(error: Throwable) {
+    private fun handleFatalError(error: Throwable) {
         if (handledOnce) {
             // just ignore to avoid spamming dialogs
             return

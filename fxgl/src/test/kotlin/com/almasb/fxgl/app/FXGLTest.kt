@@ -33,11 +33,11 @@ class FXGLTest {
 //        assertTrue(engine.version.matches("\\d\\.\\d\\.\\d.*".toRegex()))
 //    }
 
-    @Test
-    fun `GameApplication subclass is a singleton across FXGL`() {
-        assertTrue(FXGL.getApp() === FXGL.getAppCast<MockGameApplication>())
-        assertTrue(FXGL.getApp() === MockGameApplication.get())
-    }
+//    @Test
+//    fun `GameApplication subclass is a singleton across FXGL`() {
+//        assertTrue(FXGL.getApp() === FXGL.getAppCast<MockGameApplication>())
+//        assertTrue(FXGL.getApp() === MockGameApplication.get())
+//    }
 
 //    @Test
 //    fun `fail if property not found`() {
