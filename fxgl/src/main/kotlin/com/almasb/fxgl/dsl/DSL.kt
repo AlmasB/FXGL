@@ -4,6 +4,9 @@
  * See LICENSE for details.
  */
 
+// TODO:
+//@file:JvmName("FXGL2")
+
 package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.animation.*
@@ -22,11 +25,12 @@ import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
+import com.almasb.fxgl.scene.SceneListener
 import com.almasb.fxgl.texture.Texture
+import javafx.animation.Interpolator
 import javafx.beans.property.*
 import javafx.event.Event
 import javafx.geometry.Point2D
@@ -43,6 +47,8 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+
+
 
 // TODO: move to FXGL, so FXGL will become DSL
 
@@ -318,8 +324,112 @@ fun centerTextBind(text: Text, x: Double, y: Double) {
     }
 }
 
-fun translate(e: Entity, to: Point2D, duration: Duration) {
-    translate(object : Animatable {
+/* ANIMATIONS */
+
+// TODO: specify explicitly
+
+@JvmOverloads fun translate(n: Node,
+                                from: Point2D = Point2D(n.translateX, n.translateY),
+                                to: Point2D,
+                                delay: Duration = Duration.ZERO,
+                                duration: Duration,
+                                onFinishedAction: Runnable = EmptyRunnable,
+                                interpolator: Interpolator = Interpolators.LINEAR.EASE_OUT()): Animation<*> {
+
+    return translateAnim(n.toAnimatable(), from, to, delay, duration, onFinishedAction, interpolator)
+            .also {
+                it.start()
+                FXGL.getGameScene().addListener(it.toListener())
+            }
+}
+
+@JvmOverloads fun translate(e: Entity,
+                                from: Point2D = Point2D(e.x, e.y),
+                                to: Point2D,
+                                delay: Duration = Duration.ZERO,
+                                duration: Duration,
+                                onFinishedAction: Runnable = EmptyRunnable,
+                                interpolator: Interpolator = Interpolators.LINEAR.EASE_OUT()): Animation<*> {
+
+    return translateAnim(e.toAnimatable(), from, to, delay, duration, onFinishedAction, interpolator)
+            .also {
+                it.start()
+                FXGL.getGameScene().addListener(it.toListener())
+            }
+}
+
+@JvmOverloads fun translateAnim(n: Node,
+                                from: Point2D = Point2D(n.translateX, n.translateY),
+                                to: Point2D,
+                                delay: Duration = Duration.ZERO,
+                                duration: Duration,
+                                onFinishedAction: Runnable = EmptyRunnable,
+                                interpolator: Interpolator = Interpolators.LINEAR.EASE_OUT()): Animation<*> {
+
+    return translateAnim(n.toAnimatable(), from, to, delay, duration, onFinishedAction, interpolator)
+}
+
+@JvmOverloads fun translateAnim(e: Entity,
+                                from: Point2D = Point2D(e.x, e.y),
+                                to: Point2D,
+                                delay: Duration = Duration.ZERO,
+                                duration: Duration,
+                                onFinishedAction: Runnable = EmptyRunnable,
+                                interpolator: Interpolator = Interpolators.LINEAR.EASE_OUT()): Animation<*> {
+
+    return translateAnim(e.toAnimatable(), from, to, delay, duration, onFinishedAction, interpolator)
+}
+
+private fun translateAnim(a: Animatable,
+                          from: Point2D,
+                          to: Point2D,
+                          delay: Duration,
+                          duration: Duration,
+                          onFinishedAction: Runnable,
+                          interpolator: Interpolator): Animation<*> {
+
+    return AnimationBuilder(duration, delay, interpolator)
+            .onFinished(onFinishedAction)
+            .build(AnimatedPoint2D(from, to), Consumer {
+                a.xProperty().value = it.x
+                a.yProperty().value = it.y
+            })
+}
+
+
+
+private fun Node.toAnimatable(): Animatable {
+    val n = this
+    return object : Animatable {
+        override fun xProperty(): DoubleProperty {
+            return n.translateXProperty()
+        }
+
+        override fun yProperty(): DoubleProperty {
+            return n.translateYProperty()
+        }
+
+        override fun scaleXProperty(): DoubleProperty {
+            return n.scaleXProperty()
+        }
+
+        override fun scaleYProperty(): DoubleProperty {
+            return n.scaleYProperty()
+        }
+
+        override fun rotationProperty(): DoubleProperty {
+            return n.rotateProperty()
+        }
+
+        override fun opacityProperty(): DoubleProperty {
+            return n.opacityProperty()
+        }
+    }
+}
+
+private fun Entity.toAnimatable(): Animatable {
+    val e = this
+    return object : Animatable {
         override fun xProperty(): DoubleProperty {
             return e.xProperty()
         }
@@ -343,49 +453,26 @@ fun translate(e: Entity, to: Point2D, duration: Duration) {
         override fun opacityProperty(): DoubleProperty {
             return e.viewComponent.opacity
         }
-    }, to, duration)
+    }
 }
 
-fun translate(a: Animatable, to: Point2D, duration: Duration) {
-    val anim = object : Animation<Point2D>(AnimationBuilder(duration), AnimatedPoint2D(Point2D(a.xProperty().value, a.yProperty().value), to)) {
-
-        override fun onProgress(value: Point2D) {
-            a.xProperty().value = value.x
-            a.yProperty().value = value.y
+private fun Animation<*>.toListener(): SceneListener {
+    val a = this
+    return object : SceneListener {
+        override fun onUpdate(tpf: Double) {
+            a.onUpdate(tpf)
         }
     }
-
-//    FXGL.getStateMachine().playState.addStateListener {
-//        anim.onUpdate(it)
-//    }
-
-    anim.start()
 }
 
 
-fun translate(node: Node, to: Point2D, duration: Duration): Animation<*> {
-    return translate(node, Point2D(node.translateX, node.translateY), to, Duration.ZERO, duration)
-}
 
-fun translate(node: Node, from: Point2D, to: Point2D, duration: Duration): Animation<*> {
-    return translate(node, from, to, Duration.ZERO, duration)
-}
 
-fun translate(node: Node, from: Point2D, to: Point2D, delay: Duration, duration: Duration): Animation<*> {
-    return translate(node, from, to, delay, duration, EmptyRunnable)
-}
 
-fun translate(node: Node, from: Point2D, to: Point2D, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    val anim = object : Animation<Point2D>(AnimationBuilder(duration, delay, onFinished = onFinishedAction), AnimatedPoint2D(from, to)) {
 
-        override fun onProgress(value: Point2D) {
-            node.translateX = value.x
-            node.translateY = value.y
-        }
-    }
-    anim.onFinished = onFinishedAction
-    return anim
-}
+
+
+
 
 fun fadeIn(node: Node, duration: Duration): Animation<*> {
     return fadeIn(node, duration, EmptyRunnable)
@@ -400,12 +487,11 @@ fun fadeIn(node: Node, delay: Duration, duration: Duration): Animation<*> {
 }
 
 fun fadeIn(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    val anim = object : Animation<Double>(AnimationBuilder(duration, delay, onFinished = onFinishedAction), AnimatedValue(0.0, 1.0)) {
-        override fun onProgress(value: Double) {
-            node.opacity = value
-        }
-    }
-    return anim
+    return AnimationBuilder()
+            .duration(duration)
+            .delay(delay)
+            .onFinished(onFinishedAction)
+            .build(AnimatedValue(0.0, 1.0), Consumer { node.opacity = it })
 }
 
 fun fadeOut(node: Node, duration: Duration): Animation<*> {

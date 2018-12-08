@@ -8,6 +8,7 @@ package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  *
@@ -17,6 +18,16 @@ abstract class Scene {
 
     val input = Input()
     val timer = Timer()
+
+    private val listeners = CopyOnWriteArrayList<SceneListener>()
+
+    fun addListener(l: SceneListener) {
+        listeners += l
+    }
+
+    fun removeListener(l: SceneListener) {
+        listeners -= l
+    }
 
     /**
      * Called after entering this state from prevState
@@ -38,10 +49,6 @@ abstract class Scene {
 
     internal fun enter(prevState: Scene) {
         onEnter(prevState)
-
-//        for (i in listeners.indices) {
-//            listeners.get(i).onEnter(prevState)
-//        }
     }
 
     internal fun update(tpf: Double) {
@@ -49,17 +56,11 @@ abstract class Scene {
         timer.update(tpf)
         onUpdate(tpf)
 
-//        for (i in listeners.indices) {
-//            listeners.get(i).onUpdate(tpf)
-//        }
+        listeners.forEach { it.onUpdate(tpf) }
     }
 
     internal fun exit() {
         onExit()
         input.clearAll()
-
-//        for (i in listeners.indices) {
-//            listeners.get(i).onExit()
-//        }
     }
 }

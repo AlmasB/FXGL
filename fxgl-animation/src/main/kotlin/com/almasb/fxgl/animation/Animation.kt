@@ -12,7 +12,7 @@ import com.almasb.fxgl.core.util.EmptyRunnable
 import javafx.animation.Interpolator
 import javafx.util.Duration
 
-open class AnimationBuilder
+class AnimationBuilder
 @JvmOverloads constructor(
         var duration: Duration = Duration.seconds(1.0),
         var delay: Duration = Duration.ZERO,
@@ -55,7 +55,7 @@ open class AnimationBuilder
         return this
     }
 
-    open fun <T> build(animatedValue: AnimatedValue<T>, onProgress: Consumer<T>): Animation<T> {
+    fun <T> build(animatedValue: AnimatedValue<T>, onProgress: Consumer<T>): Animation<T> {
         animatedValue.interpolator = this.interpolator
 
         return object : Animation<T>(this, animatedValue) {
@@ -77,6 +77,10 @@ abstract class Animation<T>(
 
     var isAutoReverse: Boolean = builder.isAutoReverse
     var onFinished: Runnable = builder.onFinished
+
+    var interpolator: Interpolator
+        get() = animatedValue.interpolator
+        set(value) { animatedValue.interpolator = value }
 
     private var time = 0.0
 

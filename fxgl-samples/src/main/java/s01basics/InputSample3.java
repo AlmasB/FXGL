@@ -29,7 +29,7 @@ public class InputSample3 extends GameApplication {
     public void onUpdate(double tpf) {
 
         // 1. you can check if a key is held anytime
-        // however bound actions from InputSample2 are preferred
+        // however bound actions from AnimSample are preferred
         // to manual checks, because they can be altered via menu controls
 
         if (getInput().isHeld(KeyCode.F)) {
