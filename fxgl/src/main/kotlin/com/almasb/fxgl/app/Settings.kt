@@ -8,7 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Credits
-import com.almasb.fxgl.core.util.Language
+import com.almasb.fxgl.core.local.Language
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
@@ -419,7 +419,7 @@ class ReadOnlyGameSettings internal constructor(
     val devShowBBox = SimpleBooleanProperty(false)
     val devShowPosition = SimpleBooleanProperty(false)
 
-    val language = SimpleObjectProperty<Language>(Language.ENGLISH)
+    val language = SimpleObjectProperty<Language>()
     val fullScreen = SimpleBooleanProperty(false)
 
     // WRAPPERS

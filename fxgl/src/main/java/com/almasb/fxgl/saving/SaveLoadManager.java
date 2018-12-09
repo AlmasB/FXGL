@@ -9,6 +9,7 @@ package com.almasb.fxgl.saving;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.concurrent.IOTask;
+import com.almasb.fxgl.core.local.Local;
 import com.almasb.sslogger.Logger;
 import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.io.FileExtension;
@@ -84,7 +85,7 @@ public final class SaveLoadManager {
                     saveFiles.setAll(files);
                     Collections.sort(saveFiles, SaveFile.RECENT_FIRST);
                 })
-                .runAsyncFXWithDialog(new ProgressDialog(FXGL.getLocalizedString("menu.loadingSaveFiles")));
+                .runAsyncFXWithDialog(new ProgressDialog(Local.getLocalizedString("menu.loadingSaveFiles")));
     }
 
     /**

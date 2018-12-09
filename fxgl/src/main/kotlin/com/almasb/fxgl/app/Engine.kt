@@ -4,6 +4,7 @@ import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.FXGLExecutor
 import com.almasb.fxgl.core.concurrent.IOTask
+import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
@@ -111,6 +112,8 @@ internal class Engine(
 
         val start = System.nanoTime()
 
+        loadLocalization()
+
         log.debug("Registering font factories")
 
         settings.uiFactory.registerFontFactory(FontType.UI, assetLoader.loadFont(settings.fontUI))
@@ -162,6 +165,20 @@ internal class Engine(
                 loop.start()
             }
         }
+    }
+
+    private fun loadLocalization() {
+        log.debug("Loading localizations")
+
+        val builtInLangs = listOf("english", "french", "german", "russian", "hungarian")
+
+        builtInLangs.forEach {
+            Local.addLanguage(it, FXGL.getAssetLoader().loadResourceBundle("languages/$it.properties"))
+        }
+
+        settings.language.value = Local.languages.find { it.name == "english" }
+
+        Local.selectedLanguageProperty().bind(settings.language)
     }
 
     private fun attachPauseResumeListener() {
@@ -409,14 +426,14 @@ internal class Engine(
         saveLoadManager
                 .saveTask(dataFile, saveFile)
                 //.onSuccess { hasSaves.value = true }
-                .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("menu.savingData")+": $saveFileName"))
+                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.savingData")+": $saveFileName"))
     }
 
     override fun loadGame(saveFile: SaveFile) {
         saveLoadManager
                 .loadTask(saveFile)
                 .onSuccess { startLoadedGame(it) }
-                .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("menu.loading")+": ${saveFile.name}"))
+                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading")+": ${saveFile.name}"))
     }
 
     override fun loadGameFromLastSave() {
@@ -424,7 +441,7 @@ internal class Engine(
                 .loadLastModifiedSaveFileTask()
                 .then { saveLoadManager.loadTask(it) }
                 .onSuccess { startLoadedGame(it) }
-                .runAsyncFXWithDialog(ProgressDialog(FXGL.getLocalizedString("menu.loading")+"..."))
+                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading")+"..."))
     }
 
     override fun saveScreenshot(): Boolean {

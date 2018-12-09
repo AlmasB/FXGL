@@ -8,7 +8,8 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
-import com.almasb.fxgl.app.FXGL.Companion.localizedStringProperty
+import com.almasb.fxgl.core.local.Local
+import com.almasb.fxgl.core.local.Local.localizedStringProperty
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
 import com.almasb.fxgl.core.util.Supplier
 import com.almasb.fxgl.dsl.random
@@ -297,7 +298,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         val btnRestore = MenuButton("menu.restore")
         btnRestore.setOnAction(EventHandler{ e ->
-            FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("menu.settingsRestore")) { yes ->
+            FXGL.getDisplay().showConfirmationBox(Local.getLocalizedString("menu.settingsRestore")) { yes ->
                 if (yes!!) {
                     switchMenuContentTo(EMPTY)
                     //listener.restoreDefaultSettings()

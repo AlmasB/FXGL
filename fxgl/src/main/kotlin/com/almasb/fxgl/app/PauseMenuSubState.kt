@@ -8,6 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
+import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.dsl.texture
 import com.almasb.fxgl.dsl.translate
@@ -104,13 +105,13 @@ internal object PauseMenuSubState : SubScene() {
     }
 
     private fun createContent(): Parent {
-        val btnResume = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("menu.resume"))
+        val btnResume = FXGL.getUIFactory().newButton(Local.localizedStringProperty("menu.resume"))
         btnResume.setOnAction {
             requestHide()
             unlockSwitch()
         }
 
-        val btnExit = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("menu.exit"))
+        val btnExit = FXGL.getUIFactory().newButton(Local.localizedStringProperty("menu.exit"))
         btnExit.setOnAction {
             FXGL.getGameController().exit()
         }

@@ -117,33 +117,5 @@ private constructor() {
          * @return new instance on each call
          */
         @JvmStatic fun newOfflineTimer(name: String): LocalTimer = OfflineTimer(name, getSystemBundle())
-
-
-
-
-        // TODO: do these belong here?
-
-        /**
-         * @return a string translated to the language used by FXGL game
-         */
-        @JvmStatic fun getLocalizedString(key: String): String {
-            val langName = FXGL.getSettings().language.value.resourceBundleName()
-
-            val bundle = FXGL.getAssetLoader().loadResourceBundle("languages/$langName.properties")
-
-            try {
-                return bundle.getString(key)
-            } catch (e: Exception) {
-                //log.warning("$key is not localized for language ${FXGL.getSettings().language.value}")
-                return "MISSING!"
-            }
-        }
-
-        /**
-         * @return binding to a string translated to the language used by FXGL game
-         */
-        @JvmStatic fun localizedStringProperty(key: String): StringBinding {
-            return Bindings.createStringBinding(Callable { getLocalizedString(key) }, FXGL.getSettings().language)
-        }
     }
 }

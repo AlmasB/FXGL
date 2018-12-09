@@ -1,5 +1,6 @@
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.dsl.image
 import com.almasb.sslogger.Logger
 import com.almasb.fxgl.input.MouseEventData
@@ -151,7 +152,7 @@ internal class MainWindow(
 
                 if (settings.isCloseConfirmation) {
                     if (canShowCloseDialog()) {
-                        FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("dialog.exitGame"), { yes ->
+                        FXGL.getDisplay().showConfirmationBox(Local.getLocalizedString("dialog.exitGame"), { yes ->
                             if (yes)
                                 FXGL.getGameController().exit()
                         })
