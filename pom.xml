@@ -23,6 +23,7 @@
         <module>fxgl</module>
         <module>fxgl-media</module>
         <module>fxgl-input</module>
+        <module>fxgl-effects</module>
     </modules>
 
     <licenses>

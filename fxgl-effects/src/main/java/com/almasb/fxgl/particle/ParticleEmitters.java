@@ -7,14 +7,12 @@
 package com.almasb.fxgl.particle;
 
 import com.almasb.fxgl.animation.Interpolators;
-import com.almasb.fxgl.core.math.FXGLMath;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.dsl.DSLKt.image;
-import static com.almasb.fxgl.dsl.DSLKt.random;
+import static com.almasb.fxgl.core.math.FXGLMath.random;
 
 /**
  * Holds configuration of predefined particle emitters.
@@ -51,12 +49,12 @@ public final class ParticleEmitters {
         emitter.setNumParticles((width / 32) + 1);
         emitter.setEmissionRate(0.05);
         emitter.setSize(16, 32);
-        emitter.setVelocityFunction((i) -> new Point2D(FXGLMath.random(-1, 1) * 2.5, -FXGLMath.random() * FXGLMath.random(10, 30)));
-        emitter.setSpawnPointFunction((i) -> new Point2D(FXGLMath.random(0, width-32), 0));
+        emitter.setVelocityFunction((i) -> new Point2D(random(-1, 1) * 2.5, -random() * random(10, 30)));
+        emitter.setSpawnPointFunction((i) -> new Point2D(random(0, width-32), 0));
         emitter.setScaleFunction((i) -> new Point2D(0.15, 0.10));
         emitter.setExpireFunction(i -> Duration.seconds(random(4, 7)));
         emitter.setBlendMode(BlendMode.ADD);
-        emitter.setSourceImage(image("particles/fire.png", 32, 32));
+        //emitter.setSourceImage(image("particles/fire.png", 32, 32));
 
         return emitter;
     }

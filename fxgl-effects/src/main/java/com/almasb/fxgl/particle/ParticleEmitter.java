@@ -7,6 +7,7 @@ package com.almasb.fxgl.particle;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.core.util.Consumer;
 import com.almasb.fxgl.core.util.Function;
@@ -19,8 +20,6 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
-
-import static com.almasb.fxgl.dsl.DSLKt.random;
 
 /**
  * A general particle emitter.
@@ -144,7 +143,7 @@ public final class ParticleEmitter {
      * @return random size between min and max size
      */
     private double getRandomSize() {
-        return random(getMinSize(), getMaxSize());
+        return FXGLMath.random(getMinSize(), getMaxSize());
     }
 
     private ObjectProperty<Paint> startColor = new SimpleObjectProperty<>(Color.TRANSPARENT);
