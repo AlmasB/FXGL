@@ -7,7 +7,6 @@
 package s01basics;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.dsl.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.EntityView;
@@ -26,7 +25,6 @@ import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.DSLKt.*;
 import static com.almasb.fxgl.dsl.DSLKt.texture;
-import static com.almasb.fxgl.app.FXGL.*;
 
 /**
  * Shows how to init a basic game object and attach it to the world
@@ -79,7 +77,7 @@ public class InitSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = Entities.builder()
+        player = entityBuilder()
                 .type(Type.PLAYER)
                 .at(100, 150)
                 .viewWithBBox("brick.png")

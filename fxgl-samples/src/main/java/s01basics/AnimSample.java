@@ -9,7 +9,6 @@ package s01basics;
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.Entities;
 import com.almasb.fxgl.entity.Entity;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
@@ -45,12 +44,12 @@ public class AnimSample extends GameApplication {
     @Override
     protected void initGame() {
 
-        Entity e = Entities.builder()
+        Entity e = entityBuilder()
                 .at(100, 100)
                 .view(new Rectangle(40, 40, Color.BLUE))
                 .buildAndAttach();
 
-        Entity e2 = Entities.builder()
+        Entity e2 = entityBuilder()
                 .at(100, 150)
                 .view(new Rectangle(40, 40, Color.RED))
                 .buildAndAttach();

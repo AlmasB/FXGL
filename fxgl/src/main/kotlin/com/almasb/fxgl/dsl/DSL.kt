@@ -4,9 +4,6 @@
  * See LICENSE for details.
  */
 
-// TODO:
-//@file:JvmName("FXGL2")
-
 package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.animation.*
@@ -48,9 +45,14 @@ import javafx.util.Duration
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 
+/* FXGL */
 
-
-// TODO: move to FXGL, so FXGL will become DSL
+fun getGameWorld() = FXGL.getGameWorld()
+fun getPhysicsWorld() = FXGL.getPhysicsWorld()
+fun getGameScene() = FXGL.getGameScene()
+fun getGameState() = FXGL.getGameState()
+fun getAssetLoader() = FXGL.getAssetLoader()
+fun getInput() = FXGL.getInput()
 
 /* VARS */
 
@@ -326,7 +328,7 @@ fun centerTextBind(text: Text, x: Double, y: Double) {
 
 /* ANIMATIONS */
 
-// TODO: specify explicitly
+// TODO: specify explicitly each argument
 
 @JvmOverloads fun translate(n: Node,
                                 from: Point2D = Point2D(n.translateX, n.translateY),
@@ -334,12 +336,19 @@ fun centerTextBind(text: Text, x: Double, y: Double) {
                                 delay: Duration = Duration.ZERO,
                                 duration: Duration,
                                 onFinishedAction: Runnable = EmptyRunnable,
-                                interpolator: Interpolator = Interpolators.LINEAR.EASE_OUT()): Animation<*> {
+                                interpolator: Interpolator = Interpolators.LINEAR.EASE_OUT()) {
 
-    return translateAnim(n.toAnimatable(), from, to, delay, duration, onFinishedAction, interpolator)
+    translateAnim(n.toAnimatable(), from, to, delay, duration, onFinishedAction, interpolator)
             .also {
+                val l = it.toListener()
+
+                it.onFinished = Runnable {
+                    FXGL.getGameScene().removeListener(l)
+                    onFinishedAction.run()
+                }
+
                 it.start()
-                FXGL.getGameScene().addListener(it.toListener())
+                FXGL.getGameScene().addListener(l)
             }
 }
 
@@ -349,12 +358,19 @@ fun centerTextBind(text: Text, x: Double, y: Double) {
                                 delay: Duration = Duration.ZERO,
                                 duration: Duration,
                                 onFinishedAction: Runnable = EmptyRunnable,
-                                interpolator: Interpolator = Interpolators.LINEAR.EASE_OUT()): Animation<*> {
+                                interpolator: Interpolator = Interpolators.LINEAR.EASE_OUT()) {
 
-    return translateAnim(e.toAnimatable(), from, to, delay, duration, onFinishedAction, interpolator)
+    translateAnim(e.toAnimatable(), from, to, delay, duration, onFinishedAction, interpolator)
             .also {
+                val l = it.toListener()
+
+                it.onFinished = Runnable {
+                    FXGL.getGameScene().removeListener(l)
+                    onFinishedAction.run()
+                }
+
                 it.start()
-                FXGL.getGameScene().addListener(it.toListener())
+                FXGL.getGameScene().addListener(l)
             }
 }
 
@@ -608,3 +624,4 @@ fun run(action: Runnable, interval: Duration, limit: Int) = getMasterTimer().run
 
 /* EXTENSIONS */
 
+fun entityBuilder() = EntityBuilder()
