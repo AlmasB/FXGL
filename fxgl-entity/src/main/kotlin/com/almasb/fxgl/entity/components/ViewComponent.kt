@@ -4,8 +4,10 @@ import com.almasb.fxgl.core.View
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
 import javafx.beans.property.*
+import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.Node
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.transform.Scale
 
@@ -33,8 +35,14 @@ class ViewComponent
             propView.value = value
         }
 
+    private val listeners = arrayListOf<ClickListener>()
+
+    private val onClickListener = EventHandler<MouseEvent> { listeners.forEach { it.onClick() } }
+
     init {
         parent.opacityProperty().bind(opacity)
+
+        parent.addEventHandler(MouseEvent.MOUSE_CLICKED, onClickListener)
     }
 
     override fun onAdded() {
@@ -63,9 +71,21 @@ class ViewComponent
     }
 
     override fun onRemoved() {
+        parent.removeEventHandler(MouseEvent.MOUSE_CLICKED, onClickListener)
         view.dispose()
     }
-    //fun addClickListener
+
+    fun addClickListener(l: ClickListener) {
+        listeners += l
+    }
+
+    fun removeClickListener(l: ClickListener) {
+        listeners -= l
+    }
+}
+
+interface ClickListener {
+    fun onClick()
 }
 
 private object EmptyView : View {

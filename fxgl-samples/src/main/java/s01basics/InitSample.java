@@ -97,6 +97,10 @@ public class InitSample extends GameApplication {
         getGameWorld().addEntity(player2);
 
         translate(player, new Point2D(560, 300), Duration.seconds(2));
+
+        player.getViewComponent().addClickListener(() -> {
+            System.out.println("CLICKED");
+        });
     }
 
     @Override
