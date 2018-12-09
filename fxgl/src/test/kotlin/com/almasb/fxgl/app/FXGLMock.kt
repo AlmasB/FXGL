@@ -6,6 +6,9 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.core.reflect.ReflectionUtils.callInaccessible
+import com.almasb.fxgl.core.reflect.ReflectionUtils.getMethod
+
 /**
  *
  *
@@ -17,7 +20,9 @@ class FXGLMock {
         @JvmStatic fun mock() {
             val app = MockGameApplication.get()
 
-            FXGL.engine = Engine(app, app.settings, app.stage)
+            val engine = Engine(app, app.settings, app.stage)
+
+            callInaccessible<Any>(FXGL, getMethod(FXGL.javaClass, "inject", Engine::class.java), engine)
         }
     }
 }

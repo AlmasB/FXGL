@@ -6,12 +6,16 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
+import com.almasb.fxgl.core.util.BackportKt;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.sslogger.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.util.Arrays;
 import java.util.Map;
+
+import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
 
 /**
  * To use FXGL, extend this class and implement necessary methods.
@@ -80,7 +84,7 @@ public abstract class GameApplication {
     }
 
     private static GameApplication newInstance() {
-        var appClass = ReflectionUtils.getCallingClass(GameApplication.class, "launch");
+        var appClass = getCallingClass(GameApplication.class, "launch");
 
         return ReflectionUtils.newInstance(appClass);
     }
@@ -195,7 +199,8 @@ public abstract class GameApplication {
         public void start(Stage stage) {
             var engine = new Engine(app, settings, stage);
 
-            FXGL.engine = engine;
+            // equivalent to FXGL.engine = engine;
+            callInaccessible(FXGL.Companion, getMethod(FXGL.Companion.getClass(), "inject", Engine.class), engine);
 
             engine.startLoop();
         }

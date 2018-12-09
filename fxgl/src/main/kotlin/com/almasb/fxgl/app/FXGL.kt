@@ -25,8 +25,11 @@ private constructor() {
 
     companion object {
 
-        // TODO: effectively private?
-        internal lateinit var engine: Engine
+        private lateinit var engine: Engine
+
+        private fun inject(e: Engine) {
+            engine = e
+        }
 
         @JvmStatic fun getGameController(): GameController = engine
 
