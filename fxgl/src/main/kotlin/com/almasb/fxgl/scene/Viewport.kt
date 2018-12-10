@@ -12,6 +12,7 @@ import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.components.BoundingBoxComponent
 import javafx.beans.binding.Bindings
+import javafx.beans.binding.NumberBinding
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Point2D
@@ -79,6 +80,11 @@ class Viewport
     fun angleProperty() = angle
     fun setAngle(value: Double) = angleProperty().set(value)
 
+    private var entityToFollow: Entity? = null
+
+    private var boundX: NumberBinding? = null
+    private var boundY: NumberBinding? = null
+
     /**
      * Binds the viewport to entity so that it follows the given entity.
      * distX and distY represent bound distance between entity and viewport origin.
@@ -101,51 +107,51 @@ class Viewport
         val by = position.yProperty().add(-distY)
 
         // origin X Y with bounds applied
-        var boundX = Bindings.`when`(bx.lessThan(minX)).then(minX).otherwise(position.xProperty().add(-distX))
-        var boundY = Bindings.`when`(by.lessThan(minY)).then(minY).otherwise(position.yProperty().add(-distY))
+        boundX = Bindings.`when`(bx.lessThan(minX)).then(minX).otherwise(position.xProperty().add(-distX))
+        boundY = Bindings.`when`(by.lessThan(minY)).then(minY).otherwise(position.yProperty().add(-distY))
 
         boundX = Bindings.`when`(bx.greaterThan(maxX.subtract(width))).then(maxX.subtract(width)).otherwise(boundX)
         boundY = Bindings.`when`(by.greaterThan(maxY.subtract(height))).then(maxY.subtract(height)).otherwise(boundY)
 
-        x.bind(boundX)
-        y.bind(boundY)
+//        x.bind(boundX)
+//        y.bind(boundY)
     }
 
-    fun bindToFit(xMargin: Double, yMargin: Double, vararg entities: Entity) {
-        val minBindingX = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
-                .map { it.getComponent(BoundingBoxComponent::class.java) }
-                .map { it.minXWorldProperty() }
-                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE), { min, x -> Bindings.min(min, x) })
-                .subtract(xMargin)
-
-        val minBindingY = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
-                .map { it.getComponent(BoundingBoxComponent::class.java) }
-                .map { it.minYWorldProperty() }
-                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE), { min, y -> Bindings.min(min, y) })
-                .subtract(yMargin)
-
-        val maxBindingX = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
-                .map { it.getComponent(BoundingBoxComponent::class.java) }
-                .map { it.maxXWorldProperty() }
-                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE), { max, x -> Bindings.max(max, x) })
-                .add(xMargin)
-
-        val maxBindingY = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
-                .map { it.getComponent(BoundingBoxComponent::class.java) }
-                .map { it.maxYWorldProperty() }
-                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE), { max, y -> Bindings.max(max, y) })
-                .add(yMargin)
-
-        val widthBinding = maxBindingX.subtract(minBindingX)
-        val heightBinding = maxBindingY.subtract(minBindingY)
-
-        val ratio = Bindings.min(Bindings.divide(width, widthBinding), Bindings.divide(height, heightBinding))
-
-        x.bind(minBindingX)
-        y.bind(minBindingY)
-
-        zoom.bind(ratio)
-    }
+//    fun bindToFit(xMargin: Double, yMargin: Double, vararg entities: Entity) {
+//        val minBindingX = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
+//                .map { it.getComponent(BoundingBoxComponent::class.java) }
+//                .map { it.minXWorldProperty() }
+//                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE), { min, x -> Bindings.min(min, x) })
+//                .subtract(xMargin)
+//
+//        val minBindingY = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
+//                .map { it.getComponent(BoundingBoxComponent::class.java) }
+//                .map { it.minYWorldProperty() }
+//                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE), { min, y -> Bindings.min(min, y) })
+//                .subtract(yMargin)
+//
+//        val maxBindingX = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
+//                .map { it.getComponent(BoundingBoxComponent::class.java) }
+//                .map { it.maxXWorldProperty() }
+//                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE), { max, x -> Bindings.max(max, x) })
+//                .add(xMargin)
+//
+//        val maxBindingY = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
+//                .map { it.getComponent(BoundingBoxComponent::class.java) }
+//                .map { it.maxYWorldProperty() }
+//                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE), { max, y -> Bindings.max(max, y) })
+//                .add(yMargin)
+//
+//        val widthBinding = maxBindingX.subtract(minBindingX)
+//        val heightBinding = maxBindingY.subtract(minBindingY)
+//
+//        val ratio = Bindings.min(Bindings.divide(width, widthBinding), Bindings.divide(height, heightBinding))
+//
+//        x.bind(minBindingX)
+//        y.bind(minBindingY)
+//
+//        zoom.bind(ratio)
+//    }
 
     /**
      * Unbind viewport.
@@ -227,11 +233,6 @@ class Viewport
         shakeRotational(powerRotate)
     }
 
-    @Deprecated("use shake(double, double)")
-    fun shake(power: Double) {
-        shakeTranslational(power)
-    }
-
     fun shakeTranslational(power: Double) {
         shakePowerTranslate = power
         shakeAngle = FXGLMath.random() * FXGLMath.PI2
@@ -258,6 +259,11 @@ class Viewport
     fun onUpdate(tpf: Double) {
         time += tpf
 
+        boundX?.let {
+            setX(boundX!!.doubleValue())
+            setY(boundY!!.doubleValue())
+        }
+
         if (!shakingRotate && !shakingTranslate)
             return
 
@@ -267,12 +273,17 @@ class Viewport
             offset.set((shakePowerTranslate * FXGLMath.cos(shakeAngle)).toFloat(),
                     (shakePowerTranslate * FXGLMath.sin(shakeAngle)).toFloat())
 
-            setX(offset.x + originBeforeShake.x.toDouble())
-            setY(offset.y + originBeforeShake.y.toDouble())
+            if (boundX != null) {
+                setX(offset.x + boundX!!.doubleValue())
+                setY(offset.y + boundY!!.doubleValue())
+            } else {
+                setX(offset.x + originBeforeShake.x.toDouble())
+                setY(offset.y + originBeforeShake.y.toDouble())
+            }
 
             if (FXGLMath.abs(offset.x) < 0.5 && FXGLMath.abs(offset.y) < 0.5) {
-                setX(originBeforeShake.x.toDouble())
-                setY(originBeforeShake.y.toDouble())
+                //setX(originBeforeShake.x.toDouble())
+                //setY(originBeforeShake.y.toDouble())
 
                 shakingTranslate = false
             }

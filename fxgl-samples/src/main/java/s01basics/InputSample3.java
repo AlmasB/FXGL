@@ -6,11 +6,16 @@
 
 package s01basics;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.DSLKt;
+import dev.DeveloperWASDControl;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
-import static com.almasb.fxgl.app.FXGL.*;
+import static com.almasb.fxgl.dsl.DSLKt.*;
 
 /**
  * Shows how to use input service and bind actions to triggers.
@@ -26,15 +31,30 @@ public class InputSample3 extends GameApplication {
     }
 
     @Override
+    protected void initInput() {
+        onKeyDown(KeyCode.Q, "Shake", () -> getGameScene().getViewport().shake(5, 0));
+    }
+
+    @Override
+    protected void initGame() {
+        entityBuilder()
+                .at(-10, -10)
+                .view("background.png")
+                .buildAndAttach();
+
+        var e = entityBuilder()
+                .at(150, 150)
+                .view(new Rectangle(10, 10, Color.BLUE))
+                .with(new DeveloperWASDControl())
+                .buildAndAttach();
+
+        getGameScene().getViewport().bindToEntity(e, FXGL.getAppWidth() / 2, FXGL.getAppHeight() / 2);
+    }
+
+    @Override
     public void onUpdate(double tpf) {
 
-        // 1. you can check if a key is held anytime
-        // however bound actions from AnimSample are preferred
-        // to manual checks, because they can be altered via menu controls
 
-        if (getInput().isHeld(KeyCode.F)) {
-            System.out.println("F is held");
-        }
     }
 
     public static void main(String[] args) {
