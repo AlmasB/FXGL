@@ -201,6 +201,8 @@ internal constructor(width: Int, height: Int,
     override fun onEntityAdded(entity: Entity) {
         entities.add(entity)
         initView(entity.viewComponent)
+
+        sortZ()
     }
 
     override fun onEntityRemoved(entity: Entity) {

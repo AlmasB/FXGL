@@ -82,6 +82,7 @@ public class InitSample extends GameApplication {
                 .at(100, 150)
                 .viewWithBBox("brick.png")
                 .with(new CollidableComponent(true), new DeveloperWASDControl())
+                .zIndex(250)
                 .buildAndAttach();
 
         player.getTransformComponent().scaleOriginXProperty().setValue(40);
@@ -93,6 +94,7 @@ public class InitSample extends GameApplication {
         player2.setView(new EntityView(new Rectangle(40, 40, Color.RED)));
         player2.getBoundingBoxComponent().addHitBox(new HitBox(BoundingShape.box(40, 40)));
         player2.addComponent(new CollidableComponent(true));
+        player2.getTransformComponent().setZ(250);
 
         getGameWorld().addEntity(player2);
 
@@ -101,6 +103,14 @@ public class InitSample extends GameApplication {
         player.getViewComponent().addClickListener(() -> {
             System.out.println("CLICKED");
         });
+
+        entityBuilder()
+                .type(Type.PLAYER)
+                .at(120, 120)
+                .viewWithBBox(new Rectangle(40, 40, Color.GREEN))
+                .with(new CollidableComponent(true))
+                .zIndex(100)
+                .buildAndAttach();
     }
 
     @Override

@@ -85,6 +85,10 @@ class EntityBuilder {
         viewWithBBox(texture(textureName))
     }
 
+    fun zIndex(z: Int) = this.also {
+        entity.transformComponent.z = z
+    }
+
     fun with(vararg comps: Component) = this.also {
         comps.forEach { entity.addComponent(it) }
     }
