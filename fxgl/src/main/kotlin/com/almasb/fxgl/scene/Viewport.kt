@@ -85,6 +85,8 @@ class Viewport
     private var boundX: NumberBinding? = null
     private var boundY: NumberBinding? = null
 
+    var isLazy = false
+
     /**
      * Binds the viewport to entity so that it follows the given entity.
      * distX and distY represent bound distance between entity and viewport origin.
@@ -260,8 +262,16 @@ class Viewport
         time += tpf
 
         boundX?.let {
-            setX(boundX!!.doubleValue())
-            setY(boundY!!.doubleValue())
+            if (!isLazy) {
+                setX(boundX!!.doubleValue())
+                setY(boundY!!.doubleValue())
+            } else {
+                val sourceX = getX()
+                val sourceY = getY()
+
+                setX(sourceX * 0.9 + boundX!!.doubleValue() * 0.1)
+                setY(sourceY * 0.9 + boundY!!.doubleValue() * 0.1)
+            }
         }
 
         if (!shakingRotate && !shakingTranslate)
@@ -274,8 +284,17 @@ class Viewport
                     (shakePowerTranslate * FXGLMath.sin(shakeAngle)).toFloat())
 
             if (boundX != null) {
-                setX(offset.x + boundX!!.doubleValue())
-                setY(offset.y + boundY!!.doubleValue())
+                if (!isLazy) {
+                    setX(offset.x + boundX!!.doubleValue())
+                    setY(offset.y + boundY!!.doubleValue())
+                } else {
+                    val sourceX = offset.x + getX()
+                    val sourceY = offset.y + getY()
+
+                    setX(sourceX * 0.9 + boundX!!.doubleValue() * 0.1)
+                    setY(sourceY * 0.9 + boundY!!.doubleValue() * 0.1)
+                }
+
             } else {
                 setX(offset.x + originBeforeShake.x.toDouble())
                 setY(offset.y + originBeforeShake.y.toDouble())

@@ -12,6 +12,7 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.DSLKt;
 import dev.DeveloperWASDControl;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -33,12 +34,15 @@ public class InputSample3 extends GameApplication {
     @Override
     protected void initInput() {
         onKeyDown(KeyCode.Q, "Shake", () -> getGameScene().getViewport().shake(5, 0));
+
+        onBtnDown(MouseButton.PRIMARY, "Lazy", () -> {
+            getGameScene().getViewport().setLazy(!getGameScene().getViewport().isLazy());
+        });
     }
 
     @Override
     protected void initGame() {
         entityBuilder()
-                .at(-10, -10)
                 .view("background.png")
                 .buildAndAttach();
 
@@ -48,6 +52,7 @@ public class InputSample3 extends GameApplication {
                 .with(new DeveloperWASDControl())
                 .buildAndAttach();
 
+        getGameScene().getViewport().setBounds(30, 30, 1600 - 30, 1200 - 30);
         getGameScene().getViewport().bindToEntity(e, FXGL.getAppWidth() / 2, FXGL.getAppHeight() / 2);
     }
 
