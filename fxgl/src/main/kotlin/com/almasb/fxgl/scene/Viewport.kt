@@ -85,7 +85,18 @@ class Viewport
     private var boundX: NumberBinding? = null
     private var boundY: NumberBinding? = null
 
+    private val minX = SimpleIntegerProperty(Integer.MIN_VALUE)
+    private val minY = SimpleIntegerProperty(Integer.MIN_VALUE)
+    private val maxX = SimpleIntegerProperty(Integer.MAX_VALUE)
+    private val maxY = SimpleIntegerProperty(Integer.MAX_VALUE)
+
     var isLazy = false
+
+    val camera = Entity()
+
+    init {
+        bindToEntity(camera, 0.0, 0.0)
+    }
 
     /**
      * Binds the viewport to entity so that it follows the given entity.
@@ -164,10 +175,7 @@ class Viewport
         zoomProperty().unbind()
     }
 
-    private val minX = SimpleIntegerProperty(Integer.MIN_VALUE)
-    private val minY = SimpleIntegerProperty(Integer.MIN_VALUE)
-    private val maxX = SimpleIntegerProperty(Integer.MAX_VALUE)
-    private val maxY = SimpleIntegerProperty(Integer.MAX_VALUE)
+
 
     /**
      * Set bounds to viewport so that the viewport will not move outside the bounds
