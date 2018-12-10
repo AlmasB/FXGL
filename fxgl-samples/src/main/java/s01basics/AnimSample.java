@@ -10,6 +10,9 @@ import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.EntityFactory;
+import com.almasb.fxgl.entity.SpawnData;
+import com.almasb.fxgl.entity.Spawns;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -43,6 +46,7 @@ public class AnimSample extends GameApplication {
 
     @Override
     protected void initGame() {
+        getGameWorld().addEntityFactory(new EFactory());
 
         Entity e = entityBuilder()
                 .at(100, 100)
@@ -57,11 +61,26 @@ public class AnimSample extends GameApplication {
         anim = translateAnim(e, new Point2D(200, 100), Duration.seconds(1));
 
         translate(e2, new Point2D(200, 150), Duration.seconds(2));
+
+        //fadeIn(e, Duration.ZERO, Duration.seconds(1), () -> {});
+
+        spawnFadeIn("block", new SpawnData(110, 11), Duration.seconds(2));
     }
 
     @Override
     protected void onUpdate(double tpf) {
         anim.onUpdate(tpf);
+    }
+
+    public static class EFactory implements EntityFactory {
+
+        @Spawns("block")
+        public Entity newBlock(SpawnData data) {
+            return entityBuilder()
+                    .at(300, 100)
+                    .view(new Rectangle(40, 40, Color.BLUE))
+                    .build();
+        }
     }
 
     public static void main(String[] args) {

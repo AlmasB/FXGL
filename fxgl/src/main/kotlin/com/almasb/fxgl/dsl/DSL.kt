@@ -182,11 +182,12 @@ fun spawn(entityName: String, data: SpawnData): Entity = FXGL.getGameWorld().spa
  * Spawns given [entityName] with a fade in animation.
  */
 fun spawnFadeIn(entityName: String, data: SpawnData, duration: Duration): Entity {
-    val e = FXGL.getGameWorld().create(entityName, data)
+    val e = getGameWorld().create(entityName, data)
+    e.viewComponent.opacity.value = 0.0
 
-    //fadeIn(e.view, duration).startInPlayState()
+    fadeIn(e, Duration.ZERO, duration, EmptyRunnable)
 
-    FXGL.getGameWorld().addEntity(e)
+    getGameWorld().addEntity(e)
 
     return e
 }
@@ -396,6 +397,132 @@ fun centerTextBind(text: Text, x: Double, y: Double) {
     return translateAnim(e.toAnimatable(), from, to, delay, duration, onFinishedAction, interpolator)
 }
 
+fun fadeIn(node: Node, duration: Duration) {
+    fadeIn(node, duration, EmptyRunnable)
+}
+
+fun fadeIn(node: Node, duration: Duration, onFinishedAction: Runnable){
+    fadeIn(node, Duration.ZERO, duration, onFinishedAction)
+}
+
+fun fadeIn(node: Node, delay: Duration, duration: Duration) {
+    fadeIn(node, delay, duration, EmptyRunnable)
+}
+
+fun fadeIn(e: Entity, duration: Duration) {
+    fadeIn(e, duration, EmptyRunnable)
+}
+
+fun fadeIn(e: Entity, duration: Duration, onFinishedAction: Runnable){
+    fadeIn(e, Duration.ZERO, duration, onFinishedAction)
+}
+
+fun fadeIn(e: Entity, delay: Duration, duration: Duration) {
+    fadeIn(e, delay, duration, EmptyRunnable)
+}
+
+fun fadeIn(e: Entity, delay: Duration, duration: Duration, onFinishedAction: Runnable) {
+    fadeInAnim(e.toAnimatable(), 0.0, 1.0, delay, duration, onFinishedAction, Interpolators.LINEAR.EASE_OUT())
+            .also {
+                val l = it.toListener()
+
+                it.onFinished = Runnable {
+                    FXGL.getGameScene().removeListener(l)
+                    onFinishedAction.run()
+                }
+
+                it.start()
+                FXGL.getGameScene().addListener(l)
+            }
+}
+
+fun fadeIn(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable) {
+    fadeInAnim(node.toAnimatable(), 0.0, 1.0, delay, duration, onFinishedAction, Interpolators.LINEAR.EASE_OUT())
+            .also {
+                val l = it.toListener()
+
+                it.onFinished = Runnable {
+                    FXGL.getGameScene().removeListener(l)
+                    onFinishedAction.run()
+                }
+
+                it.start()
+                FXGL.getGameScene().addListener(l)
+            }
+}
+
+
+
+
+
+
+
+//fun fadeOut(node: Node, duration: Duration): Animation<*> {
+//    return fadeOut(node, duration, EmptyRunnable)
+//}
+//
+//fun fadeOut(node: Node, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+//    return fadeOut(node, Duration.ZERO, duration, onFinishedAction)
+//}
+//
+//fun fadeOut(node: Node, delay: Duration, duration: Duration): Animation<*> {
+//    return fadeOut(node, delay, duration, EmptyRunnable)
+//}
+//
+//fun fadeOut(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+//    val anim = fadeInAnim(node.toAnimatable(), delay, duration, onFinishedAction)
+//
+//    // fade out is reverse fade in
+//    anim.isReverse = true
+//    return anim
+//}
+//
+//fun fadeInOut(node: Node, duration: Duration): Animation<*> {
+//    return fadeInOut(node, duration, EmptyRunnable)
+//}
+//
+//fun fadeInOut(node: Node, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+//    return fadeInOut(node, Duration.ZERO, duration, onFinishedAction)
+//}
+//
+//fun fadeInOut(node: Node, delay: Duration, duration: Duration): Animation<*> {
+//    return fadeInOut(node, delay, duration, EmptyRunnable)
+//}
+//
+//fun fadeInOut(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+//    val anim = fadeIn(node, delay, duration, onFinishedAction)
+//    anim.cycleCount = 2
+//    anim.isAutoReverse = true
+//    return anim
+//}
+//
+//fun fadeOutIn(node: Node, duration: Duration): Animation<*> {
+//    return fadeOutIn(node, duration, EmptyRunnable)
+//}
+//
+//fun fadeOutIn(node: Node, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+//    return fadeOutIn(node, Duration.ZERO, duration, onFinishedAction)
+//}
+//
+//fun fadeOutIn(node: Node, delay: Duration, duration: Duration): Animation<*> {
+//    return fadeOutIn(node, delay, duration, EmptyRunnable)
+//}
+//
+//fun fadeOutIn(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
+//    val anim = fadeInOut(node, delay, duration, onFinishedAction)
+//
+//    // fade out in is reverse fade in out
+//    anim.isReverse = true
+//    return anim
+//}
+
+
+
+
+
+
+
+
 private fun translateAnim(a: Animatable,
                           from: Point2D,
                           to: Point2D,
@@ -412,6 +539,20 @@ private fun translateAnim(a: Animatable,
             })
 }
 
+private fun fadeInAnim(a: Animatable,
+                       from: Double,
+                       to: Double,
+                       delay: Duration,
+                       duration: Duration,
+                       onFinishedAction: Runnable,
+                       interpolator: Interpolator): Animation<*> {
+
+    return AnimationBuilder(duration, delay, interpolator)
+            .onFinished(onFinishedAction)
+            .build(AnimatedValue(from, to), Consumer {
+                a.opacityProperty().value = it
+            })
+}
 
 
 private fun Node.toAnimatable(): Animatable {
@@ -490,84 +631,7 @@ private fun Animation<*>.toListener(): SceneListener {
 
 
 
-fun fadeIn(node: Node, duration: Duration): Animation<*> {
-    return fadeIn(node, duration, EmptyRunnable)
-}
 
-fun fadeIn(node: Node, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    return fadeIn(node, Duration.ZERO, duration, onFinishedAction)
-}
-
-fun fadeIn(node: Node, delay: Duration, duration: Duration): Animation<*> {
-    return fadeIn(node, delay, duration, EmptyRunnable)
-}
-
-fun fadeIn(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    return AnimationBuilder()
-            .duration(duration)
-            .delay(delay)
-            .onFinished(onFinishedAction)
-            .build(AnimatedValue(0.0, 1.0), Consumer { node.opacity = it })
-}
-
-fun fadeOut(node: Node, duration: Duration): Animation<*> {
-    return fadeOut(node, duration, EmptyRunnable)
-}
-
-fun fadeOut(node: Node, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    return fadeOut(node, Duration.ZERO, duration, onFinishedAction)
-}
-
-fun fadeOut(node: Node, delay: Duration, duration: Duration): Animation<*> {
-    return fadeOut(node, delay, duration, EmptyRunnable)
-}
-
-fun fadeOut(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    val anim = fadeIn(node, delay, duration, onFinishedAction)
-
-    // fade out is reverse fade in
-    anim.isReverse = true
-    return anim
-}
-
-fun fadeInOut(node: Node, duration: Duration): Animation<*> {
-    return fadeInOut(node, duration, EmptyRunnable)
-}
-
-fun fadeInOut(node: Node, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    return fadeInOut(node, Duration.ZERO, duration, onFinishedAction)
-}
-
-fun fadeInOut(node: Node, delay: Duration, duration: Duration): Animation<*> {
-    return fadeInOut(node, delay, duration, EmptyRunnable)
-}
-
-fun fadeInOut(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    val anim = fadeIn(node, delay, duration, onFinishedAction)
-    anim.cycleCount = 2
-    anim.isAutoReverse = true
-    return anim
-}
-
-fun fadeOutIn(node: Node, duration: Duration): Animation<*> {
-    return fadeOutIn(node, duration, EmptyRunnable)
-}
-
-fun fadeOutIn(node: Node, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    return fadeOutIn(node, Duration.ZERO, duration, onFinishedAction)
-}
-
-fun fadeOutIn(node: Node, delay: Duration, duration: Duration): Animation<*> {
-    return fadeOutIn(node, delay, duration, EmptyRunnable)
-}
-
-fun fadeOutIn(node: Node, delay: Duration, duration: Duration, onFinishedAction: Runnable): Animation<*> {
-    val anim = fadeInOut(node, delay, duration, onFinishedAction)
-
-    // fade out in is reverse fade in out
-    anim.isReverse = true
-    return anim
-}
 
 fun scale(node: Node, to: Point2D, duration: Duration): Animation<*> {
     return scale(node, Point2D(node.scaleX, node.scaleY), to, Duration.ZERO, duration)
