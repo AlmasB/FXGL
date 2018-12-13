@@ -66,6 +66,8 @@ internal constructor(width: Int, height: Int,
 
         initViewport(width.toDouble(), height.toDouble())
 
+        contentRoot.children.add(viewport.camera.viewComponent.parent)
+
         log.debug("Game scene initialized: " + width + "x" + height)
 
         gameWorld.addWorldListener(physicsWorld)

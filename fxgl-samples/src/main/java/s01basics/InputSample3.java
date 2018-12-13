@@ -12,6 +12,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.DSLKt;
+import com.almasb.fxgl.entity.Entity;
 import dev.DeveloperWASDControl;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
@@ -45,9 +46,17 @@ public class InputSample3 extends GameApplication {
             getGameScene().getViewport().setLazy(!getGameScene().getViewport().isLazy());
         });
 
-        onKeyDown(KeyCode.F, "Target", () -> {
+        onKeyDown(KeyCode.F, "Flash", () -> {
 
-            a.start();
+            getGameScene().getViewport().flash(() -> System.out.println("Flash finished"));
+        });
+
+        onKeyDown(KeyCode.G, "Fade", () -> {
+
+            getGameScene().getViewport().fade(() -> {
+
+                System.out.println("Fade finished");
+            });
         });
     }
 
@@ -64,7 +73,7 @@ public class InputSample3 extends GameApplication {
                 .buildAndAttach();
 
         getGameScene().getViewport().setBounds(30, 30, 1600 - 30, 1200 - 30);
-        //getGameScene().getViewport().bindToEntity(e, FXGL.getAppWidth() / 2, FXGL.getAppHeight() / 2);
+        getGameScene().getViewport().bindToEntity(e, FXGL.getAppWidth() / 2, FXGL.getAppHeight() / 2);
 
         a = translateAnim(getGameScene().getViewport().getCamera(), new Point2D(0, 0), new Point2D(400, 400), Duration.ZERO, Duration.seconds(1.5),
                 () -> {}, Interpolators.EXPONENTIAL.EASE_OUT());

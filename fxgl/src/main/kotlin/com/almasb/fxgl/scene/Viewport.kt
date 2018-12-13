@@ -6,17 +6,20 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.animation.AnimatedValue
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.Vec2
+import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.components.BoundingBoxComponent
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.NumberBinding
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
+import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 
 /**
  * Scene viewport.
@@ -264,10 +267,66 @@ class Viewport
         shakingRotate = true
     }
 
-    private var time = 0.0
+    private val flashRect by lazy { Rectangle(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble(), Color.WHITE) }
+
+    private val flashAnimatedValue = AnimatedValue(1.0, 0.0)
+
+    private var flashTime = 0.0
+
+    private var isFlashing = false
+    private var isFading = false
+
+    private var onFadeFlashFinish: Runnable = EmptyRunnable
+
+    fun flash(onFinished: Runnable) {
+        if (isFlashing || isFading)
+            return
+
+        onFadeFlashFinish = onFinished
+        flashRect.opacity = 1.0
+        isFlashing = true
+
+        fadeFlash()
+    }
+
+    fun fade(onFinished: Runnable) {
+        if (isFlashing || isFading)
+            return
+
+        onFadeFlashFinish = onFinished
+        flashRect.opacity = 0.0
+        isFading = true
+
+        fadeFlash()
+    }
+
+    private fun fadeFlash() {
+        // TODO: needs symmetric API: add / remove / clear ?
+        camera.viewComponent.setViewFromNode(flashRect)
+
+        flashTime = 0.0
+    }
 
     fun onUpdate(tpf: Double) {
-        time += tpf
+        if (isFlashing || isFading) {
+            flashTime += tpf
+
+            if (flashTime > 1.0) {
+                flashTime = 1.0
+                isFlashing = false
+                isFading = false
+                camera.viewComponent.parent.children.clear()
+
+                onFadeFlashFinish.run()
+            }
+
+            val ratio = flashTime / 1.0
+
+            val progress = if (isFading) 1 - ratio else ratio
+            val opacity = flashAnimatedValue.getValue(progress)
+
+            flashRect.opacity = opacity
+        }
 
         boundX?.let {
             if (!isLazy) {
@@ -276,6 +335,15 @@ class Viewport
             } else {
                 val sourceX = getX()
                 val sourceY = getY()
+
+                /*(Asymptotic average:
+
+                x = 0.9x + 0.1target;
+                OR
+                x += (target - x) * 0.1 * timeScale;
+                Use 0.01 for 60fps
+
+                timeScale 0 for pause, 0.1 for slow)*/
 
                 setX(sourceX * 0.9 + boundX!!.doubleValue() * 0.1)
                 setY(sourceY * 0.9 + boundY!!.doubleValue() * 0.1)
@@ -331,5 +399,9 @@ class Viewport
                 shakingRotate = false
             }
         }
+
+        // TODO: bidirectional binding?
+        camera.x = getX()
+        camera.y = getY()
     }
 }

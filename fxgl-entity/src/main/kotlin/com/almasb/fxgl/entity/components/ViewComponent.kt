@@ -1,6 +1,7 @@
 package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.core.View
+import com.almasb.fxgl.entity.EntityView
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
 import javafx.beans.property.*
@@ -35,6 +36,8 @@ class ViewComponent
             propView.value = value
         }
 
+    private val entityView by lazy { EntityView() }
+
     private val listeners = arrayListOf<ClickListener>()
 
     private val onClickListener = EventHandler<MouseEvent> { listeners.forEach { it.onClick() } }
@@ -43,6 +46,13 @@ class ViewComponent
         parent.opacityProperty().bind(opacity)
 
         parent.addEventHandler(MouseEvent.MOUSE_CLICKED, onClickListener)
+    }
+
+    fun setViewFromNode(node: Node) {
+        entityView.clearChildren()
+        entityView.addNode(node)
+
+        view = entityView
     }
 
     override fun onAdded() {
