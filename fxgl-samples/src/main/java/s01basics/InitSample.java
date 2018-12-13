@@ -50,6 +50,7 @@ public class InitSample extends GameApplication {
     private Entity player;
 
     private double scale = 1.0;
+    private double scaleY = 1.0;
 
     @Override
     protected void initInput() {
@@ -71,7 +72,12 @@ public class InitSample extends GameApplication {
             scale += 0.1;
 
             player.setScaleX(scale);
-            //player.setScaleY(scale);
+        });
+
+        onKey(KeyCode.E, () -> {
+            scaleY += 0.1;
+
+            player.setScaleY(scaleY);
         });
     }
 
@@ -104,13 +110,13 @@ public class InitSample extends GameApplication {
             System.out.println("CLICKED");
         });
 
-        entityBuilder()
-                .type(Type.PLAYER)
-                .at(120, 120)
-                .viewWithBBox(new Rectangle(40, 40, Color.GREEN))
-                .with(new CollidableComponent(true))
-                .zIndex(100)
-                .buildAndAttach();
+//        entityBuilder()
+//                .type(Type.PLAYER)
+//                .at(120, 120)
+//                .viewWithBBox(new Rectangle(40, 40, Color.GREEN))
+//                .with(new CollidableComponent(true))
+//                .zIndex(100)
+//                .buildAndAttach();
     }
 
     @Override

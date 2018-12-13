@@ -5,7 +5,9 @@
  */
 package com.almasb.fxgl.physics;
 
+import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.BoundingBox;
@@ -247,22 +249,42 @@ public final class HitBox implements Serializable {
 
     /**
      * Bind to x property of entity.
-     *
-     * @param xProperty x property
      */
-    public void bindX(DoubleProperty xProperty) {
-        minXWorld.bind(xProperty.add(getMinX()));
-        maxXWorld.bind(minXWorld.add(getWidth()));
-    }
+    public void bindXY(TransformComponent transform) {
 
-    /**
-     * Bind to y property of entity.
-     *
-     * @param yProperty y property
-     */
-    public void bindY(DoubleProperty yProperty) {
-        minYWorld.bind(yProperty.add(getMinY()));
-        maxYWorld.bind(minYWorld.add(getHeight()));
+        // compute local min and max, then convert to world coord
+        // var minXWorldNew1 = center1.x - (center1.x - box1.minX) * transform1.scaleX + transform1.x;
+        // var maxXWorldNew1 = center1.x - (center1.x - box1.maxX) * transform1.scaleX + transform1.x;
+
+        var x1 = Bindings.createDoubleBinding(() ->
+                        transform.getScaleOrigin().getX() - (transform.getScaleOrigin().getX() - getMinX()) * transform.getScaleX() + transform.getX(),
+                // dependencies
+                transform.scaleOriginXProperty(), transform.scaleXProperty(), transform.xProperty()
+        );
+
+        var x2 = Bindings.createDoubleBinding(() ->
+                        transform.getScaleOrigin().getX() - (transform.getScaleOrigin().getX() - getMaxX()) * transform.getScaleX() + transform.getX(),
+                // dependencies
+                transform.scaleOriginXProperty(), transform.scaleXProperty(), transform.xProperty()
+        );
+
+        var y1 = Bindings.createDoubleBinding(() ->
+                        transform.getScaleOrigin().getY() - (transform.getScaleOrigin().getY() - getMinY()) * transform.getScaleY() + transform.getY(),
+                // dependencies
+                transform.scaleOriginYProperty(), transform.scaleYProperty(), transform.yProperty()
+        );
+
+        var y2 = Bindings.createDoubleBinding(() ->
+                        transform.getScaleOrigin().getY() - (transform.getScaleOrigin().getY() - getMaxY()) * transform.getScaleY() + transform.getY(),
+                // dependencies
+                transform.scaleOriginYProperty(), transform.scaleYProperty(), transform.yProperty()
+        );
+
+        minXWorld.bind(x1);
+        maxXWorld.bind(x2);
+
+        minYWorld.bind(y1);
+        maxYWorld.bind(y2);
     }
 
     /**

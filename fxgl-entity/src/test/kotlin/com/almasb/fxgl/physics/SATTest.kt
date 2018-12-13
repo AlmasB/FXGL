@@ -18,20 +18,20 @@ import org.junit.jupiter.api.Test
  */
 class SATTest {
 
-    @Test
-    fun `AABB`() {
-        var box1 = HitBox("main", BoundingShape.box(20.0, 40.0))
-        var box2 = HitBox("main", BoundingShape.box(20.0, 40.0))
-
-        assertTrue(SAT.isColliding(box1, box2, 0.0, 0.0))
-
-        box1 = HitBox("main", BoundingShape.box(20.0, 40.0))
-        box2 = HitBox("main", BoundingShape.box(20.0, 40.0))
-
-        box2.bindX(SimpleDoubleProperty(21.0))
-
-        assertFalse(SAT.isColliding(box1, box2, 0.0, 0.0))
-    }
+//    @Test
+//    fun `AABB`() {
+//        var box1 = HitBox("main", BoundingShape.box(20.0, 40.0))
+//        var box2 = HitBox("main", BoundingShape.box(20.0, 40.0))
+//
+//        assertTrue(SAT.isColliding(box1, box2, 0.0, 0.0))
+//
+//        box1 = HitBox("main", BoundingShape.box(20.0, 40.0))
+//        box2 = HitBox("main", BoundingShape.box(20.0, 40.0))
+//
+//        box2.bindX(SimpleDoubleProperty(21.0))
+//
+//        assertFalse(SAT.isColliding(box1, box2, 0.0, 0.0))
+//    }
 
     // https://github.com/AlmasB/FXGL/issues/490
 //    @Test

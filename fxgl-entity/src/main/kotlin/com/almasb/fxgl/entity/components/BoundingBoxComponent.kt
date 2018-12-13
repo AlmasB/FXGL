@@ -153,8 +153,7 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
         while (c.next()) {
             if (c.wasAdded()) {
                 for (box in c.getAddedSubList()) {
-                    box.bindX(transform.xProperty())
-                    box.bindY(transform.yProperty())
+                    box.bindXY(transform)
                 }
 
             } else if (c.wasRemoved()) {
@@ -183,8 +182,7 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
         maxYWorld.bind(minYWorld.add(height))
 
         for (i in hitBoxes.indices) {
-            hitBoxes[i].bindX(transform.xProperty())
-            hitBoxes[i].bindX(transform.yProperty())
+            hitBoxes[i].bindXY(transform)
         }
     }
 
@@ -317,13 +315,8 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
         val minXWorldNew1 = center1.x - (center1.x - box1.minX) * transform1.scaleX + transform1.x
         val maxXWorldNew1 = center1.x - (center1.x - box1.maxX) * transform1.scaleX + transform1.x
 
-
-
         val minXWorldNew2 = center2.x - (center2.x - box2.minX) * transform2.scaleX + transform2.x
         val maxXWorldNew2 = center2.x - (center2.x - box2.maxX) * transform2.scaleX + transform2.x
-
-        //println("" + minXWorldNew1 + "," + maxXWorldNew1 +" : " + "" + minXWorldNew2 + "," + maxXWorldNew2)
-
 
         return maxXWorldNew2 >= minXWorldNew1 &&
                 box2.maxYWorld >= box1.minYWorld &&
