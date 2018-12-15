@@ -308,6 +308,11 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
         return SAT.isColliding(box1, box2, angle1, angle2)
     }
 
+    private fun checkCollision(box1: HitBox, box2: HitBox, angle1: Double, angle2: Double,
+                               t1: TransformComponent, t2: TransformComponent): Boolean {
+        return SAT.isColliding(box1, box2, angle1, angle2, t1, t2)
+    }
+
     /**
      * Checks for collision with another bounding box. Returns collision result
      * containing the first hit box that triggered collision.
@@ -343,7 +348,7 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
                 if (angle1 == 0.0 && angle2 == 0.0) {
                     collision = checkCollision(box1, box2)
                 } else {
-                    collision = checkCollision(box1, box2, angle1, angle2)
+                    collision = checkCollision(box1, box2, angle1, angle2, transform, other.transform)
                 }
 
                 if (collision) {

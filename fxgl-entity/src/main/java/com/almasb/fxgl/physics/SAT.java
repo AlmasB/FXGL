@@ -10,6 +10,9 @@ import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pools;
+import com.almasb.fxgl.core.util.Debug;
+import com.almasb.fxgl.entity.components.TransformComponent;
+import javafx.geometry.Point2D;
 
 /**
  * Separating Axis Theorem based check for collision.
@@ -40,8 +43,36 @@ public final class SAT {
         populateAxes(angle1);
         populateAxes(angle2);
 
-        corners(box1, angle1, corners1);
-        corners(box2, angle2, corners2);
+        corners(box1, angle1, new TransformComponent(), corners1);
+        corners(box2, angle2, new TransformComponent(), corners2);
+
+        boolean result = true;
+
+        for (Vec2 axis : axes) {
+            float e1Min = getMin(corners1, axis);
+            float e1Max = getMax(corners1, axis);
+
+            float e2Min = getMin(corners2, axis);
+            float e2Max = getMax(corners2, axis);
+
+            if (e1Max < e2Min || e2Max < e1Min) {
+                result = false;
+                break;
+            }
+        }
+
+        cleanArrays();
+
+        return result;
+    }
+
+    public static boolean isColliding(HitBox box1, HitBox box2, double angle1, double angle2,
+                                      TransformComponent t1, TransformComponent t2) {
+        populateAxes(angle1);
+        populateAxes(angle2);
+
+        corners(box1, angle1, t1, corners1);
+        corners(box2, angle2, t2, corners2);
 
         boolean result = true;
 
@@ -84,12 +115,13 @@ public final class SAT {
     }
 
     private static Vec2 center(HitBox box) {
-        return newVec(box.getMinXWorld() + box.getWidth() / 2,
-                box.getMinYWorld() + box.getHeight() / 2);
+        return newVec(box.getMinXWorld() + (box.getMinXWorld() + box.getMaxXWorld()) / 2,
+                box.getMinYWorld() + (box.getMinYWorld() + box.getMaxYWorld()) / 2);
     }
 
-    private static void corners(HitBox box, double angle, Array<Vec2> array) {
-        Vec2 center = center(box);
+    private static void corners(HitBox box, double angle, TransformComponent t, Array<Vec2> array) {
+        // TODO: this needs to be scaled accordingly ...
+        Vec2 origin = new Vec2(t.getRotationOrigin()).addLocal(t.getX(), t.getY());
 
         Vec2 topLeft = newVec(box.getMinXWorld(), box.getMinYWorld());
         Vec2 topRight = newVec(box.getMaxXWorld(), box.getMinYWorld());
@@ -98,16 +130,18 @@ public final class SAT {
 
         array.addAll(topLeft, topRight, botRight, botLeft);
 
-        for (Vec2 v : array) {
-            double cos = cos(angle);
-            double sin = sin(angle);
+        double cos = cos(angle);
+        double sin = sin(angle);
 
-            v.subLocal(center);
+        for (Vec2 v : array) {
+            v.subLocal(origin);
             v.set((float)(v.x * cos - v.y * sin), (float)(v.x * sin + v.y * cos));
-            v.addLocal(center);
+            v.addLocal(origin);
+
+            Debug.INSTANCE.getPoints().add(v.toPoint2D());
         }
 
-        freeVec(center);
+        freeVec(origin);
     }
 
     private static float getMin(Array<Vec2> arrayCorners, Vec2 axis) {

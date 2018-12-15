@@ -6,7 +6,9 @@
 
 package s01basics;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.core.util.Debug;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.EntityView;
@@ -17,6 +19,8 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import dev.DeveloperWASDControl;
 import javafx.geometry.Point2D;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -151,6 +155,7 @@ public class InitSample extends GameApplication {
     }
 
     private Text t;
+    private GraphicsContext g;
 
     @Override
     protected void initUI() {
@@ -158,6 +163,24 @@ public class InitSample extends GameApplication {
         t.setTranslateY(100);
 
         getGameScene().addUINode(t);
+
+        Canvas canvas = new Canvas(FXGL.getAppWidth(), FXGL.getAppHeight());
+        g = canvas.getGraphicsContext2D();
+
+        getGameScene().addUINode(canvas);
+    }
+
+    @Override
+    protected void onUpdate(double tpf) {
+        g.clearRect(0, 0, FXGL.getAppWidth(), FXGL.getAppHeight());
+
+        var points = Debug.INSTANCE.getPoints();
+
+        while (!points.isEmpty()) {
+            var p = points.poll();
+
+            g.fillOval(p.getX() - 2.5, p.getY() - 2.5, 5, 5);
+        }
     }
 
     public static void main(String[] args) {
