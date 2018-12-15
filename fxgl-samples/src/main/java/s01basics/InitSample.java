@@ -109,10 +109,10 @@ public class InitSample extends GameApplication {
                 .zIndex(250)
                 .buildAndAttach();
 
-        player.getTransformComponent().setRotationOrigin(new Point2D(32, 32));
+        player.getTransformComponent().setRotationOrigin(new Point2D(64, 64));
 
-        player.getTransformComponent().scaleOriginXProperty().setValue(40);
-        player.getTransformComponent().scaleOriginYProperty().setValue(40);
+        player.getTransformComponent().scaleOriginXProperty().setValue(64);
+        player.getTransformComponent().scaleOriginYProperty().setValue(64);
 
         Entity player2 = new Entity();
         player2.setType(Type.NPC);
@@ -166,6 +166,7 @@ public class InitSample extends GameApplication {
 
         Canvas canvas = new Canvas(FXGL.getAppWidth(), FXGL.getAppHeight());
         g = canvas.getGraphicsContext2D();
+        g.setFill(Color.YELLOWGREEN);
 
         getGameScene().addUINode(canvas);
     }

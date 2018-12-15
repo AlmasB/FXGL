@@ -74,7 +74,7 @@ class ViewComponent
         rotate.pivotXProperty().bind(entity.transformComponent.rotationOriginXProperty())
         rotate.pivotYProperty().bind(entity.transformComponent.rotationOriginYProperty())
 
-        parent.transforms.addAll(scale, rotate)
+        parent.transforms.addAll(rotate, scale)
 
         (z as ReadOnlyIntegerWrapper).bind(entity.transformComponent.zProperty())
     }

@@ -120,8 +120,15 @@ public final class SAT {
     }
 
     private static void corners(HitBox box, double angle, TransformComponent t, Array<Vec2> array) {
-        // TODO: this needs to be scaled accordingly ...
         Vec2 origin = new Vec2(t.getRotationOrigin()).addLocal(t.getX(), t.getY());
+
+        // this needs to be scaled accordingly, so               centerX * scale + (1-scale) * pivot.x
+        //origin.x = (float) (t.getScaleOrigin().getX() - (t.getScaleOrigin().getX() - origin.x) * t.getScaleX() + origin.x);
+        //origin.y = (float) (t.getScaleOrigin().getY() - (t.getScaleOrigin().getY() - origin.y) * t.getScaleY() + origin.y);
+
+        //origin
+
+        Debug.INSTANCE.getPoints().add(origin.toPoint2D());
 
         Vec2 topLeft = newVec(box.getMinXWorld(), box.getMinYWorld());
         Vec2 topRight = newVec(box.getMaxXWorld(), box.getMinYWorld());
