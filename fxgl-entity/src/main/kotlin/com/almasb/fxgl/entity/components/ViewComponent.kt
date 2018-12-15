@@ -10,6 +10,7 @@ import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
+import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
 
 /**
@@ -66,14 +67,16 @@ class ViewComponent
         scale.pivotXProperty().bind(entity.transformComponent.scaleOriginXProperty())
         scale.pivotYProperty().bind(entity.transformComponent.scaleOriginYProperty())
 
-        parent.transforms.add(scale)
-        //parent.scaleXProperty().bind(entity.transformComponent.scaleXProperty())
-        //parent.scaleYProperty().bind(entity.transformComponent.scaleYProperty())
+        val rotate = Rotate()
+        rotate.axis = Rotate.Z_AXIS
+        rotate.angleProperty().bind(entity.transformComponent.angleProperty())
 
+        rotate.pivotXProperty().bind(entity.transformComponent.rotationOriginXProperty())
+        rotate.pivotYProperty().bind(entity.transformComponent.rotationOriginYProperty())
+
+        parent.transforms.addAll(scale, rotate)
 
         (z as ReadOnlyIntegerWrapper).bind(entity.transformComponent.zProperty())
-
-        // TODO: bind rotation and origin
     }
 
     override fun onUpdate(tpf: Double) {

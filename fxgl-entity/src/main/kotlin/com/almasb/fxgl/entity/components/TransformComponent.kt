@@ -40,6 +40,9 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     private val propScaleOriginX = SimpleDoubleProperty(0.0)
     private val propScaleOriginY = SimpleDoubleProperty(0.0)
 
+    private val propRotationOriginX = SimpleDoubleProperty(0.0)
+    private val propRotationOriginY = SimpleDoubleProperty(0.0)
+
     var x: Double
         get() = propX.value
         set(value) { propX.value = value }
@@ -83,6 +86,12 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
             propScaleOriginY.value = value.y
         }
 
+    var rotationOrigin: Point2D
+        get() = Point2D(propRotationOriginX.value, propRotationOriginY.value)
+        set(value) {
+            propRotationOriginX.value = value.x
+            propRotationOriginY.value = value.y
+        }
 
     fun xProperty() = propX
     fun yProperty() = propY
@@ -98,6 +107,9 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
 
     fun scaleOriginXProperty() = propScaleOriginX
     fun scaleOriginYProperty() = propScaleOriginY
+
+    fun rotationOriginXProperty() = propRotationOriginX
+    fun rotationOriginYProperty() = propRotationOriginY
 
     fun setPosition(x: Double, y: Double) {
         this.x = x

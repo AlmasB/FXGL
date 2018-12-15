@@ -52,6 +52,8 @@ public class InitSample extends GameApplication {
     private double scale = 1.0;
     private double scaleY = 1.0;
 
+    private double angle = 0;
+
     @Override
     protected void initInput() {
         getInput().addAction(new UserAction("Change view") {
@@ -79,6 +81,18 @@ public class InitSample extends GameApplication {
 
             player.setScaleY(scaleY);
         });
+
+        onKey(KeyCode.R, () -> {
+            angle -= 5;
+
+            player.setRotation(angle);
+        });
+
+        onKey(KeyCode.T, () -> {
+            angle += 5;
+
+            player.setRotation(angle);
+        });
     }
 
     @Override
@@ -90,6 +104,8 @@ public class InitSample extends GameApplication {
                 .with(new CollidableComponent(true), new DeveloperWASDControl())
                 .zIndex(250)
                 .buildAndAttach();
+
+        player.getTransformComponent().setRotationOrigin(new Point2D(32, 32));
 
         player.getTransformComponent().scaleOriginXProperty().setValue(40);
         player.getTransformComponent().scaleOriginYProperty().setValue(40);
@@ -104,7 +120,7 @@ public class InitSample extends GameApplication {
 
         getGameWorld().addEntity(player2);
 
-        translate(player, new Point2D(560, 300), Duration.seconds(2));
+        //translate(player, new Point2D(560, 300), Duration.seconds(2));
 
         player.getViewComponent().addClickListener(() -> {
             System.out.println("CLICKED");
