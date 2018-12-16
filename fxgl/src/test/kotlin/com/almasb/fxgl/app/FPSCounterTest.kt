@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app
 
 /**
- * TODO:
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

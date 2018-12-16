@@ -36,10 +36,9 @@ public final class PhysicsComponent extends Component {
 
     Body body;
 
-    List<Entity> groundedList = new ArrayList<>();
+    private List<Entity> groundedList = new ArrayList<>();
 
     private boolean raycastIgnored = false;
-    private boolean generateGroundSensor = false;
 
     private Runnable onInitPhysics;
 
@@ -56,8 +55,7 @@ public final class PhysicsComponent extends Component {
     }
 
     /**
-     * Note: only works when {@link #setGenerateGroundSensor(boolean)} was called with value true
-     * before attaching entity to game world.
+     * Note: for this to work you need to add ground sensor.
      *
      * @return true if entity is standing on top of another entity with physics component
      */
@@ -78,26 +76,6 @@ public final class PhysicsComponent extends Component {
      */
     public void setOnPhysicsInitialized(Runnable code) {
         onInitPhysics = code;
-    }
-
-    /**
-     * Force this entity to create a ground sensor, so that {@link #isOnGround()} can be used.
-     * Deprecated: Use addGroundSensor()
-     *
-     * @param generate flag
-     * @defaultValue false
-     */
-    @Deprecated
-    public void setGenerateGroundSensor(boolean generate) {
-        generateGroundSensor = generate;
-    }
-
-    /**
-     * @return does this entity have a ground sensor
-     */
-    @Deprecated
-    public boolean isGenerateGroundSensor() {
-        return generateGroundSensor;
     }
 
     private ObjectMap<HitBox, SensorCollisionHandler> sensorHandlers = new ObjectMap<>();
@@ -131,6 +109,7 @@ public final class PhysicsComponent extends Component {
 
     public void removeSensor(HitBox box) {
         // TODO: but we didn't remove the fixture
+        box.unbind();
         sensorHandlers.remove(box);
     }
 

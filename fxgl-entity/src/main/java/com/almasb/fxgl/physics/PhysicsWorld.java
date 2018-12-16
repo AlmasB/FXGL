@@ -24,12 +24,14 @@ import com.almasb.fxgl.physics.box2d.collision.shapes.*;
 import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.List;
 
 import static com.almasb.fxgl.core.util.BackportKt.forEach;
 
@@ -205,6 +207,23 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         } else {
             delayedBodiesAdd.add(entity);
         }
+
+        ChangeListener<Number> scaleChangeListener = (observable, oldValue, newValue) -> {
+            Body b = entity.getComponent(PhysicsComponent.class).body;
+
+            if (b != null) {
+                List<Fixture> fixtures = List.copyOf(b.getFixtures());
+
+                forEach(fixtures, b::destroyFixture);
+
+                createFixtures(entity);
+                createSensors(entity);
+            }
+        };
+
+        // TODO: clean listeners on remove
+        entity.getTransformComponent().scaleXProperty().addListener(scaleChangeListener);
+        entity.getTransformComponent().scaleYProperty().addListener(scaleChangeListener);
     }
 
     private void onPhysicsParticleEntityAdded(Entity entity) {
@@ -578,10 +597,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
         createFixtures(e);
 
-        if (physics.isGenerateGroundSensor()) {
-            createGroundSensor(e);
-        }
-
         createSensors(e);
 
         physics.body.setEntity(e);
@@ -615,6 +630,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
             return;
 
         forEach(physics.getSensorHandlers().keys(), box -> {
+            box.bindXY(e.getTransformComponent());
 
             Shape polygonShape = createShape(box, e);
 
@@ -628,15 +644,13 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     private Shape createShape(HitBox box, Entity e) {
-        Bounds bounds = box.translate(e.getX(), e.getY());
-
         // take world center bounds and subtract from entity center (all in pixels) to get local center
         // because box2d operates on vector offsets from the body center, also in local coordinates
-        Point2D boundsCenterWorld = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
+        Point2D boundsCenterWorld = new Point2D((box.getMinXWorld() + box.getMaxXWorld()) / 2, (box.getMinYWorld() + box.getMaxYWorld()) / 2);
         Point2D boundsCenterLocal = boundsCenterWorld.subtract(e.getCenter());
 
-        double w = bounds.getWidth();
-        double h = bounds.getHeight();
+        double w = box.getMaxXWorld() - box.getMinXWorld();
+        double h = box.getMaxYWorld() - box.getMinYWorld();
 
         BoundingShape boundingShape = box.getShape();
 
@@ -713,18 +727,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         shape.createLoop(vertices, vertices.length);
 
         return shape;
-    }
-
-    // TODO: remove this in 0.6
-    private void createGroundSensor(Entity e) {
-        // 3 is a good ratio of entity width, since we don't want to occupy the full width
-        // if we want to ban "ledge" jumps
-        double sensorWidth = e.getWidth() / 3;
-        double sensorHeight = 5;
-
-        // assumes that origin of entity's main hit box is at 0,0
-        e.getComponent(PhysicsComponent.class).addGroundSensor(new HitBox("GROUND_SENSOR", new Point2D(e.getWidth() / 2, e.getHeight()).add(-sensorWidth / 2, -sensorHeight / 2),
-                BoundingShape.box(sensorWidth, sensorHeight)));
     }
 
     private void createPhysicsParticles(Entity e) {

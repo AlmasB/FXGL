@@ -696,6 +696,14 @@ public class Entity {
         transform.setScaleY(scaleY);
     }
 
+    public final double getScaleX() {
+        return transform.getScaleX();
+    }
+
+    public final double getScaleY() {
+        return transform.getScaleY();
+    }
+
     public final void setZ(int z) {
         transform.setZ(z);
     }
