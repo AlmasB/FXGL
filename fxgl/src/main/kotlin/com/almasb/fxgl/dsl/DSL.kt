@@ -15,6 +15,7 @@ import com.almasb.fxgl.app.FXGL.Companion.getEventBus
 import com.almasb.fxgl.app.FXGL.Companion.getInput
 import com.almasb.fxgl.app.FXGL.Companion.getMasterTimer
 import com.almasb.fxgl.app.FXGL.Companion.getUIFactory
+import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.core.util.BiConsumer
@@ -100,13 +101,28 @@ fun <T : Any> jsonAs(name: String, type: Class<T>): T = getAssetLoader().loadJSO
 
 /* AUDIO */
 
-fun loopBGM(assetName: String) = getAudioPlayer().loopBGM(assetName)
+/**
+ * @param bgmName name of the background music file to loop
+ * @return the music object that is played in a loop
+ */
+fun loopBGM(assetName: String): Music {
+    val music = getAssetLoader().loadMusic(assetName)
+    getAudioPlayer().loopMusic(music)
+    return music
+}
 
+/**
+ * Convenience method to play music/sound given its filename.
+ *
+ * @param assetName name of the music file
+ */
 fun play(assetName: String) {
     if (assetName.endsWith(".wav")) {
-        getAudioPlayer().playSound(assetName)
+        val sound = getAssetLoader().loadSound(assetName)
+        getAudioPlayer().playSound(sound)
     } else if (assetName.endsWith(".mp3")) {
-        getAudioPlayer().playMusic(assetName)
+        val music = getAssetLoader().loadMusic(assetName)
+        getAudioPlayer().playMusic(music)
     } else {
         throw IllegalArgumentException("Unsupported audio format: $assetName")
     }

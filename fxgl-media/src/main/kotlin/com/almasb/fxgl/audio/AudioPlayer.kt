@@ -6,12 +6,9 @@
 
 package com.almasb.fxgl.audio
 
-
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.sslogger.Logger
-import com.almasb.fxgl.core.serialization.Bundle
 
-import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Point2D
 
@@ -28,39 +25,11 @@ class AudioPlayer {
     private val activeMusic = UnorderedArray<Music>()
     private val activeSounds = UnorderedArray<Sound>()
 
-    private val globalMusicVolume = SimpleDoubleProperty(0.5)
-    private val globalSoundVolume = SimpleDoubleProperty(0.5)
+    @get:JvmName("globalMusicVolumeProperty")
+    val propGlobalMusicVolume = SimpleDoubleProperty(0.5)
 
-    init {
-        globalMusicVolume.addListener { _, _, newVolume ->
-            activeMusic.forEach { it.audio.setVolume(newVolume.toDouble()) }
-        }
-
-        globalSoundVolume.addListener { _, _, newVolume ->
-            activeSounds.forEach { it.audio.setVolume(newVolume.toDouble()) }
-        }
-    }
-
-    fun onUpdate(tpf: Double) {
-        activeMusic.removeAll { it.isDisposed }
-        activeSounds.removeAll { it.isDisposed }
-    }
-
-    fun globalMusicVolumeProperty(): DoubleProperty {
-        return globalMusicVolume
-    }
-
-    fun globalSoundVolumeProperty(): DoubleProperty {
-        return globalSoundVolume
-    }
-
-//    fun onNotificationEvent(event: NotificationEvent) {
-//        playSound(FXGL.getSettings().soundNotification)
-//    }
-
-    fun getGlobalMusicVolume(): Double {
-        return globalMusicVolumeProperty().get()
-    }
+    @get:JvmName("globalSoundVolumeProperty")
+    val propGlobalSoundVolume = SimpleDoubleProperty(0.5)
 
     /**
      * Set global music volume in the range [0..1],
@@ -68,13 +37,11 @@ class AudioPlayer {
      *
      * @param volume music volume
      */
-    fun setGlobalMusicVolume(volume: Double) {
-        globalMusicVolumeProperty().set(volume)
-    }
-
-    fun getGlobalSoundVolume(): Double {
-        return globalSoundVolumeProperty().get()
-    }
+    var globalMusicVolume: Double
+        get() = propGlobalMusicVolume.value
+        set(value) {
+            propGlobalMusicVolume.value = value
+        }
 
     /**
      * Set global sound volume in the range [0..1],
@@ -82,22 +49,25 @@ class AudioPlayer {
      *
      * @param volume sound volume
      */
-    fun setGlobalSoundVolume(volume: Double) {
-        globalSoundVolumeProperty().set(volume)
+    var globalSoundVolume: Double
+        get() = propGlobalSoundVolume.value
+        set(value) {
+            propGlobalSoundVolume.value = value
+        }
+
+    init {
+        propGlobalMusicVolume.addListener { _, _, newVolume ->
+            activeMusic.forEach { it.audio.setVolume(newVolume.toDouble()) }
+        }
+
+        propGlobalSoundVolume.addListener { _, _, newVolume ->
+            activeSounds.forEach { it.audio.setVolume(newVolume.toDouble()) }
+        }
     }
 
-    /**
-     * @param assetName sound file name
-     * *
-     * @param soundPosition where sound is playing
-     * *
-     * @param earPosition where sound is heard
-     * *
-     * @param maxDistance how far the sound can be heard before it's "full" right or "full" left,
-     * *                    i.e. if dist > maxDistance then sound balance is set to max (1.0) in that direction
-     */
-    fun playPositionalSound(assetName: String, soundPosition: Point2D, earPosition: Point2D, maxDistance: Double) {
-        //playPositionalSound(FXGL.getAssetLoader().loadSound(assetName), soundPosition, earPosition, maxDistance)
+    fun onUpdate(tpf: Double) {
+        activeMusic.removeAll { it.isDisposed }
+        activeSounds.removeAll { it.isDisposed }
     }
 
     /**
@@ -120,15 +90,6 @@ class AudioPlayer {
     }
 
     /**
-     * Convenience method to play the sound given its filename.
-     *
-     * @param assetName name of the sound file
-     */
-    fun playSound(assetName: String) {
-        //playSound(FXGL.getAssetLoader().loadSound(assetName))
-    }
-
-    /**
      * Plays given sound based on its properties.
      *
      * @param sound sound to play
@@ -137,7 +98,7 @@ class AudioPlayer {
         if (!activeSounds.containsByIdentity(sound))
             activeSounds.add(sound)
 
-        sound.audio.setVolume(getGlobalSoundVolume())
+        sound.audio.setVolume(globalSoundVolume)
         sound.audio.play()
     }
 
@@ -148,32 +109,6 @@ class AudioPlayer {
      */
     fun stopSound(sound: Sound) {
         sound.audio.stop()
-    }
-
-//    /**
-//     * Stops playing all sounds.
-//     */
-//    fun stopAllSounds() {
-//        log.debug("Stopping all sounds")
-//
-//        val it = activeSounds.iterator()
-//        while (it.hasNext()) {
-//            it.next().clip.stop()
-//            it.remove()
-//        }
-//    }
-
-    /**
-     * @param bgmName name of the background music file to loop
-     * @return the music object that is played in a loop
-     */
-    fun loopBGM(bgmName: String): Music {
-        return TODO()
-//        val music = FXGL.getAssetLoader().loadMusic(bgmName)
-//        music.cycleCount = Integer.MAX_VALUE
-//        music.audio.setLooping(true)
-//        playMusic(music)
-//        return music
     }
 
     /**
@@ -188,18 +123,8 @@ class AudioPlayer {
             activeMusic.add(music)
         }
 
-        music.audio.setVolume(getGlobalMusicVolume())
+        music.audio.setVolume(globalMusicVolume)
         music.audio.play()
-    }
-
-    /**
-     * Convenience method to play the music given its filename.
-     *
-     * @param assetName name of the music file
-     */
-    fun playMusic(assetName: String) {
-        // TODO: extract this to DSL
-        //playMusic(FXGL.getAssetLoader().loadMusic(assetName))
     }
 
     /**
@@ -238,53 +163,9 @@ class AudioPlayer {
         music.audio.stop()
     }
 
-//    /**
-//     * Pauses all currently playing music.
-//     * These can be resumed using [.resumeAllMusic].
-//     */
-//    fun pauseAllMusic() {
-//        log.debug("Pausing all music")
-//
-//        activeMusic.forEach { it.pause() }
-//    }
-//
-//    /**
-//     * Resumes all currently paused music.
-//     */
-//    fun resumeAllMusic() {
-//        log.debug("Resuming all music")
-//
-//        activeMusic.forEach { it.resume() }
-//    }
-//
-//    /**
-//     * Stops all currently playing music. The music cannot be restarted
-//     * by calling [.resumeAllMusic]. Each music object will need
-//     * to be started by [.playMusic].
-//     */
-//    fun stopAllMusic() {
-//        log.debug("Stopping all music. Active music size: ${activeMusic.size}")
-//
-//        activeMusic.forEach { it.stop() }
-//    }
-
-//    fun save(profile: UserProfile) {
-//        log.debug("Saving data to profile")
-//
-//        val bundle = Bundle("audio")
-//        bundle.put("musicVolume", getGlobalMusicVolume())
-//        bundle.put("soundVolume", getGlobalSoundVolume())
-//
-//        bundle.log()
-//        profile.putBundle(bundle)
-//    }
-//
-//    fun load(profile: UserProfile) {
-//        log.debug("Loading data from profile")
-//        val bundle = profile.getBundle("audio")
-//        bundle.log()
-//
-//        setGlobalMusicVolume(bundle.get<Double>("musicVolume"))
-//        setGlobalSoundVolume(bundle.get<Double>("soundVolume"))
-//    }
+    fun loopMusic(music: Music) {
+        music.cycleCount = Integer.MAX_VALUE
+        music.audio.setLooping(true)
+        playMusic(music)
+    }
 }
