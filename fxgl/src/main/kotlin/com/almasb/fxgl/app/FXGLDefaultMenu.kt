@@ -390,7 +390,6 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             p.stroke = Color.color(0.1, 0.1, 0.1, 0.15)
             p.effect = GaussianBlur()
 
-            // TODO: hover and/or focused?
             p.visibleProperty().bind(btn.hoverProperty())
 
             children.addAll(btn, p)

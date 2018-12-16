@@ -14,4 +14,5 @@ module fxgl.core {
     exports com.almasb.fxgl.core.reflect;
     exports com.almasb.fxgl.core.serialization;
     exports com.almasb.fxgl.core.util;
+    exports com.almasb.fxgl.core.local;
 }

@@ -119,8 +119,6 @@ class NineSliceTextureBuilder(val texture: Texture) {
 
         check(w > 0 && h > 0) { "Too small" }
 
-        // TODO: cleanup
-
         var newTop = top
 
         if (top.width > w) {

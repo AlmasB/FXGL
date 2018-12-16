@@ -9,20 +9,17 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.dsl.centerText
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.sslogger.Logger
-import javafx.animation.KeyFrame
-import javafx.animation.KeyValue
-import javafx.animation.Timeline
 import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
-import javafx.util.Duration
 
 /**
  * This is the default startup scene which is shown while FXGL is in startup state.
  *
- * TODO: properly clean this up once done using startup
+ * As soon as the main loop starts, this scene will be switched instantly, so
+ * there is no need to do animation in this state.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -83,17 +80,6 @@ class StartupScene : FXGLScene() {
         point.strokeWidth = 1.5
         point.translateX = 25.0
         point.radius = 1.0
-
-        val frame = KeyFrame(Duration.seconds(1.0),
-                KeyValue(innerCircle.radiusProperty(), 20),
-                KeyValue(innerCircle.fillProperty(), Color.GREEN))
-
-        // TODO: use FXGL loop?
-
-        val timeline = Timeline()
-        timeline.cycleCount = 10
-        timeline.keyFrames.add(frame)
-        timeline.play()
 
         symbol.children.addAll(top, mid, bot, outerCircle, innerCircle, point)
         return symbol

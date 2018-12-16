@@ -24,7 +24,6 @@ private constructor() {
 
         private val log = Logger.get<FS>()
 
-        // TODO: just use one universal?
         private val fs: FSService = if (Platform.isDesktop()) DesktopFSService() else MobileFSService()
 
         init {

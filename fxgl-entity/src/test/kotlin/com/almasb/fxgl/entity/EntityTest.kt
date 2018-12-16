@@ -778,7 +778,6 @@ class EntityTest {
 
     /* SCRIPTS */
 
-    // TODO:
 //    @Test
 //    fun `Scripts`() {
 //        assertFalse(entity.getScriptHandler("onHit").isPresent)
