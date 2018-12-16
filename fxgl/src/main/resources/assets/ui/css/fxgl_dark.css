@@ -276,6 +276,77 @@
 	-fx-padding:0;
 }
 
+
+
+
+/*
+From
+https://github.com/jfoenixadmin/JFoenix/blob/master/jfoenix/src/main/resources/css/controls/jfx-check-box.css
+Under Apache License 2.0
+*/
+
+
+
+/* Styling checkmark */
+
+.fxgl-check-box .box-container {
+    -fx-shape: "M 400 100 L 400 100 A 50 50 0 1 1 400 250 A 50 50 0 1 1 400 100 ";
+    -fx-padding: 10;
+}
+
+.fxgl-check-box .box,
+.fxgl-check-box:indeterminate .box,
+.fxgl-check-box:indeterminate:selected .box {
+    -fx-pref-width: 18;
+    -fx-pref-height: 18;
+
+    -fx-min-width: -fx-pref-width;
+    -fx-max-width: -fx-pref-width;
+    -fx-min-height: -fx-pref-height;
+    -fx-max-height: -fx-pref-height;
+
+    -fx-background-color: TRANSPARENT;
+    -fx-background-radius: 2;
+
+    -fx-border-color: black;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 2;
+}
+
+.fxgl-check-box:selected .mark {
+    -fx-shape: "M384 690l452-452 60 60-512 512-238-238 60-60z";
+    -fx-max-width: 15;
+    -fx-max-height: 12;
+
+    -fx-background-color: black;
+
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-border-radius: 2;
+}
+
+.fxgl-check-box .indeterminate-mark {
+    -fx-background-color: black;
+    -fx-background-radius: 2;
+    -fx-border-width: 0;
+    -fx-max-width: 10;
+    -fx-max-height: 10;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
   for MDIWindow
  */

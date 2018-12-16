@@ -331,6 +331,8 @@ internal class Engine(
         // 2. register user actions
         app.initInput()
 
+        SystemActions.bind(playState.input)
+
         generateDefaultProfile()
     }
 
