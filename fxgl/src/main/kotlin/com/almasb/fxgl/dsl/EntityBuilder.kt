@@ -10,6 +10,7 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityView
+import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
@@ -23,6 +24,12 @@ import javafx.scene.Node
 class EntityBuilder {
     private val entity = Entity()
     private val entityView by lazy { EntityView() }
+
+    fun from(data: SpawnData) = this.also {
+        at(data.x, data.y)
+
+        data.data.forEach { entity.setProperty(it.key, it.value) }
+    }
 
     fun type(t: Enum<*>) = this.also {
         entity.type = t
@@ -45,8 +52,8 @@ class EntityBuilder {
     }
 
     fun scale(x: Double, y: Double) = this.also {
-        entity.setScaleX(x)
-        entity.setScaleY(y)
+        entity.scaleX = x
+        entity.scaleY = y
     }
 
     fun scale(scale: Point2D) = this.also {

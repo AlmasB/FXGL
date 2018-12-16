@@ -18,7 +18,17 @@ import javafx.scene.input.KeyCode
  */
 class DeveloperWASDControl : Component() {
 
+    companion object {
+        var check = false
+    }
+
     override fun onAdded() {
+        if (check)
+            return
+
+
+        check = true
+
         with(FXGL.getInput()) {
             addAction(object : UserAction("Dev_UP") {
                 override fun onAction() = up()

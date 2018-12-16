@@ -6,6 +6,7 @@
 
 package s01basics;
 
+import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.util.Debug;
@@ -124,6 +125,15 @@ public class InitSample extends GameApplication {
 
         getGameWorld().addEntity(player2);
 
+        animationBuilder().delay(Duration.seconds(0.25))
+                .duration(Duration.seconds(1))
+                .interpolator(Interpolators.BOUNCE.EASE_OUT())
+                //.repeat(2)
+                .rotate(player2, player)
+                .from(0)
+                .to(360)
+                .buildAndPlay();
+
         //translate(player, new Point2D(560, 300), Duration.seconds(2));
 
         player.getViewComponent().addClickListener(() -> {
@@ -168,7 +178,7 @@ public class InitSample extends GameApplication {
         g = canvas.getGraphicsContext2D();
         g.setFill(Color.YELLOWGREEN);
 
-        getGameScene().addUINode(canvas);
+        //getGameScene().addUINode(canvas);
     }
 
     @Override

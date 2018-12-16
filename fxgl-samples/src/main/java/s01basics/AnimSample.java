@@ -58,9 +58,9 @@ public class AnimSample extends GameApplication {
                 .view(new Rectangle(40, 40, Color.RED))
                 .buildAndAttach();
 
-        anim = translateAnim(e, new Point2D(200, 100), Duration.seconds(1));
+        //anim = translateAnim(e, new Point2D(200, 100), Duration.seconds(1));
 
-        translate(e2, new Point2D(200, 150), Duration.seconds(2));
+        //translate(e2, new Point2D(200, 150), Duration.seconds(2));
 
         //fadeIn(e, Duration.ZERO, Duration.seconds(1), () -> {});
 
@@ -69,7 +69,7 @@ public class AnimSample extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        anim.onUpdate(tpf);
+        //anim.onUpdate(tpf);
     }
 
     public static class EFactory implements EntityFactory {
@@ -77,7 +77,7 @@ public class AnimSample extends GameApplication {
         @Spawns("block")
         public Entity newBlock(SpawnData data) {
             return entityBuilder()
-                    .at(300, 100)
+                    .from(data)
                     .view(new Rectangle(40, 40, Color.BLUE))
                     .build();
         }

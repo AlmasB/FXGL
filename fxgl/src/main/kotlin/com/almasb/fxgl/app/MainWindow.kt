@@ -191,7 +191,6 @@ internal class MainWindow(
      */
     fun setScene(scene: FXGLScene) {
         if (!subScenes.isEmpty()) {
-            // TODO: why is this limitation?
             log.warning("Cannot change states with active substates")
             return
         }

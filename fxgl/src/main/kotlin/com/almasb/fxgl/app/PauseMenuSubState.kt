@@ -10,9 +10,8 @@ import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.util.EmptyRunnable
+import com.almasb.fxgl.dsl.animationBuilder
 import com.almasb.fxgl.dsl.texture
-import com.almasb.fxgl.dsl.translate
-import com.almasb.fxgl.dsl.translateAnim
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
@@ -59,10 +58,13 @@ internal object PauseMenuSubState : SubScene() {
 
         children.addAll(masker, content)
 
-        animation = translateAnim(content,
-                from = Point2D(FXGL.getAppWidth() / 2.0 - 125, -400.0),
-                to = Point2D(FXGL.getAppWidth() / 2.0 - 125, FXGL.getAppHeight() / 2.0 - 200),
-                duration = Duration.seconds(0.5))
+        animation = animationBuilder()
+                .duration(Duration.seconds(0.5))
+                .translate(content)
+                .from(Point2D(FXGL.getAppWidth() / 2.0 - 125, -400.0))
+                .to(Point2D(FXGL.getAppWidth() / 2.0 - 125, FXGL.getAppHeight() / 2.0 - 200))
+                .build()
+
         animation.animatedValue.interpolator = Interpolators.BACK.EASE_OUT()
     }
 

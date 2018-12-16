@@ -75,8 +75,7 @@ public class InputSample3 extends GameApplication {
         getGameScene().getViewport().setBounds(30, 30, 1600 - 30, 1200 - 30);
         getGameScene().getViewport().bindToEntity(e, FXGL.getAppWidth() / 2, FXGL.getAppHeight() / 2);
 
-        a = translateAnim(getGameScene().getViewport().getCamera(), new Point2D(0, 0), new Point2D(400, 400), Duration.ZERO, Duration.seconds(1.5),
-                () -> {}, Interpolators.EXPONENTIAL.EASE_OUT());
+        //a = translateAnim(getGameScene().getViewport().getCamera(), new Point2D(0, 0), new Point2D(400, 400), Duration.ZERO, Duration.seconds(1.5), () -> {}, Interpolators.EXPONENTIAL.EASE_OUT());
 
         a.setAutoReverse(true);
         a.setCycleCount(2);

@@ -10,8 +10,6 @@ package com.almasb.fxgl.physics.box2d;
  * @author Daniel Murphy
  */
 public class MathTest {
-
-    // TODO: refactor
 //
 //    private final static int MAX = (int) (Float.MAX_VALUE / 1000);
 //    private final static int RAND_ITERS = 100;

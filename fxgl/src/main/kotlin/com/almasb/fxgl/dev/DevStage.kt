@@ -54,6 +54,7 @@ class DevStage(val settings: ReadOnlyGameSettings) : Stage() {
         pane.vgap = 10.0
 
         settings.javaClass.declaredMethods
+                .filter { it.name.startsWith("dev") }
                 .filter { it.returnType == SimpleBooleanProperty::class.java }
                 .forEachIndexed { index, method ->
 

@@ -209,6 +209,6 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     }
 
     override fun copy(): TransformComponent {
-        TODO()
+        return TransformComponent(x, y, angle, scaleX, scaleY)
     }
 }

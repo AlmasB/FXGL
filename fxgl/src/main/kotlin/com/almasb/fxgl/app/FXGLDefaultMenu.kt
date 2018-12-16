@@ -12,10 +12,9 @@ import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.local.Local.localizedStringProperty
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
 import com.almasb.fxgl.core.util.Supplier
+import com.almasb.fxgl.dsl.animationBuilder
 import com.almasb.fxgl.dsl.random
 import com.almasb.fxgl.dsl.texture
-import com.almasb.fxgl.dsl.translate
-import com.almasb.fxgl.dsl.translateAnim
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
 import com.almasb.fxgl.scene.MenuType
@@ -119,9 +118,13 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
             node.translateX = -250.0
 
-            val animation = translateAnim(node, Point2D(-250.0, 0.0), Point2D(0.0, 0.0),
-                    Duration.seconds(index * 0.07),
-                    Duration.seconds(0.66))
+            val animation = animationBuilder()
+                    .delay(Duration.seconds(index * 0.07))
+                    .duration(Duration.seconds(0.66))
+                    .translate(node)
+                    .from(Point2D(-250.0, 0.0))
+                    .to(Point2D(0.0, 0.0))
+                    .build()
 
             animations += animation
 
