@@ -124,6 +124,10 @@ public class InitSample extends GameApplication {
 
         getGameWorld().addEntity(player2);
 
+        FXGL.getExecutor().async(() -> {
+            throw new RuntimeException("Test");
+        });
+
         //translate(player, new Point2D(560, 300), Duration.seconds(2));
 
         player.getViewComponent().addClickListener(() -> {

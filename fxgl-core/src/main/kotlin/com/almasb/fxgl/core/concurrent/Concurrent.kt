@@ -23,8 +23,11 @@ class Coroutine<T>(private val func: Callable<T>,
             try {
                 value = func.call()
             } catch (e: Exception) {
-                // TODO: wrap this and throw to our error reporter
-                e.printStackTrace()
+
+                // re-throw to jfx thread so it knows we are going to crash
+                Platform.runLater {
+                    throw e
+                }
             } finally {
                 latch.countDown()
             }

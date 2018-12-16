@@ -26,10 +26,10 @@ class AudioPlayer {
     private val activeSounds = UnorderedArray<Sound>()
 
     @get:JvmName("globalMusicVolumeProperty")
-    val propGlobalMusicVolume = SimpleDoubleProperty(0.5)
+    val globalMusicVolumeProperty = SimpleDoubleProperty(0.5)
 
     @get:JvmName("globalSoundVolumeProperty")
-    val propGlobalSoundVolume = SimpleDoubleProperty(0.5)
+    val globalSoundVolumeProperty = SimpleDoubleProperty(0.5)
 
     /**
      * Set global music volume in the range [0..1],
@@ -38,9 +38,9 @@ class AudioPlayer {
      * @param volume music volume
      */
     var globalMusicVolume: Double
-        get() = propGlobalMusicVolume.value
+        get() = globalMusicVolumeProperty.value
         set(value) {
-            propGlobalMusicVolume.value = value
+            globalMusicVolumeProperty.value = value
         }
 
     /**
@@ -50,17 +50,17 @@ class AudioPlayer {
      * @param volume sound volume
      */
     var globalSoundVolume: Double
-        get() = propGlobalSoundVolume.value
+        get() = globalSoundVolumeProperty.value
         set(value) {
-            propGlobalSoundVolume.value = value
+            globalSoundVolumeProperty.value = value
         }
 
     init {
-        propGlobalMusicVolume.addListener { _, _, newVolume ->
+        globalMusicVolumeProperty.addListener { _, _, newVolume ->
             activeMusic.forEach { it.audio.setVolume(newVolume.toDouble()) }
         }
 
-        propGlobalSoundVolume.addListener { _, _, newVolume ->
+        globalSoundVolumeProperty.addListener { _, _, newVolume ->
             activeSounds.forEach { it.audio.setVolume(newVolume.toDouble()) }
         }
     }
