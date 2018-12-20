@@ -12,7 +12,6 @@ import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.local.Local.localizedStringProperty
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
 import com.almasb.fxgl.core.util.Supplier
-import com.almasb.fxgl.dsl.FXGL.*
 import com.almasb.fxgl.dsl.FXGL.Companion.random
 import com.almasb.fxgl.dsl.FXGL.Companion.texture
 import com.almasb.fxgl.dsl.*
