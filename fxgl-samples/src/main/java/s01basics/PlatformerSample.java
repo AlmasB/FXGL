@@ -20,7 +20,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import static com.almasb.fxgl.dsl.DSLKt.*;
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * Sample that shows how to use ChainShape for platforms.

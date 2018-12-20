@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.dsl
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityView
@@ -85,11 +84,11 @@ class EntityBuilder {
     }
 
     fun view(textureName: String) = this.also {
-        view(texture(textureName))
+        view(FXGL.texture(textureName))
     }
 
     fun viewWithBBox(textureName: String) = this.also {
-        viewWithBBox(texture(textureName))
+        viewWithBBox(FXGL.texture(textureName))
     }
 
     fun zIndex(z: Int) = this.also {

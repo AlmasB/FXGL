@@ -6,13 +6,12 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
-import com.almasb.fxgl.core.util.BackportKt;
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.sslogger.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;

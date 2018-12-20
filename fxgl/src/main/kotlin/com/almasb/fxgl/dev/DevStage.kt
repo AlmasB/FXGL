@@ -6,27 +6,19 @@
 
 package com.almasb.fxgl.dev
 
-import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.app.ReadOnlyGameSettings
-import com.almasb.fxgl.ui.FXGLButton
 import com.almasb.fxgl.ui.FXGLCheckBox
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Insets
-import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.Scene
-import javafx.scene.control.Button
-import javafx.scene.control.CheckBox
-import javafx.scene.control.Separator
 import javafx.scene.layout.GridPane
-import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.scene.text.Text
 import javafx.stage.Modality
 import javafx.stage.Stage
-import javafx.stage.StageStyle
 
 /**
  *

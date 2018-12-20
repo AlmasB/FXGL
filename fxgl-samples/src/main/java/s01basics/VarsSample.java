@@ -14,7 +14,7 @@ import javafx.scene.text.Text;
 
 import java.util.Map;
 
-import static com.almasb.fxgl.app.FXGL.*;
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * Shows how to use global property variables.

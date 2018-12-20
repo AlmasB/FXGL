@@ -7,7 +7,7 @@
 package com.almasb.fxgl.settings
 
 import com.almasb.fxgl.app.ApplicationMode
-import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.app.FXGLMock
 import javafx.scene.input.KeyCode
 import org.hamcrest.CoreMatchers.`is`

@@ -12,9 +12,11 @@ import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.local.Local.localizedStringProperty
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
 import com.almasb.fxgl.core.util.Supplier
-import com.almasb.fxgl.dsl.animationBuilder
-import com.almasb.fxgl.dsl.random
-import com.almasb.fxgl.dsl.texture
+import com.almasb.fxgl.dsl.FXGL.*
+import com.almasb.fxgl.dsl.FXGL.Companion.random
+import com.almasb.fxgl.dsl.FXGL.Companion.texture
+import com.almasb.fxgl.dsl.*
+import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
 import com.almasb.fxgl.scene.MenuType
@@ -42,6 +44,7 @@ import javafx.scene.paint.*
 import javafx.scene.shape.Polygon
 import javafx.scene.shape.Rectangle
 import javafx.util.Duration
+
 
 /**
  * This is the default FXGL menu used if the users
@@ -77,7 +80,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         menuContentRoot.translateY = menuY
 
         // particle smoke
-        val t = texture("particles/smoke.png", 128.0, 128.0).brighter().brighter()
+        val t = FXGL.texture("particles/smoke.png", 128.0, 128.0).brighter().brighter()
 
         val emitter = ParticleEmitters.newFireEmitter()
         emitter.blendMode = BlendMode.SRC_OVER

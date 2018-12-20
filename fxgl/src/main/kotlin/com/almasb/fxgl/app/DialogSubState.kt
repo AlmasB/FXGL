@@ -9,6 +9,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.core.util.Predicate
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.DialogBox

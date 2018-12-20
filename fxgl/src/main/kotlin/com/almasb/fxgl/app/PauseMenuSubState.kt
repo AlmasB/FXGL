@@ -10,8 +10,7 @@ import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.util.EmptyRunnable
-import com.almasb.fxgl.dsl.animationBuilder
-import com.almasb.fxgl.dsl.texture
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
@@ -58,7 +57,7 @@ internal object PauseMenuSubState : SubScene() {
 
         children.addAll(masker, content)
 
-        animation = animationBuilder()
+        animation = FXGL.animationBuilder()
                 .duration(Duration.seconds(0.5))
                 .translate(content)
                 .from(Point2D(FXGL.getAppWidth() / 2.0 - 125, -400.0))
@@ -103,7 +102,7 @@ internal object PauseMenuSubState : SubScene() {
     }
 
     private fun createContentPane(): StackPane {
-        return StackPane(texture("pause_menu_bg.png"))
+        return StackPane(FXGL.texture("pause_menu_bg.png"))
     }
 
     private fun createContent(): Parent {

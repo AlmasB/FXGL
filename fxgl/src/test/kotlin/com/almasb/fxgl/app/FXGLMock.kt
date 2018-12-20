@@ -8,6 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.reflect.ReflectionUtils.callInaccessible
 import com.almasb.fxgl.core.reflect.ReflectionUtils.getMethod
+import com.almasb.fxgl.dsl.FXGL
 
 /**
  *

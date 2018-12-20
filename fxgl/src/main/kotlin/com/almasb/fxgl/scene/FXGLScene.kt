@@ -1,7 +1,6 @@
 package com.almasb.fxgl.scene
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.dsl.texture
+import com.almasb.fxgl.dsl.FXGL
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleBooleanProperty
@@ -156,7 +155,7 @@ abstract class FXGLScene
      * Convenience method to load the texture and repeat as often as needed to cover the background.
      */
     fun setBackgroundRepeat(textureName: String) {
-        setBackgroundRepeat(texture(textureName).image)
+        setBackgroundRepeat(FXGL.texture(textureName).image)
     }
 
     /**

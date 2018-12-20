@@ -7,21 +7,15 @@
 package s01basics;
 
 import com.almasb.fxgl.animation.Animation;
-import com.almasb.fxgl.animation.Interpolators;
-import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.DSLKt;
-import com.almasb.fxgl.entity.Entity;
 import dev.DeveloperWASDControl;
-import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 
-import static com.almasb.fxgl.dsl.DSLKt.*;
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * Shows how to use input service and bind actions to triggers.

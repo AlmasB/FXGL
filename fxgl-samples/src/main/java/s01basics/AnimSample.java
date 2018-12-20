@@ -19,7 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.dsl.DSLKt.*;
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * Shows how to use input service and bind actions to triggers.

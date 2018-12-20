@@ -1,7 +1,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.local.Local
-import com.almasb.fxgl.dsl.image
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.sslogger.Logger
 import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.FXGLScene
@@ -162,7 +162,7 @@ internal class MainWindow(
                 }
             }
 
-            icons.add(image(settings.appIcon))
+            icons.add(FXGL.image(settings.appIcon))
 
             if (settings.isFullScreenAllowed) {
                 fullScreenExitHint = ""

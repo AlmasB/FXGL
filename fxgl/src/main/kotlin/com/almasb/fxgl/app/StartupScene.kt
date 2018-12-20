@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.dsl.centerText
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.sslogger.Logger
 import javafx.scene.Node
@@ -31,7 +31,7 @@ class StartupScene : FXGLScene() {
         val bg = Rectangle(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble())
 
         val title = makeTitle()
-        centerText(title)
+        FXGL.centerText(title)
 
         val symbol = makeSymbol()
         symbol.translateX = FXGL.getAppWidth() / 2 - 53.0

@@ -7,7 +7,6 @@
 package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.animation.*
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.entity.Entity

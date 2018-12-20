@@ -7,8 +7,11 @@
 package s01basics;
 
 import com.almasb.fxgl.app.*;
+import com.almasb.fxgl.dsl.FXGL;
 
 import java.util.EnumSet;
+
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * This is an example of a minimalistic FXGL game application.
@@ -30,9 +33,10 @@ public class BasicAppSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        BasicAppSample app = FXGL.getAppCast();
+        BasicAppSample app = getAppCast();
 
         System.out.println(app);
+
     }
 
     public static void main(String[] args) {

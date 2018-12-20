@@ -9,6 +9,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.core.collection.ObjectMap
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.sslogger.Logger
 import com.almasb.fxgl.entity.level.tiled.TMXParser
 import com.almasb.fxgl.entity.level.tiled.TiledMap

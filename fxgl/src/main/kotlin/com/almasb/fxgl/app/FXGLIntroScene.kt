@@ -11,8 +11,7 @@ import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.FXGLMath.*
 import com.almasb.fxgl.core.math.Vec2
-import com.almasb.fxgl.dsl.random
-import com.almasb.fxgl.dsl.texture
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.particle.Particle
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
@@ -121,7 +120,7 @@ class FXGLIntroScene : IntroScene() {
 
         setVelocityFunction { i -> randomPoint2D().multiply(1.5) }
 
-        setSourceImage(texture("particles/explosion.png", 32.0, 32.0).brighter().brighter().saturate().image)
+        setSourceImage(FXGL.texture("particles/explosion.png", 32.0, 32.0).brighter().brighter().saturate().image)
         setSize(1.5, 8.5)
         numParticles = 15
         emissionRate = 1.0

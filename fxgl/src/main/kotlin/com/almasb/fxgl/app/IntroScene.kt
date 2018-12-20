@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.scene.Scene
 

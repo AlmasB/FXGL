@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.saving;
 
-import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.concurrent.IOTask;
 import com.almasb.fxgl.core.local.Local;

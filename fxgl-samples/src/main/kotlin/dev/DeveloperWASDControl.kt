@@ -6,7 +6,7 @@
 
 package dev
 
-import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.input.UserAction
 import javafx.scene.input.KeyCode

@@ -8,7 +8,6 @@ package com.almasb.fxgl.app
 
 
 import com.almasb.sslogger.Logger
-import com.almasb.fxgl.core.local.Language
 import com.almasb.fxgl.core.util.Supplier
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
@@ -34,13 +33,14 @@ import javafx.scene.shape.Rectangle
 
 import java.util.ArrayList
 
-import com.almasb.fxgl.app.FXGL.Companion.getSettings
-import com.almasb.fxgl.app.FXGL.Companion.getUIFactory
+import com.almasb.fxgl.dsl.FXGL.Companion.getSettings
+import com.almasb.fxgl.dsl.FXGL.Companion.getUIFactory
 import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.local.Local.getLocalizedString
 import com.almasb.fxgl.core.local.Local.localizedStringProperty
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.InputPredicates
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.scene.MenuType
 import com.almasb.fxgl.scene.SubScene
