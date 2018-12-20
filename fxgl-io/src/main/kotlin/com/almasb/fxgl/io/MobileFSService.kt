@@ -15,14 +15,16 @@ import java.io.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class MobileFSService : FSService {
+internal class MobileFSService(val isDesktop: Boolean) : FSService {
 
     private val log = Logger.get(javaClass)
 
     private val storage = Services.get(StorageService::class.java).orElseThrow { RuntimeException("No StorageService present") }
-    // the following should work even on desktop
-    //private val rootStorage = File(System.getProperty("user.dir") + "/")
-    private val rootStorage = storage.privateStorage.orElseThrow { RuntimeException("No private storage present") }
+
+    private val rootStorage = if (isDesktop)
+        File(System.getProperty("user.dir") + "/")
+    else
+        storage.privateStorage.orElseThrow { RuntimeException("No private storage present") }
 
     override fun exists(pathName: String): Boolean {
         return toFile(pathName).exists()

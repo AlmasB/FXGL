@@ -24,7 +24,7 @@ private constructor() {
 
         private val log = Logger.get<FS>()
 
-        private val fs: FSService = if (Platform.isDesktop()) DesktopFSService() else MobileFSService()
+        private val fs: FSService = MobileFSService(Platform.isDesktop())
 
         init {
             log.debug("Loaded ${fs.javaClass.simpleName}")
