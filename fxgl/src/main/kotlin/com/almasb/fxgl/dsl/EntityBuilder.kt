@@ -78,9 +78,13 @@ class EntityBuilder {
 
         entity.boundingBoxComponent.clearHitBoxes()
 
-        bbox(HitBox("__VIEW__", BoundingShape.box(
-                node.layoutBounds.width, node.layoutBounds.height
-        )))
+        val w = node.layoutBounds.width
+        val h = node.layoutBounds.height
+
+        bbox(HitBox("__VIEW__", BoundingShape.box(w, h)))
+
+        entity.transformComponent.scaleOrigin = Point2D(w / 2, h / 2)
+        entity.transformComponent.rotationOrigin = Point2D(w / 2, h / 2)
     }
 
     fun view(textureName: String) = this.also {
