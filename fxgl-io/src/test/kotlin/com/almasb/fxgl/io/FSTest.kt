@@ -2,6 +2,8 @@ package com.almasb.fxgl.io
 
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers
+import org.hamcrest.Matchers.*
 import org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
+import java.nio.file.Files
 import java.nio.file.Files.*
 import java.nio.file.Paths.get as path
 
@@ -51,6 +54,7 @@ class FSTest {
             deleteIfExists(path("testdir/testexist"))
             deleteIfExists(path("testdir"))
             deleteIfExists(path("somefile.data"))
+            deleteIfExists(path("somefile.txt"))
 
             assertTrue(!exists(path("testdir")), "test dir is present before")
         }
@@ -91,6 +95,19 @@ class FSTest {
     }
 
     @Test
+    fun `Write to and read from text file`() {
+        val text = listOf("Test Line1", "Test Line2")
+
+        assertFalse(exists(path("somefile.txt")))
+
+        FS.writeDataTask(text, "somefile.txt").run()
+
+        assertTrue(exists(path("somefile.txt")))
+
+        assertThat(Files.readAllLines(path("somefile.txt")), `is`(text))
+    }
+
+    @Test
     fun `Load file names from a dir`() {
         val fileNames = FS.loadFileNamesTask("testdir", false).run()
 
@@ -99,6 +116,10 @@ class FSTest {
         val fileNames2 = FS.loadFileNamesTask("testdir", true).run()
 
         assertThat(fileNames2, containsInAnyOrder("testfile.txt", "testfile.json", "testsubdir/testfile2.json"))
+
+        val fileNames3 = FS.loadFileNamesTask("testdir", true, listOf(FileExtension("json"))).run()
+
+        assertThat(fileNames3, containsInAnyOrder("testfile.json", "testsubdir/testfile2.json"))
     }
 
     @Test
