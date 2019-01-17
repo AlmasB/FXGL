@@ -16,25 +16,9 @@ import javafx.geometry.Point2D
  */
 open class SpawnData(val x: Double, val y: Double) {
 
-    val data = ObjectMap<String, Any>()
-
     constructor(position: Point2D) : this(position.x, position.y)
 
-    // TODO:
-//    constructor(tiledObject: TiledObject) : this(tiledObject.x.toDouble(),
-//            // it appears that if object has non-zero gid then its y is flipped
-//            (tiledObject.y - if (tiledObject.gid == 0) 0 else tiledObject.height).toDouble()) {
-//
-//        put("name", tiledObject.name)
-//        put("type", tiledObject.type)
-//        put("width", tiledObject.width)
-//        put("height", tiledObject.height)
-//        put("rotation", tiledObject.rotation)
-//        put("id", tiledObject.id)
-//        put("gid", tiledObject.gid)
-//
-//        tiledObject.properties.forEach { put(it.key, it.value) }
-//    }
+    val data = ObjectMap<String, Any>()
 
     fun put(key: String, value: Any): SpawnData {
         data.put(key, value)

@@ -19,7 +19,6 @@ import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.entity.components.IrremovableComponent
 import com.almasb.fxgl.entity.components.TimeComponent
 import com.almasb.fxgl.entity.level.Level
-import com.almasb.fxgl.entity.level.LevelParser
 import com.almasb.sslogger.Logger
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
@@ -55,8 +54,6 @@ class GameWorld {
      */
     val entitiesCopy: List<Entity>
         get(): List<Entity> = ArrayList(entities)
-
-    private val levelParsers = mutableMapOf<String, LevelParser>()
 
     init {
         log.debug("Game world initialized")
