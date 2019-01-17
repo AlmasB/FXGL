@@ -11,8 +11,6 @@ import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.sslogger.Logger
-import com.almasb.fxgl.entity.level.tiled.TMXParser
-import com.almasb.fxgl.entity.level.tiled.TiledMap
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.ui.FontFactory
@@ -365,21 +363,6 @@ class AssetLoader {
     fun <T : Any> loadJSON(name: String, type: Class<T>): T {
         getStream(JSON_DIR + name).use {
             return jsonMapper.readValue(it, type)
-        }
-    }
-
-    /**
-     * Loads TMX (Tiled Map Editor) file with given name from /assets/tmx/ and parses into
-     * a TiledMap.
-     * Either returns a valid parsed object or throws exception in case of errors.
-     *
-     * The tileset sprite sheets must be located in /assets/textures/
-     *
-     * @param name TMX file name, e.g. level0.tmx
-     */
-    fun loadTMX(name: String): TiledMap {
-        getStream(TMX_DIR + name).use {
-            return TMXParser().parse(it)
         }
     }
 
