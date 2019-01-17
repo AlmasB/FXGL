@@ -301,11 +301,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         // check sensors first
 
         if (contact.getFixtureA().isSensor()) {
-            notifySensorCollisionBegin(e1, e2, contact);
+            notifySensorCollisionBegin(e1, e2, contact.getFixtureA().getHitBox());
 
             return;
         } else if (contact.getFixtureB().isSensor()) {
-            notifySensorCollisionBegin(e2, e1, contact);
+            notifySensorCollisionBegin(e2, e1, contact.getFixtureB().getHitBox());
 
             return;
         }
@@ -326,8 +326,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
                 // add pair to list of collisions so we still use it
                 collisions.add(pair);
 
-                HitBox boxA = (HitBox)contact.getFixtureA().getUserData();
-                HitBox boxB = (HitBox)contact.getFixtureB().getUserData();
+                HitBox boxA = contact.getFixtureA().getHitBox();
+                HitBox boxB = contact.getFixtureB().getHitBox();
 
                 handler.onHitBoxTrigger(pair.getA(), pair.getB(),
                         e1 == pair.getA() ? boxA : boxB,
@@ -346,11 +346,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         // check sensors first
 
         if (contact.getFixtureA().isSensor()) {
-            notifySensorCollisionEnd(e1, e2, contact);
+            notifySensorCollisionEnd(e1, e2, contact.getFixtureA().getHitBox());
 
             return;
         } else if (contact.getFixtureB().isSensor()) {
-            notifySensorCollisionEnd(e2, e1, contact);
+            notifySensorCollisionEnd(e2, e1, contact.getFixtureB().getHitBox());
 
             return;
         }
@@ -374,16 +374,12 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         }
     }
 
-    private void notifySensorCollisionBegin(Entity eWithSensor, Entity eTriggered, Contact contact) {
-        HitBox box = (HitBox) contact.getFixtureA().getUserData();
-
+    private void notifySensorCollisionBegin(Entity eWithSensor, Entity eTriggered, HitBox box) {
         var handler = eWithSensor.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
         handler.onCollisionBegin(eTriggered);
     }
 
-    private void notifySensorCollisionEnd(Entity eWithSensor, Entity eTriggered, Contact contact) {
-        HitBox box = (HitBox) contact.getFixtureA().getUserData();
-
+    private void notifySensorCollisionEnd(Entity eWithSensor, Entity eTriggered, HitBox box) {
         var handler = eWithSensor.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
         handler.onCollisionEnd(eTriggered);
     }
@@ -613,8 +609,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
             Fixture fixture = physics.body.createFixture(fd);
 
-            // TODO: setHitBox()?
-            fixture.setUserData(box);
+            fixture.setHitBox(box);
         }
     }
 
@@ -634,7 +629,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
                     .shape(polygonShape);
 
             Fixture f = physics.body.createFixture(fd);
-            f.setUserData(box);
+            f.setHitBox(box);
         });
     }
 

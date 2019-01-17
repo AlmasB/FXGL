@@ -7,6 +7,7 @@
 package com.almasb.fxgl.physics.box2d.dynamics;
 
 import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.collision.RayCastOutput;
@@ -34,6 +35,9 @@ public final class Fixture {
     private final Shape shape;
 
     private Object userData;
+
+    private HitBox hitBox;
+
     private float density;
     private float friction;
     private float restitution;
@@ -126,6 +130,14 @@ public final class Fixture {
      */
     public void setUserData(Object data) {
         userData = data;
+    }
+
+    public HitBox getHitBox() {
+        return hitBox;
+    }
+
+    public void setHitBox(HitBox hitBox) {
+        this.hitBox = hitBox;
     }
 
     public float getDensity() {
