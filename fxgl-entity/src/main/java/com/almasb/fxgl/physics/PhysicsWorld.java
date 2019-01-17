@@ -299,21 +299,13 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         // TODO: we do not have sensor collision(), ony begin() and end()
 
         // check sensors first
-        // TODO: refactor
 
         if (contact.getFixtureA().isSensor()) {
-            HitBox box = (HitBox) contact.getFixtureA().getUserData();
-
-            SensorCollisionHandler h = e1.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
-            h.onCollisionBegin(e2);
+            notifySensorCollisionBegin(e1, e2, contact);
 
             return;
         } else if (contact.getFixtureB().isSensor()) {
-
-            HitBox box = (HitBox) contact.getFixtureB().getUserData();
-
-            SensorCollisionHandler h = e2.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
-            h.onCollisionBegin(e1);
+            notifySensorCollisionBegin(e2, e1, contact);
 
             return;
         }
@@ -354,18 +346,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         // check sensors first
 
         if (contact.getFixtureA().isSensor()) {
-            HitBox box = (HitBox) contact.getFixtureA().getUserData();
-
-            SensorCollisionHandler h = e1.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
-            h.onCollisionEnd(e2);
+            notifySensorCollisionEnd(e1, e2, contact);
 
             return;
         } else if (contact.getFixtureB().isSensor()) {
-
-            HitBox box = (HitBox) contact.getFixtureB().getUserData();
-
-            SensorCollisionHandler h = e2.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
-            h.onCollisionEnd(e1);
+            notifySensorCollisionEnd(e2, e1, contact);
 
             return;
         }
@@ -389,15 +374,25 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         }
     }
 
-    @Override
-    public void preSolve(Contact contact, Manifold oldManifold) {
-        // no default implementation
+    private void notifySensorCollisionBegin(Entity eWithSensor, Entity eTriggered, Contact contact) {
+        HitBox box = (HitBox) contact.getFixtureA().getUserData();
+
+        var handler = eWithSensor.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
+        handler.onCollisionBegin(eTriggered);
+    }
+
+    private void notifySensorCollisionEnd(Entity eWithSensor, Entity eTriggered, Contact contact) {
+        HitBox box = (HitBox) contact.getFixtureA().getUserData();
+
+        var handler = eWithSensor.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
+        handler.onCollisionEnd(eTriggered);
     }
 
     @Override
-    public void postSolve(Contact contact, ContactImpulse impulse) {
-        // no default implementation
-    }
+    public void preSolve(Contact contact, Manifold oldManifold) { }
+
+    @Override
+    public void postSolve(Contact contact, ContactImpulse impulse) { }
 
     private Array<Entity> collidables = new UnorderedArray<>(128);
 
