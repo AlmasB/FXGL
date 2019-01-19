@@ -7,20 +7,17 @@
 package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.core.math.Vec2
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.entity.component.*
 import com.almasb.fxgl.entity.components.*
-import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
-import javafx.scene.Node
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -32,13 +29,6 @@ import org.junit.jupiter.api.Test
 class EntityTest {
 
     private lateinit var entity: Entity
-
-//    companion object {
-//        @BeforeAll
-//        @JvmStatic fun before() {
-//            FXGLMock.mock()
-//        }
-//    }
 
     @BeforeEach
     fun setUp() {
@@ -356,6 +346,27 @@ class EntityTest {
     }
 
     @Test
+    fun `Get Int`() {
+        entity.setProperty("hp", 11)
+
+        assertThat(entity.getInt("hp"), `is`(11))
+    }
+
+    @Test
+    fun `Get Double`() {
+        entity.setProperty("sp", 33.5)
+
+        assertThat(entity.getDouble("sp"), `is`(33.5))
+    }
+
+    @Test
+    fun `Get Boolean`() {
+        entity.setProperty("hasKey", true)
+
+        assertThat(entity.getBoolean("hasKey"), `is`(true))
+    }
+
+    @Test
     fun `Get Object`() {
         entity.setProperty("vec2", Vec2())
 
@@ -367,6 +378,13 @@ class EntityTest {
         entity.setPosition(Vec2(10.0, 10.0))
 
         assertThat(entity.position, `is`(Point2D(10.0, 10.0)))
+    }
+
+    @Test
+    fun `Set position x y`() {
+        entity.setPosition(15.0, 33.0)
+
+        assertThat(entity.position, `is`(Point2D(15.0, 33.0)))
     }
 
     @Test
@@ -704,41 +722,34 @@ class EntityTest {
         assertTrue(entity.isWithin(Rectangle2D(20.0, 20.0, 10.0, 10.0)))
     }
 
-//    @Test
-//    fun `View`() {
-//        val r = Rectangle(40.0, 15.0)
-//
-//        entity.setView(r)
-//
-//        assertThat(entity.view.nodes, containsInAnyOrder<Node>(r))
-//
-//        entity.setViewFromTexture("brick.png")
-//
-//        //assertThat(entity.view.nodes.map { it.javaClass }, containsInAnyOrder<Class<*>>(Texture::class.java))
-//
-//        entity.setViewFromTextureWithBBox("brick.png")
-//
-//        assertThat(entity.width, `is`(64.0))
-//        assertThat(entity.height, `is`(64.0))
-//
-//        entity.setViewWithBBox(r)
-//
-//        assertThat(entity.width, `is`(40.0))
-//        assertThat(entity.height, `is`(15.0))
-//    }
+    @Test
+    fun `View`() {
+        val r = Rectangle()
+        val eView = EntityView(r)
 
-    /* SCRIPTS */
+        entity.view = eView
 
-//    @Test
-//    fun `Scripts`() {
-//        assertFalse(entity.getScriptHandler("onHit").isPresent)
-//
-//        entity.setProperty("onHit", "entity_script.js")
-//
-//        val script = entity.getScriptHandler("onHit").get()
-//
-//        assertThat(script.call<String>("onHit"), `is`("EntityTest"))
-//    }
+        assertThat(entity.view, `is`<com.almasb.fxgl.core.View>(eView))
+        assertThat(entity.viewComponent.view, `is`<com.almasb.fxgl.core.View>(eView))
+    }
+
+    @Test
+    fun `Scale`() {
+        entity.scaleX = 2.0
+        assertThat(entity.scaleX, `is`(2.0))
+        assertThat(entity.transformComponent.scaleX, `is`(2.0))
+
+        entity.scaleY = 1.5
+        assertThat(entity.scaleY, `is`(1.5))
+        assertThat(entity.transformComponent.scaleY, `is`(1.5))
+    }
+
+    @Test
+    fun `Z index`() {
+        entity.z = 100
+        assertThat(entity.z, `is`(100))
+        assertThat(entity.transformComponent.z, `is`(100))
+    }
 
     /* MOCK CLASSES */
 
@@ -794,7 +805,6 @@ class EntityTest {
     }
 
     @Required(TestComponent::class)
-    //@Required(HPComponent::class)
     private inner class RequireTestComponent : Component()
 
     private inner class GravityComponent internal constructor(value: Boolean) : BooleanComponent(value)
