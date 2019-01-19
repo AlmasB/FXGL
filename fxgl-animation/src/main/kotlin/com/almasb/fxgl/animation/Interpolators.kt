@@ -132,6 +132,9 @@ enum class Interpolators : EasingInterpolator {
 
     SINE {
         override fun easeIn(ratio: Double): Double {
+            if (ratio == 1.0)
+                return 1.0
+
             return 1 - Math.cos(ratio * (Math.PI / 2))
         }
 
@@ -247,10 +250,16 @@ enum class Interpolators : EasingInterpolator {
         private val s = 1.70158
 
         override fun easeIn(ratio: Double): Double {
+            if (ratio == 1.0)
+                return 1.0
+
             return ratio * ratio * ((s+1) * ratio - s)
         }
 
         override fun easeOut(ratio: Double): Double {
+            if (ratio == 0.0)
+                return 0.0
+
             val r = ratio - 1
 
             return r * r * ((s+1) * r + s) + 1
