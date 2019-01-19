@@ -630,29 +630,6 @@ class GameWorldTest {
     }
 
     @Test
-    fun `Entity group`() {
-        val e1 = Entity()
-        e1.type = TestType.T1
-
-        val e2 = Entity()
-        e2.type = TestType.T2
-
-        val e3 = Entity()
-        e3.type = TestType.T3
-
-        gameWorld.addEntities(e1, e2, e3)
-
-        var count = 0
-
-        gameWorld.getGroup<Entity>(TestType.T1, TestType.T2).forEach(Consumer {
-            assertTrue(it === e1 || it === e2)
-            count++
-        })
-
-        assertThat(count, `is`(2))
-    }
-
-    @Test
     fun `Closest entity returns Optional empty if no valid entity found`() {
         val e = Entity()
         e.x = 10.0

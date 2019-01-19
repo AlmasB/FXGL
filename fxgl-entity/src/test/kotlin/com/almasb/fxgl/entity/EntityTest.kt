@@ -490,55 +490,6 @@ class EntityTest {
     }
 
     @Test
-    fun `Save and load`() {
-        entity.addComponent(GravityComponent(true))
-        entity.addComponent(CustomDataComponent("SerializationData"))
-        entity.addComponent(CustomDataControl("SerializableControl"))
-
-        val bundle = Bundle("Entity01234")
-        entity.save(bundle)
-
-        val entity2 = Entity()
-        entity2.addComponent(GravityComponent(false))
-        entity2.addComponent(CustomDataComponent(""))
-        entity2.addComponent(CustomDataControl(""))
-
-        entity2.load(bundle)
-
-        assertThat(entity2.getComponent(CustomDataControl::class.java).data, `is`("SerializableControl"))
-        assertThat(entity2.getComponent(CustomDataComponent::class.java).data, `is`("SerializationData"))
-        assertThat(entity2.getComponent(GravityComponent::class.java).value, `is`(true))
-    }
-
-    @Test
-    fun `Load from entity with different components`() {
-        val bundle = Bundle("Entity01234")
-        entity.save(bundle)
-
-        val entity2 = Entity()
-        entity2.addComponent(CustomDataComponent(""))
-
-        // if bundle has no such component coz entity1 did not have it, we ignore it
-        entity2.load(bundle)
-
-        assertThat(entity2.components.size(), `is`(4 + 1))
-    }
-
-    @Test
-    fun `Copying an entity also copies components and controls`() {
-        entity.addComponent(HPComponent(33.0))
-        entity.addComponent(HPControl(10))
-
-        val e2 = entity.copy()
-
-        assertTrue(e2.hasComponent(HPComponent::class.java))
-        assertTrue(e2.hasComponent(HPControl::class.java))
-
-        assertThat(e2.getComponent(HPComponent::class.java).value, `is`(33.0))
-        assertThat(e2.getComponent(HPControl::class.java).value, `is`(10))
-    }
-
-    @Test
     fun testToString() {
         val component = HPComponent(33.0)
         val control = HPControl()

@@ -401,14 +401,6 @@ class GameWorld {
 
     /* QUERIES */
 
-    /**
-     * @return a group of entities of particular type, this is preferred over querying
-     * manually if called many times
-     */
-    fun <T : Entity> getGroup(vararg types: Enum<*>): EntityGroup<T> {
-        return EntityGroup(this, getEntitiesByType(*types) as List<T>, *types)
-    }
-
     fun getSingleton(type: Enum<*>): Entity {
         return getSingleton(Predicate { it.isType(type) })
     }

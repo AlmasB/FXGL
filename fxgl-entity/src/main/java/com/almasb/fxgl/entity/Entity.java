@@ -443,39 +443,6 @@ public class Entity {
         }
     }
 
-    /**
-     * Creates a new instance, which is a copy of this entity.
-     * For each copyable component, copy() will be invoked on the component and attached to new instance.
-     * Components that cannot be copied, must be added manually if required.
-     *
-     * @return copy of this entity
-     */
-    public Entity copy() {
-        return EntityCopier.INSTANCE.copy(this);
-    }
-
-    /**
-     * Save entity state into bundle.
-     * Only serializable components will be written.
-     *
-     * @param bundle the bundle to write to
-     */
-    public void save(Bundle bundle) {
-        EntitySerializer.INSTANCE.save(this, bundle);
-    }
-
-    /**
-     * Load entity state from a bundle.
-     * Only serializable components will be read.
-     * If an entity has a serializable type that is not present in the bundle,
-     * a warning will be logged but no exception thrown.
-     *
-     * @param bundle bundle to read from
-     */
-    public void load(Bundle bundle) {
-        EntitySerializer.INSTANCE.load(this, bundle);
-    }
-
     // CONVENIENCE COMPONENT ACCESS
 
     public final TypeComponent getTypeComponent() {
