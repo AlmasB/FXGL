@@ -20,6 +20,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.io.Serializable
 
 /**
  *
@@ -708,6 +709,10 @@ class EntityTest {
 
         entity.rotateToVector(Point2D(-1.0, 0.0))
         assertThat(entity.rotation, `is`(180.0))
+
+        entity.rotation = 15.0
+        assertThat(entity.rotation, `is`(15.0))
+        assertThat(entity.transformComponent.angle, `is`(15.0))
     }
 
     @Test
@@ -720,6 +725,16 @@ class EntityTest {
         assertThat(entity.bottomY, `is`(40.0))
         assertThat(entity.center, `is`(Point2D(15.0, 20.0)))
         assertTrue(entity.isWithin(Rectangle2D(20.0, 20.0, 10.0, 10.0)))
+    }
+
+    private enum class TT { O }
+
+    @Test
+    fun `Type`() {
+        entity.type = TT.O
+
+        assertThat(entity.type, `is`<Serializable>(TT.O))
+        assertThat(entity.typeComponent.value, `is`<Serializable>(TT.O))
     }
 
     @Test
