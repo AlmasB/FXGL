@@ -32,6 +32,15 @@ class InputTest {
     }
 
     @Test
+    fun `Empty actions`() {
+        val action = object : UserAction("T") {}
+
+        action.onActionBegin()
+        action.onAction()
+        action.onActionEnd()
+    }
+
+    @Test
     fun `Test registering input does not affect mocking`() {
         assertTrue(input.registerInput)
 
