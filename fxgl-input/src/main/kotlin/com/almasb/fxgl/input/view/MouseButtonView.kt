@@ -82,12 +82,8 @@ class MouseButtonView
                 children.add(1, highlight)
             }
 
-            MouseButton.MIDDLE -> {
-                // https://github.com/AlmasB/FXGL/issues/488
-            }
-
             else -> {
-                throw IllegalArgumentException("View for $button type is not supported")
+                throw IllegalArgumentException("View for $button type is not (yet?) supported")
             }
         }
     }

@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
+import javafx.scene.text.Font
 import javafx.scene.text.Text
 
 /**
@@ -21,8 +22,10 @@ class KeyView
                           color: Color = Color.ORANGE,
                           size: Double = 24.0) : StackPane() {
 
-    //private val text = Text(keyCode.getName(), color, size - 2)
-    private val text = Text(keyCode.getName())
+    private val text = Text(keyCode.getName()).also {
+        it.fill = color
+        it.font = Font.font(size - 2)
+    }
     private val background = Rectangle(size * 0.95, size * 1.2, Color.BLACK)
     private val border = Rectangle(size * 1.01, size * 1.25, null)
 

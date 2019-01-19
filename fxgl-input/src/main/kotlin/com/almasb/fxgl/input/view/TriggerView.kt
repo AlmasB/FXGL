@@ -16,6 +16,8 @@ import javafx.scene.Node
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
+import javafx.scene.text.Font
+import javafx.scene.text.Text
 
 /**
  * Trigger view is bound to set trigger.
@@ -49,17 +51,22 @@ class TriggerView
     private fun updateView() {
         val view = createView()
 
-        if (trigger.getModifier() != InputModifier.NONE) {
-            val modifierKey = trigger.getModifier().toKeyCode()
-
-            val modifierView = KeyView(modifierKey, color, size)
-
-//            val hbox = HBox(modifierView, FXGL.getUIFactory().newText("+", color, size), view)
-//
-//            children.setAll(hbox)
-        } else {
+        if (trigger.getModifier() == InputModifier.NONE) {
             children.setAll(view)
+            return
         }
+
+        val modifierKey = trigger.getModifier().toKeyCode()
+        val modifierView = KeyView(modifierKey, color, size)
+
+        val text = Text("+").also {
+            it.fill = color
+            it.font = Font.font(size)
+        }
+
+        val hbox = HBox(modifierView, text, view)
+
+        children.setAll(hbox)
     }
 
     private fun createView(): Node {
