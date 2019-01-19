@@ -6,9 +6,39 @@
 
 package com.almasb.fxgl.input
 
+import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 
-data class MouseTrigger(val button: MouseButton, private val modifier: InputModifier) : Trigger {
+/**
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
+ */
+
+interface Trigger {
+
+    fun getModifier(): InputModifier
+    fun getName(): String
+    fun isKey(): Boolean
+    fun isButton(): Boolean
+}
+
+data class KeyTrigger
+@JvmOverloads constructor(val key: KeyCode,
+                          private val modifier: InputModifier = InputModifier.NONE) : Trigger {
+
+    override fun getModifier() = modifier
+
+    override fun getName() = key.getName()
+
+    override fun isKey() = true
+    override fun isButton() = false
+
+    override fun toString() = (if (modifier == InputModifier.NONE) "" else "$modifier+") + key.getName()
+}
+
+data class MouseTrigger
+@JvmOverloads constructor(val button: MouseButton,
+                          private val modifier: InputModifier = InputModifier.NONE) : Trigger {
 
     companion object {
         fun buttonFromString(value: String) = when(value) {
@@ -19,14 +49,11 @@ data class MouseTrigger(val button: MouseButton, private val modifier: InputModi
         }
     }
 
-    constructor(button: MouseButton) : this(button, InputModifier.NONE)
-
     override fun getModifier() = modifier
 
     override fun getName() = buttonToString()
 
     override fun isKey() = false
-
     override fun isButton() = true
 
     override fun toString() = (if (modifier == InputModifier.NONE) "" else "$modifier+") + buttonToString()
