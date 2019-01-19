@@ -140,7 +140,7 @@ class Input {
     fun update(tpf: Double) {
         if (processInput) {
             for (i in currentActions.indices) {
-                currentActions[i].fireAction()
+                currentActions[i].onAction()
             }
         }
     }
@@ -209,7 +209,7 @@ class Input {
                     currentActions.add(it.key)
 
                     if (processInput)
-                        it.key.fireActionBegin()
+                        it.key.onActionBegin()
                 }
     }
 
@@ -230,7 +230,7 @@ class Input {
             currentActions.remove(it.key)
 
             if (processInput)
-                it.key.fireActionEnd()
+                it.key.onActionEnd()
         }
     }
 

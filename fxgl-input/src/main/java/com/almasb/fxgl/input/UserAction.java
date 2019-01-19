@@ -53,34 +53,16 @@ public abstract class UserAction {
     /**
      * Called once in the same tick when triggered.
      */
-    protected void onActionBegin() {
-        // no default implementation
-    }
+    protected void onActionBegin() { }
 
     /**
      * Called as long as the trigger is being held (pressed).
      * Starts from the next tick from the one when was triggered
      */
-    protected void onAction() {
-        // no default implementation
-    }
+    protected void onAction() { }
 
     /**
      * Called once in the same tick when trigger was released.
      */
-    protected void onActionEnd() {
-        // no default implementation
-    }
-
-    public final void fireActionBegin() {
-        onActionBegin();
-    }
-
-    public final void fireAction() {
-        onAction();
-    }
-
-    public final void fireActionEnd() {
-        onActionEnd();
-    }
+    protected void onActionEnd() { }
 }
