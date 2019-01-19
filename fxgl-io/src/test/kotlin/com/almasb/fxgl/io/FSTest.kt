@@ -56,6 +56,9 @@ class FSTest {
             deleteIfExists(path("somefile.data"))
             deleteIfExists(path("somefile.txt"))
 
+            deleteIfExists(path("parentdir/childfile.dat"))
+            deleteIfExists(path("parentdir"))
+
             assertTrue(!exists(path("testdir")), "test dir is present before")
         }
     }
@@ -105,6 +108,17 @@ class FSTest {
         assertTrue(exists(path("somefile.txt")))
 
         assertThat(Files.readAllLines(path("somefile.txt")), `is`(text))
+    }
+
+    @Test
+    fun `Write creates parent dirs if necessary`() {
+        val data = "Test FXGL FS!"
+
+        assertFalse(exists(path("parentdir")))
+
+        FS.writeDataTask(data, "parentdir/childfile.dat").run()
+
+        assertTrue(exists(path("parentdir")))
     }
 
     @Test
@@ -168,5 +182,16 @@ class FSTest {
 
         FS.deleteFileTask("testdir/somefile").run()
         assertFalse(exists(path("testdir/somefile")))
+    }
+
+    @Test
+    fun `Delete dir throws if dir does not exit`() {
+        var exception = ""
+
+        FS.deleteDirectoryTask("bla-bla-does-not-exist")
+                .onFailure { exception = it.message!! }
+                .run()
+
+        assertTrue(exception.isNotEmpty())
     }
 }
