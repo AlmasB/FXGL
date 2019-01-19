@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.input
 
-import com.almasb.fxgl.input.virtual.VirtualButton
 import com.almasb.sslogger.Logger
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
@@ -268,7 +267,7 @@ class Input {
      */
     fun isHeld(button: MouseButton): Boolean = buttons.getOrDefault(button, false)
 
-    private val virtualButtons = hashMapOf<VirtualButton, KeyCode>()
+    //private val virtualButtons = hashMapOf<VirtualButton, KeyCode>()
 
     /**
      * Bind given action to a mouse button with special modifier key.
@@ -290,12 +289,12 @@ class Input {
         addBinding(action, KeyTrigger(key, modifier))
     }
 
-    @JvmOverloads fun addAction(action: UserAction, key: KeyCode, virtualButton: VirtualButton) {
-        require(!isIllegal(key)) { "Cannot bind to illegal key: $key" }
-
-        addBinding(action, KeyTrigger(key, InputModifier.NONE))
-        addVirtualButton(virtualButton, key)
-    }
+//    @JvmOverloads fun addAction(action: UserAction, key: KeyCode, virtualButton: VirtualButton) {
+//        require(!isIllegal(key)) { "Cannot bind to illegal key: $key" }
+//
+//        addBinding(action, KeyTrigger(key, InputModifier.NONE))
+//        addVirtualButton(virtualButton, key)
+//    }
 
     private fun addBinding(action: UserAction, trigger: Trigger) {
         require(!bindings.containsKey(action)) { """Action with name "${action.name}" already exists""" }
@@ -316,9 +315,9 @@ class Input {
         log.debug("Registered new binding: $action - $trigger")
     }
 
-    private fun addVirtualButton(virtualButton: VirtualButton, key: KeyCode) {
-        virtualButtons[virtualButton] = key
-    }
+//    private fun addVirtualButton(virtualButton: VirtualButton, key: KeyCode) {
+//        virtualButtons[virtualButton] = key
+//    }
 
     /**
      * @return true if rebound, false if action not found or there is another action bound to key
@@ -354,13 +353,13 @@ class Input {
 
     /* VIRTUAL */
 
-    internal fun pressVirtual(virtualButton: VirtualButton) {
-        virtualButtons[virtualButton]?.let { mockKeyPress(it) }
-    }
-
-    internal fun releaseVirtual(virtualButton: VirtualButton) {
-        virtualButtons[virtualButton]?.let { mockKeyRelease(it) }
-    }
+//    internal fun pressVirtual(virtualButton: VirtualButton) {
+//        virtualButtons[virtualButton]?.let { mockKeyPress(it) }
+//    }
+//
+//    internal fun releaseVirtual(virtualButton: VirtualButton) {
+//        virtualButtons[virtualButton]?.let { mockKeyRelease(it) }
+//    }
 
     /* MOCKING */
 
