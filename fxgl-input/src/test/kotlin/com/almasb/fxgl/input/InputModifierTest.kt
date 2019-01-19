@@ -102,6 +102,14 @@ class InputModifierTest {
         assertTrue(InputModifier.NONE.isTriggered(keyEvent(false, false, false)))
     }
 
+    @Test
+    fun `To KeyCode`() {
+        assertTrue(InputModifier.ALT.toKeyCode() == KeyCode.ALT)
+        assertTrue(InputModifier.CTRL.toKeyCode() == KeyCode.CONTROL)
+        assertTrue(InputModifier.SHIFT.toKeyCode() == KeyCode.SHIFT)
+        assertTrue(InputModifier.NONE.toKeyCode() == KeyCode.ALPHANUMERIC)
+    }
+
     private fun mouseEvent(shift: Boolean, ctrl: Boolean, alt: Boolean): MouseEvent {
         return MouseEvent(MouseEvent.ANY, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
                 shift, ctrl, alt,
