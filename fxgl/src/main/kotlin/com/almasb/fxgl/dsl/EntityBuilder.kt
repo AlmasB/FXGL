@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.dsl
 
+import com.almasb.fxgl.core.View
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityView
@@ -22,7 +23,6 @@ import javafx.scene.Node
  */
 class EntityBuilder {
     private val entity = Entity()
-    private val entityView by lazy { EntityView() }
 
     fun from(data: SpawnData) = this.also {
         at(data.x, data.y)
@@ -73,9 +73,20 @@ class EntityBuilder {
     }
 
     fun view(node: Node) = this.also {
-        entityView.clearChildren()
-        entityView.addNode(node)
-        entity.view = entityView
+        if (node is View) {
+            entity.viewComponent.view = node
+        } else {
+            entity.viewComponent.setViewFromNode(node)
+        }
+
+//        entityView.clearChildren()
+//
+//        if (node is View) {
+//            entity.view = node
+//        } else {
+//            entityView.addNode(node)
+//            entity.view = entityView
+//        }
     }
 
     fun viewWithBBox(node: Node) = this.also {
