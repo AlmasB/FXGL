@@ -6,4 +6,6 @@ module fxgl.io {
     requires fxgl.core;
     requires charm.down.core;
     requires charm.down.plugin.storage;
+
+    exports com.almasb.fxgl.io;
 }
