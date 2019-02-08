@@ -16,7 +16,6 @@ import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.ui.FontFactory
 import com.almasb.fxgl.ui.UI
 import com.almasb.fxgl.ui.UIController
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.gluonhq.charm.down.Services
 import com.gluonhq.charm.down.plugins.AudioService
 import com.gluonhq.charm.down.plugins.audio.Audio
@@ -345,25 +344,6 @@ class AssetLoader {
      */
     fun loadJSON(name: String): List<String> {
         return readAllLines(JSON_DIR + name)
-    }
-
-    private val jsonMapper by lazy { ObjectMapper() }
-
-    /**
-     * Loads JSON file with given name from /assets/json/ and parses into an object of type T.
-     * Either returns a valid parsed object or throws exception in case of errors.
-     *
-     * The tileset sprite sheets must be located in /assets/textures/
-     *
-     * @param name JSON file name, e.g. level_data.json
-     * @param type object type to parse to
-     * @return parsed object
-     * @throws IllegalArgumentException if asset not found or loading error
-     */
-    fun <T : Any> loadJSON(name: String, type: Class<T>): T {
-        getStream(JSON_DIR + name).use {
-            return jsonMapper.readValue(it, type)
-        }
     }
 
     /**

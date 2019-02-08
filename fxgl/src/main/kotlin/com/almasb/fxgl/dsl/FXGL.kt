@@ -194,8 +194,6 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun text(assetName: String) = getAssetLoader().loadText(assetName)
 
-    @JvmStatic fun <T : Any> jsonAs(name: String, type: Class<T>): T = getAssetLoader().loadJSON(name, type)
-
 /* AUDIO */
 
     /**
