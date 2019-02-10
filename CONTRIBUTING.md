@@ -18,7 +18,7 @@ Any new API or changes to existing API should be discussed to avoid inconsistenc
 
 ## Building
 
-You need to have Oracle JDK 1.8.0_101+ to build FXGL.
+You need to have JDK 11 to build FXGL.
 You can build FXGL from sources using [Maven](https://maven.apache.org/):
 ```maven
 mvn clean package
@@ -28,22 +28,22 @@ This will create FXGL-x.y.z.jar, sources.jar, javadoc.jar and uber-jar in the "f
 
 ## Workflow
 
-Typically there are 2 branches: `master` and `x.y.z`.
+Typically there are 2 branches: `master` and `dev`.
 The `master` branch is for releases only.
-All the work goes to and stems from the `x.y.z` branch.
-Hence, after cloning you should always branch away from `x.y.z` and once
-your work is complete, pull a request back to `x.y.z`.
+All the work goes to and stems from the `dev` branch.
+Hence, after cloning you should always branch away from `dev` and once
+your work is complete, pull a request back to `dev`.
 
 ## Development
 
 Due to use of Kotlin, the only feasible IDE is [IntelliJ IDEA](https://www.jetbrains.com/idea/).
-To start developing FXGL you can setup IDEA (2017.2.5+) as follows:
+To start developing FXGL you can setup IDEA (2018.3.4+) as follows:
 
 1. Fork FXGL into your GitHub repo, then clone your repo to your machine.
-1. `cd` to that directory -> `git checkout -b BRANCH_NAME x.y.z`, where `x.y.z` is next version and `BRANCH_NAME` is your working branch.
+1. `cd` to that directory -> `git checkout -b BRANCH_NAME dev`, where `BRANCH_NAME` is your working branch.
 1. Open IDEA -> File -> New -> Project from Existing Sources -> Select the cloned FXGL directory.
 1. Import project from external model -> Maven -> Next -> Next.
-1. Select the provided Maven project to import -> Next -> Use JDK8+ -> Next -> Finish.
+1. Select the provided Maven project to import -> Next -> Use JDK11 -> Next -> Finish.
 
 You now should see something like this:
 
@@ -58,7 +58,6 @@ The project uses the following guidelines:
 * Javadoc on public and protected API (where appropriate).
 * Keep access to fields and methods as restricted as you can.
 * When using text in UI, use localization (e.g. english.properties).
-* Use BackportKt if you need to access Java 8 API.
 * Short license header in each new file and `@author`.
 
 Code quality reports are available from [Codacy](https://www.codacy.com/app/AlmasB/FXGL/dashboard).
