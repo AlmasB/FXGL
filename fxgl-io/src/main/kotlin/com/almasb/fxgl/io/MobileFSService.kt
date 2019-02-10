@@ -7,9 +7,8 @@
 package com.almasb.fxgl.io
 
 import com.almasb.sslogger.Logger
-import com.gluonhq.charm.down.Services
-import com.gluonhq.charm.down.plugins.StorageService
 import java.io.*
+import java.lang.RuntimeException
 
 /**
  *
@@ -19,12 +18,13 @@ internal class MobileFSService(val isDesktop: Boolean) : FSService {
 
     private val log = Logger.get(javaClass)
 
-    private val storage = Services.get(StorageService::class.java).orElseThrow { RuntimeException("No StorageService present") }
+    //private val storage = Services.get(StorageService::class.java).orElseThrow { RuntimeException("No StorageService present") }
 
     private val rootStorage = if (isDesktop)
         File(System.getProperty("user.dir") + "/")
     else
-        storage.privateStorage.orElseThrow { RuntimeException("No private storage present") }
+        throw RuntimeException("Mobile not supported yet!")
+        //storage.privateStorage.orElseThrow { RuntimeException("No private storage present") }
 
     override fun exists(pathName: String): Boolean {
         return toFile(pathName).exists()

@@ -23,9 +23,6 @@ import com.almasb.fxgl.ui.FXGLUIConfig
 import com.almasb.fxgl.ui.FontType
 import com.almasb.sslogger.Logger
 import com.gluonhq.charm.down.Platform
-import com.gluonhq.charm.down.Services
-import com.gluonhq.charm.down.plugins.LifecycleEvent
-import com.gluonhq.charm.down.plugins.LifecycleService
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.event.EventHandler
@@ -184,10 +181,7 @@ internal class Engine(
 
     private fun attachPauseResumeListener() {
         if (FXGL.isMobile()) {
-            Services.get(LifecycleService::class.java).ifPresent { service ->
-                service.addListener(LifecycleEvent.PAUSE) { loop.pause() }
-                service.addListener(LifecycleEvent.RESUME) { loop.resume() }
-            }
+            // no-op
         } else {
             stage.iconifiedProperty().addListener { _, _, isMinimized ->
                 if (isMinimized) {

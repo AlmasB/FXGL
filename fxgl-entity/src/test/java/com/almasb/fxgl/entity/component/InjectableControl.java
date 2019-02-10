@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity.diff;
+package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.entity.EntityTest;
 import com.almasb.fxgl.entity.component.Component;

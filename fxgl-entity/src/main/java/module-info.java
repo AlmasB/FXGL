@@ -5,6 +5,9 @@ module fxgl.entity {
     requires kotlin.stdlib;
     requires fxgl.core;
 
+    opens com.almasb.fxgl.entity.component to fxgl.core;
+    opens com.almasb.fxgl.entity.components to fxgl.core;
+
     exports com.almasb.fxgl.entity;
     exports com.almasb.fxgl.entity.component;
     exports com.almasb.fxgl.entity.components;

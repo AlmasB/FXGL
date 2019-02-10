@@ -85,12 +85,6 @@
             <artifactId>fxgl-time</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.gluonhq</groupId>
-            <artifactId>charm-down-plugin-lifecycle</artifactId>
-            <version>${charm.down.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
