@@ -182,18 +182,18 @@ class AssetLoaderTest {
         stream.close()
     }
 
-    @Test
-    fun `Load all file names from given asset directory`() {
-        val filenames = assetLoader.loadFileNames("/assets/ui/")
-
-        assertThat(filenames,
-                hasItems(
-                "css/test.css",
-                "cursors/test_cursor.png",
-                "fonts/test.ttf",
-                "test_ui.fxml"
-                ))
-    }
+//    @Test
+//    fun `Load all file names from given asset directory`() {
+//        val filenames = assetLoader.loadFileNames("/assets/ui/")
+//
+//        assertThat(filenames,
+//                hasItems(
+//                "css/test.css",
+//                "cursors/test_cursor.png",
+//                "fonts/test.ttf",
+//                "test_ui.fxml"
+//                ))
+//    }
 
     @Test
     fun `Check loaded from cache when present`() {

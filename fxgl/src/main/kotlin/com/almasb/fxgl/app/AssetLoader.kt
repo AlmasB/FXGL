@@ -443,7 +443,7 @@ class AssetLoader {
         log.debug("Loading from disk: " + name)
 
         // try /assets/ from user module using their class
-        return GameApplication.FXGLApplication.app.javaClass.getResource(name)
+        return GameApplication.FXGLApplication.app?.javaClass?.getResource(name)
                 // try /fxglassets/ from fxgl.all module using this javaclass
                 ?: javaClass.getResource("/fxgl${name.substring(1)}")
                 ?: throw IllegalArgumentException("Asset \"$name\" was not found!")
@@ -505,18 +505,18 @@ class AssetLoader {
      * Pre-loads all textures / sounds / music / text / fonts and binary data
      * from their respective folders.
      */
-    fun cache() {
-        log.debug("Caching assets")
-
-        loadFileNames(TEXTURES_DIR).forEach { loadTexture(it) }
-        loadFileNames(SOUNDS_DIR).forEach { loadSound(it) }
-        loadFileNames(MUSIC_DIR).forEach { loadMusic(it) }
-        loadFileNames(TEXT_DIR).forEach { loadText(it) }
-        loadFileNames(FONTS_DIR).forEach { loadFont(it) }
-        loadFileNames(BINARY_DIR).forEach { loadDataInternal(it) }
-
-        log.debug("Caching complete. Size: ${cachedAssets.size()}")
-    }
+//    fun cache() {
+//        log.debug("Caching assets")
+//
+//        loadFileNames(TEXTURES_DIR).forEach { loadTexture(it) }
+//        loadFileNames(SOUNDS_DIR).forEach { loadSound(it) }
+//        loadFileNames(MUSIC_DIR).forEach { loadMusic(it) }
+//        loadFileNames(TEXT_DIR).forEach { loadText(it) }
+//        loadFileNames(FONTS_DIR).forEach { loadFont(it) }
+//        loadFileNames(BINARY_DIR).forEach { loadDataInternal(it) }
+//
+//        log.debug("Caching complete. Size: ${cachedAssets.size()}")
+//    }
 
     /**
      * Release all cached assets.
@@ -535,32 +535,32 @@ class AssetLoader {
      * @return list of file names
      * @throws IllegalArgumentException if directory does not start with "/assets/" or was not found
      */
-    fun loadFileNames(directory: String): List<String> {
-        require(directory.startsWith(ASSETS_DIR)) {
-            "Directory must start with: $ASSETS_DIR Provided: $directory"
-        }
-
-        try {
-            val url = javaClass.getResource(directory)
-            if (url != null) {
-                if (url.toString().startsWith("jar"))
-                    return loadFileNamesJar(directory.substring(1))
-
-                val dir = Paths.get(url.toURI())
-
-                if (Files.exists(dir)) {
-                    return Files.walk(dir)
-                            .filter { Files.isRegularFile(it) }
-                            .map { dir.relativize(it).toString().replace("\\", "/") }
-                            .collect(Collectors.toList<String>())
-                }
-            }
-
-            return loadFileNamesJar(directory.substring(1))
-        } catch (e: Exception) {
-            throw loadFailed(directory, e)
-        }
-    }
+//    fun loadFileNames(directory: String): List<String> {
+//        require(directory.startsWith(ASSETS_DIR)) {
+//            "Directory must start with: $ASSETS_DIR Provided: $directory"
+//        }
+//
+//        try {
+//            val url = javaClass.getResource(directory)
+//            if (url != null) {
+//                if (url.toString().startsWith("jar"))
+//                    return loadFileNamesJar(directory.substring(1))
+//
+//                val dir = Paths.get(url.toURI())
+//
+//                if (Files.exists(dir)) {
+//                    return Files.walk(dir)
+//                            .filter { Files.isRegularFile(it) }
+//                            .map { dir.relativize(it).toString().replace("\\", "/") }
+//                            .collect(Collectors.toList<String>())
+//                }
+//            }
+//
+//            return loadFileNamesJar(directory.substring(1))
+//        } catch (e: Exception) {
+//            throw loadFailed(directory, e)
+//        }
+//    }
 
     /**
      * Loads file names from a directory when running within a jar.
@@ -569,37 +569,37 @@ class AssetLoader {
      * @param folderName folder files of which need to be retrieved
      * @return list of file names
      */
-    private fun loadFileNamesJar(folderName: String): List<String> {
-        val fileNames = ArrayList<String>()
-        val src = AssetLoader::class.java.protectionDomain.codeSource
-        if (src != null) {
-            val jar = src.location
-            try {
-                jar.openStream().use {
-                    ZipInputStream(it).use { zip ->
-                        var ze: ZipEntry
-                        while (true) {
-                            ze = zip.nextEntry ?: break
-
-                            val entryName = ze.name
-                            if (entryName.startsWith(folderName)) {
-                                if (entryName.endsWith("/"))
-                                    continue
-                                fileNames.add(entryName.substring(entryName.indexOf(folderName) + folderName.length))
-                            }
-                        }
-                    }
-                }
-            } catch (e: IOException) {
-                log.warning("Failed to load file names from jar - " + e)
-            }
-
-        } else {
-            log.warning("Failed to load file names from jar - No code source")
-        }
-
-        return fileNames
-    }
+//    private fun loadFileNamesJar(folderName: String): List<String> {
+//        val fileNames = ArrayList<String>()
+//        val src = AssetLoader::class.java.protectionDomain.codeSource
+//        if (src != null) {
+//            val jar = src.location
+//            try {
+//                jar.openStream().use {
+//                    ZipInputStream(it).use { zip ->
+//                        var ze: ZipEntry
+//                        while (true) {
+//                            ze = zip.nextEntry ?: break
+//
+//                            val entryName = ze.name
+//                            if (entryName.startsWith(folderName)) {
+//                                if (entryName.endsWith("/"))
+//                                    continue
+//                                fileNames.add(entryName.substring(entryName.indexOf(folderName) + folderName.length))
+//                            }
+//                        }
+//                    }
+//                }
+//            } catch (e: IOException) {
+//                log.warning("Failed to load file names from jar - " + e)
+//            }
+//
+//        } else {
+//            log.warning("Failed to load file names from jar - No code source")
+//        }
+//
+//        return fileNames
+//    }
 
     /**
      * Constructs new IllegalArgumentException with "load failed" message
