@@ -19,15 +19,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-plugin-audio</artifactId>
-            <version>${audio.plugin.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-plugin-audio-desktop</artifactId>
-            <version>${audio.plugin.version}</version>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>${jfx.version}</version>
         </dependency>
     </dependencies>
 

@@ -6,20 +6,17 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.audio.AudioType
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
+import com.almasb.fxgl.audio.impl.DesktopAudioService
 import com.almasb.fxgl.core.collection.ObjectMap
-import com.almasb.fxgl.dsl.FXGL
-import com.almasb.sslogger.Logger
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.ui.FontFactory
 import com.almasb.fxgl.ui.UI
 import com.almasb.fxgl.ui.UIController
-import com.gluonhq.charm.down.Services
-import com.gluonhq.charm.down.plugins.AudioService
-import com.gluonhq.charm.down.plugins.audio.Audio
-import com.gluonhq.charm.down.plugins.audio.AudioType
+import com.almasb.sslogger.Logger
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.image.Image
@@ -89,43 +86,7 @@ class AssetLoader {
 
     private val log = Logger.get(javaClass)
 
-    private val audioService = audioService()
-
-    private fun audioService(): AudioService {
-        return if (!FXGL.isIOS())
-            Services.get(AudioService::class.java).orElseThrow { RuntimeException("No AudioService present") }
-        else
-            // ios audio service is not implemented yet, so just mock
-            object : AudioService {
-                override fun unloadAudio(audio: Audio) {
-                }
-
-                override fun loadAudio(audio: AudioType, fileName: String): Audio {
-                    return object : Audio(AudioType.MUSIC, fileName) {
-                        override fun play() {
-                        }
-
-                        override fun setVolume(p0: Double) {
-                        }
-
-                        override fun stop() {
-                        }
-
-                        override fun pause() {
-                        }
-
-                        override fun setOnFinished(p0: Runnable?) {
-                        }
-
-                        override fun setLooping(p0: Boolean) {
-                        }
-
-                        override fun dispose() {
-                        }
-                    }
-                }
-            }
-    }
+    private val audioService = DesktopAudioService()
 
     private val cachedAssets = ObjectMap<String, Any>()
 

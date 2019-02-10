@@ -7,7 +7,6 @@
 package com.almasb.fxgl.audio
 
 import com.almasb.fxgl.core.Disposable
-import com.gluonhq.charm.down.plugins.audio.Audio
 
 /**
  * Represents a short sound in .wav file.
