@@ -22,7 +22,6 @@ import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.fxgl.ui.FXGLUIConfig
 import com.almasb.fxgl.ui.FontType
 import com.almasb.sslogger.Logger
-import com.gluonhq.charm.down.Platform
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.event.EventHandler
@@ -98,7 +97,7 @@ internal class Engine(
     }
 
     private fun logVersion() {
-        val platform = "${Platform.getCurrent()}" + if (FXGL.isBrowser()) " BROWSER" else ""
+        val platform = "DESKTOP" + if (FXGL.isBrowser()) " BROWSER" else ""
 
         log.info("FXGL-$version on $platform")
         log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")

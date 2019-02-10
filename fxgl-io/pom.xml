@@ -17,18 +17,6 @@
             <artifactId>fxgl-core</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.gluonhq</groupId>
-            <artifactId>charm-down-plugin-storage</artifactId>
-            <version>${charm.down.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.gluonhq</groupId>
-            <artifactId>charm-down-plugin-storage-desktop</artifactId>
-            <version>${charm.down.version}</version>
-        </dependency>
     </dependencies>
 
     <build>

@@ -26,7 +26,6 @@ import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.time.Timer
-import com.gluonhq.charm.down.Platform
 import javafx.beans.property.*
 import javafx.event.Event
 import javafx.geometry.Point2D
@@ -61,10 +60,10 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun isBrowser() = System.getProperty("fxgl.isBrowser", "false") == "true"
 
     // javafxports doesn't have "web" option, so will incorrectly default to desktop, hence the extra check
-    @JvmStatic fun isDesktop() = !isBrowser() && Platform.isDesktop()
+    @JvmStatic fun isDesktop() = true
     @JvmStatic fun isMobile() = isAndroid() || isIOS()
-    @JvmStatic fun isAndroid() = Platform.isAndroid()
-    @JvmStatic fun isIOS() = Platform.isIOS()
+    @JvmStatic fun isAndroid() = false
+    @JvmStatic fun isIOS() = false
 
     /**
      * @return FXGL system settings

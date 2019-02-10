@@ -8,7 +8,6 @@ package com.almasb.fxgl.io
 
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.sslogger.Logger
-import com.gluonhq.charm.down.Platform
 import java.io.File
 import java.io.Serializable
 
@@ -24,7 +23,7 @@ private constructor() {
 
         private val log = Logger.get<FS>()
 
-        private val fs: FSService = MobileFSService(Platform.isDesktop())
+        private val fs: FSService = MobileFSService(true)
 
         init {
             log.debug("Loaded ${fs.javaClass.simpleName}")
