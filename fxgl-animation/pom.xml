@@ -32,6 +32,24 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
             </plugin>
 
+            <!-- Create sources.jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+
+            <!-- Create javadoc.jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+
+            <!-- Attach kotlin sources -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+
             <!-- Generate test coverage reports -->
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -40,14 +58,6 @@
                 <configuration>
                     <destFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</destFile>
                     <dataFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</dataFile>
-
-                    <!-- Ignore 3rd party code and developer tools -->
-
-                    <excludes>
-                        <exclude>com/almasb/fxgl/physics/box2d/**/*</exclude>
-                        <exclude>com/almasb/fxgl/ai/**/*</exclude>
-                        <exclude>com/almasb/fxgl/devtools/**/*</exclude>
-                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
