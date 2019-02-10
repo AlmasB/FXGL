@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ FXGL - JavaFX Game Library. The MIT License (MIT).
+  ~ Copyright (c) AlmasB (almaslvl@gmail.com).
+  ~ See LICENSE for details.
+  -->
+
+<?import javafx.scene.control.*?>
+<DeveloperMenuBar xmlns="http://javafx.com/javafx/8.0.60"
+                  xmlns:fx="http://javafx.com/fxml/1">
+
+    <Menu text="FXGL">
+        <MenuItem text="Console" onAction="#openConsole" />
+        <MenuItem text="Pause" onAction="#onPause" />
+        <MenuItem text="Resume" onAction="#onResume" />
+        <MenuItem text="Exit" onAction="#onExit" />
+    </Menu>
+
+    <Menu text="Add...">
+        <MenuItem text="Entity" onAction="#openAddDialog" />
+        <MenuItem text="Edit Entity" onAction="#openEditDialog" />
+    </Menu>
+
+    <Menu text="View">
+        <MenuItem text="Color Adjust" onAction="#openColorAdjustDialog" />
+        <CheckMenuItem text="Show BBox" onAction="#onShowBBox" />
+        <CheckMenuItem text="Show Position" onAction="#onShowPosition" />
+        <CheckMenuItem text="Track Clicks" onAction="#onTrackClicks" />
+    </Menu>
+
+    <Menu fx:id="menuCustom" text="Custom">
+
+    </Menu>
+
+</DeveloperMenuBar>

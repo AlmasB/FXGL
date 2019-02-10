@@ -13,8 +13,8 @@ JavaFX Game Development Framework
 
 ### Why FXGL?
 
-* No native libraries, no installation, no setup required
-* "Out of the box": Java 8/9/10, Win/Mac/Linux/Android 5.0+([Sample](https://github.com/AlmasB/FXGL-MobileApp))/iOS([alpha](https://github.com/AlmasB/FXGL-MobileApp))/Web([alpha](https://github.com/AlmasB/FXGL-WebApp))
+* No installation or setup required
+* "Out of the box": Java 8/9/10/11, Win/Mac/Linux/Android 5.0+([Sample](https://github.com/AlmasB/FXGL-MobileApp))/iOS([alpha](https://github.com/AlmasB/FXGL-MobileApp))/Web([alpha](https://github.com/AlmasB/FXGL-WebApp))
 * Simple and clean API, higher level than other engines
 * Superset of JavaFX: no need to learn new UI API
 * Real-world game development techniques: Entity-Component, Event System, Scripting, etc.
@@ -52,6 +52,9 @@ public class BasicGameApp extends GameApplication {
 ```
 
 ## Getting Started
+
+- Version for Java 8/9/10: `0.5.4`
+- Version for Java 11+: `11.0`
 
 * [Wiki & Written tutorials](https://github.com/AlmasB/FXGL/wiki)
 * API Documentation
@@ -113,7 +116,7 @@ If your institution wants to use / is using FXGL, drop me an email to discuss ho
 If you want to build FXGL from sources or want to contribute,
 please see the [Contribution Guide](CONTRIBUTING.md) (including non-code).
 
-You can support the FXGL development via [PayPal](https://www.paypal.me/FXGL) or simply star the repo to show interest.
+You can support the FXGL development / show interest by simply starring the repo.
 
 ### Contact
 

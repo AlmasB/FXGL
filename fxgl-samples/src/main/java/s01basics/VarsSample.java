@@ -8,11 +8,13 @@ package s01basics;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.app.GameSettings;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import java.util.Map;
+
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * Shows how to use global property variables.
