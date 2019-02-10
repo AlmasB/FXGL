@@ -12,7 +12,6 @@ import com.almasb.fxgl.dsl.FXGL;
 import javafx.concurrent.Task;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * This is an example of a minimalistic FXGL game application.
@@ -30,7 +29,6 @@ public class LoadingSample extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
         settings.setSceneFactory(new SceneFactory() {
-            @NotNull
             @Override
             public LoadingScene newLoadingScene() {
                 return new MyLoadingScene();
@@ -75,7 +73,7 @@ public class LoadingSample extends GameApplication {
         }
 
         @Override
-        public void bind(@NotNull Task<?> task) {
+        public void bind(Task<?> task) {
             task.progressProperty().addListener((observable, oldValue, progress) -> {
                 r.setHeight(FXGL.getAppHeight() * progress.doubleValue());
             });

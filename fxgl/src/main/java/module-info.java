@@ -2,20 +2,22 @@
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 module fxgl.all {
-    requires fxgl.core;
-    requires fxgl.animation;
-    requires fxgl.effects;
-    requires fxgl.entity;
-    requires fxgl.events;
-    requires fxgl.input;
-    requires fxgl.io;
-    requires fxgl.media;
-    requires fxgl.time;
-    requires fxgl.ui;
+    requires transitive fxgl.core;
+    requires transitive fxgl.animation;
+    requires transitive fxgl.effects;
+    requires transitive fxgl.entity;
+    requires transitive fxgl.events;
+    requires transitive fxgl.input;
+    requires transitive fxgl.io;
+    requires transitive fxgl.media;
+    requires transitive fxgl.time;
+    requires transitive fxgl.ui;
 
-    requires javafx.controls;
-    requires javafx.fxml;
-    requires javafx.swing;
+    requires transitive javafx.base;
+    requires transitive javafx.graphics;
+    requires transitive javafx.controls;
+    requires transitive javafx.fxml;
+    requires transitive javafx.swing;
 
     opens com.almasb.fxgl.dsl to fxgl.core;
 

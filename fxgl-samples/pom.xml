@@ -26,6 +26,7 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
+            <classifier>modular</classifier>
         </dependency>
 
         <dependency>
