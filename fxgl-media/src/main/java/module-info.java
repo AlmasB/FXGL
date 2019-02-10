@@ -2,7 +2,6 @@
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 module fxgl.media {
-    requires kotlin.stdlib;
     requires fxgl.core;
     requires javafx.media;
 

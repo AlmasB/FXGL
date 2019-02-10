@@ -80,8 +80,7 @@
         <!-- dependencies -->
         <jfx.version>11</jfx.version>
         <kotlin.version>1.3.21</kotlin.version>
-        <charm.down.version>3.7.0</charm.down.version>
-        <audio.plugin.version>0.0.2</audio.plugin.version>
+        <sslogger.version>1.0</sslogger.version>
 
         <!-- test dependencies -->
         <junit.jupiter.version>5.4.0</junit.jupiter.version>
@@ -94,6 +93,7 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
+            <classifier>modular</classifier>
         </dependency>
 
         <!-- test scope dependencies -->

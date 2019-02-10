@@ -2,7 +2,6 @@
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 module fxgl.entity {
-    requires kotlin.stdlib;
     requires fxgl.core;
 
     opens com.almasb.fxgl.entity.component to fxgl.core;

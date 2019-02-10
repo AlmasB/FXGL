@@ -2,8 +2,9 @@
  *
  */
 module fxgl.core {
-    requires kotlin.stdlib;
+    requires transitive kotlin.stdlib;
     requires transitive javafx.graphics;
+    requires transitive javafx.base;
     requires transitive sslogger.main;
 
     exports com.almasb.fxgl.core;
