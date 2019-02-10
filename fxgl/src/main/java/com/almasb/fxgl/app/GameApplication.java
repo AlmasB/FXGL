@@ -188,7 +188,7 @@ public abstract class GameApplication {
 
     public static final class FXGLApplication extends Application {
 
-        private static GameApplication app;
+        public static GameApplication app;
         private static ReadOnlyGameSettings settings;
 
         /**

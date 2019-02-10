@@ -442,7 +442,11 @@ class AssetLoader {
     private fun getURL(name: String): URL {
         log.debug("Loading from disk: " + name)
 
-        return javaClass.getResource(name) ?: throw IllegalArgumentException("Asset \"$name\" was not found!")
+        // try /assets/ from user module using their class
+        return GameApplication.FXGLApplication.app.javaClass.getResource(name)
+                // try /fxglassets/ from fxgl.all module using this javaclass
+                ?: javaClass.getResource("/fxgl${name.substring(1)}")
+                ?: throw IllegalArgumentException("Asset \"$name\" was not found!")
     }
 
     /**
