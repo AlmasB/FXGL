@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.asset
+package com.almasb.fxgl.app
 
 /**
  *

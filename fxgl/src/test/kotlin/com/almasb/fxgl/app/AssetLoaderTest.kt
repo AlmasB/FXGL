@@ -4,10 +4,8 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.asset
+package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.AssetLoader
-import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat

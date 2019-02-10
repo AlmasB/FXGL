@@ -6,7 +6,6 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.util.Credits;
-import com.almasb.fxgl.ui.MockUIFactory;
 import javafx.application.Application;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;

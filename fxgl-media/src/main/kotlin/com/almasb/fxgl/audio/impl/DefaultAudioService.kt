@@ -9,6 +9,7 @@ package com.almasb.fxgl.audio.impl
 import com.almasb.fxgl.audio.Audio
 import com.almasb.fxgl.audio.AudioService
 import com.almasb.fxgl.audio.AudioType
+import java.net.URL
 import java.util.HashMap
 
 /**
@@ -19,17 +20,15 @@ abstract class DefaultAudioService : AudioService {
 
     private val cache = HashMap<String, Audio>()
 
-    override fun loadAudio(type: AudioType, resourceName: String): Audio {
-        var audio: Audio? = cache[resourceName]
+    override fun loadAudio(type: AudioType, resourceURL: URL): Audio {
+        val url = resourceURL.toExternalForm()
+
+        var audio: Audio? = cache[url]
 
         if (audio == null) {
-            try {
-                audio = loadAudioImpl(type, resourceName)
-            } catch (e: Exception) {
-                throw RuntimeException("Failed to load audio", e)
-            }
+            audio = loadAudioImpl(type, resourceURL)
 
-            cache[resourceName] = audio
+            cache[url] = audio
         }
 
         return audio
@@ -40,5 +39,5 @@ abstract class DefaultAudioService : AudioService {
         audio.dispose()
     }
 
-    protected abstract fun loadAudioImpl(type: AudioType, resourceName: String): Audio
+    protected abstract fun loadAudioImpl(type: AudioType, resourceURL: URL): Audio
 }

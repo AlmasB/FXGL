@@ -6,13 +6,15 @@
 
 package com.almasb.fxgl.audio
 
+import java.net.URL
+
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 interface AudioService {
 
-    fun loadAudio(type: AudioType, resourceName: String): Audio
+    fun loadAudio(type: AudioType, resourceURL: URL): Audio
 
     fun unloadAudio(audio: Audio)
 }

@@ -4,8 +4,9 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.ui
+package com.almasb.fxgl.app
 
+import com.almasb.fxgl.ui.*
 import javafx.beans.binding.StringBinding
 import javafx.beans.binding.StringExpression
 import javafx.collections.ObservableList

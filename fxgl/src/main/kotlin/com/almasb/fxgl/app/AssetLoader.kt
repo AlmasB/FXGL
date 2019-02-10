@@ -239,7 +239,7 @@ class AssetLoader {
         }
 
         try {
-            val sound = Sound(audioService.loadAudio(AudioType.SOUND, SOUNDS_DIR + name))
+            val sound = Sound(audioService.loadAudio(AudioType.SOUND, getURL(SOUNDS_DIR + name)))
             cachedAssets.put(SOUNDS_DIR + name, sound)
             return sound
         } catch (e: Exception) {
@@ -265,7 +265,7 @@ class AssetLoader {
         }
 
         try {
-            val music = Music(audioService.loadAudio(AudioType.MUSIC, MUSIC_DIR + name))
+            val music = Music(audioService.loadAudio(AudioType.MUSIC, getURL(MUSIC_DIR + name)))
             cachedAssets.put(MUSIC_DIR + name, music)
             return music
         } catch (e: Exception) {

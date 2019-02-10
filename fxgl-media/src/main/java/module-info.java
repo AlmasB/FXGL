@@ -9,5 +9,5 @@ module fxgl.media {
     exports com.almasb.fxgl.audio;
     exports com.almasb.fxgl.texture;
 
-    //exports com.almasb.fxgl.audio.impl to fxgl
+    exports com.almasb.fxgl.audio.impl to fxgl.all;
 }

@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.settings
+package com.almasb.fxgl.app
 
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.dsl.FXGL
