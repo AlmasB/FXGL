@@ -23,7 +23,7 @@ private constructor() {
 
         private val log = Logger.get<FS>()
 
-        private val fs: FSService = MobileFSService(true)
+        private val fs: FSService = MobileFSService()
 
         init {
             log.debug("Loaded ${fs.javaClass.simpleName}")
