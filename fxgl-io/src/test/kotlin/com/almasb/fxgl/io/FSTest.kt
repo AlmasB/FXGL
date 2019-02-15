@@ -67,6 +67,7 @@ class FSTest {
     @Test
     fun `Exists correctly reports dirs and files`() {
         assertTrue(FS.exists("testdir"))
+        assertTrue(FS.exists("testdir/"))
         assertFalse(FS.exists("testdir/testexist"))
         assertFalse(FS.exists("testdir/testexist.txt"))
 
