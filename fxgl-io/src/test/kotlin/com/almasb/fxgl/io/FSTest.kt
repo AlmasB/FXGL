@@ -136,6 +136,10 @@ class FSTest {
         val fileNames3 = FS.loadFileNamesTask("testdir", true, listOf(FileExtension("json"))).run()
 
         assertThat(fileNames3, containsInAnyOrder("testfile.json", "testsubdir/testfile2.json"))
+
+        val fileNames4 = FS.loadFileNamesTask("testdir", false, listOf(FileExtension("json"))).run()
+
+        assertThat(fileNames4, containsInAnyOrder("testfile.json"))
     }
 
     @Test
