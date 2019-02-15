@@ -166,6 +166,9 @@ class FSTest {
         val data = FS.loadLastModifiedFileTask<String>("testdir", false).run()
         assertThat(data, `is`("b"))
 
+        val data2 = FS.loadLastModifiedFileTask<String>("testdir", true).run()
+        assertThat(data2, `is`("b"))
+
         deleteIfExists(path("testdir/file.a"))
         deleteIfExists(path("testdir/file.b"))
     }
