@@ -8,6 +8,7 @@ package com.almasb.fxgl.input
 
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
+import java.lang.RuntimeException
 
 /**
  *
@@ -45,7 +46,7 @@ data class MouseTrigger
             "LMB" -> MouseButton.PRIMARY
             "MMB" -> MouseButton.MIDDLE
             "RMB" -> MouseButton.SECONDARY
-            else -> MouseButton.NONE
+            else -> throw RuntimeException("Must be one of [LMB, MMB, RMB]")
         }
     }
 
@@ -62,6 +63,6 @@ data class MouseTrigger
         MouseButton.PRIMARY -> "LMB"
         MouseButton.MIDDLE -> "MMB"
         MouseButton.SECONDARY -> "RMB"
-        else -> "NONE"
+        else -> throw RuntimeException("Not a mouse button")
     }
 }

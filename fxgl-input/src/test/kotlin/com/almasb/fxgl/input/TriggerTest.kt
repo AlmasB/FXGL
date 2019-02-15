@@ -10,8 +10,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 /**
@@ -52,5 +51,19 @@ class TriggerTest {
         val btn = MouseTrigger(MouseButton.PRIMARY, InputModifier.ALT)
 
         assertThat(btn.toString(), `is`("ALT+LMB"))
+    }
+
+    @Test
+    fun `toString throws if not a button`() {
+        assertThrows(RuntimeException::class.java) {
+            MouseTrigger(MouseButton.NONE).toString()
+        }
+    }
+
+    @Test
+    fun `Mouse button from string`() {
+        assertThat(MouseTrigger.buttonFromString("LMB"), `is`(MouseButton.PRIMARY))
+        assertThat(MouseTrigger.buttonFromString("MMB"), `is`(MouseButton.MIDDLE))
+        assertThat(MouseTrigger.buttonFromString("RMB"), `is`(MouseButton.SECONDARY))
     }
 }
