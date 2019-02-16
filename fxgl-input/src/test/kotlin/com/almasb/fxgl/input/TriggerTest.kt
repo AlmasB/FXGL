@@ -66,4 +66,11 @@ class TriggerTest {
         assertThat(MouseTrigger.buttonFromString("MMB"), `is`(MouseButton.MIDDLE))
         assertThat(MouseTrigger.buttonFromString("RMB"), `is`(MouseButton.SECONDARY))
     }
+
+    @Test
+    fun `Mouse button from string throws if not LMB MMB or RMB`() {
+        assertThrows(RuntimeException::class.java) {
+            MouseTrigger.buttonFromString("")
+        }
+    }
 }
