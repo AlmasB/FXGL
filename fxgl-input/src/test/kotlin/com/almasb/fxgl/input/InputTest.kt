@@ -9,6 +9,7 @@ package com.almasb.fxgl.input
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
+import javafx.geometry.Point2D
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import org.hamcrest.CoreMatchers.`is`
@@ -35,9 +36,9 @@ class InputTest {
     fun `Empty actions`() {
         val action = object : UserAction("T") {}
 
-        action.onActionBegin()
-        action.onAction()
-        action.onActionEnd()
+        action.begin()
+        action.action()
+        action.end()
     }
 
     @Test
@@ -126,38 +127,50 @@ class InputTest {
 
     @Test
     fun `Test mouse cursor in-game coordinates`() {
-//        assertThat(input.mouseXUI, `is`(0.0))
-//        assertThat(input.mouseYUI, `is`(0.0))
-//        assertThat(input.mouseXWorld, `is`(0.0))
-//        assertThat(input.mouseYWorld, `is`(0.0))
-//
-//        input.mockButtonPress(MouseButton.PRIMARY, 100.0, 50.0)
-//
-//        assertThat(input.mouseXUI, `is`(0.0))
-//        assertThat(input.mouseYUI, `is`(0.0))
-//        assertThat(input.mouseXWorld, `is`(100.0))
-//        assertThat(input.mouseYWorld, `is`(50.0))
-//
-//        input.mockButtonPress(MouseButton.SECONDARY)
-//
-//        assertThat(input.mouseXUI, `is`(0.0))
-//        assertThat(input.mouseYUI, `is`(0.0))
-//        assertThat(input.mouseXWorld, `is`(100.0))
-//        assertThat(input.mouseYWorld, `is`(50.0))
-//
-//        input.mockButtonRelease(MouseButton.PRIMARY, 50.0, 30.0)
-//
-//        assertThat(input.mouseXUI, `is`(0.0))
-//        assertThat(input.mouseYUI, `is`(0.0))
-//        assertThat(input.mouseXWorld, `is`(50.0))
-//        assertThat(input.mouseYWorld, `is`(30.0))
-//
-//        input.mockButtonRelease(MouseButton.SECONDARY);
-//
-//        assertThat(input.mouseXUI, `is`(0.0))
-//        assertThat(input.mouseYUI, `is`(0.0))
-//        assertThat(input.mouseXWorld, `is`(50.0))
-//        assertThat(input.mouseYWorld, `is`(30.0))
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(0.0))
+        assertThat(input.mouseYWorld, `is`(0.0))
+
+        input.mockButtonPress(MouseButton.PRIMARY, 100.0, 50.0)
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(100.0))
+        assertThat(input.mouseYWorld, `is`(50.0))
+
+        input.mockButtonPress(MouseButton.SECONDARY)
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(100.0))
+        assertThat(input.mouseYWorld, `is`(50.0))
+
+        input.mockButtonRelease(MouseButton.PRIMARY, 50.0, 30.0)
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(50.0))
+        assertThat(input.mouseYWorld, `is`(30.0))
+
+        input.mockButtonRelease(MouseButton.SECONDARY);
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(50.0))
+        assertThat(input.mouseYWorld, `is`(30.0))
+
+        assertThat(input.mousePositionUI, `is`(Point2D(0.0, 0.0)))
+        assertThat(input.mousePositionWorld, `is`(Point2D(50.0, 30.0)))
+    }
+
+    @Test
+    fun `Mouse vectors`() {
+        input.mockButtonPress(MouseButton.PRIMARY, 100.0, 50.0)
+        input.mockButtonRelease(MouseButton.PRIMARY)
+
+        assertThat(input.getVectorToMouse(Point2D(10.0, 10.0)), `is`(Point2D(90.0, 40.0)))
+        assertThat(input.getVectorFromMouse(Point2D(10.0, 10.0)), `is`(Point2D(-90.0, -40.0)))
     }
 
     @Test

@@ -32,31 +32,33 @@ class Input {
     /**
      * Cursor point in game coordinate space.
      */
-    private var gameX = 0.0
-    private var gameY = 0.0
+    var mouseXWorld = 0.0
+        private set
 
-    fun getMousePositionWorld() = Point2D(gameX, gameY)
+    var mouseYWorld = 0.0
+        private set
+
+    val mousePositionWorld
+        get() = Point2D(mouseXWorld, mouseYWorld)
 
     /**
      * Cursor point in screen coordinate space.
      * Useful for UI manipulation.
      */
-    private var sceneX = 0.0
-    private var sceneY = 0.0
+    var mouseXUI = 0.0
+        private set
 
-    fun getMousePositionUI() = Point2D(sceneX, sceneY)
+    var mouseYUI = 0.0
+        private set
 
-    fun getMouseXWorld() = getMousePositionWorld().x
-    fun getMouseYWorld() = getMousePositionWorld().y
-
-    fun getMouseXUI() = getMousePositionUI().x
-    fun getMouseYUI() = getMousePositionUI().y
+    val mousePositionUI
+        get() = Point2D(mouseXUI, mouseYUI)
 
     /**
      * @param gamePosition point in game world
      * @return vector from given point to mouse cursor point
      */
-    fun getVectorToMouse(gamePosition: Point2D): Point2D = getMousePositionWorld().subtract(gamePosition)
+    fun getVectorToMouse(gamePosition: Point2D): Point2D = mousePositionWorld.subtract(gamePosition)
 
     /**
      * @param gamePosition point in game world
@@ -70,6 +72,7 @@ class Input {
     val bindings = LinkedHashMap<UserAction, Trigger>()
 
     private val triggerNames = hashMapOf<UserAction, ReadOnlyStringWrapper>()
+    private val triggers = hashMapOf<UserAction, ReadOnlyObjectWrapper<Trigger>>()
 
     fun triggerNameProperty(action: UserAction): ReadOnlyStringProperty {
         return triggerNames[action]?.readOnlyProperty ?: throw IllegalArgumentException("Action $action not found")
@@ -81,8 +84,6 @@ class Input {
 
     fun getActionByName(actionName: String): UserAction = bindings.keys.find { it.name == actionName }
             ?: throw IllegalArgumentException("Action $actionName not found")
-
-    private val triggers = hashMapOf<UserAction, ReadOnlyObjectWrapper<Trigger>>()
 
     fun triggerProperty(action: UserAction): ReadOnlyObjectProperty<Trigger> {
         return triggers[action]?.readOnlyProperty ?: throw IllegalArgumentException("Action $action not found")
@@ -137,10 +138,11 @@ class Input {
     }
 
     fun update(tpf: Double) {
-        if (processInput) {
-            for (i in currentActions.indices) {
-                currentActions[i].onAction()
-            }
+        if (!processInput)
+            return
+
+        for (i in currentActions.indices) {
+            currentActions[i].action()
         }
     }
 
@@ -176,18 +178,18 @@ class Input {
             return
 
         if (mouseEvent.eventType == MouseEvent.MOUSE_PRESSED) {
-            buttons.put(mouseEvent.button, true)
+            buttons[mouseEvent.button] = true
             handlePressed(mouseEvent)
         } else if (mouseEvent.eventType == MouseEvent.MOUSE_RELEASED) {
-            buttons.put(mouseEvent.button, false)
+            buttons[mouseEvent.button] = false
             handleReleased(mouseEvent)
         }
 
-        sceneX = mouseEvent.sceneX
-        sceneY = mouseEvent.sceneY
+        mouseXUI = mouseEvent.sceneX
+        mouseYUI = mouseEvent.sceneY
 
-        gameX = sceneX / scaleRatioX + viewportOrigin.x
-        gameY = sceneY / scaleRatioY + viewportOrigin.y
+        mouseXWorld = mouseXUI / scaleRatioX + viewportOrigin.x
+        mouseYWorld = mouseYUI / scaleRatioY + viewportOrigin.y
     }
 
     private fun isTriggered(trigger: Trigger, fxEvent: InputEvent): Boolean {
@@ -203,34 +205,36 @@ class Input {
     }
 
     private fun handlePressed(event: InputEvent) {
-        bindings.filter { isTriggered(it.value, event) && it.key !in currentActions }
-                .forEach {
-                    currentActions.add(it.key)
+        bindings.filter { (act, trigger) -> isTriggered(trigger, event) && act !in currentActions }
+                .forEach { (act, _) ->
+                    currentActions.add(act)
 
                     if (processInput)
-                        it.key.onActionBegin()
+                        act.begin()
+                }
+    }
+
+    private fun handleReleased(event: InputEvent) {
+        bindings.filter { (_, trigger) -> isReleased(event, trigger) }
+                .forEach { (act, _) ->
+                    currentActions.remove(act)
+
+                    if (processInput)
+                        act.end()
                 }
     }
 
     @Suppress("NON_EXHAUSTIVE_WHEN")
-    private fun handleReleased(event: InputEvent) {
-        bindings.filter({ binding ->
-            if (event is KeyEvent) {
-                when (event.code) {
-                    KeyCode.CONTROL -> return@filter binding.value.getModifier() == InputModifier.CTRL
-                    KeyCode.SHIFT -> return@filter binding.value.getModifier() == InputModifier.SHIFT
-                    KeyCode.ALT -> return@filter binding.value.getModifier() == InputModifier.ALT
-                }
+    private fun isReleased(event: InputEvent, trigger: Trigger): Boolean {
+        if (event is KeyEvent) {
+            when (event.code) {
+                KeyCode.CONTROL -> return trigger.getModifier() == InputModifier.CTRL
+                KeyCode.SHIFT -> return trigger.getModifier() == InputModifier.SHIFT
+                KeyCode.ALT -> return trigger.getModifier() == InputModifier.ALT
             }
-
-            isTriggered(binding.value, event)
-        })
-        .forEach {
-            currentActions.remove(it.key)
-
-            if (processInput)
-                it.key.onActionEnd()
         }
+
+        return isTriggered(trigger, event)
     }
 
     /**
@@ -297,8 +301,8 @@ class Input {
 //    }
 
     private fun addBinding(action: UserAction, trigger: Trigger) {
-        require(!bindings.containsKey(action)) { """Action with name "${action.name}" already exists""" }
-        require(!bindings.containsValue(trigger)){ "Trigger $trigger is already bound" }
+        require(!bindings.containsKey(action)) { "Action already exists: ${action.name}" }
+        require(!bindings.containsValue(trigger)) { "Trigger is already bound: $trigger" }
 
         bindings[action] = trigger
 
@@ -429,9 +433,13 @@ class Input {
     @JvmOverloads fun mockButtonPress(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier = InputModifier.NONE) {
         log.debug("Mocking button press: ${MouseTrigger(button, modifier)} at $gameX, $gameY")
 
-        this.gameX = gameX
-        this.gameY = gameY
+        mouseXWorld = gameX
+        mouseYWorld = gameY
         handlePressed(makeMouseEvent(button, MouseEvent.MOUSE_PRESSED, gameX, gameY, modifier))
+    }
+
+    @JvmOverloads fun mockButtonPress(button: MouseButton, inputModifier: InputModifier = InputModifier.NONE) {
+        mockButtonPress(button, mouseXWorld, mouseYWorld, inputModifier)
     }
 
     /**
@@ -448,13 +456,13 @@ class Input {
     @JvmOverloads fun mockButtonRelease(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier = InputModifier.NONE) {
         log.debug("Mocking button release: ${MouseTrigger(button, modifier)} at $gameX, $gameY")
 
-        this.gameX = gameX
-        this.gameY = gameY
+        mouseXWorld = gameX
+        mouseYWorld = gameY
         handleReleased(makeMouseEvent(button, MouseEvent.MOUSE_RELEASED, gameX, gameY, modifier))
     }
 
     @JvmOverloads fun mockButtonRelease(button: MouseButton, inputModifier: InputModifier = InputModifier.NONE) {
-        mockButtonRelease(button, getMouseXWorld(), getMouseYWorld(), inputModifier)
+        mockButtonRelease(button, mouseXWorld, mouseYWorld, inputModifier)
     }
 
 //
