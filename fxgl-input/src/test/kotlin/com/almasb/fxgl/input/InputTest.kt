@@ -11,7 +11,9 @@ import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseButton
+import javafx.scene.input.MouseEvent
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.MatcherAssert.assertThat
@@ -39,6 +41,13 @@ class InputTest {
         action.begin()
         action.action()
         action.end()
+    }
+
+    @Test
+    fun `Action is not equal to String`() {
+        val action = object : UserAction("T") {}
+
+        assertFalse(action.equals("T"))
     }
 
     @Test
@@ -102,6 +111,52 @@ class InputTest {
         assertThat(calls, `is`(-1))
 
         input.mockKeyRelease(KeyCode.A)
+    }
+
+    @Test
+    fun `Test update`() {
+        var calls = 0
+
+        input.addAction(object : UserAction("Test") {
+            override fun onAction() {
+                calls++
+            }
+        }, KeyCode.A)
+
+        input.mockKeyPress(KeyCode.A)
+        assertThat(calls, `is`(0))
+
+        input.update(0.016)
+        assertThat(calls, `is`(1))
+
+        input.update(0.016)
+        assertThat(calls, `is`(2))
+
+        input.mockKeyRelease(KeyCode.A)
+
+        input.update(0.016)
+        assertThat(calls, `is`(2))
+
+        input.processInput = false
+
+        input.mockKeyPress(KeyCode.A)
+        assertThat(calls, `is`(2))
+
+        // process input is false so update shouldn't happen
+        input.update(0.016)
+        assertThat(calls, `is`(2))
+
+        input.update(0.016)
+        assertThat(calls, `is`(2))
+
+        // turn back on
+        input.processInput = true
+
+        input.update(0.016)
+        assertThat(calls, `is`(3))
+
+        input.update(0.016)
+        assertThat(calls, `is`(4))
     }
 
     @Test
@@ -340,6 +395,82 @@ class InputTest {
                     assertThat(count, `is`(1))
                 }
         )
+    }
+
+    @Test
+    fun `On key event`() {
+        var count = 0
+
+        input.addAction(object : UserAction("Test") {
+            override fun onActionBegin() {
+                count++
+            }
+
+            override fun onActionEnd() {
+                count--
+            }
+        }, KeyCode.A)
+
+        val e1 = KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.A, false, false, false, false)
+
+        input.onKeyEvent(e1)
+        assertThat(count, `is`(1))
+
+        val e2 = KeyEvent(KeyEvent.KEY_RELEASED, "", "", KeyCode.A, false, false, false, false)
+
+        input.onKeyEvent(e2)
+        assertThat(count, `is`(0))
+
+        input.registerInput = false
+
+        // should now ignore any events
+
+        input.onKeyEvent(e1)
+        assertThat(count, `is`(0))
+
+        input.onKeyEvent(e2)
+        assertThat(count, `is`(0))
+    }
+
+    @Test
+    fun `On mouse event`() {
+        var count = 0
+
+        input.addAction(object : UserAction("Test") {
+            override fun onActionBegin() {
+                count++
+            }
+
+            override fun onActionEnd() {
+                count--
+            }
+        }, MouseButton.PRIMARY)
+
+        val e1 = MouseEvent(MouseEvent.MOUSE_PRESSED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        input.onMouseEvent(e1, Point2D.ZERO, 1.0, 1.0)
+        assertThat(count, `is`(1))
+        assertThat(input.mousePositionWorld, `is`(Point2D(10.0, 15.0)))
+        assertThat(input.mousePositionUI, `is`(Point2D(10.0, 15.0)))
+
+        val e2 = MouseEvent(MouseEvent.MOUSE_RELEASED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        input.onMouseEvent(e2, Point2D.ZERO, 1.0, 1.0)
+        assertThat(count, `is`(0))
+
+        input.registerInput = false
+
+        // should now ignore any events
+
+        input.onMouseEvent(e1, Point2D.ZERO, 1.0, 1.0)
+        assertThat(count, `is`(0))
+
+        input.onMouseEvent(e2, Point2D.ZERO, 1.0, 1.0)
+        assertThat(count, `is`(0))
     }
 
 //    @Test

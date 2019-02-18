@@ -154,10 +154,10 @@ class Input {
             return
 
         if (keyEvent.eventType == KeyEvent.KEY_PRESSED) {
-            keys.put(keyEvent.code, true)
+            keys[keyEvent.code] = true
             handlePressed(keyEvent)
         } else if (keyEvent.eventType == KeyEvent.KEY_RELEASED) {
-            keys.put(keyEvent.code, false)
+            keys[keyEvent.code] = false
             handleReleased(keyEvent)
         }
     }
@@ -366,14 +366,6 @@ class Input {
 //    }
 
     /* MOCKING */
-
-    internal fun mockKeyPressEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
-        fireEvent(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
-    }
-
-    internal fun mockKeyRleaseEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
-        fireEvent(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
-    }
 
     private fun makeKeyEvent(key: KeyCode, eventType: EventType<KeyEvent>, modifier: InputModifier) =
         KeyEvent(eventType, "", key.toString(), key,
