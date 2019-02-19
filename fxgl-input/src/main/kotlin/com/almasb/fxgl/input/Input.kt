@@ -154,10 +154,8 @@ class Input {
             return
 
         if (keyEvent.eventType == KeyEvent.KEY_PRESSED) {
-            keys[keyEvent.code] = true
             handlePressed(keyEvent)
         } else if (keyEvent.eventType == KeyEvent.KEY_RELEASED) {
-            keys[keyEvent.code] = false
             handleReleased(keyEvent)
         }
     }
@@ -178,10 +176,8 @@ class Input {
             return
 
         if (mouseEvent.eventType == MouseEvent.MOUSE_PRESSED) {
-            buttons[mouseEvent.button] = true
             handlePressed(mouseEvent)
         } else if (mouseEvent.eventType == MouseEvent.MOUSE_RELEASED) {
-            buttons[mouseEvent.button] = false
             handleReleased(mouseEvent)
         }
 
@@ -245,31 +241,7 @@ class Input {
         log.debug("Clearing active input actions")
 
         currentActions.clear()
-        keys.clear()
-        buttons.clear()
     }
-
-    /**
-     * Currently held keys.
-     */
-    private val keys = HashMap<KeyCode, Boolean>()
-
-    /**
-     * @param key the key to check
-     * @return true iff key is currently (physically) held; mocking does not trigger this
-     */
-    fun isHeld(key: KeyCode): Boolean = keys.getOrDefault(key, false)
-
-    /**
-     * Currently held buttons.
-     */
-    private val buttons = HashMap<MouseButton, Boolean>()
-
-    /**
-     * @param button the button to check
-     * @return true iff button is currently (physically) held; mocking does not trigger this
-     */
-    fun isHeld(button: MouseButton): Boolean = buttons.getOrDefault(button, false)
 
     //private val virtualButtons = hashMapOf<VirtualButton, KeyCode>()
 

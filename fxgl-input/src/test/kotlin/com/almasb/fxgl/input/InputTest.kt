@@ -160,27 +160,6 @@ class InputTest {
     }
 
     @Test
-    fun `Mocking must not trigger isHeld`() {
-        // keys
-        assertFalse(input.isHeld(KeyCode.A))
-
-        input.mockKeyPress(KeyCode.A)
-
-        assertFalse(input.isHeld(KeyCode.A))
-
-        input.mockKeyRelease(KeyCode.A)
-
-        // buttons
-        assertFalse(input.isHeld(MouseButton.PRIMARY))
-
-        input.mockButtonPress(MouseButton.PRIMARY, 0.0, 0.0)
-
-        assertFalse(input.isHeld(MouseButton.PRIMARY))
-
-        input.mockButtonRelease(MouseButton.PRIMARY)
-    }
-
-    @Test
     fun `Test mouse cursor in-game coordinates`() {
         assertThat(input.mouseXUI, `is`(0.0))
         assertThat(input.mouseYUI, `is`(0.0))
@@ -344,6 +323,12 @@ class InputTest {
         assertThat((trigger as MouseTrigger).button, `is`(MouseButton.MIDDLE))
     }
 
+    @Test
+    fun `Trigger name property throws if not such action`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            input.triggerNameProperty(object : UserAction("") {})
+        }
+    }
 
     @Test
     fun `Trigger name by action`() {
@@ -364,12 +349,35 @@ class InputTest {
     }
 
     @Test
+    fun `Action by name throws if action not found`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            input.getActionByName("Action")
+        }
+    }
+
+    @Test
     fun `Trigger name by action name`() {
         val action = object : UserAction("Action") {}
 
         input.addAction(action, KeyCode.K)
 
         assertThat(input.getTriggerByActionName("Action"), `is`("K"))
+    }
+
+    @Test
+    fun `Trigger by action`() {
+        val action = object : UserAction("Action") {}
+
+        input.addAction(action, KeyCode.K)
+
+        assertThat(input.triggerProperty(action).value.getName(), `is`("K"))
+    }
+
+    @Test
+    fun `Trigger by action throws if action not found`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            input.triggerProperty(object : UserAction("Action") {})
+        }
     }
 
     @Test
