@@ -236,6 +236,8 @@ class Input {
     /**
      * Clears all active actions.
      * Releases all key presses and mouse clicks for a single frame.
+     * Note: if this is called while the trigger is pressed,
+     * then once the trigger is released, a single onActionEnd() will fire.
      */
     fun clearAll() {
         log.debug("Clearing active input actions")

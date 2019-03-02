@@ -481,6 +481,35 @@ class InputTest {
         assertThat(count, `is`(0))
     }
 
+    @Test
+    fun `Clear all`() {
+        var calls = 0
+
+        input.addAction(object : UserAction("Test") {
+            override fun onActionBegin() {
+                calls = 1
+            }
+
+            override fun onAction() {
+                calls--
+            }
+        }, KeyCode.A)
+
+        input.mockKeyPress(KeyCode.A)
+        assertThat(calls, `is`(1))
+
+        input.update(0.016)
+        assertThat(calls, `is`(0))
+
+        input.update(0.016)
+        assertThat(calls, `is`(-1))
+
+        input.clearAll()
+
+        input.update(0.016)
+        assertThat(calls, `is`(-1))
+    }
+
 //    @Test
 //    fun `Serialization`() {
 //        val action = object : UserAction("Action") {}
