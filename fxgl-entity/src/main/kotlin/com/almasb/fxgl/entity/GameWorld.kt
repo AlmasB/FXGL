@@ -301,12 +301,13 @@ class GameWorld {
         ReflectionUtils.findMethodsMapToFunctions(entityFactory, Spawns::class.java, EntitySpawner::class.java)
                 .forEach { annotation, entitySpawner ->
 
-                    val entityName = annotation.value
+                    val entityAliases = annotation.value.split(",".toRegex())
+                    entityAliases.forEach { entityName ->
+                        checkDuplicateSpawners(entityFactory, entityName)
 
-                    checkDuplicateSpawners(entityFactory, entityName)
-
-                    entitySpawners.put(entityName, entitySpawner)
-                    entityNames.add(entityName)
+                        entitySpawners.put(entityName, entitySpawner)
+                        entityNames.add(entityName)
+                    }
                 }
 
         entityFactories.put(entityFactory, entityNames)

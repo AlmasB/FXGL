@@ -11,6 +11,7 @@ module fxgl.entity {
     exports com.almasb.fxgl.entity.component;
     exports com.almasb.fxgl.entity.components;
     exports com.almasb.fxgl.entity.level;
+    exports com.almasb.fxgl.entity.level.text;
     exports com.almasb.fxgl.physics;
     exports com.almasb.fxgl.physics.box2d.dynamics;
 }
