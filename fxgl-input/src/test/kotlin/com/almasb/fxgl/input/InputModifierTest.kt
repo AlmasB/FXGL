@@ -12,6 +12,7 @@ import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -92,6 +93,10 @@ class InputModifierTest {
         assertTrue(InputModifier.CTRL.isTriggered(mouseEvent(false, true, false)))
         assertTrue(InputModifier.ALT.isTriggered(mouseEvent(false, false, true)))
         assertTrue(InputModifier.NONE.isTriggered(mouseEvent(false, false, false)))
+
+        assertFalse(InputModifier.NONE.isTriggered(mouseEvent(true, false, false)))
+        assertFalse(InputModifier.NONE.isTriggered(mouseEvent(false, true, false)))
+        assertFalse(InputModifier.NONE.isTriggered(mouseEvent(false, false, true)))
     }
 
     @Test
@@ -100,6 +105,10 @@ class InputModifierTest {
         assertTrue(InputModifier.CTRL.isTriggered(keyEvent(false, true, false)))
         assertTrue(InputModifier.ALT.isTriggered(keyEvent(false, false, true)))
         assertTrue(InputModifier.NONE.isTriggered(keyEvent(false, false, false)))
+
+        assertFalse(InputModifier.NONE.isTriggered(keyEvent(true, false, false)))
+        assertFalse(InputModifier.NONE.isTriggered(keyEvent(false, true, false)))
+        assertFalse(InputModifier.NONE.isTriggered(keyEvent(false, false, true)))
     }
 
     @Test
