@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.input.view
 
+import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.KeyTrigger
 import com.almasb.fxgl.input.MouseTrigger
 import javafx.scene.input.KeyCode
@@ -17,6 +18,8 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 
 /**
  *
@@ -45,9 +48,10 @@ class ViewTest {
         }
     }
 
-    @Test
-    fun `Trigger view`() {
-        val view = TriggerView(KeyTrigger(KeyCode.C))
+    @ParameterizedTest
+    @EnumSource(InputModifier::class)
+    fun `Trigger view`(modifier: InputModifier) {
+        val view = TriggerView(KeyTrigger(KeyCode.C, modifier))
         val nodes = arrayListOf(view.children)
 
         assertTrue(nodes.isNotEmpty())
