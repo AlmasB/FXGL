@@ -16,6 +16,7 @@ import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 /**
  *
@@ -31,6 +32,13 @@ class ViewTest {
     @Test
     fun `MouseButton view`() {
         val view = MouseButtonView(MouseButton.PRIMARY, Color.BLUE, 20.0)
+    }
+
+    @Test
+    fun `MouseButton view throws if not supported`() {
+        assertThrows<IllegalArgumentException> {
+            MouseButtonView(MouseButton.MIDDLE)
+        }
     }
 
     @Test
