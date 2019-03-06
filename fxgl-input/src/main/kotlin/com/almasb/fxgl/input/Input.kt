@@ -7,9 +7,7 @@
 package com.almasb.fxgl.input
 
 import com.almasb.sslogger.Logger
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
-import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.collections.FXCollections
 import javafx.event.Event
@@ -74,20 +72,18 @@ class Input {
     private val triggerNames = hashMapOf<UserAction, ReadOnlyStringWrapper>()
     private val triggers = hashMapOf<UserAction, ReadOnlyObjectWrapper<Trigger>>()
 
-    fun triggerNameProperty(action: UserAction): ReadOnlyStringProperty {
-        return triggerNames[action]?.readOnlyProperty ?: throw IllegalArgumentException("Action $action not found")
-    }
-
     fun getTriggerName(action: UserAction): String = triggerNameProperty(action).value
 
-    fun getTriggerByActionName(actionName: String): String = getTriggerName(getActionByName(actionName))
+    fun getTriggerName(actionName: String): String = getTriggerName(getActionByName(actionName))
+
+    fun triggerNameProperty(action: UserAction) = triggerNames[action]?.readOnlyProperty
+            ?: throw IllegalArgumentException("Action $action not found")
+
+    fun triggerProperty(action: UserAction) = triggers[action]?.readOnlyProperty
+            ?: throw IllegalArgumentException("Action $action not found")
 
     fun getActionByName(actionName: String): UserAction = bindings.keys.find { it.name == actionName }
             ?: throw IllegalArgumentException("Action $actionName not found")
-
-    fun triggerProperty(action: UserAction): ReadOnlyObjectProperty<Trigger> {
-        return triggers[action]?.readOnlyProperty ?: throw IllegalArgumentException("Action $action not found")
-    }
 
     /**
      * Currently active actions.

@@ -65,5 +65,7 @@ class ViewTest {
         nodes.forEach {
             assertThat(view.children, not(hasItem(it)))
         }
+
+        TriggerView(MouseTrigger(MouseButton.PRIMARY))
     }
 }

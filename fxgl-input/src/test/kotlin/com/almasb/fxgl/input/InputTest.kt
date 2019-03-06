@@ -361,7 +361,7 @@ class InputTest {
 
         input.addAction(action, KeyCode.K)
 
-        assertThat(input.getTriggerByActionName("Action"), `is`("K"))
+        assertThat(input.getTriggerName("Action"), `is`("K"))
     }
 
     @Test
@@ -468,6 +468,17 @@ class InputTest {
                 false, false, false, false, false, false, false, null)
 
         input.onMouseEvent(e2, Point2D.ZERO, 1.0, 1.0)
+        assertThat(count, `is`(0))
+
+        input.onMouseEvent(MouseEventData(e1, Point2D(15.0, 15.0), 1.0, 1.0))
+        assertThat(count, `is`(1))
+
+        // the viewport (15.0, 15.0) affects the position world, but not UI
+        
+        assertThat(input.mousePositionWorld, `is`(Point2D(10.0 + 15.0, 15.0 + 15.0)))
+        assertThat(input.mousePositionUI, `is`(Point2D(10.0, 15.0)))
+
+        input.onMouseEvent(MouseEventData(e2, Point2D(15.0, 15.0), 1.0, 1.0))
         assertThat(count, `is`(0))
 
         input.registerInput = false
