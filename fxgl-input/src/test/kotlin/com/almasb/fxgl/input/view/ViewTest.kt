@@ -26,7 +26,11 @@ class ViewTest {
 
     @Test
     fun `Key view`() {
-        val view = KeyView(KeyCode.A, Color.WHITE, 15.0)
+        KeyCode.values().forEach {
+            val view = KeyView(it, Color.WHITE, 15.0)
+            view.setBackgroundColor(Color.AQUAMARINE)
+            view.setKeyColor(Color.RED)
+        }
     }
 
     @Test
