@@ -9,11 +9,11 @@ package com.almasb.fxgl.input.view
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.KeyTrigger
 import com.almasb.fxgl.input.MouseTrigger
+import com.almasb.fxgl.input.Trigger
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
-import org.hamcrest.CoreMatchers.hasItem
-import org.hamcrest.CoreMatchers.not
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -51,13 +51,15 @@ class ViewTest {
     @ParameterizedTest
     @EnumSource(InputModifier::class)
     fun `Trigger view`(modifier: InputModifier) {
-        val view = TriggerView(KeyTrigger(KeyCode.C, modifier))
+        val view = TriggerView(KeyTrigger(KeyCode.C, modifier), Color.BLUE, 18.0)
         val nodes = arrayListOf(view.children)
 
         assertTrue(nodes.isNotEmpty())
 
-        view.trigger = MouseTrigger(MouseButton.SECONDARY)
+        val trigger = MouseTrigger(MouseButton.SECONDARY)
+        view.trigger = trigger
 
+        assertThat(view.triggerProperty().value, `is`<Trigger>(trigger))
         assertTrue(view.children.isNotEmpty())
 
         nodes.forEach {
