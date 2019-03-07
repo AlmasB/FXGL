@@ -21,6 +21,7 @@ interface Trigger {
     fun isKey(): Boolean
     fun isButton(): Boolean
     fun isTriggered(event: InputEvent): Boolean
+    fun isReleased(event: InputEvent): Boolean
 }
 
 data class KeyTrigger
@@ -39,6 +40,20 @@ data class KeyTrigger
             return false
 
         return event.code == key && modifier.isTriggered(event)
+    }
+
+    @Suppress("NON_EXHAUSTIVE_WHEN")
+    override fun isReleased(event: InputEvent): Boolean {
+        if (event !is KeyEvent)
+            return false
+
+        when (event.code) {
+            KeyCode.CONTROL -> return modifier == InputModifier.CTRL
+            KeyCode.SHIFT -> return modifier == InputModifier.SHIFT
+            KeyCode.ALT -> return modifier == InputModifier.ALT
+        }
+
+        return event.code == key
     }
 
     override fun toString() = (if (modifier == InputModifier.NONE) "" else "$modifier+") + key.getName()
@@ -69,6 +84,19 @@ data class MouseTrigger
             return false
 
         return event.button == button && modifier.isTriggered(event)
+    }
+
+    @Suppress("NON_EXHAUSTIVE_WHEN")
+    override fun isReleased(event: InputEvent): Boolean {
+        if (event is KeyEvent) {
+            when (event.code) {
+                KeyCode.CONTROL -> return modifier == InputModifier.CTRL
+                KeyCode.SHIFT -> return modifier == InputModifier.SHIFT
+                KeyCode.ALT -> return modifier == InputModifier.ALT
+            }
+        }
+
+        return isTriggered(event)
     }
 
     override fun toString() = (if (modifier == InputModifier.NONE) "" else "$modifier+") + buttonToString()

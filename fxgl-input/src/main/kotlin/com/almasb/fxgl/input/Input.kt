@@ -195,26 +195,13 @@ class Input {
     }
 
     private fun handleReleased(event: InputEvent) {
-        bindings.filter { (_, trigger) -> isReleased(event, trigger) }
+        bindings.filter { (act, trigger) -> act in currentActions && trigger.isReleased(event) }
                 .forEach { (act, _) ->
                     currentActions.remove(act)
 
                     if (processInput)
                         act.end()
                 }
-    }
-
-    @Suppress("NON_EXHAUSTIVE_WHEN")
-    private fun isReleased(event: InputEvent, trigger: Trigger): Boolean {
-        if (event is KeyEvent) {
-            when (event.code) {
-                KeyCode.CONTROL -> return trigger.getModifier() == InputModifier.CTRL
-                KeyCode.SHIFT -> return trigger.getModifier() == InputModifier.SHIFT
-                KeyCode.ALT -> return trigger.getModifier() == InputModifier.ALT
-            }
-        }
-
-        return trigger.isTriggered(event)
     }
 
     /**

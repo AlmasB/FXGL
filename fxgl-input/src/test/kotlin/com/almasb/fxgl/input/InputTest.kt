@@ -114,6 +114,45 @@ class InputTest {
     }
 
     @Test
+    fun `Mock with input modifiers`() {
+        var calls = 0
+
+        input.addAction(object : UserAction("Test") {
+            override fun onActionBegin() {
+                calls = 1
+            }
+
+            override fun onActionEnd() {
+                calls = -1
+            }
+        }, KeyCode.A, InputModifier.CTRL)
+
+        input.mockKeyPress(KeyCode.A, InputModifier.CTRL)
+        assertThat(calls, `is`(1))
+
+        input.mockKeyRelease(KeyCode.A)
+        assertThat(calls, `is`(-1))
+
+        // without input modifier, so input should ignore it
+        input.mockKeyPress(KeyCode.A)
+        assertThat(calls, `is`(-1))
+
+        input.mockKeyPress(KeyCode.A, InputModifier.CTRL)
+        assertThat(calls, `is`(1))
+
+        // shift and alt should not trigger release
+        input.mockKeyRelease(KeyCode.SHIFT)
+        assertThat(calls, `is`(1))
+
+        input.mockKeyRelease(KeyCode.ALT)
+        assertThat(calls, `is`(1))
+
+        // control will since we specified it as input modifier
+        input.mockKeyRelease(KeyCode.CONTROL)
+        assertThat(calls, `is`(-1))
+    }
+
+    @Test
     fun `Test update`() {
         var calls = 0
 
