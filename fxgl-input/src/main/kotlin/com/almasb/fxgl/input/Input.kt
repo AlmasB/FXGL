@@ -184,20 +184,8 @@ class Input {
         mouseYWorld = mouseYUI / scaleRatioY + viewportOrigin.y
     }
 
-    private fun isTriggered(trigger: Trigger, fxEvent: InputEvent): Boolean {
-        if (fxEvent is MouseEvent && trigger is MouseTrigger
-                && fxEvent.button == trigger.button && trigger.getModifier().isTriggered(fxEvent))
-            return true
-
-        if (fxEvent is KeyEvent && trigger is KeyTrigger
-                && fxEvent.code == trigger.key && trigger.getModifier().isTriggered(fxEvent))
-            return true
-
-        return false
-    }
-
     private fun handlePressed(event: InputEvent) {
-        bindings.filter { (act, trigger) -> isTriggered(trigger, event) && act !in currentActions }
+        bindings.filter { (act, trigger) -> trigger.isTriggered(event) && act !in currentActions }
                 .forEach { (act, _) ->
                     currentActions.add(act)
 
@@ -226,7 +214,7 @@ class Input {
             }
         }
 
-        return isTriggered(trigger, event)
+        return trigger.isTriggered(event)
     }
 
     /**

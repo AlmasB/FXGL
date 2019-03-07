@@ -474,7 +474,7 @@ class InputTest {
         assertThat(count, `is`(1))
 
         // the viewport (15.0, 15.0) affects the position world, but not UI
-        
+
         assertThat(input.mousePositionWorld, `is`(Point2D(10.0 + 15.0, 15.0 + 15.0)))
         assertThat(input.mousePositionUI, `is`(Point2D(10.0, 15.0)))
 

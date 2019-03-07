@@ -6,8 +6,7 @@
 
 package com.almasb.fxgl.input
 
-import javafx.scene.input.KeyCode
-import javafx.scene.input.MouseButton
+import javafx.scene.input.*
 import java.lang.RuntimeException
 
 /**
@@ -21,6 +20,7 @@ interface Trigger {
     fun getName(): String
     fun isKey(): Boolean
     fun isButton(): Boolean
+    fun isTriggered(event: InputEvent): Boolean
 }
 
 data class KeyTrigger
@@ -33,6 +33,13 @@ data class KeyTrigger
 
     override fun isKey() = true
     override fun isButton() = false
+
+    override fun isTriggered(event: InputEvent): Boolean {
+        if (event !is KeyEvent)
+            return false
+
+        return event.code == key && modifier.isTriggered(event)
+    }
 
     override fun toString() = (if (modifier == InputModifier.NONE) "" else "$modifier+") + key.getName()
 }
@@ -56,6 +63,13 @@ data class MouseTrigger
 
     override fun isKey() = false
     override fun isButton() = true
+
+    override fun isTriggered(event: InputEvent): Boolean {
+        if (event !is MouseEvent)
+            return false
+
+        return event.button == button && modifier.isTriggered(event)
+    }
 
     override fun toString() = (if (modifier == InputModifier.NONE) "" else "$modifier+") + buttonToString()
 
