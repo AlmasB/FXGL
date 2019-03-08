@@ -216,8 +216,6 @@ class Input {
         currentActions.clear()
     }
 
-    //private val virtualButtons = hashMapOf<VirtualButton, KeyCode>()
-
     /**
      * Bind given action to a mouse button with special modifier key.
      */
@@ -238,13 +236,6 @@ class Input {
         addBinding(action, KeyTrigger(key, modifier))
     }
 
-//    @JvmOverloads fun addAction(action: UserAction, key: KeyCode, virtualButton: VirtualButton) {
-//        require(!isIllegal(key)) { "Cannot bind to illegal key: $key" }
-//
-//        addBinding(action, KeyTrigger(key, InputModifier.NONE))
-//        addVirtualButton(virtualButton, key)
-//    }
-
     private fun addBinding(action: UserAction, trigger: Trigger) {
         require(!bindings.containsKey(action)) { "Action already exists: ${action.name}" }
         require(!bindings.containsValue(trigger)) { "Trigger is already bound: $trigger" }
@@ -263,10 +254,6 @@ class Input {
 
         log.debug("Registered new binding: $action - $trigger")
     }
-
-//    private fun addVirtualButton(virtualButton: VirtualButton, key: KeyCode) {
-//        virtualButtons[virtualButton] = key
-//    }
 
     /**
      * @return true if rebound, false if action not found or there is another action bound to key
@@ -299,16 +286,6 @@ class Input {
 
         return false
     }
-
-    /* VIRTUAL */
-
-//    internal fun pressVirtual(virtualButton: VirtualButton) {
-//        virtualButtons[virtualButton]?.let { mockKeyPress(it) }
-//    }
-//
-//    internal fun releaseVirtual(virtualButton: VirtualButton) {
-//        virtualButtons[virtualButton]?.let { mockKeyRelease(it) }
-//    }
 
     /* MOCKING */
 
@@ -401,58 +378,4 @@ class Input {
     @JvmOverloads fun mockButtonRelease(button: MouseButton, inputModifier: InputModifier = InputModifier.NONE) {
         mockButtonRelease(button, mouseXWorld, mouseYWorld, inputModifier)
     }
-
-//
-//    fun save(profile: UserProfile) {
-//        log.debug("Saving data to profile")
-//
-//        val bundle = Bundle("input")
-//        bindings.forEach { bundle.put(it.key.toString(), it.value.toString()) }
-//
-//        bundle.log()
-//        profile.putBundle(bundle)
-//    }
-//
-//    fun load(profile: UserProfile) {
-//        log.debug("Loading data from profile")
-//
-//        val bundle = profile.getBundle("input")
-//        bundle.log()
-//
-//        for (binding in bindings) {
-//
-//            val action = binding.key
-//
-//            // if binding is not present in bundle, then we added some new binding thru code
-//            // it will be saved on next serialization and will be found in bundle
-//            var triggerName: String? = bundle.get<String>("$action")
-//            if (triggerName == null)
-//                continue
-//
-//            var modifierName = "NONE"
-//
-//            val plusIndex = triggerName.indexOf("+")
-//            if (plusIndex != -1) {
-//                modifierName = triggerName.substring(0, plusIndex)
-//                triggerName = triggerName.substring(plusIndex + 1)
-//            }
-//
-//            // if triggerName was CTRL+A, we end up with:
-//            // triggerName = A
-//            // modifierName = CTRL
-//
-//            try {
-//                val key = KeyCode.getKeyCode(triggerName)
-//                rebind(action, key, InputModifier.valueOf(modifierName))
-//            } catch (ignored: Exception) {
-//                try {
-//                    val btn = MouseTrigger.buttonFromString(triggerName)
-//                    rebind(action, btn, InputModifier.valueOf(modifierName))
-//                } catch (e: Exception) {
-//                    log.warning("Undefined trigger name: " + triggerName)
-//                    throw IllegalArgumentException("Corrupt or incompatible user profile: " + e.message)
-//                }
-//            }
-//        }
-//    }
 }
