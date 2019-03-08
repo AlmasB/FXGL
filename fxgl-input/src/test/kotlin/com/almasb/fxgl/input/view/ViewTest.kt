@@ -67,5 +67,6 @@ class ViewTest {
         }
 
         TriggerView(MouseTrigger(MouseButton.PRIMARY))
+        TriggerView(MouseTrigger(MouseButton.PRIMARY), Color.GOLD)
     }
 }
