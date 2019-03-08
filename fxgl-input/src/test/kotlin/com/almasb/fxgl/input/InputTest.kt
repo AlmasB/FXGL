@@ -458,6 +458,11 @@ class InputTest {
             }
         }, KeyCode.A)
 
+        // KEY_TYPED should just be ignored
+        val e0 = KeyEvent(KeyEvent.KEY_TYPED, "", "", KeyCode.A, false, false, false, false)
+        input.onKeyEvent(e0)
+        assertThat(count, `is`(0))
+
         val e1 = KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.A, false, false, false, false)
 
         input.onKeyEvent(e1)
@@ -492,6 +497,13 @@ class InputTest {
                 count--
             }
         }, MouseButton.PRIMARY)
+
+        // MOUSE_CLICKED should be ignored
+        val e0 = MouseEvent(MouseEvent.MOUSE_CLICKED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+        input.onMouseEvent(e0, Point2D.ZERO, 1.0, 1.0)
+        assertThat(count, `is`(0))
 
         val e1 = MouseEvent(MouseEvent.MOUSE_PRESSED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
                 false, false, false,
