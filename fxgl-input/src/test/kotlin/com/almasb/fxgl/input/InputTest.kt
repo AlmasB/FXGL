@@ -333,6 +333,10 @@ class InputTest {
         var ok = input.rebind(action, KeyCode.B)
         assertThat(ok, `is`(false))
 
+        // binding to non-existent action must not succeed
+        ok = input.rebind(object : UserAction("Action3") {}, KeyCode.C)
+        assertThat(ok, `is`(false))
+
         ok = input.rebind(action, KeyCode.C)
         assertThat(ok, `is`(true))
 
