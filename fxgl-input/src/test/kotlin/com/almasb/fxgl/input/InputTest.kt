@@ -468,8 +468,20 @@ class InputTest {
         input.onKeyEvent(e1)
         assertThat(count, `is`(1))
 
+        // should make no difference since already pressed
+        input.onKeyEvent(e1)
+        assertThat(count, `is`(1))
+
+        // should make no difference since different key
+        input.onKeyEvent(KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.B, false, false, false, false))
+        assertThat(count, `is`(1))
+
         val e2 = KeyEvent(KeyEvent.KEY_RELEASED, "", "", KeyCode.A, false, false, false, false)
 
+        input.onKeyEvent(e2)
+        assertThat(count, `is`(0))
+
+        // should make no difference since already released
         input.onKeyEvent(e2)
         assertThat(count, `is`(0))
 

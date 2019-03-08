@@ -185,7 +185,7 @@ class Input {
     }
 
     private fun handlePressed(event: InputEvent) {
-        bindings.filter { (act, trigger) -> trigger.isTriggered(event) && act !in currentActions }
+        bindings.filter { (act, trigger) -> act !in currentActions && trigger.isTriggered(event) }
                 .forEach { (act, _) ->
                     currentActions.add(act)
 
