@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.input
 
+import javafx.beans.property.ReadOnlyObjectWrapper
+import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.scene.input.*
 import java.lang.RuntimeException
 
@@ -22,6 +24,21 @@ interface Trigger {
     fun isButton(): Boolean
     fun isTriggered(event: InputEvent): Boolean
     fun isReleased(event: InputEvent): Boolean
+}
+
+internal class ObservableTrigger(trigger: Trigger) {
+
+    val trigger = ReadOnlyObjectWrapper(trigger)
+    val name = ReadOnlyStringWrapper(trigger.toString())
+
+    init {
+        this.trigger.addListener { _, _, newTrigger ->
+            name.value = newTrigger.toString()
+        }
+    }
+
+    fun isTriggered(event: InputEvent) = trigger.value.isTriggered(event)
+    fun isReleased(event: InputEvent) = trigger.value.isReleased(event)
 }
 
 data class KeyTrigger

@@ -252,9 +252,9 @@ class InputTest {
 
         input.addAction(action, KeyCode.A)
 
-        assertThat(input.bindings.keys, hasItem(action))
+        assertThat(input.allBindings.keys, hasItem(action))
 
-        val trigger = input.bindings[action]
+        val trigger = input.allBindings[action]
 
         assertTrue(trigger is KeyTrigger)
         assertThat((trigger as KeyTrigger).key, `is`(KeyCode.A))
@@ -266,9 +266,9 @@ class InputTest {
 
         input.addAction(action, MouseButton.PRIMARY)
 
-        assertThat(input.bindings.keys, hasItem(action))
+        assertThat(input.allBindings.keys, hasItem(action))
 
-        val trigger = input.bindings[action]
+        val trigger = input.allBindings[action]
 
         assertTrue(trigger is MouseTrigger)
         assertThat((trigger as MouseTrigger).button, `is`(MouseButton.PRIMARY))
@@ -336,7 +336,7 @@ class InputTest {
         ok = input.rebind(action, KeyCode.C)
         assertThat(ok, `is`(true))
 
-        val trigger = input.bindings[action]
+        val trigger = input.allBindings[action]
 
         assertTrue(trigger is KeyTrigger)
         assertThat((trigger as KeyTrigger).key, `is`(KeyCode.C))
@@ -356,7 +356,7 @@ class InputTest {
         ok = input.rebind(action, MouseButton.MIDDLE)
         assertThat(ok, `is`(true))
 
-        val trigger = input.bindings[action]
+        val trigger = input.allBindings[action]
 
         assertTrue(trigger is MouseTrigger)
         assertThat((trigger as MouseTrigger).button, `is`(MouseButton.MIDDLE))

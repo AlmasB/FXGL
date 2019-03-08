@@ -67,19 +67,19 @@ class Input {
     /**
      * @return registered action bindings
      */
-    val bindings = LinkedHashMap<UserAction, Trigger>()
+    private val bindings = LinkedHashMap<UserAction, ObservableTrigger>()
 
-    private val triggerNames = hashMapOf<UserAction, ReadOnlyStringWrapper>()
-    private val triggers = hashMapOf<UserAction, ReadOnlyObjectWrapper<Trigger>>()
+    val allBindings: Map<UserAction, Trigger>
+        get() = bindings.mapValues { (_, obsTrigger) -> obsTrigger.trigger.value }
 
     fun getTriggerName(action: UserAction): String = triggerNameProperty(action).value
 
     fun getTriggerName(actionName: String): String = getTriggerName(getActionByName(actionName))
 
-    fun triggerNameProperty(action: UserAction) = triggerNames[action]?.readOnlyProperty
+    fun triggerNameProperty(action: UserAction) = bindings[action]?.name?.readOnlyProperty
             ?: throw IllegalArgumentException("Action $action not found")
 
-    fun triggerProperty(action: UserAction) = triggers[action]?.readOnlyProperty
+    fun triggerProperty(action: UserAction) = bindings[action]?.trigger?.readOnlyProperty
             ?: throw IllegalArgumentException("Action $action not found")
 
     fun getActionByName(actionName: String): UserAction = bindings.keys.find { it.name == actionName }
@@ -238,19 +238,9 @@ class Input {
 
     private fun addBinding(action: UserAction, trigger: Trigger) {
         require(!bindings.containsKey(action)) { "Action already exists: ${action.name}" }
-        require(!bindings.containsValue(trigger)) { "Trigger is already bound: $trigger" }
+        require(!isTriggerBound(trigger)) { "Trigger is already bound: $trigger" }
 
-        bindings[action] = trigger
-
-        if (!triggers.containsKey(action)) {
-            triggers[action] = ReadOnlyObjectWrapper(trigger)
-        }
-
-        if (!triggerNames.containsKey(action)) {
-            triggerNames[action] = ReadOnlyStringWrapper("")
-        }
-
-        triggerNames[action]?.value = trigger.toString()
+        bindings[action] = ObservableTrigger(trigger)
 
         log.debug("Registered new binding: $action - $trigger")
     }
@@ -258,34 +248,25 @@ class Input {
     /**
      * @return true if rebound, false if action not found or there is another action bound to key
      */
-    @JvmOverloads fun rebind(action: UserAction, key: KeyCode, modifier: InputModifier = InputModifier.NONE): Boolean {
-        if (bindings.containsKey(action) && !bindings.containsValue(KeyTrigger(key, modifier))) {
-            val newTrigger = KeyTrigger(key, modifier)
-
-            bindings[action] = newTrigger
-            triggers[action]?.value = newTrigger
-            triggerNames[action]?.value = newTrigger.toString()
-            return true
-        }
-
-        return false
-    }
+    @JvmOverloads fun rebind(action: UserAction, key: KeyCode, modifier: InputModifier = InputModifier.NONE) =
+            rebind(action, KeyTrigger(key, modifier))
 
     /**
      * @return true if rebound, false if action not found or there is another action bound to mouse button
      */
-    @JvmOverloads fun rebind(action: UserAction, button: MouseButton, modifier: InputModifier = InputModifier.NONE): Boolean {
-        if (bindings.containsKey(action) && !bindings.containsValue(MouseTrigger(button, modifier))) {
-            val newTrigger = MouseTrigger(button, modifier)
+    @JvmOverloads fun rebind(action: UserAction, button: MouseButton, modifier: InputModifier = InputModifier.NONE) =
+            rebind(action, MouseTrigger(button, modifier))
 
-            bindings[action] = newTrigger
-            triggers[action]?.value = newTrigger
-            triggerNames[action]?.value = newTrigger.toString()
-            return true
-        }
+    private fun rebind(action: UserAction, newTrigger: Trigger): Boolean {
+        // if no such action or trigger already bound
+        if (!bindings.containsKey(action) || isTriggerBound(newTrigger))
+            return false
 
-        return false
+        bindings[action]!!.trigger.value = newTrigger
+        return true
     }
+
+    private fun isTriggerBound(trigger: Trigger) = bindings.values.any { it.trigger.value == trigger }
 
     /* MOCKING */
 
