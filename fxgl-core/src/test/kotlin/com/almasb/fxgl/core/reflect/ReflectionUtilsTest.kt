@@ -8,12 +8,11 @@ package com.almasb.fxgl.core.reflect
 
 import com.almasb.fxgl.core.util.Function
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert
-import org.hamcrest.MatcherAssert.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.util.concurrent.Callable
+import org.junit.jupiter.api.assertThrows
 
 /**
  *
@@ -29,6 +28,15 @@ class ReflectionUtilsTest {
         val result = ReflectionUtils.call<String>(obj, obj.javaClass.getDeclaredMethod("foo"))
 
         assertThat(result, `is`("Hello"))
+    }
+
+    @Test
+    fun `Call a method reflectively throws if invalid params`() {
+        assertThrows<ReflectionException> {
+            val obj = TestClass1()
+
+            ReflectionUtils.call<String>(obj, obj.javaClass.getDeclaredMethod("foo"), "")
+        }
     }
 
     @Test

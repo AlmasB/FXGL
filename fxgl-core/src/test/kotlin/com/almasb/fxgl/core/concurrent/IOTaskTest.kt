@@ -12,7 +12,6 @@ import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertTimeout
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.Duration
@@ -25,13 +24,6 @@ import java.util.concurrent.Executor
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class IOTaskTest {
-
-//    companion object {
-//        @BeforeAll
-//        @JvmStatic fun before() {
-//            FXGLMock.mock()
-//        }
-//    }
 
     @Test
     fun `Task run`() {
