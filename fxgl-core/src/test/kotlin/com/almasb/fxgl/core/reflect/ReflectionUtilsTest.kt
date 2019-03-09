@@ -22,12 +22,39 @@ import org.junit.jupiter.api.assertThrows
 class ReflectionUtilsTest {
 
     @Test
+    fun `Get a method of a class`() {
+        val obj = TestClass1()
+
+        val result = ReflectionUtils.getMethod(obj.javaClass, "foo").invoke(obj) as String
+
+        assertThat(result, `is`("Hello"))
+    }
+
+    @Test
+    fun `Get a method throws if no such method`() {
+        assertThrows<ReflectionException> {
+            val obj = TestClass1()
+
+            ReflectionUtils.getMethod(obj.javaClass, "bla-bla")
+        }
+    }
+
+    @Test
     fun `Call a method reflectively`() {
         val obj = TestClass1()
 
         val result = ReflectionUtils.call<String>(obj, obj.javaClass.getDeclaredMethod("foo"))
 
         assertThat(result, `is`("Hello"))
+    }
+
+    @Test
+    fun `Call an inaccessible method reflectively`() {
+        val obj = TestClass1()
+
+        val result = ReflectionUtils.callInaccessible<String>(obj, obj.javaClass.getDeclaredMethod("fooInaccessible"))
+
+        assertThat(result, `is`("Hello4"))
     }
 
     @Test
@@ -46,6 +73,24 @@ class ReflectionUtilsTest {
         val result = obj.foo()
 
         assertThat(result, `is`("Hello"))
+    }
+
+    @Test
+    fun `New instance throws if cant create`() {
+        assertThrows<ReflectionException> {
+            ReflectionUtils.newInstance(TestClass2::class.java)
+        }
+    }
+
+    @Test
+    fun `Map a method to a function`() {
+        val obj = TestClass1()
+
+        val func = ReflectionUtils.mapToFunction<String, String>(obj, obj.javaClass.getDeclaredMethod("fooMapable", String::class.java))
+
+        val result = func.apply(" world")
+
+        assertThat(result, `is`("Hello3 world"))
     }
 
     @Test
@@ -78,9 +123,27 @@ class ReflectionUtilsTest {
     }
 
     @Test
+    fun `Get field returns optional empty if no such field`() {
+        assertFalse(ReflectionUtils.getDeclaredField("name", "").isPresent)
+    }
+
+    @Test
     fun `Is anonymous class`() {
         assertFalse(ReflectionUtils.isAnonymousClass(TestClass1::class.java))
         assertTrue(ReflectionUtils.isAnonymousClass(Runnable { }.javaClass))
+    }
+
+    @Test
+    fun `Get calling class using superclass and method name`() {
+        val c = TestSuperClass.TestSubClass.highLevelFunction()
+        assertTrue(TestSuperClass.TestSubClass::class.java == c)
+    }
+
+    @Test
+    fun `Get calling class throws if called not from subclass`() {
+        assertThrows<ReflectionException> {
+            ReflectionUtils.getCallingClass(TestSuperClass::class.java, "lowLevelFunction")
+        }
     }
 
     @Retention(AnnotationRetention.RUNTIME)
@@ -102,5 +165,9 @@ class ReflectionUtilsTest {
 
         @Ann2
         fun fooMapable(s: String) = "Hello3$s"
+
+        private fun fooInaccessible() = "Hello4"
     }
+
+    class TestClass2(val s: String)
 }

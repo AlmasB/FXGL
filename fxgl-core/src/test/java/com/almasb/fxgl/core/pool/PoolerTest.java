@@ -41,6 +41,9 @@ public class PoolerTest {
 
         assertThat(obj2, is(obj));
         assertThat(obj.field, is(0));
+
+        // pools ignore objects which were never in the pool
+        Pools.free("");
     }
 
     @Test
@@ -55,6 +58,35 @@ public class PoolerTest {
         PoolableObject obj = Pools.obtain(PoolableObject.class);
 
         assertThat(obj.field, is(99));
+    }
+
+    @Test
+    void testPoolClear() {
+        Pool<Stateful> pool = new Pool<>(1) {
+            @Override
+            protected Stateful newObject() {
+                return new Stateful(44);
+            }
+        };
+
+        Stateful obj = pool.obtain();
+        obj.field = 10;
+
+        pool.clear();
+
+        assertThat(pool.obtain().field, is(44));
+    }
+
+    public static class Stateful implements Poolable {
+
+        int field = 0;
+
+        public Stateful(int value) {
+            field = value;
+        }
+
+        @Override
+        public void reset() { }
     }
 
     public static class PoolableObject implements Poolable {
