@@ -31,6 +31,10 @@ class InterpolatorsTest {
         assertThat(i2.interpolate(0.0, 1.0, 0.0), `is`(0.0))
         assertThat(i3.interpolate(0.0, 1.0, 0.0), `is`(0.0))
 
+        assertThat(i1.interpolate(0.0, 1.0, 0.5), not(anyOf(`is`(0.0), `is`(1.0))))
+        assertThat(i2.interpolate(0.0, 1.0, 0.5), not(anyOf(`is`(0.0), `is`(1.0))))
+        assertThat(i3.interpolate(0.0, 1.0, 0.5), not(anyOf(`is`(0.0), `is`(1.0))))
+
         assertThat(i1.interpolate(0.0, 1.0, 1.0), `is`(1.0))
         assertThat(i2.interpolate(0.0, 1.0, 1.0), `is`(1.0))
         assertThat(i3.interpolate(0.0, 1.0, 1.0), `is`(1.0))
