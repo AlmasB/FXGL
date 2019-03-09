@@ -38,7 +38,13 @@ public class AnimSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        onKeyDown(KeyCode.F, "f", () -> anim.start());
+        onKeyDown(KeyCode.F, "f", () -> {
+            anim.onUpdate(0.5);
+
+            getGameWorld().getEntities().forEach(e -> {
+                System.out.println(e.getPosition());
+            });
+        });
         onKeyDown(KeyCode.G, "g", () -> anim.stop());
         onKeyDown(KeyCode.Q, "q", () -> anim.pause());
         onKeyDown(KeyCode.E, "e", () -> anim.resume());
@@ -53,23 +59,20 @@ public class AnimSample extends GameApplication {
                 .view(new Rectangle(40, 40, Color.BLUE))
                 .buildAndAttach();
 
-        Entity e2 = entityBuilder()
-                .at(100, 150)
-                .view(new Rectangle(40, 40, Color.RED))
-                .buildAndAttach();
-
-        //anim = translateAnim(e, new Point2D(200, 100), Duration.seconds(1));
-
-        //translate(e2, new Point2D(200, 150), Duration.seconds(2));
-
-        //fadeIn(e, Duration.ZERO, Duration.seconds(1), () -> {});
-
-        spawnFadeIn("block", new SpawnData(110, 11), Duration.seconds(2));
+        anim = animationBuilder()
+                .duration(Duration.seconds(2))
+                .translate(e)
+                .from(new Point2D(100, 100))
+                .to(new Point2D(200, 100))
+                .build();
+        anim.start();
     }
 
     @Override
     protected void onUpdate(double tpf) {
-        //anim.onUpdate(tpf);
+
+
+
     }
 
     public static class EFactory implements EntityFactory {
