@@ -583,25 +583,6 @@ public class Array<T> implements Iterable<T> {
     }
 
     /**
-     * Sorts this array.
-     * The array elements must implement {@link Comparable}.
-     * This method is not thread safe (uses {@link Sort#instance()}).
-     */
-    public void sort() {
-        Sort.instance().sort(items, 0, size);
-    }
-
-    /**
-     * Sorts the array using given comparator.
-     * This method is not thread safe (uses {@link Sort#instance()}).
-     *
-     * @param comparator comparator for sorting
-     */
-    public void sort(Comparator<? super T> comparator) {
-        Sort.instance().sort(items, comparator, 0, size);
-    }
-
-    /**
      * Reverses the items.
      */
     public void reverse() {
@@ -657,32 +638,6 @@ public class Array<T> implements Iterable<T> {
         else
             predicateIterable.set(this, predicate);
         return predicateIterable;
-    }
-
-    /** Selects the nth-lowest element from the Array according to Comparator ranking. This might partially sort the Array. The
-     * array must have a size greater than 0, or a {@link IllegalArgumentException} will be thrown.
-     * @see Select
-     * @param comparator used for comparison
-     * @param kthLowest rank of desired object according to comparison, n is based on ordinal numbers, not array indices. for min
-     *           value use 1, for max value use size of array, using 0 results in runtime exception.
-     * @return the value of the Nth lowest ranked object. */
-    public T selectRanked(Comparator<T> comparator, int kthLowest) {
-        if (kthLowest < 1) {
-            throw new IllegalArgumentException("nth_lowest must be greater than 0, 1 = first, 2 = second...");
-        }
-        return Select.instance().select(items, comparator, kthLowest, size);
-    }
-
-    /** @see Array#selectRanked(Comparator, int)
-     * @param comparator used for comparison
-     * @param kthLowest rank of desired object according to comparison, n is based on ordinal numbers, not array indices. for min
-     *           value use 1, for max value use size of array, using 0 results in runtime exception.
-     * @return the index of the Nth lowest ranked object. */
-    public int selectRankedIndex(Comparator<T> comparator, int kthLowest) {
-        if (kthLowest < 1) {
-            throw new IllegalArgumentException("nth_lowest must be greater than 0, 1 = first, 2 = second...");
-        }
-        return Select.instance().selectIndex(items, comparator, kthLowest, size);
     }
 
     /**
