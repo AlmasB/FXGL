@@ -77,6 +77,20 @@ public class PoolerTest {
         assertThat(pool.obtain().field, is(44));
     }
 
+    @Test
+    public void testPoolNonPoolable() {
+        Pool<String> pool = new Pool<>(1, 2) {
+            @Override
+            protected String newObject() {
+                return "Hi";
+            }
+        };
+
+        pool.free("");
+        pool.free("");
+        pool.free("");
+    }
+
     public static class Stateful implements Poolable {
 
         int field = 0;
