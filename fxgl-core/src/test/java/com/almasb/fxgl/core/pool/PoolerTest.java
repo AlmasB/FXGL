@@ -61,7 +61,7 @@ public class PoolerTest {
     }
 
     @Test
-    void testPoolClear() {
+    public void testPoolClear() {
         Pool<Stateful> pool = new Pool<>(1) {
             @Override
             protected Stateful newObject() {
