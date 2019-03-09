@@ -23,13 +23,7 @@ public abstract class Pool<T> {
     /**
      * The maximum number of objects that will be pooled.
      */
-    public final int max;
-
-    /**
-     * The highest number of free objects.
-     * Can be reset any time.
-     */
-    private int peak;
+    private final int max;
 
     private final Array<T> freeObjects;
 
@@ -79,15 +73,10 @@ public abstract class Pool<T> {
      * If the pool already contains {@link #max} free objects, the specified object is reset but not added to the pool.
      *
      * @param object the object to put in the pool
-     * @throws IllegalArgumentException if object is null
      */
     public void free(T object) {
-        if (object == null)
-            throw new IllegalArgumentException("object cannot be null.");
-
         if (freeObjects.size() < max) {
             freeObjects.add(object);
-            peak = Math.max(peak, freeObjects.size());
         }
 
         reset(object);
@@ -105,47 +94,10 @@ public abstract class Pool<T> {
     }
 
     /**
-     * Puts the specified objects in the pool.
-     * Null objects within the array are silently ignored.
-     *
-     * @see #free(Object)
-     * @param objects an array of objects to put back in the pool
-     * @throws IllegalArgumentException if objects is null
-     */
-    public void freeAll(Array<T> objects) {
-        if (objects == null)
-            throw new IllegalArgumentException("objects cannot be null.");
-
-        Array<T> freeObjects = this.freeObjects;
-        int max = this.max;
-
-        for (int i = 0; i < objects.size(); i++) {
-            T object = objects.get(i);
-
-            if (object == null)
-                continue;
-
-            if (freeObjects.size() < max)
-                freeObjects.add(object);
-
-            reset(object);
-        }
-
-        peak = Math.max(peak, freeObjects.size());
-    }
-
-    /**
      * Removes all free objects from this pool.
      */
     public void clear() {
         freeObjects.clear();
-    }
-
-    /**
-     * The number of objects available to be obtained.
-     */
-    public int getFree() {
-        return freeObjects.size();
     }
 }
 
