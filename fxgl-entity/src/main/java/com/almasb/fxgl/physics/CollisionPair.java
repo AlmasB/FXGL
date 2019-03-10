@@ -33,13 +33,6 @@ final class CollisionPair extends Pair<Entity> implements Poolable {
         }
     }
 
-    /**
-     * @return collision handler for this pair
-     */
-    CollisionHandler getHandler() {
-        return handler;
-    }
-
     void collisionBegin() {
         handler.onCollisionBegin(getA(), getB());
     }
