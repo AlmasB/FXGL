@@ -6,15 +6,16 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.core.collection.Array
-import com.almasb.fxgl.entity.component.Component
-import com.almasb.fxgl.entity.components.*
-import com.almasb.fxgl.physics.BoundingShape
-import com.almasb.fxgl.physics.HitBox
-import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.core.util.Predicate
+import com.almasb.fxgl.entity.component.Component
+import com.almasb.fxgl.entity.components.IDComponent
+import com.almasb.fxgl.entity.components.IrremovableComponent
+import com.almasb.fxgl.entity.components.TimeComponent
+import com.almasb.fxgl.entity.components.TypeComponent
 import com.almasb.fxgl.entity.level.Level
+import com.almasb.fxgl.physics.BoundingShape
+import com.almasb.fxgl.physics.HitBox
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import org.hamcrest.BaseMatcher
@@ -27,16 +28,10 @@ import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.function.Executable
 
 class GameWorldTest {
-
-//    companion object {
-//        @BeforeAll
-//        @JvmStatic fun before() {
-//            FXGLMock.mock()
-//        }
-//    }
 
     private lateinit var gameWorld: GameWorld
 
@@ -97,37 +92,29 @@ class GameWorldTest {
         assertThat(gameWorld.entities, not(contains(e)))
     }
 
-//    @Test
-//    fun `Removed entity keeps components and components in that frame`() {
-//        val e = Entity()
-//        e.addComponent(EntitiesTest.TestComponent())
-//        e.addComponent(EntitiesTest.TestControl())
-//
-//        gameWorld.addEntity(e)
-//        gameWorld.removeEntity(e)
-//
-//        assertAll(
-//                Executable { assertTrue(e.components.isNotEmpty) },
-//                Executable { assertTrue(e.components.isNotEmpty) }
-//        )
-//    }
-//
-//    @Test
-//    fun `Removed entity is cleaned in next frame`() {
-//        val e = Entity()
-//        e.addComponent(EntitiesTest.TestComponent())
-//        e.addComponent(EntitiesTest.TestControl())
-//
-//        gameWorld.addEntity(e)
-//        gameWorld.removeEntity(e)
-//
-//        gameWorld.onUpdate(0.0)
-//
-//        assertAll(
-//                Executable { assertTrue(e.components.isEmpty) },
-//                Executable { assertTrue(e.components.isEmpty) }
-//        )
-//    }
+    @Test
+    fun `Removed entity keeps components and components in that frame`() {
+        val e = Entity()
+        e.addComponent(EntityTest.CustomDataComponent("hello"))
+
+        gameWorld.addEntity(e)
+        gameWorld.removeEntity(e)
+
+        assertTrue(e.components.isNotEmpty)
+    }
+
+    @Test
+    fun `Removed entity is cleaned in next frame`() {
+        val e = Entity()
+        e.addComponent(EntityTest.CustomDataComponent("hello"))
+
+        gameWorld.addEntity(e)
+        gameWorld.removeEntity(e)
+
+        gameWorld.onUpdate(0.0)
+
+        assertTrue(e.components.isEmpty)
+    }
 
     @Test
     fun `Remove multiple entities by passing entities as varag)`() {
@@ -418,52 +405,52 @@ class GameWorldTest {
 
         assertTrue(gameWorld.entities.isEmpty())
     }
-//
-//    @Test
-//    fun `Clear correctly cleans all entities`() {
-//        val e = Entity()
-//        e.addComponent(EntitiesTest.TestControl())
-//        gameWorld.addEntity(e)
-//
-//        gameWorld.onUpdate(0.0)
-//
-//        val e2 = Entity()
-//        e2.addComponent(EntitiesTest.TestControl())
-//        gameWorld.addEntity(e2)
-//
-//        var count = 0
-//
-//        gameWorld.addWorldListener(object : EntityWorldListener {
-//            override fun onEntityAdded(entity: Entity) {}
-//
-//            override fun onEntityRemoved(entity: Entity) {
-//                count++
-//            }
-//        })
-//
-//        gameWorld.clear()
-//
-//        assertAll(
-//                Executable { assertThat(count, `is`(2)) },
-//                Executable { assertTrue(e.components.isEmpty) },
-//                Executable { assertTrue(e2.components.isEmpty) }
-//        )
-//    }
-//
-//    @Test
-//    fun `Clear correctly cleans entity removed in previous frame`() {
-//        val e = Entity()
-//        e.addComponent(EntitiesTest.TestControl())
-//        gameWorld.addEntity(e)
-//
-//        gameWorld.onUpdate(0.0)
-//
-//        gameWorld.removeEntity(e)
-//
-//        gameWorld.clear()
-//
-//        assertTrue(e.components.isEmpty)
-//    }
+
+    @Test
+    fun `Clear correctly cleans all entities`() {
+        val e = Entity()
+        e.addComponent(EntityTest.CustomDataComponent("hello"))
+        gameWorld.addEntity(e)
+
+        gameWorld.onUpdate(0.0)
+
+        val e2 = Entity()
+        e2.addComponent(EntityTest.CustomDataComponent("hello"))
+        gameWorld.addEntity(e2)
+
+        var count = 0
+
+        gameWorld.addWorldListener(object : EntityWorldListener {
+            override fun onEntityAdded(entity: Entity) {}
+
+            override fun onEntityRemoved(entity: Entity) {
+                count++
+            }
+        })
+
+        gameWorld.clear()
+
+        assertAll(
+                Executable { assertThat(count, `is`(2)) },
+                Executable { assertTrue(e.components.isEmpty) },
+                Executable { assertTrue(e2.components.isEmpty) }
+        )
+    }
+
+    @Test
+    fun `Clear correctly cleans entity removed in previous frame`() {
+        val e = Entity()
+        e.addComponent(EntityTest.CustomDataComponent("hello"))
+        gameWorld.addEntity(e)
+
+        gameWorld.onUpdate(0.0)
+
+        gameWorld.removeEntity(e)
+
+        gameWorld.clear()
+
+        assertTrue(e.components.isEmpty)
+    }
 
     @Test
     fun `Do not remove if entity has IrremovableComponent`() {
@@ -521,23 +508,23 @@ class GameWorldTest {
         assertThat(e.position, `is`(Point2D(0.0, 0.0)))
     }
 
-//    @Test
-//    fun `Spawn with initial position`() {
-//        val factory = TestEntityFactory()
-//        gameWorld.addEntityFactory(factory)
-//
-//        assertAll(
-//                Executable {
-//                    val e1 = gameWorld.spawn("enemy", 33.0, 40.0)
-//                    assertThat(e1.position, `is`(Point2D(33.0, 40.0)))
-//                },
-//
-//                Executable {
-//                    val e2 = gameWorld.spawn("enemy", Point2D(100.0, 100.0))
-//                    assertThat(e2.position, `is`(Point2D(100.0, 100.0)))
-//                }
-//        )
-//    }
+    @Test
+    fun `Spawn with initial position`() {
+        val factory = TestEntityFactory()
+        gameWorld.addEntityFactory(factory)
+
+        assertAll(
+                Executable {
+                    val e1 = gameWorld.spawn("enemy", 33.0, 40.0)
+                    assertThat(e1.position, `is`(Point2D(33.0, 40.0)))
+                },
+
+                Executable {
+                    val e2 = gameWorld.spawn("enemy", Point2D(100.0, 100.0))
+                    assertThat(e2.position, `is`(Point2D(100.0, 100.0)))
+                }
+        )
+    }
 
 //    @Test
 //    fun `Spawn with initial properties`() {
@@ -589,29 +576,32 @@ class GameWorldTest {
         )
     }
 
-//    @Test
-//    fun `Singleton`() {
-//        val e1 = Entity()
-//        e1.type = TestType.T1
-//
-//        val e2 = Entity()
-//        e2.type = TestType.T2
-//
-//        val e3 = Entity()
-//        e3.type = TestType.T3
-//
-//        val e4 = Entity()
-//
-//        gameWorld.addEntities(e1, e2, e3, e4)
-//
-//        assertAll(
-//                Executable { assertThat(gameWorld.getSingleton(TestType.T1).get(), `is`(e1)) },
-//                Executable { assertThat(gameWorld.getSingleton(TestType.T2).get(), `is`(e2)) },
-//                Executable { assertThat(gameWorld.getSingleton (Predicate { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T3) }).get(), `is`(e3)) },
-//                Executable { assertFalse(gameWorld.getSingleton(TestType.T4).isPresent) },
-//                Executable { assertFalse(gameWorld.getSingleton (Predicate { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T4) }).isPresent) }
-//        )
-//    }
+    @Test
+    fun `Singleton`() {
+        val e1 = Entity()
+        e1.type = TestType.T1
+
+        val e2 = Entity()
+        e2.type = TestType.T2
+
+        val e3 = Entity()
+        e3.type = TestType.T3
+
+        val e4 = Entity()
+
+        gameWorld.addEntities(e1, e2, e3, e4)
+
+        assertAll(
+                Executable { assertThat(gameWorld.getSingleton(TestType.T1), `is`(e1)) },
+                Executable { assertThat(gameWorld.getSingleton(Predicate { it.isType(TestType.T1) }), `is`(e1)) },
+                Executable { assertThat(gameWorld.getSingletonOptional(TestType.T1).get(), `is`(e1)) },
+                Executable { assertThat(gameWorld.getSingletonOptional(TestType.T2).get(), `is`(e2)) },
+                Executable { assertThat(gameWorld.getSingletonOptional (Predicate { it.isType(TestType.T3) }).get(), `is`(e3)) },
+                Executable { assertFalse(gameWorld.getSingletonOptional(TestType.T4).isPresent) },
+                Executable { assertFalse(gameWorld.getSingletonOptional (Predicate { it.isType(TestType.T4) }).isPresent) },
+                Executable { assertThrows<NoSuchElementException> { gameWorld.getSingleton(Predicate { it.x < 0 }) } }
+        )
+    }
 
     @Test
     fun `Random returns the single item present`() {
@@ -812,10 +802,9 @@ class GameWorldTest {
 
         @Spawns("enemy")
         fun makeEnemy(data: SpawnData): Entity {
-            return Entity()
-//            return com.almasb.fxgl.util.Entities.builder()
-//                    .from(data)
-//                    .build()
+            val e = Entity()
+            e.setPosition(data.x, data.y)
+            return e
         }
     }
 
@@ -823,10 +812,9 @@ class GameWorldTest {
 
         @Spawns("enemy")
         fun makeEnemy(data: SpawnData): Entity {
-            return Entity()
-//            return com.almasb.fxgl.util.Entities.builder()
-//                    .from(data)
-//                    .build()
+            val e = Entity()
+            e.setPosition(data.x, data.y)
+            return e
         }
     }
 
@@ -834,18 +822,16 @@ class GameWorldTest {
 
         @Spawns("player")
         fun makePlayer(data: SpawnData): Entity {
-            return Entity()
-//            return com.almasb.fxgl.util.Entities.builder()
-//                    .from(data)
-//                    .build()
+            val e = Entity()
+            e.setPosition(data.x, data.y)
+            return e
         }
 
         @Spawns("platform")
         fun makePlatform(data: SpawnData): Entity {
-            return Entity()
-//            return com.almasb.fxgl.util.Entities.builder()
-//                    .from(data)
-//                    .build()
+            val e = Entity()
+            e.setPosition(data.x, data.y)
+            return e
         }
     }
 }

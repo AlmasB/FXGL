@@ -407,7 +407,7 @@ class GameWorld {
     }
 
     fun getSingleton(predicate: Predicate<Entity>): Entity {
-        return entities.find { predicate.test(it) } ?: throw RuntimeException("No entity found satisfying the predicate")
+        return entities.find { predicate.test(it) } ?: throw NoSuchElementException("No entity found satisfying the predicate")
     }
 
     /**
