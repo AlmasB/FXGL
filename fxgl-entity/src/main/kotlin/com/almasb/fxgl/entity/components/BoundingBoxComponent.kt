@@ -446,7 +446,10 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
             val copy = hitBox.copy()
             list.add(copy)
         }
-        return BoundingBoxComponent(*list.toTypedArray())
+
+        val copy = BoundingBoxComponent(*list.toTypedArray())
+        copy.transform = transform.copy()
+        return copy
     }
 
     override fun toString(): String {
