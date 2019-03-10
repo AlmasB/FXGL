@@ -20,6 +20,14 @@ import org.junit.jupiter.api.Test
 class SpawnDataTest {
 
     @Test
+    fun `Creation`() {
+        val data = SpawnData(15.0, 30.0)
+
+        assertThat(data.x, `is`(15.0))
+        assertThat(data.y, `is`(30.0))
+    }
+
+    @Test
     fun `Put and get`() {
         val data = SpawnData(0.0, 0.0)
 

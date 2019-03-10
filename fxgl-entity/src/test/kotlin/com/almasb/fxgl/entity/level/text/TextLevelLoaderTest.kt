@@ -28,6 +28,15 @@ class TextLevelLoaderTest {
     }
 
     @Test
+    fun `Default char is empty char`() {
+        val loader = TextLevelLoader(BLOCK_WIDTH, BLOCK_HEIGHT)
+
+        assertThat(loader.blockWidth, `is`(BLOCK_WIDTH))
+        assertThat(loader.blockHeight, `is`(BLOCK_HEIGHT))
+        assertThat(loader.emptyChar, `is`(' '))
+    }
+
+    @Test
     fun `Load text level`() {
         val loader = TextLevelLoader(BLOCK_WIDTH, BLOCK_HEIGHT, '0')
 
