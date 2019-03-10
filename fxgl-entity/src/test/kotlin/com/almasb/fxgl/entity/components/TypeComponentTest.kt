@@ -22,14 +22,6 @@ class TypeComponentTest {
     }
 
     @Test
-    fun `Copy`() {
-        val t1 = TypeComponent(MyType.ONE)
-        val t2 = t1.copy()
-
-        assertTrue(t2.isType(MyType.ONE))
-    }
-
-    @Test
     fun `Save`() {
         val t1 = TypeComponent(MyType.ONE)
         val bundle = Bundle("")

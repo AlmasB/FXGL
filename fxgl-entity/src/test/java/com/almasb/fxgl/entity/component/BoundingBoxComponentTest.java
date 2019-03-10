@@ -41,19 +41,6 @@ public class BoundingBoxComponentTest {
     }
 
     @Test
-    public void copy() {
-        bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 20)));
-        assertEquals(1, bbox.hitBoxesProperty().size());
-
-        BoundingBoxComponent bbox2 = bbox.copy();
-
-        assertEquals(1, bbox2.hitBoxesProperty().size());
-        assertThat(bbox2.getWidth(), is(bbox.getWidth()));
-        assertThat(bbox2.getHeight(), is(bbox.getHeight()));
-        assertThat(bbox2.getCenterWorld(), is(bbox.getCenterWorld()));
-    }
-
-    @Test
     public void testRemoveHitBox() throws Exception {
         bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 40)));
         assertEquals(1, bbox.hitBoxesProperty().size());

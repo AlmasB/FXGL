@@ -803,21 +803,12 @@ class EntityTest {
     }
 
     @Required(HPComponent::class)
-    private inner class HPControl(var value: Int = 0) : Component(), CopyableComponent<HPControl> {
-
-        override fun copy(): HPControl {
-            return HPControl(value)
-        }
+    private inner class HPControl(var value: Int = 0) : Component() {
     }
 
     private inner class TestComponent : Component()
 
-    private inner class HPComponent(value: Double) : DoubleComponent(value), CopyableComponent<HPComponent> {
-
-        override fun copy(): HPComponent {
-            return HPComponent(value)
-        }
-    }
+    private inner class HPComponent(value: Double) : DoubleComponent(value)
 
     @Required(TestComponent::class)
     private inner class RequireTestComponent : Component()

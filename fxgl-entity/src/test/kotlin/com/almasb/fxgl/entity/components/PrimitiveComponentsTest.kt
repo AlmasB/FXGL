@@ -126,11 +126,7 @@ class PrimitiveComponentsTest {
 
         c.value = true
 
-        val c2 = c.copy()
-
-        assertFalse(c === c2)
-        assertTrue(c2.value)
-        assertThat(c.toString(), `is`("Collidable(true)"))
+        assertTrue(c.value)
     }
 
     class SimpleBooleanComponent : BooleanComponent()

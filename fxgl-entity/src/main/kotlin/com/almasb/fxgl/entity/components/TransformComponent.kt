@@ -2,7 +2,6 @@ package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.entity.component.Component
-import com.almasb.fxgl.entity.component.CopyableComponent
 import com.almasb.fxgl.entity.component.CoreComponent
 import com.almasb.fxgl.entity.component.SerializableComponent
 import javafx.beans.property.DoubleProperty
@@ -18,8 +17,7 @@ import javafx.geometry.Point2D
 @CoreComponent
 class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, scaleY: Double) :
         Component(),
-        SerializableComponent,
-        CopyableComponent<TransformComponent> {
+        SerializableComponent {
 
     constructor(p: Point2D) : this(p.x, p.y, 0.0, 1.0, 1.0)
     constructor() : this(0.0, 0.0, 0.0, 1.0, 1.0)
@@ -215,12 +213,5 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         angle = bundle.get("angle")
         scaleX = bundle.get("scaleX")
         scaleY = bundle.get("scaleY")
-    }
-
-    override fun copy(): TransformComponent {
-        val c = TransformComponent(x, y, angle, scaleX, scaleY)
-        c.scaleOrigin = scaleOrigin
-        c.rotationOrigin = rotationOrigin
-        return c
     }
 }

@@ -35,20 +35,6 @@ class TransformComponentTest {
     }
 
     @Test
-    fun `Copy`() {
-        val c = TransformComponent(Point2D(30.0, 55.0))
-        c.scaleOrigin = Point2D(1.0, 1.0)
-        c.scaleX = 1.5
-        c.scaleY = 3.0
-        c.angle = 45.0
-        c.rotationOrigin = Point2D(2.0, 2.0)
-
-        val c2 = c.copy()
-
-        assertTrue(areEqual(c, c2))
-    }
-
-    @Test
     fun `To String`() {
         val c = TransformComponent(100.0, 100.0, 30.0, 2.0, 2.0)
 
