@@ -11,9 +11,6 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Point2D
 
-
-//data class Transform(val x: Double, val y: Double, val rotation: Double, val scaleX: Double, val scaleY: Double)
-
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -196,19 +193,34 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     }
 
     override fun toString(): String {
-        return "Transform(" + ")"
+        return "Transform($x, $y, $angle, $scaleX, $scaleY)"
     }
 
     override fun write(bundle: Bundle) {
         bundle.put("propX", x)
         bundle.put("propY", y)
+        bundle.put("angle", angle)
+        bundle.put("scaleX", scaleX)
+        bundle.put("scaleY", scaleY)
+        bundle.put("scaleOriginX", scaleOrigin.x)
+        bundle.put("scaleOriginY", scaleOrigin.y)
+        bundle.put("rotationOriginX", rotationOrigin.x)
+        bundle.put("rotationOriginY", rotationOrigin.y)
     }
 
     override fun read(bundle: Bundle) {
         setPosition(bundle.get("propX"), bundle.get("propY"))
+        scaleOrigin = Point2D(bundle.get("scaleOriginX"), bundle.get("scaleOriginY"))
+        rotationOrigin = Point2D(bundle.get("rotationOriginX"), bundle.get("rotationOriginY"))
+        angle = bundle.get("angle")
+        scaleX = bundle.get("scaleX")
+        scaleY = bundle.get("scaleY")
     }
 
     override fun copy(): TransformComponent {
-        return TransformComponent(x, y, angle, scaleX, scaleY)
+        val c = TransformComponent(x, y, angle, scaleX, scaleY)
+        c.scaleOrigin = scaleOrigin
+        c.rotationOrigin = rotationOrigin
+        return c
     }
 }
