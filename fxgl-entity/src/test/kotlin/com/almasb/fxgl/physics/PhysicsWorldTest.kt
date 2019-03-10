@@ -13,7 +13,11 @@ import com.almasb.fxgl.entity.components.CollidableComponent
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers
+import org.hamcrest.Matchers.*
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 /**
@@ -27,7 +31,12 @@ class PhysicsWorldTest {
         TYPE1, TYPE2
     }
 
-    private val physicsWorld = PhysicsWorld(600, 50.0)
+    private lateinit var physicsWorld: PhysicsWorld
+
+    @BeforeEach
+    fun setUp() {
+        physicsWorld = PhysicsWorld(600, 50.0)
+    }
 
     @Test
     fun `Jbox world`() {
@@ -175,5 +184,63 @@ class PhysicsWorldTest {
         assertThat(collisionBeginCount, `is`(1))
         assertThat(collisionCount, `is`(3))
         assertThat(collisionEndCount, `is`(1))
+    }
+
+    @Test
+    fun `Raycast`() {
+        val e1 = Entity()
+        e1.position = Point2D(100.0, 100.0)
+        e1.boundingBoxComponent.addHitBox(HitBox("Test1", BoundingShape.box(40.0, 40.0)))
+        e1.addComponent(PhysicsComponent())
+
+        val e2 = Entity()
+        e2.position = Point2D(200.0, 100.0)
+        e2.boundingBoxComponent.addHitBox(HitBox("Test2", BoundingShape.box(40.0, 40.0)))
+        e2.addComponent(PhysicsComponent())
+
+        val e3 = Entity()
+        e3.position = Point2D(300.0, 100.0)
+        e3.boundingBoxComponent.addHitBox(HitBox("Test2", BoundingShape.box(40.0, 40.0)))
+        e3.addComponent(PhysicsComponent())
+
+        // entities that are not part of any world are not active
+        // so we add them to _some_ world
+        val gameWorld = GameWorld()
+        gameWorld.addWorldListener(physicsWorld)
+
+        gameWorld.addEntity(e1)
+        gameWorld.addEntity(e2)
+        gameWorld.addEntity(e3)
+
+        // -->   X    Y     Z
+
+        var result = physicsWorld.raycast(Point2D(0.0, 120.0), Point2D(500.0, 120.0))
+
+        assertThat(result.entity.get(), `is`(e1))
+        assertThat(result.point.get().x, closeTo(100.0, 1.0))
+        assertThat(result.point.get().y, closeTo(120.0, 1.0))
+
+        //    X  -->  Y     Z
+
+        result = physicsWorld.raycast(Point2D(150.0, 120.0), Point2D(500.0, 120.0))
+
+        assertThat(result.entity.get(), `is`(e2))
+        assertThat(result.point.get().x, closeTo(200.0, 1.0))
+        assertThat(result.point.get().y, closeTo(120.0, 1.0))
+
+        //    X    Y  -->   Z
+
+        result = physicsWorld.raycast(Point2D(250.0, 120.0), Point2D(500.0, 120.0))
+
+        assertThat(result.entity.get(), `is`(e3))
+        assertThat(result.point.get().x, closeTo(300.0, 1.0))
+        assertThat(result.point.get().y, closeTo(120.0, 1.0))
+
+        //    X    Y     Z  -->
+
+        result = physicsWorld.raycast(Point2D(450.0, 120.0), Point2D(500.0, 120.0))
+
+        assertFalse(result.entity.isPresent)
+        assertFalse(result.point.isPresent)
     }
 }
