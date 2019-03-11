@@ -542,6 +542,14 @@ class PhysicsWorldTest {
         assertThat(result.point.get().x, closeTo(300.0, 1.0))
         assertThat(result.point.get().y, closeTo(120.0, 1.0))
 
+        // ignore Z:     X    Y  -->   (Z)
+        e3.getComponent(PhysicsComponent::class.java).isRaycastIgnored = true
+
+        result = physicsWorld.raycast(Point2D(250.0, 120.0), Point2D(500.0, 120.0))
+
+        assertFalse(result.entity.isPresent)
+        assertFalse(result.point.isPresent)
+
         //    X    Y     Z  -->
 
         result = physicsWorld.raycast(Point2D(450.0, 120.0), Point2D(500.0, 120.0))

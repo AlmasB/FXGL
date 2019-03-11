@@ -181,4 +181,53 @@ class PhysicsComponentTest {
         assertFalse(c.isMovingX)
         assertTrue(c.isMovingY)
     }
+
+    @Test
+    fun `Apply linear impulse to dynamic`() {
+        val c = PhysicsComponent()
+        c.setBodyType(BodyType.DYNAMIC)
+
+        val world = PhysicsWorld(600, 50.0)
+        world.setGravity(0.0, 0.0)
+
+        val e = Entity()
+        e.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(10.0, 10.0)))
+        e.addComponent(c)
+
+        world.onEntityAdded(e)
+
+        c.applyLinearImpulse(Point2D(50.0, 0.0), Point2D(0.0, 0.0), true)
+
+        world.onUpdate(1.0)
+        c.onUpdate(1.0)
+
+        assertThat(e.position, `is`(Point2D(50.0, 0.0)))
+
+        world.onUpdate(1.0)
+        c.onUpdate(1.0)
+
+        assertThat(e.position, `is`(Point2D(100.0, 0.0)))
+    }
+
+    @Test
+    fun `Apply angular velocity to dynamic`() {
+        val c = PhysicsComponent()
+        c.setBodyType(BodyType.DYNAMIC)
+
+        val world = PhysicsWorld(600, 50.0)
+        world.setGravity(0.0, 0.0)
+
+        val e = Entity()
+        e.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(10.0, 10.0)))
+        e.addComponent(c)
+
+        world.onEntityAdded(e)
+
+        c.setAngularVelocity(5.0)
+
+        world.onUpdate(0.016)
+        c.onUpdate(0.016)
+
+        assertThat(e.rotation, closeTo(5.0, 0.5))
+    }
 }

@@ -293,42 +293,6 @@ public final class PhysicsComponent extends Component {
     }
 
     /**
-     * Apply an angular impulse.
-     *
-     * @param impulse the angular impulse (in pixel/sec)
-     */
-    public void applyAngularImpulse(float impulse) {
-        applyBodyAngularImpulse(physicsWorld.toMetersF(impulse));
-    }
-
-    /**
-     * Apply an angular impulse.
-     *
-     * @param impulse the angular impulse (in meter/sec)
-     */
-    public void applyBodyAngularImpulse(float impulse) {
-        getBody().applyAngularImpulse(impulse);
-    }
-
-    /**
-     * Apply a torque. This affects the angular velocity without affecting the linear velocity of the center of mass. This wakes up the body.
-     *
-     * @param torque the force (in pixel)
-     */
-    public void applyTorque(float torque) {
-        applyBodyTorque(physicsWorld.toMetersF(torque));
-    }
-
-    /**
-     * Apply a torque. This affects the angular velocity without affecting the linear velocity of the center of mass. This wakes up the body.
-     *
-     * @param torque the force (in meter)
-     */
-    public void applyBodyTorque(float torque) {
-        getBody().applyTorque(torque);
-    }
-
-    /**
      * Set true to make raycast ignore this entity.
      *
      * @param b raycast flag
