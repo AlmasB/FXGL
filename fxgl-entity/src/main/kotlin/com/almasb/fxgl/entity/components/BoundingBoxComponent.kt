@@ -302,10 +302,6 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
                 box2.minYWorld <= box1.maxYWorld
     }
 
-    private fun checkCollision(box1: HitBox, box2: HitBox, angle1: Double, angle2: Double): Boolean {
-        return SAT.isColliding(box1, box2, angle1, angle2)
-    }
-
     private fun checkCollision(box1: HitBox, box2: HitBox, angle1: Double, angle2: Double,
                                t1: TransformComponent, t2: TransformComponent): Boolean {
         return SAT.isColliding(box1, box2, angle1, angle2, t1, t2)

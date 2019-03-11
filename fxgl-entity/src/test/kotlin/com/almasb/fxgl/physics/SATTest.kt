@@ -20,21 +20,6 @@ import org.junit.jupiter.api.Test
 class SATTest {
 
     @Test
-    fun `AABB`() {
-        var box1 = HitBox("main", BoundingShape.box(20.0, 40.0))
-        var box2 = HitBox("main", BoundingShape.box(20.0, 40.0))
-
-        assertTrue(SAT.isColliding(box1, box2, 0.0, 0.0))
-
-        box1 = HitBox("main", BoundingShape.box(20.0, 40.0))
-        box2 = HitBox("main", BoundingShape.box(20.0, 40.0))
-
-        box2.bindXY(TransformComponent(21.0, 0.0, 0.0, 1.0, 1.0))
-
-        assertFalse(SAT.isColliding(box1, box2, 0.0, 0.0))
-    }
-
-    @Test
     fun `HitBoxes with scale`() {
         val box1 = HitBox(BoundingShape.box(20.0, 40.0))
         val box2 = HitBox(BoundingShape.box(20.0, 40.0))
