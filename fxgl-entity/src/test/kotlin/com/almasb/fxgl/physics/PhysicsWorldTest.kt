@@ -319,6 +319,180 @@ class PhysicsWorldTest {
     }
 
     @Test
+    fun `Sensor collisions`() {
+        val e1 = Entity()
+        e1.type = EntityType.TYPE1
+        e1.position = Point2D(100.0, 100.0)
+        e1.boundingBoxComponent.addHitBox(HitBox("Test1", BoundingShape.box(40.0, 40.0)))
+        e1.addComponent(CollidableComponent(true))
+        e1.addComponent(PhysicsComponent())
+
+        val c2 = PhysicsComponent()
+        c2.setBodyType(BodyType.DYNAMIC)
+
+        val e2 = Entity()
+        e2.type = EntityType.TYPE2
+        e2.position = Point2D(150.0, 100.0)
+        e2.boundingBoxComponent.addHitBox(HitBox("Test2", BoundingShape.box(40.0, 40.0)))
+        e2.addComponent(CollidableComponent(true))
+        e2.addComponent(c2)
+
+        // entities that are not part of any world are not active
+        // so we add them to _some_ world
+        val gameWorld = GameWorld()
+        gameWorld.addEntity(e1)
+        gameWorld.addEntity(e2)
+
+        var hitboxCount = 0
+        var collisionBeginCount = 0
+        var collisionCount = 0
+        var collisionEndCount = 0
+
+        val handler = object : CollisionHandler(EntityType.TYPE1, EntityType.TYPE2) {
+
+            override fun onHitBoxTrigger(a: Entity, b: Entity, boxA: HitBox, boxB: HitBox) {
+                assertTrue(a === e1)
+                assertTrue(b === e2)
+
+                assertThat(boxA.name, `is`("Test1"))
+                assertThat(boxB.name, `is`("Test2"))
+
+                hitboxCount++
+            }
+
+            override fun onCollisionBegin(a: Entity, b: Entity) {
+                assertTrue(a === e1)
+                assertTrue(b === e2)
+                collisionBeginCount++
+            }
+
+            override fun onCollision(a: Entity, b: Entity) {
+                assertTrue(a === e1)
+                assertTrue(b === e2)
+                collisionCount++
+            }
+
+            override fun onCollisionEnd(a: Entity, b: Entity) {
+                assertTrue(a === e1)
+                assertTrue(b === e2)
+                collisionEndCount++
+            }
+        }
+
+        var sensorCount = 0
+
+        val box1 = HitBox(Point2D(-50.0, 0.0), BoundingShape.box(50.0, 20.0))
+
+        c2.addSensor(box1, object : SensorCollisionHandler() {
+            override fun onCollisionBegin(other: Entity) {
+                assertThat(other, `is`(e1))
+                sensorCount++
+            }
+
+            override fun onCollisionEnd(other: Entity) {
+                assertThat(other, `is`(e1))
+                sensorCount--
+            }
+        })
+
+        physicsWorld.setGravity(0.0, 0.0)
+        physicsWorld.addCollisionHandler(handler)
+
+        physicsWorld.onEntityAdded(e1)
+        physicsWorld.onEntityAdded(e2)
+        physicsWorld.onUpdate(0.016)
+
+        // no collision happened, entities are apart
+        assertThat(hitboxCount, `is`(0))
+        assertThat(collisionBeginCount, `is`(0))
+        assertThat(collisionCount, `is`(0))
+        assertThat(collisionEndCount, `is`(0))
+
+        // move 2nd entity closer to first, colliding with it
+        c2.velocityX = (-30.0) * 20
+
+        physicsWorld.onUpdate(0.016)
+        c2.onUpdate(0.016)
+
+        // no collision happened, entities are apart, but sensor should be triggered
+        assertThat(hitboxCount, `is`(0))
+        assertThat(collisionBeginCount, `is`(0))
+        assertThat(collisionCount, `is`(0))
+        assertThat(collisionEndCount, `is`(0))
+        assertThat(sensorCount, `is`(1))
+
+        physicsWorld.onUpdate(0.016)
+        c2.onUpdate(0.016)
+
+        // hit box and collision begin triggered, entities are now colliding
+        assertThat(hitboxCount, `is`(1))
+        assertThat(collisionBeginCount, `is`(1))
+        assertThat(collisionCount, `is`(1))
+        assertThat(collisionEndCount, `is`(0))
+
+        // sensor still at 1
+        assertThat(sensorCount, `is`(1))
+
+        physicsWorld.onUpdate(0.016)
+        c2.onUpdate(0.016)
+
+        // collision continues
+        assertThat(hitboxCount, `is`(1))
+        assertThat(collisionBeginCount, `is`(1))
+        assertThat(collisionCount, `is`(2))
+        assertThat(collisionEndCount, `is`(0))
+
+        physicsWorld.onUpdate(0.016)
+        c2.onUpdate(0.016)
+
+        // collision continues
+        assertThat(hitboxCount, `is`(1))
+        assertThat(collisionBeginCount, `is`(1))
+        assertThat(collisionCount, `is`(3))
+        assertThat(collisionEndCount, `is`(0))
+
+        // sensor still at 1
+        assertThat(sensorCount, `is`(1))
+
+        // move 2nd entity away from 1st
+        c2.velocityX = (30.0) * 60
+
+        physicsWorld.onUpdate(0.5)
+        c2.onUpdate(0.5)
+
+        // last frame when colliding, so collision still continues
+        assertThat(hitboxCount, `is`(1))
+        assertThat(collisionBeginCount, `is`(1))
+        assertThat(collisionCount, `is`(4))
+        assertThat(collisionEndCount, `is`(0))
+
+        assertThat(sensorCount, `is`(1))
+
+        physicsWorld.onUpdate(0.016)
+        c2.onUpdate(0.016)
+
+        // collision end
+        assertThat(hitboxCount, `is`(1))
+        assertThat(collisionBeginCount, `is`(1))
+        assertThat(collisionCount, `is`(4))
+        assertThat(collisionEndCount, `is`(1))
+
+        // sensor collision also end
+        assertThat(sensorCount, `is`(0))
+
+        c2.removeSensor(box1)
+
+        // move 2nd entity closer to 1st, colliding with it
+        c2.velocityX = (-30.0) * 60
+
+        physicsWorld.onUpdate(0.016)
+        c2.onUpdate(0.016)
+
+        // no change in sensor
+        assertThat(sensorCount, `is`(0))
+    }
+
+    @Test
     fun `Raycast`() {
         val e1 = Entity()
         e1.position = Point2D(100.0, 100.0)
