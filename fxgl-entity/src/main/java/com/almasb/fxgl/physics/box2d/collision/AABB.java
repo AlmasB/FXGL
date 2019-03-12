@@ -10,6 +10,8 @@ import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 
+import static com.almasb.fxgl.core.math.FXGLMath.abs;
+
 /**
  * An axis-aligned bounding box.
  */
@@ -145,7 +147,9 @@ public final class AABB {
 
         p.set(input.p1);
         d.set(input.p2).subLocal(input.p1);
-        Vec2.absToOut(d, absD);
+
+        absD.x = abs(d.x);
+        absD.y = abs(d.y);
 
         // x then y
         if (absD.x < JBoxSettings.EPSILON) {

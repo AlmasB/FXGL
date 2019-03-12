@@ -45,6 +45,14 @@ class Vec2Test {
 
         assertTrue(v1.x == 0.0f)
         assertTrue(v1.y == 0.0f)
+
+        v1.x = 3.0f
+        v1.y = 2.0f
+
+        v1.reset()
+
+        assertTrue(v1.x == 0.0f)
+        assertTrue(v1.y == 0.0f)
     }
 
     @Test
@@ -271,5 +279,37 @@ class Vec2Test {
         val v1 = Vec2.fromAngle(45.0)
 
         assertThat(v1, `is`(Vec2(0.70697117, 0.70724237)))
+    }
+
+    @Test
+    fun `Dot product`() {
+        assertThat(Vec2.dot(Vec2(2f, 3f), Vec2(4f, 7f)), `is`(29f))
+    }
+
+    @Test
+    fun `Cross product`() {
+        assertThat(Vec2.cross(Vec2(2f, 3f), Vec2(4f, 7f)), `is`(2f))
+    }
+
+    @Test
+    fun `Min to out`() {
+        val v1 = Vec2(2f, 3f)
+        val v2 = Vec2(4f, 5f)
+        val v3 = Vec2()
+
+        Vec2.minToOut(v1, v2, v3)
+
+        assertThat(v3, `is`(Vec2(2f, 3f)))
+    }
+
+    @Test
+    fun `Max to out`() {
+        val v1 = Vec2(2f, 3f)
+        val v2 = Vec2(4f, 5f)
+        val v3 = Vec2()
+
+        Vec2.maxToOut(v1, v2, v3)
+
+        assertThat(v3, `is`(Vec2(4f, 5f)))
     }
 }
