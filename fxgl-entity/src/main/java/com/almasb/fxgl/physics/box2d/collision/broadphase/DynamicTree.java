@@ -342,11 +342,16 @@ public class DynamicTree implements BroadPhaseStrategy {
 
             DynamicTreeNode child1 = node.child1;
             DynamicTreeNode child2 = node.child2;
-            int balance = FXGLMath.absShift31(child2.height - child1.height);
+            int balance = absShift31(child2.height - child1.height);
             maxBalance = JBoxUtils.max(maxBalance, balance);
         }
 
         return maxBalance;
+    }
+
+    private static int absShift31(int value) {
+        int y = value >> 31;
+        return (value ^ y) - y;
     }
 
     @Override
