@@ -372,13 +372,6 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
-     * True if the vector represents a pair of valid, non-infinite floating point numbers.
-     */
-    public boolean isValid() {
-        return !Float.isNaN(x) && !Float.isInfinite(x) && !Float.isNaN(y) && !Float.isInfinite(y);
-    }
-
-    /**
      * @return new vector that has positive components
      */
     public Vec2 abs() {

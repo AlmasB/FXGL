@@ -70,17 +70,6 @@ public final class AABB {
     }
 
     /**
-     * @return true if the bounds are sorted (upper x and y are greater than lower x and y)
-     */
-    public boolean isValid() {
-        if (upperBound.x - lowerBound.x < 0
-                || upperBound.y - lowerBound.y < 0)
-            return false;
-
-        return lowerBound.isValid() && upperBound.isValid();
-    }
-
-    /**
      * @return the center of the AABB
      */
     public Vec2 getCenter() {

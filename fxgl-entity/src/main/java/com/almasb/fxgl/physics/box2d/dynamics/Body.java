@@ -139,12 +139,6 @@ public final class Body {
     }
 
     private void checkValid(BodyDef def) {
-        if (!def.getPosition().isValid())
-            throw new IllegalArgumentException("Position is invalid");
-
-        if (!def.getLinearVelocity().isValid())
-            throw new IllegalArgumentException("Linear velocity is invalid");
-
         if (def.getGravityScale() < 0)
             throw new IllegalArgumentException("Gravity scale is invalid");
 

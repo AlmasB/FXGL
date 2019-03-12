@@ -42,7 +42,6 @@ public class MouseJoint extends Joint {
 
     protected MouseJoint(IWorldPool argWorld, MouseJointDef def) {
         super(argWorld, def);
-        assert (def.target.isValid());
         assert (def.maxForce >= 0);
         assert (def.frequencyHz >= 0);
         assert (def.dampingRatio >= 0);
