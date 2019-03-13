@@ -58,16 +58,31 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         reset()
     }
 
+    /**
+     * Play the last animation channel (or default) from start to end.
+     * The channel cannot be reset while playing, but
+     * you can call this method instead to reset the channel.
+     */
     fun play(): AnimatedTexture {
         playAnimationChannel(animationChannel!!)
         return this
     }
 
+    /**
+     * Loops the last animation channel (or default).
+     * Calling this again on the same channel will have no effect
+     * and the channel will not be reset,
+     * but calling with a different channel will switch to that channel.
+     */
     fun loop(): AnimatedTexture {
         loopAnimationChannel(animationChannel!!)
         return this
     }
 
+    /**
+     * Stop the animation.
+     * The frame will be set to 0th.
+     */
     fun stop() {
         currentFrame = 0
         counter = 0.0
