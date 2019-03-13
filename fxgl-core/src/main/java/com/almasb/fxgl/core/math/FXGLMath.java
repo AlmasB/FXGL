@@ -474,21 +474,10 @@ public final class FXGLMath {
      *
      * double noise = noise2D(x * freq, y * freq)
      *
-     * @return perlin noise in 2D quality in [0..1)
-     * @implNote twice slower than noise1D
+     * @return a value in [-1,1]
      */
     public static double noise2D(double x, double y) {
-
-        double noise = PerlinNoiseGenerator.INSTANCE.noise2D(x, y) + 0.5;
-
-        // https://github.com/AlmasB/FXGL/issues/479
-        if (noise < 0)
-            return 0;
-
-        if (noise >= 1)
-            return 0.99999999;
-
-        return noise;
+        return SimplexNoise.noise2D(x, y);
     }
 
     /**
