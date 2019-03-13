@@ -9,13 +9,21 @@ package com.almasb.fxgl.texture
 import javafx.geometry.HorizontalDirection
 import javafx.geometry.Rectangle2D
 import javafx.geometry.VerticalDirection
+import javafx.scene.Node
+import javafx.scene.effect.Blend
+import javafx.scene.effect.BlendMode
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
+import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 
 /**
  *
@@ -85,5 +93,51 @@ class TextureTest {
 
         assertThat(super4.image.width, `is`(320.0))
         assertThat(super4.image.height, `is`(640.0))
+    }
+
+    @Test
+    fun `Color conversions`() {
+        assertThat(texture.toGrayscale().image, `is`(not(image)))
+        assertThat(texture.brighter().image, `is`(not(image)))
+        assertThat(texture.darker().image, `is`(not(image)))
+        assertThat(texture.invert().image, `is`(not(image)))
+        assertThat(texture.desaturate().image, `is`(not(image)))
+        assertThat(texture.saturate().image, `is`(not(image)))
+        assertThat(texture.discolor().image, `is`(not(image)))
+        assertThat(texture.multiplyColor(Color.BLUE).image, `is`(not(image)))
+        assertThat(texture.toColor(Color.GRAY).image, `is`(not(image)))
+        assertThat(texture.replaceColor(Color.WHITE, Color.GRAY).image, `is`(not(image)))
+        assertThat(texture.transparentColor(Color.PURPLE).image, `is`(not(image)))
+    }
+
+    @ParameterizedTest
+    @EnumSource(BlendMode::class)
+    fun `Blending`(blend: BlendMode) {
+        assertThat(texture.blend(WritableImage(320, 320), blend).image, `is`(not(image)))
+    }
+
+    @Test
+    fun `Set from another texture`() {
+        val newImage = WritableImage(320, 320)
+
+        assertThat(texture.image, `is`(image))
+
+        texture.set(Texture(newImage))
+
+        assertThat(texture.image, `is`<Image>(newImage))
+    }
+
+    @Test
+    fun `Get renderable node`() {
+        assertThat(texture.node, `is`<Node>(texture))
+    }
+
+    @Test
+    fun `Dispose`() {
+        assertNotNull(texture.image)
+
+        texture.dispose()
+
+        assertNull(texture.image)
     }
 }
