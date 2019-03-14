@@ -96,6 +96,9 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
             Image(ext + imageName)
             //FXGL.getAssetLoader().loadTexture(imageName, Color.web(tileset.transparentcolor)).getImage()
 
+        if (image.isError)
+            throw IllegalArgumentException("${ext + imageName} cannot be loaded")
+
         imageCache[imageName] = image
 
         return image

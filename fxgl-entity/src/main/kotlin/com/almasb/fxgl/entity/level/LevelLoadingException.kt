@@ -12,4 +12,4 @@ import java.lang.RuntimeException
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class LevelLoadingException(message: String, cause: Throwable) : RuntimeException()
+class LevelLoadingException(message: String, cause: Throwable?) : RuntimeException(message, cause)

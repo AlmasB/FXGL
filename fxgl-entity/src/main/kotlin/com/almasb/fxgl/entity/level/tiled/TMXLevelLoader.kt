@@ -17,6 +17,7 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
+import java.lang.IllegalArgumentException
 import java.net.URL
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -40,18 +41,31 @@ class TMXLevelLoader : LevelLoader {
     private val log = Logger.get<TMXLevelLoader>()
 
     override fun load(url: URL, world: GameWorld): Level {
-        val map = url.openStream().use { parse(it) }
+        try {
+            val map = url.openStream().use { parse(it) }
 
-        val tilesetLoader = TilesetLoader(map, url)
+            val tilesetLoader = TilesetLoader(map, url)
 
-        val tileLayerEntities = map.layers.filter { it.type == "tilelayer" }
+            val tileLayerEntities = createTileLayerEntities(map, tilesetLoader)
+
+            val objectEntities = createObjectLayerEntities(map, tilesetLoader, world)
+
+            return Level(map.width * map.tilewidth, map.height * map.tileheight, tileLayerEntities + objectEntities)
+
+        } catch (e: Exception) {
+            throw LevelLoadingException("${e.message}", e)
+        }
+    }
+
+    private fun createTileLayerEntities(map: TiledMap, tilesetLoader: TilesetLoader): List<Entity> {
+        return map.layers.filter { it.type == "tilelayer" }
                 .map { layer ->
-                    val e = Entity()
-                    e.viewComponent.setViewFromNode(tilesetLoader.loadView(layer.name))
-                    e
+                    Entity().also { it.viewComponent.setViewFromNode(tilesetLoader.loadView(layer.name)) }
                 }
+    }
 
-        val objectEntities = map.layers.filter { it.type == "objectgroup" }
+    private fun createObjectLayerEntities(map: TiledMap, tilesetLoader: TilesetLoader, world: GameWorld): List<Entity> {
+        return map.layers.filter { it.type == "objectgroup" }
                 .flatMap { it.objects }
                 .map { tiledObject ->
                     val data = SpawnData(
@@ -78,90 +92,83 @@ class TMXLevelLoader : LevelLoader {
 
                     world.create(tiledObject.type, data)
                 }
-
-        return Level(map.width * map.tilewidth, map.height * map.tileheight, tileLayerEntities + objectEntities)
     }
 
     fun parse(inputStream: InputStream): TiledMap {
-        try {
-            val inputFactory = XMLInputFactory.newInstance()
-            val eventReader = inputFactory.createXMLEventReader(inputStream)
+        val inputFactory = XMLInputFactory.newInstance()
+        val eventReader = inputFactory.createXMLEventReader(inputStream)
 
-            val map = TiledMap()
-            val layers = arrayListOf<Layer>()
-            val tilesets = arrayListOf<Tileset>()
+        val map = TiledMap()
+        val layers = arrayListOf<Layer>()
+        val tilesets = arrayListOf<Tileset>()
 
-            // vars
+        // vars
 
-            var currentLayer = Layer()
-            var currentTileset = Tileset()
-            var currentObject = TiledObject()
+        var currentLayer = Layer()
+        var currentTileset = Tileset()
+        var currentObject = TiledObject()
 
-            while (eventReader.hasNext()) {
-                val event = eventReader.nextEvent()
+        while (eventReader.hasNext()) {
+            val event = eventReader.nextEvent()
 
-                if (event.isStartElement) {
-                    val start = event.asStartElement()
+            if (event.isStartElement) {
+                val start = event.asStartElement()
 
-                    when (start.name.localPart) {
-                        "map" -> { parseMap(map, start) }
+                when (start.name.localPart) {
+                    "map" -> { parseMap(map, start) }
 
-                        "tileset" -> {
-                            currentTileset = Tileset()
-                            parseTileset(currentTileset, start)
-                        }
-
-                        "image" -> {
-                            parseImage(currentTileset, start)
-                        }
-
-                        "layer" -> {
-                            currentLayer = Layer()
-                            parseTileLayer(currentLayer, start)
-                        }
-
-                        "data" -> {
-                            parseData(currentLayer, eventReader.elementText, start)
-                        }
-
-                        "objectgroup" -> {
-                            currentLayer = Layer()
-                            parseObjectGroupLayer(currentLayer, start)
-                        }
-
-                        "object" -> {
-                            currentObject = TiledObject()
-                            parseObject(currentLayer, currentObject, start)
-                        }
-
-                        "property" -> {
-                            parseObjectProperty(currentObject, start)
-                        }
-
-                        "polygon" -> {
-                            parseObjectPolygon(currentObject, start)
-                        }
+                    "tileset" -> {
+                        currentTileset = Tileset()
+                        parseTileset(currentTileset, start)
                     }
-                }
 
-                if (event.isEndElement) {
-                    val endElement = event.asEndElement()
+                    "image" -> {
+                        parseImage(currentTileset, start)
+                    }
 
-                    when (endElement.name.localPart) {
-                        "tileset" -> { tilesets.add(currentTileset) }
-                        "layer", "objectgroup" -> { layers.add(currentLayer) }
+                    "layer" -> {
+                        currentLayer = Layer()
+                        parseTileLayer(currentLayer, start)
+                    }
+
+                    "data" -> {
+                        parseData(currentLayer, eventReader.elementText, start)
+                    }
+
+                    "objectgroup" -> {
+                        currentLayer = Layer()
+                        parseObjectGroupLayer(currentLayer, start)
+                    }
+
+                    "object" -> {
+                        currentObject = TiledObject()
+                        parseObject(currentLayer, currentObject, start)
+                    }
+
+                    "property" -> {
+                        parseObjectProperty(currentObject, start)
+                    }
+
+                    "polygon" -> {
+                        parseObjectPolygon(currentObject, start)
                     }
                 }
             }
 
-            map.layers = layers
-            map.tilesets = tilesets
+            if (event.isEndElement) {
+                val endElement = event.asEndElement()
 
-            return map
-
-        } catch (e: Exception) {
-            throw LevelLoadingException("Cannot parse tmx file", e)
+                when (endElement.name.localPart) {
+                    "tileset" -> { tilesets.add(currentTileset) }
+                    "layer", "objectgroup" -> { layers.add(currentLayer) }
+                }
+            }
         }
+
+        map.layers = layers
+        map.tilesets = tilesets
+
+        return map
     }
 
     private fun parseMap(map: TiledMap, start: StartElement) {
@@ -298,7 +305,7 @@ class TMXLevelLoader : LevelLoader {
             }
 
             else -> {
-                throw RuntimeException("Unknown property type: $propType for $propName")
+                throw IllegalArgumentException("Unknown property type: $propType for $propName")
             }
         }
     }
