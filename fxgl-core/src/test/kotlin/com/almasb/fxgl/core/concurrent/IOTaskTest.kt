@@ -6,14 +6,13 @@
 
 package com.almasb.fxgl.core.concurrent
 
-import com.almasb.fxgl.core.RunWithFX
+import com.almasb.fxgl.test.RunWithFX
 import javafx.application.Platform
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertTimeout
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Duration

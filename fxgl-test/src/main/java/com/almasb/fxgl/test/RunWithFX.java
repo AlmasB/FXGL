@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.core;
+package com.almasb.fxgl.test;
 
 import javafx.application.Platform;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class RunWithFX implements BeforeAllCallback {
+public final class RunWithFX implements BeforeAllCallback {
 
     private static boolean jfxStarted = false;
 

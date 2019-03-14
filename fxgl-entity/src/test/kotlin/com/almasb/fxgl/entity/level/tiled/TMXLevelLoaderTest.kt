@@ -6,12 +6,10 @@
 
 package com.almasb.fxgl.entity.level.tiled
 
-import com.almasb.fxgl.core.RunWithFX
 import com.almasb.fxgl.entity.*
+import com.almasb.fxgl.test.RunWithFX
 import javafx.scene.paint.Color
-import javafx.scene.shape.Circle
 import javafx.scene.shape.Polygon
-import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse

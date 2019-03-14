@@ -18,13 +18,11 @@
             <version>${fxgl.version}</version>
         </dependency>
 
-        <!-- Pull in common test classes from fxgl-core -->
+        <!-- Pull in common test classes from fxgl-test -->
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-core</artifactId>
-            <version>${fxgl.version}</version>
-            <classifier>tests</classifier>
-            <type>test-jar</type>
+            <artifactId>fxgl-test</artifactId>
+            <version>dev-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
