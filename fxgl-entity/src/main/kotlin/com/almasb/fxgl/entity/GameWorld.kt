@@ -223,30 +223,6 @@ class GameWorld {
         level.entities.forEach { addEntity(it) }
     }
 
-//
-//    fun setLevelFromMap(map: TiledMap) {
-//        clearLevel()
-//
-//        log.debug("Setting level from map")
-//
-//        map.layers.filter { it.type == "tilelayer" }
-//                .forEach {
-//                    Entities.builder()
-//                            .viewFromTiles(map, it.name, RenderLayer.BACKGROUND)
-//                            .buildAndAttach(this)
-//                }
-//
-//        map.layers.filter { it.type == "objectgroup" }
-//                .flatMap { it.objects }
-//                .forEach { obj ->
-//                    val data = SpawnData(obj)
-//
-//                    data.put("tilesets", map.tilesets)
-//
-//                    spawn(obj.type, data)
-//                }
-//    }
-
     /**
      * Removes removable entities.
      */
