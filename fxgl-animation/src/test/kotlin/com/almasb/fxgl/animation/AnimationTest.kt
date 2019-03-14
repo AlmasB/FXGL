@@ -21,6 +21,23 @@ import org.junit.jupiter.api.Test
 class AnimationTest {
 
     @Test
+    fun `Set animation interpolator`() {
+        val i1 = Interpolators.ELASTIC.EASE_OUT()
+
+        val anim = AnimationBuilder()
+                .interpolator(i1)
+                .duration(Duration.seconds(4.0))
+                .build(AnimatedValue(1.0, 5.0), Consumer {  })
+
+        assertThat(anim.interpolator, `is`(i1))
+
+        val i2 = Interpolators.BACK.EASE_IN()
+
+        anim.interpolator = i2
+        assertThat(anim.interpolator, `is`(i2))
+    }
+
+    @Test
     fun `Simple Animation`() {
         var count = 0.0
 
