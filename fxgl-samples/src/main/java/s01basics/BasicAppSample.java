@@ -7,9 +7,9 @@
 package s01basics;
 
 import com.almasb.fxgl.app.*;
-import com.almasb.fxgl.dsl.FXGL;
 
 import java.util.EnumSet;
+import java.util.List;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -28,6 +28,7 @@ public class BasicAppSample extends GameApplication {
         settings.setVersion("0.1");
         settings.setMenuEnabled(true);
         settings.setIntroEnabled(false);
+        settings.setCredits(List.of("Hello world", "2nd line", "3rd Credit"));
         settings.setEnabledMenuItems(EnumSet.allOf(MenuItem.class));
     }
 

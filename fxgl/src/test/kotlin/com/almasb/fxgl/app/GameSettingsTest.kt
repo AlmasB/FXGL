@@ -62,7 +62,7 @@ class GameSettingsTest {
         assertThat(settings.isProfilingEnabled, `is`(false))
         assertThat(settings.isCloseConfirmation, `is`(false))
         assertThat(settings.menuKey, `is`(KeyCode.ENTER))
-        assertThat(settings.credits.list, hasItems("TestCredit1", "TestCredit2"))
+        assertThat(settings.credits, hasItems("TestCredit1", "TestCredit2"))
         assertThat(settings.applicationMode, `is`(ApplicationMode.RELEASE))
     }
 }

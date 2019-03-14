@@ -411,7 +411,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         vbox.alignment = Pos.CENTER
         vbox.prefWidth = pane.prefWidth - 15
 
-        val credits = ArrayList(getSettings().credits.list)
+        val credits = ArrayList(getSettings().credits)
         credits.add("")
         credits.add("Powered by FXGL " + FXGL.getVersion())
         credits.add("Author: Almas Baimagambetov")

@@ -241,6 +241,12 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         itemOptions.setChild(createOptionsMenu())
         box.add(itemOptions)
 
+        if (enabledItems.contains(MenuItem.EXTRA)) {
+            val itemExtra = MenuButton("menu.extra")
+            itemExtra.setChild(createExtraMenu())
+            box.add(itemExtra)
+        }
+
         val itemExit = MenuButton("menu.exit")
         itemExit.setOnAction(EventHandler{ e -> fireExit() })
         box.add(itemExit)
