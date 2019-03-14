@@ -6,12 +6,14 @@
 
 package com.almasb.fxgl.core.concurrent
 
+import com.almasb.fxgl.core.RunWithFX
 import javafx.application.Platform
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Duration
 
 /**
@@ -19,6 +21,7 @@ import java.time.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@ExtendWith(RunWithFX::class)
 class AsyncTest {
 
     @Test
@@ -43,7 +46,6 @@ class AsyncTest {
         }
     }
 
-    @Disabled
     @Test
     fun `Async FX runs in a FX thread`() {
         assertTimeout(Duration.ofSeconds(1)) {
