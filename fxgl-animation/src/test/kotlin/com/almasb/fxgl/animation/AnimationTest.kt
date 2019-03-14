@@ -51,6 +51,35 @@ class AnimationTest {
     }
 
     @Test
+    fun `Infinite Animation`() {
+        var count = 0
+
+        val anim = AnimationBuilder()
+                .duration(Duration.seconds(2.0))
+                .repeatInfinitely()
+                .build(AnimatedValue(1, 3), Consumer { count = it })
+
+        anim.start()
+
+        for (i in 0..100) {
+            assertThat(count, `is`(1))
+
+            anim.onUpdate(1.0)
+
+            assertThat(count, `is`(2))
+
+            anim.onUpdate(1.0)
+
+            assertThat(count, `is`(3))
+
+            // push over the cycle
+            anim.onUpdate(0.1)
+        }
+
+        assertTrue(anim.isAnimating)
+    }
+
+    @Test
     fun `Simple Reverse Animation`() {
         var count = 0.0
 
