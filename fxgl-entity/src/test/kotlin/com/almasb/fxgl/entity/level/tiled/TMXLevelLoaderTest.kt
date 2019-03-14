@@ -12,6 +12,8 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -22,13 +24,14 @@ import java.nio.file.Paths
  */
 class TMXLevelLoaderTest {
 
-    @Test
-    fun parse() {
-        val map = javaClass.getResourceAsStream("sewers_v1_1_2.tmx").use {
+    @ParameterizedTest
+    @CsvSource("sewers_v1_1_2.tmx", "sewers_v1_2_3.tmx")
+    fun parse(mapName: String) {
+        val map = javaClass.getResourceAsStream(mapName).use {
             TMXLevelLoader().parse(it)
         }
 
-        assertThat(map.tiledversion, `is`("1.1.2"))
+        assertThat(map.tiledversion, `is`(mapName.substringAfter("_v").substringBefore(".").replace("_", ".")))
         assertThat(map.width, `is`(64))
         assertThat(map.height, `is`(64))
         assertThat(map.tilewidth, `is`(24))

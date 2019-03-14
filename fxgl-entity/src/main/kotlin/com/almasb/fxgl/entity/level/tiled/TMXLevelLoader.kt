@@ -6,10 +6,12 @@
 
 package com.almasb.fxgl.entity.level.tiled
 
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
+import com.almasb.fxgl.entity.level.LevelLoadingException
 import com.almasb.sslogger.Logger
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
@@ -31,7 +33,7 @@ import javax.xml.stream.events.StartElement
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 
-private const val TILED_VERSION_LATEST = "1.1.2"
+private const val TILED_VERSION_LATEST = "1.2.3"
 
 class TMXLevelLoader : LevelLoader {
 
@@ -40,24 +42,44 @@ class TMXLevelLoader : LevelLoader {
     override fun load(url: URL, world: GameWorld): Level {
         val map = url.openStream().use { parse(it) }
 
-        map.layers.filter { it.type == "tilelayer" }
-                .forEach {
-//                    Entities.builder()
-//                            .viewFromTiles(map, it.name, RenderLayer.BACKGROUND)
-//                            .buildAndAttach(this)
+        val tilesetLoader = TilesetLoader(map, url)
+
+        val tileLayerEntities = map.layers.filter { it.type == "tilelayer" }
+                .map { layer ->
+                    val e = Entity()
+                    e.viewComponent.setViewFromNode(tilesetLoader.loadView(layer.name))
+                    e
                 }
 
-        val entities = map.layers.filter { it.type == "objectgroup" }
+        val objectEntities = map.layers.filter { it.type == "objectgroup" }
                 .flatMap { it.objects }
-                .map { obj ->
-                    val data = SpawnData(obj.x.toDouble(), obj.y.toDouble())
+                .map { tiledObject ->
+                    val data = SpawnData(
+                            tiledObject.x.toDouble(),
+                            // it appears that if object has non-zero gid then its y is flipped
+                            (tiledObject.y - if (tiledObject.gid == 0) 0 else tiledObject.height).toDouble()
+                    )
+
+                    data.run {
+                        put("name", tiledObject.name)
+                        put("type", tiledObject.type)
+                        put("width", tiledObject.width)
+                        put("height", tiledObject.height)
+                        put("rotation", tiledObject.rotation)
+                        put("id", tiledObject.id)
+                        put("gid", tiledObject.gid)
+
+                        tiledObject.properties.forEach {
+                            put(it.key, it.value)
+                        }
+                    }
 
                     data.put("tilesets", map.tilesets)
 
-                    world.create(obj.type, data)
+                    world.create(tiledObject.type, data)
                 }
 
-        return Level(map.width * map.tilewidth, map.height * map.tileheight, entities)
+        return Level(map.width * map.tilewidth, map.height * map.tileheight, tileLayerEntities + objectEntities)
     }
 
     fun parse(inputStream: InputStream): TiledMap {
@@ -138,7 +160,7 @@ class TMXLevelLoader : LevelLoader {
             return map
 
         } catch (e: Exception) {
-            throw RuntimeException("Cannot parse tmx file: $e")
+            throw LevelLoadingException("Cannot parse tmx file", e)
         }
     }
 
