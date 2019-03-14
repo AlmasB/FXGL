@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test
 class ParticleEmitterTest {
 
     @Test
-    fun `das`() {
+    fun `Emit particles`() {
         val emitter = ParticleEmitter()
         emitter.maxEmissions = 1
         emitter.numParticles = 22

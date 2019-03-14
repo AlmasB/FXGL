@@ -6,12 +6,17 @@
 
 package com.almasb.fxgl.entity.level.tiled
 
+import com.almasb.fxgl.core.RunWithFX
+import com.almasb.fxgl.entity.*
 import javafx.scene.paint.Color
+import javafx.scene.shape.Circle
 import javafx.scene.shape.Polygon
+import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import java.nio.file.Files
@@ -22,7 +27,22 @@ import java.nio.file.Paths
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@ExtendWith(RunWithFX::class)
 class TMXLevelLoaderTest {
+
+    @Test
+    fun `Load tmx level`() {
+        val world = GameWorld()
+        world.addEntityFactory(MyEntityFactory())
+
+        val level = TMXLevelLoader().load(javaClass.getResource("sewers_v1_2_3.tmx"), world)
+
+        assertThat(level.width, `is`(24*64))
+        assertThat(level.height, `is`(24*64))
+
+        // 4 object entities + 2 background tile layers
+        assertThat(level.entities.size, `is`(4 + 2))
+    }
 
     @ParameterizedTest
     @CsvSource("sewers_v1_1_2.tmx", "sewers_v1_2_3.tmx")
@@ -128,5 +148,23 @@ class TMXLevelLoaderTest {
         assertThat(obj3.y, `is`(504))
         assertThat(obj3.width, `is`(120))
         assertThat(obj3.height, `is`(120))
+    }
+
+    class MyEntityFactory : EntityFactory {
+
+        @Spawns("no_type,type1")
+        fun newRectangle(data: SpawnData): Entity {
+            return Entity()
+        }
+
+        @Spawns("")
+        fun newEmpty(data: SpawnData): Entity {
+            return Entity()
+        }
+
+        @Spawns("type2,type3")
+        fun newCircle(data: SpawnData): Entity {
+            return Entity()
+        }
     }
 }
