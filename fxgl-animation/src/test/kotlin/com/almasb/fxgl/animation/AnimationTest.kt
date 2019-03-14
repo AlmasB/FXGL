@@ -198,4 +198,44 @@ class AnimationTest {
         anim.onUpdate(1.0)
         assertThat(count, `is`(4))
     }
+
+    @Test
+    fun `Start and stop noop if animation has started stopped`() {
+        val anim = AnimationBuilder()
+                .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
+                .duration(Duration.seconds(3.0))
+                .build(AnimatedValue(1, 4), Consumer { })
+
+        anim.stop()
+
+        anim.start()
+
+        anim.start()
+
+        anim.onUpdate(3.0)
+
+        assertFalse(anim.isAnimating)
+    }
+
+    @Test
+    fun `Start reverse`() {
+        var count = 0
+
+        val anim = AnimationBuilder()
+                .duration(Duration.seconds(3.0))
+                .build(AnimatedValue(1, 4), Consumer { count = it })
+
+        anim.startReverse()
+
+        assertTrue(anim.isAnimating)
+        assertTrue(anim.isReverse)
+
+        assertThat(count, `is`(4))
+
+        for (i in 3 downTo 1) {
+            anim.onUpdate(1.0)
+
+            assertThat(count, `is`(i))
+        }
+    }
 }

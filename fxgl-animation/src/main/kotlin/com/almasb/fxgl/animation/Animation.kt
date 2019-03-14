@@ -117,6 +117,7 @@ abstract class Animation<T>(
     fun start() {
         if (!isAnimating) {
             isAnimating = true
+            resetTime()
             onProgress(animatedValue.getValue(if (isReverse) 1.0 else 0.0))
         }
     }
