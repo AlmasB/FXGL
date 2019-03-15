@@ -13,6 +13,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 
 /**
  *
@@ -149,17 +150,29 @@ class Vec2Test {
 
     @Test
     fun `Normalize`() {
-        val v = Vec2(1f, 1f).normalize()
 
-        assertThat(v.x.toDouble(), closeTo(0.7, 0.01))
-        assertThat(v.y.toDouble(), closeTo(0.7, 0.01))
+        assertAll(
+                Executable {
+                    val v = Vec2(1f, 1f).normalize()
 
-        v.x = 0.0f
-        v.y = 0.0f
+                    assertThat(v.x.toDouble(), closeTo(0.7, 0.01))
+                    assertThat(v.y.toDouble(), closeTo(0.7, 0.01))
 
-        val v2 = v.normalize()
+                    v.x = 0.0f
+                    v.y = 0.0f
 
-        assertTrue(v2 == v)
+                    val v2 = v.normalize()
+
+                    assertTrue(v2 == v)
+                },
+
+                Executable {
+                    val v = Vec2().normalize()
+
+                    assertThat(v.x.toDouble(), `is`(0.0))
+                    assertThat(v.y.toDouble(), `is`(0.0))
+                }
+        )
     }
 
     @Test
