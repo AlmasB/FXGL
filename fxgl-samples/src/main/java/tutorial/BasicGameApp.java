@@ -66,6 +66,13 @@ public class BasicGameApp extends GameApplication {
                 FXGL.getGameState().increment("pixelsMoved", +5);
             }
         }, KeyCode.S);
+
+        input.addAction(new UserAction("Play Sound") {
+            @Override
+            protected void onActionBegin() {
+                FXGL.play("drop.wav");
+            }
+        }, KeyCode.F);
     }
 
     @Override
@@ -79,7 +86,8 @@ public class BasicGameApp extends GameApplication {
     protected void initGame() {
         player = FXGL.entityBuilder()
                 .at(300, 300)
-                .view(new Rectangle(25, 25, Color.BLUE))
+                //.view(new Rectangle(25, 25, Color.BLUE))
+                .view("brick.png")
                 .buildAndAttach();
     }
 
@@ -92,6 +100,12 @@ public class BasicGameApp extends GameApplication {
         textPixels.textProperty().bind(FXGL.getGameState().intProperty("pixelsMoved").asString());
 
         FXGL.getGameScene().addUINode(textPixels); // add to the scene graph
+
+        var brickTexture = FXGL.getAssetLoader().loadTexture("brick.png");
+        brickTexture.setTranslateX(50);
+        brickTexture.setTranslateY(450);
+
+        FXGL.getGameScene().addUINode(brickTexture);
     }
 
     public static void main(String[] args) {
