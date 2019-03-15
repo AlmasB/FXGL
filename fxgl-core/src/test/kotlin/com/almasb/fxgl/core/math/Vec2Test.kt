@@ -13,6 +13,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 
 /**
  *
@@ -149,17 +150,29 @@ class Vec2Test {
 
     @Test
     fun `Normalize`() {
-        val v = Vec2(1f, 1f).normalize()
 
-        assertThat(v.x.toDouble(), closeTo(0.7, 0.01))
-        assertThat(v.y.toDouble(), closeTo(0.7, 0.01))
+        assertAll(
+                Executable {
+                    val v = Vec2(1f, 1f).normalize()
 
-        v.x = 0.0f
-        v.y = 0.0f
+                    assertThat(v.x.toDouble(), closeTo(0.7, 0.01))
+                    assertThat(v.y.toDouble(), closeTo(0.7, 0.01))
 
-        val v2 = v.normalize()
+                    v.x = 0.0f
+                    v.y = 0.0f
 
-        assertTrue(v2 == v)
+                    val v2 = v.normalize()
+
+                    assertTrue(v2 == v)
+                },
+
+                Executable {
+                    val v = Vec2().normalize()
+
+                    assertThat(v.x.toDouble(), `is`(0.0))
+                    assertThat(v.y.toDouble(), `is`(0.0))
+                }
+        )
     }
 
     @Test
@@ -292,24 +305,88 @@ class Vec2Test {
     }
 
     @Test
-    fun `Min to out`() {
+    fun `Min to out should return min x and y from both vector when min x and y are in one vector`() {
         val v1 = Vec2(2f, 3f)
         val v2 = Vec2(4f, 5f)
         val v3 = Vec2()
 
         Vec2.minToOut(v1, v2, v3)
+        assertThat(v3, `is`(v1))
 
+        Vec2.minToOut(v2, v1, v3)
+        assertThat(v3, `is`(v1))
+    }
+
+    @Test
+    fun `Min to out should return min x and y from both vectors when min x and y are in different vectors`() {
+        val v1 = Vec2(2f, 5f)
+        val v2 = Vec2(4f, 3f)
+        val v3 = Vec2()
+
+        Vec2.minToOut(v1, v2, v3)
+        assertThat(v3, `is`(Vec2(2f, 3f)))
+
+        Vec2.minToOut(v2, v1, v3)
         assertThat(v3, `is`(Vec2(2f, 3f)))
     }
 
     @Test
-    fun `Max to out`() {
+    fun `Max to out should return max x and y from both vector when max x and y are in one vector`() {
         val v1 = Vec2(2f, 3f)
         val v2 = Vec2(4f, 5f)
         val v3 = Vec2()
 
         Vec2.maxToOut(v1, v2, v3)
+        assertThat(v3, `is`(v2))
 
+        Vec2.maxToOut(v2, v1, v3)
+        assertThat(v3, `is`(v2))
+    }
+
+    @Test
+    fun `Max to out should return max x and y from both vectors when max x and y are in different vectors`() {
+        val v1 = Vec2(2f, 5f)
+        val v2 = Vec2(4f, 3f)
+        val v3 = Vec2()
+
+        Vec2.maxToOut(v1, v2, v3)
         assertThat(v3, `is`(Vec2(4f, 5f)))
+
+        Vec2.maxToOut(v2, v1, v3)
+        assertThat(v3, `is`(Vec2(4f, 5f)))
+    }
+
+    @Test
+    fun `Equals should return true if passed the same instance`() {
+        val v1 = Vec2()
+        assertTrue(v1 == v1)
+    }
+
+    @Test
+    fun `Equals should return true if passed the same type and coordinates`() {
+        val v1 = Vec2(1f, 1f)
+        val v2 = Vec2(1f, 1f)
+        assertTrue(v1 == v2)
+    }
+
+    @Test
+    fun `Equals should return false if passed the same type and different y coordinates`() {
+        val v1 = Vec2(1f, 1f)
+        val v2 = Vec2(1f, 2f)
+        assertFalse(v1 == v2)
+    }
+
+    @Test
+    fun `Equals should return false if passed the same type and different x coordinates`() {
+        val v1 = Vec2(1f, 1f)
+        val v2 = Vec2(2f, 1f)
+        assertFalse(v1 == v2)
+    }
+
+
+    @Test
+    fun `Equals should return false if passed a different type`() {
+        val v1 = Vec2(1f, 1f)
+        assertFalse(v1.equals(1))
     }
 }
