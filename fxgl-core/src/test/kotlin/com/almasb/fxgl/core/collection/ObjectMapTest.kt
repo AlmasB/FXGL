@@ -71,9 +71,9 @@ class ObjectMapTest {
 
         map2.putAll(map1)
 
-        val map = map1.toMap()
+        val map = map2.toMap()
 
-        assertThat(map1.size(), `is`(3))
+        assertThat(map2.size(), `is`(3))
         assertThat(map, hasEntry("key1", 0))
         assertThat(map, hasEntry("key2", -55))
         assertThat(map, hasEntry("key3", 900))
