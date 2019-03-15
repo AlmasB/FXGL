@@ -96,6 +96,7 @@ class TMXLevelLoader : LevelLoader {
                         }
 
                         e.setPosition(data.x, data.y)
+                        e.rotation = tiledObject.rotation.toDouble()
 
                         // non-zero gid means view is read from the tileset
                         if (tiledObject.gid != 0) {
