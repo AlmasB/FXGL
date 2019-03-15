@@ -43,7 +43,8 @@ To start developing FXGL you can setup IDEA (2018.3.4+) as follows:
 1. Fork FXGL into your GitHub repo, then clone your repo to your machine.
 1. `cd` to that directory -> `git checkout dev` to switch to development branch.
 1. Open IDEA -> File -> New -> Project from Existing Sources -> Select the cloned FXGL directory.
-1. Import project from external model -> Maven -> Next -> Next.
+1. Import project from external model -> Maven -> Next.
+1. Tick "Search for projects recursively" and "Import Maven projects automatically" -> Next.
 1. Select the provided Maven project to import -> Next -> Use JDK11 -> Next -> Finish.
 
 You should now see something like this:
