@@ -10,13 +10,14 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.physics.CollisionHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
-
 import java.util.Map;
 
 /**
@@ -29,6 +30,10 @@ public class BasicGameApp extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("Basic Game App");
         settings.setVersion("0.1");
+    }
+
+    public enum EntityType {
+        PLAYER, COIN
     }
 
     @Override
@@ -85,10 +90,30 @@ public class BasicGameApp extends GameApplication {
     @Override
     protected void initGame() {
         player = FXGL.entityBuilder()
+                .type(EntityType.PLAYER)
                 .at(300, 300)
-                //.view(new Rectangle(25, 25, Color.BLUE))
-                .view("brick.png")
+                .viewWithBBox("brick.png")
+                .with(new CollidableComponent(true))
                 .buildAndAttach();
+
+        FXGL.entityBuilder()
+                .type(EntityType.COIN)
+                .at(500, 200)
+                .viewWithBBox(new Circle(15, Color.YELLOW))
+                .with(new CollidableComponent(true))
+                .buildAndAttach();
+    }
+
+    @Override
+    protected void initPhysics() {
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.COIN) {
+
+            // order of types is the same as passed into the constructor
+            @Override
+            protected void onCollisionBegin(Entity player, Entity coin) {
+                coin.removeFromWorld();
+            }
+        });
     }
 
     @Override
