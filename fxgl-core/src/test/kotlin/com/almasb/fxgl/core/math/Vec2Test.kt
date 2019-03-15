@@ -151,28 +151,24 @@ class Vec2Test {
     @Test
     fun `Normalize`() {
 
-        assertAll(
-                Executable {
-                    val v = Vec2(1f, 1f).normalize()
 
-                    assertThat(v.x.toDouble(), closeTo(0.7, 0.01))
-                    assertThat(v.y.toDouble(), closeTo(0.7, 0.01))
+        val v = Vec2(1f, 1f).normalize()
 
-                    v.x = 0.0f
-                    v.y = 0.0f
+        assertThat(v.x.toDouble(), closeTo(0.7, 0.01))
+        assertThat(v.y.toDouble(), closeTo(0.7, 0.01))
 
-                    val v2 = v.normalize()
+        v.x = 0.0f
+        v.y = 0.0f
 
-                    assertTrue(v2 == v)
-                },
+        val v2 = v.normalize()
 
-                Executable {
-                    val v = Vec2().normalize()
+        assertTrue(v2 == v)
+    }
 
-                    assertThat(v.x.toDouble(), `is`(0.0))
-                    assertThat(v.y.toDouble(), `is`(0.0))
-                }
-        )
+    @Test
+    fun `getLengthAndNormalize should return 0 if square of the hypotenuse vector is less than FXGLMath epsilon constant`(){
+        val v = Vec2().getLengthAndNormalize()
+        assertThat(v, `is`(0f))
     }
 
     @Test
