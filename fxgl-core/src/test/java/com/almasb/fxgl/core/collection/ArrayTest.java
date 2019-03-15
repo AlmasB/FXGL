@@ -7,15 +7,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ArrayTest
 {
     @Test
-    public void constructor_should_instantiate()
-    {
+    public void constructor_should_instantiate() {
         Array<Integer> array = new Array();
         array = new Array(Integer.class);
     }
 
     @Test
-    public void array_has_correctEmptyStatus()
-    {
+    public void array_has_correctEmptyStatus() {
         Array<Integer> array = new Array();
         assertAll(
                 () -> assertTrue(array.isEmpty()),
@@ -30,8 +28,7 @@ public class ArrayTest
     }
 
     @Test
-    public void array_has_correctSize()
-    {
+    public void array_has_correctSize() {
         Array<Integer> array = new Array<>();
 
         assertEquals(array.size(), 0);
@@ -44,8 +41,7 @@ public class ArrayTest
     }
 
     @Test
-    public void orderedConstructor_shouldBe_ordered()
-    {
+    public void orderedConstructor_shouldBe_ordered() {
         Array array = new Array(true, 16, Integer.class);
         assertTrue(array.isOrdered());
 
@@ -54,15 +50,13 @@ public class ArrayTest
     }
 
     @Test
-    public void addAll_should_addGivenElements()
-    {
+    public void addAll_should_addGivenElements() {
         Integer[] ints = new Integer[] { 1, 2, 3, 4, 5, 6, 7 };
         Array<Integer> array = new Array<>(Integer.class);
 
         array.addAll(ints);
 
-        for(Integer integer : ints)
-        {
+        for(Integer integer : ints) {
             assertTrue(array.containsByEquality(integer));
         }
 
@@ -72,20 +66,17 @@ public class ArrayTest
 
         array.addAll(secondArray);
 
-        for(Integer integer : ints)
-        {
+        for(Integer integer : ints) {
             assertTrue(array.containsByEquality(integer));
         }
 
-        for(Integer integer : moreInts)
-        {
+        for(Integer integer : moreInts) {
             assertTrue(array.containsByEquality(integer));
         }
     }
 
     @Test
-    public void addAllStartPlusCount_should_beLessThanSize()
-    {
+    public void addAllStartPlusCount_should_beLessThanSize() {
         Array<String> array = new Array<>(String.class);
 
         Array<String> arrayToAdd = new Array<>(String.class);
@@ -97,8 +88,7 @@ public class ArrayTest
     }
 
     @Test
-    public void getItems_should_returnItems()
-    {
+    public void getItems_should_returnItems() {
         String[] strings = new String[] { "Hello", "World" };
 
         Array<String> array = new Array<>(false, 16, String.class);
@@ -107,15 +97,13 @@ public class ArrayTest
 
         String[] returnItems = array.getItems();
 
-        for(int i = 0; i < strings.length; i++)
-        {
+        for(int i = 0; i < strings.length; i++) {
             assertTrue(strings[i].equals(returnItems[i]));
         }
     }
 
     @Test
-    public void addItem_should_resize()
-    {
+    public void addItem_should_resize() {
         Array<String> array = new Array<>(false, 1, String.class);
         array.insert(0, "String One");
         array.insert(1, "String Two");
@@ -134,8 +122,7 @@ public class ArrayTest
     }
 
     @Test
-    public void index_should_returnItem()
-    {
+    public void index_should_returnItem() {
         Array<String> array = new Array<>(String.class);
         String[] strings = new String[] {"Hello", "World", "Java"};
         array.addAll(strings);
@@ -144,8 +131,7 @@ public class ArrayTest
     }
 
     @Test
-    public void setIndex_should_replaceCorrectItem()
-    {
+    public void setIndex_should_replaceCorrectItem() {
         Array<String> array = new Array<>(String.class);
         String[] strings = new String[] {"Hello", "World", "Java"};
         array.addAll(strings);
@@ -160,8 +146,7 @@ public class ArrayTest
     }
 
     @Test
-    public void insertAtIndex_should_insert()
-    {
+    public void insertAtIndex_should_insert() {
         Array<String> array = new Array<>(false, 1, String.class);
         String[] strings = new String[] {"Hello", "World", "Java"};
         array.addAll(strings);
@@ -182,8 +167,7 @@ public class ArrayTest
     }
 
     @Test
-    public void swap_should_swapTwoElements()
-    {
+    public void swap_should_swapTwoElements() {
         Array<String> array = new Array<>(String.class);
         array.addAll("Hello", "World");
 
@@ -200,8 +184,7 @@ public class ArrayTest
     }
 
     @Test
-    public void containsByIdentity_should_comparePrimitives()
-    {
+    public void containsByIdentity_should_comparePrimitives() {
         Array<Integer> array = new Array<>(Integer.class);
 
         array.add(1);
@@ -209,8 +192,7 @@ public class ArrayTest
     }
 
     @Test
-    public void containsElementDoesNotExist_should_returnFalse()
-    {
+    public void containsElementDoesNotExist_should_returnFalse() {
         Array<Integer> array = new Array<>(Integer.class);
 
         assertAll(
