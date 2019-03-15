@@ -74,6 +74,7 @@ class TMXLevelLoader : LevelLoader {
                             (tiledObject.y - if (tiledObject.gid == 0) 0 else tiledObject.height).toDouble()
                     )
 
+                    // make data available when inside factory's spawn methods
                     data.run {
                         put("name", tiledObject.name)
                         put("type", tiledObject.type)
@@ -88,9 +89,19 @@ class TMXLevelLoader : LevelLoader {
                         }
                     }
 
-                    data.put("tilesets", map.tilesets)
+                    // we populate the entity properties in case the factory didn't make use of them
+                    world.create(tiledObject.type, data).also { e ->
+                        data.data.forEach {
+                            e.setProperty(it.key, it.value)
+                        }
 
-                    world.create(tiledObject.type, data)
+                        e.setPosition(data.x, data.y)
+
+                        // non-zero gid means view is read from the tileset
+                        if (tiledObject.gid != 0) {
+                            e.viewComponent.setViewFromNode(tilesetLoader.loadView(tiledObject.gid))
+                        }
+                    }
                 }
     }
 

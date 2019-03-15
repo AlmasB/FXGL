@@ -38,7 +38,7 @@ public class TiledMapSample extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new MyEntityFactory());
 
-        Level level = getAssetLoader().loadLevel("tmx/sewers.tmx", new TMXLevelLoader());
+        Level level = getAssetLoader().loadLevel("tmx/map_with_gid_objects.tmx", new TMXLevelLoader());
 
         getGameWorld().setLevel(level);
     }

@@ -8,11 +8,13 @@ package com.almasb.fxgl.entity.level.tiled
 
 import com.almasb.fxgl.entity.*
 import com.almasb.fxgl.test.RunWithFX
+import javafx.geometry.Point2D
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
@@ -40,6 +42,37 @@ class TMXLevelLoaderTest {
 
         // 4 object entities + 2 background tile layers
         assertThat(level.entities.size, `is`(4 + 2))
+    }
+
+    @Test
+    fun `Load tmx level with gid objects`() {
+        val world = GameWorld()
+        world.addEntityFactory(MyEntityFactory())
+
+        val level = TMXLevelLoader().load(javaClass.getResource("map_with_gid_objects.tmx"), world)
+
+        assertThat(level.width, `is`(16*10))
+        assertThat(level.height, `is`(16*10))
+
+        // 1 bg + 7 entities
+        assertThat(level.entities.size, `is`(1 + 7))
+
+        val objects = level.entities.drop(1)
+
+        assertThat(objects.find { it.getInt("id") == 14 }!!.position, `is`(Point2D(0.0, 144.0)))
+        assertThat(objects.find { it.getInt("id") == 15 }!!.position, `is`(Point2D(0.0, 0.0)))
+        assertThat(objects.find { it.getInt("id") == 17 }!!.position, `is`(Point2D(144.0, 16.0)))
+        assertThat(objects.find { it.getInt("id") == 18 }!!.position, `is`(Point2D(16.0, 0.0)))
+
+        // Tiled y is up, our y is down hence the height subtraction
+        assertThat(objects.find { it.getInt("id") == 28 }!!.position, `is`(Point2D(47.0, 80.0 - 16)))
+        assertThat(objects.find { it.getInt("id") == 31 }!!.position, `is`(Point2D(111.0, 128.0 - 16)))
+        assertThat(objects.find { it.getInt("id") == 33 }!!.position, `is`(Point2D(32.0, 47.0 - 16)))
+
+        // check whether gid tiled objects have been parsed
+        assertTrue(objects.find { it.getInt("id") == 28 }!!.viewComponent.parent.children.isNotEmpty())
+        assertTrue(objects.find { it.getInt("id") == 31 }!!.viewComponent.parent.children.isNotEmpty())
+        assertTrue(objects.find { it.getInt("id") == 33 }!!.viewComponent.parent.children.isNotEmpty())
     }
 
     @ParameterizedTest
@@ -160,7 +193,7 @@ class TMXLevelLoaderTest {
             return Entity()
         }
 
-        @Spawns("type2,type3")
+        @Spawns("type2,type3,Wall,Player,Coin")
         fun newCircle(data: SpawnData): Entity {
             return Entity()
         }

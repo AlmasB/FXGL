@@ -43,4 +43,11 @@ public class MyEntityFactory implements EntityFactory {
                 .view(new Circle(15))
                 .build();
     }
+
+    @Spawns("Wall,Player,Coin")
+    public Entity newObjectgid(SpawnData data) {
+        return FXGL.entityBuilder()
+                .from(data)
+                .build();
+    }
 }

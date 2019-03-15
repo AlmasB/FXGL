@@ -20,6 +20,33 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
 
     private val imageCache = hashMapOf<String, Image>()
 
+    fun loadView(gidArg: Int): Node {
+        var gid = gidArg
+
+        val tileset = findTileset(gid, map.tilesets)
+
+        // we offset because data is encoded as continuous
+        gid -= tileset.firstgid
+
+        // image source
+        val tilex = gid % tileset.columns
+        val tiley = gid / tileset.columns
+
+        val w = map.tilewidth
+        val h = map.tileheight
+
+        val buffer = WritableImage(w, h)
+
+        val sourceImage = loadTilesetImage(tileset)
+
+        buffer.pixelWriter.setPixels(0, 0,
+                w, h, sourceImage.pixelReader,
+                tilex * w + tileset.margin + tilex * tileset.spacing,
+                tiley * h + tileset.margin + tiley * tileset.spacing)
+
+        return ImageView(buffer)
+    }
+
     fun loadView(layerName: String): Node {
         val layer = map.getLayerByName(layerName)
 
