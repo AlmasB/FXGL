@@ -10,7 +10,6 @@ import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.core.util.BiConsumer
-import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.texture.Texture
@@ -108,19 +107,19 @@ fun loopBGM(assetName: String) = FXGL.loopBGM(assetName)
 
 fun play(assetName: String) = FXGL.play(assetName)
 
-fun onKeyDown(key: KeyCode, actionName: String, action: Runnable) = FXGL.onKeyDown(key, actionName, action)
+fun onKeyDown(key: KeyCode, actionName: String, action: () -> Unit) = FXGL.onKeyDown(key, actionName, Runnable(action))
 
-fun onKey(key: KeyCode, action: Runnable) = FXGL.onKey(key, action)
+fun onKey(key: KeyCode, action: () -> Unit) = FXGL.onKey(key, Runnable(action))
 
-fun onKey(key: KeyCode, actionName: String, action: Runnable) = FXGL.onKey(key, actionName, action)
+fun onKey(key: KeyCode, actionName: String, action: () -> Unit) = FXGL.onKey(key, actionName, Runnable(action))
 
-fun onKeyUp(key: KeyCode, actionName: String, action: Runnable) = FXGL.onKeyUp(key, actionName, action)
+fun onKeyUp(key: KeyCode, actionName: String, action: () -> Unit) = FXGL.onKeyUp(key, actionName, Runnable(action))
 
-fun onBtnDown(btn: MouseButton, actionName: String, action: Runnable) = FXGL.onBtnDown(btn, actionName, action)
+fun onBtnDown(btn: MouseButton, actionName: String, action: () -> Unit) = FXGL.onBtnDown(btn, actionName, Runnable(action))
 
-fun onBtn(btn: MouseButton, actionName: String, action: Runnable) = FXGL.onBtn(btn, actionName, action)
+fun onBtn(btn: MouseButton, actionName: String, action: () -> Unit) = FXGL.onBtn(btn, actionName, Runnable(action))
 
-fun onBtnUp(btn: MouseButton, actionName: String, action: Runnable) = FXGL.onBtnUp(btn, actionName, action)
+fun onBtnUp(btn: MouseButton, actionName: String, action: () -> Unit) = FXGL.onBtnUp(btn, actionName, Runnable(action))
 
 fun spawn(entityName: String): Entity = FXGL.getGameWorld().spawn(entityName)
 
@@ -130,11 +129,11 @@ fun spawn(entityName: String, position: Point2D): Entity = FXGL.getGameWorld().s
 
 fun spawn(entityName: String, data: SpawnData): Entity = FXGL.getGameWorld().spawn(entityName, data)
 
-fun onCollisionBegin(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entity>) = FXGL.onCollisionBegin(typeA, typeB, action)
+fun onCollisionBegin(typeA: Enum<*>, typeB: Enum<*>, action: (Entity, Entity) -> Unit) = FXGL.onCollisionBegin(typeA, typeB, BiConsumer(action))
 
-fun onCollision(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entity>) = FXGL.onCollision(typeA, typeB, action)
+fun onCollision(typeA: Enum<*>, typeB: Enum<*>, action: (Entity, Entity) -> Unit) = FXGL.onCollision(typeA, typeB, BiConsumer(action))
 
-fun onCollisionEnd(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entity>) = FXGL.onCollisionEnd(typeA, typeB, action)
+fun onCollisionEnd(typeA: Enum<*>, typeB: Enum<*>, action: (Entity, Entity) -> Unit) = FXGL.onCollisionEnd(typeA, typeB, BiConsumer(action))
 
 fun random() = FXGLMath.random()
 
@@ -159,9 +158,9 @@ fun fire(event: Event) = FXGL.getEventBus().fireEvent(event)
 
 fun showMessage(message: String) = FXGL.getDisplay().showMessageBox(message)
 
-fun showMessage(message: String, callback: Runnable) = FXGL.getDisplay().showMessageBox(message, callback)
+fun showMessage(message: String, callback: () -> Unit) = FXGL.getDisplay().showMessageBox(message, callback)
 
-fun showConfirm(message: String, callback: Consumer<Boolean>) = FXGL.getDisplay().showConfirmationBox(message, callback)
+fun showConfirm(message: String, callback: (Boolean) -> Unit) = FXGL.getDisplay().showConfirmationBox(message, callback)
 
 fun addUINode(node: Node) = FXGL.addUINode(node)
 
@@ -169,11 +168,11 @@ fun addUINode(node: Node, x: Double, y: Double) = FXGL.addUINode(node, x, y)
 
 fun removeUINode(node: Node) = FXGL.removeUINode(node)
 
-fun runOnce(action: Runnable, delay: Duration) = FXGL.getMasterTimer().runOnceAfter(action, delay)
+fun runOnce(action: () -> Unit, delay: Duration) = FXGL.getMasterTimer().runOnceAfter(action, delay)
 
-fun run(action: Runnable, interval: Duration) = FXGL.getMasterTimer().runAtInterval(action, interval)
+fun run(action: () -> Unit, interval: Duration) = FXGL.getMasterTimer().runAtInterval(Runnable(action), interval)
 
-fun run(action: Runnable, interval: Duration, limit: Int) = FXGL.getMasterTimer().runAtInterval(action, interval, limit)
+fun run(action: () -> Unit, interval: Duration, limit: Int) = FXGL.getMasterTimer().runAtInterval(Runnable(action), interval, limit)
 
 /* EXTENSIONS */
 
