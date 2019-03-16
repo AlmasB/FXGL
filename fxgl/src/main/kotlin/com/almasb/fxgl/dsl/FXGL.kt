@@ -153,8 +153,6 @@ class FXGL private constructor() { companion object {
 
 /* VARS */
 
-    @JvmStatic fun newVar(varName: String, value: Any) = getGameState().setValue(varName, value)
-
     @JvmStatic fun set(varName: String, value: Any) = getGameState().setValue(varName, value)
 
     @JvmStatic fun geti(varName: String): Int = getGameState().getInt(varName)
