@@ -2,7 +2,6 @@ package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.entity.component.Component
-import com.almasb.fxgl.entity.component.CopyableComponent
 import com.almasb.fxgl.entity.component.CoreComponent
 import com.almasb.fxgl.entity.component.SerializableComponent
 import javafx.beans.property.DoubleProperty
@@ -11,9 +10,6 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Point2D
 
-
-//data class Transform(val x: Double, val y: Double, val rotation: Double, val scaleX: Double, val scaleY: Double)
-
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -21,8 +17,7 @@ import javafx.geometry.Point2D
 @CoreComponent
 class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, scaleY: Double) :
         Component(),
-        SerializableComponent,
-        CopyableComponent<TransformComponent> {
+        SerializableComponent {
 
     constructor(p: Point2D) : this(p.x, p.y, 0.0, 1.0, 1.0)
     constructor() : this(0.0, 0.0, 0.0, 1.0, 1.0)
@@ -196,19 +191,27 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     }
 
     override fun toString(): String {
-        return "Transform(" + ")"
+        return "Transform($x, $y, $angle, $scaleX, $scaleY)"
     }
 
     override fun write(bundle: Bundle) {
         bundle.put("propX", x)
         bundle.put("propY", y)
+        bundle.put("angle", angle)
+        bundle.put("scaleX", scaleX)
+        bundle.put("scaleY", scaleY)
+        bundle.put("scaleOriginX", scaleOrigin.x)
+        bundle.put("scaleOriginY", scaleOrigin.y)
+        bundle.put("rotationOriginX", rotationOrigin.x)
+        bundle.put("rotationOriginY", rotationOrigin.y)
     }
 
     override fun read(bundle: Bundle) {
         setPosition(bundle.get("propX"), bundle.get("propY"))
-    }
-
-    override fun copy(): TransformComponent {
-        return TransformComponent(x, y, angle, scaleX, scaleY)
+        scaleOrigin = Point2D(bundle.get("scaleOriginX"), bundle.get("scaleOriginY"))
+        rotationOrigin = Point2D(bundle.get("rotationOriginX"), bundle.get("rotationOriginY"))
+        angle = bundle.get("angle")
+        scaleX = bundle.get("scaleX")
+        scaleY = bundle.get("scaleY")
     }
 }

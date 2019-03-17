@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.entity.components;
 
-import com.almasb.fxgl.entity.component.CopyableComponent;
 import com.almasb.fxgl.entity.component.CoreComponent;
 import com.almasb.fxgl.entity.component.SerializableComponent;
 import com.almasb.fxgl.core.serialization.Bundle;
@@ -20,7 +19,7 @@ import java.io.Serializable;
  */
 @CoreComponent
 public class TypeComponent extends ObjectComponent<Serializable>
-        implements SerializableComponent, CopyableComponent<TypeComponent> {
+        implements SerializableComponent {
 
     /**
      * Constructs a component with no type.
@@ -66,11 +65,6 @@ public class TypeComponent extends ObjectComponent<Serializable>
     @Override
     public void read(Bundle bundle) {
         setValue(bundle.get("value"));
-    }
-
-    @Override
-    public TypeComponent copy() {
-        return new TypeComponent(getValue());
     }
 
     private static class SObject implements Serializable {

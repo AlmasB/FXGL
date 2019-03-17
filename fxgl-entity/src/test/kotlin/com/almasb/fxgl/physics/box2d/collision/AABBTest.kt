@@ -29,20 +29,6 @@ class AABBTest {
     }
 
     @Test
-    fun `Valid when bounds are sorted`() {
-        assertTrue(aabb.isValid)
-
-        aabb = AABB(Vec2(10.0, 15.0), Vec2(5.0, 3.0))
-        assertFalse(aabb.isValid)
-
-        aabb = AABB(Vec2(10.0, 1.0), Vec2(5.0, 3.0))
-        assertFalse(aabb.isValid)
-
-        aabb = AABB(Vec2(1.0, 15.0), Vec2(5.0, 3.0))
-        assertFalse(aabb.isValid)
-    }
-
-    @Test
     fun `Center`() {
         assertThat(aabb.center, `is`(Vec2(7.5, 9.0)))
     }

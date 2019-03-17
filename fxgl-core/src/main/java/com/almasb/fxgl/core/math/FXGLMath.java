@@ -103,44 +103,6 @@ public final class FXGLMath {
         return degreesToRadians * degrees;
     }
 
-    /*
-
-        // reduce the angle
-    angle =  angle % 360;
-
-    // force it to be the positive remainder, so that 0 <= angle < 360
-    angle = (angle + 360) % 360;
-
-    // force into the minimum absolute value residue class, so that -180 < angle <= 180
-    if (angle > 180)
-        angle -= 360;
-     */
-    /**
-     * @param theta angle in radians
-     * @return angle in radians normalized to [0..PI / 2]
-     */
-//    public static final double normalizeAngle(double theta) {
-//        theta %= PI2;
-//        if (abs(theta) > PI) {
-//            theta = theta - PI2;
-//        }
-//        if (abs(theta) > HALF_PI) {
-//            theta = PI - theta;
-//        }
-//        return theta;
-//    }
-//
-//    public static final double normalizeAngleDeg(double theta) {
-//        theta %= 360;
-//        if (abs(theta) > 180) {
-//            theta = theta - 360;
-//        }
-//        if (abs(theta) > 90) {
-//            theta = 180 - theta;
-//        }
-//        return theta;
-//    }
-
     /**
      * Average error of 0.00231 radians (0.1323 degrees),
      * largest error of 0.00488 radians (0.2796 degrees).
@@ -287,39 +249,6 @@ public final class FXGLMath {
     }
 
     /**
-     * This is an optimized version of {@link #randomTriangular(double, double, double) randomTriangular(-1, 1, 0)}.
-     *
-     * @return a triangularly distributed random number between -1.0 (exclusive) and 1.0 (exclusive),
-     * where values around zero are more likely
-     */
-    public static double randomTriangular() {
-        return random.nextDouble() - random.nextDouble();
-    }
-
-    /**
-     * This is an optimized version of {@link #randomTriangular(double, double, double) randomTriangular(-max, max, 0)}.
-     *
-     * @param max the upper limit
-     * @return a triangularly distributed random number between {@code -max} (exclusive) and {@code max} (exclusive),
-     * where values around zero are more likely
-     */
-    public static double randomTriangular(double max) {
-        return (random.nextDouble() - random.nextDouble()) * max;
-    }
-
-    /**
-     * This method is equivalent of {@link #randomTriangular(double, double, double) randomTriangular(min, max, (min + max) * .5f)}.
-     *
-     * @param min the lower limit
-     * @param max the upper limit
-     * @return a triangularly distributed random number between {@code min} (inclusive) and {@code max} (exclusive),
-     * where the {@code mode} argument defaults to the midpoint between the bounds, giving a symmetric distribution
-     */
-    public static double randomTriangular(double min, double max) {
-        return randomTriangular(min, max, (min + max) * 0.5f);
-    }
-
-    /**
      * @param min the lower limit
      * @param max the upper limit
      * @param mode the point around which the values are more likely
@@ -415,44 +344,6 @@ public final class FXGLMath {
     }
 
     /**
-     * @param value the value to check
-     * @return true if the value is a power of two
-     */
-    public static boolean isPowerOfTwo(int value) {
-        return value != 0 && (value & value - 1) == 0;
-    }
-
-    public static short clamp(short value, short min, short max) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-
-    public static int clamp(int value, int min, int max) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-
-    public static long clamp(long value, long min, long max) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-
-    public static double clamp(double value, double min, double max) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-
-    public static float clamp(float value, float min, float max) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-
-    /**
      * Map value of a given range to a target range.
      *
      * @param value the value to map
@@ -460,20 +351,6 @@ public final class FXGLMath {
      */
     public static double map(double value, double currentRangeStart, double currentRangeStop, double targetRangeStart, double targetRangeStop) {
         return targetRangeStart + (targetRangeStop - targetRangeStart) * ((value - currentRangeStart) / (currentRangeStop - currentRangeStart));
-    }
-
-    /**
-     * @param fromValue start value
-     * @param toValue end value
-     * @param progress the interpolation progress [0..1]
-     * @return linearly interpolated value between fromValue to toValue based on progress position
-     */
-    public static double lerp(double fromValue, double toValue, double progress) {
-        return Interpolator.LINEAR.interpolate(fromValue, toValue, progress);
-    }
-
-    public static Point2D lerp(double fromX, double fromY, double toX, double toY, double progress) {
-        return new Point2D(lerp(fromX, toX, progress), lerp(fromY, toY, progress));
     }
 
     public static double interpolate(double fromValue, double toValue, double progress, Interpolator interpolator) {
@@ -487,46 +364,11 @@ public final class FXGLMath {
         return new Point2D(x, y);
     }
 
-    /**
-     * Linearly interpolates between two angles in radians.
-     * Takes into account that angles wrap at two pi and always takes the
-     * direction with the smallest delta angle.
-     *
-     * @param fromRadians start angle in radians
-     * @param toRadians target angle in radians
-     * @param progress interpolation value in the range [0, 1]
-     * @return the interpolated angle in the range [0, PI2[
-     */
-    public static double lerpAngle(double fromRadians, double toRadians, double progress) {
-        double delta = ((toRadians - fromRadians + PI2 + PI) % PI2) - PI;
-        return (fromRadians + delta * progress + PI2) % PI2;
-    }
-
-    /**
-     * Linearly interpolates between two angles in degrees.
-     * Takes into account that angles wrap at 360 degrees and always takes
-     * the direction with the smallest delta angle.
-     *
-     * @param fromDegrees start angle in degrees
-     * @param toDegrees target angle in degrees
-     * @param progress interpolation value in the range [0, 1]
-     * @return the interpolated angle in the range [0, 360[
-     */
-    public static double lerpAngleDeg(double fromDegrees, double toDegrees, double progress) {
-        double delta = ((toDegrees - fromDegrees + 360 + 180) % 360) - 180;
-        return (fromDegrees + delta * progress + 360) % 360;
-    }
-
     private static final int BIG_ENOUGH_INT = 16 * 1024;
     private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
     private static final double CEIL = 0.9999999;
     private static final double BIG_ENOUGH_CEIL = 16384.999999999996;
     private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5f;
-
-    public static int absShift31(int value) {
-        int y = value >> 31;
-        return (value ^ y) - y;
-    }
 
     public static float abs(float value) {
         return value > 0 ? value : -value;
@@ -605,43 +447,6 @@ public final class FXGLMath {
         return Math.abs(value) <= tolerance;
     }
 
-    /**
-     * Note: prone to floating point errors if the arguments are not doubles.
-     *
-     * @param a the first value
-     * @param b the second value
-     * @param tolerance represent an upper bound below which the two values are considered equal
-     *
-     * @return true if a is nearly equal to b, i.e. true if difference between a and b is less than or equal to tolerance
-     */
-    public static boolean isClose(double a, double b, double tolerance) {
-        return Math.abs(a - b) <= tolerance;
-    }
-
-    /**
-     * @return a to the power of b
-     */
-    public static double pow(double a, double b) {
-        return Math.pow(a, b);
-    }
-
-    /**
-     * @param base the base
-     * @param value the value
-     * @return the logarithm of value with given base
-     */
-    public static double log(double base, double value) {
-        return Math.log(value) / Math.log(base);
-    }
-
-    /**
-     * @param value the value
-     * @return the logarithm of value with base 2
-     */
-    public static double log2(double value) {
-        return log(2, value);
-    }
-
     public static Point2D bezier(Point2D p1, Point2D p2, Point2D p3, double t) {
         double x = (1 - t) * (1 - t) * p1.getX() + 2 * (1 - t) * t * p2.getX() + t * t * p3.getX();
         double y = (1 - t) * (1 - t) * p1.getY() + 2 * (1 - t) * t * p2.getY() + t * t * p3.getY();
@@ -669,21 +474,10 @@ public final class FXGLMath {
      *
      * double noise = noise2D(x * freq, y * freq)
      *
-     * @return perlin noise in 2D quality in [0..1)
-     * @implNote twice slower than noise1D
+     * @return a value in [-1,1]
      */
     public static double noise2D(double x, double y) {
-
-        double noise = PerlinNoiseGenerator.INSTANCE.noise2D(x, y) + 0.5;
-
-        // https://github.com/AlmasB/FXGL/issues/479
-        if (noise < 0)
-            return 0;
-
-        if (noise >= 1)
-            return 0.99999999;
-
-        return noise;
+        return SimplexNoise.noise2D(x, y);
     }
 
     /**
@@ -691,6 +485,6 @@ public final class FXGLMath {
      * @return a value in [-1,1]
      */
     public static double noise3D(double x, double y, double z) {
-        return SimplexNoise.noise(x, y, z);
+        return SimplexNoise.noise3D(x, y, z);
     }
 }

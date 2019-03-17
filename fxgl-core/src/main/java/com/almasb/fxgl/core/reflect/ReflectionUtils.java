@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.util.Function;
 import com.almasb.fxgl.core.util.Optional;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -35,8 +36,7 @@ public final class ReflectionUtils {
         }
     }
 
-    public static <A extends java.lang.annotation.Annotation> Map<A, Method>
-        findMethods(Object instance, Class<A> annotationClass) {
+    public static <A extends Annotation> Map<A, Method> findMethods(Object instance, Class<A> annotationClass) {
 
         Map<A, Method> map = new HashMap<>();
 
@@ -50,7 +50,7 @@ public final class ReflectionUtils {
         return map;
     }
 
-    public static <T, R, A extends java.lang.annotation.Annotation> Map<A, Function<T, R>>
+    public static <T, R, A extends Annotation> Map<A, Function<T, R>>
         findMethodsMapToFunctions(Object instance, Class<A> annotationClass) {
 
         Map<A, Function<T, R>> map = new HashMap<>();
@@ -64,7 +64,7 @@ public final class ReflectionUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T, R, F extends Function<T, R>, A extends java.lang.annotation.Annotation> Map<A, F>
+    public static <T, R, F extends Function<T, R>, A extends Annotation> Map<A, F>
         findMethodsMapToFunctions(Object instance, Class<A> annotationClass, Class<F> functionClass) {
 
         Map<A, F> map = new HashMap<>();
@@ -104,8 +104,7 @@ public final class ReflectionUtils {
         return input -> call(instance, method, input);
     }
 
-    public static <A extends java.lang.annotation.Annotation> Array<Field>
-        findFieldsByAnnotation(Object instance, Class<A> annotationClass) {
+    public static <A extends Annotation> Array<Field> findFieldsByAnnotation(Object instance, Class<A> annotationClass) {
 
         Array<Field> fields = new Array<>();
 

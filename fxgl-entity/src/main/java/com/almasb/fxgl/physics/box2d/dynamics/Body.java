@@ -139,12 +139,6 @@ public final class Body {
     }
 
     private void checkValid(BodyDef def) {
-        if (!def.getPosition().isValid())
-            throw new IllegalArgumentException("Position is invalid");
-
-        if (!def.getLinearVelocity().isValid())
-            throw new IllegalArgumentException("Linear velocity is invalid");
-
         if (def.getGravityScale() < 0)
             throw new IllegalArgumentException("Gravity scale is invalid");
 
@@ -577,7 +571,12 @@ public final class Body {
         // m_linearVelocity += Cross(m_angularVelocity, m_sweep.c - oldCenter);
         final Vec2 temp = world.getPool().popVec2();
         temp.set(m_sweep.c).subLocal(oldCenter);
-        Vec2.crossToOut(m_angularVelocity, temp, temp);
+
+        // crossToOut(m_angularVelocity, temp, temp);
+        final float tempY = m_angularVelocity * temp.x;
+        temp.x = -m_angularVelocity * temp.y;
+        temp.y = tempY;
+
         m_linearVelocity.addLocal(temp);
 
         world.getPool().pushVec2(2);

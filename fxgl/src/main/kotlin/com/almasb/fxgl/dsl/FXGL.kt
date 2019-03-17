@@ -19,6 +19,7 @@ import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
+import com.almasb.fxgl.entity.level.tiled.TMXLevelLoader
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
@@ -152,8 +153,6 @@ class FXGL private constructor() { companion object {
 
 
 /* VARS */
-
-    @JvmStatic fun newVar(varName: String, value: Any) = getGameState().setValue(varName, value)
 
     @JvmStatic fun set(varName: String, value: Any) = getGameState().setValue(varName, value)
 
@@ -311,13 +310,12 @@ class FXGL private constructor() { companion object {
      * @param mapFileName name of the .json file or the .tmx file
      */
     @JvmStatic fun setLevelFromMap(mapFileName: String) {
-//    if (mapFileName.endsWith(".json")) {
-//        setLevelFromMap(getAssetLoader().loadJSON(mapFileName, TiledMap::class.java))
-//    } else if (mapFileName.endsWith(".tmx")) {
-//        setLevelFromMap(getAssetLoader().loadTMX(mapFileName))
-//    } else {
-//        throw IllegalArgumentException("Unknown Tiled map format")
-//    }
+        if (mapFileName.endsWith(".tmx")) {
+            val level = getAssetLoader().loadLevel(mapFileName, TMXLevelLoader())
+            getGameWorld().setLevel(level)
+        } else {
+            throw IllegalArgumentException("Unknown Tiled map format: $mapFileName")
+        }
     }
 
 /* PHYSICS */

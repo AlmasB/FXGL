@@ -40,22 +40,6 @@ class PropertyMap {
      */
     fun exists(propertyName: String) = properties.containsKey(propertyName)
 
-    /**
-     * Ensure that property with such name exists first using [exists].
-     *
-     * @return type of a property with [propertyName], e.g. SimpleIntegerProperty, SimpleStringProperty
-     */
-    fun getType(propertyName: String): Class<*> {
-        return get(propertyName).javaClass
-    }
-
-    /**
-     * @return all existing properties in the form (propertyName, rawValue)
-     */
-    fun getProperties(): Map<String, String> {
-        return properties.associateBy({ it.key }, { rawValue(it.value).toString() })
-    }
-
     fun <T> getValueOptional(propertyName: String): Optional<T> {
         try {
             return Optional.ofNullable(getValue(propertyName))
@@ -71,13 +55,6 @@ class PropertyMap {
     private fun <T> rawValueT(valueWrapper: Any): T {
         return when (valueWrapper) {
             is ObservableValue<*> -> valueWrapper.value as T
-            else -> throw IllegalArgumentException("Unsupported value wrapper type: $valueWrapper")
-        }
-    }
-
-    private fun rawValue(valueWrapper: Any): Any {
-        return when (valueWrapper) {
-            is ObservableValue<*> -> valueWrapper.value
             else -> throw IllegalArgumentException("Unsupported value wrapper type: $valueWrapper")
         }
     }
@@ -104,33 +81,6 @@ class PropertyMap {
             }
 
             properties.put(propertyName, property)
-        }
-    }
-
-    /**
-     * Set a new [value] to an existing var [propertyName] or creates new var.
-     * The value is parsed from String type to an actual type, e.g. Boolean.
-     */
-    fun setValueFromString(propertyName: String, value: String) {
-        if (value.startsWith("#")) {
-            setValue(propertyName, Color.web(value))
-            return
-        }
-
-        if (value == "true" || value == "false") {
-            setValue(propertyName, value.toBoolean())
-        } else {
-            try {
-                val intValue = value.toInt()
-                setValue(propertyName, intValue)
-            } catch (e: Exception) {
-                try {
-                    val doubleValue = value.toDouble()
-                    setValue(propertyName, doubleValue)
-                } catch (e2: Exception) {
-                    setValue(propertyName, value)
-                }
-            }
         }
     }
 

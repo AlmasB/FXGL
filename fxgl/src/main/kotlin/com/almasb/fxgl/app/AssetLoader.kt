@@ -11,6 +11,10 @@ import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.audio.impl.DesktopAudioService
 import com.almasb.fxgl.core.collection.ObjectMap
+import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.entity.EntityFactory
+import com.almasb.fxgl.entity.level.Level
+import com.almasb.fxgl.entity.level.LevelLoader
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.ui.FontFactory
@@ -78,6 +82,7 @@ class AssetLoader {
     private val SCRIPTS_DIR = ASSETS_DIR + "scripts/"
     private val PROPERTIES_DIR = ASSETS_DIR + "properties/"
     private val AI_DIR = ASSETS_DIR + "ai/"
+    private val LEVELS_DIR = ASSETS_DIR + "levels/"
 
     private val UI_DIR = ASSETS_DIR + "ui/"
     private val CSS_DIR = UI_DIR + "css/"
@@ -305,6 +310,15 @@ class AssetLoader {
      */
     fun loadJSON(name: String): List<String> {
         return readAllLines(JSON_DIR + name)
+    }
+
+    /**
+     * @param name level file name in /assets/levels/
+     * @param levelLoader level loader to use to load this level
+     * @param entityFactory entity factory to use when spawning entities in this level
+     */
+    fun loadLevel(name: String, levelLoader: LevelLoader): Level {
+        return levelLoader.load(getURL(LEVELS_DIR + name), FXGL.getGameWorld())
     }
 
     /**

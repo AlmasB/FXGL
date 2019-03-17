@@ -1,7 +1,6 @@
 package com.almasb.fxgl.core.concurrent
 
 import javafx.application.Platform
-import java.lang.Exception
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService

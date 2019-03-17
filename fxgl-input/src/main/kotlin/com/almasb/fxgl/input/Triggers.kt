@@ -6,8 +6,10 @@
 
 package com.almasb.fxgl.input
 
-import javafx.scene.input.KeyCode
-import javafx.scene.input.MouseButton
+import javafx.beans.property.ReadOnlyObjectWrapper
+import javafx.beans.property.ReadOnlyStringWrapper
+import javafx.scene.input.*
+import java.lang.RuntimeException
 
 /**
  *
@@ -20,6 +22,23 @@ interface Trigger {
     fun getName(): String
     fun isKey(): Boolean
     fun isButton(): Boolean
+    fun isTriggered(event: InputEvent): Boolean
+    fun isReleased(event: InputEvent): Boolean
+}
+
+internal class ObservableTrigger(trigger: Trigger) {
+
+    val trigger = ReadOnlyObjectWrapper(trigger)
+    val name = ReadOnlyStringWrapper(trigger.toString())
+
+    init {
+        this.trigger.addListener { _, _, newTrigger ->
+            name.value = newTrigger.toString()
+        }
+    }
+
+    fun isTriggered(event: InputEvent) = trigger.value.isTriggered(event)
+    fun isReleased(event: InputEvent) = trigger.value.isReleased(event)
 }
 
 data class KeyTrigger
@@ -33,6 +52,27 @@ data class KeyTrigger
     override fun isKey() = true
     override fun isButton() = false
 
+    override fun isTriggered(event: InputEvent): Boolean {
+        if (event !is KeyEvent)
+            return false
+
+        return event.code == key && modifier.isTriggered(event)
+    }
+
+    @Suppress("NON_EXHAUSTIVE_WHEN")
+    override fun isReleased(event: InputEvent): Boolean {
+        if (event !is KeyEvent)
+            return false
+
+        when (event.code) {
+            KeyCode.CONTROL -> return modifier == InputModifier.CTRL
+            KeyCode.SHIFT -> return modifier == InputModifier.SHIFT
+            KeyCode.ALT -> return modifier == InputModifier.ALT
+        }
+
+        return event.code == key
+    }
+
     override fun toString() = (if (modifier == InputModifier.NONE) "" else "$modifier+") + key.getName()
 }
 
@@ -45,7 +85,7 @@ data class MouseTrigger
             "LMB" -> MouseButton.PRIMARY
             "MMB" -> MouseButton.MIDDLE
             "RMB" -> MouseButton.SECONDARY
-            else -> MouseButton.NONE
+            else -> throw RuntimeException("Must be one of [LMB, MMB, RMB]")
         }
     }
 
@@ -56,12 +96,32 @@ data class MouseTrigger
     override fun isKey() = false
     override fun isButton() = true
 
+    override fun isTriggered(event: InputEvent): Boolean {
+        if (event !is MouseEvent)
+            return false
+
+        return event.button == button && modifier.isTriggered(event)
+    }
+
+    @Suppress("NON_EXHAUSTIVE_WHEN")
+    override fun isReleased(event: InputEvent): Boolean {
+        if (event is KeyEvent) {
+            when (event.code) {
+                KeyCode.CONTROL -> return modifier == InputModifier.CTRL
+                KeyCode.SHIFT -> return modifier == InputModifier.SHIFT
+                KeyCode.ALT -> return modifier == InputModifier.ALT
+            }
+        }
+
+        return isTriggered(event)
+    }
+
     override fun toString() = (if (modifier == InputModifier.NONE) "" else "$modifier+") + buttonToString()
 
     private fun buttonToString() = when(button) {
         MouseButton.PRIMARY -> "LMB"
         MouseButton.MIDDLE -> "MMB"
         MouseButton.SECONDARY -> "RMB"
-        else -> "NONE"
+        else -> throw RuntimeException("Not a mouse button")
     }
 }

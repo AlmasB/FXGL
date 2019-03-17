@@ -260,7 +260,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         // row 0
         grid.userData = 0
 
-        FXGL.getInput().bindings.forEach { action, trigger -> addNewInputBinding(action, trigger, grid) }
+        FXGL.getInput().allBindings.forEach { action, trigger -> addNewInputBinding(action, trigger, grid) }
 
         val scroll = FXGLScrollPane(grid)
         scroll.vbarPolicy = ScrollBarPolicy.ALWAYS
@@ -411,7 +411,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         vbox.alignment = Pos.CENTER
         vbox.prefWidth = pane.prefWidth - 15
 
-        val credits = ArrayList(getSettings().credits.list)
+        val credits = ArrayList(getSettings().credits)
         credits.add("")
         credits.add("Powered by FXGL " + FXGL.getVersion())
         credits.add("Author: Almas Baimagambetov")

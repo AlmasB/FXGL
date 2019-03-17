@@ -19,6 +19,8 @@ class InputPredicatesTest {
 
     @Test
     fun `Alphanum`() {
+        InputPredicates()
+
         val s1 = "abassd"
         val s2 = "2asadsda"
         val s3 = "%2asdasd"

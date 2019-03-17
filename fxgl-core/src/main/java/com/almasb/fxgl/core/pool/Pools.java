@@ -10,7 +10,6 @@
 
 package com.almasb.fxgl.core.pool;
 
-import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 
 /**
@@ -30,10 +29,11 @@ public final class Pools {
      * Returns a new or existing pool for the specified type, stored in a Class to {@link Pool} map.
      * Note the max size is ignored if this is not the first time this pool has been requested.
      */
-    public static <T> Pool<T> get(Class<T> type, int max) {
+    @SuppressWarnings("unchecked")
+    private static <T> Pool<T> get(Class<T> type, int max) {
         Pool pool = typePools.get(type);
         if (pool == null) {
-            pool = new ReflectionPool<>(type, 4, max);
+            pool = new ReflectionPool<>(type, 16, max);
             typePools.put(type, pool);
         }
         return pool;
@@ -46,7 +46,7 @@ public final class Pools {
      * @param <T> pool type
      * @return a new or existing pool for the specified type, stored in a Class to {@link Pool} map
      */
-    public static <T> Pool<T> get(Class<T> type) {
+    private static <T> Pool<T> get(Class<T> type) {
         return get(type, 100);
     }
 
@@ -75,65 +75,12 @@ public final class Pools {
      *
      * @param object the object to free
      */
+    @SuppressWarnings("unchecked")
     public static void free(Object object) {
-        if (object == null)
-            throw new IllegalArgumentException("Object cannot be null.");
-
         Pool pool = typePools.get(object.getClass());
         if (pool == null)
             return; // Ignore freeing an object that was never retained.
 
         pool.free(object);
-    }
-
-    /**
-     * Frees the specified objects from the {@link #get(Class) pool}.
-     * Null objects within the array are silently ignored.
-     * Objects don't need to be from the same pool.
-     *
-     * @param objects objects to be freed
-     */
-    public static void freeAll(Array objects) {
-        freeAll(objects, false);
-    }
-
-    /**
-     * Frees the specified objects from the {@link #get(Class) pool}.
-     * Null objects within the array are silently ignored.
-     *
-     * @param objects objects to free
-     * @param samePool if false, objects don't need to be from the same pool but the pool must be looked up for each object
-     */
-    public static void freeAll(Array objects, boolean samePool) {
-        if (objects == null)
-            throw new IllegalArgumentException("Objects cannot be null.");
-
-        Pool pool = null;
-        for (int i = 0, n = objects.size(); i < n; i++) {
-            Object object = objects.get(i);
-            if (object == null)
-                continue;
-
-            if (pool == null) {
-                pool = typePools.get(object.getClass());
-                if (pool == null)
-                    continue; // Ignore freeing an object that was never retained.
-            }
-
-            pool.free(object);
-
-            if (!samePool)
-                pool = null;
-        }
-    }
-
-    /**
-     * Frees all given objects.
-     *
-     * @param objects to free
-     */
-    public static void freeAll(Object... objects) {
-        for (Object obj : objects)
-            free(obj);
     }
 }

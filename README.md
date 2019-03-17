@@ -13,10 +13,10 @@ JavaFX Game Development Framework
 ### Why FXGL?
 
 * No installation or setup required
-* "Out of the box": Java 8/9/10/11(alpha), Win/Mac/Linux/Android 5.0+([Sample](https://github.com/AlmasB/FXGL-MobileApp))/iOS([alpha](https://github.com/AlmasB/FXGL-MobileApp))/Web([alpha](https://github.com/AlmasB/FXGL-WebApp))
+* "Out of the box": Java 8/9/10/11, Win/Mac/Linux/Android 5.0+([Sample](https://github.com/AlmasB/FXGL-MobileApp))/iOS([alpha](https://github.com/AlmasB/FXGL-MobileApp))/Web([alpha](https://github.com/AlmasB/FXGL-WebApp))
 * Simple and clean API, higher level than other engines
 * Superset of JavaFX: no need to learn new UI API
-* Real-world game development techniques: Entity-Component, Event System, Scripting, etc.
+* Real-world game development techniques: Entity-Component, Event System, Scripting, and [many more](https://github.com/AlmasB/FXGL/wiki/Core-Features)
 * Games are easily packaged into a single executable .jar
 
 ### Good for:
@@ -26,11 +26,6 @@ JavaFX Game Development Framework
 * Hobby / academic / commercial projects
 * Teaching / learning / improving game development skills
 * Fast prototyping of game ideas
-
-### Features
-
-* [More than 60 major features](https://github.com/AlmasB/FXGL/wiki/Core-Features)
-* [Showcase](http://almasb.github.io/FXGLGames/)
 
 ### Minimal Example
 
@@ -53,17 +48,17 @@ public class BasicGameApp extends GameApplication {
 ## Getting Started
 
 - Version for Java 8/9/10: `0.5.4`
-- Version for Java 11: `11.0-alpha`
+- Version for Java 11: `11.1-beta`
 
 Note: from now on only 11.0+ will be developed.
-FXGL 11 supports Java 11 and has a more scalable architecture,
+FXGL 11 supports Java 11+ and has a more scalable architecture,
 but currently supports only a subset of features from `0.5.4`.
 
 * [Java 11 modules](https://github.com/AlmasB/FXGL/wiki/FXGL-11-%28Java-11-modules%29)
 * [Wiki & Written tutorials](https://github.com/AlmasB/FXGL/wiki)
 * [YouTube tutorials](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
 * [Sample code demos](fxgl-samples)
-* [Game demos](https://github.com/AlmasB/FXGLGames) (src)
+* [FXGL games](https://github.com/AlmasB/FXGLGames) (src)
 * [Game demos](https://github.com/AlmasB/FXGLGames/tree/master/binaries) (.jar)
 
 ### Maven
@@ -77,7 +72,7 @@ Already have `pom.xml`? Then add: (use `0.5.4` for Java 8/9/10)
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>11.0-alpha</version>
+    <version>11.1-beta</version>
 </dependency>
 ```
 
@@ -94,7 +89,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:11.0-alpha'
+    compile 'com.github.almasb:fxgl:11.1-beta'
 }
 ```
 

@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.core.util.Credits;
 import javafx.application.Application;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -71,7 +70,7 @@ public class MockGameApplication extends GameApplication {
         settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
         settings.setMenuKey(KeyCode.ENTER);
-        settings.setCredits(new Credits(Arrays.asList("TestCredit1", "TestCredit2")));
+        settings.setCredits(Arrays.asList("TestCredit1", "TestCredit2"));
         settings.setApplicationMode(ApplicationMode.RELEASE);
 
         // mock

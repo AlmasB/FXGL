@@ -23,9 +23,6 @@ class ColoredTexture(width: Int, height: Int, color: Color) : Texture() {
     }
 
     private fun createImageFromColor(width: Int, height: Int, color: Color): Image {
-        require(width >= 0){ "width cannot be negative" }
-        require(height >= 0) { "height cannot be negative" }
-
         val image = WritableImage(width, height)
         val writer = image.pixelWriter
 

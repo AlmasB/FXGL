@@ -53,6 +53,15 @@ public class BoundingBoxComponentTest {
     }
 
     @Test
+    public void testClearHitBoxes() throws Exception {
+        bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 40)));
+        assertEquals(1, bbox.hitBoxesProperty().size());
+
+        bbox.clearHitBoxes();
+        assertEquals(0, bbox.hitBoxesProperty().size());
+    }
+
+    @Test
     public void testGetWidth() throws Exception {
         bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 40)));
         assertThat(bbox.getWidth(), is(40.0));
@@ -91,6 +100,14 @@ public class BoundingBoxComponentTest {
     }
 
     @Test
+    public void testMaxLocals() {
+        bbox.addHitBox(new HitBox(BoundingShape.box(40, 20)));
+
+        assertThat(bbox.getMaxXLocal(), is(40.0));
+        assertThat(bbox.getMaxYLocal(), is(20.0));
+    }
+
+    @Test
     public void testGetMinXLocal() throws Exception {
         bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 40)));
         assertThat(bbox.getMinXLocal(), is(0.0));
@@ -102,6 +119,7 @@ public class BoundingBoxComponentTest {
 
         position.translateX(100);
         assertThat(bbox.getMinXLocal(), is(20.0));
+        assertThat(bbox.minXLocalProperty().get(), is(20.0));
     }
 
     @Test
@@ -116,6 +134,7 @@ public class BoundingBoxComponentTest {
 
         position.translateY(100);
         assertThat(bbox.getMinYLocal(), is(20.0));
+        assertThat(bbox.minYLocalProperty().get(), is(20.0));
     }
 
     @Test
@@ -125,6 +144,7 @@ public class BoundingBoxComponentTest {
 
         position.translateX(100);
         assertThat(bbox.getMinXWorld(), is(120.0));
+        assertThat(bbox.minXWorldProperty().get(), is(120.0));
     }
 
     @Test
@@ -134,6 +154,7 @@ public class BoundingBoxComponentTest {
 
         position.translateY(100);
         assertThat(bbox.getMinYWorld(), is(120.0));
+        assertThat(bbox.minYWorldProperty().get(), is(120.0));
     }
 
     @Test
@@ -152,6 +173,7 @@ public class BoundingBoxComponentTest {
 
         position.translateX(100);
         assertThat(bbox.getMaxXWorld(), is(160.0));
+        assertThat(bbox.maxXWorldProperty().get(), is(160.0));
     }
 
     @Test
@@ -170,6 +192,7 @@ public class BoundingBoxComponentTest {
 
         position.translateY(100);
         assertThat(bbox.getMaxYWorld(), is(160.0));
+        assertThat(bbox.maxYWorldProperty().get(), is(160.0));
     }
 
     @Test
@@ -270,6 +293,9 @@ public class BoundingBoxComponentTest {
         assertTrue(bbox.isOutside(40, 60, 100, 100));
         assertTrue(bbox.isOutside(-10, 0, 0, 60));
         assertFalse(bbox.isOutside(10, 10, 20, 20));
+
+        assertTrue(bbox.isOutside(new Rectangle2D(-10, 0, 0, 60)));
+        assertFalse(bbox.isOutside(new Rectangle2D(10, 10, 20, 20)));
     }
 
     @Test

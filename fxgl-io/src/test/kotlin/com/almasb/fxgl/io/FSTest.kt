@@ -2,15 +2,13 @@ package com.almasb.fxgl.io
 
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.*
 import org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
+import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Files.*
 import java.nio.file.Paths.get as path
@@ -28,6 +26,7 @@ class FSTest {
             createDirectories(path("testdir"))
             createDirectories(path("testdir/testsubdir"))
             createDirectories(path("testdir/testsubdir/testsubsubdir"))
+            createDirectories(path("testdir_empty"))
 
             createFile(path("testdir/testfile.txt"))
             createFile(path("testdir/testfile.json"))
@@ -59,6 +58,8 @@ class FSTest {
             deleteIfExists(path("parentdir/childfile.dat"))
             deleteIfExists(path("parentdir"))
 
+            deleteIfExists(path("testdir_empty"))
+
             assertTrue(!exists(path("testdir")), "test dir is present before")
         }
     }
@@ -66,6 +67,7 @@ class FSTest {
     @Test
     fun `Exists correctly reports dirs and files`() {
         assertTrue(FS.exists("testdir"))
+        assertTrue(FS.exists("testdir/"))
         assertFalse(FS.exists("testdir/testexist"))
         assertFalse(FS.exists("testdir/testexist.txt"))
 
@@ -134,6 +136,10 @@ class FSTest {
         val fileNames3 = FS.loadFileNamesTask("testdir", true, listOf(FileExtension("json"))).run()
 
         assertThat(fileNames3, containsInAnyOrder("testfile.json", "testsubdir/testfile2.json"))
+
+        val fileNames4 = FS.loadFileNamesTask("testdir", false, listOf(FileExtension("json"))).run()
+
+        assertThat(fileNames4, containsInAnyOrder("testfile.json"))
     }
 
     @Test
@@ -160,8 +166,17 @@ class FSTest {
         val data = FS.loadLastModifiedFileTask<String>("testdir", false).run()
         assertThat(data, `is`("b"))
 
+        val data2 = FS.loadLastModifiedFileTask<String>("testdir", true).run()
+        assertThat(data2, `is`("b"))
+
         deleteIfExists(path("testdir/file.a"))
         deleteIfExists(path("testdir/file.b"))
+    }
+
+    @Test
+    fun `Load last modified file task does not throw if no file in dir`() {
+        val data: Any? = FS.loadLastModifiedFileTask<Any>("testdir_empty", false).run()
+        assertNull(data)
     }
 
     @Test

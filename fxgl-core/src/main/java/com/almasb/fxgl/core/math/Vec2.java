@@ -316,20 +316,6 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
-     * @return true if distance between this and other point is less than given
-     */
-    public boolean distanceLessThanOrEqual(double otherX, double otherY, double distance) {
-        return distanceSquared(otherX, otherY) <= distance * distance;
-    }
-
-    /**
-     * @return true if distance between this and other point is greater than given
-     */
-    public boolean distanceGreaterThanOrEqual(double otherX, double otherY, double distance) {
-        return distanceSquared(otherX, otherY) >= distance * distance;
-    }
-
-    /**
      * @return new normalized vector
      */
     public Vec2 normalize() {
@@ -383,13 +369,6 @@ public final class Vec2 implements Serializable, Poolable {
                 x + (other.getX() - x) / 2,
                 y + (other.getY() - y) / 2
         );
-    }
-
-    /**
-     * True if the vector represents a pair of valid, non-infinite floating point numbers.
-     */
-    public boolean isValid() {
-        return !Float.isNaN(x) && !Float.isInfinite(x) && !Float.isNaN(y) && !Float.isInfinite(y);
     }
 
     /**
@@ -486,15 +465,6 @@ public final class Vec2 implements Serializable, Poolable {
         return new Vec2(FXGLMath.cosDeg((float)degrees), FXGLMath.sinDeg((float)degrees));
     }
 
-    public static Vec2 abs(Vec2 a) {
-        return new Vec2(FXGLMath.abs(a.x), FXGLMath.abs(a.y));
-    }
-
-    public static void absToOut(Vec2 a, Vec2 out) {
-        out.x = FXGLMath.abs(a.x);
-        out.y = FXGLMath.abs(a.y);
-    }
-
     public static float dot(final Vec2 a, final Vec2 b) {
         return a.x * b.x + a.y * b.y;
     }
@@ -503,47 +473,14 @@ public final class Vec2 implements Serializable, Poolable {
         return a.x * b.y - a.y * b.x;
     }
 
-    public static Vec2 cross(Vec2 a, float s) {
-        return new Vec2(s * a.y, -s * a.x);
-    }
-
-    public static void crossToOut(Vec2 a, float s, Vec2 out) {
-        final float tempy = -s * a.x;
-        out.x = s * a.y;
-        out.y = tempy;
-    }
-
     public static void crossToOutUnsafe(Vec2 a, float s, Vec2 out) {
         out.x = s * a.y;
         out.y = -s * a.x;
     }
 
-    public static Vec2 cross(float s, Vec2 a) {
-        return new Vec2(-s * a.y, s * a.x);
-    }
-
-    public static void crossToOut(float s, Vec2 a, Vec2 out) {
-        final float tempY = s * a.x;
-        out.x = -s * a.y;
-        out.y = tempY;
-    }
-
     public static void crossToOutUnsafe(float s, Vec2 a, Vec2 out) {
         out.x = -s * a.y;
         out.y = s * a.x;
-    }
-
-    public static void negateToOut(Vec2 a, Vec2 out) {
-        out.x = -a.x;
-        out.y = -a.y;
-    }
-
-    public static Vec2 min(Vec2 a, Vec2 b) {
-        return new Vec2(a.x < b.x ? a.x : b.x, a.y < b.y ? a.y : b.y);
-    }
-
-    public static Vec2 max(Vec2 a, Vec2 b) {
-        return new Vec2(a.x > b.x ? a.x : b.x, a.y > b.y ? a.y : b.y);
     }
 
     public static void minToOut(Vec2 a, Vec2 b, Vec2 out) {

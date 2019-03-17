@@ -101,9 +101,9 @@ abstract class Animation<T>(
     var isAnimating = false
         private set
 
-    private var checkDelay = true
-
     private val delay = builder.delay
+
+    private var checkDelay = delay.greaterThan(Duration.ZERO)
 
     var cycleCount = builder.times
 
@@ -117,6 +117,8 @@ abstract class Animation<T>(
     fun start() {
         if (!isAnimating) {
             isAnimating = true
+            resetTime()
+            onProgress(animatedValue.getValue(if (isReverse) 1.0 else 0.0))
         }
     }
 
@@ -126,7 +128,7 @@ abstract class Animation<T>(
             time = 0.0
             count = 0
             isReverse = false
-            checkDelay = true
+            checkDelay = delay.greaterThan(Duration.ZERO)
         }
     }
 
@@ -148,16 +150,10 @@ abstract class Animation<T>(
             if (time >= delay.toSeconds()) {
                 checkDelay = false
                 resetTime()
+                return
             } else {
                 return
             }
-        }
-
-        if ((isReverse && time == endTime) || (!isReverse && time == 0.0)) {
-            onProgress(animatedValue.getValue(if (isReverse) 1.0 else 0.0))
-
-            updateTime(tpf)
-            return
         }
 
         updateTime(tpf)

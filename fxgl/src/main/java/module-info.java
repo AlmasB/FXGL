@@ -23,6 +23,7 @@ module fxgl.all {
 
     exports com.almasb.fxgl.app;
     exports com.almasb.fxgl.dsl;
+    exports com.almasb.fxgl.dsl.components;
     exports com.almasb.fxgl.gameplay;
     exports com.almasb.fxgl.saving;
     exports com.almasb.fxgl.scene;

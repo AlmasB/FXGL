@@ -31,24 +31,12 @@ class GameState {
      */
     fun gameDifficultyProperty(): ObjectProperty<GameDifficulty> = gameDifficulty
 
-    private val properties = PropertyMap()
+    val properties = PropertyMap()
 
     /**
      * @return true if a property with [propertyName] exists
      */
     fun exists(propertyName: String) = properties.exists(propertyName)
-
-    /**
-     * Ensure that property with such name exists first using [exists].
-     *
-     * @return type of a property with [propertyName], e.g. SimpleIntegerProperty, SimpleStringProperty
-     */
-    fun getType(propertyName: String) = properties.getType(propertyName)
-
-    /**
-     * @return all existing properties in the form (propertyName, rawValue)
-     */
-    fun getProperties() = properties.getProperties()
 
     /**
      * Set a new [value] to an existing var [propertyName] or creates new var.

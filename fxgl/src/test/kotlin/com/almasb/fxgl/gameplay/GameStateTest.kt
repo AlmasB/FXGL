@@ -41,7 +41,6 @@ class GameStateTest {
         assertThat(gameState.getInt("testInt"), `is`(5))
         assertThat(gameState.getDouble("testDouble"), `is`(10.5))
         assertThat(gameState.getString("testString"), `is`("StringData"))
-        assertTrue(gameState.getType("testObject") == (SimpleObjectProperty::class.java))
         assertThat(gameState.getObject<Dummy>("testObject").data, `is`("ObjectData"))
 
         assertThat(gameState.getBoolean("testBoolean"), `is`(gameState.booleanProperty("testBoolean").value))
@@ -49,18 +48,6 @@ class GameStateTest {
         assertThat(gameState.getDouble("testDouble"), `is`(gameState.doubleProperty("testDouble").value))
         assertThat(gameState.getString("testString"), `is`(gameState.stringProperty("testString").value))
         assertThat(gameState.getObject<Dummy>("testObject"), `is`(gameState.objectProperty<Dummy>("testObject").value))
-    }
-
-    @Test
-    fun `Get all properties`() {
-        gameState.setValue("testInt", 1)
-        gameState.setValue("testString", "data")
-
-        val map = gameState.getProperties()
-
-        assertThat(map.size, `is`(2))
-        assertThat(map, hasEntry("testInt", "1"))
-        assertThat(map, hasEntry("testString", "data"))
     }
 
     @Test
@@ -81,7 +68,6 @@ class GameStateTest {
         assertThat(gameState.getInt("testInt"), `is`(50))
         assertThat(gameState.getDouble("testDouble"), `is`(100.5))
         assertThat(gameState.getString("testString"), `is`("StringDataNew"))
-        assertTrue(gameState.getType("testObject") == (SimpleObjectProperty::class.java))
         assertThat(gameState.getObject<Dummy>("testObject").data, `is`("ObjectDataNew"))
     }
 

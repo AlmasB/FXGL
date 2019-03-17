@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.core.serialization
 
-import com.almasb.sslogger.Logger
 import java.io.Serializable
 
 /**
@@ -18,8 +17,6 @@ class Bundle(val name: String) : Serializable {
 
     companion object {
         private val serialVersionUID = 1L
-
-        private val log = Logger.get<Bundle>()
     }
 
     private val data = hashMapOf<String, Any>()
@@ -28,7 +25,7 @@ class Bundle(val name: String) : Serializable {
      * Store a [value] with given [key].
      */
     fun put(key: String, value: Serializable) {
-        data.put("$name.$key", value)
+        data["$name.$key"] = value
     }
 
     /**
@@ -43,11 +40,5 @@ class Bundle(val name: String) : Serializable {
         return data.containsKey("$name.$key")
     }
 
-    /**
-     * Logs contents of the bundle.
-     */
-    fun log() {
-        log.debug("Logging bundle: $name")
-        data.forEach { k, v -> log.debug("$k=$v") }
-    }
+    override fun toString() = "Bundle $name: $data"
 }

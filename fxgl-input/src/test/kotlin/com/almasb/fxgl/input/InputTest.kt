@@ -9,8 +9,11 @@ package com.almasb.fxgl.input
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
+import javafx.geometry.Point2D
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseButton
+import javafx.scene.input.MouseEvent
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.MatcherAssert.assertThat
@@ -35,9 +38,16 @@ class InputTest {
     fun `Empty actions`() {
         val action = object : UserAction("T") {}
 
-        action.onActionBegin()
-        action.onAction()
-        action.onActionEnd()
+        action.begin()
+        action.action()
+        action.end()
+    }
+
+    @Test
+    fun `Action is not equal to String`() {
+        val action = object : UserAction("T") {}
+
+        assertFalse(action.equals("T"))
     }
 
     @Test
@@ -104,60 +114,136 @@ class InputTest {
     }
 
     @Test
-    fun `Mocking must not trigger isHeld`() {
-        // keys
-        assertFalse(input.isHeld(KeyCode.A))
+    fun `Mock with input modifiers`() {
+        var calls = 0
+
+        input.addAction(object : UserAction("Test") {
+            override fun onActionBegin() {
+                calls = 1
+            }
+
+            override fun onActionEnd() {
+                calls = -1
+            }
+        }, KeyCode.A, InputModifier.CTRL)
+
+        input.mockKeyPress(KeyCode.A, InputModifier.CTRL)
+        assertThat(calls, `is`(1))
+
+        input.mockKeyRelease(KeyCode.A)
+        assertThat(calls, `is`(-1))
+
+        // without input modifier, so input should ignore it
+        input.mockKeyPress(KeyCode.A)
+        assertThat(calls, `is`(-1))
+
+        input.mockKeyPress(KeyCode.A, InputModifier.CTRL)
+        assertThat(calls, `is`(1))
+
+        // shift and alt should not trigger release
+        input.mockKeyRelease(KeyCode.SHIFT)
+        assertThat(calls, `is`(1))
+
+        input.mockKeyRelease(KeyCode.ALT)
+        assertThat(calls, `is`(1))
+
+        // control will since we specified it as input modifier
+        input.mockKeyRelease(KeyCode.CONTROL)
+        assertThat(calls, `is`(-1))
+    }
+
+    @Test
+    fun `Test update`() {
+        var calls = 0
+
+        input.addAction(object : UserAction("Test") {
+            override fun onAction() {
+                calls++
+            }
+        }, KeyCode.A)
 
         input.mockKeyPress(KeyCode.A)
+        assertThat(calls, `is`(0))
 
-        assertFalse(input.isHeld(KeyCode.A))
+        input.update(0.016)
+        assertThat(calls, `is`(1))
+
+        input.update(0.016)
+        assertThat(calls, `is`(2))
 
         input.mockKeyRelease(KeyCode.A)
 
-        // buttons
-        assertFalse(input.isHeld(MouseButton.PRIMARY))
+        input.update(0.016)
+        assertThat(calls, `is`(2))
 
-        input.mockButtonPress(MouseButton.PRIMARY, 0.0, 0.0)
+        input.processInput = false
 
-        assertFalse(input.isHeld(MouseButton.PRIMARY))
+        input.mockKeyPress(KeyCode.A)
+        assertThat(calls, `is`(2))
 
-        input.mockButtonRelease(MouseButton.PRIMARY)
+        // process input is false so update shouldn't happen
+        input.update(0.016)
+        assertThat(calls, `is`(2))
+
+        input.update(0.016)
+        assertThat(calls, `is`(2))
+
+        // turn back on
+        input.processInput = true
+
+        input.update(0.016)
+        assertThat(calls, `is`(3))
+
+        input.update(0.016)
+        assertThat(calls, `is`(4))
     }
 
     @Test
     fun `Test mouse cursor in-game coordinates`() {
-//        assertThat(input.mouseXUI, `is`(0.0))
-//        assertThat(input.mouseYUI, `is`(0.0))
-//        assertThat(input.mouseXWorld, `is`(0.0))
-//        assertThat(input.mouseYWorld, `is`(0.0))
-//
-//        input.mockButtonPress(MouseButton.PRIMARY, 100.0, 50.0)
-//
-//        assertThat(input.mouseXUI, `is`(0.0))
-//        assertThat(input.mouseYUI, `is`(0.0))
-//        assertThat(input.mouseXWorld, `is`(100.0))
-//        assertThat(input.mouseYWorld, `is`(50.0))
-//
-//        input.mockButtonPress(MouseButton.SECONDARY)
-//
-//        assertThat(input.mouseXUI, `is`(0.0))
-//        assertThat(input.mouseYUI, `is`(0.0))
-//        assertThat(input.mouseXWorld, `is`(100.0))
-//        assertThat(input.mouseYWorld, `is`(50.0))
-//
-//        input.mockButtonRelease(MouseButton.PRIMARY, 50.0, 30.0)
-//
-//        assertThat(input.mouseXUI, `is`(0.0))
-//        assertThat(input.mouseYUI, `is`(0.0))
-//        assertThat(input.mouseXWorld, `is`(50.0))
-//        assertThat(input.mouseYWorld, `is`(30.0))
-//
-//        input.mockButtonRelease(MouseButton.SECONDARY);
-//
-//        assertThat(input.mouseXUI, `is`(0.0))
-//        assertThat(input.mouseYUI, `is`(0.0))
-//        assertThat(input.mouseXWorld, `is`(50.0))
-//        assertThat(input.mouseYWorld, `is`(30.0))
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(0.0))
+        assertThat(input.mouseYWorld, `is`(0.0))
+
+        input.mockButtonPress(MouseButton.PRIMARY, 100.0, 50.0)
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(100.0))
+        assertThat(input.mouseYWorld, `is`(50.0))
+
+        input.mockButtonPress(MouseButton.SECONDARY)
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(100.0))
+        assertThat(input.mouseYWorld, `is`(50.0))
+
+        input.mockButtonRelease(MouseButton.PRIMARY, 50.0, 30.0)
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(50.0))
+        assertThat(input.mouseYWorld, `is`(30.0))
+
+        input.mockButtonRelease(MouseButton.SECONDARY);
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(50.0))
+        assertThat(input.mouseYWorld, `is`(30.0))
+
+        assertThat(input.mousePositionUI, `is`(Point2D(0.0, 0.0)))
+        assertThat(input.mousePositionWorld, `is`(Point2D(50.0, 30.0)))
+    }
+
+    @Test
+    fun `Mouse vectors`() {
+        input.mockButtonPress(MouseButton.PRIMARY, 100.0, 50.0)
+        input.mockButtonRelease(MouseButton.PRIMARY)
+
+        assertThat(input.getVectorToMouse(Point2D(10.0, 10.0)), `is`(Point2D(90.0, 40.0)))
+        assertThat(input.getVectorFromMouse(Point2D(10.0, 10.0)), `is`(Point2D(-90.0, -40.0)))
     }
 
     @Test
@@ -166,9 +252,9 @@ class InputTest {
 
         input.addAction(action, KeyCode.A)
 
-        assertThat(input.bindings.keys, hasItem(action))
+        assertThat(input.allBindings.keys, hasItem(action))
 
-        val trigger = input.bindings[action]
+        val trigger = input.allBindings[action]
 
         assertTrue(trigger is KeyTrigger)
         assertThat((trigger as KeyTrigger).key, `is`(KeyCode.A))
@@ -180,9 +266,9 @@ class InputTest {
 
         input.addAction(action, MouseButton.PRIMARY)
 
-        assertThat(input.bindings.keys, hasItem(action))
+        assertThat(input.allBindings.keys, hasItem(action))
 
-        val trigger = input.bindings[action]
+        val trigger = input.allBindings[action]
 
         assertTrue(trigger is MouseTrigger)
         assertThat((trigger as MouseTrigger).button, `is`(MouseButton.PRIMARY))
@@ -247,10 +333,14 @@ class InputTest {
         var ok = input.rebind(action, KeyCode.B)
         assertThat(ok, `is`(false))
 
+        // binding to non-existent action must not succeed
+        ok = input.rebind(object : UserAction("Action3") {}, KeyCode.C)
+        assertThat(ok, `is`(false))
+
         ok = input.rebind(action, KeyCode.C)
         assertThat(ok, `is`(true))
 
-        val trigger = input.bindings[action]
+        val trigger = input.allBindings[action]
 
         assertTrue(trigger is KeyTrigger)
         assertThat((trigger as KeyTrigger).key, `is`(KeyCode.C))
@@ -270,12 +360,18 @@ class InputTest {
         ok = input.rebind(action, MouseButton.MIDDLE)
         assertThat(ok, `is`(true))
 
-        val trigger = input.bindings[action]
+        val trigger = input.allBindings[action]
 
         assertTrue(trigger is MouseTrigger)
         assertThat((trigger as MouseTrigger).button, `is`(MouseButton.MIDDLE))
     }
 
+    @Test
+    fun `Trigger name property throws if not such action`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            input.triggerNameProperty(object : UserAction("") {})
+        }
+    }
 
     @Test
     fun `Trigger name by action`() {
@@ -296,12 +392,35 @@ class InputTest {
     }
 
     @Test
+    fun `Action by name throws if action not found`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            input.getActionByName("Action")
+        }
+    }
+
+    @Test
     fun `Trigger name by action name`() {
         val action = object : UserAction("Action") {}
 
         input.addAction(action, KeyCode.K)
 
-        assertThat(input.getTriggerByActionName("Action"), `is`("K"))
+        assertThat(input.getTriggerName("Action"), `is`("K"))
+    }
+
+    @Test
+    fun `Trigger by action`() {
+        val action = object : UserAction("Action") {}
+
+        input.addAction(action, KeyCode.K)
+
+        assertThat(input.triggerProperty(action).value.getName(), `is`("K"))
+    }
+
+    @Test
+    fun `Trigger by action throws if action not found`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            input.triggerProperty(object : UserAction("Action") {})
+        }
     }
 
     @Test
@@ -327,6 +446,146 @@ class InputTest {
                     assertThat(count, `is`(1))
                 }
         )
+    }
+
+    @Test
+    fun `On key event`() {
+        var count = 0
+
+        input.addAction(object : UserAction("Test") {
+            override fun onActionBegin() {
+                count++
+            }
+
+            override fun onActionEnd() {
+                count--
+            }
+        }, KeyCode.A)
+
+        // KEY_TYPED should just be ignored
+        val e0 = KeyEvent(KeyEvent.KEY_TYPED, "", "", KeyCode.A, false, false, false, false)
+        input.onKeyEvent(e0)
+        assertThat(count, `is`(0))
+
+        val e1 = KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.A, false, false, false, false)
+
+        input.onKeyEvent(e1)
+        assertThat(count, `is`(1))
+
+        // should make no difference since already pressed
+        input.onKeyEvent(e1)
+        assertThat(count, `is`(1))
+
+        // should make no difference since different key
+        input.onKeyEvent(KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.B, false, false, false, false))
+        assertThat(count, `is`(1))
+
+        val e2 = KeyEvent(KeyEvent.KEY_RELEASED, "", "", KeyCode.A, false, false, false, false)
+
+        input.onKeyEvent(e2)
+        assertThat(count, `is`(0))
+
+        // should make no difference since already released
+        input.onKeyEvent(e2)
+        assertThat(count, `is`(0))
+
+        input.registerInput = false
+
+        // should now ignore any events
+
+        input.onKeyEvent(e1)
+        assertThat(count, `is`(0))
+
+        input.onKeyEvent(e2)
+        assertThat(count, `is`(0))
+    }
+
+    @Test
+    fun `On mouse event`() {
+        var count = 0
+
+        input.addAction(object : UserAction("Test") {
+            override fun onActionBegin() {
+                count++
+            }
+
+            override fun onActionEnd() {
+                count--
+            }
+        }, MouseButton.PRIMARY)
+
+        // MOUSE_CLICKED should be ignored
+        val e0 = MouseEvent(MouseEvent.MOUSE_CLICKED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+        input.onMouseEvent(e0, Point2D.ZERO, 1.0, 1.0)
+        assertThat(count, `is`(0))
+
+        val e1 = MouseEvent(MouseEvent.MOUSE_PRESSED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        input.onMouseEvent(e1, Point2D.ZERO, 1.0, 1.0)
+        assertThat(count, `is`(1))
+        assertThat(input.mousePositionWorld, `is`(Point2D(10.0, 15.0)))
+        assertThat(input.mousePositionUI, `is`(Point2D(10.0, 15.0)))
+
+        val e2 = MouseEvent(MouseEvent.MOUSE_RELEASED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        input.onMouseEvent(e2, Point2D.ZERO, 1.0, 1.0)
+        assertThat(count, `is`(0))
+
+        input.onMouseEvent(MouseEventData(e1, Point2D(15.0, 15.0), 1.0, 1.0))
+        assertThat(count, `is`(1))
+
+        // the viewport (15.0, 15.0) affects the position world, but not UI
+
+        assertThat(input.mousePositionWorld, `is`(Point2D(10.0 + 15.0, 15.0 + 15.0)))
+        assertThat(input.mousePositionUI, `is`(Point2D(10.0, 15.0)))
+
+        input.onMouseEvent(MouseEventData(e2, Point2D(15.0, 15.0), 1.0, 1.0))
+        assertThat(count, `is`(0))
+
+        input.registerInput = false
+
+        // should now ignore any events
+
+        input.onMouseEvent(e1, Point2D.ZERO, 1.0, 1.0)
+        assertThat(count, `is`(0))
+
+        input.onMouseEvent(e2, Point2D.ZERO, 1.0, 1.0)
+        assertThat(count, `is`(0))
+    }
+
+    @Test
+    fun `Clear all`() {
+        var calls = 0
+
+        input.addAction(object : UserAction("Test") {
+            override fun onActionBegin() {
+                calls = 1
+            }
+
+            override fun onAction() {
+                calls--
+            }
+        }, KeyCode.A)
+
+        input.mockKeyPress(KeyCode.A)
+        assertThat(calls, `is`(1))
+
+        input.update(0.016)
+        assertThat(calls, `is`(0))
+
+        input.update(0.016)
+        assertThat(calls, `is`(-1))
+
+        input.clearAll()
+
+        input.update(0.016)
+        assertThat(calls, `is`(-1))
     }
 
 //    @Test

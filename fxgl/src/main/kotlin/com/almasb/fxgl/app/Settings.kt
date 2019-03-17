@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.fxgl.core.util.Credits
 import com.almasb.fxgl.core.local.Language
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.saving.UserProfile
@@ -128,7 +127,7 @@ class GameSettings(
         /**
          * Set additional credits.
          */
-        var credits: Credits = Credits(emptyList()),
+        var credits: List<String> = emptyList(),
         var enabledMenuItems: EnumSet<MenuItem> = EnumSet.noneOf(MenuItem::class.java),
         var stageStyle: StageStyle = StageStyle.DECORATED,
         var appIcon: String = "fxgl_icon.png",
@@ -202,7 +201,7 @@ class GameSettings(
                 isSingleStep,
                 applicationMode,
                 menuKey,
-                credits,
+                Collections.unmodifiableList(credits),
                 enabledMenuItems,
                 stageStyle,
                 appIcon,
@@ -309,7 +308,7 @@ class ReadOnlyGameSettings internal constructor(
         /**
          * Set additional credits.
          */
-        val credits: Credits,
+        val credits: List<String>,
         val enabledMenuItems: EnumSet<MenuItem>,
         val stageStyle: StageStyle,
         val appIcon: String,

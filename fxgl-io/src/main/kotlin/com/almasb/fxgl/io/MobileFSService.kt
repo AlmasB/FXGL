@@ -8,23 +8,16 @@ package com.almasb.fxgl.io
 
 import com.almasb.sslogger.Logger
 import java.io.*
-import java.lang.RuntimeException
 
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class MobileFSService(val isDesktop: Boolean) : FSService {
+internal class MobileFSService : FSService {
 
     private val log = Logger.get(javaClass)
 
-    //private val storage = Services.get(StorageService::class.java).orElseThrow { RuntimeException("No StorageService present") }
-
-    private val rootStorage = if (isDesktop)
-        File(System.getProperty("user.dir") + "/")
-    else
-        throw RuntimeException("Mobile not supported yet!")
-        //storage.privateStorage.orElseThrow { RuntimeException("No private storage present") }
+    private val rootStorage = File(System.getProperty("user.dir") + "/")
 
     override fun exists(pathName: String): Boolean {
         return toFile(pathName).exists()

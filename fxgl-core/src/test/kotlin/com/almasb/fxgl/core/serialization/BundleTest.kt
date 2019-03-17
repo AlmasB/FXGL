@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.core.serialization
 
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -35,5 +37,15 @@ class BundleTest {
         bundle.put("key", "someValue")
 
         assertTrue(bundle.exists("key"))
+    }
+
+    @Test
+    fun `To String`() {
+        val bundle = Bundle("Test")
+
+        bundle.put("key", "someValue")
+        bundle.put("key2", 33)
+
+        assertThat(bundle.toString(), `is`("Bundle Test: {Test.key2=33, Test.key=someValue}"))
     }
 }

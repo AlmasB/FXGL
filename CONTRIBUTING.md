@@ -12,6 +12,7 @@ Any new API or changes to existing API should be discussed to avoid inconsistenc
 * Create an issue or suggest a feature backed up by a use case.
 * Provide or suggest an implementation of an issue from [GitHub Issues](https://github.com/AlmasB/FXGL/issues).
 * Suggest an API change if you think some calls can be made more concise.
+* Add missing tests.
 * [Samples](fxgl-samples) might get outdated quite quickly, see if you can find something weird / not working.
 * Share details about your project based on FXGL (this will go to the showcase section).
 * Write a tutorial on how to use FXGL.
@@ -28,11 +29,9 @@ This will create FXGL-x.y.z.jar, sources.jar, javadoc.jar and uber-jar in the "f
 
 ## Workflow
 
-Typically there are 2 branches: `master` and `dev`.
+There are 2 branches: `master` and `dev`.
 The `master` branch is for releases only.
-All the work goes to and stems from the `dev` branch.
-Hence, after cloning you should always branch away from `dev` and once
-your work is complete, pull a request back to `dev`.
+All the work goes to your `dev` branch, then pull a request back to `dev`.
 
 ## Development
 
@@ -40,14 +39,28 @@ Due to use of Kotlin, the only feasible IDE is [IntelliJ IDEA](https://www.jetbr
 To start developing FXGL you can setup IDEA (2018.3.4+) as follows:
 
 1. Fork FXGL into your GitHub repo, then clone your repo to your machine.
-1. `cd` to that directory -> `git checkout -b BRANCH_NAME dev`, where `BRANCH_NAME` is your working branch.
-1. Open IDEA -> File -> New -> Project from Existing Sources -> Select the cloned FXGL directory.
-1. Import project from external model -> Maven -> Next -> Next.
-1. Select the provided Maven project to import -> Next -> Use JDK11 -> Next -> Finish.
+2. `cd` to that directory -> `git checkout dev` to switch to development branch.
+3. Open IDEA -> File -> New -> Project from Existing Sources -> Select the cloned FXGL directory.
+4. Import project from external model -> Maven -> Next.
+5. Tick "Search for projects recursively" and "Import Maven projects automatically" -> Next.
+6. Select the provided Maven project to import -> Next -> Use JDK11 -> Next -> Finish.
 
-You now should see something like this:
+You should now see something like this:
 
-![FXGL](https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/FXGL_IDEA.jpg)
+<img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl11_IDEA.jpg" width="400" />
+
+## Running all tests
+
+In IntelliJ,
+
+1. Run -> Edit Configurations
+2. Add new JUnit configuration with name "ALL FXGL TESTS"
+3. Select "Test kind" - "All in package" and "Search for tests" - "In whole project".
+4. Apply -> OK.
+
+<img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl11_tests.jpg" width="400" />
+
+Now you can run your configuration "ALL FXGL TESTS" which runs tests from all modules.
 
 ## Coding Standards
 

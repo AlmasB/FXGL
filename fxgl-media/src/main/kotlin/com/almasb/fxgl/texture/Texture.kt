@@ -6,14 +6,11 @@
 
 package com.almasb.fxgl.texture
 
-import com.almasb.fxgl.core.Disposable
 import com.almasb.fxgl.core.View
-import com.almasb.fxgl.core.concurrent.Async
 import javafx.geometry.HorizontalDirection
 import javafx.geometry.Rectangle2D
 import javafx.geometry.VerticalDirection
 import javafx.scene.Node
-import javafx.scene.SnapshotParameters
 import javafx.scene.effect.BlendMode
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
@@ -321,26 +318,12 @@ open class Texture : ImageView, View {
     }
 
     /**
-     * @param background the node with which to blend
+     * @param backgroundImage the image with which to blend
      * @param blendMode blend mode
      * @return new texture using a blended image of this texture
      */
-    fun blend(background: Node, blendMode: BlendMode): Texture {
-        require(background.parent == null) { "The blend background must not be attached to a parent." }
-
-        val w = image.width.toInt()
-        val h = image.height.toInt()
-
-        val bgImage = WritableImage(w, h)
-
-        Async.startFX {
-            val params = SnapshotParameters()
-            params.fill = Color.TRANSPARENT
-
-            background.snapshot(params, bgImage)
-        }.await()
-
-        return Texture(bgImage.map(image, blendMode.operation()))
+    fun blend(backgroundImage: Image, blendMode: BlendMode): Texture {
+        return Texture(backgroundImage.map(image, blendMode.operation()))
     }
 
     /**
@@ -363,9 +346,5 @@ open class Texture : ImageView, View {
 
     override fun dispose() {
         image = null
-    }
-
-    override fun toString(): String {
-        return "Texture [fitWidth=$fitWidth, fitHeight=$fitHeight]"
     }
 }

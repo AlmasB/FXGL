@@ -9,7 +9,6 @@ package com.almasb.fxgl.entity.components
 import com.almasb.fxgl.core.pool.Pool
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.entity.component.Component
-import com.almasb.fxgl.entity.component.CopyableComponent
 import com.almasb.fxgl.entity.component.CoreComponent
 import com.almasb.fxgl.entity.component.SerializableComponent
 import com.almasb.fxgl.core.serialization.Bundle
@@ -33,8 +32,7 @@ import javafx.geometry.Rectangle2D
 @CoreComponent
 class BoundingBoxComponent(vararg boxes: HitBox) :
         Component(),
-        SerializableComponent,
-        CopyableComponent<BoundingBoxComponent> {
+        SerializableComponent {
 
     companion object {
 
@@ -304,10 +302,6 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
                 box2.minYWorld <= box1.maxYWorld
     }
 
-    private fun checkCollision(box1: HitBox, box2: HitBox, angle1: Double, angle2: Double): Boolean {
-        return SAT.isColliding(box1, box2, angle1, angle2)
-    }
-
     private fun checkCollision(box1: HitBox, box2: HitBox, angle1: Double, angle2: Double,
                                t1: TransformComponent, t2: TransformComponent): Boolean {
         return SAT.isColliding(box1, box2, angle1, angle2, t1, t2)
@@ -438,15 +432,6 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
 
     override fun read(bundle: Bundle) {
         hitBoxes.addAll(bundle.get<ArrayList<HitBox>>("hitBoxes"))
-    }
-
-    override fun copy(): BoundingBoxComponent {
-        val list = ArrayList<HitBox>()
-        for (hitBox in hitBoxes) {
-            val copy = hitBox.copy()
-            list.add(copy)
-        }
-        return BoundingBoxComponent(*list.toTypedArray())
     }
 
     override fun toString(): String {

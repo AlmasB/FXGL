@@ -10,6 +10,8 @@ import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 
+import static com.almasb.fxgl.core.math.FXGLMath.abs;
+
 /**
  * An axis-aligned bounding box.
  */
@@ -65,17 +67,6 @@ public final class AABB {
         Vec2 v1 = aabb.upperBound;
         upperBound.x = v1.x;
         upperBound.y = v1.y;
-    }
-
-    /**
-     * @return true if the bounds are sorted (upper x and y are greater than lower x and y)
-     */
-    public boolean isValid() {
-        if (upperBound.x - lowerBound.x < 0
-                || upperBound.y - lowerBound.y < 0)
-            return false;
-
-        return lowerBound.isValid() && upperBound.isValid();
     }
 
     /**
@@ -145,7 +136,9 @@ public final class AABB {
 
         p.set(input.p1);
         d.set(input.p2).subLocal(input.p1);
-        Vec2.absToOut(d, absD);
+
+        absD.x = abs(d.x);
+        absD.y = abs(d.y);
 
         // x then y
         if (absD.x < JBoxSettings.EPSILON) {

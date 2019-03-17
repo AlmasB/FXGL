@@ -289,7 +289,7 @@ internal class Engine(
         FS.readDataTask<Bundle>("system/fxgl.bundle")
                 .onSuccess {
                     bundle = it
-                    bundle.log()
+                    log.debug("$bundle")
                 }
                 .onFailure {
                     log.warning("Failed to load: $it")

@@ -64,6 +64,27 @@ class PrimitiveComponentsTest {
     }
 
     @Test
+    fun `Double`() {
+        val c = SimpleDoubleComponent()
+
+        assertThat(c.value, `is`(0.0))
+        assertThat(c.valueProperty().value, `is`(0.0))
+
+        c.value = 22.0
+        assertThat(c.value, `is`(22.0))
+
+        val bundle = Bundle("")
+        c.write(bundle)
+
+        c.value = 33.0
+        c.read(bundle)
+
+        assertThat(c.value, `is`(22.0))
+
+        assertThat(c.toString(), `is`("SimpleDouble(22.0)"))
+    }
+
+    @Test
     fun `String`() {
         val c = SimpleStringComponent()
 
@@ -105,15 +126,12 @@ class PrimitiveComponentsTest {
 
         c.value = true
 
-        val c2 = c.copy()
-
-        assertFalse(c === c2)
-        assertTrue(c2.value)
-        assertThat(c.toString(), `is`("Collidable(true)"))
+        assertTrue(c.value)
     }
 
     class SimpleBooleanComponent : BooleanComponent()
     class SimpleIntegerComponent : IntegerComponent()
+    class SimpleDoubleComponent : DoubleComponent()
     class SimpleStringComponent : StringComponent()
     class SimpleObjectComponent : ObjectComponent<Vec2>(Vec2())
 }

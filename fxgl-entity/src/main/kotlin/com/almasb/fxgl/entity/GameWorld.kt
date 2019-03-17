@@ -223,30 +223,6 @@ class GameWorld {
         level.entities.forEach { addEntity(it) }
     }
 
-//
-//    fun setLevelFromMap(map: TiledMap) {
-//        clearLevel()
-//
-//        log.debug("Setting level from map")
-//
-//        map.layers.filter { it.type == "tilelayer" }
-//                .forEach {
-//                    Entities.builder()
-//                            .viewFromTiles(map, it.name, RenderLayer.BACKGROUND)
-//                            .buildAndAttach(this)
-//                }
-//
-//        map.layers.filter { it.type == "objectgroup" }
-//                .flatMap { it.objects }
-//                .forEach { obj ->
-//                    val data = SpawnData(obj)
-//
-//                    data.put("tilesets", map.tilesets)
-//
-//                    spawn(obj.type, data)
-//                }
-//    }
-
     /**
      * Removes removable entities.
      */
@@ -301,12 +277,13 @@ class GameWorld {
         ReflectionUtils.findMethodsMapToFunctions(entityFactory, Spawns::class.java, EntitySpawner::class.java)
                 .forEach { annotation, entitySpawner ->
 
-                    val entityName = annotation.value
+                    val entityAliases = annotation.value.split(",".toRegex())
+                    entityAliases.forEach { entityName ->
+                        checkDuplicateSpawners(entityFactory, entityName)
 
-                    checkDuplicateSpawners(entityFactory, entityName)
-
-                    entitySpawners.put(entityName, entitySpawner)
-                    entityNames.add(entityName)
+                        entitySpawners.put(entityName, entitySpawner)
+                        entityNames.add(entityName)
+                    }
                 }
 
         entityFactories.put(entityFactory, entityNames)
@@ -406,7 +383,7 @@ class GameWorld {
     }
 
     fun getSingleton(predicate: Predicate<Entity>): Entity {
-        return entities.find { predicate.test(it) } ?: throw RuntimeException("No entity found satisfying the predicate")
+        return entities.find { predicate.test(it) } ?: throw NoSuchElementException("No entity found satisfying the predicate")
     }
 
     /**

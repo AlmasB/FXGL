@@ -6,7 +6,17 @@
 
 package com.almasb.fxgl.entity.components
 
+import com.almasb.fxgl.entity.EntityView
+import javafx.scene.Node
+import javafx.scene.input.MouseButton
+import javafx.scene.input.MouseEvent
+import javafx.scene.shape.Rectangle
+import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.*
+import org.hamcrest.MatcherAssert
+import org.hamcrest.MatcherAssert.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class ViewComponentTest {
 
@@ -17,39 +27,52 @@ class ViewComponentTest {
         view = ViewComponent()
     }
 
-//    @Test
-//    fun `Creation`() {
-//        val rect = Rectangle()
-//        val v = ViewComponent(rect)
-//
-//        assertThat(v.view.nodes, contains<Node>(rect))
-//
-//        val v1 = ViewComponent(RenderLayer.BACKGROUND)
-//
-//        assertThat(v1.renderLayer, `is`(RenderLayer.BACKGROUND))
-//
-//        val v2 = ViewComponent(rect, RenderLayer.BACKGROUND)
-//
-//        assertThat(v2.view.nodes, contains<Node>(rect))
-//        assertThat(v2.renderLayer, `is`(RenderLayer.BACKGROUND))
-//    }
+    @Test
+    fun `Set view from node`() {
+        val rect = Rectangle()
 
-//    @Test
-//    fun `Setting a view does not affect render layer`() {
-//        val layer1 = object : RenderLayer() {
-//            override fun index(): Int {
-//                return 10
-//            }
-//
-//            override fun name(): String {
-//                return ""
-//            }
-//        }
-//
-//        view.renderLayer = layer1
-//        view.setView(Rectangle())
-//
-//        assertThat(view.renderLayer, `is`<RenderLayer>(layer1))
-//        assertThat(view.renderLayerProperty().value, `is`<RenderLayer>(layer1))
-//    }
+        assertThat(view.view.node, `is`(not<Node>(rect)))
+
+        view.setViewFromNode(rect)
+
+        assertThat((view.view.node as EntityView).nodes[0], `is`<Node>(rect))
+    }
+
+    @Test
+    fun `Add remove click listener`() {
+        var count = 0
+
+        val l = object : ClickListener {
+            override fun onClick() {
+                count++
+            }
+        }
+
+        view.addClickListener(l)
+
+        val e0 = MouseEvent(MouseEvent.MOUSE_PRESSED, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        val e1 = MouseEvent(MouseEvent.MOUSE_CLICKED, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        assertThat(count, `is`(0))
+
+        // PRESS does not trigger click
+        view.parent.fireEvent(e0)
+
+        assertThat(count, `is`(0))
+
+        view.parent.fireEvent(e1)
+
+        assertThat(count, `is`(1))
+
+        view.removeClickListener(l)
+
+        view.parent.fireEvent(e1)
+
+        assertThat(count, `is`(1))
+    }
 }

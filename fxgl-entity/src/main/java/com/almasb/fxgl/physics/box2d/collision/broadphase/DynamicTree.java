@@ -57,7 +57,6 @@ public class DynamicTree implements BroadPhaseStrategy {
 
     @Override
     public final int createProxy(final AABB aabb, Object userData) {
-        assert (aabb.isValid());
         final DynamicTreeNode node = allocateNode();
         int proxyId = node.id;
         // Fatten the aabb
@@ -85,7 +84,6 @@ public class DynamicTree implements BroadPhaseStrategy {
 
     @Override
     public final boolean moveProxy(int proxyId, final AABB aabb, Vec2 displacement) {
-        assert (aabb.isValid());
         assert (0 <= proxyId && proxyId < m_nodeCapacity);
         final DynamicTreeNode node = m_nodes[proxyId];
         assert (node.child1 == null);
@@ -140,7 +138,6 @@ public class DynamicTree implements BroadPhaseStrategy {
 
     @Override
     public final void query(TreeCallback callback, AABB aabb) {
-        assert (aabb.isValid());
         nodeStackIndex = 0;
         nodeStack[nodeStackIndex++] = root;
 
@@ -342,11 +339,16 @@ public class DynamicTree implements BroadPhaseStrategy {
 
             DynamicTreeNode child1 = node.child1;
             DynamicTreeNode child2 = node.child2;
-            int balance = FXGLMath.absShift31(child2.height - child1.height);
+            int balance = absShift31(child2.height - child1.height);
             maxBalance = JBoxUtils.max(maxBalance, balance);
         }
 
         return maxBalance;
+    }
+
+    private static int absShift31(int value) {
+        int y = value >> 31;
+        return (value ^ y) - y;
     }
 
     @Override
