@@ -4,10 +4,11 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity.components
+package com.almasb.fxgl.dsl.components
 
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.Component
+import com.almasb.fxgl.entity.components.TimeComponent
 import javafx.util.Duration
 
 /**
