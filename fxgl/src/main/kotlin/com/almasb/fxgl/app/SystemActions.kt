@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.dev.DevStage
+import com.almasb.fxgl.dev.DevPane
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
@@ -43,13 +43,17 @@ object SystemActions {
 
     private fun devOptions() = object : UserAction("Dev Options") {
 
-        private val devStage by lazy { DevStage(FXGL.getSettings()) }
+        private val devPane by lazy { DevPane(FXGL.getGameScene(), FXGL.getSettings()) }
 
         override fun onActionBegin() {
             if (FXGL.getSettings().applicationMode == ApplicationMode.RELEASE)
                 return
 
-            devStage.show()
+            if (devPane.isOpen) {
+                devPane.close()
+            } else {
+                devPane.open()
+            }
         }
     }
 

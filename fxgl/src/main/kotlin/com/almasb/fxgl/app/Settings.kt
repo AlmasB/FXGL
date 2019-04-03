@@ -413,11 +413,14 @@ class ReadOnlyGameSettings internal constructor(
 
     // DYNAMIC - can be modified at runtime
 
+    @get:JvmName("devBBoxColorProperty")
     val devBBoxColor = SimpleObjectProperty<Color>(Color.web("#ff0000"))
+    @get:JvmName("devSensorColorProperty")
     val devSensorColor = SimpleObjectProperty<Color>(Color.YELLOW)
 
     @get:JvmName("devShowBBoxProperty")
     val devShowBBox = SimpleBooleanProperty(false)
+    @get:JvmName("devShowPositionProperty")
     val devShowPosition = SimpleBooleanProperty(false)
 
     val language = SimpleObjectProperty<Language>()

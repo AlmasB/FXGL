@@ -363,3 +363,60 @@ Under Apache License 2.0
     -fx-stroke: rgba(255,255,255,50);
     -fx-fill: rgba(255,255,255,50);
 }
+
+.dev-pane .fxgl-check-box .box,
+.dev-pane .fxgl-check-box:indeterminate .box,
+.dev-pane .fxgl-check-box:indeterminate:selected .box {
+    -fx-border-color: white;
+}
+
+.dev-pane .fxgl-check-box:selected .mark {
+    -fx-background-color: white;
+    -fx-border-color: white;
+}
+
+.dev-pane .fxgl-check-box .indeterminate-mark {
+    -fx-background-color: white;
+}
+
+
+/**
+ * Accordion inside dev pane.
+ */
+
+.dev-pane .titled-pane {
+    -fx-text-fill: aqua;
+}
+
+.dev-pane .titled-pane:expanded > .title {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+
+.dev-pane .titled-pane > .title {
+    -fx-background-color: transparent, black, transparent;
+    -fx-background-insets: 0, 0, 0;
+}
+
+.dev-pane .titled-pane > *.content {
+    -fx-background-color: rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05);
+    -fx-background-insets: 0, 0, 0;
+    -fx-border-width: 0;
+    -fx-border-color: rgba(0, 0, 0, 0.35);
+    -fx-padding: 0;
+}
+
+.dev-pane .titled-pane > .title > .arrow-button .arrow {
+    -fx-background-color: aqua;
+    -fx-background-insets: 1 0 -1 0, 0;
+    -fx-padding: 0.25em 0.3125em 0.25em 0.3125em;
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+}
+
+.dev-pane .titled-pane:expanded > .title > .arrow-button .arrow {
+    -fx-background-color: white;
+}
+
+.dev-pane .color-picker {
+    -fx-color-label-visible: false;
+}
