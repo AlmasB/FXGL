@@ -58,6 +58,7 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
 
         settings.javaClass.declaredMethods
                 .filter { it.name.startsWith("dev") }
+                .sortedBy { it.name }
                 .forEachIndexed { index, method ->
 
                     when (method.returnType) {

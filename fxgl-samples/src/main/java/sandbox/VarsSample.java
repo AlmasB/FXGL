@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package s01basics;
+package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.Vec2;

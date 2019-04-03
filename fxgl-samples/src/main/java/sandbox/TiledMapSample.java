@@ -4,12 +4,14 @@
  * See LICENSE for details.
  */
 
-package s02entities;
+package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.entity.level.Level;
-import com.almasb.fxgl.entity.level.tiled.TMXLevelLoader;
+import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.ui.FXGLCheckBox;
+
+import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -35,6 +37,14 @@ public class TiledMapSample extends GameApplication {
     }
 
     @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("someInt", 0);
+        vars.put("someDouble", 0.0);
+        vars.put("someVec2", new Vec2(15.0, 33.0));
+        vars.put("someString", "Hello FXGL World");
+    }
+
+    @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new MyEntityFactory());
 
@@ -43,6 +53,8 @@ public class TiledMapSample extends GameApplication {
 //        Level level = getAssetLoader().loadLevel("tmx/map_with_gid_objects.tmx", new TMXLevelLoader());
 //
 //        getGameWorld().setLevel(level);
+
+        addUINode(new FXGLCheckBox(), 200, 400);
     }
 
     public static void main(String[] args) {

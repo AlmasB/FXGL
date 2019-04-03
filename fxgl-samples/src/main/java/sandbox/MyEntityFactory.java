@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package s02entities;
+package sandbox;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.ExpireCleanComponent;

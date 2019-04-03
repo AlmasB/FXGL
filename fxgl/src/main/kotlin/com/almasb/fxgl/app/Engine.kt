@@ -6,6 +6,7 @@ import com.almasb.fxgl.core.concurrent.FXGLExecutor
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.dev.DevPlugin
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
@@ -156,6 +157,10 @@ internal class Engine(
                 // so that menus can correctly display input controls, etc.
                 // this is called once per application lifetime
                 runPreInit()
+
+                if (settings.applicationMode != ApplicationMode.RELEASE) {
+                    DevPlugin().activate()
+                }
 
                 log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
 

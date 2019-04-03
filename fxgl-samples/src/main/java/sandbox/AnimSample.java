@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package s01basics;
+package sandbox;
 
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.GameApplication;

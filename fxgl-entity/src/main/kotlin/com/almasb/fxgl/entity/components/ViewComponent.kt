@@ -21,6 +21,10 @@ import javafx.scene.transform.Scale
 class ViewComponent
 @JvmOverloads constructor(initialView: View = EmptyView): Component() {
 
+    /**
+     * Only the first child is used when calling setView.
+     * The other children can be used by systems such as debug bbox as necessary.
+     */
     val parent = Group()
 
     val z: ReadOnlyIntegerProperty = ReadOnlyIntegerWrapper(0)
@@ -33,7 +37,13 @@ class ViewComponent
     var view: View
         get() = propView.value
         set(value) {
-            parent.children.setAll(value.node)
+
+            if (parent.children.isEmpty()) {
+                parent.children += value.node
+            } else {
+                parent.children[0] = value.node
+            }
+
             propView.value = value
         }
 
@@ -85,6 +95,7 @@ class ViewComponent
 
     override fun onRemoved() {
         parent.removeEventHandler(MouseEvent.MOUSE_CLICKED, onClickListener)
+        parent.children.clear()
         view.dispose()
     }
 

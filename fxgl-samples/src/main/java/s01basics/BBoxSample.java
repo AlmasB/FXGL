@@ -6,11 +6,9 @@
 
 package s01basics;
 
-import com.almasb.fxgl.animation.Interpolators;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.input.UserAction;
@@ -19,8 +17,6 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import dev.DeveloperWASDControl;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -30,23 +26,20 @@ import javafx.util.Duration;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
- * Shows how to init a basic game object and attach it to the world
- * using fluent API.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class InitSample extends GameApplication {
+public class BBoxSample extends GameApplication {
 
-    // 1. define types of entities in the game using Enum
     private enum Type {
         PLAYER, NPC
     }
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
-        settings.setTitle("InitSample");
+        settings.setWidth(1280);
+        settings.setHeight(720);
+        settings.setTitle("BBoxSample");
         settings.setVersion("0.1");
     }
 
@@ -123,28 +116,16 @@ public class InitSample extends GameApplication {
 
         getGameWorld().addEntity(player2);
 
-        animationBuilder().delay(Duration.seconds(0.25))
-                .duration(Duration.seconds(1))
-                .interpolator(Interpolators.BOUNCE.EASE_OUT())
-                //.repeat(2)
-                .rotate(player2, player)
-                .from(0)
-                .to(360)
-                .buildAndPlay();
 
-        //translate(player, new Point2D(560, 300), Duration.seconds(2));
+        // 3
 
-        player.getViewComponent().addClickListener(() -> {
-            System.out.println("CLICKED");
-        });
-
-//        entityBuilder()
-//                .type(Type.PLAYER)
-//                .at(120, 120)
-//                .viewWithBBox(new Rectangle(40, 40, Color.GREEN))
-//                .with(new CollidableComponent(true))
-//                .zIndex(100)
-//                .buildAndAttach();
+        entityBuilder()
+                .type(Type.PLAYER)
+                .at(400, 150)
+                .bbox(new HitBox(new Point2D(5, 5), BoundingShape.circle(20)))
+                //.bbox(new HitBox(BoundingShape.box(10, 10)))
+                .view(texture("enemy1.png").toAnimatedTexture(2, Duration.seconds(1)).loop())
+                .buildAndAttach();
     }
 
     @Override
@@ -163,7 +144,6 @@ public class InitSample extends GameApplication {
     }
 
     private Text t;
-    private GraphicsContext g;
 
     @Override
     protected void initUI() {
@@ -172,24 +152,6 @@ public class InitSample extends GameApplication {
 
         getGameScene().addUINode(t);
 
-        Canvas canvas = new Canvas(FXGL.getAppWidth(), FXGL.getAppHeight());
-        g = canvas.getGraphicsContext2D();
-        g.setFill(Color.YELLOWGREEN);
-
-        //getGameScene().addUINode(canvas);
-    }
-
-    @Override
-    protected void onUpdate(double tpf) {
-        g.clearRect(0, 0, FXGL.getAppWidth(), FXGL.getAppHeight());
-
-//        var points = Debug.INSTANCE.getPoints();
-//
-//        while (!points.isEmpty()) {
-//            var p = points.poll();
-//
-//            g.fillOval(p.getX() - 2.5, p.getY() - 2.5, 5, 5);
-//        }
     }
 
     public static void main(String[] args) {

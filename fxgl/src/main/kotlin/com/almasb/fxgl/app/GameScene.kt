@@ -16,12 +16,16 @@ import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.ui.UI
 import com.almasb.sslogger.Logger
+import javafx.beans.property.ReadOnlyIntegerProperty
+import javafx.beans.property.ReadOnlyIntegerWrapper
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.collections.ObservableList
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Represents the scene that shows entities on the screen during "play" mode.
@@ -183,12 +187,12 @@ internal constructor(width: Int, height: Int,
     }
 
     private fun sortZ() {
-        val tmpE = ArrayList(entities)
-        tmpE.sortBy { it.z }
+        // it is important to sort in a different list since gameRoot is part of active scene graph
+        // and does not allow duplicates that may occur during sorting
+        val tmp = ArrayList(gameRoot.children)
+        tmp.sortBy { (it.properties["viewData"] as GameView).z }
 
-        gameRoot.children.setAll(
-                tmpE.map { e -> e.viewComponent.parent }
-        )
+        gameRoot.children.setAll(tmp)
     }
 
     /**
@@ -213,11 +217,39 @@ internal constructor(width: Int, height: Int,
         destroyView(entity.viewComponent)
     }
 
+    fun addGameView(view: GameView) {
+        view.node.properties["viewData"] = view
+
+        gameRoot.children.add(view.node)
+    }
+
+    fun removeGameView(view: GameView) {
+        view.node.properties.clear()
+
+        gameRoot.children.remove(view.node)
+    }
+
     private fun initView(viewComponent: ViewComponent) {
-        gameRoot.children += viewComponent.parent
+        val view = GameView(viewComponent.parent, viewComponent.z.value)
+        view.zProperty.bind(viewComponent.z)
+
+        addGameView(view)
     }
 
     private fun destroyView(viewComponent: ViewComponent) {
-        gameRoot.children -= viewComponent.parent
+        val view = viewComponent.parent.properties["viewData"] as GameView
+        view.zProperty.unbind()
+
+        removeGameView(view)
     }
+}
+
+class GameView(val node: Node, zIndex: Int) {
+    val zProperty = SimpleIntegerProperty(zIndex)
+
+    var z: Int
+        get() = zProperty.value
+        set(value) {
+            zProperty.value = value
+        }
 }
