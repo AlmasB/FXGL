@@ -253,11 +253,21 @@ public final class HitBox implements Serializable {
                 transform.scaleOriginYProperty(), transform.scaleYProperty(), transform.yProperty()
         );
 
-        minXWorld.bind(x1);
-        maxXWorld.bind(x2);
+        if (x1.doubleValue() <= x2.doubleValue()) {
+            minXWorld.bind(x1);
+            maxXWorld.bind(x2);
+        } else {
+            minXWorld.bind(x2);
+            maxXWorld.bind(x1);
+        }
 
-        minYWorld.bind(y1);
-        maxYWorld.bind(y2);
+        if (y1.doubleValue() <= y2.doubleValue()) {
+            minYWorld.bind(y1);
+            maxYWorld.bind(y2);
+        } else {
+            minYWorld.bind(y2);
+            maxYWorld.bind(y1);
+        }
     }
 
     /**
