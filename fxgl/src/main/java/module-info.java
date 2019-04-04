@@ -10,6 +10,7 @@ module fxgl.all {
     requires transitive fxgl.input;
     requires transitive fxgl.io;
     requires transitive fxgl.media;
+    requires transitive fxgl.notification;
     requires transitive fxgl.time;
     requires transitive fxgl.ui;
 
@@ -18,6 +19,8 @@ module fxgl.all {
     requires transitive javafx.controls;
     requires transitive javafx.fxml;
     requires transitive javafx.swing;
+
+    uses com.almasb.fxgl.notification.NotificationService;
 
     opens com.almasb.fxgl.dsl to fxgl.core;
 

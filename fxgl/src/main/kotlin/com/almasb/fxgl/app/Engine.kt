@@ -13,6 +13,7 @@ import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
+import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.FXGLScene
@@ -75,6 +76,7 @@ internal class Engine(
     internal val audioPlayer by lazy { AudioPlayer() }
     internal val display by lazy { dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
+    internal val notificationService by lazy { ServiceLoader.load(NotificationService::class.java).findFirst().get() }
 
     private val profileName = SimpleStringProperty("no-profile")
 
@@ -161,6 +163,8 @@ internal class Engine(
                 if (settings.applicationMode != ApplicationMode.RELEASE) {
                     DevPlugin().activate()
                 }
+
+                println(notificationService)
 
                 log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
 
