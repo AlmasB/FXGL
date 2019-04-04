@@ -40,12 +40,11 @@ public class BBoxSample extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.setTitle("BBoxSample");
-        settings.setVersion("0.1");
     }
 
     private Entity player;
 
-    private double scale = 1.0;
+    private double scaleX = 1.0;
     private double scaleY = 1.0;
 
     private double angle = 0;
@@ -67,13 +66,25 @@ public class BBoxSample extends GameApplication {
         }, KeyCode.G);
 
         onKey(KeyCode.Q, () -> {
-            scale += 0.1;
+            scaleX += 0.1;
 
-            player.setScaleX(scale);
+            player.setScaleX(scaleX);
         });
 
         onKey(KeyCode.E, () -> {
             scaleY += 0.1;
+
+            player.setScaleY(scaleY);
+        });
+
+        onKey(KeyCode.Z, () -> {
+            scaleX -= 0.1;
+
+            player.setScaleX(scaleX);
+        });
+
+        onKey(KeyCode.C, () -> {
+            scaleY -= 0.1;
 
             player.setScaleY(scaleY);
         });
@@ -93,6 +104,9 @@ public class BBoxSample extends GameApplication {
 
     @Override
     protected void initGame() {
+
+        // entity 1
+
         player = entityBuilder()
                 .type(Type.PLAYER)
                 .at(100, 150)
@@ -106,24 +120,22 @@ public class BBoxSample extends GameApplication {
         player.getTransformComponent().scaleOriginXProperty().setValue(64);
         player.getTransformComponent().scaleOriginYProperty().setValue(64);
 
-        Entity player2 = new Entity();
-        player2.setType(Type.NPC);
-        player2.setPosition(100, 100);
-        player2.setView(new EntityView(new Rectangle(40, 40, Color.RED)));
-        player2.getBoundingBoxComponent().addHitBox(new HitBox(BoundingShape.box(40, 40)));
-        player2.addComponent(new CollidableComponent(true));
-        player2.getTransformComponent().setZ(250);
+        // entity 2
 
-        getGameWorld().addEntity(player2);
+        entityBuilder()
+                .type(Type.NPC)
+                .at(100, 100)
+                .viewWithBBox(new Rectangle(40, 40, Color.RED))
+                .with(new CollidableComponent(true))
+                .zIndex(250)
+                .buildAndAttach();
 
-
-        // 3
+        // entity 3
 
         entityBuilder()
                 .type(Type.PLAYER)
                 .at(400, 150)
                 .bbox(new HitBox(new Point2D(5, 5), BoundingShape.circle(20)))
-                //.bbox(new HitBox(BoundingShape.box(10, 10)))
                 .view(texture("enemy1.png").toAnimatedTexture(2, Duration.seconds(1)).loop())
                 .buildAndAttach();
     }
@@ -151,7 +163,6 @@ public class BBoxSample extends GameApplication {
         t.setTranslateY(100);
 
         getGameScene().addUINode(t);
-
     }
 
     public static void main(String[] args) {
