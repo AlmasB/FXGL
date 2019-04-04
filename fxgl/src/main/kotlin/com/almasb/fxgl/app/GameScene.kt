@@ -208,8 +208,6 @@ internal constructor(width: Int, height: Int,
     override fun onEntityAdded(entity: Entity) {
         entities.add(entity)
         initView(entity.viewComponent)
-
-        sortZ()
     }
 
     override fun onEntityRemoved(entity: Entity) {
@@ -221,6 +219,8 @@ internal constructor(width: Int, height: Int,
         view.node.properties["viewData"] = view
 
         gameRoot.children.add(view.node)
+
+        sortZ()
     }
 
     fun removeGameView(view: GameView) {
