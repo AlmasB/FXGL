@@ -31,6 +31,4 @@ interface NotificationService : VisualEngineService {
      * Push a notification with given [message].
      */
     fun pushNotification(message: String)
-
-    fun provideTimer(timer: Timer)
 }

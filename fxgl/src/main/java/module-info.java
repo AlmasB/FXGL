@@ -23,6 +23,7 @@ module fxgl.all {
     uses com.almasb.fxgl.notification.NotificationService;
 
     opens com.almasb.fxgl.dsl to fxgl.core;
+    opens com.almasb.fxgl.dev to fxgl.core;
 
     exports com.almasb.fxgl.app;
     exports com.almasb.fxgl.dsl;

@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.notification.impl
 
+import com.almasb.fxgl.core.MasterTimer
+import com.almasb.fxgl.core.OverlayRoot
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.notification.Notification
 import com.almasb.fxgl.notification.NotificationService
@@ -30,7 +32,9 @@ class NotificationServiceProvider : NotificationService {
 
     private var showing = false
 
+    @OverlayRoot
     private lateinit var root: Group
+    @MasterTimer
     private lateinit var timer: Timer
 
     private val notificationView by lazy { XboxNotificationView() }
@@ -52,14 +56,6 @@ class NotificationServiceProvider : NotificationService {
             showFirstNotification()
             queue.add(notification)
         }
-    }
-
-    override fun provideOverlayRoot(overlayRoot: Group) {
-        root = overlayRoot
-    }
-
-    override fun provideTimer(timer: Timer) {
-        this.timer = timer
     }
 
     private fun nextNotification() {

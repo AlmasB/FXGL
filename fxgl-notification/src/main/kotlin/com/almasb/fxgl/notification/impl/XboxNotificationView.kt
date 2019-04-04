@@ -26,8 +26,6 @@ import javafx.util.Duration
  */
 internal class XboxNotificationView : NotificationView() {
 
-
-
     /**
      * Imitates Xbox One style circle.
      */
@@ -55,23 +53,23 @@ internal class XboxNotificationView : NotificationView() {
     }
 
     override fun playInAnimation() {
-//        // reset the view to default so we can play our nice animation
-//        bg.translateX = -385.0
-//        bg.translateY = 1.5
-//        bg.fill = backgroundColor.darker()
-//        bg.clip = bgClip
-//
-//        circle.fill = backgroundColor.brighter()
-//
-//        text1.translateY = 35.0
-//        text1.isVisible = false
-//        text1.fill = textColor
-//        text1.text = ""
-//
-//        text2.fill = textColor
-//
-//        translateX = 50.0
-//        translateY = 300.0
+        // reset the view to default so we can play our nice animation
+        bg.translateX = -385.0
+        bg.translateY = 1.5
+        bg.fill = backgroundColor.darker()
+        bg.clip = bgClip
+
+        circle.fill = backgroundColor.brighter()
+
+        text1.translateY = 35.0
+        text1.isVisible = false
+        text1.fill = textColor
+        text1.text = ""
+
+        text2.fill = textColor
+
+        translateX = 50.0
+        translateY = 300.0
 //
 ////        when (position) {
 ////            Position.LEFT -> {
@@ -98,7 +96,7 @@ internal class XboxNotificationView : NotificationView() {
 //        scaleY = 0.0
 //
 //        // make sure we only have circle for proper centering during the first animation
-//        children.setAll(circle)
+        children.setAll(circle)
 //
 //
 //
@@ -137,10 +135,10 @@ internal class XboxNotificationView : NotificationView() {
     }
 
     override fun push(notification: Notification) {
-//        text2.text = notification.message
-//        text2.translateY = -35.0
-//
-//        children.add(text2)
+        text2.text = notification.message
+        text2.translateY = -35.0
+
+        children.add(text2)
 //
 //        //centerTextX(text2, 65.0, 395.0)
 //
@@ -162,8 +160,8 @@ internal class XboxNotificationView : NotificationView() {
     }
 
     override fun playOutAnimation() {
-//        text1.isVisible = false
-//        bg.clip = bgClip
+        text1.isVisible = false
+        bg.clip = bgClip
 //
 //        bgAnimation.onFinished = Runnable {
 //            children.setAll(circle)

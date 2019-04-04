@@ -22,6 +22,7 @@ import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.level.tiled.TMXLevelLoader
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.UserAction
+import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.time.LocalTimer
@@ -106,6 +107,8 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getDisplay() = engine.display
 
     @JvmStatic fun getExecutor() = engine.executor
+
+    @JvmStatic fun getNotificationService() = engine.getService(NotificationService::class.java)
 
     /**
      * @return time per frame (in this frame)

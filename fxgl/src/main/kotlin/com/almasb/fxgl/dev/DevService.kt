@@ -7,6 +7,8 @@
 package com.almasb.fxgl.dev
 
 import com.almasb.fxgl.app.GameView
+import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
@@ -15,17 +17,13 @@ import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
 
 /**
- * TODO: engine-plugin architecture?
+ *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DevPlugin {
+class DevService : EngineService {
 
-    private val scene = FXGL.getGameScene()
-
-    private val debugViews = hashMapOf<Entity, GameView>()
-
-    fun activate() {
+    override fun onMainLoopStarting() {
         FXGL.getSettings().devShowBBox.addListener { _, _, isSelected ->
             if (isSelected) {
                 FXGL.getGameWorld().entities.forEach {
@@ -52,6 +50,20 @@ class DevPlugin {
             }
         })
     }
+
+    override fun onExit() {
+    }
+
+    override fun onUpdate(tpf: Double) {
+    }
+
+    override fun write(bundle: Bundle) {
+    }
+
+    override fun read(bundle: Bundle) {
+    }
+
+    private val debugViews = hashMapOf<Entity, GameView>()
 
     private fun addDebugView(entity: Entity) {
         val group = Group()
@@ -90,9 +102,6 @@ class DevPlugin {
 
                 group.children += bboxView
             }
-
-
-
         }
 
         entity.viewComponent.parent.children += group

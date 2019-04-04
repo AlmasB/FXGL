@@ -14,9 +14,5 @@ import javafx.scene.Group
  */
 interface VisualEngineService : EngineService {
 
-    /**
-     * [overlayRoot] is part of the active scene graph to which
-     * visual elements of this service can be attached.
-     */
-    fun provideOverlayRoot(overlayRoot: Group)
+
 }

@@ -1,19 +1,22 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.audio.AudioPlayer
+import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.MasterTimer
+import com.almasb.fxgl.core.OverlayRoot
+import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.FXGLExecutor
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.local.Local
+import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.fxgl.dev.DevPlugin
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
-import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.FXGLScene
@@ -27,10 +30,13 @@ import com.almasb.sslogger.Logger
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.event.EventHandler
+import javafx.scene.Group
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.IllegalArgumentException
+import kotlin.NoSuchElementException
 
 /**
  *
@@ -71,12 +77,42 @@ internal class Engine(
 
     /* SUBSYSTEMS */
 
+    private val services = ObjectMap<Class<out EngineService>, EngineService>()
+
+    fun <T : EngineService> addService(serviceClass: Class<T>): T {
+        val service = loadService(serviceClass)
+        services.put(serviceClass, service)
+        return service
+    }
+
+    private fun <T : EngineService> loadService(serviceClass: Class<T>): T {
+        try {
+            return ServiceLoader.load(serviceClass)
+                    .findFirst()
+                    .get()
+        } catch (e: ServiceConfigurationError) {
+            return loadServiceReflection(serviceClass)
+        } catch (e: NoSuchElementException) {
+            return loadServiceReflection(serviceClass)
+        }
+    }
+
+    private fun <T : EngineService> loadServiceReflection(serviceClass: Class<T>): T {
+        if (serviceClass.isInterface)
+            throw IllegalArgumentException("Service provider not found for: $serviceClass")
+
+        return ReflectionUtils.newInstance(serviceClass)
+    }
+
+    fun <T : EngineService> getService(serviceClass: Class<T>): T {
+        return (services[serviceClass] ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
+    }
+
     internal val assetLoader by lazy { AssetLoader() }
     internal val eventBus by lazy { EventBus() }
     internal val audioPlayer by lazy { AudioPlayer() }
     internal val display by lazy { dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
-    internal val notificationService by lazy { ServiceLoader.load(NotificationService::class.java).findFirst().get() }
 
     private val profileName = SimpleStringProperty("no-profile")
 
@@ -160,11 +196,25 @@ internal class Engine(
                 // this is called once per application lifetime
                 runPreInit()
 
-                if (settings.applicationMode != ApplicationMode.RELEASE) {
-                    DevPlugin().activate()
+                // TODO: refactor
+                val overlayRoot = Group()
+
+                playState.addUINode(overlayRoot)
+
+                // TODO: extract
+                services.values().forEach { service ->
+                    ReflectionUtils.findFieldsByAnnotation(service, MasterTimer::class.java).forEach {
+                        ReflectionUtils.inject(it, service, playState.timer)
+                    }
+                }
+                services.values().forEach { service ->
+                    ReflectionUtils.findFieldsByAnnotation(service, OverlayRoot::class.java).forEach {
+                        ReflectionUtils.inject(it, service, overlayRoot)
+                    }
                 }
 
-                println(notificationService)
+
+                services.values().forEach { it.onMainLoopStarting() }
 
                 log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
 
@@ -349,6 +399,8 @@ internal class Engine(
         mainWindow.onUpdate(tpf)
 
         audioPlayer.onUpdate(tpf)
+
+        services.values().forEach { it.onUpdate(tpf) }
     }
 
     private var handledOnce = false
@@ -389,6 +441,8 @@ internal class Engine(
             System.exit(-1)
         }
     }
+
+
 
     // GAME CONTROLLER CALLBACKS
 
@@ -507,6 +561,8 @@ internal class Engine(
 
     override fun exit() {
         log.debug("Exiting FXGL")
+
+        services.values().forEach { it.onExit() }
 
         if (settings.isMenuEnabled) {
             //menuHandler.saveProfile()
