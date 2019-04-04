@@ -12,9 +12,6 @@ import javafx.geometry.HorizontalDirection
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
-import javafx.scene.shape.StrokeLineCap
-import javafx.scene.shape.StrokeLineJoin
-import javafx.scene.shape.StrokeType
 import javafx.util.Duration
 
 /**
@@ -32,20 +29,7 @@ class InGamePanel(val panelWidth: Double,
         private set
 
     init {
-//        val outerBorder = Rectangle(panelWidth, panelHeight,
-//                Color.color(0.5, 0.5, 0.5, 0.5)
-//        )
-//        with(outerBorder) {
-//            strokeWidth = 4.0
-//            stroke = Color.color(0.2, 0.2, 0.2, 0.7)
-//            strokeLineCap = StrokeLineCap.BUTT
-//            strokeLineJoin = StrokeLineJoin.ROUND
-//            strokeType = StrokeType.OUTSIDE
-//        }
-
         translateX = -panelWidth - 4
-        //translateY = 4.0
-        //children.addAll(outerBorder)
 
         val bg = Rectangle(panelWidth, panelHeight, Color.color(0.0, 0.0, 0.0, 0.85))
 
