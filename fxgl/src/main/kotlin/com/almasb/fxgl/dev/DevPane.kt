@@ -11,8 +11,7 @@ import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.ui.FXGLCheckBox
 import com.almasb.fxgl.ui.InGamePanel
-import javafx.beans.property.SimpleBooleanProperty
-import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.*
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
@@ -103,9 +102,34 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
         FXGL.getGameState().properties.keys().forEachIndexed { index, key ->
             val textKey = FXGL.getUIFactory().newText(key, Color.WHITE, 18.0)
 
-            val value = FXGL.getGameState().properties.getValue(key) as Any
+            val value = FXGL.getGameState().properties.getValueObservable(key)
+            val textValue = FXGL.getUIFactory().newText("", Color.WHITE, 18.0)
 
-            val textValue = FXGL.getUIFactory().newText(value.toString(), Color.WHITE, 18.0)
+            when (value.javaClass) {
+                SimpleBooleanProperty::class.java -> {
+                    textValue.textProperty().bind((value as SimpleBooleanProperty).asString())
+                }
+
+                SimpleIntegerProperty::class.java -> {
+                    textValue.textProperty().bind((value as SimpleIntegerProperty).asString())
+                }
+
+                SimpleDoubleProperty::class.java -> {
+                    textValue.textProperty().bind((value as SimpleDoubleProperty).asString())
+                }
+
+                SimpleStringProperty::class.java -> {
+                    textValue.textProperty().bind((value as SimpleStringProperty))
+                }
+
+                SimpleObjectProperty::class.java -> {
+                    textValue.textProperty().bind((value as SimpleObjectProperty<*>).asString())
+                }
+
+                else -> {
+                    throw IllegalArgumentException("Unknown value type: ${value.javaClass}")
+                }
+            }
 
             pane.addRow(index, textKey, textValue)
         }

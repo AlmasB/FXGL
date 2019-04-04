@@ -52,6 +52,10 @@ class PropertyMap {
         return rawValueT(get(propertyName))
     }
 
+    fun getValueObservable(propertyName: String): Any {
+        return get(propertyName)
+    }
+
     private fun <T> rawValueT(valueWrapper: Any): T {
         return when (valueWrapper) {
             is ObservableValue<*> -> valueWrapper.value as T
