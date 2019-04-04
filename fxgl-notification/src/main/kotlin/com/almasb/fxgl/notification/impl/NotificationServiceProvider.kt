@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.notification.impl
 
+import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.MasterTimer
 import com.almasb.fxgl.core.OverlayRoot
 import com.almasb.fxgl.core.serialization.Bundle
@@ -35,6 +36,7 @@ class NotificationServiceProvider : NotificationService {
     @OverlayRoot
     private lateinit var root: Group
     @MasterTimer
+    @Inject("MasterTimer")
     private lateinit var timer: Timer
 
     private val notificationView by lazy { XboxNotificationView() }
@@ -105,6 +107,7 @@ class NotificationServiceProvider : NotificationService {
     }
 
     override fun onUpdate(tpf: Double) {
+        notificationView.onUpdate(tpf)
     }
 
     override fun write(bundle: Bundle) {

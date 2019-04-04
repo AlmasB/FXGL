@@ -7,11 +7,11 @@
 package com.almasb.fxgl.notification.impl
 
 import com.almasb.fxgl.animation.Animation
-import com.almasb.fxgl.animation.AnimationBuilder
+import com.almasb.fxgl.animation.AnimationDSL
 import com.almasb.fxgl.notification.Notification
 import com.almasb.fxgl.notification.NotificationView
+import com.almasb.fxgl.ui.FXGLUIConfig
 import javafx.geometry.Point2D
-import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
@@ -37,19 +37,14 @@ internal class XboxNotificationView : NotificationView() {
     /**
      * These two will be replacing one another.
      */
-    private val text1 = Text()
-    private val text2 = Text()
-
-    private lateinit var bgAnimation: Animation<*>
+    private val text1 = FXGLUIConfig.getUIFactory().newText("", textColor, 18.0)
+    private val text2 = FXGLUIConfig.getUIFactory().newText("", textColor, 18.0)
 
     init {
         bg.arcWidth = 55.0
         bg.arcHeight = 55.0
 
         bgClip.translateXProperty().bind(bg.translateXProperty().negate().add(30))
-    }
-
-    override fun onUpdate(tpf: Double) {
     }
 
     override fun playInAnimation() {
@@ -68,106 +63,159 @@ internal class XboxNotificationView : NotificationView() {
 
         text2.fill = textColor
 
-        translateX = 50.0
-        translateY = 300.0
-//
-////        when (position) {
-////            Position.LEFT -> {
-////                translateX = 50.0
-////                translateY = FXGL.getAppHeight() / 2 - (text1.layoutBounds.width + 10) / 2
-////            }
-////            Position.RIGHT -> {
-////                translateX = FXGL.getAppWidth()  - (text1.layoutBounds.width + 20) - 50.0
-////                translateY = FXGL.getAppHeight()  / 2 - (text1.layoutBounds.height + 10) / 2
-////            }
-////            Position.TOP -> {
-////                translateX = FXGL.getAppWidth() / 2 - 30.0
-////                translateY = 50.0
-////            }
-////            Position.BOTTOM -> {
-////                translateX = FXGL.getAppWidth()  / 2 - (text1.layoutBounds.width + 20) / 2
-////                translateY = FXGL.getAppHeight()  - (text1.layoutBounds.height + 10) - 50.0
-////            }
-////        }
-//
-//        //centerTextX(text1, 65.0, 395.0)
-//
-//        scaleX = 0.0
-//        scaleY = 0.0
-//
-//        // make sure we only have circle for proper centering during the first animation
+        translateX = 350.0
+        translateY = 50.0
+
+//        when (position) {
+//            Position.LEFT -> {
+//                translateX = 50.0
+//                translateY = FXGL.getAppHeight() / 2 - (text1.layoutBounds.width + 10) / 2
+//            }
+//            Position.RIGHT -> {
+//                translateX = FXGL.getAppWidth()  - (text1.layoutBounds.width + 20) - 50.0
+//                translateY = FXGL.getAppHeight()  / 2 - (text1.layoutBounds.height + 10) / 2
+//            }
+//            Position.TOP -> {
+//                translateX = FXGL.getAppWidth() / 2 - 30.0
+//                translateY = 50.0
+//            }
+//            Position.BOTTOM -> {
+//                translateX = FXGL.getAppWidth()  / 2 - (text1.layoutBounds.width + 20) / 2
+//                translateY = FXGL.getAppHeight()  - (text1.layoutBounds.height + 10) - 50.0
+//            }
+//        }
+
+        centerTextX(text1, 65.0, 395.0)
+
+        scaleX = 0.0
+        scaleY = 0.0
+
+        // make sure we only have circle for proper centering during the first animation
         children.setAll(circle)
-//
-//
-//
-//
-//        // move the whole view to left
-//        val translateThis = translate(this, Point2D(translateX, translateY), Point2D(FXGL.getAppWidth() / 4.0, translateY), Duration.seconds(0.33))
-//
-//        // but move the BG to right, creating the "slide out" effect
-//        val translateBG = translate(bg, Point2D(bg.translateX, bg.translateY), Point2D(bg.translateX + 400.0, bg.translateY), Duration.seconds(0.33))
-//
-//        bgAnimation = ParallelAnimation(1, translateThis, translateBG)
-//        bgAnimation.onFinished = Runnable {
-//            bg.clip = null
-//            text1.isVisible = true
-//        }
-//
-//
-//
-//
-//        val scale = AnimationBuilder()
-//                .duration(Duration.seconds(0.3))
-//
-//
-//        val scale = scale(this, Point2D.ZERO, Point2D(1.0, 1.0), Duration.seconds(0.3))
-//        scale.onFinished = Runnable {
-//            FXGL.getMasterTimer().runOnceAfter({
-//                // make background appear before the circle
-//                children.add(0, bg)
-//                children.add(text1)
-//
-//                bgAnimation.startInPlayState()
-//            }, Duration.seconds(0.33))
-//        }
-//
-//        scale.startInPlayState()
+
+        // move the whole view to left
+        translateThis = AnimationDSL()
+                .duration(Duration.seconds(0.33))
+                .translate(this)
+                .from(Point2D(translateX, translateY))
+                .to(Point2D(200.0, translateY))
+                .build()
+        //.to(Point2D(FXGL.getAppWidth() / 4.0, translateY))
+
+
+        // but move the BG to right, creating the "slide out" effect
+        translateBG = AnimationDSL()
+                .onFinished(Runnable {
+                    bg.clip = null
+                    text1.isVisible = true
+                })
+                .duration(Duration.seconds(0.33))
+                .translate(bg)
+                .from(Point2D(bg.translateX, bg.translateY))
+                .to(Point2D(bg.translateX + 400.0, bg.translateY))
+                .build()
+
+        scale = AnimationDSL()
+                .duration(Duration.seconds(0.3))
+                .onFinished(Runnable {
+
+                    // make background appear before the circle
+                    children.add(0, bg)
+                    children.add(text1)
+
+                    translateThis!!.start()
+                    translateBG!!.start()
+
+//                    FXGL.getMasterTimer().runOnceAfter({
+
+//                    }, Duration.seconds(0.33))
+                })
+                .scale(this)
+                .from(Point2D.ZERO)
+                .to(Point2D(1.0, 1.0))
+                .build()
+
+        scale!!.start()
     }
+
+    private var translateThis: Animation<*>? = null
+    private var translateBG: Animation<*>? = null
+
+    private var scale: Animation<*>? = null
+
+    private var animText2: Animation<*>? = null
+    private var animText1: Animation<*>? = null
 
     override fun push(notification: Notification) {
         text2.text = notification.message
         text2.translateY = -35.0
 
         children.add(text2)
-//
-//        //centerTextX(text2, 65.0, 395.0)
-//
-//        // move text 2 to replace text 1
-//        val anim = translate(text2, Point2D(text2.translateX, text2.translateY), Point2D(text2.translateX, 35.0), Duration.seconds(0.33))
-//        anim.startInPlayState()
-//
-//        // move text 1 down
-//        val anim2 = translate(text1, Point2D(text1.translateX, text1.translateY), Point2D(text1.translateX, text1.translateY + 35.0), Duration.seconds(0.33))
-//        anim2.onFinished = Runnable {
-//            // when done, just swap them and keep text2 for next reuse
-//            text1.translateX = text2.translateX
-//            text1.translateY = text2.translateY
-//            text1.text = text2.text
-//
-//            children.remove(text2)
-//        }
-//        anim2.startInPlayState()
+
+        centerTextX(text2, 65.0, 395.0)
+
+        // move text 2 to replace text 1
+        animText2 = AnimationDSL()
+                .duration(Duration.seconds(0.33))
+                .translate(text2)
+                .from(Point2D(text2.translateX, text2.translateY))
+                .to(Point2D(text2.translateX, 35.0))
+                .build()
+
+        // move text 1 down
+        animText1 = AnimationDSL()
+                .onFinished(Runnable {
+                    // when done, just swap them and keep text2 for next reuse
+                    text1.translateX = text2.translateX
+                    text1.translateY = text2.translateY
+                    text1.text = text2.text
+
+                    children.remove(text2)
+                })
+                .duration(Duration.seconds(0.33))
+                .translate(text1)
+                .from(Point2D(text1.translateX, text1.translateY))
+                .to(Point2D(text1.translateX, text1.translateY + 35.0))
+                .build()
+
+        animText2!!.start()
+        animText1!!.start()
     }
 
     override fun playOutAnimation() {
         text1.isVisible = false
         bg.clip = bgClip
-//
-//        bgAnimation.onFinished = Runnable {
-//            children.setAll(circle)
-//            scale(this, Point2D(1.0, 1.0), Point2D.ZERO, Duration.seconds(0.3)).startInPlayState()
-//        }
-//        bgAnimation.stop()
-//        bgAnimation.startReverse(FXGL.getApp().stateMachine.playState)
+
+        translateBG?.stop()
+
+        translateBG?.onFinished = Runnable {
+
+            children.setAll(circle)
+
+            scale = AnimationDSL()
+                    .duration(Duration.seconds(0.3))
+                    .scale(this)
+                    .from(Point2D(1.0, 1.0))
+                    .to(Point2D.ZERO)
+                    .build()
+
+            scale!!.start()
+        }
+
+        translateBG?.startReverse()
+    }
+
+    override fun onUpdate(tpf: Double) {
+        translateThis?.onUpdate(tpf)
+        translateBG?.onUpdate(tpf)
+
+        scale?.onUpdate(tpf)
+
+        animText2?.onUpdate(tpf)
+        animText1?.onUpdate(tpf)
+    }
+
+    private fun centerTextX(text: Text, minX: Double, maxX: Double) {
+        text.translateX = (minX + maxX) / 2 - text.layoutBounds.width / 2
     }
 }
