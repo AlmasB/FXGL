@@ -18,6 +18,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -30,6 +31,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class PlatformerSample extends GameApplication {
 
     private Entity player;
+    private Entity poly;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -86,6 +88,14 @@ public class PlatformerSample extends GameApplication {
 //                player = createPlayer(x, y, 60, 80);
             }
         }, KeyCode.SPACE);
+
+        input.addAction(new UserAction("Grow Poly") {
+            @Override
+            protected void onActionBegin() {
+                poly.setScaleX(poly.getScaleX() * 1.25);
+                poly.setScaleY(poly.getScaleY() * 1.25);
+            }
+        }, KeyCode.G);
     }
 
     @Override
@@ -117,6 +127,20 @@ public class PlatformerSample extends GameApplication {
                         new Point2D(400, 0),
                         new Point2D(400, 100),
                         new Point2D(0, 100)
+                )))
+                .with(new PhysicsComponent())
+                .buildAndAttach();
+
+        poly = entityBuilder()
+                .at(180, 350)
+                .view(new Polygon(
+                        0, 0, 200, 0, 250, 100, 0, 30
+                ))
+                .bbox(new HitBox("Main", BoundingShape.polygon(
+                        new Point2D(0, 0),
+                        new Point2D(200, 0),
+                        new Point2D(250, 100),
+                        new Point2D(0, 30)
                 )))
                 .with(new PhysicsComponent())
                 .buildAndAttach();

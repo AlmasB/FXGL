@@ -12,8 +12,11 @@ import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
+import javafx.geometry.Dimension2D
+import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.shape.Circle
+import javafx.scene.shape.Polygon
 import javafx.scene.shape.Rectangle
 
 /**
@@ -70,7 +73,7 @@ class DevService : EngineService {
 
         entity.boundingBoxComponent.hitBoxesProperty().forEach {
 
-            // TODO: add polygon
+
             if (it.shape.isCircle) {
 
                 val bboxView = Circle(it.width / 2, it.width / 2, it.width / 2)
@@ -84,23 +87,39 @@ class DevService : EngineService {
 
                 group.children += bboxView
 
-            } else if (it.shape.isRectangle) {
-                val bboxView = Rectangle()
-                bboxView.fill = null
+            } else if (it.shape.isPolygon) {
 
-                bboxView.translateX = it.minX
-                bboxView.translateY = it.minY
+                val data = it.shape.data
 
-                bboxView.strokeWidth = 2.0
-                bboxView.strokeProperty().bind(FXGL.getSettings().devBBoxColor)
+                // TODO: clean up
+                if (data is Dimension2D) {
+                    val bboxView = Rectangle()
+                    bboxView.fill = null
 
-                bboxView.widthProperty().value = it.width
-                bboxView.heightProperty().value = it.height
-                bboxView.visibleProperty().bind(
-                        bboxView.widthProperty().greaterThan(0).and(bboxView.heightProperty().greaterThan(0))
-                )
+                    bboxView.translateX = it.minX
+                    bboxView.translateY = it.minY
 
-                group.children += bboxView
+                    bboxView.strokeWidth = 2.0
+                    bboxView.strokeProperty().bind(FXGL.getSettings().devBBoxColor)
+
+                    bboxView.widthProperty().value = it.width
+                    bboxView.heightProperty().value = it.height
+                    bboxView.visibleProperty().bind(
+                            bboxView.widthProperty().greaterThan(0).and(bboxView.heightProperty().greaterThan(0))
+                    )
+
+                    group.children += bboxView
+                } else {
+                    val polygonPoints = data as Array<Point2D>
+
+                    val polygonView = Polygon(*polygonPoints.flatMap { listOf(it.x, it.y) }.toDoubleArray())
+
+                    polygonView.fill = null
+                    polygonView.strokeWidth = 2.0
+                    polygonView.strokeProperty().bind(FXGL.getSettings().devBBoxColor)
+
+                    group.children += polygonView
+                }
             }
         }
 

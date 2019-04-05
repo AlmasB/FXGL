@@ -649,7 +649,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
                 return circle(w, boundsCenterLocal);
 
             case POLYGON:
-
+                // TODO: clean up + scale does not work properly
                 if (boundingShape.data instanceof Dimension2D) {
                     return polygonAsBox(w, h, boundsCenterLocal);
                 } else {
