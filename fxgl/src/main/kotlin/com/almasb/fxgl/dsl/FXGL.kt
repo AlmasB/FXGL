@@ -11,6 +11,7 @@ import com.almasb.fxgl.app.Engine
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.GameController
 import com.almasb.fxgl.app.ReadOnlyGameSettings
+import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.pool.Pools
@@ -102,7 +103,7 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getEventBus() = engine.eventBus
 
-    @JvmStatic fun getAudioPlayer() = engine.audioPlayer
+    @JvmStatic fun getAudioPlayer() = engine.getService(AudioPlayer::class.java)
 
     @JvmStatic fun getDisplay() = engine.display
 

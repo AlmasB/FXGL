@@ -6,8 +6,7 @@
 
 package com.almasb.fxgl.notification
 
-import com.almasb.fxgl.core.VisualEngineService
-import com.almasb.fxgl.time.Timer
+import com.almasb.fxgl.core.EngineService
 import javafx.scene.paint.Color
 
 /**
@@ -15,7 +14,7 @@ import javafx.scene.paint.Color
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-interface NotificationService : VisualEngineService {
+interface NotificationService : EngineService {
 
     /**
      * Current background color for notifications.

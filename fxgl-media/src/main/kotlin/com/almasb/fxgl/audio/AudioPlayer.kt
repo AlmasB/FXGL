@@ -6,7 +6,9 @@
 
 package com.almasb.fxgl.audio
 
+import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.collection.UnorderedArray
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.sslogger.Logger
 
 import javafx.beans.property.SimpleDoubleProperty
@@ -18,7 +20,7 @@ import javafx.geometry.Point2D
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class AudioPlayer {
+class AudioPlayer : EngineService {
 
     private val log = Logger.get(javaClass)
 
@@ -65,7 +67,19 @@ class AudioPlayer {
         }
     }
 
-    fun onUpdate(tpf: Double) {
+    override fun onMainLoopStarting() {
+    }
+
+    override fun onExit() {
+    }
+
+    override fun write(bundle: Bundle) {
+    }
+
+    override fun read(bundle: Bundle) {
+    }
+
+    override fun onUpdate(tpf: Double) {
         activeMusic.removeAll { it.isDisposed }
         activeSounds.removeAll { it.isDisposed }
     }

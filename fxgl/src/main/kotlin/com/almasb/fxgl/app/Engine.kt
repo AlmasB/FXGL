@@ -94,7 +94,6 @@ internal class Engine(
 
     internal val assetLoader by lazy { AssetLoader() }
     internal val eventBus by lazy { EventBus() }
-    internal val audioPlayer by lazy { AudioPlayer() }
     internal val display by lazy { dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
 
@@ -382,8 +381,6 @@ internal class Engine(
     private fun loop(tpf: Double) {
         mainWindow.onUpdate(tpf)
 
-        audioPlayer.onUpdate(tpf)
-
         services.forEach { it.onUpdate(tpf) }
     }
 
@@ -425,8 +422,6 @@ internal class Engine(
             System.exit(-1)
         }
     }
-
-
 
     // GAME CONTROLLER CALLBACKS
 
