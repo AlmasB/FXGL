@@ -11,5 +11,5 @@ module fxgl.notification {
 
     opens com.almasb.fxgl.notification.impl to fxgl.core;
 
-    provides com.almasb.fxgl.notification.NotificationService with com.almasb.fxgl.notification.impl.NotificationServiceProvider;
+    provides com.almasb.fxgl.core.EngineService with com.almasb.fxgl.notification.impl.NotificationServiceProvider;
 }

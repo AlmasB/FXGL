@@ -35,8 +35,6 @@ import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.IllegalArgumentException
-import kotlin.NoSuchElementException
 
 /**
  *
@@ -77,35 +75,21 @@ internal class Engine(
 
     /* SUBSYSTEMS */
 
-    private val services = ObjectMap<Class<out EngineService>, EngineService>()
+    private val services = arrayListOf<EngineService>()
+    private val servicesCache = ObjectMap<Class<out EngineService>, EngineService>()
 
-    fun <T : EngineService> addService(serviceClass: Class<T>): T {
-        val service = loadService(serviceClass)
-        services.put(serviceClass, service)
-        return service
+    fun addService(engineService: EngineService) {
+        log.debug("Adding new engine service: ${engineService.javaClass}")
+
+        services += engineService
     }
 
-    private fun <T : EngineService> loadService(serviceClass: Class<T>): T {
-        try {
-            return ServiceLoader.load(serviceClass)
-                    .findFirst()
-                    .get()
-        } catch (e: ServiceConfigurationError) {
-            return loadServiceReflection(serviceClass)
-        } catch (e: NoSuchElementException) {
-            return loadServiceReflection(serviceClass)
-        }
-    }
+    inline fun <reified T : EngineService> getService(serviceClass: Class<T>): T {
+        if (servicesCache.containsKey(serviceClass))
+            return servicesCache[serviceClass] as T
 
-    private fun <T : EngineService> loadServiceReflection(serviceClass: Class<T>): T {
-        if (serviceClass.isInterface)
-            throw IllegalArgumentException("Service provider not found for: $serviceClass")
-
-        return ReflectionUtils.newInstance(serviceClass)
-    }
-
-    fun <T : EngineService> getService(serviceClass: Class<T>): T {
-        return (services[serviceClass] ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
+        return (services.find { it is T  }?.also { servicesCache.put(serviceClass, it) }
+                ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
     }
 
     internal val assetLoader by lazy { AssetLoader() }
@@ -202,19 +186,19 @@ internal class Engine(
                 playState.addUINode(overlayRoot)
 
                 // TODO: extract
-                services.values().forEach { service ->
+                services.forEach { service ->
                     ReflectionUtils.findFieldsByAnnotation(service, MasterTimer::class.java).forEach {
                         ReflectionUtils.inject(it, service, playState.timer)
                     }
                 }
-                services.values().forEach { service ->
+                services.forEach { service ->
                     ReflectionUtils.findFieldsByAnnotation(service, OverlayRoot::class.java).forEach {
                         ReflectionUtils.inject(it, service, overlayRoot)
                     }
                 }
 
 
-                services.values().forEach { it.onMainLoopStarting() }
+                services.forEach { it.onMainLoopStarting() }
 
                 log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
 
@@ -400,7 +384,7 @@ internal class Engine(
 
         audioPlayer.onUpdate(tpf)
 
-        services.values().forEach { it.onUpdate(tpf) }
+        services.forEach { it.onUpdate(tpf) }
     }
 
     private var handledOnce = false
@@ -562,7 +546,7 @@ internal class Engine(
     override fun exit() {
         log.debug("Exiting FXGL")
 
-        services.values().forEach { it.onExit() }
+        services.forEach { it.onExit() }
 
         if (settings.isMenuEnabled) {
             //menuHandler.saveProfile()

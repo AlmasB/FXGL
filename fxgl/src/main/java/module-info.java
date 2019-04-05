@@ -21,6 +21,7 @@ module fxgl.all {
     requires transitive javafx.swing;
 
     uses com.almasb.fxgl.notification.NotificationService;
+    uses com.almasb.fxgl.core.EngineService;
 
     opens com.almasb.fxgl.dsl to fxgl.core;
     opens com.almasb.fxgl.dev to fxgl.core;

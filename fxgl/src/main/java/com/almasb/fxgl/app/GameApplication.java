@@ -5,16 +5,17 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.core.EngineService;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.dev.DevService;
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.notification.NotificationService;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.sslogger.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.util.Map;
+import java.util.ServiceLoader;
 
 import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
 
@@ -199,10 +200,12 @@ public abstract class GameApplication {
         @Override
         public void start(Stage stage) {
             var engine = new Engine(app, settings, stage);
-            engine.addService(NotificationService.class);
+
+            ServiceLoader.load(EngineService.class)
+                    .forEach(engine::addService);
 
             if (settings.getApplicationMode() != ApplicationMode.RELEASE) {
-                engine.addService(DevService.class);
+                engine.addService(new DevService());
             }
 
             // equivalent to FXGL.engine = engine;
