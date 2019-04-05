@@ -9,6 +9,8 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.local.Language
 import com.almasb.fxgl.core.util.Optional
+import com.almasb.fxgl.notification.view.NotificationView
+import com.almasb.fxgl.notification.view.XboxNotificationView
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
 import com.almasb.fxgl.ui.DialogFactory
@@ -183,7 +185,9 @@ class GameSettings(
          */
         @get:JvmName("getUIFactory")
         @set:JvmName("setUIFactory")
-        var uiFactory: UIFactory = FXGLUIFactory()
+        var uiFactory: UIFactory = FXGLUIFactory(),
+
+        var notificationViewClass: Class<out NotificationView> = XboxNotificationView::class.java
 ) {
 
     fun toReadOnly(): ReadOnlyGameSettings {
@@ -221,7 +225,8 @@ class GameSettings(
                 //achievementStoreClass,
                 sceneFactory,
                 dialogFactory,
-                uiFactory)
+                uiFactory,
+                notificationViewClass)
     }
 }
 
@@ -362,7 +367,9 @@ class ReadOnlyGameSettings internal constructor(
          * Provide a custom UI factory.
          */
         @get:JvmName("getUIFactory")
-        val uiFactory: UIFactory
+        val uiFactory: UIFactory,
+
+        val notificationViewClass: Class<out NotificationView>
 ) : UserProfileSavable {
 
     /* STATIC - cannot be modified at runtime */

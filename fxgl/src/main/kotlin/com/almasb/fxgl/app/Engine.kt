@@ -1,15 +1,14 @@
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
-import com.almasb.fxgl.core.MasterTimer
-import com.almasb.fxgl.core.OverlayRoot
+import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.FXGLExecutor
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.reflect.ReflectionUtils
+import com.almasb.fxgl.core.reflect.ReflectionUtils.*
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.GameWorld
@@ -184,18 +183,24 @@ internal class Engine(
 
                 playState.addUINode(overlayRoot)
 
-                // TODO: extract
-                services.forEach { service ->
-                    ReflectionUtils.findFieldsByAnnotation(service, MasterTimer::class.java).forEach {
-                        ReflectionUtils.inject(it, service, playState.timer)
-                    }
-                }
-                services.forEach { service ->
-                    ReflectionUtils.findFieldsByAnnotation(service, OverlayRoot::class.java).forEach {
-                        ReflectionUtils.inject(it, service, overlayRoot)
-                    }
-                }
+                // TODO: extract and make constant key names
+                val injectionMap = hashMapOf<String, Any>(
+                        "overlayRoot" to overlayRoot,
+                        "masterTimer" to playState.timer,
+                        "notificationViewClass" to settings.notificationViewClass
+                )
 
+                services.forEach { service ->
+                    findFieldsByAnnotation(service, Inject::class.java).forEach { field ->
+                        val injectKey = field.getDeclaredAnnotation(Inject::class.java).value
+
+                        if (injectKey !in injectionMap) {
+                            throw IllegalArgumentException("Cannot inject @Inject($injectKey). No value present for $injectKey")
+                        }
+
+                        inject(field, service, injectionMap[injectKey])
+                    }
+                }
 
                 services.forEach { it.onMainLoopStarting() }
 

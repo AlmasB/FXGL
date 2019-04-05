@@ -7,11 +7,11 @@
 package com.almasb.fxgl.notification.impl
 
 import com.almasb.fxgl.core.Inject
-import com.almasb.fxgl.core.MasterTimer
-import com.almasb.fxgl.core.OverlayRoot
+import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.notification.Notification
 import com.almasb.fxgl.notification.NotificationService
+import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.time.Timer
 import javafx.scene.Group
 import javafx.scene.paint.Color
@@ -33,13 +33,16 @@ class NotificationServiceProvider : NotificationService {
 
     private var showing = false
 
-    @OverlayRoot
+    @Inject("overlayRoot")
     private lateinit var root: Group
-    @MasterTimer
-    @Inject("MasterTimer")
+
+    @Inject("masterTimer")
     private lateinit var timer: Timer
 
-    private val notificationView by lazy { XboxNotificationView() }
+    @Inject("notificationViewClass")
+    private lateinit var notificationViewClass: Class<out NotificationView>
+
+    private val notificationView by lazy { ReflectionUtils.newInstance(notificationViewClass) }
 
     /**
      * Shows a notification with given text.

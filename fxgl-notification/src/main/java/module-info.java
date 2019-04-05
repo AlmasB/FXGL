@@ -8,6 +8,7 @@ module fxgl.notification {
     requires fxgl.ui;
 
     exports com.almasb.fxgl.notification;
+    exports com.almasb.fxgl.notification.view;
 
     opens com.almasb.fxgl.notification.impl to fxgl.core;
 

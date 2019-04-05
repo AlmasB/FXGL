@@ -4,12 +4,11 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.notification.impl
+package com.almasb.fxgl.notification.view
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationDSL
 import com.almasb.fxgl.notification.Notification
-import com.almasb.fxgl.notification.NotificationView
 import com.almasb.fxgl.ui.FXGLUIConfig
 import javafx.geometry.Point2D
 import javafx.scene.shape.Circle
@@ -24,7 +23,7 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-internal class XboxNotificationView : NotificationView() {
+class XboxNotificationView : NotificationView() {
 
     /**
      * Imitates Xbox One style circle.

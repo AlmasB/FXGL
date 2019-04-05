@@ -4,9 +4,10 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.notification
+package com.almasb.fxgl.notification.view
 
 import com.almasb.fxgl.core.Updatable
+import com.almasb.fxgl.notification.Notification
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 
