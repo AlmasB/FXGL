@@ -30,7 +30,11 @@ class ViewComponent
     val z: ReadOnlyIntegerProperty = ReadOnlyIntegerWrapper(0)
 
     @get:JvmName("opacityProperty")
-    val opacity = SimpleDoubleProperty(1.0)
+    val opacityProp = SimpleDoubleProperty(1.0)
+
+    var opacity: Double
+        get() = opacityProp.value
+        set(value) { opacityProp.value = value }
 
     private val propView: ObjectProperty<View> = SimpleObjectProperty<View>(initialView)
 
@@ -54,7 +58,7 @@ class ViewComponent
     private val onClickListener = EventHandler<MouseEvent> { listeners.forEach { it.onClick() } }
 
     init {
-        parent.opacityProperty().bind(opacity)
+        parent.opacityProperty().bind(opacityProp)
 
         parent.addEventHandler(MouseEvent.MOUSE_CLICKED, onClickListener)
     }
