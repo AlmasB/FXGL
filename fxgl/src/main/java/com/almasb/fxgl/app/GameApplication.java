@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.core.EngineService;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.dev.DevService;
 import com.almasb.fxgl.dsl.FXGL;
@@ -15,7 +14,6 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.util.Map;
-import java.util.ServiceLoader;
 
 import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
 
@@ -201,8 +199,9 @@ public abstract class GameApplication {
         public void start(Stage stage) {
             var engine = new Engine(app, settings, stage);
 
-            ServiceLoader.load(EngineService.class)
-                    .forEach(engine::addService);
+            settings.getEngineServices().forEach(serviceClass ->
+                    engine.addService(ReflectionUtils.newInstance(serviceClass))
+            );
 
             if (settings.getApplicationMode() != ApplicationMode.RELEASE) {
                 engine.addService(new DevService());

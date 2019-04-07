@@ -6,9 +6,12 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.audio.AudioPlayer
+import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.local.Language
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Optional
+import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
 import com.almasb.fxgl.saving.UserProfile
@@ -170,6 +173,11 @@ class GameSettings(
 
         /* CUSTOMIZABLE SERVICES BELOW */
 
+        var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
+                AudioPlayer::class.java,
+                NotificationServiceProvider::class.java
+        ),
+
         /**
          * Provide a custom scene factory.
          */
@@ -223,6 +231,7 @@ class GameSettings(
                 isExperimentalTiledLargeMap,
                 configClass,
                 //achievementStoreClass,
+                engineServices,
                 sceneFactory,
                 dialogFactory,
                 uiFactory,
@@ -352,6 +361,8 @@ class ReadOnlyGameSettings internal constructor(
         //private val achievementStoreClassInternal: Class<out AchievementStore>?,
 
         /* CUSTOMIZABLE SERVICES BELOW */
+
+        val engineServices: List<Class<out EngineService>>,
 
         /**
          * Provide a custom scene factory.

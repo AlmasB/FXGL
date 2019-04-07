@@ -10,7 +10,6 @@ module fxgl.notification {
     exports com.almasb.fxgl.notification;
     exports com.almasb.fxgl.notification.view;
 
+    exports com.almasb.fxgl.notification.impl to fxgl.all;
     opens com.almasb.fxgl.notification.impl to fxgl.core;
-
-    provides com.almasb.fxgl.core.EngineService with com.almasb.fxgl.notification.impl.NotificationServiceProvider;
 }
