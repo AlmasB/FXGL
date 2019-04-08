@@ -175,4 +175,8 @@ class PropertyMap {
             return propertyName == other.propertyName && propertyListener === other.propertyListener
         }
     }
+
+    override fun toString(): String {
+        return properties.toMap().toString()
+    }
 }

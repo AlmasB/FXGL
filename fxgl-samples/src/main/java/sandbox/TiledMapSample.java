@@ -11,6 +11,7 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.ui.FXGLCheckBox;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -48,7 +49,15 @@ public class TiledMapSample extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new MyEntityFactory());
 
-        setLevelFromMap("tmx/map_with_gid_objects.tmx");
+        var level = setLevelFromMap("tmx/map_with_gid_objects.tmx");
+
+        var map = new HashMap<String, Integer>();
+        map.put("h", 1);
+        map.put("kjj", 2);
+
+        System.out.println(map);
+
+        System.out.println(level.getProperties());
 
 //        Level level = getAssetLoader().loadLevel("tmx/map_with_gid_objects.tmx", new TMXLevelLoader());
 //
