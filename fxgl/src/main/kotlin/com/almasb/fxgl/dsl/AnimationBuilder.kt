@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneListener
 import javafx.animation.Interpolator
 import javafx.beans.property.DoubleProperty
@@ -172,7 +173,7 @@ class AnimationBuilder {
             buildAndPlay(FXGL.getGameScene())
         }
 
-        fun buildAndPlay(scene: FXGLScene) {
+        fun buildAndPlay(scene: Scene) {
             build().also {
                 val l = it.toListener()
 
