@@ -20,6 +20,7 @@ import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
+import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.tiled.TMXLevelLoader
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.UserAction
@@ -313,10 +314,11 @@ class FXGL private constructor() { companion object {
     /**
      * @param mapFileName name of the .json file or the .tmx file
      */
-    @JvmStatic fun setLevelFromMap(mapFileName: String) {
+    @JvmStatic fun setLevelFromMap(mapFileName: String): Level {
         if (mapFileName.endsWith(".tmx")) {
             val level = getAssetLoader().loadLevel(mapFileName, TMXLevelLoader())
             getGameWorld().setLevel(level)
+            return level
         } else {
             throw IllegalArgumentException("Unknown Tiled map format: $mapFileName")
         }
