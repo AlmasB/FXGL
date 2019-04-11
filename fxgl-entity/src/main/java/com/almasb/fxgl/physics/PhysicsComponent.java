@@ -347,12 +347,25 @@ public final class PhysicsComponent extends Component {
     }
 
     /**
+     * Deprecated: use overwritePosition(point).
+     *
      * Repositions an entity that supports physics directly in the physics world.
      * Note: depending on how it is used, it may cause non-physical behavior.
      *
      * @param point point in game world coordinates (pixels)
      */
+    @Deprecated
     public void reposition(Point2D point) {
+        overwritePosition(point);
+    }
+
+    /**
+     * Repositions an entity that supports physics directly in the physics world.
+     * Note: depending on how it is used, it may cause non-physical behavior.
+     *
+     * @param point point in game world coordinates (pixels)
+     */
+    public void overwritePosition(Point2D point) {
         double w = getEntity().getWidth();
         double h = getEntity().getHeight();
 
@@ -362,5 +375,15 @@ public final class PhysicsComponent extends Component {
         ));
 
         getBody().setTransform(positionMeters, getBody().getAngle());
+    }
+
+    /**
+     * Overwrite entity's angle in the physics world.
+     * May cause non-physical behavior.
+     *
+     * @param angDegrees angle in degrees
+     */
+    public void overwriteAngle(double angDegrees) {
+        getBody().setTransform(getBody().getPosition(), (float) -FXGLMath.toRadians(angDegrees));
     }
 }
