@@ -50,11 +50,10 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
                 TitledPane("Game vars", createContentGameVars()),
                 TitledPane("Entities", createContentEntities())
         )
-        acc.prefWidth = 350.0
+        acc.prefWidth = 340.0
 
         val scroll = ScrollPane(acc)
-        scroll.prefHeight = scene.height
-        scroll.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+        scroll.setPrefSize(350.0, scene.height)
 
         panel.children += scroll
 
