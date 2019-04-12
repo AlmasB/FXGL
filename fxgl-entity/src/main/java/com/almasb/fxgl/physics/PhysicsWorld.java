@@ -510,6 +510,9 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
             if (!pair.getA().isActive() || !pair.getB().isActive()
                     || !isCollidable(pair.getA()) || !isCollidable(pair.getB())) {
 
+                // tell the pair that collision ended
+                pair.collisionEnd();
+
                 it.remove();
                 Pools.free(pair);
                 continue;
