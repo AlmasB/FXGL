@@ -84,7 +84,7 @@
         <build.helper.version>3.0.0</build.helper.version>
 
         <!-- dependencies -->
-        <jfx.version>11.0.2</jfx.version>
+        <jfx.version>12</jfx.version>
         <kotlin.version>1.3.21</kotlin.version>
         <sslogger.version>1.0</sslogger.version>
 
