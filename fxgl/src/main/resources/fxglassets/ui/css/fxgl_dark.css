@@ -417,6 +417,35 @@ Under Apache License 2.0
     -fx-background-color: white;
 }
 
+
+
 .dev-pane .color-picker {
     -fx-color-label-visible: false;
+}
+
+
+
+.dev-pane .choice-box {
+    -fx-background-color: black, black, black, white;
+    -fx-background-radius: 0, 0, 0, 0;
+    -fx-padding: 0 2 0 2;
+}
+
+
+
+.dev-pane .scroll-pane {
+    -fx-background: black;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.dev-pane .scroll-pane .scroll-bar {
+    -fx-background-color: rgb(96,96,96);
+    -fx-background-radius: 1.5em;
+}
+
+.dev-pane .scroll-pane .scroll-bar .increment-arrow,
+.dev-pane .scroll-pane .scroll-bar .decrement-arrow {
+	-fx-shape: " ";
+	-fx-padding: 0;
 }

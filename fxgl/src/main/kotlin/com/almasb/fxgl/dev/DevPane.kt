@@ -9,17 +9,28 @@ package com.almasb.fxgl.dev
 import com.almasb.fxgl.app.GameScene
 import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.dsl.getGameWorld
+import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.EntityWorldListener
 import com.almasb.fxgl.ui.FXGLCheckBox
 import com.almasb.fxgl.ui.InGamePanel
+import javafx.beans.binding.*
 import javafx.beans.property.*
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
-import javafx.scene.control.Accordion
-import javafx.scene.control.ColorPicker
-import javafx.scene.control.TitledPane
+import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
+import javafx.scene.text.Font
+import javafx.scene.text.FontWeight
+import javafx.scene.text.Text
+import javafx.scene.layout.Priority
+import javafx.scene.layout.RowConstraints
+
+
 
 /**
  *
@@ -29,6 +40,8 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
 
     private val panel = InGamePanel(350.0, scene.height)
 
+    private val entities = FXCollections.observableArrayList<Entity>()
+
     val isOpen: Boolean
         get() = panel.isOpen
 
@@ -37,11 +50,18 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
 
         val acc =  Accordion(
                 TitledPane("Dev vars", createContentDevVars()),
-                TitledPane("Game vars", createContentGameVars())
+                TitledPane("Game vars", createContentGameVars()),
+                TitledPane("Entities", createContentEntities())
         )
         acc.prefWidth = 350.0
 
-        panel.children += acc
+        val scroll = ScrollPane(acc)
+
+        //scroll.setPrefSize(350.0, scene.height)
+        scroll.prefHeight = scene.height
+        scroll.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+
+        panel.children += scroll
 
         scene.addUINode(panel)
     }
@@ -135,6 +155,114 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
         }
 
         vbox.children.add(pane)
+
+        return vbox
+    }
+
+    private fun createContentEntities(): Parent {
+        val vbox = VBox()
+        vbox.padding = Insets(15.0)
+        vbox.alignment = Pos.TOP_CENTER
+
+        getGameWorld().addWorldListener(object : EntityWorldListener {
+            override fun onEntityAdded(entity: Entity) {
+                entities += entity
+            }
+
+            override fun onEntityRemoved(entity: Entity) {
+                entities -= entity
+            }
+        })
+
+        entities.addAll(getGameWorld().entities)
+
+        val innerBox = VBox(5.0)
+        innerBox.padding = Insets(15.0)
+        innerBox.alignment = Pos.TOP_CENTER
+
+        val choiceBox = ChoiceBox(entities)
+        choiceBox.prefWidth = 260.0
+
+        choiceBox.selectionModel.selectedItemProperty().addListener { _, _, entity ->
+            entity?.let {
+                innerBox.children.clear()
+
+                it.components.sortedBy { it.javaClass.simpleName }
+                        .forEach { comp ->
+                    val pane = GridPane()
+                    pane.hgap = 25.0
+                    pane.vgap = 10.0
+
+//                    val growingRow = ColumnConstraints(300.0)
+//                    growingRow.hgrow = Priority.NEVER
+//
+//                            pane.columnConstraints += growingRow
+
+                    var index = 0
+
+                    val title = FXGL.getUIFactory().newText(comp.javaClass.simpleName.removeSuffix("Component"), Color.ANTIQUEWHITE, 22.0)
+
+                    pane.addRow(index++, title)
+
+                    pane.addRow(index++, Separator())
+
+                    comp.javaClass.methods
+                            .filter { it.name.endsWith("Property") }
+                            .sortedBy { it.name }
+                            .forEach { method ->
+
+                                val textKey = FXGL.getUIFactory().newText(method.name.removeSuffix("Property"), Color.WHITE, 18.0)
+
+                                val value = method.invoke(comp)
+                                val textValue = FXGL.getUIFactory().newText("", Color.WHITE, 18.0)
+
+                                when (value) {
+                                    is BooleanExpression -> {
+                                        textValue.textProperty().bind(value.asString())
+                                    }
+
+                                    is IntegerExpression -> {
+                                        textValue.textProperty().bind(value.asString())
+                                    }
+
+                                    is DoubleExpression -> {
+                                        textValue.textProperty().bind(value.asString("%.2f"))
+                                    }
+
+                                    is StringExpression -> {
+                                        textValue.textProperty().bind(value)
+                                    }
+
+                                    is ObjectExpression<*> -> {
+                                        textValue.textProperty().bind(value.asString())
+                                    }
+
+                                    is ObservableList<*> -> {
+                                        // TODO: 
+                                    }
+
+                                    else -> {
+                                        throw IllegalArgumentException("Unknown value type: ${value.javaClass}")
+                                    }
+                                }
+
+                                pane.addRow(index++, textKey, textValue)
+                            }
+
+                    pane.addRow(index++, Text(""))
+
+                    innerBox.children += pane
+                }
+            }
+        }
+
+        if (entities.isNotEmpty()) {
+            choiceBox.selectionModel.selectFirst()
+        }
+
+        //vbox.prefWidth = 340.0
+
+        vbox.children.addAll(choiceBox, innerBox)
 
         return vbox
     }
