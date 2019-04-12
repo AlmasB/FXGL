@@ -22,15 +22,12 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.*
-import javafx.scene.layout.*
+import javafx.scene.layout.GridPane
+import javafx.scene.layout.Pane
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.scene.text.Font
-import javafx.scene.text.FontWeight
+import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
-import javafx.scene.layout.Priority
-import javafx.scene.layout.RowConstraints
-
-
 
 /**
  *
@@ -56,8 +53,6 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
         acc.prefWidth = 350.0
 
         val scroll = ScrollPane(acc)
-
-        //scroll.setPrefSize(350.0, scene.height)
         scroll.prefHeight = scene.height
         scroll.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
 
@@ -193,18 +188,12 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
                     pane.hgap = 25.0
                     pane.vgap = 10.0
 
-//                    val growingRow = ColumnConstraints(300.0)
-//                    growingRow.hgrow = Priority.NEVER
-//
-//                            pane.columnConstraints += growingRow
-
                     var index = 0
 
                     val title = FXGL.getUIFactory().newText(comp.javaClass.simpleName.removeSuffix("Component"), Color.ANTIQUEWHITE, 22.0)
 
                     pane.addRow(index++, title)
-
-                    pane.addRow(index++, Separator())
+                    pane.addRow(index++, Rectangle(165.0, 2.0, Color.ANTIQUEWHITE))
 
                     comp.javaClass.methods
                             .filter { it.name.endsWith("Property") }
@@ -238,7 +227,7 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
                                     }
 
                                     is ObservableList<*> -> {
-                                        // TODO: 
+                                        // TODO:
                                     }
 
                                     else -> {
@@ -259,8 +248,6 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
         if (entities.isNotEmpty()) {
             choiceBox.selectionModel.selectFirst()
         }
-
-        //vbox.prefWidth = 340.0
 
         vbox.children.addAll(choiceBox, innerBox)
 
