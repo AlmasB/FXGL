@@ -156,7 +156,7 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
     private fun createContentEntities(): Parent {
         val vbox = VBox()
         vbox.padding = Insets(15.0)
-        vbox.alignment = Pos.TOP_CENTER
+        vbox.alignment = Pos.TOP_LEFT
 
         getGameWorld().addWorldListener(object : EntityWorldListener {
             override fun onEntityAdded(entity: Entity) {
@@ -172,14 +172,30 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
 
         val innerBox = VBox(5.0)
         innerBox.padding = Insets(15.0)
-        innerBox.alignment = Pos.TOP_CENTER
+        innerBox.alignment = Pos.TOP_LEFT
 
+        // TODO: find a way to shorten name, so dont use toString()
         val choiceBox = ChoiceBox(entities)
         choiceBox.prefWidth = 260.0
 
-        choiceBox.selectionModel.selectedItemProperty().addListener { _, _, entity ->
+        val highlight = Rectangle(0.0, 0.0, null)
+        highlight.strokeWidth = 3.0
+        highlight.stroke = Color.LIGHTGOLDENRODYELLOW
+
+        choiceBox.selectionModel.selectedItemProperty().addListener { _, old, entity ->
+
+            old?.let {
+                it.viewComponent.parent.children -= highlight
+            }
+
             entity?.let {
                 innerBox.children.clear()
+
+                highlight.width = it.width
+                highlight.height = it.height
+
+                // highlight selected entity
+                it.viewComponent.parent.children += highlight
 
                 it.components.sortedBy { it.javaClass.simpleName }
                         .forEach { comp ->
