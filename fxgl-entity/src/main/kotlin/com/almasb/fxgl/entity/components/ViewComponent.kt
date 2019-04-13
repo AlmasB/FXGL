@@ -48,9 +48,18 @@ class ViewComponent
                 parent.children[0] = value.node
             }
 
+            propView.value?.node?.opacityProperty()?.unbind()
+
             propView.value = value
+
+            // we only apply effects to the first child aka game view
+            // so debug views stay unaffected
+            propView.value.node.opacityProperty().bind(opacityProp)
         }
 
+    /**
+     * "Parent" of views created from Node since Node is not subtype of View.
+     */
     private val entityView by lazy { EntityView() }
 
     private val listeners = arrayListOf<ClickListener>()
@@ -58,8 +67,6 @@ class ViewComponent
     private val onClickListener = EventHandler<MouseEvent> { listeners.forEach { it.onClick() } }
 
     init {
-        parent.opacityProperty().bind(opacityProp)
-
         parent.addEventHandler(MouseEvent.MOUSE_CLICKED, onClickListener)
     }
 
