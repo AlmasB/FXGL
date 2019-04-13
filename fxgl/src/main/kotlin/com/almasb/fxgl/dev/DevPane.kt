@@ -28,6 +28,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
+import javafx.util.StringConverter
 
 /**
  *
@@ -174,8 +175,16 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
         innerBox.padding = Insets(15.0)
         innerBox.alignment = Pos.TOP_LEFT
 
-        // TODO: find a way to shorten name, so dont use toString()
         val choiceBox = ChoiceBox(entities)
+        choiceBox.converter = object : StringConverter<Entity>() {
+            override fun fromString(string: String): Entity {
+                throw AssertionError("Not supposed to be called")
+            }
+
+            override fun toString(entity: Entity): String {
+                return entity.type.toString()
+            }
+        }
         choiceBox.prefWidth = 260.0
 
         val highlight = Rectangle(0.0, 0.0, null)
