@@ -9,6 +9,7 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -131,15 +132,43 @@ public class PlatformerSample extends GameApplication {
                 .with(new PhysicsComponent())
                 .buildAndAttach();
 
+        EntityView view = new EntityView();
+
+        var first = new Polygon(
+                0, 0, 200, 0, 250, 100, 0, 30
+        );
+        first.setTranslateX(-15);
+        first.setTranslateY(10);
+
+        view.addNode(first);
+
+        Polygon second = new Polygon(
+                0, -30, 30, -30, 60, 30, 0, 30
+        );
+        second.setTranslateX(280);
+        second.setTranslateY(50);
+        view.addNode(second);
+
+        var third = new Rectangle(30, 30);
+        third.setTranslateX(250);
+        third.setTranslateY(-30);
+        view.addNode(third);
+
         poly = entityBuilder()
                 .at(180, 350)
-                .view(new Polygon(
-                        0, 0, 200, 0, 250, 100, 0, 30
-                ))
-                .bbox(new HitBox("Main", BoundingShape.polygon(
+                .view(view)
+                .bbox(new HitBox("Main", new Point2D(-15, 10), BoundingShape.polygon(
                         new Point2D(0, 0),
                         new Point2D(200, 0),
                         new Point2D(250, 100),
+                        new Point2D(0, 30)
+                )))
+                .bbox(new HitBox("2nd", new Point2D(250, -30), BoundingShape.box(30, 30)))
+                //.bbox(new HitBox("4th", new Point2D(280, 0), BoundingShape.box(30, 30)))
+                .bbox(new HitBox("3rd", new Point2D(280, 50), BoundingShape.polygon(
+                        new Point2D(0, -30),
+                        new Point2D(30, -30),
+                        new Point2D(60, 30),
                         new Point2D(0, 30)
                 )))
                 .with(new PhysicsComponent())

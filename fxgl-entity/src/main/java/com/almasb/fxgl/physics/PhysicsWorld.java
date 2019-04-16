@@ -7,7 +7,6 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
-import com.almasb.sslogger.Logger;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.core.pool.Pools;
@@ -15,17 +14,20 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityWorldListener;
 import com.almasb.fxgl.entity.components.BoundingBoxComponent;
 import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.TypeComponent;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactFilter;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactImpulse;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.collision.Manifold;
-import com.almasb.fxgl.physics.box2d.collision.shapes.*;
+import com.almasb.fxgl.physics.box2d.collision.shapes.ChainShape;
+import com.almasb.fxgl.physics.box2d.collision.shapes.CircleShape;
+import com.almasb.fxgl.physics.box2d.collision.shapes.PolygonShape;
+import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
-import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef;
+import com.almasb.sslogger.Logger;
 import javafx.beans.value.ChangeListener;
-import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 
@@ -652,11 +654,12 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
                 return circle(w, boundsCenterLocal);
 
             case POLYGON:
-                // TODO: clean up + scale does not work properly
+
+                // TODO: clean up
                 if (boundingShape.data instanceof Dimension2D) {
                     return polygonAsBox(w, h, boundsCenterLocal);
                 } else {
-                    return polygon((Point2D[]) boundingShape.data, boundsCenterLocal, e.getBoundingBoxComponent().getCenterLocal());
+                    return polygon((Point2D[]) boundingShape.data, boundsCenterLocal, e.getBoundingBoxComponent().getCenterLocal(), e.getTransformComponent(), box, e.getBoundingBoxComponent());
                 }
 
             case CHAIN:
@@ -694,12 +697,31 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         return shape;
     }
 
-    private Shape polygon(Point2D[] points, Point2D boundsCenterLocal, Point2D bboxCenterLocal) {
+    private Shape polygon(Point2D[] points, Point2D boundsCenterLocal, Point2D bboxCenterLocal, TransformComponent t, HitBox box, BoundingBoxComponent bboxComp) {
 
         Vec2[] vertices = new Vec2[points.length];
 
+        var bboxCenterLocalNew = new Point2D(
+                bboxCenterLocal.getX() * t.getScaleX() + (1 - t.getScaleX()) * t.getScaleOrigin().getX(),
+                bboxCenterLocal.getY() * t.getScaleY() + (1 - t.getScaleY()) * t.getScaleOrigin().getY()
+        );
+
+        var boundsCenterLocalNew = new Point2D(
+                boundsCenterLocal.getX() * t.getScaleX() + (1 - t.getScaleX()) * t.getScaleOrigin().getX(),
+                boundsCenterLocal.getY() * t.getScaleY() + (1 - t.getScaleY()) * t.getScaleOrigin().getY()
+        );
+
         for (int i = 0; i < vertices.length; i++) {
-            vertices[i] = toVector(points[i].subtract(boundsCenterLocal)).subLocal(toVector(bboxCenterLocal));
+
+            var p = new Point2D(
+                    (points[i].getX() + box.getMinX()) * t.getScaleX() + (1 - t.getScaleX()) * t.getScaleOrigin().getX(),
+                    (points[i].getY() + box.getMinY()) * t.getScaleY() + (1 - t.getScaleY()) * t.getScaleOrigin().getY()
+            );
+
+            vertices[i] = toVector(p.subtract(boundsCenterLocalNew))
+                    .subLocal(toVector(bboxCenterLocalNew))
+                    .addLocal(toVector(boundsCenterLocalNew))
+                    .subLocal(toMeters(bboxComp.getMinXLocal()), -toMeters(bboxComp.getMinYLocal()));
         }
 
         PolygonShape shape = new PolygonShape();
