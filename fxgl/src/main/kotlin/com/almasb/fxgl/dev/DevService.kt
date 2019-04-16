@@ -114,6 +114,9 @@ class DevService : EngineService {
 
                     val polygonView = Polygon(*polygonPoints.flatMap { listOf(it.x, it.y) }.toDoubleArray())
 
+                    polygonView.translateX = it.minX
+                    polygonView.translateY = it.minY
+
                     polygonView.fill = null
                     polygonView.strokeWidth = 2.0
                     polygonView.strokeProperty().bind(FXGL.getSettings().devBBoxColor)
