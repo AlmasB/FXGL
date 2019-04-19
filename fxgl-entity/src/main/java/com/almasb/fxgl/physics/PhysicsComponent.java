@@ -16,6 +16,8 @@ import com.almasb.fxgl.physics.box2d.dynamics.Body;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyDef;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
@@ -37,6 +39,8 @@ public final class PhysicsComponent extends Component {
     Body body;
 
     private List<Entity> groundedList = new ArrayList<>();
+
+    private ReadOnlyBooleanWrapper onGroundProperty = new ReadOnlyBooleanWrapper(false);
 
     private boolean raycastIgnored = false;
 
@@ -61,6 +65,15 @@ public final class PhysicsComponent extends Component {
      */
     public boolean isOnGround() {
         return !groundedList.isEmpty();
+    }
+
+    /**
+     * Note: for this to work you need to add ground sensor.
+     *
+     * @return true if entity is standing on top of another entity with physics component
+     */
+    public ReadOnlyBooleanProperty onGroundProperty() {
+        return onGroundProperty.getReadOnlyProperty();
     }
 
     public final Body getBody() {
@@ -89,6 +102,7 @@ public final class PhysicsComponent extends Component {
             @Override
             protected void onCollisionBegin(Entity other) {
                 groundedList.add(other);
+                onGroundProperty.setValue(isOnGround());
             }
 
             @Override
@@ -99,6 +113,7 @@ public final class PhysicsComponent extends Component {
             @Override
             protected void onCollisionEnd(Entity other) {
                 groundedList.remove(other);
+                onGroundProperty.setValue(isOnGround());
             }
         });
     }
