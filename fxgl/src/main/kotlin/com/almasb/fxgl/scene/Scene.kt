@@ -63,4 +63,6 @@ abstract class Scene {
         onExit()
         input.clearAll()
     }
+
+    override fun toString(): String = javaClass.simpleName
 }
