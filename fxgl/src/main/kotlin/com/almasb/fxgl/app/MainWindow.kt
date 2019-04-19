@@ -53,6 +53,8 @@ internal class MainWindow(
 
     val currentFXGLScene = ReadOnlyObjectWrapper<FXGLScene>(scene)
 
+    val currentStateProperty = ReadOnlyObjectWrapper<Scene>(scene)
+
     private val scenes = arrayListOf<FXGLScene>()
 
     private val scaledWidth: DoubleProperty = SimpleDoubleProperty()
@@ -213,6 +215,8 @@ internal class MainWindow(
         log.debug("$prevState -> $scene")
 
         currentFXGLScene.value.enter(prevState)
+
+        currentStateProperty.value = currentState
     }
 
     fun pushState(newState: SubScene) {
@@ -231,6 +235,8 @@ internal class MainWindow(
         getCurrentScene().root.children.add(newState.view)
 
         newState.enter(prevState)
+
+        currentStateProperty.value = currentState
     }
 
     fun popState() {
@@ -247,6 +253,8 @@ internal class MainWindow(
 
         // pop view
         getCurrentScene().root.children.remove(prevState.view)
+
+        currentStateProperty.value = currentState
 
         log.debug("$currentState <- $prevState")
     }

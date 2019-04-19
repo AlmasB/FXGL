@@ -7,8 +7,8 @@ import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.FXGLExecutor
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.local.Local
-import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.core.reflect.ReflectionUtils.*
+import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
+import com.almasb.fxgl.core.reflect.ReflectionUtils.inject
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.GameWorld
@@ -20,7 +20,9 @@ import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.scene.ProgressDialog
+import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.Display
 import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.fxgl.ui.FXGLUIConfig
@@ -95,6 +97,17 @@ internal class Engine(
     internal val eventBus by lazy { EventBus() }
     internal val display by lazy { dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
+
+    /**
+     * The 'always on' engine timer.
+     */
+    private val engineTimer = Timer()
+
+    /**
+     * The root for the overlay group that is constantly visible and on top
+     * of every other UI element. For things like notifications.
+     */
+    private val overlayRoot = Group()
 
     private val profileName = SimpleStringProperty("no-profile")
 
@@ -178,15 +191,19 @@ internal class Engine(
                 // this is called once per application lifetime
                 runPreInit()
 
-                // TODO: refactor
-                val overlayRoot = Group()
+                addOverlay(startupScene)
 
-                playState.addUINode(overlayRoot)
+                mainWindow.currentStateProperty.addListener { _, oldScene, newScene ->
+                    log.debug("Removing overlay from $oldScene and adding to $newScene")
+
+                    removeOverlay(oldScene)
+                    addOverlay(newScene)
+                }
 
                 // TODO: extract and make constant key names
                 val injectionMap = hashMapOf<String, Any>(
                         "overlayRoot" to overlayRoot,
-                        "masterTimer" to playState.timer,
+                        "masterTimer" to engineTimer,
                         "notificationViewClass" to settings.notificationViewClass
                 )
 
@@ -208,6 +225,22 @@ internal class Engine(
 
                 loop.start()
             }
+        }
+    }
+
+    private fun addOverlay(scene: Scene) {
+        if (scene is FXGLScene) {
+            scene.root.children += overlayRoot
+        } else if (scene is SubScene) {
+            scene.view.children += overlayRoot
+        }
+    }
+
+    private fun removeOverlay(scene: Scene) {
+        if (scene is FXGLScene) {
+            scene.root.children -= overlayRoot
+        } else if (scene is SubScene) {
+            scene.view.children -= overlayRoot
         }
     }
 
@@ -384,6 +417,8 @@ internal class Engine(
     }
 
     private fun loop(tpf: Double) {
+        engineTimer.update(tpf)
+
         mainWindow.onUpdate(tpf)
 
         services.forEach { it.onUpdate(tpf) }
