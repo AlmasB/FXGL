@@ -105,6 +105,9 @@ public class PlatformerSample extends GameApplication {
         player = createPlayer(100, 100, 40, 60);
 
         player.getTransformComponent().setScaleOrigin(new Point2D(20, 30));
+        player.getComponent(PhysicsComponent.class).onGroundProperty().addListener((o, oldValue, newValue) -> {
+            System.out.println(newValue ? "On Ground" : "In the air");
+        });
     }
 
     private void createPlatforms() {
