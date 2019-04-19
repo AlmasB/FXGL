@@ -18,49 +18,19 @@ import javafx.scene.transform.Scale
 abstract class FXGLScene
 @JvmOverloads constructor(width: Int = FXGL.getAppWidth(), height: Int = FXGL.getAppHeight()) : Scene() {
 
-    /**
-     * Top-level root node.
-     */
-    /**
-     * @return top-level root node of the scene
-     */
-    val root = Pane()
+    val viewport = Viewport(width.toDouble(), height.toDouble())
 
-    /**
-     * Root node for content.
-     */
-    /**
-     * @return root node of the content
-     */
-    val contentRoot: Pane
-
-
-    /**
-     * @return viewport
-     */
-    val viewport: Viewport
-
-    /**
-     * @return width
-     */
     val width: Double
         get() = root.prefWidth
 
-    /**
-     * @return height
-     */
     val height: Double
         get() = root.prefHeight
 
-
-
-    /**
-     * @return currently applied effect or null if no effect is applied
-     */
     /**
      * Applies given effect to the scene.
      *
      * @param effect the effect to apply
+     * @return currently applied effect or null if no effect is applied
      */
     var effect: Effect?
         get() = contentRoot.effect
@@ -71,34 +41,10 @@ abstract class FXGLScene
     private val active = SimpleBooleanProperty(false)
 
     init {
-        root.background = null
-
-        contentRoot = Pane()
-        contentRoot.background = null
-
-        root.children.addAll(contentRoot)
-
-        viewport = Viewport(width.toDouble(), height.toDouble())
-
         if (FXGL.isDesktop()) {
             setCursor("fxgl_default.png", Point2D(7.0, 6.0))
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Removes any effects applied to the scene.

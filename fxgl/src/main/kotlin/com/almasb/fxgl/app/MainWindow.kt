@@ -232,7 +232,7 @@ internal class MainWindow(
         subScenes.add(newState)
 
         // push view
-        getCurrentScene().root.children.add(newState.view)
+        getCurrentScene().root.children.add(newState.root)
 
         newState.enter(prevState)
 
@@ -252,7 +252,7 @@ internal class MainWindow(
         subScenes.removeAt(subScenes.size - 1)
 
         // pop view
-        getCurrentScene().root.children.remove(prevState.view)
+        getCurrentScene().root.children.remove(prevState.root)
 
         currentStateProperty.value = currentState
 

@@ -229,19 +229,11 @@ internal class Engine(
     }
 
     private fun addOverlay(scene: Scene) {
-        if (scene is FXGLScene) {
-            scene.root.children += overlayRoot
-        } else if (scene is SubScene) {
-            scene.view.children += overlayRoot
-        }
+        scene.root.children += overlayRoot
     }
 
     private fun removeOverlay(scene: Scene) {
-        if (scene is FXGLScene) {
-            scene.root.children -= overlayRoot
-        } else if (scene is SubScene) {
-            scene.view.children -= overlayRoot
-        }
+        scene.root.children -= overlayRoot
     }
 
     private fun loadLocalization() {
