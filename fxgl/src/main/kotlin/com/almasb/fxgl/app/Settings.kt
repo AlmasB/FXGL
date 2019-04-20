@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.achievement.AchievementManager
+import com.almasb.fxgl.achievement.AchievementStore
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.local.Language
@@ -26,6 +28,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
 import javafx.stage.StageStyle
 import java.util.*
+import java.util.Collections.unmodifiableList
 
 enum class MenuItem {
 
@@ -169,13 +172,13 @@ class GameSettings(
         /* CONFIGS */
 
         var configClass: Class<*>? = null,
-        //var achievementStoreClass: Class<out AchievementStore>? = null,
 
         /* CUSTOMIZABLE SERVICES BELOW */
 
         var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
                 AudioPlayer::class.java,
-                NotificationServiceProvider::class.java
+                NotificationServiceProvider::class.java,
+                AchievementManager::class.java
         ),
 
         /**
@@ -195,7 +198,9 @@ class GameSettings(
         @set:JvmName("setUIFactory")
         var uiFactory: UIFactory = FXGLUIFactory(),
 
-        var notificationViewClass: Class<out NotificationView> = XboxNotificationView::class.java
+        var notificationViewClass: Class<out NotificationView> = XboxNotificationView::class.java,
+
+        var achievementStores: List<AchievementStore> = arrayListOf()
 ) {
 
     fun toReadOnly(): ReadOnlyGameSettings {
@@ -213,7 +218,7 @@ class GameSettings(
                 isSingleStep,
                 applicationMode,
                 menuKey,
-                Collections.unmodifiableList(credits),
+                unmodifiableList(credits),
                 enabledMenuItems,
                 stageStyle,
                 appIcon,
@@ -230,12 +235,12 @@ class GameSettings(
                 secondsIn24h,
                 isExperimentalTiledLargeMap,
                 configClass,
-                //achievementStoreClass,
-                engineServices,
+                unmodifiableList(engineServices),
                 sceneFactory,
                 dialogFactory,
                 uiFactory,
-                notificationViewClass)
+                notificationViewClass,
+                unmodifiableList(achievementStores))
     }
 }
 
@@ -358,7 +363,6 @@ class ReadOnlyGameSettings internal constructor(
         /* CONFIGS */
 
         private val configClassInternal: Class<*>?,
-        //private val achievementStoreClassInternal: Class<out AchievementStore>?,
 
         /* CUSTOMIZABLE SERVICES BELOW */
 
@@ -380,7 +384,10 @@ class ReadOnlyGameSettings internal constructor(
         @get:JvmName("getUIFactory")
         val uiFactory: UIFactory,
 
-        val notificationViewClass: Class<out NotificationView>
+        val notificationViewClass: Class<out NotificationView>,
+
+        val achievementStores: List<AchievementStore>
+
 ) : UserProfileSavable {
 
     /* STATIC - cannot be modified at runtime */

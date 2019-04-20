@@ -207,7 +207,8 @@ internal class Engine(
                 val injectionMap = hashMapOf<String, Any>(
                         "overlayRoot" to overlayRoot,
                         "masterTimer" to engineTimer,
-                        "notificationViewClass" to settings.notificationViewClass
+                        "notificationViewClass" to settings.notificationViewClass,
+                        "achievementStores" to settings.achievementStores
                 )
 
                 services.forEach { service ->

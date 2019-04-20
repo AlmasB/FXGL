@@ -3,6 +3,7 @@
  */
 module fxgl.all {
     requires transitive fxgl.core;
+    requires transitive fxgl.achievement;
     requires transitive fxgl.animation;
     requires transitive fxgl.effects;
     requires transitive fxgl.entity;
@@ -19,9 +20,6 @@ module fxgl.all {
     requires transitive javafx.controls;
     requires transitive javafx.fxml;
     requires transitive javafx.swing;
-
-    uses com.almasb.fxgl.notification.NotificationService;
-    uses com.almasb.fxgl.core.EngineService;
 
     opens com.almasb.fxgl.dsl to fxgl.core;
     opens com.almasb.fxgl.dev to fxgl.core;
