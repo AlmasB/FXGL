@@ -113,7 +113,7 @@ class FSTest {
     }
 
     @Test
-    fun `Write creates parent dirs if necessary`() {
+    fun `Write creates parent dirs if necessary and does not fail when parent already exists`() {
         val data = "Test FXGL FS!"
 
         assertFalse(exists(path("parentdir")))
@@ -121,6 +121,9 @@ class FSTest {
         FS.writeDataTask(data, "parentdir/childfile.dat").run()
 
         assertTrue(exists(path("parentdir")))
+
+        // parentdir exists, check we can write
+        FS.writeDataTask(data, "parentdir/childfile.dat").run()
     }
 
     @Test
