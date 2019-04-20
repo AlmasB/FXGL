@@ -212,6 +212,12 @@ internal class Engine(
                     environmentVars[it.name.removePrefix("get").decapitalize()] = it.invoke(settings)
                 }
 
+                log.debug("Logging environment variables")
+
+                environmentVars.forEach { (key, value) ->
+                    log.debug("$key: $value")
+                }
+
                 services.forEach { service ->
                     findFieldsByAnnotation(service, Inject::class.java).forEach { field ->
                         val injectKey = field.getDeclaredAnnotation(Inject::class.java).value
