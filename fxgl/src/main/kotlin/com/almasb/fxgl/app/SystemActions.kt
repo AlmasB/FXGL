@@ -43,16 +43,14 @@ object SystemActions {
 
     private fun devOptions() = object : UserAction("Dev Options") {
 
-        private val devPane by lazy { DevPane(FXGL.getGameScene(), FXGL.getSettings()) }
-
         override fun onActionBegin() {
             if (FXGL.getSettings().applicationMode == ApplicationMode.RELEASE)
                 return
 
-            if (devPane.isOpen) {
-                devPane.close()
+            if (FXGL.getDevPane().isOpen) {
+                FXGL.getDevPane().close()
             } else {
-                devPane.open()
+                FXGL.getDevPane().open()
             }
         }
     }

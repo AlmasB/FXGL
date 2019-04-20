@@ -27,6 +27,7 @@ module fxgl.all {
     opens com.almasb.fxgl.dev to fxgl.core;
 
     exports com.almasb.fxgl.app;
+    exports com.almasb.fxgl.dev;
     exports com.almasb.fxgl.dsl;
     exports com.almasb.fxgl.dsl.components;
     exports com.almasb.fxgl.gameplay;

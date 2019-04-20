@@ -17,6 +17,8 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 abstract class Scene {
 
+    // TODO: add nicer API for adding/removing nodes
+
     /**
      * Top-level root node.
      */

@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
 import com.almasb.fxgl.core.reflect.ReflectionUtils.inject
 import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.dev.DevPane
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
@@ -97,6 +98,8 @@ internal class Engine(
     internal val eventBus by lazy { EventBus() }
     internal val display by lazy { dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
+
+    internal val devPane by lazy { DevPane(playState, settings) }
 
     /**
      * The 'always on' engine timer.

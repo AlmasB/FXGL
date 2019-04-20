@@ -98,6 +98,8 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun getSystemBundle() = engine.bundle
 
+    @JvmStatic fun getDevPane() = engine.devPane
+
     @JvmStatic fun getUIFactory() = getSettings().uiFactory
 
     @JvmStatic fun getAssetLoader() = engine.assetLoader

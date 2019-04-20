@@ -19,13 +19,16 @@ import javafx.beans.property.*
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.geometry.Insets
+import javafx.geometry.Point2D
 import javafx.geometry.Pos
+import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.*
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import javafx.util.StringConverter
@@ -59,6 +62,32 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
         panel.children += scroll
 
         scene.addUINode(panel)
+    }
+
+    private val debugPoints = hashMapOf<Point2D, Node>()
+
+    /**
+     * Adds a point view at the given point.
+     */
+    fun addDebugPoint(p: Point2D) {
+        val n = Circle(0.0, 0.0, 5.0, Color.color(0.0, 0.0, 1.0, 0.15))
+        n.stroke = Color.RED
+
+        val group = VBox(n, Text("${p.x}, ${p.y}"))
+        group.alignment = Pos.TOP_LEFT
+        group.translateX = p.x - n.radius
+        group.translateY = p.y - n.radius
+
+        scene.root.children += group
+
+        debugPoints[p] = group
+    }
+
+    /**
+     * Removes the view for the given point.
+     */
+    fun removeDebugPoint(p: Point2D) {
+        debugPoints.remove(p)?.let { scene.root.children -= it }
     }
 
     private fun createContentDevVars(): Pane {
