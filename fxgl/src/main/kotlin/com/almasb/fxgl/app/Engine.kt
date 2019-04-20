@@ -121,12 +121,17 @@ internal class Engine(
 
     private lateinit var saveLoadManager: SaveLoadManager
 
+    private val environmentVars = hashMapOf<String, Any>()
+
     init {
         log.debug("Initializing FXGL")
 
         version = loadVersion()
 
         logVersion()
+
+        environmentVars["overlayRoot"] = overlayRoot
+        environmentVars["masterTimer"] = engineTimer
     }
 
     private fun loadVersion(): String {
@@ -203,23 +208,19 @@ internal class Engine(
                     addOverlay(newScene)
                 }
 
-                // TODO: extract and make constant key names
-                val injectionMap = hashMapOf<String, Any>(
-                        "overlayRoot" to overlayRoot,
-                        "masterTimer" to engineTimer,
-                        "notificationViewClass" to settings.notificationViewClass,
-                        "achievementStores" to settings.achievementStores
-                )
+                settings.javaClass.declaredMethods.filter { it.name.startsWith("is") || it.name.startsWith("get") }.forEach {
+                    environmentVars[it.name.removePrefix("get").decapitalize()] = it.invoke(settings)
+                }
 
                 services.forEach { service ->
                     findFieldsByAnnotation(service, Inject::class.java).forEach { field ->
                         val injectKey = field.getDeclaredAnnotation(Inject::class.java).value
 
-                        if (injectKey !in injectionMap) {
+                        if (injectKey !in environmentVars) {
                             throw IllegalArgumentException("Cannot inject @Inject($injectKey). No value present for $injectKey")
                         }
 
-                        inject(field, service, injectionMap[injectKey])
+                        inject(field, service, environmentVars[injectKey])
                     }
                 }
 
