@@ -9,6 +9,7 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.dsl.components.RandomMoveComponent;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -40,7 +41,8 @@ public class BmpSample extends GameApplication {
 
         entityBuilder().at(FXGLMath.randomPoint(new Rectangle2D(0, 0, getAppWidth() - 55, getAppHeight() - 55)))
                 .type(Type.CRYSTAL)
-                .view(texture("ball_1.bmp", 64, 64))
+                .viewWithBBox(texture("ball_1.bmp", 32, 32))
+                .with(new RandomMoveComponent(new Rectangle2D(0, 0, getAppWidth(), getAppHeight()), 250))
                 //.view(texture("YellowCrystal.png").toAnimatedTexture(8, Duration.seconds(0.66)).loop())
                 .buildAndAttach();
     }

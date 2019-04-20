@@ -6,6 +6,7 @@
 
 package s01basics;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
@@ -25,6 +26,8 @@ public class NotificationSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("NotificationSample");
+        settings.setMenuEnabled(true);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override

@@ -8,6 +8,7 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.input.Input;
@@ -68,6 +69,8 @@ public class PlatformerSample extends GameApplication {
                 if (physics.isOnGround()) {
                     physics.setVelocityY(-300);
                 }
+
+                FXGL.getDevPane().addDebugPoint(player.getCenter());
             }
         }, KeyCode.W);
 
