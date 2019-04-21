@@ -72,10 +72,10 @@ public class Entity {
     private GameWorld world = null;
 
     public Entity() {
-        addComponent(type);
-        addComponent(transform);
-        addComponent(bbox);
-        addComponent(view);
+        addComponentNoChecks(type);
+        addComponentNoChecks(transform);
+        addComponentNoChecks(bbox);
+        addComponentNoChecks(view);
     }
 
     /**
@@ -295,6 +295,10 @@ public class Entity {
 
         checkRequirementsMet(component.getClass());
 
+        addComponentNoChecks(component);
+    }
+
+    private void addComponentNoChecks(Component component) {
         injectFields(component);
 
         component.onAdded();
