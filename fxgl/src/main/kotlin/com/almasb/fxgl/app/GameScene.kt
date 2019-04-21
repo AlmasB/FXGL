@@ -16,16 +16,12 @@ import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.ui.UI
 import com.almasb.sslogger.Logger
-import javafx.beans.property.ReadOnlyIntegerProperty
-import javafx.beans.property.ReadOnlyIntegerWrapper
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.collections.ObservableList
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
-import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Represents the scene that shows entities on the screen during "play" mode.
@@ -59,6 +55,8 @@ internal constructor(width: Int, height: Int,
     private val uiRoot = Group()
 
     private val entities = ArrayList<Entity>()
+
+    private var isZSortingNeeded = false
 
     /**
      * @return unmodifiable list of UI nodes
@@ -112,6 +110,11 @@ internal constructor(width: Int, height: Int,
         viewport.onUpdate(tpf)
 
         FXGL.getApp().onUpdate(tpf)
+
+        if (isZSortingNeeded) {
+            sortZ()
+            isZSortingNeeded = false
+        }
     }
 
     /**
@@ -220,7 +223,7 @@ internal constructor(width: Int, height: Int,
 
         gameRoot.children.add(view.node)
 
-        sortZ()
+        isZSortingNeeded = true
     }
 
     fun removeGameView(view: GameView) {
