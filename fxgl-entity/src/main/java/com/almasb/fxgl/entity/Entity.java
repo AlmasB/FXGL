@@ -12,13 +12,12 @@ import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.util.EmptyRunnable;
-import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.entity.component.ComponentListener;
-import com.almasb.fxgl.entity.component.CoreComponent;
-import com.almasb.fxgl.entity.component.Required;
-import com.almasb.fxgl.entity.components.*;
-import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.core.util.Optional;
+import com.almasb.fxgl.entity.component.*;
+import com.almasb.fxgl.entity.components.BoundingBoxComponent;
+import com.almasb.fxgl.entity.components.TransformComponent;
+import com.almasb.fxgl.entity.components.TypeComponent;
+import com.almasb.fxgl.entity.components.ViewComponent;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -337,8 +336,7 @@ public class Entity {
 
     @SuppressWarnings("unchecked")
     private void injectFields(Component component) {
-        // equivalent to component.setEntity(this);
-        callInaccessible(component, getMethod(Component.class, "setEntity", Entity.class), this);
+        ComponentHelper.setEntity(component, this);
 
         forEach(
                 findFieldsByTypeRecursive(component, Component.class),
@@ -355,9 +353,7 @@ public class Entity {
 
         component.onRemoved();
 
-        // equivalent to component.setEntity(null);
-        // new Object[1] because it's varargs, so we pass an array of 1 param, which is null
-        callInaccessible(component, getMethod(Component.class, "setEntity", Entity.class), new Object[1]);
+        ComponentHelper.setEntity(component, null);
     }
 
     private <T extends Component> void notifyComponentAdded(T c) {
