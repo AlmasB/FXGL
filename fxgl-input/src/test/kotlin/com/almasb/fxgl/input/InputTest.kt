@@ -51,6 +51,16 @@ class InputTest {
     }
 
     @Test
+    fun `Action equality`() {
+        val action1: UserAction = object : UserAction("Up") {}
+        val action2: UserAction = object : UserAction("Up") {}
+        assertTrue(action1 == action2)
+
+        val action3: UserAction = object : UserAction("Down") {}
+        assertFalse(action1 == action3)
+    }
+
+    @Test
     fun `Test registering input does not affect mocking`() {
         assertTrue(input.registerInput)
 
