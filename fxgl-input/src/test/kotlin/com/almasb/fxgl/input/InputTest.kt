@@ -423,7 +423,7 @@ class InputTest {
 
         input.addAction(action, KeyCode.K)
 
-        assertThat(input.triggerProperty(action).value.getName(), `is`("K"))
+        assertThat(input.triggerProperty(action).value.name, `is`("K"))
     }
 
     @Test

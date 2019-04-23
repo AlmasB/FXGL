@@ -24,22 +24,22 @@ class TriggerTest {
     fun `Key trigger`() {
         val key = KeyTrigger(KeyCode.A)
 
-        assertTrue(key.isKey())
-        assertFalse(key.isButton())
-        assertThat(key.getModifier(), `is`(InputModifier.NONE))
+        assertTrue(key.isKey)
+        assertFalse(key.isButton)
+        assertThat(key.modifier, `is`(InputModifier.NONE))
         assertThat(key.key, `is`(KeyCode.A))
-        assertThat(key.getName(), `is`("A"))
+        assertThat(key.name, `is`("A"))
     }
 
     @Test
     fun `Mouse trigger`() {
         val btn = MouseTrigger(MouseButton.PRIMARY)
 
-        assertFalse(btn.isKey())
-        assertTrue(btn.isButton())
-        assertThat(btn.getModifier(), `is`(InputModifier.NONE))
+        assertFalse(btn.isKey)
+        assertTrue(btn.isButton)
+        assertThat(btn.modifier, `is`(InputModifier.NONE))
         assertThat(btn.button, `is`(MouseButton.PRIMARY))
-        assertThat(btn.getName(), `is`("LMB"))
+        assertThat(btn.name, `is`("LMB"))
     }
 
     @Test

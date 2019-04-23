@@ -16,16 +16,52 @@ import java.lang.RuntimeException
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 
+/**
+ * An abstraction for a key or a mouse button.
+ */
 interface Trigger {
 
-    fun getModifier(): InputModifier
-    fun getName(): String
-    fun isKey(): Boolean
-    fun isButton(): Boolean
+    /**
+     * A modifier associated with this trigger.
+     */
+    val modifier: InputModifier
+
+    /**
+     * For keys: W, S, A, D, F, G ...
+     * For mouse buttons: one of [LMB, MMB, RMB]
+     */
+    val name: String
+
+    /**
+     * True if this is a key trigger.
+     */
+    val isKey: Boolean
+
+    /**
+     * True if this is a mouse button trigger.
+     */
+    val isButton: Boolean
+
+    /**
+     * Given input [event] that occurred, returns true if this trigger fully
+     * (i.e. in CTRL+W, both CTRL modifier and W must match)
+     * matches the event's signature.
+     */
     fun isTriggered(event: InputEvent): Boolean
+
+    /**
+     * Given input [event] that occurred, returns true if this trigger partially
+     * (i.e. in CTRL+W, CTRL modifier or W must match)
+     * matches the event's signature.
+     */
     fun isReleased(event: InputEvent): Boolean
 }
 
+/**
+ * Wraps [trigger] with an observable trigger object and observable name.
+ * This is useful in the case the user rebinds actions to different triggers:
+ * we maintain the wrapper object the same and only update its internal data, i.e. trigger and name.
+ */
 internal class ObservableTrigger(trigger: Trigger) {
 
     val trigger = ReadOnlyObjectWrapper(trigger)
@@ -43,14 +79,12 @@ internal class ObservableTrigger(trigger: Trigger) {
 
 data class KeyTrigger
 @JvmOverloads constructor(val key: KeyCode,
-                          private val modifier: InputModifier = InputModifier.NONE) : Trigger {
+                          override val modifier: InputModifier = InputModifier.NONE) : Trigger {
 
-    override fun getModifier() = modifier
+    override val name: String = key.getName()
 
-    override fun getName() = key.getName()
-
-    override fun isKey() = true
-    override fun isButton() = false
+    override val isKey = true
+    override val isButton = false
 
     override fun isTriggered(event: InputEvent): Boolean {
         if (event !is KeyEvent)
@@ -78,7 +112,7 @@ data class KeyTrigger
 
 data class MouseTrigger
 @JvmOverloads constructor(val button: MouseButton,
-                          private val modifier: InputModifier = InputModifier.NONE) : Trigger {
+                          override val modifier: InputModifier = InputModifier.NONE) : Trigger {
 
     companion object {
         fun buttonFromString(value: String) = when(value) {
@@ -87,14 +121,19 @@ data class MouseTrigger
             "RMB" -> MouseButton.SECONDARY
             else -> throw RuntimeException("Must be one of [LMB, MMB, RMB]")
         }
+
+        fun buttonToString(button: MouseButton) = when(button) {
+            MouseButton.PRIMARY -> "LMB"
+            MouseButton.MIDDLE -> "MMB"
+            MouseButton.SECONDARY -> "RMB"
+            else -> throw RuntimeException("Not a mouse button")
+        }
     }
 
-    override fun getModifier() = modifier
+    override val name: String = buttonToString(button)
 
-    override fun getName() = buttonToString()
-
-    override fun isKey() = false
-    override fun isButton() = true
+    override val isKey = false
+    override val isButton = true
 
     override fun isTriggered(event: InputEvent): Boolean {
         if (event !is MouseEvent)
@@ -116,12 +155,5 @@ data class MouseTrigger
         return isTriggered(event)
     }
 
-    override fun toString() = (if (modifier == InputModifier.NONE) "" else "$modifier+") + buttonToString()
-
-    private fun buttonToString() = when(button) {
-        MouseButton.PRIMARY -> "LMB"
-        MouseButton.MIDDLE -> "MMB"
-        MouseButton.SECONDARY -> "RMB"
-        else -> throw RuntimeException("Not a mouse button")
-    }
+    override fun toString() = (if (modifier == InputModifier.NONE) "" else "$modifier+") + name
 }
