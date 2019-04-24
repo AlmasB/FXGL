@@ -63,10 +63,13 @@ class Input {
     fun getVectorFromMouse(gamePosition: Point2D): Point2D = getVectorToMouse(gamePosition).multiply(-1.0)
 
     /**
-     * @return registered action bindings
+     * Registered action bindings.
      */
     private val bindings = LinkedHashMap<UserAction, ObservableTrigger>()
 
+    /**
+     * A new copy map of existing bindings.
+     */
     val allBindings: Map<UserAction, Trigger>
         get() = bindings.mapValues { (_, obsTrigger) -> obsTrigger.trigger.value }
 
@@ -141,7 +144,7 @@ class Input {
     }
 
     /**
-     * Called on key event.
+     * Called automatically by FXGL on key event.
      */
     fun onKeyEvent(keyEvent: KeyEvent) {
         if (!registerInput)
@@ -154,16 +157,15 @@ class Input {
         }
     }
 
+    /**
+     * Called automatically by FXGL on mouse event.
+     */
     fun onMouseEvent(eventData: MouseEventData) {
         onMouseEvent(eventData.event, eventData.viewportOrigin, eventData.scaleRatioX, eventData.scaleRatioY)
     }
 
     /**
-     * Called on mouse event.
-     *
-     * @param event mouse event
-     * @param viewport current viewport where the even occurred
-     * @param scaleRatio scale ratio of the display where the event occurred
+     * Called automatically by FXGL on mouse event.
      */
     fun onMouseEvent(mouseEvent: MouseEvent, viewportOrigin: Point2D, scaleRatioX: Double, scaleRatioY: Double) {
         if (!registerInput)
@@ -274,13 +276,6 @@ class Input {
 
     /* MOCKING */
 
-    private fun makeKeyEvent(key: KeyCode, eventType: EventType<KeyEvent>, modifier: InputModifier) =
-        KeyEvent(eventType, "", key.toString(), key,
-                modifier == InputModifier.SHIFT,
-                modifier == InputModifier.CTRL,
-                modifier == InputModifier.ALT,
-                false)
-
     /**
      * Mocks key press event. The behavior is equivalent to
      * user pressing and holding the key with the modifier.
@@ -309,13 +304,12 @@ class Input {
         handleReleased(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
     }
 
-    private fun makeMouseEvent(btn: MouseButton, eventType: EventType<MouseEvent>,
-                               gameX: Double, gameY: Double, modifier: InputModifier) =
-        MouseEvent(eventType, gameX, gameY, gameX, gameY, btn, 0,
+    private fun makeKeyEvent(key: KeyCode, eventType: EventType<KeyEvent>, modifier: InputModifier) =
+        KeyEvent(eventType, "", key.toString(), key,
                 modifier == InputModifier.SHIFT,
                 modifier == InputModifier.CTRL,
                 modifier == InputModifier.ALT,
-                false, false, false, false, false, false, false, null)
+                false)
 
     /**
      * Mocks button press event. The behavior is equivalent to
@@ -363,4 +357,12 @@ class Input {
     @JvmOverloads fun mockButtonRelease(button: MouseButton, inputModifier: InputModifier = InputModifier.NONE) {
         mockButtonRelease(button, mouseXWorld, mouseYWorld, inputModifier)
     }
+
+    private fun makeMouseEvent(btn: MouseButton, eventType: EventType<MouseEvent>,
+                               gameX: Double, gameY: Double, modifier: InputModifier) =
+            MouseEvent(eventType, gameX, gameY, gameX, gameY, btn, 0,
+                    modifier == InputModifier.SHIFT,
+                    modifier == InputModifier.CTRL,
+                    modifier == InputModifier.ALT,
+                    false, false, false, false, false, false, false, null)
 }
