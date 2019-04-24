@@ -16,7 +16,7 @@ import javafx.scene.shape.Line
 import javafx.scene.shape.Rectangle
 
 /**
- *
+ * View for a mouse button.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

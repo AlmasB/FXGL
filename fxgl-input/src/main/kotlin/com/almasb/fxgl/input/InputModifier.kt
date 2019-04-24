@@ -79,7 +79,7 @@ enum class InputModifier {
         }
     }
 
-    fun toKeyCode(): KeyCode {
+    internal fun toKeyCode(): KeyCode {
         return when (this) {
             CTRL -> KeyCode.CONTROL
             SHIFT -> KeyCode.SHIFT

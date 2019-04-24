@@ -14,6 +14,7 @@ import javafx.scene.text.Font
 import javafx.scene.text.Text
 
 /**
+ * View for a key code.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

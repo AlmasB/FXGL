@@ -68,5 +68,8 @@ class ViewTest {
 
         TriggerView(MouseTrigger(MouseButton.PRIMARY))
         TriggerView(MouseTrigger(MouseButton.PRIMARY), Color.GOLD)
+
+        view.color = Color.RED
+        view.size = 24.0
     }
 }
