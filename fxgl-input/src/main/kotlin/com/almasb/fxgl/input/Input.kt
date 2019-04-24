@@ -7,8 +7,6 @@
 package com.almasb.fxgl.input
 
 import com.almasb.sslogger.Logger
-import javafx.beans.property.ReadOnlyObjectWrapper
-import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.collections.FXCollections
 import javafx.event.Event
 import javafx.event.EventHandler

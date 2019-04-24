@@ -9,7 +9,6 @@ package com.almasb.fxgl.input
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.scene.input.*
-import java.lang.RuntimeException
 
 /**
  *
