@@ -7,7 +7,9 @@
 package com.almasb.fxgl.input
 
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseButton
+import javafx.scene.input.MouseEvent
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.*
@@ -43,6 +45,21 @@ class TriggerTest {
     }
 
     @Test
+    fun `Is triggered`() {
+        val key = KeyTrigger(KeyCode.A)
+        val btn = MouseTrigger(MouseButton.PRIMARY)
+
+        val keyevent = keyEvent(KeyCode.A, false, false, false)
+        val mouseEvent = mouseEvent(MouseButton.PRIMARY, false, false, false)
+
+        assertTrue(key.isTriggered(keyevent))
+        assertFalse(key.isTriggered(mouseEvent))
+
+        assertTrue(btn.isTriggered(mouseEvent))
+        assertFalse(btn.isTriggered(keyevent))
+    }
+
+    @Test
     fun `Test toString`() {
         val key = KeyTrigger(KeyCode.A, InputModifier.CTRL)
 
@@ -72,5 +89,16 @@ class TriggerTest {
         assertThrows(RuntimeException::class.java) {
             MouseTrigger.buttonFromString("")
         }
+    }
+
+    // TODO: make it common to input tests?
+    private fun mouseEvent(button: MouseButton, shift: Boolean, ctrl: Boolean, alt: Boolean): MouseEvent {
+        return MouseEvent(MouseEvent.ANY, 0.0, 0.0, 0.0, 0.0, button, 1,
+                shift, ctrl, alt,
+                false, false, false, false, false, false, false, null)
+    }
+
+    private fun keyEvent(key: KeyCode, shift: Boolean, ctrl: Boolean, alt: Boolean): KeyEvent {
+        return KeyEvent(KeyEvent.ANY, "", "", key, shift, ctrl, alt, false)
     }
 }
