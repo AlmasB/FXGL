@@ -68,6 +68,26 @@ class TriggerTest {
     }
 
     @Test
+    fun `Key trigger does not fire when a different key is pressed`() {
+        val key = KeyTrigger(KeyCode.A)
+
+        val keyevent = keyEvent(KeyCode.B, false, false, false)
+
+        assertFalse(key.isTriggered(keyevent))
+        assertFalse(key.isReleased(keyevent))
+    }
+
+    @Test
+    fun `Mouse trigger does not fire when a different button is pressed`() {
+        val btn = MouseTrigger(MouseButton.PRIMARY)
+
+        val mouseEvent = mouseEvent(MouseButton.SECONDARY, false, false, false)
+
+        assertFalse(btn.isTriggered(mouseEvent))
+        assertFalse(btn.isReleased(mouseEvent))
+    }
+
+    @Test
     fun `Trigger does not fire when a different event is fired`() {
         val key = KeyTrigger(KeyCode.A)
         val btn = MouseTrigger(MouseButton.PRIMARY)
@@ -87,8 +107,8 @@ class TriggerTest {
         val key = KeyTrigger(KeyCode.A, modifier)
         val btn = MouseTrigger(MouseButton.PRIMARY, modifier)
 
-        assertTrue(key.isReleased(keyEvent(KeyCode.A, modifier == SHIFT, modifier == CTRL, modifier == ALT)))
-        assertTrue(btn.isReleased(mouseEvent(MouseButton.PRIMARY, modifier == SHIFT, modifier == CTRL, modifier == ALT)))
+        assertTrue(key.isReleased(keyEvent(modifier.toKeyCode(), modifier == SHIFT, modifier == CTRL, modifier == ALT)))
+        assertTrue(btn.isReleased(keyEvent(modifier.toKeyCode(), modifier == SHIFT, modifier == CTRL, modifier == ALT)))
     }
 
     @Test
