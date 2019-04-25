@@ -111,6 +111,24 @@ class PropertyMapTest {
 
         map.setValue("key", 5)
         assertThat(count, `is`(1))
+
+        map.addListener("key", l)
+
+        map.clear()
+
+        map.setValue("key", 7)
+        assertThat(count, `is`(1))
+    }
+
+    @Test
+    fun `To String`() {
+        map.setValue("testInt", 3)
+        map.setValue("testDouble", 5.0)
+
+        val s = map.toString()
+
+        assertTrue(s.contains("testDouble=DoubleProperty [value: 5.0]"))
+        assertTrue(s.contains("testInt=IntegerProperty [value: 3]"))
     }
 
     private class MyClass(val i: Int)

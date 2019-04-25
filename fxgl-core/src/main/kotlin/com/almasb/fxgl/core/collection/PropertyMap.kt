@@ -149,10 +149,11 @@ class PropertyMap {
 
     @Suppress("UNCHECKED_CAST")
     fun clear() {
-        forEach(listeners, BiConsumer { key, listener ->
+        listeners.forEach { (key, listener) ->
             // clean up all non-removed JavaFX listeners
             (get(key.propertyName) as ObservableValue<Any>).removeListener(listener as ChangeListener<Any>)
-        })
+        }
+
         listeners.clear()
 
         properties.clear()
