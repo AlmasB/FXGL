@@ -107,8 +107,14 @@ class TriggerTest {
         val key = KeyTrigger(KeyCode.A, modifier)
         val btn = MouseTrigger(MouseButton.PRIMARY, modifier)
 
+        val key2 = KeyTrigger(KeyCode.A)
+        val btn2 = MouseTrigger(MouseButton.PRIMARY)
+
         assertTrue(key.isReleased(keyEvent(modifier.toKeyCode(), modifier == SHIFT, modifier == CTRL, modifier == ALT)))
         assertTrue(btn.isReleased(keyEvent(modifier.toKeyCode(), modifier == SHIFT, modifier == CTRL, modifier == ALT)))
+
+        assertFalse(key2.isReleased(keyEvent(modifier.toKeyCode(), modifier == SHIFT, modifier == CTRL, modifier == ALT)))
+        assertFalse(btn2.isReleased(keyEvent(modifier.toKeyCode(), modifier == SHIFT, modifier == CTRL, modifier == ALT)))
     }
 
     @Test
