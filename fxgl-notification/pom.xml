@@ -35,12 +35,6 @@
             <artifactId>fxgl-time</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-ui</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
     </dependencies>
 
     <build>

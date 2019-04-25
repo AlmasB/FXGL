@@ -5,7 +5,6 @@ module fxgl.notification {
     requires fxgl.core;
     requires fxgl.animation;
     requires fxgl.time;
-    requires fxgl.ui;
 
     exports com.almasb.fxgl.notification;
     exports com.almasb.fxgl.notification.view;

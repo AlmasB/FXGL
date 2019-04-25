@@ -9,10 +9,10 @@ package com.almasb.fxgl.notification.view
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationDSL
 import com.almasb.fxgl.notification.Notification
-import com.almasb.fxgl.ui.FXGLUIConfig
 import javafx.geometry.Point2D
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
+import javafx.scene.text.Font
 import javafx.scene.text.Text
 import javafx.util.Duration
 
@@ -36,8 +36,15 @@ class XboxNotificationView : NotificationView() {
     /**
      * These two will be replacing one another.
      */
-    private val text1 = FXGLUIConfig.getUIFactory().newText("", textColor, 18.0)
-    private val text2 = FXGLUIConfig.getUIFactory().newText("", textColor, 18.0)
+    private val text1 = Text().also {
+        it.fill = textColor
+        it.font = Font.font(18.0)
+    }
+
+    private val text2 = Text().also {
+        it.fill = textColor
+        it.font = Font.font(18.0)
+    }
 
     init {
         bg.arcWidth = 55.0
