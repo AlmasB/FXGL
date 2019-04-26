@@ -71,6 +71,23 @@ public abstract class GameApplication {
         }
     }
 
+    public static void customLaunch(GameApplication app, Stage stage) {
+        try {
+            // this will be set automatically by javafxports on mobile
+            if (System.getProperty("javafx.platform") == null)
+                System.setProperty("javafx.platform", "Desktop");
+
+            var settings = app.takeUserSettings();
+
+            app.initLogger(settings);
+
+            FXGLApplication.customLaunchFX(app, settings, stage);
+
+        } catch (Exception e) {
+            printErrorAndExit(e);
+        }
+    }
+
     private static void launch(GameApplication app, String[] args) {
         // this will be set automatically by javafxports on mobile
         if (System.getProperty("javafx.platform") == null)
@@ -217,6 +234,12 @@ public abstract class GameApplication {
             FXGLApplication.app = app;
             FXGLApplication.settings = settings;
             launch(args);
+        }
+
+        static void customLaunchFX(GameApplication app, ReadOnlyGameSettings settings, Stage stage) {
+            FXGLApplication.app = app;
+            FXGLApplication.settings = settings;
+            new FXGLApplication().start(stage);
         }
     }
 }
