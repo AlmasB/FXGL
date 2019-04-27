@@ -64,7 +64,7 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun isBrowser() = System.getProperty("fxgl.isBrowser", "false") == "true"
 
     // javafxports doesn't have "web" option, so will incorrectly default to desktop, hence the extra check
-    @JvmStatic fun isDesktop() = true
+    @JvmStatic fun isDesktop() = !isBrowser()
     @JvmStatic fun isMobile() = isAndroid() || isIOS()
     @JvmStatic fun isAndroid() = false
     @JvmStatic fun isIOS() = false
