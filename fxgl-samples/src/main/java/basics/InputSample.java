@@ -4,15 +4,14 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package basics;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.app.GameSettings;
 import javafx.scene.input.KeyCode;
-
-import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * Shows how to use input service and bind actions to triggers.
@@ -20,17 +19,12 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class InputSample extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
-        settings.setTitle("InputSample");
-        settings.setVersion("0.1");
-    }
+    protected void initSettings(GameSettings settings) { }
 
     @Override
     protected void initInput() {
         // 1. get input service
-        Input input = getInput();
+        Input input = FXGL.getInput();
 
         // 2. add key/mouse bound actions
         // when app is running press F to see output to console
