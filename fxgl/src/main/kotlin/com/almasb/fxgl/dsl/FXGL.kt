@@ -123,6 +123,7 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getGameWorld() = engine.playState.gameWorld
     @JvmStatic fun getPhysicsWorld() = engine.playState.physicsWorld
     @JvmStatic fun getGameScene() = engine.playState
+    @JvmStatic fun getGameTimer(): Timer = engine.playState.timer
 
     /**
      * @return play state input
@@ -132,12 +133,13 @@ class FXGL private constructor() { companion object {
     /**
      * @return play state timer
      */
-    @JvmStatic fun getMasterTimer(): Timer = engine.playState.timer
+    @Deprecated("Use getGameTimer()", ReplaceWith("getGameTimer()", "com.almasb.fxgl.dsl.FXGL.Companion.getGameTimer"))
+    @JvmStatic fun getMasterTimer(): Timer = getGameTimer()
 
     /**
      * @return new instance on each call
      */
-    @JvmStatic fun newLocalTimer() = getMasterTimer().newLocalTimer()
+    @JvmStatic fun newLocalTimer() = getGameTimer().newLocalTimer()
 
     /**
      * @param name unique name for timer
