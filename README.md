@@ -13,7 +13,7 @@ JavaFX Game Development Framework
 ### Why FXGL?
 
 * No installation or setup required
-* "Out of the box": Java 8/9/10/11, Win/Mac/Linux/Android 5.0+([Sample](https://github.com/AlmasB/FXGL-MobileApp))/iOS([alpha](https://github.com/AlmasB/FXGL-MobileApp))/Web([alpha](https://github.com/AlmasB/FXGL-WebApp))
+* "Out of the box": Java 8-11, Win/Mac/Linux/Android 5.0+([Sample](https://github.com/AlmasB/FXGL-MobileApp))/iOS([alpha](https://github.com/AlmasB/FXGL-MobileApp))/Web([Sample](https://github.com/AlmasB/FXGL-WebApp))
 * Simple and clean API, higher level than other engines
 * Superset of JavaFX: no need to learn new UI API
 * Real-world game development techniques: Entity-Component, Event System, Scripting, and [many more](https://github.com/AlmasB/FXGL/wiki/Core-Features)
@@ -47,12 +47,15 @@ public class BasicGameApp extends GameApplication {
 
 ## Getting Started
 
-- Version for Java 8/9/10: `0.5.4`
-- Version for Java 11: `11.1-beta`
+- Version for Java 8-10: `0.5.4`
+- Version for Java 11: `11.2-beta`
 
 Note: from now on only 11.0+ will be developed.
 FXGL 11 supports Java 11+ and has a more scalable architecture,
 but currently supports only a subset of features from `0.5.4`.
+
+Want a quick dive into code? See [basic examples](https://github.com/AlmasB/FXGL/tree/master/fxgl-samples/src/main/java/basics).
+Otherwise, you have the following options:
 
 * [Java 11 modules](https://github.com/AlmasB/FXGL/wiki/FXGL-11-%28Java-11-modules%29)
 * [Wiki & Written tutorials](https://github.com/AlmasB/FXGL/wiki)
@@ -66,22 +69,23 @@ but currently supports only a subset of features from `0.5.4`.
 * [Maven](https://github.com/AlmasB/FXGL-Maven) project if you use Java
 * [Maven](https://github.com/AlmasB/FXGL-MavenKt) project if you use Kotlin
 
-Already have `pom.xml`? Then add: (use `0.5.4` for Java 8/9/10)
+Already have `pom.xml`? Then add: (use `0.5.4` for Java 8-10)
 
 ```
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>11.1-beta</version>
+    <version>11.2-beta</version>
 </dependency>
 ```
 
 ### Gradle
 
-* [Gradle](https://github.com/AlmasB/FXGL-Gradle) project if you use Java
+* [Gradle](https://github.com/AlmasB/FXGL-Gradle) project if you use Java 8-10
+* [Gradle](https://github.com/AlmasB/FXGL11-Gradle) project if you use Java 11+
 * [Gradle](https://github.com/AlmasB/FXGL-GradleKt) project if you use Kotlin
 
-Already have `build.gradle`? Then add: (use `0.5.4` for Java 8/9/10)
+Already have `build.gradle`? Then add: (use `0.5.4` for Java 8-10)
 
 ```
 repositories {
@@ -89,7 +93,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:11.1-beta'
+    compile 'com.github.almasb:fxgl:11.2-beta'
 }
 ```
 
@@ -112,6 +116,7 @@ If your institution wants to use / is using FXGL, drop me an email to discuss ho
 
 If you want to build FXGL from sources or want to contribute,
 please see the [Contribution Guide](CONTRIBUTING.md) (including non-code).
+FXGL is fully modular, so new contributors do not need to understand the entire codebase, only the module to which the contribution is made.
 
 You can support the FXGL development / show interest by simply starring the repo.
 
