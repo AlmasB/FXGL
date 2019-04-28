@@ -121,6 +121,7 @@ class PropertyMapTest {
         var count = 0
 
         map.setValue("key", 1)
+        map.setValue("key2", 2)
 
         val l = object : PropertyChangeListener<Int> {
 
@@ -133,6 +134,13 @@ class PropertyMapTest {
         }
 
         map.addListener("key", l)
+        map.addListener("key2", object : PropertyChangeListener<Int> {
+
+            override fun onChange(prev: Int, now: Int) {
+                // this should not fire
+                count++
+            }
+        })
 
         map.setValue("key", 3)
         assertThat(count, `is`(1))
