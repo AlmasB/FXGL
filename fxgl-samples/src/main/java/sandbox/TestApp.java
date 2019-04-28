@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package s01basics;
+package sandbox;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
