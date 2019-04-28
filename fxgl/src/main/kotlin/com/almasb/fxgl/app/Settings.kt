@@ -6,9 +6,16 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.achievement.AchievementManager
+import com.almasb.fxgl.achievement.AchievementStore
+import com.almasb.fxgl.audio.AudioPlayer
+import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.local.Language
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Optional
+import com.almasb.fxgl.notification.impl.NotificationServiceProvider
+import com.almasb.fxgl.notification.view.NotificationView
+import com.almasb.fxgl.notification.view.XboxNotificationView
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
 import com.almasb.fxgl.ui.DialogFactory
@@ -21,6 +28,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
 import javafx.stage.StageStyle
 import java.util.*
+import java.util.Collections.unmodifiableList
 
 enum class MenuItem {
 
@@ -164,9 +172,14 @@ class GameSettings(
         /* CONFIGS */
 
         var configClass: Class<*>? = null,
-        //var achievementStoreClass: Class<out AchievementStore>? = null,
 
         /* CUSTOMIZABLE SERVICES BELOW */
+
+        var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
+                AudioPlayer::class.java,
+                NotificationServiceProvider::class.java,
+                AchievementManager::class.java
+        ),
 
         /**
          * Provide a custom scene factory.
@@ -183,7 +196,11 @@ class GameSettings(
          */
         @get:JvmName("getUIFactory")
         @set:JvmName("setUIFactory")
-        var uiFactory: UIFactory = FXGLUIFactory()
+        var uiFactory: UIFactory = FXGLUIFactory(),
+
+        var notificationViewClass: Class<out NotificationView> = XboxNotificationView::class.java,
+
+        var achievementStores: List<AchievementStore> = arrayListOf()
 ) {
 
     fun toReadOnly(): ReadOnlyGameSettings {
@@ -201,7 +218,7 @@ class GameSettings(
                 isSingleStep,
                 applicationMode,
                 menuKey,
-                Collections.unmodifiableList(credits),
+                unmodifiableList(credits),
                 enabledMenuItems,
                 stageStyle,
                 appIcon,
@@ -218,10 +235,12 @@ class GameSettings(
                 secondsIn24h,
                 isExperimentalTiledLargeMap,
                 configClass,
-                //achievementStoreClass,
+                unmodifiableList(engineServices),
                 sceneFactory,
                 dialogFactory,
-                uiFactory)
+                uiFactory,
+                notificationViewClass,
+                unmodifiableList(achievementStores))
     }
 }
 
@@ -344,9 +363,10 @@ class ReadOnlyGameSettings internal constructor(
         /* CONFIGS */
 
         private val configClassInternal: Class<*>?,
-        //private val achievementStoreClassInternal: Class<out AchievementStore>?,
 
         /* CUSTOMIZABLE SERVICES BELOW */
+
+        val engineServices: List<Class<out EngineService>>,
 
         /**
          * Provide a custom scene factory.
@@ -362,7 +382,12 @@ class ReadOnlyGameSettings internal constructor(
          * Provide a custom UI factory.
          */
         @get:JvmName("getUIFactory")
-        val uiFactory: UIFactory
+        val uiFactory: UIFactory,
+
+        val notificationViewClass: Class<out NotificationView>,
+
+        val achievementStores: List<AchievementStore>
+
 ) : UserProfileSavable {
 
     /* STATIC - cannot be modified at runtime */
@@ -413,11 +438,14 @@ class ReadOnlyGameSettings internal constructor(
 
     // DYNAMIC - can be modified at runtime
 
+    @get:JvmName("devBBoxColorProperty")
     val devBBoxColor = SimpleObjectProperty<Color>(Color.web("#ff0000"))
+    @get:JvmName("devSensorColorProperty")
     val devSensorColor = SimpleObjectProperty<Color>(Color.YELLOW)
 
     @get:JvmName("devShowBBoxProperty")
     val devShowBBox = SimpleBooleanProperty(false)
+    @get:JvmName("devShowPositionProperty")
     val devShowPosition = SimpleBooleanProperty(false)
 
     val language = SimpleObjectProperty<Language>()

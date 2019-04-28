@@ -20,7 +20,7 @@ import java.util.List;
 public final class BoundingShape {
 
     final ShapeType type;
-    final Object data;
+    public final Object data;
     final Dimension2D size;
 
     private BoundingShape(ShapeType type, Object data, Dimension2D size) {
@@ -46,7 +46,7 @@ public final class BoundingShape {
     /**
      * @return true if the type of this shape is a rectangle/square
      */
-    public boolean isRectangle() {
+    public boolean isPolygon() {
         return type == ShapeType.POLYGON;
     }
 

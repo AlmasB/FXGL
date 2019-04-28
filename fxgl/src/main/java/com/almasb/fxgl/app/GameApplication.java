@@ -6,6 +6,7 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
+import com.almasb.fxgl.dev.DevService;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.sslogger.*;
@@ -65,6 +66,23 @@ public abstract class GameApplication {
             var instance = ReflectionUtils.newInstance(appClass);
 
             launch(instance, args);
+        } catch (Exception e) {
+            printErrorAndExit(e);
+        }
+    }
+
+    public static void customLaunch(GameApplication app, Stage stage) {
+        try {
+            // this will be set automatically by javafxports on mobile
+            if (System.getProperty("javafx.platform") == null)
+                System.setProperty("javafx.platform", "Desktop");
+
+            var settings = app.takeUserSettings();
+
+            app.initLogger(settings);
+
+            FXGLApplication.customLaunchFX(app, settings, stage);
+
         } catch (Exception e) {
             printErrorAndExit(e);
         }
@@ -198,6 +216,14 @@ public abstract class GameApplication {
         public void start(Stage stage) {
             var engine = new Engine(app, settings, stage);
 
+            settings.getEngineServices().forEach(serviceClass ->
+                    engine.addService(ReflectionUtils.newInstance(serviceClass))
+            );
+
+            if (settings.getApplicationMode() != ApplicationMode.RELEASE) {
+                engine.addService(new DevService());
+            }
+
             // equivalent to FXGL.engine = engine;
             callInaccessible(FXGL.Companion, getMethod(FXGL.Companion.getClass(), "inject", Engine.class), engine);
 
@@ -208,6 +234,12 @@ public abstract class GameApplication {
             FXGLApplication.app = app;
             FXGLApplication.settings = settings;
             launch(args);
+        }
+
+        static void customLaunchFX(GameApplication app, ReadOnlyGameSettings settings, Stage stage) {
+            FXGLApplication.app = app;
+            FXGLApplication.settings = settings;
+            new FXGLApplication().start(stage);
         }
     }
 }

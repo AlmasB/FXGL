@@ -1,7 +1,14 @@
 package com.almasb.fxgl.core.collection;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArrayTest
@@ -206,5 +213,80 @@ public class ArrayTest
                 () -> assertTrue(array.containsByEquality(5)),
                 () -> assertTrue(array.containsByIdentity(5))
         );
+    }
+
+    @Test
+    public void testRemoveAll() {
+        Array<String> array = new Array<>();
+
+        array.add("Hello");
+        array.add("World");
+        array.add("Java");
+
+        array.removeAllByEquality(new Array<>(Arrays.asList("Hello", "World")));
+
+        assertThat(array.size(), is(1));
+        assertThat(array.get(0), is("Java"));
+    }
+
+    @Test
+    public void testReverse() {
+        Array<String> array = new Array<>();
+
+        array.add("Hello");
+        array.add("World");
+        array.add("Java");
+
+        array.reverse();
+
+        assertThat(array.size(), is(3));
+        assertThat(array.get(0), is("Java"));
+        assertThat(array.get(1), is("World"));
+        assertThat(array.get(2), is("Hello"));
+    }
+
+    @Test
+    public void toJavaArray() {
+        Array<String> array = new Array<>(String.class);
+
+        array.add("Hello");
+        array.add("World");
+        array.add("Java");
+
+        String[] arr = array.toArray();
+
+        assertArrayEquals(new String[] { "Hello", "World", "Java" }, arr);
+    }
+
+    @Test
+    public void testToString() {
+        Array<String> array = new Array<>(String.class);
+
+        array.add("Hello");
+        array.add("World");
+        array.add("Java");
+
+        String result = array.toString();
+
+        assertThat(result, is("[Hello, World, Java]"));
+    }
+
+    @Test
+    public void iterator_should_returnSameInstance() {
+        Array<String> array = new Array<>(String.class);
+
+        array.add("Hello");
+        array.add("World");
+        array.add("Java");
+
+        Iterator<String> it1 = array.iterator();
+        Iterator<String> it2 = array.iterator();
+
+        assertThat(array.iterator(), Matchers.isOneOf(it1, it2));
+    }
+
+    @Test
+    public void emptyArray_should_returnSameInstance() {
+        assertSame(Array.empty(), Array.empty());
     }
 }

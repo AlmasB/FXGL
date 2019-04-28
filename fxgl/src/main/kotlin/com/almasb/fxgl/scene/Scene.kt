@@ -8,6 +8,7 @@ package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
+import javafx.scene.layout.Pane
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -16,10 +17,30 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 abstract class Scene {
 
+    // TODO: add nicer API for adding/removing nodes
+
+    /**
+     * Top-level root node.
+     */
+    val root = Pane()
+
+    /**
+     * Root node for content. All children of this class
+     * should use content root.
+     */
+    val contentRoot = Pane()
+
     val input = Input()
     val timer = Timer()
 
     private val listeners = CopyOnWriteArrayList<SceneListener>()
+
+    init {
+        root.background = null
+        contentRoot.background = null
+
+        root.children.addAll(contentRoot)
+    }
 
     fun addListener(l: SceneListener) {
         listeners += l
@@ -30,7 +51,7 @@ abstract class Scene {
     }
 
     /**
-     * Called after entering this state from prevState
+     * Called after entering this state from prevState.
      */
     protected open fun onEnter(prevState: Scene) {
 
@@ -63,4 +84,6 @@ abstract class Scene {
         onExit()
         input.clearAll()
     }
+
+    override fun toString(): String = javaClass.simpleName
 }

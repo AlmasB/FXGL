@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.particle
 
+import com.almasb.fxgl.core.Updatable
+import com.almasb.fxgl.core.pool.Pools
 import javafx.geometry.Point2D
 import javafx.scene.layout.Pane
 
@@ -15,16 +17,12 @@ import javafx.scene.layout.Pane
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ParticleSystem {
+class ParticleSystem : Updatable {
 
     val pane = Pane()
 
     private val emitters = hashMapOf<ParticleEmitter, Point2D>()
     private val particles = hashMapOf<ParticleEmitter, MutableList<Particle>>()
-
-    init {
-
-    }
 
     fun addParticleEmitter(emitter: ParticleEmitter, x: Double, y: Double) {
         emitters[emitter] = Point2D(x, y)
@@ -33,11 +31,11 @@ class ParticleSystem {
 
     fun removeParticleEmitter(emitter: ParticleEmitter) {
         emitters.remove(emitter)
-        particles.remove(emitter)
+        particles.remove(emitter)?.let { it.forEach { Pools.free(it) } }
     }
 
-    fun onUpdate(tpf: Double) {
-        emitters.forEach { emitter, p ->
+    override fun onUpdate(tpf: Double) {
+        emitters.forEach { (emitter, p) ->
             val particlesList = particles[emitter]!!
 
             particlesList.addAll(emitter.emit(p.x, p.y))
@@ -50,32 +48,12 @@ class ParticleSystem {
                     iter.remove()
 
                     pane.children.remove(particle.view)
+                    Pools.free(p)
                 } else {
-                    if (particle.getView().getParent() == null)
+                    if (particle.view.parent == null)
                         pane.children.add(particle.view)
                 }
             }
         }
-
-
-//
-
-//
-//        if (particles.isEmpty() && emitter.isFinished()) {
-//            onFinished.run();
-//        }
-//    }
-//
-//    @Override
-//    public void onRemoved() {
-//        forEach(particles, Pools::free);
-//        particles.clear();
-//
-//        parent.removeFromWorld();
-//    }
-//
-//    public final void setOnFinished(Runnable onFinished) {
-//        this.onFinished = onFinished;
-//    }
     }
 }

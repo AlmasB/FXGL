@@ -306,7 +306,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             pane.translateX = (FXGL.getAppWidth() / 2 - 125).toDouble()
             pane.translateY = (FXGL.getAppHeight() / 2 - 50).toDouble()
 
-            children.add(pane)
+            contentRoot.children.add(pane)
         }
     }
 

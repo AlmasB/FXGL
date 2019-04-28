@@ -9,7 +9,6 @@ package com.almasb.fxgl.dsl
 import com.almasb.fxgl.core.View
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.EntityView
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.physics.BoundingShape
@@ -60,7 +59,7 @@ class EntityBuilder {
     }
 
     fun opacity(value: Double) = this.also {
-        entity.viewComponent.opacity.value = value
+        entity.viewComponent.opacityProp.value = value
     }
 
     fun bbox(box: HitBox) = this.also {

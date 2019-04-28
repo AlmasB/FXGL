@@ -51,6 +51,16 @@ class InputTest {
     }
 
     @Test
+    fun `Action equality`() {
+        val action1: UserAction = object : UserAction("Up") {}
+        val action2: UserAction = object : UserAction("Up") {}
+        assertTrue(action1 == action2)
+
+        val action3: UserAction = object : UserAction("Down") {}
+        assertFalse(action1 == action3)
+    }
+
+    @Test
     fun `Test registering input does not affect mocking`() {
         assertTrue(input.registerInput)
 
@@ -413,7 +423,7 @@ class InputTest {
 
         input.addAction(action, KeyCode.K)
 
-        assertThat(input.triggerProperty(action).value.getName(), `is`("K"))
+        assertThat(input.triggerProperty(action).value.name, `is`("K"))
     }
 
     @Test
@@ -571,6 +581,10 @@ class InputTest {
             override fun onAction() {
                 calls--
             }
+
+            override fun onActionEnd() {
+                calls = 999
+            }
         }, KeyCode.A)
 
         input.mockKeyPress(KeyCode.A)
@@ -585,7 +599,21 @@ class InputTest {
         input.clearAll()
 
         input.update(0.016)
-        assertThat(calls, `is`(-1))
+        assertThat(calls, `is`(999))
+
+
+
+        input.mockKeyPress(KeyCode.A)
+        assertThat(calls, `is`(1))
+
+        input.update(0.016)
+        assertThat(calls, `is`(0))
+
+        // end should no longer fire
+        input.processInput = false
+
+        input.clearAll()
+        assertThat(calls, `is`(0))
     }
 
 //    @Test

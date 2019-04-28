@@ -6,12 +6,17 @@
 
 package com.almasb.fxgl.input
 
+import com.almasb.fxgl.input.InputModifier.*
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseButton
+import javafx.scene.input.MouseEvent
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 
 /**
  *
@@ -24,31 +29,119 @@ class TriggerTest {
     fun `Key trigger`() {
         val key = KeyTrigger(KeyCode.A)
 
-        assertTrue(key.isKey())
-        assertFalse(key.isButton())
-        assertThat(key.getModifier(), `is`(InputModifier.NONE))
+        assertTrue(key.isKey)
+        assertFalse(key.isButton)
+        assertThat(key.modifier, `is`(NONE))
         assertThat(key.key, `is`(KeyCode.A))
-        assertThat(key.getName(), `is`("A"))
+        assertThat(key.name, `is`("A"))
     }
 
     @Test
     fun `Mouse trigger`() {
         val btn = MouseTrigger(MouseButton.PRIMARY)
 
-        assertFalse(btn.isKey())
-        assertTrue(btn.isButton())
-        assertThat(btn.getModifier(), `is`(InputModifier.NONE))
+        assertFalse(btn.isKey)
+        assertTrue(btn.isButton)
+        assertThat(btn.modifier, `is`(NONE))
         assertThat(btn.button, `is`(MouseButton.PRIMARY))
-        assertThat(btn.getName(), `is`("LMB"))
+        assertThat(btn.name, `is`("LMB"))
+    }
+
+    @Test
+    fun `When trigger key is pressed and modifier is pressed then trigger fires`() {
+        val key = KeyTrigger(KeyCode.A)
+
+        val keyevent = keyEvent(KeyCode.A, false, false, false)
+
+        assertTrue(key.isTriggered(keyevent))
+        assertTrue(key.isReleased(keyevent))
+    }
+
+    @Test
+    fun `When trigger button is pressed and modifier is pressed then trigger fires`() {
+        val btn = MouseTrigger(MouseButton.PRIMARY)
+
+        val mouseEvent = mouseEvent(MouseButton.PRIMARY, false, false, false)
+
+        assertTrue(btn.isTriggered(mouseEvent))
+        assertTrue(btn.isReleased(mouseEvent))
+    }
+
+    @Test
+    fun `Key trigger does not fire when a different key is pressed`() {
+        val key = KeyTrigger(KeyCode.A)
+
+        val keyevent = keyEvent(KeyCode.B, false, false, false)
+
+        assertFalse(key.isTriggered(keyevent))
+        assertFalse(key.isReleased(keyevent))
+    }
+
+    @Test
+    fun `Mouse trigger does not fire when a different button is pressed`() {
+        val btn = MouseTrigger(MouseButton.PRIMARY)
+
+        val mouseEvent = mouseEvent(MouseButton.SECONDARY, false, false, false)
+
+        assertFalse(btn.isTriggered(mouseEvent))
+        assertFalse(btn.isReleased(mouseEvent))
+    }
+
+    @Test
+    fun `Trigger does not fire when a different event is fired`() {
+        val key = KeyTrigger(KeyCode.A)
+        val btn = MouseTrigger(MouseButton.PRIMARY)
+
+        val keyevent = keyEvent(KeyCode.A, false, false, false)
+        val mouseEvent = mouseEvent(MouseButton.PRIMARY, false, false, false)
+
+        assertFalse(key.isTriggered(mouseEvent))
+        assertFalse(btn.isTriggered(keyevent))
+        assertFalse(key.isReleased(mouseEvent))
+        assertFalse(btn.isReleased(keyevent))
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = InputModifier::class, names = ["SHIFT", "CTRL", "ALT"])
+    fun `Trigger with modifier is released if a modifier is released`(modifier: InputModifier) {
+        val key = KeyTrigger(KeyCode.A, modifier)
+        val btn = MouseTrigger(MouseButton.PRIMARY, modifier)
+
+        val key2 = KeyTrigger(KeyCode.A)
+        val btn2 = MouseTrigger(MouseButton.PRIMARY)
+
+        assertTrue(key.isReleased(keyEvent(modifier.toKeyCode(), modifier == SHIFT, modifier == CTRL, modifier == ALT)))
+        assertTrue(btn.isReleased(keyEvent(modifier.toKeyCode(), modifier == SHIFT, modifier == CTRL, modifier == ALT)))
+
+        assertFalse(key2.isReleased(keyEvent(modifier.toKeyCode(), modifier == SHIFT, modifier == CTRL, modifier == ALT)))
+        assertFalse(btn2.isReleased(keyEvent(modifier.toKeyCode(), modifier == SHIFT, modifier == CTRL, modifier == ALT)))
+    }
+
+    @Test
+    fun `When trigger key is pressed and modifier is not pressed then trigger does not fire`() {
+        val key = KeyTrigger(KeyCode.A, SHIFT)
+
+        val keyevent = keyEvent(KeyCode.A, false, false, false)
+
+        assertFalse(key.isTriggered(keyevent))
+    }
+
+    @Test
+    fun `When trigger button is pressed and modifier is not pressed then trigger does not fire`() {
+        val btn = MouseTrigger(MouseButton.PRIMARY, SHIFT)
+
+        val mouseEvent = mouseEvent(MouseButton.PRIMARY, false, false, false)
+
+        assertFalse(btn.isTriggered(mouseEvent))
     }
 
     @Test
     fun `Test toString`() {
-        val key = KeyTrigger(KeyCode.A, InputModifier.CTRL)
+        val key = KeyTrigger(KeyCode.A, CTRL)
 
         assertThat(key.toString(), `is`("CTRL+A"))
 
-        val btn = MouseTrigger(MouseButton.PRIMARY, InputModifier.ALT)
+        val btn = MouseTrigger(MouseButton.PRIMARY, ALT)
 
         assertThat(btn.toString(), `is`("ALT+LMB"))
     }
@@ -72,5 +165,16 @@ class TriggerTest {
         assertThrows(RuntimeException::class.java) {
             MouseTrigger.buttonFromString("")
         }
+    }
+
+    // TODO: make it common to input tests?
+    private fun mouseEvent(button: MouseButton, shift: Boolean, ctrl: Boolean, alt: Boolean): MouseEvent {
+        return MouseEvent(MouseEvent.ANY, 0.0, 0.0, 0.0, 0.0, button, 1,
+                shift, ctrl, alt,
+                false, false, false, false, false, false, false, null)
+    }
+
+    private fun keyEvent(key: KeyCode, shift: Boolean, ctrl: Boolean, alt: Boolean): KeyEvent {
+        return KeyEvent(KeyEvent.ANY, "", "", key, shift, ctrl, alt, false)
     }
 }

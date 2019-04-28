@@ -266,7 +266,13 @@ class GameWorld {
     }
 
     private val entityFactories = ObjectMap<EntityFactory, List<String>>()
+
+    /**
+     * Maps entity spawn name to the method that creates the entity.
+     */
     private val entitySpawners = ObjectMap<String, EntitySpawner>()
+
+    private val entityPreloader = EntityPreloader(entitySpawners)
 
     /**
      * @param entityFactory factory for creating entities
@@ -284,6 +290,17 @@ class GameWorld {
                         entitySpawners.put(entityName, entitySpawner)
                         entityNames.add(entityName)
                     }
+                }
+
+        ReflectionUtils.findMethods(entityFactory, Preload::class.java)
+                .forEach { preload, method ->
+
+                    val ann = method.getDeclaredAnnotation(Spawns::class.java)
+                    val entityAliases = ann.value.split(",".toRegex())
+
+                    val numToPreload = preload.value
+
+                    entityPreloader.addForPreloading(entityAliases, numToPreload)
                 }
 
         entityFactories.put(entityFactory, entityNames)
@@ -371,6 +388,10 @@ class GameWorld {
 
         if (!data.hasKey("type")) {
             data.put("type", entityName)
+        }
+
+        if (entityPreloader.isPreloadingEnabled(entityName)) {
+            return entityPreloader.obtain(entityName, data)
         }
 
         return tryCatchRoot { spawner.apply(data) }

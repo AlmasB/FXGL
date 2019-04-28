@@ -46,8 +46,8 @@ class DialogSubState(
         val width = FXGL.getSettings().width.toDouble()
         val height = FXGL.getSettings().height.toDouble()
 
-        (view as Pane).setPrefSize(width, height)
-        (view as Pane).background = Background(BackgroundFill(Color.rgb(127, 127, 123, 0.5), null, null))
+        contentRoot.setPrefSize(width, height)
+        contentRoot.background = Background(BackgroundFill(Color.rgb(127, 127, 123, 0.5), null, null))
 
         window.canResize = false
         window.canMove = false
@@ -57,7 +57,7 @@ class DialogSubState(
         window.layoutXProperty().bind(window.widthProperty().divide(2).negate().add(width / 2))
         window.layoutYProperty().bind(window.heightProperty().divide(2).negate().add(height / 2))
 
-        children.add(window)
+        contentRoot.children.add(window)
 
         // keep traversal input within this node
         initTraversalPolicy()
@@ -76,7 +76,7 @@ class DialogSubState(
     }
 
     val isShowing: Boolean
-        get() = view.scene != null
+        get() = contentRoot.scene != null
 
     /**
      * Replaces all content of the internal window by given node.
@@ -102,7 +102,7 @@ class DialogSubState(
         if (!isShowing) {
             openInScene(currentSceneProperty.value)
 
-            view.requestFocus()
+            contentRoot.requestFocus()
         }
     }
 

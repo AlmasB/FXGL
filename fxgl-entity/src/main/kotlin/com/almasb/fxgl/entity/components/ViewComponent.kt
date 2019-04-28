@@ -21,22 +21,45 @@ import javafx.scene.transform.Scale
 class ViewComponent
 @JvmOverloads constructor(initialView: View = EmptyView): Component() {
 
+    /**
+     * Only the first child is used when calling setView.
+     * The other children can be used by systems such as debug bbox as necessary.
+     */
     val parent = Group()
 
     val z: ReadOnlyIntegerProperty = ReadOnlyIntegerWrapper(0)
 
     @get:JvmName("opacityProperty")
-    val opacity = SimpleDoubleProperty(1.0)
+    val opacityProp = SimpleDoubleProperty(1.0)
+
+    var opacity: Double
+        get() = opacityProp.value
+        set(value) { opacityProp.value = value }
 
     private val propView: ObjectProperty<View> = SimpleObjectProperty<View>(initialView)
 
     var view: View
         get() = propView.value
         set(value) {
-            parent.children.setAll(value.node)
+
+            if (parent.children.isEmpty()) {
+                parent.children += value.node
+            } else {
+                parent.children[0] = value.node
+            }
+
+            propView.value?.node?.opacityProperty()?.unbind()
+
             propView.value = value
+
+            // we only apply effects to the first child aka game view
+            // so debug views stay unaffected
+            propView.value.node.opacityProperty().bind(opacityProp)
         }
 
+    /**
+     * "Parent" of views created from Node since Node is not subtype of View.
+     */
     private val entityView by lazy { EntityView() }
 
     private val listeners = arrayListOf<ClickListener>()
@@ -44,8 +67,6 @@ class ViewComponent
     private val onClickListener = EventHandler<MouseEvent> { listeners.forEach { it.onClick() } }
 
     init {
-        parent.opacityProperty().bind(opacity)
-
         parent.addEventHandler(MouseEvent.MOUSE_CLICKED, onClickListener)
     }
 
@@ -85,6 +106,7 @@ class ViewComponent
 
     override fun onRemoved() {
         parent.removeEventHandler(MouseEvent.MOUSE_CLICKED, onClickListener)
+        parent.children.clear()
         view.dispose()
     }
 

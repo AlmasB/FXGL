@@ -12,6 +12,7 @@ import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.core.util.Consumer;
 import com.almasb.fxgl.core.util.Function;
 import com.almasb.fxgl.core.util.Supplier;
+import com.almasb.fxgl.texture.Texture;
 import javafx.animation.Interpolator;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
@@ -322,12 +323,21 @@ public final class ParticleEmitter {
 
     /**
      * Set source image for this emitter to produce particles.
+     * Default: null.
      *
      * @param sourceImage the image
-     * @defaultValue null
      */
     public void setSourceImage(Image sourceImage) {
         this.sourceImage = sourceImage;
+    }
+
+    /**
+     * Set source image from the texture for this emitter to produce particles.
+     *
+     * @param texture the texture whose image is used
+     */
+    public void setSourceImage(Texture texture) {
+        setSourceImage(texture.getImage());
     }
 
     /**

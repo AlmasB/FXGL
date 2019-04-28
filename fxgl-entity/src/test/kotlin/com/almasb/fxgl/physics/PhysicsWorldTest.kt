@@ -68,6 +68,97 @@ class PhysicsWorldTest {
     }
 
     @Test
+    fun `Making entity not collidable mid-collision correctly triggers onCollisionEnd`() {
+        val e1 = Entity()
+        e1.type = EntityType.TYPE1
+        e1.position = Point2D(100.0, 100.0)
+        e1.boundingBoxComponent.addHitBox(HitBox("Test1", BoundingShape.box(40.0, 40.0)))
+        e1.addComponent(CollidableComponent(true))
+
+        val e2 = Entity()
+        e2.type = EntityType.TYPE2
+        e2.position = Point2D(150.0, 100.0)
+        e2.boundingBoxComponent.addHitBox(HitBox("Test2", BoundingShape.box(40.0, 40.0)))
+        e2.addComponent(CollidableComponent(true))
+
+        // entities that are not part of any world are not active
+        // so we add them to _some_ world
+        val gameWorld = GameWorld()
+        gameWorld.addEntity(e1)
+        gameWorld.addEntity(e2)
+
+        var hitboxCount = 0
+        var collisionBeginCount = 0
+        var collisionCount = 0
+        var collisionEndCount = 0
+
+        val handler = object : CollisionHandler(EntityType.TYPE1, EntityType.TYPE2) {
+
+            override fun onHitBoxTrigger(a: Entity, b: Entity, boxA: HitBox, boxB: HitBox) {
+                assertTrue(a === e1)
+                assertTrue(b === e2)
+
+                assertThat(boxA.name, `is`("Test1"))
+                assertThat(boxB.name, `is`("Test2"))
+
+                hitboxCount++
+            }
+
+            override fun onCollisionBegin(a: Entity, b: Entity) {
+                assertTrue(a === e1)
+                assertTrue(b === e2)
+                collisionBeginCount++
+            }
+
+            override fun onCollision(a: Entity, b: Entity) {
+                assertTrue(a === e1)
+                assertTrue(b === e2)
+                collisionCount++
+            }
+
+            override fun onCollisionEnd(a: Entity, b: Entity) {
+                assertTrue(a === e1)
+                assertTrue(b === e2)
+                collisionEndCount++
+            }
+        }
+
+        physicsWorld.addCollisionHandler(handler)
+
+        physicsWorld.onEntityAdded(e1)
+        physicsWorld.onEntityAdded(e2)
+        physicsWorld.onUpdate(0.016)
+
+        // no collision happened, entities are apart
+        assertThat(hitboxCount, `is`(0))
+        assertThat(collisionBeginCount, `is`(0))
+        assertThat(collisionCount, `is`(0))
+        assertThat(collisionEndCount, `is`(0))
+
+        // move 2nd entity closer to first, colliding with it
+        e2.translateX(-30.0)
+
+        physicsWorld.onUpdate(0.016)
+
+        // hit box and collision begin triggered, entities are now colliding
+        assertThat(hitboxCount, `is`(1))
+        assertThat(collisionBeginCount, `is`(1))
+        assertThat(collisionCount, `is`(1))
+        assertThat(collisionEndCount, `is`(0))
+
+        // remove collidable component, e2 is now not collidable but we should
+        // correctly notify that collision ended
+        e2.removeComponent(CollidableComponent::class.java)
+
+        physicsWorld.onUpdate(0.016)
+
+        assertThat(hitboxCount, `is`(1))
+        assertThat(collisionBeginCount, `is`(1))
+        assertThat(collisionCount, `is`(1))
+        assertThat(collisionEndCount, `is`(1))
+    }
+
+    @Test
     fun `Collision notification`() {
         val e1 = Entity()
         e1.type = EntityType.TYPE1

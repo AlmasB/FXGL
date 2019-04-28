@@ -3,6 +3,7 @@
  */
 module fxgl.all {
     requires transitive fxgl.core;
+    requires transitive fxgl.achievement;
     requires transitive fxgl.animation;
     requires transitive fxgl.effects;
     requires transitive fxgl.entity;
@@ -10,6 +11,7 @@ module fxgl.all {
     requires transitive fxgl.input;
     requires transitive fxgl.io;
     requires transitive fxgl.media;
+    requires transitive fxgl.notification;
     requires transitive fxgl.time;
     requires transitive fxgl.ui;
 
@@ -20,8 +22,10 @@ module fxgl.all {
     requires transitive javafx.swing;
 
     opens com.almasb.fxgl.dsl to fxgl.core;
+    opens com.almasb.fxgl.dev to fxgl.core;
 
     exports com.almasb.fxgl.app;
+    exports com.almasb.fxgl.dev;
     exports com.almasb.fxgl.dsl;
     exports com.almasb.fxgl.dsl.components;
     exports com.almasb.fxgl.gameplay;

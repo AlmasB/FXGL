@@ -1,11 +1,16 @@
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.audio.AudioPlayer
+import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.Inject
+import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.FXGLExecutor
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.local.Local
+import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
+import com.almasb.fxgl.core.reflect.ReflectionUtils.inject
 import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.dev.DevPane
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
@@ -16,7 +21,9 @@ import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.scene.ProgressDialog
+import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.Display
 import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.fxgl.ui.FXGLUIConfig
@@ -25,6 +32,7 @@ import com.almasb.sslogger.Logger
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.event.EventHandler
+import javafx.scene.Group
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import java.time.LocalDateTime
@@ -69,11 +77,40 @@ internal class Engine(
 
     /* SUBSYSTEMS */
 
+    private val services = arrayListOf<EngineService>()
+    private val servicesCache = ObjectMap<Class<out EngineService>, EngineService>()
+
+    fun addService(engineService: EngineService) {
+        log.debug("Adding new engine service: ${engineService.javaClass}")
+
+        services += engineService
+    }
+
+    inline fun <reified T : EngineService> getService(serviceClass: Class<T>): T {
+        if (servicesCache.containsKey(serviceClass))
+            return servicesCache[serviceClass] as T
+
+        return (services.find { it is T  }?.also { servicesCache.put(serviceClass, it) }
+                ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
+    }
+
     internal val assetLoader by lazy { AssetLoader() }
     internal val eventBus by lazy { EventBus() }
-    internal val audioPlayer by lazy { AudioPlayer() }
     internal val display by lazy { dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
+
+    internal val devPane by lazy { DevPane(playState, settings) }
+
+    /**
+     * The 'always on' engine timer.
+     */
+    private val engineTimer = Timer()
+
+    /**
+     * The root for the overlay group that is constantly visible and on top
+     * of every other UI element. For things like notifications.
+     */
+    private val overlayRoot = Group()
 
     private val profileName = SimpleStringProperty("no-profile")
 
@@ -84,12 +121,17 @@ internal class Engine(
 
     private lateinit var saveLoadManager: SaveLoadManager
 
+    private val environmentVars = hashMapOf<String, Any>()
+
     init {
         log.debug("Initializing FXGL")
 
         version = loadVersion()
 
         logVersion()
+
+        environmentVars["overlayRoot"] = overlayRoot
+        environmentVars["masterTimer"] = engineTimer
     }
 
     private fun loadVersion(): String {
@@ -157,11 +199,52 @@ internal class Engine(
                 // this is called once per application lifetime
                 runPreInit()
 
+                addOverlay(startupScene)
+
+                mainWindow.currentStateProperty.addListener { _, oldScene, newScene ->
+                    log.debug("Removing overlay from $oldScene and adding to $newScene")
+
+                    removeOverlay(oldScene)
+                    addOverlay(newScene)
+                }
+
+                settings.javaClass.declaredMethods.filter { it.name.startsWith("is") || it.name.startsWith("get") }.forEach {
+                    environmentVars[it.name.removePrefix("get").decapitalize()] = it.invoke(settings)
+                }
+
+                log.debug("Logging environment variables")
+
+                environmentVars.forEach { (key, value) ->
+                    log.debug("$key: $value")
+                }
+
+                services.forEach { service ->
+                    findFieldsByAnnotation(service, Inject::class.java).forEach { field ->
+                        val injectKey = field.getDeclaredAnnotation(Inject::class.java).value
+
+                        if (injectKey !in environmentVars) {
+                            throw IllegalArgumentException("Cannot inject @Inject($injectKey). No value present for $injectKey")
+                        }
+
+                        inject(field, service, environmentVars[injectKey])
+                    }
+                }
+
+                services.forEach { it.onMainLoopStarting() }
+
                 log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
 
                 loop.start()
             }
         }
+    }
+
+    private fun addOverlay(scene: Scene) {
+        scene.root.children += overlayRoot
+    }
+
+    private fun removeOverlay(scene: Scene) {
+        scene.root.children -= overlayRoot
     }
 
     private fun loadLocalization() {
@@ -337,9 +420,11 @@ internal class Engine(
     }
 
     private fun loop(tpf: Double) {
+        engineTimer.update(tpf)
+
         mainWindow.onUpdate(tpf)
 
-        audioPlayer.onUpdate(tpf)
+        services.forEach { it.onUpdate(tpf) }
     }
 
     private var handledOnce = false
@@ -498,6 +583,8 @@ internal class Engine(
 
     override fun exit() {
         log.debug("Exiting FXGL")
+
+        services.forEach { it.onExit() }
 
         if (settings.isMenuEnabled) {
             //menuHandler.saveProfile()

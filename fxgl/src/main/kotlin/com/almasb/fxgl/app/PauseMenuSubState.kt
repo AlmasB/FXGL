@@ -23,6 +23,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.util.Duration
+import java.util.Collections.addAll
 
 /**
  *
@@ -55,7 +56,7 @@ internal object PauseMenuSubState : SubScene() {
         content.translateX = FXGL.getAppWidth() / 2.0 - 125
         content.translateY = FXGL.getAppHeight() / 2.0 - 200
 
-        children.addAll(masker, content)
+        contentRoot.children.addAll(masker, content)
 
         animation = FXGL.animationBuilder()
                 .duration(Duration.seconds(0.5))

@@ -11,6 +11,7 @@ import com.almasb.fxgl.app.Engine
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.GameController
 import com.almasb.fxgl.app.ReadOnlyGameSettings
+import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.pool.Pools
@@ -19,9 +20,11 @@ import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
+import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.tiled.TMXLevelLoader
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.UserAction
+import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.time.LocalTimer
@@ -61,7 +64,7 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun isBrowser() = System.getProperty("fxgl.isBrowser", "false") == "true"
 
     // javafxports doesn't have "web" option, so will incorrectly default to desktop, hence the extra check
-    @JvmStatic fun isDesktop() = true
+    @JvmStatic fun isDesktop() = !isBrowser()
     @JvmStatic fun isMobile() = isAndroid() || isIOS()
     @JvmStatic fun isAndroid() = false
     @JvmStatic fun isIOS() = false
@@ -95,17 +98,21 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun getSystemBundle() = engine.bundle
 
+    @JvmStatic fun getDevPane() = engine.devPane
+
     @JvmStatic fun getUIFactory() = getSettings().uiFactory
 
     @JvmStatic fun getAssetLoader() = engine.assetLoader
 
     @JvmStatic fun getEventBus() = engine.eventBus
 
-    @JvmStatic fun getAudioPlayer() = engine.audioPlayer
+    @JvmStatic fun getAudioPlayer() = engine.getService(AudioPlayer::class.java)
 
     @JvmStatic fun getDisplay() = engine.display
 
     @JvmStatic fun getExecutor() = engine.executor
+
+    @JvmStatic fun getNotificationService() = engine.getService(NotificationService::class.java)
 
     /**
      * @return time per frame (in this frame)
@@ -116,6 +123,7 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getGameWorld() = engine.playState.gameWorld
     @JvmStatic fun getPhysicsWorld() = engine.playState.physicsWorld
     @JvmStatic fun getGameScene() = engine.playState
+    @JvmStatic fun getGameTimer(): Timer = engine.playState.timer
 
     /**
      * @return play state input
@@ -125,12 +133,13 @@ class FXGL private constructor() { companion object {
     /**
      * @return play state timer
      */
-    @JvmStatic fun getMasterTimer(): Timer = engine.playState.timer
+    @Deprecated("Use getGameTimer()", ReplaceWith("getGameTimer()", "com.almasb.fxgl.dsl.FXGL.Companion.getGameTimer"))
+    @JvmStatic fun getMasterTimer(): Timer = getGameTimer()
 
     /**
      * @return new instance on each call
      */
-    @JvmStatic fun newLocalTimer() = getMasterTimer().newLocalTimer()
+    @JvmStatic fun newLocalTimer() = getGameTimer().newLocalTimer()
 
     /**
      * @param name unique name for timer
@@ -292,7 +301,7 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun spawnFadeIn(entityName: String, data: SpawnData, duration: Duration): Entity {
         val e = getGameWorld().create(entityName, data)
-        e.viewComponent.opacity.value = 0.0
+        e.viewComponent.opacityProp.value = 0.0
 
         animationBuilder()
                 .duration(duration)
@@ -309,10 +318,11 @@ class FXGL private constructor() { companion object {
     /**
      * @param mapFileName name of the .json file or the .tmx file
      */
-    @JvmStatic fun setLevelFromMap(mapFileName: String) {
+    @JvmStatic fun setLevelFromMap(mapFileName: String): Level {
         if (mapFileName.endsWith(".tmx")) {
             val level = getAssetLoader().loadLevel(mapFileName, TMXLevelLoader())
             getGameWorld().setLevel(level)
+            return level
         } else {
             throw IllegalArgumentException("Unknown Tiled map format: $mapFileName")
         }

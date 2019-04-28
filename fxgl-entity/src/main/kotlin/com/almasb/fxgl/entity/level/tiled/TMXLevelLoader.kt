@@ -50,7 +50,18 @@ class TMXLevelLoader : LevelLoader {
 
             val objectEntities = createObjectLayerEntities(map, tilesetLoader, world)
 
-            return Level(map.width * map.tilewidth, map.height * map.tileheight, tileLayerEntities + objectEntities)
+            val level = Level(map.width * map.tilewidth, map.height * map.tileheight, tileLayerEntities + objectEntities)
+
+            map.properties.forEach { key, value ->
+
+                if (value is Float) {
+                    level.properties.setValue(key, value.toDouble())
+                } else {
+                    level.properties.setValue(key, value)
+                }
+            }
+
+            return level
 
         } catch (e: Exception) {
             throw LevelLoadingException("${e.message}", e)
@@ -120,6 +131,8 @@ class TMXLevelLoader : LevelLoader {
         var currentTileset = Tileset()
         var currentObject = TiledObject()
 
+        var mapPropertiesFinished = false
+
         while (eventReader.hasNext()) {
             val event = eventReader.nextEvent()
 
@@ -153,12 +166,21 @@ class TMXLevelLoader : LevelLoader {
                     }
 
                     "object" -> {
+                        // I'm making an assumption that map properties are defined before objects
+                        // If there are no objects in the map this flag is irrelevant anyway
+                        // as there can be no confusion between map and object properties
+                        mapPropertiesFinished = true
+
                         currentObject = TiledObject()
                         parseObject(currentLayer, currentObject, start)
                     }
 
                     "property" -> {
-                        parseObjectProperty(currentObject, start)
+                        if (mapPropertiesFinished) {
+                            parseObjectProperty(currentObject, start)
+                        } else {
+                            parseMapProperty(map, start)
+                        }
                     }
 
                     "polygon" -> {
@@ -296,6 +318,39 @@ class TMXLevelLoader : LevelLoader {
         (obj.propertytypes as MutableMap)[propName] = propType
 
         (obj.properties as MutableMap)[propName] = when (propType) {
+            "int" -> {
+                start.getInt("value")
+            }
+
+            "bool" -> {
+                start.getBoolean("value")
+            }
+
+            "float" -> {
+                start.getFloat("value")
+            }
+
+            "string", "" -> {
+                start.getString("value")
+            }
+
+            "color" -> {
+                start.getColor("value")
+            }
+
+            else -> {
+                throw IllegalArgumentException("Unknown property type: $propType for $propName")
+            }
+        }
+    }
+
+    private fun parseMapProperty(map: TiledMap, start: StartElement) {
+        val propName = start.getString("name")
+        val propType = start.getString("type")
+
+        (map.propertytypes as MutableMap)[propName] = propType
+
+        (map.properties as MutableMap)[propName] = when (propType) {
             "int" -> {
                 start.getInt("value")
             }

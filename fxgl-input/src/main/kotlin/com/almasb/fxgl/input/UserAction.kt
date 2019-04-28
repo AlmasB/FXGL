@@ -8,7 +8,7 @@ package com.almasb.fxgl.input
 
 /**
  * Represents a user action which is typically triggered when a key
- * or a mouse event has occurred. User actions have names so that they
+ * or a mouse event has occurred. User actions have unique names so that they
  * are easily identifiable. An action can be bound to a key or mouse event
  * using Input.
  *
@@ -45,7 +45,7 @@ abstract class UserAction(
 
     /**
      * Called as long as the trigger is being held (pressed).
-     * Starts from the next tick from the one when was triggered
+     * Starts from the next tick from the one when was triggered.
      */
     protected open fun onAction() {}
 

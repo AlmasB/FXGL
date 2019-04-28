@@ -26,7 +26,9 @@ class TiledMap(var width: Int = 0,
                var version: Int = 0,
                var tiledversion: String = "",
                var type: String = "",
-               var infinite: Boolean = false) {
+               var infinite: Boolean = false,
+               var properties: Map<String, Any> = hashMapOf(),
+               var propertytypes: Map<String, String> = hashMapOf()) {
 
     fun getLayerByName(name: String) = layers.filter { it.name == name }.firstOrNull()
             ?: throw IllegalArgumentException("Layer with name=$name not found")

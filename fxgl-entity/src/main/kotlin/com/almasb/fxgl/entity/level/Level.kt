@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.entity.level
 
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.entity.Entity
 
 /**
@@ -29,4 +30,5 @@ class Level(
          */
         val entities: List<Entity>) {
 
+    val properties = PropertyMap()
 }

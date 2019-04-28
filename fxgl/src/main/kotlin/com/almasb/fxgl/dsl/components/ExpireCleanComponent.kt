@@ -57,7 +57,7 @@ class ExpireCleanComponent(
     private fun updateOpacity(tpf: Double) {
         time += tpf
 
-        getEntity().viewComponent.opacity.value = if (time >= expire.toSeconds()) 0.0 else 1 - time / expire.toSeconds()
+        getEntity().viewComponent.opacityProp.value = if (time >= expire.toSeconds()) 0.0 else 1 - time / expire.toSeconds()
     }
 
     /**

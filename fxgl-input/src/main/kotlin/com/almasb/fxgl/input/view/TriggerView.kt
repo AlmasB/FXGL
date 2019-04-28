@@ -51,12 +51,12 @@ class TriggerView
     private fun updateView() {
         val view = createView()
 
-        if (trigger.getModifier() == InputModifier.NONE) {
+        if (trigger.modifier == InputModifier.NONE) {
             children.setAll(view)
             return
         }
 
-        val modifierKey = trigger.getModifier().toKeyCode()
+        val modifierKey = trigger.modifier.toKeyCode()
         val modifierView = KeyView(modifierKey, color, size)
 
         val text = Text("+").also {
@@ -70,7 +70,7 @@ class TriggerView
     }
 
     private fun createView(): Node {
-        if (trigger.isKey()) {
+        if (trigger.isKey) {
             return KeyView((trigger as KeyTrigger).key, color, size)
         } else {
             return MouseButtonView((trigger as MouseTrigger).button, color, size)

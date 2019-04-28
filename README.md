@@ -101,6 +101,7 @@ Download the latest uber jar from [Releases](https://github.com/AlmasB/FXGL/rele
 
 * University of Brighton, UK
 * University of Nottingham, UK
+* kidOYO, USA
 * Walton High School, USA
 * Zealand Institute of Business and Technology, Denmark
 * Federal Institute of Education, Science and Technology of Rio Grande do Sul, Brazil

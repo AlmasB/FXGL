@@ -4,7 +4,7 @@
 
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>11.1-beta</version>
+    <version>dev-SNAPSHOT</version>
     
     <packaging>pom</packaging>
 
@@ -25,6 +25,8 @@
         <module>fxgl-input</module>
         <module>fxgl-effects</module>
         <module>fxgl-test</module>
+        <module>fxgl-notification</module>
+        <module>fxgl-achievement</module>
     </modules>
 
     <licenses>
@@ -133,8 +135,7 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven.compiler.version}</version>
                     <configuration>
-                        <source>${source.version}</source>
-                        <target>${source.version}</target>
+                        <release>${source.version}</release>
                     </configuration>
                 </plugin>
 
