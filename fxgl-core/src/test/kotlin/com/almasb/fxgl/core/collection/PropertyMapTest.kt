@@ -6,12 +6,14 @@
 
 package com.almasb.fxgl.core.collection
 
+import javafx.beans.property.StringProperty
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 /**
  *
@@ -52,6 +54,15 @@ class PropertyMapTest {
     }
 
     @Test
+    fun `Get observable value`() {
+        map.setValue("key1", "aaa")
+
+        val obsValue = map.getValueObservable("key1") as StringProperty
+
+        assertThat(obsValue.value, `is`("aaa"))
+    }
+
+    @Test
     fun `Put and get`() {
         map.setValue("key1", "aaa")
         map.setValue("key2", -55)
@@ -70,8 +81,27 @@ class PropertyMapTest {
 
         assertThat(map.keys(), containsInAnyOrder("key1", "key2", "key3", "key4", "key5"))
 
+        map.setValue("key1", "a2")
+        map.setValue("key2", 33)
+        map.setValue("key3", 40.0)
+        map.setValue("key4", MyClass(4))
+        map.setValue("key5", false)
+
+        assertThat(map.getString("key1"), `is`("a2"))
+        assertThat(map.getInt("key2"), `is`(33))
+        assertThat(map.getDouble("key3"), `is`(40.0))
+        assertThat(map.getObject<MyClass>("key4").i, `is`(4))
+        assertThat(map.getBoolean("key5"), `is`(false))
+
         map.clear()
         assertTrue(map.keys().isEmpty())
+    }
+
+    @Test
+    fun `Throws if no such key`() {
+        assertThrows<IllegalArgumentException> {
+            map.getValue("hello")
+        }
     }
 
     @Test

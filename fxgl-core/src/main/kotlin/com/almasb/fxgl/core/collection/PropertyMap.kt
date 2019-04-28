@@ -6,31 +6,28 @@
 
 package com.almasb.fxgl.core.collection
 
-import com.almasb.fxgl.core.util.BiConsumer
 import com.almasb.fxgl.core.util.Optional
-import com.almasb.fxgl.core.util.forEach
 import javafx.beans.property.*
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
-import javafx.scene.paint.Color
 import java.util.*
 
 /**
  * Maps property (variable) names to observable JavaFX properties.
  *
+ * Value types are one of
+ * SimpleIntegerProperty,
+ * SimpleDoubleProperty,
+ * SimpleBooleanProperty,
+ * SimpleStringProperty,
+ * SimpleObjectProperty.
+ *
+ * Null values are not allowed.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class PropertyMap {
 
-    /**
-     * Value types are one of
-     *
-     * SimpleIntegerProperty,
-     * SimpleDoubleProperty,
-     * SimpleBooleanProperty,
-     * SimpleStringProperty,
-     * SimpleObjectProperty
-     */
     private val properties = ObjectMap<String, Any>(32)
 
     fun keys(): Set<String> = properties.keys().toSet()
@@ -48,23 +45,18 @@ class PropertyMap {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T> getValue(propertyName: String): T {
-        return rawValueT(get(propertyName))
+        return (get(propertyName) as ObservableValue<*>).value as T
     }
 
     fun getValueObservable(propertyName: String): Any {
         return get(propertyName)
     }
 
-    private fun <T> rawValueT(valueWrapper: Any): T {
-        return when (valueWrapper) {
-            is ObservableValue<*> -> valueWrapper.value as T
-            else -> throw IllegalArgumentException("Unsupported value wrapper type: $valueWrapper")
-        }
-    }
-
     /**
      * Set a new [value] to an existing var [propertyName] or creates new var.
+     * The value cannot be null.
      */
     fun setValue(propertyName: String, value: Any) {
         if (exists(propertyName)) {
@@ -162,18 +154,18 @@ class PropertyMap {
     private fun get(propertyName: String) = properties.get(propertyName)
             ?: throw IllegalArgumentException("Property $propertyName does not exist")
 
-    private class ListenerKey(val propertyName: String,
-                              val propertyListener: PropertyChangeListener<*>) {
+    private class ListenerKey(val propertyName: String, val propertyListener: PropertyChangeListener<*>) {
 
         override fun hashCode(): Int {
             return Objects.hash(propertyName, propertyListener)
         }
 
         override fun equals(other: Any?): Boolean {
-            if (other !is ListenerKey)
-                return false
+            // this assumption is valid since this is a private class that is used only
+            // inside the listeners map above
+            val o = other as ListenerKey
 
-            return propertyName == other.propertyName && propertyListener === other.propertyListener
+            return propertyName == o.propertyName && propertyListener === o.propertyListener
         }
     }
 
