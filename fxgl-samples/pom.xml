@@ -43,8 +43,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.version}</version>
                 <configuration>
-                    <source>${source.version}</source>
-                    <target>${source.version}</target>
+                    <release>${source.version}</release>
                 </configuration>
             </plugin>
 
