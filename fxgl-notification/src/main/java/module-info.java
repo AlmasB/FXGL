@@ -1,14 +1,14 @@
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-module fxgl.notification {
-    requires fxgl.core;
-    requires fxgl.animation;
-    requires fxgl.time;
+module com.almasb.fxgl.notification {
+    requires com.almasb.fxgl.core;
+    requires com.almasb.fxgl.animation;
+    requires com.almasb.fxgl.time;
 
     exports com.almasb.fxgl.notification;
     exports com.almasb.fxgl.notification.view;
 
-    exports com.almasb.fxgl.notification.impl to fxgl.all;
-    opens com.almasb.fxgl.notification.impl to fxgl.core;
+    exports com.almasb.fxgl.notification.impl to com.almasb.fxgl.all;
+    opens com.almasb.fxgl.notification.impl to com.almasb.fxgl.core;
 }

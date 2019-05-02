@@ -1,7 +1,7 @@
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-module fxgl.test {
+module com.almasb.fxgl.test {
     requires javafx.graphics;
     requires org.junit.jupiter.api;
 

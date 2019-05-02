@@ -1,8 +1,8 @@
 /**
  *
  */
-module fxgl.animation {
-    requires fxgl.core;
+module com.almasb.fxgl.animation {
+    requires com.almasb.fxgl.core;
 
     exports com.almasb.fxgl.animation;
 }

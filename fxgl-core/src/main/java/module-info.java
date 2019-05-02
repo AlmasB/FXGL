@@ -1,7 +1,7 @@
 /**
  *
  */
-module fxgl.core {
+module com.almasb.fxgl.core {
     requires transitive kotlin.stdlib;
     requires transitive javafx.graphics;
     requires transitive javafx.base;

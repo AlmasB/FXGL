@@ -1,12 +1,12 @@
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-module fxgl.entity {
-    requires fxgl.core;
+module com.almasb.fxgl.entity {
+    requires com.almasb.fxgl.core;
     requires java.xml;
 
-    opens com.almasb.fxgl.entity.component to fxgl.core;
-    opens com.almasb.fxgl.entity.components to fxgl.core;
+    opens com.almasb.fxgl.entity.component to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.entity.components to com.almasb.fxgl.core;
 
     exports com.almasb.fxgl.entity;
     exports com.almasb.fxgl.entity.component;
