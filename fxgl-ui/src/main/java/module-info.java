@@ -1,9 +1,9 @@
 /**
  *
  */
-module fxgl.ui {
-    requires fxgl.core;
-    requires fxgl.animation;
+module com.almasb.fxgl.ui {
+    requires com.almasb.fxgl.core;
+    requires com.almasb.fxgl.animation;
 
     requires javafx.controls;
 

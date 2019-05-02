@@ -1,19 +1,19 @@
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-module fxgl.all {
-    requires transitive fxgl.core;
-    requires transitive fxgl.achievement;
-    requires transitive fxgl.animation;
-    requires transitive fxgl.effects;
-    requires transitive fxgl.entity;
-    requires transitive fxgl.events;
-    requires transitive fxgl.input;
-    requires transitive fxgl.io;
-    requires transitive fxgl.media;
-    requires transitive fxgl.notification;
-    requires transitive fxgl.time;
-    requires transitive fxgl.ui;
+module com.almasb.fxgl.all {
+    requires transitive com.almasb.fxgl.core;
+    requires transitive com.almasb.fxgl.achievement;
+    requires transitive com.almasb.fxgl.animation;
+    requires transitive com.almasb.fxgl.effects;
+    requires transitive com.almasb.fxgl.entity;
+    requires transitive com.almasb.fxgl.events;
+    requires transitive com.almasb.fxgl.input;
+    requires transitive com.almasb.fxgl.io;
+    requires transitive com.almasb.fxgl.media;
+    requires transitive com.almasb.fxgl.notification;
+    requires transitive com.almasb.fxgl.time;
+    requires transitive com.almasb.fxgl.ui;
 
     requires transitive javafx.base;
     requires transitive javafx.graphics;
@@ -21,8 +21,8 @@ module fxgl.all {
     requires transitive javafx.fxml;
     requires transitive javafx.swing;
 
-    opens com.almasb.fxgl.dsl to fxgl.core;
-    opens com.almasb.fxgl.dev to fxgl.core;
+    opens com.almasb.fxgl.dsl to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.dev to com.almasb.fxgl.core;
 
     exports com.almasb.fxgl.app;
     exports com.almasb.fxgl.dev;
