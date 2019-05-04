@@ -133,6 +133,7 @@ internal class Engine(
 
         environmentVars["overlayRoot"] = overlayRoot
         environmentVars["masterTimer"] = engineTimer
+        environmentVars["eventBus"] = eventBus
     }
 
     private fun loadVersion(): String {

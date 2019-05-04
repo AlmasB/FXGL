@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyChangeListener
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.event.EventBus
 import com.almasb.sslogger.Logger
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
@@ -26,6 +27,9 @@ class AchievementManager : EngineService {
 
     @Inject("achievementStores")
     private lateinit var achievementStores: List<AchievementStore>
+
+    @Inject("eventBus")
+    private lateinit var eventBus: EventBus
 
     private val achievements = FXCollections.observableArrayList<Achievement>()
     private val achievementsReadOnly by lazy { FXCollections.unmodifiableObservableList(achievements) }
@@ -86,10 +90,7 @@ class AchievementManager : EngineService {
 
                             if (now >= it.varValue) {
                                 it.setAchieved()
-
-                                log.debug("Achievement unlocked: $it")
-
-                                //FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
+                                eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
 
                                 vars.removeListener(it.varName, listener!!)
                             }
@@ -114,7 +115,7 @@ class AchievementManager : EngineService {
 
                             if (now >= it.varValue) {
                                 it.setAchieved()
-                                //FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
+                                eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
 
                                 vars.removeListener(it.varName, listener!!)
                             }
@@ -132,7 +133,7 @@ class AchievementManager : EngineService {
                         override fun onChange(prev: Boolean, now: Boolean) {
                             if (now) {
                                 it.setAchieved()
-                                //FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
+                                eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
 
                                 vars.removeListener(it.varName, listener!!)
                             }
