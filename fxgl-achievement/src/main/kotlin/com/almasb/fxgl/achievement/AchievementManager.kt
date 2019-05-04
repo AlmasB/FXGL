@@ -15,9 +15,11 @@ import com.almasb.fxgl.event.EventBus
 import com.almasb.sslogger.Logger
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import java.util.*
 
 /**
  * Responsible for registering and updating achievements.
+ * All achievements are registered once via [AchievementStore].
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -31,8 +33,13 @@ class AchievementManager : EngineService {
     @Inject("eventBus")
     lateinit var eventBus: EventBus
 
-    private val achievements = FXCollections.observableArrayList<Achievement>()
-    private val achievementsReadOnly by lazy { FXCollections.unmodifiableObservableList(achievements) }
+    private val achievementsInternal = mutableListOf<Achievement>()
+
+    /**
+     * @return unmodifiable list of achievements
+     */
+    val achievements: List<Achievement>
+        get() = Collections.unmodifiableList(achievementsInternal)
 
     /**
      * Registers achievement in the system.
@@ -41,11 +48,11 @@ class AchievementManager : EngineService {
      * @param a the achievement
      */
     fun registerAchievement(a: Achievement) {
-        require(achievements.none { it.name == a.name }) {
+        require(achievementsInternal.none { it.name == a.name }) {
             "Achievement with name [${a.name}] exists"
         }
 
-        achievements.add(a)
+        achievementsInternal.add(a)
         log.debug("Registered new achievement: ${a.name}")
     }
 
@@ -55,14 +62,9 @@ class AchievementManager : EngineService {
      * @throws IllegalArgumentException if achievement is not registered
      */
     fun getAchievementByName(name: String): Achievement {
-        return achievements.find { it.name == name }
+        return achievementsInternal.find { it.name == name }
                 ?: throw IllegalArgumentException("Achievement with name [$name] is not registered!")
     }
-
-    /**
-     * @return unmodifiable list of achievements
-     */
-    fun getAchievements(): ObservableList<Achievement> = achievementsReadOnly
 
     override fun onMainLoopStarting() {
         achievementStores.forEach { it.initAchievements(this) }
@@ -73,7 +75,7 @@ class AchievementManager : EngineService {
     }
 
     fun bindToVars(vars: PropertyMap) {
-        achievements.forEach {
+        achievementsInternal.forEach {
 
             // TODO: first check if already achieved or do we read it from the bundle data?
 

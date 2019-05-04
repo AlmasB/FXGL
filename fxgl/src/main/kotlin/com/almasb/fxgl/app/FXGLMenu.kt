@@ -6,45 +6,45 @@
 
 package com.almasb.fxgl.app
 
-
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.core.local.Local
+import com.almasb.fxgl.core.local.Local.getLocalizedString
+import com.almasb.fxgl.core.local.Local.localizedStringProperty
+import com.almasb.fxgl.core.util.Consumer
+import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.core.util.Supplier
+import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.TriggerView
 import com.almasb.fxgl.saving.SaveFile
+import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.MenuType
+import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.FXGLScrollPane
+import com.almasb.fxgl.ui.FXGLUIConfig.getUIFactory
+import com.almasb.sslogger.Logger
 import javafx.beans.binding.StringBinding
 import javafx.collections.FXCollections
+import javafx.event.EventHandler
 import javafx.geometry.HPos
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.geometry.VPos
 import javafx.scene.Node
-import javafx.scene.control.*
+import javafx.scene.control.Button
+import javafx.scene.control.CheckBox
 import javafx.scene.control.ScrollPane.ScrollBarPolicy
+import javafx.scene.control.Slider
+import javafx.scene.control.Tooltip
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
-
-import java.util.ArrayList
-
-import com.almasb.fxgl.dsl.FXGL.Companion.getSettings
-import com.almasb.fxgl.dsl.FXGL.Companion.getUIFactory
-import com.almasb.fxgl.core.local.Local
-import com.almasb.fxgl.core.local.Local.getLocalizedString
-import com.almasb.fxgl.core.local.Local.localizedStringProperty
-import com.almasb.fxgl.core.util.Consumer
-import com.almasb.fxgl.core.util.InputPredicates
-import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.MenuType
-import com.almasb.fxgl.scene.SubScene
-import javafx.event.EventHandler
+import javafx.util.Duration
+import java.util.*
 
 /**
  * This is a base class for main/game menus. It provides several
@@ -69,10 +69,10 @@ import javafx.event.EventHandler
 abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
     companion object {
-        private val log = Logger.get("FXGL.Menu")
+        private val log = Logger.get("Menu")
     }
 
-    protected val controller: GameController = FXGL.getGameController()
+    protected val controller: GameController = getGameController()
 
     protected val menuRoot = Pane()
     protected val menuContentRoot = Pane()
@@ -83,8 +83,8 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
     init {
         contentRoot.children.addAll(
-                createBackground(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble()),
-                createTitleView(FXGL.getSettings().title),
+                createBackground(getAppWidth().toDouble(), getAppHeight().toDouble()),
+                createTitleView(getSettings().title),
                 createVersionView(makeVersionString()),
                 menuRoot, menuContentRoot)
 
@@ -133,11 +133,11 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
      * @return full version string
      */
     private fun makeVersionString(): String {
-        return ("v" + FXGL.getSettings().version
-                + if (FXGL.getSettings().applicationMode === ApplicationMode.RELEASE)
+        return ("v" + getSettings().version
+                + if (getSettings().applicationMode === ApplicationMode.RELEASE)
             ""
         else
-            "-" + FXGL.getSettings().applicationMode)
+            "-" + getSettings().applicationMode)
     }
 
     /**
@@ -260,11 +260,11 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         // row 0
         grid.userData = 0
 
-        FXGL.getInput().allBindings.forEach { action, trigger -> addNewInputBinding(action, trigger, grid) }
+        getInput().allBindings.forEach { action, trigger -> addNewInputBinding(action, trigger, grid) }
 
         val scroll = FXGLScrollPane(grid)
         scroll.vbarPolicy = ScrollBarPolicy.ALWAYS
-        scroll.maxHeight = FXGL.getAppHeight() / 2.5
+        scroll.maxHeight = getAppHeight() / 2.5
 
         val hbox = HBox(scroll)
         hbox.alignment = Pos.CENTER
@@ -281,14 +281,14 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
                 if (Input.isIllegal(e.getCode()))
                     return@EventHandler
 
-                val rebound = FXGL.getInput().rebind(actionContext!!, e.getCode(), InputModifier.from(e))
+                val rebound = getInput().rebind(actionContext!!, e.getCode(), InputModifier.from(e))
 
                 if (rebound)
                     controller.popSubScene()
             })
 
             input.addEventHandler(MouseEvent.MOUSE_PRESSED, EventHandler { e ->
-                val rebound = FXGL.getInput().rebind(actionContext!!, e.getButton(), InputModifier.from(e))
+                val rebound = getInput().rebind(actionContext!!, e.getButton(), InputModifier.from(e))
 
                 if (rebound)
                     controller.popSubScene()
@@ -303,8 +303,8 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             val text = getUIFactory().newText(getLocalizedString("menu.pressAnyKey"), 24.0)
 
             val pane = StackPane(rect, text)
-            pane.translateX = (FXGL.getAppWidth() / 2 - 125).toDouble()
-            pane.translateY = (FXGL.getAppHeight() / 2 - 50).toDouble()
+            pane.translateX = (getAppWidth() / 2 - 125).toDouble()
+            pane.translateY = (getAppHeight() / 2 - 50).toDouble()
 
             contentRoot.children.add(pane)
         }
@@ -314,7 +314,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         val actionName = getUIFactory().newText(action.name, Color.WHITE, 18.0)
 
         val triggerView = TriggerView(trigger)
-        triggerView.triggerProperty().bind(FXGL.getInput().triggerProperty(action))
+        triggerView.triggerProperty().bind(getInput().triggerProperty(action))
 
         triggerView.setOnMouseClicked { event ->
             pressAnyKeyState.actionContext = action
@@ -374,14 +374,14 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         log.debug("createContentAudio()")
 
         val sliderMusic = Slider(0.0, 1.0, 1.0)
-        sliderMusic.valueProperty().bindBidirectional(FXGL.getAudioPlayer().globalMusicVolumeProperty)
+        sliderMusic.valueProperty().bindBidirectional(getAudioPlayer().globalMusicVolumeProperty)
 
         val textMusic = getUIFactory().newText(localizedStringProperty("menu.music.volume").concat(": "))
         val percentMusic = getUIFactory().newText("")
         percentMusic.textProperty().bind(sliderMusic.valueProperty().multiply(100).asString("%.0f"))
 
         val sliderSound = Slider(0.0, 1.0, 1.0)
-        sliderSound.valueProperty().bindBidirectional(FXGL.getAudioPlayer().globalSoundVolumeProperty)
+        sliderSound.valueProperty().bindBidirectional(getAudioPlayer().globalSoundVolumeProperty)
 
         val textSound = getUIFactory().newText(localizedStringProperty("menu.sound.volume").concat(": "))
         val percentSound = getUIFactory().newText("")
@@ -403,8 +403,8 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         log.debug("createContentCredits()")
 
         val pane = FXGLScrollPane()
-        pane.prefWidth = (FXGL.getAppWidth() * 3 / 5).toDouble()
-        pane.prefHeight = (FXGL.getAppHeight() / 2).toDouble()
+        pane.prefWidth = (getAppWidth() * 3 / 5).toDouble()
+        pane.prefHeight = (getAppHeight() / 2).toDouble()
         pane.style = "-fx-background:black;"
 
         val vbox = VBox()
@@ -442,7 +442,26 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun createContentAchievements(): MenuContent {
         log.debug("createContentAchievements()")
 
-        return MenuContent()
+        val content = MenuContent()
+        
+        getAchievementService().achievements.forEach { a ->
+            val checkBox = CheckBox()
+            checkBox.isDisable = true
+            checkBox.selectedProperty().bind(a.achievedProperty())
+
+            val text = getUIFactory().newText(a.name)
+            val tooltip = Tooltip(a.description)
+            tooltip.showDelay = Duration.seconds(0.1)
+
+            Tooltip.install(text, tooltip)
+
+            val box = HBox(25.0, text, checkBox)
+            box.alignment = Pos.CENTER_RIGHT
+
+            content.children.add(box)
+        }
+
+        return content
     }
 
     /**
@@ -531,7 +550,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 //    }
 
 //    override fun onDelete(saveFile: SaveFile) {
-//        FXGL.getDisplay().showConfirmationBox(Local.getLocalizedString("menu.deleteSave")+"[${saveFile.name}]?", { yes ->
+//        getDisplay().showConfirmationBox(Local.getLocalizedString("menu.deleteSave")+"[${saveFile.name}]?", { yes ->
 //
 //            if (yes) {
 //                saveLoadManager
@@ -570,7 +589,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
                 " [${saveFile.name}]?\n" +
                 Local.getLocalizedString("menu.unsavedProgress")
 
-        FXGL.getDisplay().showConfirmationBox(text) { yes ->
+        getDisplay().showConfirmationBox(text) { yes ->
             if (yes)
                 controller.loadGame(saveFile)
         }
@@ -583,7 +602,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireSave() {
         log.debug("fireSave()")
 
-        FXGL.getDisplay().showInputBoxWithCancel(Local.getLocalizedString("menu.enterSaveName"), InputPredicates.ALPHANUM, Consumer { saveFileName ->
+        getDisplay().showInputBoxWithCancel(Local.getLocalizedString("menu.enterSaveName"), InputPredicates.ALPHANUM, Consumer { saveFileName ->
 
             if (saveFileName.isEmpty())
                 return@Consumer
@@ -591,7 +610,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             controller.saveGame(saveFileName)
 
 //            if (saveLoadManager.saveFileExists(saveFileName)) {
-//                FXGL.getDisplay().showConfirmationBox(getLocalizedString("menu.overwrite") +" [$saveFileName]?", { yes ->
+//                getDisplay().showConfirmationBox(getLocalizedString("menu.overwrite") +" [$saveFileName]?", { yes ->
 //
 //                    if (yes)
 //                        doSave(saveFileName)
@@ -626,7 +645,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         val text = getLocalizedString("dialog.exitGame")
 
-        FXGL.getDisplay().showConfirmationBox(text) { yes ->
+        getDisplay().showConfirmationBox(text) { yes ->
             if (yes)
                 controller.exit()
         }
@@ -638,7 +657,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         val text = Local.getLocalizedString("menu.exitMainMenu") + "\n" +
                 Local.getLocalizedString("menu.unsavedProgress")
 
-        FXGL.getDisplay().showConfirmationBox(text) { yes ->
+        getDisplay().showConfirmationBox(text) { yes ->
             if (yes)
                 controller.gotoMainMenu()
         }

@@ -37,6 +37,8 @@ fun getApp() = FXGL.getApp()
 
 fun <T : GameApplication> getAppCast() = FXGL.getAppCast<T>()
 
+fun getSettings() = FXGL.getSettings()
+
 fun getAppWidth() = FXGL.getAppWidth()
 
 fun getAppHeight() = FXGL.getAppHeight()
@@ -63,9 +65,15 @@ fun getPhysicsWorld() = FXGL.getPhysicsWorld()
 
 fun getInput() = FXGL.getInput()
 
-fun getMasterTimer() = FXGL.getMasterTimer()
+fun getGameTimer() = FXGL.getGameTimer()
 
 fun newLocalTimer() = FXGL.newLocalTimer()
+
+fun getGameController() = FXGL.getGameController()
+
+fun getAchievementService() = FXGL.getAchievementService()
+
+fun getNotificationService() = FXGL.getNotificationService()
 
 fun set(varName: String, value: Any) = FXGL.set(varName, value)
 

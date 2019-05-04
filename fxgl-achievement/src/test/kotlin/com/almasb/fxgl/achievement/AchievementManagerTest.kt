@@ -29,6 +29,8 @@ class AchievementManagerTest {
     @BeforeEach
     fun setUp() {
         achievementManager = AchievementManager()
+
+        // TODO: reflect set via a common fxgl-test func, make them private
         achievementManager.achievementStores = emptyList()
         achievementManager.eventBus = EventBus()
     }
@@ -37,7 +39,7 @@ class AchievementManagerTest {
     fun `Register achievement`() {
         achievementManager.registerAchievement(a1)
 
-        assertThat(achievementManager.getAchievements(), contains(a1))
+        assertThat(achievementManager.achievements, contains(a1))
         assertThat(achievementManager.getAchievementByName("TestAchievement"), `is`(a1))
     }
 
