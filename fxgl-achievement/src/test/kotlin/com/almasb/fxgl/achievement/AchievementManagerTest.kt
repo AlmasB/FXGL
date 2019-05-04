@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.achievement
 
+import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.event.EventBus
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
@@ -22,15 +24,17 @@ class AchievementManagerTest {
 
     private lateinit var achievementManager: AchievementManager
 
+    private val a1 = Achievement("TestAchievement", "TestDescription", "", 0)
+
     @BeforeEach
     fun setUp() {
         achievementManager = AchievementManager()
+        achievementManager.achievementStores = emptyList()
+        achievementManager.eventBus = EventBus()
     }
 
     @Test
     fun `Register achievement`() {
-        val a1 = Achievement("TestAchievement", "TestDescription", "", 0)
-
         achievementManager.registerAchievement(a1)
 
         assertThat(achievementManager.getAchievements(), contains(a1))
@@ -46,7 +50,6 @@ class AchievementManagerTest {
 
     @Test
     fun `Cannot have achievements with same name`() {
-        val a1 = Achievement("TestAchievement", "TestDescription", "", 0)
         val a2 = Achievement("TestAchievement", "TestDescription", "", 0)
 
         achievementManager.registerAchievement(a1)
@@ -54,6 +57,26 @@ class AchievementManagerTest {
         assertThrows(IllegalArgumentException::class.java, {
             achievementManager.registerAchievement(a2)
         })
+    }
+
+    @Test
+    fun `Achievement is unlocked when var reaches required value`() {
+        val a = Achievement("TestAchievement", "TestDescription", "varName", 2)
+
+        achievementManager.registerAchievement(a)
+
+        val map = PropertyMap()
+        map.setValue("varName", 0)
+
+        achievementManager.bindToVars(map)
+
+        assertFalse(a.isAchieved)
+
+        map.setValue("varName", 1)
+        assertFalse(a.isAchieved)
+
+        map.setValue("varName", 2)
+        assertTrue(a.isAchieved)
     }
 
 //    @Test

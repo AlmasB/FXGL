@@ -26,10 +26,10 @@ class AchievementManager : EngineService {
     private val log = Logger.get(javaClass)
 
     @Inject("achievementStores")
-    private lateinit var achievementStores: List<AchievementStore>
+    lateinit var achievementStores: List<AchievementStore>
 
     @Inject("eventBus")
-    private lateinit var eventBus: EventBus
+    lateinit var eventBus: EventBus
 
     private val achievements = FXCollections.observableArrayList<Achievement>()
     private val achievementsReadOnly by lazy { FXCollections.unmodifiableObservableList(achievements) }
@@ -69,7 +69,10 @@ class AchievementManager : EngineService {
     }
 
     override fun onGameReady(vars: PropertyMap) {
+        bindToVars(vars)
+    }
 
+    fun bindToVars(vars: PropertyMap) {
         achievements.forEach {
 
             // TODO: first check if already achieved or do we read it from the bundle data?
