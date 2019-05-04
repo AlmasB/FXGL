@@ -7,6 +7,7 @@
 package com.almasb.fxgl.audio
 
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.sslogger.Logger
@@ -68,6 +69,9 @@ class AudioPlayer : EngineService {
     }
 
     override fun onMainLoopStarting() {
+    }
+
+    override fun onGameReady(vars: PropertyMap) {
     }
 
     override fun onExit() {

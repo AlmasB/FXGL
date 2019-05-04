@@ -3,6 +3,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.ObjectMap
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.FXGLExecutor
 import com.almasb.fxgl.core.concurrent.IOTask
@@ -579,6 +580,10 @@ internal class Engine(
 
     override fun popSubScene() {
         mainWindow.popState()
+    }
+
+    override fun onGameReady(vars: PropertyMap) {
+        services.forEach { it.onGameReady(vars) }
     }
 
     override fun exit() {

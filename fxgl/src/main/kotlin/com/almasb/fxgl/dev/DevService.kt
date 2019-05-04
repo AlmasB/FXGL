@@ -8,6 +8,7 @@ package com.almasb.fxgl.dev
 
 import com.almasb.fxgl.app.GameView
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.Entity
@@ -58,6 +59,9 @@ class DevService : EngineService {
     }
 
     override fun onUpdate(tpf: Double) {
+    }
+
+    override fun onGameReady(vars: PropertyMap) {
     }
 
     override fun write(bundle: Bundle) {

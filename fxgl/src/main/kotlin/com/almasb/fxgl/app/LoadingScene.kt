@@ -121,7 +121,7 @@ open class LoadingScene : FXGLScene() {
             FXGL.getPhysicsWorld().clearCollisionHandlers()
             FXGL.getGameScene().clear()
             FXGL.getGameState().clear()
-            FXGL.getMasterTimer().clear()
+            FXGL.getGameTimer().clear()
         }
 
         private fun initGame() {
@@ -129,7 +129,10 @@ open class LoadingScene : FXGLScene() {
 
             val vars = hashMapOf<String, Any>()
             app.initGameVars(vars)
-            forEach(vars, BiConsumer { name, value -> FXGL.getGameState().setValue(name, value) })
+
+            vars.forEach { (name, value) ->
+                FXGL.getGameState().setValue(name, value)
+            }
 
             if (dataFile === DataFile.EMPTY) {
                 app.initGame()
@@ -150,6 +153,7 @@ open class LoadingScene : FXGLScene() {
 
         private fun initComplete() {
             update("Initialization Complete", 3)
+            FXGL.getGameController().onGameReady(FXGL.getGameState().properties)
         }
 
         private fun update(message: String, step: Int) {

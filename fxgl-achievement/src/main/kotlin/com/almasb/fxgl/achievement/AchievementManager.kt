@@ -9,6 +9,7 @@ package com.almasb.fxgl.achievement
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyChangeListener
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.sslogger.Logger
 import javafx.collections.FXCollections
@@ -61,10 +62,14 @@ class AchievementManager : EngineService {
 
     override fun onMainLoopStarting() {
         achievementStores.forEach { it.initAchievements(this) }
+    }
 
-        // TODO: cleanup
+    override fun onGameReady(vars: PropertyMap) {
 
         achievements.forEach {
+
+            // TODO: first check if already achieved or do we read it from the bundle data?
+
             when(it.varValue) {
                 is Int -> {
                     var listener: PropertyChangeListener<Int>? = null
@@ -81,13 +86,17 @@ class AchievementManager : EngineService {
 
                             if (now >= it.varValue) {
                                 it.setAchieved()
+
+                                log.debug("Achievement unlocked: $it")
+
                                 //FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
-                                //FXGL.getApp().gameState.removeListener(it.varName, listener!!)
+
+                                vars.removeListener(it.varName, listener!!)
                             }
                         }
                     }
 
-                    //FXGL.getApp().gameState.addListener<Int>(it.varName, listener)
+                    vars.addListener(it.varName, listener)
                 }
 
                 is Double -> {
@@ -106,12 +115,13 @@ class AchievementManager : EngineService {
                             if (now >= it.varValue) {
                                 it.setAchieved()
                                 //FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
-                                //FXGL.getApp().gameState.removeListener(it.varName, listener!!)
+
+                                vars.removeListener(it.varName, listener!!)
                             }
                         }
                     }
 
-                    //FXGL.getApp().gameState.addListener<Double>(it.varName, listener)
+                    vars.addListener(it.varName, listener)
                 }
 
                 is Boolean -> {
@@ -123,12 +133,13 @@ class AchievementManager : EngineService {
                             if (now) {
                                 it.setAchieved()
                                 //FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
-                                //FXGL.getApp().gameState.removeListener(it.varName, listener!!)
+
+                                vars.removeListener(it.varName, listener!!)
                             }
                         }
                     }
 
-                    //FXGL.getApp().gameState.addListener<Boolean>(it.varName, listener)
+                    vars.addListener(it.varName, listener)
                 }
 
                 else -> throw IllegalArgumentException("Unknown value type for achievement: " + it.varValue)

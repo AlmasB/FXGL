@@ -15,12 +15,14 @@ import javafx.beans.property.ReadOnlyBooleanWrapper
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class Achievement(
+
+        /**
+         * Name of this achievement, as shown in UI.
+         */
         val name: String,
 
         /**
          * Contains info on how to unlock the achievement.
-         *
-         * @return achievement description
          */
         val description: String,
 

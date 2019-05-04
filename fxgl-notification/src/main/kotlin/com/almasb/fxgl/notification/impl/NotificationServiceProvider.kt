@@ -7,6 +7,7 @@
 package com.almasb.fxgl.notification.impl
 
 import com.almasb.fxgl.core.Inject
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.notification.Notification
@@ -104,6 +105,9 @@ class NotificationServiceProvider : NotificationService {
     }
 
     override fun onMainLoopStarting() {
+    }
+
+    override fun onGameReady(vars: PropertyMap) {
     }
 
     override fun onExit() {
