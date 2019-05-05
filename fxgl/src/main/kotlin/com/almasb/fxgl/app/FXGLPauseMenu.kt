@@ -11,9 +11,7 @@ import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.scene.Scene
-import com.almasb.fxgl.scene.SubScene
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Parent
@@ -23,33 +21,19 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.util.Duration
-import java.util.Collections.addAll
 
 /**
  *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal object PauseMenuSubState : SubScene() {
+class FXGLPauseMenu : PauseMenu() {
 
     private val masker = Rectangle(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble(), Color.color(0.0, 0.0, 0.0, 0.25))
     private val content: Pane
 
-    private var canSwitchGameMenu = true
-
     private val animation: Animation<*>
 
     init {
-        input.addAction(object : UserAction("Resume") {
-            override fun onActionBegin() {
-                requestHide()
-            }
-
-            override fun onActionEnd() {
-                unlockSwitch()
-            }
-        }, FXGL.getSettings().menuKey)
-
         content = createContentPane()
         content.children.add(createContent())
 
@@ -77,31 +61,6 @@ internal object PauseMenuSubState : SubScene() {
         animation.onUpdate(tpf)
     }
 
-    internal fun requestShow(onShow: () -> Unit) {
-        if (canSwitchGameMenu) {
-            canSwitchGameMenu = false
-            onShow()
-        }
-    }
-
-    private fun requestHide() {
-        if (animation.isAnimating)
-            return
-
-        if (canSwitchGameMenu) {
-            canSwitchGameMenu = false
-
-            animation.onFinished = Runnable {
-                FXGL.getGameController().popSubScene()
-            }
-            animation.startReverse()
-        }
-    }
-
-    internal fun unlockSwitch() {
-        canSwitchGameMenu = true
-    }
-
     private fun createContentPane(): StackPane {
         return StackPane(FXGL.texture("pause_menu_bg.png"))
     }
@@ -110,7 +69,6 @@ internal object PauseMenuSubState : SubScene() {
         val btnResume = FXGL.getUIFactory().newButton(Local.localizedStringProperty("menu.resume"))
         btnResume.setOnAction {
             requestHide()
-            unlockSwitch()
         }
 
         val btnExit = FXGL.getUIFactory().newButton(Local.localizedStringProperty("menu.exit"))
@@ -123,5 +81,15 @@ internal object PauseMenuSubState : SubScene() {
         vbox.setPrefSize(250.0, 400.0)
 
         return vbox
+    }
+
+    override fun onHide() {
+        if (animation.isAnimating)
+            return
+
+        animation.onFinished = Runnable {
+            FXGL.getGameController().popSubScene()
+        }
+        animation.startReverse()
     }
 }

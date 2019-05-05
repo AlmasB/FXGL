@@ -71,6 +71,8 @@ internal class Engine(
     private var mainMenu: FXGLScene? = null
     private var gameMenu: FXGLScene? = null
 
+    private var pauseMenu: PauseMenu? = null
+
     private val loop = LoopRunner { loop(it) }
 
     val tpf: Double
@@ -334,15 +336,18 @@ internal class Engine(
             playState.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
             gameMenu!!.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
         } else {
+
+            pauseMenu = sceneFactory.newPauseMenu()
+
             playState.input.addAction(object : UserAction("Pause") {
                 override fun onActionBegin() {
-                    PauseMenuSubState.requestShow {
-                        mainWindow.pushState(PauseMenuSubState)
+                    pauseMenu!!.requestShow {
+                        mainWindow.pushState(pauseMenu!!)
                     }
                 }
 
                 override fun onActionEnd() {
-                    PauseMenuSubState.unlockSwitch()
+                    pauseMenu!!.unlockSwitch()
                 }
             }, settings.menuKey)
         }
