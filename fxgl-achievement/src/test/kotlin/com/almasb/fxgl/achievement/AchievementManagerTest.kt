@@ -8,7 +8,6 @@ package com.almasb.fxgl.achievement
 
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.event.EventBus
-import com.almasb.fxgl.test.InjectInTest
 import com.almasb.fxgl.test.InjectInTest.inject
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -16,6 +15,7 @@ import org.hamcrest.Matchers.contains
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.lang.invoke.MethodHandles
 
 /**
  *
@@ -31,9 +31,10 @@ class AchievementManagerTest {
     @BeforeEach
     fun setUp() {
         achievementManager = AchievementManager()
+        val lookup = MethodHandles.lookup()
 
-        inject(achievementManager, "achievementStores", emptyList<AchievementStore>())
-        inject(achievementManager, "eventBus",  EventBus())
+        inject(lookup, achievementManager, "achievementStores", emptyList<AchievementStore>())
+        inject(lookup, achievementManager, "eventBus",  EventBus())
     }
 
     @Test
