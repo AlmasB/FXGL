@@ -7,16 +7,17 @@
 package sandbox.achievements;
 
 import com.almasb.fxgl.achievement.Achievement;
-import com.almasb.fxgl.achievement.AchievementManager;
 import com.almasb.fxgl.achievement.AchievementStore;
+
+import java.util.List;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class AchievementStore1 implements AchievementStore {
-    @Override
-    public void initAchievements(AchievementManager manager) {
-        manager.registerAchievement(new Achievement("See the world", "Move 600 pixels", "pixelsMoved", 600));
 
+    @Override
+    public void initAchievements(List<Achievement> achievements) {
+        achievements.add(new Achievement("See the world", "Move 600 pixels", "pixelsMoved", 600));
     }
 }

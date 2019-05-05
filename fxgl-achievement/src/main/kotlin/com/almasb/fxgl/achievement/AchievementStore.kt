@@ -13,5 +13,5 @@ package com.almasb.fxgl.achievement
  */
 interface AchievementStore {
 
-    fun initAchievements(manager: AchievementManager)
+    fun initAchievements(achievements: List<Achievement>)
 }

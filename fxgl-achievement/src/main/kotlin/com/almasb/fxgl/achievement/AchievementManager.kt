@@ -13,13 +13,11 @@ import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.event.EventBus
 import com.almasb.sslogger.Logger
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import java.util.*
 
 /**
  * Responsible for registering and updating achievements.
- * All achievements are registered once via [AchievementStore].
+ * All achievements are added once via [AchievementStore].
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -28,10 +26,10 @@ class AchievementManager : EngineService {
     private val log = Logger.get(javaClass)
 
     @Inject("achievementStores")
-    lateinit var achievementStores: List<AchievementStore>
+    private lateinit var achievementStores: List<AchievementStore>
 
     @Inject("eventBus")
-    lateinit var eventBus: EventBus
+    private lateinit var eventBus: EventBus
 
     private val achievementsInternal = mutableListOf<Achievement>()
 
@@ -40,21 +38,6 @@ class AchievementManager : EngineService {
      */
     val achievements: List<Achievement>
         get() = Collections.unmodifiableList(achievementsInternal)
-
-    /**
-     * Registers achievement in the system.
-     * Note: this method can only be called from initAchievements() to function properly.
-     *
-     * @param a the achievement
-     */
-    fun registerAchievement(a: Achievement) {
-        require(achievementsInternal.none { it.name == a.name }) {
-            "Achievement with name [${a.name}] exists"
-        }
-
-        achievementsInternal.add(a)
-        log.debug("Registered new achievement: ${a.name}")
-    }
 
     /**
      * @param name achievement name
@@ -66,15 +49,37 @@ class AchievementManager : EngineService {
                 ?: throw IllegalArgumentException("Achievement with name [$name] is not registered!")
     }
 
+    /**
+     * Registers achievement in the system.
+     * Note: this method can only be called from initAchievements() to function properly.
+     *
+     * @param a the achievement
+     */
+    internal fun registerAchievement(a: Achievement) {
+        require(achievementsInternal.none { it.name == a.name }) {
+            "Achievement with name [${a.name}] exists"
+        }
+
+        achievementsInternal.add(a)
+        log.debug("Registered new achievement: ${a.name}")
+    }
+
     override fun onMainLoopStarting() {
-        achievementStores.forEach { it.initAchievements(this) }
+        val store = mutableListOf<Achievement>()
+
+        achievementStores.forEach {
+            it.initAchievements(store)
+
+            store.forEach { registerAchievement(it) }
+            store.clear()
+        }
     }
 
     override fun onGameReady(vars: PropertyMap) {
         bindToVars(vars)
     }
 
-    fun bindToVars(vars: PropertyMap) {
+    internal fun bindToVars(vars: PropertyMap) {
         achievementsInternal.forEach {
 
             // TODO: first check if already achieved or do we read it from the bundle data?

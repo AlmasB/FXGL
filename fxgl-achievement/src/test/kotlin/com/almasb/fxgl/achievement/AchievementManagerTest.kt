@@ -8,6 +8,8 @@ package com.almasb.fxgl.achievement
 
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.event.EventBus
+import com.almasb.fxgl.test.InjectInTest
+import com.almasb.fxgl.test.InjectInTest.inject
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
@@ -30,9 +32,8 @@ class AchievementManagerTest {
     fun setUp() {
         achievementManager = AchievementManager()
 
-        // TODO: reflect set via a common fxgl-test func, make them private
-        achievementManager.achievementStores = emptyList()
-        achievementManager.eventBus = EventBus()
+        inject(achievementManager, "achievementStores", emptyList<AchievementStore>())
+        inject(achievementManager, "eventBus",  EventBus())
     }
 
     @Test
