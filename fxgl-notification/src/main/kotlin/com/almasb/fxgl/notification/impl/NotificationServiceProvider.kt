@@ -35,13 +35,13 @@ class NotificationServiceProvider : NotificationService {
     private var showing = false
 
     @Inject("overlayRoot")
-    internal lateinit var root: Group
+    private lateinit var root: Group
 
     @Inject("masterTimer")
-    internal lateinit var timer: Timer
+    private lateinit var timer: Timer
 
     @Inject("notificationViewClass")
-    internal lateinit var notificationViewClass: Class<out NotificationView>
+    private lateinit var notificationViewClass: Class<out NotificationView>
 
     private val notificationView by lazy { ReflectionUtils.newInstance(notificationViewClass) }
 
