@@ -73,9 +73,8 @@ class AchievementManager : EngineService {
     }
 
     internal fun bindToVars(vars: PropertyMap) {
-        achievementsInternal.forEach {
-
-            // TODO: first check if already achieved or do we read it from the bundle data?
+        // only interested in non-achieved achievements
+        achievementsInternal.filter { !it.isAchieved }.forEach {
 
             when(it.varValue) {
                 is Int -> {
@@ -158,26 +157,14 @@ class AchievementManager : EngineService {
     }
 
     override fun write(bundle: Bundle) {
-//        log.debug("Saving data to profile")
-//
-//        val bundle = Bundle("achievement")
-//
-//        achievements.forEach { a -> bundle.put(a.name, a.isAchieved) }
-//        bundle.log()
-//
-//        profile.putBundle(bundle)
+        achievementsInternal.forEach { a -> bundle.put(a.name, a.isAchieved) }
     }
 
     override fun read(bundle: Bundle) {
-//        log.debug("Loading data from profile")
-//
-//        val bundle = profile.getBundle("achievement")
-//        bundle.log()
-//
-//        achievements.forEach { a ->
-//            val achieved = bundle.get<Boolean>(a.name)
-//            if (achieved)
-//                a.setAchieved()
-//        }
+        achievementsInternal.forEach { a ->
+            val achieved = bundle.get<Boolean>(a.name)
+            if (achieved)
+                a.setAchieved()
+        }
     }
 }

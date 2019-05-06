@@ -7,6 +7,7 @@
 package com.almasb.fxgl.achievement
 
 import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.test.InjectInTest.inject
 import org.hamcrest.CoreMatchers.`is`
@@ -15,7 +16,16 @@ import org.hamcrest.Matchers.contains
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.CsvSource
 import java.lang.invoke.MethodHandles
+import java.util.Arrays
+import org.junit.jupiter.params.provider.Arguments.arguments
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
+
+
 
 /**
  *
@@ -64,41 +74,52 @@ class AchievementManagerTest {
     }
 
     @Test
-    fun `Achievement is unlocked when var reaches required value`() {
-        val a = Achievement("TestAchievement", "TestDescription", "varName", 2)
+    fun `Serialization`() {
+        val bundle = Bundle("achievements")
+
+        achievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription", "", 0))
+        achievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription", "", 0))
+        achievementManager.getAchievementByName("TestAchievement").setAchieved()
+        achievementManager.write(bundle)
+
+        val newAchievementManager = AchievementManager()
+        newAchievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription", "", 0))
+        newAchievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription", "", 0))
+        newAchievementManager.read(bundle)
+
+        assertThat(newAchievementManager.achievements.size, `is`(2))
+        assertTrue(newAchievementManager.getAchievementByName("TestAchievement").isAchieved)
+        assertFalse(newAchievementManager.getAchievementByName("TestAchievement2").isAchieved)
+    }
+
+    @ParameterizedTest
+    @MethodSource("varValueProvider")
+    fun `Achievement is unlocked when var reaches required value`(varValue: Any, initialValue: Any, value1: Any) {
+        val a = Achievement("TestAchievement", "TestDescription", "varName", varValue)
 
         achievementManager.registerAchievement(a)
 
         val map = PropertyMap()
-        map.setValue("varName", 0)
+        map.setValue("varName", initialValue)
 
         achievementManager.bindToVars(map)
 
         assertFalse(a.isAchieved)
 
-        map.setValue("varName", 1)
+        map.setValue("varName", value1)
         assertFalse(a.isAchieved)
 
-        map.setValue("varName", 2)
+        map.setValue("varName", varValue)
         assertTrue(a.isAchieved)
     }
 
-//    @Test
-//    fun `Serialization`() {
-//        val profile = UserProfile("1", "1")
-//
-//        achievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription", "", 0))
-//        achievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription", "", 0))
-//        achievementManager.getAchievementByName("TestAchievement").setAchieved()
-//        achievementManager.save(profile)
-//
-//        val newAchievementManager = AchievementManager()
-//        newAchievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription", "", 0))
-//        newAchievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription", "", 0))
-//        newAchievementManager.load(profile)
-//
-//        assertThat(newAchievementManager.getAchievements().size, `is`(2))
-//        assertTrue(newAchievementManager.getAchievementByName("TestAchievement").isAchieved)
-//        assertFalse(newAchievementManager.getAchievementByName("TestAchievement2").isAchieved)
-//    }
+    companion object {
+        @JvmStatic fun varValueProvider(): Stream<Arguments> {
+            return Stream.of(
+                    arguments(2, 1, 0),
+                    arguments(50.0, 0.0, 10.0),
+                    arguments(true, false, false)
+            )
+        }
+    }
 }
