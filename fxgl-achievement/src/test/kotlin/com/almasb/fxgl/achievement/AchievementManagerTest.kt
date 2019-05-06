@@ -33,7 +33,7 @@ class AchievementManagerTest {
         achievementManager = AchievementManager()
         val lookup = MethodHandles.lookup()
 
-        inject(lookup, achievementManager, "achievementStores", emptyList<AchievementStore>())
+        inject(lookup, achievementManager, "achievementsFromSettings", emptyList<Achievement>())
         inject(lookup, achievementManager, "eventBus",  EventBus())
     }
 

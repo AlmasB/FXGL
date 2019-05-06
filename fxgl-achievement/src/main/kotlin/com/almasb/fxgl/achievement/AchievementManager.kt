@@ -17,7 +17,6 @@ import java.util.*
 
 /**
  * Responsible for registering and updating achievements.
- * All achievements are added once via [AchievementStore].
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -25,8 +24,9 @@ class AchievementManager : EngineService {
 
     private val log = Logger.get(javaClass)
 
-    @Inject("achievementStores")
-    private lateinit var achievementStores: List<AchievementStore>
+    // TODO: can we merge some of these List<Achievement>?
+    @Inject("achievements")
+    private lateinit var achievementsFromSettings: List<Achievement>
 
     @Inject("eventBus")
     private lateinit var eventBus: EventBus
@@ -65,14 +65,7 @@ class AchievementManager : EngineService {
     }
 
     override fun onMainLoopStarting() {
-        val store = mutableListOf<Achievement>()
-
-        achievementStores.forEach {
-            it.initAchievements(store)
-
-            store.forEach { registerAchievement(it) }
-            store.clear()
-        }
+        achievementsFromSettings.forEach { registerAchievement(it) }
     }
 
     override fun onGameReady(vars: PropertyMap) {

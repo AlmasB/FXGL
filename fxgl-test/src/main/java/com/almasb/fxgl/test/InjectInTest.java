@@ -15,6 +15,9 @@ import java.lang.reflect.Field;
  */
 public class InjectInTest {
 
+    // TODO: find @Inject and use its name to inject, possibly via a map of pairs
+    // k to v
+
     /**
      * @param lookup the lookup created by the module where class of instance lives
      * @param instance object to inject to

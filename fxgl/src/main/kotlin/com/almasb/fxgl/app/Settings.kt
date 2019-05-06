@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.achievement.Achievement
 import com.almasb.fxgl.achievement.AchievementManager
-import com.almasb.fxgl.achievement.AchievementStore
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.local.Language
@@ -200,7 +200,7 @@ class GameSettings(
 
         var notificationViewClass: Class<out NotificationView> = XboxNotificationView::class.java,
 
-        var achievementStores: List<AchievementStore> = arrayListOf()
+        var achievements: List<Achievement> = arrayListOf()
 ) {
 
     fun toReadOnly(): ReadOnlyGameSettings {
@@ -240,7 +240,7 @@ class GameSettings(
                 dialogFactory,
                 uiFactory,
                 notificationViewClass,
-                unmodifiableList(achievementStores))
+                unmodifiableList(achievements))
     }
 }
 
@@ -386,7 +386,7 @@ class ReadOnlyGameSettings internal constructor(
 
         val notificationViewClass: Class<out NotificationView>,
 
-        val achievementStores: List<AchievementStore>
+        val achievements: List<Achievement>
 
 ) : UserProfileSavable {
 

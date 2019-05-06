@@ -6,6 +6,7 @@
 
 package sandbox.achievements;
 
+import com.almasb.fxgl.achievement.Achievement;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -32,7 +33,10 @@ public class AchievementApp extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setApplicationMode(ApplicationMode.DEBUG);
-        settings.setAchievementStores(Arrays.asList(new AchievementStore1(), new AchievementStore2()));
+
+        settings.getAchievements().add(new Achievement("See the world", "Move 600 pixels", "pixelsMoved", 600));
+        settings.getAchievements().add(new Achievement("Killer", "Kill 3 enemies", "enemiesKilled", 3));
+
         settings.setMenuEnabled(true);
         settings.setEnabledMenuItems(EnumSet.allOf(MenuItem.class));
     }
