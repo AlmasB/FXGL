@@ -44,12 +44,11 @@ class FXGLPauseMenu : PauseMenu() {
 
         animation = FXGL.animationBuilder()
                 .duration(Duration.seconds(0.5))
+                .interpolator(Interpolators.BACK.EASE_OUT())
                 .translate(content)
                 .from(Point2D(FXGL.getAppWidth() / 2.0 - 125, -400.0))
                 .to(Point2D(FXGL.getAppWidth() / 2.0 - 125, FXGL.getAppHeight() / 2.0 - 200))
                 .build()
-
-        animation.animatedValue.interpolator = Interpolators.BACK.EASE_OUT()
     }
 
     override fun onEnter(prevState: Scene) {

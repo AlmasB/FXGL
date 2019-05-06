@@ -9,13 +9,10 @@ package sandbox;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.app.PauseMenu;
-import com.almasb.fxgl.app.SceneFactory;
 import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
 import javafx.scene.paint.Color;
-import sandbox.customization.CustomPauseMenuApp;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -27,19 +24,12 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class RainSample extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) {
-        settings.setSceneFactory(new SceneFactory() {
-            @Override
-            public PauseMenu newPauseMenu() {
-                return new CustomPauseMenuApp.MyPauseMenu();
-            }
-        });
-    }
+    protected void initSettings(GameSettings settings) { }
 
     @Override
     protected void initGame() {
         entityBuilder()
-                .view("underwater3.png")
+                .view(texture("underwater3.png", getAppWidth(), getAppHeight()))
                 .buildAndAttach();
 
         // example - multiply color with existing

@@ -6,20 +6,26 @@
 
 package sandbox.customization;
 
+import com.almasb.fxgl.animation.Animation;
+import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.PauseMenu;
 import com.almasb.fxgl.app.SceneFactory;
+import com.almasb.fxgl.core.util.EmptyRunnable;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.level.Level;
 import com.almasb.fxgl.entity.level.text.TextLevelLoader;
+import com.almasb.fxgl.scene.Scene;
 import com.almasb.fxgl.ui.FontType;
 import javafx.beans.binding.Bindings;
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import sandbox.MyEntityFactory;
 
 /**
@@ -50,6 +56,8 @@ public class CustomPauseMenuApp extends GameApplication {
     public static class MyPauseMenu extends PauseMenu {
 
         private static final int SIZE = 150;
+
+        private Animation<?> animation;
 
         public MyPauseMenu() {
             getContentRoot().setTranslateX(FXGL.getAppWidth() / 2.0 - SIZE);
@@ -113,6 +121,37 @@ public class CustomPauseMenuApp extends GameApplication {
             textOptions.setMouseTransparent(true);
 
             getContentRoot().getChildren().addAll(shape, shape2, shape3, textResume, textExit, textOptions);
+
+            getContentRoot().setScaleX(0);
+            getContentRoot().setScaleY(0);
+
+            animation = FXGL.animationBuilder()
+                    .duration(Duration.seconds(0.66))
+                    .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
+                    .scale(getContentRoot())
+                    .from(new Point2D(0, 0))
+                    .to(new Point2D(1, 1))
+                    .build();
+        }
+
+        @Override
+        protected void onEnter(Scene prevState) {
+            animation.setOnFinished(EmptyRunnable.INSTANCE);
+            animation.start();
+        }
+
+        @Override
+        protected void onUpdate(double tpf) {
+            animation.onUpdate(tpf);
+        }
+
+        @Override
+        protected void onHide() {
+            if (animation.isAnimating())
+                return;
+
+            animation.setOnFinished(() -> FXGL.getGameController().popSubScene());
+            animation.startReverse();
         }
     }
 
