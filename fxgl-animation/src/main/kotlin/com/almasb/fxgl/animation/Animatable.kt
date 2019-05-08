@@ -9,6 +9,7 @@ package com.almasb.fxgl.animation
 import javafx.beans.property.DoubleProperty
 
 /**
+ * An object whose position, scale, rotation and opacity can be animated.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

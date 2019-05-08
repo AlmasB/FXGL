@@ -12,6 +12,9 @@ import com.almasb.fxgl.core.util.EmptyRunnable
 import javafx.animation.Interpolator
 import javafx.util.Duration
 
+/**
+ * Animation configuration object.
+ */
 class AnimationBuilder
 @JvmOverloads constructor(
         var duration: Duration = Duration.seconds(1.0),
