@@ -58,6 +58,12 @@
                 <configuration>
                     <destFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</destFile>
                     <dataFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</dataFile>
+
+                    <!-- Exclude DSL code -->
+
+                    <excludes>
+                        <exclude>com/almasb/fxgl/animation/AnimationDSL*</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
