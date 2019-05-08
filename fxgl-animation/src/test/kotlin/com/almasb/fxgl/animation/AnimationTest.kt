@@ -24,10 +24,13 @@ class AnimationTest {
     fun `Set animation interpolator`() {
         val i1 = Interpolators.ELASTIC.EASE_OUT()
 
-        val anim = AnimationBuilder()
+        val builder = AnimationBuilder()
+        val animValue = AnimatedValue(1.0, 5.0)
+
+        val anim = builder
                 .interpolator(i1)
                 .duration(Duration.seconds(4.0))
-                .build(AnimatedValue(1.0, 5.0), Consumer {  })
+                .build(animValue, Consumer {  })
 
         assertThat(anim.interpolator, `is`(i1))
 
@@ -35,6 +38,9 @@ class AnimationTest {
 
         anim.interpolator = i2
         assertThat(anim.interpolator, `is`(i2))
+
+        assertThat(anim.builder, `is`(builder))
+        assertThat(anim.animatedValue, `is`(animValue))
     }
 
     @Test
@@ -277,6 +283,9 @@ class AnimationTest {
         assertTrue(anim.isReverse)
 
         assertThat(count, `is`(4))
+
+        // does nothing since we are animating already
+        anim.startReverse()
 
         for (i in 3 downTo 1) {
             anim.onUpdate(1.0)
