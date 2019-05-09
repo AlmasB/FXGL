@@ -37,15 +37,17 @@ public final class SaveLoadManager {
 
     private static final String SAVE_FILE_EXT = FXGL.getSettings().getSaveFileExt();
     private static final String DATA_FILE_EXT = FXGL.getSettings().getDataFileExt();
+    
+    private static final FS fs = new FS();
 
     static {
         log.debug("Checking profiles dir: " + PROFILES_DIR);
 
-        if (!FS.exists(PROFILES_DIR)) {
+        if (!fs.exists(PROFILES_DIR)) {
             log.debug("Creating non-existent profiles dir");
 
-            FS.createDirectoryTask(PROFILES_DIR)
-                    .then(n -> FS.writeDataTask(Collections.singletonList("This directory contains user profiles."), PROFILES_DIR + "Readme.txt"))
+            fs.createDirectoryTask(PROFILES_DIR)
+                    .then(n -> fs.writeDataTask(Collections.singletonList("This directory contains user profiles."), PROFILES_DIR + "Readme.txt"))
                     .onFailure(e -> {
                         log.warning("Failed to create profiles dir: " + e);
                         Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
@@ -115,8 +117,8 @@ public final class SaveLoadManager {
     public IOTask<Void> saveTask(DataFile dataFile, SaveFile saveFile) {
         log.debug("Saving data: " + saveFile.getName());
 
-        return FS.writeDataTask(saveFile, saveDir() + saveFile.getName() + SAVE_FILE_EXT)
-                .then(n -> FS.writeDataTask(dataFile, saveDir() + saveFile.getName() + DATA_FILE_EXT))
+        return fs.writeDataTask(saveFile, saveDir() + saveFile.getName() + SAVE_FILE_EXT)
+                .then(n -> fs.writeDataTask(dataFile, saveDir() + saveFile.getName() + DATA_FILE_EXT))
                 .then(n -> IOTask.ofVoid("updateSaves", () -> {
                     Async.startFX(() -> {
                         saveFiles.add(saveFile);
@@ -134,17 +136,17 @@ public final class SaveLoadManager {
      */
     public IOTask<Void> saveProfileTask(UserProfile profile) {
         log.debug("Saving profile: " + profileName);
-        return FS.writeDataTask(profile, profileDir() + PROFILE_FILE_NAME)
+        return fs.writeDataTask(profile, profileDir() + PROFILE_FILE_NAME)
                 .then(n -> new IOTask<Void>("checkSavesDir(" + saveDir() + ")") {
 
                     @Override
                     protected Void onExecute() throws Exception {
 
-                        if (!FS.exists(saveDir())) {
+                        if (!fs.exists(saveDir())) {
                             log.debug("Creating non-existent saves dir");
 
-                            FS.createDirectoryTask(saveDir())
-                                    .then(n -> FS.writeDataTask(Collections.singletonList("This directory contains save files."), saveDir() + "Readme.txt"))
+                            fs.createDirectoryTask(saveDir())
+                                    .then(n -> fs.writeDataTask(Collections.singletonList("This directory contains save files."), saveDir() + "Readme.txt"))
                                     .onFailure(e -> {
                                         log.warning("Failed to create saves dir: " + e);
                                         Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
@@ -167,7 +169,7 @@ public final class SaveLoadManager {
      */
     public IOTask<DataFile> loadTask(SaveFile saveFile) {
         log.debug("Loading data: " + saveFile.getName());
-        return FS.<DataFile>readDataTask(saveDir() + saveFile.getName() + DATA_FILE_EXT);
+        return fs.<DataFile>readDataTask(saveDir() + saveFile.getName() + DATA_FILE_EXT);
     }
 
     /**
@@ -177,7 +179,7 @@ public final class SaveLoadManager {
      */
     public IOTask<UserProfile> loadProfileTask() {
         log.debug("Loading profile: " + profileName);
-        return FS.<UserProfile>readDataTask(profileDir() + PROFILE_FILE_NAME);
+        return fs.<UserProfile>readDataTask(profileDir() + PROFILE_FILE_NAME);
     }
 
     /**
@@ -187,8 +189,8 @@ public final class SaveLoadManager {
     public IOTask<Void> deleteSaveFileTask(SaveFile saveFile) {
         log.debug("Deleting save file: " + saveFile.getName());
 
-        return FS.deleteFileTask(saveDir() + saveFile.getName() + SAVE_FILE_EXT)
-                .then(n -> FS.deleteFileTask(saveDir() + saveFile.getName() + DATA_FILE_EXT))
+        return fs.deleteFileTask(saveDir() + saveFile.getName() + SAVE_FILE_EXT)
+                .then(n -> fs.deleteFileTask(saveDir() + saveFile.getName() + DATA_FILE_EXT))
                 .then(n -> IOTask.ofVoid("updateSaves", () -> {
                     Async.startFX(() -> saveFiles.remove(saveFile));
                 }));
@@ -201,7 +203,7 @@ public final class SaveLoadManager {
     public boolean saveFileExists(String saveFileName) {
         log.debug("Checking if save file exists: " + saveFileName);
 
-        return FS.exists(saveDir() + saveFileName + SAVE_FILE_EXT);
+        return fs.exists(saveDir() + saveFileName + SAVE_FILE_EXT);
     }
 
     /**
@@ -211,7 +213,7 @@ public final class SaveLoadManager {
      */
     public static IOTask<List<String> > loadProfileNamesTask() {
         log.debug("Loading profile names");
-        return FS.loadDirectoryNamesTask("./" + PROFILES_DIR, false);
+        return fs.loadDirectoryNamesTask("./" + PROFILES_DIR, false);
     }
 
     /**
@@ -222,7 +224,7 @@ public final class SaveLoadManager {
      */
     public static IOTask<Void> deleteProfileTask(String profileName) {
         log.debug("Deleting profile: " + profileName);
-        return FS.deleteDirectoryTask("./" + PROFILES_DIR + profileName);
+        return fs.deleteDirectoryTask("./" + PROFILES_DIR + profileName);
     }
 
     /**
@@ -233,12 +235,12 @@ public final class SaveLoadManager {
     public IOTask<List<SaveFile> > loadSaveFilesTask() {
         log.debug("Loading save files");
 
-        return FS.loadFileNamesTask(saveDir(), true, Collections.singletonList(new FileExtension(SAVE_FILE_EXT)))
+        return fs.loadFileNamesTask(saveDir(), true, Collections.singletonList(new FileExtension(SAVE_FILE_EXT)))
                 .then(fileNames -> IOTask.of("readSaveFiles", () -> {
 
                     List<SaveFile> list = new ArrayList<>();
                     for (String name : fileNames) {
-                        SaveFile file = FS.<SaveFile>readDataTask(saveDir() + name).run();
+                        SaveFile file = fs.<SaveFile>readDataTask(saveDir() + name).run();
                         if (file != null) {
                             list.add(file);
                         }

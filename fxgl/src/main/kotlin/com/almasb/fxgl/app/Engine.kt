@@ -101,6 +101,7 @@ internal class Engine(
     internal val eventBus by lazy { EventBus() }
     internal val display by lazy { dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
+    internal val fs by lazy { FS() }
 
     internal val devPane by lazy { DevPane(playState, settings) }
 
@@ -182,7 +183,7 @@ internal class Engine(
             IOTask.setDefaultExecutor(executor)
             IOTask.setDefaultFailAction { display.showErrorBox(it) }
 
-            isFirstRun = !FS.exists("system/")
+            isFirstRun = !fs.exists("system/")
 
             if (isFirstRun) {
                 createRequiredDirs()
@@ -356,8 +357,8 @@ internal class Engine(
     }
 
     private fun createRequiredDirs() {
-        FS.createDirectoryTask("system/")
-                .then { FS.writeDataTask(listOf("This directory contains FXGL system data files."), "system/Readme.txt") }
+        fs.createDirectoryTask("system/")
+                .then { fs.writeDataTask(listOf("This directory contains FXGL system data files."), "system/Readme.txt") }
                 .onFailure { e ->
                     log.warning("Failed to create system dir: $e")
                     Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e)
@@ -368,7 +369,7 @@ internal class Engine(
     private fun saveSystemData() {
         log.debug("Saving FXGL system data")
 
-        FS.writeDataTask(bundle, "system/fxgl.bundle")
+        fs.writeDataTask(bundle, "system/fxgl.bundle")
                 .onFailure { log.warning("Failed to save: $it") }
                 .run()
     }
@@ -376,7 +377,7 @@ internal class Engine(
     private fun loadSystemData() {
         log.debug("Loading FXGL system data")
 
-        FS.readDataTask<Bundle>("system/fxgl.bundle")
+        fs.readDataTask<Bundle>("system/fxgl.bundle")
                 .onSuccess {
                     bundle = it
                     log.debug("$bundle")

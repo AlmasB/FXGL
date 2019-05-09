@@ -113,6 +113,8 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getExecutor() = engine.executor
 
+    @JvmStatic fun getFS() = engine.fs
+
     @JvmStatic fun getNotificationService() = engine.getService(NotificationService::class.java)
 
     @JvmStatic fun getAchievementService() = engine.getService(AchievementManager::class.java)

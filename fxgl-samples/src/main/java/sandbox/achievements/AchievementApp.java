@@ -52,11 +52,11 @@ public class AchievementApp extends GameApplication {
         onKeyDown(KeyCode.Q, "save", () -> {
             var data = saveState();
 
-            FS.writeDataTask(data, "data.dat").run();
+            getFS().writeDataTask(data, "data.dat").run();
         });
 
         onKeyDown(KeyCode.E, "Load", () -> {
-            FS.<DataFile>readDataTask("data.dat")
+            getFS().<DataFile>readDataTask("data.dat")
                     .onSuccess(data -> loadState(data))
                     .run();
         });
