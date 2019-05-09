@@ -12,7 +12,10 @@ import java.io.File
 import java.io.Serializable
 
 /**
- * A collection of static methods to access IO via IO tasks.
+ * A wrapper abstraction around the file system access.
+ * Enables access of IO via IO tasks.
+ * All file names used here are full paths relative to root.
+ * Example: ./profiles/ProfileName/save1.dat
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -26,6 +29,9 @@ class FS {
         log.debug("Loaded ${fs.javaClass.simpleName}")
     }
 
+    /**
+     * @return true if file or dir with given name exists
+     */
     fun exists(pathName: String): Boolean {
         return fs.exists(pathName)
     }
@@ -38,7 +44,7 @@ class FS {
     })
 
     /**
-     * Writes data to file, creating required directories.
+     * Writes binary data to file, creating required directories.
      *
      * @param data data object to save
      * @param fileName to save as
@@ -48,6 +54,13 @@ class FS {
         fs.writeData(data, fileName)
     })
 
+    /**
+     * Writes text data to file, creating required directories.
+     *
+     * @param text text data to save
+     * @param fileName to save as
+     * @return IO task
+     */
     fun writeDataTask(text: List<String>, fileName: String) = IOTask.ofVoid("writeDataTask($fileName)", {
         fs.writeData(text, fileName)
     })
@@ -56,7 +69,6 @@ class FS {
      * Loads data from file into an object.
      *
      * @param fileName file to load from
-     *
      * @return IO task
      */
     fun <T> readDataTask(fileName: String): IOTask<T> = IOTask.of("readDataTask($fileName)") {
