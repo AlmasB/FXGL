@@ -34,6 +34,12 @@
             <artifactId>fxgl</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-trade</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

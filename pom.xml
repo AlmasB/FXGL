@@ -27,6 +27,7 @@
         <module>fxgl-test</module>
         <module>fxgl-notification</module>
         <module>fxgl-achievement</module>
+        <module>fxgl-trade</module>
     </modules>
 
     <licenses>
