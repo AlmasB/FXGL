@@ -27,9 +27,6 @@ class TradeListView(items: ObservableList<TradeItem<*>>) : ListView<TradeItem<*>
 }
 
 class TradeListCell : ListCell<TradeItem<*>>() {
-    init {
-        //styleClass.setAll("fxgl-trade-list-cell")
-    }
 
     override fun updateItem(item: TradeItem<*>?, empty: Boolean) {
         super.updateItem(item, empty)
