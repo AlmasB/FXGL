@@ -263,13 +263,13 @@ public class ArrayTest {
     public void testToString() {
         Array<String> array = new Array<>(String.class);
 
+        assertThat(array.toString(), is("[]"));
+
         array.add("Hello");
         array.add("World");
         array.add("Java");
 
-        String result = array.toString();
-
-        assertThat(result, is("[Hello, World, Java]"));
+        assertThat(array.toString(), is("[Hello, World, Java]"));
     }
 
     @Test
@@ -359,6 +359,19 @@ public class ArrayTest {
     }
 
     @Test
+    public void first_should_returnFirstItem() {
+        Array<String> array = new Array<>(String.class);
+
+        array.add("Hello");
+        array.add("World");
+        array.add("Java");
+        array.add("Hi");
+        array.add("Bye");
+
+        assertThat(array.first(), is("Hello"));
+    }
+
+    @Test
     public void last_should_returnLastItem() {
         Array<String> array = new Array<>(String.class);
 
@@ -394,5 +407,31 @@ public class ArrayTest {
         array.add("World");
 
         assertThat(array.random(), Matchers.isOneOf("Hello", "World"));
+    }
+
+    @Test
+    public void toList_should_createListCopy() {
+        Array<String> array = new Array<>(String.class);
+
+        array.add("Hello");
+        array.add("World");
+        array.add("Java");
+        array.add("Hi");
+        array.add("Bye");
+
+        assertThat(array.toList(), contains("Hello", "World", "Java", "Hi", "Bye"));
+    }
+
+    @Test
+    public void select_should_filterItems() {
+        Array<String> array = new Array<>(String.class);
+
+        array.add("Hello");
+        array.add("World");
+        array.add("Java");
+        array.add("Hi");
+        array.add("Bye");
+
+        assertThat(array.select(s -> s.startsWith("H")), contains("Hello", "Hi"));
     }
 }
