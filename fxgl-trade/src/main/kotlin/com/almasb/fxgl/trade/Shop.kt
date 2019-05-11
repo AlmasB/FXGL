@@ -44,6 +44,12 @@ class Shop<T>(initialMoney: Int = 0, items: List<TradeItem<T>>) {
 
         item.quantity -= qty
 
+        if (item in items) {
+            items.find { it.item === item.item }!!.quantity += qty
+        } else {
+            items += item.copy().also { it.quantity = qty }
+        }
+
         if (item.quantity == 0) {
             other.items -= item
         }

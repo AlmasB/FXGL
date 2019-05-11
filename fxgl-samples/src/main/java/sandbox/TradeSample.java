@@ -15,7 +15,6 @@ import com.almasb.fxgl.trade.Shop;
 import com.almasb.fxgl.trade.TradeItem;
 import com.almasb.fxgl.trade.ShopView;
 import com.almasb.fxgl.trade.TradeView;
-import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCode;
 
 import java.util.List;
@@ -49,8 +48,6 @@ public class TradeSample extends GameApplication {
     public static class TradeSubScene extends SubScene {
         public TradeSubScene() {
 
-            //TabPane pane = new TabPane();
-
             Entity item1 = new Entity();
             Entity item2 = new Entity();
             Entity item3 = new Entity();
@@ -64,46 +61,14 @@ public class TradeSample extends GameApplication {
                     new TradeItem<>(item3, "10mm Pistol", "Item Description", 30, 165, 3)
             ));
 
-
-
             var playerView = new ShopView<>(playerShop, 400, 450);
             var npcView = new ShopView<>(npcShop, 400, 450);
-
-
-
-
-
-
-            //Text t = getUIFactory().newText("Money: 1000", Color.GOLD, 24.0);
-            //t.setTranslateX(450);
-            //t.setTranslateY(100);
-
-
-//            var box = new VBox(10, pane, t);
-//            box.setPadding(new Insets(15));
-//
-//            var bg = new Rectangle(400, 550, Color.color(0.1, 0, 0, 0.6));
-//            bg.setArcWidth(25);
-//            bg.setArcHeight(25);
-
-
-
-
-//            FXGLTextFlow flow = getUIFactory().newTextFlow();
-//            flow.append(new KeyView(KeyCode.E, Color.RED)).append(" Sell", Color.RED, 27.0);
-//
-//            flow.setTranslateY(460);
 
             var view = new TradeView<>(playerView, npcView);
 
             getContentRoot().getChildren().addAll(view);
             getContentRoot().setTranslateX(100);
             getContentRoot().setTranslateY(50);
-
-
-
-
-
 
             this.getInput().addAction(new UserAction("Close") {
                 @Override
@@ -112,19 +77,30 @@ public class TradeSample extends GameApplication {
                 }
             }, KeyCode.F);
 
-            this.getInput().addAction(new UserAction("Sell") {
+            this.getInput().addAction(new UserAction("Trade") {
                 @Override
                 protected void onActionBegin() {
-                    TradeItem<?> item = playerView.getListView().getSelectionModel().getSelectedItem();
+                    var tab = view.getTabPane().getSelectionModel().getSelectedItem();
+
+                    ShopView<Entity> shopView = (ShopView<Entity>) tab.getContent();
+
+                    TradeItem<Entity> item = (TradeItem<Entity>) shopView.getListView().getSelectionModel().getSelectedItem();
+
+                    System.out.println("Item is : " + item);
 
                     if (item == null)
                         return;
 
-                    playerView.getListView().getItems().remove(item);
+                    if (shopView == playerView) {
+                        npcView.getShop().buyFrom(playerShop, item, 1);
+                    } else {
+                        playerShop.buyFrom(npcShop, item, 1);
+                    }
 
-                    getNotificationService().pushNotification("Sold: " + item.getName());
+                    npcView.getListView().refresh();
+                    playerView.getListView().refresh();
                 }
-            }, KeyCode.ENTER);
+            }, KeyCode.S);
         }
     }
 

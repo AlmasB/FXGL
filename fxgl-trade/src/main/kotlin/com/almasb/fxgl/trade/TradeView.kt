@@ -16,9 +16,9 @@ import javafx.scene.control.TabPane
  */
 class TradeView<T>(val playerShopView: ShopView<T>, val npcShopView: ShopView<T>) : Parent() {
 
-    init {
-        val tabPane = TabPane()
+    val tabPane = TabPane()
 
+    init {
         val tab1 = Tab("Buy")
         tab1.content = playerShopView
         tab1.isClosable = false

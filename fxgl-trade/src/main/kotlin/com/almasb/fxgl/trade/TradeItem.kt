@@ -29,4 +29,6 @@ class TradeItem<T>(
 
         return item === other.item
     }
+
+    fun copy(): TradeItem<T> = TradeItem(item, name, description, sellPrice, buyPrice, quantity)
 }
