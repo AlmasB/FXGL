@@ -421,17 +421,4 @@ public class ArrayTest {
 
         assertThat(array.toList(), contains("Hello", "World", "Java", "Hi", "Bye"));
     }
-
-    @Test
-    public void select_should_filterItems() {
-        Array<String> array = new Array<>(String.class);
-
-        array.add("Hello");
-        array.add("World");
-        array.add("Java");
-        array.add("Hi");
-        array.add("Bye");
-
-        assertThat(array.select(s -> s.startsWith("H")), contains("Hello", "Hi"));
-    }
 }
