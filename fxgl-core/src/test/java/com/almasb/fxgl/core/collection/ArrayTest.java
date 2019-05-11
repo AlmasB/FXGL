@@ -9,10 +9,11 @@ import java.util.Iterator;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ArrayTest
-{
+public class ArrayTest {
     @Test
     public void constructor_should_instantiate() {
         Array<Integer> array = new Array();
@@ -288,5 +289,110 @@ public class ArrayTest
     @Test
     public void emptyArray_should_returnSameInstance() {
         assertSame(Array.empty(), Array.empty());
+    }
+
+    @Test
+    public void indexOfByEquality() {
+        Array<String> array = new Array<>(String.class);
+
+        array.add("Hello");
+        array.add("World");
+        array.add("Java");
+        array.add("World");
+
+        assertThat(array.indexOfByEquality("World"), is(1));
+        assertThat(array.lastIndexOfByEquality("World"), is(3));
+    }
+
+    @Test
+    public void indexOfByIdentity() {
+        Array<StringBuilder> array = new Array<>(StringBuilder.class);
+
+        StringBuilder s1 = new StringBuilder();
+        StringBuilder s2 = new StringBuilder();
+        StringBuilder s3 = new StringBuilder();
+
+        array.add(s1);
+        array.add(s2);
+        array.add(s3);
+        array.add(s2);
+
+        assertThat(array.indexOfByIdentity(s3), is(2));
+        assertThat(array.lastIndexOfByIdentity(s2), is(3));
+    }
+
+    @Test
+    public void removeByEquality_should_removeValue() {
+        Array<String> array = new Array<>(String.class);
+
+        array.add("Hello");
+
+        array.removeValueByEquality("Hello");
+
+        assertThat(array.size(), is(0));
+    }
+
+    @Test
+    public void removeByIdentity_should_removeValue() {
+        Array<StringBuilder> array = new Array<>(StringBuilder.class);
+
+        StringBuilder s1 = new StringBuilder();
+
+        array.removeValueByIdentity(s1);
+
+        assertThat(array.size(), is(0));
+    }
+
+    @Test
+    public void removeRange_should_removeItems() {
+        Array<String> array = new Array<>(String.class);
+
+        array.add("Hello");
+        array.add("World");
+        array.add("Java");
+        array.add("Hi");
+        array.add("Bye");
+
+        array.removeRange(1, 3);
+
+        assertThat(array, contains("Hello", "Bye"));
+    }
+
+    @Test
+    public void last_should_returnLastItem() {
+        Array<String> array = new Array<>(String.class);
+
+        array.add("Hello");
+        array.add("World");
+        array.add("Java");
+        array.add("Hi");
+        array.add("Bye");
+
+        assertThat(array.last(), is("Bye"));
+    }
+
+    @Test
+    public void shuffle_should_keepSameItems() {
+        Array<String> array = new Array<>(String.class);
+
+        array.add("Hello");
+        array.add("World");
+        array.add("Java");
+        array.add("Hi");
+        array.add("Bye");
+
+        array.shuffle();
+
+        assertThat(array, containsInAnyOrder("Hello", "World", "Java", "Hi", "Bye"));
+    }
+
+    @Test
+    public void random_should_returnItem() {
+        Array<String> array = new Array<>(String.class);
+
+        array.add("Hello");
+        array.add("World");
+
+        assertThat(array.random(), Matchers.isOneOf("Hello", "World"));
     }
 }

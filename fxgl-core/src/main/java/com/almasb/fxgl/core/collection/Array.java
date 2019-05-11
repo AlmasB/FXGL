@@ -510,20 +510,6 @@ public class Array<T> implements Iterable<T> {
     }
 
     /**
-     * Reduces the size of the backing array to the size of the actual items.
-     * This is useful to release memory when many items
-     * have been removed, or if it is known that more items will not be added.
-     *
-     * @return items
-     */
-    public T[] shrink() {
-        if (items.length != size)
-            resize(size);
-
-        return items;
-    }
-
-    /**
      * Increases the size of the backing array to accommodate the specified number of additional items.
      * Useful before adding many items to avoid multiple backing array resizes.
      *
@@ -539,21 +525,6 @@ public class Array<T> implements Iterable<T> {
     }
 
     /**
-     * Sets the array size, leaving any values beyond the current size null.
-     *
-     * @param newSize new array size
-     * @return items
-     */
-    public T[] setSize(int newSize) {
-        truncate(newSize);
-        if (newSize > items.length)
-            resize(Math.max(8, newSize));
-
-        size = newSize;
-        return items;
-    }
-
-    /**
      * Creates a new backing array with the specified size containing the current items.
      *
      * @param newSize new array size
@@ -565,21 +536,6 @@ public class Array<T> implements Iterable<T> {
         System.arraycopy(items, 0, newItems, 0, Math.min(size, newItems.length));
         this.items = newItems;
         return newItems;
-    }
-
-    /**
-     * Reduces the size of the array to the specified size.
-     * If the array is already smaller than the specified size, no action is taken.
-     *
-     * @param newSize new array size
-     */
-    public void truncate(int newSize) {
-        if (size <= newSize)
-            return;
-
-        for (int i = newSize; i < size; i++)
-            items[i] = null;
-        size = newSize;
     }
 
     /**
@@ -1010,12 +966,6 @@ public class Array<T> implements Iterable<T> {
 
         @Override
         public T[] ensureCapacity(int additionalCapacity) {
-            fail();
-            return null;
-        }
-
-        @Override
-        public T[] setSize(int newSize) {
             fail();
             return null;
         }
