@@ -59,7 +59,7 @@ class EntityBuilder {
     }
 
     fun opacity(value: Double) = this.also {
-        entity.viewComponent.opacityProp.value = value
+        entity.viewComponent.opacity = value
     }
 
     fun bbox(box: HitBox) = this.also {
@@ -77,15 +77,6 @@ class EntityBuilder {
         } else {
             entity.viewComponent.setViewFromNode(node)
         }
-
-//        entityView.clearChildren()
-//
-//        if (node is View) {
-//            entity.view = node
-//        } else {
-//            entityView.addNode(node)
-//            entity.view = entityView
-//        }
     }
 
     fun viewWithBBox(node: Node) = this.also {
