@@ -66,13 +66,14 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         get() = Point2D(x, y)
         set(value) { setPosition(value.x, value.y) }
 
-    var positionOriginX: Double
-        get() = propPositionOriginX.value
-        set(value) { propPositionOriginX.value = value }
-
-    var positionOriginY: Double
-        get() = propPositionOriginY.value
-        set(value) { propPositionOriginY.value = value }
+    // these are currently unused for simplicity
+//    var positionOriginX: Double
+//        get() = propPositionOriginX.value
+//        set(value) { propPositionOriginX.value = value }
+//
+//    var positionOriginY: Double
+//        get() = propPositionOriginY.value
+//        set(value) { propPositionOriginY.value = value }
 
     var scaleOrigin: Point2D
         get() = Point2D(propScaleOriginX.value, propScaleOriginY.value)
