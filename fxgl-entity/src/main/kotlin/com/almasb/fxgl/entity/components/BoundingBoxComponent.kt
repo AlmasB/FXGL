@@ -150,14 +150,9 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
 
         while (c.next()) {
             if (c.wasAdded()) {
-                for (box in c.getAddedSubList()) {
-                    box.bindXY(transform)
-                }
-
+                c.addedSubList.forEach { it.bindXY(transform) }
             } else if (c.wasRemoved()) {
-                for (box in c.getRemoved()) {
-                    box.unbind()
-                }
+                c.removed.forEach { it.unbind() }
             }
         }
     }
@@ -179,16 +174,12 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
         maxXWorld.bind(minXWorld.add(width))
         maxYWorld.bind(minYWorld.add(height))
 
-        for (i in hitBoxes.indices) {
-            hitBoxes[i].bindXY(transform)
-        }
+        hitBoxes.forEach { it.bindXY(transform) }
     }
 
     override fun onRemoved() {
         hitBoxes.removeListener(onHitBoxChange)
-        for (i in hitBoxes.indices) {
-            hitBoxes[i].unbind()
-        }
+        hitBoxes.forEach { it.unbind() }
 
         minXWorld.unbind()
         minYWorld.unbind()
