@@ -183,7 +183,7 @@ public final class PhysicsComponent extends Component {
      * Set linear velocity for a physics entity.
      * <p>
      * Use this method to move a physics entity.
-     * Please note that the vector x and y are in pixels.
+     * Please note that the vector x and y are in pixels per second.
      *
      * @param vector x and y in pixels
      */
@@ -195,7 +195,7 @@ public final class PhysicsComponent extends Component {
      * Set linear velocity for a physics entity.
      * <p>
      * Use this method to move a physics entity.
-     * Please note that x and y are in pixels.
+     * Please note that x and y are in pixels per second.
      *
      * @param x and y in pixels
      */
@@ -223,7 +223,7 @@ public final class PhysicsComponent extends Component {
      * Set linear velocity for a physics entity.
      * <p>
      * Similar to {@link #setLinearVelocity(Point2D)} but
-     * x and y of the argument are in meters.
+     * x and y of the argument are in meters per second.
      *
      * @param vector x and y in meters
      */
@@ -232,19 +232,19 @@ public final class PhysicsComponent extends Component {
     }
 
     /**
-     * @return linear velocity in pixels
+     * @return linear velocity in pixels per second.
      */
     public Point2D getLinearVelocity() {
         return physicsWorld.toVector(getBody().getLinearVelocity());
     }
 
     /**
-     * Set velocity (angle in deg) at which the entity will rotate per tick.
+     * Set velocity (angle in deg) at which the entity will rotate per second.
      *
-     * @param velocity value in ~ degrees per tick
+     * @param velocity value in ~ degrees per second
      */
     public void setAngularVelocity(double velocity) {
-        getBody().setAngularVelocity((float) -velocity);
+        getBody().setAngularVelocity((float) -FXGLMath.toRadians(velocity));
     }
 
     /**
