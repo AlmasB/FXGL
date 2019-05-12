@@ -19,13 +19,14 @@ import javafx.scene.transform.Scale
  */
 @CoreComponent
 class ViewComponent
-@JvmOverloads constructor(initialView: View = EmptyView): Component() {
+@JvmOverloads constructor(initialView: View = EmptyView()): Component() {
 
     /**
      * Only the first child is used when calling setView.
      * The other children can be used by systems such as debug bbox as necessary.
+     * This node is managed by FXGL, do NOT modify children.
      */
-    val parent = Group()
+    val parent = Group(initialView.node)
 
     val z: ReadOnlyIntegerProperty = ReadOnlyIntegerWrapper(0)
 
@@ -36,25 +37,18 @@ class ViewComponent
         get() = opacityProp.value
         set(value) { opacityProp.value = value }
 
-    private val propView: ObjectProperty<View> = SimpleObjectProperty<View>(initialView)
-
-    var view: View
-        get() = propView.value
+    var view: View = initialView
         set(value) {
+            // unbind effects on old view
+            view.node.opacityProperty().unbind()
 
-            if (parent.children.isEmpty()) {
-                parent.children += value.node
-            } else {
-                parent.children[0] = value.node
-            }
+            // apply effects to new view
+            value.node.opacityProperty().bind(opacityProp)
 
-            propView.value?.node?.opacityProperty()?.unbind()
+            // attach to (possibly active) scene graph
+            parent.children[0] = value.node
 
-            propView.value = value
-
-            // we only apply effects to the first child aka game view
-            // so debug views stay unaffected
-            propView.value.node.opacityProperty().bind(opacityProp)
+            field = value
         }
 
     /**
@@ -123,12 +117,16 @@ interface ClickListener {
     fun onClick()
 }
 
-private object EmptyView : View {
+/**
+ * Dummy placeholder for ViewComponent.
+ * Its getNode() will return a unique Node, so can be safely added to scene graph.
+ */
+private class EmptyView : View {
     override fun onUpdate(tpf: Double) {
     }
 
     override fun getNode(): Node {
-        return Pane()
+        return Group()
     }
 
     override fun dispose() {
