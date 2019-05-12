@@ -429,6 +429,7 @@ public class Array<T> implements Iterable<T> {
 
     /**
      * Removes from this array all of elements contained in the specified array.
+     * Only the first occurrence of each element is removed.
      *
      * @param array given array
      * @param identity True to use ==, false to use .equals()

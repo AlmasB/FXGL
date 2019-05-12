@@ -231,6 +231,25 @@ public class ArrayTest {
     }
 
     @Test
+    public void testRemoveAllByIdentity() {
+        Array<StringBuilder> array = new Array<>(StringBuilder.class);
+
+        StringBuilder s1 = new StringBuilder();
+        StringBuilder s2 = new StringBuilder();
+        StringBuilder s3 = new StringBuilder();
+
+        array.add(s1);
+        array.add(s2);
+        array.add(s3);
+        array.add(s2);
+
+        array.removeAllByIdentity(new Array<>(Arrays.asList(s1, s2)));
+
+        assertThat(array.size(), is(2));
+        assertThat(array, contains(s3, s2));
+    }
+
+    @Test
     public void testReverse() {
         Array<String> array = new Array<>();
 
