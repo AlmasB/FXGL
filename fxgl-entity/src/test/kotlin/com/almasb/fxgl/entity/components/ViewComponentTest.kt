@@ -39,6 +39,25 @@ class ViewComponentTest {
     }
 
     @Test
+    fun `Opacity is set to node only and not parent`() {
+        val rect = Rectangle()
+
+        assertThat(view.view.node, `is`(not<Node>(rect)))
+
+        view.setViewFromNode(rect)
+
+        val entityView = view.view
+
+        assertThat(entityView.node.opacity, `is`(1.0))
+
+        view.opacity = 0.35
+
+        assertThat(view.opacity, `is`(0.35))
+        assertThat(entityView.node.opacity, `is`(0.35))
+        assertThat(view.parent.opacity, `is`(1.0))
+    }
+
+    @Test
     fun `Add remove click listener`() {
         var count = 0
 
