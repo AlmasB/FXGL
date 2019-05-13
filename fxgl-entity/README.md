@@ -1,0 +1,1 @@
+The code from jbox2d is used under the BSD 2-clause "Simplified" License.
