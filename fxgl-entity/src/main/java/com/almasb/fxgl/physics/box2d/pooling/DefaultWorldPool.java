@@ -9,7 +9,6 @@
 package com.almasb.fxgl.physics.box2d.pooling;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.Collision;
 import com.almasb.fxgl.physics.box2d.collision.Distance;
 import com.almasb.fxgl.physics.box2d.collision.TimeOfImpact;
@@ -35,12 +34,9 @@ public class DefaultWorldPool implements IWorldPool {
     private final OrderedStack<Vec3> vec3s;
     private final OrderedStack<Mat22> mats;
     private final OrderedStack<Mat33> mat33s;
-    private final OrderedStack<AABB> aabbs;
     private final OrderedStack<Rotation> rots;
 
-    private final HashMap<Integer, float[]> afloats = new HashMap<Integer, float[]>();
-    private final HashMap<Integer, int[]> aints = new HashMap<Integer, int[]>();
-    private final HashMap<Integer, Vec2[]> avecs = new HashMap<Integer, Vec2[]>();
+    private final HashMap<Integer, Vec2[]> avecs = new HashMap<>();
 
     private final IWorldPool world = this;
 
@@ -123,7 +119,7 @@ public class DefaultWorldPool implements IWorldPool {
 
     private final Collision collision;
     private final TimeOfImpact toi;
-    private final Distance dist;
+    private final Distance dist = new Distance();
 
     public DefaultWorldPool(int argSize, int argContainerSize) {
         vecs = new OrderedStack<Vec2>(argSize, argContainerSize) {
@@ -141,11 +137,6 @@ public class DefaultWorldPool implements IWorldPool {
                 return new Mat22();
             }
         };
-        aabbs = new OrderedStack<AABB>(argSize, argContainerSize) {
-            protected AABB newInstance() {
-                return new AABB();
-            }
-        };
         rots = new OrderedStack<Rotation>(argSize, argContainerSize) {
             protected Rotation newInstance() {
                 return new Rotation();
@@ -157,7 +148,6 @@ public class DefaultWorldPool implements IWorldPool {
             }
         };
 
-        dist = new Distance();
         collision = new Collision(this);
         toi = new TimeOfImpact(this);
     }
@@ -238,18 +228,6 @@ public class DefaultWorldPool implements IWorldPool {
         mat33s.push(argNum);
     }
 
-    public final AABB popAABB() {
-        return aabbs.pop();
-    }
-
-    public final AABB[] popAABB(int argNum) {
-        return aabbs.pop(argNum);
-    }
-
-    public final void pushAABB(int argNum) {
-        aabbs.push(argNum);
-    }
-
     public final Rotation popRot() {
         return rots.pop();
     }
@@ -268,24 +246,6 @@ public class DefaultWorldPool implements IWorldPool {
 
     public final Distance getDistance() {
         return dist;
-    }
-
-    public final float[] getFloatArray(int argLength) {
-        if (!afloats.containsKey(argLength)) {
-            afloats.put(argLength, new float[argLength]);
-        }
-
-        assert (afloats.get(argLength).length == argLength) : "Array not built with correct length";
-        return afloats.get(argLength);
-    }
-
-    public final int[] getIntArray(int argLength) {
-        if (!aints.containsKey(argLength)) {
-            aints.put(argLength, new int[argLength]);
-        }
-
-        assert (aints.get(argLength).length == argLength) : "Array not built with correct length";
-        return aints.get(argLength);
     }
 
     public final Vec2[] getVec2Array(int argLength) {

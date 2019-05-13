@@ -19,17 +19,11 @@ public interface BroadPhase {
 
     /**
      * Create a proxy with an initial AABB. Pairs are not reported until updatePairs is called.
-     *
-     * @param aabb
-     * @param userData
-     * @return
      */
     int createProxy(AABB aabb, Object userData);
 
     /**
      * Destroy a proxy. It is up to the client to remove any pairs.
-     *
-     * @param proxyId
      */
     void destroyProxy(int proxyId);
 
@@ -43,8 +37,6 @@ public interface BroadPhase {
 
     Object getUserData(int proxyId);
 
-    AABB getFatAABB(int proxyId);
-
     boolean testOverlap(int proxyIdA, int proxyIdB);
 
     /**
@@ -54,17 +46,12 @@ public interface BroadPhase {
 
     /**
      * Update the pairs. This results in pair callbacks. This can only add pairs.
-     *
-     * @param callback
      */
     void updatePairs(PairCallback callback);
 
     /**
      * Query an AABB for overlapping proxies. The callback class is called for each proxy that
      * overlaps the supplied AABB.
-     *
-     * @param callback
-     * @param aabb
      */
     void query(TreeCallback callback, AABB aabb);
 

@@ -71,14 +71,11 @@ public final class World {
     private final Vec2 gravity = new Vec2();
 
     public World(Vec2 gravity) {
-        this(gravity, new DefaultWorldPool(WORLD_POOL_SIZE, WORLD_POOL_CONTAINER_SIZE), new DefaultBroadPhaseBuffer(new DynamicTree()));
-    }
-
-    private World(Vec2 gravity, IWorldPool pool, BroadPhase broadPhase) {
-        this.pool = pool;
         this.gravity.set(gravity);
 
-        contactManager = new ContactManager(pool, broadPhase);
+        pool = new DefaultWorldPool(WORLD_POOL_SIZE, WORLD_POOL_CONTAINER_SIZE);
+
+        contactManager = new ContactManager(pool, new DefaultBroadPhaseBuffer(new DynamicTree()));
         particleSystem = new ParticleSystem(this);
     }
 
