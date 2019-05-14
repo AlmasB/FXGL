@@ -47,7 +47,7 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
     }
 
     @Override
-    public final int createProxy(final AABB aabb, Object userData) {
+    public final int createProxy(AABB aabb, Object userData) {
         int proxyId = tree.createProxy(aabb, userData);
         ++proxyCount;
         bufferMove(proxyId);
@@ -62,7 +62,7 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
     }
 
     @Override
-    public final void moveProxy(int proxyId, final AABB aabb, final Vec2 displacement) {
+    public final void moveProxy(int proxyId, AABB aabb, Vec2 displacement) {
         boolean buffer = tree.moveProxy(proxyId, aabb, displacement);
         if (buffer) {
             bufferMove(proxyId);
@@ -135,12 +135,12 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
     }
 
     @Override
-    public final void query(final TreeCallback callback, final AABB aabb) {
+    public final void query(TreeCallback callback, AABB aabb) {
         tree.query(callback, aabb);
     }
 
     @Override
-    public final void raycast(final TreeRayCastCallback callback, final RayCastInput input) {
+    public final void raycast(TreeRayCastCallback callback, RayCastInput input) {
         tree.raycast(callback, input);
     }
 
