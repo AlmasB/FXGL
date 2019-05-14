@@ -63,9 +63,7 @@ public class DynamicTree implements BroadPhaseStrategy {
 
     @Override
     public final void destroyProxy(int proxyId) {
-        assert (0 <= proxyId && proxyId < m_nodeCapacity);
         DynamicTreeNode node = m_nodes[proxyId];
-        assert (node.child1 == null);
 
         removeLeaf(node);
         freeNode(node);
@@ -73,9 +71,7 @@ public class DynamicTree implements BroadPhaseStrategy {
 
     @Override
     public final boolean moveProxy(int proxyId, final AABB aabb, Vec2 displacement) {
-        assert (0 <= proxyId && proxyId < m_nodeCapacity);
         final DynamicTreeNode node = m_nodes[proxyId];
-        assert (node.child1 == null);
 
         final AABB nodeAABB = node.aabb;
         // if (nodeAABB.contains(aabb)) {
@@ -115,13 +111,11 @@ public class DynamicTree implements BroadPhaseStrategy {
 
     @Override
     public final Object getUserData(int proxyId) {
-        assert (0 <= proxyId && proxyId < m_nodeCapacity);
         return m_nodes[proxyId].userData;
     }
 
     @Override
     public final AABB getFatAABB(int proxyId) {
-        assert (0 <= proxyId && proxyId < m_nodeCapacity);
         return m_nodes[proxyId].aabb;
     }
 
@@ -272,8 +266,6 @@ public class DynamicTree implements BroadPhaseStrategy {
 
     private DynamicTreeNode allocateNode() {
         if (m_freeList == NULL_NODE) {
-            assert (m_nodeCount == m_nodeCapacity);
-
             DynamicTreeNode[] old = m_nodes;
             m_nodeCapacity *= 2;
             m_nodes = new DynamicTreeNode[m_nodeCapacity];
@@ -304,8 +296,6 @@ public class DynamicTree implements BroadPhaseStrategy {
      * returns a node to the pool
      */
     private void freeNode(DynamicTreeNode node) {
-        assert (node != null);
-        assert (0 < m_nodeCount);
         node.parent = m_freeList != NULL_NODE ? m_nodes[m_freeList] : null;
         node.height = -1;
         m_freeList = node.id;
@@ -473,8 +463,6 @@ public class DynamicTree implements BroadPhaseStrategy {
     // Perform a left or right rotation if node A is imbalanced.
     // Returns the new root index.
     private DynamicTreeNode balance(DynamicTreeNode iA) {
-        assert (iA != null);
-
         DynamicTreeNode A = iA;
         if (A.child1 == null || A.height < 2) {
             return iA;
