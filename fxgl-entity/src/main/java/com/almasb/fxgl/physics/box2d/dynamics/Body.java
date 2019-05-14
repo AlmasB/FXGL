@@ -29,13 +29,13 @@ import java.util.List;
  * @author Daniel Murphy
  */
 public final class Body {
-    public static final int e_islandFlag = 0x0001;
-    public static final int e_awakeFlag = 0x0002;
-    public static final int e_autoSleepFlag = 0x0004;
-    public static final int e_bulletFlag = 0x0008;
-    public static final int e_fixedRotationFlag = 0x0010;
-    public static final int e_activeFlag = 0x0020;
-    public static final int e_toiFlag = 0x0040;
+    static final int e_islandFlag = 0x0001;
+
+    private static final int e_awakeFlag = 0x0002;
+    private static final int e_autoSleepFlag = 0x0004;
+    private static final int e_bulletFlag = 0x0008;
+    private static final int e_fixedRotationFlag = 0x0010;
+    private static final int e_activeFlag = 0x0020;
 
     private final World world;
     private BodyType type;
