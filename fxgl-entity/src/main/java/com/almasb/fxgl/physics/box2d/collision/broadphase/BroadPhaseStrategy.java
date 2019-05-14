@@ -52,25 +52,4 @@ public interface BroadPhaseStrategy {
      * @param callback a callback class that is called for each proxy that is hit by the ray.
      */
     void raycast(TreeRayCastCallback callback, RayCastInput input);
-
-    /**
-     * Compute the height of the tree.
-     */
-    int computeHeight();
-
-    /**
-     * Compute the height of the binary tree in O(N) time. Should not be called often.
-     */
-    int getHeight();
-
-    /**
-     * Get the maximum balance of an node in the tree. The balance is the difference in height of the
-     * two children of a node.
-     */
-    int getMaxBalance();
-
-    /**
-     * Get the ratio of the sum of the node areas to the root area.
-     */
-    float getAreaRatio();
 }
