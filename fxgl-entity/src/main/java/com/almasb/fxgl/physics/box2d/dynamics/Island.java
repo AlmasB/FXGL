@@ -231,7 +231,7 @@ class Island {
                 // v += h * (b.m_gravityScale * gravity + b.m_invMass * b.m_force);
                 v.x += h * (b.getGravityScale() * gravity.x + b.m_invMass * b.m_force.x);
                 v.y += h * (b.getGravityScale() * gravity.y + b.m_invMass * b.m_force.y);
-                w += h * b.m_invI * b.m_torque;
+                w += h * b.m_invI * b.getTorque();
 
                 // Apply damping.
                 // ODE: dv/dt + c * v = 0

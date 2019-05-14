@@ -860,7 +860,7 @@ public final class World {
     public void clearForces() {
         for (Body body : bodies) {
             body.m_force.setZero();
-            body.m_torque = 0.0f;
+            body.setTorque(0.0f);
         }
     }
 

@@ -68,7 +68,7 @@ public final class Body {
     public float m_angularVelocity = 0;
 
     public final Vec2 m_force = new Vec2();
-    public float m_torque = 0;
+    private float m_torque = 0;
 
     public float m_mass, m_invMass;
 
@@ -147,6 +147,14 @@ public final class Body {
 
         if (def.getLinearDamping() < 0)
             throw new IllegalArgumentException("Linear damping is invalid");
+    }
+
+    public float getTorque() {
+        return m_torque;
+    }
+
+    public void setTorque(float torque) {
+        m_torque = torque;
     }
 
     /**
