@@ -26,8 +26,6 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
 
     private final BroadPhaseStrategy tree;
 
-    private int proxyCount = 0;
-
     private int moveCapacity = 16;
     private int[] moveBuffer = new int[moveCapacity];
     private int moveCount = 0;
@@ -49,7 +47,6 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
     @Override
     public final int createProxy(AABB aabb, Object userData) {
         int proxyId = tree.createProxy(aabb, userData);
-        ++proxyCount;
         bufferMove(proxyId);
         return proxyId;
     }
@@ -57,7 +54,6 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
     @Override
     public final void destroyProxy(int proxyId) {
         unbufferMove(proxyId);
-        --proxyCount;
         tree.destroyProxy(proxyId);
     }
 
