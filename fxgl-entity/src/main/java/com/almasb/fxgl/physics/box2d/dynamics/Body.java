@@ -65,7 +65,7 @@ public final class Body {
     public final Sweep m_sweep = new Sweep();
 
     public final Vec2 m_linearVelocity = new Vec2();
-    public float m_angularVelocity = 0;
+    private float m_angularVelocity;
 
     public final Vec2 m_force = new Vec2();
     private float m_torque = 0;
@@ -383,6 +383,10 @@ public final class Body {
         }
 
         m_angularVelocity = w;
+    }
+
+    void setAngularVelocityDirectly(float angularVelocity) {
+        this.m_angularVelocity = angularVelocity;
     }
 
     /**

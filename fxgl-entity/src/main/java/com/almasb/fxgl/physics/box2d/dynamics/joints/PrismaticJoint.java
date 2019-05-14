@@ -208,8 +208,8 @@ public class PrismaticJoint extends Joint {
 
         Vec2 vA = bA.m_linearVelocity;
         Vec2 vB = bB.m_linearVelocity;
-        float wA = bA.m_angularVelocity;
-        float wB = bB.m_angularVelocity;
+        float wA = bA.getAngularVelocity();
+        float wB = bB.getAngularVelocity();
 
 
         Vec2.crossToOutUnsafe(wA, axis, temp);

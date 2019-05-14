@@ -839,8 +839,8 @@ public class ParticleSystem {
             final float tempY = p.y - b.m_sweep.c.y;
             final Vec2 velA = m_velocityBuffer.data[a];
             // getLinearVelocityFromWorldPointToOut, with -= velA
-            float vx = -b.m_angularVelocity * tempY + b.m_linearVelocity.x - velA.x;
-            float vy = b.m_angularVelocity * tempX + b.m_linearVelocity.y - velA.y;
+            float vx = -b.getAngularVelocity() * tempY + b.m_linearVelocity.x - velA.x;
+            float vy = b.getAngularVelocity() * tempX + b.m_linearVelocity.y - velA.y;
             // done
             float vn = vx * n.x + vy * n.y;
             if (vn < 0) {
@@ -1051,8 +1051,8 @@ public class ParticleSystem {
                 final Vec2 va = m_velocityBuffer.data[a];
                 final float tempX = p.x - b.m_sweep.c.x;
                 final float tempY = p.y - b.m_sweep.c.y;
-                final float vx = -b.m_angularVelocity * tempY + b.m_linearVelocity.x - va.x;
-                final float vy = b.m_angularVelocity * tempX + b.m_linearVelocity.y - va.y;
+                final float vx = -b.getAngularVelocity() * tempY + b.m_linearVelocity.x - va.x;
+                final float vy = b.getAngularVelocity() * tempX + b.m_linearVelocity.y - va.y;
                 final Vec2 f = tempVec;
                 final float pInvMass = getParticleInvMass();
                 f.x = viscousStrength * m * w * vx;

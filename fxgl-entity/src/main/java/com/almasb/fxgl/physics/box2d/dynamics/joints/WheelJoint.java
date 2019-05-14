@@ -152,7 +152,7 @@ public class WheelJoint extends Joint {
     }
 
     public float getJointSpeed() {
-        return m_bodyA.m_angularVelocity - m_bodyB.m_angularVelocity;
+        return m_bodyA.getAngularVelocity() - m_bodyB.getAngularVelocity();
     }
 
     public boolean isMotorEnabled() {
