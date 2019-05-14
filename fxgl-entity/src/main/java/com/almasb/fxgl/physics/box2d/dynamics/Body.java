@@ -125,8 +125,6 @@ public final class Body {
         angularDamping = bd.getAngularDamping();
         gravityScale = bd.getGravityScale();
 
-        m_force.setZero();
-
         type = bd.getType();
 
         if (type == BodyType.DYNAMIC) {
