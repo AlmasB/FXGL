@@ -88,11 +88,6 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
     }
 
     @Override
-    public final int getProxyCount() {
-        return proxyCount;
-    }
-
-    @Override
     public final void updatePairs(PairCallback callback) {
         // Reset pair buffer
         pairCount = 0;

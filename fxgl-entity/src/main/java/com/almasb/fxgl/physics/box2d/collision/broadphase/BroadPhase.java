@@ -40,11 +40,6 @@ public interface BroadPhase {
     boolean testOverlap(int proxyIdA, int proxyIdB);
 
     /**
-     * @return number of proxies
-     */
-    int getProxyCount();
-
-    /**
      * Update the pairs. This results in pair callbacks. This can only add pairs.
      */
     void updatePairs(PairCallback callback);

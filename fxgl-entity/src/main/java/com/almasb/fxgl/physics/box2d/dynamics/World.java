@@ -1235,13 +1235,6 @@ public final class World {
     }
 
     /**
-     * @return the number of broad-phase proxies
-     */
-    public int getProxyCount() {
-        return contactManager.broadPhase.getProxyCount();
-    }
-
-    /**
      * @return the number of bodies
      */
     public int getBodyCount() {
