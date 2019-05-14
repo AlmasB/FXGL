@@ -1263,27 +1263,6 @@ public final class World {
     }
 
     /**
-     * @return the height of the dynamic tree
-     */
-    public int getTreeHeight() {
-        return contactManager.broadPhase.getTreeHeight();
-    }
-
-    /**
-     * @return the balance of the dynamic tree
-     */
-    public int getTreeBalance() {
-        return contactManager.broadPhase.getTreeBalance();
-    }
-
-    /**
-     * @return the quality of the dynamic tree
-     */
-    public float getTreeQuality() {
-        return contactManager.broadPhase.getTreeQuality();
-    }
-
-    /**
      * Change the global gravity vector.
      *
      * @param gravity gravity vector

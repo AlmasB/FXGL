@@ -65,13 +65,4 @@ public interface BroadPhase {
      * @param callback a callback class that is called for each proxy that is hit by the ray.
      */
     void raycast(TreeRayCastCallback callback, RayCastInput input);
-
-    /**
-     * @return height of the embedded tree
-     */
-    int getTreeHeight();
-
-    int getTreeBalance();
-
-    float getTreeQuality();
 }

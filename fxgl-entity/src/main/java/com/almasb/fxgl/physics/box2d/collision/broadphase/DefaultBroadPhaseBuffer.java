@@ -151,21 +151,6 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
         tree.raycast(callback, input);
     }
 
-    @Override
-    public final int getTreeHeight() {
-        return tree.getHeight();
-    }
-
-    @Override
-    public int getTreeBalance() {
-        return tree.getMaxBalance();
-    }
-
-    @Override
-    public float getTreeQuality() {
-        return tree.getAreaRatio();
-    }
-
     private void bufferMove(int proxyId) {
         if (m_moveCount == m_moveCapacity) {
             int[] old = m_moveBuffer;
