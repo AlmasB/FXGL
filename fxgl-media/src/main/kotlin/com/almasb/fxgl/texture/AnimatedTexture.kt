@@ -138,18 +138,12 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
 
     private fun updateImage() {
         animationChannel?.let {
-            val framesPerRow = it.framesPerRow
-
-            val frameWidth = it.frameWidth.toDouble()
-            val frameHeight = it.frameHeight.toDouble()
-
-            val row = it.sequence[currentFrame] / framesPerRow
-            val col = it.sequence[currentFrame] % framesPerRow
+            val frameData = it.getFrameData(currentFrame)
 
             image = it.image
-            fitWidth = frameWidth
-            fitHeight = frameHeight
-            viewport = Rectangle2D(col * frameWidth, row * frameHeight, frameWidth, frameHeight)
+            fitWidth = frameData.width.toDouble()
+            fitHeight = frameData.height.toDouble()
+            viewport = Rectangle2D(frameData.x.toDouble(), frameData.y.toDouble(), frameData.width.toDouble(), frameData.height.toDouble())
         }
     }
 

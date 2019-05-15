@@ -11,8 +11,12 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
+import com.almasb.fxgl.texture.AnimationChannelData;
+import com.almasb.fxgl.texture.FrameData;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
+
+import java.util.List;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -28,7 +32,20 @@ public class AnimationComponent extends Component {
         animIdle = new AnimationChannel(FXGL.image("newdude.png"), 4, 32, 42, Duration.seconds(1), 1, 1);
         animWalk = new AnimationChannel(FXGL.image("newdude.png"), 4, 32, 42, Duration.seconds(1), 0, 3);
 
+//        animIdle = new AnimationChannel(FXGL.image("sprite_sheet1.png"), Duration.seconds(1.5), 7, List.of(
+//                new AnimationChannelData(0, 5, 77, 37),
+//                new AnimationChannelData(7, 12, 77, 37),
+//                new AnimationChannelData(14, 19, 77, 37)
+//        ));
+//
+//        animWalk = new AnimationChannel(FXGL.image("sprite_sheet1.png"), Duration.seconds(1.5), 7, List.of(
+//                new AnimationChannelData(21, 26, 77, 37),
+//                new AnimationChannelData(28, 33, 77, 37),
+//                new AnimationChannelData(35, 40, 77, 37)
+//        ));
+
         texture = new AnimatedTexture(animIdle);
+        texture.loop();
     }
 
     @Override
