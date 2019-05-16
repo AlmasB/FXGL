@@ -22,6 +22,19 @@ class AnimationChannel(val image: Image,
                         */
                        private val frameData: List<Pair<Int, FrameData>>) {
 
+    constructor(image: Image,
+                channelDuration: Duration,
+                numFrames: Int
+    ) : this(
+            image,
+            numFrames,
+            image.width.toInt() / numFrames,
+            image.height.toInt(),
+            channelDuration,
+            0,
+            numFrames - 1
+    )
+
     @Deprecated("Use diff ctor")
     constructor(image: Image,
                 framesPerRow: Int,

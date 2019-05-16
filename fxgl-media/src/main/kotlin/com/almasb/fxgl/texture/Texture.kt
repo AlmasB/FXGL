@@ -20,7 +20,7 @@ import javafx.util.Duration
 
 /**
  * Represents a 2D image which can be set as view for an entity.
- * The size ratio and viewport can be modified as necessary.
+ * The size ratio and visible area of the image can be modified as necessary.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @apiNote This is essentially a wrapper around [javafx.scene.image.ImageView]
@@ -51,13 +51,7 @@ open class Texture : ImageView, View {
      * @param duration overall duration (for all frames) of the animation
      * @return new AnimatedTexture
      */
-    fun toAnimatedTexture(frames: Int, duration: Duration): AnimatedTexture {
-        return toAnimatedTexture(AnimationChannel(
-                image,
-                frames, image.width.toInt() / frames, image.height.toInt(),
-                duration, 0, frames - 1)
-        )
-    }
+    fun toAnimatedTexture(frames: Int, duration: Duration) = toAnimatedTexture(AnimationChannel(image, duration, frames))
 
     /**
      * Converts the texture to animated texture.
@@ -65,9 +59,7 @@ open class Texture : ImageView, View {
      * @param defaultChannel the default channel
      * @return new AnimatedTexture
      */
-    fun toAnimatedTexture(defaultChannel: AnimationChannel): AnimatedTexture {
-        return AnimatedTexture(defaultChannel)
-    }
+    fun toAnimatedTexture(defaultChannel: AnimationChannel) = AnimatedTexture(defaultChannel)
 
     /**
      * Call this to create a new texture if you are
@@ -82,9 +74,7 @@ open class Texture : ImageView, View {
      *
      * @return new Texture with same image
      */
-    fun copy(): Texture {
-        return Texture(image)
-    }
+    fun copy() = Texture(image)
 
     /**
      * Given a rectangular area, produces a sub-texture of
@@ -229,29 +219,17 @@ open class Texture : ImageView, View {
     /**
      * @return grayscale version of the texture
      */
-    fun toGrayscale(): Texture {
-        return Texture(image.map { it.copy(it.color.grayscale()) })
-    }
+    fun toGrayscale() = Texture(image.map { it.copy(it.color.grayscale()) })
 
-    fun invert(): Texture {
-        return Texture(image.map { it.copy(it.color.invert()) })
-    }
+    fun invert() = Texture(image.map { it.copy(it.color.invert()) })
 
-    fun brighter(): Texture {
-        return Texture(image.map { it.copy(it.color.brighter()) })
-    }
+    fun brighter() = Texture(image.map { it.copy(it.color.brighter()) })
 
-    fun darker(): Texture {
-        return Texture(image.map { it.copy(it.color.darker()) })
-    }
+    fun darker() = Texture(image.map { it.copy(it.color.darker()) })
 
-    fun saturate(): Texture {
-        return Texture(image.map { it.copy(it.color.saturate()) })
-    }
+    fun saturate() = Texture(image.map { it.copy(it.color.saturate()) })
 
-    fun desaturate(): Texture {
-        return Texture(image.map { it.copy(it.color.desaturate()) })
-    }
+    fun desaturate() = Texture(image.map { it.copy(it.color.desaturate()) })
 
     /**
      * Discoloring is done via setting each pixel to white but
@@ -259,9 +237,7 @@ open class Texture : ImageView, View {
      *
      * @return texture with image discolored
      */
-    fun discolor(): Texture {
-        return Texture(image.map { it.copy(Color.color(1.0, 1.0, 1.0, it.A)) })
-    }
+    fun discolor() = Texture(image.map { it.copy(Color.color(1.0, 1.0, 1.0, it.A)) })
 
     /**
      * Multiplies this texture's pixel color with given color.
@@ -313,18 +289,14 @@ open class Texture : ImageView, View {
      * @param color transparent color
      * @return new texture whose pixels with given color are set to transparent
      */
-    fun transparentColor(color: Color): Texture {
-        return replaceColor(color, Color.TRANSPARENT)
-    }
+    fun transparentColor(color: Color) = replaceColor(color, Color.TRANSPARENT)
 
     /**
      * @param backgroundImage the image with which to blend
      * @param blendMode blend mode
      * @return new texture using a blended image of this texture
      */
-    fun blend(backgroundImage: Image, blendMode: BlendMode): Texture {
-        return Texture(backgroundImage.map(image, blendMode.operation()))
-    }
+    fun blend(backgroundImage: Image, blendMode: BlendMode) = Texture(backgroundImage.map(image, blendMode.operation()))
 
     /**
      * Set texture data by copying it from other texture.

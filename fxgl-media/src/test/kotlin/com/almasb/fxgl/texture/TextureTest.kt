@@ -22,6 +22,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 
@@ -66,10 +67,32 @@ class TextureTest {
     }
 
     @Test
-    fun `Fail if subtexture larger`() {
-        assertThrows(IllegalArgumentException::class.java, {
-            texture.subTexture(Rectangle2D(0.0, 0.0, 400.0, 400.0))
-        })
+    fun `Fail if subtexture larger or x y are negative`() {
+        assertAll(
+                Executable {
+                    assertThrows(IllegalArgumentException::class.java) {
+                        texture.subTexture(Rectangle2D(0.0, 0.0, 400.0, 300.0))
+                    }
+                },
+
+                Executable {
+                    assertThrows(IllegalArgumentException::class.java) {
+                        texture.subTexture(Rectangle2D(0.0, 0.0, 300.0, 400.0))
+                    }
+                },
+
+                Executable {
+                    assertThrows(IllegalArgumentException::class.java) {
+                        texture.subTexture(Rectangle2D(-10.0, 0.0, 400.0, 300.0))
+                    }
+                },
+
+                Executable {
+                    assertThrows(IllegalArgumentException::class.java) {
+                        texture.subTexture(Rectangle2D(0.0, -10.0, 300.0, 400.0))
+                    }
+                }
+        )
     }
 
     @Test
@@ -93,6 +116,32 @@ class TextureTest {
 
         assertThat(super4.image.width, `is`(320.0))
         assertThat(super4.image.height, `is`(640.0))
+
+        // now test with different size textures, so transparent pixels will be added to compensate
+
+        val diffSizeTexture1 = Texture(WritableImage(10, 320))
+
+        val super5 = texture.superTexture(diffSizeTexture1, VerticalDirection.DOWN)
+
+        assertThat(super5.image.width, `is`(320.0))
+        assertThat(super5.image.height, `is`(640.0))
+
+        val super6 = diffSizeTexture1.superTexture(texture, VerticalDirection.DOWN)
+
+        assertThat(super6.image.width, `is`(320.0))
+        assertThat(super6.image.height, `is`(640.0))
+
+        val diffSizeTexture2 = Texture(WritableImage(320, 10))
+
+        val super7 = texture.superTexture(diffSizeTexture2, HorizontalDirection.RIGHT)
+
+        assertThat(super7.image.width, `is`(640.0))
+        assertThat(super7.image.height, `is`(320.0))
+
+        val super8 = diffSizeTexture2.superTexture(texture, HorizontalDirection.RIGHT)
+
+        assertThat(super8.image.width, `is`(640.0))
+        assertThat(super8.image.height, `is`(320.0))
     }
 
     @Test
@@ -107,6 +156,7 @@ class TextureTest {
         assertThat(texture.multiplyColor(Color.BLUE).image, `is`(not(image)))
         assertThat(texture.toColor(Color.GRAY).image, `is`(not(image)))
         assertThat(texture.replaceColor(Color.WHITE, Color.GRAY).image, `is`(not(image)))
+        assertThat(texture.replaceColor(Color.TRANSPARENT, Color.GRAY).image, `is`(not(image)))
         assertThat(texture.transparentColor(Color.PURPLE).image, `is`(not(image)))
     }
 
