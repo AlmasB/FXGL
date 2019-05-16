@@ -165,6 +165,7 @@ class TextureTest {
     fun `Blending`(blend: BlendMode) {
         assertThat(texture.blend(WritableImage(320, 320), blend).image, `is`(not(image)))
         assertThat(ColoredTexture(320, 320, Color.BLACK).blend(ColoredTexture(320, 320, Color.WHITE).image, blend).image, `is`(not(image)))
+        assertThat(ColoredTexture(320, 320, Color.WHITE).blend(ColoredTexture(320, 320, Color.BLACK).image, blend).image, `is`(not(image)))
     }
 
     @Test
