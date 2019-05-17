@@ -42,8 +42,22 @@ class AnimatedTextureTest {
     }
 
     @Test
-    fun `Animation channel`() {
-        //assertThat(texture.animationChannel, `is`(not(null)))
+    fun `Next frame updates after counter reaches frame duration`() {
+        assertThat(texture.viewport, `is`(Rectangle2D(0.0, 0.0, 320.0, 320.0)))
+
+        texture.play()
+
+        texture.onUpdate(0.1)
+        texture.onUpdate(0.1)
+        texture.onUpdate(0.1)
+        texture.onUpdate(0.1)
+
+        assertThat(texture.viewport, `is`(Rectangle2D(0.0, 0.0, 320.0, 320.0)))
+
+        // should now move one frame
+        texture.onUpdate(0.1)
+
+        assertThat(texture.viewport, `is`(Rectangle2D(320.0, 0.0, 320.0, 320.0)))
     }
 
     @Test
