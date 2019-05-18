@@ -374,14 +374,14 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         log.debug("createContentAudio()")
 
         val sliderMusic = Slider(0.0, 1.0, 1.0)
-        sliderMusic.valueProperty().bindBidirectional(getAudioPlayer().globalMusicVolumeProperty)
+        sliderMusic.valueProperty().bindBidirectional(getSettings().globalMusicVolumeProperty)
 
         val textMusic = getUIFactory().newText(localizedStringProperty("menu.music.volume").concat(": "))
         val percentMusic = getUIFactory().newText("")
         percentMusic.textProperty().bind(sliderMusic.valueProperty().multiply(100).asString("%.0f"))
 
         val sliderSound = Slider(0.0, 1.0, 1.0)
-        sliderSound.valueProperty().bindBidirectional(getAudioPlayer().globalSoundVolumeProperty)
+        sliderSound.valueProperty().bindBidirectional(getSettings().globalSoundVolumeProperty)
 
         val textSound = getUIFactory().newText(localizedStringProperty("menu.sound.volume").concat(": "))
         val percentSound = getUIFactory().newText("")

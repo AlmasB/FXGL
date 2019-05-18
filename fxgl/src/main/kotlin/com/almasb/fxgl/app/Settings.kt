@@ -23,6 +23,7 @@ import com.almasb.fxgl.ui.FXGLDialogFactory
 import com.almasb.fxgl.ui.FXGLUIFactory
 import com.almasb.fxgl.ui.UIFactory
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
@@ -448,8 +449,39 @@ class ReadOnlyGameSettings internal constructor(
     @get:JvmName("devShowPositionProperty")
     val devShowPosition = SimpleBooleanProperty(false)
 
+    /*
+    Usage of below:
+    1. UI objects should bi-directionally bind to these properties.
+    2. Engine services should one-directionally bind to these properties and not expose their own properties.
+    3. Any kind of programmatic access should modify these properties, in which case (1) and (2) are auto-updated.
+
+    These are saved by the Settings, so engine services do not need to save their copy of these.
+     */
+
     val language = SimpleObjectProperty<Language>()
     val fullScreen = SimpleBooleanProperty(false)
+
+    @get:JvmName("globalMusicVolumeProperty")
+    val globalMusicVolumeProperty = SimpleDoubleProperty(0.5)
+
+    /**
+     * Set global music volume in the range [0..1],
+     * where 0 = 0%, 1 = 100%.
+     */
+    var globalMusicVolume: Double
+        get() = globalMusicVolumeProperty.value
+        set(value) { globalMusicVolumeProperty.value = value }
+
+    @get:JvmName("globalSoundVolumeProperty")
+    val globalSoundVolumeProperty = SimpleDoubleProperty(0.5)
+
+    /**
+     * Set global sound volume in the range [0..1],
+     * where 0 = 0%, 1 = 100%.
+     */
+    var globalSoundVolume: Double
+        get() = globalSoundVolumeProperty.value
+        set(value) { globalSoundVolumeProperty.value = value }
 
     // WRAPPERS
 
@@ -460,6 +492,8 @@ class ReadOnlyGameSettings internal constructor(
         val bundle = Bundle("menusettings")
 
         bundle.put("fullscreen", fullScreen.value)
+        bundle.put("globalMusicVolume", globalMusicVolume)
+        bundle.put("globalSoundVolume", globalSoundVolume)
 
         profile.putBundle(bundle)
     }
@@ -467,6 +501,9 @@ class ReadOnlyGameSettings internal constructor(
     override fun load(profile: UserProfile) {
         val bundle = profile.getBundle("menusettings")
         fullScreen.value = bundle.get("fullscreen")
+
+        globalMusicVolume = bundle.get("globalMusicVolume")
+        globalSoundVolume = bundle.get("globalSoundVolume")
     }
 
     override fun toString(): String {

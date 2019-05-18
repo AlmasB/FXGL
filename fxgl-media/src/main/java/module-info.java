@@ -9,4 +9,6 @@ module com.almasb.fxgl.media {
     exports com.almasb.fxgl.texture;
 
     exports com.almasb.fxgl.audio.impl to com.almasb.fxgl.all;
+
+    opens com.almasb.fxgl.audio to com.almasb.fxgl.core;
 }

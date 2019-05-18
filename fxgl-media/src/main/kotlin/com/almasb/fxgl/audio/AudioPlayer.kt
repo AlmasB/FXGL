@@ -7,12 +7,13 @@
 package com.almasb.fxgl.audio
 
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.sslogger.Logger
+import javafx.beans.property.DoubleProperty
 
-import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Point2D
 
 /**
@@ -28,47 +29,20 @@ class AudioPlayer : EngineService {
     private val activeMusic = UnorderedArray<Music>()
     private val activeSounds = UnorderedArray<Sound>()
 
-    @get:JvmName("globalMusicVolumeProperty")
-    val globalMusicVolumeProperty = SimpleDoubleProperty(0.5)
+    @Inject("globalMusicVolumeProperty")
+    private lateinit var musicVolume: DoubleProperty
 
-    @get:JvmName("globalSoundVolumeProperty")
-    val globalSoundVolumeProperty = SimpleDoubleProperty(0.5)
+    @Inject("globalSoundVolumeProperty")
+    private lateinit var soundVolume: DoubleProperty
 
-    /**
-     * Set global music volume in the range [0..1],
-     * where 0 = 0%, 1 = 100%.
-     *
-     * @param volume music volume
-     */
-    var globalMusicVolume: Double
-        get() = globalMusicVolumeProperty.value
-        set(value) {
-            globalMusicVolumeProperty.value = value
-        }
-
-    /**
-     * Set global sound volume in the range [0..1],
-     * where 0 = 0%, 1 = 100%.
-     *
-     * @param volume sound volume
-     */
-    var globalSoundVolume: Double
-        get() = globalSoundVolumeProperty.value
-        set(value) {
-            globalSoundVolumeProperty.value = value
-        }
-
-    init {
-        globalMusicVolumeProperty.addListener { _, _, newVolume ->
+    override fun onMainLoopStarting() {
+        musicVolume.addListener { _, _, newVolume ->
             activeMusic.forEach { it.audio.setVolume(newVolume.toDouble()) }
         }
 
-        globalSoundVolumeProperty.addListener { _, _, newVolume ->
+        soundVolume.addListener { _, _, newVolume ->
             activeSounds.forEach { it.audio.setVolume(newVolume.toDouble()) }
         }
-    }
-
-    override fun onMainLoopStarting() {
     }
 
     override fun onGameReady(vars: PropertyMap) {
@@ -116,7 +90,7 @@ class AudioPlayer : EngineService {
         if (!activeSounds.containsByIdentity(sound))
             activeSounds.add(sound)
 
-        sound.audio.setVolume(globalSoundVolume)
+        sound.audio.setVolume(soundVolume.value)
         sound.audio.play()
     }
 
@@ -141,7 +115,7 @@ class AudioPlayer : EngineService {
             activeMusic.add(music)
         }
 
-        music.audio.setVolume(globalMusicVolume)
+        music.audio.setVolume(musicVolume.value)
         music.audio.play()
     }
 

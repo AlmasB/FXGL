@@ -213,7 +213,7 @@ internal class Engine(
                     addOverlay(newScene)
                 }
 
-                settings.javaClass.declaredMethods.filter { it.name.startsWith("is") || it.name.startsWith("get") }.forEach {
+                settings.javaClass.declaredMethods.filter { it.name.startsWith("is") || it.name.startsWith("get") || it.name.endsWith("Property") }.forEach {
                     environmentVars[it.name.removePrefix("get").decapitalize()] = it.invoke(settings)
                 }
 
