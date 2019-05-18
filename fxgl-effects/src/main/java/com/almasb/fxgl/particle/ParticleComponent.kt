@@ -42,11 +42,11 @@ class ParticleComponent(val emitter: ParticleEmitter) : Component() {
             if (p.update(tpf)) {
                 iter.remove()
 
-                parent.viewComponent.parent.children -= p.view
+                parent.viewComponent.removeChild(p.view)
                 Pools.free(p)
             } else {
                 if (p.view.parent == null)
-                    parent.viewComponent.parent.children += p.view
+                    parent.viewComponent.addChild(p.view)
             }
         }
 

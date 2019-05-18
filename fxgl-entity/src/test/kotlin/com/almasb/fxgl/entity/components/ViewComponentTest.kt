@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.entity.EntityView
+import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
@@ -15,6 +16,8 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -36,6 +39,23 @@ class ViewComponentTest {
         view.setViewFromNode(rect)
 
         assertThat((view.view.node as EntityView).nodes[0], `is`<Node>(rect))
+    }
+
+    @Test
+    fun `Add and remove direct children`() {
+        assertThat((view.parent as Group).children.size, `is`(1))
+
+        val rect = Rectangle()
+
+        view.addChild(rect)
+
+        assertThat((view.parent as Group).children.size, `is`(2))
+        assertThat((view.parent as Group).children[1], `is`<Node>(rect))
+
+        view.removeChild(rect)
+
+        assertThat((view.parent as Group).children.size, `is`(1))
+        assertThat((view.parent as Group).children[0], `is`(not<Node>(rect)))
     }
 
     @Test

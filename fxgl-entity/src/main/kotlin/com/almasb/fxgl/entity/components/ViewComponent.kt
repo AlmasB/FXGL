@@ -4,12 +4,14 @@ import com.almasb.fxgl.core.View
 import com.almasb.fxgl.entity.EntityView
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
-import javafx.beans.property.*
+import javafx.beans.property.ReadOnlyIntegerProperty
+import javafx.beans.property.ReadOnlyIntegerWrapper
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.Pane
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
 
@@ -26,7 +28,7 @@ class ViewComponent
      * The other children can be used by systems such as debug bbox as necessary.
      * This node is managed by FXGL, do NOT modify children.
      */
-    val parent = Group(initialView.node)
+    val parent: Parent = Group(initialView.node)
 
     val z: ReadOnlyIntegerProperty = ReadOnlyIntegerWrapper(0)
 
@@ -46,7 +48,7 @@ class ViewComponent
             value.node.opacityProperty().bind(opacityProp)
 
             // attach to (possibly active) scene graph
-            parent.children[0] = value.node
+            (parent as Group).children[0] = value.node
 
             field = value
         }
@@ -100,7 +102,7 @@ class ViewComponent
 
     override fun onRemoved() {
         parent.removeEventHandler(MouseEvent.MOUSE_CLICKED, onClickListener)
-        parent.children.clear()
+        (parent as Group).children.clear()
         view.dispose()
     }
 
@@ -110,6 +112,22 @@ class ViewComponent
 
     fun removeClickListener(l: ClickListener) {
         listeners -= l
+    }
+
+    /**
+     * Add a child directly to parent on top of the actual view.
+     * This is only used by FXGL itself.
+     */
+    fun addChild(node: Node) {
+        (parent as Group).children += node
+    }
+
+    /**
+     * Remove a child previously directly added to parent on top of the actual view.
+     * This is only used by FXGL itself.
+     */
+    fun removeChild(node: Node) {
+        (parent as Group).children -= node
     }
 }
 

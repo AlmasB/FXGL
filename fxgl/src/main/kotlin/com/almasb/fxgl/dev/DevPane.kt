@@ -223,7 +223,7 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
         choiceBox.selectionModel.selectedItemProperty().addListener { _, old, entity ->
 
             old?.let {
-                it.viewComponent.parent.children -= highlight
+                it.viewComponent.removeChild(highlight)
             }
 
             entity?.let {
@@ -233,7 +233,7 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
                 highlight.height = it.height
 
                 // highlight selected entity
-                it.viewComponent.parent.children += highlight
+                it.viewComponent.addChild(highlight)
 
                 it.components.sortedBy { it.javaClass.simpleName }
                         .forEach { comp ->

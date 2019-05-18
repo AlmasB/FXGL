@@ -130,7 +130,7 @@ class DevService : EngineService {
             }
         }
 
-        entity.viewComponent.parent.children += group
+        entity.viewComponent.addChild(group)
 
         val view = GameView(group, Int.MAX_VALUE)
 
@@ -140,6 +140,6 @@ class DevService : EngineService {
     private fun removeDebugView(entity: Entity) {
         val view = debugViews.remove(entity)!!
 
-        entity.viewComponent.parent.children.remove(view.node)
+        entity.viewComponent.removeChild(view.node)
     }
 }

@@ -69,10 +69,11 @@ class TMXLevelLoaderTest {
         assertThat(objects.find { it.getInt("id") == 31 }!!.position, `is`(Point2D(111.0, 128.0 - 16)))
         assertThat(objects.find { it.getInt("id") == 33 }!!.position, `is`(Point2D(32.0, 47.0 - 16)))
 
+        // TODO: this assertion is incorrect since children list is never empty
         // check whether gid tiled objects have been parsed
-        assertTrue(objects.find { it.getInt("id") == 28 }!!.viewComponent.parent.children.isNotEmpty())
-        assertTrue(objects.find { it.getInt("id") == 31 }!!.viewComponent.parent.children.isNotEmpty())
-        assertTrue(objects.find { it.getInt("id") == 33 }!!.viewComponent.parent.children.isNotEmpty())
+//        assertTrue(objects.find { it.getInt("id") == 28 }!!.viewComponent.parent.children.isNotEmpty())
+//        assertTrue(objects.find { it.getInt("id") == 31 }!!.viewComponent.parent.children.isNotEmpty())
+//        assertTrue(objects.find { it.getInt("id") == 33 }!!.viewComponent.parent.children.isNotEmpty())
     }
 
     @ParameterizedTest
