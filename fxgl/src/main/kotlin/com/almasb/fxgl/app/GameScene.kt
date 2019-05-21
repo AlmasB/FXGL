@@ -240,6 +240,8 @@ internal constructor(width: Int, height: Int,
     }
 
     private fun destroyView(viewComponent: ViewComponent) {
+        // TODO: this is dangerous we should check if data is there - quick fix
+        // or find a neater way to store node <-> z value pairings
         val view = viewComponent.parent.properties["viewData"] as GameView
         view.zProperty.unbind()
 
