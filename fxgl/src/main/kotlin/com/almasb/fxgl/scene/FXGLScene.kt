@@ -40,12 +40,6 @@ abstract class FXGLScene
 
     private val active = SimpleBooleanProperty(false)
 
-    init {
-        if (FXGL.isDesktop()) {
-            setCursor("fxgl_default.png", Point2D(7.0, 6.0))
-        }
-    }
-
     /**
      * Removes any effects applied to the scene.
      */
@@ -54,16 +48,11 @@ abstract class FXGLScene
     }
 
     /**
-     * Sets global game cursor using given name to find
-     * the image cursor within assets/ui/cursors/.
-     * Hotspot is location of the pointer end on the image.
-     *
-     * @param imageName name of image file
+     * @param image cursor image
      * @param hotspot hotspot location
      */
-    fun setCursor(imageName: String, hotspot: Point2D) {
-        root.cursor = ImageCursor(FXGL.getAssetLoader().loadCursorImage(imageName),
-                hotspot.x, hotspot.y)
+    fun setCursor(image: Image, hotspot: Point2D) {
+        root.cursor = ImageCursor(image, hotspot.x, hotspot.y)
     }
 
     /**
