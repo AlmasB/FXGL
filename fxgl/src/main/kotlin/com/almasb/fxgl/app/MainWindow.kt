@@ -328,6 +328,11 @@ internal class MainWindow(
     private fun registerScene(scene: FXGLScene) {
         scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
         scene.appendCSS(FXGL.getAssetLoader().loadCSS(settings.css))
+
+        if (FXGL.isDesktop()) {
+            scene.setCursor(FXGL.getAssetLoader().loadCursorImage("fxgl_default.png"), Point2D(7.0, 6.0))
+        }
+
         scenes.add(scene)
     }
 
