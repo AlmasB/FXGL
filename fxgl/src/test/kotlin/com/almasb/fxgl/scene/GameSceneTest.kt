@@ -35,11 +35,19 @@ class GameSceneTest {
 
     private lateinit var gameScene: GameScene
     private lateinit var world: GameWorld
+    private lateinit var state: GameState
 
     @BeforeEach
     fun setUp() {
         world = GameWorld()
-        gameScene = GameScene(800, 600, GameState(), world, PhysicsWorld(600, 50.0))
+        state = GameState()
+        gameScene = GameScene(800, 600, state, world, PhysicsWorld(600, 50.0))
+    }
+
+    @Test
+    fun `Creation`() {
+        assertThat(gameScene.gameWorld, `is`(world))
+        assertThat(gameScene.gameState, `is`(state))
     }
 
     @Test
