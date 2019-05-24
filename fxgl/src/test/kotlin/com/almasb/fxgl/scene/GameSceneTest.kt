@@ -7,6 +7,7 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.app.GameScene
+import com.almasb.fxgl.app.GameView
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.gameplay.GameState
@@ -126,5 +127,45 @@ class GameSceneTest {
         gameScene.removeUI(ui)
 
         assertTrue(gameScene.uiNodes.isEmpty())
+    }
+
+    @Test
+    fun `Z index is correctly sorted`() {
+        val gameRoot = gameScene.contentRoot.children[0] as Group
+
+        assertThat(gameRoot.children.size, `is`(0))
+
+        val view1 = GameView(Rectangle(), 1000)
+        gameScene.addGameView(view1)
+        assertThat(gameRoot.children[0], `is`(view1.node))
+
+        val view2 = GameView(Rectangle(), 300)
+        gameScene.addGameView(view2)
+        assertThat(gameRoot.children[0], `is`(view1.node))
+        assertThat(gameRoot.children[1], `is`(view2.node))
+
+        // update should sort z indices
+        gameScene.update(0.016)
+        assertThat(gameRoot.children[0], `is`(view2.node))
+        assertThat(gameRoot.children[1], `is`(view1.node))
+    }
+
+    @Test
+    fun `Clear game views removes all views`() {
+        val gameRoot = gameScene.contentRoot.children[0] as Group
+
+        assertThat(gameRoot.children.size, `is`(0))
+
+        val view1 = GameView(Rectangle(), 1000)
+        gameScene.addGameView(view1)
+
+        val view2 = GameView(Rectangle(), 300)
+        gameScene.addGameView(view2)
+
+        assertThat(gameRoot.children.size, `is`(2))
+
+        gameScene.clearGameViews()
+
+        assertThat(gameRoot.children.size, `is`(0))
     }
 }
