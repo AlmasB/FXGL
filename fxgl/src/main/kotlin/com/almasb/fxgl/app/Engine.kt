@@ -20,10 +20,7 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.saving.*
-import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.ProgressDialog
-import com.almasb.fxgl.scene.Scene
-import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.Display
 import com.almasb.fxgl.ui.ErrorDialog
@@ -291,6 +288,15 @@ internal class Engine(
                 GameWorld(),
                 PhysicsWorld(settings.height, settings.pixelsPerMeter)
         )
+
+        playState.isSingleStep = settings.isSingleStep
+
+        // app is only updated in Game Scene
+        playState.addListener(object : SceneListener {
+            override fun onUpdate(tpf: Double) {
+                app.onUpdate(tpf)
+            }
+        })
 
         // we need dialog state before intro and menus
         dialogState = DialogSubState(mainWindow.currentFXGLScene)

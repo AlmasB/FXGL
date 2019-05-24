@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
 import com.almasb.fxgl.entity.GameWorld
@@ -64,6 +63,12 @@ internal constructor(width: Int, height: Int,
     val uiNodes: ObservableList<Node>
         get() = uiRoot.childrenUnmodifiable
 
+    /**
+     * If set to true, Game Scene will require calling step()
+     * to advance each frame.
+     */
+    var isSingleStep = false
+
     init {
         contentRoot.children.addAll(gameRoot, uiRoot)
 
@@ -98,7 +103,7 @@ internal constructor(width: Int, height: Int,
 
     override fun onUpdate(tpf: Double) {
         // if single step is configured, then step() will be called manually
-        if (FXGL.getSettings().isSingleStep)
+        if (isSingleStep)
             return
 
         step(tpf)
@@ -108,8 +113,6 @@ internal constructor(width: Int, height: Int,
         gameWorld.onUpdate(tpf)
         physicsWorld.onUpdate(tpf)
         viewport.onUpdate(tpf)
-
-        FXGL.getApp().onUpdate(tpf)
 
         if (isZSortingNeeded) {
             sortZ()
