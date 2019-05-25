@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.entity.EntityView
+import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.input.MouseButton
@@ -109,6 +110,40 @@ class ViewComponentTest {
         assertThat(count, `is`(1))
 
         view.removeClickListener(l)
+
+        view.parent.fireEvent(e1)
+
+        assertThat(count, `is`(1))
+    }
+
+    @Test
+    fun `Add remove general click listener`() {
+        var count = 0
+
+        val l = EventHandler<MouseEvent> { count++ }
+
+        view.addEventHandler(MouseEvent.MOUSE_CLICKED, l)
+
+        val e0 = MouseEvent(MouseEvent.MOUSE_PRESSED, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        val e1 = MouseEvent(MouseEvent.MOUSE_CLICKED, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        assertThat(count, `is`(0))
+
+        // PRESS does not trigger click
+        view.parent.fireEvent(e0)
+
+        assertThat(count, `is`(0))
+
+        view.parent.fireEvent(e1)
+
+        assertThat(count, `is`(1))
+
+        view.removeEventHandler(MouseEvent.MOUSE_CLICKED, l)
 
         view.parent.fireEvent(e1)
 

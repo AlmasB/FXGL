@@ -7,7 +7,9 @@ import com.almasb.fxgl.entity.component.CoreComponent
 import javafx.beans.property.ReadOnlyIntegerProperty
 import javafx.beans.property.ReadOnlyIntegerWrapper
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.event.Event
 import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -106,12 +108,28 @@ class ViewComponent
         view.dispose()
     }
 
+    @Deprecated(replaceWith = ReplaceWith("addEventHandler"), message = "")
     fun addClickListener(l: ClickListener) {
         listeners += l
     }
 
+    @Deprecated(replaceWith = ReplaceWith("removeEventHandler"), message = "")
     fun removeClickListener(l: ClickListener) {
         listeners -= l
+    }
+
+    /**
+     * Register event handler for event type that occurs on this view.
+     */
+    fun <T : Event> addEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>) {
+        parent.addEventHandler(eventType, eventHandler)
+    }
+
+    /**
+     * Remove event handler for event type that occurs on this view.
+     */
+    fun <T : Event> removeEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>) {
+        parent.removeEventHandler(eventType, eventHandler)
     }
 
     /**
@@ -133,6 +151,11 @@ class ViewComponent
 
 interface ClickListener {
     fun onClick()
+}
+
+abstract class MouseListener {
+    abstract fun onPressed()
+    abstract fun onReleased()
 }
 
 /**
