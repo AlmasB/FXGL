@@ -21,8 +21,7 @@ import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Rectangle
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -106,6 +105,18 @@ class GameSceneTest {
         assertThat(gameScene.uiNodes, containsInAnyOrder<Node>(rect))
 
         gameScene.clearUINodes()
+
+        assertTrue(gameScene.uiNodes.isEmpty())
+
+        // add remove multiple
+
+        val rect2 = Rectangle()
+
+        gameScene.addUINodes(rect, rect2)
+
+        assertThat(gameScene.uiNodes, contains<Node>(rect, rect2))
+
+        gameScene.removeUINodes(rect, rect2)
 
         assertTrue(gameScene.uiNodes.isEmpty())
     }
