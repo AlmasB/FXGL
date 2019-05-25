@@ -10,6 +10,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.dsl.components.DraggableComponent;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -42,6 +43,7 @@ public class CrystalApp extends GameApplication {
         entityBuilder().at(FXGLMath.randomPoint(new Rectangle2D(0, 0, getAppWidth() - 55, getAppHeight() - 55)))
                 .type(Type.CRYSTAL)
                 .view(texture("YellowCrystal.png").toAnimatedTexture(8, Duration.seconds(0.66)).loop())
+                .with(new DraggableComponent())
                 .buildAndAttach();
     }
 
