@@ -9,6 +9,7 @@ package com.almasb.fxgl.scene
 import com.almasb.fxgl.app.GameScene
 import com.almasb.fxgl.app.GameView
 import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.EntityWorldListener
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.particle.ParticleComponent
@@ -22,6 +23,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.shape.Rectangle
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -178,5 +180,43 @@ class GameSceneTest {
         gameScene.clearGameViews()
 
         assertThat(gameRoot.children.size, `is`(0))
+    }
+
+    @Test
+    fun `Set UI mouse transparent`() {
+        val uiRoot = gameScene.contentRoot.children[1] as Group
+
+        assertFalse(uiRoot.isMouseTransparent)
+
+        gameScene.setUIMouseTransparent(true)
+
+        assertTrue(uiRoot.isMouseTransparent)
+    }
+
+    @Test
+    fun `Single step does not trigger step update`() {
+        assertFalse(gameScene.isSingleStep)
+
+        val gameRoot = gameScene.contentRoot.children[0] as Group
+
+        assertThat(gameRoot.children.size, `is`(0))
+
+        val view1 = GameView(Rectangle(), 1000)
+        gameScene.addGameView(view1)
+        assertThat(gameRoot.children[0], `is`(view1.node))
+
+        val view2 = GameView(Rectangle(), 300)
+        gameScene.addGameView(view2)
+        assertThat(gameRoot.children[0], `is`(view1.node))
+        assertThat(gameRoot.children[1], `is`(view2.node))
+
+        gameScene.isSingleStep = true
+
+        // now update should not trigger frame update, in which case
+        // z is not sorted and the order remains the same
+        gameScene.update(0.016)
+
+        assertThat(gameRoot.children[0], `is`(view1.node))
+        assertThat(gameRoot.children[1], `is`(view2.node))
     }
 }
