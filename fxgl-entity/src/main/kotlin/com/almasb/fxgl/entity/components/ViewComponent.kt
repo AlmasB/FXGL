@@ -153,11 +153,6 @@ interface ClickListener {
     fun onClick()
 }
 
-abstract class MouseListener {
-    abstract fun onPressed()
-    abstract fun onReleased()
-}
-
 /**
  * Dummy placeholder for ViewComponent.
  * Its getNode() will return a unique Node, so can be safely added to scene graph.
