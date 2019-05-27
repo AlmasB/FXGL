@@ -28,6 +28,7 @@
         <module>fxgl-notification</module>
         <module>fxgl-achievement</module>
         <module>fxgl-trade</module>
+        <module>fxgl-minigames</module>
     </modules>
 
     <licenses>

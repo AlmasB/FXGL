@@ -40,6 +40,12 @@
             <artifactId>fxgl-trade</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-minigames</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

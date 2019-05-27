@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>fxgl-trade</artifactId>
+    <artifactId>fxgl-minigames</artifactId>
 
     <dependencies>
         <dependency>
