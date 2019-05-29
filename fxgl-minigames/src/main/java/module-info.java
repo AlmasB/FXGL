@@ -6,4 +6,5 @@ module com.almasb.fxgl.minigames {
     requires javafx.controls;
 
     exports com.almasb.fxgl.minigames;
+    exports com.almasb.fxgl.minigames.sweetspot;
 }

@@ -4,17 +4,16 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.minigames
+package com.almasb.fxgl.minigames.sweetspot
+
+import com.almasb.fxgl.minigames.MiniGameResult
 
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-interface MiniGame<T : MiniGameResult> {
+class SweetSpotResult : MiniGameResult {
 
-    val result: T
-
-    val isDone: Boolean
-
-    fun onUpdate(tpf: Double)
+    override val isSuccess: Boolean
+        get() = false
 }

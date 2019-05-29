@@ -10,11 +10,7 @@ package com.almasb.fxgl.minigames
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-interface MiniGame<T : MiniGameResult> {
+interface MiniGameResult {
 
-    val result: T
-
-    val isDone: Boolean
-
-    fun onUpdate(tpf: Double)
+    val isSuccess: Boolean
 }
