@@ -4,14 +4,13 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.minigames.sweetspot
+package com.almasb.fxgl.minigames
 
-import com.almasb.fxgl.minigames.MiniGameResult
+import javafx.scene.Parent
 
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class SweetSpotResult(override val isSuccess: Boolean) : MiniGameResult {
-
+abstract class MiniGameView<T : MiniGame<*>>(val miniGame: T) : Parent() {
 }

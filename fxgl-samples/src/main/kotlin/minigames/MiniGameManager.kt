@@ -10,6 +10,11 @@ import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.minigames.MiniGame
 import com.almasb.fxgl.minigames.MiniGameResult
+import com.almasb.fxgl.minigames.MiniGameView
+import com.almasb.fxgl.minigames.lockpicking.LockPickResult
+import com.almasb.fxgl.minigames.lockpicking.LockPickView
+import com.almasb.fxgl.minigames.sweetspot.SweetSpotResult
+import com.almasb.fxgl.minigames.sweetspot.SweetSpotView
 import com.almasb.fxgl.scene.SubScene
 
 /**
@@ -18,26 +23,41 @@ import com.almasb.fxgl.scene.SubScene
  */
 class MiniGameManager {
 
-    fun <T : MiniGameResult> startMiniGame(miniGame: MiniGame<T>, callback: Consumer<T>) {
-        startMiniGame(miniGame) { callback.accept(it) }
+    fun startSweetSpot(callback: Consumer<SweetSpotResult>) {
+        startMiniGame(SweetSpotView()) { callback.accept(it) }
     }
 
-    fun <T : MiniGameResult> startMiniGame(miniGame: MiniGame<T>, callback: (T) -> Unit) {
-        val scene = MiniGameSubScene(miniGame, callback)
+    fun startLockPicking(callback: Consumer<LockPickResult>) {
+        startMiniGame(LockPickView()) { callback.accept(it) }
+    }
+
+    fun <S : MiniGameResult, T : MiniGame<S>> startMiniGame(view: MiniGameView<T>, callback: Consumer<S>) {
+        startMiniGame(view) { callback.accept(it) }
+    }
+
+    fun <S : MiniGameResult, T : MiniGame<S>> startMiniGame(view: MiniGameView<T>, callback: (S) -> Unit) {
+        val scene = MiniGameSubScene(view, callback)
 
         FXGL.getGameController().pushSubScene(scene)
     }
 }
 
-class MiniGameSubScene<T : MiniGameResult>(val miniGame: MiniGame<T>, val callback: (T) -> Unit) : SubScene() {
+class MiniGameSubScene<S : MiniGameResult, T : MiniGame<S>>(val view: MiniGameView<T>, val callback: (S) -> Unit) : SubScene() {
+
+    init {
+        view.translateX = FXGL.getAppWidth() / 2 - view.layoutBounds.width / 2
+        view.translateY = FXGL.getAppHeight() / 2 - view.layoutBounds.height / 2
+
+        contentRoot.children += view
+    }
 
     override fun onUpdate(tpf: Double) {
-        miniGame.onUpdate(tpf)
+        view.miniGame.onUpdate(tpf)
 
-        if (miniGame.isDone) {
+        if (view.miniGame.isDone) {
             FXGL.getGameController().popSubScene()
 
-            callback(miniGame.result)
+            callback(view.miniGame.result)
         }
     }
 }

@@ -7,4 +7,5 @@ module com.almasb.fxgl.minigames {
 
     exports com.almasb.fxgl.minigames;
     exports com.almasb.fxgl.minigames.sweetspot;
+    exports com.almasb.fxgl.minigames.lockpicking;
 }

@@ -23,22 +23,27 @@ class SweetSpotMiniGame : MiniGame<SweetSpotResult> {
     val minSuccessValue = SimpleIntegerProperty(0)
     val maxSuccessValue = SimpleIntegerProperty(0)
 
+    private var resultProp: SweetSpotResult? = null
+    private var isDoneProp = false
+
     override val result: SweetSpotResult
-        get() = TODO("not implemented")
+        get() = resultProp!!
 
     override val isDone: Boolean
-        get() = false
+        get() = isDoneProp
 
     fun click() {
         if (cursorValue.value in minSuccessValue.value..maxSuccessValue.value) {
-            println("success")
+            resultProp = SweetSpotResult(true)
         } else {
-            println("fail")
+            resultProp = SweetSpotResult(false)
         }
+
+        isDoneProp = true
     }
 
     override fun onUpdate(tpf: Double) {
-        val ratePerSecond = 60
+        val ratePerSecond = 140
         val speed = tpf * ratePerSecond
 
         if (isIncreasing) {
