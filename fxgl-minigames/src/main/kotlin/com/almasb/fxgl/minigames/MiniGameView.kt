@@ -13,4 +13,6 @@ import javafx.scene.Parent
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 abstract class MiniGameView<T : MiniGame<*>>(val miniGame: T) : Parent() {
+
+    open fun onUpdate(tpf: Double) {}
 }

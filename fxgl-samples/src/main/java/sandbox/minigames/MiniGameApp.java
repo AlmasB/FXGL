@@ -12,6 +12,8 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.minigames.lockpicking.LockPickView;
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import minigames.MiniGameManager;
 
 /**
@@ -31,14 +33,16 @@ public class MiniGameApp extends GameApplication {
     //view.getMinigame().getMinSuccessValue().bind(spinner.valueProperty());
     //FXGL.addUINode(spinner, 400, 100);
 
+    int i = 1;
 
     @Override
     protected void initInput() {
         FXGL.onKeyDown(KeyCode.F, "Hello", () -> {
 
             var manager = new MiniGameManager();
-            manager.startMiniGame(new SweetSpotView(), (result) -> {
-                System.out.println(result.isSuccess() ? "SUCCESS" : "FAIL");
+            manager.startSweetSpot(10, (result) -> {
+
+                FXGL.addUINode(FXGL.getUIFactory().newText(result.isSuccess() ? "SUCCESS" : "FAIL", Color.BLACK, 24.0), 20, i++ * 50);
             });
         });
 
@@ -53,7 +57,7 @@ public class MiniGameApp extends GameApplication {
 
     @Override
     protected void initGame() {
-
+        FXGL.getGameScene().setBackgroundRepeat("bg_10.png");
     }
 
     public static void main(String[] args) {

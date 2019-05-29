@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.minigames.sweetspot
 
+import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.minigames.MiniGame
 import javafx.beans.property.SimpleIntegerProperty
 
@@ -40,6 +41,15 @@ class SweetSpotMiniGame : MiniGame<SweetSpotResult> {
         }
 
         isDoneProp = true
+    }
+
+    fun randomizeRange(successRange: Int) {
+        require(successRange in 0..100) {
+            "Success range must be in 0..100"
+        }
+
+        minSuccessValue.value = FXGLMath.random(0, 100 - successRange)
+        maxSuccessValue.value = minSuccessValue.value + successRange
     }
 
     override fun onUpdate(tpf: Double) {

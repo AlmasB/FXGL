@@ -13,6 +13,7 @@ import com.almasb.fxgl.minigames.MiniGameResult
 import com.almasb.fxgl.minigames.MiniGameView
 import com.almasb.fxgl.minigames.lockpicking.LockPickResult
 import com.almasb.fxgl.minigames.lockpicking.LockPickView
+import com.almasb.fxgl.minigames.sweetspot.SweetSpotMiniGame
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotResult
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotView
 import com.almasb.fxgl.scene.SubScene
@@ -23,8 +24,11 @@ import com.almasb.fxgl.scene.SubScene
  */
 class MiniGameManager {
 
-    fun startSweetSpot(callback: Consumer<SweetSpotResult>) {
-        startMiniGame(SweetSpotView()) { callback.accept(it) }
+    fun startSweetSpot(successRange: Int, callback: Consumer<SweetSpotResult>) {
+        val miniGame = SweetSpotMiniGame()
+        miniGame.randomizeRange(successRange)
+
+        startMiniGame(SweetSpotView(miniGame)) { callback.accept(it) }
     }
 
     fun startLockPicking(callback: Consumer<LockPickResult>) {
@@ -53,6 +57,7 @@ class MiniGameSubScene<S : MiniGameResult, T : MiniGame<S>>(val view: MiniGameVi
 
     override fun onUpdate(tpf: Double) {
         view.miniGame.onUpdate(tpf)
+        view.onUpdate(tpf)
 
         if (view.miniGame.isDone) {
             FXGL.getGameController().popSubScene()

@@ -19,6 +19,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-animation</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${jfx.version}</version>
