@@ -139,6 +139,11 @@ public abstract class GameApplication {
     protected abstract void initSettings(GameSettings settings);
 
     /**
+     * Called once per application lifetime, just before initGame().
+     */
+    protected void onPreInit() {}
+
+    /**
      * Initialize input, i.e. bind key presses, bind mouse buttons.
      * <pre>
      * Example:

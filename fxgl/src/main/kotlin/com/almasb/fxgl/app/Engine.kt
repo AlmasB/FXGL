@@ -234,6 +234,8 @@ internal class Engine(
 
                 services.forEach { it.onMainLoopStarting() }
 
+                app.onPreInit()
+
                 log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
 
                 loop.start()
