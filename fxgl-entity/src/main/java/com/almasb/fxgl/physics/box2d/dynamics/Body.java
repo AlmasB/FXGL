@@ -29,13 +29,13 @@ import java.util.List;
  * @author Daniel Murphy
  */
 public final class Body {
-    public static final int e_islandFlag = 0x0001;
-    public static final int e_awakeFlag = 0x0002;
-    public static final int e_autoSleepFlag = 0x0004;
-    public static final int e_bulletFlag = 0x0008;
-    public static final int e_fixedRotationFlag = 0x0010;
-    public static final int e_activeFlag = 0x0020;
-    public static final int e_toiFlag = 0x0040;
+    static final int e_islandFlag = 0x0001;
+
+    private static final int e_awakeFlag = 0x0002;
+    private static final int e_autoSleepFlag = 0x0004;
+    private static final int e_bulletFlag = 0x0008;
+    private static final int e_fixedRotationFlag = 0x0010;
+    private static final int e_activeFlag = 0x0020;
 
     private final World world;
     private BodyType type;
@@ -65,10 +65,10 @@ public final class Body {
     public final Sweep m_sweep = new Sweep();
 
     public final Vec2 m_linearVelocity = new Vec2();
-    public float m_angularVelocity = 0;
+    private float m_angularVelocity;
 
     public final Vec2 m_force = new Vec2();
-    public float m_torque = 0;
+    private float m_torque = 0;
 
     public float m_mass, m_invMass;
 
@@ -125,8 +125,6 @@ public final class Body {
         angularDamping = bd.getAngularDamping();
         gravityScale = bd.getGravityScale();
 
-        m_force.setZero();
-
         type = bd.getType();
 
         if (type == BodyType.DYNAMIC) {
@@ -147,6 +145,14 @@ public final class Body {
 
         if (def.getLinearDamping() < 0)
             throw new IllegalArgumentException("Linear damping is invalid");
+    }
+
+    public float getTorque() {
+        return m_torque;
+    }
+
+    public void setTorque(float torque) {
+        m_torque = torque;
     }
 
     /**
@@ -377,6 +383,10 @@ public final class Body {
         }
 
         m_angularVelocity = w;
+    }
+
+    void setAngularVelocityDirectly(float angularVelocity) {
+        this.m_angularVelocity = angularVelocity;
     }
 
     /**

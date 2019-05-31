@@ -270,6 +270,25 @@ public class BoundingBoxComponentTest {
     }
 
     @Test
+    public void testIsCollidingWithAngles() throws Exception {
+        bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 60)));
+
+        Entity entity2 = new Entity();
+        entity2.getBoundingBoxComponent().addHitBox(new HitBox("test", BoundingShape.box(50, 50)));
+        entity2.setPosition(50, 0);
+        entity2.getTransformComponent().setRotationOrigin(new Point2D(0, 0));
+        entity2.setRotation(91);
+
+        Entity entity3 = new Entity();
+        entity3.getBoundingBoxComponent().addHitBox(new HitBox("test", BoundingShape.box(50, 50)));
+        entity3.setPosition(50, 0);
+
+        // both identical but e2 is rotated and e3 is not
+        assertTrue(bbox.isCollidingWith(entity2.getBoundingBoxComponent()));
+        assertFalse(bbox.isCollidingWith(entity3.getBoundingBoxComponent()));
+    }
+
+    @Test
     public void testIsWithin() throws Exception {
         bbox.addHitBox(new HitBox("ARM", new Point2D(50, 50), BoundingShape.box(40, 60)));
 

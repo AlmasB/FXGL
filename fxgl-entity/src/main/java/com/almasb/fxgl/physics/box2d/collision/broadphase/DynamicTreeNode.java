@@ -22,15 +22,15 @@ public class DynamicTreeNode {
     protected final int id;
     protected int height;
 
+    DynamicTreeNode(int id) {
+        this.id = id;
+    }
+
     public Object getUserData() {
         return userData;
     }
 
     public void setUserData(Object argData) {
         userData = argData;
-    }
-
-    protected DynamicTreeNode(int id) {
-        this.id = id;
     }
 }

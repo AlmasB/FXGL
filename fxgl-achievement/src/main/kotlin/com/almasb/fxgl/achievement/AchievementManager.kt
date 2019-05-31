@@ -9,10 +9,11 @@ package com.almasb.fxgl.achievement
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyChangeListener
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.event.EventBus
 import com.almasb.sslogger.Logger
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
+import java.util.*
 
 /**
  * Responsible for registering and updating achievements.
@@ -23,26 +24,20 @@ class AchievementManager : EngineService {
 
     private val log = Logger.get(javaClass)
 
-    @Inject("achievementStores")
-    private lateinit var achievementStores: List<AchievementStore>
+    // TODO: can we merge some of these List<Achievement>?
+    @Inject("achievements")
+    private lateinit var achievementsFromSettings: List<Achievement>
 
-    private val achievements = FXCollections.observableArrayList<Achievement>()
-    private val achievementsReadOnly by lazy { FXCollections.unmodifiableObservableList(achievements) }
+    @Inject("eventBus")
+    private lateinit var eventBus: EventBus
+
+    private val achievementsInternal = mutableListOf<Achievement>()
 
     /**
-     * Registers achievement in the system.
-     * Note: this method can only be called from initAchievements() to function properly.
-     *
-     * @param a the achievement
+     * @return unmodifiable list of achievements
      */
-    fun registerAchievement(a: Achievement) {
-        require(achievements.none { it.name == a.name }) {
-            "Achievement with name [${a.name}] exists"
-        }
-
-        achievements.add(a)
-        log.debug("Registered new achievement: ${a.name}")
-    }
+    val achievements: List<Achievement>
+        get() = Collections.unmodifiableList(achievementsInternal)
 
     /**
      * @param name achievement name
@@ -50,21 +45,37 @@ class AchievementManager : EngineService {
      * @throws IllegalArgumentException if achievement is not registered
      */
     fun getAchievementByName(name: String): Achievement {
-        return achievements.find { it.name == name }
+        return achievementsInternal.find { it.name == name }
                 ?: throw IllegalArgumentException("Achievement with name [$name] is not registered!")
     }
 
     /**
-     * @return unmodifiable list of achievements
+     * Registers achievement in the system.
+     * Note: this method can only be called from initAchievements() to function properly.
+     *
+     * @param a the achievement
      */
-    fun getAchievements(): ObservableList<Achievement> = achievementsReadOnly
+    internal fun registerAchievement(a: Achievement) {
+        require(achievementsInternal.none { it.name == a.name }) {
+            "Achievement with name [${a.name}] exists"
+        }
+
+        achievementsInternal.add(a)
+        log.debug("Registered new achievement: ${a.name}")
+    }
 
     override fun onMainLoopStarting() {
-        achievementStores.forEach { it.initAchievements(this) }
+        achievementsFromSettings.forEach { registerAchievement(it) }
+    }
 
-        // TODO: cleanup
+    override fun onGameReady(vars: PropertyMap) {
+        bindToVars(vars)
+    }
 
-        achievements.forEach {
+    internal fun bindToVars(vars: PropertyMap) {
+        // only interested in non-achieved achievements
+        achievementsInternal.filter { !it.isAchieved }.forEach {
+
             when(it.varValue) {
                 is Int -> {
                     var listener: PropertyChangeListener<Int>? = null
@@ -81,13 +92,14 @@ class AchievementManager : EngineService {
 
                             if (now >= it.varValue) {
                                 it.setAchieved()
-                                //FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
-                                //FXGL.getApp().gameState.removeListener(it.varName, listener!!)
+                                eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
+
+                                vars.removeListener(it.varName, listener!!)
                             }
                         }
                     }
 
-                    //FXGL.getApp().gameState.addListener<Int>(it.varName, listener)
+                    vars.addListener(it.varName, listener)
                 }
 
                 is Double -> {
@@ -105,13 +117,14 @@ class AchievementManager : EngineService {
 
                             if (now >= it.varValue) {
                                 it.setAchieved()
-                                //FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
-                                //FXGL.getApp().gameState.removeListener(it.varName, listener!!)
+                                eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
+
+                                vars.removeListener(it.varName, listener!!)
                             }
                         }
                     }
 
-                    //FXGL.getApp().gameState.addListener<Double>(it.varName, listener)
+                    vars.addListener(it.varName, listener)
                 }
 
                 is Boolean -> {
@@ -122,13 +135,14 @@ class AchievementManager : EngineService {
                         override fun onChange(prev: Boolean, now: Boolean) {
                             if (now) {
                                 it.setAchieved()
-                                //FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
-                                //FXGL.getApp().gameState.removeListener(it.varName, listener!!)
+                                eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
+
+                                vars.removeListener(it.varName, listener!!)
                             }
                         }
                     }
 
-                    //FXGL.getApp().gameState.addListener<Boolean>(it.varName, listener)
+                    vars.addListener(it.varName, listener)
                 }
 
                 else -> throw IllegalArgumentException("Unknown value type for achievement: " + it.varValue)
@@ -143,26 +157,14 @@ class AchievementManager : EngineService {
     }
 
     override fun write(bundle: Bundle) {
-//        log.debug("Saving data to profile")
-//
-//        val bundle = Bundle("achievement")
-//
-//        achievements.forEach { a -> bundle.put(a.name, a.isAchieved) }
-//        bundle.log()
-//
-//        profile.putBundle(bundle)
+        achievementsInternal.forEach { a -> bundle.put(a.name, a.isAchieved) }
     }
 
     override fun read(bundle: Bundle) {
-//        log.debug("Loading data from profile")
-//
-//        val bundle = profile.getBundle("achievement")
-//        bundle.log()
-//
-//        achievements.forEach { a ->
-//            val achieved = bundle.get<Boolean>(a.name)
-//            if (achieved)
-//                a.setAchieved()
-//        }
+        achievementsInternal.forEach { a ->
+            val achieved = bundle.get<Boolean>(a.name)
+            if (achieved)
+                a.setAchieved()
+        }
     }
 }

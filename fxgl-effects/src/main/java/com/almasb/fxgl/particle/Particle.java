@@ -183,7 +183,7 @@ public class Particle implements Poolable {
         this.control = control;
 
         imageView.setImage(image);
-        colorAnimation = new AnimatedColor((Color)startColor, (Color)endColor, interpolator);
+        colorAnimation = new AnimatedColor((Color)startColor, (Color)endColor);
     }
 
     @Override
@@ -275,7 +275,7 @@ public class Particle implements Poolable {
                 view.setLayoutX(x);
                 view.setLayoutY(y);
                 view.setOpacity(alpha);
-                view.setFill(colorAnimation.getValue(progress));
+                view.setFill(colorAnimation.getValue(progress, interpolator));
                 view.setBlendMode(blendMode);
 
                 if (allowRotation) {

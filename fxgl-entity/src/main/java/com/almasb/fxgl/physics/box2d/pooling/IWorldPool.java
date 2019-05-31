@@ -59,12 +59,6 @@ public interface IWorldPool {
 
     void pushMat33(int num);
 
-    AABB popAABB();
-
-    AABB[] popAABB(int num);
-
-    void pushAABB(int num);
-
     Rotation popRot();
 
     void pushRot(int num);
@@ -74,10 +68,6 @@ public interface IWorldPool {
     TimeOfImpact getTimeOfImpact();
 
     Distance getDistance();
-
-    float[] getFloatArray(int argLength);
-
-    int[] getIntArray(int argLength);
 
     Vec2[] getVec2Array(int argLength);
 }

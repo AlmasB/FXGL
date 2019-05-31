@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.core
 
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.SerializableType
 
 /**
@@ -16,8 +17,15 @@ interface EngineService : Updatable, SerializableType {
 
     /**
      * Called when the engine is fully initialized and just before the main loop.
+     * This occurs once per application lifetime.
      */
     fun onMainLoopStarting()
+
+    /**
+     * Called when initGame(), initPhysics(), initUI() all completed and
+     * the game is ready to be played.
+     */
+    fun onGameReady(vars: PropertyMap)
 
     /**
      * Called just before the engine exits and the application shuts down.

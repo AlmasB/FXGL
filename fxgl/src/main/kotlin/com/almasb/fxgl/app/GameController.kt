@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.saving.SaveFile
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.scene.SubScene
@@ -36,6 +37,8 @@ interface GameController {
     fun saveProfile()
 
     fun loadFromProfile(profile: UserProfile): Boolean
+
+    fun onGameReady(vars: PropertyMap)
 
     fun exit()
 

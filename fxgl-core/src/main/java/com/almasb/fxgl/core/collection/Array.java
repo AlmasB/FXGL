@@ -11,7 +11,6 @@
 package com.almasb.fxgl.core.collection;
 
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.core.util.Predicate;
 
 import java.util.*;
 
@@ -35,7 +34,6 @@ public class Array<T> implements Iterable<T> {
     private int size;
 
     private ArrayIterable iterable;
-    private PredicateIterable<T> predicateIterable;
 
     /**
      * Creates an ordered array with a capacity of 16.
@@ -431,6 +429,7 @@ public class Array<T> implements Iterable<T> {
 
     /**
      * Removes from this array all of elements contained in the specified array.
+     * Only the first occurrence of each element is removed.
      *
      * @param array given array
      * @param identity True to use ==, false to use .equals()
@@ -510,20 +509,6 @@ public class Array<T> implements Iterable<T> {
     }
 
     /**
-     * Reduces the size of the backing array to the size of the actual items.
-     * This is useful to release memory when many items
-     * have been removed, or if it is known that more items will not be added.
-     *
-     * @return items
-     */
-    public T[] shrink() {
-        if (items.length != size)
-            resize(size);
-
-        return items;
-    }
-
-    /**
      * Increases the size of the backing array to accommodate the specified number of additional items.
      * Useful before adding many items to avoid multiple backing array resizes.
      *
@@ -539,21 +524,6 @@ public class Array<T> implements Iterable<T> {
     }
 
     /**
-     * Sets the array size, leaving any values beyond the current size null.
-     *
-     * @param newSize new array size
-     * @return items
-     */
-    public T[] setSize(int newSize) {
-        truncate(newSize);
-        if (newSize > items.length)
-            resize(Math.max(8, newSize));
-
-        size = newSize;
-        return items;
-    }
-
-    /**
      * Creates a new backing array with the specified size containing the current items.
      *
      * @param newSize new array size
@@ -565,21 +535,6 @@ public class Array<T> implements Iterable<T> {
         System.arraycopy(items, 0, newItems, 0, Math.min(size, newItems.length));
         this.items = newItems;
         return newItems;
-    }
-
-    /**
-     * Reduces the size of the array to the specified size.
-     * If the array is already smaller than the specified size, no action is taken.
-     *
-     * @param newSize new array size
-     */
-    public void truncate(int newSize) {
-        if (size <= newSize)
-            return;
-
-        for (int i = newSize; i < size; i++)
-            items[i] = null;
-        size = newSize;
     }
 
     /**
@@ -624,23 +579,6 @@ public class Array<T> implements Iterable<T> {
     }
 
     /**
-     * Returns an iterable for the selected items in the array.
-     * Remove is supported, but not between hasNext() and next().
-     * Note that the same iterable instance is returned each time this method is called.
-     * Use the {@link PredicateIterable} constructor for nested or multithreaded iteration.
-     *
-     * @param predicate predicate for selection
-     * @return an iterable for the selected items in the array
-     */
-    public Iterable<T> select(Predicate<T> predicate) {
-        if (predicateIterable == null)
-            predicateIterable = new PredicateIterable<T>(this, predicate);
-        else
-            predicateIterable.set(this, predicate);
-        return predicateIterable;
-    }
-
-    /**
      * @return a random item from the array
      */
     public T random() {
@@ -671,7 +609,9 @@ public class Array<T> implements Iterable<T> {
      */
     public List<T> toList() {
         List<T> list = new ArrayList<>(size);
-        Collections.addAll(list, items);
+        for (int i = 0; i < size; i++) {
+            list.add(items[i]);
+        }
         return list;
     }
 
@@ -753,20 +693,6 @@ public class Array<T> implements Iterable<T> {
             buffer.append(items[i]);
         }
         buffer.append(']');
-        return buffer.toString();
-    }
-
-    public String toString(String separator) {
-        if (size == 0)
-            return "";
-
-        T[] items = this.items;
-        StringBuilder buffer = new StringBuilder(32);
-        buffer.append(items[0]);
-        for (int i = 1; i < size; i++) {
-            buffer.append(separator);
-            buffer.append(items[i]);
-        }
         return buffer.toString();
     }
 
@@ -876,90 +802,6 @@ public class Array<T> implements Iterable<T> {
         }
     }
 
-    public static class PredicateIterator<T> implements Iterator<T> {
-        public Iterator<T> iterator;
-        public Predicate<T> predicate;
-        public boolean end = false;
-        public boolean peeked = false;
-        public T next = null;
-
-        public PredicateIterator(final Iterable<T> iterable, final Predicate<T> predicate) {
-            this(iterable.iterator(), predicate);
-        }
-
-        public PredicateIterator(final Iterator<T> iterator, final Predicate<T> predicate) {
-            set(iterator, predicate);
-        }
-
-        public void set(final Iterable<T> iterable, final Predicate<T> predicate) {
-            set(iterable.iterator(), predicate);
-        }
-
-        public void set(final Iterator<T> iterator, final Predicate<T> predicate) {
-            this.iterator = iterator;
-            this.predicate = predicate;
-            end = peeked = false;
-            next = null;
-        }
-
-        @Override
-        public boolean hasNext() {
-            if (end) return false;
-            if (next != null) return true;
-            peeked = true;
-            while (iterator.hasNext()) {
-                final T n = iterator.next();
-                if (predicate.test(n)) {
-                    next = n;
-                    return true;
-                }
-            }
-            end = true;
-            return false;
-        }
-
-        @Override
-        public T next() {
-            if (next == null && !hasNext()) return null;
-            final T result = next;
-            next = null;
-            peeked = false;
-            return result;
-        }
-
-        @Override
-        public void remove() {
-            if (peeked) throw new IllegalStateException("Cannot remove between a call to hasNext() and next().");
-            iterator.remove();
-        }
-    }
-
-    public static class PredicateIterable<T> implements Iterable<T> {
-        public Iterable<T> iterable;
-        public Predicate<T> predicate;
-        public PredicateIterator<T> iterator = null;
-
-        public PredicateIterable(Iterable<T> iterable, Predicate<T> predicate) {
-            set(iterable, predicate);
-        }
-
-        public void set(Iterable<T> iterable, Predicate<T> predicate) {
-            this.iterable = iterable;
-            this.predicate = predicate;
-        }
-
-        /** Returns an iterator. Note that the same iterator instance is returned each time this method is called. Use the
-         * {@link PredicateIterator} constructor for nested or multithreaded iteration. */
-        @Override
-        public Iterator<T> iterator() {
-            if (iterator == null)
-                iterator = new PredicateIterator<T>(iterable.iterator(), predicate);
-            else
-                iterator.set(iterable.iterator(), predicate);
-            return iterator;
-        }
-    }
-
     private static final Array<?> EMPTY = new EmptyArray<>();
 
     @SuppressWarnings("unchecked")
@@ -1010,12 +852,6 @@ public class Array<T> implements Iterable<T> {
 
         @Override
         public T[] ensureCapacity(int additionalCapacity) {
-            fail();
-            return null;
-        }
-
-        @Override
-        public T[] setSize(int newSize) {
             fail();
             return null;
         }

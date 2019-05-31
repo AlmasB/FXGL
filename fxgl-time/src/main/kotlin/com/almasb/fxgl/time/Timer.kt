@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Timer that supports running actions at an interval and with a delay.
- * Runs on the same thread that created the timer.
+ * Runs on the same thread that updates the timer.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -121,7 +121,7 @@ class Timer {
     }
 
     /**
-     * Constructs a local timer is driven by this timer.
+     * Constructs a local timer that is driven by this timer.
      */
     fun newLocalTimer(): LocalTimer = object : LocalTimer {
         private var time = 0.0

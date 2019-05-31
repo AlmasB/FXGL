@@ -39,88 +39,86 @@ public class ParticleSystem {
      */
     private static final int k_noPressureFlags = ParticleTypeInternal.b2_powderParticle;
 
-    static final int xTruncBits = 12;
-    static final int yTruncBits = 12;
-    static final int tagBits = 8 * 4 - 1  /* sizeof(int) */;
-    static final long yOffset = 1 << (yTruncBits - 1);
-    static final int yShift = tagBits - yTruncBits;
-    static final int xShift = tagBits - yTruncBits - xTruncBits;
-    static final long xScale = 1 << xShift;
-    static final long xOffset = xScale * (1 << (xTruncBits - 1));
-    static final int xMask = (1 << xTruncBits) - 1;
-    static final int yMask = (1 << yTruncBits) - 1;
+    private static final int xTruncBits = 12;
+    private static final int yTruncBits = 12;
+    private static final int tagBits = 8 * 4 - 1  /* sizeof(int) */;
+    private static final long yOffset = 1 << (yTruncBits - 1);
+    private static final int yShift = tagBits - yTruncBits;
+    private static final int xShift = tagBits - yTruncBits - xTruncBits;
+    private static final long xScale = 1 << xShift;
+    private static final long xOffset = xScale * (1 << (xTruncBits - 1));
 
-    static long computeTag(float x, float y) {
+    private static long computeTag(float x, float y) {
         return (((long) (y + yOffset)) << yShift) + (((long) (xScale * x)) + xOffset);
     }
 
-    static long computeRelativeTag(long tag, int x, int y) {
+    private static long computeRelativeTag(long tag, int x, int y) {
         return tag + (y << yShift) + (x << xShift);
     }
 
-    static int limitCapacity(int capacity, int maxCount) {
+    private static int limitCapacity(int capacity, int maxCount) {
         return maxCount != 0 && capacity > maxCount ? maxCount : capacity;
     }
 
     int m_timestamp;
-    int m_allParticleFlags;
-    int m_allGroupFlags;
-    float m_density;
-    float m_inverseDensity;
-    float m_gravityScale;
-    float m_particleDiameter;
-    float m_inverseDiameter;
-    float m_squaredDiameter;
+    private int m_allParticleFlags;
+    private int m_allGroupFlags;
+    private float m_density;
+    private float m_inverseDensity;
+    private float m_gravityScale;
+    private float m_particleDiameter;
+    private float m_inverseDiameter;
+    private float m_squaredDiameter;
 
-    int m_count;
-    int m_internalAllocatedCapacity;
-    int m_maxCount;
-    ParticleBufferInt m_flagsBuffer;
+    private int m_count;
+    private int m_internalAllocatedCapacity;
+    private int m_maxCount;
+    private ParticleBufferInt m_flagsBuffer;
     ParticleBuffer<Vec2> m_positionBuffer;
     ParticleBuffer<Vec2> m_velocityBuffer;
-    float[] m_accumulationBuffer; // temporary values
-    Vec2[] m_accumulation2Buffer; // temporary vector values
-    float[] m_depthBuffer; // distance from the surface
+    private float[] m_accumulationBuffer; // temporary values
+    private Vec2[] m_accumulation2Buffer; // temporary vector values
+    private float[] m_depthBuffer; // distance from the surface
 
-    public ParticleBuffer<ParticleColor> m_colorBuffer;
-    ParticleGroup[] m_groupBuffer;
-    ParticleBuffer<Object> m_userDataBuffer;
+    private ParticleBuffer<ParticleColor> m_colorBuffer;
+    private ParticleGroup[] m_groupBuffer;
+    private ParticleBuffer<Object> m_userDataBuffer;
 
-    int m_proxyCount;
-    int m_proxyCapacity;
-    Proxy[] m_proxyBuffer;
+    private int m_proxyCount;
+    private int m_proxyCapacity;
+    private Proxy[] m_proxyBuffer;
 
     public int m_contactCount;
-    int m_contactCapacity;
+    private int m_contactCapacity;
     public ParticleContact[] m_contactBuffer;
 
     public int m_bodyContactCount;
-    int m_bodyContactCapacity;
+    private int m_bodyContactCapacity;
     public ParticleBodyContact[] m_bodyContactBuffer;
 
-    int m_pairCount;
-    int m_pairCapacity;
-    Pair[] m_pairBuffer;
+    private int m_pairCount;
+    private int m_pairCapacity;
+    private Pair[] m_pairBuffer;
 
-    int m_triadCount;
-    int m_triadCapacity;
-    Triad[] m_triadBuffer;
+    private int m_triadCount;
+    private int m_triadCapacity;
+    private Triad[] m_triadBuffer;
 
-    int m_groupCount;
-    ParticleGroup m_groupList;
+    private int m_groupCount;
+    private ParticleGroup m_groupList;
 
-    float m_pressureStrength;
-    float m_dampingStrength;
-    float m_elasticStrength;
-    float m_springStrength;
-    float m_viscousStrength;
-    float m_surfaceTensionStrengthA;
-    float m_surfaceTensionStrengthB;
-    float m_powderStrength;
-    float m_ejectionStrength;
-    float m_colorMixingStrength;
+    private float m_pressureStrength;
+    private float m_dampingStrength;
+    private float m_elasticStrength;
+    private float m_springStrength;
+    private float m_viscousStrength;
+    private float m_surfaceTensionStrengthA;
+    private float m_surfaceTensionStrengthB;
+    private float m_powderStrength;
+    private float m_ejectionStrength;
+    private float m_colorMixingStrength;
 
-    World m_world;
+    private World m_world;
 
     public ParticleSystem(World world) {
         m_world = world;
@@ -266,8 +264,7 @@ public class ParticleSystem {
     private final Vec2 tempVec = new Vec2();
     private final Transform tempTransform = new Transform();
     private final Transform tempTransform2 = new Transform();
-    private CreateParticleGroupCallback createParticleGroupCallback =
-            new CreateParticleGroupCallback();
+    private CreateParticleGroupCallback createParticleGroupCallback = new CreateParticleGroupCallback();
     private final ParticleDef tempParticleDef = new ParticleDef();
 
     public ParticleGroup createParticleGroup(ParticleGroupDef groupDef) {
@@ -483,7 +480,7 @@ public class ParticleSystem {
         --m_groupCount;
     }
 
-    public void computeDepthForGroup(ParticleGroup group) {
+    private void computeDepthForGroup(ParticleGroup group) {
         for (int i = group.m_firstIndex; i < group.m_lastIndex; i++) {
             m_accumulationBuffer[i] = 0;
         }
@@ -541,7 +538,7 @@ public class ParticleSystem {
         }
     }
 
-    public void addContact(int a, int b) {
+    private void addContact(int a, int b) {
         assert (a != b);
         Vec2 pa = m_positionBuffer.data[a];
         Vec2 pb = m_positionBuffer.data[b];
@@ -571,7 +568,7 @@ public class ParticleSystem {
         }
     }
 
-    public void updateContacts(boolean exceptZombie) {
+    private void updateContacts(boolean exceptZombie) {
         for (int p = 0; p < m_proxyCount; p++) {
             Proxy proxy = m_proxyBuffer[p];
             int i = proxy.index;
@@ -625,7 +622,7 @@ public class ParticleSystem {
 
     private final UpdateBodyContactsCallback ubccallback = new UpdateBodyContactsCallback();
 
-    public void updateBodyContacts() {
+    private void updateBodyContacts() {
         final AABB aabb = temp;
         aabb.lowerBound.x = Float.MAX_VALUE;
         aabb.lowerBound.y = Float.MAX_VALUE;
@@ -648,7 +645,7 @@ public class ParticleSystem {
 
     private SolveCollisionCallback sccallback = new SolveCollisionCallback();
 
-    public void solveCollision(TimeStep step) {
+    private void solveCollision(TimeStep step) {
         final AABB aabb = temp;
         final Vec2 lowerBound = aabb.lowerBound;
         final Vec2 upperBound = aabb.upperBound;
@@ -842,8 +839,8 @@ public class ParticleSystem {
             final float tempY = p.y - b.m_sweep.c.y;
             final Vec2 velA = m_velocityBuffer.data[a];
             // getLinearVelocityFromWorldPointToOut, with -= velA
-            float vx = -b.m_angularVelocity * tempY + b.m_linearVelocity.x - velA.x;
-            float vy = b.m_angularVelocity * tempX + b.m_linearVelocity.y - velA.y;
+            float vx = -b.getAngularVelocity() * tempY + b.m_linearVelocity.x - velA.x;
+            float vy = b.getAngularVelocity() * tempX + b.m_linearVelocity.y - velA.y;
             // done
             float vn = vx * n.x + vy * n.y;
             if (vn < 0) {
@@ -1054,8 +1051,8 @@ public class ParticleSystem {
                 final Vec2 va = m_velocityBuffer.data[a];
                 final float tempX = p.x - b.m_sweep.c.x;
                 final float tempY = p.y - b.m_sweep.c.y;
-                final float vx = -b.m_angularVelocity * tempY + b.m_linearVelocity.x - va.x;
-                final float vy = b.m_angularVelocity * tempX + b.m_linearVelocity.y - va.y;
+                final float vx = -b.getAngularVelocity() * tempY + b.m_linearVelocity.x - va.x;
+                final float vy = b.getAngularVelocity() * tempX + b.m_linearVelocity.y - va.y;
                 final Vec2 f = tempVec;
                 final float pInvMass = getParticleInvMass();
                 f.x = viscousStrength * m * w * vx;
@@ -1391,7 +1388,7 @@ public class ParticleSystem {
 
     private final NewIndices newIndices = new NewIndices();
 
-    void RotateBuffer(int start, int mid, int end) {
+    private void RotateBuffer(int start, int mid, int end) {
         // move the particles assigned to the given group toward the end of array
         if (start == mid || mid == end) {
             return;
@@ -1659,11 +1656,6 @@ public class ParticleSystem {
         }
     }
 
-    /**
-     * @param callback
-     * @param point1
-     * @param point2
-     */
     public void raycast(ParticleRaycastCallback callback, final Vec2 point1, final Vec2 point2) {
         if (m_proxyCount == 0) {
             return;

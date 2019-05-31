@@ -14,6 +14,7 @@ import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -38,6 +39,25 @@ class AnimatedTextureTest {
     @BeforeEach
     fun setUp() {
         texture = Texture(image).toAnimatedTexture(2, Duration.seconds(1.0))
+    }
+
+    @Test
+    fun `Next frame updates after counter reaches frame duration`() {
+        assertThat(texture.viewport, `is`(Rectangle2D(0.0, 0.0, 320.0, 320.0)))
+
+        texture.play()
+
+        texture.onUpdate(0.1)
+        texture.onUpdate(0.1)
+        texture.onUpdate(0.1)
+        texture.onUpdate(0.1)
+
+        assertThat(texture.viewport, `is`(Rectangle2D(0.0, 0.0, 320.0, 320.0)))
+
+        // should now move one frame
+        texture.onUpdate(0.1)
+
+        assertThat(texture.viewport, `is`(Rectangle2D(320.0, 0.0, 320.0, 320.0)))
     }
 
     @Test
@@ -86,6 +106,32 @@ class AnimatedTextureTest {
         texture.onUpdate(2.0)
 
         assertThat(texture.viewport, `is`(Rectangle2D(320.0, 0.0, 320.0, 320.0)))
+    }
+
+    @Test
+    fun `Stop animation ends with 1st frame`() {
+        assertThat(texture.viewport, `is`(Rectangle2D(0.0, 0.0, 320.0, 320.0)))
+
+        texture.loop()
+
+        assertThat(texture.viewport, `is`(Rectangle2D(0.0, 0.0, 320.0, 320.0)))
+
+        // move single frame
+        texture.onUpdate(0.5)
+
+        assertThat(texture.viewport, `is`(Rectangle2D(320.0, 0.0, 320.0, 320.0)))
+
+        // animation is complete with loop() we move to 1st frame
+        texture.onUpdate(0.5)
+
+        assertThat(texture.viewport, `is`(Rectangle2D(0.0, 0.0, 320.0, 320.0)))
+
+        // we stop so 1st frame
+
+        texture.stop()
+        texture.onUpdate(2.0)
+
+        assertThat(texture.viewport, `is`(Rectangle2D(0.0, 0.0, 320.0, 320.0)))
     }
 
     @Test

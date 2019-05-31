@@ -25,8 +25,8 @@ open class AchievementEvent(
         @JvmField val ACHIEVED = EventType(ANY, "ACHIEVED")
     }
 
-    constructor(achievement: Achievement) : this(ANY, achievement) {}
+    constructor(achievement: Achievement) : this(ACHIEVED, achievement) {}
 
     override fun toString() =
-            "AchievementEvent[name=${achievement.name}, description=${achievement.description}]"
+            "AchievementEvent[type=$eventType, name=${achievement.name}, description=${achievement.description}]"
 }

@@ -301,8 +301,7 @@ class Viewport
     }
 
     private fun fadeFlash() {
-        // TODO: needs symmetric API: add / remove / clear ?
-        camera.viewComponent.setViewFromNode(flashRect)
+        camera.viewComponent.addChild(flashRect)
 
         flashTime = 0.0
     }
@@ -315,7 +314,7 @@ class Viewport
                 flashTime = 1.0
                 isFlashing = false
                 isFading = false
-                camera.viewComponent.parent.children.clear()
+                camera.viewComponent.removeChild(flashRect)
 
                 onFadeFlashFinish.run()
             }

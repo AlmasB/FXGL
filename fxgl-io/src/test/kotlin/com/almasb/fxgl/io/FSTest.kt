@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
-import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Files.*
 import java.nio.file.Paths.get as path
@@ -64,24 +63,26 @@ class FSTest {
         }
     }
 
+    private val fs = FS()
+
     @Test
     fun `Exists correctly reports dirs and files`() {
-        assertTrue(FS.exists("testdir"))
-        assertTrue(FS.exists("testdir/"))
-        assertFalse(FS.exists("testdir/testexist"))
-        assertFalse(FS.exists("testdir/testexist.txt"))
+        assertTrue(fs.exists("testdir"))
+        assertTrue(fs.exists("testdir/"))
+        assertFalse(fs.exists("testdir/testexist"))
+        assertFalse(fs.exists("testdir/testexist.txt"))
 
         createDirectory(path("testdir/testexist"))
-        assertTrue(FS.exists("testdir/testexist"))
+        assertTrue(fs.exists("testdir/testexist"))
 
         createDirectory(path("testdir/testexist.txt"))
-        assertTrue(FS.exists("testdir/testexist.txt"))
+        assertTrue(fs.exists("testdir/testexist.txt"))
 
         deleteIfExists(path("testdir/testexist"))
-        assertFalse(FS.exists("testdir/testexist"))
+        assertFalse(fs.exists("testdir/testexist"))
 
         deleteIfExists(path("testdir/testexist.txt"))
-        assertFalse(FS.exists("testdir/testexist.txt"))
+        assertFalse(fs.exists("testdir/testexist.txt"))
     }
 
     @Test
@@ -90,11 +91,11 @@ class FSTest {
 
         assertFalse(exists(path("somefile.data")))
 
-        FS.writeDataTask(data, "somefile.data").run()
+        fs.writeDataTask(data, "somefile.data").run()
 
         assertTrue(exists(path("somefile.data")))
 
-        val data2 = FS.readDataTask<String>("somefile.data").run()
+        val data2 = fs.readDataTask<String>("somefile.data").run()
 
         assertThat(data, `is`(data2))
     }
@@ -105,7 +106,7 @@ class FSTest {
 
         assertFalse(exists(path("somefile.txt")))
 
-        FS.writeDataTask(text, "somefile.txt").run()
+        fs.writeDataTask(text, "somefile.txt").run()
 
         assertTrue(exists(path("somefile.txt")))
 
@@ -118,40 +119,40 @@ class FSTest {
 
         assertFalse(exists(path("parentdir")))
 
-        FS.writeDataTask(data, "parentdir/childfile.dat").run()
+        fs.writeDataTask(data, "parentdir/childfile.dat").run()
 
         assertTrue(exists(path("parentdir")))
 
         // parentdir exists, check we can write
-        FS.writeDataTask(data, "parentdir/childfile.dat").run()
+        fs.writeDataTask(data, "parentdir/childfile.dat").run()
     }
 
     @Test
     fun `Load file names from a dir`() {
-        val fileNames = FS.loadFileNamesTask("testdir", false).run()
+        val fileNames = fs.loadFileNamesTask("testdir", false).run()
 
         assertThat(fileNames, containsInAnyOrder("testfile.txt", "testfile.json"))
 
-        val fileNames2 = FS.loadFileNamesTask("testdir", true).run()
+        val fileNames2 = fs.loadFileNamesTask("testdir", true).run()
 
         assertThat(fileNames2, containsInAnyOrder("testfile.txt", "testfile.json", "testsubdir/testfile2.json"))
 
-        val fileNames3 = FS.loadFileNamesTask("testdir", true, listOf(FileExtension("json"))).run()
+        val fileNames3 = fs.loadFileNamesTask("testdir", true, listOf(FileExtension("json"))).run()
 
         assertThat(fileNames3, containsInAnyOrder("testfile.json", "testsubdir/testfile2.json"))
 
-        val fileNames4 = FS.loadFileNamesTask("testdir", false, listOf(FileExtension("json"))).run()
+        val fileNames4 = fs.loadFileNamesTask("testdir", false, listOf(FileExtension("json"))).run()
 
         assertThat(fileNames4, containsInAnyOrder("testfile.json"))
     }
 
     @Test
     fun `Load dir names from a dir`() {
-        val dirNames = FS.loadDirectoryNamesTask("testdir", false).run()
+        val dirNames = fs.loadDirectoryNamesTask("testdir", false).run()
 
         assertThat(dirNames, containsInAnyOrder("testsubdir"))
 
-        val dirNames2 = FS.loadDirectoryNamesTask("testdir", true).run()
+        val dirNames2 = fs.loadDirectoryNamesTask("testdir", true).run()
 
         assertThat(dirNames2, containsInAnyOrder("testsubdir", "testsubdir/testsubsubdir"))
     }
@@ -159,17 +160,17 @@ class FSTest {
     @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     @Test
     fun `Load last modified file`() {
-        FS.writeDataTask("a", "testdir/file.a").run()
+        fs.writeDataTask("a", "testdir/file.a").run()
 
         // this is to make sure that even on Unix systems we have a difference in timestamps
         Thread.sleep(1000)
 
-        FS.writeDataTask("b", "testdir/file.b").run()
+        fs.writeDataTask("b", "testdir/file.b").run()
 
-        val data = FS.loadLastModifiedFileTask<String>("testdir", false).run()
+        val data = fs.loadLastModifiedFileTask<String>("testdir", false).run()
         assertThat(data, `is`("b"))
 
-        val data2 = FS.loadLastModifiedFileTask<String>("testdir/", true).run()
+        val data2 = fs.loadLastModifiedFileTask<String>("testdir/", true).run()
         assertThat(data2, `is`("b"))
 
         deleteIfExists(path("testdir/file.a"))
@@ -178,7 +179,7 @@ class FSTest {
 
     @Test
     fun `Load last modified file task does not throw if no file in dir`() {
-        val data: Any? = FS.loadLastModifiedFileTask<Any>("testdir_empty", false).run()
+        val data: Any? = fs.loadLastModifiedFileTask<Any>("testdir_empty", false).run()
         assertNull(data)
     }
 
@@ -186,10 +187,10 @@ class FSTest {
     fun `Create dir and delete dir`() {
         assertFalse(exists(path("testdir/somedir/")))
 
-        FS.createDirectoryTask("testdir/somedir/").run()
+        fs.createDirectoryTask("testdir/somedir/").run()
         assertTrue(exists(path("testdir/somedir/")))
 
-        FS.deleteDirectoryTask("testdir/somedir/").run()
+        fs.deleteDirectoryTask("testdir/somedir/").run()
         assertFalse(exists(path("testdir/somedir/")))
     }
 
@@ -198,7 +199,7 @@ class FSTest {
         createFile(path("testdir/somefile"))
         assertTrue(exists(path("testdir/somefile")))
 
-        FS.deleteFileTask("testdir/somefile").run()
+        fs.deleteFileTask("testdir/somefile").run()
         assertFalse(exists(path("testdir/somefile")))
     }
 
@@ -206,7 +207,7 @@ class FSTest {
     fun `Delete dir throws if dir does not exit`() {
         var exception = ""
 
-        FS.deleteDirectoryTask("bla-bla-does-not-exist")
+        fs.deleteDirectoryTask("bla-bla-does-not-exist")
                 .onFailure { exception = it.message!! }
                 .run()
 

@@ -3,6 +3,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.ObjectMap
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.FXGLExecutor
 import com.almasb.fxgl.core.concurrent.IOTask
@@ -19,10 +20,7 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.saving.*
-import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.ProgressDialog
-import com.almasb.fxgl.scene.Scene
-import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.Display
 import com.almasb.fxgl.ui.ErrorDialog
@@ -70,6 +68,8 @@ internal class Engine(
     private var mainMenu: FXGLScene? = null
     private var gameMenu: FXGLScene? = null
 
+    private var pauseMenu: PauseMenu? = null
+
     private val loop = LoopRunner { loop(it) }
 
     val tpf: Double
@@ -98,6 +98,7 @@ internal class Engine(
     internal val eventBus by lazy { EventBus() }
     internal val display by lazy { dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
+    internal val fs by lazy { FS() }
 
     internal val devPane by lazy { DevPane(playState, settings) }
 
@@ -132,6 +133,7 @@ internal class Engine(
 
         environmentVars["overlayRoot"] = overlayRoot
         environmentVars["masterTimer"] = engineTimer
+        environmentVars["eventBus"] = eventBus
     }
 
     private fun loadVersion(): String {
@@ -178,7 +180,7 @@ internal class Engine(
             IOTask.setDefaultExecutor(executor)
             IOTask.setDefaultFailAction { display.showErrorBox(it) }
 
-            isFirstRun = !FS.exists("system/")
+            isFirstRun = !fs.exists("system/")
 
             if (isFirstRun) {
                 createRequiredDirs()
@@ -208,7 +210,7 @@ internal class Engine(
                     addOverlay(newScene)
                 }
 
-                settings.javaClass.declaredMethods.filter { it.name.startsWith("is") || it.name.startsWith("get") }.forEach {
+                settings.javaClass.declaredMethods.filter { it.name.startsWith("is") || it.name.startsWith("get") || it.name.endsWith("Property") }.forEach {
                     environmentVars[it.name.removePrefix("get").decapitalize()] = it.invoke(settings)
                 }
 
@@ -231,6 +233,8 @@ internal class Engine(
                 }
 
                 services.forEach { it.onMainLoopStarting() }
+
+                app.onPreInit()
 
                 log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
 
@@ -287,6 +291,15 @@ internal class Engine(
                 PhysicsWorld(settings.height, settings.pixelsPerMeter)
         )
 
+        playState.isSingleStep = settings.isSingleStep
+
+        // app is only updated in Game Scene
+        playState.addListener(object : SceneListener {
+            override fun onUpdate(tpf: Double) {
+                app.onUpdate(tpf)
+            }
+        })
+
         // we need dialog state before intro and menus
         dialogState = DialogSubState(mainWindow.currentFXGLScene)
 
@@ -332,15 +345,18 @@ internal class Engine(
             playState.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
             gameMenu!!.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
         } else {
+
+            pauseMenu = sceneFactory.newPauseMenu()
+
             playState.input.addAction(object : UserAction("Pause") {
                 override fun onActionBegin() {
-                    PauseMenuSubState.requestShow {
-                        mainWindow.pushState(PauseMenuSubState)
+                    pauseMenu!!.requestShow {
+                        mainWindow.pushState(pauseMenu!!)
                     }
                 }
 
                 override fun onActionEnd() {
-                    PauseMenuSubState.unlockSwitch()
+                    pauseMenu!!.unlockSwitch()
                 }
             }, settings.menuKey)
         }
@@ -349,8 +365,8 @@ internal class Engine(
     }
 
     private fun createRequiredDirs() {
-        FS.createDirectoryTask("system/")
-                .then { FS.writeDataTask(listOf("This directory contains FXGL system data files."), "system/Readme.txt") }
+        fs.createDirectoryTask("system/")
+                .then { fs.writeDataTask(listOf("This directory contains FXGL system data files."), "system/Readme.txt") }
                 .onFailure { e ->
                     log.warning("Failed to create system dir: $e")
                     Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e)
@@ -361,7 +377,7 @@ internal class Engine(
     private fun saveSystemData() {
         log.debug("Saving FXGL system data")
 
-        FS.writeDataTask(bundle, "system/fxgl.bundle")
+        fs.writeDataTask(bundle, "system/fxgl.bundle")
                 .onFailure { log.warning("Failed to save: $it") }
                 .run()
     }
@@ -369,7 +385,7 @@ internal class Engine(
     private fun loadSystemData() {
         log.debug("Loading FXGL system data")
 
-        FS.readDataTask<Bundle>("system/fxgl.bundle")
+        fs.readDataTask<Bundle>("system/fxgl.bundle")
                 .onSuccess {
                     bundle = it
                     log.debug("$bundle")
@@ -579,6 +595,10 @@ internal class Engine(
 
     override fun popSubScene() {
         mainWindow.popState()
+    }
+
+    override fun onGameReady(vars: PropertyMap) {
+        services.forEach { it.onGameReady(vars) }
     }
 
     override fun exit() {

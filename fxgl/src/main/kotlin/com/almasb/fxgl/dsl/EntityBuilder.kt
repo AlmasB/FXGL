@@ -12,7 +12,9 @@ import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.physics.BoundingShape
+import com.almasb.fxgl.physics.BoundingShape.box
 import com.almasb.fxgl.physics.HitBox
+import com.almasb.fxgl.physics.PhysicsComponent
 import javafx.geometry.Point2D
 import javafx.scene.Node
 
@@ -59,7 +61,7 @@ class EntityBuilder {
     }
 
     fun opacity(value: Double) = this.also {
-        entity.viewComponent.opacityProp.value = value
+        entity.viewComponent.opacity = value
     }
 
     fun bbox(box: HitBox) = this.also {
@@ -77,15 +79,6 @@ class EntityBuilder {
         } else {
             entity.viewComponent.setViewFromNode(node)
         }
-
-//        entityView.clearChildren()
-//
-//        if (node is View) {
-//            entity.view = node
-//        } else {
-//            entityView.addNode(node)
-//            entity.view = entityView
-//        }
     }
 
     fun viewWithBBox(node: Node) = this.also {
@@ -122,4 +115,24 @@ class EntityBuilder {
     fun build() = entity
 
     fun buildAndAttach() = entity.also { FXGL.getGameWorld().addEntity(it) }
+
+    /**
+     * Create an entity with a bounding box around the screen with given thickness.
+     *
+     * @param thickness thickness of hit boxes around the screen
+     * @return entity with screen bounds
+     */
+    fun buildScreenBounds(thickness: Double): Entity {
+        val w = FXGL.getAppWidth().toDouble()
+        val h = FXGL.getAppHeight().toDouble()
+        
+        return bbox(HitBox("LEFT",  Point2D(-thickness, 0.0), box(thickness, h)))
+                .bbox(HitBox("RIGHT", Point2D(w, 0.0), box(thickness, h)))
+                .bbox(HitBox("TOP",   Point2D(0.0, -thickness), box(w, thickness)))
+                .bbox(HitBox("BOT",   Point2D(0.0, h), box(w, thickness)))
+                .with(PhysicsComponent())
+                .build()
+    }
+
+    fun buildScreenBoundsAndAttach(thickness: Double) = entity.also { FXGL.getGameWorld().addEntity(buildScreenBounds(thickness)) }
 }

@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.texture
 
+import com.almasb.fxgl.core.util.EmptyRunnable
 import javafx.geometry.Rectangle2D
 
 /**
@@ -23,14 +24,12 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
     private var looping = false
     private var needUpdate = false
 
-    var animationChannel: AnimationChannel? = null
+    var animationChannel: AnimationChannel = defaultChannel
         private set
 
-    var onCycleFinished: Runnable? = null
+    var onCycleFinished: Runnable = EmptyRunnable
 
     init {
-        animationChannel = defaultChannel
-
         // force channel to apply settings to this texture
         updateImage()
     }
@@ -64,7 +63,7 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
      * you can call this method instead to reset the channel.
      */
     fun play(): AnimatedTexture {
-        playAnimationChannel(animationChannel!!)
+        playAnimationChannel(animationChannel)
         return this
     }
 
@@ -75,7 +74,7 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
      * but calling with a different channel will switch to that channel.
      */
     fun loop(): AnimatedTexture {
-        loopAnimationChannel(animationChannel!!)
+        loopAnimationChannel(animationChannel)
         return this
     }
 
@@ -99,57 +98,33 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         if (!needUpdate)
             return
 
-        animationChannel?.let {
+        var channelDone = false
 
-            var channelDone = false
+        counter += tpf
 
-            counter += tpf
+        if (counter >= animationChannel.frameDuration) {
 
-            if (counter >= it.frameDuration) {
+            // frame done
+            if (animationChannel.isLastFrame(currentFrame)) {
 
-                // frame done
-                if (it.isLastFrame(currentFrame)) {
+                channelDone = true
 
-                    channelDone = true
-
-                    if (!looping) {
-                        // stop at last frame, do not update image
-                        needUpdate = false
-                        onCycleFinished()
-                        return
-                    }
+                if (!looping) {
+                    // stop at last frame, do not update image
+                    needUpdate = false
+                    onCycleFinished()
+                    return
                 }
-
-                counter = 0.0
-                currentFrame = it.frameAfter(currentFrame)
-
-                updateImage()
             }
 
-            if (channelDone) {
-                onCycleFinished()
-            }
+            counter = 0.0
+            currentFrame = animationChannel.frameAfter(currentFrame)
+
+            updateImage()
         }
-    }
 
-    private fun onCycleFinished() {
-        onCycleFinished?.run()
-    }
-
-    private fun updateImage() {
-        animationChannel?.let {
-            val framesPerRow = it.framesPerRow
-
-            val frameWidth = it.frameWidth.toDouble()
-            val frameHeight = it.frameHeight.toDouble()
-
-            val row = it.sequence[currentFrame] / framesPerRow
-            val col = it.sequence[currentFrame] % framesPerRow
-
-            image = it.image
-            fitWidth = frameWidth
-            fitHeight = frameHeight
-            viewport = Rectangle2D(col * frameWidth, row * frameHeight, frameWidth, frameHeight)
+        if (channelDone) {
+            onCycleFinished()
         }
     }
 
@@ -159,5 +134,18 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         needUpdate = true
 
         updateImage()
+    }
+
+    private fun updateImage() {
+        val frameData = animationChannel.getFrameData(currentFrame)
+
+        image = animationChannel.image
+        fitWidth = frameData.width.toDouble()
+        fitHeight = frameData.height.toDouble()
+        viewport = Rectangle2D(frameData.x.toDouble(), frameData.y.toDouble(), frameData.width.toDouble(), frameData.height.toDouble())
+    }
+
+    private fun onCycleFinished() {
+        onCycleFinished.run()
     }
 }

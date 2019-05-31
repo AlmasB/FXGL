@@ -4,12 +4,16 @@ import com.almasb.fxgl.core.View
 import com.almasb.fxgl.entity.EntityView
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
-import javafx.beans.property.*
+import javafx.beans.property.ReadOnlyIntegerProperty
+import javafx.beans.property.ReadOnlyIntegerWrapper
+import javafx.beans.property.SimpleDoubleProperty
+import javafx.event.Event
 import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.scene.Group
 import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.Pane
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
 
@@ -19,13 +23,14 @@ import javafx.scene.transform.Scale
  */
 @CoreComponent
 class ViewComponent
-@JvmOverloads constructor(initialView: View = EmptyView): Component() {
+@JvmOverloads constructor(initialView: View = EmptyView()): Component() {
 
     /**
      * Only the first child is used when calling setView.
      * The other children can be used by systems such as debug bbox as necessary.
+     * This node is managed by FXGL, do NOT modify children.
      */
-    val parent = Group()
+    val parent: Parent = Group(initialView.node)
 
     val z: ReadOnlyIntegerProperty = ReadOnlyIntegerWrapper(0)
 
@@ -36,25 +41,18 @@ class ViewComponent
         get() = opacityProp.value
         set(value) { opacityProp.value = value }
 
-    private val propView: ObjectProperty<View> = SimpleObjectProperty<View>(initialView)
-
-    var view: View
-        get() = propView.value
+    var view: View = initialView
         set(value) {
+            // unbind effects on old view
+            view.node.opacityProperty().unbind()
 
-            if (parent.children.isEmpty()) {
-                parent.children += value.node
-            } else {
-                parent.children[0] = value.node
-            }
+            // apply effects to new view
+            value.node.opacityProperty().bind(opacityProp)
 
-            propView.value?.node?.opacityProperty()?.unbind()
+            // attach to (possibly active) scene graph
+            (parent as Group).children[0] = value.node
 
-            propView.value = value
-
-            // we only apply effects to the first child aka game view
-            // so debug views stay unaffected
-            propView.value.node.opacityProperty().bind(opacityProp)
+            field = value
         }
 
     /**
@@ -106,16 +104,48 @@ class ViewComponent
 
     override fun onRemoved() {
         parent.removeEventHandler(MouseEvent.MOUSE_CLICKED, onClickListener)
-        parent.children.clear()
+        (parent as Group).children.clear()
         view.dispose()
     }
 
+    @Deprecated(replaceWith = ReplaceWith("addEventHandler"), message = "")
     fun addClickListener(l: ClickListener) {
         listeners += l
     }
 
+    @Deprecated(replaceWith = ReplaceWith("removeEventHandler"), message = "")
     fun removeClickListener(l: ClickListener) {
         listeners -= l
+    }
+
+    /**
+     * Register event handler for event type that occurs on this view.
+     */
+    fun <T : Event> addEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>) {
+        parent.addEventHandler(eventType, eventHandler)
+    }
+
+    /**
+     * Remove event handler for event type that occurs on this view.
+     */
+    fun <T : Event> removeEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>) {
+        parent.removeEventHandler(eventType, eventHandler)
+    }
+
+    /**
+     * Add a child directly to parent on top of the actual view.
+     * This is only used by FXGL itself.
+     */
+    fun addChild(node: Node) {
+        (parent as Group).children += node
+    }
+
+    /**
+     * Remove a child previously directly added to parent on top of the actual view.
+     * This is only used by FXGL itself.
+     */
+    fun removeChild(node: Node) {
+        (parent as Group).children -= node
     }
 }
 
@@ -123,12 +153,16 @@ interface ClickListener {
     fun onClick()
 }
 
-private object EmptyView : View {
+/**
+ * Dummy placeholder for ViewComponent.
+ * Its getNode() will return a unique Node, so can be safely added to scene graph.
+ */
+private class EmptyView : View {
     override fun onUpdate(tpf: Double) {
     }
 
     override fun getNode(): Node {
-        return Pane()
+        return Group()
     }
 
     override fun dispose() {

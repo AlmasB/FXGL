@@ -71,14 +71,11 @@ public final class World {
     private final Vec2 gravity = new Vec2();
 
     public World(Vec2 gravity) {
-        this(gravity, new DefaultWorldPool(WORLD_POOL_SIZE, WORLD_POOL_CONTAINER_SIZE), new DefaultBroadPhaseBuffer(new DynamicTree()));
-    }
-
-    private World(Vec2 gravity, IWorldPool pool, BroadPhase broadPhase) {
-        this.pool = pool;
         this.gravity.set(gravity);
 
-        contactManager = new ContactManager(pool, broadPhase);
+        pool = new DefaultWorldPool(WORLD_POOL_SIZE, WORLD_POOL_CONTAINER_SIZE);
+
+        contactManager = new ContactManager(pool, new DefaultBroadPhaseBuffer(new DynamicTree()));
         particleSystem = new ParticleSystem(this);
     }
 
@@ -863,7 +860,7 @@ public final class World {
     public void clearForces() {
         for (Body body : bodies) {
             body.m_force.setZero();
-            body.m_torque = 0.0f;
+            body.setTorque(0.0f);
         }
     }
 
@@ -1238,13 +1235,6 @@ public final class World {
     }
 
     /**
-     * @return the number of broad-phase proxies
-     */
-    public int getProxyCount() {
-        return contactManager.broadPhase.getProxyCount();
-    }
-
-    /**
      * @return the number of bodies
      */
     public int getBodyCount() {
@@ -1263,27 +1253,6 @@ public final class World {
      */
     public int getContactCount() {
         return contactManager.contactCount;
-    }
-
-    /**
-     * @return the height of the dynamic tree
-     */
-    public int getTreeHeight() {
-        return contactManager.broadPhase.getTreeHeight();
-    }
-
-    /**
-     * @return the balance of the dynamic tree
-     */
-    public int getTreeBalance() {
-        return contactManager.broadPhase.getTreeBalance();
-    }
-
-    /**
-     * @return the quality of the dynamic tree
-     */
-    public float getTreeQuality() {
-        return contactManager.broadPhase.getTreeQuality();
     }
 
     /**

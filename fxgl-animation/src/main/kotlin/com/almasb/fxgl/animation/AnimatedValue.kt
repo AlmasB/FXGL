@@ -14,15 +14,20 @@ import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
 
 /**
+ * A value that can be animated (progressed) from value1 to value 2.
+ * An interpolator can be used to control the rate of animation (progression).
  * Built-in supported types: Point2D, Double, Int, Long, Float.
  * Any other types must implement animate().
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-open class AnimatedValue<T>
-@JvmOverloads constructor(val from: T, val to: T, var interpolator: Interpolator = Interpolator.LINEAR) {
+open class AnimatedValue<T>(val from: T, val to: T) {
 
     fun getValue(progress: Double): T {
+        return animate(from, to, progress, Interpolator.LINEAR)
+    }
+
+    fun getValue(progress: Double, interpolator: Interpolator): T {
         return animate(from, to, progress, interpolator)
     }
 
@@ -32,9 +37,8 @@ open class AnimatedValue<T>
     }
 }
 
-class AnimatedPoint2D
-@JvmOverloads constructor(from: Point2D, to: Point2D, interpolator: Interpolator = Interpolator.LINEAR)
-    : AnimatedValue<Point2D>(from, to, interpolator) {
+class AnimatedPoint2D(from: Point2D, to: Point2D)
+    : AnimatedValue<Point2D>(from, to) {
 
     override fun animate(val1: Point2D, val2: Point2D, progress: Double, interpolator: Interpolator): Point2D {
         return FXGLMath.interpolate(val1, val2, progress, interpolator)
@@ -68,9 +72,8 @@ class AnimatedCubicBezierPoint2D
     }
 }
 
-class AnimatedColor
-@JvmOverloads constructor(from: Color, to: Color, interpolator: Interpolator = Interpolator.LINEAR)
-    : AnimatedValue<Color>(from, to, interpolator) {
+class AnimatedColor(from: Color, to: Color)
+    : AnimatedValue<Color>(from, to) {
 
     override fun animate(val1: Color, val2: Color, progress: Double, interpolator: Interpolator): Color {
         return Color.color(

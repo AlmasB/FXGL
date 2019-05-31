@@ -7,6 +7,7 @@
 package com.almasb.fxgl.notification.impl
 
 import com.almasb.fxgl.core.Inject
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.notification.Notification
@@ -34,13 +35,13 @@ class NotificationServiceProvider : NotificationService {
     private var showing = false
 
     @Inject("overlayRoot")
-    internal lateinit var root: Group
+    private lateinit var root: Group
 
     @Inject("masterTimer")
-    internal lateinit var timer: Timer
+    private lateinit var timer: Timer
 
     @Inject("notificationViewClass")
-    internal lateinit var notificationViewClass: Class<out NotificationView>
+    private lateinit var notificationViewClass: Class<out NotificationView>
 
     private val notificationView by lazy { ReflectionUtils.newInstance(notificationViewClass) }
 
@@ -104,6 +105,9 @@ class NotificationServiceProvider : NotificationService {
     }
 
     override fun onMainLoopStarting() {
+    }
+
+    override fun onGameReady(vars: PropertyMap) {
     }
 
     override fun onExit() {

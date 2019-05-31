@@ -3,6 +3,7 @@
  */
 module com.almasb.fxgl.achievement {
     requires com.almasb.fxgl.core;
+    requires com.almasb.fxgl.events;
 
     exports com.almasb.fxgl.achievement;
 

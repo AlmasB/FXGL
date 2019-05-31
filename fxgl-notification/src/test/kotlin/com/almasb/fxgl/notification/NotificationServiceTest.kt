@@ -8,6 +8,7 @@ package com.almasb.fxgl.notification
 
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.XboxNotificationView
+import com.almasb.fxgl.test.InjectInTest
 import com.almasb.fxgl.time.Timer
 import javafx.scene.Group
 import javafx.scene.paint.Color
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.lang.invoke.MethodHandles
 
 /**
  *
@@ -37,16 +39,19 @@ class NotificationServiceTest {
         timer = Timer()
 
         val provider = NotificationServiceProvider()
-        provider.notificationViewClass = XboxNotificationView::class.java
-        provider.root = overlayRoot
-        provider.timer = timer
+
+        val lookup = MethodHandles.lookup()
+
+        InjectInTest.inject(lookup, provider, "timer", timer)
+        InjectInTest.inject(lookup, provider, "notificationViewClass", XboxNotificationView::class.java)
+        InjectInTest.inject(lookup, provider, "root", overlayRoot)
 
         notificationService = provider
     }
 
     @Test
     fun `Test settings`() {
-        notificationService.backgroundColor = Color.NAVY;
+        notificationService.backgroundColor = Color.NAVY
         assertThat(notificationService.backgroundColor, `is`(Color.NAVY))
     }
 

@@ -34,6 +34,18 @@
             <artifactId>fxgl</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-trade</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-minigames</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -43,8 +55,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.version}</version>
                 <configuration>
-                    <source>${source.version}</source>
-                    <target>${source.version}</target>
+                    <release>${source.version}</release>
                 </configuration>
             </plugin>
 

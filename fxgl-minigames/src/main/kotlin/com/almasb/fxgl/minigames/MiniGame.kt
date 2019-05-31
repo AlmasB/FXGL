@@ -4,14 +4,17 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.achievement
+package com.almasb.fxgl.minigames
 
 /**
- * Marks a class that registers achievements.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-interface AchievementStore {
+interface MiniGame<T : MiniGameResult> {
 
-    fun initAchievements(manager: AchievementManager)
+    val result: T
+
+    val isDone: Boolean
+
+    fun onUpdate(tpf: Double)
 }

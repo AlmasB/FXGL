@@ -461,7 +461,7 @@ public class RevoluteJoint extends Joint {
     public float getJointSpeed() {
         final Body b1 = m_bodyA;
         final Body b2 = m_bodyB;
-        return b2.m_angularVelocity - b1.m_angularVelocity;
+        return b2.getAngularVelocity() - b1.getAngularVelocity();
     }
 
     public boolean isMotorEnabled() {

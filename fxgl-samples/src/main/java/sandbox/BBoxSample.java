@@ -8,6 +8,8 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.components.IntervalPauseComponent;
+import com.almasb.fxgl.dsl.components.LiftComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.components.CollidableComponent;
@@ -22,6 +24,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+
+import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -112,6 +116,9 @@ public class BBoxSample extends GameApplication {
                 .at(100, 150)
                 .viewWithBBox("brick.png")
                 .with(new CollidableComponent(true), new DeveloperWASDControl())
+                //.with(new LiftComponent().xAxisSpeedDuration(400, Duration.seconds(1)))
+                .with(new LiftComponent().yAxisSpeedDuration(150, Duration.seconds(3)).xAxisSpeedDuration(100, Duration.seconds(3)))
+                //.with(new IntervalPauseComponent(Map.of(LiftComponent.class, Duration.seconds(2))))
                 .zIndex(250)
                 .buildAndAttach();
 

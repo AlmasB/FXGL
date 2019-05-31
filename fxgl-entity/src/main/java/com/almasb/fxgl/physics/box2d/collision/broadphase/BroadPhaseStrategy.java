@@ -16,17 +16,11 @@ public interface BroadPhaseStrategy {
 
     /**
      * Create a proxy. Provide a tight fitting AABB and a userData pointer.
-     *
-     * @param aabb
-     * @param userData
-     * @return
      */
     int createProxy(AABB aabb, Object userData);
 
     /**
      * Destroy a proxy
-     *
-     * @param proxyId
      */
     void destroyProxy(int proxyId);
 
@@ -45,9 +39,6 @@ public interface BroadPhaseStrategy {
     /**
      * Query an AABB for overlapping proxies. The callback class is called for each proxy that
      * overlaps the supplied AABB.
-     *
-     * @param callback
-     * @param araabbgAABB
      */
     void query(TreeCallback callback, AABB aabb);
 
@@ -61,31 +52,4 @@ public interface BroadPhaseStrategy {
      * @param callback a callback class that is called for each proxy that is hit by the ray.
      */
     void raycast(TreeRayCastCallback callback, RayCastInput input);
-
-    /**
-     * Compute the height of the tree.
-     */
-    int computeHeight();
-
-    /**
-     * Compute the height of the binary tree in O(N) time. Should not be called often.
-     *
-     * @return
-     */
-    int getHeight();
-
-    /**
-     * Get the maximum balance of an node in the tree. The balance is the difference in height of the
-     * two children of a node.
-     *
-     * @return
-     */
-    int getMaxBalance();
-
-    /**
-     * Get the ratio of the sum of the node areas to the root area.
-     *
-     * @return
-     */
-    float getAreaRatio();
 }

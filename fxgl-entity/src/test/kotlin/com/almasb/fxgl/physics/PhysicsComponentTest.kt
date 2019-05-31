@@ -68,13 +68,41 @@ class PhysicsComponentTest {
 
         world.onEntityAdded(e)
 
-        c.reposition(Point2D(100.0, 15.0))
+        c.overwritePosition(Point2D(100.0, 15.0))
 
         assertThat(e.position, `is`(Point2D(0.0, 0.0)))
 
         c.onUpdate(0.016)
 
         assertThat(e.position, `is`(Point2D(100.0, 15.0)))
+    }
+
+    @Test
+    fun `Overwrite angle of entity with physics`() {
+        val c = PhysicsComponent()
+        c.setBodyType(BodyType.DYNAMIC)
+
+        val world = PhysicsWorld(600, 50.0)
+        world.setGravity(0.0, 0.0)
+
+        val e = Entity()
+        e.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(10.0, 10.0)))
+        e.addComponent(c)
+
+        world.onEntityAdded(e)
+
+        c.setAngularVelocity(15.0)
+
+        world.onUpdate(1.0)
+        c.onUpdate(1.0)
+
+        assertThat(e.rotation, closeTo(15.0, 0.5))
+
+        c.overwriteAngle(30.0)
+
+        c.onUpdate(0.016)
+
+        assertThat(e.rotation, closeTo(30.0, 0.5))
     }
 
     @Test
@@ -225,8 +253,8 @@ class PhysicsComponentTest {
 
         c.setAngularVelocity(5.0)
 
-        world.onUpdate(0.016)
-        c.onUpdate(0.016)
+        world.onUpdate(1.0)
+        c.onUpdate(1.0)
 
         assertThat(e.rotation, closeTo(5.0, 0.5))
     }

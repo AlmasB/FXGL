@@ -18,6 +18,8 @@ import javafx.scene.shape.Shape
 import javafx.util.Duration
 
 /**
+ * Animation DSL to be used by FXGL modules that do not have access
+ * to the top-level FXGL DSL.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

@@ -104,6 +104,8 @@ public class PlatformerSample extends GameApplication {
 
     @Override
     protected void initGame() {
+        entityBuilder().buildScreenBoundsAndAttach(40);
+
         createPlatforms();
         player = createPlayer(100, 100, 40, 60);
 
@@ -183,7 +185,7 @@ public class PlatformerSample extends GameApplication {
 
     private Entity createPlayer(double x, double y, double width, double height) {
         PhysicsComponent physics = new PhysicsComponent();
-        physics.addGroundSensor(new HitBox(new Point2D(0, height - 5), BoundingShape.box(width, 10)));
+        physics.addGroundSensor(new HitBox(new Point2D(5, height - 5), BoundingShape.box(width - 10, 10)));
         physics.setBodyType(BodyType.DYNAMIC);
 
         return entityBuilder()

@@ -29,7 +29,7 @@ public class RainSample extends GameApplication {
     @Override
     protected void initGame() {
         entityBuilder()
-                .view("underwater3.png")
+                .view(texture("underwater3.png", getAppWidth(), getAppHeight()))
                 .buildAndAttach();
 
         // example - multiply color with existing

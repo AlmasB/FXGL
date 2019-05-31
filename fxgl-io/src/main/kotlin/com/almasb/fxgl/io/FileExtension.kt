@@ -7,9 +7,8 @@
 package com.almasb.fxgl.io
 
 /**
- *
+ * Example: new FileExtension("json").
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-data class FileExtension(val extension: String) {
-}
+data class FileExtension(val extension: String)

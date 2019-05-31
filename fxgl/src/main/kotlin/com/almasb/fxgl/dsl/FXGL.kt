@@ -7,6 +7,7 @@
 
 package com.almasb.fxgl.dsl
 
+import com.almasb.fxgl.achievement.AchievementManager
 import com.almasb.fxgl.app.Engine
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.GameController
@@ -112,7 +113,11 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getExecutor() = engine.executor
 
+    @JvmStatic fun getFS() = engine.fs
+
     @JvmStatic fun getNotificationService() = engine.getService(NotificationService::class.java)
+
+    @JvmStatic fun getAchievementService() = engine.getService(AchievementManager::class.java)
 
     /**
      * @return time per frame (in this frame)

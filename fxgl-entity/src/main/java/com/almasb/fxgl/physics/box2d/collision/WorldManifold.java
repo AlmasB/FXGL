@@ -27,11 +27,6 @@ public final class WorldManifold {
      */
     public final Vec2[] points = new Vec2[JBoxSettings.maxManifoldPoints];
 
-    /**
-     * A negative value indicates overlap, in meters.
-     */
-    private final float[] separations = new float[JBoxSettings.maxManifoldPoints];
-
     public WorldManifold() {
         for (int i = 0; i < JBoxSettings.maxManifoldPoints; i++) {
             points[i] = new Vec2();
@@ -79,7 +74,6 @@ public final class WorldManifold {
 
                 points[0].x = (cAx + cBx) * .5f;
                 points[0].y = (cAy + cBy) * .5f;
-                separations[0] = (cBx - cAx) * normal.x + (cBy - cAy) * normal.y;
             }
             break;
             case FACE_A: {
@@ -117,7 +111,6 @@ public final class WorldManifold {
 
                     points[i].x = (cAx + cBx) * .5f;
                     points[i].y = (cAy + cBy) * .5f;
-                    separations[i] = (cBx - cAx) * normal.x + (cBy - cAy) * normal.y;
                 }
             }
             break;
@@ -170,7 +163,6 @@ public final class WorldManifold {
 
                     points[i].x = (cAx + cBx) * .5f;
                     points[i].y = (cAy + cBy) * .5f;
-                    separations[i] = (cAx - cBx) * normal.x + (cAy - cBy) * normal.y;
                 }
                 // Ensure normal points from A to B.
                 normal.x = -normal.x;

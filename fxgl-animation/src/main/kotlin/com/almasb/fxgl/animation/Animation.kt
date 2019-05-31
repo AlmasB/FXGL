@@ -12,6 +12,9 @@ import com.almasb.fxgl.core.util.EmptyRunnable
 import javafx.animation.Interpolator
 import javafx.util.Duration
 
+/**
+ * Animation configuration object.
+ */
 class AnimationBuilder
 @JvmOverloads constructor(
         var duration: Duration = Duration.seconds(1.0),
@@ -56,8 +59,6 @@ class AnimationBuilder
     }
 
     fun <T> build(animatedValue: AnimatedValue<T>, onProgress: Consumer<T>): Animation<T> {
-        animatedValue.interpolator = this.interpolator
-
         return object : Animation<T>(this, animatedValue) {
             override fun onProgress(value: T) {
                 onProgress.accept(value)
@@ -79,8 +80,8 @@ abstract class Animation<T>(
     var onFinished: Runnable = builder.onFinished
 
     var interpolator: Interpolator
-        get() = animatedValue.interpolator
-        set(value) { animatedValue.interpolator = value }
+        get() = builder.interpolator
+        set(value) { builder.interpolator = value }
 
     private var time = 0.0
 
@@ -177,7 +178,7 @@ abstract class Animation<T>(
             return
         }
 
-        onProgress(animatedValue.getValue(time / endTime))
+        onProgress(animatedValue.getValue(time / endTime, interpolator))
     }
 
     private fun updateTime(tpf: Double) {

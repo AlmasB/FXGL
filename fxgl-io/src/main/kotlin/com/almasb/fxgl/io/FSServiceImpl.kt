@@ -13,7 +13,7 @@ import java.io.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class MobileFSService : FSService {
+internal class FSServiceImpl : FSService {
 
     private val log = Logger.get(javaClass)
 

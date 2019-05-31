@@ -122,6 +122,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
             val animation = animationBuilder()
                     .delay(Duration.seconds(index * 0.07))
+                    .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
                     .duration(Duration.seconds(0.66))
                     .translate(node)
                     .from(Point2D(-250.0, 0.0))
@@ -129,8 +130,6 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
                     .build()
 
             animations += animation
-
-            animation.animatedValue.interpolator = Interpolators.EXPONENTIAL.EASE_OUT()
 
             animation.stop()
             animation.start()

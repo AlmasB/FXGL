@@ -220,7 +220,7 @@ class Island {
             final Vec2 c = bm_sweep.c;
             float a = bm_sweep.a;
             final Vec2 v = b.m_linearVelocity;
-            float w = b.m_angularVelocity;
+            float w = b.getAngularVelocity();
 
             // Store positions for continuous collision.
             bm_sweep.c0.set(bm_sweep.c);
@@ -231,7 +231,7 @@ class Island {
                 // v += h * (b.m_gravityScale * gravity + b.m_invMass * b.m_force);
                 v.x += h * (b.getGravityScale() * gravity.x + b.m_invMass * b.m_force.x);
                 v.y += h * (b.getGravityScale() * gravity.y + b.m_invMass * b.m_force.y);
-                w += h * b.m_invI * b.m_torque;
+                w += h * b.m_invI * b.getTorque();
 
                 // Apply damping.
                 // ODE: dv/dt + c * v = 0
@@ -348,7 +348,7 @@ class Island {
             body.m_sweep.a = m_positions[i].a;
             body.m_linearVelocity.x = m_velocities[i].v.x;
             body.m_linearVelocity.y = m_velocities[i].v.y;
-            body.m_angularVelocity = m_velocities[i].w;
+            body.setAngularVelocityDirectly(m_velocities[i].w);
             body.synchronizeTransform();
         }
 
@@ -367,7 +367,7 @@ class Island {
                 }
 
                 if (!b.isSleepingAllowed()
-                        || b.m_angularVelocity * b.m_angularVelocity > angTolSqr
+                        || b.getAngularVelocity() * b.getAngularVelocity() > angTolSqr
                         || Vec2.dot(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
                     b.setSleepTime(0);
                     minSleepTime = 0.0f;
@@ -400,7 +400,7 @@ class Island {
             m_positions[i].a = m_bodies[i].m_sweep.a;
             m_velocities[i].v.x = m_bodies[i].m_linearVelocity.x;
             m_velocities[i].v.y = m_bodies[i].m_linearVelocity.y;
-            m_velocities[i].w = m_bodies[i].m_angularVelocity;
+            m_velocities[i].w = m_bodies[i].getAngularVelocity();
         }
 
         toiSolverDef.contacts = m_contacts;
@@ -481,7 +481,7 @@ class Island {
             body.m_sweep.a = a;
             body.m_linearVelocity.x = v.x;
             body.m_linearVelocity.y = v.y;
-            body.m_angularVelocity = w;
+            body.setAngularVelocityDirectly(w);
             body.synchronizeTransform();
         }
 

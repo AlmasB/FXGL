@@ -30,9 +30,9 @@ class AnimationChannelTest {
         val channel = AnimationChannel(image, 10, 32, 32, Duration.seconds(1.0), 0, 9)
 
         assertThat(channel.frameDuration, `is`(0.1))
-        assertThat(channel.frameWidth, `is`(32))
-        assertThat(channel.frameHeight, `is`(32))
-        assertThat(channel.framesPerRow, `is`(10))
+        assertThat(channel.getFrameWidth(0), `is`(32))
+        assertThat(channel.getFrameHeight(0), `is`(32))
+        //assertThat(channel.framesPerRow, `is`(10))
         assertThat(channel.image, `is`(image))
 
         assertThat(channel.sequence.size, `is`(10))
@@ -44,9 +44,9 @@ class AnimationChannelTest {
         val channel = AnimationChannel(image, 10, 32, 32, Duration.seconds(3.0), 10, 12)
 
         assertThat(channel.frameDuration, `is`(1.0))
-        assertThat(channel.frameWidth, `is`(32))
-        assertThat(channel.frameHeight, `is`(32))
-        assertThat(channel.framesPerRow, `is`(10))
+        assertThat(channel.getFrameWidth(0), `is`(32))
+        assertThat(channel.getFrameHeight(0), `is`(32))
+        //assertThat(channel.framesPerRow, `is`(10))
         assertThat(channel.image, `is`(image))
 
         assertThat(channel.sequence.size, `is`(3))

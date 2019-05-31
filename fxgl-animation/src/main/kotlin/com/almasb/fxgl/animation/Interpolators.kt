@@ -10,6 +10,12 @@ import com.almasb.fxgl.core.math.FXGLMath
 import javafx.animation.Interpolator
 
 /**
+ * A collection of interpolators to be used with animations to control their progress rate.
+ * Each interpolator returns 0 when input is 0 and returns 1 when input is 1.
+ * When input is in (0, 1) the returned value is dependent on the interpolator behavior, but
+ * typically stays within the (0, 1) range with a few exceptions, such as BACK interpolator,
+ * which goes above 1.
+ *
  * Adapted from https://github.com/grapefrukt/juicy-breakout/tree/master/lib/com/gskinner/motion/easing
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
