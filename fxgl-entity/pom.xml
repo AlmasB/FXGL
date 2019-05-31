@@ -5,7 +5,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>dev-SNAPSHOT</version>
+        <version>11.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-test</artifactId>
-            <version>dev-SNAPSHOT</version>
+            <version>11.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
