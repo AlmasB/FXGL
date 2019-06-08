@@ -145,7 +145,7 @@ internal class MainWindow(
 
             isResizable = settings.isManualResizeEnabled
 
-            if (FXGL.isDesktop()) {
+            if (settings.isDesktop) {
                 initStyle(settings.stageStyle)
             }
 
@@ -287,7 +287,7 @@ internal class MainWindow(
 
         // this is a hack to estimate platform offsets on ubuntu and potentially other Linux os
         // because for some reason javafx does not create a stage to contain scene of given size
-        if (windowBorderHeight < 0.5 && System.getProperty("os.name").contains("nux")) {
+        if (windowBorderHeight < 0.5 && settings.isLinux) {
             windowBorderHeight = 35.0
         }
 
@@ -329,7 +329,7 @@ internal class MainWindow(
         scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
         scene.appendCSS(FXGL.getAssetLoader().loadCSS(settings.css))
 
-        if (FXGL.isDesktop()) {
+        if (settings.isDesktop) {
             scene.setCursor(FXGL.getAssetLoader().loadCursorImage("fxgl_default.png"), Point2D(7.0, 6.0))
         }
 
