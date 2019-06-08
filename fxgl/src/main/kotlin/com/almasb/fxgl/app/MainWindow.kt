@@ -172,7 +172,7 @@ internal class MainWindow(
                 fullScreenExitKeyCombination = KeyCombination.NO_MATCH
             }
 
-            FXGL.getSettings().fullScreen.addListener { _, _, fullscreenNow ->
+            settings.fullScreen.addListener { _, _, fullscreenNow ->
                 isFullScreen = fullscreenNow
             }
 
