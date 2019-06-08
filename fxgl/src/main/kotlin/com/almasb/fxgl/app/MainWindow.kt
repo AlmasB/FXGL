@@ -329,7 +329,7 @@ internal class MainWindow(
         scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
         scene.appendCSS(FXGL.getAssetLoader().loadCSS(settings.css))
 
-        if (settings.isDesktop) {
+        if (settings.isDesktop && scene.root.cursor == null) {
             scene.setCursor(FXGL.getAssetLoader().loadCursorImage("fxgl_default.png"), Point2D(7.0, 6.0))
         }
 
