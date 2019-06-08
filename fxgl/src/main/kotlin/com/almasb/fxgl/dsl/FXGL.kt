@@ -61,19 +61,14 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getVersion() = engine.version
 
-    // cheap hack for now
-    @JvmStatic fun isBrowser() = System.getProperty("fxgl.isBrowser", "false") == "true"
-
-    // javafxports doesn't have "web" option, so will incorrectly default to desktop, hence the extra check
-    @JvmStatic fun isDesktop() = !isBrowser()
-    @JvmStatic fun isMobile() = isAndroid() || isIOS()
-    @JvmStatic fun isAndroid() = false
-    @JvmStatic fun isIOS() = false
-
     /**
      * @return FXGL system settings
      */
     @JvmStatic fun getSettings(): ReadOnlyGameSettings = engine.settings
+
+    @JvmStatic fun isBrowser() = engine.settings.isBrowser
+    @JvmStatic fun isDesktop() = engine.settings.isDesktop
+    @JvmStatic fun isMobile() = engine.settings.isMobile
 
     /**
      * @return instance of the running game application

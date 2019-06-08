@@ -12,7 +12,6 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
 import com.almasb.fxgl.core.reflect.ReflectionUtils.inject
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dev.DevPane
-import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.GameState
@@ -141,9 +140,7 @@ internal class Engine(
     }
 
     private fun logVersion() {
-        val platform = "DESKTOP" + if (FXGL.isBrowser()) " BROWSER" else ""
-
-        log.info("FXGL-$version on $platform")
+        log.info("FXGL-$version on ${settings.platform}")
         log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
@@ -266,7 +263,7 @@ internal class Engine(
     }
 
     private fun attachPauseResumeListener() {
-        if (FXGL.isMobile()) {
+        if (settings.isMobile) {
             // no-op
         } else {
             stage.iconifiedProperty().addListener { _, _, isMinimized ->
