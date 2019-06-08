@@ -13,6 +13,7 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.local.Language
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Optional
+import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
@@ -57,6 +58,7 @@ enum class MenuItem {
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class GameSettings(
+        var platform: Platform = Platform.WINDOWS,
 
         /**
          * Set title of the game. This will be shown as the
@@ -206,6 +208,7 @@ class GameSettings(
 
     fun toReadOnly(): ReadOnlyGameSettings {
         return ReadOnlyGameSettings(
+                platform,
                 title,
                 version,
                 width,
@@ -250,6 +253,8 @@ class GameSettings(
  * A copy of GameSettings with public getters only.
  */
 class ReadOnlyGameSettings internal constructor(
+        val platform: Platform,
+
         /**
          * Set title of the game. This will be shown as the
          * window header if the game isn't fullscreen.
@@ -436,6 +441,30 @@ class ReadOnlyGameSettings internal constructor(
     val saveFileExt = ".sav"
 
     val dataFileExt = ".dat"
+
+    val isDesktop: Boolean
+        get() = platform.isDesktop
+
+    val isMobile: Boolean
+        get() = platform.isMobile
+
+    val isBrowser: Boolean
+        get() = platform.isBrowser
+
+    val isWindows: Boolean
+        get() = platform === Platform.WINDOWS
+
+    val isMac: Boolean
+        get() = platform === Platform.MAC
+
+    val isLinux: Boolean
+        get() = platform === Platform.LINUX
+
+    val isIOS: Boolean
+        get() = platform === Platform.IOS
+
+    val isAndroid: Boolean
+        get() = platform === Platform.ANDROID
 
     // DYNAMIC - can be modified at runtime
 

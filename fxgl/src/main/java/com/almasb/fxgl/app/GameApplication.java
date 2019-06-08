@@ -6,6 +6,7 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
+import com.almasb.fxgl.core.util.Platform;
 import com.almasb.fxgl.dev.DevService;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.saving.DataFile;
@@ -73,10 +74,6 @@ public abstract class GameApplication {
 
     public static void customLaunch(GameApplication app, Stage stage) {
         try {
-            // this will be set automatically by javafxports on mobile
-            if (System.getProperty("javafx.platform") == null)
-                System.setProperty("javafx.platform", "Desktop");
-
             var settings = app.takeUserSettings();
 
             app.initLogger(settings);
@@ -89,10 +86,6 @@ public abstract class GameApplication {
     }
 
     private static void launch(GameApplication app, String[] args) {
-        // this will be set automatically by javafxports on mobile
-        if (System.getProperty("javafx.platform") == null)
-            System.setProperty("javafx.platform", "Desktop");
-
         var settings = app.takeUserSettings();
 
         app.initLogger(settings);
@@ -116,6 +109,12 @@ public abstract class GameApplication {
     private ReadOnlyGameSettings takeUserSettings() {
         var localSettings = new GameSettings();
         initSettings(localSettings);
+
+        // if user set platform as browser, we keep it that way
+        if (!localSettings.getPlatform().isBrowser()) {
+            localSettings.setPlatform(Platform.get());
+        }
+
         return localSettings.toReadOnly();
     }
 

@@ -257,7 +257,7 @@ internal class Engine(
         val builtInLangs = listOf("english", "french", "german", "russian", "hungarian")
 
         builtInLangs.forEach {
-            Local.addLanguage(it, FXGL.getAssetLoader().loadResourceBundle("languages/$it.properties"))
+            Local.addLanguage(it, assetLoader.loadResourceBundle("languages/$it.properties"))
         }
 
         settings.language.value = Local.languages.find { it.name == "english" }
@@ -409,11 +409,11 @@ internal class Engine(
     }
 
     private fun attachEventHandlers() {
-        FXGL.getEventBus().addEventHandler(SaveEvent.ANY, EventHandler { e ->
+        eventBus.addEventHandler(SaveEvent.ANY, EventHandler { e ->
             settings.save(e.getProfile())
         })
 
-        FXGL.getEventBus().addEventHandler(LoadEvent.ANY, EventHandler { e ->
+        eventBus.addEventHandler(LoadEvent.ANY, EventHandler { e ->
             settings.load(e.getProfile())
         })
     }
@@ -559,10 +559,10 @@ internal class Engine(
      * @return true if loaded successfully, false if couldn't load
      */
     override fun loadFromProfile(profile: UserProfile): Boolean {
-        if (!profile.isCompatible(FXGL.getSettings().title, FXGL.getSettings().version))
+        if (!profile.isCompatible(settings.title, settings.version))
             return false
 
-        FXGL.getEventBus().fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
+        eventBus.fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
         return true
     }
 
@@ -573,7 +573,7 @@ internal class Engine(
     override fun restoreDefaultProfileSettings() {
         log.debug("restoreDefaultSettings()")
 
-        FXGL.getEventBus().fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
+        eventBus.fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
     }
 
     /**
@@ -582,9 +582,9 @@ internal class Engine(
     private fun createProfile(): UserProfile {
         log.debug("Creating default profile")
 
-        val profile = UserProfile(FXGL.getSettings().title, FXGL.getSettings().version)
+        val profile = UserProfile(settings.title, settings.version)
 
-        FXGL.getEventBus().fireEvent(SaveEvent(profile))
+        eventBus.fireEvent(SaveEvent(profile))
 
         return profile
     }
