@@ -8,11 +8,15 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.components.AccumulatedUpdateComponent;
+import com.almasb.fxgl.dsl.components.OffscreenPauseComponent;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.input.UserAction;
 import dev.ScrollingBackgroundView;
 import javafx.geometry.Orientation;
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Rectangle;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -52,6 +56,13 @@ public class ScrollingBackgroundSample extends GameApplication {
         player = entityBuilder()
                 .buildAndAttach();
 
+        entityBuilder()
+                .at(410, 10)
+                .with(new OffscreenPauseComponent())
+                .with(new DebugComponent())
+                .viewWithBBox(new Rectangle(20, 20))
+                .buildAndAttach();
+
         getGameScene().getViewport().bindToEntity(player, 0, 0);
 
         entityBuilder()
@@ -62,6 +73,18 @@ public class ScrollingBackgroundSample extends GameApplication {
 
         // 1. load texture to be the background and specify orientation (horizontal or vertical)
         //getGameScene().addGameView();
+    }
+
+    // TODO: debug messages console dev pane
+    static class DebugComponent extends AccumulatedUpdateComponent {
+        public DebugComponent() {
+            super(10);
+        }
+
+        @Override
+        public void onAccumulatedUpdate(double tpfSum) {
+            System.out.println(tpfSum);
+        }
     }
 
     public static void main(String[] args) {
