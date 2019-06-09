@@ -30,7 +30,10 @@ public class ScrollingBackgroundSample extends GameApplication {
     private Entity player;
 
     @Override
-    protected void initSettings(GameSettings settings) { }
+    protected void initSettings(GameSettings settings) {
+        settings.setManualResizeEnabled(true);
+        settings.setPreserveResizeRatio(true);
+    }
 
     @Override
     protected void initInput() {
@@ -56,17 +59,17 @@ public class ScrollingBackgroundSample extends GameApplication {
         player = entityBuilder()
                 .buildAndAttach();
 
-        entityBuilder()
-                .at(410, 10)
-                .with(new OffscreenPauseComponent())
-                .with(new DebugComponent())
-                .viewWithBBox(new Rectangle(20, 20))
-                .buildAndAttach();
+//        entityBuilder()
+//                .at(410, 10)
+//                .with(new OffscreenPauseComponent())
+//                .with(new DebugComponent())
+//                .viewWithBBox(new Rectangle(20, 20))
+//                .buildAndAttach();
 
         getGameScene().getViewport().bindToEntity(player, 0, 0);
 
         entityBuilder()
-                .view(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_1.png", 1066, 600),
+                .view(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_wrap.png", 1066, 600),
                         Orientation.HORIZONTAL))
                 .zIndex(-1)
                 .buildAndAttach();
@@ -83,7 +86,7 @@ public class ScrollingBackgroundSample extends GameApplication {
 
         @Override
         public void onAccumulatedUpdate(double tpfSum) {
-            System.out.println(tpfSum);
+            //System.out.println(tpfSum);
         }
     }
 

@@ -297,8 +297,20 @@ internal class MainWindow(
         scaledHeight.bind(stage.heightProperty().subtract(
                 Bindings.`when`(stage.fullScreenProperty()).then(0).otherwise(windowBorderHeight)
         ))
-        scaleRatioX.bind(scaledWidth.divide(settings.width))
-        scaleRatioY.bind(scaledHeight.divide(settings.height))
+
+        if (settings.isPreserveResizeRatio) {
+            scaleRatioX.bind(Bindings.min(
+                    scaledWidth.divide(settings.width), scaledHeight.divide(settings.height)
+            ))
+        } else {
+            scaleRatioX.bind(scaledWidth.divide(settings.width))
+        }
+
+        if (settings.isPreserveResizeRatio) {
+            scaleRatioY.bind(scaleRatioX)
+        } else {
+            scaleRatioY.bind(scaledHeight.divide(settings.height))
+        }
 
         log.debug("Window border size: ($windowBorderWidth, $windowBorderHeight)")
         log.debug("Scaled size: ${scaledWidth.value} x ${scaledHeight.value}")

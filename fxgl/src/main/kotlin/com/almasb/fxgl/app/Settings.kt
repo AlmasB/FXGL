@@ -99,6 +99,11 @@ class GameSettings(
         var isManualResizeEnabled: Boolean = false,
 
         /**
+         * If enabled, during resize black bars will be added to preserve the ratio.
+         */
+        var isPreserveResizeRatio: Boolean = false,
+
+        /**
          * If set to true, the intro video/animation will
          * be played before the start of the game.
          */
@@ -223,6 +228,7 @@ class GameSettings(
                 height,
                 isFullScreenAllowed,
                 isManualResizeEnabled,
+                isPreserveResizeRatio,
                 isIntroEnabled,
                 isMenuEnabled,
                 isProfilingEnabled,
@@ -301,6 +307,8 @@ class ReadOnlyGameSettings internal constructor(
          * to resize it and the game.
          */
         val isManualResizeEnabled: Boolean,
+
+        val isPreserveResizeRatio: Boolean,
 
         /**
          * If set to true, the intro video/animation will
