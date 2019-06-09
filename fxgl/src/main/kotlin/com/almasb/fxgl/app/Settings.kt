@@ -138,7 +138,7 @@ class GameSettings(
         /**
          * Set additional credits.
          */
-        var credits: List<String> = emptyList(),
+        var credits: List<String> = arrayListOf(),
         var enabledMenuItems: EnumSet<MenuItem> = EnumSet.noneOf(MenuItem::class.java),
         var stageStyle: StageStyle = StageStyle.DECORATED,
         var appIcon: String = "fxgl_icon.png",
