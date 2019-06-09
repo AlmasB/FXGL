@@ -209,6 +209,7 @@ internal constructor(width: Int, height: Int,
 
         viewport.unbind()
         gameRoot.children.clear()
+        uiRoot.children.clear()
     }
 
     override fun onEntityAdded(entity: Entity) {
