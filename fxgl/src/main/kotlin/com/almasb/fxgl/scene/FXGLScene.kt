@@ -79,7 +79,10 @@ abstract class FXGLScene
         val scale = Scale()
         scale.xProperty().bind(scaleRatioX)
         scale.yProperty().bind(scaleRatioY)
-        root.transforms.setAll(scale)
+        contentRoot.transforms.setAll(scale)
+
+        contentRoot.translateXProperty().bind(scaledWidth.divide(2).subtract(scaleRatioX.multiply(viewport.width).divide(2)))
+        contentRoot.translateYProperty().bind(scaledHeight.divide(2).subtract(scaleRatioY.multiply(viewport.height).divide(2)))
     }
 
     fun setBackgroundColor(color: Paint) {
