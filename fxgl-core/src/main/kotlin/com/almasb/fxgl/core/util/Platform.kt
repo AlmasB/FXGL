@@ -38,6 +38,10 @@ enum class Platform {
                 return WINDOWS
             }
 
+            if (osName.contains("iOS", ignoreCase = true)) {
+                return IOS
+            }
+
             // TODO: mobile is not supported at the moment
 
             return BROWSER
