@@ -8,8 +8,12 @@ import javafx.geometry.Point2D
 import javafx.scene.ImageCursor
 import javafx.scene.effect.Effect
 import javafx.scene.image.Image
-import javafx.scene.layout.*
+import javafx.scene.layout.Background
+import javafx.scene.layout.BackgroundFill
+import javafx.scene.layout.BackgroundImage
+import javafx.scene.layout.BackgroundRepeat
 import javafx.scene.paint.Paint
+import javafx.scene.shape.Rectangle
 import javafx.scene.transform.Scale
 
 /**
@@ -19,6 +23,29 @@ abstract class FXGLScene
 @JvmOverloads constructor(width: Int = FXGL.getAppWidth(), height: Int = FXGL.getAppHeight()) : Scene() {
 
     val viewport = Viewport(width.toDouble(), height.toDouble())
+
+    val paddingTop = Rectangle()
+    val paddingBot = Rectangle()
+    val paddingLeft = Rectangle()
+    val paddingRight = Rectangle()
+
+    init {
+        paddingTop.widthProperty().bind(root.prefWidthProperty())
+        paddingTop.heightProperty().bind(contentRoot.translateYProperty())
+
+        paddingBot.translateYProperty().bind(root.prefHeightProperty().subtract(paddingTop.heightProperty()))
+        paddingBot.widthProperty().bind(root.prefWidthProperty())
+        paddingBot.heightProperty().bind(paddingTop.heightProperty())
+
+        paddingLeft.widthProperty().bind(contentRoot.translateXProperty())
+        paddingLeft.heightProperty().bind(root.prefHeightProperty())
+
+        paddingRight.translateXProperty().bind(root.prefWidthProperty().subtract(paddingLeft.widthProperty()))
+        paddingRight.widthProperty().bind(contentRoot.translateXProperty())
+        paddingRight.heightProperty().bind(root.prefHeightProperty())
+
+        root.children.addAll(paddingTop, paddingBot, paddingLeft, paddingRight)
+    }
 
     val width: Double
         get() = root.prefWidth
