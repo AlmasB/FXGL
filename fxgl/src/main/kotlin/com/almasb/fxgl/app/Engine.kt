@@ -48,6 +48,7 @@ internal class Engine(
     private val log = Logger.get(javaClass)
 
     internal val version: String
+    private val build: String
 
     /**
      * @return true iff FXGL is running for the first time
@@ -126,7 +127,9 @@ internal class Engine(
     init {
         log.debug("Initializing FXGL")
 
-        version = loadVersion()
+        val bundle = ResourceBundle.getBundle("com.almasb.fxgl.app.system")
+        version = bundle.getString("fxgl.version")
+        build = bundle.getString("fxgl.build")
 
         logVersion()
 
@@ -135,12 +138,11 @@ internal class Engine(
         environmentVars["eventBus"] = eventBus
     }
 
-    private fun loadVersion(): String {
-        return ResourceBundle.getBundle("com.almasb.fxgl.app.system").getString("fxgl.version")
-    }
-
     private fun logVersion() {
-        log.info("FXGL-$version on ${settings.platform}")
+        val jVersion = System.getProperty("java.version", "?")
+        val fxVersion = System.getProperty("javafx.version", "?")
+
+        log.info("FXGL-$version ($build) on ${settings.platform} (J:$jVersion FX:$fxVersion)")
         log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
