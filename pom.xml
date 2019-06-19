@@ -29,6 +29,9 @@
         <module>fxgl-achievement</module>
         <module>fxgl-trade</module>
         <module>fxgl-minigames</module>
+        <module>fxgl-samples</module>
+        <module>fxgl-nativesamples</module>
+        <module>fxgl-zdeploy</module>
     </modules>
 
     <licenses>

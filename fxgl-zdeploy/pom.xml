@@ -9,28 +9,22 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>fxgl-samples</artifactId>
+    <artifactId>fxgl-zdeploy</artifactId>
 
     <properties>
-        <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+        <skipNexusStagingDeployMojo>false</skipNexusStagingDeployMojo>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl</artifactId>
+            <artifactId>fxgl-samples</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-trade</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-minigames</artifactId>
+            <artifactId>fxgl-nativesamples</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
     </dependencies>
