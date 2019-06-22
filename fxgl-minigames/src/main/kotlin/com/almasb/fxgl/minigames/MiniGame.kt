@@ -10,11 +10,13 @@ package com.almasb.fxgl.minigames
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-interface MiniGame<T : MiniGameResult> {
+abstract class MiniGame<T : MiniGameResult> {
 
-    val result: T
+    lateinit var result: T
+        protected set
 
-    val isDone: Boolean
+    var isDone: Boolean = false
+        protected set
 
-    fun onUpdate(tpf: Double)
+    open fun onUpdate(tpf: Double) {}
 }

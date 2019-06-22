@@ -19,12 +19,7 @@ class LockPickResult : MiniGameResult {
         get() = false
 }
 
-class LockPickMiniGame : MiniGame<LockPickResult> {
-    override val result: LockPickResult
-        get() = LockPickResult()
-
-    override val isDone: Boolean
-        get() = false
+class LockPickMiniGame : MiniGame<LockPickResult>() {
 
     override fun onUpdate(tpf: Double) {
     }

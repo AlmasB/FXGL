@@ -11,10 +11,15 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.minigames.lockpicking.LockPickView;
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotView;
+import com.almasb.fxgl.minigames.triggermash.TriggerMashMiniGame;
+import com.almasb.fxgl.minigames.triggermash.TriggerMashView;
+import com.almasb.fxgl.ui.FXGLButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import minigames.MiniGameManager;
+
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -22,6 +27,7 @@ import minigames.MiniGameManager;
 public class MiniGameApp extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setWidth(1066);
     }
 
     //            var view = new SweetSpotView();
@@ -35,29 +41,58 @@ public class MiniGameApp extends GameApplication {
 
     int i = 1;
 
+    private Text debugText;
+
     @Override
     protected void initInput() {
-        FXGL.onKeyDown(KeyCode.F, "Hello", () -> {
-
-            var manager = new MiniGameManager();
-            manager.startSweetSpot(10, (result) -> {
-
-                FXGL.addUINode(FXGL.getUIFactory().newText(result.isSuccess() ? "SUCCESS" : "FAIL", Color.BLACK, 24.0), 20, i++ * 50);
-            });
+        onKeyDown(KeyCode.F, "Hello", () -> {
         });
 
-        FXGL.onKeyDown(KeyCode.G, "Hello2", () -> {
+        onKeyDown(KeyCode.G, "Hello2", () -> {
 
             var manager = new MiniGameManager();
             manager.startMiniGame(new LockPickView(), (result) -> {
                 System.out.println(result.isSuccess() ? "SUCCESS" : "FAIL");
             });
         });
+
+        onKeyDown(KeyCode.H, "Hello3", () -> {
+
+        });
     }
 
     @Override
     protected void initGame() {
-        FXGL.getGameScene().setBackgroundRepeat("bg_10.png");
+        debugText = getUIFactory().newText("", Color.BLACK, 36.0);
+
+        getGameScene().setBackgroundRepeat("bg_10.png");
+
+        addUINode(getUIFactory().newText("Mini-games dev area", Color.BLACK, 48.0), 100, 100);
+
+        var btn = new FXGLButton("Trigger Mash");
+        btn.setOnAction(e -> {
+            var manager = new MiniGameManager();
+            manager.startMiniGame(new TriggerMashView(), result -> {
+                debugText.setText(result.isSuccess() ? "Success" : "Fail");
+            });
+        });
+
+        addUINode(debugText, 600, 300);
+        addUINode(btn, 150, 150);
+        addUINode(new FXGLButton("Lockpicking"), 150, 200);
+
+        var btnCheck = new FXGLButton("Skill Check");
+
+        btnCheck.setOnAction(e -> {
+            var manager = new MiniGameManager();
+            manager.startSweetSpot(10, (result) -> {
+
+                debugText.setText(result.isSuccess() ? "Success" : "Fail");
+                //addUINode(getUIFactory().newText(result.isSuccess() ? "SUCCESS" : "FAIL", Color.BLACK, 24.0), 20, i++ * 50);
+            });
+        });
+
+        addUINode(btnCheck, 150, 250);
     }
 
     public static void main(String[] args) {
