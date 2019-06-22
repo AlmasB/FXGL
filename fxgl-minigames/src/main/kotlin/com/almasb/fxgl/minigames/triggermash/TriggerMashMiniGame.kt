@@ -14,14 +14,22 @@ import com.almasb.fxgl.minigames.MiniGameView
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Point2D
+import javafx.geometry.VPos
+import javafx.scene.effect.DropShadow
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
+import javafx.scene.paint.CycleMethod
+import javafx.scene.paint.LinearGradient
+import javafx.scene.paint.Stop
 import javafx.scene.shape.Arc
 import javafx.scene.shape.ArcType
 import javafx.scene.shape.Circle
 import javafx.scene.text.Font
 import javafx.scene.text.Text
+import javafx.scene.text.TextAlignment
+import javafx.scene.text.TextBoundsType
+import javafx.scene.transform.Scale
 import javafx.util.Duration
 import kotlin.math.max
 import kotlin.math.min
@@ -39,7 +47,7 @@ class TriggerMashView(miniGame: TriggerMashMiniGame = TriggerMashMiniGame()) : M
 
         innerCircle.radiusProperty().bind(miniGame.fillValue.divide(100.0).multiply(circle.radiusProperty()))
 
-        val letter = Text("F")
+        val letter = Text(miniGame.trigger.toString())
         letter.font = Font.font(36.0)
         letter.stroke = Color.BLACK
         letter.fill = Color.YELLOW
@@ -56,21 +64,72 @@ class TriggerMashView(miniGame: TriggerMashMiniGame = TriggerMashMiniGame()) : M
                 .to(Point2D(1.4, 1.4))
                 .build()
 
-//        val arc = Arc()
-//        arc.setCenterX(50.0)
-//        arc.setCenterY(50.0)
-//        arc.setRadiusX(25.0)
-//        arc.setRadiusY(25.0)
-//        arc.setStartAngle(45.0)
-//        arc.setLength(270.0)
-//        arc.setType(ArcType.ROUND)
-//
-//        arc.fill = null
-//        arc.stroke = Color.GREEN
-
-
-
         children.addAll(StackPane(innerCircle, circle, letter, letterCircle))
+    }
+
+    override fun onUpdate(tpf: Double) {
+        animation.onUpdate(tpf)
+    }
+
+    override fun onKeyPress(key: KeyCode) {
+        animation.start()
+        miniGame.boost()
+    }
+}
+
+class CircleTriggerMashView(miniGame: TriggerMashMiniGame = TriggerMashMiniGame()) : MiniGameView<TriggerMashMiniGame>(miniGame) {
+
+    private val animation: Animation<*>
+
+    init {
+        val circle = Circle(100.0, 100.0, 40.0, null)
+        circle.stroke = Color.DARKGREEN
+        circle.strokeWidth = 5.0
+
+        val arc = Arc()
+        arc.centerX = 100.0
+        arc.centerY = 100.0
+        arc.radiusX = circle.radius
+        arc.radiusY = circle.radius
+        arc.startAngle = 90.0
+        arc.type = ArcType.OPEN
+        arc.fill = null
+        arc.stroke = Color.YELLOW
+        arc.strokeWidth = 3.0
+        arc.transforms.add(Scale(-1.0, 1.0, arc.centerX, arc.centerY))
+
+        arc.lengthProperty().bind(miniGame.fillValue.divide(100.0).multiply(360))
+
+        val letter = Text(miniGame.trigger.toString())
+        letter.font = Font.font(36.0)
+        letter.stroke = Color.BLACK
+        letter.fill = Color.YELLOW
+        letter.strokeWidth = 1.5
+        letter.textOrigin = VPos.TOP
+
+        letter.translateX = 100.0 - letter.layoutBounds.width / 2
+        letter.translateY = 100.0 - letter.layoutBounds.height / 2 - 1.5
+
+        val letterCircle = Circle(100.0, 100.0, 20.0, null)
+        letterCircle.stroke = Color.color(0.76, 0.9, 0.0, 0.76)
+
+        animation = AnimationDSL().duration(Duration.seconds(0.09))
+                .autoReverse(true)
+                .repeat(2)
+                .scale(letter, letterCircle)
+                .from(Point2D(1.0, 1.0))
+                .to(Point2D(1.4, 1.4))
+                .build()
+
+        val bg = Circle(100.0, 100.0, 100.0, LinearGradient(
+                0.0, 0.0, 1.0, 1.0, true, CycleMethod.NO_CYCLE,
+                Stop(0.1, Color.color(0.1, 0.4, 0.9, 0.8)),
+                Stop(0.9, Color.color(0.1, 0.9, 0.1, 0.4))
+        ))
+
+        effect = DropShadow(20.0, Color.BLACK)
+
+        children.addAll(bg, circle, arc, letter, letterCircle)
     }
 
     override fun onUpdate(tpf: Double) {
@@ -88,6 +147,9 @@ class TriggerMashView(miniGame: TriggerMashMiniGame = TriggerMashMiniGame()) : M
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class TriggerMashMiniGame : MiniGame<TriggerMashResult>() {
+
+    // TODO: fxgl-input dep + trigger
+    var trigger = KeyCode.G
 
     var decayRate = 0.1
     var boostRate = 1.7
