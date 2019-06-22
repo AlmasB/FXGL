@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.component.Component
+import com.almasb.fxgl.entity.components.CollidableComponent
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.BoundingShape.box
 import com.almasb.fxgl.physics.HitBox
@@ -103,6 +104,8 @@ class EntityBuilder {
     fun zIndex(z: Int) = this.also {
         entity.transformComponent.z = z
     }
+
+    fun collidable() = with(CollidableComponent(true))
 
     fun with(vararg comps: Component) = this.also {
         comps.forEach { entity.addComponent(it) }
