@@ -457,6 +457,9 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun run(action: Runnable, interval: Duration, limit: Int) = getMasterTimer().runAtInterval(action, interval, limit)
 
+    /* DEBUG */
+    @JvmStatic fun debug(message: String) = getDevPane().pushMessage(message)
+
 /* EXTENSIONS */
 
     @JvmStatic fun entityBuilder() = EntityBuilder()

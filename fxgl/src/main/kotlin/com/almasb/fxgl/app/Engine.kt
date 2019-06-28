@@ -105,7 +105,7 @@ internal class Engine(
     /**
      * The 'always on' engine timer.
      */
-    private val engineTimer = Timer()
+    internal val engineTimer = Timer()
 
     /**
      * The root for the overlay group that is constantly visible and on top
