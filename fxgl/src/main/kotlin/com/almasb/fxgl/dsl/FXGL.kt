@@ -124,6 +124,7 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getPhysicsWorld() = engine.playState.physicsWorld
     @JvmStatic fun getGameScene() = engine.playState
     @JvmStatic fun getGameTimer(): Timer = engine.playState.timer
+    @JvmStatic fun getEngineTimer(): Timer = engine.engineTimer
 
     /**
      * @return play state input
