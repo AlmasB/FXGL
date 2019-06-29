@@ -19,6 +19,7 @@ import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.core.util.BiConsumer
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.Optional
+import com.almasb.fxgl.dev.DevService
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.level.Level
@@ -95,6 +96,8 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getSystemBundle() = engine.bundle
 
     @JvmStatic fun getDevPane() = engine.devPane
+
+    @JvmStatic fun getDevService() = engine.getService(DevService::class.java)
 
     @JvmStatic fun getUIFactory() = getSettings().uiFactory
 

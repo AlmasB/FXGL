@@ -29,6 +29,7 @@ object SystemActions {
     fun bind(input: Input) {
         input.addAction(screenshot(), KeyCode.P)
         input.addAction(devOptions(), KeyCode.DIGIT1)
+        input.addAction(devConsole(), KeyCode.DIGIT2)
         input.addAction(sysdump(), KeyCode.DIGIT9, InputModifier.CTRL)
         input.addAction(restartGame(), KeyCode.R, InputModifier.CTRL)
     }
@@ -38,6 +39,16 @@ object SystemActions {
             //val ok = FXGL.saveScreenshot()
 
             //FXGL.getNotificationService().pushNotification(if (ok) FXGL.getLocalizedString("dev.screenshotSaved") else FXGL.getLocalizedString("dev.screenshotFailed"))
+        }
+    }
+
+    private fun devConsole() = object : UserAction("Dev Console") {
+
+        override fun onActionBegin() {
+            if (FXGL.getSettings().applicationMode == ApplicationMode.RELEASE)
+                return
+
+            FXGL.getDevService().openConsole()
         }
     }
 
