@@ -23,7 +23,8 @@ class FXGLMock {
 
             val engine = Engine(app, app.settings, app.stage)
 
-            callInaccessible<Any>(FXGL, getMethod(FXGL.javaClass, "inject", Engine::class.java), engine)
+            FXGL.inject(engine)
+            //callInaccessible<Any>(FXGL, getMethod(FXGL.javaClass, "inject", Engine::class.java), engine)
         }
     }
 }
