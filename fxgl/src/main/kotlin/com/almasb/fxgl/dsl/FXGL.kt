@@ -52,7 +52,8 @@ class FXGL private constructor() { companion object {
     
     private lateinit var engine: Engine
 
-    private fun inject(e: Engine) {
+    @JvmStatic
+    internal fun inject(e: Engine) {
         engine = e
     }
 

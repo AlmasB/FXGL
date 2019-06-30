@@ -153,6 +153,7 @@ internal class MainWindow(
                 e.consume()
 
                 if (settings.isCloseConfirmation) {
+                    // TODO: native_fail
                     if (canShowCloseDialog()) {
                         FXGL.getDisplay().showConfirmationBox(Local.getLocalizedString("dialog.exitGame"), { yes ->
                             if (yes)
@@ -164,6 +165,7 @@ internal class MainWindow(
                 }
             }
 
+            // TODO: native_fail
             icons.add(FXGL.image(settings.appIcon))
 
             if (settings.isFullScreenAllowed) {
@@ -345,6 +347,7 @@ internal class MainWindow(
             scene.appendCSS(FXGL.getAssetLoader().loadCSS(it))
         }
 
+        // TODO: native_fail
         if (settings.isDesktop && scene.root.cursor == null) {
             scene.setCursor(FXGL.getAssetLoader().loadCursorImage("fxgl_default.png"), Point2D(7.0, 6.0))
         }

@@ -19,7 +19,7 @@
 
         <!-- plugins -->
         <jfx.maven.plugin.version>0.0.2</jfx.maven.plugin.version>
-        <client.plugin.version>0.0.9</client.plugin.version>
+        <client.plugin.version>0.0.10</client.plugin.version>
 
         <!-- dependencies -->
         <kotlin.version>1.3.21</kotlin.version>
@@ -71,7 +71,36 @@
                 <artifactId>client-maven-plugin</artifactId>
                 <version>${client.plugin.version}</version>
                 <configuration>
-                    <target>ios-sim</target>
+                    <resourcesList>
+                        <list>com/almasb/fxgl/app/system.properties</list>
+                        <list>system.properties</list>
+                        <list>properties</list>
+                    </resourcesList>
+                    <verbose>true</verbose>
+                    <reflectionList>
+                        <list>com.almasb.fxgl.app.GameApplication</list>
+                        <list>com.almasb.fxgl.app.GameApplication$FXGLApplication</list>
+                        <list>com.almasb.fxgl.app.ReadOnlyGameSettings</list>
+                        <list>com.almasb.fxgl.app.GameSettings</list>
+
+                        <!-- Engine services -->
+                        <list>com.almasb.fxgl.audio.AudioPlayer</list>
+                        <list>com.almasb.fxgl.notification.impl.NotificationServiceProvider</list>
+                        <list>com.almasb.fxgl.notification.view.XboxNotificationView</list>
+                        <list>com.almasb.fxgl.achievement.AchievementManager</list>
+
+                        <!-- Components -->
+
+                        <list>com.almasb.fxgl.entity.components.BoundingBoxComponent</list>
+                        <list>com.almasb.fxgl.entity.components.CollidableComponent</list>
+                        <list>com.almasb.fxgl.entity.components.IDComponent</list>
+                        <list>com.almasb.fxgl.entity.components.IrremovableComponent</list>
+                        <list>com.almasb.fxgl.entity.components.TimeComponent</list>
+                        <list>com.almasb.fxgl.entity.components.TransformComponent</list>
+                        <list>com.almasb.fxgl.entity.components.TypeComponent</list>
+                        <list>com.almasb.fxgl.entity.components.ViewComponent</list>
+                    </reflectionList>
+                    <!-- <target>ios-sim</target> -->
                     <mainClass>${mainClassName}</mainClass>
                 </configuration>
             </plugin>

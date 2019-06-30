@@ -228,8 +228,7 @@ public abstract class GameApplication {
                 engine.addService(new DevService());
             }
 
-            // equivalent to FXGL.engine = engine;
-            callInaccessible(FXGL.Companion, getMethod(FXGL.Companion.getClass(), "inject", Engine.class), engine);
+            FXGL.inject$fxgl(engine);
 
             engine.startLoop();
         }

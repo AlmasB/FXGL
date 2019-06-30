@@ -127,6 +127,7 @@ internal class Engine(
     init {
         log.debug("Initializing FXGL")
 
+        // TODO: native_fail
         val bundle = ResourceBundle.getBundle("com.almasb.fxgl.app.system")
         version = bundle.getString("fxgl.version")
         build = bundle.getString("fxgl.build")
@@ -181,6 +182,7 @@ internal class Engine(
 
             isFirstRun = !fs.exists("system/")
 
+            // TODO: native_fail
             if (isFirstRun) {
                 createRequiredDirs()
                 loadDefaultSystemData()
@@ -612,6 +614,7 @@ internal class Engine(
         log.debug("Shutting down background threads")
         executor.shutdownNow()
 
+        // TODO: native_fail
         saveSystemData()
 
         log.debug("Closing logger and exiting JavaFX")

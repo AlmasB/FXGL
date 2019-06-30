@@ -30,6 +30,7 @@ class StartupScene : FXGLScene() {
     init {
         val bg = Rectangle(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble())
 
+        // TODO: native_fail
         val title = makeTitle()
         FXGL.centerText(title)
 
