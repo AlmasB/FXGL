@@ -14,6 +14,7 @@ import com.almasb.fxgl.core.local.Language
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.core.util.Platform
+import com.almasb.fxgl.core.util.RuntimeInfo
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
@@ -58,7 +59,7 @@ enum class MenuItem {
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class GameSettings(
-        var platform: Platform = Platform.WINDOWS,
+        var runtimeInfo: RuntimeInfo = RuntimeInfo(Platform.WINDOWS, "11.x", "?"),
 
         /**
          * Set title of the game. This will be shown as the
@@ -221,7 +222,7 @@ class GameSettings(
 
     fun toReadOnly(): ReadOnlyGameSettings {
         return ReadOnlyGameSettings(
-                platform,
+                runtimeInfo,
                 title,
                 version,
                 width,
@@ -268,7 +269,7 @@ class GameSettings(
  * A copy of GameSettings with public getters only.
  */
 class ReadOnlyGameSettings internal constructor(
-        val platform: Platform,
+        val runtimeInfo: RuntimeInfo,
 
         /**
          * Set title of the game. This will be shown as the
@@ -462,6 +463,9 @@ class ReadOnlyGameSettings internal constructor(
     val saveFileExt = ".sav"
 
     val dataFileExt = ".dat"
+
+    val platform: Platform
+        get() = runtimeInfo.platform
 
     val isDesktop: Boolean
         get() = platform.isDesktop

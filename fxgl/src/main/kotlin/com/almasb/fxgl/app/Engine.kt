@@ -33,7 +33,6 @@ import javafx.scene.Group
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import java.time.LocalDateTime
-import java.util.*
 
 /**
  *
@@ -46,9 +45,6 @@ internal class Engine(
 ) : GameController {
 
     private val log = Logger.get(javaClass)
-
-    internal val version: String
-    private val build: String
 
     /**
      * @return true iff FXGL is running for the first time
@@ -127,11 +123,6 @@ internal class Engine(
     init {
         log.debug("Initializing FXGL")
 
-        // TODO: native_fail
-        val bundle = ResourceBundle.getBundle("com.almasb.fxgl.app.system")
-        version = bundle.getString("fxgl.version")
-        build = bundle.getString("fxgl.build")
-
         logVersion()
 
         environmentVars["overlayRoot"] = overlayRoot
@@ -142,6 +133,9 @@ internal class Engine(
     private fun logVersion() {
         val jVersion = System.getProperty("java.version", "?")
         val fxVersion = System.getProperty("javafx.version", "?")
+
+        val version = settings.runtimeInfo.version
+        val build = settings.runtimeInfo.build
 
         log.info("FXGL-$version ($build) on ${settings.platform} (J:$jVersion FX:$fxVersion)")
         log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")

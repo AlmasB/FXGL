@@ -61,7 +61,7 @@ class FXGL private constructor() { companion object {
 
 /* STATIC ACCESSORS */
 
-    @JvmStatic fun getVersion() = engine.version
+    @JvmStatic fun getVersion() = engine.settings.runtimeInfo.version
 
     /**
      * @return FXGL system settings

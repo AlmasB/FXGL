@@ -7,6 +7,7 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.util.Platform;
+import com.almasb.fxgl.core.util.RuntimeInfo;
 import com.almasb.fxgl.dev.DevService;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.saving.DataFile;
@@ -15,6 +16,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
 
@@ -110,11 +112,26 @@ public abstract class GameApplication {
         var localSettings = new GameSettings();
         initSettings(localSettings);
 
+        var platform = Platform.get();
+
         // if user set platform as browser, we keep it that way
-        if (!localSettings.getPlatform().isBrowser()) {
-            localSettings.setPlatform(Platform.get());
+        if (localSettings.getRuntimeInfo().getPlatform().isBrowser()) {
+            platform = Platform.BROWSER;
         }
 
+        var version = "11.x";
+        var build = "?";
+
+        try {
+            var bundle = ResourceBundle.getBundle("com.almasb.fxgl.app.system");
+            version = bundle.getString("fxgl.version");
+            build = bundle.getString("fxgl.build");
+        } catch (Exception e) {
+            System.out.println("Warning: Could not load com.almasb.fxgl.app.system.properties");
+        }
+
+        var runtimeInfo = new RuntimeInfo(platform, version, build);
+        localSettings.setRuntimeInfo(runtimeInfo);
         return localSettings.toReadOnly();
     }
 
