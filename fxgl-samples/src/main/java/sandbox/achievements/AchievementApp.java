@@ -7,6 +7,7 @@
 package sandbox.achievements;
 
 import com.almasb.fxgl.achievement.Achievement;
+import com.almasb.fxgl.achievement.AchievementEvent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -32,8 +33,6 @@ public class AchievementApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setApplicationMode(ApplicationMode.DEBUG);
-
         settings.getAchievements().add(new Achievement("See the world", "Move 600 pixels", "pixelsMoved", 600));
         settings.getAchievements().add(new Achievement("Killer", "Kill 3 enemies", "enemiesKilled", 3));
 
@@ -45,6 +44,13 @@ public class AchievementApp extends GameApplication {
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("pixelsMoved", 0);
         vars.put("enemiesKilled", 0);
+    }
+
+    @Override
+    protected void initGame() {
+        getEventBus().addEventHandler(AchievementEvent.ACHIEVED, e -> {
+            System.out.println(e);
+        });
     }
 
     @Override
