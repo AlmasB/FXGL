@@ -444,7 +444,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         val content = MenuContent()
         
-        getAchievementService().achievements.forEach { a ->
+        getAchievementService().achievementsCopy.forEach { a ->
             val checkBox = CheckBox()
             checkBox.isDisable = true
             checkBox.selectedProperty().bind(a.achievedProperty())

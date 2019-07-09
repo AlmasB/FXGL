@@ -24,20 +24,20 @@ class AchievementManager : EngineService {
 
     private val log = Logger.get(javaClass)
 
-    // TODO: can we merge some of these List<Achievement>?
+    // this is a read-only list as populated by the user
     @Inject("achievements")
     private lateinit var achievementsFromSettings: List<Achievement>
 
     @Inject("eventBus")
     private lateinit var eventBus: EventBus
 
-    private val achievementsInternal = mutableListOf<Achievement>()
+    private val achievements = mutableListOf<Achievement>()
 
     /**
      * @return unmodifiable list of achievements
      */
-    val achievements: List<Achievement>
-        get() = Collections.unmodifiableList(achievementsInternal)
+    val achievementsCopy: List<Achievement>
+        get() = Collections.unmodifiableList(achievements)
 
     /**
      * @param name achievement name
@@ -45,7 +45,7 @@ class AchievementManager : EngineService {
      * @throws IllegalArgumentException if achievement is not registered
      */
     fun getAchievementByName(name: String): Achievement {
-        return achievementsInternal.find { it.name == name }
+        return achievements.find { it.name == name }
                 ?: throw IllegalArgumentException("Achievement with name [$name] is not registered!")
     }
 
@@ -56,11 +56,11 @@ class AchievementManager : EngineService {
      * @param a the achievement
      */
     internal fun registerAchievement(a: Achievement) {
-        require(achievementsInternal.none { it.name == a.name }) {
+        require(achievements.none { it.name == a.name }) {
             "Achievement with name [${a.name}] exists"
         }
 
-        achievementsInternal.add(a)
+        achievements.add(a)
         log.debug("Registered new achievement: ${a.name}")
     }
 
@@ -74,7 +74,7 @@ class AchievementManager : EngineService {
 
     internal fun bindToVars(vars: PropertyMap) {
         // only interested in non-achieved achievements
-        achievementsInternal.filter { !it.isAchieved }.forEach {
+        achievements.filter { !it.isAchieved }.forEach {
 
             when(it.varValue) {
                 is Int -> {
@@ -157,11 +157,11 @@ class AchievementManager : EngineService {
     }
 
     override fun write(bundle: Bundle) {
-        achievementsInternal.forEach { a -> bundle.put(a.name, a.isAchieved) }
+        achievements.forEach { a -> bundle.put(a.name, a.isAchieved) }
     }
 
     override fun read(bundle: Bundle) {
-        achievementsInternal.forEach { a ->
+        achievements.forEach { a ->
             val achieved = bundle.get<Boolean>(a.name)
             if (achieved)
                 a.setAchieved()

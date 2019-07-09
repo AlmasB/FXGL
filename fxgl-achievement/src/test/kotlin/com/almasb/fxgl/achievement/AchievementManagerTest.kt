@@ -51,7 +51,7 @@ class AchievementManagerTest {
     fun `Register achievement`() {
         achievementManager.registerAchievement(a1)
 
-        assertThat(achievementManager.achievements, contains(a1))
+        assertThat(achievementManager.achievementsCopy, contains(a1))
         assertThat(achievementManager.getAchievementByName("TestAchievement"), `is`(a1))
     }
 
@@ -87,7 +87,7 @@ class AchievementManagerTest {
         newAchievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription", "", 0))
         newAchievementManager.read(bundle)
 
-        assertThat(newAchievementManager.achievements.size, `is`(2))
+        assertThat(newAchievementManager.achievementsCopy.size, `is`(2))
         assertTrue(newAchievementManager.getAchievementByName("TestAchievement").isAchieved)
         assertFalse(newAchievementManager.getAchievementByName("TestAchievement2").isAchieved)
     }
