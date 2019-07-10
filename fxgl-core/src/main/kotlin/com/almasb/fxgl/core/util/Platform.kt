@@ -7,7 +7,6 @@
 package com.almasb.fxgl.core.util
 
 /**
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 enum class Platform {
@@ -42,7 +41,9 @@ enum class Platform {
                 return IOS
             }
 
-            // TODO: mobile is not supported at the moment
+            if (osName.contains("android", ignoreCase = true)) {
+                return ANDROID
+            }
 
             return BROWSER
         }
