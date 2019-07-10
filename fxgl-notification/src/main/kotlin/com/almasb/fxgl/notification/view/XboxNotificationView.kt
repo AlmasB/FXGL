@@ -19,8 +19,6 @@ import javafx.util.Duration
 /**
  * A notification view, inspired by Xbox One achievements.
  *
- * https://github.com/AlmasB/FXGL/issues/487
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class XboxNotificationView : NotificationView() {
@@ -69,27 +67,8 @@ class XboxNotificationView : NotificationView() {
 
         text2.fill = textColor
 
-        translateX = 350.0
+        translateX = appWidth / 2 - bg.width / 2 + 200
         translateY = 50.0
-
-//        when (position) {
-//            Position.LEFT -> {
-//                translateX = 50.0
-//                translateY = FXGL.getAppHeight() / 2 - (text1.layoutBounds.width + 10) / 2
-//            }
-//            Position.RIGHT -> {
-//                translateX = FXGL.getAppWidth()  - (text1.layoutBounds.width + 20) - 50.0
-//                translateY = FXGL.getAppHeight()  / 2 - (text1.layoutBounds.height + 10) / 2
-//            }
-//            Position.TOP -> {
-//                translateX = FXGL.getAppWidth() / 2 - 30.0
-//                translateY = 50.0
-//            }
-//            Position.BOTTOM -> {
-//                translateX = FXGL.getAppWidth()  / 2 - (text1.layoutBounds.width + 20) / 2
-//                translateY = FXGL.getAppHeight()  - (text1.layoutBounds.height + 10) - 50.0
-//            }
-//        }
 
         centerTextX(text1, 65.0, 395.0)
 
@@ -104,10 +83,8 @@ class XboxNotificationView : NotificationView() {
                 .duration(Duration.seconds(0.33))
                 .translate(this)
                 .from(Point2D(translateX, translateY))
-                .to(Point2D(200.0, translateY))
+                .to(Point2D(translateX - 200, translateY))
                 .build()
-        //.to(Point2D(FXGL.getAppWidth() / 4.0, translateY))
-
 
         // but move the BG to right, creating the "slide out" effect
         translateBG = AnimationDSL()
@@ -131,10 +108,6 @@ class XboxNotificationView : NotificationView() {
 
                     translateThis!!.start()
                     translateBG!!.start()
-
-//                    FXGL.getMasterTimer().runOnceAfter({
-
-//                    }, Duration.seconds(0.33))
                 })
                 .scale(this)
                 .from(Point2D.ZERO)

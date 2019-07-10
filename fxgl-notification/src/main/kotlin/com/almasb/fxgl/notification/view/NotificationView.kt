@@ -21,7 +21,10 @@ abstract class NotificationView : Pane(), Updatable {
 
     var backgroundColor = Color.LIGHTGREEN
     var textColor = Color.WHITE
-    //var position = Position.TOP
+
+    // these will be updated during notification service init
+    var appWidth = 800
+    var appHeight = 600
 
     /**
      * Called when view is added to scene.

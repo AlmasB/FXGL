@@ -23,10 +23,11 @@ public class NotificationSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
+        settings.setWidth(520);
         settings.setHeight(600);
         settings.setTitle("NotificationSample");
         settings.setMenuEnabled(true);
+        settings.setManualResizeEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
