@@ -32,6 +32,7 @@ import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.time.Timer
+import javafx.animation.Interpolator
 import javafx.beans.property.*
 import javafx.event.Event
 import javafx.geometry.Point2D
@@ -316,6 +317,43 @@ class FXGL private constructor() { companion object {
         getGameWorld().addEntity(e)
 
         return e
+    }
+
+    @JvmStatic fun spawnWithScale(entityName: String, data: SpawnData, duration: Duration, interpolator: Interpolator): Entity {
+        val e = getGameWorld().create(entityName, data)
+        return spawnWithScale(e, duration, interpolator)
+    }
+
+    @JvmStatic @JvmOverloads fun spawnWithScale(e: Entity,
+                                                duration: Duration = Duration.seconds(1.0),
+                                                interpolator: Interpolator = Interpolator.LINEAR): Entity {
+
+        e.transformComponent.scaleOrigin = Point2D(e.width / 2, e.height / 2)
+
+        animationBuilder()
+                .duration(duration)
+                .interpolator(interpolator)
+                .scale(e)
+                .from(Point2D(0.0, 0.0))
+                .to(Point2D(1.0, 1.0))
+                .buildAndPlay()
+
+        getGameWorld().addEntity(e)
+
+        return e
+    }
+
+    @JvmStatic @JvmOverloads fun despawnWithScale(e: Entity,
+                                                  duration: Duration = Duration.seconds(1.0),
+                                                  interpolator: Interpolator = Interpolator.LINEAR) {
+        animationBuilder()
+                .duration(duration)
+                .interpolator(interpolator)
+                .onFinished(Runnable { getGameWorld().removeEntity(e) })
+                .scale(e)
+                .from(Point2D(1.0, 1.0))
+                .to(Point2D(0.0, 0.0))
+                .buildAndPlay()
     }
 
     @JvmStatic fun byID(name: String, id: Int): Optional<Entity> = getGameWorld().getEntityByID(name, id)
