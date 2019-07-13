@@ -20,13 +20,13 @@ class HealthBarChildViewComponent(x: Double, y: Double) : ChildViewComponent(x, 
     val hpBar = ProgressBar()
 
     init {
-        val hp = SimpleIntegerProperty(44)
+        val hp = SimpleIntegerProperty(2999)
         val maxHP = 4003
 
         hpBar.setMinValue(0.0)
         hpBar.setMaxValue(100.0)
-        hpBar.setWidth(300.0)
-        hpBar.setLabelVisible(true)
+        hpBar.setWidth(100.0)
+        hpBar.setLabelVisible(false)
         hpBar.setLabelPosition(Position.RIGHT)
         hpBar.setFill(Color.GREEN)
 
@@ -35,7 +35,7 @@ class HealthBarChildViewComponent(x: Double, y: Double) : ChildViewComponent(x, 
         )
 
         // TODO: API should be something like
-        // children.addAll(hpBar)
+        children.children.addAll(hpBar)
 
 
         // ViewCOmponent should have two roots, one Group and one Group for dev stuff

@@ -71,7 +71,7 @@ class TMXLevelLoader : LevelLoader {
     private fun createTileLayerEntities(map: TiledMap, tilesetLoader: TilesetLoader): List<Entity> {
         return map.layers.filter { it.type == "tilelayer" }
                 .map { layer ->
-                    Entity().also { it.viewComponent.setViewFromNode(tilesetLoader.loadView(layer.name)) }
+                    Entity().also { it.viewComponent.addChild(tilesetLoader.loadView(layer.name)) }
                 }
     }
 
@@ -111,7 +111,7 @@ class TMXLevelLoader : LevelLoader {
 
                         // non-zero gid means view is read from the tileset
                         if (tiledObject.gid != 0) {
-                            e.viewComponent.setViewFromNode(tilesetLoader.loadView(tiledObject.gid))
+                            e.viewComponent.addChild(tilesetLoader.loadView(tiledObject.gid))
                         }
                     }
                 }

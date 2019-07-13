@@ -8,6 +8,7 @@ package sandbox.view;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.components.view.HealthBarChildViewComponent;
 import com.almasb.sslogger.Logger;
 import com.almasb.sslogger.LoggerLevel;
 import com.almasb.sslogger.LoggerOutput;
@@ -35,14 +36,11 @@ public class BasicEntityViewApp extends GameApplication {
 
     @Override
     protected void initGame() {
-
-
-        //getGameScene().addUINode(new Rectangle(getAppWidth(), getAppHeight()));
-
         entityBuilder()
                 .at(100, 100)
-                .view(new Rectangle(40, 40, Color.BLUE))
+                .view(new Rectangle(100, 100, Color.BLUE))
                 .with(new DeveloperWASDControl())
+                .with(new HealthBarChildViewComponent(0, 100))
                 .buildAndAttach();
     }
 

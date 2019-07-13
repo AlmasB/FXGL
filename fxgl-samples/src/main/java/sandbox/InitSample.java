@@ -62,14 +62,14 @@ public class InitSample extends GameApplication {
         getInput().addAction(new UserAction("Change view") {
             @Override
             protected void onActionBegin() {
-                player.setView(new EntityView(new Rectangle(40, 30, Color.BLUE)));
+                //player.setView(new EntityView(new Rectangle(40, 30, Color.BLUE)));
             }
         }, KeyCode.F);
 
         getInput().addAction(new UserAction("Change view 1") {
             @Override
             protected void onActionBegin() {
-                player.setView(texture("bird.png").toAnimatedTexture(2, Duration.seconds(0.33)).play());
+                //player.setView(texture("bird.png").toAnimatedTexture(2, Duration.seconds(0.33)).play());
             }
         }, KeyCode.G);
 
@@ -116,7 +116,7 @@ public class InitSample extends GameApplication {
         Entity player2 = new Entity();
         player2.setType(Type.NPC);
         player2.setPosition(100, 100);
-        player2.setView(new EntityView(new Rectangle(40, 40, Color.RED)));
+        //player2.setView(new EntityView(new Rectangle(40, 40, Color.RED)));
         player2.getBoundingBoxComponent().addHitBox(new HitBox(BoundingShape.box(40, 40)));
         player2.addComponent(new CollidableComponent(true));
         player2.getTransformComponent().setZ(250);
@@ -134,9 +134,9 @@ public class InitSample extends GameApplication {
 
         //translate(player, new Point2D(560, 300), Duration.seconds(2));
 
-        player.getViewComponent().addClickListener(() -> {
-            System.out.println("CLICKED");
-        });
+//        player.getViewComponent().addClickListener(() -> {
+//            System.out.println("CLICKED");
+//        });
 
 //        entityBuilder()
 //                .type(Type.PLAYER)

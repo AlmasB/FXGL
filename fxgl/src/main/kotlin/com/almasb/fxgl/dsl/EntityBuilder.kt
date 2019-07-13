@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.dsl
 
-import com.almasb.fxgl.core.View
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
@@ -75,11 +74,7 @@ class EntityBuilder {
     }
 
     fun view(node: Node) = this.also {
-        if (node is View) {
-            entity.viewComponent.view = node
-        } else {
-            entity.viewComponent.setViewFromNode(node)
-        }
+        entity.viewComponent.addChild(node)
     }
 
     fun viewWithBBox(node: Node) = this.also {

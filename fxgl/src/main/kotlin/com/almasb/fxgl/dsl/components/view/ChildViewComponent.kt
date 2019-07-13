@@ -10,6 +10,7 @@ import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.TransformComponent
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.scene.Group
 
 /**
  *
@@ -30,9 +31,14 @@ open class ChildViewComponent(x: Double, y: Double) : Component() {
         get() = propY.value
         set(value) { propY.value = value }
 
+    val children = Group()
+
     override fun onAdded() {
         // TODO: add child to view somehow at x,y
 
-        //entity.viewComponent.addChild()
+        children.translateX = x
+        children.translateY = y
+
+        entity.viewComponent.addChild(children)
     }
 }
