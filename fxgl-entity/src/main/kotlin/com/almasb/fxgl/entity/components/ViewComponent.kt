@@ -46,10 +46,10 @@ class ViewComponent : Component() {
         set(value) { opacityProp.value = value }
 
     /**
-     * Do not modify children, for queries only.
+     * @return all view children (the order is transform applied first, then without transforms)
      */
     val children: List<Node>
-        get() = viewRoot.children
+        get() = viewRoot.children + viewRootNoTransform.children
 
     init {
         viewRoot.opacityProperty().bind(opacityProp)
