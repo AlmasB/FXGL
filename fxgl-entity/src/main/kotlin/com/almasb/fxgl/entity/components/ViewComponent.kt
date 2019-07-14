@@ -24,6 +24,9 @@ import javafx.scene.transform.Scale
 class ViewComponent : Component() {
 
     private val viewRoot = Group()
+
+    // no scale, rotate is applied
+    private val viewRootNoTransform = Group()
     internal val devRoot = Group()
 
     private val updateableViews = arrayListOf<View>()
@@ -31,7 +34,7 @@ class ViewComponent : Component() {
     /**
      * This node is managed by FXGL and is part of active scene graph, do NOT modify children.
      */
-    val parent: Parent = Group(viewRoot, devRoot)
+    val parent: Parent = Group(viewRoot, viewRootNoTransform, devRoot)
 
     val z: ReadOnlyIntegerProperty = ReadOnlyIntegerWrapper(0)
 
@@ -50,11 +53,18 @@ class ViewComponent : Component() {
 
     init {
         viewRoot.opacityProperty().bind(opacityProp)
+        viewRootNoTransform.opacityProperty().bind(viewRoot.opacityProperty())
     }
 
     override fun onAdded() {
-        parent.translateXProperty().bind(entity.xProperty().subtract(entity.transformComponent.positionOriginXProperty()))
-        parent.translateYProperty().bind(entity.yProperty().subtract(entity.transformComponent.positionOriginYProperty()))
+        viewRoot.translateXProperty().bind(entity.xProperty().subtract(entity.transformComponent.positionOriginXProperty()))
+        viewRoot.translateYProperty().bind(entity.yProperty().subtract(entity.transformComponent.positionOriginYProperty()))
+
+        viewRootNoTransform.translateXProperty().bind(viewRoot.translateXProperty())
+        viewRootNoTransform.translateYProperty().bind(viewRoot.translateYProperty())
+
+        devRoot.translateXProperty().bind(viewRoot.translateXProperty())
+        devRoot.translateYProperty().bind(viewRoot.translateYProperty())
 
         val scale = Scale()
         scale.xProperty().bind(entity.transformComponent.scaleXProperty())
@@ -70,7 +80,8 @@ class ViewComponent : Component() {
         rotate.pivotXProperty().bind(entity.transformComponent.rotationOriginXProperty())
         rotate.pivotYProperty().bind(entity.transformComponent.rotationOriginYProperty())
 
-        parent.transforms.addAll(rotate, scale)
+        viewRoot.transforms.addAll(rotate, scale)
+        devRoot.transforms.addAll(rotate, scale)
 
         (z as ReadOnlyIntegerWrapper).bind(entity.transformComponent.zProperty())
     }
@@ -82,6 +93,11 @@ class ViewComponent : Component() {
     override fun onRemoved() {
         (parent as Group).children.clear()
         viewRoot.children.forEach {
+            if (it is View) {
+                it.dispose()
+            }
+        }
+        viewRootNoTransform.children.forEach {
             if (it is View) {
                 it.dispose()
             }
@@ -105,8 +121,12 @@ class ViewComponent : Component() {
     /**
      * Add a child node to this view.
      */
-    fun addChild(node: Node) {
-        viewRoot.children += node
+    @JvmOverloads fun addChild(node: Node, isTransformApplied: Boolean = true) {
+        if (isTransformApplied) {
+            viewRoot.children += node
+        } else {
+            viewRootNoTransform.children += node
+        }
 
         if (node is View)
             updateableViews += node
@@ -117,6 +137,7 @@ class ViewComponent : Component() {
      */
     fun removeChild(node: Node) {
         viewRoot.children -= node
+        viewRootNoTransform.children -= node
 
         if (node is View)
             updateableViews -= node
@@ -131,6 +152,15 @@ class ViewComponent : Component() {
             }
         }
 
+        viewRootNoTransform.children.forEach {
+            if (it is View) {
+                updateableViews -= it
+
+                // TODO: it.dispose()
+            }
+        }
+
         viewRoot.children.clear()
+        viewRootNoTransform.children.clear()
     }
 }

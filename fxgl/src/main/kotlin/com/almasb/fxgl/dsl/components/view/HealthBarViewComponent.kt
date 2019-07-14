@@ -15,7 +15,7 @@ import javafx.scene.paint.Color
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class HealthBarChildViewComponent(x: Double, y: Double) : ChildViewComponent(x, y) {
+class HealthBarViewComponent(x: Double, y: Double) : ChildViewComponent(x, y, false) {
 
     val hpBar = ProgressBar()
 
@@ -34,10 +34,6 @@ class HealthBarChildViewComponent(x: Double, y: Double) : ChildViewComponent(x, 
                 hp.divide(maxHP*1.0).multiply(100)
         )
 
-        // TODO: API should be something like
-        children.children.addAll(hpBar)
-
-
-        // ViewCOmponent should have two roots, one Group and one Group for dev stuff
+        viewRoot.children.addAll(hpBar)
     }
 }

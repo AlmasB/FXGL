@@ -7,7 +7,6 @@
 package com.almasb.fxgl.dsl.components.view
 
 import com.almasb.fxgl.entity.component.Component
-import com.almasb.fxgl.entity.components.TransformComponent
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.scene.Group
@@ -16,9 +15,10 @@ import javafx.scene.Group
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-open class ChildViewComponent(x: Double, y: Double) : Component() {
-
-    constructor() : this(0.0, 0.0)
+open class ChildViewComponent
+@JvmOverloads constructor(x: Double = 0.0,
+                          y: Double = 0.0,
+                          val isTransformApplied: Boolean = true) : Component() {
 
     private val propX: DoubleProperty = SimpleDoubleProperty(x)
     private val propY: DoubleProperty = SimpleDoubleProperty(y)
@@ -31,14 +31,20 @@ open class ChildViewComponent(x: Double, y: Double) : Component() {
         get() = propY.value
         set(value) { propY.value = value }
 
-    val children = Group()
+    val viewRoot = Group()
+
+    init {
+        viewRoot.translateXProperty().bind(propX)
+        viewRoot.translateYProperty().bind(propY)
+    }
 
     override fun onAdded() {
-        // TODO: add child to view somehow at x,y
+        entity.viewComponent.addChild(viewRoot, isTransformApplied)
+    }
 
-        children.translateX = x
-        children.translateY = y
-
-        entity.viewComponent.addChild(children)
+    override fun onRemoved() {
+        viewRoot.translateXProperty().unbind()
+        viewRoot.translateYProperty().unbind()
+        entity.viewComponent.removeChild(viewRoot)
     }
 }
