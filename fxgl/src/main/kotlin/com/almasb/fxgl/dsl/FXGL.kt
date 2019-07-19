@@ -20,6 +20,8 @@ import com.almasb.fxgl.core.util.BiConsumer
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.dev.DevService
+import com.almasb.fxgl.dsl.handlers.CollectibleHandler
+import com.almasb.fxgl.dsl.handlers.OneTimeCollisionHandler
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.level.Level
@@ -356,6 +358,10 @@ class FXGL private constructor() { companion object {
                 .buildAndPlay()
     }
 
+    @JvmStatic fun despawnWithDelay(e: Entity, delay: Duration) {
+        com.almasb.fxgl.dsl.runOnce({ e.removeFromWorld() }, delay)
+    }
+
     @JvmStatic fun byID(name: String, id: Int): Optional<Entity> = getGameWorld().getEntityByID(name, id)
 
     /**
@@ -372,6 +378,14 @@ class FXGL private constructor() { companion object {
     }
 
 /* PHYSICS */
+
+    @JvmStatic fun onCollisionCollectible(typeCollector: Enum<*>, typeCollectible: Enum<*>, action: Consumer<Entity>) {
+        getPhysicsWorld().addCollisionHandler(CollectibleHandler(typeCollector, typeCollectible, "", action))
+    }
+
+    @JvmStatic fun onCollisionOneTimeOnly(typeA: Enum<*>, typeOneTimeOnly: Enum<*>, action: BiConsumer<Entity, Entity>) {
+        getPhysicsWorld().addCollisionHandler(OneTimeCollisionHandler(typeA, typeOneTimeOnly, action))
+    }
 
     @JvmStatic fun onCollisionBegin(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entity>) {
         getPhysicsWorld().addCollisionHandler(object : CollisionHandler(typeA, typeB) {
