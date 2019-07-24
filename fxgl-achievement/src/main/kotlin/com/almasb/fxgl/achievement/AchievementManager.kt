@@ -76,76 +76,81 @@ class AchievementManager : EngineService {
         // only interested in non-achieved achievements
         achievements.filter { !it.isAchieved }.forEach {
 
-            when(it.varValue) {
-                is Int -> {
-                    var listener: PropertyChangeListener<Int>? = null
+            // TODO: cleanup
+            if (!vars.exists(it.varName)) {
+                log.warning("Achievement ${it.name} cannot find property ${it.varName}")
+            } else {
+                when (it.varValue) {
+                    is Int -> {
+                        var listener: PropertyChangeListener<Int>? = null
 
-                    listener = object : PropertyChangeListener<Int> {
-                        var halfReached = false
+                        listener = object : PropertyChangeListener<Int> {
+                            var halfReached = false
 
-                        override fun onChange(prev: Int, now: Int) {
+                            override fun onChange(prev: Int, now: Int) {
 
-                            if (!halfReached && now >= it.varValue / 2) {
-                                halfReached = true
-                                //FXGL.getEventBus().fireEvent(AchievementProgressEvent(it, now.toDouble(), it.varValue.toDouble()))
-                            }
+                                if (!halfReached && now >= it.varValue / 2) {
+                                    halfReached = true
+                                    //FXGL.getEventBus().fireEvent(AchievementProgressEvent(it, now.toDouble(), it.varValue.toDouble()))
+                                }
 
-                            if (now >= it.varValue) {
-                                it.setAchieved()
-                                eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
+                                if (now >= it.varValue) {
+                                    it.setAchieved()
+                                    eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
 
-                                vars.removeListener(it.varName, listener!!)
-                            }
-                        }
-                    }
-
-                    vars.addListener(it.varName, listener)
-                }
-
-                is Double -> {
-                    var listener: PropertyChangeListener<Double>? = null
-
-                    listener = object : PropertyChangeListener<Double> {
-                        var halfReached = false
-
-                        override fun onChange(prev: Double, now: Double) {
-
-                            if (!halfReached && now >= it.varValue / 2) {
-                                halfReached = true
-                                //FXGL.getEventBus().fireEvent(AchievementProgressEvent(it, now, it.varValue))
-                            }
-
-                            if (now >= it.varValue) {
-                                it.setAchieved()
-                                eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
-
-                                vars.removeListener(it.varName, listener!!)
+                                    vars.removeListener(it.varName, listener!!)
+                                }
                             }
                         }
+
+                        vars.addListener(it.varName, listener)
                     }
 
-                    vars.addListener(it.varName, listener)
-                }
+                    is Double -> {
+                        var listener: PropertyChangeListener<Double>? = null
 
-                is Boolean -> {
-                    var listener: PropertyChangeListener<Boolean>? = null
+                        listener = object : PropertyChangeListener<Double> {
+                            var halfReached = false
 
-                    listener = object : PropertyChangeListener<Boolean> {
+                            override fun onChange(prev: Double, now: Double) {
 
-                        override fun onChange(prev: Boolean, now: Boolean) {
-                            if (now) {
-                                it.setAchieved()
-                                eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
+                                if (!halfReached && now >= it.varValue / 2) {
+                                    halfReached = true
+                                    //FXGL.getEventBus().fireEvent(AchievementProgressEvent(it, now, it.varValue))
+                                }
 
-                                vars.removeListener(it.varName, listener!!)
+                                if (now >= it.varValue) {
+                                    it.setAchieved()
+                                    eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
+
+                                    vars.removeListener(it.varName, listener!!)
+                                }
                             }
                         }
+
+                        vars.addListener(it.varName, listener)
                     }
 
-                    vars.addListener(it.varName, listener)
-                }
+                    is Boolean -> {
+                        var listener: PropertyChangeListener<Boolean>? = null
 
-                else -> throw IllegalArgumentException("Unknown value type for achievement: " + it.varValue)
+                        listener = object : PropertyChangeListener<Boolean> {
+
+                            override fun onChange(prev: Boolean, now: Boolean) {
+                                if (now) {
+                                    it.setAchieved()
+                                    eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
+
+                                    vars.removeListener(it.varName, listener!!)
+                                }
+                            }
+                        }
+
+                        vars.addListener(it.varName, listener)
+                    }
+
+                    else -> throw IllegalArgumentException("Unknown value type for achievement: " + it.varValue)
+                }
             }
         }
     }
