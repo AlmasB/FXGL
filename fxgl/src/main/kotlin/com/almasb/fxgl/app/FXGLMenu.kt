@@ -390,8 +390,8 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         val hboxMusic = HBox(15.0, textMusic, sliderMusic, percentMusic)
         val hboxSound = HBox(15.0, textSound, sliderSound, percentSound)
 
-        hboxMusic.setAlignment(Pos.CENTER_RIGHT)
-        hboxSound.setAlignment(Pos.CENTER_RIGHT)
+        hboxMusic.alignment = Pos.CENTER_RIGHT
+        hboxSound.alignment = Pos.CENTER_RIGHT
 
         return MenuContent(hboxMusic, hboxSound)
     }
@@ -403,12 +403,12 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         log.debug("createContentCredits()")
 
         val pane = FXGLScrollPane()
-        pane.prefWidth = (getAppWidth() * 3 / 5).toDouble()
+        pane.prefWidth = 500.0
         pane.prefHeight = (getAppHeight() / 2).toDouble()
         pane.style = "-fx-background:black;"
 
         val vbox = VBox()
-        vbox.alignment = Pos.CENTER
+        vbox.alignment = Pos.CENTER_LEFT
         vbox.prefWidth = pane.prefWidth - 15
 
         val credits = ArrayList(getSettings().credits)
@@ -419,6 +419,10 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         credits.add("")
 
         for (credit in credits) {
+            if (credit.length > 45) {
+                log.warning("Credit name length > 45: $credit")
+            }
+
             vbox.children.add(getUIFactory().newText(credit))
         }
 
@@ -473,10 +477,11 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         private var onOpen: Runnable? = null
         private var onClose: Runnable? = null
 
-        init {
+        var maxW = 0
 
-            if (items.size > 0) {
-                var maxW = items[0].layoutBounds.width.toInt()
+        init {
+            if (items.isNotEmpty()) {
+                maxW = items[0].layoutBounds.width.toInt()
 
                 for (n in items) {
                     val w = n.layoutBounds.width.toInt()
@@ -585,9 +590,9 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireLoad(saveFile: SaveFile) {
         log.debug("fireLoad()")
 
-        val text = Local.getLocalizedString("menu.loadSave") +
+        val text = getLocalizedString("menu.loadSave") +
                 " [${saveFile.name}]?\n" +
-                Local.getLocalizedString("menu.unsavedProgress")
+                getLocalizedString("menu.unsavedProgress")
 
         getDisplay().showConfirmationBox(text) { yes ->
             if (yes)
@@ -602,7 +607,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireSave() {
         log.debug("fireSave()")
 
-        getDisplay().showInputBoxWithCancel(Local.getLocalizedString("menu.enterSaveName"), InputPredicates.ALPHANUM, Consumer { saveFileName ->
+        getDisplay().showInputBoxWithCancel(getLocalizedString("menu.enterSaveName"), InputPredicates.ALPHANUM, Consumer { saveFileName ->
 
             if (saveFileName.isEmpty())
                 return@Consumer
@@ -654,8 +659,8 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireExitToMainMenu() {
         log.debug("fireExitToMainMenu()")
 
-        val text = Local.getLocalizedString("menu.exitMainMenu") + "\n" +
-                Local.getLocalizedString("menu.unsavedProgress")
+        val text = getLocalizedString("menu.exitMainMenu") + "\n" +
+                getLocalizedString("menu.unsavedProgress")
 
         getDisplay().showConfirmationBox(text) { yes ->
             if (yes)

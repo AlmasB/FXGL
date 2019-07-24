@@ -64,6 +64,9 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     private var t = 0.0
 
     init {
+        if (FXGL.getAppWidth() < 600 || FXGL.getAppHeight() < 600)
+            log.warning("FXGLDefaultMenu is not designed for resolutions < 800x600")
+
         val menu = if (type === MenuType.MAIN_MENU)
             createMenuBodyMainMenu()
         else
@@ -233,7 +236,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         val enabledItems = FXGL.getSettings().enabledMenuItems
 
         val itemNewGame = MenuButton("menu.newGame")
-        itemNewGame.setOnAction(EventHandler{ e -> fireNewGame() })
+        itemNewGame.setOnAction(EventHandler{ fireNewGame() })
         box.add(itemNewGame)
 
         val itemOptions = MenuButton("menu.options")
@@ -247,7 +250,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         }
 
         val itemExit = MenuButton("menu.exit")
-        itemExit.setOnAction(EventHandler{ e -> fireExit() })
+        itemExit.setOnAction(EventHandler{ fireExit() })
         box.add(itemExit)
 
         return box
@@ -261,12 +264,12 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         val enabledItems = FXGL.getSettings().enabledMenuItems
 
         val itemResume = MenuButton("menu.resume")
-        itemResume.setOnAction(EventHandler{ e -> fireResume() })
+        itemResume.setOnAction(EventHandler{ fireResume() })
         box.add(itemResume)
 
         if (enabledItems.contains(MenuItem.SAVE_LOAD)) {
             val itemSave = MenuButton("menu.save")
-            itemSave.setOnAction(EventHandler{ e -> fireSave() })
+            itemSave.setOnAction(EventHandler{ fireSave() })
 
             val itemLoad = MenuButton("menu.load")
             itemLoad.setMenuContent(Supplier { this.createContentLoad() })
@@ -286,7 +289,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         }
 
         val itemExit = MenuButton("menu.mainMenu")
-        itemExit.setOnAction(EventHandler{ e -> fireExitToMainMenu() })
+        itemExit.setOnAction(EventHandler{ fireExitToMainMenu() })
         box.add(itemExit)
 
         return box
@@ -361,7 +364,6 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             get() = (10 * children.size).toDouble()
 
         init {
-
             for (item in items) {
                 add(item)
             }
