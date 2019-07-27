@@ -91,7 +91,7 @@ class AchievementManager : EngineService {
 
                                 if (!halfReached && now >= it.varValue / 2) {
                                     halfReached = true
-                                    //FXGL.getEventBus().fireEvent(AchievementProgressEvent(it, now.toDouble(), it.varValue.toDouble()))
+                                    eventBus.fireEvent(AchievementProgressEvent(it, now.toDouble(), it.varValue.toDouble()))
                                 }
 
                                 if (now >= it.varValue) {
@@ -116,7 +116,7 @@ class AchievementManager : EngineService {
 
                                 if (!halfReached && now >= it.varValue / 2) {
                                     halfReached = true
-                                    //FXGL.getEventBus().fireEvent(AchievementProgressEvent(it, now, it.varValue))
+                                    eventBus.fireEvent(AchievementProgressEvent(it, now, it.varValue))
                                 }
 
                                 if (now >= it.varValue) {
