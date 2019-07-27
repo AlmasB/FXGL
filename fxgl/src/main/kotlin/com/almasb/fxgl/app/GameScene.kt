@@ -244,12 +244,14 @@ internal constructor(width: Int, height: Int,
     }
 
     private fun destroyView(viewComponent: ViewComponent) {
-        // TODO: this is dangerous we should check if data is there - quick fix
-        // or find a neater way to store node <-> z value pairings
-        val view = viewComponent.parent.properties["viewData"] as GameView
-        view.zProperty.unbind()
+        // can we find a neater way to store node <-> z value pairings
+        // since properties[] is null e.g. for particle views
+        viewComponent.parent.properties["viewData"]?.let {
+            val view = it as GameView
+            view.zProperty.unbind()
 
-        removeGameView(view)
+            removeGameView(view)
+        }
     }
 }
 
