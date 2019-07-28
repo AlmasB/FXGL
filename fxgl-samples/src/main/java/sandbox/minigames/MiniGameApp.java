@@ -14,6 +14,7 @@ import com.almasb.fxgl.minigames.sweetspot.SweetSpotView;
 import com.almasb.fxgl.minigames.triggermash.CircleTriggerMashView;
 import com.almasb.fxgl.minigames.triggermash.TriggerMashMiniGame;
 import com.almasb.fxgl.minigames.triggermash.TriggerMashView;
+import com.almasb.fxgl.minigames.triggersequence.TriggerSequenceView;
 import com.almasb.fxgl.ui.FXGLButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -71,10 +72,14 @@ public class MiniGameApp extends GameApplication {
 
         addUINode(getUIFactory().newText("Mini-games dev area", Color.BLACK, 48.0), 100, 100);
 
-        var btn = new FXGLButton("Trigger Mash");
+        var btn = new FXGLButton("Trigger Sequence");
         btn.setOnAction(e -> {
             var manager = new MiniGameManager();
-            manager.startMiniGame(new CircleTriggerMashView(), result -> {
+//            manager.startMiniGame(new CircleTriggerMashView(), result -> {
+//                debugText.setText(result.isSuccess() ? "Success" : "Fail");
+//            });
+
+            manager.startMiniGame(new TriggerSequenceView(), result -> {
                 debugText.setText(result.isSuccess() ? "Success" : "Fail");
             });
         });

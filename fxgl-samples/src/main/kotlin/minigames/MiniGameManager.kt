@@ -38,6 +38,7 @@ class MiniGameManager {
         startMiniGame(LockPickView()) { callback.accept(it) }
     }
 
+    // TODO: start mini game in the in-game mode, not a different subscene
     fun <S : MiniGameResult, T : MiniGame<S>> startMiniGame(view: MiniGameView<T>, callback: Consumer<S>) {
         startMiniGame(view) { callback.accept(it) }
     }

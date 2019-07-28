@@ -23,6 +23,8 @@ import javafx.scene.text.Text
  * Trigger view is bound to set trigger.
  * If trigger changes, the view is automatically updated.
  *
+ * TODO: color property
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class TriggerView
@@ -47,6 +49,12 @@ class TriggerView
     }
 
     fun triggerProperty(): ObjectProperty<Trigger> = triggerProperty
+
+    // TODO:
+    fun updateColor(color: Color) {
+        this.color = color
+        updateView()
+    }
 
     private fun updateView() {
         val view = createView()
