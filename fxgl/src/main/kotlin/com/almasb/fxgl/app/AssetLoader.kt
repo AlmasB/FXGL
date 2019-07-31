@@ -12,11 +12,11 @@ import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.audio.impl.DesktopAudioService
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.entity.EntityFactory
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.texture.Texture
+import com.almasb.fxgl.texture.getDummyImage
 import com.almasb.fxgl.ui.FontFactory
 import com.almasb.fxgl.ui.UI
 import com.almasb.fxgl.ui.UIController
@@ -31,12 +31,7 @@ import java.io.InputStream
 import java.io.ObjectInputStream
 import java.net.URL
 import java.nio.charset.StandardCharsets
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.*
-import java.util.stream.Collectors
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
 
 /**
  * Handles all resource (asset) loading operations.
@@ -155,7 +150,8 @@ class AssetLoader {
                 return texture
             }
         } catch (e: Exception) {
-            throw loadFailed(name, e)
+            log.warning("Failed to load texture $name", e)
+            return Texture(getDummyImage())
         }
     }
 
@@ -192,7 +188,8 @@ class AssetLoader {
                 return texture
             }
         } catch (e: Exception) {
-            throw loadFailed(name, e)
+            log.warning("Failed to load texture $name", e)
+            return Texture(getDummyImage())
         }
     }
 
