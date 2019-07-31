@@ -17,10 +17,14 @@ import com.almasb.fxgl.minigames.MiniGameResult
 import com.almasb.fxgl.minigames.MiniGameView
 import javafx.geometry.Point2D
 import javafx.scene.Group
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
+import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.*
+import javafx.scene.text.Text
 import javafx.util.Duration
 
 class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMiniGame()) : MiniGameView<TriggerSequenceMiniGame>(miniGame) {
@@ -28,22 +32,26 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
     private val animationGood: Animation<*>
     private val animationBad: Animation<*>
 
-    private val circle = Circle(40.0, 40.0, 40.0, Color.GREEN)
+    private val circle = StackPane()
+    private val bg = Circle(40.0, 40.0, 40.0, Color.GREEN)
 
     //private val circle = KeyView(KeyCode.A, Color.BLACK, 74.0)
 
     private val triggerViews = Group()
 
+    private val good = ImageView(Image(javaClass.getResourceAsStream("checkmark.png")))
+    private val bad = ImageView(Image(javaClass.getResourceAsStream("cross.png")))
+
     init {
         val line1 = Line(0.0, 0.0, 0.0, 300.0)
-        val line2 = Line(80.0, 0.0, 80.0, 300.0)
+        val line2 = Line(100.0, 0.0, 100.0, 300.0)
         line1.strokeWidth = 2.0
         line2.strokeWidth = 2.0
 
-        val bg = Rectangle(80.0, 300.0, Color.color(0.2, 0.2, 0.8, 0.7))
-
 
         circle.opacity = 0.0
+        circle.children.addAll(bg, good)
+
 
 
         animationGood = AnimationDSL().duration(Duration.seconds(0.49))
@@ -51,7 +59,7 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
                 .onFinished(Runnable { circle.opacity = 0.0 })
                 .translate(circle)
                 .from(Point2D(0.0, 40.0))
-                .to(Point2D(0.0, -90.0))
+                .to(Point2D(0.0, -40.0))
                 .build()
 
         animationBad = AnimationDSL().duration(Duration.seconds(0.49))
@@ -59,7 +67,7 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
                 .interpolator(Interpolators.ELASTIC.EASE_OUT())
                 .translate(circle)
                 .from(Point2D(0.0, 40.0))
-                .to(Point2D(0.0, 170.0))
+                .to(Point2D(0.0, 190.0))
                 .build()
 
         children.addAll(line1, line2, circle, triggerViews)
@@ -85,10 +93,15 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
 
         if (miniGame.press(key)) {
             animationGood.start()
-            circle.fill = Color.GREEN
+            bg.fill = Color.GREEN
+
+            circle.children[1] = good
+
         } else {
             animationBad.start()
-            circle.fill = Color.RED
+            bg.fill = Color.RED
+
+            circle.children[1] = bad
         }
     }
 }
@@ -100,7 +113,7 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
 class TriggerSequenceMiniGame : MiniGame<TriggerSequenceResult>() {
 
     var numTriggers = 4
-    var moveSpeed = 200
+    var moveSpeed = 350
 
     private var currentIndex = 0
 
@@ -108,7 +121,11 @@ class TriggerSequenceMiniGame : MiniGame<TriggerSequenceResult>() {
             KeyTrigger(KeyCode.F),
             KeyTrigger(KeyCode.F),
             KeyTrigger(KeyCode.G),
-            KeyTrigger(KeyCode.F)
+            KeyTrigger(KeyCode.F),
+            KeyTrigger(KeyCode.F),
+            KeyTrigger(KeyCode.L),
+            KeyTrigger(KeyCode.I),
+            KeyTrigger(KeyCode.A)
     )
 
     val views = arrayListOf<TriggerView>()

@@ -87,6 +87,7 @@ public class MiniGameApp extends GameApplication {
         addUINode(debugText, 600, 300);
         addUINode(btn, 150, 150);
         addUINode(new FXGLButton("Lockpicking"), 150, 200);
+        addUINode(new FXGLButton("Trigger Mash"), 150, 400);
 
         var btnCheck = new FXGLButton("Skill Check");
 
