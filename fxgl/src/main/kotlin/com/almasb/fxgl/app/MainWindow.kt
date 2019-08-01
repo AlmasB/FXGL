@@ -304,13 +304,9 @@ internal class MainWindow(
             scaleRatioX.bind(Bindings.min(
                     scaledWidth.divide(settings.width), scaledHeight.divide(settings.height)
             ))
-        } else {
-            scaleRatioX.bind(scaledWidth.divide(settings.width))
-        }
-
-        if (settings.isPreserveResizeRatio) {
             scaleRatioY.bind(scaleRatioX)
         } else {
+            scaleRatioX.bind(scaledWidth.divide(settings.width))
             scaleRatioY.bind(scaledHeight.divide(settings.height))
         }
 
