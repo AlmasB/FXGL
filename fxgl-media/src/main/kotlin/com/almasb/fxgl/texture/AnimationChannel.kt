@@ -35,7 +35,6 @@ class AnimationChannel(val image: Image,
             numFrames - 1
     )
 
-    @Deprecated("Use diff ctor")
     constructor(image: Image,
                 framesPerRow: Int,
                 frameWidth: Int,

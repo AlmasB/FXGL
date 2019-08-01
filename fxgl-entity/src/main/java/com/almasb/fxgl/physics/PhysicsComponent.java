@@ -362,19 +362,6 @@ public final class PhysicsComponent extends Component {
     }
 
     /**
-     * Deprecated: use overwritePosition(point).
-     *
-     * Repositions an entity that supports physics directly in the physics world.
-     * Note: depending on how it is used, it may cause non-physical behavior.
-     *
-     * @param point point in game world coordinates (pixels)
-     */
-    @Deprecated
-    public void reposition(Point2D point) {
-        overwritePosition(point);
-    }
-
-    /**
      * Repositions an entity that supports physics directly in the physics world.
      * Note: depending on how it is used, it may cause non-physical behavior.
      *

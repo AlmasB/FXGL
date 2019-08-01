@@ -130,19 +130,21 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getGameWorld() = engine.playState.gameWorld
     @JvmStatic fun getPhysicsWorld() = engine.playState.physicsWorld
     @JvmStatic fun getGameScene() = engine.playState
+
+    /**
+     * @return play state timer
+     */
     @JvmStatic fun getGameTimer(): Timer = engine.playState.timer
+
+    /**
+     * @return 'always-on' (regardless of active scene) engine timer
+     */
     @JvmStatic fun getEngineTimer(): Timer = engine.engineTimer
 
     /**
      * @return play state input
      */
     @JvmStatic fun getInput(): Input = engine.playState.input
-
-    /**
-     * @return play state timer
-     */
-    @Deprecated("Use getGameTimer()", ReplaceWith("getGameTimer()", "com.almasb.fxgl.dsl.FXGL.Companion.getGameTimer"))
-    @JvmStatic fun getMasterTimer(): Timer = getGameTimer()
 
     /**
      * @return new instance on each call
@@ -507,11 +509,11 @@ class FXGL private constructor() { companion object {
 
 /* TIMER */
 
-    @JvmStatic fun runOnce(action: Runnable, delay: Duration) = getMasterTimer().runOnceAfter(action, delay)
+    @JvmStatic fun runOnce(action: Runnable, delay: Duration) = getGameTimer().runOnceAfter(action, delay)
 
-    @JvmStatic fun run(action: Runnable, interval: Duration) = getMasterTimer().runAtInterval(action, interval)
+    @JvmStatic fun run(action: Runnable, interval: Duration) = getGameTimer().runAtInterval(action, interval)
 
-    @JvmStatic fun run(action: Runnable, interval: Duration, limit: Int) = getMasterTimer().runAtInterval(action, interval, limit)
+    @JvmStatic fun run(action: Runnable, interval: Duration, limit: Int) = getGameTimer().runAtInterval(action, interval, limit)
 
     /* DEBUG */
     @JvmStatic fun debug(message: String) = getDevPane().pushMessage(message)

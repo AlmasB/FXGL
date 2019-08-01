@@ -149,17 +149,12 @@ class GameSettings(
         var stageStyle: StageStyle = StageStyle.DECORATED,
         var appIcon: String = "fxgl_icon.png",
 
-        @Deprecated("Use getCSSList() instead")
-        @get:JvmName("getCSS")
-        @set:JvmName("setCSS")
-        var css: String = "fxgl_dark.css",
-
         /**
          * Add extra css from /assets/ui/css/.
          */
         @get:JvmName("getCSSList")
         @set:JvmName("setCSSList")
-        var cssList: List<String> = arrayListOf(css),
+        var cssList: List<String> = arrayListOf("fxgl_dark.css"),
 
         /**
          * Set font to be used in UI controls.
@@ -241,7 +236,6 @@ class GameSettings(
                 enabledMenuItems,
                 stageStyle,
                 appIcon,
-                css,
                 unmodifiableList(cssList),
                 fontUI,
                 fontMono,
@@ -355,10 +349,6 @@ class ReadOnlyGameSettings internal constructor(
         val enabledMenuItems: EnumSet<MenuItem>,
         val stageStyle: StageStyle,
         val appIcon: String,
-
-        @Deprecated("Use getCSSList()")
-        @get:JvmName("getCSS")
-        val css: String,
 
         @get:JvmName("getCSSList")
         val cssList: List<String>,
