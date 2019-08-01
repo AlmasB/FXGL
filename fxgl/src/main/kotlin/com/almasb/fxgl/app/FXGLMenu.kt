@@ -346,13 +346,6 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         val vbox = VBox()
 
-        if (getSettings().isManualResizeEnabled) {
-            val btnFixRatio = getUIFactory().newButton(localizedStringProperty("menu.fixRatio"))
-            btnFixRatio.setOnAction { e -> controller.fixAspectRatio() }
-
-            vbox.children.add(btnFixRatio)
-        }
-
         if (getSettings().isFullScreenAllowed) {
             val cbFullScreen = getUIFactory().newCheckBox()
             cbFullScreen.isSelected = false

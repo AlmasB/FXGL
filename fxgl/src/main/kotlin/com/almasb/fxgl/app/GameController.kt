@@ -46,8 +46,6 @@ interface GameController {
 
     fun saveScreenshot(): Boolean
 
-    fun fixAspectRatio()
-
     fun restoreDefaultProfileSettings()
 
     fun pushSubScene(subScene: SubScene)

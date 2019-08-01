@@ -540,10 +540,6 @@ internal class Engine(
         return mainWindow.saveScreenshot()
     }
 
-    override fun fixAspectRatio() {
-        mainWindow.fixAspectRatio()
-    }
-
     override fun saveProfile() {
         saveLoadManager.saveProfileTask(createProfile())
                 .onFailure { error -> "Failed to save profile: ${profileName.value} - $error" }

@@ -321,19 +321,6 @@ internal class MainWindow(
         log.debug("Stage size: ${stage.width} x ${stage.height}")
     }
 
-    fun fixAspectRatio() {
-        log.debug("Fixing aspect ratio")
-
-        val ratio = settings.width.toDouble() / settings.height
-
-        stage.height = scaledWidth.value / ratio + windowBorderHeight
-
-        log.debug("Scaled size: ${scaledWidth.value} x ${scaledHeight.value}")
-        log.debug("Scaled ratio: (${scaleRatioX.value}, ${scaleRatioY.value})")
-        log.debug("Scene size: ${stage.scene.width} x ${stage.scene.height}")
-        log.debug("Stage size: ${stage.width} x ${stage.height}")
-    }
-
     /**
      * Register an FXGL scene to be managed by display settings.
      *
