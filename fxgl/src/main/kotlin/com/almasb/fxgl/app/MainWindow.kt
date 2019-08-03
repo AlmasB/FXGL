@@ -153,20 +153,17 @@ internal class MainWindow(
                 e.consume()
 
                 if (settings.isCloseConfirmation) {
-                    // TODO: native_fail
                     if (canShowCloseDialog()) {
-                        FXGL.getDisplay().showConfirmationBox(Local.getLocalizedString("dialog.exitGame"), { yes ->
-                            if (yes)
-                                FXGL.getGameController().exit()
-                        })
+                        showConfirmExitDialog()
                     }
                 } else {
                     FXGL.getGameController().exit()
                 }
             }
 
-            // TODO: native_fail
-            icons.add(FXGL.image(settings.appIcon))
+            if (!settings.isExperimentalNative) {
+                icons.add(FXGL.image(settings.appIcon))
+            }
 
             if (settings.isFullScreenAllowed) {
                 fullScreenExitHint = ""
@@ -180,6 +177,13 @@ internal class MainWindow(
 
             sizeToScene()
             centerOnScreen()
+        }
+    }
+
+    private fun showConfirmExitDialog() {
+        FXGL.getDisplay().showConfirmationBox(Local.getLocalizedString("dialog.exitGame")) { yes ->
+            if (yes)
+                FXGL.getGameController().exit()
         }
     }
 
@@ -330,8 +334,7 @@ internal class MainWindow(
             scene.appendCSS(FXGL.getAssetLoader().loadCSS(it))
         }
 
-        // TODO: native_fail
-        if (settings.isDesktop && scene.root.cursor == null) {
+        if (!settings.isExperimentalNative && settings.isDesktop && scene.root.cursor == null) {
             scene.setCursor(FXGL.getAssetLoader().loadCursorImage("fxgl_default.png"), Point2D(7.0, 6.0))
         }
 

@@ -180,6 +180,7 @@ class GameSettings(
         /* EXPERIMENTAL */
 
         var isExperimentalTiledLargeMap: Boolean = false,
+        var isExperimentalNative: Boolean = false,
 
         /* CONFIGS */
 
@@ -248,6 +249,7 @@ class GameSettings(
                 pixelsPerMeter,
                 secondsIn24h,
                 isExperimentalTiledLargeMap,
+                isExperimentalNative,
                 configClass,
                 unmodifiableList(engineServices),
                 sceneFactory,
@@ -377,6 +379,7 @@ class ReadOnlyGameSettings internal constructor(
         /* EXPERIMENTAL */
 
         val isExperimentalTiledLargeMap: Boolean,
+        val isExperimentalNative: Boolean,
 
         /* CONFIGS */
 
