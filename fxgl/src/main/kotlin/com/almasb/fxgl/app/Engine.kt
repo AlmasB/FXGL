@@ -143,7 +143,10 @@ internal class Engine(
     }
 
     fun startLoop() {
-        saveLoadManager = SaveLoadManager(profileName.value)
+        // TODO: a quick fix for now, but will need to start using cross-platform File System access
+        if (!settings.isExperimentalNative) {
+            saveLoadManager = SaveLoadManager(profileName.value)
+        }
 
         val start = System.nanoTime()
 
