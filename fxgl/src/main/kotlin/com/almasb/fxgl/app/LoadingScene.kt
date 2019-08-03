@@ -42,8 +42,10 @@ open class LoadingScene : FXGLScene() {
         }
 
         with(text) {
-            // TODO: native_fail
-            font = FXGL.getUIFactory().newFont(24.0)
+            if (!settings.isExperimentalNative) {
+                font = FXGL.getUIFactory().newFont(24.0)
+            }
+
             fill = Color.WHITE
         }
 

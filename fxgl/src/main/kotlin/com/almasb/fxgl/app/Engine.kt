@@ -176,12 +176,15 @@ internal class Engine(
 
             isFirstRun = !fs.exists("system/")
 
-            // TODO: native_fail
-            if (isFirstRun) {
-                createRequiredDirs()
-                loadDefaultSystemData()
+            if (!settings.isExperimentalNative) {
+                if (isFirstRun) {
+                    createRequiredDirs()
+                    loadDefaultSystemData()
+                } else {
+                    loadSystemData()
+                }
             } else {
-                loadSystemData()
+                loadDefaultSystemData()
             }
 
             initAppScenes()
@@ -604,8 +607,9 @@ internal class Engine(
         log.debug("Shutting down background threads")
         executor.shutdownNow()
 
-        // TODO: native_fail
-        saveSystemData()
+        if (!settings.isExperimentalNative) {
+            saveSystemData()
+        }
 
         log.debug("Closing logger and exiting JavaFX")
 
