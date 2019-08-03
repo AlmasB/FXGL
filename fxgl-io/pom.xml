@@ -28,13 +28,13 @@
         <dependency>
             <groupId>com.gluonhq.attach</groupId>
             <artifactId>storage</artifactId>
-            <version>4.0.2</version>
+            <version>${attach.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.gluonhq.attach</groupId>
             <artifactId>util</artifactId>
-            <version>4.0.2</version>
+            <version>${attach.version}</version>
         </dependency>
     </dependencies>
 
