@@ -22,6 +22,25 @@ import javafx.stage.Stage;
  */
 public class NativeApp extends GameApplication {
 
+    @Override
+    protected void initGame() {
+        FXGL.entityBuilder()
+                .at(200, 200)
+                .view(new Circle(15, Color.BLUE))
+                .buildAndAttach();
+    }
+
+    @Override
+    protected void initUI() {
+        Button btn = new Button("HELLO");
+
+        btn.setOnAction(e -> {
+            FXGL.getGameWorld().getEntities().get(0).translate(5, 5);
+        });
+
+        FXGL.addUINode(btn, 100, 100);
+    }
+
     public static void main(String[] args) {
 //        System.setProperty("os.target", "ios");
 //        System.setProperty("os.name", "iOS");
