@@ -52,6 +52,7 @@ public class NativeApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setExperimentalNative(true);
         settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 }
