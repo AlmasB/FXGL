@@ -7,17 +7,23 @@
 package com.almasb.fxgl.io
 
 import com.almasb.sslogger.Logger
+import com.gluonhq.attach.storage.StorageService
 import java.io.*
 
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class FSServiceImpl : FSService {
+internal class FSServiceImpl(isDesktop: Boolean) : FSService {
 
     private val log = Logger.get(javaClass)
 
-    private val rootStorage = File(System.getProperty("user.dir") + "/")
+    private val rootStorage = if (isDesktop)
+        File(System.getProperty("user.dir") + "/")
+    else
+        StorageService.create()
+                .flatMap { it.privateStorage }
+                .orElseThrow { RuntimeException("No private storage present") }
 
     override fun exists(pathName: String): Boolean {
         return toFile(pathName).exists()

@@ -11,11 +11,30 @@
 
     <artifactId>fxgl-io</artifactId>
 
+    <repositories>
+        <repository>
+            <id>nexus-gluon</id>
+            <url>https://nexus.gluonhq.com/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-core</artifactId>
             <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.gluonhq.attach</groupId>
+            <artifactId>storage</artifactId>
+            <version>4.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.gluonhq.attach</groupId>
+            <artifactId>util</artifactId>
+            <version>4.0.2</version>
         </dependency>
     </dependencies>
 

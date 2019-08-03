@@ -63,7 +63,7 @@ class FSTest {
         }
     }
 
-    private val fs = FS()
+    private val fs = FS(true)
 
     @Test
     fun `Exists correctly reports dirs and files`() {

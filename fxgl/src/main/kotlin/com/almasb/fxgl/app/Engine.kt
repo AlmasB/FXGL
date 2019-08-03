@@ -94,7 +94,7 @@ internal class Engine(
     internal val eventBus by lazy { EventBus() }
     internal val display by lazy { dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
-    internal val fs by lazy { FS() }
+    internal val fs by lazy { FS(settings.isDesktop) }
 
     internal val devPane by lazy { DevPane(playState, settings) }
 
@@ -143,10 +143,7 @@ internal class Engine(
     }
 
     fun startLoop() {
-        // TODO: a quick fix for now, but will need to start using cross-platform File System access
-        if (!settings.isExperimentalNative) {
-            saveLoadManager = SaveLoadManager(profileName.value)
-        }
+        saveLoadManager = SaveLoadManager(profileName.value)
 
         val start = System.nanoTime()
 
