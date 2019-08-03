@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.entity.level.tiled
 
+import com.almasb.sslogger.Logger
 import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
@@ -17,6 +18,8 @@ import java.net.URL
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
+
+    private val log = Logger.get<TilesetLoader>()
 
     private val imageCache = hashMapOf<String, Image>()
 
@@ -48,12 +51,16 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
     }
 
     fun loadView(layerName: String): Node {
+        log.debug("Loading view for layer $layerName")
+
         val layer = map.getLayerByName(layerName)
 
         val buffer = WritableImage(
                 layer.width * map.tilewidth,
                 layer.height * map.tileheight
         )
+
+        log.debug("Created buffer with size ${buffer.width}x${buffer.height}")
 
         for (i in 0 until layer.data.size) {
 
@@ -81,10 +88,15 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
 
             val sourceImage = loadTilesetImage(tileset)
 
+            val srcx = tilex * w + tileset.margin + tilex * tileset.spacing
+            val srcy = tiley * h + tileset.margin + tiley * tileset.spacing
+
+            log.debug("Writing to buffer: dst=${x*w},${y*h}, w=$w,h=$h, src=$srcx,$srcy")
+
             buffer.pixelWriter.setPixels(x * w, y * h,
                     w, h, sourceImage.pixelReader,
-                    tilex * w + tileset.margin + tilex * tileset.spacing,
-                    tiley * h + tileset.margin + tiley * tileset.spacing)
+                    srcx,
+                    srcy)
         }
 
         return ImageView(buffer)
