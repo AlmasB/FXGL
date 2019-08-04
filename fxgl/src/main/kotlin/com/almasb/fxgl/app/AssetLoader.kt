@@ -117,7 +117,8 @@ class AssetLoader {
                 return image
             }
         } catch (e: Exception) {
-            throw loadFailed(name, e)
+            log.warning("Failed to load texture $name", e)
+            return getDummyImage()
         }
     }
 
@@ -137,21 +138,7 @@ class AssetLoader {
      * @throws IllegalArgumentException if asset not found or loading error
      */
     fun loadTexture(name: String): Texture {
-        val asset = getAssetFromCache(TEXTURES_DIR + name)
-        if (asset != null) {
-            return Texture(Image::class.java.cast(asset))
-        }
-
-        try {
-            getStream(TEXTURES_DIR + name).use {
-                val texture = Texture(Image(it))
-                cachedAssets.put(TEXTURES_DIR + name, texture.image)
-                return texture
-            }
-        } catch (e: Exception) {
-            log.warning("Failed to load texture $name", e)
-            return Texture(getDummyImage())
-        }
+        return Texture(loadImage(name))
     }
 
     /**
