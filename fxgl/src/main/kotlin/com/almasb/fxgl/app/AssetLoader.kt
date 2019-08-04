@@ -70,7 +70,6 @@ class AssetLoader {
     private val SOUNDS_DIR = ASSETS_DIR + "sounds/"
     private val MUSIC_DIR = ASSETS_DIR + "music/"
     private val TEXT_DIR = ASSETS_DIR + "text/"
-    private val KV_DIR = ASSETS_DIR + "kv/"
     private val JSON_DIR = ASSETS_DIR + "json/"
     private val TMX_DIR = ASSETS_DIR + "tmx/"
     private val BINARY_DIR = ASSETS_DIR + "data/"
