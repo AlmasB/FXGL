@@ -63,25 +63,6 @@ class AudioPlayer : EngineService {
     }
 
     /**
-     * @param sound sound
-     * @param soundPosition where sound is playing
-     * @param earPosition where sound is heard
-     * @param maxDistance how far the sound can be heard before it's "full" right or "full" left,
-     *                    i.e. if dist > maxDistance then sound balance is set to max (1.0) in that direction
-     */
-    fun playPositionalSound(sound: Sound, soundPosition: Point2D, earPosition: Point2D, maxDistance: Double) {
-        val rawBalance = earPosition.distance(soundPosition) / maxDistance
-
-        sound.balance = if (soundPosition.x > earPosition.x) {
-            rawBalance
-        } else {
-            -rawBalance
-        }
-
-        playSound(sound)
-    }
-
-    /**
      * Plays given sound based on its properties.
      *
      * @param sound sound to play
@@ -156,7 +137,6 @@ class AudioPlayer : EngineService {
     }
 
     fun loopMusic(music: Music) {
-        music.cycleCount = Integer.MAX_VALUE
         music.audio.setLooping(true)
         playMusic(music)
     }

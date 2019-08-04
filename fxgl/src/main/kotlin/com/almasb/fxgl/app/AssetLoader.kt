@@ -9,6 +9,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.audio.AudioType
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
+import com.almasb.fxgl.audio.getDummyAudio
 import com.almasb.fxgl.audio.impl.DesktopAudioService
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.dsl.FXGL
@@ -231,7 +232,8 @@ class AssetLoader {
             cachedAssets.put(SOUNDS_DIR + name, sound)
             return sound
         } catch (e: Exception) {
-            throw loadFailed(name, e)
+            log.warning("Failed to load sound $name", e)
+            return Sound(getDummyAudio())
         }
     }
 
@@ -257,7 +259,8 @@ class AssetLoader {
             cachedAssets.put(MUSIC_DIR + name, music)
             return music
         } catch (e: Exception) {
-            throw loadFailed(name, e)
+            log.warning("Failed to load music $name", e)
+            return Music(getDummyAudio())
         }
     }
 
@@ -340,7 +343,8 @@ class AssetLoader {
         try {
             getStream(CURSORS_DIR + name).use { return Image(it) }
         } catch (e: Exception) {
-            throw loadFailed(name, e)
+            log.warning("Failed to load cursor image $name", e)
+            return getDummyImage()
         }
     }
 
@@ -478,9 +482,9 @@ class AssetLoader {
         if (asset != null) {
             log.debug("Loading from cache: $name")
             return asset
-        } else {
-            return null
         }
+
+        return null
     }
 
     /**
