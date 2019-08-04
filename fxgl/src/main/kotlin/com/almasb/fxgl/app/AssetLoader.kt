@@ -36,27 +36,23 @@ import java.util.*
 
 /**
  * Handles all resource (asset) loading operations.
- * <p>
- * The "assets" directory must be located in source folder ("src" by default).
- * If you are using the Maven directory structure then under "src/main/resources/".
- * <p>
+ * 
+ * The "assets" directory must be located in "src/main/resources/" (using the Maven directory structure).
+ * Alternatively, (not recommended) source folder ("src" by default).
+ * 
  * Resources (assets) will be searched for in these specified directories:
- * <ul>
- * <li>Texture - /assets/textures/</li>
- * <li>Sound - /assets/sounds/</li>
- * <li>Music - /assets/music/</li>
- * <li>Text (List&lt;String&gt;) - /assets/text/</li>
- * <li>KVFile - /assets/kv/</li>
- * <li>Data - /assets/data/</li>
- * <li>Scripts - /assets/scripts/</li>
- * <li>Behavior Tree - /assets/ai/</li>
- * <li>FXML - /assets/ui/</li>
- * <li>CSS - /assets/ui/css/</li>
- * <li>Font - /assets/ui/fonts/</li>
- * <li>App icons - /assets/ui/icons/</li>
- * <li>Cursors - /assets/ui/cursors/</li>
- * <li>Resource bundles - /assets/properties/</li>
- * </ul>
+ * 
+ * Texture / images - /assets/textures/
+ * Sound - /assets/sounds/
+ * Music - /assets/music/
+ * Text (List of String) - /assets/text/
+ * Scripts - /assets/scripts/
+ * Behavior Tree - /assets/ai/
+ * FXML - /assets/ui/
+ * CSS - /assets/ui/css/
+ * Font - /assets/ui/fonts/
+ * Cursors - /assets/ui/cursors/
+ * Resource bundles - /assets/properties/
  *
  * If you need to access the "raw" JavaFX objects (e.g. Image), you can use
  * {@link AssetLoader#getStream(String)} to obtain an InputStream and then
@@ -73,7 +69,6 @@ class AssetLoader {
     private val TEXT_DIR = ASSETS_DIR + "text/"
     private val JSON_DIR = ASSETS_DIR + "json/"
     private val TMX_DIR = ASSETS_DIR + "tmx/"
-    private val BINARY_DIR = ASSETS_DIR + "data/"
     private val SCRIPTS_DIR = ASSETS_DIR + "scripts/"
     private val PROPERTIES_DIR = ASSETS_DIR + "properties/"
     private val AI_DIR = ASSETS_DIR + "ai/"
@@ -375,11 +370,9 @@ class AssetLoader {
      * Loads a CSS file from /assets/ui/css/.
      * Can be applied by calling object.getStyleSheets().add(css.getExternalForm()).
      * Either returns ready CSS or throws exception in case of errors.
-
+     * 
      * @param name CSS file name without the /assets/ui/css/, e.g. "ui_button.css"
-     * *
      * @return css
-     * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
     fun loadCSS(name: String): CSS {
@@ -425,15 +418,6 @@ class AssetLoader {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun <T> loadDataInternal(name: String): T {
-        try {
-            ObjectInputStream(getStream(BINARY_DIR + name)).use { return it.readObject() as T }
-        } catch (e: Exception) {
-            throw loadFailed(name, e)
-        }
-    }
-
     /**
      * Returns a valid URL to resource or throws [IllegalArgumentException].
      *
@@ -441,7 +425,7 @@ class AssetLoader {
      * @return URL to resource
      */
     private fun getURL(name: String): URL {
-        log.debug("Loading from disk: " + name)
+        log.debug("Loading from file system: $name")
 
         // try /assets/ from user module using their class
         return GameApplication.FXGLApplication.app?.javaClass?.getResource(name)
@@ -503,105 +487,13 @@ class AssetLoader {
     }
 
     /**
-     * Pre-loads all textures / sounds / music / text / fonts and binary data
-     * from their respective folders.
-     */
-//    fun cache() {
-//        log.debug("Caching assets")
-//
-//        loadFileNames(TEXTURES_DIR).forEach { loadTexture(it) }
-//        loadFileNames(SOUNDS_DIR).forEach { loadSound(it) }
-//        loadFileNames(MUSIC_DIR).forEach { loadMusic(it) }
-//        loadFileNames(TEXT_DIR).forEach { loadText(it) }
-//        loadFileNames(FONTS_DIR).forEach { loadFont(it) }
-//        loadFileNames(BINARY_DIR).forEach { loadDataInternal(it) }
-//
-//        log.debug("Caching complete. Size: ${cachedAssets.size()}")
-//    }
-
-    /**
      * Release all cached assets.
      */
     fun clearCache() {
         log.debug("Clearing assets cache")
         cachedAssets.clear()
     }
-
-    /**
-     * Loads file names from a directory.
-     * Note: directory name must be in the format "/assets/...".
-     * Returned file names are relativized to the given directory name.
-     *
-     * @param directory name of directory
-     * @return list of file names
-     * @throws IllegalArgumentException if directory does not start with "/assets/" or was not found
-     */
-//    fun loadFileNames(directory: String): List<String> {
-//        require(directory.startsWith(ASSETS_DIR)) {
-//            "Directory must start with: $ASSETS_DIR Provided: $directory"
-//        }
-//
-//        try {
-//            val url = javaClass.getResource(directory)
-//            if (url != null) {
-//                if (url.toString().startsWith("jar"))
-//                    return loadFileNamesJar(directory.substring(1))
-//
-//                val dir = Paths.get(url.toURI())
-//
-//                if (Files.exists(dir)) {
-//                    return Files.walk(dir)
-//                            .filter { Files.isRegularFile(it) }
-//                            .map { dir.relativize(it).toString().replace("\\", "/") }
-//                            .collect(Collectors.toList<String>())
-//                }
-//            }
-//
-//            return loadFileNamesJar(directory.substring(1))
-//        } catch (e: Exception) {
-//            throw loadFailed(directory, e)
-//        }
-//    }
-
-    /**
-     * Loads file names from a directory when running within a jar.
-     * If it contains other folders they'll be searched too.
-     *
-     * @param folderName folder files of which need to be retrieved
-     * @return list of file names
-     */
-//    private fun loadFileNamesJar(folderName: String): List<String> {
-//        val fileNames = ArrayList<String>()
-//        val src = AssetLoader::class.java.protectionDomain.codeSource
-//        if (src != null) {
-//            val jar = src.location
-//            try {
-//                jar.openStream().use {
-//                    ZipInputStream(it).use { zip ->
-//                        var ze: ZipEntry
-//                        while (true) {
-//                            ze = zip.nextEntry ?: break
-//
-//                            val entryName = ze.name
-//                            if (entryName.startsWith(folderName)) {
-//                                if (entryName.endsWith("/"))
-//                                    continue
-//                                fileNames.add(entryName.substring(entryName.indexOf(folderName) + folderName.length))
-//                            }
-//                        }
-//                    }
-//                }
-//            } catch (e: IOException) {
-//                log.warning("Failed to load file names from jar - " + e)
-//            }
-//
-//        } else {
-//            log.warning("Failed to load file names from jar - No code source")
-//        }
-//
-//        return fileNames
-//    }
-
+    
     /**
      * Constructs new IllegalArgumentException with "load failed" message
      * and with relevant information about the asset.
