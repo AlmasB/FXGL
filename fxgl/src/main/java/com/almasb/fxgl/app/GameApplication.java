@@ -242,7 +242,7 @@ public abstract class GameApplication {
                     engine.addService(ReflectionUtils.newInstance(serviceClass))
             );
 
-            if (settings.getApplicationMode() != ApplicationMode.RELEASE) {
+            if (settings.getApplicationMode() != ApplicationMode.RELEASE && settings.isDeveloperMenuEnabled()) {
                 engine.addService(new DevService());
             }
 

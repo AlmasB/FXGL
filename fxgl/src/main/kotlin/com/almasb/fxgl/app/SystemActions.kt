@@ -28,10 +28,16 @@ object SystemActions {
      */
     fun bind(input: Input) {
         input.addAction(screenshot(), KeyCode.P)
-        input.addAction(devOptions(), KeyCode.DIGIT1)
-        input.addAction(devConsole(), KeyCode.DIGIT2)
-        input.addAction(sysdump(), KeyCode.DIGIT9, InputModifier.CTRL)
-        input.addAction(restartGame(), KeyCode.R, InputModifier.CTRL)
+
+        if (FXGL.getSettings().applicationMode != ApplicationMode.RELEASE) {
+            if (FXGL.getSettings().isDeveloperMenuEnabled) {
+                input.addAction(devOptions(), KeyCode.DIGIT1)
+                input.addAction(devConsole(), KeyCode.DIGIT2)
+            }
+
+            input.addAction(sysdump(), KeyCode.DIGIT9, InputModifier.CTRL)
+            input.addAction(restartGame(), KeyCode.R, InputModifier.CTRL)
+        }
     }
 
     private fun screenshot() = object : UserAction("Screenshot") {
