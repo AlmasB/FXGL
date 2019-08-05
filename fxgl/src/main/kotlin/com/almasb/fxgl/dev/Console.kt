@@ -140,6 +140,7 @@ class Console : Pane() {
     }
 
     fun pushMessage(message: String) {
+        // TODO: very rarely this crashes, why? a javafx bug?
         output.appendText(message + "\n")
     }
 

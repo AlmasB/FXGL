@@ -18,6 +18,8 @@ import javafx.scene.shape.Circle
  * Represents the visual aspect of an entity.
  * Note that the view need not be associated with an entity.
  *
+ * TODO: consider for removal
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 open class EntityView : Parent, View {
