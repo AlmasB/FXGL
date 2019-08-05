@@ -55,6 +55,10 @@ public class ScrollingBackgroundSample extends GameApplication {
                 player.translateX(-10);
             }
         }, KeyCode.A);
+
+        onKeyDown(KeyCode.F, "shake", () -> {
+            getGameScene().getViewport().shakeTranslational(5);
+        });
     }
 
     @Override
@@ -81,6 +85,7 @@ public class ScrollingBackgroundSample extends GameApplication {
 //                .buildAndAttach();
 
         getGameScene().getViewport().bindToEntity(player, 0, 0);
+        getGameScene().getViewport().setLazy(true);
 
         entityBuilder()
                 .view(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_wrap.png", 1066, 600),

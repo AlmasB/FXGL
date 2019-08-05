@@ -51,6 +51,12 @@ class Viewport
     val visibleArea: Rectangle2D
         get() = Rectangle2D(getX(), getY(), width, height)
 
+    /*
+    Moving origin X and Y moves the viewport.
+    Moving the camera does nothing.
+    Explanation given below for camera's purpose.
+     */
+
     /**
      * Origin x.
      */
@@ -83,8 +89,6 @@ class Viewport
     fun angleProperty() = angle
     fun setAngle(value: Double) = angleProperty().set(value)
 
-    private var entityToFollow: Entity? = null
-
     private var boundX: NumberBinding? = null
     private var boundY: NumberBinding? = null
 
@@ -95,10 +99,14 @@ class Viewport
 
     var isLazy = false
 
+    /**
+     * This is only used for visual effects.
+     * Its x and y follow the actual x and y of viewport.
+     */
     val camera = Entity()
 
     init {
-        bindToEntity(camera, 0.0, 0.0)
+        //bindToEntity(camera, 0.0, 0.0)
     }
 
     /**
@@ -128,9 +136,6 @@ class Viewport
 
         boundX = Bindings.`when`(bx.greaterThan(maxX.subtract(width))).then(maxX.subtract(width)).otherwise(boundX)
         boundY = Bindings.`when`(by.greaterThan(maxY.subtract(height))).then(maxY.subtract(height)).otherwise(boundY)
-
-//        x.bind(boundX)
-//        y.bind(boundY)
     }
 
 //    fun bindToFit(xMargin: Double, yMargin: Double, vararg entities: Entity) {
@@ -327,6 +332,7 @@ class Viewport
             flashRect.opacity = opacity
         }
 
+        // TODO: cleanup
         boundX?.let {
             if (!isLazy) {
                 setX(boundX!!.doubleValue())
@@ -376,8 +382,21 @@ class Viewport
             }
 
             if (FXGLMath.abs(offset.x) < 0.5 && FXGLMath.abs(offset.y) < 0.5) {
-                //setX(originBeforeShake.x.toDouble())
-                //setY(originBeforeShake.y.toDouble())
+                if (boundX != null) {
+                    if (!isLazy) {
+                        setX(0.0 + boundX!!.doubleValue())
+                        setY(0.0 + boundY!!.doubleValue())
+                    } else {
+                        val sourceX = 0.0 + getX()
+                        val sourceY = 0.0 + getY()
+
+                        setX(sourceX * 0.9 + boundX!!.doubleValue() * 0.1)
+                        setY(sourceY * 0.9 + boundY!!.doubleValue() * 0.1)
+                    }
+                } else {
+                    setX(originBeforeShake.x.toDouble())
+                    setY(originBeforeShake.y.toDouble())
+                }
 
                 shakingTranslate = false
             }
@@ -399,7 +418,7 @@ class Viewport
             }
         }
 
-        // TODO: bidirectional binding?
+        // update camera's overlay location based on viewport X Y
         camera.x = getX()
         camera.y = getY()
     }
