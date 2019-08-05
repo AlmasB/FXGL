@@ -165,8 +165,8 @@ class DevService : EngineService {
     }
 
     private fun removeDebugView(entity: Entity) {
-        val view = debugViews.remove(entity)!!
-
-        entity.viewComponent.removeChild(view.node)
+        debugViews.remove(entity)?.let { view ->
+            entity.viewComponent.removeChild(view.node)
+        }
     }
 }
