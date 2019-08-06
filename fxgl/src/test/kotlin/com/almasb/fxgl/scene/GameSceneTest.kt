@@ -183,6 +183,26 @@ class GameSceneTest {
     }
 
     @Test
+    fun `Clear removes all game and ui views`() {
+        val gameRoot = gameScene.contentRoot.children[0] as Group
+
+        val view1 = GameView(Rectangle(), 1000)
+        gameScene.addGameView(view1)
+
+        val view2 = GameView(Rectangle(), 300)
+        gameScene.addGameView(view2)
+
+        val rect = Rectangle()
+
+        gameScene.addUINode(rect)
+
+        gameScene.clear()
+
+        assertThat(gameRoot.children.size, `is`(0))
+        assertThat(gameScene.uiNodes.size, `is`(0))
+    }
+
+    @Test
     fun `Set UI mouse transparent`() {
         val uiRoot = gameScene.contentRoot.children[1] as Group
 

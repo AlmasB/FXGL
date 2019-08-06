@@ -737,16 +737,16 @@ class EntityTest {
         assertThat(entity.typeComponent.value, `is`<Serializable>(TT.O))
     }
 
-    @Test
-    fun `View`() {
-        val r = Rectangle()
-        val eView = EntityView(r)
-
-        entity.view = eView
-
-        assertThat(entity.view, `is`<com.almasb.fxgl.core.View>(eView))
-        assertThat(entity.viewComponent.view, `is`<com.almasb.fxgl.core.View>(eView))
-    }
+//    @Test
+//    fun `View`() {
+//        val r = Rectangle()
+//        val eView = EntityView(r)
+//
+//        entity.view = eView
+//
+//        assertThat(entity.view, `is`<com.almasb.fxgl.core.View>(eView))
+//        assertThat(entity.viewComponent.view, `is`<com.almasb.fxgl.core.View>(eView))
+//    }
 
     @Test
     fun `Scale`() {

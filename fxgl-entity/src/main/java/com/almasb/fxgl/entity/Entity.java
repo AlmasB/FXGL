@@ -744,18 +744,6 @@ public class Entity {
 
     // BBOX END
 
-    // VIEW BEGIN
-
-    public final View getView() {
-        return this.view.getView();
-    }
-
-    public final void setView(View view) {
-        this.view.setView(view);
-    }
-
-    // VIEW END
-
     @Override
     public String toString() {
         // we want core components to be shown first for readability

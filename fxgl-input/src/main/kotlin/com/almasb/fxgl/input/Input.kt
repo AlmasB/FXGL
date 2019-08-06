@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.input
 
+import com.almasb.fxgl.input.virtual.VirtualButton
 import com.almasb.sslogger.Logger
 import javafx.collections.FXCollections
 import javafx.event.Event
@@ -273,6 +274,29 @@ class Input {
     }
 
     private fun isTriggerBound(trigger: Trigger) = bindings.values.any { it.trigger.value == trigger }
+
+    /* VIRTUAL */
+
+    private val virtualButtons = hashMapOf<VirtualButton, KeyCode>()
+
+    fun addAction(action: UserAction, key: KeyCode, virtualButton: VirtualButton) {
+        require(!isIllegal(key)) { "Cannot bind to illegal key: $key" }
+
+        addBinding(action, KeyTrigger(key, InputModifier.NONE))
+        addVirtualButton(virtualButton, key)
+    }
+
+    private fun addVirtualButton(virtualButton: VirtualButton, key: KeyCode) {
+        virtualButtons[virtualButton] = key
+    }
+
+    internal fun pressVirtual(virtualButton: VirtualButton) {
+        virtualButtons[virtualButton]?.let { mockKeyPress(it) }
+    }
+
+    internal fun releaseVirtual(virtualButton: VirtualButton) {
+        virtualButtons[virtualButton]?.let { mockKeyRelease(it) }
+    }
 
     /* MOCKING */
 

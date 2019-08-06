@@ -37,21 +37,31 @@ class AchievementManagerTest {
     private lateinit var achievementManager: AchievementManager
 
     private val a1 = Achievement("TestAchievement", "TestDescription", "", 0)
+    private val a2 = Achievement("TestAchievement2", "TestDescription2", "", 0)
 
     @BeforeEach
     fun setUp() {
         achievementManager = AchievementManager()
         val lookup = MethodHandles.lookup()
 
-        inject(lookup, achievementManager, "achievementsFromSettings", emptyList<Achievement>())
+        inject(lookup, achievementManager, "achievementsFromSettings", listOf(a2))
         inject(lookup, achievementManager, "eventBus",  EventBus())
+    }
+
+    @Test
+    fun `Settings integration test`() {
+        assertTrue(achievementManager.achievementsCopy.isEmpty())
+
+        achievementManager.onMainLoopStarting()
+
+        assertThat(achievementManager.achievementsCopy, contains(a2))
     }
 
     @Test
     fun `Register achievement`() {
         achievementManager.registerAchievement(a1)
 
-        assertThat(achievementManager.achievements, contains(a1))
+        assertThat(achievementManager.achievementsCopy, contains(a1))
         assertThat(achievementManager.getAchievementByName("TestAchievement"), `is`(a1))
     }
 
@@ -87,7 +97,7 @@ class AchievementManagerTest {
         newAchievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription", "", 0))
         newAchievementManager.read(bundle)
 
-        assertThat(newAchievementManager.achievements.size, `is`(2))
+        assertThat(newAchievementManager.achievementsCopy.size, `is`(2))
         assertTrue(newAchievementManager.getAchievementByName("TestAchievement").isAchieved)
         assertFalse(newAchievementManager.getAchievementByName("TestAchievement2").isAchieved)
     }
@@ -109,8 +119,21 @@ class AchievementManagerTest {
         map.setValue("varName", value1)
         assertFalse(a.isAchieved)
 
-        map.setValue("varName", varValue)
+        // check for game restart
+
+        val map2 = PropertyMap()
+        map2.setValue("varName", initialValue)
+
+        achievementManager.onGameReady(map2)
+
+        map2.setValue("varName", varValue)
         assertTrue(a.isAchieved)
+
+        // old map should no longer trigger achievement events
+        // currently it does since we do not clear listeners from the old map
+        // but it should not be possible to modify the old map
+//        map.setValue("varName", varValue)
+//        assertFalse(a.isAchieved)
     }
 
     companion object {

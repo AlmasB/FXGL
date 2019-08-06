@@ -34,6 +34,11 @@ class NotificationServiceProvider : NotificationService {
 
     private var showing = false
 
+    @Inject("width")
+    private var appWidth: Int = 0
+    @Inject("height")
+    private var appHeight: Int = 0
+
     @Inject("overlayRoot")
     private lateinit var root: Group
 
@@ -43,7 +48,12 @@ class NotificationServiceProvider : NotificationService {
     @Inject("notificationViewClass")
     private lateinit var notificationViewClass: Class<out NotificationView>
 
-    private val notificationView by lazy { ReflectionUtils.newInstance(notificationViewClass) }
+    private val notificationView by lazy {
+        ReflectionUtils.newInstance(notificationViewClass).also {
+            it.appWidth = appWidth
+            it.appHeight = appHeight
+        }
+    }
 
     /**
      * Shows a notification with given text.

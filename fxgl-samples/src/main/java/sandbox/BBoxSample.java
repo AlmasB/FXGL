@@ -58,14 +58,14 @@ public class BBoxSample extends GameApplication {
         getInput().addAction(new UserAction("Change view") {
             @Override
             protected void onActionBegin() {
-                player.setView(new EntityView(new Rectangle(40, 30, Color.BLUE)));
+                //player.setView(new EntityView(new Rectangle(40, 30, Color.BLUE)));
             }
         }, KeyCode.F);
 
         getInput().addAction(new UserAction("Change view 1") {
             @Override
             protected void onActionBegin() {
-                player.setView(texture("bird.png").toAnimatedTexture(2, Duration.seconds(0.33)).play());
+                //player.setView(texture("bird.png").toAnimatedTexture(2, Duration.seconds(0.33)).play());
             }
         }, KeyCode.G);
 

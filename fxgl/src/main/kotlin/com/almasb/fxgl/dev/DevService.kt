@@ -13,6 +13,9 @@ import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
+import com.almasb.sslogger.Logger
+import com.almasb.sslogger.LoggerLevel
+import com.almasb.sslogger.LoggerOutput
 import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.Group
@@ -21,13 +24,37 @@ import javafx.scene.shape.Polygon
 import javafx.scene.shape.Rectangle
 
 /**
- *
+ * TODO: all dev calls should point to dev service
+ * TODO: ensure that calls are still valid and noop when app mode is release
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class DevService : EngineService {
 
+    private val console by lazy { Console() }
+
+    val isConsoleOpen: Boolean
+        get() = console.isOpen()
+
+    private val consoleOutput = object : LoggerOutput {
+        override fun append(message: String) {
+            console.pushMessage(message)
+        }
+
+        override fun close() { }
+    }
+
+    fun openConsole() {
+        console.open()
+    }
+
+    fun closeConsole() {
+        console.close()
+    }
+
     override fun onMainLoopStarting() {
+        Logger.addOutput(consoleOutput, LoggerLevel.DEBUG)
+
         FXGL.getSettings().devShowBBox.addListener { _, _, isSelected ->
             if (isSelected) {
                 FXGL.getGameWorld().entities.forEach {
@@ -138,8 +165,8 @@ class DevService : EngineService {
     }
 
     private fun removeDebugView(entity: Entity) {
-        val view = debugViews.remove(entity)!!
-
-        entity.viewComponent.removeChild(view.node)
+        debugViews.remove(entity)?.let { view ->
+            entity.viewComponent.removeChild(view.node)
+        }
     }
 }

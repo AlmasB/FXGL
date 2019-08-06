@@ -48,7 +48,7 @@ public class BasicGameApp extends GameApplication {
 ## Getting Started
 
 - Version for Java 8-10: `0.5.4`
-- Version for Java 11: `11.3`
+- Version for Java 11: `11.4`
 
 Note: from now on only 11.0+ will be developed.
 FXGL 11 supports Java 11+ and has a more scalable architecture,
@@ -69,13 +69,13 @@ Otherwise, you have the following options:
 * [Maven](https://github.com/AlmasB/FXGL-Maven) project if you use Java
 * [Maven](https://github.com/AlmasB/FXGL-MavenKt) project if you use Kotlin
 
-Already have `pom.xml`? Then add: (use `0.5.4` for Java 8-10)
+Already have `pom.xml`? Then add: (use `0.5.4` for Java 8-10). **Note:** make sure to set `<release>11</release>` for `maven-compiler-plugin`.
 
 ```
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>11.3</version>
+    <version>11.4</version>
 </dependency>
 ```
 
@@ -85,7 +85,7 @@ Already have `pom.xml`? Then add: (use `0.5.4` for Java 8-10)
 * [Gradle](https://github.com/AlmasB/FXGL11-Gradle) project if you use Java 11+
 * [Gradle](https://github.com/AlmasB/FXGL-GradleKt) project if you use Kotlin
 
-Already have `build.gradle`? Then add: (use `0.5.4` for Java 8-10)
+Already have `build.gradle`? Then add: (use `0.5.4` for Java 8-10). **Note:** in case you have errors, please see templates for Gradle above.
 
 ```
 repositories {
@@ -93,7 +93,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:11.3'
+    compile 'com.github.almasb:fxgl:11.4'
 }
 ```
 

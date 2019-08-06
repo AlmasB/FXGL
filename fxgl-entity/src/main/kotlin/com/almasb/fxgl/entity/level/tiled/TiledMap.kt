@@ -13,7 +13,7 @@ package com.almasb.fxgl.entity.level.tiled
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class TiledMap(var width: Int = 0,
+data class TiledMap(var width: Int = 0,
                var height: Int = 0,
                var tilewidth: Int = 0,
                var tileheight: Int = 0,

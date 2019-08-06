@@ -63,7 +63,6 @@ class MainWindowTest {
             `Show Window`()
             `Set scene`()
             `Take screenshot`()
-            `Fix aspect ratio`()
             `Save screenshot`()
 
             count++
@@ -97,13 +96,6 @@ class MainWindowTest {
 
         assertThat(img.width, `is`(1200.0))
         assertThat(img.height, `is`(600.0))
-    }
-
-    fun `Fix aspect ratio`() {
-        stage.width = 900.0
-
-        window.fixAspectRatio()
-        assertTrue(stage.height >= 450, "Window aspect ratio was not fixed to 900x450")
     }
 
     fun `Save screenshot`() {

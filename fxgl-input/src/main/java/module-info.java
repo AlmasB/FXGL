@@ -6,4 +6,5 @@ module com.almasb.fxgl.input {
 
     exports com.almasb.fxgl.input;
     exports com.almasb.fxgl.input.view;
+    exports com.almasb.fxgl.input.virtual;
 }

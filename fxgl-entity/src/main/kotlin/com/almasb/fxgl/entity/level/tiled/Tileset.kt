@@ -11,7 +11,7 @@ package com.almasb.fxgl.entity.level.tiled
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Tileset(var firstgid: Int = 0,
+data class Tileset(var firstgid: Int = 0,
               var image: String = "",
               var name: String = "",
               var tilewidth: Int = 0,

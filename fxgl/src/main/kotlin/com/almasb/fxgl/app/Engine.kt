@@ -12,7 +12,6 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
 import com.almasb.fxgl.core.reflect.ReflectionUtils.inject
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dev.DevPane
-import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.GameState
@@ -34,7 +33,6 @@ import javafx.scene.Group
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import java.time.LocalDateTime
-import java.util.*
 
 /**
  *
@@ -47,8 +45,6 @@ internal class Engine(
 ) : GameController {
 
     private val log = Logger.get(javaClass)
-
-    internal val version: String
 
     /**
      * @return true iff FXGL is running for the first time
@@ -98,14 +94,14 @@ internal class Engine(
     internal val eventBus by lazy { EventBus() }
     internal val display by lazy { dialogState as Display }
     internal val executor by lazy { FXGLExecutor() }
-    internal val fs by lazy { FS() }
+    internal val fs by lazy { FS(settings.isDesktop) }
 
     internal val devPane by lazy { DevPane(playState, settings) }
 
     /**
      * The 'always on' engine timer.
      */
-    private val engineTimer = Timer()
+    internal val engineTimer = Timer()
 
     /**
      * The root for the overlay group that is constantly visible and on top
@@ -127,8 +123,6 @@ internal class Engine(
     init {
         log.debug("Initializing FXGL")
 
-        version = loadVersion()
-
         logVersion()
 
         environmentVars["overlayRoot"] = overlayRoot
@@ -136,14 +130,14 @@ internal class Engine(
         environmentVars["eventBus"] = eventBus
     }
 
-    private fun loadVersion(): String {
-        return ResourceBundle.getBundle("com.almasb.fxgl.app.system").getString("fxgl.version")
-    }
-
     private fun logVersion() {
-        val platform = "DESKTOP" + if (FXGL.isBrowser()) " BROWSER" else ""
+        val jVersion = System.getProperty("java.version", "?")
+        val fxVersion = System.getProperty("javafx.version", "?")
 
-        log.info("FXGL-$version on $platform")
+        val version = settings.runtimeInfo.version
+        val build = settings.runtimeInfo.build
+
+        log.info("FXGL-$version ($build) on ${settings.platform} (J:$jVersion FX:$fxVersion)")
         log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
@@ -182,11 +176,15 @@ internal class Engine(
 
             isFirstRun = !fs.exists("system/")
 
-            if (isFirstRun) {
-                createRequiredDirs()
-                loadDefaultSystemData()
+            if (!settings.isExperimentalNative) {
+                if (isFirstRun) {
+                    createRequiredDirs()
+                    loadDefaultSystemData()
+                } else {
+                    loadSystemData()
+                }
             } else {
-                loadSystemData()
+                loadDefaultSystemData()
             }
 
             initAppScenes()
@@ -257,7 +255,7 @@ internal class Engine(
         val builtInLangs = listOf("english", "french", "german", "russian", "hungarian")
 
         builtInLangs.forEach {
-            Local.addLanguage(it, FXGL.getAssetLoader().loadResourceBundle("languages/$it.properties"))
+            Local.addLanguage(it, assetLoader.loadResourceBundle("languages/$it.properties"))
         }
 
         settings.language.value = Local.languages.find { it.name == "english" }
@@ -266,7 +264,7 @@ internal class Engine(
     }
 
     private fun attachPauseResumeListener() {
-        if (FXGL.isMobile()) {
+        if (settings.isMobile) {
             // no-op
         } else {
             stage.iconifiedProperty().addListener { _, _, isMinimized ->
@@ -409,11 +407,11 @@ internal class Engine(
     }
 
     private fun attachEventHandlers() {
-        FXGL.getEventBus().addEventHandler(SaveEvent.ANY, EventHandler { e ->
+        eventBus.addEventHandler(SaveEvent.ANY, EventHandler { e ->
             settings.save(e.getProfile())
         })
 
-        FXGL.getEventBus().addEventHandler(LoadEvent.ANY, EventHandler { e ->
+        eventBus.addEventHandler(LoadEvent.ANY, EventHandler { e ->
             settings.load(e.getProfile())
         })
     }
@@ -545,10 +543,6 @@ internal class Engine(
         return mainWindow.saveScreenshot()
     }
 
-    override fun fixAspectRatio() {
-        mainWindow.fixAspectRatio()
-    }
-
     override fun saveProfile() {
         saveLoadManager.saveProfileTask(createProfile())
                 .onFailure { error -> "Failed to save profile: ${profileName.value} - $error" }
@@ -559,10 +553,10 @@ internal class Engine(
      * @return true if loaded successfully, false if couldn't load
      */
     override fun loadFromProfile(profile: UserProfile): Boolean {
-        if (!profile.isCompatible(FXGL.getSettings().title, FXGL.getSettings().version))
+        if (!profile.isCompatible(settings.title, settings.version))
             return false
 
-        FXGL.getEventBus().fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
+        eventBus.fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
         return true
     }
 
@@ -573,7 +567,7 @@ internal class Engine(
     override fun restoreDefaultProfileSettings() {
         log.debug("restoreDefaultSettings()")
 
-        FXGL.getEventBus().fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
+        eventBus.fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
     }
 
     /**
@@ -582,9 +576,9 @@ internal class Engine(
     private fun createProfile(): UserProfile {
         log.debug("Creating default profile")
 
-        val profile = UserProfile(FXGL.getSettings().title, FXGL.getSettings().version)
+        val profile = UserProfile(settings.title, settings.version)
 
-        FXGL.getEventBus().fireEvent(SaveEvent(profile))
+        eventBus.fireEvent(SaveEvent(profile))
 
         return profile
     }
@@ -613,7 +607,9 @@ internal class Engine(
         log.debug("Shutting down background threads")
         executor.shutdownNow()
 
-        saveSystemData()
+        if (!settings.isExperimentalNative) {
+            saveSystemData()
+        }
 
         log.debug("Closing logger and exiting JavaFX")
 

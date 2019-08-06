@@ -6,11 +6,46 @@
 
 package com.almasb.fxgl.texture
 
+import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.math.FXGLMath.*
+import javafx.scene.Group
 import javafx.scene.effect.BlendMode
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
+
+private val image: Image by lazy {
+    val group = Group()
+    val size = 32.0
+
+    val r1 = Rectangle(size, size, Color.BLACK)
+    val r2 = Rectangle(size, size, Color.HOTPINK)
+    val r3 = Rectangle(size, size, Color.PURPLE)
+    val r4 = Rectangle(size, size, Color.BLACK)
+
+    r2.translateX = size
+    r3.translateY = size
+    r4.translateX = size
+    r4.translateY = size
+
+    r1.stroke = Color.GRAY
+    r2.stroke = Color.GRAY
+    r3.stroke = Color.GRAY
+    r4.stroke = Color.GRAY
+
+    group.children.addAll(r1, r2, r3, r4)
+
+    var result: Image? = null
+
+    Async.startFX {
+        result = group.snapshot(null, null)
+    }.await()
+
+    result!!
+}
+
+fun getDummyImage() = image
 
 data class Pixel(val x: Int, val y: Int, val color: Color, val parent: Image) {
 

@@ -13,6 +13,8 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.local.Language
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Optional
+import com.almasb.fxgl.core.util.Platform
+import com.almasb.fxgl.core.util.RuntimeInfo
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
@@ -57,6 +59,7 @@ enum class MenuItem {
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class GameSettings(
+        var runtimeInfo: RuntimeInfo = RuntimeInfo(Platform.WINDOWS, "11.x", "?"),
 
         /**
          * Set title of the game. This will be shown as the
@@ -97,6 +100,11 @@ class GameSettings(
         var isManualResizeEnabled: Boolean = false,
 
         /**
+         * If enabled, during resize black bars will be added to preserve the ratio.
+         */
+        var isPreserveResizeRatio: Boolean = false,
+
+        /**
          * If set to true, the intro video/animation will
          * be played before the start of the game.
          */
@@ -114,6 +122,8 @@ class GameSettings(
          * when the application is run.
          */
         var isProfilingEnabled: Boolean = false,
+
+        var isDeveloperMenuEnabled: Boolean = false,
 
         /**
          * Setting to false will disable asking for confirmation on exit.
@@ -136,14 +146,17 @@ class GameSettings(
         /**
          * Set additional credits.
          */
-        var credits: List<String> = emptyList(),
+        var credits: List<String> = arrayListOf(),
         var enabledMenuItems: EnumSet<MenuItem> = EnumSet.noneOf(MenuItem::class.java),
         var stageStyle: StageStyle = StageStyle.DECORATED,
         var appIcon: String = "fxgl_icon.png",
 
-        @get:JvmName("getCSS")
-        @set:JvmName("setCSS")
-        var css: String = "fxgl_dark.css",
+        /**
+         * Add extra css from /assets/ui/css/.
+         */
+        @get:JvmName("getCSSList")
+        @set:JvmName("setCSSList")
+        var cssList: List<String> = arrayListOf("fxgl_dark.css"),
 
         /**
          * Set font to be used in UI controls.
@@ -169,6 +182,7 @@ class GameSettings(
         /* EXPERIMENTAL */
 
         var isExperimentalTiledLargeMap: Boolean = false,
+        var isExperimentalNative: Boolean = false,
 
         /* CONFIGS */
 
@@ -206,15 +220,18 @@ class GameSettings(
 
     fun toReadOnly(): ReadOnlyGameSettings {
         return ReadOnlyGameSettings(
+                runtimeInfo,
                 title,
                 version,
                 width,
                 height,
                 isFullScreenAllowed,
                 isManualResizeEnabled,
+                isPreserveResizeRatio,
                 isIntroEnabled,
                 isMenuEnabled,
                 isProfilingEnabled,
+                isDeveloperMenuEnabled,
                 isCloseConfirmation,
                 isSingleStep,
                 applicationMode,
@@ -223,7 +240,7 @@ class GameSettings(
                 enabledMenuItems,
                 stageStyle,
                 appIcon,
-                css,
+                unmodifiableList(cssList),
                 fontUI,
                 fontMono,
                 fontText,
@@ -235,6 +252,7 @@ class GameSettings(
                 pixelsPerMeter,
                 secondsIn24h,
                 isExperimentalTiledLargeMap,
+                isExperimentalNative,
                 configClass,
                 unmodifiableList(engineServices),
                 sceneFactory,
@@ -250,6 +268,8 @@ class GameSettings(
  * A copy of GameSettings with public getters only.
  */
 class ReadOnlyGameSettings internal constructor(
+        val runtimeInfo: RuntimeInfo,
+
         /**
          * Set title of the game. This will be shown as the
          * window header if the game isn't fullscreen.
@@ -288,6 +308,8 @@ class ReadOnlyGameSettings internal constructor(
          */
         val isManualResizeEnabled: Boolean,
 
+        val isPreserveResizeRatio: Boolean,
+
         /**
          * If set to true, the intro video/animation will
          * be played before the start of the game.
@@ -306,6 +328,8 @@ class ReadOnlyGameSettings internal constructor(
          * when the application is run.
          */
         val isProfilingEnabled: Boolean,
+
+        val isDeveloperMenuEnabled: Boolean,
 
         /**
          * Setting to false will disable asking for confirmation on exit.
@@ -333,8 +357,8 @@ class ReadOnlyGameSettings internal constructor(
         val stageStyle: StageStyle,
         val appIcon: String,
 
-        @get:JvmName("getCSS")
-        val css: String,
+        @get:JvmName("getCSSList")
+        val cssList: List<String>,
 
         /**
          * Set font to be used in UI controls.
@@ -360,6 +384,7 @@ class ReadOnlyGameSettings internal constructor(
         /* EXPERIMENTAL */
 
         val isExperimentalTiledLargeMap: Boolean,
+        val isExperimentalNative: Boolean,
 
         /* CONFIGS */
 
@@ -436,6 +461,33 @@ class ReadOnlyGameSettings internal constructor(
     val saveFileExt = ".sav"
 
     val dataFileExt = ".dat"
+
+    val platform: Platform
+        get() = runtimeInfo.platform
+
+    val isDesktop: Boolean
+        get() = platform.isDesktop
+
+    val isMobile: Boolean
+        get() = platform.isMobile
+
+    val isBrowser: Boolean
+        get() = platform.isBrowser
+
+    val isWindows: Boolean
+        get() = platform === Platform.WINDOWS
+
+    val isMac: Boolean
+        get() = platform === Platform.MAC
+
+    val isLinux: Boolean
+        get() = platform === Platform.LINUX
+
+    val isIOS: Boolean
+        get() = platform === Platform.IOS
+
+    val isAndroid: Boolean
+        get() = platform === Platform.ANDROID
 
     // DYNAMIC - can be modified at runtime
 

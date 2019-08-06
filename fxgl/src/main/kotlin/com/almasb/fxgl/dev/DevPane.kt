@@ -14,6 +14,7 @@ import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
 import com.almasb.fxgl.ui.FXGLCheckBox
 import com.almasb.fxgl.ui.InGamePanel
+import com.almasb.sslogger.Logger
 import javafx.beans.binding.*
 import javafx.beans.property.*
 import javafx.collections.FXCollections
@@ -24,13 +25,13 @@ import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.*
-import javafx.scene.layout.GridPane
-import javafx.scene.layout.Pane
-import javafx.scene.layout.VBox
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
+import javafx.scene.text.Font
 import javafx.scene.text.Text
+import javafx.util.Duration
 import javafx.util.StringConverter
 
 /**
@@ -39,7 +40,11 @@ import javafx.util.StringConverter
  */
 class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) {
 
+    private val log = Logger.get(javaClass)
+
     private val panel = InGamePanel(350.0, scene.height)
+
+    private val debugMessagesBox = VBox(5.0)
 
     private val entities = FXCollections.observableArrayList<Entity>()
 
@@ -61,7 +66,10 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
 
         panel.children += scroll
 
-        scene.addUINode(panel)
+        debugMessagesBox.isMouseTransparent = true
+        debugMessagesBox.background = Background(BackgroundFill(Color.color(0.7, 0.6, 0.7, 0.6), null, null))
+
+        scene.addUINodes(panel, debugMessagesBox)
     }
 
     private val debugPoints = hashMapOf<Point2D, Node>()
@@ -88,6 +96,19 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
      */
     fun removeDebugPoint(p: Point2D) {
         debugPoints.remove(p)?.let { scene.root.children -= it }
+    }
+
+    fun pushMessage(message: String) {
+        log.debug(message)
+
+        val text = Text(message)
+        text.font = Font.font(18.0)
+        text.fill = Color.BLACK
+        text.stroke = Color.BLACK
+
+        debugMessagesBox.children += text
+
+        FXGL.getEngineTimer().runOnceAfter({ debugMessagesBox.children.removeAt(0) }, Duration.seconds(5.0))
     }
 
     private fun createContentDevVars(): Pane {

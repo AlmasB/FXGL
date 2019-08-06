@@ -176,11 +176,11 @@ fun addUINode(node: Node, x: Double, y: Double) = FXGL.addUINode(node, x, y)
 
 fun removeUINode(node: Node) = FXGL.removeUINode(node)
 
-fun runOnce(action: () -> Unit, delay: Duration) = FXGL.getMasterTimer().runOnceAfter(action, delay)
+fun runOnce(action: () -> Unit, delay: Duration) = FXGL.getGameTimer().runOnceAfter(action, delay)
 
-fun run(action: () -> Unit, interval: Duration) = FXGL.getMasterTimer().runAtInterval(Runnable(action), interval)
+fun run(action: () -> Unit, interval: Duration) = FXGL.getGameTimer().runAtInterval(Runnable(action), interval)
 
-fun run(action: () -> Unit, interval: Duration, limit: Int) = FXGL.getMasterTimer().runAtInterval(Runnable(action), interval, limit)
+fun run(action: () -> Unit, interval: Duration, limit: Int) = FXGL.getGameTimer().runAtInterval(Runnable(action), interval, limit)
 
 /* EXTENSIONS */
 

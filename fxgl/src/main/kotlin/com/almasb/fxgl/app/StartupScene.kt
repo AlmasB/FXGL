@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.sslogger.Logger
 import javafx.scene.Node
@@ -28,19 +28,18 @@ class StartupScene : FXGLScene() {
     private val log = Logger.get(javaClass)
 
     init {
-        val bg = Rectangle(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble())
+        val bg = Rectangle(getAppWidth().toDouble(), getAppHeight().toDouble())
 
-        val title = makeTitle()
-        FXGL.centerText(title)
+        val logo = texture("fxgl_logo.png", 877 * 0.25, 213 * 0.25)
+        logo.translateX = getAppWidth() / 2 - logo.width / 2
+        logo.translateY = getAppHeight() / 2 - logo.height * 2
 
         val symbol = makeSymbol()
-        symbol.translateX = FXGL.getAppWidth() / 2 - 53.0
-        symbol.translateY = FXGL.getAppHeight() / 2 + 45.0
+        symbol.translateX = getAppWidth() / 2 - 53.0
+        symbol.translateY = getAppHeight() / 2 + 45.0
 
-        contentRoot.children.addAll(bg, title, symbol)
+        contentRoot.children.addAll(bg, logo, symbol)
     }
-
-    private fun makeTitle() = FXGL.getUIFactory().newText("FXGL", 48.0)
 
     private fun makeSymbol(): Node {
         val symbol = Pane()
@@ -89,13 +88,13 @@ class StartupScene : FXGLScene() {
         log.debug("STARTUP")
 
         // Start -> (Intro) -> (Menu) -> Game
-        if (FXGL.getSettings().isIntroEnabled) {
-            FXGL.getGameController().gotoIntro()
+        if (getSettings().isIntroEnabled) {
+            getGameController().gotoIntro()
         } else {
-            if (FXGL.getSettings().isMenuEnabled) {
-                FXGL.getGameController().gotoMainMenu()
+            if (getSettings().isMenuEnabled) {
+                getGameController().gotoMainMenu()
             } else {
-                FXGL.getGameController().startNewGame()
+                getGameController().startNewGame()
             }
         }
     }

@@ -145,7 +145,7 @@ internal class MainWindow(
 
             isResizable = settings.isManualResizeEnabled
 
-            if (FXGL.isDesktop()) {
+            if (settings.isDesktop) {
                 initStyle(settings.stageStyle)
             }
 
@@ -154,17 +154,16 @@ internal class MainWindow(
 
                 if (settings.isCloseConfirmation) {
                     if (canShowCloseDialog()) {
-                        FXGL.getDisplay().showConfirmationBox(Local.getLocalizedString("dialog.exitGame"), { yes ->
-                            if (yes)
-                                FXGL.getGameController().exit()
-                        })
+                        showConfirmExitDialog()
                     }
                 } else {
                     FXGL.getGameController().exit()
                 }
             }
 
-            icons.add(FXGL.image(settings.appIcon))
+            if (!settings.isExperimentalNative) {
+                icons.add(FXGL.image(settings.appIcon))
+            }
 
             if (settings.isFullScreenAllowed) {
                 fullScreenExitHint = ""
@@ -172,12 +171,19 @@ internal class MainWindow(
                 fullScreenExitKeyCombination = KeyCombination.NO_MATCH
             }
 
-            FXGL.getSettings().fullScreen.addListener { _, _, fullscreenNow ->
+            settings.fullScreen.addListener { _, _, fullscreenNow ->
                 isFullScreen = fullscreenNow
             }
 
             sizeToScene()
             centerOnScreen()
+        }
+    }
+
+    private fun showConfirmExitDialog() {
+        FXGL.getDisplay().showConfirmationBox(Local.getLocalizedString("dialog.exitGame")) { yes ->
+            if (yes)
+                FXGL.getGameController().exit()
         }
     }
 
@@ -287,7 +293,7 @@ internal class MainWindow(
 
         // this is a hack to estimate platform offsets on ubuntu and potentially other Linux os
         // because for some reason javafx does not create a stage to contain scene of given size
-        if (windowBorderHeight < 0.5 && System.getProperty("os.name").contains("nux")) {
+        if (windowBorderHeight < 0.5 && settings.isLinux) {
             windowBorderHeight = 35.0
         }
 
@@ -297,23 +303,18 @@ internal class MainWindow(
         scaledHeight.bind(stage.heightProperty().subtract(
                 Bindings.`when`(stage.fullScreenProperty()).then(0).otherwise(windowBorderHeight)
         ))
-        scaleRatioX.bind(scaledWidth.divide(settings.width))
-        scaleRatioY.bind(scaledHeight.divide(settings.height))
+
+        if (settings.isPreserveResizeRatio) {
+            scaleRatioX.bind(Bindings.min(
+                    scaledWidth.divide(settings.width), scaledHeight.divide(settings.height)
+            ))
+            scaleRatioY.bind(scaleRatioX)
+        } else {
+            scaleRatioX.bind(scaledWidth.divide(settings.width))
+            scaleRatioY.bind(scaledHeight.divide(settings.height))
+        }
 
         log.debug("Window border size: ($windowBorderWidth, $windowBorderHeight)")
-        log.debug("Scaled size: ${scaledWidth.value} x ${scaledHeight.value}")
-        log.debug("Scaled ratio: (${scaleRatioX.value}, ${scaleRatioY.value})")
-        log.debug("Scene size: ${stage.scene.width} x ${stage.scene.height}")
-        log.debug("Stage size: ${stage.width} x ${stage.height}")
-    }
-
-    fun fixAspectRatio() {
-        log.debug("Fixing aspect ratio")
-
-        val ratio = settings.width.toDouble() / settings.height
-
-        stage.height = scaledWidth.value / ratio + windowBorderHeight
-
         log.debug("Scaled size: ${scaledWidth.value} x ${scaledHeight.value}")
         log.debug("Scaled ratio: (${scaleRatioX.value}, ${scaleRatioY.value})")
         log.debug("Scene size: ${stage.scene.width} x ${stage.scene.height}")
@@ -327,9 +328,13 @@ internal class MainWindow(
      */
     private fun registerScene(scene: FXGLScene) {
         scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
-        scene.appendCSS(FXGL.getAssetLoader().loadCSS(settings.css))
 
-        if (FXGL.isDesktop()) {
+        settings.cssList.forEach {
+            log.debug("Applying CSS: $it")
+            scene.appendCSS(FXGL.getAssetLoader().loadCSS(it))
+        }
+
+        if (!settings.isExperimentalNative && settings.isDesktop && scene.root.cursor == null) {
             scene.setCursor(FXGL.getAssetLoader().loadCursorImage("fxgl_default.png"), Point2D(7.0, 6.0))
         }
 

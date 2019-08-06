@@ -1,34 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-    <groupId>com.github.almasb</groupId>
-    <artifactId>fxgl-samples</artifactId>
-    <version>0.5.0</version>
+    <parent>
+        <artifactId>fxgl-framework</artifactId>
+        <groupId>com.github.almasb</groupId>
+        <version>dev-SNAPSHOT</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <artifactId>fxgl-samples</artifactId>
+
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <source.version>11</source.version>
-        <fxgl.version>dev-SNAPSHOT</fxgl.version>
-
-        <!-- plugins -->
-        <maven.compiler.version>3.8.0</maven.compiler.version>
-
-        <!-- dependencies -->
-        <kotlin.version>1.3.21</kotlin.version>
+        <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-            <version>${kotlin.version}</version>
-            <classifier>modular</classifier>
-        </dependency>
-
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl</artifactId>
@@ -53,45 +40,12 @@
             <!-- Compile java -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.version}</version>
-                <configuration>
-                    <release>${source.version}</release>
-                </configuration>
             </plugin>
 
             <!-- Compile kotlin -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <source>src/main/kotlin</source>
-                                <source>src/main/java</source>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>process-test-sources</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <source>src/test/kotlin</source>
-                                <source>src/test/java</source>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

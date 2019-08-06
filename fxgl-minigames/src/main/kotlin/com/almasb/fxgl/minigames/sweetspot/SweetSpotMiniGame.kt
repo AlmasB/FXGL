@@ -14,7 +14,7 @@ import javafx.beans.property.SimpleIntegerProperty
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class SweetSpotMiniGame : MiniGame<SweetSpotResult> {
+class SweetSpotMiniGame : MiniGame<SweetSpotResult>() {
 
     private var isIncreasing = true
 
@@ -24,23 +24,14 @@ class SweetSpotMiniGame : MiniGame<SweetSpotResult> {
     val minSuccessValue = SimpleIntegerProperty(0)
     val maxSuccessValue = SimpleIntegerProperty(0)
 
-    private var resultProp: SweetSpotResult? = null
-    private var isDoneProp = false
-
-    override val result: SweetSpotResult
-        get() = resultProp!!
-
-    override val isDone: Boolean
-        get() = isDoneProp
-
     fun click() {
         if (cursorValue.value in minSuccessValue.value..maxSuccessValue.value) {
-            resultProp = SweetSpotResult(true)
+            result = SweetSpotResult(true)
         } else {
-            resultProp = SweetSpotResult(false)
+            result = SweetSpotResult(false)
         }
 
-        isDoneProp = true
+        isDone = true
     }
 
     fun randomizeRange(successRange: Int) {

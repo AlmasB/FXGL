@@ -38,7 +38,7 @@ public final class SaveLoadManager {
     private static final String SAVE_FILE_EXT = FXGL.getSettings().getSaveFileExt();
     private static final String DATA_FILE_EXT = FXGL.getSettings().getDataFileExt();
     
-    private static final FS fs = new FS();
+    private static final FS fs = new FS(FXGL.getSettings().isDesktop());
 
     static {
         log.debug("Checking profiles dir: " + PROFILES_DIR);

@@ -19,11 +19,11 @@ import java.io.Serializable
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FS {
+class FS(isDesktop: Boolean) {
 
     private val log = Logger.get<FS>()
 
-    private val fs: FSService = FSServiceImpl()
+    private val fs: FSService = FSServiceImpl(isDesktop)
 
     init {
         log.debug("Loaded ${fs.javaClass.simpleName}")

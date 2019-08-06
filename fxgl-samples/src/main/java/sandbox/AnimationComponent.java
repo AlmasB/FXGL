@@ -59,7 +59,7 @@ public class AnimationComponent extends Component {
     @Override
     public void onAdded() {
         entity.getTransformComponent().setScaleOrigin(new Point2D(16, 21));
-        entity.setView(texture);
+        entity.getViewComponent().addChild(texture);
     }
 
     @Override

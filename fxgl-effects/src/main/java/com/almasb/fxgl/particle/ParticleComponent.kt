@@ -21,9 +21,12 @@ class ParticleComponent(val emitter: ParticleEmitter) : Component() {
 
     var onFinished: Runnable = EmptyRunnable
 
-    // TODO: find a way to not use extra entity
-    // may involve having a separate parent in entity view component that
-    // does not scale / rotate
+    /**
+     * This is the entity whose view is used to render particles.
+     * Use of extra entity allows to render particles independently from
+     * the entity to which this component is attached. Otherwise, the entire
+     * set of emitted particles will be moved based on entity's view.
+     */
     private val parent = Entity()
 
     private val particles = UnorderedArray<Particle>(256)

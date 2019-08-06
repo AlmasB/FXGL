@@ -44,6 +44,8 @@ class TMXLevelLoader : LevelLoader {
         try {
             val map = url.openStream().use { parse(it) }
 
+            log.debug("Parsed raw map: $map")
+
             val tilesetLoader = TilesetLoader(map, url)
 
             val tileLayerEntities = createTileLayerEntities(map, tilesetLoader)
@@ -64,18 +66,24 @@ class TMXLevelLoader : LevelLoader {
             return level
 
         } catch (e: Exception) {
+            log.warning("Parse error", e)
+            e.printStackTrace()
             throw LevelLoadingException("${e.message}", e)
         }
     }
 
     private fun createTileLayerEntities(map: TiledMap, tilesetLoader: TilesetLoader): List<Entity> {
+        log.debug("Creating tile layer entities")
+
         return map.layers.filter { it.type == "tilelayer" }
                 .map { layer ->
-                    Entity().also { it.viewComponent.setViewFromNode(tilesetLoader.loadView(layer.name)) }
+                    Entity().also { it.viewComponent.addChild(tilesetLoader.loadView(layer.name)) }
                 }
     }
 
     private fun createObjectLayerEntities(map: TiledMap, tilesetLoader: TilesetLoader, world: GameWorld): List<Entity> {
+        log.debug("Creating object layer entities")
+
         return map.layers.filter { it.type == "objectgroup" }
                 .flatMap { it.objects }
                 .map { tiledObject ->
@@ -111,7 +119,7 @@ class TMXLevelLoader : LevelLoader {
 
                         // non-zero gid means view is read from the tileset
                         if (tiledObject.gid != 0) {
-                            e.viewComponent.setViewFromNode(tilesetLoader.loadView(tiledObject.gid))
+                            e.viewComponent.addChild(tilesetLoader.loadView(tiledObject.gid))
                         }
                     }
                 }
@@ -119,7 +127,7 @@ class TMXLevelLoader : LevelLoader {
 
     fun parse(inputStream: InputStream): TiledMap {
         val inputFactory = XMLInputFactory.newInstance()
-        val eventReader = inputFactory.createXMLEventReader(inputStream)
+        val eventReader = inputFactory.createXMLEventReader(inputStream, "UTF-8")
 
         val map = TiledMap()
         val layers = arrayListOf<Layer>()

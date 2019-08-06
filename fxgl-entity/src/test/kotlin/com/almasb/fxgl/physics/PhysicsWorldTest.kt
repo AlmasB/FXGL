@@ -383,7 +383,7 @@ class PhysicsWorldTest {
         assertThat(collisionEndCount, `is`(0))
 
         // move 2nd entity away from 1st
-        c2.reposition(Point2D(150.0, 100.0))
+        c2.overwritePosition(Point2D(150.0, 100.0))
 
         physicsWorld.onUpdate(0.016)
         c2.onUpdate(0.016)

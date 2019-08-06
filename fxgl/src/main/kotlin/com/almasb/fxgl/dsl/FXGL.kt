@@ -19,6 +19,9 @@ import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.core.util.BiConsumer
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.Optional
+import com.almasb.fxgl.dev.DevService
+import com.almasb.fxgl.dsl.handlers.CollectibleHandler
+import com.almasb.fxgl.dsl.handlers.OneTimeCollisionHandler
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.level.Level
@@ -31,6 +34,7 @@ import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.time.Timer
+import javafx.animation.Interpolator
 import javafx.beans.property.*
 import javafx.event.Event
 import javafx.geometry.Point2D
@@ -51,7 +55,8 @@ class FXGL private constructor() { companion object {
     
     private lateinit var engine: Engine
 
-    private fun inject(e: Engine) {
+    @JvmStatic
+    internal fun inject(e: Engine) {
         engine = e
     }
 
@@ -59,21 +64,16 @@ class FXGL private constructor() { companion object {
 
 /* STATIC ACCESSORS */
 
-    @JvmStatic fun getVersion() = engine.version
-
-    // cheap hack for now
-    @JvmStatic fun isBrowser() = System.getProperty("fxgl.isBrowser", "false") == "true"
-
-    // javafxports doesn't have "web" option, so will incorrectly default to desktop, hence the extra check
-    @JvmStatic fun isDesktop() = !isBrowser()
-    @JvmStatic fun isMobile() = isAndroid() || isIOS()
-    @JvmStatic fun isAndroid() = false
-    @JvmStatic fun isIOS() = false
+    @JvmStatic fun getVersion() = engine.settings.runtimeInfo.version
 
     /**
      * @return FXGL system settings
      */
     @JvmStatic fun getSettings(): ReadOnlyGameSettings = engine.settings
+
+    @JvmStatic fun isBrowser() = engine.settings.isBrowser
+    @JvmStatic fun isDesktop() = engine.settings.isDesktop
+    @JvmStatic fun isMobile() = engine.settings.isMobile
 
     /**
      * @return instance of the running game application
@@ -100,6 +100,8 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getSystemBundle() = engine.bundle
 
     @JvmStatic fun getDevPane() = engine.devPane
+
+    @JvmStatic fun getDevService() = engine.getService(DevService::class.java)
 
     @JvmStatic fun getUIFactory() = getSettings().uiFactory
 
@@ -128,18 +130,21 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getGameWorld() = engine.playState.gameWorld
     @JvmStatic fun getPhysicsWorld() = engine.playState.physicsWorld
     @JvmStatic fun getGameScene() = engine.playState
+
+    /**
+     * @return play state timer
+     */
     @JvmStatic fun getGameTimer(): Timer = engine.playState.timer
+
+    /**
+     * @return 'always-on' (regardless of active scene) engine timer
+     */
+    @JvmStatic fun getEngineTimer(): Timer = engine.engineTimer
 
     /**
      * @return play state input
      */
     @JvmStatic fun getInput(): Input = engine.playState.input
-
-    /**
-     * @return play state timer
-     */
-    @Deprecated("Use getGameTimer()", ReplaceWith("getGameTimer()", "com.almasb.fxgl.dsl.FXGL.Companion.getGameTimer"))
-    @JvmStatic fun getMasterTimer(): Timer = getGameTimer()
 
     /**
      * @return new instance on each call
@@ -318,6 +323,47 @@ class FXGL private constructor() { companion object {
         return e
     }
 
+    @JvmStatic fun spawnWithScale(entityName: String, data: SpawnData, duration: Duration, interpolator: Interpolator): Entity {
+        val e = getGameWorld().create(entityName, data)
+        return spawnWithScale(e, duration, interpolator)
+    }
+
+    @JvmStatic @JvmOverloads fun spawnWithScale(e: Entity,
+                                                duration: Duration = Duration.seconds(1.0),
+                                                interpolator: Interpolator = Interpolator.LINEAR): Entity {
+
+        e.transformComponent.scaleOrigin = Point2D(e.width / 2, e.height / 2)
+
+        animationBuilder()
+                .duration(duration)
+                .interpolator(interpolator)
+                .scale(e)
+                .from(Point2D(0.0, 0.0))
+                .to(Point2D(1.0, 1.0))
+                .buildAndPlay()
+
+        getGameWorld().addEntity(e)
+
+        return e
+    }
+
+    @JvmStatic @JvmOverloads fun despawnWithScale(e: Entity,
+                                                  duration: Duration = Duration.seconds(1.0),
+                                                  interpolator: Interpolator = Interpolator.LINEAR) {
+        animationBuilder()
+                .duration(duration)
+                .interpolator(interpolator)
+                .onFinished(Runnable { getGameWorld().removeEntity(e) })
+                .scale(e)
+                .from(Point2D(1.0, 1.0))
+                .to(Point2D(0.0, 0.0))
+                .buildAndPlay()
+    }
+
+    @JvmStatic fun despawnWithDelay(e: Entity, delay: Duration) {
+        com.almasb.fxgl.dsl.runOnce({ e.removeFromWorld() }, delay)
+    }
+
     @JvmStatic fun byID(name: String, id: Int): Optional<Entity> = getGameWorld().getEntityByID(name, id)
 
     /**
@@ -334,6 +380,14 @@ class FXGL private constructor() { companion object {
     }
 
 /* PHYSICS */
+
+    @JvmStatic fun onCollisionCollectible(typeCollector: Enum<*>, typeCollectible: Enum<*>, action: Consumer<Entity>) {
+        getPhysicsWorld().addCollisionHandler(CollectibleHandler(typeCollector, typeCollectible, "", action))
+    }
+
+    @JvmStatic fun onCollisionOneTimeOnly(typeA: Enum<*>, typeOneTimeOnly: Enum<*>, action: BiConsumer<Entity, Entity>) {
+        getPhysicsWorld().addCollisionHandler(OneTimeCollisionHandler(typeA, typeOneTimeOnly, action))
+    }
 
     @JvmStatic fun onCollisionBegin(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entity>) {
         getPhysicsWorld().addCollisionHandler(object : CollisionHandler(typeA, typeB) {
@@ -455,11 +509,14 @@ class FXGL private constructor() { companion object {
 
 /* TIMER */
 
-    @JvmStatic fun runOnce(action: Runnable, delay: Duration) = getMasterTimer().runOnceAfter(action, delay)
+    @JvmStatic fun runOnce(action: Runnable, delay: Duration) = getGameTimer().runOnceAfter(action, delay)
 
-    @JvmStatic fun run(action: Runnable, interval: Duration) = getMasterTimer().runAtInterval(action, interval)
+    @JvmStatic fun run(action: Runnable, interval: Duration) = getGameTimer().runAtInterval(action, interval)
 
-    @JvmStatic fun run(action: Runnable, interval: Duration, limit: Int) = getMasterTimer().runAtInterval(action, interval, limit)
+    @JvmStatic fun run(action: Runnable, interval: Duration, limit: Int) = getGameTimer().runAtInterval(action, interval, limit)
+
+    /* DEBUG */
+    @JvmStatic fun debug(message: String) = getDevPane().pushMessage(message)
 
 /* EXTENSIONS */
 

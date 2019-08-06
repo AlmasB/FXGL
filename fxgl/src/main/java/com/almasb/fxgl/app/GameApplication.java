@@ -6,6 +6,8 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
+import com.almasb.fxgl.core.util.Platform;
+import com.almasb.fxgl.core.util.RuntimeInfo;
 import com.almasb.fxgl.dev.DevService;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.saving.DataFile;
@@ -14,6 +16,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
 
@@ -73,10 +76,6 @@ public abstract class GameApplication {
 
     public static void customLaunch(GameApplication app, Stage stage) {
         try {
-            // this will be set automatically by javafxports on mobile
-            if (System.getProperty("javafx.platform") == null)
-                System.setProperty("javafx.platform", "Desktop");
-
             var settings = app.takeUserSettings();
 
             app.initLogger(settings);
@@ -89,10 +88,6 @@ public abstract class GameApplication {
     }
 
     private static void launch(GameApplication app, String[] args) {
-        // this will be set automatically by javafxports on mobile
-        if (System.getProperty("javafx.platform") == null)
-            System.setProperty("javafx.platform", "Desktop");
-
         var settings = app.takeUserSettings();
 
         app.initLogger(settings);
@@ -116,13 +111,35 @@ public abstract class GameApplication {
     private ReadOnlyGameSettings takeUserSettings() {
         var localSettings = new GameSettings();
         initSettings(localSettings);
+
+        var platform = Platform.get();
+
+        // if user set platform as browser, we keep it that way
+        if (localSettings.getRuntimeInfo().getPlatform().isBrowser()) {
+            platform = Platform.BROWSER;
+        }
+
+        var version = "11.x";
+        var build = "?";
+
+        try {
+            var bundle = ResourceBundle.getBundle("com.almasb.fxgl.app.system");
+            version = bundle.getString("fxgl.version");
+            build = bundle.getString("fxgl.build");
+        } catch (Exception e) {
+            System.out.println("Warning: Could not load com.almasb.fxgl.app.system.properties");
+        }
+
+        var runtimeInfo = new RuntimeInfo(platform, version, build);
+        localSettings.setRuntimeInfo(runtimeInfo);
+        localSettings.setExperimentalNative(localSettings.isExperimentalNative() || platform.isMobile());
         return localSettings.toReadOnly();
     }
 
     private void initLogger(ReadOnlyGameSettings settings) {
         Logger.configure(new LoggerConfig());
         // we write all logs to file but adjust console log level based on app mode
-        if (FXGL.isDesktop()) {
+        if (settings.isDesktop()) {
             Logger.addOutput(new FileOutput("FXGL"), LoggerLevel.DEBUG);
         }
         Logger.addOutput(new ConsoleOutput(), settings.getApplicationMode().getLoggerLevel());
@@ -225,12 +242,11 @@ public abstract class GameApplication {
                     engine.addService(ReflectionUtils.newInstance(serviceClass))
             );
 
-            if (settings.getApplicationMode() != ApplicationMode.RELEASE) {
+            if (settings.getApplicationMode() != ApplicationMode.RELEASE && settings.isDeveloperMenuEnabled()) {
                 engine.addService(new DevService());
             }
 
-            // equivalent to FXGL.engine = engine;
-            callInaccessible(FXGL.Companion, getMethod(FXGL.Companion.getClass(), "inject", Engine.class), engine);
+            FXGL.inject$fxgl(engine);
 
             engine.startLoop();
         }

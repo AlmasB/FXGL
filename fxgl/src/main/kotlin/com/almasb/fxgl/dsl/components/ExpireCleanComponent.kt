@@ -34,7 +34,7 @@ class ExpireCleanComponent(
     override fun onAdded() {
         entity.activeProperty().addListener { _, _, isActive ->
             if (isActive) {
-                timerAction = FXGL.getMasterTimer().runOnceAfter({ entity.removeFromWorld() }, expire)
+                timerAction = FXGL.getGameTimer().runOnceAfter({ entity.removeFromWorld() }, expire)
             } else {
                 timerAction?.expire()
             }
@@ -43,7 +43,7 @@ class ExpireCleanComponent(
 
     override fun onUpdate(tpf: Double) {
         if (timerAction == null) {
-            timerAction = FXGL.getMasterTimer().runOnceAfter({ entity.removeFromWorld() }, expire)
+            timerAction = FXGL.getGameTimer().runOnceAfter({ entity.removeFromWorld() }, expire)
         } else {
 
             if (animate) {

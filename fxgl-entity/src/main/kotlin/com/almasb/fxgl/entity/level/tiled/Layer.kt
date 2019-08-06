@@ -11,7 +11,7 @@ package com.almasb.fxgl.entity.level.tiled
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Layer(var width: Int = 0,
+data class Layer(var width: Int = 0,
             var height: Int = 0,
             var name: String = "",
             var type: String = "",
