@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.input
 
-import com.almasb.fxgl.input.virtual.VirtualButton
+import com.almasb.fxgl.input.virtual.*
 import com.almasb.sslogger.Logger
 import javafx.collections.FXCollections
 import javafx.event.Event
@@ -296,6 +296,23 @@ class Input {
 
     internal fun releaseVirtual(virtualButton: VirtualButton) {
         virtualButtons[virtualButton]?.let { mockKeyRelease(it) }
+    }
+
+    /**
+     * Creates a view containing virtual dpad (4 directional controls).
+     */
+    fun createVirtualDpad() = createVirtualDpad(FXGLVirtualDpad(this))
+
+    fun createVirtualDpad(dpad: VirtualDpad): Group {
+        return dpad.createView()
+    }
+
+    fun createXboxVirtualController() = createVirtualController(XboxVirtualController(this))
+
+    fun createPSVirtualController() = createVirtualController(PSVirtualController(this))
+
+    fun createVirtualController(controller: VirtualController): Group {
+        return controller.createView()
     }
 
     /* MOCKING */

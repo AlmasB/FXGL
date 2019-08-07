@@ -8,14 +8,15 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.input.virtual.VirtualButton;
-import com.almasb.fxgl.input.virtual.VirtualControllerOverlay;
-import com.almasb.fxgl.input.virtual.VirtualControllerStyle;
-import com.almasb.fxgl.input.virtual.VirtualPauseButtonOverlay;
+import com.almasb.fxgl.input.virtual.*;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -26,8 +27,8 @@ public class VirtualControllerSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(450);
-        settings.setHeight(800);
+        settings.setWidth(850);
+        settings.setHeight(500);
         settings.setMenuEnabled(false);
     }
 
@@ -48,27 +49,45 @@ public class VirtualControllerSample extends GameApplication {
             protected void onActionEnd() {
                 System.out.println("end f");
             }
-        }, KeyCode.F, VirtualButton.A);
+        }, KeyCode.F, VirtualButton.Y);
+    }
+
+    @Override
+    protected void initGame() {
+        getGameScene().setBackgroundColor(
+                new LinearGradient(0.5, 0, 0.5, 1, true, CycleMethod.NO_CYCLE,
+                        new Stop(0.1, Color.WHITE),
+                        new Stop(0.39, Color.GRAY),
+                        new Stop(0.95, Color.BLACK)
+                )
+        );
     }
 
     @Override
     protected void initUI() {
-//        VirtualPauseButtonOverlay btn = new VirtualPauseButtonOverlay();
-//        btn.setTranslateX(getAppWidth() - 100);
-//        btn.setTranslateY(50);
+        Node dpad = getInput().createVirtualDpad(new CustomDpad());
+        Node buttons = getInput().createPSVirtualController();
 
-        VirtualControllerOverlay vcOverlay = new VirtualControllerOverlay(getInput(), VirtualControllerStyle.XBOX);
+        addUINode(dpad, 50, 20);
+        addUINode(buttons, 200, 150);
 
-        Node dpad = vcOverlay.getDpad();
-        Node buttons = vcOverlay.getButtons();
+        addUINode(getInput().createXboxVirtualController(), 350, 20);
 
-        //Node dpad = vcOverlay.getButtons();
-        //vcOverlay.setTranslateY(600);
+        addUINode(getInput().createVirtualDpad(), 500, 150);
 
-        addUINode(dpad, 0, 300);
-        addUINode(buttons, 250, 300);
+        addUINode(new VirtualPauseButtonOverlay(getInput(), getSettings().getMenuKey(), getSettings().isMenuEnabled()), 650, 50);
+    }
 
-        addUINode(new VirtualPauseButtonOverlay(getInput(), getSettings().getMenuKey(), getSettings().isMenuEnabled()), 100, 50);
+    public static class CustomDpad extends VirtualDpad {
+
+        public CustomDpad() {
+            super(getInput());
+        }
+
+        @Override
+        public Node createView(VirtualButton dpadButton) {
+            return new Rectangle(40, 40, Color.RED);
+        }
     }
 
     public static void main(String[] args) {
