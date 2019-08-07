@@ -28,6 +28,7 @@ public class VirtualControllerSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(450);
         settings.setHeight(800);
+        settings.setMenuEnabled(false);
     }
 
     @Override
@@ -66,6 +67,8 @@ public class VirtualControllerSample extends GameApplication {
 
         addUINode(dpad, 0, 300);
         addUINode(buttons, 250, 300);
+
+        addUINode(new VirtualPauseButtonOverlay(getInput(), getSettings().getMenuKey(), getSettings().isMenuEnabled()), 100, 50);
     }
 
     public static void main(String[] args) {

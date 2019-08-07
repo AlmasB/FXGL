@@ -300,6 +300,14 @@ class Input {
 
     /* MOCKING */
 
+    internal fun mockKeyPressEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
+        fireEvent(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
+    }
+
+    internal fun mockKeyReleaseEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
+        fireEvent(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
+    }
+
     /**
      * Mocks key press event. The behavior is equivalent to
      * user pressing and holding the key with the modifier.

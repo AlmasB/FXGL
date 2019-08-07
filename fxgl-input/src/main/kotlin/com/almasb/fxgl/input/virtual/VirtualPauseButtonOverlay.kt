@@ -6,7 +6,9 @@
 
 package com.almasb.fxgl.input.virtual
 
+import com.almasb.fxgl.input.Input
 import javafx.scene.Parent
+import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
@@ -17,7 +19,9 @@ import javafx.scene.shape.StrokeType
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class VirtualPauseButtonOverlay : Parent() {
+class VirtualPauseButtonOverlay(private val input: Input,
+                                private val menuKey: KeyCode,
+                                private val isMenuEnabled: Boolean) : Parent() {
 
     init {
         val bg = Circle(40.0, Color.web("blue", 0.15))
@@ -42,15 +46,13 @@ class VirtualPauseButtonOverlay : Parent() {
         children.addAll(bg, rect1, rect2)
 
         setOnMousePressed {
-// TODO:
-
-//            if (FXGL.getSettings().isMenuEnabled) {
-//                FXGL.getInput().mockKeyPressEvent(FXGL.getSettings().menuKey)
-//                FXGL.getInput().mockKeyRleaseEvent(FXGL.getSettings().menuKey)
-//            } else {
-//                FXGL.getInput().mockKeyPress(FXGL.getSettings().menuKey)
-//                FXGL.getInput().mockKeyRelease(FXGL.getSettings().menuKey)
-//            }
+            if (isMenuEnabled) {
+                input.mockKeyPressEvent(menuKey)
+                input.mockKeyReleaseEvent(menuKey)
+            } else {
+                input.mockKeyPress(menuKey)
+                input.mockKeyRelease(menuKey)
+            }
         }
     }
 }
