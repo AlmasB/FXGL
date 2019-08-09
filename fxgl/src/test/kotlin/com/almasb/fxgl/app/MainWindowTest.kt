@@ -14,8 +14,8 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -53,8 +53,7 @@ class MainWindowTest {
     }
 
     @Test
-    @Disabled
-    //@EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     fun runTests() {
         var count = 0
 
