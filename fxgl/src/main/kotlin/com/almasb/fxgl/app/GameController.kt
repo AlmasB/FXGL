@@ -16,7 +16,7 @@ import javafx.beans.property.StringProperty
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-interface GameController {
+interface GameController : SceneStack {
 
     fun startNewGame()
 
@@ -47,7 +47,9 @@ interface GameController {
     fun saveScreenshot(): Boolean
 
     fun restoreDefaultProfileSettings()
+}
 
+interface SceneStack {
     fun pushSubScene(subScene: SubScene)
 
     fun popSubScene()

@@ -15,6 +15,7 @@ import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.core.util.RuntimeInfo
+import com.almasb.fxgl.dsl.CutsceneService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
@@ -193,7 +194,8 @@ class GameSettings(
         var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
                 AudioPlayer::class.java,
                 NotificationServiceProvider::class.java,
-                AchievementManager::class.java
+                AchievementManager::class.java,
+                CutsceneService::class.java
         ),
 
         /**

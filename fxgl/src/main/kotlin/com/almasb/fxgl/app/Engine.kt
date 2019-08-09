@@ -128,6 +128,7 @@ internal class Engine(
         environmentVars["overlayRoot"] = overlayRoot
         environmentVars["masterTimer"] = engineTimer
         environmentVars["eventBus"] = eventBus
+        environmentVars["sceneStack"] = this
     }
 
     private fun logVersion() {

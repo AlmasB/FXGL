@@ -121,6 +121,8 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getAchievementService() = engine.getService(AchievementManager::class.java)
 
+    @JvmStatic fun getCutsceneService() = engine.getService(CutsceneService::class.java)
+
     /**
      * @return time per frame (in this frame)
      */
