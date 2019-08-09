@@ -10,10 +10,12 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.input.view.KeyView;
+import com.almasb.fxgl.input.view.MouseButtonView;
 import com.almasb.fxgl.input.virtual.*;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -88,6 +90,17 @@ public class VirtualControllerSample extends GameApplication {
         );
 
         addUINode(keyView, 50, 400);
+
+        var mouseView = new MouseButtonView(MouseButton.PRIMARY);
+        mouseView.setBackgroundColor(Color.BLUEVIOLET);
+        mouseView.colorProperty().bind(
+                Bindings.when(mouseView.hoverProperty()).then(Color.GREEN).otherwise(Color.GRAY)
+        );
+//        mouseView.backgroundColorProperty().bind(
+//                Bindings.when(mouseView.hoverProperty()).then(Color.WHITE).otherwise(Color.BLACK)
+//        );
+
+        addUINode(mouseView, 150, 400);
     }
 
     public static class CustomDpad extends VirtualDpad {
