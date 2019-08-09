@@ -32,6 +32,9 @@ class MainWindowTest {
         private lateinit var stage: Stage
         private lateinit var scene: FXGLScene
 
+        private const val WIDTH = 600
+        private const val HEIGHT = 400
+
         @BeforeAll
         @JvmStatic fun before() {
             FXGLMock.mock()
@@ -41,8 +44,8 @@ class MainWindowTest {
             Async.startFX {
 
                 val settings = GameSettings()
-                settings.width = 1200
-                settings.height = 600
+                settings.width = WIDTH
+                settings.height = HEIGHT
 
                 stage = MockGameApplication.get().stage
                 scene = object : FXGLScene() {}
@@ -76,8 +79,8 @@ class MainWindowTest {
         assertThat(window.stage, `is`(stage))
 
         assertTrue(stage.isShowing, "Window is not showing")
-        assertTrue(stage.width >= 1200, "Window is not at least 1200 wide")
-        assertTrue(stage.height >= 600, "Window is not at least 600 high")
+        assertTrue(stage.width >= WIDTH, "Window is not at least $WIDTH wide")
+        assertTrue(stage.height >= HEIGHT, "Window is not at least $HEIGHT high")
 
         assertThat(stage.scene.root, `is`<Parent>(scene.root))
     }
@@ -93,8 +96,8 @@ class MainWindowTest {
     fun `Take screenshot`() {
         val img = window.takeScreenshot()
 
-        assertThat(img.width, `is`(1200.0))
-        assertThat(img.height, `is`(600.0))
+        assertThat(img.width, `is`(WIDTH.toDouble()))
+        assertThat(img.height, `is`(HEIGHT.toDouble()))
     }
 
     fun `Save screenshot`() {

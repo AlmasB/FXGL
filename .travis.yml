@@ -1,6 +1,6 @@
 sudo: required
 
-# Ubuntu 16.04 
+# Ubuntu 16.04
 dist: xenial
 language: java
 cache:
@@ -11,9 +11,7 @@ services:
 jdk:
 - openjdk11
 - openjdk12
-before_script:
-- export DISPLAY=:99.0
-- sleep 3
+
 install:
 - 
 after_success:
