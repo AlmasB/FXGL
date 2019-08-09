@@ -11,12 +11,10 @@ import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import javafx.scene.shape.Circle
-import javafx.scene.shape.Line
-import javafx.scene.shape.Polygon
-import javafx.scene.shape.Rectangle
+import javafx.scene.shape.*
 import javafx.scene.text.Font
 import javafx.scene.text.Text
 
@@ -85,6 +83,49 @@ abstract class VirtualController(input: Input) : VirtualInput(input) {
     override fun createViewRight(): Node = createViewAndAttachEventHandler(VirtualButton.B)
     override fun createViewDown(): Node = createViewAndAttachEventHandler(VirtualButton.A)
     override fun createViewLeft(): Node = createViewAndAttachEventHandler(VirtualButton.X)
+}
+
+abstract class VirtualMenuKey(private val input: Input, private val key: KeyCode, private val isMenuEnabled: Boolean) {
+
+    internal fun createViewAndAttachHandler(): Node = createView().apply {
+        setOnMousePressed {
+            if (isMenuEnabled) {
+                input.mockKeyPressEvent(key)
+                input.mockKeyReleaseEvent(key)
+            } else {
+                input.mockKeyPress(key)
+                input.mockKeyRelease(key)
+            }
+        }
+    }
+
+    abstract fun createView(): Node
+}
+
+class FXGLVirtualMenuKey(input: Input, key: KeyCode, isMenuEnabled: Boolean) : VirtualMenuKey(input, key, isMenuEnabled) {
+
+    override fun createView(): Node {
+        val bg = Circle(40.0, Color.web("blue", 0.15))
+        bg.strokeType = StrokeType.OUTSIDE
+        bg.stroke = Color.web("blue", 0.25)
+        bg.strokeWidth = 3.0
+        bg.centerX = 40.0
+        bg.centerY = 40.0
+
+        val rect1 = Rectangle(10.0, 30.0, Color.WHITE)
+        rect1.translateX = 25.0
+        rect1.translateY = 25.0
+        rect1.arcWidth = 10.0
+        rect1.arcHeight = 5.0
+
+        val rect2 = Rectangle(10.0, 30.0, Color.WHITE)
+        rect2.translateX = 45.0
+        rect2.translateY = 25.0
+        rect2.arcWidth = 10.0
+        rect2.arcHeight = 5.0
+
+        return Group(bg, rect1, rect2)
+    }
 }
 
 /**

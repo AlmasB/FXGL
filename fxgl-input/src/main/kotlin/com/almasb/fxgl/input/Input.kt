@@ -14,6 +14,7 @@ import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.scene.Group
+import javafx.scene.Node
 import javafx.scene.input.*
 
 class Input {
@@ -313,6 +314,14 @@ class Input {
 
     fun createVirtualController(controller: VirtualController): Group {
         return controller.createView()
+    }
+
+    @JvmOverloads fun createVirtualMenuKeyView(menuKey: KeyCode, isMenuEnabled: Boolean = false): Node {
+        return createVirtualMenuKeyView(FXGLVirtualMenuKey(this, menuKey, isMenuEnabled))
+    }
+
+    fun createVirtualMenuKeyView(virtualKey: VirtualMenuKey): Node {
+        return virtualKey.createViewAndAttachHandler()
     }
 
     /* MOCKING */

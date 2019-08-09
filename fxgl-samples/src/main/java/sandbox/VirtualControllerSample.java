@@ -75,7 +75,7 @@ public class VirtualControllerSample extends GameApplication {
 
         addUINode(getInput().createVirtualDpad(), 500, 150);
 
-        addUINode(new VirtualPauseButtonOverlay(getInput(), getSettings().getMenuKey(), getSettings().isMenuEnabled()), 650, 50);
+        addUINode(getInput().createVirtualMenuKeyView(getSettings().getMenuKey(), getSettings().isMenuEnabled()), 650, 50);
     }
 
     public static class CustomDpad extends VirtualDpad {
