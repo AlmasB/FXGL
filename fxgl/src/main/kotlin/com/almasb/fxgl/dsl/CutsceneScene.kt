@@ -10,8 +10,6 @@ import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.app.SceneStack
 import com.almasb.fxgl.cutscene.Cutscene
 import com.almasb.fxgl.cutscene.CutsceneDialogLine
-import com.almasb.fxgl.dsl.FXGL.Companion.centerTextBind
-
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
@@ -76,6 +74,13 @@ class CutsceneScene(private val sceneStack: SceneStack, appWidth: Int, appHeight
                 nextLine()
             }
         }, KeyCode.ENTER)
+    }
+
+    private fun centerTextBind(text: Text, x: Double, y: Double) {
+        text.layoutBoundsProperty().addListener { _, _, bounds ->
+            text.translateX = x - bounds.width / 2
+            text.translateY = y - bounds.height / 2
+        }
     }
 
     override fun onEnter(prevState: Scene) {
