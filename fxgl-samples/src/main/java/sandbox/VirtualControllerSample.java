@@ -9,7 +9,9 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.input.view.KeyView;
 import com.almasb.fxgl.input.virtual.*;
+import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -76,6 +78,16 @@ public class VirtualControllerSample extends GameApplication {
         addUINode(getInput().createVirtualDpad(), 500, 150);
 
         addUINode(getInput().createVirtualMenuKeyView(getSettings().getMenuKey(), getSettings().isMenuEnabled()), 650, 50);
+
+        var keyView = new KeyView(KeyCode.E);
+        keyView.keyColorProperty().bind(
+                Bindings.when(keyView.hoverProperty()).then(Color.GREEN).otherwise(Color.GRAY)
+        );
+        keyView.backgroundColorProperty().bind(
+                Bindings.when(keyView.hoverProperty()).then(Color.WHITE).otherwise(Color.BLACK)
+        );
+
+        addUINode(keyView, 50, 400);
     }
 
     public static class CustomDpad extends VirtualDpad {
