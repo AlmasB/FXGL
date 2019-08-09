@@ -8,9 +8,11 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.input.KeyTrigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.input.view.KeyView;
 import com.almasb.fxgl.input.view.MouseButtonView;
+import com.almasb.fxgl.input.view.TriggerView;
 import com.almasb.fxgl.input.virtual.*;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
@@ -101,6 +103,13 @@ public class VirtualControllerSample extends GameApplication {
 //        );
 
         addUINode(mouseView, 150, 400);
+
+        var triggerView = new TriggerView(new KeyTrigger(KeyCode.K));
+        triggerView.colorProperty().bind(
+                Bindings.when(triggerView.hoverProperty()).then(Color.YELLOW).otherwise(Color.AZURE)
+        );
+
+        addUINode(triggerView, 350, 400);
     }
 
     public static class CustomDpad extends VirtualDpad {

@@ -23,22 +23,25 @@ import javafx.scene.text.Text
  * Trigger view is bound to set trigger.
  * If trigger changes, the view is automatically updated.
  *
- * TODO: color property
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class TriggerView
 @JvmOverloads constructor(trigger: Trigger,
-                          var color: Color = Color.ORANGE,
+                          color: Color = Color.ORANGE,
                           var size: Double = 24.0) : Pane() {
 
-    private val triggerProperty = SimpleObjectProperty<Trigger>(trigger)
+    private val triggerProperty = SimpleObjectProperty(trigger)
+    private val colorProperty = SimpleObjectProperty(color)
 
     var trigger: Trigger
         get() = triggerProperty.value
         set(value) {
             triggerProperty.value = value
         }
+
+    var color: Color
+        get() = colorProperty.value
+        set(value) { colorProperty.value = value }
 
     init {
         triggerProperty.addListener { _, _, _ ->
@@ -49,12 +52,7 @@ class TriggerView
     }
 
     fun triggerProperty(): ObjectProperty<Trigger> = triggerProperty
-
-    // TODO:
-    fun updateColor(color: Color) {
-        this.color = color
-        updateView()
-    }
+    fun colorProperty(): ObjectProperty<Color> = colorProperty
 
     private fun updateView() {
         val view = createView()
@@ -79,9 +77,13 @@ class TriggerView
 
     private fun createView(): Node {
         if (trigger.isKey) {
-            return KeyView((trigger as KeyTrigger).key, color, size)
-        } else {
-            return MouseButtonView((trigger as MouseTrigger).button, color, size)
+            return KeyView((trigger as KeyTrigger).key, color, size).also {
+                it.keyColorProperty().bind(colorProperty)
+            }
+        }
+
+        return MouseButtonView((trigger as MouseTrigger).button, color, size).also {
+            it.colorProperty().bind(colorProperty)
         }
     }
 }
