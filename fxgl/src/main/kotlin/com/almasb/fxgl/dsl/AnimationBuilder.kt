@@ -10,7 +10,6 @@ import com.almasb.fxgl.animation.*
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneListener
 import javafx.animation.Interpolator

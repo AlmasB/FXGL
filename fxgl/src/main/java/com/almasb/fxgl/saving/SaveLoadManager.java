@@ -13,7 +13,7 @@ import com.almasb.fxgl.core.local.Local;
 import com.almasb.sslogger.Logger;
 import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.io.FileExtension;
-import com.almasb.fxgl.scene.ProgressDialog;
+import com.almasb.fxgl.app.ProgressDialog;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 

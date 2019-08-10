@@ -4,11 +4,13 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.scene
+package com.almasb.fxgl.app
 
 /**
+ *
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-open class SubScene : Scene() {
-
+enum class MenuType {
+    MAIN_MENU, GAME_MENU
 }

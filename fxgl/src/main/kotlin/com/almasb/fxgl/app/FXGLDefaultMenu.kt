@@ -18,7 +18,6 @@ import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
-import com.almasb.fxgl.scene.MenuType
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.ui.FXGLButton
 import com.almasb.sslogger.Logger

@@ -7,12 +7,12 @@
 package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.animation.Animation
-import com.almasb.fxgl.app.SceneStack
 import com.almasb.fxgl.cutscene.Cutscene
 import com.almasb.fxgl.cutscene.CutsceneDialogLine
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.scene.SubSceneStack
 import javafx.geometry.Point2D
 import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
@@ -27,7 +27,7 @@ import java.util.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class CutsceneScene(private val sceneStack: SceneStack, appWidth: Int, appHeight: Int) : SubScene() {
+class CutsceneScene(private val sceneStack: SubSceneStack, appWidth: Int, appHeight: Int) : SubScene() {
 
     private val animation: Animation<*>
     private val animation2: Animation<*>

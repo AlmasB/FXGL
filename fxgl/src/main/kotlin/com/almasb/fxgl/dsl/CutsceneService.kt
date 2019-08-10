@@ -6,12 +6,12 @@
 
 package com.almasb.fxgl.dsl
 
-import com.almasb.fxgl.app.SceneStack
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.cutscene.Cutscene
+import com.almasb.fxgl.scene.SubSceneStack
 
 /**
  * TODO: This only temporarily lives here. Once SubScene moves to core, this will move to fxgl-cutscene
@@ -27,7 +27,7 @@ class CutsceneService : EngineService {
     private var appHeight: Int = 0
 
     @Inject("sceneStack")
-    private lateinit var sceneStack: SceneStack
+    private lateinit var sceneStack: SubSceneStack
 
     private val scene by lazy { CutsceneScene(sceneStack, appWidth, appHeight) }
 

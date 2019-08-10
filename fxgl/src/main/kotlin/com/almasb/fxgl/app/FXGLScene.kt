@@ -1,6 +1,13 @@
-package com.almasb.fxgl.scene
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
+
+package com.almasb.fxgl.app
 
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.scene.Scene
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleBooleanProperty

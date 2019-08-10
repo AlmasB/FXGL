@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.dsl.*
-import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.sslogger.Logger
 import javafx.scene.Node
 import javafx.scene.layout.Pane

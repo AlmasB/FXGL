@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.scene
+package com.almasb.fxgl.app
 
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.core.concurrent.IOTask

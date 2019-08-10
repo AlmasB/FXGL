@@ -15,7 +15,6 @@ import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
-import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.texture.getDummyImage
 import com.almasb.fxgl.ui.FontFactory
@@ -29,7 +28,6 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import java.io.IOException
 import java.io.InputStream
-import java.io.ObjectInputStream
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*

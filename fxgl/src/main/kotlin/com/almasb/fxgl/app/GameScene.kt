@@ -12,7 +12,6 @@ import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.components.ViewComponent
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.physics.PhysicsWorld
-import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.ui.UI
 import com.almasb.sslogger.Logger
 import javafx.beans.property.SimpleIntegerProperty

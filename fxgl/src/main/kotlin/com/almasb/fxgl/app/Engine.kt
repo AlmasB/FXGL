@@ -19,7 +19,9 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.saving.*
-import com.almasb.fxgl.scene.*
+import com.almasb.fxgl.scene.Scene
+import com.almasb.fxgl.scene.SceneListener
+import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.Display
 import com.almasb.fxgl.ui.ErrorDialog
@@ -522,14 +524,14 @@ internal class Engine(
         saveLoadManager
                 .saveTask(dataFile, saveFile)
                 //.onSuccess { hasSaves.value = true }
-                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.savingData")+": $saveFileName"))
+                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.savingData") + ": $saveFileName"))
     }
 
     override fun loadGame(saveFile: SaveFile) {
         saveLoadManager
                 .loadTask(saveFile)
                 .onSuccess { startLoadedGame(it) }
-                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading")+": ${saveFile.name}"))
+                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading") + ": ${saveFile.name}"))
     }
 
     override fun loadGameFromLastSave() {
@@ -537,7 +539,7 @@ internal class Engine(
                 .loadLastModifiedSaveFileTask()
                 .then { saveLoadManager.loadTask(it) }
                 .onSuccess { startLoadedGame(it) }
-                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading")+"..."))
+                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading") + "..."))
     }
 
     override fun saveScreenshot(): Boolean {

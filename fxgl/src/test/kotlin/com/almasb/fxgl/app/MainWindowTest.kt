@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.concurrent.Async
-import com.almasb.fxgl.scene.FXGLScene
 import javafx.scene.Parent
 import javafx.stage.Stage
 import org.hamcrest.CoreMatchers.`is`

@@ -15,6 +15,14 @@ import java.util.concurrent.CopyOnWriteArrayList
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+interface SubSceneStack {
+    fun pushSubScene(subScene: SubScene)
+
+    fun popSubScene()
+}
+
+open class SubScene : Scene()
+
 abstract class Scene {
 
     // TODO: add nicer API for adding/removing nodes
@@ -68,11 +76,11 @@ abstract class Scene {
 
     }
 
-    internal fun enter(prevState: Scene) {
+    fun enter(prevState: Scene) {
         onEnter(prevState)
     }
 
-    internal fun update(tpf: Double) {
+    fun update(tpf: Double) {
         input.update(tpf)
         timer.update(tpf)
         onUpdate(tpf)
@@ -80,10 +88,11 @@ abstract class Scene {
         listeners.forEach { it.onUpdate(tpf) }
     }
 
-    internal fun exit() {
+    fun exit() {
         onExit()
         input.clearAll()
     }
 
     override fun toString(): String = javaClass.simpleName
 }
+

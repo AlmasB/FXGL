@@ -19,8 +19,6 @@ import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.TriggerView
 import com.almasb.fxgl.saving.SaveFile
-import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.MenuType
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.FXGLScrollPane
 import com.almasb.fxgl.ui.FXGLUIConfig.getUIFactory
