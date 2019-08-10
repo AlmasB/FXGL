@@ -7,9 +7,12 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.concurrent.Async
+import com.almasb.fxgl.scene.Scene
+import com.almasb.fxgl.scene.SubScene
 import javafx.scene.Parent
 import javafx.stage.Stage
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
@@ -60,6 +63,7 @@ class MainWindowTest {
             `Show Window`()
             `Set scene`()
             `Take screenshot`()
+            `Push and pop subscene`()
 
             count++
         }.await()
@@ -92,5 +96,46 @@ class MainWindowTest {
 
         assertThat(img.width, `is`(WIDTH.toDouble()))
         assertThat(img.height, `is`(HEIGHT.toDouble()))
+    }
+
+    fun `Push and pop subscene`() {
+        var t = 0.0
+
+        val subscene = object : SubScene() {
+            override fun onUpdate(tpf: Double) {
+                t += tpf
+            }
+        }
+
+        window.pushState(subscene)
+
+        assertThat(window.currentScene, `is`<Scene>(subscene))
+
+        window.onUpdate(1.0)
+
+        assertThat(t, `is`(1.0))
+
+        window.popState()
+
+        assertThat(window.currentScene, `is`(not<Scene>(subscene)))
+
+        window.onUpdate(1.0)
+
+        assertThat(t, `is`(1.0))
+
+        val subscene2 = object : SubScene() {
+            override val isAllowConcurrency: Boolean = true
+
+            override fun onUpdate(tpf: Double) {
+                t += tpf
+            }
+        }
+
+        window.pushState(subscene)
+        window.pushState(subscene2)
+
+        window.onUpdate(1.0)
+
+        assertThat(t, `is`(3.0))
     }
 }
