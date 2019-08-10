@@ -14,7 +14,7 @@ import javafx.animation.AnimationTimer
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class LoopRunner(val runnable: (Double) -> Unit) {
+internal class LoopRunner(private val runnable: (Double) -> Unit) {
 
     private val log = Logger.get<LoopRunner>()
 
