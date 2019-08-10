@@ -18,7 +18,7 @@ open class SceneFactory {
      *
      * @return startup scene
      */
-    open fun newStartup(): FXGLScene = StartupScene()
+    open fun newStartup(): StartupScene = FXGLStartupScene()
 
     /**
      * Called to construct intro scene.
