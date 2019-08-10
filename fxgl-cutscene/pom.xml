@@ -23,6 +23,24 @@
             <artifactId>fxgl-core</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-animation</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-input</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-scene</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

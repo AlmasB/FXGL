@@ -4,17 +4,15 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.dsl
+package com.almasb.fxgl.cutscene
 
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.fxgl.cutscene.Cutscene
 import com.almasb.fxgl.scene.SubSceneStack
 
 /**
- * TODO: This only temporarily lives here. Once SubScene moves to core, this will move to fxgl-cutscene
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.scene
+package com.almasb.fxgl.app
 
 import com.almasb.fxgl.app.GameScene
 import com.almasb.fxgl.app.GameView

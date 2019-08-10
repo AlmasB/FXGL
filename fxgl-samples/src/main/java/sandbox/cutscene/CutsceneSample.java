@@ -9,7 +9,6 @@ package sandbox.cutscene;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.cutscene.Cutscene;
-import com.almasb.fxgl.dsl.CutsceneScene;
 import javafx.scene.input.KeyCode;
 
 import static com.almasb.fxgl.dsl.FXGL.*;

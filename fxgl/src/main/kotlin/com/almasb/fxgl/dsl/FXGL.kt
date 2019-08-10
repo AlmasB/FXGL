@@ -19,6 +19,7 @@ import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.core.util.BiConsumer
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.Optional
+import com.almasb.fxgl.cutscene.CutsceneService
 import com.almasb.fxgl.dev.DevService
 import com.almasb.fxgl.dsl.handlers.CollectibleHandler
 import com.almasb.fxgl.dsl.handlers.OneTimeCollisionHandler

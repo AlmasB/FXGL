@@ -4,11 +4,10 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.dsl
+package com.almasb.fxgl.cutscene
 
 import com.almasb.fxgl.animation.Animation
-import com.almasb.fxgl.cutscene.Cutscene
-import com.almasb.fxgl.cutscene.CutsceneDialogLine
+import com.almasb.fxgl.animation.AnimationDSL
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
@@ -23,7 +22,6 @@ import javafx.util.Duration
 import java.util.*
 
 /**
- * TODO: This only temporarily lives here. Once SubScene moves to core, this will move to fxgl-cutscene
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -45,14 +43,14 @@ class CutsceneScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
 
         contentRoot.children.addAll(topLine, botLine)
 
-        animation = animationBuilder()
+        animation = AnimationDSL()
                 .duration(Duration.seconds(0.5))
                 .translate(topLine)
                 .from(Point2D(0.0, -150.0))
                 .to(Point2D.ZERO)
                 .build()
 
-        animation2 = animationBuilder()
+        animation2 = AnimationDSL()
                 .duration(Duration.seconds(0.5))
                 .translate(botLine)
                 .from(Point2D(0.0, appHeight.toDouble()))
