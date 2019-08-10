@@ -70,6 +70,8 @@ public class CustomIntroApp extends GameApplication {
                 animations.add(anim);
             });
 
+            animations.get(animations.size() - 1).setOnFinished(this::finishIntro);
+
             getContentRoot().getChildren().addAll(
                     new Rectangle(FXGL.getAppWidth(), FXGL.getAppHeight()),
                     circles
@@ -78,6 +80,7 @@ public class CustomIntroApp extends GameApplication {
 
         @Override
         protected void onUpdate(double tpf) {
+            super.onUpdate(tpf);
             animations.forEach(a -> a.onUpdate(tpf));
         }
 
