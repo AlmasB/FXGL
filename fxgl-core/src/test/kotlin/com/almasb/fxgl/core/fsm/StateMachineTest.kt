@@ -119,8 +119,8 @@ class StateMachineTest {
 
         assertThat(initialState.exit, `is`(1))
 
-        assertThat(subState1.enteredFrom, `is`<State>(initialState))
-        assertThat(initialState.exitedTo, `is`<State>(subState1))
+        assertThat(subState1.enteredFrom, `is`<State<*>>(initialState))
+        assertThat(initialState.exitedTo, `is`<State<*>>(subState1))
 
 
         // substate -> substate
@@ -136,8 +136,8 @@ class StateMachineTest {
         assertThat(subState2.exit, `is`(0))
         assertThat(subState2.destroy, `is`(0))
 
-        assertThat(subState1.exitedTo, `is`<State>(subState2))
-        assertThat(subState2.enteredFrom, `is`<State>(subState1))
+        assertThat(subState1.exitedTo, `is`<State<*>>(subState2))
+        assertThat(subState2.enteredFrom, `is`<State<*>>(subState1))
 
         // substate <- substate
         machine.popSubState()
@@ -152,8 +152,8 @@ class StateMachineTest {
         assertThat(subState2.exit, `is`(1))
         assertThat(subState2.destroy, `is`(1))
 
-        assertThat(subState2.exitedTo, `is`<State>(subState1))
-        assertThat(subState1.enteredFrom, `is`<State>(subState2))
+        assertThat(subState2.exitedTo, `is`<State<*>>(subState1))
+        assertThat(subState1.enteredFrom, `is`<State<*>>(subState2))
 
 
         // parent <- substate
@@ -164,8 +164,8 @@ class StateMachineTest {
         assertThat(subState1.exit, `is`(2))
         assertThat(subState1.destroy, `is`(1))
 
-        assertThat(subState1.exitedTo, `is`<State>(initialState))
-        assertThat(initialState.enteredFrom, `is`<State>(subState1))
+        assertThat(subState1.exitedTo, `is`<State<*>>(initialState))
+        assertThat(initialState.enteredFrom, `is`<State<*>>(subState1))
 
 
         // parent -> parent
@@ -176,18 +176,18 @@ class StateMachineTest {
         assertThat(initialState.exit, `is`(2))
         assertThat(initialState.destroy, `is`(1))
 
-        assertThat(initialState.exitedTo, `is`<State>(state2))
-        assertThat(state2.enteredFrom, `is`<State>(initialState))
+        assertThat(initialState.exitedTo, `is`<State<*>>(state2))
+        assertThat(state2.enteredFrom, `is`<State<*>>(initialState))
     }
 
-    private class TestState(override val isSubState: Boolean, override val isAllowConcurrency: Boolean) : State {
+    private class TestState(override val isSubState: Boolean, override val isAllowConcurrency: Boolean) : State<TestState> {
         var create = 0
         var destroy = 0
         var enter = 0
         var exit = 0
 
-        lateinit var enteredFrom: State
-        lateinit var exitedTo: State
+        lateinit var enteredFrom: TestState
+        lateinit var exitedTo: TestState
 
         override fun onCreate() {
             create++
@@ -197,12 +197,12 @@ class StateMachineTest {
             destroy++
         }
 
-        override fun onEnteredFrom(prevState: State) {
+        override fun onEnteredFrom(prevState: TestState) {
             enteredFrom = prevState
             enter++
         }
 
-        override fun onExitingTo(nextState: State) {
+        override fun onExitingTo(nextState: TestState) {
             exitedTo = nextState
             exit++
         }

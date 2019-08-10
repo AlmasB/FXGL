@@ -69,7 +69,7 @@ open class LoadingScene : FXGLScene() {
         text.textProperty().bind(task.messageProperty())
     }
 
-    override fun onEnter(prevState: Scene) {
+    override fun onCreate() {
         val initTask = InitAppTask(FXGL.getApp(), dataFile)
         initTask.setOnSucceeded {
             loadingFinished = true

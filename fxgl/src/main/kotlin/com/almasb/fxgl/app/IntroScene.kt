@@ -22,7 +22,7 @@ abstract class IntroScene : FXGLScene() {
 
     private var introFinished = false
 
-    override fun onEnter(prevState: Scene) {
+    override fun onCreate() {
         startIntro()
     }
 

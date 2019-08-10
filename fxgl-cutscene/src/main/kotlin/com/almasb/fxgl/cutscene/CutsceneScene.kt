@@ -81,7 +81,7 @@ class CutsceneScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
         }
     }
 
-    override fun onEnter(prevState: Scene) {
+    override fun onCreate() {
         animation2.onFinished = Runnable {
             onOpen()
         }

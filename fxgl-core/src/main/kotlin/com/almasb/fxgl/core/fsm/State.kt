@@ -10,7 +10,7 @@ package com.almasb.fxgl.core.fsm
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-interface State {
+interface State<T> {
 
     val isSubState: Boolean
 
@@ -35,10 +35,10 @@ interface State {
     /**
      * Called after transitioning from [prevState].
      */
-    fun onEnteredFrom(prevState: State)
+    fun onEnteredFrom(prevState: T)
 
     /**
      * Called before transitioning to [nextState].
      */
-    fun onExitingTo(nextState: State)
+    fun onExitingTo(nextState: T)
 }

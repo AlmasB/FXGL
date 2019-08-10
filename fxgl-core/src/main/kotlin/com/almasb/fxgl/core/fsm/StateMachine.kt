@@ -7,6 +7,7 @@
 package com.almasb.fxgl.core.fsm
 
 import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * This state machine always has a present single state.
@@ -17,13 +18,13 @@ import java.util.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class StateMachine<S : State>(initialState: S) {
+class StateMachine<S : State<S>>(initialState: S) {
 
     /**
      * A (sub)state is active when it is parent, or when it allows concurrency
      * and is a substate of parent.
      */
-    val activeStates = mutableListOf<S>()
+    val activeStates = CopyOnWriteArrayList<S>()
 
     /**
      * A queue of substates.
@@ -106,9 +107,12 @@ class StateMachine<S : State>(initialState: S) {
         updateActiveStates()
     }
 
-    fun popSubState() {
+    /**
+     * @return true if state successfully changed
+     */
+    fun popSubState(): Boolean {
         if (subStates.isEmpty())
-            return
+            return false
 
         // moving substate (new) <- substate (prev)
         // OR       parent (new) <- substate (prev)
@@ -122,6 +126,8 @@ class StateMachine<S : State>(initialState: S) {
         prevState.onDestroy()
 
         updateActiveStates()
+
+        return true
     }
 
     private fun updateActiveStates() {

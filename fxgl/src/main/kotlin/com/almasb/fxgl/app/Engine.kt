@@ -204,7 +204,7 @@ internal class Engine(
 
                 addOverlay(startupScene)
 
-                mainWindow.currentStateProperty.addListener { _, oldScene, newScene ->
+                mainWindow.currentSceneProperty.addListener { _, oldScene, newScene ->
                     log.debug("Removing overlay from $oldScene and adding to $newScene")
 
                     removeOverlay(oldScene)
@@ -302,7 +302,7 @@ internal class Engine(
         })
 
         // we need dialog state before intro and menus
-        dialogState = DialogSubState(mainWindow.currentFXGLScene)
+        dialogState = DialogSubState(mainWindow.currentFXGLSceneProperty)
 
         if (settings.isIntroEnabled) {
             intro = sceneFactory.newIntro()
@@ -325,11 +325,11 @@ internal class Engine(
 
                     if (canSwitchGameMenu) {
                         // we only care if menu key was pressed in one of these states
-                        if (mainWindow.currentState === gameMenu) {
+                        if (mainWindow.currentScene === gameMenu) {
                             canSwitchGameMenu = false
                             gotoPlay()
 
-                        } else if (mainWindow.currentState === playState) {
+                        } else if (mainWindow.currentScene === playState) {
                             canSwitchGameMenu = false
                             gotoGameMenu()
                         }

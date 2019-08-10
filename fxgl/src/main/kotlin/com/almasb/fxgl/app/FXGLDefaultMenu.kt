@@ -113,7 +113,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
     private val animations = arrayListOf<Animation<*>>()
 
-    override fun onEnter(prevState: Scene) {
+    override fun onCreate() {
         animations.clear()
 
         val menuBox = menuRoot.children[0] as MenuBox

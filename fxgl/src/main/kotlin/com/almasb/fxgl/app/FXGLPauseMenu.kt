@@ -51,7 +51,7 @@ class FXGLPauseMenu : PauseMenu() {
                 .build()
     }
 
-    override fun onEnter(prevState: Scene) {
+    override fun onCreate() {
         animation.onFinished = EmptyRunnable
         animation.start()
     }

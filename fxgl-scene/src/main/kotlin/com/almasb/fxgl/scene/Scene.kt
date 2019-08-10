@@ -6,8 +6,10 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.core.fsm.State
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
+import javafx.scene.Node
 import javafx.scene.layout.Pane
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -21,11 +23,12 @@ interface SubSceneStack {
     fun popSubScene()
 }
 
-open class SubScene : Scene()
+abstract class SubScene : Scene() {
 
-abstract class Scene {
+    override final val isSubState: Boolean = true
+}
 
-    // TODO: add nicer API for adding/removing nodes
+abstract class Scene : State<Scene> {
 
     /**
      * Top-level root node.
@@ -41,6 +44,9 @@ abstract class Scene {
     val input = Input()
     val timer = Timer()
 
+    override val isSubState: Boolean = false
+    override val isAllowConcurrency: Boolean = false
+
     private val listeners = CopyOnWriteArrayList<SceneListener>()
 
     init {
@@ -48,6 +54,14 @@ abstract class Scene {
         contentRoot.background = null
 
         root.children.addAll(contentRoot)
+    }
+
+    fun addChild(node: Node) {
+        contentRoot.children += node
+    }
+
+    fun removeChild(node: Node) {
+        contentRoot.children -= node
     }
 
     fun addListener(l: SceneListener) {
@@ -58,28 +72,6 @@ abstract class Scene {
         listeners -= l
     }
 
-    /**
-     * Called after entering this state from prevState.
-     */
-    protected open fun onEnter(prevState: Scene) {
-
-    }
-
-    /**
-     * Called before exit.
-     */
-    protected open fun onExit() {
-
-    }
-
-    protected open fun onUpdate(tpf: Double) {
-
-    }
-
-    fun enter(prevState: Scene) {
-        onEnter(prevState)
-    }
-
     fun update(tpf: Double) {
         input.update(tpf)
         timer.update(tpf)
@@ -88,10 +80,11 @@ abstract class Scene {
         listeners.forEach { it.onUpdate(tpf) }
     }
 
-    fun exit() {
-        onExit()
-        input.clearAll()
-    }
+    protected open fun onUpdate(tpf: Double) { }
+    override fun onCreate() { }
+    override fun onDestroy() { }
+    override fun onEnteredFrom(prevState: Scene) { }
+    override fun onExitingTo(nextState: Scene) { }
 
     override fun toString(): String = javaClass.simpleName
 }

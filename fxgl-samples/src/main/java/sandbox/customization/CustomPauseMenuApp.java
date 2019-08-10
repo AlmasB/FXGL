@@ -135,7 +135,7 @@ public class CustomPauseMenuApp extends GameApplication {
         }
 
         @Override
-        protected void onEnter(Scene prevState) {
+        public void onCreate() {
             animation.setOnFinished(EmptyRunnable.INSTANCE);
             animation.start();
         }
