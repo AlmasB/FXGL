@@ -4,6 +4,5 @@ open module samples.main {
 
     // these are only here while being developed
     requires com.almasb.fxgl.trade;
-    requires com.almasb.fxgl.minigames;
     requires com.almasb.fxgl.cutscene;
 }

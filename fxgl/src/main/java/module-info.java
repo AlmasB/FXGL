@@ -12,6 +12,7 @@ module com.almasb.fxgl.all {
     requires transitive com.almasb.fxgl.input;
     requires transitive com.almasb.fxgl.io;
     requires transitive com.almasb.fxgl.media;
+    requires transitive com.almasb.fxgl.minigames;
     requires transitive com.almasb.fxgl.notification;
     requires transitive com.almasb.fxgl.scene;
     requires transitive com.almasb.fxgl.time;

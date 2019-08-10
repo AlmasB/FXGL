@@ -16,6 +16,7 @@ import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.core.util.RuntimeInfo
 import com.almasb.fxgl.cutscene.CutsceneService
+import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
@@ -195,7 +196,8 @@ class GameSettings(
                 AudioPlayer::class.java,
                 NotificationServiceProvider::class.java,
                 AchievementManager::class.java,
-                CutsceneService::class.java
+                CutsceneService::class.java,
+                MiniGameService::class.java
         ),
 
         /**
