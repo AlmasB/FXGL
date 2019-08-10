@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
-import java.nio.file.Files
-import java.nio.file.Paths
 
 /**
  *
@@ -37,8 +35,6 @@ class MainWindowTest {
         @BeforeAll
         @JvmStatic fun before() {
             FXGLMock.mock()
-
-            Files.deleteIfExists(Paths.get("testScreen.png"))
 
             Async.startFX {
 
@@ -64,7 +60,6 @@ class MainWindowTest {
             `Show Window`()
             `Set scene`()
             `Take screenshot`()
-            `Save screenshot`()
 
             count++
         }.await()
@@ -97,13 +92,5 @@ class MainWindowTest {
 
         assertThat(img.width, `is`(WIDTH.toDouble()))
         assertThat(img.height, `is`(HEIGHT.toDouble()))
-    }
-
-    fun `Save screenshot`() {
-        val ok = window.saveScreenshot("testScreen.png")
-
-        assertTrue(ok, "Failed to save screenshot")
-
-        Files.deleteIfExists(Paths.get("testScreen.png"))
     }
 }

@@ -30,11 +30,15 @@ import com.almasb.fxgl.ui.FontType
 import com.almasb.sslogger.Logger
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
+import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.time.LocalDateTime
+import javax.imageio.ImageIO
 
 /**
  *
@@ -542,8 +546,27 @@ internal class Engine(
                 .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading") + "..."))
     }
 
+    /**
+     * Saves a screenshot of the current scene into a ".png" file,
+     * named by title + version + time.
+     */
     override fun saveScreenshot(): Boolean {
-        return mainWindow.saveScreenshot()
+        val fxImage = mainWindow.takeScreenshot()
+        val img = SwingFXUtils.fromFXImage(fxImage, null)
+
+        var fileName = "./" + settings.title + settings.version + LocalDateTime.now()
+        fileName = fileName.replace(":", "_")
+
+        try {
+            val name = if (fileName.endsWith(".png")) fileName else "$fileName.png"
+
+            Files.newOutputStream(Paths.get(name)).use {
+                return ImageIO.write(img, "png", it)
+            }
+        } catch (e: Exception) {
+            log.warning("saveScreenshot($fileName.png) failed: $e")
+            return false
+        }
     }
 
     override fun saveProfile() {

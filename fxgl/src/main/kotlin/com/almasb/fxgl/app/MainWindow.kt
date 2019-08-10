@@ -3,15 +3,14 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.core.fsm.StateMachine
 import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.dsl.FXGL
-import com.almasb.sslogger.Logger
 import com.almasb.fxgl.input.MouseEventData
-import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.scene.Scene
+import com.almasb.fxgl.scene.SubScene
+import com.almasb.sslogger.Logger
 import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.embed.swing.SwingFXUtils
 import javafx.event.Event
 import javafx.event.EventType
 import javafx.geometry.Point2D
@@ -22,10 +21,6 @@ import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.stage.Screen
 import javafx.stage.Stage
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.time.LocalDateTime
-import javax.imageio.ImageIO
 
 /**
  * A wrapper around JavaFX primary stage.
@@ -365,41 +360,4 @@ internal class MainWindow(
     }
 
     fun takeScreenshot(): Image = fxScene.snapshot(null)
-
-    /**
-     * Saves a screenshot of the current scene into a ".png" file,
-     * named by title + version + time.
-     *
-     * @return true if the screenshot was saved successfully, false otherwise
-     */
-    fun saveScreenshot(): Boolean {
-        var fileName = "./" + settings.title + settings.version + LocalDateTime.now()
-        fileName = fileName.replace(":", "_")
-
-        return saveScreenshot(fileName)
-    }
-
-    /**
-     * TODO: extract writing code
-     *
-     * Saves a screenshot of the current scene into a ".png" [fileName].
-     *
-     * @return true if the screenshot was saved successfully, false otherwise
-     */
-    fun saveScreenshot(fileName: String): Boolean {
-        val fxImage = takeScreenshot()
-
-        val img = SwingFXUtils.fromFXImage(fxImage, null)
-
-        try {
-            val name = if (fileName.endsWith(".png")) fileName else "$fileName.png"
-
-            Files.newOutputStream(Paths.get(name)).use {
-                return ImageIO.write(img, "png", it)
-            }
-        } catch (e: Exception) {
-            log.warning("saveScreenshot($fileName.png) failed: $e")
-            return false
-        }
-    }
 }
