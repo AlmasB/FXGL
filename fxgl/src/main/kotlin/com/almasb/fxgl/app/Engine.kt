@@ -172,6 +172,15 @@ internal class Engine(
         // get window up ASAP
         mainWindow = MainWindow(stage, startupScene, settings)
         mainWindow.show()
+        mainWindow.onClose = {
+            if (settings.isCloseConfirmation) {
+                if (canShowCloseDialog()) {
+                    showConfirmExitDialog()
+                }
+            } else {
+                exit()
+            }
+        }
 
         initFatalExceptionHandler()
 
@@ -484,6 +493,28 @@ internal class Engine(
 
             // we failed during launch, so abnormal exit
             System.exit(-1)
+        }
+    }
+
+    /**
+     * @return true if can show close dialog
+     */
+    private fun canShowCloseDialog(): Boolean {
+        return true
+        // TODO:
+        // do not allow close dialog if
+        // 1. a dialog is shown
+        // 2. we are loading a game
+        // 3. we are showing intro
+//        return (state !== FXGL.getStateMachine().dialogState
+//                && state !== FXGL.getStateMachine().loadingState
+//                && (!FXGL.getSettings().isIntroEnabled || state !== FXGL.getStateMachine().introState))
+    }
+
+    private fun showConfirmExitDialog() {
+        display.showConfirmationBox(Local.getLocalizedString("dialog.exitGame")) { yes ->
+            if (yes)
+                exit()
         }
     }
 

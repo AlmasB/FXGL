@@ -1,7 +1,6 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.fsm.StateMachine
-import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.Scene
@@ -53,6 +52,8 @@ internal class MainWindow(
 
     val currentScene: Scene
         get() = currentSceneProperty.value
+
+    var onClose: (() -> Unit)? = null
 
     private val scenes = arrayListOf<FXGLScene>()
 
@@ -157,18 +158,11 @@ internal class MainWindow(
 
             setOnCloseRequest { e ->
                 e.consume()
-
-                if (settings.isCloseConfirmation) {
-                    if (canShowCloseDialog()) {
-                        showConfirmExitDialog()
-                    }
-                } else {
-                    FXGL.getGameController().exit()
-                }
+                onClose?.invoke()
             }
 
             if (!settings.isExperimentalNative) {
-                icons.add(FXGL.image(settings.appIcon))
+                icons.add(FXGL.getAssetLoader().loadImage(settings.appIcon))
             }
 
             if (settings.isFullScreenAllowed) {
@@ -183,13 +177,6 @@ internal class MainWindow(
 
             sizeToScene()
             centerOnScreen()
-        }
-    }
-
-    private fun showConfirmExitDialog() {
-        FXGL.getDisplay().showConfirmationBox(Local.getLocalizedString("dialog.exitGame")) { yes ->
-            if (yes)
-                FXGL.getGameController().exit()
         }
     }
 
@@ -265,20 +252,6 @@ internal class MainWindow(
         currentSceneProperty.value = stateMachine.currentState
 
         log.debug("${stateMachine.currentState} <- $prevScene")
-    }
-
-    /**
-     * @return true if can show close dialog
-     */
-    private fun canShowCloseDialog(): Boolean {
-        return true
-        // do not allow close dialog if
-        // 1. a dialog is shown
-        // 2. we are loading a game
-        // 3. we are showing intro
-//        return (state !== FXGL.getStateMachine().dialogState
-//                && state !== FXGL.getStateMachine().loadingState
-//                && (!FXGL.getSettings().isIntroEnabled || state !== FXGL.getStateMachine().introState))
     }
 
     private var windowBorderWidth = 0.0
