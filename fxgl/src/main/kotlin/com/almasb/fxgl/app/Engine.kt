@@ -12,6 +12,7 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
 import com.almasb.fxgl.core.reflect.ReflectionUtils.inject
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dev.DevPane
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.GameState
@@ -32,7 +33,9 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
+import javafx.geometry.Point2D
 import javafx.scene.Group
+import javafx.scene.ImageCursor
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import java.nio.file.Files
@@ -171,6 +174,14 @@ internal class Engine(
 
         // get window up ASAP
         mainWindow = MainWindow(stage, startupScene, settings)
+        mainWindow.addIcons(assetLoader.loadImage(settings.appIcon))
+
+        settings.cssList.forEach {
+            log.debug("Applying CSS: $it")
+            mainWindow.addCSS(assetLoader.loadCSS(it))
+        }
+        mainWindow.defaultCursor = ImageCursor(assetLoader.loadCursorImage("fxgl_default.png"), 7.0, 6.0)
+
         mainWindow.show()
         mainWindow.onClose = {
             if (settings.isCloseConfirmation) {

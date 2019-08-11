@@ -1,7 +1,6 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.fsm.StateMachine
-import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
@@ -13,6 +12,7 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.event.Event
 import javafx.event.EventType
 import javafx.geometry.Point2D
+import javafx.scene.ImageCursor
 import javafx.scene.Parent
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCombination
@@ -54,6 +54,7 @@ internal class MainWindow(
         get() = currentSceneProperty.value
 
     var onClose: (() -> Unit)? = null
+    var defaultCursor: ImageCursor? = null
 
     private val scenes = arrayListOf<FXGLScene>()
 
@@ -142,6 +143,22 @@ internal class MainWindow(
     }
 
     /**
+     * Add desktop taskbar / window icon.
+     * Multiple images of different sizes can be added: 16x16, 32x32
+     * and most suitable will be chosen.
+     * Can only be called before [show].
+     */
+    fun addIcons(vararg images: Image) {
+        if (!settings.isExperimentalNative) {
+            stage.icons += images
+        }
+    }
+
+    fun addCSS(vararg cssList: CSS) {
+        fxScene.stylesheets += cssList.map { it.externalForm }
+    }
+
+    /**
      * Configure main stage based on user settings.
      */
     private fun initStage() {
@@ -161,10 +178,6 @@ internal class MainWindow(
                 onClose?.invoke()
             }
 
-            if (!settings.isExperimentalNative) {
-                icons.add(FXGL.getAssetLoader().loadImage(settings.appIcon))
-            }
-
             if (settings.isFullScreenAllowed) {
                 fullScreenExitHint = ""
                 // don't let the user exit FS mode manually
@@ -180,7 +193,7 @@ internal class MainWindow(
         }
     }
 
-    internal fun onUpdate(tpf: Double) {
+    fun onUpdate(tpf: Double) {
         stateMachine.runOnActiveStates { it.update(tpf) }
     }
 
@@ -304,13 +317,10 @@ internal class MainWindow(
     private fun registerScene(scene: FXGLScene) {
         scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
 
-        settings.cssList.forEach {
-            log.debug("Applying CSS: $it")
-            scene.appendCSS(FXGL.getAssetLoader().loadCSS(it))
-        }
-
         if (!settings.isExperimentalNative && settings.isDesktop && scene.root.cursor == null) {
-            scene.setCursor(FXGL.getAssetLoader().loadCursorImage("fxgl_default.png"), Point2D(7.0, 6.0))
+            defaultCursor?.let {
+                scene.setCursor(it.image, Point2D(it.hotspotX, it.hotspotY))
+            }
         }
 
         scenes.add(scene)
