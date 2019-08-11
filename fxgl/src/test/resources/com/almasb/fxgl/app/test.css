@@ -1,0 +1,451 @@
+/*
+ * The MIT License (MIT)
+ *
+ * FXGL - JavaFX Game Library
+ *
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/*
+    This is a modified version of the following document
+    Document   : JMetroDarkTheme
+    Created on : Oct 23, 2012, 7:12:32 PM
+    Author     : Pedro Duque Vieira
+    Description:
+        Dark Metro style sheet for use in JavaFX applications
+*/
+ 
+ /*
+  * FXGLButton
+  */
+.fxgl_button {
+    -fx-padding: 5 22 5 22;
+    -fx-border-width: 0;
+
+    -fx-background-color: black;
+    -fx-text-fill: #a9a9a9;
+}
+
+.fxgl_button:hover {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, rgba(179, 122, 54, 0.6) 0%, rgba(0, 92, 31, 0.8) 100%);
+    -fx-text-fill: white;
+}
+
+.fxgl_button:pressed, .fxgl_button:default:hover:pressed {
+    -fx-background-color: rgba(255, 215, 25, 0.8);
+    -fx-text-fill: white;
+}
+
+.fxgl_button:focused {
+    -fx-text-fill: white;
+}
+
+.fxgl_button:disabled, .fxgl_button:default:disabled {
+    -fx-opacity: 0.4;
+    -fx-text-fill: #a9a9a9;
+}
+
+/**
+ * FXGLListView
+ */
+.fxgl-list-view {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-accent: white;
+}
+
+/* this is a workaround (overrides native javafx css) as fxgl-list-cell doesn't work for some reason */
+.list-cell {
+    -fx-background: black;
+    -fx-font-size: 18px;
+
+    /*
+     * to remove selected item border
+     */
+    /*-fx-background-insets: 0;*/
+}
+
+.fxgl-list-view .scroll-bar {
+    -fx-background-color: rgb(96,96,96);
+    -fx-background-radius: 1.5em;
+}
+
+.fxgl-list-view .scroll-bar .track {
+    -fx-background-color: transparent;
+	-fx-border-color: transparent;
+	-fx-background-radius: 0em;
+	-fx-border-radius: 2em;
+}
+
+.fxgl-list-view .scroll-bar .track-background {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2em;
+}
+
+.fxgl-list-view .scroll-bar .thumb {
+    -fx-background-color: orange;
+	-fx-background-insets: 2, 0, 0;
+	-fx-background-radius: 2em;
+}
+
+.fxgl-list-view .scroll-bar:vertical:focused,
+.fxgl-list-view .scroll-bar:horizontal:focused {
+    -fx-background-color: transparent,rgb(96,96,96),rgb(96,96,96);
+}
+
+.fxgl-list-view .scroll-bar:vertical .increment-button, .scroll-bar:vertical .decrement-button {
+    -fx-background-color:transparent;
+	-fx-background-radius: 0em;
+	-fx-padding:0 10 0 0;
+}
+
+.fxgl-list-view .scroll-bar:horizontal .increment-button, .scroll-bar:horizontal .decrement-button {
+    -fx-background-color:transparent;
+	-fx-background-radius: 0em;
+	-fx-padding:0 0 10 0;
+}
+
+.fxgl-list-view .scroll-bar .increment-arrow,
+.fxgl-list-view .scroll-bar .decrement-arrow {
+	-fx-shape: " ";
+	-fx-padding:0;
+}
+
+/**
+ * FXGLChoiceBox
+ */
+.fxgl-choice-box  {
+    -fx-background-color: black, rgba(250, 250, 250, 0.98);
+    -fx-background-radius: 0, 0, 0, 0;
+    -fx-padding: 0 2 0 2;
+
+    -fx-font-size: 18px;
+}
+
+.fxgl-choice-box:hover {
+    -fx-background-color: black, black, black, white;
+}
+
+.fxgl-choice-box:focused {
+    -fx-background-color: black, black, black, white;
+    -fx-background-insets: -1.4, 0, 1, 2;
+    -fx-background-radius: 1, 1, 1, 1;
+}
+
+.fxgl-choice-box:focused:hover {
+    -fx-background-color: black, black, black, white;
+}
+
+.fxgl-choice-box:disabled {
+    -fx-opacity: 0.4;
+}
+
+/**
+ * FXGLSpinner
+ */
+/*******************************************************************************
+ *                                                                             *
+ * Spinner                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+
+.fxgl-spinner {
+    -fx-background-color: white, #4a4a4a;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 0;
+}
+
+.fxgl-spinner > .text-field{
+    -fx-skin: "com.sun.javafx.scene.control.skin.TextFieldSkin";
+}
+
+.fxgl-spinner > .text-field {
+    -fx-background-color: #4a4a4a;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-text-fill: white;
+}
+
+.fxgl-spinner .increment-arrow-button, .fxgl-spinner .decrement-arrow-button  {
+    -fx-background-color: white;
+    /*Change the two 0's here to -1 to get rid of the horizontal line */
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.fxgl-spinner .increment-arrow-button .increment-arrow, .fxgl-spinner .decrement-arrow-button .decrement-arrow {
+    -fx-background-color: black;
+}
+
+.fxgl-spinner .increment-arrow-button:hover, .fxgl-spinner .decrement-arrow-button:hover {
+    -fx-background-color: grey;
+}
+
+.fxgl-spinner .increment-arrow-button:pressed, .fxgl-spinner .decrement-arrow-button:pressed {
+    -fx-background-color: white;
+}
+
+.fxgl-spinner.split-arrows-horizontal .increment-arrow-button:pressed .increment-arrow, .fxgl-spinner.split-arrows-horizontal .decrement-arrow-button:pressed .decrement-arrow {
+    -fx-background-color: white;
+}
+
+/**
+ * Dialogs
+ */
+.dialog-border {
+    -fx-border-color: azure;
+    -fx-border-width: 1;
+    -fx-border-style: solid;
+}
+
+/**
+ * FXGL scroll pane
+ */
+.fxgl-scroll-pane {
+    -fx-background: black;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+/**
+ * Adapted from https://farrukhobaid.wordpress.com/2013/01/16/dark-scrollbar-skin-for-javafx/
+ */
+.fxgl-scroll-pane .scroll-bar {
+    -fx-background-color: rgb(96,96,96);
+    -fx-background-radius: 1.5em;
+}
+
+.fxgl-scroll-pane .scroll-bar .track {
+    -fx-background-color: transparent;
+	-fx-border-color: transparent;
+	-fx-background-radius: 0em;
+	-fx-border-radius: 2em;
+}
+
+.fxgl-scroll-pane .scroll-bar .track-background {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2em;
+}
+
+.fxgl-scroll-pane .scroll-bar .thumb {
+    -fx-background-color: orange;
+	-fx-background-insets: 2, 0, 0;
+	-fx-background-radius: 2em;
+}
+
+.fxgl-scroll-pane .scroll-bar:vertical:focused,
+.fxgl-scroll-pane .scroll-bar:horizontal:focused {
+    -fx-background-color: transparent,rgb(96,96,96),rgb(96,96,96);
+}
+
+.fxgl-scroll-pane .scroll-bar:vertical .increment-button, .scroll-bar:vertical .decrement-button {
+    -fx-background-color:transparent;
+	-fx-background-radius: 0em;
+	-fx-padding:0 10 0 0;
+}
+
+.fxgl-scroll-pane .scroll-bar:horizontal .increment-button, .scroll-bar:horizontal .decrement-button {
+    -fx-background-color:transparent;
+	-fx-background-radius: 0em;
+	-fx-padding:0 0 10 0;
+}
+
+.fxgl-scroll-pane .scroll-bar .increment-arrow,
+.fxgl-scroll-pane .scroll-bar .decrement-arrow {
+	-fx-shape: " ";
+	-fx-padding:0;
+}
+
+
+
+
+/*
+From
+https://github.com/jfoenixadmin/JFoenix/blob/master/jfoenix/src/main/resources/css/controls/jfx-check-box.css
+Under Apache License 2.0
+*/
+
+
+
+/* Styling checkmark */
+
+.fxgl-check-box .box-container {
+    -fx-shape: "M 400 100 L 400 100 A 50 50 0 1 1 400 250 A 50 50 0 1 1 400 100 ";
+    -fx-padding: 10;
+}
+
+.fxgl-check-box .box,
+.fxgl-check-box:indeterminate .box,
+.fxgl-check-box:indeterminate:selected .box {
+    -fx-pref-width: 18;
+    -fx-pref-height: 18;
+
+    -fx-min-width: -fx-pref-width;
+    -fx-max-width: -fx-pref-width;
+    -fx-min-height: -fx-pref-height;
+    -fx-max-height: -fx-pref-height;
+
+    -fx-background-color: TRANSPARENT;
+    -fx-background-radius: 2;
+
+    -fx-border-color: black;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 2;
+}
+
+.fxgl-check-box:selected .mark {
+    -fx-shape: "M384 690l452-452 60 60-512 512-238-238 60-60z";
+    -fx-max-width: 15;
+    -fx-max-height: 12;
+
+    -fx-background-color: black;
+
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-border-radius: 2;
+}
+
+.fxgl-check-box .indeterminate-mark {
+    -fx-background-color: black;
+    -fx-background-radius: 2;
+    -fx-border-width: 0;
+    -fx-max-width: 10;
+    -fx-max-height: 10;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+  for MDIWindow
+ */
+
+.window-titlebar {
+    -fx-glass-color: rgba(42, 42, 42, 0.9);
+    -fx-alignment: center;
+    -fx-background-color: linear-gradient(to bottom, derive(-fx-glass-color, 30%), -fx-glass-color);
+    -fx-border-color: derive(-fx-glass-color, -60%);
+    -fx-border-width: 2;
+    -fx-background-insets: 1;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-stroke: rgba(255,255,255,50);
+    -fx-fill: rgba(255,255,255,50);
+}
+
+.dev-pane .fxgl-check-box .box,
+.dev-pane .fxgl-check-box:indeterminate .box,
+.dev-pane .fxgl-check-box:indeterminate:selected .box {
+    -fx-border-color: white;
+}
+
+.dev-pane .fxgl-check-box:selected .mark {
+    -fx-background-color: white;
+    -fx-border-color: white;
+}
+
+.dev-pane .fxgl-check-box .indeterminate-mark {
+    -fx-background-color: white;
+}
+
+
+/**
+ * Accordion inside dev pane.
+ */
+
+.dev-pane .titled-pane {
+    -fx-text-fill: aqua;
+}
+
+.dev-pane .titled-pane:expanded > .title {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+
+.dev-pane .titled-pane > .title {
+    -fx-background-color: transparent, black, transparent;
+    -fx-background-insets: 0, 0, 0;
+}
+
+.dev-pane .titled-pane > *.content {
+    -fx-background-color: rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05);
+    -fx-background-insets: 0, 0, 0;
+    -fx-border-width: 0;
+    -fx-border-color: rgba(0, 0, 0, 0.35);
+    -fx-padding: 0;
+}
+
+.dev-pane .titled-pane > .title > .arrow-button .arrow {
+    -fx-background-color: aqua;
+    -fx-background-insets: 1 0 -1 0, 0;
+    -fx-padding: 0.25em 0.3125em 0.25em 0.3125em;
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+}
+
+.dev-pane .titled-pane:expanded > .title > .arrow-button .arrow {
+    -fx-background-color: white;
+}
+
+
+
+.dev-pane .color-picker {
+    -fx-color-label-visible: false;
+}
+
+
+
+.dev-pane .choice-box {
+    -fx-background-color: black, black, black, white;
+    -fx-background-radius: 0, 0, 0, 0;
+    -fx-padding: 0 2 0 2;
+}
+
+
+
+.dev-pane .scroll-pane {
+    -fx-background: black;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.dev-pane .scroll-pane .scroll-bar {
+    -fx-background-color: rgb(96,96,96);
+    -fx-background-radius: 1.5em;
+}
+
+.dev-pane .scroll-pane .scroll-bar .increment-arrow,
+.dev-pane .scroll-pane .scroll-bar .decrement-arrow {
+	-fx-shape: " ";
+	-fx-padding: 0;
+}

@@ -9,7 +9,9 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.test.RunWithFX
 import javafx.scene.Parent
+import javafx.scene.image.Image
 import javafx.stage.Stage
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
@@ -18,12 +20,14 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
+import org.junit.jupiter.api.extension.ExtendWith
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@ExtendWith(RunWithFX::class)
 class MainWindowTest {
 
     companion object {
@@ -37,16 +41,14 @@ class MainWindowTest {
 
         @BeforeAll
         @JvmStatic fun before() {
-            FXGLMock.mock()
-
             Async.startFX {
 
                 val settings = GameSettings()
                 settings.width = WIDTH
                 settings.height = HEIGHT
 
-                stage = MockGameApplication.get().stage
-                scene = object : FXGLScene() {}
+                stage = Stage()
+                scene = object : FXGLScene(WIDTH, HEIGHT) {}
 
                 window = MainWindow(stage, scene, settings.toReadOnly())
             }.await()
@@ -60,6 +62,8 @@ class MainWindowTest {
 
         Async.startFX {
 
+            `Add icon`()
+            `Add CSS`()
             `Show Window`()
             `Set scene`()
             `Take screenshot`()
@@ -69,6 +73,25 @@ class MainWindowTest {
         }.await()
 
         assertThat(count, `is`(1))
+    }
+
+    fun `Add icon`() {
+        assertTrue(stage.icons.isEmpty())
+
+        val image = Image(javaClass.getResource("test_icon.png").toExternalForm())
+
+        window.addIcons(image)
+
+        assertTrue(stage.icons.isNotEmpty())
+    }
+
+    fun `Add CSS`() {
+        assertTrue(scene.root.scene.stylesheets.isEmpty())
+
+        val css = CSS(javaClass.getResource("test.css").toExternalForm())
+        window.addCSS(css)
+
+        assertTrue(scene.root.scene.stylesheets.isNotEmpty())
     }
 
     fun `Show Window`() {
@@ -84,7 +107,7 @@ class MainWindowTest {
     }
 
     fun `Set scene`() {
-        val scene2 = object : FXGLScene() {}
+        val scene2 = object : FXGLScene(WIDTH, HEIGHT) {}
 
         window.setScene(scene2)
 
