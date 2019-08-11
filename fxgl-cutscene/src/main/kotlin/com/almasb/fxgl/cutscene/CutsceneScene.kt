@@ -9,6 +9,7 @@ package com.almasb.fxgl.cutscene
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationDSL
 import com.almasb.fxgl.input.UserAction
+import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.scene.SubSceneStack
 import javafx.geometry.Point2D
@@ -40,8 +41,6 @@ class CutsceneScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
         val botLine = Rectangle(appWidth.toDouble(), 200.0)
         botLine.translateY = appHeight.toDouble()
 
-        contentRoot.children.addAll(topLine, botLine)
-
         animation = AnimationDSL()
                 .duration(Duration.seconds(0.5))
                 .translate(topLine)
@@ -58,14 +57,17 @@ class CutsceneScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
 
         textRPG.fill = Color.WHITE
         textRPG.font = Font.font(18.0)
-        textRPG.wrappingWidth = appWidth.toDouble() - 50.0
+        textRPG.wrappingWidth = appWidth.toDouble() - 155.0
         textRPG.translateX = 50.0
-        textRPG.translateY = appHeight.toDouble() - 100.0
+        textRPG.translateY = appHeight.toDouble() - 160.0
         textRPG.opacity = 0.0
 
-        centerTextBind(textRPG, appWidth / 2.0, appHeight - 100.0)
+        val keyView = KeyView(KeyCode.ENTER, Color.GREENYELLOW, 18.0)
+        keyView.translateX = appWidth.toDouble() - 80.0
+        keyView.translateY = appHeight - 40.0
+        keyView.opacityProperty().bind(textRPG.opacityProperty())
 
-        contentRoot.children.addAll(textRPG)
+        contentRoot.children.addAll(topLine, botLine, textRPG, keyView)
 
         input.addAction(object : UserAction("Next RPG Line") {
             override fun onActionBegin() {
