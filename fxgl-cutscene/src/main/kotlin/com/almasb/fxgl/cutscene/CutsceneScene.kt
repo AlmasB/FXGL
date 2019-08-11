@@ -9,7 +9,6 @@ package com.almasb.fxgl.cutscene
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationDSL
 import com.almasb.fxgl.input.UserAction
-import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.scene.SubSceneStack
 import javafx.geometry.Point2D
@@ -62,6 +61,7 @@ class CutsceneScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
         textRPG.wrappingWidth = appWidth.toDouble() - 50.0
         textRPG.translateX = 50.0
         textRPG.translateY = appHeight.toDouble() - 100.0
+        textRPG.opacity = 0.0
 
         centerTextBind(textRPG, appWidth / 2.0, appHeight - 100.0)
 
@@ -99,7 +99,8 @@ class CutsceneScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
         }
     }
 
-    internal fun endCutscene() {
+    private fun endCutscene() {
+        textRPG.opacity = 0.0
         animation2.onFinished = Runnable {
             sceneStack.popSubScene()
             onClose()
@@ -136,11 +137,11 @@ class CutsceneScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
         }
     }
 
-    fun onOpen() {
-
+    private fun onOpen() {
+        textRPG.opacity = 1.0
     }
 
-    fun onClose() {
+    private fun onClose() {
         currentLine = 0
         message.clear()
     }
