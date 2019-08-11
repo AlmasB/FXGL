@@ -58,7 +58,7 @@ class KeyView
             }
 
             KeyCode.ALT -> {
-                background.width = text.layoutBounds.width * 1.2
+                background.width = text.layoutBounds.width * 1.25
                 border.width = text.layoutBounds.width * 1.26
             }
 
@@ -88,6 +88,18 @@ class KeyView
 
             KeyCode.RIGHT -> {
                 text.text = "\u2192"
+            }
+
+            KeyCode.ENTER -> {
+                text.text = "\u23CEEnter"
+                background.width = size * 3.45
+                border.width = size * 3.47
+            }
+
+            KeyCode.DELETE -> {
+                text.text = "Del"
+                background.width = text.layoutBounds.width * 1.25
+                border.width = text.layoutBounds.width * 1.26
             }
 
             else -> {}

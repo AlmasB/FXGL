@@ -18,6 +18,7 @@ import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -34,7 +35,7 @@ public class VirtualControllerSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(850);
-        settings.setHeight(500);
+        settings.setHeight(700);
         settings.setMenuEnabled(false);
     }
 
@@ -110,6 +111,20 @@ public class VirtualControllerSample extends GameApplication {
         );
 
         addUINode(triggerView, 350, 400);
+
+        // special keys
+        addUINode(new HBox(10,
+                new KeyView(KeyCode.UP),
+                new KeyView(KeyCode.RIGHT),
+                new KeyView(KeyCode.DOWN),
+                new KeyView(KeyCode.LEFT),
+                new KeyView(KeyCode.SHIFT),
+                new KeyView(KeyCode.CONTROL),
+                new KeyView(KeyCode.ALT),
+                new KeyView(KeyCode.DELETE),
+                new KeyView(KeyCode.SPACE),
+                new KeyView(KeyCode.ENTER, Color.BLUE)
+                ), 50, 550);
     }
 
     public static class CustomDpad extends VirtualDpad {
