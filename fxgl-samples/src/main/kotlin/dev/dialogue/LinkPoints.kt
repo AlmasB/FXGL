@@ -6,6 +6,7 @@
 
 package dev.dialogue
 
+import javafx.beans.property.SimpleStringProperty
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 
@@ -27,4 +28,5 @@ class InLinkPoint : LinkPoint() {}
 class OutLinkPoint : LinkPoint() {
 
     var choiceLocalID: Int = -1
+    var choiceLocalOptionProperty = SimpleStringProperty("")
 }

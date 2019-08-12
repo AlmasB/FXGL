@@ -142,7 +142,7 @@ class DialoguePane : HBox() {
                     val line = nodeView.connect(selectedNodeView!!, selectedOutLink!!, p as InLinkPoint)
 
                     if (it.choiceLocalID != -1) {
-                        graph.addEdge(selectedNodeView!!.node as ChoiceNode, it.choiceLocalID, nodeView.node)
+                        graph.addEdge(selectedNodeView!!.node as ChoiceNode, it.choiceLocalID, it.choiceLocalOptionProperty.value, nodeView.node)
                     } else {
                         graph.addEdge(selectedNodeView!!.node, nodeView.node)
                     }

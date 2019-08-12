@@ -8,14 +8,14 @@ package dev.dialogue
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationDSL
-import com.almasb.fxgl.cutscene.CutsceneDialogLine
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.scene.SubSceneStack
+import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
@@ -34,7 +34,7 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
     private val animation2: Animation<*>
 
     private val topText = Text()
-    private val botText = VBox(5.0)
+    private val boxPlayerLines = VBox(5.0)
 
     private lateinit var graph: DialogueGraph
 
@@ -69,31 +69,24 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
 //        botText.fill = Color.WHITE
 //        botText.font = Font.font(18.0)
 //        botText.wrappingWidth = appWidth.toDouble() - 155.0
-        botText.translateX = 50.0
-        botText.translateY = appHeight.toDouble() - 160.0
-        botText.opacity = 0.0
+        boxPlayerLines.translateX = 50.0
+        boxPlayerLines.translateY = appHeight.toDouble() - 160.0
+        boxPlayerLines.opacity = 0.0
 
         val keyView = KeyView(KeyCode.ENTER, Color.GREENYELLOW, 18.0)
         keyView.translateX = appWidth.toDouble() - 80.0
         keyView.translateY = appHeight - 40.0
 
-        keyView.opacityProperty().bind(botText.opacityProperty())
-        topText.opacityProperty().bind(botText.opacityProperty())
+        keyView.opacityProperty().bind(boxPlayerLines.opacityProperty())
+        topText.opacityProperty().bind(boxPlayerLines.opacityProperty())
 
-        contentRoot.children.addAll(topLine, botLine, topText, botText, keyView)
+        contentRoot.children.addAll(topLine, botLine, topText, boxPlayerLines, keyView)
 
         input.addAction(object : UserAction("Next RPG Line") {
             override fun onActionBegin() {
                 nextLine()
             }
         }, KeyCode.ENTER)
-    }
-
-    private fun centerTextBind(text: Text, x: Double, y: Double) {
-        text.layoutBoundsProperty().addListener { _, _, bounds ->
-            text.translateX = x - bounds.width / 2
-            text.translateY = y - bounds.height / 2
-        }
     }
 
     override fun onCreate() {
@@ -115,7 +108,7 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
     }
 
     private fun endCutscene() {
-        botText.opacity = 0.0
+        boxPlayerLines.opacity = 0.0
         animation2.onFinished = Runnable {
             sceneStack.popSubScene()
             onClose()
@@ -138,7 +131,7 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
     private lateinit var currentNode: DialogueNode
     private val message = ArrayDeque<Char>()
 
-    private fun nextLine() {
+    private fun nextLine(nextNode: DialogueNode? = null) {
         // do not allow to move to next line while the text animation is going
         if (message.isNotEmpty())
             return
@@ -150,13 +143,21 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
             return
         }
 
-
-
         val isDone = currentNode.type == DialogueNodeType.END
         if (!isDone) {
-            currentNode = nextNode()
+            currentNode = nextNode ?: nextNode()
 
             currentNode.text.forEach { message.addLast(it) }
+
+            if (currentNode.type == DialogueNodeType.CHOICE) {
+                val choiceNode = currentNode as ChoiceNode
+
+                choiceNode.localIDs.forEach { id ->
+                    choiceNode.localOptions[id]?.let {
+                        populatePlayerLine(id, it)
+                    }
+                }
+            }
 
             topText.text = ""
 
@@ -165,20 +166,42 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
         }
     }
 
+    private fun populatePlayerLine(localID: Int, data: String) {
+        val text = FXGL.getUIFactory().newText("${localID + 1}. ${data}", 18.0)
+        text.font = Font.font(18.0)
+        text.fillProperty().bind(
+                Bindings.`when`(text.hoverProperty())
+                        .then(Color.YELLOW)
+                        .otherwise(Color.WHITE)
+        )
+
+        text.setOnMouseClicked {
+            selectLine(localID)
+        }
+
+        boxPlayerLines.children.add(text)
+    }
+
+    private fun selectLine(choiceLocalID: Int) {
+        boxPlayerLines.children.clear()
+        nextLine(nextNodeFromChoice(choiceLocalID))
+    }
+
     private fun nextNode(): DialogueNode {
         return graph.edges.find { it.source.id == currentNode.id }!!.target
     }
 
-    private fun nextNodeFromChoice(choiceID: Int): DialogueNode {
-        return graph.choiceEdges.find { it.source.id == currentNode.id && it.localID == choiceID }!!.target
+    private fun nextNodeFromChoice(choiceLocalID: Int): DialogueNode {
+        return graph.choiceEdges.find { it.source.id == currentNode.id && it.localID == choiceLocalID }!!.target
     }
 
     private fun onOpen() {
-        botText.opacity = 1.0
+        boxPlayerLines.opacity = 1.0
     }
 
     private fun onClose() {
         currentLine = 0
         message.clear()
+        boxPlayerLines.children.clear()
     }
 }

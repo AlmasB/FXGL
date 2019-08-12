@@ -33,6 +33,7 @@ class ChoiceNodeView : NodeView(ChoiceNode("")) {
 
 
             outPoint.choiceLocalID = i
+            outPoint.choiceLocalOptionProperty.bind(field.textProperty())
 
             node.localIDs += i
 

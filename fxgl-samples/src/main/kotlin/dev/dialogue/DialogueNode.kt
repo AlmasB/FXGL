@@ -41,6 +41,7 @@ class TextNode(text: String) : DialogueNode(DialogueNodeType.TEXT, text)
 class ChoiceNode(text: String) : DialogueNode(DialogueNodeType.CHOICE, text)  {
 
     val localIDs = mutableListOf<Int>()
+    val localOptions = hashMapOf<Int, String>()
 }
 
 class DialogueEdge(val source: DialogueNode, val target: DialogueNode)
@@ -73,8 +74,10 @@ class DialogueGraph : Serializable {
         print()
     }
 
-    fun addEdge(source: ChoiceNode, localID: Int, target: DialogueNode) {
+    fun addEdge(source: ChoiceNode, localID: Int, localOption: String, target: DialogueNode) {
         choiceEdges += DialogueChoiceEdge(source, localID, target)
+
+        source.localOptions[localID] = localOption
 
         print()
     }
@@ -107,7 +110,7 @@ class DialogueGraph : Serializable {
 
     fun toSerializable(): SerializableGraph {
         val nodesS = nodes.filter { it.type != DialogueNodeType.CHOICE }.map { SerializableTextNode(it.id, it.type, it.text) }
-        val choiceNodesS = nodes.filter { it.type == DialogueNodeType.CHOICE }.map { SerializableChoiceNode(it.id, it.type, it.text, (it as ChoiceNode).localIDs) }
+        val choiceNodesS = nodes.filter { it.type == DialogueNodeType.CHOICE }.map { SerializableChoiceNode(it.id, it.type, it.text, (it as ChoiceNode).localIDs, it.localOptions) }
 
         val edgesS = edges.map { SerializableEdge(it.source.id, it.target.id) }
         val choiceEdgesS = choiceEdges.map { SerializableChoiceEdge(it.source.id, it.localID, it.target.id) }
@@ -121,7 +124,7 @@ class DialogueGraph : Serializable {
 
 data class SerializableTextNode(val id: Int, val type: DialogueNodeType, val text: String)
 
-data class SerializableChoiceNode(val id: Int, val type: DialogueNodeType, val text: String, val localIDs: List<Int>)
+data class SerializableChoiceNode(val id: Int, val type: DialogueNodeType, val text: String, val localIDs: List<Int>, val localOptions: Map<Int, String>)
 
 data class SerializableEdge(val source: Int, val target: Int)
 
@@ -170,7 +173,7 @@ data class SerializableGraph(
             val source = graph.findNodeById(it.source)!!
             val target = graph.findNodeById(it.target)!!
 
-            graph.addEdge(source as ChoiceNode, it.localID, target)
+            graph.addEdge(source as ChoiceNode, it.localID, source.localOptions[it.localID]!!, target)
         }
 
         return graph
