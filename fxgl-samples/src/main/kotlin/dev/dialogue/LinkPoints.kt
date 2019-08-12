@@ -19,14 +19,12 @@ sealed class LinkPoint : Circle(8.0, 8.0, 8.0) {
         fill = Color.TRANSPARENT
         stroke = Color.YELLOW
         strokeWidth = 2.0
-
-
-//        background = null
-//
-//        children.add(circle)
     }
 }
 
 class InLinkPoint : LinkPoint() {}
 
-class OutLinkPoint : LinkPoint() {}
+class OutLinkPoint : LinkPoint() {
+
+    var choiceLocalID: Int = -1
+}

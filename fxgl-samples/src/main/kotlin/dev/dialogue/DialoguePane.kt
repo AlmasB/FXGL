@@ -7,6 +7,7 @@
 package dev.dialogue
 
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.ui.FXGLScrollPane
 import javafx.geometry.Pos
 import javafx.scene.control.ContextMenu
@@ -49,81 +50,50 @@ class DialoguePane : HBox() {
 
         // start and end
 
-        val startNode = StartNodeView()
-        startNode.relocate(100.0, 100.0)
-
-        val endNode = EndNodeView()
-        endNode.relocate(400.0, 100.0)
-
-        graph.addNode(startNode.node)
-        graph.addNode(endNode.node)
-
-        contentPane.children.addAll(startNode, endNode)
+        addNodeView(StartNodeView(), 100.0, 100.0)
+        addNodeView(EndNodeView(), 400.0, 100.0)
 
 
-
-
-
-
-
-
-        val contextMenu = ContextMenu()
 
         val item1 = MenuItem("Text")
         item1.setOnAction {
             val textNode = TextNodeView()
-            textNode.relocate(FXGL.getInput().mouseXUI, FXGL.getInput().mouseYUI)
 
-            graph.addNode(textNode.node)
-
-            attachMouseHandler(textNode)
-
-            contentPane.children.add(textNode)
+            addNodeView(textNode)
         }
 
-        contextMenu.items.addAll(item1)
+        val item2 = MenuItem("Choice")
+        item2.setOnAction {
+            val textNode = ChoiceNodeView()
+
+            addNodeView(textNode)
+        }
+
+        val btnSave = MenuItem("Save")
+        btnSave.setOnAction {
+            FS(true).writeDataTask(graph, "graph.dat").run()
+        }
+
+        val contextMenu = ContextMenu()
+        contextMenu.items.addAll(item1, item2, btnSave)
 
         setOnContextMenuRequested {
             contextMenu.show(contentPane.scene.window, FXGL.getInput().mouseXUI + 200, FXGL.getInput().mouseYUI + 15)
         }
+    }
 
+    private fun addNodeView(nodeView: NodeView, x: Double = FXGL.getInput().mouseXUI, y: Double = FXGL.getInput().mouseYUI) {
+        nodeView.relocate(x, y)
 
+        graph.addNode(nodeView.node)
 
+        attachMouseHandler(nodeView)
 
-
-//
-//        val item2 = MenuItem("Function")
-//        item2.setOnAction {
-//            val fNode = ScriptNodeView()
-//            fNode.relocate(FXGL.getInput().getMouseXUI(), FXGL.getInput().getMouseYUI())
-//
-//            attachMouseHandler(fNode)
-//
-//            contentPane.children.add(fNode)
-//        }
-//
-//        val item3 = MenuItem("Choice")
-//        item3.setOnAction {
-//            val fNode = ChoiceNodeView()
-//            fNode.relocate(FXGL.getInput().getMouseXUI(), FXGL.getInput().getMouseYUI())
-//
-//            attachMouseHandler(fNode)
-//
-//            contentPane.children.add(fNode)
-//        }
-//
-
-
-
-
-        attachMouseHandler(startNode)
-        attachMouseHandler(endNode)
+        contentPane.children.add(nodeView)
     }
 
     private fun attachMouseHandler(nodeView: NodeView) {
         nodeView.outPoints.forEach { p ->
-
-            //println("attached out")
 
             p.setOnMouseClicked {
                 selectedOutLink = p as OutLinkPoint
@@ -133,14 +103,16 @@ class DialoguePane : HBox() {
 
         nodeView.inPoints.forEach { p ->
 
-            //println("attached in")
-
             p.setOnMouseClicked {
                 selectedOutLink?.let {
 
                     val line = nodeView.connect(selectedNodeView!!, selectedOutLink!!, p as InLinkPoint)
 
-                    graph.addEdge(selectedNodeView!!.node, nodeView.node)
+                    if (it.choiceLocalID != -1) {
+                        graph.addEdge(selectedNodeView!!.node as ChoiceNode, it.choiceLocalID, nodeView.node)
+                    } else {
+                        graph.addEdge(selectedNodeView!!.node, nodeView.node)
+                    }
 
                     contentPane.children.add(line)
 
