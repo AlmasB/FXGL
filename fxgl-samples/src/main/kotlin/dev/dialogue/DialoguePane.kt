@@ -7,13 +7,25 @@
 package dev.dialogue
 
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.dsl.getAppHeight
+import com.almasb.fxgl.dsl.getAppWidth
+import com.almasb.fxgl.dsl.getGameController
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.ui.FXGLScrollPane
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.geometry.Pos
+import javafx.scene.control.Button
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
+import javafx.scene.input.KeyEvent
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
+import javafx.scene.layout.StackPane
+import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
+import javafx.scene.text.Font
+import javafx.scene.text.Text
 
 //        startNode.outPoints.forEach {
 //            it.localToSceneTransformProperty().addListener { _, _, newValue ->
@@ -38,6 +50,18 @@ class DialoguePane : HBox() {
 
     init {
         contentPane.setPrefSize(2000.0, 1000.0)
+
+        val btnRun = Text("Run")
+        btnRun.fill = Color.WHITE
+        btnRun.font = Font.font(28.0)
+        btnRun.setOnMouseClicked {
+            DialogueScene(getGameController(), getAppWidth(), getAppHeight()).start(graph)
+        }
+
+        contentPane.children.add(StackPane(
+                Rectangle(80.0, 40.0, Color.color(0.0, 0.0, 0.0, 0.5)),
+                btnRun
+        ))
 
         val scroll = FXGLScrollPane(contentPane)
         scroll.style = "-fx-background-color: gray"
@@ -71,7 +95,16 @@ class DialoguePane : HBox() {
 
         val btnSave = MenuItem("Save")
         btnSave.setOnAction {
-            FS(true).writeDataTask(graph, "graph.dat").run()
+            val mapper = jacksonObjectMapper()
+            mapper.enable(SerializationFeature.INDENT_OUTPUT)
+
+            val s = mapper.writeValueAsString(graph.toSerializable())
+            println(s)
+
+            val graph2 = mapper.readValue(s, SerializableGraph::class.java).toGraph()
+
+            println()
+            println(graph2)
         }
 
         val contextMenu = ContextMenu()

@@ -5,4 +5,8 @@ open module samples.main {
     // these are only here while being developed
     requires com.almasb.fxgl.trade;
     requires com.almasb.fxgl.cutscene;
+
+    requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.module.kotlin;
+    requires jackson.annotations;
 }

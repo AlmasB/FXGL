@@ -127,7 +127,7 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
     fun start(cutscene: DialogueGraph) {
         this.graph = cutscene
 
-        currentNode = graph.nodes.find { it.id == 0}!!
+        currentNode = graph.nodes.find { it.id == 0 }!!
 
         nextLine()
 
