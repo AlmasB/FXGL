@@ -10,22 +10,23 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getAppHeight
 import com.almasb.fxgl.dsl.getAppWidth
 import com.almasb.fxgl.dsl.getGameController
-import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.ui.FXGLScrollPane
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import javafx.geometry.Pos
-import javafx.scene.control.Button
+import javafx.event.EventHandler
+import javafx.scene.Group
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
-import javafx.scene.input.KeyEvent
-import javafx.scene.layout.HBox
+import javafx.scene.control.Slider
+import javafx.scene.input.MouseButton
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
 import javafx.scene.text.Text
+
 
 //        startNode.outPoints.forEach {
 //            it.localToSceneTransformProperty().addListener { _, _, newValue ->
@@ -38,7 +39,7 @@ import javafx.scene.text.Text
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DialoguePane : HBox() {
+class DialoguePane : Pane() {
 
     private val contentPane = Pane()
 
@@ -47,6 +48,8 @@ class DialoguePane : HBox() {
 
 
     private val graph = DialogueGraph()
+
+    private val edgeViews = Group()
 
     init {
         contentPane.setPrefSize(2000.0, 1000.0)
@@ -63,19 +66,31 @@ class DialoguePane : HBox() {
                 btnRun
         ))
 
+        contentPane.children += edgeViews
+
         val scroll = FXGLScrollPane(contentPane)
         scroll.style = "-fx-background-color: gray"
         //scroll.vbarPolicy = ScrollPane.ScrollBarPolicy.ALWAYS
         scroll.maxWidth = FXGL.getAppWidth() - 1.0
-        scroll.maxHeight = FXGL.getAppHeight() - 1.0
+        scroll.maxHeight = FXGL.getAppHeight() - 45.0
 
-        children.add(scroll)
-        alignment = Pos.CENTER
+
+        val slider = Slider(0.1, 2.0, 1.0)
+        slider.isShowTickMarks = true
+        slider.isShowTickLabels = true
+        //slider.majorTickUnit = 0.5
+        //slider.blockIncrement = 0.1
+        slider.setPrefSize(100.0, 40.0)
+        slider.translateY = FXGL.getAppHeight() - 40.0
+        contentPane.scaleXProperty().bind(slider.valueProperty())
+        contentPane.scaleYProperty().bind(slider.valueProperty())
+
+        children.addAll(scroll, slider)
 
         // start and end
 
         addNodeView(StartNodeView(), 100.0, 100.0)
-        addNodeView(EndNodeView(), 400.0, 100.0)
+        addNodeView(EndNodeView(), 600.0, 100.0)
 
 
 
@@ -126,33 +141,67 @@ class DialoguePane : HBox() {
     }
 
     private fun attachMouseHandler(nodeView: NodeView) {
-        nodeView.outPoints.forEach { p ->
+        nodeView.outPoints.forEach { outPoint ->
 
-            p.setOnMouseClicked {
-                selectedOutLink = p as OutLinkPoint
-                selectedNodeView = nodeView
+            outPoint.setOnMouseClicked {
+                if (it.button == MouseButton.PRIMARY) {
+                    selectedOutLink = outPoint
+                    selectedNodeView = nodeView
+                } else {
+                    if (outPoint.isConnected) {
+                        outPoint.disconnect()?.let { inPoint ->
+                            val view = removeEdgeView(outPoint, inPoint)
+
+                            view?.let {
+                                if (it.localID != -1) {
+                                    graph.removeEdge(nodeView.node, it.localID, inPoint.owner.node)
+                                } else {
+                                    graph.removeEdge(nodeView.node, inPoint.owner.node)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
         nodeView.inPoints.forEach { p ->
 
             p.setOnMouseClicked {
-                selectedOutLink?.let {
 
-                    val line = nodeView.connect(selectedNodeView!!, selectedOutLink!!, p as InLinkPoint)
+                if (it.button == MouseButton.PRIMARY) {
 
-                    if (it.choiceLocalID != -1) {
-                        graph.addEdge(selectedNodeView!!.node as ChoiceNode, it.choiceLocalID, it.choiceLocalOptionProperty.value, nodeView.node)
-                    } else {
-                        graph.addEdge(selectedNodeView!!.node, nodeView.node)
+                    selectedOutLink?.let { outLink ->
+
+                        val edgeView = outLink.connect(p)
+
+                        edgeView?.let {
+                            if (outLink.choiceLocalID != -1) {
+                                edgeView.localID = outLink.choiceLocalID
+                                graph.addEdge(selectedNodeView!!.node as ChoiceNode, outLink.choiceLocalID, outLink.choiceLocalOptionProperty.value, nodeView.node)
+                            } else {
+                                graph.addEdge(selectedNodeView!!.node, nodeView.node)
+                            }
+
+                            edgeViews.children.add(edgeView)
+                        }
+
+                        // reset selection
+                        selectedOutLink = null
+                        selectedNodeView = null
                     }
-
-                    contentPane.children.add(line)
-
-                    selectedOutLink = null
-                    selectedNodeView = null
                 }
             }
         }
+    }
+
+    private fun removeEdgeView(source: OutLinkPoint, target: InLinkPoint): EdgeView? {
+        val view = edgeViews.children.find { (it as EdgeView).source === source && (it as EdgeView).target === target } as EdgeView?
+
+        view?.let {
+            edgeViews.children -= view
+        }
+
+        return view
     }
 }

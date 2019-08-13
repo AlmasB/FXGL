@@ -83,7 +83,16 @@ class DialogueGraph : Serializable {
     }
 
     fun removeEdge(source: DialogueNode, target: DialogueNode) {
+        edges.removeIf { it.source.id == source.id && it.target.id == target.id }
 
+        print()
+    }
+
+    // remove choice node
+    fun removeEdge(source: DialogueNode, localID: Int, target: DialogueNode) {
+        choiceEdges.removeIf { it.source.id == source.id && it.localID == localID && it.target.id == target.id }
+
+        print()
     }
 
     fun print() {

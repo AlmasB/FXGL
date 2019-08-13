@@ -20,8 +20,8 @@ public class DialogueEditorSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1280);
-        settings.setHeight(720);
+        settings.setWidth(1600);
+        settings.setHeight(900);
         settings.setTitle("EditorSample");
         settings.setVersion("0.1");
     }

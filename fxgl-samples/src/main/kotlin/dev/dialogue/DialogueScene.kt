@@ -9,6 +9,7 @@ package dev.dialogue
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationDSL
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.dsl.animationBuilder
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.scene.SubScene
@@ -175,9 +176,15 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
                         .otherwise(Color.WHITE)
         )
 
+        text.opacity = 0.0
+
         text.setOnMouseClicked {
             selectLine(localID)
         }
+
+        animationBuilder()
+                .fadeIn(text)
+                .buildAndPlay(this)
 
         boxPlayerLines.children.add(text)
     }
