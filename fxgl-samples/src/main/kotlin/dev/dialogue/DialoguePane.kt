@@ -10,29 +10,19 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getAppHeight
 import com.almasb.fxgl.dsl.getAppWidth
 import com.almasb.fxgl.dsl.getGameController
-import com.almasb.fxgl.ui.FXGLScrollPane
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
 import javafx.scene.control.Slider
 import javafx.scene.input.MouseButton
-import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
 import javafx.scene.text.Text
-
-
-//        startNode.outPoints.forEach {
-//            it.localToSceneTransformProperty().addListener { _, _, newValue ->
-//                println(newValue)
-//            }
-//        }
 
 /**
  *
@@ -41,18 +31,22 @@ import javafx.scene.text.Text
  */
 class DialoguePane : Pane() {
 
-    private val contentPane = Pane()
+    private val contentRoot = Group()
 
     private var selectedNodeView: NodeView? = null
     private var selectedOutLink: OutLinkPoint? = null
-
 
     private val graph = DialogueGraph()
 
     private val edgeViews = Group()
 
+    private val dragScale = 1.25
+    private var dragX = 0.0
+    private var dragY = 0.0
+
     init {
-        contentPane.setPrefSize(2000.0, 1000.0)
+        setPrefSize(getAppWidth().toDouble(), getAppHeight().toDouble())
+        style = "-fx-background-color: gray"
 
         val btnRun = Text("Run")
         btnRun.fill = Color.WHITE
@@ -61,18 +55,17 @@ class DialoguePane : Pane() {
             DialogueScene(getGameController(), getAppWidth(), getAppHeight()).start(graph)
         }
 
-        contentPane.children.add(StackPane(
+        contentRoot.children.add(StackPane(
                 Rectangle(80.0, 40.0, Color.color(0.0, 0.0, 0.0, 0.5)),
                 btnRun
         ))
 
-        contentPane.children += edgeViews
+        contentRoot.children += edgeViews
 
-        val scroll = FXGLScrollPane(contentPane)
-        scroll.style = "-fx-background-color: gray"
-        //scroll.vbarPolicy = ScrollPane.ScrollBarPolicy.ALWAYS
-        scroll.maxWidth = FXGL.getAppWidth() - 1.0
-        scroll.maxHeight = FXGL.getAppHeight() - 45.0
+//        val scroll = FXGLScrollPane(contentPane)
+//        scroll
+//        scroll.maxWidth = FXGL.getAppWidth() - 1.0
+//        scroll.maxHeight = FXGL.getAppHeight() - 45.0
 
 
         val slider = Slider(0.1, 2.0, 1.0)
@@ -82,10 +75,10 @@ class DialoguePane : Pane() {
         //slider.blockIncrement = 0.1
         slider.setPrefSize(100.0, 40.0)
         slider.translateY = FXGL.getAppHeight() - 40.0
-        contentPane.scaleXProperty().bind(slider.valueProperty())
-        contentPane.scaleYProperty().bind(slider.valueProperty())
+        contentRoot.scaleXProperty().bind(slider.valueProperty())
+        contentRoot.scaleYProperty().bind(slider.valueProperty())
 
-        children.addAll(scroll, slider)
+        children.addAll(contentRoot, slider)
 
         // start and end
 
@@ -126,7 +119,25 @@ class DialoguePane : Pane() {
         contextMenu.items.addAll(item1, item2, btnSave)
 
         setOnContextMenuRequested {
-            contextMenu.show(contentPane.scene.window, FXGL.getInput().mouseXUI + 200, FXGL.getInput().mouseYUI + 15)
+            contextMenu.show(contentRoot.scene.window, FXGL.getInput().mouseXUI + 200, FXGL.getInput().mouseYUI + 15)
+        }
+
+
+
+        setOnMouseMoved {
+            dragX = it.x
+            dragY = it.y
+        }
+
+        setOnMouseDragged {
+            if (!it.isControlDown)
+                return@setOnMouseDragged
+
+            contentRoot.translateX += (it.x - dragX) * dragScale
+            contentRoot.translateY += (it.y - dragY) * dragScale
+
+            dragX = it.x
+            dragY = it.y
         }
     }
 
@@ -137,7 +148,7 @@ class DialoguePane : Pane() {
 
         attachMouseHandler(nodeView)
 
-        contentPane.children.add(nodeView)
+        contentRoot.children.add(nodeView)
     }
 
     private fun attachMouseHandler(nodeView: NodeView) {

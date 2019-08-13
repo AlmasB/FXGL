@@ -64,7 +64,7 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         val title = FXGL.getUIFactory().newText(node.type.toString().toLowerCase().capitalize(), Color.WHITE, 16.0)
 
 
-        children.addAll(contentRoot, text)
+        children.addAll(contentRoot)
 
 
         textArea.styleClass.add("dialogue-editor-text-area")
@@ -100,11 +100,11 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         addContent(title)
         addContent(textArea)
 
-        runOnce({
-            val bar = textArea.lookup(".scroll-bar:vertical") as ScrollBar
-            bar.isDisable = true
-            bar.opacity = 0.0
-        }, Duration.seconds(3.0))
+//        runOnce({
+//            val bar = textArea.lookup(".scroll-bar:vertical") as ScrollBar
+//            bar.isDisable = true
+//            bar.opacity = 0.0
+//        }, Duration.seconds(3.0))
     }
 
     fun addContent(node: Node) {
