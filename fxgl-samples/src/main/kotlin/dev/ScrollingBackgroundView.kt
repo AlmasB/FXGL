@@ -15,10 +15,6 @@ import javafx.scene.canvas.GraphicsContext
 
 
 /**
- * EntityView for scrollable backgrounds.
- * Ensure that your viewport x, y cannot go < 0.
- * In other words, limit min x, y to 0.
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class ScrollingBackgroundView
@@ -43,12 +39,12 @@ class ScrollingBackgroundView
         if (orientation == Orientation.HORIZONTAL) {
             translateXProperty().addListener { _, _, x ->
 
-                //check(x.toInt() >= 0) { "Background x cannot be < 0" }
-
-                if (x.toInt() < 0)
-                    return@addListener
-
                 sx = (x.toDouble() * speed) % image.width
+
+                if (sx < 0) {
+                    sx += image.width
+                }
+
                 redraw()
             }
 
@@ -56,12 +52,12 @@ class ScrollingBackgroundView
         } else {
             translateYProperty().addListener { _, _, y ->
 
-                //check(y.toInt() >= 0) { "Background y cannot be < 0" }
-
-                if (y.toInt() < 0)
-                    return@addListener
-
                 sy = (y.toDouble() * speed) % image.height
+
+                if (sy < 0) {
+                    sy += image.height
+                }
+
                 redraw()
             }
 
