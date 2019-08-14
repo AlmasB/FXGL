@@ -11,7 +11,6 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.components.IntervalPauseComponent;
 import com.almasb.fxgl.dsl.components.LiftComponent;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
