@@ -9,17 +9,12 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.components.AccumulatedUpdateComponent;
-import com.almasb.fxgl.dsl.components.OffscreenPauseComponent;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.input.UserAction;
-import dev.ScrollingBackgroundView;
+import com.almasb.fxgl.dsl.views.ScrollingBackgroundView;
 import javafx.geometry.Orientation;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 

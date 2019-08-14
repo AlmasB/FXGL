@@ -4,15 +4,16 @@
  * See LICENSE for details.
  */
 
-package dev
+package com.almasb.fxgl.dsl.views
 
+import com.almasb.fxgl.core.View
 import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.entity.EntityView
 import com.almasb.fxgl.texture.Texture
 import javafx.geometry.Orientation
+import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
-
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -20,7 +21,7 @@ import javafx.scene.canvas.GraphicsContext
 class ScrollingBackgroundView
 @JvmOverloads constructor(texture: Texture,
                           val orientation: Orientation = Orientation.HORIZONTAL,
-                          val speed: Double = 1.0) : EntityView() {
+                          val speed: Double = 1.0) : Parent(), View {
 
     private val canvas: Canvas
     private val g: GraphicsContext
@@ -64,7 +65,7 @@ class ScrollingBackgroundView
             translateYProperty().bind(viewport.yProperty())
         }
 
-        addNode(canvas)
+        children += canvas
 
         redraw()
     }
@@ -116,4 +117,12 @@ class ScrollingBackgroundView
                     0.0, h, w, canvas.height - h)
         }
     }
+
+    override fun onUpdate(tpf: Double) { }
+
+    override fun getNode(): Node {
+        return this
+    }
+
+    override fun dispose() { }
 }
