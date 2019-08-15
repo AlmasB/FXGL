@@ -10,46 +10,72 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Adapted from Roland C. (https://www.youtube.com/watch?v=1Nx5Be9BDYg).
  */
 public class MouseGestures {
 
-    private DragContext dragContext = new DragContext();
-    //private FXRenderer renderer;
+    private boolean isDragging = false;
 
-    private EventHandler<MouseEvent> onMousePressedEventHandler = event -> {
-        dragContext.x = event.getSceneX();
-        dragContext.y = event.getSceneY();
-    };
+    private Map<Node, DragContext> draggableNodes = new HashMap<>();
+    private Node context;
 
-    private EventHandler<MouseEvent> onMouseDraggedEventHandler = event -> {
-        Node node = (Node) event.getSource();
+    public MouseGestures(Node context) {
+        this.context = context;
+    }
 
-        double offsetX = event.getSceneX() - dragContext.x;
-        double offsetY = event.getSceneY() - dragContext.y;
+    public boolean isDragging() {
+        return isDragging;
+    }
+
+    public void makeDraggable(Node node) {
+        draggableNodes.put(node, new DragContext(node, context));
+    }
+
+    private class DragContext {
+        private double x;
+        private double y;
+
+        private Node node;
+        private Node context;
+
+        private EventHandler<MouseEvent> onMousePressedEventHandler = event -> {
+            isDragging = true;
+
+            x = event.getSceneX();
+            y = event.getSceneY();
+        };
+
+        private EventHandler<MouseEvent> onMouseDraggedEventHandler = event -> {
+            Node node = (Node) event.getSource();
+
+            double offsetX = event.getSceneX() - x;
+            double offsetY = event.getSceneY() - y;
 
 //        node.setTranslateX(node.getTranslateX() + offsetX * 1 / renderer.getScaleX());
 //        node.setTranslateY(node.getTranslateY() + offsetY * 1 / renderer.getScaleY());
 
-        node.setLayoutX(node.getLayoutX() + offsetX);
-        node.setLayoutY(node.getLayoutY() + offsetY);
+            node.setLayoutX(node.getLayoutX() + offsetX * 1 / context.getScaleX());
+            node.setLayoutY(node.getLayoutY() + offsetY * 1 / context.getScaleY());
 
-        dragContext.x = event.getSceneX();
-        dragContext.y = event.getSceneY();
-    };
+            x = event.getSceneX();
+            y = event.getSceneY();
+        };
 
-//    public MouseGestures(FXRenderer renderer) {
-//        this.renderer = renderer;
-//    }
+        private EventHandler<MouseEvent> onMouseReleased = event -> {
+            isDragging = false;
+        };
 
-    public void makeDraggable(Node node) {
-        node.setOnMousePressed(onMousePressedEventHandler);
-        node.setOnMouseDragged(onMouseDraggedEventHandler);
-    }
+        DragContext(Node node, Node context) {
+            this.node = node;
+            this.context = context;
 
-    private static class DragContext {
-        double x;
-        double y;
+            node.setOnMousePressed(onMousePressedEventHandler);
+            node.setOnMouseDragged(onMouseDraggedEventHandler);
+            node.setOnMouseReleased(onMouseReleased);
+        }
     }
 }

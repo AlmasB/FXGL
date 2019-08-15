@@ -23,6 +23,8 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
 import javafx.scene.text.Text
+import javafx.scene.transform.Scale
+import sandbox.cutscene.MouseGestures
 
 /**
  *
@@ -40,9 +42,14 @@ class DialoguePane : Pane() {
 
     private val edgeViews = Group()
 
-    private val dragScale = 1.25
+    private val dragScale = 1.35
     private var dragX = 0.0
     private var dragY = 0.0
+
+    private var mouseX = 0.0
+    private var mouseY = 0.0
+
+    private val mouseGestures = MouseGestures(contentRoot)
 
     init {
         setPrefSize(getAppWidth().toDouble(), getAppHeight().toDouble())
@@ -55,17 +62,35 @@ class DialoguePane : Pane() {
             DialogueScene(getGameController(), getAppWidth(), getAppHeight()).start(graph)
         }
 
-        contentRoot.children.add(StackPane(
-                Rectangle(80.0, 40.0, Color.color(0.0, 0.0, 0.0, 0.5)),
-                btnRun
-        ))
+        contentRoot.children.addAll(
+                StackPane(
+                        Rectangle(80.0, 40.0, Color.color(0.0, 0.0, 0.0, 0.5)),
+                        btnRun
+                ),
+                edgeViews
+        )
 
-        contentRoot.children += edgeViews
+        val scale = Scale()
+        contentRoot.transforms += scale
 
-//        val scroll = FXGLScrollPane(contentPane)
-//        scroll
-//        scroll.maxWidth = FXGL.getAppWidth() - 1.0
-//        scroll.maxHeight = FXGL.getAppHeight() - 45.0
+//        setOnScroll {
+//            val scaleFactor = if (it.deltaY < 0) 0.95 else 1.05
+//
+//            println("XY: ${it.x}, ${it.y}")
+//            println("Scene XY: ${it.sceneX}, ${it.sceneY}")
+//            println("Screen XY: ${it.screenX}, ${it.screenY}")
+//
+//            val p = contentRoot.sceneToLocal(it.x, it.y)
+//
+//            scale.pivotX = p.x
+//            scale.pivotY = p.y
+//            scale.x *= scaleFactor
+//            scale.y *= scaleFactor
+//
+//            println()
+//
+//
+//        }
 
 
         val slider = Slider(0.1, 2.0, 1.0)
@@ -75,15 +100,15 @@ class DialoguePane : Pane() {
         //slider.blockIncrement = 0.1
         slider.setPrefSize(100.0, 40.0)
         slider.translateY = FXGL.getAppHeight() - 40.0
-        contentRoot.scaleXProperty().bind(slider.valueProperty())
-        contentRoot.scaleYProperty().bind(slider.valueProperty())
+        //contentRoot.scaleXProperty().bind(slider.valueProperty())
+        //contentRoot.scaleYProperty().bind(slider.valueProperty())
 
         children.addAll(contentRoot, slider)
 
         // start and end
 
-        addNodeView(StartNodeView(), 100.0, 100.0)
-        addNodeView(EndNodeView(), 600.0, 100.0)
+        addNodeView(StartNodeView(), 50.0, getAppHeight() / 2.0)
+        addNodeView(EndNodeView(), getAppWidth() - 370.0, getAppHeight() / 2.0)
 
 
 
@@ -91,14 +116,18 @@ class DialoguePane : Pane() {
         item1.setOnAction {
             val textNode = TextNodeView()
 
-            addNodeView(textNode)
+            val p = contentRoot.sceneToLocal(mouseX, mouseY)
+
+            addNodeView(textNode, p.x, p.y)
         }
 
         val item2 = MenuItem("Choice")
         item2.setOnAction {
             val textNode = ChoiceNodeView()
 
-            addNodeView(textNode)
+            val p = contentRoot.sceneToLocal(mouseX, mouseY)
+
+            addNodeView(textNode, p.x, p.y)
         }
 
         val btnSave = MenuItem("Save")
@@ -119,18 +148,19 @@ class DialoguePane : Pane() {
         contextMenu.items.addAll(item1, item2, btnSave)
 
         setOnContextMenuRequested {
-            contextMenu.show(contentRoot.scene.window, FXGL.getInput().mouseXUI + 200, FXGL.getInput().mouseYUI + 15)
+            contextMenu.show(contentRoot.scene.window, it.sceneX + 150.0, it.sceneY + 45.0)
         }
-
-
 
         setOnMouseMoved {
             dragX = it.x
             dragY = it.y
+
+            mouseX = it.sceneX
+            mouseY = it.sceneY
         }
 
         setOnMouseDragged {
-            if (!it.isControlDown)
+            if (mouseGestures.isDragging)
                 return@setOnMouseDragged
 
             contentRoot.translateX += (it.x - dragX) * dragScale
@@ -141,11 +171,12 @@ class DialoguePane : Pane() {
         }
     }
 
-    private fun addNodeView(nodeView: NodeView, x: Double = FXGL.getInput().mouseXUI, y: Double = FXGL.getInput().mouseYUI) {
+    private fun addNodeView(nodeView: NodeView, x: Double, y: Double) {
         nodeView.relocate(x, y)
 
         graph.addNode(nodeView.node)
 
+        mouseGestures.makeDraggable(nodeView)
         attachMouseHandler(nodeView)
 
         contentRoot.children.add(nodeView)
