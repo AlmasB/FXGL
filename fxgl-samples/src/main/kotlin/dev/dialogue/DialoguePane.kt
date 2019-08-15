@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.application.Platform
 import javafx.beans.binding.Bindings
+import javafx.collections.ListChangeListener
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.control.*
@@ -210,7 +211,7 @@ class DialoguePane : Pane() {
         mouseGestures.makeDraggable(nodeView)
 
         nodeView.outPoints.forEach { outPoint ->
-
+            // TODO: refactor repetition
             outPoint.setOnMouseClicked {
                 if (it.button == MouseButton.PRIMARY) {
                     selectedOutLink = outPoint
@@ -218,6 +219,23 @@ class DialoguePane : Pane() {
                 } else {
                     if (outPoint.isConnected) {
                         disconnectOutLink(outPoint)
+                    }
+                }
+            }
+        }
+
+        nodeView.outPoints.addListener { c: ListChangeListener.Change<out OutLinkPoint> ->
+            while (c.next()) {
+                c.addedSubList.forEach { outPoint ->
+                    outPoint.setOnMouseClicked {
+                        if (it.button == MouseButton.PRIMARY) {
+                            selectedOutLink = outPoint
+                            selectedNodeView = nodeView
+                        } else {
+                            if (outPoint.isConnected) {
+                                disconnectOutLink(outPoint)
+                            }
+                        }
                     }
                 }
             }

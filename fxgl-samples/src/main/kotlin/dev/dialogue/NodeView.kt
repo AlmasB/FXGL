@@ -7,6 +7,7 @@
 package dev.dialogue
 
 import com.almasb.fxgl.dsl.FXGL
+import javafx.collections.FXCollections
 import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
@@ -25,11 +26,11 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
     private val initialHeight = 100.0
 
     // TODO: only one in point?
-    var outPoints = arrayListOf<OutLinkPoint>()
+    var outPoints = FXCollections.observableArrayList<OutLinkPoint>()
 
-    var inPoints = arrayListOf<InLinkPoint>()
+    var inPoints = FXCollections.observableArrayList<InLinkPoint>()
 
-    private val contentRoot = VBox(10.0)
+    protected val contentRoot = VBox(10.0)
 
     protected val textArea = ExpandableTextArea(initialWidth - 70, initialHeight - 50)
 
