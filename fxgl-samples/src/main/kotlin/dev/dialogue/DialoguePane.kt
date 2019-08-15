@@ -6,24 +6,25 @@
 
 package dev.dialogue
 
-import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getAppHeight
 import com.almasb.fxgl.dsl.getAppWidth
 import com.almasb.fxgl.dsl.getGameController
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import javafx.beans.binding.Bindings
 import javafx.scene.Group
-import javafx.scene.control.ContextMenu
-import javafx.scene.control.MenuItem
-import javafx.scene.control.Slider
+import javafx.scene.Node
+import javafx.scene.control.*
 import javafx.scene.input.MouseButton
+import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
+import javafx.scene.shape.Polygon
 import javafx.scene.shape.Rectangle
-import javafx.scene.text.Font
 import javafx.scene.text.Text
 import javafx.scene.transform.Scale
+import javafx.scene.transform.Translate
 import sandbox.cutscene.MouseGestures
 
 /**
@@ -51,59 +52,65 @@ class DialoguePane : Pane() {
 
     private val mouseGestures = MouseGestures(contentRoot)
 
+    private val toolbar = HBox(5.0)
+
     init {
+        toolbar.setPrefSize(getAppWidth().toDouble(), 30.0)
+        toolbar.translateY = -toolbar.prefHeight
+        toolbar.style = "-fx-background-color: black"
+
+
+        val itemSave = MenuItem("Save")
+        itemSave.setOnAction {
+            val mapper = jacksonObjectMapper()
+            mapper.enable(SerializationFeature.INDENT_OUTPUT)
+
+            val s = mapper.writeValueAsString(graph.toSerializable())
+            println(s)
+
+            val graph2 = mapper.readValue(s, SerializableGraph::class.java).toGraph()
+
+            println()
+            println(graph2)
+        }
+
+        val menuFile = Menu("")
+        menuFile.graphic = Text("File").also { it.fill = Color.WHITE }
+        menuFile.style = "-fx-background-color: black"
+        menuFile.items.addAll(itemSave, MenuItem("Load"))
+
+        val menuBar = MenuBar()
+        menuBar.style = "-fx-background-color: black"
+        menuBar.menus.addAll(menuFile)
+
+        toolbar.children += menuBar
+
+
+        translateY = toolbar.prefHeight
         setPrefSize(getAppWidth().toDouble(), getAppHeight().toDouble())
         style = "-fx-background-color: gray"
 
-        val btnRun = Text("Run")
-        btnRun.fill = Color.WHITE
-        btnRun.font = Font.font(28.0)
-        btnRun.setOnMouseClicked {
-            DialogueScene(getGameController(), getAppWidth(), getAppHeight()).start(graph)
-        }
+
+        toolbar.children += makeRunButton()
 
         contentRoot.children.addAll(
-                StackPane(
-                        Rectangle(80.0, 40.0, Color.color(0.0, 0.0, 0.0, 0.5)),
-                        btnRun
-                ),
                 edgeViews
         )
 
         val scale = Scale()
+        val translate = Translate()
+
         contentRoot.transforms += scale
+        contentRoot.transforms += translate
 
-//        setOnScroll {
-//            val scaleFactor = if (it.deltaY < 0) 0.95 else 1.05
-//
-//            println("XY: ${it.x}, ${it.y}")
-//            println("Scene XY: ${it.sceneX}, ${it.sceneY}")
-//            println("Screen XY: ${it.screenX}, ${it.screenY}")
-//
-//            val p = contentRoot.sceneToLocal(it.x, it.y)
-//
-//            scale.pivotX = p.x
-//            scale.pivotY = p.y
-//            scale.x *= scaleFactor
-//            scale.y *= scaleFactor
-//
-//            println()
-//
-//
-//        }
+        setOnScroll {
+            val scaleFactor = if (it.deltaY < 0) 0.95 else 1.05
 
+            scale.x *= scaleFactor
+            scale.y *= scaleFactor
+        }
 
-        val slider = Slider(0.1, 2.0, 1.0)
-        slider.isShowTickMarks = true
-        slider.isShowTickLabels = true
-        //slider.majorTickUnit = 0.5
-        //slider.blockIncrement = 0.1
-        slider.setPrefSize(100.0, 40.0)
-        slider.translateY = FXGL.getAppHeight() - 40.0
-        //contentRoot.scaleXProperty().bind(slider.valueProperty())
-        //contentRoot.scaleYProperty().bind(slider.valueProperty())
-
-        children.addAll(contentRoot, slider)
+        children.addAll(toolbar, contentRoot)
 
         // start and end
 
@@ -130,24 +137,14 @@ class DialoguePane : Pane() {
             addNodeView(textNode, p.x, p.y)
         }
 
-        val btnSave = MenuItem("Save")
-        btnSave.setOnAction {
-            val mapper = jacksonObjectMapper()
-            mapper.enable(SerializationFeature.INDENT_OUTPUT)
-
-            val s = mapper.writeValueAsString(graph.toSerializable())
-            println(s)
-
-            val graph2 = mapper.readValue(s, SerializableGraph::class.java).toGraph()
-
-            println()
-            println(graph2)
-        }
 
         val contextMenu = ContextMenu()
-        contextMenu.items.addAll(item1, item2, btnSave)
+        contextMenu.items.addAll(item1, item2)
 
         setOnContextMenuRequested {
+            if (it.target !== this)
+                return@setOnContextMenuRequested
+
             contextMenu.show(contentRoot.scene.window, it.sceneX + 150.0, it.sceneY + 45.0)
         }
 
@@ -160,7 +157,7 @@ class DialoguePane : Pane() {
         }
 
         setOnMouseDragged {
-            if (mouseGestures.isDragging)
+            if (mouseGestures.isDragging || it.button != MouseButton.PRIMARY)
                 return@setOnMouseDragged
 
             contentRoot.translateX += (it.x - dragX) * dragScale
@@ -169,6 +166,34 @@ class DialoguePane : Pane() {
             dragX = it.x
             dragY = it.y
         }
+    }
+
+    private fun makeRunButton(): Node {
+        val stack = StackPane()
+
+        val bgRun = Rectangle(18.0, 18.0, null)
+        bgRun.strokeProperty().bind(
+                Bindings.`when`(stack.hoverProperty()).then(Color.WHITE).otherwise(Color.TRANSPARENT)
+        )
+        bgRun.fillProperty().bind(
+                Bindings.`when`(stack.pressedProperty()).then(Color.color(0.5, 0.5, 0.5, 0.95)).otherwise(Color.TRANSPARENT)
+        )
+
+        val btnRun = Polygon(
+                0.0, 0.0,
+                13.0, 6.5,
+                0.0, 13.0
+        )
+        btnRun.fill = Color.LIGHTGREEN
+
+        stack.setOnMouseClicked {
+            stack.requestFocus()
+            DialogueScene(getGameController(), getAppWidth(), getAppHeight()).start(graph)
+        }
+
+        stack.children.addAll(bgRun, btnRun)
+
+        return stack
     }
 
     private fun addNodeView(nodeView: NodeView, x: Double, y: Double) {
@@ -191,36 +216,30 @@ class DialoguePane : Pane() {
                     selectedNodeView = nodeView
                 } else {
                     if (outPoint.isConnected) {
-                        outPoint.disconnect()?.let { inPoint ->
-                            val view = removeEdgeView(outPoint, inPoint)
-
-                            view?.let {
-                                if (it.localID != -1) {
-                                    graph.removeEdge(nodeView.node, it.localID, inPoint.owner.node)
-                                } else {
-                                    graph.removeEdge(nodeView.node, inPoint.owner.node)
-                                }
-                            }
-                        }
+                        disconnectOutLink(outPoint)
                     }
                 }
             }
         }
 
-        nodeView.inPoints.forEach { p ->
+        nodeView.inPoints.forEach { inPoint ->
 
-            p.setOnMouseClicked {
+            inPoint.setOnMouseClicked {
 
                 if (it.button == MouseButton.PRIMARY) {
 
-                    selectedOutLink?.let { outLink ->
+                    selectedOutLink?.let { outPoint ->
 
-                        val edgeView = outLink.connect(p)
+                        if (outPoint.isConnected) {
+                            disconnectOutLink(outPoint)
+                        }
+
+                        val edgeView = outPoint.connect(inPoint)
 
                         edgeView?.let {
-                            if (outLink.choiceLocalID != -1) {
-                                edgeView.localID = outLink.choiceLocalID
-                                graph.addEdge(selectedNodeView!!.node as ChoiceNode, outLink.choiceLocalID, outLink.choiceLocalOptionProperty.value, nodeView.node)
+                            if (outPoint.choiceLocalID != -1) {
+                                edgeView.localID = outPoint.choiceLocalID
+                                graph.addEdge(selectedNodeView!!.node as ChoiceNode, outPoint.choiceLocalID, outPoint.choiceLocalOptionProperty.value, nodeView.node)
                             } else {
                                 graph.addEdge(selectedNodeView!!.node, nodeView.node)
                             }
@@ -232,6 +251,20 @@ class DialoguePane : Pane() {
                         selectedOutLink = null
                         selectedNodeView = null
                     }
+                }
+            }
+        }
+    }
+
+    private fun disconnectOutLink(outPoint: OutLinkPoint) {
+        outPoint.disconnect()?.let { inPoint ->
+            val view = removeEdgeView(outPoint, inPoint)
+
+            view?.let {
+                if (it.localID != -1) {
+                    graph.removeEdge(outPoint.owner.node, it.localID, inPoint.owner.node)
+                } else {
+                    graph.removeEdge(outPoint.owner.node, inPoint.owner.node)
                 }
             }
         }

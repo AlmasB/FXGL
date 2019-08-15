@@ -28,9 +28,11 @@ sealed class LinkPoint(val owner: NodeView) : Circle(8.0, 8.0, 8.0) {
 
     init {
         fillProperty().bind(
-                Bindings.`when`(connectedProperty).then(Color.GREEN).otherwise(Color.TRANSPARENT)
+                Bindings.`when`(connectedProperty).then(Color.YELLOWGREEN).otherwise(Color.TRANSPARENT)
         )
-        stroke = Color.YELLOW
+        strokeProperty().bind(
+                Bindings.`when`(connectedProperty).then(Color.YELLOW.brighter()).otherwise(Color.YELLOW.darker())
+        )
         strokeWidth = 2.0
     }
 }

@@ -24,6 +24,7 @@ public class DialogueEditorSample extends GameApplication {
         settings.setHeight(900);
         settings.setTitle("EditorSample");
         settings.setVersion("0.1");
+        settings.getCSSList().add("dialogue_editor.css");
     }
 
     @Override

@@ -8,7 +8,9 @@ package sandbox.cutscene;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.transform.Scale;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +45,10 @@ public class MouseGestures {
         private Node context;
 
         private EventHandler<MouseEvent> onMousePressedEventHandler = event -> {
+            if (event.getButton() != MouseButton.PRIMARY) {
+                return;
+            }
+
             isDragging = true;
 
             x = event.getSceneX();
@@ -50,22 +56,29 @@ public class MouseGestures {
         };
 
         private EventHandler<MouseEvent> onMouseDraggedEventHandler = event -> {
+            if (event.getButton() != MouseButton.PRIMARY) {
+                return;
+            }
+
             Node node = (Node) event.getSource();
 
             double offsetX = event.getSceneX() - x;
             double offsetY = event.getSceneY() - y;
 
-//        node.setTranslateX(node.getTranslateX() + offsetX * 1 / renderer.getScaleX());
-//        node.setTranslateY(node.getTranslateY() + offsetY * 1 / renderer.getScaleY());
+            var scale = (Scale) context.getTransforms().get(0);
 
-            node.setLayoutX(node.getLayoutX() + offsetX * 1 / context.getScaleX());
-            node.setLayoutY(node.getLayoutY() + offsetY * 1 / context.getScaleY());
+            node.setLayoutX(node.getLayoutX() + offsetX * 1 / scale.getX());
+            node.setLayoutY(node.getLayoutY() + offsetY * 1 / scale.getY());
 
             x = event.getSceneX();
             y = event.getSceneY();
         };
 
         private EventHandler<MouseEvent> onMouseReleased = event -> {
+            if (event.getButton() != MouseButton.PRIMARY) {
+                return;
+            }
+
             isDragging = false;
         };
 

@@ -217,20 +217,6 @@
     -fx-border-style: solid;
 }
 
-.dialogue-editor-node-view {
-    -fx-border-color: azure;
-    -fx-border-width: 2;
-    -fx-border-style: solid;
-    -fx-border-radius: 5 5 5 5;
-    -fx-background-radius: 5 5 5 5;
-    -fx-background-color: rgba(0, 0, 0, 0.55);
-}
-
-.dialogue-editor-text-area .scroll-pane {
-    -fx-hbar-policy: never;
-    -fx-vbar-policy: never;
-}
-
 /**
  * FXGL scroll pane
  */
