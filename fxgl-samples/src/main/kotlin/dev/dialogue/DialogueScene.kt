@@ -139,7 +139,7 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
 
 
         if (currentLine == 0 && currentNode.type == DialogueNodeType.START) {
-            currentNode.text.forEach { message.addLast(it) }
+            currentNode.text.parseVariables().forEach { message.addLast(it) }
             currentLine++
             return
         }
@@ -148,14 +148,14 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
         if (!isDone) {
             currentNode = nextNode ?: nextNode()
 
-            currentNode.text.forEach { message.addLast(it) }
+            currentNode.text.parseVariables().forEach { message.addLast(it) }
 
             if (currentNode.type == DialogueNodeType.CHOICE) {
                 val choiceNode = currentNode as ChoiceNode
 
                 choiceNode.localIDs.forEach { id ->
                     choiceNode.localOptions[id]?.let {
-                        populatePlayerLine(id, it.value)
+                        populatePlayerLine(id, it.value.parseVariables())
                     }
                 }
             }
@@ -210,5 +210,29 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
         currentLine = 0
         message.clear()
         boxPlayerLines.children.clear()
+    }
+
+    private fun String.parseVariables(): String {
+        val vars = this.split(" +".toRegex())
+                .filter { it.startsWith("\$") && it.length > 1 }
+                .map {
+                    if (!it.last().isLetterOrDigit())
+                        it.substring(1, it.length - 1)
+                    else
+                        it.substring(1)
+                }
+                .toSet()
+
+        var result = this
+        val properties = FXGL.getGameState().properties
+
+        vars.forEach {
+            if (properties.exists(it)) {
+                val value = properties.getValue<Any>(it)
+                result = result.replace("\$$it", value.toString())
+            }
+        }
+
+        return result
     }
 }
