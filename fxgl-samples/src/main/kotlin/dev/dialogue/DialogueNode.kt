@@ -41,15 +41,14 @@ class TextNode(text: String) : DialogueNode(DialogueNodeType.TEXT, text)
 class ChoiceNode(text: String) : DialogueNode(DialogueNodeType.CHOICE, text)  {
 
     val localIDs = mutableListOf<Int>()
-    val localOptions = hashMapOf<Int, String>()
+    val localOptions = hashMapOf<Int, StringProperty>()
 }
 
 class DialogueEdge(val source: DialogueNode, val target: DialogueNode)
 
 class DialogueChoiceEdge(val source: ChoiceNode, val localID: Int, val target: DialogueNode)
 
-class DialogueGraph : Serializable {
-    private var uniqueID = 0
+class DialogueGraph(private var uniqueID: Int = 0) : Serializable {
 
     val nodes = mutableListOf<DialogueNode>()
     val edges = mutableListOf<DialogueEdge>()
@@ -76,8 +75,6 @@ class DialogueGraph : Serializable {
 
     fun addEdge(source: ChoiceNode, localID: Int, localOption: String, target: DialogueNode) {
         choiceEdges += DialogueChoiceEdge(source, localID, target)
-
-        source.localOptions[localID] = localOption
 
         print()
     }
@@ -119,12 +116,14 @@ class DialogueGraph : Serializable {
 
     fun toSerializable(): SerializableGraph {
         val nodesS = nodes.filter { it.type != DialogueNodeType.CHOICE }.map { SerializableTextNode(it.id, it.type, it.text) }
-        val choiceNodesS = nodes.filter { it.type == DialogueNodeType.CHOICE }.map { SerializableChoiceNode(it.id, it.type, it.text, (it as ChoiceNode).localIDs, it.localOptions) }
+        val choiceNodesS = nodes.filter { it.type == DialogueNodeType.CHOICE }.map {
+            SerializableChoiceNode(it.id, it.type, it.text, (it as ChoiceNode).localIDs, it.localOptions.mapValues { it.value.value })
+        }
 
         val edgesS = edges.map { SerializableEdge(it.source.id, it.target.id) }
         val choiceEdgesS = choiceEdges.map { SerializableChoiceEdge(it.source.id, it.localID, it.target.id) }
 
-        return SerializableGraph(nodesS, choiceNodesS, edgesS, choiceEdgesS)
+        return SerializableGraph(uniqueID, nodesS, choiceNodesS, edgesS, choiceEdgesS)
     }
 }
 
@@ -140,6 +139,7 @@ data class SerializableEdge(val source: Int, val target: Int)
 data class SerializableChoiceEdge(val source: Int, val localID: Int, val target: Int)
 
 data class SerializableGraph(
+        val uniqueID: Int,
         val nodes: List<SerializableTextNode>,
         val choiceNodes: List<SerializableChoiceNode>,
 
@@ -150,13 +150,13 @@ data class SerializableGraph(
     fun toGraph(): DialogueGraph {
         // TODO: error checks?
 
-        val graph = DialogueGraph()
+        val graph = DialogueGraph(uniqueID)
         nodes.forEach {
             val node = when (it.type) {
                 DialogueNodeType.START -> StartNode(it.text)
                 DialogueNodeType.END -> EndNode(it.text)
                 DialogueNodeType.TEXT -> TextNode(it.text)
-                DialogueNodeType.CHOICE -> TODO()
+                DialogueNodeType.CHOICE -> TODO("CANNOT HAPPEN")
             }
 
             node.id = it.id
@@ -167,6 +167,10 @@ data class SerializableGraph(
             val node = ChoiceNode(it.text)
             node.id = it.id
             node.localIDs += it.localIDs
+
+            it.localOptions.forEach { option ->
+                node.localOptions[option.key] = SimpleStringProperty(option.value)
+            }
 
             graph.addNode(node)
         }
@@ -182,7 +186,7 @@ data class SerializableGraph(
             val source = graph.findNodeById(it.source)!!
             val target = graph.findNodeById(it.target)!!
 
-            graph.addEdge(source as ChoiceNode, it.localID, source.localOptions[it.localID]!!, target)
+            graph.addEdge(source as ChoiceNode, it.localID, source.localOptions[it.localID]!!.value, target)
         }
 
         return graph

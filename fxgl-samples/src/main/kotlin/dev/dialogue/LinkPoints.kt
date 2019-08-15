@@ -53,7 +53,7 @@ class OutLinkPoint(owner: NodeView) : LinkPoint(owner) {
     var choiceLocalID: Int = -1
     var choiceLocalOptionProperty = SimpleStringProperty("")
 
-    fun connect(inPoint: InLinkPoint): EdgeView? {
+    fun connect(inPoint: InLinkPoint): EdgeView {
         other = inPoint
         inPoint.connectedPoints += this
         isConnected = true

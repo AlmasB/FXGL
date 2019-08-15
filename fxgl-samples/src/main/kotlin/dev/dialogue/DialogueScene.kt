@@ -155,7 +155,7 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
 
                 choiceNode.localIDs.forEach { id ->
                     choiceNode.localOptions[id]?.let {
-                        populatePlayerLine(id, it)
+                        populatePlayerLine(id, it.value)
                     }
                 }
             }

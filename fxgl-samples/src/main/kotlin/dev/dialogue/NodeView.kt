@@ -24,6 +24,7 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
     private val initialWidth = 320.0
     private val initialHeight = 100.0
 
+    // TODO: only one in point?
     var outPoints = arrayListOf<OutLinkPoint>()
 
     var inPoints = arrayListOf<InLinkPoint>()

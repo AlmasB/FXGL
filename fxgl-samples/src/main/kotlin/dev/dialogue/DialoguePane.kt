@@ -11,6 +11,7 @@ import com.almasb.fxgl.dsl.getAppWidth
 import com.almasb.fxgl.dsl.getGameController
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import javafx.application.Platform
 import javafx.beans.binding.Bindings
 import javafx.scene.Group
 import javafx.scene.Node
@@ -25,7 +26,11 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import javafx.scene.transform.Scale
 import javafx.scene.transform.Translate
+import javafx.stage.FileChooser
 import sandbox.cutscene.MouseGestures
+import java.io.File
+import java.lang.Exception
+import java.nio.file.Files
 
 /**
  *
@@ -39,9 +44,10 @@ class DialoguePane : Pane() {
     private var selectedNodeView: NodeView? = null
     private var selectedOutLink: OutLinkPoint? = null
 
-    private val graph = DialogueGraph()
+    private var graph = DialogueGraph()
 
     private val edgeViews = Group()
+    private val nodeViews = Group()
 
     private val dragScale = 1.35
     private var dragX = 0.0
@@ -59,25 +65,15 @@ class DialoguePane : Pane() {
         toolbar.translateY = -toolbar.prefHeight
         toolbar.style = "-fx-background-color: black"
 
-
         val itemSave = MenuItem("Save")
         itemSave.setOnAction {
-            val mapper = jacksonObjectMapper()
-            mapper.enable(SerializationFeature.INDENT_OUTPUT)
-
-            val s = mapper.writeValueAsString(graph.toSerializable())
-            println(s)
-
-            val graph2 = mapper.readValue(s, SerializableGraph::class.java).toGraph()
-
-            println()
-            println(graph2)
+            openSaveDialog()
         }
 
         val menuFile = Menu("")
         menuFile.graphic = Text("File").also { it.fill = Color.WHITE }
         menuFile.style = "-fx-background-color: black"
-        menuFile.items.addAll(itemSave, MenuItem("Load"))
+        menuFile.items.addAll(itemSave, MenuItem("Load").also { it.setOnAction { openLoadDialog() } })
 
         val menuBar = MenuBar()
         menuBar.style = "-fx-background-color: black"
@@ -94,7 +90,7 @@ class DialoguePane : Pane() {
         toolbar.children += makeRunButton()
 
         contentRoot.children.addAll(
-                edgeViews
+                edgeViews, nodeViews
         )
 
         val scale = Scale()
@@ -110,12 +106,12 @@ class DialoguePane : Pane() {
             scale.y *= scaleFactor
         }
 
-        children.addAll(toolbar, contentRoot)
+        children.addAll(contentRoot, toolbar)
 
         // start and end
 
-        addNodeView(StartNodeView(), 50.0, getAppHeight() / 2.0)
-        addNodeView(EndNodeView(), getAppWidth() - 370.0, getAppHeight() / 2.0)
+        createNode(StartNodeView(), 50.0, getAppHeight() / 2.0)
+        createNode(EndNodeView(), getAppWidth() - 370.0, getAppHeight() / 2.0)
 
 
 
@@ -125,7 +121,7 @@ class DialoguePane : Pane() {
 
             val p = contentRoot.sceneToLocal(mouseX, mouseY)
 
-            addNodeView(textNode, p.x, p.y)
+            createNode(textNode, p.x, p.y)
         }
 
         val item2 = MenuItem("Choice")
@@ -134,7 +130,7 @@ class DialoguePane : Pane() {
 
             val p = contentRoot.sceneToLocal(mouseX, mouseY)
 
-            addNodeView(textNode, p.x, p.y)
+            createNode(textNode, p.x, p.y)
         }
 
 
@@ -196,18 +192,23 @@ class DialoguePane : Pane() {
         return stack
     }
 
+    private fun createNode(nodeView: NodeView, x: Double, y: Double) {
+        graph.addNode(nodeView.node)
+
+        addNodeView(nodeView, x, y)
+    }
+
     private fun addNodeView(nodeView: NodeView, x: Double, y: Double) {
         nodeView.relocate(x, y)
 
-        graph.addNode(nodeView.node)
-
-        mouseGestures.makeDraggable(nodeView)
         attachMouseHandler(nodeView)
 
-        contentRoot.children.add(nodeView)
+        nodeViews.children.add(nodeView)
     }
 
     private fun attachMouseHandler(nodeView: NodeView) {
+        mouseGestures.makeDraggable(nodeView)
+
         nodeView.outPoints.forEach { outPoint ->
 
             outPoint.setOnMouseClicked {
@@ -236,16 +237,14 @@ class DialoguePane : Pane() {
 
                         val edgeView = outPoint.connect(inPoint)
 
-                        edgeView?.let {
-                            if (outPoint.choiceLocalID != -1) {
-                                edgeView.localID = outPoint.choiceLocalID
-                                graph.addEdge(selectedNodeView!!.node as ChoiceNode, outPoint.choiceLocalID, outPoint.choiceLocalOptionProperty.value, nodeView.node)
-                            } else {
-                                graph.addEdge(selectedNodeView!!.node, nodeView.node)
-                            }
-
-                            edgeViews.children.add(edgeView)
+                        if (outPoint.choiceLocalID != -1) {
+                            edgeView.localID = outPoint.choiceLocalID
+                            graph.addEdge(selectedNodeView!!.node as ChoiceNode, outPoint.choiceLocalID, outPoint.choiceLocalOptionProperty.value, nodeView.node)
+                        } else {
+                            graph.addEdge(selectedNodeView!!.node, nodeView.node)
                         }
+
+                        edgeViews.children.add(edgeView)
 
                         // reset selection
                         selectedOutLink = null
@@ -278,5 +277,87 @@ class DialoguePane : Pane() {
         }
 
         return view
+    }
+
+    private val mapper = jacksonObjectMapper()
+
+    private fun openSaveDialog() {
+        val chooser = FileChooser()
+        chooser.initialDirectory = File(System.getProperty("user.dir"))
+        chooser.initialFileName = "dialogue_graph.json"
+
+        chooser.showSaveDialog(scene.window)?.let {
+            mapper.enable(SerializationFeature.INDENT_OUTPUT)
+
+            val s = mapper.writeValueAsString(graph.toSerializable())
+
+            Files.writeString(it.toPath(), s)
+        }
+    }
+
+    private fun openLoadDialog() {
+        val chooser = FileChooser()
+        chooser.initialDirectory = File(System.getProperty("user.dir"))
+        chooser.initialFileName = "dialogue_graph.json"
+
+        chooser.showOpenDialog(scene.window)?.let {
+            graph = mapper.readValue(it, SerializableGraph::class.java).toGraph()
+
+            updateView()
+        }
+    }
+
+    private fun updateView() {
+        nodeViews.children.clear()
+        edgeViews.children.clear()
+
+        var x = 0.0
+        var y = 100.0
+
+        graph.nodes.forEach {
+            when (it.type) {
+                DialogueNodeType.START -> {
+                    addNodeView(StartNodeView(it), x, y)
+                }
+
+                DialogueNodeType.END -> {
+                    addNodeView(EndNodeView(it), x, y)
+                }
+
+                DialogueNodeType.TEXT -> {
+                    addNodeView(TextNodeView(it), x, y)
+                }
+
+                DialogueNodeType.CHOICE -> {
+                    addNodeView(ChoiceNodeView(it), x, y)
+                }
+            }
+
+            x += 360
+        }
+
+        graph.edges.forEach { edge ->
+            val source = nodeViews.children.map { it as NodeView }.find { it.node === edge.source }
+            val target = nodeViews.children.map { it as NodeView }.find { it.node === edge.target }
+
+            if (source != null && target != null) {
+                val edgeView = source.outPoints[0].connect(target.inPoints[0])
+
+                edgeViews.children.add(edgeView)
+            }
+        }
+
+        graph.choiceEdges.forEach { edge ->
+            val source = nodeViews.children.map { it as NodeView }.find { it.node === edge.source }
+            val target = nodeViews.children.map { it as NodeView }.find { it.node === edge.target }
+
+            if (source != null && target != null) {
+                source.outPoints.find { it.choiceLocalID == edge.localID }?.let { outPoint ->
+                    val edgeView = outPoint.connect(target.inPoints[0])
+
+                    edgeViews.children.add(edgeView)
+                }
+            }
+        }
     }
 }
