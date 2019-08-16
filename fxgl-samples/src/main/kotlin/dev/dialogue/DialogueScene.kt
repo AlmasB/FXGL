@@ -14,6 +14,7 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.scene.SubSceneStack
+import com.almasb.sslogger.Logger
 import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
 import javafx.scene.input.KeyCode
@@ -30,6 +31,8 @@ import java.util.*
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHeight: Int) : SubScene() {
+
+    private val log = Logger.get<DialogueScene>()
 
     private val animation: Animation<*>
     private val animation2: Animation<*>
@@ -85,6 +88,10 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
 
         input.addAction(object : UserAction("Next RPG Line") {
             override fun onActionBegin() {
+                if (currentNode.type == DialogueNodeType.CHOICE) {
+                    return
+                }
+
                 nextLine()
             }
         }, KeyCode.ENTER)
@@ -147,6 +154,12 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
         val isDone = currentNode.type == DialogueNodeType.END
         if (!isDone) {
             currentNode = nextNode ?: nextNode()
+
+            while (currentNode.type == DialogueNodeType.FUNCTION) {
+                currentNode.text.parseAndExecuteFunctions()
+
+                currentNode = nextNode ?: nextNode()
+            }
 
             currentNode.text.parseVariables().forEach { message.addLast(it) }
 
@@ -234,5 +247,22 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
         }
 
         return result
+    }
+
+    private fun String.parseAndExecuteFunctions() {
+        val funcNames = this.split("\n".toRegex())
+                .map { it.removeSuffix("()") }
+
+        val properties = FXGL.getGameState().properties
+
+        funcNames.forEach { name ->
+            if (properties.exists("f_$name")) {
+                val func = properties.getObject<Runnable>("f_$name")
+
+                func.run()
+            } else {
+                log.warning("Function $name does not exist in the game variables.")
+            }
+        }
     }
 }

@@ -32,7 +32,15 @@ public class DialogueEditorSample extends GameApplication {
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("playerName", "Almas");
-        vars.put("playerHP", 100);
+        vars.put("playerHP", 45);
+
+        Runnable func = this::healPlayer;
+
+        vars.put("f_healPlayer", func);
+    }
+
+    private void healPlayer() {
+        FXGL.set("playerHP", 100);
     }
 
     @Override

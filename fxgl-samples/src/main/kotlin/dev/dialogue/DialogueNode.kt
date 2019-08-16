@@ -16,7 +16,7 @@ import java.io.Serializable
 
 enum class DialogueNodeType {
     START, END,
-    TEXT, CHOICE
+    TEXT, CHOICE, FUNCTION
 }
 
 /**
@@ -38,6 +38,8 @@ class StartNode(text: String) : DialogueNode(DialogueNodeType.START, text)
 class EndNode(text: String) : DialogueNode(DialogueNodeType.END, text)
 
 class TextNode(text: String) : DialogueNode(DialogueNodeType.TEXT, text)
+
+class FunctionNode(text: String) : DialogueNode(DialogueNodeType.FUNCTION, text)
 
 class ChoiceNode(text: String) : DialogueNode(DialogueNodeType.CHOICE, text)  {
 
@@ -162,6 +164,7 @@ data class SerializableGraph(
                 DialogueNodeType.END -> EndNode(it.text)
                 DialogueNodeType.TEXT -> TextNode(it.text)
                 DialogueNodeType.CHOICE -> TODO("CANNOT HAPPEN")
+                DialogueNodeType.FUNCTION -> FunctionNode(it.text)
             }
 
             node.id = it.id

@@ -7,6 +7,7 @@
 package dev.dialogue
 
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.ui.FontType
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.Button
@@ -18,7 +19,7 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
 
 /**
- *
+ * TODO: refactor repetition
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -28,6 +29,19 @@ class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
     val outLink = OutLinkPoint(this)
 
     init {
+        addInPoint(inLink)
+        addOutPoint(outLink)
+    }
+}
+
+class FunctionNodeView(node: DialogueNode = FunctionNode("")) : NodeView(node) {
+
+    val inLink = InLinkPoint(this)
+    val outLink = OutLinkPoint(this)
+
+    init {
+        textArea.font = FXGL.getUIFactory().newFont(FontType.MONO, 16.0)
+
         addInPoint(inLink)
         addOutPoint(outLink)
     }

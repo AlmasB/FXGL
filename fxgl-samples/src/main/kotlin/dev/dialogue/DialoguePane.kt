@@ -113,36 +113,7 @@ class DialoguePane : Pane() {
         createNode(StartNodeView(), 50.0, getAppHeight() / 2.0)
         createNode(EndNodeView(), getAppWidth() - 370.0, getAppHeight() / 2.0)
 
-
-
-        val item1 = MenuItem("Text")
-        item1.setOnAction {
-            val textNode = TextNodeView()
-
-            val p = contentRoot.sceneToLocal(mouseX, mouseY)
-
-            createNode(textNode, p.x, p.y)
-        }
-
-        val item2 = MenuItem("Choice")
-        item2.setOnAction {
-            val textNode = ChoiceNodeView()
-
-            val p = contentRoot.sceneToLocal(mouseX, mouseY)
-
-            createNode(textNode, p.x, p.y)
-        }
-
-
-        val contextMenu = ContextMenu()
-        contextMenu.items.addAll(item1, item2)
-
-        setOnContextMenuRequested {
-            if (it.target !== this)
-                return@setOnContextMenuRequested
-
-            contextMenu.show(contentRoot.scene.window, it.sceneX + 150.0, it.sceneY + 45.0)
-        }
+        initContextMenu()
 
         setOnMouseMoved {
             dragX = it.x
@@ -161,6 +132,30 @@ class DialoguePane : Pane() {
 
             dragX = it.x
             dragY = it.y
+        }
+    }
+
+    private fun initContextMenu() {
+        val contextMenu = ContextMenu()
+        contextMenu.items.addAll(
+                newMenuItem("Text") { TextNodeView() },
+                newMenuItem("Choice") { ChoiceNodeView() },
+                newMenuItem("Function") { FunctionNodeView() }
+        )
+
+        setOnContextMenuRequested {
+            if (it.target !== this)
+                return@setOnContextMenuRequested
+
+            contextMenu.show(contentRoot.scene.window, it.sceneX + 150.0, it.sceneY + 45.0)
+        }
+    }
+
+    private fun newMenuItem(name: String, creator: () -> NodeView) = MenuItem(name).also {
+        it.setOnAction {
+            val view = creator()
+            val p = contentRoot.sceneToLocal(mouseX, mouseY)
+            createNode(view, p.x, p.y)
         }
     }
 
@@ -353,6 +348,10 @@ class DialoguePane : Pane() {
 
                 DialogueNodeType.CHOICE -> {
                     addNodeView(ChoiceNodeView(it), x, y)
+                }
+
+                DialogueNodeType.FUNCTION -> {
+                    addNodeView(FunctionNodeView(it), x, y)
                 }
             }
         }
