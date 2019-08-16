@@ -11,9 +11,9 @@ import com.almasb.fxgl.dsl.getAppWidth
 import com.almasb.fxgl.dsl.getGameController
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import javafx.application.Platform
 import javafx.beans.binding.Bindings
 import javafx.collections.ListChangeListener
+import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.control.*
@@ -30,7 +30,6 @@ import javafx.scene.transform.Translate
 import javafx.stage.FileChooser
 import sandbox.cutscene.MouseGestures
 import java.io.File
-import java.lang.Exception
 import java.nio.file.Files
 
 /**
@@ -307,7 +306,13 @@ class DialoguePane : Pane() {
         chooser.showSaveDialog(scene.window)?.let {
             mapper.enable(SerializationFeature.INDENT_OUTPUT)
 
-            val s = mapper.writeValueAsString(graph.toSerializable())
+            val serializedGraph = graph.toSerializable()
+
+            nodeViews.children.map { it as NodeView }.forEach {
+                serializedGraph.uiMetadata[it.node.id] = SerializablePoint2D(it.layoutX, it.layoutY)
+            }
+
+            val s = mapper.writeValueAsString(serializedGraph)
 
             Files.writeString(it.toPath(), s)
         }
@@ -319,20 +324,20 @@ class DialoguePane : Pane() {
         chooser.initialFileName = "dialogue_graph.json"
 
         chooser.showOpenDialog(scene.window)?.let {
-            graph = mapper.readValue(it, SerializableGraph::class.java).toGraph()
-
-            updateView()
+            load(mapper.readValue(it, SerializableGraph::class.java))
         }
     }
 
-    private fun updateView() {
+    private fun load(serializedGraph: SerializableGraph) {
+        graph = serializedGraph.toGraph()
+
         nodeViews.children.clear()
         edgeViews.children.clear()
 
-        var x = 0.0
-        var y = 100.0
-
         graph.nodes.forEach {
+            val x = serializedGraph.uiMetadata[it.id]?.x ?: 100.0
+            val y = serializedGraph.uiMetadata[it.id]?.y ?: 100.0
+
             when (it.type) {
                 DialogueNodeType.START -> {
                     addNodeView(StartNodeView(it), x, y)
@@ -350,8 +355,6 @@ class DialoguePane : Pane() {
                     addNodeView(ChoiceNodeView(it), x, y)
                 }
             }
-
-            x += 360
         }
 
         graph.edges.forEach { edge ->

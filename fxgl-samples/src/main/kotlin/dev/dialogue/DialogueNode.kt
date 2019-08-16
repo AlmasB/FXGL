@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
+import javafx.geometry.Point2D
 import java.io.IOException
 import java.io.Serializable
 
@@ -138,6 +139,8 @@ data class SerializableEdge(val source: Int, val target: Int)
 
 data class SerializableChoiceEdge(val source: Int, val localID: Int, val target: Int)
 
+data class SerializablePoint2D(val x: Double, val y: Double)
+
 data class SerializableGraph(
         val uniqueID: Int,
         val nodes: List<SerializableTextNode>,
@@ -146,6 +149,8 @@ data class SerializableGraph(
         val edges: List<SerializableEdge>,
         val choiceEdges: List<SerializableChoiceEdge>
 ) {
+
+    val uiMetadata = hashMapOf<Int, SerializablePoint2D>()
 
     fun toGraph(): DialogueGraph {
         // TODO: error checks?
