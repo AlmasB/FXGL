@@ -66,6 +66,8 @@ class EndNodeView(node: DialogueNode = EndNode("")) : NodeView(node) {
 
 class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
+    private val conditions = arrayListOf<Condition>()
+
     init {
         addInPoint(InLinkPoint(this))
 
@@ -111,12 +113,21 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
                 node.localIDs += i
                 node.localOptions[i] = SimpleStringProperty().also { it.bindBidirectional(field.textProperty()) }
 
+                val condition = Condition()
+                condition.prefWidth = 155.0
+                condition.prefHeight = 16.0
+                condition.translateX = -160.0
+                condition.translateYProperty().bind(outPoint.translateYProperty())
+
+                conditions += condition
 
                 outPoints.add(outPoint)
 
 
                 addContent(field)
 
+                // TODO: implement
+                //children.add(condition)
                 children.add(outPoint)
             }
         }
@@ -159,6 +170,18 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
             )
 
             children.addAll(bg, text)
+        }
+    }
+
+    private class Condition : StackPane() {
+        init {
+            styleClass.add("dialogue-editor-condition-view")
+
+            val text = TextField()
+            text.font = FXGL.getUIFactory().newFont(FontType.MONO, 12.0)
+            text.text = "\$playerHP > 50"
+
+            children.add(text)
         }
     }
 
