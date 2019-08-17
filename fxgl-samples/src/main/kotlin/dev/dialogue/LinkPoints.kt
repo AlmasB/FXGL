@@ -96,20 +96,48 @@ class OutLinkPoint(owner: NodeView) : LinkPoint(owner) {
             startXProperty().bind(fromView.layoutXProperty().add(outPoint.translateXProperty().add(10)))
             startYProperty().bind(fromView.layoutYProperty().add(outPoint.translateYProperty().add(10)))
 
-            controlX1Property().bind(startXProperty().add(endXProperty()).divide(2))
-            controlY1Property().bind(startYProperty())
+            endXProperty().bind(toView.layoutXProperty().add(inPoint.translateXProperty()).add(10))
+            endYProperty().bind(toView.layoutYProperty().add(inPoint.translateYProperty()).add(10))
 
-            controlX2Property().bind(startXProperty().add(endXProperty()).divide(2))
-            controlY2Property().bind(endYProperty())
+            val right = endXProperty().greaterThanOrEqualTo(startXProperty())
+
+            val offset = Bindings.max(startXProperty().subtract(endXProperty()), 160.0)
+
+            controlX1Property().bind(Bindings.`when`(right)
+                    .then(
+                            startXProperty().add(endXProperty()).divide(2)
+                    ).otherwise(
+                            startXProperty().add(offset)
+                    )
+            )
+            controlY1Property().bind(Bindings.`when`(right)
+                    .then(
+                            startYProperty()
+                    ).otherwise(
+                            startYProperty().add(endYProperty()).divide(2)
+                    )
+            )
+
+            controlX2Property().bind(Bindings.`when`(right)
+                    .then(
+                            startXProperty().add(endXProperty()).divide(2)
+                    ).otherwise(
+                            endXProperty().subtract(offset)
+                    )
+            )
+            controlY2Property().bind(Bindings.`when`(right)
+                    .then(
+                            endYProperty()
+                    ).otherwise(
+                            startYProperty().add(endYProperty()).divide(2)
+                    )
+            )
 
             strokeWidth = 2.5
             stroke = NodeView.colors[inPoint.owner.node.type] ?: Color.color(0.9, 0.9, 0.9, 0.9)
             fill = null
             effect = Glow(0.7)
         }
-
-        curve.endXProperty().bind(toView.layoutXProperty().add(inPoint.translateXProperty()).add(10))
-        curve.endYProperty().bind(toView.layoutYProperty().add(inPoint.translateYProperty()).add(10))
 
         return curve
     }
