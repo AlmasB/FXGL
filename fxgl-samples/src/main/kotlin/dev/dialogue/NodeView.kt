@@ -31,10 +31,10 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         private const val INITIAL_HEIGHT = 100.0
 
         val colors = mapOf(
-                START to Color.LIGHTGREEN,
-                END to Color.RED,
+                START to Color.LIGHTGREEN.brighter(),
+                END to Color.LIGHTGREEN.darker(),
                 FUNCTION to Color.BLUE,
-                CHOICE to Color.YELLOW,
+                CHOICE to Color.GOLD,
                 TEXT to Color.DARKGREEN,
                 BRANCH to Color.MEDIUMPURPLE
         )
@@ -102,7 +102,9 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         init {
             styleClass += "title"
 
-            style += "-fx-background-color: linear-gradient(from 0% 50% to 100% 50%, rgba(${c.red*255}, ${c.green*255}, ${c.blue*255}, 0.85), transparent);"
+            //style += "-fx-background-color: linear-gradient(from 0% 50% to 100% 50%, rgba(${c.red*255}, ${c.green*255}, ${c.blue*255}, 0.85), transparent);"
+
+            style += "-fx-background-color: rgba(${c.red*255}, ${c.green*255}, ${c.blue*255}, 0.85)"
 
             val text = FXGL.getUIFactory().newText(name, Color.WHITE, 16.0)
 
