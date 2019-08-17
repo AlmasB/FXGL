@@ -29,9 +29,9 @@ sealed class LinkPoint(val owner: NodeView) : Pane() {
         get() = connectedProperty.value
         protected set(value) { connectedProperty.value = value }
 
-    init {
-        val bg = Circle(8.0, 8.0, 8.0)
+    protected val bg = Circle(8.0, 8.0, 8.0)
 
+    init {
         bg.fillProperty().bind(
                 Bindings.`when`(connectedProperty).then(Color.YELLOWGREEN).otherwise(Color.TRANSPARENT)
         )
@@ -95,7 +95,6 @@ class OutLinkPoint(owner: NodeView) : LinkPoint(owner) {
         with(curve) {
             startXProperty().bind(fromView.layoutXProperty().add(outPoint.translateXProperty().add(10)))
             startYProperty().bind(fromView.layoutYProperty().add(outPoint.translateYProperty().add(10)))
-
 
             controlX1Property().bind(startXProperty().add(endXProperty()).divide(2))
             controlY1Property().bind(startYProperty())

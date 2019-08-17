@@ -9,11 +9,15 @@ package dev.dialogue
 import com.almasb.fxgl.dsl.getAppHeight
 import com.almasb.fxgl.dsl.getAppWidth
 import com.almasb.fxgl.dsl.getGameController
+import com.almasb.fxgl.dsl.getUIFactory
+import com.almasb.fxgl.ui.FXGLCheckBox
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.beans.binding.Bindings
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
 import javafx.geometry.Point2D
+import javafx.geometry.Pos
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.control.*
@@ -39,6 +43,10 @@ import java.nio.file.Files
  */
 class DialoguePane : Pane() {
 
+    companion object {
+        val highContrastProperty = SimpleBooleanProperty(false)
+    }
+
     private val contentRoot = Group()
 
     private var selectedNodeView: NodeView? = null
@@ -58,12 +66,13 @@ class DialoguePane : Pane() {
 
     private val mouseGestures = MouseGestures(contentRoot)
 
-    private val toolbar = HBox(5.0)
+    private val toolbar = HBox(15.0)
 
     init {
         toolbar.setPrefSize(getAppWidth().toDouble(), 30.0)
         toolbar.translateY = -toolbar.prefHeight
         toolbar.style = "-fx-background-color: black"
+        toolbar.alignment = Pos.CENTER_LEFT
 
         val itemSave = MenuItem("Save")
         itemSave.setOnAction {
@@ -88,6 +97,12 @@ class DialoguePane : Pane() {
 
 
         toolbar.children += makeRunButton()
+
+        toolbar.children += getUIFactory().newText("High contrast")
+
+        toolbar.children += CheckBox().also {
+            it.selectedProperty().bindBidirectional(highContrastProperty)
+        }
 
         contentRoot.children.addAll(
                 edgeViews, nodeViews
