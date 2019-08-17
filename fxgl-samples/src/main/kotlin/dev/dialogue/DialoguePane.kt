@@ -140,7 +140,8 @@ class DialoguePane : Pane() {
         contextMenu.items.addAll(
                 newMenuItem("Text") { TextNodeView() },
                 newMenuItem("Choice") { ChoiceNodeView() },
-                newMenuItem("Function") { FunctionNodeView() }
+                newMenuItem("Function") { FunctionNodeView() },
+                newMenuItem("End") { EndNodeView() }
         )
 
         setOnContextMenuRequested {
