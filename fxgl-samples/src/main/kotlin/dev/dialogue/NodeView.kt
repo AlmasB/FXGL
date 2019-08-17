@@ -7,13 +7,16 @@
 package dev.dialogue
 
 import com.almasb.fxgl.dsl.FXGL
+import dev.dialogue.DialogueNodeType.*
 import javafx.collections.FXCollections
+import javafx.geometry.Insets
+import javafx.geometry.Pos
 import javafx.scene.Node
+import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
-import sandbox.cutscene.MouseGestures
 
 /**
  * A generic view of a dialogue node.
@@ -22,8 +25,18 @@ import sandbox.cutscene.MouseGestures
  */
 abstract class NodeView(val node: DialogueNode) : Pane() {
 
-    private val initialWidth = 320.0
-    private val initialHeight = 100.0
+    companion object {
+        private const val INITIAL_WIDTH = 320.0
+        private const val INITIAL_HEIGHT = 100.0
+
+        private val colors = mapOf(
+                START to Color.LIGHTGREEN,
+                END to Color.RED,
+                FUNCTION to Color.BLUE,
+                CHOICE to Color.YELLOW,
+                TEXT to Color.DARKGREEN
+        )
+    }
 
     // TODO: only one in point?
     var outPoints = FXCollections.observableArrayList<OutLinkPoint>()
@@ -32,29 +45,30 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
 
     protected val contentRoot = VBox(10.0)
 
-    protected val textArea = ExpandableTextArea(initialWidth - 70, initialHeight - 50)
+    protected val textArea = ExpandableTextArea(INITIAL_WIDTH - 70, INITIAL_HEIGHT - 50)
 
     init {
         styleClass.add("dialogue-editor-node-view")
 
-        prefWidth = initialWidth
-        prefHeight = initialHeight
+        prefWidth = INITIAL_WIDTH
+        prefHeight = INITIAL_HEIGHT
 
         textArea.font = Font.font(14.0)
         textArea.textProperty().bindBidirectional(node.textProperty)
 
         prefHeightProperty().bind(textArea.prefHeightProperty().add(50.0))
 
-        val title = FXGL.getUIFactory().newText(node.type.toString().toLowerCase().capitalize(),
-                Color.WHITE, 16.0)
-
-        addContent(title)
         addContent(textArea)
 
-        contentRoot.translateX = 35.0
-        contentRoot.translateY = 10.0
+        val title = Title(node.type.toString().toLowerCase().capitalize(), colors[node.type] ?: Color.WHITE)
+        title.prefWidthProperty().bind(prefWidthProperty().subtract(4))
+        title.translateX = 2.0
+        title.translateY = 2.0
 
-        children.addAll(contentRoot)
+        contentRoot.translateX = 35.0
+        contentRoot.translateY = 35.0
+
+        children.addAll(contentRoot, title)
     }
 
     fun addContent(node: Node) {
@@ -77,5 +91,21 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
 
         linkPoint.translateXProperty().bind(widthProperty().add(-25))
         linkPoint.translateYProperty().bind(heightProperty().divide(2))
+    }
+
+    private class Title(name: String, c: Color) : HBox() {
+
+        init {
+            styleClass += "title"
+
+            style += "-fx-background-color: linear-gradient(from 0% 50% to 100% 50%, rgba(${c.red*255}, ${c.green*255}, ${c.blue*255}, 0.85), transparent);"
+
+            val text = FXGL.getUIFactory().newText(name, Color.WHITE, 16.0)
+
+            alignment = Pos.CENTER_LEFT
+            padding = Insets(1.0, 15.0, 1.0, 33.0)
+
+            children += text
+        }
     }
 }

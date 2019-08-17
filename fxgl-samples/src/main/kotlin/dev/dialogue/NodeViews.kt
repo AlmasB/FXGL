@@ -144,7 +144,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
         }
 
         btnAdd.translateX = 9.0
-        btnAdd.translateY = 5.0
+        btnAdd.translateY = 1.0
 
         val btnRemove = CustomButton("-")
         btnRemove.setOnMouseClicked {

@@ -7,6 +7,14 @@
     -fx-background-color: rgba(0, 0, 0, 0.55);
 }
 
+.dialogue-editor-node-view .title {
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-radius: 5 5 0 0;
+    -fx-background-radius: 4 4 0 0;
+}
+
 .dialogue-editor-text-area .scroll-pane {
     -fx-hbar-policy: never;
     -fx-vbar-policy: never;
