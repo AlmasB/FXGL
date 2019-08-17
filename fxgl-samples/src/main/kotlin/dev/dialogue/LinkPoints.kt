@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.scene.Node
+import javafx.scene.effect.Glow
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.CubicCurve
@@ -74,9 +75,10 @@ class OutLinkPoint(owner: NodeView) : LinkPoint(owner) {
             controlX2Property().bind(startXProperty().add(endXProperty()).divide(2))
             controlY2Property().bind(endYProperty())
 
-            strokeWidth = 2.0
-            stroke = Color.color(0.9, 0.9, 0.9, 0.9)
+            strokeWidth = 2.5
+            stroke = NodeView.colors[inPoint.owner.node.type] ?: Color.color(0.9, 0.9, 0.9, 0.9)
             fill = null
+            effect = Glow(0.7)
         }
 
         curve.endXProperty().bind(toView.layoutXProperty().add(inPoint.translateXProperty()).add(10))

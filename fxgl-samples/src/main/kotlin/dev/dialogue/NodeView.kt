@@ -12,6 +12,7 @@ import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
+import javafx.scene.effect.DropShadow
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
@@ -29,7 +30,7 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         private const val INITIAL_WIDTH = 320.0
         private const val INITIAL_HEIGHT = 100.0
 
-        private val colors = mapOf(
+        val colors = mapOf(
                 START to Color.LIGHTGREEN,
                 END to Color.RED,
                 FUNCTION to Color.BLUE,
@@ -67,6 +68,8 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
 
         contentRoot.translateX = 35.0
         contentRoot.translateY = 35.0
+
+        effect = DropShadow(10.0, Color.BLACK)
 
         children.addAll(contentRoot, title)
     }
