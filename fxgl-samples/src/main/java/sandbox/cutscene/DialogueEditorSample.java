@@ -40,6 +40,8 @@ public class DialogueEditorSample extends GameApplication {
     }
 
     private void healPlayer() {
+        System.out.println("Healing player");
+
         FXGL.set("playerHP", 100);
     }
 

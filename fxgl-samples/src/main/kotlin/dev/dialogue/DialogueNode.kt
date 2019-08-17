@@ -16,7 +16,7 @@ import java.io.Serializable
 
 enum class DialogueNodeType {
     START, END,
-    TEXT, CHOICE, FUNCTION
+    TEXT, CHOICE, FUNCTION, BRANCH
 }
 
 /**
@@ -41,6 +41,8 @@ class TextNode(text: String) : DialogueNode(DialogueNodeType.TEXT, text)
 
 class FunctionNode(text: String) : DialogueNode(DialogueNodeType.FUNCTION, text)
 
+class BranchNode(text: String) : DialogueNode(DialogueNodeType.BRANCH, text)
+
 class ChoiceNode(text: String) : DialogueNode(DialogueNodeType.CHOICE, text)  {
 
     val localIDs = mutableListOf<Int>()
@@ -49,7 +51,7 @@ class ChoiceNode(text: String) : DialogueNode(DialogueNodeType.CHOICE, text)  {
 
 class DialogueEdge(val source: DialogueNode, val target: DialogueNode)
 
-class DialogueChoiceEdge(val source: ChoiceNode, val localID: Int, val target: DialogueNode)
+class DialogueChoiceEdge(val source: DialogueNode, val localID: Int, val target: DialogueNode)
 
 class DialogueGraph(private var uniqueID: Int = 0) : Serializable {
 
@@ -76,7 +78,7 @@ class DialogueGraph(private var uniqueID: Int = 0) : Serializable {
         print()
     }
 
-    fun addEdge(source: ChoiceNode, localID: Int, localOption: String, target: DialogueNode) {
+    fun addEdge(source: DialogueNode, localID: Int, target: DialogueNode) {
         choiceEdges += DialogueChoiceEdge(source, localID, target)
 
         print()
@@ -88,7 +90,7 @@ class DialogueGraph(private var uniqueID: Int = 0) : Serializable {
         print()
     }
 
-    // remove choice node
+    // remove choice or branch edge
     fun removeEdge(source: DialogueNode, localID: Int, target: DialogueNode) {
         choiceEdges.removeIf { it.source.id == source.id && it.localID == localID && it.target.id == target.id }
 
@@ -165,6 +167,7 @@ data class SerializableGraph(
                 DialogueNodeType.TEXT -> TextNode(it.text)
                 DialogueNodeType.CHOICE -> TODO("CANNOT HAPPEN")
                 DialogueNodeType.FUNCTION -> FunctionNode(it.text)
+                DialogueNodeType.BRANCH -> BranchNode(it.text)
             }
 
             node.id = it.id
@@ -194,7 +197,7 @@ data class SerializableGraph(
             val source = graph.findNodeById(it.source)!!
             val target = graph.findNodeById(it.target)!!
 
-            graph.addEdge(source as ChoiceNode, it.localID, source.localOptions[it.localID]!!.value, target)
+            graph.addEdge(source, it.localID, target)
         }
 
         return graph

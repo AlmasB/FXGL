@@ -35,7 +35,8 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
                 END to Color.RED,
                 FUNCTION to Color.BLUE,
                 CHOICE to Color.YELLOW,
-                TEXT to Color.DARKGREEN
+                TEXT to Color.DARKGREEN,
+                BRANCH to Color.MEDIUMPURPLE
         )
     }
 

@@ -141,7 +141,8 @@ class DialoguePane : Pane() {
                 newMenuItem("Text") { TextNodeView() },
                 newMenuItem("Choice") { ChoiceNodeView() },
                 newMenuItem("Function") { FunctionNodeView() },
-                newMenuItem("End") { EndNodeView() }
+                newMenuItem("End") { EndNodeView() },
+                newMenuItem("Branch") { BranchNodeView() }
         )
 
         setOnContextMenuRequested {
@@ -252,7 +253,7 @@ class DialoguePane : Pane() {
 
                         if (outPoint.choiceLocalID != -1) {
                             edgeView.localID = outPoint.choiceLocalID
-                            graph.addEdge(selectedNodeView!!.node as ChoiceNode, outPoint.choiceLocalID, outPoint.choiceLocalOptionProperty.value, nodeView.node)
+                            graph.addEdge(selectedNodeView!!.node, outPoint.choiceLocalID, nodeView.node)
                         } else {
                             graph.addEdge(selectedNodeView!!.node, nodeView.node)
                         }
@@ -354,6 +355,11 @@ class DialoguePane : Pane() {
                 DialogueNodeType.FUNCTION -> {
                     addNodeView(FunctionNodeView(it), x, y)
                 }
+                DialogueNodeType.BRANCH -> {
+                    addNodeView(BranchNodeView(it), x, y)
+                }
+
+                else -> throw IllegalArgumentException("Unknown node type: ${it.type}")
             }
         }
 

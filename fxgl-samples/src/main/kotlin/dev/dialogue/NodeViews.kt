@@ -10,6 +10,7 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.ui.FontType
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleStringProperty
+import javafx.geometry.Pos
 import javafx.scene.control.Button
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
@@ -17,6 +18,7 @@ import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
+import javafx.scene.text.Text
 
 /**
  * TODO: refactor repetition
@@ -44,6 +46,41 @@ class FunctionNodeView(node: DialogueNode = FunctionNode("")) : NodeView(node) {
 
         addInPoint(inLink)
         addOutPoint(outLink)
+    }
+}
+
+class BranchNodeView(node: DialogueNode = BranchNode("")) : NodeView(node) {
+
+    val inLink = InLinkPoint(this)
+
+    init {
+        textArea.font = FXGL.getUIFactory().newFont(FontType.MONO, 16.0)
+
+        addInPoint(inLink)
+
+        for (i in 0..1) {
+
+            val field = Text()
+            field.text = if (i == 0) "true" else "false"
+            field.fill = Color.WHITE
+            field.font = Font.font(14.0)
+
+            val outPoint = OutLinkPoint(this)
+            outPoint.translateXProperty().bind(widthProperty().add(-25.0))
+            outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(48 + i * 28.0))
+
+            outPoint.choiceLocalID = i
+
+            outPoints.add(outPoint)
+
+            addContent(field)
+
+            children.add(outPoint)
+        }
+
+        prefHeightProperty().bind(outPoints.last().translateYProperty().add(35.0))
+
+        contentRoot.alignment = Pos.CENTER_RIGHT
     }
 }
 

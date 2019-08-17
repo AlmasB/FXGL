@@ -155,25 +155,34 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
         if (!isDone) {
             currentNode = nextNode ?: nextNode()
 
-            while (currentNode.type == DialogueNodeType.FUNCTION) {
+            if (currentNode.type == DialogueNodeType.FUNCTION) {
                 currentNode.text.parseAndExecuteFunctions()
 
-                currentNode = nextNode ?: nextNode()
-            }
+                nextLine(nextNode())
+            } else if (currentNode.type == DialogueNodeType.BRANCH) {
+                val branchNode = currentNode as BranchNode
 
-            currentNode.text.parseVariables().forEach { message.addLast(it) }
+                // evaluate branchNode.text
+                val choiceLocalID = if (branchNode.text.evaluate()) 0 else 1
 
-            if (currentNode.type == DialogueNodeType.CHOICE) {
-                val choiceNode = currentNode as ChoiceNode
+                nextLine(nextNodeFromChoice(choiceLocalID))
+            } else {
+                currentNode.text.parseVariables().forEach { message.addLast(it) }
 
-                choiceNode.localIDs.forEach { id ->
-                    choiceNode.localOptions[id]?.let {
-                        populatePlayerLine(id, it.value.parseVariables())
+                if (currentNode.type == DialogueNodeType.CHOICE) {
+                    val choiceNode = currentNode as ChoiceNode
+
+                    choiceNode.localIDs.forEach { id ->
+                        choiceNode.localOptions[id]?.let {
+                            populatePlayerLine(id, it.value.parseVariables())
+                        }
                     }
                 }
+
+                topText.text = ""
             }
 
-            topText.text = ""
+
 
         } else {
             endCutscene()
@@ -262,6 +271,40 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
                 func.run()
             } else {
                 log.warning("Function $name does not exist in the game variables.")
+            }
+        }
+    }
+
+    // TODO: syntax check
+    private fun String.evaluate(): Boolean {
+        val tokens = this.split(" +".toRegex())
+        val num1 = tokens[0].toInt()
+        val num2 = tokens[2].toInt()
+
+        return when (tokens[1]) {
+
+            "<" -> {
+                num1 < num2
+            }
+
+            ">" -> {
+                num1 > num2
+            }
+
+            "<=" -> {
+                num1 <= num2
+            }
+
+            ">=" -> {
+                num1 >= num2
+            }
+
+            "==" -> {
+                num1 == num2
+            }
+
+            else -> {
+                throw IllegalArgumentException("Parse error")
             }
         }
     }
