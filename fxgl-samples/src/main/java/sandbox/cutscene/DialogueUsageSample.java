@@ -8,8 +8,9 @@ package sandbox.cutscene;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.cutscene.dialogue.DialogueGraph;
+import com.almasb.fxgl.cutscene.dialogue.DialogueScene;
 import com.almasb.fxgl.io.FS;
-import dev.dialogue.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 

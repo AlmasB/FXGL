@@ -6,17 +6,16 @@
 
 package dev.dialogue
 
+import com.almasb.fxgl.cutscene.dialogue.*
 import com.almasb.fxgl.dsl.getAppHeight
 import com.almasb.fxgl.dsl.getAppWidth
 import com.almasb.fxgl.dsl.getGameController
 import com.almasb.fxgl.dsl.getUIFactory
-import com.almasb.fxgl.ui.FXGLCheckBox
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
-import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Group
 import javafx.scene.Node
@@ -318,7 +317,7 @@ class DialoguePane : Pane() {
         chooser.showSaveDialog(scene.window)?.let {
             mapper.enable(SerializationFeature.INDENT_OUTPUT)
 
-            val serializedGraph = graph.toSerializable()
+            val serializedGraph = DialogueGraphSerializer.toSerializable(graph)
 
             nodeViews.children.map { it as NodeView }.forEach {
                 serializedGraph.uiMetadata[it.node.id] = SerializablePoint2D(it.layoutX, it.layoutY)
@@ -341,7 +340,7 @@ class DialoguePane : Pane() {
     }
 
     private fun load(serializedGraph: SerializableGraph) {
-        graph = serializedGraph.toGraph()
+        graph = DialogueGraphSerializer.fromSerializable(serializedGraph)
 
         nodeViews.children.clear()
         edgeViews.children.clear()
@@ -394,7 +393,7 @@ class DialoguePane : Pane() {
             val target = nodeViews.children.map { it as NodeView }.find { it.node === edge.target }
 
             if (source != null && target != null) {
-                source.outPoints.find { it.choiceLocalID == edge.localID }?.let { outPoint ->
+                source.outPoints.find { it.choiceLocalID == edge.optionID }?.let { outPoint ->
                     val edgeView = outPoint.connect(target.inPoints[0])
 
                     edgeViews.children.add(edgeView)

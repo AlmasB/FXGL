@@ -8,6 +8,8 @@ module com.almasb.fxgl.cutscene {
     requires com.almasb.fxgl.scene;
 
     exports com.almasb.fxgl.cutscene;
+    exports com.almasb.fxgl.cutscene.dialogue;
 
     opens com.almasb.fxgl.cutscene to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.cutscene.dialogue;
 }

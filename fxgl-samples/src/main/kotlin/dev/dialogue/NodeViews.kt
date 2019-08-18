@@ -6,13 +6,12 @@
 
 package dev.dialogue
 
+import com.almasb.fxgl.cutscene.dialogue.*
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.ui.FontType
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
-import javafx.scene.control.Button
-import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
@@ -110,9 +109,9 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
         val node = this.node as ChoiceNode
 
-        if (node.localOptions.isNotEmpty()) {
+        if (node.options.isNotEmpty()) {
 
-            node.localOptions.forEach { i, optionText ->
+            node.options.forEach { i, optionText ->
                 val field = TextField(optionText.value)
 
                 val outPoint = OutLinkPoint(this)
@@ -147,8 +146,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
                 outPoint.choiceLocalID = i
                 outPoint.choiceLocalOptionProperty.bind(field.textProperty())
 
-                node.localIDs += i
-                node.localOptions[i] = SimpleStringProperty().also { it.bindBidirectional(field.textProperty()) }
+                node.options[i] = SimpleStringProperty().also { it.bindBidirectional(field.textProperty()) }
 
                 val condition = Condition()
                 condition.prefWidth = 155.0
@@ -224,13 +222,12 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
     private fun addNewOption() {
         val node = this.node as ChoiceNode
-        val nextID = node.localIDs.last() + 1
+        val nextID = node.lastOptionID + 1
 
         val field = TextField()
         field.promptText = "Choice $nextID"
 
-        node.localIDs += nextID
-        node.localOptions[nextID] = SimpleStringProperty().also { it.bindBidirectional(field.textProperty()) }
+        node.options[nextID] = SimpleStringProperty().also { it.bindBidirectional(field.textProperty()) }
 
 
         val outPoint = OutLinkPoint(this)
@@ -256,9 +253,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
         val node = this.node as ChoiceNode
 
-        val lastID = node.localIDs.last()
-        node.localIDs -= lastID
-        node.localOptions.remove(lastID)
+        node.options.remove(node.lastOptionID)
 
         prefHeightProperty().bind(outPoints.last().translateYProperty().add(35.0))
     }

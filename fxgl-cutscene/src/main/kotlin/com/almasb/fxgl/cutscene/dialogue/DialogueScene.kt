@@ -4,12 +4,11 @@
  * See LICENSE for details.
  */
 
-package dev.dialogue
+package com.almasb.fxgl.cutscene.dialogue
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationDSL
-import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.dsl.animationBuilder
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.scene.SubScene
@@ -41,6 +40,8 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
     private val boxPlayerLines = VBox(5.0)
 
     private lateinit var graph: DialogueGraph
+
+    internal lateinit var gameVars: PropertyMap
 
     init {
         val topLine = Rectangle(appWidth.toDouble(), 150.0)
@@ -172,10 +173,8 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
                 if (currentNode.type == DialogueNodeType.CHOICE) {
                     val choiceNode = currentNode as ChoiceNode
 
-                    choiceNode.localIDs.forEach { id ->
-                        choiceNode.localOptions[id]?.let {
-                            populatePlayerLine(id, it.value.parseVariables())
-                        }
+                    choiceNode.options.forEach { id, option ->
+                        populatePlayerLine(id, option.value.parseVariables())
                     }
                 }
 
@@ -190,7 +189,8 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
     }
 
     private fun populatePlayerLine(localID: Int, data: String) {
-        val text = FXGL.getUIFactory().newText("${localID + 1}. ${data}", 18.0)
+        //val text = FXGL.getUIFactory().newText("${localID + 1}. ${data}", 18.0)
+        val text = Text("${localID + 1}. ${data}")
         text.font = Font.font(18.0)
         text.fillProperty().bind(
                 Bindings.`when`(text.hoverProperty())
@@ -198,15 +198,16 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
                         .otherwise(Color.WHITE)
         )
 
-        text.opacity = 0.0
+        //text.opacity = 0.0
 
         text.setOnMouseClicked {
             selectLine(localID)
         }
 
-        animationBuilder()
-                .fadeIn(text)
-                .buildAndPlay(this)
+        // TODO:
+//        AnimationDSL()
+//                .fadeIn(text)
+//                .buildAndPlay(this)
 
         boxPlayerLines.children.add(text)
     }
@@ -221,7 +222,7 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
     }
 
     private fun nextNodeFromChoice(choiceLocalID: Int): DialogueNode {
-        return graph.choiceEdges.find { it.source.id == currentNode.id && it.localID == choiceLocalID }!!.target
+        return graph.choiceEdges.find { it.source.id == currentNode.id && it.optionID == choiceLocalID }!!.target
     }
 
     private fun onOpen() {
@@ -246,11 +247,10 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
                 .toSet()
 
         var result = this
-        val properties = FXGL.getGameState().properties
 
         vars.forEach {
-            if (properties.exists(it)) {
-                val value = properties.getValue<Any>(it)
+            if (gameVars.exists(it)) {
+                val value = gameVars.getValue<Any>(it)
                 result = result.replace("\$$it", value.toString())
             }
         }
@@ -262,11 +262,9 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
         val funcNames = this.split("\n".toRegex())
                 .map { it.removeSuffix("()") }
 
-        val properties = FXGL.getGameState().properties
-
         funcNames.forEach { name ->
-            if (properties.exists("f_$name")) {
-                val func = properties.getObject<Runnable>("f_$name")
+            if (gameVars.exists("f_$name")) {
+                val func = gameVars.getObject<Runnable>("f_$name")
 
                 func.run()
             } else {

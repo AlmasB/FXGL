@@ -6,8 +6,9 @@
 
 package dev.dialogue
 
+import com.almasb.fxgl.cutscene.dialogue.DialogueNode
 import com.almasb.fxgl.dsl.FXGL
-import dev.dialogue.DialogueNodeType.*
+import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
