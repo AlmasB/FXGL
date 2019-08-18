@@ -367,7 +367,8 @@ private fun Entity.toAnimatable(): Animatable {
         }
     }
 }
-
+// TODO: refactor this to fxgl-animation since we have access to fxgl-scene now
+// and above too buildAndPlay() using fxgl-entity?
 private fun Animation<*>.toListener(): SceneListener {
     val a = this
     return object : SceneListener {
