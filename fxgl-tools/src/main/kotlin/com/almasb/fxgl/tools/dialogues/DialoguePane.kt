@@ -6,31 +6,34 @@
 
 package com.almasb.fxgl.tools.dialogues
 
+import com.almasb.fxgl.animation.Interpolators
+import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.cutscene.dialogue.*
-import com.almasb.fxgl.dsl.getAppHeight
-import com.almasb.fxgl.dsl.getAppWidth
-import com.almasb.fxgl.dsl.getGameController
-import com.almasb.fxgl.dsl.getUIFactory
+import com.almasb.fxgl.dsl.*
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
+import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.control.*
+import javafx.scene.effect.Glow
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
+import javafx.scene.shape.Circle
 import javafx.scene.shape.Polygon
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import javafx.scene.transform.Scale
 import javafx.scene.transform.Translate
 import javafx.stage.FileChooser
+import javafx.util.Duration
 import java.io.File
 import java.nio.file.Files
 
@@ -52,8 +55,11 @@ class DialoguePane : Pane() {
 
     private var graph = DialogueGraph()
 
+    private val views = Group()
     private val edgeViews = Group()
     private val nodeViews = Group()
+
+    private val scale = Scale()
 
     private val dragScale = 1.35
     private var dragX = 0.0
@@ -103,10 +109,10 @@ class DialoguePane : Pane() {
         }
 
         contentRoot.children.addAll(
-                edgeViews, nodeViews
+                edgeViews, views, nodeViews
         )
 
-        val scale = Scale()
+
         val translate = Translate()
 
         contentRoot.transforms += scale
@@ -219,6 +225,75 @@ class DialoguePane : Pane() {
     private fun attachMouseHandler(nodeView: NodeView) {
         mouseGestures.makeDraggable(nodeView)
 
+        nodeView.closeButton.setOnMouseClicked {
+            nodeView.closeButton.isVisible = false
+            graph.removeNode(nodeView.node)
+
+            edgeViews.children
+                    .filter {
+                        val edgeView = it as EdgeView
+
+                        edgeView.source.owner === nodeView || edgeView.target.owner === nodeView
+                    }.forEach {
+                        val edgeView = it as EdgeView
+
+                        val p1 = Point2D(edgeView.startX, edgeView.startY)
+                        val p2 = Point2D(edgeView.controlX1, edgeView.controlY1)
+                        val p3 = Point2D(edgeView.controlX2, edgeView.controlY2)
+                        val p4 = Point2D(edgeView.endX, edgeView.endY)
+
+                        val group = Group()
+                        group.effect = Glow(0.7)
+
+                        val numSegments = 350
+
+                        for (t in 0..numSegments) {
+                            val delay = if (edgeView.source.owner === nodeView) t else (numSegments - t)
+
+                            val p = FXGLMath.bezier(p1, p2, p3, p4, t / numSegments.toDouble())
+
+                            val c = Circle(p.x, p.y, 2.5, edgeView.stroke)
+
+                            group.children += c
+
+                            animationBuilder()
+                                    .delay(Duration.millis(delay * 2.0))
+                                    .duration(Duration.seconds(0.5))
+                                    .fadeOut(c)
+                                    .buildAndPlay()
+                        }
+
+                        views.children += group
+
+                        runOnce({ views.children -= group }, Duration.seconds(7.0))
+                    }
+
+            val inPoints = ArrayList(nodeView.inPoints)
+
+            inPoints.forEach {
+                val connected = ArrayList(it.connectedPoints)
+
+                connected.forEach {
+                    disconnectOutLink(it)
+                }
+            }
+
+            val outPoints = ArrayList(nodeView.outPoints)
+
+            outPoints.forEach {
+                disconnectOutLink(it)
+            }
+
+            animationBuilder()
+                    .duration(Duration.seconds(0.56))
+                    .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
+                    .onFinished(Runnable { nodeViews.children -= nodeView })
+                    .scale(nodeView)
+                    .from(Point2D(1.0, 1.0))
+                    .to(Point2D.ZERO)
+                    .buildAndPlay()
+        }
+
         nodeView.outPoints.forEach { outPoint ->
             // TODO: refactor repetition
             outPoint.setOnMouseClicked {
@@ -282,6 +357,7 @@ class DialoguePane : Pane() {
         }
     }
 
+    // TODO: check logic and use SRP
     private fun disconnectOutLink(outPoint: OutLinkPoint) {
         outPoint.disconnect()?.let { inPoint ->
             val view = removeEdgeView(outPoint, inPoint)

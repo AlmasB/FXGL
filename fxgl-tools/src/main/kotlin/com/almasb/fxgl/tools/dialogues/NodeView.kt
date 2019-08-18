@@ -9,6 +9,7 @@ package com.almasb.fxgl.tools.dialogues
 import com.almasb.fxgl.cutscene.dialogue.DialogueNode
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
+import javafx.beans.binding.Bindings
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -16,8 +17,10 @@ import javafx.scene.Node
 import javafx.scene.effect.DropShadow
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
+import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
 
 /**
@@ -50,6 +53,8 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
 
     protected val textArea = ExpandableTextArea(INITIAL_WIDTH - 70, INITIAL_HEIGHT - 50)
 
+    val closeButton = CustomButton("\u2715", 16.0)
+
     init {
         styleClass.add("dialogue-editor-node-view")
 
@@ -72,9 +77,12 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         contentRoot.translateX = 35.0
         contentRoot.translateY = 35.0
 
+        closeButton.translateX = prefWidth - 28.0
+        closeButton.translateY = 6.0
+
         effect = DropShadow(10.0, Color.BLACK)
 
-        children.addAll(contentRoot, title)
+        children.addAll(contentRoot, title, closeButton)
     }
 
     fun addContent(node: Node) {
@@ -124,5 +132,19 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
 
             children += text
         }
+    }
+}
+
+class CustomButton(symbol: String, size: Double = 24.0) : StackPane() {
+
+    init {
+        val bg = Rectangle(20.0, 20.0, null)
+        val text = FXGL.getUIFactory().newText(symbol, size)
+
+        bg.strokeProperty().bind(
+                Bindings.`when`(hoverProperty()).then(Color.WHITE).otherwise(Color.TRANSPARENT)
+        )
+
+        children.addAll(bg, text)
     }
 }

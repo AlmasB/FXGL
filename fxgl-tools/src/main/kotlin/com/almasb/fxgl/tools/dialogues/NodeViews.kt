@@ -194,20 +194,6 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
         children.addAll(btnAdd, btnRemove)
     }
 
-    private class CustomButton(symbol: String) : StackPane() {
-
-        init {
-            val bg = Rectangle(20.0, 20.0, null)
-            val text = FXGL.getUIFactory().newText(symbol, 24.0)
-
-            bg.strokeProperty().bind(
-                    Bindings.`when`(hoverProperty()).then(Color.WHITE).otherwise(Color.TRANSPARENT)
-            )
-
-            children.addAll(bg, text)
-        }
-    }
-
     private class Condition : StackPane() {
         init {
             styleClass.add("dialogue-editor-condition-view")
