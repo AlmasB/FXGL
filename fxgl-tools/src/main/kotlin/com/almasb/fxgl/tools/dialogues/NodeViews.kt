@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package dev.dialogue
+package com.almasb.fxgl.tools.dialogues
 
 import com.almasb.fxgl.cutscene.dialogue.*
 import com.almasb.fxgl.dsl.FXGL

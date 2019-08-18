@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package dev.dialogue
+package com.almasb.fxgl.tools.dialogues
 
 import com.almasb.fxgl.cutscene.dialogue.DialogueNode
 import com.almasb.fxgl.dsl.FXGL
@@ -63,7 +63,8 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
 
         addContent(textArea)
 
-        val title = Title(node.type.toString().toLowerCase().capitalize(), colors[node.type] ?: Color.WHITE)
+        val title = Title(node.type.toString().toLowerCase().capitalize(), colors[node.type]
+                ?: Color.WHITE)
         title.prefWidthProperty().bind(prefWidthProperty().subtract(4))
         title.translateX = 2.0
         title.translateY = 2.0

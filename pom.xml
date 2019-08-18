@@ -33,6 +33,7 @@
         <module>fxgl-minigames</module>
         <module>fxgl-samples</module>
         <module>fxgl-nativesamples</module>
+        <module>fxgl-tools</module>
         <module>fxgl-zdeploy</module>
     </modules>
 

@@ -4,13 +4,12 @@
  * See LICENSE for details.
  */
 
-package dev.dialogue
+package com.almasb.fxgl.tools.dialogues
 
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import javafx.scene.Node
 import javafx.scene.effect.Glow
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color

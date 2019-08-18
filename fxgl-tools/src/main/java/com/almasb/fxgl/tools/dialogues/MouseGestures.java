@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox.cutscene;
+package com.almasb.fxgl.tools.dialogues;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;

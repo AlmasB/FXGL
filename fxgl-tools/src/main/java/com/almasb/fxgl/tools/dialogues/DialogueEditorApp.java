@@ -4,12 +4,11 @@
  * See LICENSE for details.
  */
 
-package sandbox.cutscene;
+package com.almasb.fxgl.tools.dialogues;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
-import dev.dialogue.DialoguePane;
 
 import java.util.Map;
 
@@ -18,14 +17,14 @@ import java.util.Map;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class DialogueEditorSample extends GameApplication {
+public class DialogueEditorApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1600);
         settings.setHeight(900);
         settings.setTitle("FXGL Dialogue Editor");
-        settings.setVersion("0.1");
+        settings.setVersion("1.0");
         settings.getCSSList().add("dialogue_editor.css");
     }
 

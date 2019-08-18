@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package dev.dialogue
+package com.almasb.fxgl.tools.dialogues
 
 import com.almasb.fxgl.cutscene.dialogue.*
 import com.almasb.fxgl.dsl.getAppHeight
@@ -31,7 +31,6 @@ import javafx.scene.text.Text
 import javafx.scene.transform.Scale
 import javafx.scene.transform.Translate
 import javafx.stage.FileChooser
-import sandbox.cutscene.MouseGestures
 import java.io.File
 import java.nio.file.Files
 

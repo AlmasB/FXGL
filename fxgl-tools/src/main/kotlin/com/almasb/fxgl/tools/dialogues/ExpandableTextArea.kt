@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package dev.dialogue
+package com.almasb.fxgl.tools.dialogues
 
 import javafx.beans.binding.Bindings
 import javafx.scene.control.TextArea
