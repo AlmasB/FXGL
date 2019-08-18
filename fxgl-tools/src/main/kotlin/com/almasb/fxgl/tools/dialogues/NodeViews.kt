@@ -189,7 +189,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
         btnRemove.visibleProperty().bind(Bindings.size(outPoints).greaterThan(2))
 
         btnRemove.translateX = btnAdd.translateX
-        btnRemove.translateYProperty().bind(prefHeightProperty().subtract(39.5))
+        btnRemove.translateYProperty().bind(prefHeightProperty().subtract(44))
 
         children.addAll(btnAdd, btnRemove)
     }
