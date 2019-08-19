@@ -15,6 +15,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
+import javafx.collections.MapChangeListener
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Group
@@ -152,6 +153,8 @@ class DialoguePane : Pane() {
             dragX = it.x
             dragY = it.y
         }
+
+        initGraphListeners()
     }
 
     private fun initContextMenu() {
@@ -178,6 +181,99 @@ class DialoguePane : Pane() {
             val p = contentRoot.sceneToLocal(mouseX, mouseY)
             createNode(view, p.x, p.y)
         }
+    }
+
+    private fun initGraphListeners() {
+        graph.nodes.addListener { c: MapChangeListener.Change<out Int, out DialogueNode> ->
+            if (c.wasAdded()) {
+                val node = c.valueAdded
+
+                onAdded(node)
+
+            } else if (c.wasRemoved()) {
+                val node = c.valueRemoved
+
+                onRemoved(node)
+            }
+        }
+
+        graph.edges.addListener { c: ListChangeListener.Change<out DialogueEdge> ->
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    c.addedSubList.forEach { onAdded(it) }
+                } else if (c.wasRemoved()) {
+                    c.removed.forEach { onRemoved(it) }
+                }
+            }
+        }
+    }
+
+    private fun onAdded(node: DialogueNode) {
+
+    }
+
+    private fun onRemoved(node: DialogueNode) {
+        val nodeView = nodeViews.children
+                .map { it as NodeView }
+                .find { it.node === node } ?: throw IllegalArgumentException("No view found for node $node")
+
+        // so that user does not accidentally press it again
+        nodeView.closeButton.isVisible = false
+
+        animationBuilder()
+                .duration(Duration.seconds(0.56))
+                .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
+                .onFinished(Runnable { nodeViews.children -= nodeView })
+                .scale(nodeView)
+                .from(Point2D(1.0, 1.0))
+                .to(Point2D.ZERO)
+                .buildAndPlay()
+    }
+
+    private fun onAdded(edge: DialogueEdge) {
+
+    }
+
+    private fun onRemoved(edge: DialogueEdge) {
+        val edgeView = edgeViews.children
+                .map { it as EdgeView }
+                .find { it.source.owner.node === edge.source && it.target.owner.node === edge.target }
+                ?: throw IllegalArgumentException("No edge view found for edge $edge")
+
+        val p1 = Point2D(edgeView.startX, edgeView.startY)
+        val p2 = Point2D(edgeView.controlX1, edgeView.controlY1)
+        val p3 = Point2D(edgeView.controlX2, edgeView.controlY2)
+        val p4 = Point2D(edgeView.endX, edgeView.endY)
+
+        val group = Group()
+        group.effect = Glow(0.7)
+
+        val numSegments = 350
+
+        for (t in 0..numSegments) {
+            val delay = if (graph.findNodeID(edgeView.source.owner.node) == -1) t else (numSegments - t)
+
+            val p = FXGLMath.bezier(p1, p2, p3, p4, t / numSegments.toDouble())
+
+            val c = Circle(p.x, p.y, 2.0, edgeView.stroke)
+
+            group.children += c
+
+            animationBuilder()
+                    .interpolator(Interpolators.BOUNCE.EASE_OUT())
+                    .delay(Duration.millis(delay * 2.0))
+                    .duration(Duration.seconds(0.35))
+                    .fadeOut(c)
+                    .buildAndPlay()
+        }
+
+        views.children += group
+
+        runOnce({ views.children -= group }, Duration.seconds(7.0))
+
+        edgeView.source.disconnect()
+
+        edgeViews.children -= edgeView
     }
 
     private fun makeRunButton(): Node {
@@ -226,70 +322,7 @@ class DialoguePane : Pane() {
         mouseGestures.makeDraggable(nodeView)
 
         nodeView.closeButton.setOnMouseClicked {
-            nodeView.closeButton.isVisible = false
             graph.removeNode(nodeView.node)
-
-            edgeViews.children
-                    .filter {
-                        val edgeView = it as EdgeView
-
-                        edgeView.source.owner === nodeView || edgeView.target.owner === nodeView
-                    }.forEach {
-                        val edgeView = it as EdgeView
-
-                        val p1 = Point2D(edgeView.startX, edgeView.startY)
-                        val p2 = Point2D(edgeView.controlX1, edgeView.controlY1)
-                        val p3 = Point2D(edgeView.controlX2, edgeView.controlY2)
-                        val p4 = Point2D(edgeView.endX, edgeView.endY)
-
-                        val group = Group()
-                        group.effect = Glow(0.7)
-
-                        val numSegments = 350
-
-                        for (t in 0..numSegments) {
-                            val delay = if (edgeView.source.owner === nodeView) t else (numSegments - t)
-
-                            val p = FXGLMath.bezier(p1, p2, p3, p4, t / numSegments.toDouble())
-
-                            val c = Circle(p.x, p.y, 2.5, edgeView.stroke)
-
-                            group.children += c
-
-                            animationBuilder()
-                                    .delay(Duration.millis(delay * 2.0))
-                                    .duration(Duration.seconds(0.5))
-                                    .fadeOut(c)
-                                    .buildAndPlay()
-                        }
-
-                        views.children += group
-
-                        runOnce({ views.children -= group }, Duration.seconds(7.0))
-                    }
-
-            nodeView.inPoint?.let {
-                val connected = ArrayList(it.connectedPoints)
-
-                connected.forEach {
-                    disconnectOutLink(it)
-                }
-            }
-
-            val outPoints = ArrayList(nodeView.outPoints)
-
-            outPoints.forEach {
-                disconnectOutLink(it)
-            }
-
-            animationBuilder()
-                    .duration(Duration.seconds(0.56))
-                    .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
-                    .onFinished(Runnable { nodeViews.children -= nodeView })
-                    .scale(nodeView)
-                    .from(Point2D(1.0, 1.0))
-                    .to(Point2D.ZERO)
-                    .buildAndPlay()
         }
 
         nodeView.outPoints.forEach { outPoint ->
@@ -355,30 +388,22 @@ class DialoguePane : Pane() {
         }
     }
 
-    // TODO: check logic and use SRP
     private fun disconnectOutLink(outPoint: OutLinkPoint) {
-        outPoint.disconnect()?.let { inPoint ->
-            val view = removeEdgeView(outPoint, inPoint)
-
-            view?.let {
-                if (it.localID != -1) {
-                    graph.removeEdge(outPoint.owner.node, it.localID, inPoint.owner.node)
-                } else {
-                    graph.removeEdge(outPoint.owner.node, inPoint.owner.node)
-                }
+        outPoint.other?.let { inPoint ->
+            if (outPoint.choiceLocalID != -1) {
+                graph.removeEdge(outPoint.owner.node, outPoint.choiceLocalID, inPoint.owner.node)
+            } else {
+                graph.removeEdge(outPoint.owner.node, inPoint.owner.node)
             }
         }
     }
 
-    private fun removeEdgeView(source: OutLinkPoint, target: InLinkPoint): EdgeView? {
-        val view = edgeViews.children.find { (it as EdgeView).source === source && (it as EdgeView).target === target } as EdgeView?
 
-        view?.let {
-            edgeViews.children -= view
-        }
 
-        return view
-    }
+
+
+
+
 
     private val mapper = jacksonObjectMapper()
 
@@ -413,65 +438,65 @@ class DialoguePane : Pane() {
     }
 
     private fun load(serializedGraph: SerializableGraph) {
-        graph = DialogueGraphSerializer.fromSerializable(serializedGraph)
-
-        nodeViews.children.clear()
-        edgeViews.children.clear()
-
-        graph.nodes.forEach { (id, node) ->
-            val x = serializedGraph.uiMetadata[id]?.x ?: 100.0
-            val y = serializedGraph.uiMetadata[id]?.y ?: 100.0
-
-            when (node.type) {
-                DialogueNodeType.START -> {
-                    addNodeView(StartNodeView(node), x, y)
-                }
-
-                DialogueNodeType.END -> {
-                    addNodeView(EndNodeView(node), x, y)
-                }
-
-                DialogueNodeType.TEXT -> {
-                    addNodeView(TextNodeView(node), x, y)
-                }
-
-                DialogueNodeType.CHOICE -> {
-                    addNodeView(ChoiceNodeView(node), x, y)
-                }
-
-                DialogueNodeType.FUNCTION -> {
-                    addNodeView(FunctionNodeView(node), x, y)
-                }
-                DialogueNodeType.BRANCH -> {
-                    addNodeView(BranchNodeView(node), x, y)
-                }
-
-                else -> throw IllegalArgumentException("Unknown node type: ${node.type}")
-            }
-        }
-
-        graph.edges.forEach { edge ->
-            val source = nodeViews.children.map { it as NodeView }.find { it.node === edge.source }
-            val target = nodeViews.children.map { it as NodeView }.find { it.node === edge.target }
-
-            if (source != null && target != null) {
-                val edgeView = source.outPoints[0].connect(target.inPoint!!)
-
-                edgeViews.children.add(edgeView)
-            }
-        }
-
-        graph.choiceEdges.forEach { edge ->
-            val source = nodeViews.children.map { it as NodeView }.find { it.node === edge.source }
-            val target = nodeViews.children.map { it as NodeView }.find { it.node === edge.target }
-
-            if (source != null && target != null) {
-                source.outPoints.find { it.choiceLocalID == edge.optionID }?.let { outPoint ->
-                    val edgeView = outPoint.connect(target.inPoint!!)
-
-                    edgeViews.children.add(edgeView)
-                }
-            }
-        }
+//        graph = DialogueGraphSerializer.fromSerializable(serializedGraph)
+//
+//        nodeViews.children.clear()
+//        edgeViews.children.clear()
+//
+//        graph.nodes.forEach { (id, node) ->
+//            val x = serializedGraph.uiMetadata[id]?.x ?: 100.0
+//            val y = serializedGraph.uiMetadata[id]?.y ?: 100.0
+//
+//            when (node.type) {
+//                DialogueNodeType.START -> {
+//                    addNodeView(StartNodeView(node), x, y)
+//                }
+//
+//                DialogueNodeType.END -> {
+//                    addNodeView(EndNodeView(node), x, y)
+//                }
+//
+//                DialogueNodeType.TEXT -> {
+//                    addNodeView(TextNodeView(node), x, y)
+//                }
+//
+//                DialogueNodeType.CHOICE -> {
+//                    addNodeView(ChoiceNodeView(node), x, y)
+//                }
+//
+//                DialogueNodeType.FUNCTION -> {
+//                    addNodeView(FunctionNodeView(node), x, y)
+//                }
+//                DialogueNodeType.BRANCH -> {
+//                    addNodeView(BranchNodeView(node), x, y)
+//                }
+//
+//                else -> throw IllegalArgumentException("Unknown node type: ${node.type}")
+//            }
+//        }
+//
+//        graph.edges.forEach { edge ->
+//            val source = nodeViews.children.map { it as NodeView }.find { it.node === edge.source }
+//            val target = nodeViews.children.map { it as NodeView }.find { it.node === edge.target }
+//
+//            if (source != null && target != null) {
+//                val edgeView = source.outPoints[0].connect(target.inPoint!!)
+//
+//                edgeViews.children.add(edgeView)
+//            }
+//        }
+//
+//        graph.choiceEdges.forEach { edge ->
+//            val source = nodeViews.children.map { it as NodeView }.find { it.node === edge.source }
+//            val target = nodeViews.children.map { it as NodeView }.find { it.node === edge.target }
+//
+//            if (source != null && target != null) {
+//                source.outPoints.find { it.choiceLocalID == edge.optionID }?.let { outPoint ->
+//                    val edgeView = outPoint.connect(target.inPoint!!)
+//
+//                    edgeViews.children.add(edgeView)
+//                }
+//            }
+//        }
     }
 }

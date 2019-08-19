@@ -63,9 +63,9 @@ class ChoiceNode(text: String) : DialogueNode(DialogueNodeType.CHOICE, text)  {
 
 /* EDGES */
 
-class DialogueEdge(val source: DialogueNode, val target: DialogueNode)
+open class DialogueEdge(val source: DialogueNode, val target: DialogueNode)
 
-class DialogueChoiceEdge(val source: DialogueNode, val optionID: Int, val target: DialogueNode)
+class DialogueChoiceEdge(source: DialogueNode, val optionID: Int, target: DialogueNode) : DialogueEdge(source, target)
 
 /* GRAPH */
 
@@ -73,7 +73,6 @@ class DialogueGraph(internal var uniqueID: Int = 0) : Serializable {
 
     val nodes = FXCollections.observableMap(hashMapOf<Int, DialogueNode>())
     val edges = FXCollections.observableArrayList<DialogueEdge>()
-    val choiceEdges = FXCollections.observableArrayList<DialogueChoiceEdge>()
 
     val startNode: StartNode
         get() = nodes.values.find { it.type == DialogueNodeType.START } as? StartNode
@@ -95,7 +94,6 @@ class DialogueGraph(internal var uniqueID: Int = 0) : Serializable {
         nodes.remove(id)
 
         edges.removeIf { it.source === node || it.target === node }
-        choiceEdges.removeIf { it.source === node || it.target === node }
     }
 
     fun addEdge(source: DialogueNode, target: DialogueNode) {
@@ -103,7 +101,7 @@ class DialogueGraph(internal var uniqueID: Int = 0) : Serializable {
     }
 
     fun addEdge(source: DialogueNode, optionID: Int, target: DialogueNode) {
-        choiceEdges += DialogueChoiceEdge(source, optionID, target)
+        edges += DialogueChoiceEdge(source, optionID, target)
     }
 
     fun removeEdge(source: DialogueNode, target: DialogueNode) {
@@ -114,9 +112,16 @@ class DialogueGraph(internal var uniqueID: Int = 0) : Serializable {
      * Remove choice or branch edge.
      */
     fun removeEdge(source: DialogueNode, optionID: Int, target: DialogueNode) {
-        choiceEdges.removeIf { it.source === source && it.optionID == optionID && it.target === target }
+        edges.removeIf { it is DialogueChoiceEdge
+                && it.source === source
+                && it.optionID == optionID
+                && it.target === target
+        }
     }
 
+    /**
+     * @return node id in this graph or -1 if node is not in this graph
+     */
     fun findNodeID(node: DialogueNode): Int {
         for ((id, n) in nodes) {
             if (n === node)
@@ -135,7 +140,7 @@ class DialogueGraph(internal var uniqueID: Int = 0) : Serializable {
     }
 
     fun nextNode(node: DialogueNode, optionID: Int): DialogueNode? {
-        return choiceEdges.find { it.source === node && it.optionID == optionID }?.target
+        return edges.find { it is DialogueChoiceEdge && it.source === node && it.optionID == optionID }?.target
     }
 }
 

@@ -49,8 +49,13 @@ object DialogueGraphSerializer {
                     SerializableChoiceNode(n.type, n.text, (n as ChoiceNode).options.mapValues { it.value.value })
                 }
 
-        val edgesS = dialogueGraph.edges.map { SerializableEdge(dialogueGraph.findNodeID(it.source), dialogueGraph.findNodeID(it.target)) }
-        val choiceEdgesS = dialogueGraph.choiceEdges.map { SerializableChoiceEdge(dialogueGraph.findNodeID(it.source), it.optionID, dialogueGraph.findNodeID(it.target)) }
+        val edgesS = dialogueGraph.edges
+                .filter { it !is DialogueChoiceEdge }
+                .map { SerializableEdge(dialogueGraph.findNodeID(it.source), dialogueGraph.findNodeID(it.target)) }
+
+        val choiceEdgesS = dialogueGraph.edges
+                .filterIsInstance<DialogueChoiceEdge>()
+                .map { SerializableChoiceEdge(dialogueGraph.findNodeID(it.source), it.optionID, dialogueGraph.findNodeID(it.target)) }
 
         return SerializableGraph(dialogueGraph.uniqueID, nodesS, choiceNodesS, edgesS, choiceEdgesS)
     }
