@@ -268,9 +268,7 @@ class DialoguePane : Pane() {
                         runOnce({ views.children -= group }, Duration.seconds(7.0))
                     }
 
-            val inPoints = ArrayList(nodeView.inPoints)
-
-            inPoints.forEach {
+            nodeView.inPoint?.let {
                 val connected = ArrayList(it.connectedPoints)
 
                 connected.forEach {
@@ -325,7 +323,7 @@ class DialoguePane : Pane() {
             }
         }
 
-        nodeView.inPoints.forEach { inPoint ->
+        nodeView.inPoint?.let { inPoint ->
 
             inPoint.setOnMouseClicked {
 
@@ -457,7 +455,7 @@ class DialoguePane : Pane() {
             val target = nodeViews.children.map { it as NodeView }.find { it.node === edge.target }
 
             if (source != null && target != null) {
-                val edgeView = source.outPoints[0].connect(target.inPoints[0])
+                val edgeView = source.outPoints[0].connect(target.inPoint!!)
 
                 edgeViews.children.add(edgeView)
             }
@@ -469,7 +467,7 @@ class DialoguePane : Pane() {
 
             if (source != null && target != null) {
                 source.outPoints.find { it.choiceLocalID == edge.optionID }?.let { outPoint ->
-                    val edgeView = outPoint.connect(target.inPoints[0])
+                    val edgeView = outPoint.connect(target.inPoint!!)
 
                     edgeViews.children.add(edgeView)
                 }

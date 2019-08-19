@@ -44,10 +44,12 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         )
     }
 
-    // TODO: only one in point?
     var outPoints = FXCollections.observableArrayList<OutLinkPoint>()
 
-    var inPoints = FXCollections.observableArrayList<InLinkPoint>()
+    /**
+     * Only start node does not have an in point.
+     */
+    var inPoint: InLinkPoint? = null
 
     protected val contentRoot = VBox(10.0)
 
@@ -90,7 +92,7 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
     }
 
     fun addInPoint(linkPoint: InLinkPoint) {
-        inPoints.add(linkPoint)
+        inPoint = linkPoint
 
         children.add(linkPoint)
 
