@@ -47,6 +47,31 @@ class DialoguePane : Pane() {
 
     companion object {
         val highContrastProperty = SimpleBooleanProperty(false)
+
+        private val branch: (DialogueNode) -> NodeView = { BranchNodeView(it) }
+        private val end: (DialogueNode) -> NodeView = { EndNodeView(it) }
+        private val start: (DialogueNode) -> NodeView = { StartNodeView(it) }
+        private val function: (DialogueNode) -> NodeView = { FunctionNodeView(it) }
+        private val text: (DialogueNode) -> NodeView = { TextNodeView(it) }
+        private val choice: (DialogueNode) -> NodeView = { ChoiceNodeView(it) }
+
+        val nodeConstructors = mapOf<DialogueNodeType, () -> DialogueNode>(
+                DialogueNodeType.BRANCH to { BranchNode("") },
+                DialogueNodeType.END to { EndNode("") },
+                DialogueNodeType.START to { StartNode("") },
+                DialogueNodeType.FUNCTION to { FunctionNode("") },
+                DialogueNodeType.TEXT to { TextNode("") },
+                DialogueNodeType.CHOICE to { ChoiceNode("") }
+        )
+
+        val nodeViewConstructors = mapOf<DialogueNodeType, (DialogueNode) -> NodeView>(
+                DialogueNodeType.BRANCH to branch,
+                DialogueNodeType.END to end,
+                DialogueNodeType.START to start,
+                DialogueNodeType.FUNCTION to function,
+                DialogueNodeType.TEXT to text,
+                DialogueNodeType.CHOICE to choice
+        )
     }
 
     private val contentRoot = Group()
@@ -160,11 +185,14 @@ class DialoguePane : Pane() {
     private fun initContextMenu() {
         val contextMenu = ContextMenu()
         contextMenu.items.addAll(
-                newMenuItem("Text") { TextNodeView() },
-                newMenuItem("Choice") { ChoiceNodeView() },
-                newMenuItem("Function") { FunctionNodeView() },
-                newMenuItem("End") { EndNodeView() },
-                newMenuItem("Branch") { BranchNodeView() }
+                DialogueNodeType.values().map { type ->
+                    MenuItem(type.toString()).also {
+                        it.setOnAction {
+                            val nodeCtor = nodeConstructors[type] ?: throw IllegalArgumentException("No constructor found for type: $type")
+                            graph.addNode(nodeCtor())
+                        }
+                    }
+                }
         )
 
         setOnContextMenuRequested {
@@ -172,14 +200,6 @@ class DialoguePane : Pane() {
                 return@setOnContextMenuRequested
 
             contextMenu.show(contentRoot.scene.window, it.sceneX + 150.0, it.sceneY + 45.0)
-        }
-    }
-
-    private fun newMenuItem(name: String, creator: () -> NodeView) = MenuItem(name).also {
-        it.setOnAction {
-            val view = creator()
-            val p = contentRoot.sceneToLocal(mouseX, mouseY)
-            createNode(view, p.x, p.y)
         }
     }
 
@@ -209,7 +229,12 @@ class DialoguePane : Pane() {
     }
 
     private fun onAdded(node: DialogueNode) {
+        val nodeViewConstructor = nodeViewConstructors[node.type] ?: throw IllegalArgumentException("View constructor for ${node.type} does not exist")
+        val nodeView = nodeViewConstructor(node)
 
+        val p = contentRoot.sceneToLocal(mouseX, mouseY)
+
+        addNodeView(nodeView, p.x, p.y)
     }
 
     private fun onRemoved(node: DialogueNode) {
