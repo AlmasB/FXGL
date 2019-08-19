@@ -9,41 +9,31 @@ package com.almasb.fxgl.tools.dialogues
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.cutscene.dialogue.*
-import com.almasb.fxgl.dsl.*
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import javafx.beans.binding.Bindings
+import com.almasb.fxgl.dsl.animationBuilder
+import com.almasb.fxgl.dsl.getAppHeight
+import com.almasb.fxgl.dsl.getAppWidth
+import com.almasb.fxgl.dsl.runOnce
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
 import javafx.collections.MapChangeListener
 import javafx.geometry.Point2D
-import javafx.geometry.Pos
 import javafx.scene.Group
-import javafx.scene.Node
-import javafx.scene.control.*
+import javafx.scene.control.ContextMenu
+import javafx.scene.control.MenuItem
 import javafx.scene.effect.Glow
 import javafx.scene.input.MouseButton
-import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
-import javafx.scene.layout.StackPane
-import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
-import javafx.scene.shape.Polygon
-import javafx.scene.shape.Rectangle
-import javafx.scene.text.Text
 import javafx.scene.transform.Scale
 import javafx.scene.transform.Translate
-import javafx.stage.FileChooser
 import javafx.util.Duration
-import java.io.File
-import java.nio.file.Files
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DialoguePane : Pane() {
+class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     companion object {
         val highContrastProperty = SimpleBooleanProperty(false)
@@ -79,7 +69,8 @@ class DialoguePane : Pane() {
     private var selectedNodeView: NodeView? = null
     private var selectedOutLink: OutLinkPoint? = null
 
-    private var graph = DialogueGraph()
+    var graph = graph
+        private set
 
     private val views = Group()
     private val edgeViews = Group()
@@ -88,61 +79,21 @@ class DialoguePane : Pane() {
     private val scale = Scale()
 
     private val dragScale = 1.35
-    private var dragX = 0.0
-    private var dragY = 0.0
 
     private var mouseX = 0.0
     private var mouseY = 0.0
 
     private val mouseGestures = MouseGestures(contentRoot)
 
-    private val toolbar = HBox(15.0)
-
     init {
-        toolbar.setPrefSize(getAppWidth().toDouble(), 30.0)
-        toolbar.translateY = -toolbar.prefHeight
-        toolbar.style = "-fx-background-color: black"
-        toolbar.alignment = Pos.CENTER_LEFT
-
-        val itemSave = MenuItem("Save")
-        itemSave.setOnAction {
-            openSaveDialog()
-        }
-
-        val menuFile = Menu("")
-        menuFile.graphic = Text("File").also { it.fill = Color.WHITE }
-        menuFile.style = "-fx-background-color: black"
-        menuFile.items.addAll(itemSave, MenuItem("Load").also { it.setOnAction { openLoadDialog() } })
-
-        val menuBar = MenuBar()
-        menuBar.style = "-fx-background-color: black"
-        menuBar.menus.addAll(menuFile)
-
-        toolbar.children += menuBar
-
-
-        translateY = toolbar.prefHeight
         setPrefSize(getAppWidth().toDouble(), getAppHeight().toDouble())
         style = "-fx-background-color: gray"
-
-
-        toolbar.children += makeRunButton()
-
-        toolbar.children += getUIFactory().newText("High contrast")
-
-        toolbar.children += CheckBox().also {
-            it.selectedProperty().bindBidirectional(highContrastProperty)
-        }
 
         contentRoot.children.addAll(
                 edgeViews, views, nodeViews
         )
 
-
-        val translate = Translate()
-
         contentRoot.transforms += scale
-        contentRoot.transforms += translate
 
         setOnScroll {
             val scaleFactor = if (it.deltaY < 0) 0.95 else 1.05
@@ -151,7 +102,7 @@ class DialoguePane : Pane() {
             scale.y *= scaleFactor
         }
 
-        children.addAll(contentRoot, toolbar)
+        children.addAll(contentRoot)
 
         // start and end
 
@@ -161,9 +112,6 @@ class DialoguePane : Pane() {
         initContextMenu()
 
         setOnMouseMoved {
-            dragX = it.x
-            dragY = it.y
-
             mouseX = it.sceneX
             mouseY = it.sceneY
         }
@@ -172,11 +120,11 @@ class DialoguePane : Pane() {
             if (mouseGestures.isDragging || it.button != MouseButton.PRIMARY)
                 return@setOnMouseDragged
 
-            contentRoot.translateX += (it.x - dragX) * dragScale
-            contentRoot.translateY += (it.y - dragY) * dragScale
+            contentRoot.translateX += (it.sceneX - mouseX) * dragScale
+            contentRoot.translateY += (it.sceneY - mouseY) * dragScale
 
-            dragX = it.x
-            dragY = it.y
+            mouseX = it.sceneX
+            mouseY = it.sceneY
         }
 
         initGraphListeners()
@@ -319,34 +267,6 @@ class DialoguePane : Pane() {
         edgeViews.children -= edgeView
     }
 
-    private fun makeRunButton(): Node {
-        val stack = StackPane()
-
-        val bgRun = Rectangle(18.0, 18.0, null)
-        bgRun.strokeProperty().bind(
-                Bindings.`when`(stack.hoverProperty()).then(Color.WHITE).otherwise(Color.TRANSPARENT)
-        )
-        bgRun.fillProperty().bind(
-                Bindings.`when`(stack.pressedProperty()).then(Color.color(0.5, 0.5, 0.5, 0.95)).otherwise(Color.TRANSPARENT)
-        )
-
-        val btnRun = Polygon(
-                0.0, 0.0,
-                13.0, 6.5,
-                0.0, 13.0
-        )
-        btnRun.fill = Color.LIGHTGREEN
-
-        stack.setOnMouseClicked {
-            stack.requestFocus()
-            DialogueScene(getGameController(), getAppWidth(), getAppHeight()).start(graph)
-        }
-
-        stack.children.addAll(bgRun, btnRun)
-
-        return stack
-    }
-
     private fun createNode(nodeView: NodeView, x: Double, y: Double) {
         graph.addNode(nodeView.node)
 
@@ -436,64 +356,5 @@ class DialoguePane : Pane() {
                 graph.removeEdge(outPoint.owner.node, inPoint.owner.node)
             }
         }
-    }
-
-
-
-
-
-
-
-
-    private val mapper = jacksonObjectMapper()
-
-    private fun openSaveDialog() {
-        val chooser = FileChooser()
-        chooser.initialDirectory = File(System.getProperty("user.dir"))
-        chooser.initialFileName = "dialogue_graph.json"
-
-        chooser.showSaveDialog(scene.window)?.let {
-            mapper.enable(SerializationFeature.INDENT_OUTPUT)
-
-            val serializedGraph = DialogueGraphSerializer.toSerializable(graph)
-
-            nodeViews.children.map { it as NodeView }.forEach {
-                serializedGraph.uiMetadata[graph.findNodeID(it.node)] = SerializablePoint2D(it.layoutX, it.layoutY)
-            }
-
-            val s = mapper.writeValueAsString(serializedGraph)
-
-            Files.writeString(it.toPath(), s)
-        }
-    }
-
-    private fun openLoadDialog() {
-        val chooser = FileChooser()
-        chooser.initialDirectory = File(System.getProperty("user.dir"))
-        chooser.initialFileName = "dialogue_graph.json"
-
-        chooser.showOpenDialog(scene.window)?.let {
-            load(mapper.readValue(it, SerializableGraph::class.java))
-        }
-    }
-
-    private fun load(serializedGraph: SerializableGraph) {
-        graph = DialogueGraphSerializer.fromSerializable(serializedGraph)
-
-        nodeViews.children.clear()
-        edgeViews.children.clear()
-
-        graph.nodes.forEach { (id, node) ->
-            val x = serializedGraph.uiMetadata[id]?.x ?: 100.0
-            val y = serializedGraph.uiMetadata[id]?.y ?: 100.0
-
-            onAdded(node, x, y)
-        }
-
-        graph.edges.forEach { edge ->
-            onAdded(edge)
-        }
-
-        initGraphListeners()
     }
 }

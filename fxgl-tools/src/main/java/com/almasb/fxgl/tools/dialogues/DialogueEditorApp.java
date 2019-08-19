@@ -46,7 +46,7 @@ public class DialogueEditorApp extends GameApplication {
 
     @Override
     protected void initGame() {
-        FXGL.getGameScene().addUINodes(new DialoguePane());
+        FXGL.getGameScene().addUINodes(new MainUI());
     }
 
     public static void main(String[] args) {

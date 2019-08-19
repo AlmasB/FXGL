@@ -20,10 +20,6 @@
     -fx-vbar-policy: never;
 }
 
-.dialogue-editor-condition-view {
-
-}
-
 .dialogue-editor-condition-view .text-field {
     -fx-border-color: white;
     -fx-border-width: 1;
@@ -31,4 +27,47 @@
     -fx-border-radius: 15 15 15 15;
     -fx-background-radius: 15 15 15 15;
     -fx-background-color: rgba(255, 255, 255, 0.55);
+}
+
+/* Main UI tab pane */
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: black;
+}
+
+.tab-pane {
+    -fx-tab-min-width: 100px;
+}
+
+.tab {
+    -fx-background-insets: 0 1 0 1, 0, 0;
+}
+
+.tab-pane .tab {
+    -fx-background-color: gray;
+    -fx-opacity: 0.3;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: white;
+    -fx-opacity: 1.0;
+}
+
+.tab .tab-label {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.tab:selected .tab-label {
+    -fx-text-fill: black;
+}
+
+.tab-pane:top *.tab-header-area {
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 5 2 0 800;
+    -fx-border-color: azure;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-radius: 5 5 5 5;
 }
