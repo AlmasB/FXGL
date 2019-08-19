@@ -23,6 +23,7 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
 import javafx.scene.text.Text
 import javafx.util.Duration
+import java.lang.IllegalStateException
 import java.util.*
 
 /**
@@ -129,7 +130,7 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
     fun start(cutscene: DialogueGraph) {
         this.graph = cutscene
 
-        currentNode = graph.nodes.find { it.id == 0 }!!
+        currentNode = graph.startNode
 
         nextLine()
 
@@ -218,11 +219,11 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
     }
 
     private fun nextNode(): DialogueNode {
-        return graph.edges.find { it.source.id == currentNode.id }!!.target
+        return graph.nextNode(currentNode) ?: throw IllegalStateException("No next node from $currentNode")
     }
 
-    private fun nextNodeFromChoice(choiceLocalID: Int): DialogueNode {
-        return graph.choiceEdges.find { it.source.id == currentNode.id && it.optionID == choiceLocalID }!!.target
+    private fun nextNodeFromChoice(optionID: Int): DialogueNode {
+        return graph.nextNode(currentNode, optionID) ?: throw IllegalStateException("No next node from $currentNode using option $optionID")
     }
 
     private fun onOpen() {

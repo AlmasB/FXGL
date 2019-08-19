@@ -32,16 +32,16 @@ class DialogueGraphTest {
     fun `Add and remove nodes`() {
         val node = TextNode("")
 
-        assertThat(node.id, `is`(-1))
+        assertThat(graph.findNodeID(node), `is`(-1))
 
         graph.addNode(node)
 
-        assertThat(node.id, `is`(0))
-        assertThat(graph.nodes, contains<DialogueNode>(node))
+        assertThat(graph.findNodeID(node), `is`(0))
+        assertThat(graph.nodes.values, contains<DialogueNode>(node))
 
         graph.removeNode(node)
 
-        assertThat(node.id, `is`(-1))
+        assertThat(graph.findNodeID(node), `is`(-1))
         assertTrue(graph.nodes.isEmpty())
     }
 }

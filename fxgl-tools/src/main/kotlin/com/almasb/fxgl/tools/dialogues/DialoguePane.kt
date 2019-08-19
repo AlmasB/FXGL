@@ -393,7 +393,7 @@ class DialoguePane : Pane() {
             val serializedGraph = DialogueGraphSerializer.toSerializable(graph)
 
             nodeViews.children.map { it as NodeView }.forEach {
-                serializedGraph.uiMetadata[it.node.id] = SerializablePoint2D(it.layoutX, it.layoutY)
+                serializedGraph.uiMetadata[graph.findNodeID(it.node)] = SerializablePoint2D(it.layoutX, it.layoutY)
             }
 
             val s = mapper.writeValueAsString(serializedGraph)
@@ -418,35 +418,35 @@ class DialoguePane : Pane() {
         nodeViews.children.clear()
         edgeViews.children.clear()
 
-        graph.nodes.forEach {
-            val x = serializedGraph.uiMetadata[it.id]?.x ?: 100.0
-            val y = serializedGraph.uiMetadata[it.id]?.y ?: 100.0
+        graph.nodes.forEach { (id, node) ->
+            val x = serializedGraph.uiMetadata[id]?.x ?: 100.0
+            val y = serializedGraph.uiMetadata[id]?.y ?: 100.0
 
-            when (it.type) {
+            when (node.type) {
                 DialogueNodeType.START -> {
-                    addNodeView(StartNodeView(it), x, y)
+                    addNodeView(StartNodeView(node), x, y)
                 }
 
                 DialogueNodeType.END -> {
-                    addNodeView(EndNodeView(it), x, y)
+                    addNodeView(EndNodeView(node), x, y)
                 }
 
                 DialogueNodeType.TEXT -> {
-                    addNodeView(TextNodeView(it), x, y)
+                    addNodeView(TextNodeView(node), x, y)
                 }
 
                 DialogueNodeType.CHOICE -> {
-                    addNodeView(ChoiceNodeView(it), x, y)
+                    addNodeView(ChoiceNodeView(node), x, y)
                 }
 
                 DialogueNodeType.FUNCTION -> {
-                    addNodeView(FunctionNodeView(it), x, y)
+                    addNodeView(FunctionNodeView(node), x, y)
                 }
                 DialogueNodeType.BRANCH -> {
-                    addNodeView(BranchNodeView(it), x, y)
+                    addNodeView(BranchNodeView(node), x, y)
                 }
 
-                else -> throw IllegalArgumentException("Unknown node type: ${it.type}")
+                else -> throw IllegalArgumentException("Unknown node type: ${node.type}")
             }
         }
 
