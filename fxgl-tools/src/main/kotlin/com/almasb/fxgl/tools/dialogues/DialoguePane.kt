@@ -74,7 +74,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     private val views = Group()
     private val edgeViews = Group()
-    private val nodeViews = Group()
+    val nodeViews = Group()
+
+    val isDirtyProperty = SimpleBooleanProperty(false)
 
     private val scale = Scale()
 
@@ -182,6 +184,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun onAdded(node: DialogueNode, x: Double, y: Double) {
+        isDirtyProperty.value = true
+
         val nodeViewConstructor = nodeViewConstructors[node.type] ?: throw IllegalArgumentException("View constructor for ${node.type} does not exist")
         val nodeView = nodeViewConstructor(node)
 
@@ -189,6 +193,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun onRemoved(node: DialogueNode) {
+        isDirtyProperty.value = true
+
         val nodeView = nodeViews.children
                 .map { it as NodeView }
                 .find { it.node === node } ?: throw IllegalArgumentException("No view found for node $node")
@@ -211,6 +217,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun onAdded(edge: DialogueEdge) {
+        isDirtyProperty.value = true
+
         val (outPoint, inPoint) = if (edge is DialogueChoiceEdge) {
             getNodeView(edge.source).outPoints.find { it.choiceOptionID == edge.optionID }!! to getNodeView(edge.target).inPoint!!
         } else {
@@ -226,6 +234,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun onRemoved(edge: DialogueEdge) {
+        isDirtyProperty.value = true
+
         val edgeView = edgeViews.children
                 .map { it as EdgeView }
                 .find { it.source.owner.node === edge.source && it.target.owner.node === edge.target }
@@ -356,5 +366,37 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 graph.removeEdge(outPoint.owner.node, inPoint.owner.node)
             }
         }
+    }
+
+    fun save(): SerializableGraph {
+        isDirtyProperty.value = false
+
+        val serializedGraph = DialogueGraphSerializer.toSerializable(graph)
+
+        nodeViews.children.map { it as NodeView }.forEach {
+            serializedGraph.uiMetadata[graph.findNodeID(it.node)] = SerializablePoint2D(it.layoutX, it.layoutY)
+        }
+
+        return serializedGraph
+    }
+
+    fun load(serializedGraph: SerializableGraph) {
+        graph = DialogueGraphSerializer.fromSerializable(serializedGraph)
+
+        nodeViews.children.clear()
+        edgeViews.children.clear()
+
+        graph.nodes.forEach { (id, node) ->
+            val x = serializedGraph.uiMetadata[id]?.x ?: 100.0
+            val y = serializedGraph.uiMetadata[id]?.y ?: 100.0
+
+            onAdded(node, x, y)
+        }
+
+        graph.edges.forEach { edge ->
+            onAdded(edge)
+        }
+
+        initGraphListeners()
     }
 }
