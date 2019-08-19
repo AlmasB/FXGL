@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.tools.dialogues
 
+import com.almasb.fxgl.cutscene.dialogue.DialogueChoiceEdge
+import com.almasb.fxgl.cutscene.dialogue.DialogueEdge
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleStringProperty
@@ -66,7 +68,7 @@ class OutLinkPoint(owner: NodeView) : LinkPoint(owner) {
 
     var other: InLinkPoint? = null
 
-    var choiceLocalID: Int = -1
+    var choiceOptionID: Int = -1
     var choiceLocalOptionProperty = SimpleStringProperty("")
 
     init {
@@ -81,64 +83,10 @@ class OutLinkPoint(owner: NodeView) : LinkPoint(owner) {
         children += arrow
     }
 
-    fun connect(inPoint: InLinkPoint): EdgeView {
+    fun connect(inPoint: InLinkPoint) {
         other = inPoint
         inPoint.connectedPoints += this
         isConnected = true
-
-        val fromView = this.owner
-        val toView = inPoint.owner
-        val outPoint = this
-
-        val curve = EdgeView(outPoint, inPoint)
-        with(curve) {
-            startXProperty().bind(fromView.layoutXProperty().add(outPoint.translateXProperty().add(10)))
-            startYProperty().bind(fromView.layoutYProperty().add(outPoint.translateYProperty().add(10)))
-
-            endXProperty().bind(toView.layoutXProperty().add(inPoint.translateXProperty()).add(10))
-            endYProperty().bind(toView.layoutYProperty().add(inPoint.translateYProperty()).add(10))
-
-            val right = endXProperty().greaterThanOrEqualTo(startXProperty())
-
-            val offset = Bindings.max(startXProperty().subtract(endXProperty()), 160.0)
-
-            controlX1Property().bind(Bindings.`when`(right)
-                    .then(
-                            startXProperty().add(endXProperty()).divide(2)
-                    ).otherwise(
-                            startXProperty().add(offset)
-                    )
-            )
-            controlY1Property().bind(Bindings.`when`(right)
-                    .then(
-                            startYProperty()
-                    ).otherwise(
-                            startYProperty().add(endYProperty()).divide(2)
-                    )
-            )
-
-            controlX2Property().bind(Bindings.`when`(right)
-                    .then(
-                            startXProperty().add(endXProperty()).divide(2)
-                    ).otherwise(
-                            endXProperty().subtract(offset)
-                    )
-            )
-            controlY2Property().bind(Bindings.`when`(right)
-                    .then(
-                            endYProperty()
-                    ).otherwise(
-                            startYProperty().add(endYProperty()).divide(2)
-                    )
-            )
-
-            strokeWidth = 2.5
-            stroke = NodeView.colors[inPoint.owner.node.type] ?: Color.color(0.9, 0.9, 0.9, 0.9)
-            fill = null
-            effect = Glow(0.7)
-        }
-
-        return curve
     }
 
     fun disconnect(): InLinkPoint? {
@@ -165,6 +113,59 @@ private class Arrow : Polygon(
     }
 }
 
-class EdgeView(val source: OutLinkPoint, val target: InLinkPoint) : CubicCurve() {
-    var localID = -1
+class EdgeView(val edge: DialogueEdge, val source: OutLinkPoint, val target: InLinkPoint) : CubicCurve() {
+    var optionID = if (edge is DialogueChoiceEdge) edge.optionID else -1
+
+    init {
+        val outPoint = source
+        val inPoint = target
+
+        val fromView = source.owner
+        val toView = target.owner
+
+        startXProperty().bind(fromView.layoutXProperty().add(outPoint.translateXProperty().add(10)))
+        startYProperty().bind(fromView.layoutYProperty().add(outPoint.translateYProperty().add(10)))
+
+        endXProperty().bind(toView.layoutXProperty().add(inPoint.translateXProperty()).add(10))
+        endYProperty().bind(toView.layoutYProperty().add(inPoint.translateYProperty()).add(10))
+
+        val right = endXProperty().greaterThanOrEqualTo(startXProperty())
+
+        val offset = Bindings.max(startXProperty().subtract(endXProperty()), 160.0)
+
+        controlX1Property().bind(Bindings.`when`(right)
+                .then(
+                        startXProperty().add(endXProperty()).divide(2)
+                ).otherwise(
+                        startXProperty().add(offset)
+                )
+        )
+        controlY1Property().bind(Bindings.`when`(right)
+                .then(
+                        startYProperty()
+                ).otherwise(
+                        startYProperty().add(endYProperty()).divide(2)
+                )
+        )
+
+        controlX2Property().bind(Bindings.`when`(right)
+                .then(
+                        startXProperty().add(endXProperty()).divide(2)
+                ).otherwise(
+                        endXProperty().subtract(offset)
+                )
+        )
+        controlY2Property().bind(Bindings.`when`(right)
+                .then(
+                        endYProperty()
+                ).otherwise(
+                        startYProperty().add(endYProperty()).divide(2)
+                )
+        )
+
+        strokeWidth = 2.5
+        stroke = NodeView.colors[inPoint.owner.node.type] ?: Color.color(0.9, 0.9, 0.9, 0.9)
+        fill = null
+        effect = Glow(0.7)
+    }
 }

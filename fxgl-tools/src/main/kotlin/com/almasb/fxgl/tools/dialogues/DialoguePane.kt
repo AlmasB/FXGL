@@ -55,22 +55,22 @@ class DialoguePane : Pane() {
         private val text: (DialogueNode) -> NodeView = { TextNodeView(it) }
         private val choice: (DialogueNode) -> NodeView = { ChoiceNodeView(it) }
 
-        val nodeConstructors = mapOf<DialogueNodeType, () -> DialogueNode>(
-                DialogueNodeType.BRANCH to { BranchNode("") },
-                DialogueNodeType.END to { EndNode("") },
-                DialogueNodeType.START to { StartNode("") },
-                DialogueNodeType.FUNCTION to { FunctionNode("") },
+        val nodeConstructors = linkedMapOf<DialogueNodeType, () -> DialogueNode>(
                 DialogueNodeType.TEXT to { TextNode("") },
-                DialogueNodeType.CHOICE to { ChoiceNode("") }
+                DialogueNodeType.CHOICE to { ChoiceNode("") },
+                DialogueNodeType.BRANCH to { BranchNode("") },
+                DialogueNodeType.FUNCTION to { FunctionNode("") },
+                DialogueNodeType.END to { EndNode("") },
+                DialogueNodeType.START to { StartNode("") }
         )
 
-        val nodeViewConstructors = mapOf<DialogueNodeType, (DialogueNode) -> NodeView>(
-                DialogueNodeType.BRANCH to branch,
-                DialogueNodeType.END to end,
-                DialogueNodeType.START to start,
-                DialogueNodeType.FUNCTION to function,
+        val nodeViewConstructors = linkedMapOf<DialogueNodeType, (DialogueNode) -> NodeView>(
                 DialogueNodeType.TEXT to text,
-                DialogueNodeType.CHOICE to choice
+                DialogueNodeType.CHOICE to choice,
+                DialogueNodeType.BRANCH to branch,
+                DialogueNodeType.FUNCTION to function,
+                DialogueNodeType.END to end,
+                DialogueNodeType.START to start
         )
     }
 
@@ -185,11 +185,10 @@ class DialoguePane : Pane() {
     private fun initContextMenu() {
         val contextMenu = ContextMenu()
         contextMenu.items.addAll(
-                DialogueNodeType.values().map { type ->
+                nodeConstructors.map { (type, ctor) ->
                     MenuItem(type.toString()).also {
                         it.setOnAction {
-                            val nodeCtor = nodeConstructors[type] ?: throw IllegalArgumentException("No constructor found for type: $type")
-                            graph.addNode(nodeCtor())
+                            graph.addNode(ctor())
                         }
                     }
                 }
@@ -229,12 +228,16 @@ class DialoguePane : Pane() {
     }
 
     private fun onAdded(node: DialogueNode) {
+        val p = contentRoot.sceneToLocal(mouseX, mouseY)
+
+        onAdded(node, p.x, p.y)
+    }
+
+    private fun onAdded(node: DialogueNode, x: Double, y: Double) {
         val nodeViewConstructor = nodeViewConstructors[node.type] ?: throw IllegalArgumentException("View constructor for ${node.type} does not exist")
         val nodeView = nodeViewConstructor(node)
 
-        val p = contentRoot.sceneToLocal(mouseX, mouseY)
-
-        addNodeView(nodeView, p.x, p.y)
+        addNodeView(nodeView, x, y)
     }
 
     private fun onRemoved(node: DialogueNode) {
@@ -255,8 +258,23 @@ class DialoguePane : Pane() {
                 .buildAndPlay()
     }
 
-    private fun onAdded(edge: DialogueEdge) {
+    private fun getNodeView(node: DialogueNode): NodeView {
+        return nodeViews.children.map { it as NodeView }.find { it.node === node }!!
+    }
 
+    private fun onAdded(edge: DialogueEdge) {
+        val (outPoint, inPoint) = if (edge is DialogueChoiceEdge) {
+            getNodeView(edge.source).outPoints.find { it.choiceOptionID == edge.optionID }!! to getNodeView(edge.target).inPoint!!
+        } else {
+
+            getNodeView(edge.source).outPoints.first() to getNodeView(edge.target).inPoint!!
+        }
+
+        outPoint.connect(inPoint)
+
+        val edgeView = EdgeView(edge, outPoint, inPoint)
+
+        edgeViews.children.add(edgeView)
     }
 
     private fun onRemoved(edge: DialogueEdge) {
@@ -393,16 +411,13 @@ class DialoguePane : Pane() {
                             disconnectOutLink(outPoint)
                         }
 
-                        val edgeView = outPoint.connect(inPoint)
 
-                        if (outPoint.choiceLocalID != -1) {
-                            edgeView.localID = outPoint.choiceLocalID
-                            graph.addEdge(selectedNodeView!!.node, outPoint.choiceLocalID, nodeView.node)
+
+                        if (outPoint.choiceOptionID != -1) {
+                            graph.addEdge(selectedNodeView!!.node, outPoint.choiceOptionID, nodeView.node)
                         } else {
                             graph.addEdge(selectedNodeView!!.node, nodeView.node)
                         }
-
-                        edgeViews.children.add(edgeView)
 
                         // reset selection
                         selectedOutLink = null
@@ -415,8 +430,8 @@ class DialoguePane : Pane() {
 
     private fun disconnectOutLink(outPoint: OutLinkPoint) {
         outPoint.other?.let { inPoint ->
-            if (outPoint.choiceLocalID != -1) {
-                graph.removeEdge(outPoint.owner.node, outPoint.choiceLocalID, inPoint.owner.node)
+            if (outPoint.choiceOptionID != -1) {
+                graph.removeEdge(outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node)
             } else {
                 graph.removeEdge(outPoint.owner.node, inPoint.owner.node)
             }
@@ -463,65 +478,22 @@ class DialoguePane : Pane() {
     }
 
     private fun load(serializedGraph: SerializableGraph) {
-//        graph = DialogueGraphSerializer.fromSerializable(serializedGraph)
-//
-//        nodeViews.children.clear()
-//        edgeViews.children.clear()
-//
-//        graph.nodes.forEach { (id, node) ->
-//            val x = serializedGraph.uiMetadata[id]?.x ?: 100.0
-//            val y = serializedGraph.uiMetadata[id]?.y ?: 100.0
-//
-//            when (node.type) {
-//                DialogueNodeType.START -> {
-//                    addNodeView(StartNodeView(node), x, y)
-//                }
-//
-//                DialogueNodeType.END -> {
-//                    addNodeView(EndNodeView(node), x, y)
-//                }
-//
-//                DialogueNodeType.TEXT -> {
-//                    addNodeView(TextNodeView(node), x, y)
-//                }
-//
-//                DialogueNodeType.CHOICE -> {
-//                    addNodeView(ChoiceNodeView(node), x, y)
-//                }
-//
-//                DialogueNodeType.FUNCTION -> {
-//                    addNodeView(FunctionNodeView(node), x, y)
-//                }
-//                DialogueNodeType.BRANCH -> {
-//                    addNodeView(BranchNodeView(node), x, y)
-//                }
-//
-//                else -> throw IllegalArgumentException("Unknown node type: ${node.type}")
-//            }
-//        }
-//
-//        graph.edges.forEach { edge ->
-//            val source = nodeViews.children.map { it as NodeView }.find { it.node === edge.source }
-//            val target = nodeViews.children.map { it as NodeView }.find { it.node === edge.target }
-//
-//            if (source != null && target != null) {
-//                val edgeView = source.outPoints[0].connect(target.inPoint!!)
-//
-//                edgeViews.children.add(edgeView)
-//            }
-//        }
-//
-//        graph.choiceEdges.forEach { edge ->
-//            val source = nodeViews.children.map { it as NodeView }.find { it.node === edge.source }
-//            val target = nodeViews.children.map { it as NodeView }.find { it.node === edge.target }
-//
-//            if (source != null && target != null) {
-//                source.outPoints.find { it.choiceLocalID == edge.optionID }?.let { outPoint ->
-//                    val edgeView = outPoint.connect(target.inPoint!!)
-//
-//                    edgeViews.children.add(edgeView)
-//                }
-//            }
-//        }
+        graph = DialogueGraphSerializer.fromSerializable(serializedGraph)
+
+        nodeViews.children.clear()
+        edgeViews.children.clear()
+
+        graph.nodes.forEach { (id, node) ->
+            val x = serializedGraph.uiMetadata[id]?.x ?: 100.0
+            val y = serializedGraph.uiMetadata[id]?.y ?: 100.0
+
+            onAdded(node, x, y)
+        }
+
+        graph.edges.forEach { edge ->
+            onAdded(edge)
+        }
+
+        initGraphListeners()
     }
 }

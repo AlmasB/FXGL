@@ -15,7 +15,6 @@ import javafx.geometry.Pos
 import javafx.scene.control.TextField
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
 import javafx.scene.text.Text
 
@@ -68,7 +67,7 @@ class BranchNodeView(node: DialogueNode = BranchNode("")) : NodeView(node) {
             outPoint.translateXProperty().bind(widthProperty().add(-25.0))
             outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(48 + i * 28.0))
 
-            outPoint.choiceLocalID = i
+            outPoint.choiceOptionID = i
 
             outPoints.add(outPoint)
 
@@ -118,7 +117,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
                 outPoint.translateXProperty().bind(widthProperty().add(-25.0))
                 outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(53 + i * 35.0))
 
-                outPoint.choiceLocalID = i
+                outPoint.choiceOptionID = i
                 outPoint.choiceLocalOptionProperty.bind(field.textProperty())
 
                 optionText.bindBidirectional(field.textProperty())
@@ -143,7 +142,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
                 outPoint.translateXProperty().bind(widthProperty().add(-25.0))
                 outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(53 + i * 35.0))
 
-                outPoint.choiceLocalID = i
+                outPoint.choiceOptionID = i
                 outPoint.choiceLocalOptionProperty.bind(field.textProperty())
 
                 node.options[i] = SimpleStringProperty().also { it.bindBidirectional(field.textProperty()) }
@@ -220,7 +219,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
         outPoint.translateXProperty().bind(widthProperty().add(-25.0))
         outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(53 + nextID * 35.0))
 
-        outPoint.choiceLocalID = nextID
+        outPoint.choiceOptionID = nextID
         outPoint.choiceLocalOptionProperty.bind(field.textProperty())
 
         outPoints.add(outPoint)
