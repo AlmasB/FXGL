@@ -13,6 +13,7 @@ import com.almasb.fxgl.dsl.animationBuilder
 import com.almasb.fxgl.dsl.getAppHeight
 import com.almasb.fxgl.dsl.getAppWidth
 import com.almasb.fxgl.dsl.runOnce
+import com.almasb.fxgl.tools.dialogues.ui.FXGLContextMenu
 import com.almasb.sslogger.Logger
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
@@ -136,22 +137,20 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun initContextMenu() {
-        val contextMenu = ContextMenu()
-        contextMenu.items.addAll(
-                nodeConstructors.map { (type, ctor) ->
-                    MenuItem(type.toString()).also {
-                        it.setOnAction {
-                            graph.addNode(ctor())
-                        }
-                    }
-                }
-        )
+        val contextMenu = FXGLContextMenu()
+        nodeConstructors.forEach { type, ctor ->
+            contextMenu.addItem(type.toString()) {
+                graph.addNode(ctor())
+            }
+        }
 
         setOnContextMenuRequested {
             if (it.target !== this)
                 return@setOnContextMenuRequested
 
-            contextMenu.show(contentRoot.scene.window, it.screenX, it.screenY)
+            val p = contentRoot.sceneToLocal(it.sceneX, it.sceneY)
+
+            contextMenu.show(contentRoot, p.x, p.y)
         }
     }
 

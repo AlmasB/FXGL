@@ -9,6 +9,7 @@ package com.almasb.fxgl.tools.dialogues
 import com.almasb.fxgl.cutscene.dialogue.DialogueNode
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
+import com.almasb.fxgl.tools.dialogues.ui.ExpandableTextArea
 import javafx.beans.binding.Bindings
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
