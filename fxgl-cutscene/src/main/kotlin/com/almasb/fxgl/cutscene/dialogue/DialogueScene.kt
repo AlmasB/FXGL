@@ -185,12 +185,12 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
 
 
         } else {
+            topText.text = ""
             endCutscene()
         }
     }
 
     private fun populatePlayerLine(localID: Int, data: String) {
-        //val text = FXGL.getUIFactory().newText("${localID + 1}. ${data}", 18.0)
         val text = Text("${localID + 1}. ${data}")
         text.font = Font.font(18.0)
         text.fillProperty().bind(

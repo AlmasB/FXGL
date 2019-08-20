@@ -62,6 +62,10 @@ class InLinkPoint(owner: NodeView) : LinkPoint(owner) {
 
         children += arrow
     }
+
+    override fun toString(): String {
+        return "InLink(${owner.javaClass.simpleName}, links=$connectedPoints)"
+    }
 }
 
 class OutLinkPoint(owner: NodeView) : LinkPoint(owner) {
@@ -100,6 +104,10 @@ class OutLinkPoint(owner: NodeView) : LinkPoint(owner) {
         other = null
 
         return result
+    }
+
+    override fun toString(): String {
+        return "OutLink(${owner.javaClass.simpleName}, connected=${other?.owner?.javaClass?.simpleName}, optionID=$choiceOptionID)"
     }
 }
 

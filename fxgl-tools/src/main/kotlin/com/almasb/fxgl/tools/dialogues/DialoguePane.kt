@@ -13,6 +13,7 @@ import com.almasb.fxgl.dsl.animationBuilder
 import com.almasb.fxgl.dsl.getAppHeight
 import com.almasb.fxgl.dsl.getAppWidth
 import com.almasb.fxgl.dsl.runOnce
+import com.almasb.sslogger.Logger
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
 import javafx.collections.MapChangeListener
@@ -36,6 +37,8 @@ import javafx.util.Duration
 class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     companion object {
+        private val log = Logger.get<DialoguePane>()
+
         val highContrastProperty = SimpleBooleanProperty(false)
 
         private val branch: (DialogueNode) -> NodeView = { BranchNodeView(it) }
@@ -193,6 +196,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun onRemoved(node: DialogueNode) {
+        log.info("Removed node: $node")
+
         isDirtyProperty.value = true
 
         val nodeView = nodeViews.children
@@ -234,11 +239,15 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun onRemoved(edge: DialogueEdge) {
+        log.info("Removed edge: $edge")
+
         isDirtyProperty.value = true
+
+        val optionID = if (edge is DialogueChoiceEdge) edge.optionID else -1
 
         val edgeView = edgeViews.children
                 .map { it as EdgeView }
-                .find { it.source.owner.node === edge.source && it.target.owner.node === edge.target }
+                .find { it.source.owner.node === edge.source && it.optionID == optionID && it.target.owner.node === edge.target }
                 ?: throw IllegalArgumentException("No edge view found for edge $edge")
 
         val p1 = Point2D(edgeView.startX, edgeView.startY)
@@ -304,6 +313,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 if (it.button == MouseButton.PRIMARY) {
                     selectedOutLink = outPoint
                     selectedNodeView = nodeView
+
+                    log.info("Clicked on $outPoint")
+
                 } else {
                     if (outPoint.isConnected) {
                         disconnectOutLink(outPoint)
@@ -398,5 +410,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         }
 
         initGraphListeners()
+
+        isDirtyProperty.value = false
     }
 }

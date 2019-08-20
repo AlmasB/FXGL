@@ -124,7 +124,7 @@ class MainUI : BorderPane() {
             stack.requestFocus()
 
             currentPane?.let {
-                DialogueScene(getGameController(), getAppWidth(), getAppHeight()).start(it.graph)
+                FXGL.getCutsceneService().startDialogueScene(it.graph)
             }
         }
 

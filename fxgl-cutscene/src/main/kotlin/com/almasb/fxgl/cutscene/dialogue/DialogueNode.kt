@@ -63,9 +63,18 @@ class ChoiceNode(text: String) : DialogueNode(DialogueNodeType.CHOICE, text)  {
 
 /* EDGES */
 
-open class DialogueEdge(val source: DialogueNode, val target: DialogueNode)
+open class DialogueEdge(val source: DialogueNode, val target: DialogueNode) {
 
-class DialogueChoiceEdge(source: DialogueNode, val optionID: Int, target: DialogueNode) : DialogueEdge(source, target)
+    override fun toString(): String {
+        return "$source -> $target"
+    }
+}
+
+class DialogueChoiceEdge(source: DialogueNode, val optionID: Int, target: DialogueNode) : DialogueEdge(source, target) {
+    override fun toString(): String {
+        return "$source, $optionID -> $target"
+    }
+}
 
 /* GRAPH */
 
