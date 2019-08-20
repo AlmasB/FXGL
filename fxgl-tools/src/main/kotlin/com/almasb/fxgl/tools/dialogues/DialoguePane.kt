@@ -151,7 +151,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
             if (it.target !== this)
                 return@setOnContextMenuRequested
 
-            contextMenu.show(contentRoot.scene.window, it.sceneX + 150.0, it.sceneY + 45.0)
+            contextMenu.show(contentRoot.scene.window, it.screenX, it.screenY)
         }
     }
 

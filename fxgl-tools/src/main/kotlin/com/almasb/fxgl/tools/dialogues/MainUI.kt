@@ -8,7 +8,6 @@ package com.almasb.fxgl.tools.dialogues
 
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.InputPredicates
-import com.almasb.fxgl.cutscene.dialogue.DialogueScene
 import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
 import com.almasb.fxgl.dsl.*
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -42,15 +41,13 @@ class MainUI : BorderPane() {
     private val currentTab: DialogueTab?
         get() = tabPane.selectionModel.selectedItem as? DialogueTab
 
-    private val currentPane: DialoguePane?
-        get() = currentTab?.content as? DialoguePane
-
     init {
-        toolbar.setPrefSize(getAppWidth() / 2.0, 30.0)
+        toolbar.prefWidthProperty().bind(
+                Bindings.`when`(Bindings.isNotEmpty(tabPane.tabs)).then(getAppWidth() / 2.0).otherwise(getAppWidth())
+        )
+        toolbar.prefHeight = 30.0
         toolbar.style = "-fx-background-color: black"
         toolbar.alignment = Pos.CENTER_LEFT
-
-
 
         val menuFile = Menu("")
         menuFile.graphic = Text("File").also { it.fill = Color.WHITE }
@@ -67,17 +64,17 @@ class MainUI : BorderPane() {
                 },
 
                 MenuItem("Save").also {
-                    it.setOnAction { onSave() }
+                    it.setOnAction { currentTab?.let { onSave(it) } }
                     it.accelerator = KeyCombination.keyCombination("Shortcut+S")
                 },
 
                 MenuItem("Save As...").also {
-                    it.setOnAction { openSaveAsDialog() }
+                    it.setOnAction { currentTab?.let { openSaveAsDialog(it) } }
                     it.accelerator = KeyCombination.keyCombination("Shortcut+ALT+S")
                 },
 
                 MenuItem("Save All").also {
-                    it.setOnAction {  }
+                    it.setOnAction { onSaveAll() }
                     it.accelerator = KeyCombination.keyCombination("Shortcut+SHIFT+S")
                 },
 
@@ -86,9 +83,16 @@ class MainUI : BorderPane() {
                 }
         )
 
+        val menuPreferences = Menu("")
+        menuPreferences.graphic = Text("Preferences").also {
+            it.fill = Color.WHITE
+            it.setOnMouseClicked { openPreferencesDialog() }
+        }
+        menuPreferences.style = "-fx-background-color: black"
+
         val menuBar = MenuBar()
         menuBar.style = "-fx-background-color: black"
-        menuBar.menus.addAll(menuFile)
+        menuBar.menus.addAll(menuFile, menuPreferences)
 
         toolbar.children += menuBar
         toolbar.children += makeRunButton()
@@ -123,7 +127,7 @@ class MainUI : BorderPane() {
         stack.setOnMouseClicked {
             stack.requestFocus()
 
-            currentPane?.let {
+            currentTab?.pane?.let {
                 FXGL.getCutsceneService().startDialogueScene(it.graph)
             }
         }
@@ -133,41 +137,48 @@ class MainUI : BorderPane() {
         return stack
     }
 
+    private fun openPreferencesDialog() {
+        val alert = Alert(Alert.AlertType.WARNING)
+        alert.contentText = "Preferences NOT IMPLEMENTED yet"
+        alert.show()
+    }
+
     private fun openNewDialog() {
         getDisplay().showInputBox("New dialogue name", InputPredicates.ALPHANUM, Consumer { name ->
-            val tab = DialogueTab(File("$name.json"))
-            tab.content = DialoguePane()
+            val tab = DialogueTab(File("$name.json"), DialoguePane())
 
             tabPane.tabs += tab
             tabPane.selectionModel.select(tab)
         })
     }
 
-    private fun onSave() {
-        currentPane?.let { pane ->
-            val serializedGraph = pane.save()
+    private fun onSave(tab: DialogueTab) {
+        val serializedGraph = tab.pane.save()
 
-            val s = mapper.writeValueAsString(serializedGraph)
+        val s = mapper.writeValueAsString(serializedGraph)
 
-            Files.writeString(currentTab!!.file.toPath(), s)
-        }
+        Files.writeString(tab.file.toPath(), s)
+    }
+
+    private fun onSaveAll() {
+        tabPane.tabs
+                .map { it as DialogueTab }
+                .forEach { onSave(it) }
     }
 
     private val mapper = jacksonObjectMapper().also { it.enable(SerializationFeature.INDENT_OUTPUT) }
 
-    private fun openSaveAsDialog() {
-        currentPane?.let { pane ->
-            val chooser = FileChooser()
-            chooser.initialDirectory = File(System.getProperty("user.dir"))
-            chooser.initialFileName = currentTab!!.file.name
+    private fun openSaveAsDialog(tab: DialogueTab) {
+        val chooser = FileChooser()
+        chooser.initialDirectory = File(System.getProperty("user.dir"))
+        chooser.initialFileName = tab.file.name + ".json"
 
-            chooser.showSaveDialog(scene.window)?.let {
-                val serializedGraph = pane.save()
+        chooser.showSaveDialog(scene.window)?.let {
+            val serializedGraph = tab.pane.save()
 
-                val s = mapper.writeValueAsString(serializedGraph)
+            val s = mapper.writeValueAsString(serializedGraph)
 
-                Files.writeString(it.toPath(), s)
-            }
+            Files.writeString(it.toPath(), s)
         }
     }
 
@@ -177,21 +188,23 @@ class MainUI : BorderPane() {
         chooser.extensionFilters += FileChooser.ExtensionFilter("FXGL dialogue files", "*.json")
 
         chooser.showOpenDialog(scene.window)?.let {
-            val tab = DialogueTab(it)
-            val pane = DialoguePane()
-
-            tab.content = pane
-
-            tab.textProperty().bind(
-                    Bindings.`when`(pane.isDirtyProperty).then(it.nameWithoutExtension + "*").otherwise(it.nameWithoutExtension)
-            )
+            val tab = DialogueTab(it, DialoguePane())
 
             tabPane.tabs += tab
             tabPane.selectionModel.select(tab)
 
-            pane.load(mapper.readValue(it, SerializableGraph::class.java))
+            tab.pane.load(mapper.readValue(it, SerializableGraph::class.java))
         }
     }
 
-    private class DialogueTab(val file: File) : Tab(file.nameWithoutExtension)
+    private class DialogueTab(val file: File,
+                              val pane: DialoguePane) : Tab(file.nameWithoutExtension) {
+        init {
+            content = pane
+
+            textProperty().bind(
+                    Bindings.`when`(pane.isDirtyProperty).then(file.nameWithoutExtension + "*").otherwise(file.nameWithoutExtension)
+            )
+        }
+    }
 }
