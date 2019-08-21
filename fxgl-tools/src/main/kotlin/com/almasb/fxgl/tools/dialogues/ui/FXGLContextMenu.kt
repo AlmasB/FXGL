@@ -8,17 +8,14 @@ package com.almasb.fxgl.tools.dialogues.ui
 
 import com.almasb.fxgl.dsl.FXGL
 import javafx.beans.binding.Bindings
+import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Group
-import javafx.scene.layout.Background
-import javafx.scene.layout.BackgroundFill
-import javafx.scene.layout.StackPane
-import javafx.scene.layout.VBox
+import javafx.scene.Parent
+import javafx.scene.input.MouseEvent
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import javafx.scene.paint.CycleMethod
-import javafx.scene.paint.LinearGradient
-import javafx.scene.paint.Stop
 import javafx.scene.shape.Rectangle
 
 /**
@@ -28,26 +25,20 @@ import javafx.scene.shape.Rectangle
  */
 class FXGLContextMenu : StackPane() {
 
-    private var parent: Group? = null
+    private var container: Parent? = null
 
     private val contentRoot = VBox()
+
+    private val mousePressHandler = EventHandler<MouseEvent> {
+        if (!layoutBounds.contains(sceneToLocal(it.sceneX, it.sceneY))) {
+            close()
+        }
+    }
 
     init {
         styleClass += "fxgl-context-menu"
 
         contentRoot.padding = Insets(3.0)
-
-//        val bg = Rectangle()
-//        bg.widthProperty().bind(contentRoot.widthProperty().add(7.0))
-//        bg.heightProperty().bind(contentRoot.heightProperty().add(7.0))
-//        bg.arcWidth = 15.0
-//        bg.arcHeight = 10.0
-//        bg.fill = LinearGradient(0.5, 0.0, 0.5, 1.0, true, CycleMethod.NO_CYCLE,
-//                Stop(0.0, Color.color(0.0, 0.0, 0.0, 0.25)),
-//                Stop(1.0, Color.color(0.0, 0.0, 0.0, 0.75))
-//        )
-//        bg.stroke = Color.BLACK
-//        bg.strokeWidth = 3.0
 
         children.addAll(contentRoot)
     }
@@ -63,22 +54,38 @@ class FXGLContextMenu : StackPane() {
         }
     }
 
-    // TODO: Group / Pane?
-    fun show(parent: Group, x: Double, y: Double) {
-        translateX = x
-        translateY = y
+    fun show(container: Parent, sceneX: Double, sceneY: Double) {
+        val p = container.sceneToLocal(sceneX, sceneY)
 
-        if (this.parent !== parent) {
+        translateX = p.x
+        translateY = p.y
+
+        if (this.container !== container) {
             close()
 
-            parent.children += this
-            this.parent = parent
+            container.scene.addEventFilter(MouseEvent.MOUSE_PRESSED, mousePressHandler)
+
+            if (container is Group)
+                container.children += this
+
+            if (container is Pane)
+                container.children += this
+
+            this.container = container
         }
     }
 
     fun close() {
-        parent?.children?.remove(this)
-        parent = null
+        container?.let {
+            if (it is Group)
+                it.children -= this
+            if (it is Pane)
+                it.children -= this
+
+            it.scene.removeEventFilter(MouseEvent.MOUSE_PRESSED, mousePressHandler)
+        }
+
+        container = null
     }
 
     private class MenuItem(name: String, action: () -> Unit) : StackPane() {

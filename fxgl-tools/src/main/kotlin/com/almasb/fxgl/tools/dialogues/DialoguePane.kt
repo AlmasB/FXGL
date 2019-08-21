@@ -148,9 +148,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
             if (it.target !== this)
                 return@setOnContextMenuRequested
 
-            val p = contentRoot.sceneToLocal(it.sceneX, it.sceneY)
-
-            contextMenu.show(contentRoot, p.x, p.y)
+            contextMenu.show(contentRoot, it.sceneX, it.sceneY)
         }
     }
 

@@ -10,13 +10,13 @@ import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
 import com.almasb.fxgl.dsl.*
+import com.almasb.fxgl.tools.dialogues.ui.FXGLContextMenu
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.beans.binding.Bindings
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.*
-import javafx.scene.input.KeyCombination
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
@@ -24,7 +24,6 @@ import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
 import javafx.scene.shape.Rectangle
-import javafx.scene.text.Text
 import javafx.stage.FileChooser
 import java.io.File
 import java.nio.file.Files
@@ -49,44 +48,31 @@ class MainUI : BorderPane() {
         toolbar.style = "-fx-background-color: black"
         toolbar.alignment = Pos.CENTER_LEFT
 
+
+        val contextMenu = FXGLContextMenu()
+        contextMenu.addItem("New") { openNewDialog() }
+        contextMenu.addItem("Open...") { openLoadDialog() }
+        contextMenu.addItem("Save") { currentTab?.let { onSave(it) } }
+        contextMenu.addItem("Save As...") { currentTab?.let { openSaveAsDialog(it) } }
+        contextMenu.addItem("Save All") { onSaveAll() }
+        contextMenu.addItem("Exit") { getGameController().exit() }
+
+
+        val pane = Pane(tabPane, toolbar)
+
         val menuFile = Menu("")
-        menuFile.graphic = Text("File").also { it.fill = Color.WHITE }
+        menuFile.graphic = getUIFactory().newText("File").also {
+            it.setOnMouseClicked {
+                contextMenu.show(pane, 0.0, toolbar.prefHeight)
+            }
+        }
         menuFile.style = "-fx-background-color: black"
-        menuFile.items.addAll(
-                MenuItem("New").also {
-                    it.setOnAction { openNewDialog() }
-                    it.accelerator = KeyCombination.keyCombination("Shortcut+N")
-                },
-
-                MenuItem("Open...").also {
-                    it.setOnAction { openLoadDialog() }
-                    it.accelerator = KeyCombination.keyCombination("Shortcut+O")
-                },
-
-                MenuItem("Save").also {
-                    it.setOnAction { currentTab?.let { onSave(it) } }
-                    it.accelerator = KeyCombination.keyCombination("Shortcut+S")
-                },
-
-                MenuItem("Save As...").also {
-                    it.setOnAction { currentTab?.let { openSaveAsDialog(it) } }
-                    it.accelerator = KeyCombination.keyCombination("Shortcut+ALT+S")
-                },
-
-                MenuItem("Save All").also {
-                    it.setOnAction { onSaveAll() }
-                    it.accelerator = KeyCombination.keyCombination("Shortcut+SHIFT+S")
-                },
-
-                MenuItem("Exit").also {
-                    it.setOnAction { getGameController().exit() }
-                }
-        )
 
         val menuPreferences = Menu("")
-        menuPreferences.graphic = Text("Preferences").also {
-            it.fill = Color.WHITE
-            it.setOnMouseClicked { openPreferencesDialog() }
+        menuPreferences.graphic = getUIFactory().newText("Preferences").also {
+            it.setOnMouseClicked {
+                openPreferencesDialog()
+            }
         }
         menuPreferences.style = "-fx-background-color: black"
 
@@ -99,7 +85,6 @@ class MainUI : BorderPane() {
 
         setPrefSize(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble())
 
-        val pane = Pane(tabPane, toolbar)
         pane.style = "-fx-background-color: gray"
         pane.setPrefSize(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble())
 
