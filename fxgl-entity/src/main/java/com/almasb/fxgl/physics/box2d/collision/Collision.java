@@ -66,7 +66,7 @@ public final class Collision {
      * Clipping for contact manifolds.
      * Sutherland-Hodgman clipping.
      */
-    public static final int clipSegmentToLine(ClipVertex[] vOut, ClipVertex[] vIn, Vec2 normal, float offset, int vertexIndexA) {
+    public static int clipSegmentToLine(ClipVertex[] vOut, ClipVertex[] vIn, Vec2 normal, float offset, int vertexIndexA) {
 
         // Start with no output points
         int numOut = 0;
@@ -128,9 +128,9 @@ public final class Collision {
         Vec2 circle1p = circle1.center;
         Vec2 circle2p = circle2.center;
         float pAx = (xfA.q.c * circle1p.x - xfA.q.s * circle1p.y) + xfA.p.x;
-        float pAy = (xfA.q.s * circle1p.x + xfA.q.c * circle1p.y) + xfA.p.y;
+        float pAy = xfA.q.s * circle1p.x + xfA.q.c * circle1p.y + xfA.p.y;
         float pBx = (xfB.q.c * circle2p.x - xfB.q.s * circle2p.y) + xfB.p.x;
-        float pBy = (xfB.q.s * circle2p.x + xfB.q.c * circle2p.y) + xfB.p.y;
+        float pBy = xfB.q.s * circle2p.x + xfB.q.c * circle2p.y + xfB.p.y;
         float dx = pBx - pAx;
         float dy = pBy - pAy;
         float distSqr = dx * dx + dy * dy;
@@ -176,11 +176,11 @@ public final class Collision {
         final Rotation xfBq = xfB.q;
         final Rotation xfAq = xfA.q;
         final float cx = (xfBq.c * circlep.x - xfBq.s * circlep.y) + xfB.p.x;
-        final float cy = (xfBq.s * circlep.x + xfBq.c * circlep.y) + xfB.p.y;
+        final float cy = xfBq.s * circlep.x + xfBq.c * circlep.y + xfB.p.y;
         final float px = cx - xfA.p.x;
         final float py = cy - xfA.p.y;
-        final float cLocalx = (xfAq.c * px + xfAq.s * py);
-        final float cLocaly = (-xfAq.s * px + xfAq.c * py);
+        final float cLocalx = xfAq.c * px + xfAq.s * py;
+        final float cLocaly = -xfAq.s * px + xfAq.c * py;
         // end inline
 
         // Find the min separating edge.
@@ -354,7 +354,7 @@ public final class Collision {
         final Vec2[] vertices2 = poly2.m_vertices;
         final Vec2[] normals2 = poly2.m_normals;
 
-        assert (0 <= edge1 && edge1 < count1);
+        assert 0 <= edge1 && edge1 < count1;
 
         final ClipVertex c0 = c[0];
         final ClipVertex c1 = c[1];
@@ -395,7 +395,7 @@ public final class Collision {
         Vec2 v1 = vertices2[i1];
         Vec2 out = c0.v;
         out.x = (xf2q.c * v1.x - xf2q.s * v1.y) + xf2.p.x;
-        out.y = (xf2q.s * v1.x + xf2q.c * v1.y) + xf2.p.y;
+        out.y = xf2q.s * v1.x + xf2q.c * v1.y + xf2.p.y;
         c0.id.indexA = (byte) edge1;
         c0.id.indexB = (byte) i1;
         c0.id.typeA = (byte) ContactID.Type.FACE.ordinal();
@@ -405,7 +405,7 @@ public final class Collision {
         Vec2 v2 = vertices2[i2];
         Vec2 out1 = c1.v;
         out1.x = (xf2q.c * v2.x - xf2q.s * v2.y) + xf2.p.x;
-        out1.y = (xf2q.s * v2.x + xf2q.c * v2.y) + xf2.p.y;
+        out1.y = xf2q.s * v2.x + xf2q.c * v2.y + xf2.p.y;
         c1.id.indexA = (byte) edge1;
         c1.id.indexB = (byte) i2;
         c1.id.typeA = (byte) ContactID.Type.FACE.ordinal();
@@ -559,8 +559,8 @@ public final class Collision {
                 Vec2 out = cp.localPoint;
                 final float px = clipPoints2[i].v.x - xf2.p.x;
                 final float py = clipPoints2[i].v.y - xf2.p.y;
-                out.x = (xf2.q.c * px + xf2.q.s * py);
-                out.y = (-xf2.q.s * px + xf2.q.c * py);
+                out.x = xf2.q.c * px + xf2.q.s * py;
+                out.y = -xf2.q.s * px + xf2.q.c * py;
                 cp.id.set(clipPoints2[i].id);
                 if (flip) {
                     // Swap features
@@ -721,7 +721,7 @@ public final class Collision {
 
         // Region AB
         float den = Vec2.dot(e, e);
-        assert (den > 0.0f);
+        assert den > 0.0f;
 
         // Vec2 P = (1.0f / den) * (u * A + v * B);
         P.set(A).mulLocal(u).addLocal(temp.set(B).mulLocal(v));
@@ -936,7 +936,7 @@ public final class Collision {
                         m_upperLimit.y = -m_normal1.y;
                     }
                 } else if (convex1) {
-                    m_front = offset0 >= 0.0f || (offset1 >= 0.0f && offset2 >= 0.0f);
+                    m_front = offset0 >= 0.0f || offset1 >= 0.0f && offset2 >= 0.0f;
                     if (m_front) {
                         m_normal.x = m_normal1.x;
                         m_normal.y = m_normal1.y;
@@ -953,7 +953,7 @@ public final class Collision {
                         m_upperLimit.y = -m_normal1.y;
                     }
                 } else if (convex2) {
-                    m_front = offset2 >= 0.0f || (offset0 >= 0.0f && offset1 >= 0.0f);
+                    m_front = offset2 >= 0.0f || offset0 >= 0.0f && offset1 >= 0.0f;
                     if (m_front) {
                         m_normal.x = m_normal1.x;
                         m_normal.y = m_normal1.y;

@@ -22,11 +22,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
-import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * Shows how to init a basic game object and attach it to the world
@@ -58,39 +55,39 @@ public class InitSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        getInput().addAction(new UserAction("Change view") {
+        FXGL.getInput().addAction(new UserAction("Change view") {
             @Override
             protected void onActionBegin() {
                 //player.setView(new EntityView(new Rectangle(40, 30, Color.BLUE)));
             }
         }, KeyCode.F);
 
-        getInput().addAction(new UserAction("Change view 1") {
+        FXGL.getInput().addAction(new UserAction("Change view 1") {
             @Override
             protected void onActionBegin() {
                 //player.setView(texture("bird.png").toAnimatedTexture(2, Duration.seconds(0.33)).play());
             }
         }, KeyCode.G);
 
-        onKey(KeyCode.Q, () -> {
+        FXGL.onKey(KeyCode.Q, () -> {
             scale += 0.1;
 
             player.setScaleX(scale);
         });
 
-        onKey(KeyCode.E, () -> {
+        FXGL.onKey(KeyCode.E, () -> {
             scaleY += 0.1;
 
             player.setScaleY(scaleY);
         });
 
-        onKey(KeyCode.R, () -> {
+        FXGL.onKey(KeyCode.R, () -> {
             angle -= 5;
 
             player.setRotation(angle);
         });
 
-        onKey(KeyCode.T, () -> {
+        FXGL.onKey(KeyCode.T, () -> {
             angle += 5;
 
             player.setRotation(angle);
@@ -99,7 +96,7 @@ public class InitSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = entityBuilder()
+        player = FXGL.entityBuilder()
                 .type(Type.PLAYER)
                 .at(100, 150)
                 .viewWithBBox("brick.png")
@@ -120,9 +117,9 @@ public class InitSample extends GameApplication {
         player2.addComponent(new CollidableComponent(true));
         player2.getTransformComponent().setZ(250);
 
-        getGameWorld().addEntity(player2);
+        FXGL.getGameWorld().addEntity(player2);
 
-        animationBuilder().delay(Duration.seconds(0.25))
+        FXGL.animationBuilder().delay(Duration.seconds(0.25))
                 .duration(Duration.seconds(1))
                 .interpolator(Interpolators.BOUNCE.EASE_OUT())
                 //.repeat(2)
@@ -148,7 +145,7 @@ public class InitSample extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.NPC) {
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.NPC) {
             @Override
             protected void onCollisionBegin(Entity a, Entity b) {
                 t.setText("Collision");
@@ -169,7 +166,7 @@ public class InitSample extends GameApplication {
         t = new Text();
         t.setTranslateY(100);
 
-        getGameScene().addUINode(t);
+        FXGL.getGameScene().addUINode(t);
 
         Canvas canvas = new Canvas(FXGL.getAppWidth(), FXGL.getAppHeight());
         g = canvas.getGraphicsContext2D();

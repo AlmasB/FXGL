@@ -65,7 +65,7 @@ public class RandomXS128 extends Random {
         final long s0 = this.seed1;
         this.seed0 = s0;
         s1 ^= s1 << 23;
-        return (this.seed1 = (s1 ^ s0 ^ (s1 >>> 17) ^ (s0 >>> 26))) + s0;
+        return (this.seed1 = s1 ^ s0 ^ (s1 >>> 17) ^ (s0 >>> 26)) + s0;
     }
 
     /** This protected method is final because, contrary to the superclass, it's not used anymore by the other methods. */

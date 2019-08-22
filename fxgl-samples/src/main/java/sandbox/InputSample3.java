@@ -15,8 +15,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
-
 /**
  * Shows how to use input service and bind actions to triggers.
  */
@@ -34,21 +32,18 @@ public class InputSample3 extends GameApplication {
 
     @Override
     protected void initInput() {
-        onKeyDown(KeyCode.Q, "Shake", () -> getGameScene().getViewport().shake(5, 0));
+        FXGL.onKeyDown(KeyCode.Q, "Shake", () -> FXGL.getGameScene().getViewport().shake(5, 0));
 
-        onKeyDown(KeyCode.E, "Lazy", () -> {
-            getGameScene().getViewport().setLazy(!getGameScene().getViewport().isLazy());
+        FXGL.onKeyDown(KeyCode.E, "Lazy", () -> {
+            FXGL.getGameScene().getViewport().setLazy(!FXGL.getGameScene().getViewport().isLazy());
         });
 
-        onKeyDown(KeyCode.F, "Flash", () -> {
-
-            getGameScene().getViewport().flash(() -> System.out.println("Flash finished"));
+        FXGL.onKeyDown(KeyCode.F, "Flash", () -> {
+            FXGL.getGameScene().getViewport().flash(() -> System.out.println("Flash finished"));
         });
 
-        onKeyDown(KeyCode.G, "Fade", () -> {
-
-            getGameScene().getViewport().fade(() -> {
-
+        FXGL.onKeyDown(KeyCode.G, "Fade", () -> {
+            FXGL.getGameScene().getViewport().fade(() -> {
                 System.out.println("Fade finished");
             });
         });
@@ -56,18 +51,18 @@ public class InputSample3 extends GameApplication {
 
     @Override
     protected void initGame() {
-        entityBuilder()
+        FXGL.entityBuilder()
                 .view("background.png")
                 .buildAndAttach();
 
-        var e = entityBuilder()
+        var e = FXGL.entityBuilder()
                 .at(150, 150)
                 .view(new Rectangle(10, 10, Color.BLUE))
                 .with(new DeveloperWASDControl())
                 .buildAndAttach();
 
-        getGameScene().getViewport().setBounds(30, 30, 1600 - 30, 1200 - 30);
-        getGameScene().getViewport().bindToEntity(e, FXGL.getAppWidth() / 2, FXGL.getAppHeight() / 2);
+        FXGL.getGameScene().getViewport().setBounds(30, 30, 1600 - 30, 1200 - 30);
+        FXGL.getGameScene().getViewport().bindToEntity(e, FXGL.getAppWidth() / 2, FXGL.getAppHeight() / 2);
 
         //a = translateAnim(getGameScene().getViewport().getCamera(), new Point2D(0, 0), new Point2D(400, 400), Duration.ZERO, Duration.seconds(1.5), () -> {}, Interpolators.EXPONENTIAL.EASE_OUT());
 

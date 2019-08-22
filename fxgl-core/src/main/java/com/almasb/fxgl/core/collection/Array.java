@@ -714,6 +714,7 @@ public class Array<T> implements Iterable<T> {
     /**
      * Creates a new array with the specified component type and length.
      */
+    @SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
     private static Object newArray(Class c, int size) {
         return java.lang.reflect.Array.newInstance(c, size);
     }

@@ -21,6 +21,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactVelocityConstraint
  */
 public final class ContactSolver {
 
+    @SuppressWarnings("PMD.UnusedPrivateField")
     private static final float k_errorTol = 1e-3f;
 
     /**
@@ -89,7 +90,7 @@ public final class ContactSolver {
             final Manifold manifold = contact.getManifold();
 
             int pointCount = manifold.pointCount;
-            assert (pointCount > 0);
+            assert pointCount > 0;
 
             ContactVelocityConstraint vc = m_velocityConstraints[i];
             vc.friction = contact.m_friction;
@@ -220,7 +221,7 @@ public final class ContactSolver {
             Vec2 vB = m_velocities[indexB].v;
             float wB = m_velocities[indexB].w;
 
-            assert (manifold.pointCount > 0);
+            assert manifold.pointCount > 0;
 
             final Rotation xfAq = xfA.q;
             final Rotation xfBq = xfB.q;
@@ -303,6 +304,7 @@ public final class ContactSolver {
         }
     }
 
+    @SuppressWarnings("PMD.AvoidBranchingStatementAsLastInLoop")
     public void solveVelocityConstraints() {
         for (int i = 0; i < m_count; ++i) {
             final ContactVelocityConstraint vc = m_velocityConstraints[i];
@@ -328,7 +330,7 @@ public final class ContactSolver {
             float tangenty = -1.0f * vc.normal.x;
             final float friction = vc.friction;
 
-            assert (pointCount == 1 || pointCount == 2);
+            assert pointCount == 1 || pointCount == 2;
 
             // Solve tangent constraints
             for (int j = 0; j < pointCount; ++j) {
@@ -380,7 +382,7 @@ public final class ContactSolver {
 
                 // Clamp the accumulated impulse
                 float a = vcp.normalImpulse + lambda;
-                final float newImpulse = (a > 0.0f ? a : 0.0f);
+                final float newImpulse = a > 0.0f ? a : 0.0f;
                 lambda = newImpulse - vcp.normalImpulse;
                 vcp.normalImpulse = newImpulse;
 
@@ -445,7 +447,7 @@ public final class ContactSolver {
                 float ax = cp1.normalImpulse;
                 float ay = cp2.normalImpulse;
 
-                assert (ax >= 0.0f && ay >= 0.0f);
+                assert ax >= 0.0f && ay >= 0.0f;
                 // Relative velocity at contact
                 // Vec2 dv1 = vB + Cross(wB, cp1.rB) - vA - Cross(wA, cp1.rA);
                 float dv1x = -wB * cp1rB.y + vB.x - vA.x + wA * cp1rA.y;
@@ -920,7 +922,7 @@ public final class ContactSolver {
         float separation;
 
         public void initialize(ContactPositionConstraint pc, Transform xfA, Transform xfB, int index) {
-            assert (pc.pointCount > 0);
+            assert pc.pointCount > 0;
 
             final Rotation xfAq = xfA.q;
             final Rotation xfBq = xfB.q;
@@ -938,9 +940,9 @@ public final class ContactSolver {
                     final Vec2 plocalPoint = pc.localPoint;
                     final Vec2 pLocalPoints0 = pc.localPoints[0];
                     final float pointAx = (xfAq.c * plocalPoint.x - xfAq.s * plocalPoint.y) + xfA.p.x;
-                    final float pointAy = (xfAq.s * plocalPoint.x + xfAq.c * plocalPoint.y) + xfA.p.y;
+                    final float pointAy = xfAq.s * plocalPoint.x + xfAq.c * plocalPoint.y + xfA.p.y;
                     final float pointBx = (xfBq.c * pLocalPoints0.x - xfBq.s * pLocalPoints0.y) + xfB.p.x;
-                    final float pointBy = (xfBq.s * pLocalPoints0.x + xfBq.c * pLocalPoints0.y) + xfB.p.y;
+                    final float pointBy = xfBq.s * pLocalPoints0.x + xfBq.c * pLocalPoints0.y + xfB.p.y;
                     normal.x = pointBx - pointAx;
                     normal.y = pointBy - pointAy;
                     normal.getLengthAndNormalize();
@@ -966,10 +968,10 @@ public final class ContactSolver {
                     normal.x = xfAq.c * pcLocalNormal.x - xfAq.s * pcLocalNormal.y;
                     normal.y = xfAq.s * pcLocalNormal.x + xfAq.c * pcLocalNormal.y;
                     final float planePointx = (xfAq.c * pcLocalPoint.x - xfAq.s * pcLocalPoint.y) + xfA.p.x;
-                    final float planePointy = (xfAq.s * pcLocalPoint.x + xfAq.c * pcLocalPoint.y) + xfA.p.y;
+                    final float planePointy = xfAq.s * pcLocalPoint.x + xfAq.c * pcLocalPoint.y + xfA.p.y;
 
                     final float clipPointx = (xfBq.c * pcLocalPointsI.x - xfBq.s * pcLocalPointsI.y) + xfB.p.x;
-                    final float clipPointy = (xfBq.s * pcLocalPointsI.x + xfBq.c * pcLocalPointsI.y) + xfB.p.y;
+                    final float clipPointy = xfBq.s * pcLocalPointsI.x + xfBq.c * pcLocalPointsI.y + xfB.p.y;
                     final float tempx = clipPointx - planePointx;
                     final float tempy = clipPointy - planePointy;
                     separation = tempx * normal.x + tempy * normal.y - pc.radiusA - pc.radiusB;
@@ -994,10 +996,10 @@ public final class ContactSolver {
                     normal.x = xfBq.c * pcLocalNormal.x - xfBq.s * pcLocalNormal.y;
                     normal.y = xfBq.s * pcLocalNormal.x + xfBq.c * pcLocalNormal.y;
                     final float planePointx = (xfBq.c * pcLocalPoint.x - xfBq.s * pcLocalPoint.y) + xfB.p.x;
-                    final float planePointy = (xfBq.s * pcLocalPoint.x + xfBq.c * pcLocalPoint.y) + xfB.p.y;
+                    final float planePointy = xfBq.s * pcLocalPoint.x + xfBq.c * pcLocalPoint.y + xfB.p.y;
 
                     final float clipPointx = (xfAq.c * pcLocalPointsI.x - xfAq.s * pcLocalPointsI.y) + xfA.p.x;
-                    final float clipPointy = (xfAq.s * pcLocalPointsI.x + xfAq.c * pcLocalPointsI.y) + xfA.p.y;
+                    final float clipPointy = xfAq.s * pcLocalPointsI.x + xfAq.c * pcLocalPointsI.y + xfA.p.y;
                     final float tempx = clipPointx - planePointx;
                     final float tempy = clipPointy - planePointy;
                     separation = tempx * normal.x + tempy * normal.y - pc.radiusA - pc.radiusB;

@@ -84,14 +84,14 @@ public class JBoxSettings {
      * A small angle used as a collision and constraint tolerance. Usually it is chosen to be
      * numerically significant, but visually insignificant.
      */
-    public static float angularSlop = (2.0f / 180.0f * PI);
+    public static float angularSlop = 2.0f / 180.0f * PI;
 
     /**
      * The radius of the polygon/edge shape skin. This should not be modified. Making this smaller
      * means polygons will have and insufficient for continuous collision. Making it larger may create
      * artifacts for vertex collision.
      */
-    public static float polygonRadius = (2.0f * linearSlop);
+    public static float polygonRadius = 2.0f * linearSlop;
 
     /**
      * Maximum number of sub-steps per contact in continuous physics simulation.
@@ -121,21 +121,21 @@ public class JBoxSettings {
      * The maximum angular position correction used when solving constraints. This helps to prevent
      * overshoot.
      */
-    public static float maxAngularCorrection = (8.0f / 180.0f * PI);
+    public static float maxAngularCorrection = 8.0f / 180.0f * PI;
 
     /**
      * The maximum linear velocity of a body. This limit is very large and is used to prevent
      * numerical problems. You shouldn't need to adjust this.
      */
     public static float maxTranslation = 2.0f;
-    public static float maxTranslationSquared = (maxTranslation * maxTranslation);
+    public static float maxTranslationSquared = maxTranslation * maxTranslation;
 
     /**
      * The maximum angular velocity of a body. This limit is very large and is used to prevent
      * numerical problems. You shouldn't need to adjust this.
      */
-    public static float maxRotation = (0.5f * PI);
-    public static float maxRotationSquared = (maxRotation * maxRotation);
+    public static float maxRotation = 0.5f * PI;
+    public static float maxRotationSquared = maxRotation * maxRotation;
 
     /**
      * This scale factor controls how fast overlap is resolved. Ideally this would be 1 so that
@@ -159,14 +159,14 @@ public class JBoxSettings {
     /**
      * A body cannot sleep if its angular velocity is above this tolerance.
      */
-    public static float angularSleepTolerance = (2.0f / 180.0f * PI);
+    public static float angularSleepTolerance = 2.0f / 180.0f * PI;
 
     // Particle
 
     /**
      * A symbolic constant that stands for particle allocation error.
      */
-    public static final int invalidParticleIndex = (-1);
+    public static final int invalidParticleIndex = -1;
 
     /**
      * The standard distance between particles, divided by the particle radius.
@@ -187,7 +187,7 @@ public class JBoxSettings {
      * The maximum distance between particles in a triad, divided by the particle radius.
      */
     public static final int maxTriadDistance = 2;
-    public static final int maxTriadDistanceSquared = (maxTriadDistance * maxTriadDistance);
+    public static final int maxTriadDistanceSquared = maxTriadDistance * maxTriadDistance;
 
     /**
      * The initial size of particle data buffers.

@@ -23,8 +23,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
-
 /**
  * Sample that shows how to use ChainShape for platforms.
  *
@@ -45,7 +43,7 @@ public class PlatformerSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        Input input = getInput();
+        Input input = FXGL.getInput();
 
         input.addAction(new UserAction("Left") {
             @Override
@@ -74,7 +72,7 @@ public class PlatformerSample extends GameApplication {
             }
         }, KeyCode.W);
 
-        onKeyDown(KeyCode.I, "Info", () -> System.out.println(player.getCenter()));
+        FXGL.onKeyDown(KeyCode.I, "Info", () -> System.out.println(player.getCenter()));
 
         input.addAction(new UserAction("Grow") {
             @Override
@@ -104,7 +102,7 @@ public class PlatformerSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        entityBuilder().buildScreenBoundsAndAttach(40);
+        FXGL.entityBuilder().buildScreenBoundsAndAttach(40);
 
         createPlatforms();
         player = createPlayer(100, 100, 40, 60);
@@ -116,7 +114,7 @@ public class PlatformerSample extends GameApplication {
     }
 
     private void createPlatforms() {
-        entityBuilder()
+        FXGL.entityBuilder()
                 .at(0, 500)
                 .view(new Rectangle(120, 100, Color.GRAY))
                 .bbox(new HitBox("Main", BoundingShape.chain(
@@ -128,7 +126,7 @@ public class PlatformerSample extends GameApplication {
                 .with(new PhysicsComponent())
                 .buildAndAttach();
 
-        entityBuilder()
+        FXGL.entityBuilder()
                 .at(180, 500)
                 .view(new Rectangle(400, 100, Color.GRAY))
                 .bbox(new HitBox("Main", BoundingShape.chain(
@@ -162,7 +160,7 @@ public class PlatformerSample extends GameApplication {
         third.setTranslateY(-30);
         view.getChildren().add(third);
 
-        poly = entityBuilder()
+        poly = FXGL.entityBuilder()
                 .at(180, 350)
                 .view(view)
                 .bbox(new HitBox("Main", new Point2D(-15, 10), BoundingShape.polygon(
@@ -188,7 +186,7 @@ public class PlatformerSample extends GameApplication {
         physics.addGroundSensor(new HitBox(new Point2D(5, height - 5), BoundingShape.box(width - 10, 10)));
         physics.setBodyType(BodyType.DYNAMIC);
 
-        return entityBuilder()
+        return FXGL.entityBuilder()
                 .at(x, y)
                 .viewWithBBox(new Rectangle(width, height, Color.BLUE))
                 .with(physics)

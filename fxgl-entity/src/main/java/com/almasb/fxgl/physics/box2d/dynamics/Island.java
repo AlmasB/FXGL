@@ -390,8 +390,8 @@ class Island {
     private final ContactSolverDef toiSolverDef = new ContactSolverDef();
 
     void solveTOI(TimeStep subStep, int toiIndexA, int toiIndexB) {
-        assert (toiIndexA < m_bodyCount);
-        assert (toiIndexB < m_bodyCount);
+        assert toiIndexA < m_bodyCount;
+        assert toiIndexB < m_bodyCount;
 
         // Initialize the body state.
         for (int i = 0; i < m_bodyCount; ++i) {
@@ -489,19 +489,19 @@ class Island {
     }
 
     void add(Body body) {
-        assert (m_bodyCount < m_bodyCapacity);
+        assert m_bodyCount < m_bodyCapacity;
         body.m_islandIndex = m_bodyCount;
         m_bodies[m_bodyCount] = body;
         ++m_bodyCount;
     }
 
     void add(Contact contact) {
-        assert (m_contactCount < m_contactCapacity);
+        assert m_contactCount < m_contactCapacity;
         m_contacts[m_contactCount++] = contact;
     }
 
     void add(Joint joint) {
-        assert (m_jointCount < m_jointCapacity);
+        assert m_jointCount < m_jointCapacity;
         m_joints[m_jointCount++] = joint;
     }
 

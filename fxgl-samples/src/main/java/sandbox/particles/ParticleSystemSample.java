@@ -32,6 +32,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  */
 public class ParticleSystemSample extends GameApplication {
 
+    @SuppressWarnings("PMD.UnusedPrivateField")
     private Entity particleEntity;
     private ParticleEmitter emitter;
 

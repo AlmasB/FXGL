@@ -7,7 +7,6 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.RandomMoveComponent;
 import com.almasb.fxgl.entity.*;
 import javafx.application.Application;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -24,8 +23,6 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.util.Map;
-
-import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class FXApp extends Application {
 
@@ -95,25 +92,25 @@ public class FXApp extends Application {
 
         @Override
         protected void initGame() {
-            getGameWorld().addEntityFactory(new MyFactory());
-            getGameScene().setBackgroundColor(Color.BLACK);
+            FXGL.getGameWorld().addEntityFactory(new MyFactory());
+            FXGL.getGameScene().setBackgroundColor(Color.BLACK);
 
-            var text = getUIFactory().newText("", Color.WHITE, 24.0);
-            text.textProperty().bind(getip("entities").asString("Entities: %d"));
+            var text = FXGL.getUIFactory().newText("", Color.WHITE, 24.0);
+            text.textProperty().bind(FXGL.getip("entities").asString("Entities: %d"));
 
-            addUINode(text, 25, 25);
+            FXGL.addUINode(text, 25, 25);
 
-            run(this::spawnCrystal, Duration.seconds(3));
+            FXGL.run(this::spawnCrystal, Duration.seconds(3));
         }
 
         private void spawnCrystal() {
             int numToSpawn = 100;
 
             for (int i = 0; i < numToSpawn; i++) {
-                spawn("crystal");
+                FXGL.spawn("crystal");
             }
 
-            inc("entities", +numToSpawn);
+            FXGL.inc("entities", +numToSpawn);
         }
 
         public class MyFactory implements EntityFactory {
@@ -121,9 +118,9 @@ public class FXApp extends Application {
             @Preload(100)
             @Spawns("crystal")
             public Entity newEntity(SpawnData data) {
-                return entityBuilder().at(FXGLMath.randomPoint(new Rectangle2D(0, 0, getAppWidth() - 55, getAppHeight() - 55)))
-                        .viewWithBBox(texture("ball.png", 32, 32))
-                        .with(new RandomMoveComponent(new Rectangle2D(0, 0, getAppWidth(), getAppHeight()), 250))
+                return FXGL.entityBuilder().at(FXGLMath.randomPoint(new Rectangle2D(0, 0, FXGL.getAppWidth() - 55, FXGL.getAppHeight() - 55)))
+                        .viewWithBBox(FXGL.texture("ball.png", 32, 32))
+                        .with(new RandomMoveComponent(new Rectangle2D(0, 0, FXGL.getAppWidth(), FXGL.getAppHeight()), 250))
                         .build();
             }
         }

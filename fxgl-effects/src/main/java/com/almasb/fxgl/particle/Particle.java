@@ -26,6 +26,7 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class Particle implements Poolable {
 
     private Vec2 startPosition = new Vec2();

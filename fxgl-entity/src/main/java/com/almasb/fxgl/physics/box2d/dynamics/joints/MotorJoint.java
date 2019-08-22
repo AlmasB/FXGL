@@ -144,7 +144,7 @@ public class MotorJoint extends Joint {
      * @param force
      */
     public void setMaxForce(float force) {
-        assert (force >= 0.0f);
+        assert force >= 0.0f;
         maxForce = force;
     }
 
@@ -159,7 +159,7 @@ public class MotorJoint extends Joint {
      * Set the maximum friction torque in N*m.
      */
     public void setMaxTorque(float torque) {
-        assert (torque >= 0.0f);
+        assert torque >= 0.0f;
         maxTorque = torque;
     }
 

@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.core.View;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.PropertyMap;

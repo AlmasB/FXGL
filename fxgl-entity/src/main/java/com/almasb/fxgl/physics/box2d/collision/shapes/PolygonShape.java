@@ -117,7 +117,7 @@ public final class PolygonShape extends Shape {
         final float xfpx = xf.p.x;
         final float xfpy = xf.p.y;
         lower.x = (xfqc * v1.x - xfqs * v1.y) + xfpx;
-        lower.y = (xfqs * v1.x + xfqc * v1.y) + xfpy;
+        lower.y = xfqs * v1.x + xfqc * v1.y + xfpy;
         upper.x = lower.x;
         upper.y = lower.y;
 
@@ -125,7 +125,7 @@ public final class PolygonShape extends Shape {
             Vec2 v2 = m_vertices[i];
             // Vec2 v = Mul(xf, m_vertices[i]);
             float vx = (xfqc * v2.x - xfqs * v2.y) + xfpx;
-            float vy = (xfqs * v2.x + xfqc * v2.y) + xfpy;
+            float vy = xfqs * v2.x + xfqc * v2.y + xfpy;
             lower.x = lower.x < vx ? lower.x : vx;
             lower.y = lower.y < vy ? lower.y : vy;
             upper.x = upper.x > vx ? upper.x : vx;
@@ -173,7 +173,7 @@ public final class PolygonShape extends Shape {
                 Vec2 vertex = m_vertices[i];
                 float distanceVecX = pLocalx - vertex.x;
                 float distanceVecY = pLocaly - vertex.y;
-                float distance2 = (distanceVecX * distanceVecX + distanceVecY * distanceVecY);
+                float distance2 = distanceVecX * distanceVecX + distanceVecY * distanceVecY;
                 if (minDistance2 > distance2) {
                     minDistanceX = distanceVecX;
                     minDistanceY = distanceVecY;
@@ -256,7 +256,7 @@ public final class PolygonShape extends Shape {
             }
         }
 
-        assert (0.0f <= lower && lower <= input.maxFraction);
+        assert 0.0f <= lower && lower <= input.maxFraction;
 
         if (index >= 0) {
             output.fraction = lower;
@@ -296,7 +296,7 @@ public final class PolygonShape extends Shape {
         //
         // The rest of the derivation is handled by computer algebra.
 
-        assert (vertexCount >= 3);
+        assert vertexCount >= 3;
 
         final Vec2 center = pool1;
         center.setZero();
@@ -345,7 +345,7 @@ public final class PolygonShape extends Shape {
         massData.mass = density * area;
 
         // Center of mass
-        assert (area > JBoxSettings.EPSILON);
+        assert area > JBoxSettings.EPSILON;
         center.mulLocal(1.0f / area);
         massData.center.set(center).addLocal(s);
 
@@ -372,7 +372,7 @@ public final class PolygonShape extends Shape {
     }
 
     private void setImpl(final Vec2[] verts, final int num) {
-        assert (3 <= num && num <= JBoxSettings.maxPolygonVertices);
+        assert 3 <= num && num <= JBoxSettings.maxPolygonVertices;
 
         if (num < 3) {
             setAsBox(1.0f, 1.0f);
@@ -403,7 +403,7 @@ public final class PolygonShape extends Shape {
         n = tempCount;
         if (n < 3) {
             // Polygon is degenerate.
-            assert (false);
+            assert false;
             setAsBox(1.0f, 1.0f);
             return;
         }
@@ -416,7 +416,7 @@ public final class PolygonShape extends Shape {
         float x0 = ps[0].x;
         for (int i = 1; i < n; ++i) {
             float x = ps[i].x;
-            if (x > x0 || (x == x0 && ps[i].y < ps[i0].y)) {
+            if (x > x0 || x == x0 && ps[i].y < ps[i0].y) {
                 i0 = i;
                 x0 = x;
             }
@@ -475,7 +475,7 @@ public final class PolygonShape extends Shape {
             final int i2 = i + 1 < vertexCount ? i + 1 : 0;
             edge.set(m_vertices[i2]).subLocal(m_vertices[i1]);
 
-            assert (edge.lengthSquared() > JBoxSettings.EPSILON * JBoxSettings.EPSILON);
+            assert edge.lengthSquared() > JBoxSettings.EPSILON * JBoxSettings.EPSILON;
             Vec2.crossToOutUnsafe(edge, 1f, m_normals[i]);
             m_normals[i].getLengthAndNormalize();
         }
@@ -545,12 +545,12 @@ public final class PolygonShape extends Shape {
      * @return
      */
     public Vec2 getVertex(final int index) {
-        assert (0 <= index && index < vertexCount);
+        assert 0 <= index && index < vertexCount;
         return m_vertices[index];
     }
 
     public void computeCentroidToOut(final Vec2[] vs, final int count, final Vec2 out) {
-        assert (count >= 3);
+        assert count >= 3;
 
         out.set(0.0f, 0.0f);
         float area = 0.0f;
@@ -585,7 +585,7 @@ public final class PolygonShape extends Shape {
         }
 
         // Centroid
-        assert (area > JBoxSettings.EPSILON);
+        assert area > JBoxSettings.EPSILON;
         out.mulLocal(1.0f / area);
     }
 

@@ -16,7 +16,6 @@ import com.almasb.fxgl.core.util.EmptyRunnable;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.level.Level;
 import com.almasb.fxgl.entity.level.text.TextLevelLoader;
-import com.almasb.fxgl.scene.Scene;
 import com.almasb.fxgl.ui.FontType;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Point2D;
