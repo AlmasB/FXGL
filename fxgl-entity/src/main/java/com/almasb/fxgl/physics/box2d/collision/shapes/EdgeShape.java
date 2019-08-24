@@ -80,6 +80,7 @@ public class EdgeShape extends Shape {
     }
 
     @Override
+    @SuppressWarnings("PMD.UselessParentheses")
     public float computeDistanceToOut(Transform xf, Vec2 p, int childIndex, Vec2 normalOut) {
         float xfqc = xf.q.c;
         float xfqs = xf.q.s;
@@ -209,6 +210,7 @@ public class EdgeShape extends Shape {
     }
 
     @Override
+    @SuppressWarnings("PMD.UselessParentheses")
     public void computeAABB(AABB aabb, Transform xf, int childIndex) {
         final Vec2 lowerBound = aabb.lowerBound;
         final Vec2 upperBound = aabb.upperBound;

@@ -8,7 +8,6 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.components.IntervalPauseComponent;
 import com.almasb.fxgl.dsl.components.LiftComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.CollidableComponent;
@@ -23,8 +22,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
-import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 

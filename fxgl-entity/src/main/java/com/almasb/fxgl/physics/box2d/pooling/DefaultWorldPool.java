@@ -257,7 +257,7 @@ public class DefaultWorldPool implements IWorldPool {
             avecs.put(argLength, ray);
         }
 
-        assert (avecs.get(argLength).length == argLength) : "Array not built with correct length";
+        assert avecs.get(argLength).length == argLength : "Array not built with correct length";
         return avecs.get(argLength);
     }
 }

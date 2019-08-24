@@ -36,6 +36,7 @@ public final class WorldManifold {
     private final Vec2 pool3 = new Vec2();
     private final Vec2 pool4 = new Vec2();
 
+    @SuppressWarnings("PMD.UselessParentheses")
     public void initialize(final Manifold manifold,
                                  final Transform xfA, float radiusA,
                                  final Transform xfB, float radiusB) {

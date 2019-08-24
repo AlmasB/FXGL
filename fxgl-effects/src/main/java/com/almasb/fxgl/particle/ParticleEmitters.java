@@ -32,7 +32,7 @@ public final class ParticleEmitters {
         emitter.setEndColor(Color.rgb(230, 75, 40));
         emitter.setSize(9, 12);
         emitter.setVelocityFunction(i -> new Point2D(random(-0.5, 0.5) * 0.25 * 60, random() * -1 * 60));
-        emitter.setSpawnPointFunction(i -> new Point2D(0, 0).add(new Point2D(i * (random() - 0.5), (random() - 1))));
+        emitter.setSpawnPointFunction(i -> new Point2D(0, 0).add(new Point2D(i * (random() - 0.5), random() - 1)));
         emitter.setScaleFunction(i -> new Point2D(random(-0.01, 0.01) * 10, random() * -0.1));
         emitter.setExpireFunction(i -> Duration.seconds(1));
         emitter.setBlendMode(BlendMode.ADD);
@@ -46,7 +46,7 @@ public final class ParticleEmitters {
      */
     public static ParticleEmitter newFireEmitter(int width) {
         ParticleEmitter emitter = new ParticleEmitter();
-        emitter.setNumParticles((width / 32) + 1);
+        emitter.setNumParticles(width / 32 + 1);
         emitter.setEmissionRate(0.05);
         emitter.setSize(16, 32);
         emitter.setVelocityFunction((i) -> new Point2D(random(-1, 1) * 2.5, -random() * random(10, 30)));
@@ -131,7 +131,7 @@ public final class ParticleEmitters {
         emitter.setEmissionRate(1);
         emitter.setSize(9, 10);
         emitter.setSpawnPointFunction(i -> Point2D.ZERO.add(random(-1, 1), 0));
-        emitter.setVelocityFunction(i -> new Point2D((random() * 0.1 * 60), 0));
+        emitter.setVelocityFunction(i -> new Point2D(random() * 0.1 * 60, 0));
         emitter.setAccelerationFunction(() -> new Point2D(0, random() * -0.03));
         emitter.setExpireFunction(i -> Duration.seconds(random(1, 3)));
         emitter.setColor(Color.rgb(230, 230, 230));
@@ -151,7 +151,7 @@ public final class ParticleEmitters {
         emitter.setSize(6, 7);
         emitter.setColor(Color.AQUA);
         emitter.setSpawnPointFunction(i -> new Point2D(random()*width, -25));
-        emitter.setVelocityFunction(i -> new Point2D(0, (random() * 15 * 60)));
+        emitter.setVelocityFunction(i -> new Point2D(0, random() * 15 * 60));
         emitter.setAccelerationFunction(() -> new Point2D(0, random() * 0.03));
         emitter.setExpireFunction(i -> Duration.seconds(random(1, 3)));
         emitter.setScaleFunction(i -> new Point2D(-0.02, 0));

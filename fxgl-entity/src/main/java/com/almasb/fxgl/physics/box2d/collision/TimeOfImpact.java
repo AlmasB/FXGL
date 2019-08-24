@@ -110,7 +110,7 @@ public class TimeOfImpact {
         float target = JBoxUtils.max(JBoxSettings.linearSlop, totalRadius - 3.0f * JBoxSettings.linearSlop);
         float tolerance = 0.25f * JBoxSettings.linearSlop;
 
-        assert (target > tolerance);
+        assert target > tolerance;
 
         float t1 = 0f;
         int iter = 0;
@@ -311,7 +311,7 @@ class SeparationFunction {
         m_proxyA = proxyA;
         m_proxyB = proxyB;
         int count = cache.count;
-        assert (0 < count && count < 3);
+        assert 0 < count && count < 3;
 
         m_sweepA = sweepA;
         m_sweepB = sweepB;
@@ -447,7 +447,7 @@ class SeparationFunction {
                 return Vec2.dot(pointA.subLocal(pointB), normal);
             }
             default:
-                assert (false);
+                assert false;
                 indexes[0] = -1;
                 indexes[1] = -1;
                 return 0f;
@@ -497,7 +497,7 @@ class SeparationFunction {
                 return Vec2.dot(pointA.subLocal(pointB), normal);
             }
             default:
-                assert (false);
+                assert false;
                 return 0f;
         }
     }

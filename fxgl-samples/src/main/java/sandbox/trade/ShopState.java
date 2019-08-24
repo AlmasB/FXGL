@@ -6,18 +6,7 @@
 
 package sandbox.trade;
 
-import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.scene.SubScene;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

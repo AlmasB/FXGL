@@ -84,7 +84,7 @@ public class FrictionJoint extends Joint {
     }
 
     public void setMaxForce(float force) {
-        assert (force >= 0.0f);
+        assert force >= 0.0f;
         m_maxForce = force;
     }
 
@@ -93,7 +93,7 @@ public class FrictionJoint extends Joint {
     }
 
     public void setMaxTorque(float torque) {
-        assert (torque >= 0.0f);
+        assert torque >= 0.0f;
         m_maxTorque = torque;
     }
 
@@ -183,7 +183,7 @@ public class FrictionJoint extends Joint {
         }
 //    data.velocities[m_indexA].v.set(vA);
         if (data.velocities[m_indexA].w != wA) {
-            assert (data.velocities[m_indexA].w != wA);
+            assert data.velocities[m_indexA].w != wA;
         }
         data.velocities[m_indexA].w = wA;
 //    data.velocities[m_indexB].v.set(vB);
@@ -261,7 +261,7 @@ public class FrictionJoint extends Joint {
 
 //    data.velocities[m_indexA].v.set(vA);
         if (data.velocities[m_indexA].w != wA) {
-            assert (data.velocities[m_indexA].w != wA);
+            assert data.velocities[m_indexA].w != wA;
         }
         data.velocities[m_indexA].w = wA;
 

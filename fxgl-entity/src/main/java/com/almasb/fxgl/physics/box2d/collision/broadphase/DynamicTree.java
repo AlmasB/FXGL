@@ -166,7 +166,7 @@ public class DynamicTree implements BroadPhaseStrategy {
         float tempx, tempy;
         r.x = p2x - p1x;
         r.y = p2y - p1y;
-        assert ((r.x * r.x + r.y * r.y) > 0f);
+        assert (r.x * r.x + r.y * r.y) > 0f;
         r.getLengthAndNormalize();
         rx = r.x;
         ry = r.y;
@@ -405,8 +405,8 @@ public class DynamicTree implements BroadPhaseStrategy {
             DynamicTreeNode child1 = index.child1;
             DynamicTreeNode child2 = index.child2;
 
-            assert (child1 != null);
-            assert (child2 != null);
+            assert child1 != null;
+            assert child2 != null;
 
             index.height = 1 + JBoxUtils.max(child1.height, child2.height);
             index.aabb.combine(child1.aabb, child2.aabb);
@@ -470,8 +470,8 @@ public class DynamicTree implements BroadPhaseStrategy {
 
         DynamicTreeNode iB = A.child1;
         DynamicTreeNode iC = A.child2;
-        assert (0 <= iB.id && iB.id < m_nodeCapacity);
-        assert (0 <= iC.id && iC.id < m_nodeCapacity);
+        assert 0 <= iB.id && iB.id < m_nodeCapacity;
+        assert 0 <= iC.id && iC.id < m_nodeCapacity;
 
         DynamicTreeNode B = iB;
         DynamicTreeNode C = iC;
@@ -484,10 +484,10 @@ public class DynamicTree implements BroadPhaseStrategy {
             DynamicTreeNode iG = C.child2;
             DynamicTreeNode F = iF;
             DynamicTreeNode G = iG;
-            assert (F != null);
-            assert (G != null);
-            assert (0 <= iF.id && iF.id < m_nodeCapacity);
-            assert (0 <= iG.id && iG.id < m_nodeCapacity);
+            assert F != null;
+            assert G != null;
+            assert 0 <= iF.id && iF.id < m_nodeCapacity;
+            assert 0 <= iG.id && iG.id < m_nodeCapacity;
 
             // Swap A and C
             C.child1 = iA;
@@ -499,7 +499,7 @@ public class DynamicTree implements BroadPhaseStrategy {
                 if (C.parent.child1 == iA) {
                     C.parent.child1 = iC;
                 } else {
-                    assert (C.parent.child2 == iA);
+                    assert C.parent.child2 == iA;
                     C.parent.child2 = iC;
                 }
             } else {
@@ -536,8 +536,8 @@ public class DynamicTree implements BroadPhaseStrategy {
             DynamicTreeNode iE = B.child2;
             DynamicTreeNode D = iD;
             DynamicTreeNode E = iE;
-            assert (0 <= iD.id && iD.id < m_nodeCapacity);
-            assert (0 <= iE.id && iE.id < m_nodeCapacity);
+            assert 0 <= iD.id && iD.id < m_nodeCapacity;
+            assert 0 <= iE.id && iE.id < m_nodeCapacity;
 
             // Swap A and B
             B.child1 = iA;
@@ -549,7 +549,7 @@ public class DynamicTree implements BroadPhaseStrategy {
                 if (B.parent.child1 == iA) {
                     B.parent.child1 = iB;
                 } else {
-                    assert (B.parent.child2 == iA);
+                    assert B.parent.child2 == iA;
                     B.parent.child2 = iB;
                 }
             } else {

@@ -58,7 +58,7 @@ public class VarsSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        getGameState().<Vec2>addListener("vector", ((prev, now) -> System.out.println(prev + " " + now)));
+        getGameState().<Vec2>addListener("vector", (prev, now) -> System.out.println(prev + " " + now));
 
         System.out.println(getGameState().getDouble("testDouble"));
 
