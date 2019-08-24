@@ -12,7 +12,6 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
 import com.almasb.fxgl.core.reflect.ReflectionUtils.inject
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dev.DevPane
-import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.GameState
@@ -33,7 +32,6 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
-import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.ImageCursor
 import javafx.scene.input.KeyEvent
@@ -511,15 +509,15 @@ internal class Engine(
      * @return true if can show close dialog
      */
     private fun canShowCloseDialog(): Boolean {
-        return true
-        // TODO:
         // do not allow close dialog if
         // 1. a dialog is shown
         // 2. we are loading a game
         // 3. we are showing intro
-//        return (state !== FXGL.getStateMachine().dialogState
-//                && state !== FXGL.getStateMachine().loadingState
-//                && (!FXGL.getSettings().isIntroEnabled || state !== FXGL.getStateMachine().introState))
+        val isNotOK = mainWindow.currentScene === dialogState
+                || mainWindow.currentScene === loadState
+                || (settings.isIntroEnabled && mainWindow.currentScene === intro)
+
+        return !isNotOK
     }
 
     private fun showConfirmExitDialog() {
