@@ -78,4 +78,17 @@ class ObjectMapTest {
         assertThat(map, hasEntry("key2", -55))
         assertThat(map, hasEntry("key3", 900))
     }
+
+    @Test
+    fun `To map correctly converts to string`() {
+        val objectMap = ObjectMap<String, Int>()
+
+        objectMap.put("key1", 0)
+        objectMap.put("key2", -55)
+        objectMap.put("key3", 900)
+
+        val expectedString = objectMap.toString()
+
+        assertThat(expectedString, `is`("{key3=900, key2=-55, key1=0}"))
+    }
 }

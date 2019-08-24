@@ -594,21 +594,27 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
         return toString(", ", true);
     }
 
+    @SuppressWarnings("PMD.AvoidBranchingStatementAsLastInLoop")
     private String toString(String separator, boolean braces) {
         if (size == 0) return braces ? "{}" : "";
         StringBuilder buffer = new StringBuilder(32);
         if (braces) buffer.append('{');
         int i = keyTable.length;
-        for (int j = --i; j > -1; j--) {
-            K key = keyTable[j];
-            if (key != null) {
-                buffer.append(key);
-                buffer.append('=');
-                buffer.append(valueTable[j]);
-            }
-            if (j > 0) {
-                buffer.append(separator);
-            }
+        while (i-- > 0) {
+            K key = keyTable[i];
+            if (key == null) continue;
+            buffer.append(key);
+            buffer.append('=');
+            buffer.append(valueTable[i]);
+            break;
+        }
+        while (i-- > 0) {
+            K key = keyTable[i];
+            if (key == null) continue;
+            buffer.append(separator);
+            buffer.append(key);
+            buffer.append('=');
+            buffer.append(valueTable[i]);
         }
         if (braces) buffer.append('}');
         return buffer.toString();
