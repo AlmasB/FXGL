@@ -20,8 +20,8 @@ public class CircleContact extends Contact {
 
     public void init(Fixture fixtureA, Fixture fixtureB) {
         super.init(fixtureA, 0, fixtureB, 0);
-        assert (m_fixtureA.getType() == ShapeType.CIRCLE);
-        assert (m_fixtureB.getType() == ShapeType.CIRCLE);
+        assert m_fixtureA.getType() == ShapeType.CIRCLE;
+        assert m_fixtureB.getType() == ShapeType.CIRCLE;
     }
 
     @Override

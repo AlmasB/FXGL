@@ -280,7 +280,7 @@ public final class Vec2 implements Serializable, Poolable {
      * @return the squared length of this vector
      */
     public float lengthSquared() {
-        return (x * x + y * y);
+        return x * x + y * y;
     }
 
     /**

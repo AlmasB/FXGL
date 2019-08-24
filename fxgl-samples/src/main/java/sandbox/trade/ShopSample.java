@@ -29,6 +29,10 @@ public class ShopSample extends GameApplication {
 
     private Entity player;
 
+    public Entity getPlayer() {
+        return player;
+    }
+
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1280);

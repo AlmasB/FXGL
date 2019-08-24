@@ -87,6 +87,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         return isCollidable(e1) && isCollidable(e2);
     }
 
+    @SuppressWarnings("PMD.UselessParentheses")
     private boolean needManualCheck(Entity e1, Entity e2) {
         // if no physics -> check manually
 
@@ -228,6 +229,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         entity.getTransformComponent().scaleYProperty().addListener(scaleChangeListener);
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private void onPhysicsParticleEntityAdded(Entity entity) {
         if (!jboxWorld.isLocked()) {
             createPhysicsParticles(entity);
@@ -744,6 +746,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         return shape;
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private void createPhysicsParticles(Entity e) {
 //        double x = e.getX();
 //        double y = e.getY();

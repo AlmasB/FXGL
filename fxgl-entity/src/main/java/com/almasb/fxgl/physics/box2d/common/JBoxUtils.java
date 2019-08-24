@@ -139,8 +139,8 @@ public class JBoxUtils {
     }
 
     public final static float distanceSquared(Vec2 v1, Vec2 v2) {
-        float dx = (v1.x - v2.x);
-        float dy = (v1.y - v2.y);
+        float dx = v1.x - v2.x;
+        float dy = v1.y - v2.y;
         return dx * dx + dy * dy;
     }
 

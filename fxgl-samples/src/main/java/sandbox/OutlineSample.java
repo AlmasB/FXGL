@@ -8,7 +8,6 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.texture.Texture;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
@@ -25,6 +24,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class OutlineSample extends GameApplication {
 
     @Override

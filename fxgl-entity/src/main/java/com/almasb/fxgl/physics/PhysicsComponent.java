@@ -76,7 +76,7 @@ public final class PhysicsComponent extends Component {
         return onGroundProperty.getReadOnlyProperty();
     }
 
-    public final Body getBody() {
+    public Body getBody() {
         if (body == null)
             throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
         return body;

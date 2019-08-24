@@ -126,7 +126,7 @@ public class RevoluteJoint extends Joint {
         float mA = m_invMassA, mB = m_invMassB;
         float iA = m_invIA, iB = m_invIB;
 
-        boolean fixedRotation = (iA + iB == 0.0f);
+        boolean fixedRotation = iA + iB == 0.0f;
 
         m_mass.ex.x = mA + mB + m_rA.y * m_rA.y * iA + m_rB.y * m_rB.y * iB;
         m_mass.ey.x = -m_rA.y * m_rA.x * iA - m_rB.y * m_rB.x * iB;
@@ -210,7 +210,7 @@ public class RevoluteJoint extends Joint {
         float mA = m_invMassA, mB = m_invMassB;
         float iA = m_invIA, iB = m_invIB;
 
-        boolean fixedRotation = (iA + iB == 0.0f);
+        boolean fixedRotation = iA + iB == 0.0f;
 
         // Solve motor constraint.
         if (m_enableMotor && m_limitState != LimitState.EQUAL && !fixedRotation) {
@@ -340,7 +340,7 @@ public class RevoluteJoint extends Joint {
         float angularError = 0.0f;
         float positionError = 0.0f;
 
-        boolean fixedRotation = (m_invIA + m_invIB == 0.0f);
+        boolean fixedRotation = m_invIA + m_invIB == 0.0f;
 
         // Solve angular limit constraint.
         if (m_enableLimit && m_limitState != LimitState.INACTIVE && !fixedRotation) {
@@ -520,7 +520,7 @@ public class RevoluteJoint extends Joint {
     }
 
     public void setLimits(final float lower, final float upper) {
-        assert (lower <= upper);
+        assert lower <= upper;
         if (lower != m_lowerAngle || upper != m_upperAngle) {
             m_bodyA.setAwake(true);
             m_bodyB.setAwake(true);

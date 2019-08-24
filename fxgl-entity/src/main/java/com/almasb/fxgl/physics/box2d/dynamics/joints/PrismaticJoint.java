@@ -283,7 +283,7 @@ public class PrismaticJoint extends Joint {
      * @param upper
      */
     public void setLimits(float lower, float upper) {
-        assert (lower <= upper);
+        assert lower <= upper;
         if (lower != m_lowerTranslation || upper != m_upperTranslation) {
             m_bodyA.setAwake(true);
             m_bodyB.setAwake(true);

@@ -21,6 +21,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactVelocityConstraint
  */
 public final class ContactSolver {
 
+    @SuppressWarnings("PMD.UnusedPrivateField")
     private static final float k_errorTol = 1e-3f;
 
     /**
@@ -89,7 +90,7 @@ public final class ContactSolver {
             final Manifold manifold = contact.getManifold();
 
             int pointCount = manifold.pointCount;
-            assert (pointCount > 0);
+            assert pointCount > 0;
 
             ContactVelocityConstraint vc = m_velocityConstraints[i];
             vc.friction = contact.m_friction;
@@ -220,7 +221,7 @@ public final class ContactSolver {
             Vec2 vB = m_velocities[indexB].v;
             float wB = m_velocities[indexB].w;
 
-            assert (manifold.pointCount > 0);
+            assert manifold.pointCount > 0;
 
             final Rotation xfAq = xfA.q;
             final Rotation xfBq = xfB.q;
@@ -303,6 +304,7 @@ public final class ContactSolver {
         }
     }
 
+    @SuppressWarnings("PMD.AvoidBranchingStatementAsLastInLoop")
     public void solveVelocityConstraints() {
         for (int i = 0; i < m_count; ++i) {
             final ContactVelocityConstraint vc = m_velocityConstraints[i];
@@ -328,7 +330,7 @@ public final class ContactSolver {
             float tangenty = -1.0f * vc.normal.x;
             final float friction = vc.friction;
 
-            assert (pointCount == 1 || pointCount == 2);
+            assert pointCount == 1 || pointCount == 2;
 
             // Solve tangent constraints
             for (int j = 0; j < pointCount; ++j) {
@@ -380,7 +382,7 @@ public final class ContactSolver {
 
                 // Clamp the accumulated impulse
                 float a = vcp.normalImpulse + lambda;
-                final float newImpulse = (a > 0.0f ? a : 0.0f);
+                final float newImpulse = a > 0.0f ? a : 0.0f;
                 lambda = newImpulse - vcp.normalImpulse;
                 vcp.normalImpulse = newImpulse;
 
@@ -445,7 +447,7 @@ public final class ContactSolver {
                 float ax = cp1.normalImpulse;
                 float ay = cp2.normalImpulse;
 
-                assert (ax >= 0.0f && ay >= 0.0f);
+                assert ax >= 0.0f && ay >= 0.0f;
                 // Relative velocity at contact
                 // Vec2 dv1 = vB + Cross(wB, cp1.rB) - vA - Cross(wA, cp1.rA);
                 float dv1x = -wB * cp1rB.y + vB.x - vA.x + wA * cp1rA.y;
@@ -919,8 +921,9 @@ public final class ContactSolver {
         final Vec2 point = new Vec2();
         float separation;
 
+        @SuppressWarnings("PMD.UselessParentheses")
         public void initialize(ContactPositionConstraint pc, Transform xfA, Transform xfB, int index) {
-            assert (pc.pointCount > 0);
+            assert pc.pointCount > 0;
 
             final Rotation xfAq = xfA.q;
             final Rotation xfBq = xfB.q;
