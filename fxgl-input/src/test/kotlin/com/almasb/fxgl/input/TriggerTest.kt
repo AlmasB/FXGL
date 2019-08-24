@@ -166,15 +166,20 @@ class TriggerTest {
             MouseTrigger.buttonFromString("")
         }
     }
+}
 
-    // TODO: make it common to input tests?
-    private fun mouseEvent(button: MouseButton, shift: Boolean, ctrl: Boolean, alt: Boolean): MouseEvent {
-        return MouseEvent(MouseEvent.ANY, 0.0, 0.0, 0.0, 0.0, button, 1,
-                shift, ctrl, alt,
-                false, false, false, false, false, false, false, null)
-    }
+internal fun mouseEvent(shift: Boolean, ctrl: Boolean, alt: Boolean) =
+        mouseEvent(MouseButton.PRIMARY, shift, ctrl, alt)
 
-    private fun keyEvent(key: KeyCode, shift: Boolean, ctrl: Boolean, alt: Boolean): KeyEvent {
-        return KeyEvent(KeyEvent.ANY, "", "", key, shift, ctrl, alt, false)
-    }
+internal fun keyEvent(shift: Boolean, ctrl: Boolean, alt: Boolean) =
+        keyEvent(KeyCode.A, shift, ctrl, alt)
+
+internal fun mouseEvent(button: MouseButton, shift: Boolean, ctrl: Boolean, alt: Boolean): MouseEvent {
+    return MouseEvent(MouseEvent.ANY, 0.0, 0.0, 0.0, 0.0, button, 1,
+            shift, ctrl, alt,
+            false, false, false, false, false, false, false, null)
+}
+
+internal fun keyEvent(key: KeyCode, shift: Boolean, ctrl: Boolean, alt: Boolean): KeyEvent {
+    return KeyEvent(KeyEvent.ANY, "", "", key, shift, ctrl, alt, false)
 }

@@ -7,9 +7,6 @@
 package com.almasb.fxgl.input
 
 import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseButton
-import javafx.scene.input.MouseEvent
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -119,13 +116,13 @@ class InputModifierTest {
         assertTrue(InputModifier.NONE.toKeyCode() == KeyCode.ALPHANUMERIC)
     }
 
-    private fun mouseEvent(shift: Boolean, ctrl: Boolean, alt: Boolean): MouseEvent {
-        return MouseEvent(MouseEvent.ANY, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
-                shift, ctrl, alt,
-                false, false, false, false, false, false, false, null)
-    }
-
-    private fun keyEvent(shift: Boolean, ctrl: Boolean, alt: Boolean): KeyEvent {
-        return KeyEvent(KeyEvent.ANY, "", "", KeyCode.A, shift, ctrl, alt, false)
-    }
+//    private fun mouseEvent(shift: Boolean, ctrl: Boolean, alt: Boolean): MouseEvent {
+//        return MouseEvent(MouseEvent.ANY, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+//                shift, ctrl, alt,
+//                false, false, false, false, false, false, false, null)
+//    }
+//
+//    private fun keyEvent(shift: Boolean, ctrl: Boolean, alt: Boolean): KeyEvent {
+//        return KeyEvent(KeyEvent.ANY, "", "", KeyCode.A, shift, ctrl, alt, false)
+//    }
 }
