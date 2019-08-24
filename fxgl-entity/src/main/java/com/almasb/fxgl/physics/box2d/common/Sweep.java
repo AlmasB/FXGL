@@ -55,7 +55,7 @@ public final class Sweep implements Serializable {
      * @param beta the normalized time in [0,1]
      */
     public void getTransform(final Transform xf, final float beta) {
-        assert (xf != null);
+        assert xf != null;
         // xf->p = (1.0f - beta) * c0 + beta * c;
         // float32 angle = (1.0f - beta) * a0 + beta * a;
         // xf->q.Set(angle);
@@ -78,7 +78,7 @@ public final class Sweep implements Serializable {
      * @param alpha the new initial time
      */
     public void advance(final float alpha) {
-        assert (alpha0 < 1.0f);
+        assert alpha0 < 1.0f;
 
         float beta = (alpha - alpha0) / (1.0f - alpha0);
 

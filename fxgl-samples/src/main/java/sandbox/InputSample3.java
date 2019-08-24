@@ -7,7 +7,6 @@
 package sandbox;
 
 import com.almasb.fxgl.animation.Animation;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import dev.DeveloperWASDControl;
@@ -41,14 +40,11 @@ public class InputSample3 extends GameApplication {
         });
 
         onKeyDown(KeyCode.F, "Flash", () -> {
-
             getGameScene().getViewport().flash(() -> System.out.println("Flash finished"));
         });
 
         onKeyDown(KeyCode.G, "Fade", () -> {
-
             getGameScene().getViewport().fade(() -> {
-
                 System.out.println("Fade finished");
             });
         });
@@ -67,7 +63,7 @@ public class InputSample3 extends GameApplication {
                 .buildAndAttach();
 
         getGameScene().getViewport().setBounds(30, 30, 1600 - 30, 1200 - 30);
-        getGameScene().getViewport().bindToEntity(e, FXGL.getAppWidth() / 2, FXGL.getAppHeight() / 2);
+        getGameScene().getViewport().bindToEntity(e, getAppWidth() / 2, getAppHeight() / 2);
 
         //a = translateAnim(getGameScene().getViewport().getCamera(), new Point2D(0, 0), new Point2D(400, 400), Duration.ZERO, Duration.seconds(1.5), () -> {}, Interpolators.EXPONENTIAL.EASE_OUT());
 

@@ -69,7 +69,7 @@ public final class ChainShape extends Shape {
 
     @Override
     public boolean raycast(RayCastOutput output, RayCastInput input, Transform xf, int childIndex) {
-        assert (childIndex < m_count);
+        assert childIndex < m_count;
 
         final EdgeShape edgeShape = pool0;
 
@@ -89,8 +89,9 @@ public final class ChainShape extends Shape {
     }
 
     @Override
+    @SuppressWarnings("PMD.UselessParentheses")
     public void computeAABB(AABB aabb, Transform xf, int childIndex) {
-        assert (childIndex < m_count);
+        assert childIndex < m_count;
         final Vec2 lower = aabb.lowerBound;
         final Vec2 upper = aabb.upperBound;
 
@@ -105,9 +106,9 @@ public final class ChainShape extends Shape {
         final Rotation xfq = xf.q;
         final Vec2 xfp = xf.p;
         float v1x = (xfq.c * vi1.x - xfq.s * vi1.y) + xfp.x;
-        float v1y = (xfq.s * vi1.x + xfq.c * vi1.y) + xfp.y;
+        float v1y = xfq.s * vi1.x + xfq.c * vi1.y + xfp.y;
         float v2x = (xfq.c * vi2.x - xfq.s * vi2.y) + xfp.x;
-        float v2y = (xfq.s * vi2.x + xfq.c * vi2.y) + xfp.y;
+        float v2y = xfq.s * vi2.x + xfq.c * vi2.y + xfp.y;
 
         lower.x = v1x < v2x ? v1x : v2x;
         lower.y = v1y < v2y ? v1y : v2y;
@@ -126,7 +127,7 @@ public final class ChainShape extends Shape {
      * Get a child edge.
      */
     public void getChildEdge(EdgeShape edge, int index) {
-        assert (0 <= index && index < m_count - 1);
+        assert 0 <= index && index < m_count - 1;
 
         edge.setRadius(getRadius());
 
@@ -167,8 +168,8 @@ public final class ChainShape extends Shape {
      * @param count the vertex count
      */
     public void createLoop(final Vec2[] vertices, int count) {
-        assert (m_vertices == null && m_count == 0);
-        assert (count >= 3);
+        assert m_vertices == null && m_count == 0;
+        assert count >= 3;
         m_count = count + 1;
         m_vertices = new Vec2[m_count];
         for (int i = 1; i < count; i++) {
@@ -196,8 +197,8 @@ public final class ChainShape extends Shape {
      * @param count the vertex count
      */
     public void createChain(final Vec2 vertices[], int count) {
-        assert (m_vertices == null && m_count == 0);
-        assert (count >= 2);
+        assert m_vertices == null && m_count == 0;
+        assert count >= 2;
         m_count = count;
         m_vertices = new Vec2[m_count];
         for (int i = 1; i < m_count; i++) {

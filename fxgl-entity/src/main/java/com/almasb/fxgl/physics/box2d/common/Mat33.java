@@ -103,7 +103,7 @@ public class Mat33 implements Serializable {
     }
 
     public static final void mul22ToOutUnsafe(Mat33 A, Vec2 v, Vec2 out) {
-        assert (v != out);
+        assert v != out;
         out.y = A.ex.y * v.x + A.ey.y * v.y;
         out.x = A.ex.x * v.x + A.ey.x * v.y;
     }
@@ -117,7 +117,7 @@ public class Mat33 implements Serializable {
     }
 
     public static final void mulToOutUnsafe(Mat33 A, Vec3 v, Vec3 out) {
-        assert (out != v);
+        assert out != v;
         out.x = v.x * A.ex.x + v.y * A.ey.x + v.z * A.ez.x;
         out.y = v.x * A.ex.y + v.y * A.ey.y + v.z * A.ez.y;
         out.z = v.x * A.ex.z + v.y * A.ey.z + v.z * A.ez.z;
@@ -176,7 +176,7 @@ public class Mat33 implements Serializable {
      * @param out the result
      */
     public final void solve33ToOut(Vec3 b, Vec3 out) {
-        assert (b != out);
+        assert b != out;
         Vec3.crossToOutUnsafe(ey, ez, out);
         float det = Vec3.dot(ex, out);
         if (det != 0.0f) {

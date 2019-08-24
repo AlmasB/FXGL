@@ -78,7 +78,7 @@ public abstract class Joint {
     // float m_invMassB, m_invIB;
 
     protected Joint(IWorldPool worldPool, JointDef def) {
-        assert (def.bodyA != def.bodyB);
+        assert def.bodyA != def.bodyB;
 
         pool = worldPool;
         m_type = def.type;

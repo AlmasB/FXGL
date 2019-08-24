@@ -9,11 +9,6 @@ package com.almasb.fxgl.nativesamples;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.ui.FXGLButton;
-import javafx.scene.control.Button;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 public class GameApp extends GameApplication {
     @Override

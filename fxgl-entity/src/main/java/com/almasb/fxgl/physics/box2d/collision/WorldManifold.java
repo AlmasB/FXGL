@@ -36,6 +36,7 @@ public final class WorldManifold {
     private final Vec2 pool3 = new Vec2();
     private final Vec2 pool4 = new Vec2();
 
+    @SuppressWarnings("PMD.UselessParentheses")
     public void initialize(final Manifold manifold,
                                  final Transform xfA, float radiusA,
                                  final Transform xfB, float radiusB) {
@@ -55,10 +56,10 @@ public final class WorldManifold {
                 // Transform.mulToOutUnsafe(xfA, manifold.localPoint, pointA);
                 // Transform.mulToOutUnsafe(xfB, manifold.points[0].localPoint, pointB);
                 pointA.x = (xfA.q.c * v.x - xfA.q.s * v.y) + xfA.p.x;
-                pointA.y = (xfA.q.s * v.x + xfA.q.c * v.y) + xfA.p.y;
+                pointA.y = xfA.q.s * v.x + xfA.q.c * v.y + xfA.p.y;
                 Vec2 mp0p = manifold.points[0].localPoint;
                 pointB.x = (xfB.q.c * mp0p.x - xfB.q.s * mp0p.y) + xfB.p.x;
-                pointB.y = (xfB.q.s * mp0p.x + xfB.q.c * mp0p.y) + xfB.p.y;
+                pointB.y = xfB.q.s * mp0p.x + xfB.q.c * mp0p.y + xfB.p.y;
 
                 if (JBoxUtils.distanceSquared(pointA, pointB) > JBoxSettings.EPSILON * JBoxSettings.EPSILON) {
                     normal.x = pointB.x - pointA.x;

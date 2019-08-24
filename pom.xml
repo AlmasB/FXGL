@@ -89,6 +89,7 @@
         <maven.gpg.version>1.6</maven.gpg.version>
         <sonatype.nexus.staging.version>1.6.7</sonatype.nexus.staging.version>
         <maven.compiler.version>3.8.0</maven.compiler.version>
+        <maven.pmd.version>3.12.0</maven.pmd.version>
         <maven.source.version>3.0.1</maven.source.version>
         <maven.javadoc.version>3.0.0-M1</maven.javadoc.version>
         <maven.jar.version>3.1.1</maven.jar.version>
@@ -248,6 +249,27 @@
         </pluginManagement>
 
         <plugins>
+            <!-- Check code quality -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven.pmd.version}</version>
+                <configuration>
+                    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+                    <targetJdk>${maven.compiler.target}</targetJdk>
+                    <verbose>true</verbose>
+                    <linkXRef>false</linkXRef>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Sign artifact using gpg -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -18,8 +18,6 @@ import javafx.stage.Stage;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
-
 /**
  * To use FXGL, extend this class and implement necessary methods.
  * The initialization process can be seen below (irrelevant phases are omitted):
@@ -96,7 +94,7 @@ public abstract class GameApplication {
     }
 
     private static GameApplication newInstance() {
-        var appClass = getCallingClass(GameApplication.class, "launch");
+        var appClass = ReflectionUtils.getCallingClass(GameApplication.class, "launch");
 
         return ReflectionUtils.newInstance(appClass);
     }

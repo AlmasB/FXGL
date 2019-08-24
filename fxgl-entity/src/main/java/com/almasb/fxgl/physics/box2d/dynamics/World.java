@@ -241,7 +241,7 @@ public final class World {
 
         Joint.destroy(j);
 
-        assert (jointCount > 0);
+        assert jointCount > 0;
         --jointCount;
 
         // If the joint prevents collisions, then flag any contacts for filtering.
@@ -374,7 +374,7 @@ public final class World {
             while (stackCount > 0) {
                 // Grab the next body off the stack and add it to the island.
                 Body b = stack[--stackCount];
-                assert (b.isActive());
+                assert b.isActive();
                 island.add(b);
 
                 // Make sure the body is awake.
@@ -417,7 +417,7 @@ public final class World {
                         continue;
                     }
 
-                    assert (stackCount < stackSize);
+                    assert stackCount < stackSize;
                     stack[stackCount++] = other;
                     other.m_flags |= Body.e_islandFlag;
                 }
@@ -442,7 +442,7 @@ public final class World {
                         continue;
                     }
 
-                    assert (stackCount < stackSize);
+                    assert stackCount < stackSize;
                     stack[stackCount++] = other;
                     other.m_flags |= Body.e_islandFlag;
                 }
@@ -540,7 +540,7 @@ public final class World {
 
                     BodyType typeA = bA.getType();
                     BodyType typeB = bB.getType();
-                    assert (typeA == BodyType.DYNAMIC || typeB == BodyType.DYNAMIC);
+                    assert typeA == BodyType.DYNAMIC || typeB == BodyType.DYNAMIC;
 
                     boolean activeA = bA.isAwake() && typeA != BodyType.STATIC;
                     boolean activeB = bB.isAwake() && typeB != BodyType.STATIC;
@@ -570,7 +570,7 @@ public final class World {
                         bB.m_sweep.advance(alpha0);
                     }
 
-                    assert (alpha0 < 1.0f);
+                    assert alpha0 < 1.0f;
 
                     int indexA = c.getChildIndexA();
                     int indexB = c.getChildIndexB();

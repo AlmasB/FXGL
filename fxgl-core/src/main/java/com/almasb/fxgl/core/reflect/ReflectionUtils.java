@@ -219,7 +219,7 @@ public final class ReflectionUtils {
         Throwable cause;
         Throwable result = e;
 
-        while (null != (cause = result.getCause())  && (result != cause) ) {
+        while (null != (cause = result.getCause()) && result != cause) {
             result = cause;
         }
         return result;

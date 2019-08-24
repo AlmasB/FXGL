@@ -240,7 +240,7 @@ public final class AABB {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return "AABB[" + lowerBound + " . " + upperBound + "]";
     }
 }

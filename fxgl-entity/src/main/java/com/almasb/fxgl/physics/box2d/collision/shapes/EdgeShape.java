@@ -80,15 +80,16 @@ public class EdgeShape extends Shape {
     }
 
     @Override
+    @SuppressWarnings("PMD.UselessParentheses")
     public float computeDistanceToOut(Transform xf, Vec2 p, int childIndex, Vec2 normalOut) {
         float xfqc = xf.q.c;
         float xfqs = xf.q.s;
         float xfpx = xf.p.x;
         float xfpy = xf.p.y;
         float v1x = (xfqc * m_vertex1.x - xfqs * m_vertex1.y) + xfpx;
-        float v1y = (xfqs * m_vertex1.x + xfqc * m_vertex1.y) + xfpy;
+        float v1y = xfqs * m_vertex1.x + xfqc * m_vertex1.y + xfpy;
         float v2x = (xfqc * m_vertex2.x - xfqs * m_vertex2.y) + xfpx;
-        float v2y = (xfqs * m_vertex2.x + xfqc * m_vertex2.y) + xfpy;
+        float v2y = xfqs * m_vertex2.x + xfqc * m_vertex2.y + xfpy;
 
         float dx = p.x - v1x;
         float dy = p.y - v1y;
@@ -215,9 +216,9 @@ public class EdgeShape extends Shape {
         final Rotation xfq = xf.q;
 
         final float v1x = (xfq.c * m_vertex1.x - xfq.s * m_vertex1.y) + xf.p.x;
-        final float v1y = (xfq.s * m_vertex1.x + xfq.c * m_vertex1.y) + xf.p.y;
+        final float v1y = xfq.s * m_vertex1.x + xfq.c * m_vertex1.y + xf.p.y;
         final float v2x = (xfq.c * m_vertex2.x - xfq.s * m_vertex2.y) + xf.p.x;
-        final float v2y = (xfq.s * m_vertex2.x + xfq.c * m_vertex2.y) + xf.p.y;
+        final float v2y = xfq.s * m_vertex2.x + xfq.c * m_vertex2.y + xf.p.y;
 
         lowerBound.x = v1x < v2x ? v1x : v2x;
         lowerBound.y = v1y < v2y ? v1y : v2y;
