@@ -80,6 +80,7 @@ public class LoadingSample extends GameApplication {
         }
 
         @Override
+        @SuppressWarnings("PMD.UselessOverridingMethod")
         protected void onUpdate(double tpf) {
             super.onUpdate(tpf);
         }

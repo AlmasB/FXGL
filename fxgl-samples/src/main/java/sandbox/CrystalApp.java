@@ -10,7 +10,6 @@ import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.DraggableComponent;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.MouseEvent;

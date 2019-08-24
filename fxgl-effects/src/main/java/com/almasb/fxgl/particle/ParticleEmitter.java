@@ -364,7 +364,7 @@ public final class ParticleEmitter {
      * @return list of particles spawned
      * @implNote cached array is used, do not obtain ownership
      */
-    final Array<Particle> emit(double x, double y) {
+    Array<Particle> emit(double x, double y) {
         double rate = getEmissionRate();
 
         rateAC += rate;

@@ -7,7 +7,6 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;

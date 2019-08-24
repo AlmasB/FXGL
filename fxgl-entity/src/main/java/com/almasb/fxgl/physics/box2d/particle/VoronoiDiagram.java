@@ -104,7 +104,7 @@ public class VoronoiDiagram {
     private final StackQueue<VoronoiDiagramTask> queue = new StackQueue<>();
 
     public void generate(float radius) {
-        assert (m_diagram == null);
+        assert m_diagram == null;
         float inverseRadius = 1 / radius;
         lower.x = Float.MAX_VALUE;
         lower.y = Float.MAX_VALUE;

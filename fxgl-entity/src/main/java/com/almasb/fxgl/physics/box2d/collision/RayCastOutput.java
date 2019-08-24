@@ -26,4 +26,4 @@ public class RayCastOutput {
         normal.set(rco.normal);
         fraction = rco.fraction;
     }
-};
+}

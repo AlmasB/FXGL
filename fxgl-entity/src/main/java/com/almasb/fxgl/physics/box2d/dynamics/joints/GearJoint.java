@@ -95,8 +95,8 @@ public class GearJoint extends Joint {
         m_typeA = m_joint1.getType();
         m_typeB = m_joint2.getType();
 
-        assert (m_typeA == JointType.REVOLUTE || m_typeA == JointType.PRISMATIC);
-        assert (m_typeB == JointType.REVOLUTE || m_typeB == JointType.PRISMATIC);
+        assert m_typeA == JointType.REVOLUTE || m_typeA == JointType.PRISMATIC;
+        assert m_typeB == JointType.REVOLUTE || m_typeB == JointType.PRISMATIC;
 
         float coordinateA, coordinateB;
 
@@ -466,7 +466,7 @@ public class GearJoint extends Joint {
             pool.pushVec2(5);
         }
 
-        float C = (coordinateA + m_ratio * coordinateB) - m_constant;
+        float C = coordinateA + m_ratio * coordinateB - m_constant;
 
         float impulse = 0.0f;
         if (mass > 0.0f) {

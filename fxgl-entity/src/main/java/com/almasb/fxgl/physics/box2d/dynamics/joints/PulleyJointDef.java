@@ -82,6 +82,6 @@ public class PulleyJointDef extends JointDef {
         Vec2 d2 = anchor2.sub(ga2);
         lengthB = d2.length();
         ratio = r;
-        assert (ratio > JBoxSettings.EPSILON);
+        assert ratio > JBoxSettings.EPSILON;
     }
 }

@@ -90,7 +90,7 @@ public class Distance {
 
         public void readCache(SimplexCache cache, DistanceProxy proxyA, Transform transformA,
                               DistanceProxy proxyB, Transform transformB) {
-            assert (cache.count <= 3);
+            assert cache.count <= 3;
 
             // Copy data from cache.
             m_count = cache.count;
@@ -137,8 +137,8 @@ public class Distance {
             cache.count = m_count;
 
             for (int i = 0; i < m_count; ++i) {
-                cache.indexA[i] = (vertices[i].indexA);
-                cache.indexB[i] = (vertices[i].indexB);
+                cache.indexA[i] = vertices[i].indexA;
+                cache.indexB[i] = vertices[i].indexB;
             }
         }
 
@@ -165,7 +165,7 @@ public class Distance {
                         return;
                     }
                 default:
-                    assert (false);
+                    assert false;
                     out.setZero();
                     return;
             }
@@ -183,7 +183,7 @@ public class Distance {
         public void getClosestPoint(final Vec2 out) {
             switch (m_count) {
                 case 0:
-                    assert (false);
+                    assert false;
                     out.setZero();
                     return;
                 case 1:
@@ -198,7 +198,7 @@ public class Distance {
                     out.setZero();
                     return;
                 default:
-                    assert (false);
+                    assert false;
                     out.setZero();
                     return;
             }
@@ -211,7 +211,7 @@ public class Distance {
         public void getWitnessPoints(Vec2 pA, Vec2 pB) {
             switch (m_count) {
                 case 0:
-                    assert (false);
+                    assert false;
                     break;
 
                 case 1:
@@ -240,7 +240,7 @@ public class Distance {
                     break;
 
                 default:
-                    assert (false);
+                    assert false;
                     break;
             }
         }
@@ -249,7 +249,7 @@ public class Distance {
         public float getMetric() {
             switch (m_count) {
                 case 0:
-                    assert (false);
+                    assert false;
                     return 0.0f;
 
                 case 1:
@@ -265,7 +265,7 @@ public class Distance {
                     return Vec2.cross(case3, case33);
 
                 default:
-                    assert (false);
+                    assert false;
                     return 0.0f;
             }
         }
@@ -492,7 +492,7 @@ public class Distance {
                     break;
                 case CHAIN:
                     final ChainShape chain = (ChainShape) shape;
-                    assert (0 <= index && index < chain.m_count);
+                    assert 0 <= index && index < chain.m_count;
 
                     m_buffer[0] = chain.m_vertices[index];
                     if (index + 1 < chain.m_count) {
@@ -514,7 +514,7 @@ public class Distance {
                     m_radius = edge.getRadius();
                     break;
                 default:
-                    assert (false);
+                    assert false;
             }
         }
 
@@ -574,7 +574,7 @@ public class Distance {
          * @return
          */
         public final Vec2 getVertex(int index) {
-            assert (0 <= index && index < m_count);
+            assert 0 <= index && index < m_count;
             return m_vertices[index];
         }
     }
@@ -596,6 +596,7 @@ public class Distance {
      * @param cache
      * @param input
      */
+    @SuppressWarnings("PMD.EmptyIfStmt")
     public final void distance(final DistanceOutput output, final SimplexCache cache,
                                final DistanceInput input) {
         GJK_CALLS++;
@@ -642,7 +643,7 @@ public class Distance {
                     simplex.solve3();
                     break;
                 default:
-                    assert (false);
+                    assert false;
             }
 
             // If we have 3 points, then the origin is in the corresponding triangle.

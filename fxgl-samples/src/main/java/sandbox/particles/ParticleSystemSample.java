@@ -35,6 +35,10 @@ public class ParticleSystemSample extends GameApplication {
     private Entity particleEntity;
     private ParticleEmitter emitter;
 
+    public Entity getParticleEntity() {
+        return particleEntity;
+    }
+
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(700 + 300);

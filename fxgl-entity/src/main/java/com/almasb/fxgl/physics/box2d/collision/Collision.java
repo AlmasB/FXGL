@@ -66,7 +66,7 @@ public final class Collision {
      * Clipping for contact manifolds.
      * Sutherland-Hodgman clipping.
      */
-    public static final int clipSegmentToLine(ClipVertex[] vOut, ClipVertex[] vIn, Vec2 normal, float offset, int vertexIndexA) {
+    public static int clipSegmentToLine(ClipVertex[] vOut, ClipVertex[] vIn, Vec2 normal, float offset, int vertexIndexA) {
 
         // Start with no output points
         int numOut = 0;
@@ -116,6 +116,7 @@ public final class Collision {
     /**
      * Compute the collision manifold between two circles.
      */
+    @SuppressWarnings("PMD.UselessParentheses")
     public void collideCircles(Manifold manifold, CircleShape circle1, Transform xfA, CircleShape circle2, Transform xfB) {
         manifold.pointCount = 0;
         // before inline:
@@ -159,6 +160,7 @@ public final class Collision {
      * @param circle
      * @param xfB
      */
+    @SuppressWarnings("PMD.UselessParentheses")
     public void collidePolygonAndCircle(Manifold manifold,
                                         final PolygonShape polygon, final Transform xfA,
                                         final CircleShape circle, final Transform xfB) {
@@ -343,6 +345,7 @@ public final class Collision {
     // djm pooling, and from above
     private final Vec2 temp = new Vec2();
 
+    @SuppressWarnings("PMD.UselessParentheses")
     public void findIncidentEdge(final ClipVertex[] c,
                                  final PolygonShape poly1, final Transform xf1, int edge1,
                                  final PolygonShape poly2, final Transform xf2) {
@@ -354,7 +357,7 @@ public final class Collision {
         final Vec2[] vertices2 = poly2.m_vertices;
         final Vec2[] normals2 = poly2.m_normals;
 
-        assert (0 <= edge1 && edge1 < count1);
+        assert 0 <= edge1 && edge1 < count1;
 
         final ClipVertex c0 = c[0];
         final ClipVertex c1 = c[1];
@@ -427,6 +430,7 @@ public final class Collision {
     /**
      * Compute the collision manifold between two polygons.
      */
+    @SuppressWarnings("PMD.UselessParentheses")
     public void collidePolygons(Manifold manifold,
                                 final PolygonShape polyA, final Transform xfA,
                                 final PolygonShape polyB, final Transform xfB) {
@@ -721,7 +725,7 @@ public final class Collision {
 
         // Region AB
         float den = Vec2.dot(e, e);
-        assert (den > 0.0f);
+        assert den > 0.0f;
 
         // Vec2 P = (1.0f / den) * (u * A + v * B);
         P.set(A).mulLocal(u).addLocal(temp.set(B).mulLocal(v));
@@ -936,7 +940,7 @@ public final class Collision {
                         m_upperLimit.y = -m_normal1.y;
                     }
                 } else if (convex1) {
-                    m_front = offset0 >= 0.0f || (offset1 >= 0.0f && offset2 >= 0.0f);
+                    m_front = offset0 >= 0.0f || offset1 >= 0.0f && offset2 >= 0.0f;
                     if (m_front) {
                         m_normal.x = m_normal1.x;
                         m_normal.y = m_normal1.y;
@@ -953,7 +957,7 @@ public final class Collision {
                         m_upperLimit.y = -m_normal1.y;
                     }
                 } else if (convex2) {
-                    m_front = offset2 >= 0.0f || (offset0 >= 0.0f && offset1 >= 0.0f);
+                    m_front = offset2 >= 0.0f || offset0 >= 0.0f && offset1 >= 0.0f;
                     if (m_front) {
                         m_normal.x = m_normal1.x;
                         m_normal.y = m_normal1.y;
