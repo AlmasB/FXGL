@@ -148,7 +148,7 @@ class ViewComponent : Component() {
             if (it is View) {
                 updateableViews -= it
 
-                // TODO: it.dispose()
+                it.dispose()
             }
         }
 
@@ -156,7 +156,7 @@ class ViewComponent : Component() {
             if (it is View) {
                 updateableViews -= it
 
-                // TODO: it.dispose()
+                it.dispose()
             }
         }
 
