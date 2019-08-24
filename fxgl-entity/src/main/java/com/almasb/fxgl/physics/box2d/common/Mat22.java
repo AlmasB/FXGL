@@ -224,7 +224,7 @@ public class Mat22 implements Serializable {
     }
 
     public final void mulToOutUnsafe(final Vec2 v, final Vec2 out) {
-        assert (v != out);
+        assert v != out;
         out.x = ex.x * v.x + ey.x * v.y;
         out.y = ex.y * v.x + ey.y * v.y;
     }
@@ -266,8 +266,8 @@ public class Mat22 implements Serializable {
     }
 
     public final void mulToOutUnsafe(final Mat22 R, final Mat22 out) {
-        assert (out != R);
-        assert (out != this);
+        assert out != R;
+        assert out != this;
         out.ex.x = this.ex.x * R.ex.x + this.ey.x * R.ex.y;
         out.ex.y = this.ex.y * R.ex.x + this.ey.y * R.ex.y;
         out.ey.x = this.ex.x * R.ey.x + this.ey.x * R.ey.y;
@@ -318,8 +318,8 @@ public class Mat22 implements Serializable {
     }
 
     public final void mulTransToOutUnsafe(final Mat22 B, final Mat22 out) {
-        assert (B != out);
-        assert (this != out);
+        assert B != out;
+        assert this != out;
         out.ex.x = this.ex.x * B.ex.x + this.ex.y * B.ex.y;
         out.ey.x = this.ex.x * B.ey.x + this.ex.y * B.ey.y;
         out.ex.y = this.ey.x * B.ex.x + this.ey.y * B.ex.y;
@@ -334,7 +334,7 @@ public class Mat22 implements Serializable {
      */
     public final Vec2 mulTrans(final Vec2 v) {
         // return new Vec2(Vec2.dot(v, ex), Vec2.dot(v, col2));
-        return new Vec2((v.x * ex.x + v.y * ex.y), (v.x * ey.x + v.y * ey.y));
+        return new Vec2(v.x * ex.x + v.y * ex.y, v.x * ey.x + v.y * ey.y);
     }
 
     /* djm added */
@@ -416,7 +416,7 @@ public class Mat22 implements Serializable {
     }
 
     public final static void mulToOutUnsafe(final Mat22 R, final Vec2 v, final Vec2 out) {
-        assert (v != out);
+        assert v != out;
         out.x = R.ex.x * v.x + R.ey.x * v.y;
         out.y = R.ex.y * v.x + R.ey.y * v.y;
     }
@@ -443,8 +443,8 @@ public class Mat22 implements Serializable {
     }
 
     public final static void mulToOutUnsafe(final Mat22 A, final Mat22 B, final Mat22 out) {
-        assert (out != A);
-        assert (out != B);
+        assert out != A;
+        assert out != B;
         out.ex.x = A.ex.x * B.ex.x + A.ey.x * B.ex.y;
         out.ex.y = A.ex.y * B.ex.x + A.ey.y * B.ex.y;
         out.ey.x = A.ex.x * B.ey.x + A.ey.x * B.ey.y;
@@ -452,7 +452,7 @@ public class Mat22 implements Serializable {
     }
 
     public final static Vec2 mulTrans(final Mat22 R, final Vec2 v) {
-        return new Vec2((v.x * R.ex.x + v.y * R.ex.y), (v.x * R.ey.x + v.y * R.ey.y));
+        return new Vec2(v.x * R.ex.x + v.y * R.ex.y, v.x * R.ey.x + v.y * R.ey.y);
     }
 
     public final static void mulTransToOut(final Mat22 R, final Vec2 v, final Vec2 out) {
@@ -462,7 +462,7 @@ public class Mat22 implements Serializable {
     }
 
     public final static void mulTransToOutUnsafe(final Mat22 R, final Vec2 v, final Vec2 out) {
-        assert (out != v);
+        assert out != v;
         out.y = v.x * R.ey.x + v.y * R.ey.y;
         out.x = v.x * R.ex.x + v.y * R.ex.y;
     }
@@ -489,8 +489,8 @@ public class Mat22 implements Serializable {
     }
 
     public final static void mulTransToOutUnsafe(final Mat22 A, final Mat22 B, final Mat22 out) {
-        assert (A != out);
-        assert (B != out);
+        assert A != out;
+        assert B != out;
         out.ex.x = A.ex.x * B.ex.x + A.ex.y * B.ex.y;
         out.ex.y = A.ey.x * B.ex.x + A.ey.y * B.ex.y;
         out.ey.x = A.ex.x * B.ey.x + A.ex.y * B.ey.y;

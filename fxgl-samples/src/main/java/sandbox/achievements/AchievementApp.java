@@ -8,16 +8,12 @@ package sandbox.achievements;
 
 import com.almasb.fxgl.achievement.Achievement;
 import com.almasb.fxgl.achievement.AchievementEvent;
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.MenuItem;
-import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.saving.DataFile;
 import javafx.scene.input.KeyCode;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;

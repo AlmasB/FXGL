@@ -25,6 +25,7 @@ import java.util.*;
  *
  * @author Nathan Sweet
  */
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
     private static final int PRIME1 = 0xbe1f14b1;
     private static final int PRIME2 = 0xb4b82e39;
@@ -600,21 +601,14 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
         K[] keyTable = this.keyTable;
         V[] valueTable = this.valueTable;
         int i = keyTable.length;
-        while (i-- > 0) {
-            K key = keyTable[i];
-            if (key == null) continue;
-            buffer.append(key);
-            buffer.append('=');
-            buffer.append(valueTable[i]);
-            break;
-        }
-        while (i-- > 0) {
-            K key = keyTable[i];
-            if (key == null) continue;
-            buffer.append(separator);
-            buffer.append(key);
-            buffer.append('=');
-            buffer.append(valueTable[i]);
+        for(int j = i; j > 0; j--) {
+            K key = keyTable[j];
+            if (key != null) {
+                buffer.append(separator);
+                buffer.append(key);
+                buffer.append('=');
+                buffer.append(valueTable[i]);
+            }
         }
         if (braces) buffer.append('}');
         return buffer.toString();

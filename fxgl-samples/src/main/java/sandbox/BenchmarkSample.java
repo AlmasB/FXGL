@@ -8,14 +8,10 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.app.MenuItem;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
-import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;

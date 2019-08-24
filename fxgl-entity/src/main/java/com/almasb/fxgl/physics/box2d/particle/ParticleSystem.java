@@ -267,6 +267,7 @@ public class ParticleSystem {
     private CreateParticleGroupCallback createParticleGroupCallback = new CreateParticleGroupCallback();
     private final ParticleDef tempParticleDef = new ParticleDef();
 
+    @SuppressWarnings("PMD.DontUseFloatTypeForLoopIndices")
     public ParticleGroup createParticleGroup(ParticleGroupDef groupDef) {
         float stride = getParticleStride();
         final Transform identity = tempTransform;
@@ -384,11 +385,11 @@ public class ParticleSystem {
     }
 
     public void joinParticleGroups(ParticleGroup groupA, ParticleGroup groupB) {
-        assert (groupA != groupB);
+        assert groupA != groupB;
         RotateBuffer(groupB.m_firstIndex, groupB.m_lastIndex, m_count);
-        assert (groupB.m_lastIndex == m_count);
+        assert groupB.m_lastIndex == m_count;
         RotateBuffer(groupA.m_firstIndex, groupA.m_lastIndex, groupB.m_firstIndex);
-        assert (groupA.m_lastIndex == groupB.m_firstIndex);
+        assert groupA.m_lastIndex == groupB.m_firstIndex;
 
         int particleFlags = 0;
         for (int i = groupA.m_firstIndex; i < groupB.m_lastIndex; i++) {
@@ -456,8 +457,8 @@ public class ParticleSystem {
     }
 
     private void destroyParticleGroup(ParticleGroup group) {
-        assert (m_groupCount > 0);
-        assert (group != null);
+        assert m_groupCount > 0;
+        assert group != null;
 
         if (m_world.getParticleDestructionListener() != null) {
             m_world.getParticleDestructionListener().onDestroy(group);
@@ -539,7 +540,7 @@ public class ParticleSystem {
     }
 
     private void addContact(int a, int b) {
-        assert (a != b);
+        assert a != b;
         Vec2 pa = m_positionBuffer.data[a];
         Vec2 pb = m_positionBuffer.data[b];
         float dx = pb.x - pa.x;
@@ -824,6 +825,7 @@ public class ParticleSystem {
         }
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private void solveDamping(TimeStep step) {
         // reduces normal velocity of each contact
         float damping = m_dampingStrength;
@@ -877,6 +879,7 @@ public class ParticleSystem {
         }
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private void solveWall(TimeStep step) {
         for (int i = 0; i < m_count; i++) {
             if ((m_flagsBuffer.data[i] & ParticleTypeInternal.b2_wallParticle) != 0) {
@@ -1038,6 +1041,7 @@ public class ParticleSystem {
         }
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private void solveViscous(final TimeStep step) {
         float viscousStrength = m_viscousStrength;
         for (int k = 0; k < m_bodyContactCount; k++) {
@@ -1156,6 +1160,7 @@ public class ParticleSystem {
         }
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private void solveColorMixing(final TimeStep step) {
         // mixes color between contacting particles
         m_colorBuffer.data = requestParticleBuffer(ParticleColor.class, m_colorBuffer.data);
@@ -1183,6 +1188,7 @@ public class ParticleSystem {
         }
     }
 
+    @SuppressWarnings("PMD.EmptyIfStmt")
     private void solveZombie() {
         // removes particles with zombie flag
         int newCount = 0;
@@ -1340,10 +1346,8 @@ public class ParticleSystem {
             if (firstIndex < lastIndex) {
                 group.m_firstIndex = firstIndex;
                 group.m_lastIndex = lastIndex;
-                if (modified) {
-                    if ((group.m_groupFlags & ParticleGroupType.b2_rigidParticleGroup) != 0) {
-                        group.m_toBeSplit = true;
-                    }
+                if (modified && (group.m_groupFlags & ParticleGroupType.b2_rigidParticleGroup) != 0) {
+                    group.m_toBeSplit = true;
                 }
             } else {
                 group.m_firstIndex = 0;
@@ -1540,12 +1544,13 @@ public class ParticleSystem {
     }
 
     public void setParticleMaxCount(int count) {
-        assert (m_count <= count);
+        assert m_count <= count;
         m_maxCount = count;
     }
 
+    @SuppressWarnings("PMD.EmptyIfStmt")
     void setParticleBuffer(ParticleBufferInt buffer, int[] newData, int newCapacity) {
-        assert ((newData != null && newCapacity != 0) || (newData == null && newCapacity == 0));
+        assert newData != null && newCapacity != 0 || newData == null && newCapacity == 0;
         if (buffer.userSuppliedCapacity != 0) {
             // m_world.m_blockAllocator.Free(buffer.data, sizeof(T) * m_internalAllocatedCapacity);
         }
@@ -1553,8 +1558,9 @@ public class ParticleSystem {
         buffer.userSuppliedCapacity = newCapacity;
     }
 
+    @SuppressWarnings("PMD.EmptyIfStmt")
     <T> void setParticleBuffer(ParticleBuffer<T> buffer, T[] newData, int newCapacity) {
-        assert ((newData != null && newCapacity != 0) || (newData == null && newCapacity == 0));
+        assert newData != null && newCapacity != 0 || newData == null && newCapacity == 0;
         if (buffer.userSuppliedCapacity != 0) {
             // m_world.m_blockAllocator.Free(buffer.data, sizeof(T) * m_internalAllocatedCapacity);
         }
@@ -1648,10 +1654,8 @@ public class ParticleSystem {
         for (int proxy = firstProxy; proxy < lastProxy; ++proxy) {
             int i = m_proxyBuffer[proxy].index;
             final Vec2 p = m_positionBuffer.data[i];
-            if (lowerBoundX < p.x && p.x < upperBoundX && lowerBoundY < p.y && p.y < upperBoundY) {
-                if (!callback.reportParticle(i)) {
-                    break;
-                }
+            if (lowerBoundX < p.x && p.x < upperBoundX && lowerBoundY < p.y && p.y < upperBoundY && !callback.reportParticle(i)) {
+                break;
             }
         }
     }
@@ -1739,14 +1743,14 @@ public class ParticleSystem {
     // reallocate a buffer
     static <T> T[] reallocateBuffer(ParticleBuffer<T> buffer, int oldCapacity, int newCapacity,
                                     boolean deferred) {
-        assert (newCapacity > oldCapacity);
+        assert newCapacity > oldCapacity;
         return BufferUtils.reallocateBuffer(buffer.dataClass, buffer.data, buffer.userSuppliedCapacity,
                 oldCapacity, newCapacity, deferred);
     }
 
     static int[] reallocateBuffer(ParticleBufferInt buffer, int oldCapacity, int newCapacity,
                                   boolean deferred) {
-        assert (newCapacity > oldCapacity);
+        assert newCapacity > oldCapacity;
         return BufferUtils.reallocateBuffer(buffer.data, buffer.userSuppliedCapacity, oldCapacity,
                 newCapacity, deferred);
     }
@@ -1797,7 +1801,7 @@ public class ParticleSystem {
 
         @Override
         public int compareTo(Proxy o) {
-            return (tag - o.tag) < 0 ? -1 : (o.tag == tag ? 0 : 1);
+            return tag - o.tag < 0 ? -1 : o.tag == tag ? 0 : 1;
         }
 
         @Override
@@ -1893,8 +1897,8 @@ public class ParticleSystem {
         public void callback(int a, int b, int c) {
             // Create a triad if it will contain particles from both groups.
             int countA =
-                    ((a < groupB.m_firstIndex) ? 1 : 0) + ((b < groupB.m_firstIndex) ? 1 : 0)
-                            + ((c < groupB.m_firstIndex) ? 1 : 0);
+                    (a < groupB.m_firstIndex ? 1 : 0) + (b < groupB.m_firstIndex ? 1 : 0)
+                            + (c < groupB.m_firstIndex ? 1 : 0);
             if (countA > 0 && countA < 3) {
                 int af = system.m_flagsBuffer.data[a];
                 int bf = system.m_flagsBuffer.data[b];
@@ -1971,7 +1975,7 @@ public class ParticleSystem {
 
         @Override
         public boolean reportParticle(int index) {
-            assert (index >= 0 && index < system.m_count);
+            assert index >= 0 && index < system.m_count;
             if (shape.testPoint(xf, system.m_positionBuffer.data[index])) {
                 system.destroyParticle(index, callDestructionListener);
                 destroyed++;

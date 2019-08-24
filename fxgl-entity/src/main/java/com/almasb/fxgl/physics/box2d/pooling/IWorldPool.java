@@ -6,7 +6,6 @@
 package com.almasb.fxgl.physics.box2d.pooling;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.Collision;
 import com.almasb.fxgl.physics.box2d.collision.Distance;
 import com.almasb.fxgl.physics.box2d.collision.TimeOfImpact;

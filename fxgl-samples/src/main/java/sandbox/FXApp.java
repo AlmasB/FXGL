@@ -3,11 +3,9 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.RandomMoveComponent;
 import com.almasb.fxgl.entity.*;
 import javafx.application.Application;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -68,7 +66,7 @@ public class FXApp extends Application {
         });
 
         stage.setScene(new Scene(root));
-        stage.setOnCloseRequest(e -> FXGL.getGameController().exit());
+        stage.setOnCloseRequest(e -> getGameController().exit());
         stage.show();
     }
 

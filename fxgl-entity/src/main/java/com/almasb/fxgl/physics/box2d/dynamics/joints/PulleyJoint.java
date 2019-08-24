@@ -62,7 +62,7 @@ public class PulleyJoint extends Joint {
         m_localAnchorA.set(def.localAnchorA);
         m_localAnchorB.set(def.localAnchorB);
 
-        assert (def.ratio != 0.0f);
+        assert def.ratio != 0.0f;
         m_ratio = def.ratio;
 
         m_lengthA = def.lengthA;

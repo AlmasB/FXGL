@@ -42,9 +42,9 @@ public class MouseJoint extends Joint {
 
     protected MouseJoint(IWorldPool argWorld, MouseJointDef def) {
         super(argWorld, def);
-        assert (def.maxForce >= 0);
-        assert (def.frequencyHz >= 0);
-        assert (def.dampingRatio >= 0);
+        assert def.maxForce >= 0;
+        assert def.frequencyHz >= 0;
+        assert def.dampingRatio >= 0;
 
         m_targetA.set(def.target);
         Transform.mulTransToOutUnsafe(m_bodyB.getTransform(), m_targetA, m_localAnchorB);
@@ -149,7 +149,7 @@ public class MouseJoint extends Joint {
         // gamma has units of inverse mass.
         // beta has units of inverse time.
         float h = data.step.dt;
-        assert (d + h * k > JBoxSettings.EPSILON);
+        assert d + h * k > JBoxSettings.EPSILON;
         m_gamma = h * (d + h * k);
         if (m_gamma != 0.0f) {
             m_gamma = 1.0f / m_gamma;
