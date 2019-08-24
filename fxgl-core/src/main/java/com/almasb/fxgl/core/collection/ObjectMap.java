@@ -598,16 +598,16 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
         if (size == 0) return braces ? "{}" : "";
         StringBuilder buffer = new StringBuilder(32);
         if (braces) buffer.append('{');
-        K[] keyTable = this.keyTable;
-        V[] valueTable = this.valueTable;
         int i = keyTable.length;
-        for(int j = i; j > 0; j--) {
+        for (int j = --i; j > -1; j--) {
             K key = keyTable[j];
             if (key != null) {
-                buffer.append(separator);
                 buffer.append(key);
                 buffer.append('=');
-                buffer.append(valueTable[i]);
+                buffer.append(valueTable[j]);
+            }
+            if (j > 0) {
+                buffer.append(separator);
             }
         }
         if (braces) buffer.append('}');
@@ -713,6 +713,7 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
             }
         }
 
+        @Override
         public void remove() {
             if (currentIndex < 0) throw new IllegalStateException("next must be called before remove.");
             if (currentIndex >= map.capacity) {
