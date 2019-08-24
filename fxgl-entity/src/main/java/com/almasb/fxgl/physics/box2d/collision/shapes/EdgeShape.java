@@ -80,13 +80,14 @@ public class EdgeShape extends Shape {
     }
 
     @Override
+    @SuppressWarnings("PMD.UselessParentheses")
     public float computeDistanceToOut(Transform xf, Vec2 p, int childIndex, Vec2 normalOut) {
         float xfqc = xf.q.c;
         float xfqs = xf.q.s;
         float xfpx = xf.p.x;
         float xfpy = xf.p.y;
         float v1x = (xfqc * m_vertex1.x - xfqs * m_vertex1.y) + xfpx;
-        float v1y = xfqs * m_vertex1.x + xfqc * m_vertex1.y + xfpy;
+        float v1y = (xfqs * m_vertex1.x + xfqc * m_vertex1.y) + xfpy;
         float v2x = (xfqc * m_vertex2.x - xfqs * m_vertex2.y) + xfpx;
         float v2y = xfqs * m_vertex2.x + xfqc * m_vertex2.y + xfpy;
 

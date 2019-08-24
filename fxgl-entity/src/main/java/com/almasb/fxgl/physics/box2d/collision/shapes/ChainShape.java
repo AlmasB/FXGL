@@ -89,6 +89,7 @@ public final class ChainShape extends Shape {
     }
 
     @Override
+    @SuppressWarnings("PMD.UselessParentheses")
     public void computeAABB(AABB aabb, Transform xf, int childIndex) {
         assert childIndex < m_count;
         final Vec2 lower = aabb.lowerBound;
@@ -105,7 +106,7 @@ public final class ChainShape extends Shape {
         final Rotation xfq = xf.q;
         final Vec2 xfp = xf.p;
         float v1x = (xfq.c * vi1.x - xfq.s * vi1.y) + xfp.x;
-        float v1y = xfq.s * vi1.x + xfq.c * vi1.y + xfp.y;
+        float v1y = (xfq.s * vi1.x + xfq.c * vi1.y) + xfp.y;
         float v2x = (xfq.c * vi2.x - xfq.s * vi2.y) + xfp.x;
         float v2y = xfq.s * vi2.x + xfq.c * vi2.y + xfp.y;
 

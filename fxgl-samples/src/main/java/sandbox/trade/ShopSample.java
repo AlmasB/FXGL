@@ -27,8 +27,11 @@ public class ShopSample extends GameApplication {
         PLAYER
     }
 
-    @SuppressWarnings("PMD.UnusedPrivateField")
     private Entity player;
+
+    public Entity getPlayer() {
+        return player;
+    }
 
     @Override
     protected void initSettings(GameSettings settings) {

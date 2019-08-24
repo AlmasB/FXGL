@@ -116,6 +116,7 @@ public final class Collision {
     /**
      * Compute the collision manifold between two circles.
      */
+    @SuppressWarnings("PMD.UselessParentheses")
     public void collideCircles(Manifold manifold, CircleShape circle1, Transform xfA, CircleShape circle2, Transform xfB) {
         manifold.pointCount = 0;
         // before inline:
@@ -128,7 +129,7 @@ public final class Collision {
         Vec2 circle1p = circle1.center;
         Vec2 circle2p = circle2.center;
         float pAx = (xfA.q.c * circle1p.x - xfA.q.s * circle1p.y) + xfA.p.x;
-        float pAy = xfA.q.s * circle1p.x + xfA.q.c * circle1p.y + xfA.p.y;
+        float pAy = (xfA.q.s * circle1p.x + xfA.q.c * circle1p.y) + xfA.p.y;
         float pBx = (xfB.q.c * circle2p.x - xfB.q.s * circle2p.y) + xfB.p.x;
         float pBy = xfB.q.s * circle2p.x + xfB.q.c * circle2p.y + xfB.p.y;
         float dx = pBx - pAx;

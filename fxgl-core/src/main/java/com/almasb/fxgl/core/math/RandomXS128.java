@@ -61,11 +61,12 @@ public class RandomXS128 extends Random {
      * Subclasses should override this, as this is used by all other methods. */
     @Override
     public long nextLong() {
-        long s1 = this.seed0;
-        final long s0 = this.seed1;
-        this.seed0 = s0;
+        long s1 = seed0;
+        final long s0 = seed1;
+        seed0 = s0;
         s1 ^= s1 << 23;
-        return (this.seed1 = s1 ^ s0 ^ (s1 >>> 17) ^ (s0 >>> 26)) + s0;
+        seed1 = s1 ^ s0 ^ (s1 >>> 17) ^ (s0 >>> 26);
+        return seed1 + s0;
     }
 
     /** This protected method is final because, contrary to the superclass, it's not used anymore by the other methods. */
@@ -184,8 +185,6 @@ public class RandomXS128 extends Random {
         x ^= x >>> 33;
         x *= 0xc4ceb9fe1a85ec53L;
         x ^= x >>> 33;
-
         return x;
     }
-
 }

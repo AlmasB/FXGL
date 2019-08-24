@@ -108,6 +108,7 @@ public final class PolygonShape extends Shape {
     }
 
     @Override
+    @SuppressWarnings("PMD.UselessParentheses")
     public void computeAABB(final AABB aabb, final Transform xf, int childIndex) {
         final Vec2 lower = aabb.lowerBound;
         final Vec2 upper = aabb.upperBound;
@@ -117,7 +118,7 @@ public final class PolygonShape extends Shape {
         final float xfpx = xf.p.x;
         final float xfpy = xf.p.y;
         lower.x = (xfqc * v1.x - xfqs * v1.y) + xfpx;
-        lower.y = xfqs * v1.x + xfqc * v1.y + xfpy;
+        lower.y = (xfqs * v1.x + xfqc * v1.y) + xfpy;
         upper.x = lower.x;
         upper.y = lower.y;
 

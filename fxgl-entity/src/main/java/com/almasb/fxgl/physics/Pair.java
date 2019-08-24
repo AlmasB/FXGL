@@ -37,9 +37,11 @@ class Pair<T> {
     }
 
     @Override
+    @SuppressWarnings("PMD.UselessParentheses")
     public boolean equals(Object o) {
         Pair<?> pair = (Pair<?>) o;
-        return pair.a == a && pair.b == b || pair.a == b && pair.b == a;
+        return (pair.a == a && pair.b == b)
+                || (pair.a == b && pair.b == a);
     }
 
     @Override
@@ -62,7 +64,9 @@ class Pair<T> {
      * @param b pair element
      * @return true iff this pair equals given pair elements
      */
+    @SuppressWarnings("PMD.UselessParentheses")
     public boolean equal(T a, T b) {
-        return this.a == a && this.b == b || this.a == b && this.b == a;
+        return (this.a == a && this.b == b)
+                || (this.a == b && this.b == a);
     }
 }

@@ -921,6 +921,7 @@ public final class ContactSolver {
         final Vec2 point = new Vec2();
         float separation;
 
+        @SuppressWarnings("PMD.UselessParentheses")
         public void initialize(ContactPositionConstraint pc, Transform xfA, Transform xfB, int index) {
             assert pc.pointCount > 0;
 
@@ -940,7 +941,7 @@ public final class ContactSolver {
                     final Vec2 plocalPoint = pc.localPoint;
                     final Vec2 pLocalPoints0 = pc.localPoints[0];
                     final float pointAx = (xfAq.c * plocalPoint.x - xfAq.s * plocalPoint.y) + xfA.p.x;
-                    final float pointAy = xfAq.s * plocalPoint.x + xfAq.c * plocalPoint.y + xfA.p.y;
+                    final float pointAy = (xfAq.s * plocalPoint.x + xfAq.c * plocalPoint.y) + xfA.p.y;
                     final float pointBx = (xfBq.c * pLocalPoints0.x - xfBq.s * pLocalPoints0.y) + xfB.p.x;
                     final float pointBy = xfBq.s * pLocalPoints0.x + xfBq.c * pLocalPoints0.y + xfB.p.y;
                     normal.x = pointBx - pointAx;
