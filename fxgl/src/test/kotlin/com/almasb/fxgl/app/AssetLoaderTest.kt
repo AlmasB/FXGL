@@ -6,21 +6,23 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.test.RunWithFX
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.extension.ExtendWith
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@ExtendWith(RunWithFX::class)
 class AssetLoaderTest {
 
     private val TEXT_ASSETS = arrayOf("test1.txt")
@@ -44,13 +46,6 @@ class AssetLoaderTest {
             "rci eget eros faucibus tincidunt")
 
     private lateinit var assetLoader: AssetLoader
-
-    companion object {
-        @BeforeAll
-        @JvmStatic fun before() {
-            FXGLMock.mock()
-        }
-    }
 
     @BeforeEach
     fun setUp() {
