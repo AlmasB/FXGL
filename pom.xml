@@ -90,6 +90,7 @@
         <sonatype.nexus.staging.version>1.6.7</sonatype.nexus.staging.version>
         <maven.compiler.version>3.8.0</maven.compiler.version>
         <maven.pmd.version>3.12.0</maven.pmd.version>
+        <maven.license.version>3.0</maven.license.version>
         <maven.source.version>3.0.1</maven.source.version>
         <maven.javadoc.version>3.0.0-M1</maven.javadoc.version>
         <maven.jar.version>3.1.1</maven.jar.version>
@@ -262,7 +263,33 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Check license headers -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${maven.license.version}</version>
+                <configuration>
+                    <header>LICENSE_HEADER</header>
+                    <strictCheck>false</strictCheck>
+                    <includes>
+                        <include>**/*.java</include>
+                        <include>**/*.kt</include>
+                    </includes>
+                    <excludes>
+                        <exclude>src/test/**</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
