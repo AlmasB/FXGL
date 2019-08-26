@@ -507,7 +507,7 @@ class FXGL private constructor() { companion object {
      * @param text UI object
      */
     @JvmStatic fun centerTextBind(text: Text, x: Double, y: Double) {
-        text.layoutBoundsProperty().addListener { o, old, bounds ->
+        text.layoutBoundsProperty().addListener { _, _, bounds ->
             text.translateX = x - bounds.width / 2
             text.translateY = y - bounds.height / 2
         }
