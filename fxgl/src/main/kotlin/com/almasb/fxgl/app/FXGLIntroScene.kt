@@ -118,7 +118,7 @@ class FXGLIntroScene : IntroScene() {
         isAllowParticleRotation = true
         blendMode = BlendMode.SRC_OVER
 
-        setVelocityFunction { i -> randomPoint2D().multiply(1.5) }
+        setVelocityFunction { randomPoint2D().multiply(1.5) }
 
         setSourceImage(FXGL.texture("particles/explosion.png", 32.0, 32.0).brighter().brighter().saturate().image)
         setSize(1.5, 8.5)

@@ -88,7 +88,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         // we don't data-bind the name because menu subclasses
         // might use some fancy UI without Text / Label
-        controller.profileNameProperty().addListener { o, oldName, newName ->
+        controller.profileNameProperty().addListener { _, oldName, newName ->
             if (!oldName.isEmpty()) {
                 // remove last node which *should* be profile view
                 contentRoot.children.removeAt(contentRoot.children.size - 1)
@@ -314,7 +314,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         val triggerView = TriggerView(trigger)
         triggerView.triggerProperty().bind(getInput().triggerProperty(action))
 
-        triggerView.setOnMouseClicked { event ->
+        triggerView.setOnMouseClicked {
             pressAnyKeyState.actionContext = action
             controller.pushSubScene(pressAnyKeyState)
         }
@@ -485,7 +485,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
                 }
             }
 
-            sceneProperty().addListener { o, oldScene, newScene ->
+            sceneProperty().addListener { _, _, newScene ->
                 if (newScene != null) {
                     onOpen()
                 } else {
@@ -620,11 +620,11 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     /**
      * @param fileName name of the save file
      */
-    protected fun fireDelete(fileName: SaveFile) {
-        log.debug("fireDelete()")
-
-        //listener.onDelete(fileName)
-    }
+//    protected fun fireDelete(fileName: SaveFile) {
+//        log.debug("fireDelete()")
+//
+//        //listener.onDelete(fileName)
+//    }
 
     /**
      * Can only be fired from game menu.
