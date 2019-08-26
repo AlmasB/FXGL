@@ -94,19 +94,23 @@ class ViewComponentTest {
         assertThat(view.children.size, `is`(0))
 
         val child = TestView()
+        val child2 = TestView()
 
         view.addChild(child)
+        view.addChild(child2, false)
 
         view.addChild(Rectangle())
         view.addChild(Rectangle(), false)
 
-        assertThat(view.children.size, `is`(3))
+        assertThat(view.children.size, `is`(4))
         assertFalse(child.isDisposed)
+        assertFalse(child2.isDisposed)
 
         view.clearChildren()
 
         assertThat(view.children.size, `is`(0))
         assertTrue(child.isDisposed)
+        assertTrue(child2.isDisposed)
     }
 
     @Test
