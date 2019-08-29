@@ -90,6 +90,11 @@ public abstract class GameApplication {
 
         app.initLogger(settings);
 
+        // this _should_ be a workaround for the JavaFX bug on linux discussed at https://github.com/AlmasB/FXGL/issues/579
+        if (settings.isLinux()) {
+            System.setProperty("quantum.multithreaded", "false");
+        }
+
         FXGLApplication.launchFX(app, settings, args);
     }
 
