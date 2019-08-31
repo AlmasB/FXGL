@@ -25,16 +25,23 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AnimationBuilder {
+open class AnimationBuilder() {
 
-    private var duration: Duration = Duration.seconds(1.0)
-    private var delay: Duration = Duration.ZERO
-    private var interpolator: Interpolator = Interpolator.LINEAR
-    private var times: Int = 1
-    private var onFinished: Runnable = EmptyRunnable
-    private var isAutoReverse: Boolean = false
+    protected var duration: Duration = Duration.seconds(1.0)
+    protected var delay: Duration = Duration.ZERO
+    protected var interpolator: Interpolator = Interpolator.LINEAR
+    protected var times: Int = 1
+    protected var onFinished: Runnable = EmptyRunnable
+    protected var isAutoReverse: Boolean = false
 
-    private val objects = arrayListOf<Animatable>()
+    constructor(copy: AnimationBuilder) : this() {
+        duration = copy.duration
+        delay = copy.delay
+        interpolator = copy.interpolator
+        times = copy.times
+        onFinished = copy.onFinished
+        isAutoReverse = copy.isAutoReverse
+    }
 
     fun duration(duration: Duration): AnimationBuilder {
         this.duration = duration
@@ -70,19 +77,21 @@ class AnimationBuilder {
         return this
     }
 
-    private fun makeBuilder(): com.almasb.fxgl.animation.AnimationBuilder {
+    protected fun makeBuilder(): com.almasb.fxgl.animation.AnimationBuilder {
         return com.almasb.fxgl.animation.AnimationBuilder(duration, delay, interpolator, times, onFinished, isAutoReverse)
     }
 
-    fun translate(vararg entities: Entity) = TranslationAnimationBuilder(this).also {
+    /* BEGIN BUILT-IN ANIMATIONS */
+
+    fun translate(vararg entities: Entity) = TranslationAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }
 
-    fun translate(vararg entities: Node) = TranslationAnimationBuilder(this).also {
+    fun translate(vararg entities: Node) = TranslationAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }
 
-    fun translate(entities: Collection<Any>) = TranslationAnimationBuilder(this).also {
+    fun translate(entities: Collection<Any>) = TranslationAnimationBuilder(this).apply {
         objects += entities.map {
             when (it) {
                 is Node -> it.toAnimatable()
@@ -92,15 +101,15 @@ class AnimationBuilder {
         }
     }
 
-    fun fade(vararg entities: Entity) = FadeAnimationBuilder(this).also {
+    fun fade(vararg entities: Entity) = FadeAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }
 
-    fun fade(vararg entities: Node) = FadeAnimationBuilder(this).also {
+    fun fade(vararg entities: Node) = FadeAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }
 
-    fun fade(entities: Collection<Any>) = FadeAnimationBuilder(this).also {
+    fun fade(entities: Collection<Any>) = FadeAnimationBuilder(this).apply {
         objects += entities.map {
             when (it) {
                 is Node -> it.toAnimatable()
@@ -110,15 +119,15 @@ class AnimationBuilder {
         }
     }
 
-    fun scale(vararg entities: Entity) = ScaleAnimationBuilder(this).also {
+    fun scale(vararg entities: Entity) = ScaleAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }
 
-    fun scale(vararg entities: Node) = ScaleAnimationBuilder(this).also {
+    fun scale(vararg entities: Node) = ScaleAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }
 
-    fun scale(entities: Collection<Any>) = ScaleAnimationBuilder(this).also {
+    fun scale(entities: Collection<Any>) = ScaleAnimationBuilder(this).apply {
         objects += entities.map {
             when (it) {
                 is Node -> it.toAnimatable()
@@ -128,15 +137,15 @@ class AnimationBuilder {
         }
     }
 
-    fun rotate(vararg entities: Entity) = RotationAnimationBuilder(this).also {
+    fun rotate(vararg entities: Entity) = RotationAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }
 
-    fun rotate(vararg entities: Node) = RotationAnimationBuilder(this).also {
+    fun rotate(vararg entities: Node) = RotationAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }
 
-    fun rotate(entities: Collection<Any>) = RotationAnimationBuilder(this).also {
+    fun rotate(entities: Collection<Any>) = RotationAnimationBuilder(this).apply {
         objects += entities.map {
             when (it) {
                 is Node -> it.toAnimatable()
@@ -146,23 +155,34 @@ class AnimationBuilder {
         }
     }
 
-    fun fadeIn(vararg entities: Entity) = FadeAnimationBuilder(this).also {
+    fun fadeIn(vararg entities: Entity) = FadeAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }.from(0.0).to(1.0)
 
-    fun fadeIn(vararg entities: Node) = FadeAnimationBuilder(this).also {
+    fun fadeIn(vararg entities: Node) = FadeAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }.from(0.0).to(1.0)
 
-    fun fadeOut(vararg entities: Entity) = FadeAnimationBuilder(this).also {
+    fun fadeOut(vararg entities: Entity) = FadeAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }.from(1.0).to(0.0)
 
-    fun fadeOut(vararg entities: Node) = FadeAnimationBuilder(this).also {
+    fun fadeOut(vararg entities: Node) = FadeAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }.from(1.0).to(0.0)
 
-    abstract class AM(private val animationBuilder: AnimationBuilder) {
+    fun bobbleDown(node: Node) = duration(Duration.seconds(0.15))
+            .autoReverse(true)
+            .repeat(2)
+            .translate(node)
+            .from(Point2D(node.translateX, node.translateY))
+            .to(Point2D(node.translateX, node.translateY + 5.0))
+
+    /* END BUILT-IN ANIMATIONS */
+
+    abstract class AM(animationBuilder: AnimationBuilder) : AnimationBuilder(animationBuilder) {
+        val objects = arrayListOf<Animatable>()
+
         abstract fun build(): Animation<*>
 
         /**
@@ -178,7 +198,7 @@ class AnimationBuilder {
 
                 it.onFinished = Runnable {
                     scene.removeListener(l)
-                    animationBuilder.onFinished.run()
+                    onFinished.run()
                 }
 
                 it.start()
@@ -187,7 +207,7 @@ class AnimationBuilder {
         }
     }
 
-    class TranslationAnimationBuilder(private val animationBuilder: AnimationBuilder) : AM(animationBuilder) {
+    class TranslationAnimationBuilder(animationBuilder: AnimationBuilder) : AM(animationBuilder) {
 
         private var path: Shape? = null
         private var fromPoint = Point2D.ZERO
@@ -219,10 +239,10 @@ class AnimationBuilder {
         }
 
         private fun makeAnim(animValue: AnimatedValue<Point2D>): Animation<Point2D> {
-            return animationBuilder.makeBuilder().build(
+            return makeBuilder().build(
                     animValue,
                     Consumer { value ->
-                        animationBuilder.objects.forEach {
+                        objects.forEach {
                             it.xProperty().value = value.x
                             it.yProperty().value = value.y
                         }
@@ -231,7 +251,7 @@ class AnimationBuilder {
         }
     }
 
-    class FadeAnimationBuilder(private val animationBuilder: AnimationBuilder) : AM(animationBuilder) {
+    class FadeAnimationBuilder(animationBuilder: AnimationBuilder) : AM(animationBuilder) {
 
         private var from = 0.0
         private var to = 0.0
@@ -245,9 +265,9 @@ class AnimationBuilder {
         }
 
         override fun build(): Animation<*> {
-            return animationBuilder.makeBuilder().build(AnimatedValue(from, to),
+            return makeBuilder().build(AnimatedValue(from, to),
                     Consumer { value ->
-                        animationBuilder.objects.forEach {
+                        objects.forEach {
                             it.opacityProperty().value = value
                         }
                     }
@@ -255,7 +275,7 @@ class AnimationBuilder {
         }
     }
 
-    class ScaleAnimationBuilder(private val animationBuilder: AnimationBuilder) : AM(animationBuilder) {
+    class ScaleAnimationBuilder(animationBuilder: AnimationBuilder) : AM(animationBuilder) {
 
         private var startScale = Point2D(1.0, 1.0)
         private var endScale = Point2D(1.0, 1.0)
@@ -271,10 +291,10 @@ class AnimationBuilder {
         }
 
         override fun build(): Animation<*> {
-            return animationBuilder.makeBuilder().build(
+            return makeBuilder().build(
                     AnimatedPoint2D(startScale, endScale),
                     Consumer { value ->
-                        animationBuilder.objects.forEach {
+                        objects.forEach {
                             it.scaleXProperty().value = value.x
                             it.scaleYProperty().value = value.y
                         }
@@ -283,7 +303,7 @@ class AnimationBuilder {
         }
     }
 
-    class RotationAnimationBuilder(private val animationBuilder: AnimationBuilder) : AM(animationBuilder) {
+    class RotationAnimationBuilder(animationBuilder: AnimationBuilder) : AM(animationBuilder) {
 
         private var startAngle = 0.0
         private var endAngle = 0.0
@@ -299,9 +319,9 @@ class AnimationBuilder {
         }
 
         override fun build(): Animation<*> {
-            return animationBuilder.makeBuilder().build(AnimatedValue(startAngle, endAngle),
+            return makeBuilder().build(AnimatedValue(startAngle, endAngle),
                     Consumer { value ->
-                        animationBuilder.objects.forEach {
+                        objects.forEach {
                             it.rotationProperty().value = value
                         }
                     }

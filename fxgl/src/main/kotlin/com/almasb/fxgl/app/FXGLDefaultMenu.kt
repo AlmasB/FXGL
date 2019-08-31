@@ -381,6 +381,8 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         private val p = Polygon(0.0, 0.0, 220.0, 0.0, 250.0, 35.0, 0.0, 35.0)
         val btn: FXGLButton
 
+        private var isAnimating = false
+
         init {
             btn = FXGLButton()
             btn.alignment = Pos.CENTER_LEFT
@@ -404,6 +406,20 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             p.visibleProperty().bind(btn.hoverProperty())
 
             children.addAll(btn, p)
+
+            btn.focusedProperty().addListener { _, _, isFocused ->
+                if (isFocused) {
+                    val isOK = animations.none { it.isAnimating } && !isAnimating
+                    if (isOK) {
+                        isAnimating = true
+
+                        animationBuilder()
+                                .onFinished(Runnable { isAnimating = false })
+                                .bobbleDown(this)
+                                .buildAndPlay(this@FXGLDefaultMenu)
+                    }
+                }
+            }
         }
 
         fun setOnAction(e: EventHandler<ActionEvent>) {
