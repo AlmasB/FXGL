@@ -346,7 +346,6 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         if (getSettings().isFullScreenAllowed) {
             val cbFullScreen = getUIFactory().newCheckBox()
-            cbFullScreen.isSelected = false
             cbFullScreen.selectedProperty().bindBidirectional(getSettings().fullScreen)
 
             vbox.children.add(HBox(25.0, getUIFactory().newText(getLocalizedString("menu.fullscreen") + ": "), cbFullScreen))
