@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.junit.jupiter.api.extension.ExtendWith
+import java.lang.IllegalStateException
 import java.time.Duration.ofSeconds
 import java.util.concurrent.CountDownLatch
 
@@ -135,7 +136,15 @@ class ConcurrencyTest {
     /* IO Task tests */
 
     @Test
-    fun `Task run`() {
+    fun `IOTask name`() {
+        val task = IOTask.ofVoid("someName") { }
+
+        assertThat(task.name, `is`("someName"))
+        assertThat(IOTask.ofVoid {  }.name, `is`("NoName"))
+    }
+
+    @Test
+    fun `IOTask correctly handles successful run`() {
         var result = ""
         var exceptionMessage = "NoMessage"
 
@@ -150,6 +159,31 @@ class ConcurrencyTest {
         assertThat(task.run(), `is`("MyString"))
         assertThat(result, `is`("MyString"))
         assertThat(exceptionMessage, `is`("NoMessage"))
+
+        assertThat(SomeIOTask().run(), `is`("RESULT"))
+    }
+
+    @Test
+    fun `IOTask correctly handles failing run`() {
+        var exceptionMessage = "NoMessage"
+
+        val task = SomeFailingIOTask()
+                .onFailure {
+                    exceptionMessage = it.message.orEmpty()
+                }
+
+        assertNull(task.run())
+
+        assertThat(exceptionMessage, `is`("EXCEPTION_MESSAGE"))
+    }
+
+    @Test
+    fun `IOTask combine`() {
+        val task = SomeIOTask().then { IOTask.of { it.length } }
+        assertThat(task.run(), `is`(6))
+
+        val task2 = task.thenWrap { it * 2 }.thenWrap { it.toString() }
+        assertThat(task2.run(), `is`("12"))
     }
 
     @Test
@@ -230,6 +264,18 @@ class ConcurrencyTest {
 
             assertThat(count, `is`(2))
             assertThat(result, `is`("MyString"))
+        }
+    }
+
+    class SomeIOTask : IOTask<String>() {
+        override fun onExecute(): String {
+            return "RESULT"
+        }
+    }
+
+    class SomeFailingIOTask : IOTask<String>() {
+        override fun onExecute(): String {
+            throw IllegalStateException("EXCEPTION_MESSAGE")
         }
     }
 }
