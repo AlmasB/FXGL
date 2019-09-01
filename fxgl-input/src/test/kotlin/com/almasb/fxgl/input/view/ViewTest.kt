@@ -33,6 +33,9 @@ class ViewTest {
             val view = KeyView(it, Color.WHITE, 15.0)
             view.backgroundColor = Color.AQUAMARINE
             view.keyColor = Color.RED
+
+            assertThat(view.backgroundColor, `is`(Color.AQUAMARINE))
+            assertThat(view.keyColor, `is`(Color.RED))
         }
     }
 
