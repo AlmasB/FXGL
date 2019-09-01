@@ -91,9 +91,15 @@ class GameSettings(
 
         /**
          * Setting to true will allow the game to be able to enter full screen
-         * from the menu.
+         * from the menu or programmatically.
          */
         var isFullScreenAllowed: Boolean = false,
+
+        /**
+         * Setting to true will start the game in fullscreen, provided
+         * [isFullScreenAllowed] is also true.
+         */
+        var isFullScreenFromStart: Boolean = false,
 
         /**
          * If enabled, users can drag the corner of the main window
@@ -230,6 +236,7 @@ class GameSettings(
                 width,
                 height,
                 isFullScreenAllowed,
+                isFullScreenFromStart,
                 isManualResizeEnabled,
                 isPreserveResizeRatio,
                 isIntroEnabled,
@@ -302,9 +309,15 @@ class ReadOnlyGameSettings internal constructor(
 
         /**
          * Setting to true will allow the game to be able to enter full screen
-         * from the menu.
+         * from the menu or programmatically.
          */
         val isFullScreenAllowed: Boolean,
+
+        /**
+         * Setting to true will start the game in fullscreen, provided
+         * [isFullScreenAllowed] is also true.
+         */
+        val isFullScreenFromStart: Boolean,
 
         /**
          * If enabled, users can drag the corner of the main window
@@ -515,7 +528,12 @@ class ReadOnlyGameSettings internal constructor(
      */
 
     val language = SimpleObjectProperty<Language>()
-    val fullScreen = SimpleBooleanProperty(false)
+
+    /**
+     * Allows toggling fullscreen on/off from code.
+     * [isFullScreenAllowed] must be true, otherwise it's no-op.
+     */
+    val fullScreen = SimpleBooleanProperty(isFullScreenFromStart)
 
     @get:JvmName("globalMusicVolumeProperty")
     val globalMusicVolumeProperty = SimpleDoubleProperty(0.5)
