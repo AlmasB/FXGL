@@ -62,7 +62,7 @@ internal class MainWindow(
     var onClose: (() -> Unit)? = null
     var defaultCursor: ImageCursor? = null
 
-    private val scenes = arrayListOf<FXGLScene>()
+    private val scenes = arrayListOf<Scene>()
 
     private val scaledWidth: DoubleProperty = SimpleDoubleProperty()
     private val scaledHeight: DoubleProperty = SimpleDoubleProperty()
@@ -188,10 +188,10 @@ internal class MainWindow(
                 fullScreenExitHint = ""
                 // don't let the user exit FS mode manually
                 fullScreenExitKeyCombination = KeyCombination.NO_MATCH
-            }
 
-            settings.fullScreen.addListener { _, _, fullscreenNow ->
-                isFullScreen = fullscreenNow
+                settings.fullScreen.addListener { _, _, fullscreenNow ->
+                    isFullScreen = fullscreenNow
+                }
             }
 
             sizeToScene()
@@ -238,6 +238,10 @@ internal class MainWindow(
 
     fun pushState(newScene: SubScene) {
         log.debug("Push state: $newScene")
+
+        if (newScene !in scenes) {
+            registerScene(newScene)
+        }
 
         val prevScene = stateMachine.currentState
 
@@ -313,6 +317,12 @@ internal class MainWindow(
         log.debug("Scaled ratio: (${scaleRatioX.value}, ${scaleRatioY.value})")
         log.debug("Scene size: ${stage.scene.width} x ${stage.scene.height}")
         log.debug("Stage size: ${stage.width} x ${stage.height}")
+
+        if (settings.isFullScreenAllowed && settings.isFullScreenFromStart) {
+            stage.isFullScreen = true
+
+            log.debug("Going fullscreen")
+        }
     }
 
     /**
@@ -320,10 +330,13 @@ internal class MainWindow(
      *
      * @param scene the scene
      */
-    private fun registerScene(scene: FXGLScene) {
+    private fun registerScene(scene: Scene) {
         scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
 
-        if (!settings.isExperimentalNative && settings.isDesktop && scene.root.cursor == null) {
+        if (!settings.isExperimentalNative
+                && settings.isDesktop
+                && scene is FXGLScene
+                && scene.root.cursor == null) {
             defaultCursor?.let {
                 scene.setCursor(it.image, Point2D(it.hotspotX, it.hotspotY))
             }

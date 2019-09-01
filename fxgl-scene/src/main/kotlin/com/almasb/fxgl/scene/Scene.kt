@@ -9,8 +9,10 @@ package com.almasb.fxgl.scene
 import com.almasb.fxgl.core.fsm.State
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
+import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.layout.Pane
+import javafx.scene.transform.Scale
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -78,6 +80,16 @@ abstract class Scene : State<Scene> {
         onUpdate(tpf)
 
         listeners.forEach { it.onUpdate(tpf) }
+    }
+
+    open fun bindSize(scaledWidth: DoubleProperty, scaledHeight: DoubleProperty, scaleRatioX: DoubleProperty, scaleRatioY: DoubleProperty) {
+        root.prefWidthProperty().bind(scaledWidth)
+        root.prefHeightProperty().bind(scaledHeight)
+
+        val scale = Scale()
+        scale.xProperty().bind(scaleRatioX)
+        scale.yProperty().bind(scaleRatioY)
+        contentRoot.transforms.setAll(scale)
     }
 
     protected open fun onUpdate(tpf: Double) { }

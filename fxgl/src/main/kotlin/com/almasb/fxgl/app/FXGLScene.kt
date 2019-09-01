@@ -106,15 +106,10 @@ abstract class FXGLScene
         root.stylesheets.clear()
     }
 
-    fun bindSize(scaledWidth: DoubleProperty, scaledHeight: DoubleProperty, scaleRatioX: DoubleProperty, scaleRatioY: DoubleProperty) {
-        root.prefWidthProperty().bind(scaledWidth)
-        root.prefHeightProperty().bind(scaledHeight)
+    override fun bindSize(scaledWidth: DoubleProperty, scaledHeight: DoubleProperty, scaleRatioX: DoubleProperty, scaleRatioY: DoubleProperty) {
+        super.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
 
-        val scale = Scale()
-        scale.xProperty().bind(scaleRatioX)
-        scale.yProperty().bind(scaleRatioY)
-        contentRoot.transforms.setAll(scale)
-
+        // in addition, we bind content root x and y since viewport can change
         contentRoot.translateXProperty().bind(scaledWidth.divide(2).subtract(scaleRatioX.multiply(viewport.width).divide(2)))
         contentRoot.translateYProperty().bind(scaledHeight.divide(2).subtract(scaleRatioY.multiply(viewport.height).divide(2)))
     }
