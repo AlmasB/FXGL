@@ -21,24 +21,24 @@ import java.util.ResourceBundle;
 /**
  * To use FXGL, extend this class and implement necessary methods.
  * The initialization process can be seen below (irrelevant phases are omitted):
- * <p>
+ *
  * <ol>
  * <li>Instance fields of YOUR subclass of GameApplication</li>
  * <li>initSettings()</li>
  * <li>Services configuration (after this you can safely call any FXGL.* methods)</li>
- * <p>Executed on JavaFX UI thread:</p>
+ * Executed on JavaFX UI thread:
  * <li>initAchievements()</li>
  * <li>initInput()</li>
  * <li>preInit()</li>
- * <p>NOT executed on JavaFX UI thread:</p>
+ * NOT executed on JavaFX UI thread:
  * <li>initAssets()</li>
  * <li>initGameVars()</li>
  * <li>initGame() OR loadState()</li>
  * <li>initPhysics()</li>
  * <li>initUI()</li>
- * <p>Start of main game loop execution on JavaFX UI thread</p>
+ * Start of main game loop execution on JavaFX UI thread
  * </ol>
- * <p>
+ *
  * Unless explicitly stated, methods are not thread-safe and must be
  * executed on the JavaFX Application (UI) Thread.
  * By default all callbacks are executed on the JavaFX Application (UI) Thread.

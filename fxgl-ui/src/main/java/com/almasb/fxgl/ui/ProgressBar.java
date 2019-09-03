@@ -25,7 +25,6 @@ import javafx.util.Duration;
 /**
  * A generic progress bar. Can be used to show
  * health, mana, experience, quest progress, reloading times, etc
- * <p>
  * <pre>
  * Example:
  *
