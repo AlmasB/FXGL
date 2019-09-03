@@ -29,7 +29,7 @@ import javafx.scene.paint.Color
  */
 class Console : Pane() {
 
-    private val commands = ObjectMap<String, Command>()
+    private val commands = hashMapOf<String, Command>()
 
     private val typedCommands = com.almasb.fxgl.core.collection.Array<String>()
     private var queueIndex = 0

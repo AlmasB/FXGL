@@ -87,7 +87,7 @@ internal class Engine(
     /* SUBSYSTEMS */
 
     private val services = arrayListOf<EngineService>()
-    private val servicesCache = ObjectMap<Class<out EngineService>, EngineService>()
+    private val servicesCache = hashMapOf<Class<out EngineService>, EngineService>()
 
     fun addService(engineService: EngineService) {
         log.debug("Adding new engine service: ${engineService.javaClass}")

@@ -28,9 +28,9 @@ import java.util.*
  */
 class PropertyMap {
 
-    private val properties = ObjectMap<String, Any>(32)
+    private val properties = hashMapOf<String, Any>()
 
-    fun keys(): Set<String> = properties.keys().toSet()
+    fun keys(): Set<String> = properties.keys
 
     /**
      * @return true if a property with [propertyName] exists

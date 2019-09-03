@@ -39,7 +39,7 @@ class FXGLIntroScene : IntroScene() {
 
     private val particleSystem = ParticleSystem()
 
-    private val indices = ObjectMap<Particle, Double>()
+    private val indices = hashMapOf<Particle, Double>()
 
     init {
         // set up particle system
@@ -127,7 +127,7 @@ class FXGLIntroScene : IntroScene() {
         setExpireFunction { Duration.seconds(random(3, 7).toDouble()) }
         setControl { p ->
 
-            val index = indices.get(p, random(0.001, 3.05))
+            val index = indices.getOrDefault(p, random(0.001, 3.05))
 
             indices.put(p, index)
 

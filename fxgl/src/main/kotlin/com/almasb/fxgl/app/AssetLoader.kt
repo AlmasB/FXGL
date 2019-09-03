@@ -81,7 +81,7 @@ class AssetLoader {
 
     private val audioService = DesktopAudioService()
 
-    private val cachedAssets = ObjectMap<String, Any>()
+    private val cachedAssets = hashMapOf<String, Any>()
 
     /**
      * Loads texture as [Image] with given name from /assets/textures/.
