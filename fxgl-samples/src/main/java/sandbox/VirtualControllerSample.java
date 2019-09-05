@@ -72,15 +72,15 @@ public class VirtualControllerSample extends GameApplication {
 
     @Override
     protected void initUI() {
-        Node dpad = getInput().createVirtualDpad(new CustomDpad());
-        Node buttons = getInput().createPSVirtualController();
+        Node dpad = getInput().createVirtualDpadView(new CustomDpad());
+        Node buttons = getInput().createPSVirtualControllerView();
 
         addUINode(dpad, 50, 20);
         addUINode(buttons, 200, 150);
 
-        addUINode(getInput().createXboxVirtualController(), 350, 20);
+        addUINode(getInput().createXboxVirtualControllerView(), 350, 20);
 
-        addUINode(getInput().createVirtualDpad(), 500, 150);
+        addUINode(getInput().createVirtualDpadView(), 500, 150);
 
         addUINode(getInput().createVirtualMenuKeyView(getSettings().getMenuKey(), getSettings().isMenuEnabled()), 650, 50);
 

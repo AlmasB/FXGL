@@ -302,19 +302,25 @@ class Input {
     /**
      * Creates a view containing virtual dpad (4 directional controls).
      */
-    fun createVirtualDpad() = createVirtualDpad(FXGLVirtualDpad(this))
+    fun createVirtualDpadView() = createVirtualDpadView(FXGLVirtualDpad(this))
 
-    fun createVirtualDpad(dpad: VirtualDpad): Group {
+    fun createVirtualDpadView(dpad: VirtualDpad): Group {
         return dpad.createView()
     }
 
-    fun createXboxVirtualController() = createVirtualController(XboxVirtualController(this))
+    fun createXboxVirtualControllerView() = createVirtualControllerView(XboxVirtualController(this))
 
-    fun createPSVirtualController() = createVirtualController(PSVirtualController(this))
+    fun createPSVirtualControllerView() = createVirtualControllerView(PSVirtualController(this))
 
-    fun createVirtualController(controller: VirtualController): Group {
+    fun createVirtualControllerView(controller: VirtualController): Group {
         return controller.createView()
     }
+
+    fun createXboxVirtualController() = XboxVirtualController(this)
+
+    fun createPSVirtualController() = PSVirtualController(this)
+
+    fun createVirtualDpad() = FXGLVirtualDpad(this)
 
     @JvmOverloads fun createVirtualMenuKeyView(menuKey: KeyCode, isMenuEnabled: Boolean = false): Node {
         return createVirtualMenuKeyView(FXGLVirtualMenuKey(this, menuKey, isMenuEnabled))

@@ -183,3 +183,9 @@ internal fun mouseEvent(button: MouseButton, shift: Boolean, ctrl: Boolean, alt:
 internal fun keyEvent(key: KeyCode, shift: Boolean, ctrl: Boolean, alt: Boolean): KeyEvent {
     return KeyEvent(KeyEvent.ANY, "", "", key, shift, ctrl, alt, false)
 }
+
+internal fun mousePressedEvent(button: MouseButton, shift: Boolean, ctrl: Boolean, alt: Boolean): MouseEvent {
+    return MouseEvent(MouseEvent.MOUSE_PRESSED, 0.0, 0.0, 0.0, 0.0, button, 1,
+            shift, ctrl, alt,
+            false, false, false, false, false, false, false, null)
+}

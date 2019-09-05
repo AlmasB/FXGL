@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.input
 
+import com.almasb.fxgl.input.virtual.VirtualButton
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -21,6 +22,8 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -666,4 +669,59 @@ class InputTest {
 //        )
 //    }
 
+    /* VIRTUAL */
+
+    @Test
+    fun `Virtual controller`() {
+        var i = 0
+
+        val action = object : UserAction("Action") {
+            override fun onActionBegin() {
+                i = 1
+            }
+        }
+
+        input.addAction(action, KeyCode.C, VirtualButton.A)
+
+        val controllers = arrayOf(
+                input.createXboxVirtualController(),
+                input.createPSVirtualController(),
+                input.createVirtualDpad()
+        )
+
+        controllers.forEach { controller ->
+            val view = controller.createView()
+
+            assertThat(view.children.size, `is`(4))
+
+            assertThat(i, `is`(0))
+
+            controller.pressVirtual(VirtualButton.A)
+            controller.releaseVirtual(VirtualButton.A)
+
+            assertThat(i, `is`(1))
+
+            i = 0
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource("true", "false")
+    fun `Virtual menu key`(isMenuEnabled: Boolean) {
+        val view = input.createVirtualMenuKeyView(KeyCode.C, isMenuEnabled)
+
+        var i = 0
+
+        input.addEventHandler(KeyEvent.ANY, EventHandler {
+            i++
+        })
+
+        view.fireEvent(mousePressedEvent(MouseButton.PRIMARY, true, true, true))
+
+        if (isMenuEnabled) {
+            assertThat(i, `is`(2))
+        } else {
+            assertThat(i, `is`(0))
+        }
+    }
 }

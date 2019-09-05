@@ -52,11 +52,11 @@ abstract class VirtualInput(private val input: Input) {
     protected fun createViewAndAttachEventHandler(btn: VirtualButton): Node {
         return createView(btn).also {
             it.setOnMousePressed {
-                input.pressVirtual(btn)
+                pressVirtual(btn)
             }
 
             it.setOnMouseReleased {
-                input.releaseVirtual(btn)
+                releaseVirtual(btn)
             }
         }
     }
@@ -67,6 +67,14 @@ abstract class VirtualInput(private val input: Input) {
     abstract fun createViewLeft(): Node
 
     abstract fun createView(btn: VirtualButton): Node
+
+    fun pressVirtual(btn: VirtualButton) {
+        input.pressVirtual(btn)
+    }
+
+    fun releaseVirtual(btn: VirtualButton) {
+        input.releaseVirtual(btn)
+    }
 }
 
 abstract class VirtualDpad(input: Input) : VirtualInput(input) {
