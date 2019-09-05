@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.dev
 
-import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.ui.FontType
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.dsl.FXGL

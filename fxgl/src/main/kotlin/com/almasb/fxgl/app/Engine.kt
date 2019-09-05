@@ -8,7 +8,6 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
-import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.FXGLExecutor

@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.animation.Interpolators
-import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.FXGLMath.*
 import com.almasb.fxgl.core.math.Vec2

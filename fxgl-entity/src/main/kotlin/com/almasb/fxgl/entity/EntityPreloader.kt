@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.sslogger.Logger
 import javafx.geometry.Point2D
 import java.util.concurrent.ArrayBlockingQueue
@@ -16,7 +15,7 @@ import java.util.concurrent.BlockingQueue
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class EntityPreloader(private val spawners: ObjectMap<String, EntitySpawner>) {
+class EntityPreloader(private val spawners: Map<String, EntitySpawner>) {
 
     private val log = Logger.get(javaClass)
 
@@ -43,7 +42,7 @@ class EntityPreloader(private val spawners: ObjectMap<String, EntitySpawner>) {
     }
 
     fun obtain(entityName: String, data: SpawnData): Entity {
-        val e = thread.preloadedEntities.get(entityName).take()
+        val e = thread.preloadedEntities.get(entityName)!!.take()
 
         if (e.position == Point2D.ZERO) {
             e.x = data.x
@@ -53,12 +52,12 @@ class EntityPreloader(private val spawners: ObjectMap<String, EntitySpawner>) {
         return e
     }
 
-    private class EntitySpawnerThread(val spawners: ObjectMap<String, EntitySpawner>) : Thread("Entity Spawner Thread") {
+    private class EntitySpawnerThread(val spawners: Map<String, EntitySpawner>) : Thread("Entity Spawner Thread") {
 
         /**
          * Maps entity spawner to preloaded entities.
          */
-        val preloadedEntities = ObjectMap<String, BlockingQueue<Entity>>()
+        val preloadedEntities = hashMapOf<String, BlockingQueue<Entity>>()
 
         init {
             isDaemon = true
@@ -69,7 +68,7 @@ class EntityPreloader(private val spawners: ObjectMap<String, EntitySpawner>) {
 
                 // TODO: this will block on only one entity spawner
                 preloadedEntities.forEach {
-                    val spawner = spawners[it.key]
+                    val spawner = spawners[it.key]!!
                     val queue = it.value
 
                     //println("SIZE: " + queue.size)
