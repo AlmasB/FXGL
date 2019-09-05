@@ -657,7 +657,7 @@ class EntityTest {
 
         entity.clean()
 
-        assertThat(entity.components.size(), `is`(0))
+        assertThat(entity.components.size, `is`(0))
     }
 
     @Test
@@ -666,7 +666,7 @@ class EntityTest {
 
         entity.clean()
 
-        assertThat(entity.components.size(), `is`(0))
+        assertThat(entity.components.size, `is`(0))
     }
 
     /* CONVENIENCE */
