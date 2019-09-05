@@ -36,6 +36,11 @@ public final class ReflectionUtils {
         }
     }
 
+    /**
+     * Finds methods of "instance" that have annotation "annotationClass".
+     *
+     * @return a mapping from annotations to methods
+     */
     public static <A extends Annotation> Map<A, Method> findMethods(Object instance, Class<A> annotationClass) {
 
         Map<A, Method> map = new HashMap<>();
@@ -50,6 +55,12 @@ public final class ReflectionUtils {
         return map;
     }
 
+    /**
+     * Finds methods of "instance" that have annotation "annotationClass" and maps them
+     * to functions.
+     *
+     * @return a mapping from annotations to functions
+     */
     public static <T, R, A extends Annotation> Map<A, Function<T, R>>
         findMethodsMapToFunctions(Object instance, Class<A> annotationClass) {
 
