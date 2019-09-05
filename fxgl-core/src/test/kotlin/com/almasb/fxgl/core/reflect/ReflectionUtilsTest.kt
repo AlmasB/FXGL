@@ -104,13 +104,41 @@ class ReflectionUtilsTest {
     }
 
     @Test
-    fun `Find methods map to functions`() {
+    fun `Find methods map to general functions`() {
+        val obj = TestClass1()
+
+        val map = ReflectionUtils.findMethodsMapToFunctions<String, String, Ann2>(obj, Ann2::class.java)
+
+        assertThat(map.size, `is`(1))
+        assertThat(map.values.first().apply(" world"), `is`("Hello3 world"))
+    }
+
+    @Test
+    fun `Find methods map to specific functions`() {
         val obj = TestClass1()
 
         val map = ReflectionUtils.findMethodsMapToFunctions(obj, Ann2::class.java, MyFunction::class.java)
 
         assertThat(map.size, `is`(1))
         assertThat(map.values.first().apply(" world"), `is`("Hello3 world"))
+    }
+
+    @Test
+    fun `Find fields by annotation`() {
+        val obj = TestClass1()
+
+        val fields = ReflectionUtils.findFieldsByAnnotation(obj, FieldAnn::class.java)
+
+        assertThat(fields.size(), `is`(1))
+    }
+
+    @Test
+    fun `Find fields by type`() {
+        val obj = TestClass1()
+
+        val fields = ReflectionUtils.findDeclaredFieldsByType(obj, Int::class.java)
+
+        assertThat(fields.size(), `is`(1))
     }
 
     @Test
@@ -152,9 +180,17 @@ class ReflectionUtilsTest {
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Ann2
 
+    @Target(AnnotationTarget.FIELD)
+    @Retention(AnnotationRetention.RUNTIME)
+    annotation class FieldAnn
+
     interface MyFunction : Function<String, String>
 
     class TestClass1 {
+
+        @FieldAnn
+        private val fieldInt = -1
+
         lateinit var name: String
             private set
 
