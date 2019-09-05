@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pools;
@@ -21,7 +20,9 @@ import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Adds physics properties to an entity.
@@ -91,9 +92,9 @@ public final class PhysicsComponent extends Component {
         onInitPhysics = code;
     }
 
-    private ObjectMap<HitBox, SensorCollisionHandler> sensorHandlers = new ObjectMap<>();
+    private Map<HitBox, SensorCollisionHandler> sensorHandlers = new HashMap<>();
 
-    public ObjectMap<HitBox, SensorCollisionHandler> getSensorHandlers() {
+    public Map<HitBox, SensorCollisionHandler> getSensorHandlers() {
         return sensorHandlers;
     }
 

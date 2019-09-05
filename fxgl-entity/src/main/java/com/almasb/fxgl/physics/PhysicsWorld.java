@@ -626,7 +626,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         if (physics.getSensorHandlers().isEmpty())
             return;
 
-        forEach(physics.getSensorHandlers().keys(), box -> {
+        physics.getSensorHandlers().keySet().forEach(box -> {
             box.bindXY(e.getTransformComponent());
 
             Shape polygonShape = createShape(box, e);
