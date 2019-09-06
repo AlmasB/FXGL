@@ -142,6 +142,15 @@ class ReflectionUtilsTest {
     }
 
     @Test
+    fun `Find fields by type recursive`() {
+        val obj = TestClass2("test")
+
+        val fields = ReflectionUtils.findFieldsByTypeRecursive(obj, Int::class.java)
+
+        assertThat(fields.size(), `is`(1))
+    }
+
+    @Test
     fun `Inject a field`() {
         val obj = TestClass1()
 
@@ -186,10 +195,10 @@ class ReflectionUtilsTest {
 
     interface MyFunction : Function<String, String>
 
-    class TestClass1 {
+    open class TestClass1 {
 
         @FieldAnn
-        private val fieldInt = -1
+        protected val fieldInt = -1
 
         lateinit var name: String
             private set
@@ -205,5 +214,5 @@ class ReflectionUtilsTest {
         private fun fooInaccessible() = "Hello4"
     }
 
-    class TestClass2(val s: String)
+    class TestClass2(val s: String) : TestClass1()
 }
