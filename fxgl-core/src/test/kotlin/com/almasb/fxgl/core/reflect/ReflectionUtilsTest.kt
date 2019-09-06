@@ -174,6 +174,13 @@ class ReflectionUtilsTest {
     }
 
     @Test
+    fun `Get field throws if exception`() {
+        assertThrows<ReflectionException> {
+            ReflectionUtils.getDeclaredField(null, "")
+        }
+    }
+
+    @Test
     fun `Is anonymous class`() {
         assertFalse(ReflectionUtils.isAnonymousClass(TestClass1::class.java))
         assertTrue(ReflectionUtils.isAnonymousClass(Runnable { }.javaClass))
