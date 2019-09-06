@@ -21,4 +21,10 @@ public class TestSuperClass {
             return lowLevelFunction();
         }
     }
+
+    public static class NoSubClass {
+        public static Class<?> highLevelFunction() {
+            return lowLevelFunction();
+        }
+    }
 }

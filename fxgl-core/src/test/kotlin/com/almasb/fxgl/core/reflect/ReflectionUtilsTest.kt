@@ -199,6 +199,13 @@ class ReflectionUtilsTest {
         }
     }
 
+    @Test
+    fun `Get calling class throws if caller is not a subclass`() {
+        assertThrows<ReflectionException> {
+            TestSuperClass.NoSubClass.highLevelFunction()
+        }
+    }
+
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Ann
 
