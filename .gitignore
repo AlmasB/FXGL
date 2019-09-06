@@ -29,6 +29,7 @@ logs/
 saves/
 profiles/
 system/
+editor_json/
 
 # FXGL Tests #
 testprofiles/
