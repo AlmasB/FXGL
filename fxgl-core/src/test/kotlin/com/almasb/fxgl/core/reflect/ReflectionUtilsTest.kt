@@ -160,6 +160,15 @@ class ReflectionUtilsTest {
     }
 
     @Test
+    fun `Inject a field throws exception if cannot be injected`() {
+        val obj = TestClass1()
+
+        assertThrows<ReflectionException> {
+            ReflectionUtils.inject(ReflectionUtils.getDeclaredField("name", obj).get(), "", "")
+        }
+    }
+
+    @Test
     fun `Get field returns optional empty if no such field`() {
         assertFalse(ReflectionUtils.getDeclaredField("name", "").isPresent)
     }
