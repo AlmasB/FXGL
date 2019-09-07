@@ -101,32 +101,12 @@ class GameSettingsTest {
         assertFalse(settings.isMobile)
         assertFalse(settings.isIOS)
         assertFalse(settings.isAndroid)
-    }
 
-    @EnabledOnOs(OS.WINDOWS)
-    @Test
-    fun `on windows`() {
+        // this only reads the default settings, so regardless of platform where test is running, the following should be Windows
+        // the actual platform tests are in PlatformTest.kt
         assertThat(settings.runtimeInfo.platform, `is`(Platform.WINDOWS))
         assertTrue(settings.isWindows)
         assertFalse(settings.isLinux)
         assertFalse(settings.isMac)
-    }
-
-    @EnabledOnOs(OS.LINUX)
-    @Test
-    fun `on linux`() {
-        assertThat(settings.runtimeInfo.platform, `is`(Platform.LINUX))
-        assertTrue(settings.isLinux)
-        assertFalse(settings.isWindows)
-        assertFalse(settings.isMac)
-    }
-
-    @EnabledOnOs(OS.MAC)
-    @Test
-    fun `on mac`() {
-        assertThat(settings.runtimeInfo.platform, `is`(Platform.MAC))
-        assertTrue(settings.isMac)
-        assertFalse(settings.isLinux)
-        assertFalse(settings.isWindows)
     }
 }
