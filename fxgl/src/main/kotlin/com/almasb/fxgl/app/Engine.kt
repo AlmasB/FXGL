@@ -41,6 +41,7 @@ import javafx.scene.Group
 import javafx.scene.ImageCursor
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
+import java.lang.RuntimeException
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
@@ -68,10 +69,10 @@ internal class Engine(
     internal lateinit var bundle: Bundle
 
     private lateinit var mainWindow: MainWindow
-    internal lateinit var playState: GameScene
+    internal lateinit var playScene: GameScene
 
-    private lateinit var loadState: LoadingScene
-    private lateinit var dialogState: DialogSubState
+    private lateinit var loadScene: LoadingScene
+    private lateinit var dialogScene: DialogSubState
     private var intro: FXGLScene? = null
     private var mainMenu: FXGLScene? = null
     private var gameMenu: FXGLScene? = null
@@ -104,11 +105,11 @@ internal class Engine(
 
     internal val assetLoader by lazy { AssetLoader() }
     internal val eventBus by lazy { EventBus() }
-    internal val display by lazy { dialogState as Display }
+    internal val display by lazy { dialogScene as Display }
     internal val executor by lazy { FXGLExecutor() }
     internal val fs by lazy { FS(settings.isDesktop) }
 
-    internal val devPane by lazy { DevPane(playState, settings) }
+    internal val devPane by lazy { DevPane(playScene, settings) }
 
     /**
      * The 'always on' engine timer.
@@ -128,8 +129,6 @@ internal class Engine(
      */
     private lateinit var defaultProfile: UserProfile
 
-    private lateinit var saveLoadManager: SaveLoadManager
-
     private val environmentVars = hashMapOf<String, Any>()
 
     init {
@@ -137,10 +136,7 @@ internal class Engine(
 
         logVersion()
 
-        environmentVars["overlayRoot"] = overlayRoot
-        environmentVars["masterTimer"] = engineTimer
-        environmentVars["eventBus"] = eventBus
-        environmentVars["sceneStack"] = this
+        initEnvironmentVars()
     }
 
     private fun logVersion() {
@@ -155,25 +151,84 @@ internal class Engine(
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
 
-    fun startLoop() {
-        saveLoadManager = SaveLoadManager(settings)
+    private fun initEnvironmentVars() {
+        log.debug("Initializing environment variables")
 
+        environmentVars["overlayRoot"] = overlayRoot
+        environmentVars["masterTimer"] = engineTimer
+        environmentVars["eventBus"] = eventBus
+        environmentVars["sceneStack"] = this
+
+        settings.javaClass.declaredMethods.filter { it.name.startsWith("is") || it.name.startsWith("get") || it.name.endsWith("Property") }.forEach {
+            environmentVars[it.name.removePrefix("get").decapitalize()] = it.invoke(settings)
+        }
+
+        log.debug("Logging environment variables")
+
+        environmentVars.forEach { (key, value) ->
+            log.debug("$key: $value")
+        }
+    }
+
+    fun startLoop() {
         val start = System.nanoTime()
 
-        loadLocalization()
+        initAndLoadLocalization()
+        initAndRegisterFontFactories()
+        initAndSetUIFactory()
+        initAndShowMainWindow()
+        initFatalExceptionHandler()
 
+        // give control back to FX thread while we do heavy init stuff
+
+        Async.start {
+            initEngine()
+
+            // finish init on FX thread
+            Async.startFX {
+                prepareToStartLoop()
+
+                log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
+
+                loop.start()
+            }
+        }
+    }
+
+    private fun initAndLoadLocalization() {
+        log.debug("Loading localizations")
+
+        val builtInLangs = listOf("english", "french", "german", "russian", "hungarian")
+
+        builtInLangs.forEach {
+            Local.addLanguage(it, assetLoader.loadResourceBundle("languages/$it.properties"))
+        }
+
+        settings.language.value = Local.languages.find { it.name == "english" }
+
+        Local.selectedLanguageProperty().bind(settings.language)
+    }
+
+    private fun initAndRegisterFontFactories() {
         log.debug("Registering font factories")
 
         settings.uiFactory.registerFontFactory(FontType.UI, assetLoader.loadFont(settings.fontUI))
         settings.uiFactory.registerFontFactory(FontType.GAME, assetLoader.loadFont(settings.fontGame))
         settings.uiFactory.registerFontFactory(FontType.MONO, assetLoader.loadFont(settings.fontMono))
         settings.uiFactory.registerFontFactory(FontType.TEXT, assetLoader.loadFont(settings.fontText))
+    }
 
+
+    private fun initAndSetUIFactory() {
         log.debug("Setting UI factory")
 
         FXGLUIConfig.setUIFactory(settings.uiFactory)
+    }
 
+    private fun initAndShowMainWindow() {
         val startupScene = settings.sceneFactory.newStartup()
+
+        addOverlay(startupScene)
 
         // get window up ASAP
         mainWindow = MainWindow(stage, startupScene, settings)
@@ -196,78 +251,11 @@ internal class Engine(
             }
         }
 
-        initFatalExceptionHandler()
+        mainWindow.currentSceneProperty.addListener { _, oldScene, newScene ->
+            log.debug("Removing overlay from $oldScene and adding to $newScene")
 
-        // give control back to FX thread while we do heavy init stuff
-
-        Async.start {
-            IOTask.setDefaultExecutor(executor)
-            IOTask.setDefaultFailAction { display.showErrorBox(it) }
-
-            isFirstRun = !fs.exists("system/")
-
-            if (!settings.isExperimentalNative) {
-                if (isFirstRun) {
-                    createRequiredDirs()
-                    loadDefaultSystemData()
-                } else {
-                    loadSystemData()
-                }
-            } else {
-                loadDefaultSystemData()
-            }
-
-            initAppScenes()
-
-            attachPauseResumeListener()
-            attachEventHandlers()
-
-            // finish init on FX thread
-            Async.startFX {
-                // these things need to be called early before the main loop
-                // so that menus can correctly display input controls, etc.
-                // this is called once per application lifetime
-                runPreInit()
-
-                addOverlay(startupScene)
-
-                mainWindow.currentSceneProperty.addListener { _, oldScene, newScene ->
-                    log.debug("Removing overlay from $oldScene and adding to $newScene")
-
-                    removeOverlay(oldScene)
-                    addOverlay(newScene)
-                }
-
-                settings.javaClass.declaredMethods.filter { it.name.startsWith("is") || it.name.startsWith("get") || it.name.endsWith("Property") }.forEach {
-                    environmentVars[it.name.removePrefix("get").decapitalize()] = it.invoke(settings)
-                }
-
-                log.debug("Logging environment variables")
-
-                environmentVars.forEach { (key, value) ->
-                    log.debug("$key: $value")
-                }
-
-                services.forEach { service ->
-                    findFieldsByAnnotation(service, Inject::class.java).forEach { field ->
-                        val injectKey = field.getDeclaredAnnotation(Inject::class.java).value
-
-                        if (injectKey !in environmentVars) {
-                            throw IllegalArgumentException("Cannot inject @Inject($injectKey). No value present for $injectKey")
-                        }
-
-                        inject(field, service, environmentVars[injectKey])
-                    }
-                }
-
-                services.forEach { it.onMainLoopStarting() }
-
-                app.onPreInit()
-
-                log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
-
-                loop.start()
-            }
+            removeOverlay(oldScene)
+            addOverlay(newScene)
         }
     }
 
@@ -279,117 +267,43 @@ internal class Engine(
         scene.root.children -= overlayRoot
     }
 
-    private fun loadLocalization() {
-        log.debug("Loading localizations")
-
-        val builtInLangs = listOf("english", "french", "german", "russian", "hungarian")
-
-        builtInLangs.forEach {
-            Local.addLanguage(it, assetLoader.loadResourceBundle("languages/$it.properties"))
-        }
-
-        settings.language.value = Local.languages.find { it.name == "english" }
-
-        Local.selectedLanguageProperty().bind(settings.language)
+    private fun initFatalExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler { _, error -> handleFatalError(error) }
     }
 
-    private fun attachPauseResumeListener() {
-        if (settings.isMobile) {
-            // no-op
-        } else {
-            stage.iconifiedProperty().addListener { _, _, isMinimized ->
-                if (isMinimized) {
-                    loop.pause()
-                } else {
-                    loop.resume()
-                }
+    private fun initEngine() {
+        IOTask.setDefaultExecutor(executor)
+        IOTask.setDefaultFailAction { display.showErrorBox(it) }
+
+        isFirstRun = !fs.exists("system/")
+
+        if (!settings.isExperimentalNative) {
+            if (isFirstRun) {
+                createRequiredDirs()
+                loadDefaultSystemData()
+            } else {
+                loadSystemData()
             }
+        } else {
+            loadDefaultSystemData()
         }
+
+        initAppScenes()
+        initPauseResumeListener()
+        initEventHandlers()
     }
 
-    private fun initAppScenes() {
-        log.debug("Initializing application scenes")
+    private fun prepareToStartLoop() {
+        // these things need to be called early before the main loop
+        // so that menus can correctly display input controls, etc.
+        // this is called once per application lifetime
+        runPreInit()
 
-        val sceneFactory = settings.sceneFactory
+        injectDependenciesIntoServices()
 
-        loadState = sceneFactory.newLoadingScene()
-        playState = GameScene(settings.width, settings.height,
-                GameState(),
-                GameWorld(),
-                PhysicsWorld(settings.height, settings.pixelsPerMeter)
-        )
+        services.forEach { it.onMainLoopStarting() }
 
-        playState.isSingleStep = settings.isSingleStep
-
-        // app is only updated in Game Scene
-        playState.addListener(object : SceneListener {
-            override fun onUpdate(tpf: Double) {
-                app.onUpdate(tpf)
-            }
-        })
-
-        // we need dialog state before intro and menus
-        dialogState = DialogSubState(mainWindow.currentFXGLSceneProperty)
-
-        if (settings.isIntroEnabled) {
-            intro = sceneFactory.newIntro()
-        }
-
-        if (settings.isMenuEnabled) {
-            mainMenu = sceneFactory.newMainMenu()
-            gameMenu = sceneFactory.newGameMenu()
-        }
-
-        if (settings.isMenuEnabled) {
-            val menuKeyHandler = object : EventHandler<KeyEvent> {
-                private var canSwitchGameMenu = true
-
-                private fun onMenuKey(pressed: Boolean) {
-                    if (!pressed) {
-                        canSwitchGameMenu = true
-                        return
-                    }
-
-                    if (canSwitchGameMenu) {
-                        // we only care if menu key was pressed in one of these states
-                        if (mainWindow.currentScene === gameMenu) {
-                            canSwitchGameMenu = false
-                            gotoPlay()
-
-                        } else if (mainWindow.currentScene === playState) {
-                            canSwitchGameMenu = false
-                            gotoGameMenu()
-                        }
-                    }
-                }
-
-                override fun handle(event: KeyEvent) {
-                    if (event.code == settings.menuKey) {
-                        onMenuKey(event.eventType == KeyEvent.KEY_PRESSED)
-                    }
-                }
-            }
-
-            playState.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
-            gameMenu!!.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
-        } else {
-
-            pauseMenu = sceneFactory.newPauseMenu()
-
-            playState.input.addAction(object : UserAction("Pause") {
-                override fun onActionBegin() {
-                    pauseMenu!!.requestShow {
-                        mainWindow.pushState(pauseMenu!!)
-                    }
-                }
-
-                override fun onActionEnd() {
-                    pauseMenu!!.unlockSwitch()
-                }
-            }, settings.menuKey)
-        }
-
-        log.debug("Application scenes initialized")
+        app.onPreInit()
     }
 
     private fun createRequiredDirs() {
@@ -432,17 +346,112 @@ internal class Engine(
         bundle = Bundle("FXGL")
     }
 
-    private fun initFatalExceptionHandler() {
-        Thread.setDefaultUncaughtExceptionHandler { _, error -> handleFatalError(error) }
+    private fun initAppScenes() {
+        log.debug("Initializing application scenes")
+
+        val sceneFactory = settings.sceneFactory
+
+        loadScene = sceneFactory.newLoadingScene()
+        playScene = GameScene(settings.width, settings.height,
+                GameState(),
+                GameWorld(),
+                PhysicsWorld(settings.height, settings.pixelsPerMeter)
+        )
+
+        playScene.isSingleStep = settings.isSingleStep
+
+        // app is only updated in Game Scene
+        playScene.addListener(object : SceneListener {
+            override fun onUpdate(tpf: Double) {
+                app.onUpdate(tpf)
+            }
+        })
+
+        // we need dialog state before intro and menus
+        dialogScene = DialogSubState(mainWindow.currentFXGLSceneProperty)
+
+        if (settings.isIntroEnabled) {
+            intro = sceneFactory.newIntro()
+        }
+
+        if (settings.isMenuEnabled) {
+            mainMenu = sceneFactory.newMainMenu()
+            gameMenu = sceneFactory.newGameMenu()
+        }
+
+        if (settings.isMenuEnabled) {
+            val menuKeyHandler = object : EventHandler<KeyEvent> {
+                private var canSwitchGameMenu = true
+
+                private fun onMenuKey(pressed: Boolean) {
+                    if (!pressed) {
+                        canSwitchGameMenu = true
+                        return
+                    }
+
+                    if (canSwitchGameMenu) {
+                        // we only care if menu key was pressed in one of these states
+                        if (mainWindow.currentScene === gameMenu) {
+                            canSwitchGameMenu = false
+                            gotoPlay()
+
+                        } else if (mainWindow.currentScene === playScene) {
+                            canSwitchGameMenu = false
+                            gotoGameMenu()
+                        }
+                    }
+                }
+
+                override fun handle(event: KeyEvent) {
+                    if (event.code == settings.menuKey) {
+                        onMenuKey(event.eventType == KeyEvent.KEY_PRESSED)
+                    }
+                }
+            }
+
+            playScene.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
+            gameMenu!!.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
+        } else {
+
+            pauseMenu = sceneFactory.newPauseMenu()
+
+            playScene.input.addAction(object : UserAction("Pause") {
+                override fun onActionBegin() {
+                    pauseMenu!!.requestShow {
+                        mainWindow.pushState(pauseMenu!!)
+                    }
+                }
+
+                override fun onActionEnd() {
+                    pauseMenu!!.unlockSwitch()
+                }
+            }, settings.menuKey)
+        }
+
+        log.debug("Application scenes initialized")
     }
 
-    private fun attachEventHandlers() {
+    private fun initPauseResumeListener() {
+        if (settings.isMobile) {
+            // no-op
+        } else {
+            stage.iconifiedProperty().addListener { _, _, isMinimized ->
+                if (isMinimized) {
+                    loop.pause()
+                } else {
+                    loop.resume()
+                }
+            }
+        }
+    }
+
+    private fun initEventHandlers() {
         eventBus.addEventHandler(SaveEvent.ANY, EventHandler { e ->
-            settings.save(e.getProfile())
+            settings.save(e.profile)
         })
 
         eventBus.addEventHandler(LoadEvent.ANY, EventHandler { e ->
-            settings.load(e.getProfile())
+            settings.load(e.profile)
         })
     }
 
@@ -452,7 +461,7 @@ internal class Engine(
         // 2. register user actions
         app.initInput()
 
-        SystemActions.bind(playState.input)
+        SystemActions.bind(playScene.input)
 
         generateDefaultProfile()
     }
@@ -461,6 +470,20 @@ internal class Engine(
         log.debug("generateDefaultProfile()")
 
         defaultProfile = createProfile()
+    }
+
+    private fun injectDependenciesIntoServices() {
+        services.forEach { service ->
+            findFieldsByAnnotation(service, Inject::class.java).forEach { field ->
+                val injectKey = field.getDeclaredAnnotation(Inject::class.java).value
+
+                if (injectKey !in environmentVars) {
+                    throw IllegalArgumentException("Cannot inject @Inject($injectKey). No value present for $injectKey")
+                }
+
+                inject(field, service, environmentVars[injectKey])
+            }
+        }
     }
 
     private fun loop(tpf: Double) {
@@ -473,13 +496,15 @@ internal class Engine(
 
     private var handledOnce = false
 
-    private fun handleFatalError(error: Throwable) {
+    private fun handleFatalError(e: Throwable) {
         if (handledOnce) {
             // just ignore to avoid spamming dialogs
             return
         }
 
         handledOnce = true
+
+        val error = if (e is Exception) e else RuntimeException(e)
 
         if (Logger.isConfigured()) {
             log.fatal("Uncaught Exception:", error)
@@ -518,8 +543,8 @@ internal class Engine(
         // 1. a dialog is shown
         // 2. we are loading a game
         // 3. we are showing intro
-        val isNotOK = mainWindow.currentScene === dialogState
-                || mainWindow.currentScene === loadState
+        val isNotOK = mainWindow.currentScene === dialogScene
+                || mainWindow.currentScene === loadScene
                 || (settings.isIntroEnabled && mainWindow.currentScene === intro)
 
         return !isNotOK
@@ -536,14 +561,14 @@ internal class Engine(
 
     override fun startNewGame() {
         log.debug("Starting new game")
-        loadState.dataFile = DataFile.EMPTY
-        mainWindow.setScene(loadState)
+        loadScene.dataFile = DataFile.EMPTY
+        mainWindow.setScene(loadScene)
     }
 
     private fun startLoadedGame(dataFile: DataFile) {
         log.debug("Starting loaded game")
-        loadState.dataFile = dataFile
-        mainWindow.setScene(loadState)
+        loadScene.dataFile = dataFile
+        mainWindow.setScene(loadScene)
     }
 
     override fun gotoIntro() {
@@ -559,7 +584,7 @@ internal class Engine(
     }
 
     override fun gotoPlay() {
-        mainWindow.setScene(playState)
+        mainWindow.setScene(playScene)
     }
 
     override fun saveGame(fileName: String) {

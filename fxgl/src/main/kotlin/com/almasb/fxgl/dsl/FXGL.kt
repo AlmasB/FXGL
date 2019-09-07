@@ -132,15 +132,15 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun tpf() = engine.tpf
 
-    @JvmStatic fun getGameState() = engine.playState.gameState
-    @JvmStatic fun getGameWorld() = engine.playState.gameWorld
-    @JvmStatic fun getPhysicsWorld() = engine.playState.physicsWorld
-    @JvmStatic fun getGameScene() = engine.playState
+    @JvmStatic fun getGameState() = engine.playScene.gameState
+    @JvmStatic fun getGameWorld() = engine.playScene.gameWorld
+    @JvmStatic fun getPhysicsWorld() = engine.playScene.physicsWorld
+    @JvmStatic fun getGameScene() = engine.playScene
 
     /**
      * @return play state timer
      */
-    @JvmStatic fun getGameTimer(): Timer = engine.playState.timer
+    @JvmStatic fun getGameTimer(): Timer = engine.playScene.timer
 
     /**
      * @return 'always-on' (regardless of active scene) engine timer
@@ -150,7 +150,7 @@ class FXGL private constructor() { companion object {
     /**
      * @return play state input
      */
-    @JvmStatic fun getInput(): Input = engine.playState.input
+    @JvmStatic fun getInput(): Input = engine.playScene.input
 
     /**
      * @return new instance on each call
