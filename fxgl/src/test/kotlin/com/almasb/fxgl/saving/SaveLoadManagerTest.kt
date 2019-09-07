@@ -6,7 +6,8 @@
 
 package com.almasb.fxgl.saving
 
-import com.almasb.fxgl.app.FXGLMock
+import com.almasb.fxgl.app.GameSettings
+import com.almasb.fxgl.test.RunWithFX
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
@@ -24,15 +26,15 @@ import java.time.LocalDateTime
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@ExtendWith(RunWithFX::class)
 class SaveLoadManagerTest {
 
-    private lateinit var manager: SaveLoadManager
+    private lateinit var saveLoadManager: SaveLoadManager
+    private lateinit var manager: ProfileManager
 
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            FXGLMock.mock()
-
             cleanUp()
         }
 
@@ -48,7 +50,8 @@ class SaveLoadManagerTest {
 
     @BeforeEach
     fun setUp() {
-        manager = SaveLoadManager("TestProfileName")
+        saveLoadManager = SaveLoadManager(GameSettings().toReadOnly())
+        manager = saveLoadManager.getProfileManager("TestProfileName")
     }
 
     @Test

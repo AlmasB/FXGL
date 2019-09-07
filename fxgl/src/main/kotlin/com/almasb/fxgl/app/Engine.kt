@@ -156,7 +156,7 @@ internal class Engine(
     }
 
     fun startLoop() {
-        saveLoadManager = SaveLoadManager(profileName.value)
+        saveLoadManager = SaveLoadManager(settings)
 
         val start = System.nanoTime()
 
@@ -570,25 +570,25 @@ internal class Engine(
         val dataFile = app.saveState()
         val saveFile = SaveFile(saveFileName, LocalDateTime.now())
 
-        saveLoadManager
-                .saveTask(dataFile, saveFile)
-                //.onSuccess { hasSaves.value = true }
-                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.savingData") + ": $saveFileName"))
+//        saveLoadManager
+//                .saveTask(dataFile, saveFile)
+//                //.onSuccess { hasSaves.value = true }
+//                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.savingData") + ": $saveFileName"))
     }
 
     override fun loadGame(saveFile: SaveFile) {
-        saveLoadManager
-                .loadTask(saveFile)
-                .onSuccess { startLoadedGame(it) }
-                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading") + ": ${saveFile.name}"))
+//        saveLoadManager
+//                .loadTask(saveFile)
+//                .onSuccess { startLoadedGame(it) }
+//                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading") + ": ${saveFile.name}"))
     }
 
     override fun loadGameFromLastSave() {
-        saveLoadManager
-                .loadLastModifiedSaveFileTask()
-                .then { saveLoadManager.loadTask(it) }
-                .onSuccess { startLoadedGame(it) }
-                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading") + "..."))
+//        saveLoadManager
+//                .loadLastModifiedSaveFileTask()
+//                .then { saveLoadManager.loadTask(it) }
+//                .onSuccess { startLoadedGame(it) }
+//                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading") + "..."))
     }
 
     /**
@@ -615,9 +615,9 @@ internal class Engine(
     }
 
     override fun saveProfile() {
-        saveLoadManager.saveProfileTask(createProfile())
-                .onFailure { error -> "Failed to save profile: ${profileName.value} - $error" }
-                .run() // we execute synchronously to avoid incomplete save since we might be shutting down
+//        saveLoadManager.saveProfileTask(createProfile())
+//                .onFailure { error -> "Failed to save profile: ${profileName.value} - $error" }
+//                .run() // we execute synchronously to avoid incomplete save since we might be shutting down
     }
 
     /**

@@ -6,25 +6,18 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.ApplicationMode
-import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.app.GameApplication.FXGLApplication.app
-import com.almasb.fxgl.app.MockApplication.Companion.stage
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.test.RunWithFX
-import javafx.application.Application
 import javafx.scene.input.KeyCode
 import javafx.stage.Stage
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 import java.util.concurrent.Callable
