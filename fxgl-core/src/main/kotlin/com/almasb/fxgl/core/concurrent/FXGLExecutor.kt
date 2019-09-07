@@ -19,7 +19,7 @@ class FXGLExecutor : Executor {
 
     companion object {
         val service = Executors.newCachedThreadPool(FXGLThreadFactory)
-        private val schedulerService = Executors.newScheduledThreadPool(2)
+        private val schedulerService = Executors.newScheduledThreadPool(2, FXGLThreadFactory)
     }
 
     override fun execute(task: Runnable) {
@@ -47,24 +47,12 @@ class FXGLExecutor : Executor {
      * The default FXGL thread factory.
      */
     private object FXGLThreadFactory : ThreadFactory {
-        private val group: ThreadGroup
         private val threadNumber = AtomicInteger(1)
 
-        init {
-            val s = System.getSecurityManager()
-            group = if (s != null)
-                        s.threadGroup
-                    else
-                        Thread.currentThread().threadGroup
-        }
-
         override fun newThread(r: Runnable): Thread {
-            val t = Thread(group, r, "FXGL Background Thread " + threadNumber.andIncrement, 0)
-
-            if (t.isDaemon)
-                t.isDaemon = false
-            if (t.priority != Thread.NORM_PRIORITY)
-                t.priority = Thread.NORM_PRIORITY
+            val t = Thread(r, "FXGL Background Thread " + threadNumber.andIncrement)
+            t.isDaemon = false
+            t.priority = Thread.NORM_PRIORITY
             return t
         }
     }
