@@ -41,7 +41,7 @@ class MainWindowTest {
 
         @BeforeAll
         @JvmStatic fun before() {
-            Async.startFX {
+            Async.startAsyncFX {
 
                 val settings = GameSettings()
                 settings.width = WIDTH
@@ -60,7 +60,7 @@ class MainWindowTest {
     fun runTests() {
         var count = 0
 
-        Async.startFX {
+        Async.startAsyncFX {
 
             `Add icon`()
             `Add CSS`()

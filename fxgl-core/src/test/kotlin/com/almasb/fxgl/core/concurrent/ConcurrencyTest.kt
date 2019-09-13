@@ -42,7 +42,7 @@ class ConcurrencyTest {
 
     @BeforeEach
     fun `init`() {
-        executor = FXGLExecutor()
+        executor = Async
     }
 
     @Test
@@ -94,7 +94,7 @@ class ConcurrencyTest {
             val threadID1 = Thread.currentThread().id
             var threadID2 = -333L
 
-            Async.start {
+            executor.startAsync {
                 count = 1
 
                 threadID2 = Thread.currentThread().id
@@ -103,7 +103,7 @@ class ConcurrencyTest {
             assertThat(count, `is`(1))
             assertFalse(threadID1 == threadID2)
 
-            count = Async.start<Int> { 99 }.await()
+            count = executor.startAsync<Int> { 99 }.await()
 
             assertThat(count, `is`(99))
         }
@@ -116,7 +116,7 @@ class ConcurrencyTest {
             val threadID1 = Thread.currentThread().id
             var threadID2 = -333L
 
-            Async.startFX {
+            executor.startAsyncFX {
                 count = 1
 
                 threadID2 = Thread.currentThread().id
@@ -127,7 +127,7 @@ class ConcurrencyTest {
             assertThat(count, `is`(1))
             assertFalse(threadID1 == threadID2)
 
-            count = Async.startFX<Int> { 99 }.await()
+            count = executor.startAsyncFX<Int> { 99 }.await()
 
             assertThat(count, `is`(99))
         }

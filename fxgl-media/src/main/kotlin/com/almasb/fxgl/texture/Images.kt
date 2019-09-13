@@ -38,7 +38,7 @@ private val image: Image by lazy {
 
     var result: Image? = null
 
-    Async.startFX {
+    Async.startAsyncFX {
         result = group.snapshot(null, null)
     }.await()
 

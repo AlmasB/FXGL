@@ -60,7 +60,7 @@ class GameSettingsTest {
             val settingsInitial = GameSettings()
             app.initSettings(settingsInitial)
 
-            val stage = Async.startFX(Callable { Stage() }).await()
+            val stage = Async.startAsyncFX(Callable { Stage() }).await()
 
             val engine = Engine(app, settingsInitial.toReadOnly(), stage)
 

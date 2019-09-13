@@ -8,6 +8,7 @@ package com.almasb.fxgl.saving
 
 import com.almasb.fxgl.app.ProgressDialog
 import com.almasb.fxgl.core.concurrent.Async
+import com.almasb.fxgl.core.concurrent.AsyncTask
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.io.FS
@@ -111,7 +112,7 @@ class ProfileManager(val fs: FS,
 
         return fs.deleteFileTask(saveDir + saveFile.name + saveFileExt)
                 .then { fs.deleteFileTask(saveDir + saveFile.name + dataFileExt) }
-                .then { IOTask.ofVoid("updateSaves") { Async.startFX<Boolean> { saveFiles.remove(saveFile) } } }
+                .then { IOTask.ofVoid("updateSaves") { Async.startAsyncFX<Boolean> { saveFiles.remove(saveFile) } } }
     }
 
     /**
@@ -132,7 +133,7 @@ class ProfileManager(val fs: FS,
                 .then { fs.writeDataTask(dataFile, saveDir + saveFile.name + dataFileExt) }
                 .then {
                     IOTask.ofVoid("updateSaves") {
-                        Async.startFX {
+                        Async.startAsyncFX {
                             saveFiles.add(saveFile)
                             Collections.sort(saveFiles, SaveFile)
                         }

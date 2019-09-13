@@ -10,7 +10,7 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
-import com.almasb.fxgl.core.concurrent.FXGLExecutor
+import com.almasb.fxgl.core.concurrent.AsyncTask
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
@@ -106,7 +106,7 @@ internal class Engine(
     internal val assetLoader by lazy { AssetLoader() }
     internal val eventBus by lazy { EventBus() }
     internal val display by lazy { dialogScene as Display }
-    internal val executor by lazy { FXGLExecutor() }
+    internal val executor by lazy { Async }
     internal val fs by lazy { FS(settings.isDesktop) }
 
     internal val devPane by lazy { DevPane(playScene, settings) }
@@ -181,11 +181,11 @@ internal class Engine(
 
         // give control back to FX thread while we do heavy init stuff
 
-        Async.start {
+        executor.startAsync {
             initEngine()
 
             // finish init on FX thread
-            Async.startFX {
+            executor.startAsyncFX {
                 prepareToStartLoop()
 
                 log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
