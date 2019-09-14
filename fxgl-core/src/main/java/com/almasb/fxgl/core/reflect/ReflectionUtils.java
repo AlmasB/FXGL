@@ -17,8 +17,6 @@ import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.almasb.fxgl.core.util.BackportKt.forEach;
-
 /**
  * A collection of convenience methods to isolate reflection code.
  *
@@ -66,9 +64,8 @@ public final class ReflectionUtils {
 
         Map<A, Function<T, R>> map = new HashMap<>();
 
-        forEach(
-                findMethods(instance, annotationClass),
-                (annotation, method) -> map.put(annotation, mapToFunction(instance, method))
+        findMethods(instance, annotationClass).forEach((annotation, method) ->
+                map.put(annotation, mapToFunction(instance, method))
         );
 
         return map;
@@ -80,17 +77,15 @@ public final class ReflectionUtils {
 
         Map<A, F> map = new HashMap<>();
 
-        forEach(
-                findMethods(instance, annotationClass),
-                (annotation, method) -> {
-                    // we create an instance implementing F on the fly
-                    // so that high-level calling code stays clean
-                    F function = (F) Proxy.newProxyInstance(functionClass.getClassLoader(),
-                            new Class[] { functionClass },
-                            (proxy, proxyMethod, args) -> method.invoke(instance, args));
+        findMethods(instance, annotationClass).forEach((annotation, method) -> {
+                // we create an instance implementing F on the fly
+                // so that high-level calling code stays clean
+                F function = (F) Proxy.newProxyInstance(functionClass.getClassLoader(),
+                        new Class[] { functionClass },
+                        (proxy, proxyMethod, args) -> method.invoke(instance, args));
 
-                    map.put(annotation, function);
-                }
+                map.put(annotation, function);
+            }
         );
 
         return map;

@@ -35,8 +35,6 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.almasb.fxgl.core.util.BackportKt.forEach;
-
 /**
  * Manages physics entities, collision handling and performs the physics tick.
  * <p>
@@ -217,7 +215,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
             if (b != null) {
                 List<Fixture> fixtures = List.copyOf(b.getFixtures());
 
-                forEach(fixtures, b::destroyFixture);
+                fixtures.forEach(b::destroyFixture);
 
                 createFixtures(entity);
                 createSensors(entity);

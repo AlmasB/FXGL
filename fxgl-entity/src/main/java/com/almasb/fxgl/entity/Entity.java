@@ -24,7 +24,6 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 
 import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
-import static com.almasb.fxgl.core.util.BackportKt.forEach;
 
 /**
  * A generic game object.
@@ -374,14 +373,11 @@ public class Entity {
     private void injectFields(Component component) {
         ComponentHelper.setEntity(component, this);
 
-        forEach(
-                findFieldsByTypeRecursive(component, Component.class),
-                field -> {
-                    getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
-                        inject(field, component, comp);
-                    });
-                }
-        );
+        findFieldsByTypeRecursive(component, Component.class).forEach(field -> {
+            getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
+                inject(field, component, comp);
+            });
+        });
     }
 
     private void removeComponent(Component component) {
@@ -393,11 +389,11 @@ public class Entity {
     }
 
     private <T extends Component> void notifyComponentAdded(T c) {
-        forEach(componentListeners, l -> l.onAdded(c));
+        componentListeners.forEach(l -> l.onAdded(c));
     }
 
     private <T extends Component> void notifyComponentRemoved(T c) {
-        forEach(componentListeners, l -> l.onRemoved(c));
+        componentListeners.forEach(l -> l.onRemoved(c));
     }
 
     private void checkNotUpdating() {
@@ -784,7 +780,7 @@ public class Entity {
         List<String> coreComponentsAsString = new ArrayList<>(comps.size());
         List<String> otherComponentsAsString = new ArrayList<>(comps.size());
 
-        forEach(comps, c -> {
+        comps.forEach(c -> {
             if (isCoreComponent(c.getClass())) {
                 coreComponentsAsString.add(c.toString());
             } else {
