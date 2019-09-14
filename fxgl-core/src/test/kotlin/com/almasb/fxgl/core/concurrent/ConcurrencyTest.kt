@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.junit.jupiter.api.extension.ExtendWith
 import java.lang.IllegalStateException
+import java.lang.RuntimeException
 import java.time.Duration.ofSeconds
 import java.util.concurrent.CountDownLatch
 
@@ -110,6 +111,26 @@ class ConcurrencyTest {
     }
 
     @Test
+    fun `Exception is rethrown to FX thread if async fails`() {
+        val latch = CountDownLatch(1)
+
+        executor.startAsyncFX {
+            Thread.setDefaultUncaughtExceptionHandler { _, e ->
+                assertThat(e.message, `is`("Test"))
+                latch.countDown()
+            }
+        }.await()
+
+        assertTimeout(ofSeconds(1)) {
+            executor.startAsync {
+                throw RuntimeException("Test")
+            }.await()
+
+            latch.await()
+        }
+    }
+
+    @Test
     fun `Async FX runs in a FX thread`() {
         assertTimeout(ofSeconds(1)) {
             var count = 0
@@ -130,6 +151,26 @@ class ConcurrencyTest {
             count = executor.startAsyncFX<Int> { 99 }.await()
 
             assertThat(count, `is`(99))
+        }
+    }
+
+    @Test
+    fun `Async FX runs immediately if started in a FX thread`() {
+        assertTimeout(ofSeconds(1)) {
+            val latch = CountDownLatch(1)
+
+            Platform.runLater {
+
+                assertTrue(Platform.isFxApplicationThread())
+
+                val value = executor.startAsyncFX<Int> { 99 }.await()
+
+                assertThat(value, `is`(99))
+
+                latch.countDown()
+            }
+
+            latch.await()
         }
     }
 
