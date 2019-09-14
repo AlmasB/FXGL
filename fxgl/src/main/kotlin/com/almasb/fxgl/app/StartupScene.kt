@@ -6,13 +6,9 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.dsl.*
+import com.almasb.fxgl.dsl.getGameController
+import com.almasb.fxgl.dsl.getSettings
 import com.almasb.sslogger.Logger
-import javafx.scene.Node
-import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
-import javafx.scene.shape.Circle
-import javafx.scene.shape.Rectangle
 
 /**
  * This is the default startup scene which is shown while FXGL is in startup state.

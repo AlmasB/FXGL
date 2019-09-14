@@ -7,7 +7,7 @@
 package com.almasb.fxgl.entity.components
 
 import java.io.Serializable
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Marks an entity as collidable.

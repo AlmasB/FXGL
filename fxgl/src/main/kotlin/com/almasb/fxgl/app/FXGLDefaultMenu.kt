@@ -12,13 +12,12 @@ import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.local.Local.localizedStringProperty
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
 import com.almasb.fxgl.core.util.Supplier
+import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
 import com.almasb.fxgl.dsl.FXGL.Companion.random
 import com.almasb.fxgl.dsl.FXGL.Companion.texture
-import com.almasb.fxgl.dsl.*
-import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
-import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.ui.FXGLButton
 import com.almasb.sslogger.Logger
 import javafx.animation.FadeTransition

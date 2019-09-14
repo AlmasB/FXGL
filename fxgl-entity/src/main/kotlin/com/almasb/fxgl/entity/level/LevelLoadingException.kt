@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.entity.level
 
-import java.lang.RuntimeException
-
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)

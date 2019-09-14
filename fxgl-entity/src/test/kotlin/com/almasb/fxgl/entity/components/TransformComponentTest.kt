@@ -10,7 +10,6 @@ import com.almasb.fxgl.core.serialization.Bundle
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 

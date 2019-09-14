@@ -12,19 +12,10 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.Assertions
+import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
-import java.util.stream.Stream
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.MethodSource
-import java.lang.IllegalStateException
 
 
 /**

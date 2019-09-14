@@ -6,12 +6,10 @@
 
 package com.almasb.fxgl.cutscene.dialogue
 
-import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.contains
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

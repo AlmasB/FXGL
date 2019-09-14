@@ -10,7 +10,7 @@ import com.almasb.fxgl.audio.Audio
 import com.almasb.fxgl.audio.AudioService
 import com.almasb.fxgl.audio.AudioType
 import java.net.URL
-import java.util.HashMap
+import java.util.*
 
 /**
  *

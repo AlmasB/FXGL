@@ -11,7 +11,6 @@ import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.core.util.Predicate
 import javafx.beans.property.DoubleProperty
-import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableStringValue
 import javafx.geometry.Insets

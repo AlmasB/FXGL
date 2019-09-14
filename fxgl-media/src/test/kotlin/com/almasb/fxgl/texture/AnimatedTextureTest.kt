@@ -8,16 +8,11 @@ package com.almasb.fxgl.texture
 
 import javafx.geometry.HorizontalDirection
 import javafx.geometry.Rectangle2D
-import javafx.geometry.VerticalDirection
 import javafx.scene.image.Image
-import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

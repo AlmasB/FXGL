@@ -10,7 +10,6 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.collections.FXCollections
 import java.io.Serializable
-import java.lang.IllegalArgumentException
 
 enum class DialogueNodeType {
     START, END, TEXT, CHOICE, FUNCTION, BRANCH

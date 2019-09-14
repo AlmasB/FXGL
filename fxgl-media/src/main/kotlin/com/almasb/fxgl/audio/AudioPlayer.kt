@@ -14,8 +14,6 @@ import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.sslogger.Logger
 import javafx.beans.property.DoubleProperty
 
-import javafx.geometry.Point2D
-
 /**
  * General audio player service that supports playback of sound and music objects.
  * It can also control volume of both.

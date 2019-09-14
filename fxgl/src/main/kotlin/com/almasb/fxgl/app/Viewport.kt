@@ -7,10 +7,10 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.animation.AnimatedValue
-import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.core.util.EmptyRunnable
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.Entity
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.NumberBinding

@@ -8,7 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.test.RunWithFX
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach

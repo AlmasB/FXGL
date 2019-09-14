@@ -6,9 +6,9 @@
 
 package com.almasb.fxgl.dsl.components
 
+import com.almasb.fxgl.app.Viewport
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.component.Component
-import com.almasb.fxgl.app.Viewport
 
 /**
  * A component that keeps an entity within the viewport.

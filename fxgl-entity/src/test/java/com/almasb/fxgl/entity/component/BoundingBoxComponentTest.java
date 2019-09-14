@@ -6,9 +6,9 @@
 
 package com.almasb.fxgl.entity.component;
 
+import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.BoundingBoxComponent;
-import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionResult;

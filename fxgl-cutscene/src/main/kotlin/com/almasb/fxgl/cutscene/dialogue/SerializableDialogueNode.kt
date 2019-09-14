@@ -7,7 +7,6 @@
 package com.almasb.fxgl.cutscene.dialogue
 
 import javafx.beans.property.SimpleStringProperty
-import java.lang.IllegalArgumentException
 
 /**
  *

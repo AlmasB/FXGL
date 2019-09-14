@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.dev.DevPane
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier

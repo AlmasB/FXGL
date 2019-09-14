@@ -6,10 +6,9 @@
 
 package com.almasb.fxgl.entity.components
 
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.entity.component.CoreComponent
 import com.almasb.fxgl.entity.component.SerializableComponent
-import com.almasb.fxgl.core.serialization.Bundle
-
 import java.io.Serializable
 
 /**

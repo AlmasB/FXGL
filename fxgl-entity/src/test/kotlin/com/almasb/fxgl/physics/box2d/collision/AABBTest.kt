@@ -9,8 +9,6 @@ package com.almasb.fxgl.physics.box2d.collision
 import com.almasb.fxgl.core.math.Vec2
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

@@ -7,16 +7,13 @@
 package com.almasb.fxgl.minigames.sweetspot
 
 import com.almasb.fxgl.animation.AnimatedColor
-import com.almasb.fxgl.animation.AnimationDSL
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.minigames.MiniGameView
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.effect.DropShadow
-import javafx.scene.effect.Glow
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
-import javafx.util.Duration
 
 /**
  *

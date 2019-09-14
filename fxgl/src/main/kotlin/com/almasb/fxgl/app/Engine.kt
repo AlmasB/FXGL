@@ -10,7 +10,6 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
-import com.almasb.fxgl.core.concurrent.AsyncTask
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
@@ -41,7 +40,6 @@ import javafx.scene.Group
 import javafx.scene.ImageCursor
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
-import java.lang.RuntimeException
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime

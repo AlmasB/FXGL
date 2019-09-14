@@ -12,7 +12,6 @@ import com.almasb.fxgl.minigames.MiniGame
 import com.almasb.fxgl.minigames.MiniGameResult
 import com.almasb.fxgl.minigames.MiniGameView
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Point2D
 import javafx.geometry.VPos
 import javafx.scene.effect.DropShadow
@@ -27,8 +26,6 @@ import javafx.scene.shape.ArcType
 import javafx.scene.shape.Circle
 import javafx.scene.text.Font
 import javafx.scene.text.Text
-import javafx.scene.text.TextAlignment
-import javafx.scene.text.TextBoundsType
 import javafx.scene.transform.Scale
 import javafx.util.Duration
 import kotlin.math.max

@@ -21,7 +21,6 @@ import javafx.scene.layout.BackgroundImage
 import javafx.scene.layout.BackgroundRepeat
 import javafx.scene.paint.Paint
 import javafx.scene.shape.Rectangle
-import javafx.scene.transform.Scale
 
 /**
  * Base class for all FXGL scenes.

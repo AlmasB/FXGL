@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.entity.components
 
-import com.almasb.fxgl.core.Disposable
 import com.almasb.fxgl.core.View
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.ComponentHelper
@@ -18,12 +17,11 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 

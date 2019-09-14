@@ -10,7 +10,6 @@ import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationDSL
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.input.KeyTrigger
-import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.input.view.TriggerView
 import com.almasb.fxgl.minigames.MiniGame
 import com.almasb.fxgl.minigames.MiniGameResult
@@ -23,8 +22,8 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import javafx.scene.shape.*
-import javafx.scene.text.Text
+import javafx.scene.shape.Circle
+import javafx.scene.shape.Line
 import javafx.util.Duration
 
 class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMiniGame()) : MiniGameView<TriggerSequenceMiniGame>(miniGame) {

@@ -8,7 +8,6 @@ package com.almasb.fxgl.saving
 
 import com.almasb.fxgl.app.ProgressDialog
 import com.almasb.fxgl.core.concurrent.Async
-import com.almasb.fxgl.core.concurrent.AsyncTask
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.io.FS

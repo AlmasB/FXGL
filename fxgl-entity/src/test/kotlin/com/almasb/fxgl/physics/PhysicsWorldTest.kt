@@ -14,8 +14,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach

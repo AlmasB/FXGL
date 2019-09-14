@@ -8,9 +8,6 @@ package com.almasb.fxgl.achievement
 
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.contains
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 /**

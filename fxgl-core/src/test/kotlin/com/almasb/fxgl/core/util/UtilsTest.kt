@@ -6,18 +6,12 @@
 
 package com.almasb.fxgl.core.util
 
-import org.hamcrest.MatcherAssert
-import org.hamcrest.MatcherAssert.*
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.Assertions.*
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
+import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.function.Executable
-import java.lang.Exception
-import java.lang.IllegalArgumentException
-import java.lang.IllegalStateException
-import java.lang.RuntimeException
 
 /**
  *

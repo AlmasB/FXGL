@@ -11,7 +11,6 @@ import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.scene.Scene
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Parent

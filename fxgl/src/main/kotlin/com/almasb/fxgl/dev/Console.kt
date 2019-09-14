@@ -6,13 +6,9 @@
 
 package com.almasb.fxgl.dev
 
-import com.almasb.fxgl.ui.FontType
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.dsl.FXGL
-import javafx.beans.property.SimpleBooleanProperty
-import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.property.SimpleIntegerProperty
-import javafx.beans.property.SimpleStringProperty
+import com.almasb.fxgl.ui.FontType
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode

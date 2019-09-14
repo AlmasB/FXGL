@@ -5,8 +5,8 @@
  */
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.core.util.Optional;
+import com.almasb.fxgl.entity.Entity;
 import javafx.geometry.Point2D;
 
 /**

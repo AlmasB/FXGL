@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.core.concurrent.IOTask
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.ui.DialogBox
 
 /**

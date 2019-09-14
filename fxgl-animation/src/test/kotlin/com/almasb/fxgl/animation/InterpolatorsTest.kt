@@ -6,11 +6,8 @@
 
 package com.almasb.fxgl.animation
 
-import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.*
-import org.hamcrest.MatcherAssert
-import org.hamcrest.MatcherAssert.*
-import org.junit.jupiter.api.Test
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 
