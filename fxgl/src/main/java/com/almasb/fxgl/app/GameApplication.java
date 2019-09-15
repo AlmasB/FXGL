@@ -7,7 +7,6 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.util.Platform;
-import com.almasb.fxgl.core.util.RuntimeInfo;
 import com.almasb.fxgl.dev.DevService;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.saving.DataFile;

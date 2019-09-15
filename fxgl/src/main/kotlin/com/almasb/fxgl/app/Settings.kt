@@ -14,7 +14,6 @@ import com.almasb.fxgl.core.local.Language
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.core.util.Platform
-import com.almasb.fxgl.core.util.RuntimeInfo
 import com.almasb.fxgl.cutscene.CutsceneService
 import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
@@ -52,6 +51,15 @@ enum class MenuItem {
      */
     ONLINE
 }
+
+/**
+ * Stores FXGL runtime information.
+ */
+data class RuntimeInfo(
+        val platform: Platform,
+        val version: String,
+        val build: String
+)
 
 /**
  * Data structure for variables that are initialised before the application (game) starts.
