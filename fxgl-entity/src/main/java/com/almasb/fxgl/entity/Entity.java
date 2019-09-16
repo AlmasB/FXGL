@@ -9,7 +9,6 @@ package com.almasb.fxgl.entity;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.util.EmptyRunnable;
-import com.almasb.fxgl.core.util.Optional;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.entity.components.BoundingBoxComponent;
 import com.almasb.fxgl.entity.components.TransformComponent;

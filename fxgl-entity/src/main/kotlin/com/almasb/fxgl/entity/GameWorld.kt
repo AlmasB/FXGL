@@ -10,7 +10,6 @@ import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.core.util.Predicate
 import com.almasb.fxgl.core.util.tryCatchRoot
 import com.almasb.fxgl.entity.component.Component
@@ -21,6 +20,9 @@ import com.almasb.fxgl.entity.level.Level
 import com.almasb.sslogger.Logger
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
+import java.util.*
+import kotlin.NoSuchElementException
+import kotlin.collections.ArrayList
 
 /**
  * Represents pure logical state of the game.

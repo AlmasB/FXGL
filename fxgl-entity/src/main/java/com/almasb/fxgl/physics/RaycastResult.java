@@ -5,9 +5,10 @@
  */
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.core.util.Optional;
 import com.almasb.fxgl.entity.Entity;
 import javafx.geometry.Point2D;
+
+import java.util.Optional;
 
 /**
  * Result of a raycast.

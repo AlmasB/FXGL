@@ -12,7 +12,6 @@ import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.local.Language
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.cutscene.CutsceneService
 import com.almasb.fxgl.minigames.MiniGameService

@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.core.collection
 
-import com.almasb.fxgl.core.util.Optional
 import javafx.beans.property.*
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue

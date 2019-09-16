@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.core.util.Optional
+import java.util.Optional
 import com.almasb.fxgl.core.util.Predicate
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.IDComponent
