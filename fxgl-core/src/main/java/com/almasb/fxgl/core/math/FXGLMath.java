@@ -145,7 +145,7 @@ public final class FXGLMath {
 
     /* RANDOM BEGIN */
 
-    private static final Random random = new RandomXS128();
+    private static final Random random = new Random();
 
     /**
      * @return random object used to generate random sequences
@@ -158,7 +158,7 @@ public final class FXGLMath {
      * @return object used to generate random sequences using given seed
      */
     public static Random getRandom(long seed) {
-        return new RandomXS128(seed);
+        return new Random(seed);
     }
 
     /**
