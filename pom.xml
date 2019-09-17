@@ -83,7 +83,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
-<!--        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>-->
+        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
         <!-- plugins -->
         <maven.gpg.version>1.6</maven.gpg.version>
@@ -92,7 +92,6 @@
         <maven.pmd.version>3.12.0</maven.pmd.version>
         <maven.license.version>3.0</maven.license.version>
         <maven.source.version>3.0.1</maven.source.version>
-        <maven.javadoc.version>3.1.1</maven.javadoc.version>
         <maven.jar.version>3.1.1</maven.jar.version>
         <maven.shade.version>3.0.0</maven.shade.version>
         <jacoco.version>0.8.3</jacoco.version>
@@ -141,6 +140,14 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <pluginManagement>
@@ -206,27 +213,7 @@
                     </executions>
                 </plugin>
 
-                <!-- Create javadoc.jar for Java sources -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven.javadoc.version}</version>
-
-                    <!-- Ignore errors in javadoc comments -->
-                    <configuration>
-                        <additionalJOption>-Xdoclint:none</additionalJOption>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>aggregate-jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <!-- Create empty javadoc.jar for Kotlin only sources -->
+                <!-- Create empty javadoc.jar -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
