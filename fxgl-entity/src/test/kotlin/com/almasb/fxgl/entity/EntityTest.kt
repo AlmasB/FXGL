@@ -8,13 +8,15 @@ package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.fxgl.entity.component.*
+import com.almasb.fxgl.entity.component.Component
+import com.almasb.fxgl.entity.component.ComponentListener
+import com.almasb.fxgl.entity.component.Required
+import com.almasb.fxgl.entity.component.SerializableComponent
 import com.almasb.fxgl.entity.components.*
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
-import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.*
@@ -657,7 +659,7 @@ class EntityTest {
 
         entity.clean()
 
-        assertThat(entity.components.size(), `is`(0))
+        assertThat(entity.components.size, `is`(0))
     }
 
     @Test
@@ -666,7 +668,7 @@ class EntityTest {
 
         entity.clean()
 
-        assertThat(entity.components.size(), `is`(0))
+        assertThat(entity.components.size, `is`(0))
     }
 
     /* CONVENIENCE */

@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.animation.Interpolators
-import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.FXGLMath.*
 import com.almasb.fxgl.core.math.Vec2
@@ -39,7 +38,7 @@ class FXGLIntroScene : IntroScene() {
 
     private val particleSystem = ParticleSystem()
 
-    private val indices = ObjectMap<Particle, Double>()
+    private val indices = hashMapOf<Particle, Double>()
 
     init {
         // set up particle system
@@ -118,7 +117,7 @@ class FXGLIntroScene : IntroScene() {
         isAllowParticleRotation = true
         blendMode = BlendMode.SRC_OVER
 
-        setVelocityFunction { i -> randomPoint2D().multiply(1.5) }
+        setVelocityFunction { randomPoint2D().multiply(1.5) }
 
         setSourceImage(FXGL.texture("particles/explosion.png", 32.0, 32.0).brighter().brighter().saturate().image)
         setSize(1.5, 8.5)
@@ -127,7 +126,7 @@ class FXGLIntroScene : IntroScene() {
         setExpireFunction { Duration.seconds(random(3, 7).toDouble()) }
         setControl { p ->
 
-            val index = indices.get(p, random(0.001, 3.05))
+            val index = indices.getOrDefault(p, random(0.001, 3.05))
 
             indices.put(p, index)
 

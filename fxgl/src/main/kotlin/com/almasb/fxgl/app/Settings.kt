@@ -12,9 +12,9 @@ import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.local.Language
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.core.util.Platform
-import com.almasb.fxgl.core.util.RuntimeInfo
+import com.almasb.fxgl.cutscene.CutsceneService
+import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
@@ -50,6 +50,15 @@ enum class MenuItem {
      */
     ONLINE
 }
+
+/**
+ * Stores FXGL runtime information.
+ */
+data class RuntimeInfo(
+        val platform: Platform,
+        val version: String,
+        val build: String
+)
 
 /**
  * Data structure for variables that are initialised before the application (game) starts.
@@ -89,9 +98,15 @@ class GameSettings(
 
         /**
          * Setting to true will allow the game to be able to enter full screen
-         * from the menu.
+         * from the menu or programmatically.
          */
         var isFullScreenAllowed: Boolean = false,
+
+        /**
+         * Setting to true will start the game in fullscreen, provided
+         * [isFullScreenAllowed] is also true.
+         */
+        var isFullScreenFromStart: Boolean = false,
 
         /**
          * If enabled, users can drag the corner of the main window
@@ -193,7 +208,9 @@ class GameSettings(
         var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
                 AudioPlayer::class.java,
                 NotificationServiceProvider::class.java,
-                AchievementManager::class.java
+                AchievementManager::class.java,
+                CutsceneService::class.java,
+                MiniGameService::class.java
         ),
 
         /**
@@ -226,6 +243,7 @@ class GameSettings(
                 width,
                 height,
                 isFullScreenAllowed,
+                isFullScreenFromStart,
                 isManualResizeEnabled,
                 isPreserveResizeRatio,
                 isIntroEnabled,
@@ -298,9 +316,15 @@ class ReadOnlyGameSettings internal constructor(
 
         /**
          * Setting to true will allow the game to be able to enter full screen
-         * from the menu.
+         * from the menu or programmatically.
          */
         val isFullScreenAllowed: Boolean,
+
+        /**
+         * Setting to true will start the game in fullscreen, provided
+         * [isFullScreenAllowed] is also true.
+         */
+        val isFullScreenFromStart: Boolean,
 
         /**
          * If enabled, users can drag the corner of the main window
@@ -511,7 +535,12 @@ class ReadOnlyGameSettings internal constructor(
      */
 
     val language = SimpleObjectProperty<Language>()
-    val fullScreen = SimpleBooleanProperty(false)
+
+    /**
+     * Allows toggling fullscreen on/off from code.
+     * [isFullScreenAllowed] must be true, otherwise it's no-op.
+     */
+    val fullScreen = SimpleBooleanProperty(isFullScreenFromStart)
 
     @get:JvmName("globalMusicVolumeProperty")
     val globalMusicVolumeProperty = SimpleDoubleProperty(0.5)

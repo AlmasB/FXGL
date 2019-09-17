@@ -8,19 +8,13 @@ package sandbox.minigames;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.minigames.MiniGameService;
 import com.almasb.fxgl.minigames.lockpicking.LockPickView;
-import com.almasb.fxgl.minigames.sweetspot.SweetSpotView;
-import com.almasb.fxgl.minigames.triggermash.CircleTriggerMashView;
-import com.almasb.fxgl.minigames.triggermash.TriggerMashMiniGame;
-import com.almasb.fxgl.minigames.triggermash.TriggerMashView;
 import com.almasb.fxgl.minigames.triggersequence.TriggerSequenceView;
 import com.almasb.fxgl.ui.FXGLButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import minigames.MiniGameManager;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -53,7 +47,7 @@ public class MiniGameApp extends GameApplication {
 
         onKeyDown(KeyCode.G, "Hello2", () -> {
 
-            var manager = new MiniGameManager();
+            var manager = getMiniGameService();
             manager.startMiniGame(new LockPickView(), (result) -> {
                 System.out.println(result.isSuccess() ? "SUCCESS" : "FAIL");
             });
@@ -74,7 +68,7 @@ public class MiniGameApp extends GameApplication {
 
         var btn = new FXGLButton("Trigger Sequence");
         btn.setOnAction(e -> {
-            var manager = new MiniGameManager();
+            var manager = getMiniGameService();
 //            manager.startMiniGame(new CircleTriggerMashView(), result -> {
 //                debugText.setText(result.isSuccess() ? "Success" : "Fail");
 //            });
@@ -92,7 +86,7 @@ public class MiniGameApp extends GameApplication {
         var btnCheck = new FXGLButton("Skill Check");
 
         btnCheck.setOnAction(e -> {
-            var manager = new MiniGameManager();
+            var manager = new MiniGameService();
             manager.startSweetSpot(10, (result) -> {
 
                 debugText.setText(result.isSuccess() ? "Success" : "Fail");

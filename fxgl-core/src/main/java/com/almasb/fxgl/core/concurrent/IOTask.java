@@ -21,6 +21,8 @@ import java.util.concurrent.Executor;
  */
 public abstract class IOTask<T> {
 
+    private static final String DEFAULT_NAME = "NoName";
+
     private static Executor defaultExecutor = Runnable::run;
     private static Consumer<Throwable> defaultFailAction = System.out::println;
 
@@ -46,7 +48,7 @@ public abstract class IOTask<T> {
     private String name;
 
     public IOTask() {
-        this("NoName");
+        this(DEFAULT_NAME);
     }
 
     public IOTask(String name) {
@@ -205,7 +207,7 @@ public abstract class IOTask<T> {
     /* Static convenience methods */
 
     public static IOTask<Void> ofVoid(Runnable action) {
-        return ofVoid("IOTask", action);
+        return ofVoid(DEFAULT_NAME, action);
     }
 
     public static IOTask<Void> ofVoid(String name, Runnable action) {
@@ -216,7 +218,7 @@ public abstract class IOTask<T> {
     }
 
     public static <R> IOTask<R> of(Callable<R> action) {
-        return of("IOTask", action);
+        return of(DEFAULT_NAME, action);
     }
 
     public static <R> IOTask<R> of(String name, Callable<R> action) {

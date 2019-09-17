@@ -7,7 +7,6 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.entity.EntityTest;
-import com.almasb.fxgl.entity.component.Component;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

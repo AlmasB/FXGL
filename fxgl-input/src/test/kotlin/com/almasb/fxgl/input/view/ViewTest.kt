@@ -13,6 +13,7 @@ import com.almasb.fxgl.input.Trigger
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -31,8 +32,11 @@ class ViewTest {
     fun `Key view`() {
         KeyCode.values().forEach {
             val view = KeyView(it, Color.WHITE, 15.0)
-            view.setBackgroundColor(Color.AQUAMARINE)
-            view.setKeyColor(Color.RED)
+            view.backgroundColor = Color.AQUAMARINE
+            view.keyColor = Color.RED
+
+            assertThat(view.backgroundColor, `is`<Paint>(Color.AQUAMARINE))
+            assertThat(view.keyColor, `is`<Paint>(Color.RED))
         }
     }
 

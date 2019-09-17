@@ -7,10 +7,8 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.core.collection.PropertyChangeListener
-import javafx.beans.property.SimpleObjectProperty
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.collection.IsMapContaining.hasEntry
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

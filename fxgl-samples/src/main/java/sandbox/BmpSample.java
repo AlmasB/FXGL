@@ -9,7 +9,6 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.core.util.PerformanceProfiler;
 import com.almasb.fxgl.dsl.components.RandomMoveComponent;
 import com.almasb.fxgl.entity.*;
 import javafx.beans.property.SimpleDoubleProperty;

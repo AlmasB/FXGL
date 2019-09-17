@@ -22,7 +22,12 @@ public final class RunWithFX implements BeforeAllCallback {
         if (jfxStarted)
             return;
 
-        jfxStarted = true;
-        Platform.startup(() -> {});
+        try {
+            // this immediately throws IllegalStateException if javafx is not initialized
+            Platform.runLater(() -> {});
+        } catch (IllegalStateException e) {
+            jfxStarted = true;
+            Platform.startup(() -> {});
+        }
     }
 }

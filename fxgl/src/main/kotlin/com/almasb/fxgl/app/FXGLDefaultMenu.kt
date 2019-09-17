@@ -12,14 +12,12 @@ import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.local.Local.localizedStringProperty
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
 import com.almasb.fxgl.core.util.Supplier
+import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
 import com.almasb.fxgl.dsl.FXGL.Companion.random
 import com.almasb.fxgl.dsl.FXGL.Companion.texture
-import com.almasb.fxgl.dsl.*
-import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
-import com.almasb.fxgl.scene.MenuType
-import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.ui.FXGLButton
 import com.almasb.sslogger.Logger
 import javafx.animation.FadeTransition
@@ -114,7 +112,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
     private val animations = arrayListOf<Animation<*>>()
 
-    override fun onEnter(prevState: Scene) {
+    override fun onCreate() {
         animations.clear()
 
         val menuBox = menuRoot.children[0] as MenuBox
@@ -382,6 +380,8 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         private val p = Polygon(0.0, 0.0, 220.0, 0.0, 250.0, 35.0, 0.0, 35.0)
         val btn: FXGLButton
 
+        private var isAnimating = false
+
         init {
             btn = FXGLButton()
             btn.alignment = Pos.CENTER_LEFT
@@ -405,6 +405,20 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             p.visibleProperty().bind(btn.hoverProperty())
 
             children.addAll(btn, p)
+
+            btn.focusedProperty().addListener { _, _, isFocused ->
+                if (isFocused) {
+                    val isOK = animations.none { it.isAnimating } && !isAnimating
+                    if (isOK) {
+                        isAnimating = true
+
+                        animationBuilder()
+                                .onFinished(Runnable { isAnimating = false })
+                                .bobbleDown(this)
+                                .buildAndPlay(this@FXGLDefaultMenu)
+                    }
+                }
+            }
         }
 
         fun setOnAction(e: EventHandler<ActionEvent>) {

@@ -244,7 +244,7 @@ public final class Body {
     public void destroyFixture(Fixture fixture) {
         world.assertNotLocked();
 
-        assert (fixture.getBody() == this);
+        assert fixture.getBody() == this;
         assert fixtures.contains(fixture);
 
         fixtures.remove(fixture);
@@ -565,7 +565,7 @@ public final class Body {
 
         if (massData.I > 0 && (m_flags & e_fixedRotationFlag) == 0) {
             m_I = massData.I - m_mass * Vec2.dot(massData.center, massData.center);
-            assert (m_I > 0);
+            assert m_I > 0;
             m_invI = 1.0f / m_I;
         }
 
@@ -615,7 +615,7 @@ public final class Body {
             return;
         }
 
-        assert (type == BodyType.DYNAMIC);
+        assert type == BodyType.DYNAMIC;
 
         // Accumulate mass over all fixtures.
         final Vec2 localCenter = world.getPool().popVec2();
@@ -648,7 +648,7 @@ public final class Body {
         if (m_I > 0.0f && (m_flags & e_fixedRotationFlag) == 0) {
             // Center the inertia about the center of mass.
             m_I -= m_mass * Vec2.dot(localCenter, localCenter);
-            assert (m_I > 0.0f);
+            assert m_I > 0.0f;
             m_invI = 1.0f / m_I;
         } else {
             m_I = 0.0f;
@@ -1152,10 +1152,8 @@ public final class Body {
 
         // Does a joint prevent collision?
         for (JointEdge jn = m_jointList; jn != null; jn = jn.next) {
-            if (jn.other == other) {
-                if (!jn.joint.getCollideConnected()) {
-                    return false;
-                }
+            if (jn.other == other && !jn.joint.getCollideConnected()) {
+                return false;
             }
         }
 

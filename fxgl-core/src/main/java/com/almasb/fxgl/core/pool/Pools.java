@@ -10,7 +10,8 @@
 
 package com.almasb.fxgl.core.pool;
 
-import com.almasb.fxgl.core.collection.ObjectMap;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Stores a map of {@link Pool}s (usually {@link ReflectionPool}s) by type for convenient static access.
@@ -23,7 +24,7 @@ public final class Pools {
         // no instances
     }
 
-    private static final ObjectMap<Class, Pool> typePools = new ObjectMap<>();
+    private static final Map<Class, Pool> typePools = new HashMap<>();
 
     /**
      * Returns a new or existing pool for the specified type, stored in a Class to {@link Pool} map.

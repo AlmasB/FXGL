@@ -1,3 +1,9 @@
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
+
 package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.core.View
@@ -25,7 +31,7 @@ class ViewComponent : Component() {
 
     private val viewRoot = Group()
 
-    // no scale, rotate is applied
+    // no scale or rotate is applied
     private val viewRootNoTransform = Group()
     internal val devRoot = Group()
 
@@ -92,16 +98,7 @@ class ViewComponent : Component() {
 
     override fun onRemoved() {
         (parent as Group).children.clear()
-        viewRoot.children.forEach {
-            if (it is View) {
-                it.dispose()
-            }
-        }
-        viewRootNoTransform.children.forEach {
-            if (it is View) {
-                it.dispose()
-            }
-        }
+        clearChildren()
     }
 
     /**
@@ -143,12 +140,15 @@ class ViewComponent : Component() {
             updateableViews -= node
     }
 
+    /**
+     * Remove all (with and without transforms) children.
+     */
     fun clearChildren() {
         viewRoot.children.forEach {
             if (it is View) {
                 updateableViews -= it
 
-                // TODO: it.dispose()
+                it.dispose()
             }
         }
 
@@ -156,7 +156,7 @@ class ViewComponent : Component() {
             if (it is View) {
                 updateableViews -= it
 
-                // TODO: it.dispose()
+                it.dispose()
             }
         }
 

@@ -7,11 +7,9 @@
 package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.core.collection.Array
-import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.core.util.Optional
 import com.almasb.fxgl.core.util.Predicate
 import com.almasb.fxgl.core.util.tryCatchRoot
 import com.almasb.fxgl.entity.component.Component
@@ -22,6 +20,9 @@ import com.almasb.fxgl.entity.level.Level
 import com.almasb.sslogger.Logger
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
+import java.util.*
+import kotlin.NoSuchElementException
+import kotlin.collections.ArrayList
 
 /**
  * Represents pure logical state of the game.
@@ -265,12 +266,12 @@ class GameWorld {
         }
     }
 
-    private val entityFactories = ObjectMap<EntityFactory, List<String>>()
+    private val entityFactories = hashMapOf<EntityFactory, List<String>>()
 
     /**
      * Maps entity spawn name to the method that creates the entity.
      */
-    private val entitySpawners = ObjectMap<String, EntitySpawner>()
+    private val entitySpawners = hashMapOf<String, EntitySpawner>()
 
     private val entityPreloader = EntityPreloader(entitySpawners)
 
@@ -310,7 +311,7 @@ class GameWorld {
         if (entitySpawners.containsKey(entityName)) {
 
             // find the factory that already has entityName spawner
-            val factory = entityFactories.find { entityName in it.value }
+            val factory = entityFactories.entries.find { entityName in it.value }
 
             throw IllegalArgumentException("Duplicated @Spawns($entityName) in $entityFactory. Already exists in $factory")
         }
@@ -381,7 +382,7 @@ class GameWorld {
      * @return created entity
      */
     fun create(entityName: String, data: SpawnData): Entity {
-        check(entityFactories.isNotEmpty) { "No EntityFactory was added! Call gameWorld.addEntityFactory()" }
+        check(entityFactories.isNotEmpty()) { "No EntityFactory was added! Call gameWorld.addEntityFactory()" }
 
         val spawner = entitySpawners.get(entityName)
                 ?: throw IllegalArgumentException("No EntityFactory has a method annotated @Spawns($entityName)")

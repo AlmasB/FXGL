@@ -1,3 +1,9 @@
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
+
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -8,7 +14,8 @@ module com.almasb.fxgl.media {
     exports com.almasb.fxgl.audio;
     exports com.almasb.fxgl.texture;
 
-    exports com.almasb.fxgl.audio.impl to com.almasb.fxgl.all;
+    // TODO: this should be updated after mobile port
+    exports com.almasb.fxgl.audio.impl;
 
     opens com.almasb.fxgl.audio to com.almasb.fxgl.core;
 }

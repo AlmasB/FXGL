@@ -6,14 +6,9 @@
 
 package com.almasb.fxgl.physics
 
-import com.almasb.fxgl.entity.Entity
 import javafx.geometry.Point2D
-import org.hamcrest.MatcherAssert
-import org.hamcrest.MatcherAssert.*
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.contains
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest

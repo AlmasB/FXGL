@@ -10,12 +10,10 @@ import javafx.geometry.HorizontalDirection
 import javafx.geometry.Rectangle2D
 import javafx.geometry.VerticalDirection
 import javafx.scene.Node
-import javafx.scene.effect.Blend
 import javafx.scene.effect.BlendMode
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat

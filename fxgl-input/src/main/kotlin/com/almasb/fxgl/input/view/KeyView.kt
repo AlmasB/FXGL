@@ -6,9 +6,11 @@
 
 package com.almasb.fxgl.input.view
 
+import javafx.beans.property.ObjectProperty
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
 import javafx.scene.text.Text
@@ -30,11 +32,23 @@ class KeyView
     private val background = Rectangle(size * 0.95, size * 1.2, Color.BLACK)
     private val border = Rectangle(size * 1.01, size * 1.25, null)
 
+    fun backgroundColorProperty(): ObjectProperty<Paint> = background.fillProperty()
+    fun keyColorProperty(): ObjectProperty<Paint> = text.fillProperty()
+
+    var keyColor: Paint
+        get() = text.fill
+        set(value) { text.fill = value }
+
+    var backgroundColor: Paint
+        get() = background.fill
+        set(value) { background.fill = value }
+
     init {
         border.arcWidth = size / 4
         border.arcHeight = size / 4
         border.stroke = color
         border.strokeWidth = size / 11
+        border.strokeProperty().bind(text.fillProperty())
 
         // handle special cases
         when (keyCode) {
@@ -44,7 +58,7 @@ class KeyView
             }
 
             KeyCode.ALT -> {
-                background.width = text.layoutBounds.width * 1.2
+                background.width = text.layoutBounds.width * 1.25
                 border.width = text.layoutBounds.width * 1.26
             }
 
@@ -76,18 +90,21 @@ class KeyView
                 text.text = "\u2192"
             }
 
+            KeyCode.ENTER -> {
+                text.text = "\u23CEEnter"
+                background.width = size * 3.45
+                border.width = size * 3.47
+            }
+
+            KeyCode.DELETE -> {
+                text.text = "Del"
+                background.width = text.layoutBounds.width * 1.25
+                border.width = text.layoutBounds.width * 1.26
+            }
+
             else -> {}
         }
 
         children.addAll(background, border, text)
-    }
-
-    fun setKeyColor(color: Color) {
-        text.fill = color
-        border.stroke = color
-    }
-
-    fun setBackgroundColor(color: Color) {
-        background.fill = color
     }
 }

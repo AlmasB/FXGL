@@ -5,8 +5,8 @@
  */
 package com.almasb.fxgl.saving;
 
-import com.almasb.sslogger.Logger;
 import com.almasb.fxgl.core.serialization.Bundle;
+import com.almasb.sslogger.Logger;
 
 import java.io.Serializable;
 import java.util.HashMap;

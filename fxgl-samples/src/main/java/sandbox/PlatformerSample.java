@@ -8,9 +8,7 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -18,6 +16,7 @@ import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -70,7 +69,7 @@ public class PlatformerSample extends GameApplication {
                     physics.setVelocityY(-300);
                 }
 
-                FXGL.getDevPane().addDebugPoint(player.getCenter());
+                getDevPane().addDebugPoint(player.getCenter());
             }
         }, KeyCode.W);
 
@@ -140,7 +139,7 @@ public class PlatformerSample extends GameApplication {
                 .with(new PhysicsComponent())
                 .buildAndAttach();
 
-        EntityView view = new EntityView();
+        var view = new Group();
 
         var first = new Polygon(
                 0, 0, 200, 0, 250, 100, 0, 30
@@ -148,19 +147,19 @@ public class PlatformerSample extends GameApplication {
         first.setTranslateX(-15);
         first.setTranslateY(10);
 
-        view.addNode(first);
+        view.getChildren().add(first);
 
         Polygon second = new Polygon(
                 0, -30, 30, -30, 60, 30, 0, 30
         );
         second.setTranslateX(280);
         second.setTranslateY(50);
-        view.addNode(second);
+        view.getChildren().add(second);
 
         var third = new Rectangle(30, 30);
         third.setTranslateX(250);
         third.setTranslateY(-30);
-        view.addNode(third);
+        view.getChildren().add(third);
 
         poly = entityBuilder()
                 .at(180, 350)

@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.core.collection.ObjectMap
 import javafx.geometry.Point2D
 
 /**
@@ -18,7 +17,7 @@ open class SpawnData(val x: Double, val y: Double) {
 
     constructor(position: Point2D) : this(position.x, position.y)
 
-    val data = ObjectMap<String, Any>()
+    val data = hashMapOf<String, Any>()
 
     fun put(key: String, value: Any): SpawnData {
         data.put(key, value)

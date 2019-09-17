@@ -104,13 +104,50 @@ class ReflectionUtilsTest {
     }
 
     @Test
-    fun `Find methods map to functions`() {
+    fun `Find methods map to general functions`() {
+        val obj = TestClass1()
+
+        val map = ReflectionUtils.findMethodsMapToFunctions<String, String, Ann2>(obj, Ann2::class.java)
+
+        assertThat(map.size, `is`(1))
+        assertThat(map.values.first().apply(" world"), `is`("Hello3 world"))
+    }
+
+    @Test
+    fun `Find methods map to specific functions`() {
         val obj = TestClass1()
 
         val map = ReflectionUtils.findMethodsMapToFunctions(obj, Ann2::class.java, MyFunction::class.java)
 
         assertThat(map.size, `is`(1))
         assertThat(map.values.first().apply(" world"), `is`("Hello3 world"))
+    }
+
+    @Test
+    fun `Find fields by annotation`() {
+        val obj = TestClass1()
+
+        val fields = ReflectionUtils.findFieldsByAnnotation(obj, FieldAnn::class.java)
+
+        assertThat(fields.size(), `is`(1))
+    }
+
+    @Test
+    fun `Find fields by type`() {
+        val obj = TestClass1()
+
+        val fields = ReflectionUtils.findDeclaredFieldsByType(obj, Int::class.java)
+
+        assertThat(fields.size(), `is`(1))
+    }
+
+    @Test
+    fun `Find fields by type recursive`() {
+        val obj = TestClass2("test")
+
+        val fields = ReflectionUtils.findFieldsByTypeRecursive(obj, Int::class.java)
+
+        assertThat(fields.size(), `is`(1))
     }
 
     @Test
@@ -123,8 +160,24 @@ class ReflectionUtilsTest {
     }
 
     @Test
+    fun `Inject a field throws exception if cannot be injected`() {
+        val obj = TestClass1()
+
+        assertThrows<ReflectionException> {
+            ReflectionUtils.inject(ReflectionUtils.getDeclaredField("name", obj).get(), "", "")
+        }
+    }
+
+    @Test
     fun `Get field returns optional empty if no such field`() {
         assertFalse(ReflectionUtils.getDeclaredField("name", "").isPresent)
+    }
+
+    @Test
+    fun `Get field throws if exception`() {
+        assertThrows<ReflectionException> {
+            ReflectionUtils.getDeclaredField(null, "")
+        }
     }
 
     @Test
@@ -146,15 +199,30 @@ class ReflectionUtilsTest {
         }
     }
 
+    @Test
+    fun `Get calling class throws if caller is not a subclass`() {
+        assertThrows<ReflectionException> {
+            TestSuperClass.NoSubClass.highLevelFunction()
+        }
+    }
+
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Ann
 
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Ann2
 
+    @Target(AnnotationTarget.FIELD)
+    @Retention(AnnotationRetention.RUNTIME)
+    annotation class FieldAnn
+
     interface MyFunction : Function<String, String>
 
-    class TestClass1 {
+    open class TestClass1 {
+
+        @FieldAnn
+        protected val fieldInt = -1
+
         lateinit var name: String
             private set
 
@@ -169,5 +237,5 @@ class ReflectionUtilsTest {
         private fun fooInaccessible() = "Hello4"
     }
 
-    class TestClass2(val s: String)
+    class TestClass2(val s: String) : TestClass1()
 }

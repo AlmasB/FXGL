@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.input
 
-import com.almasb.fxgl.input.virtual.VirtualButton
+import com.almasb.fxgl.input.virtual.*
 import com.almasb.sslogger.Logger
 import javafx.collections.FXCollections
 import javafx.event.Event
@@ -14,6 +14,7 @@ import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.scene.Group
+import javafx.scene.Node
 import javafx.scene.input.*
 
 class Input {
@@ -298,7 +299,46 @@ class Input {
         virtualButtons[virtualButton]?.let { mockKeyRelease(it) }
     }
 
+    /**
+     * Creates a view containing virtual dpad (4 directional controls).
+     */
+    fun createVirtualDpadView() = createVirtualDpadView(FXGLVirtualDpad(this))
+
+    fun createVirtualDpadView(dpad: VirtualDpad): Group {
+        return dpad.createView()
+    }
+
+    fun createXboxVirtualControllerView() = createVirtualControllerView(XboxVirtualController(this))
+
+    fun createPSVirtualControllerView() = createVirtualControllerView(PSVirtualController(this))
+
+    fun createVirtualControllerView(controller: VirtualController): Group {
+        return controller.createView()
+    }
+
+    fun createXboxVirtualController() = XboxVirtualController(this)
+
+    fun createPSVirtualController() = PSVirtualController(this)
+
+    fun createVirtualDpad() = FXGLVirtualDpad(this)
+
+    @JvmOverloads fun createVirtualMenuKeyView(menuKey: KeyCode, isMenuEnabled: Boolean = false): Node {
+        return createVirtualMenuKeyView(FXGLVirtualMenuKey(this, menuKey, isMenuEnabled))
+    }
+
+    fun createVirtualMenuKeyView(virtualKey: VirtualMenuKey): Node {
+        return virtualKey.createViewAndAttachHandler()
+    }
+
     /* MOCKING */
+
+    internal fun mockKeyPressEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
+        fireEvent(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
+    }
+
+    internal fun mockKeyReleaseEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
+        fireEvent(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
+    }
 
     /**
      * Mocks key press event. The behavior is equivalent to

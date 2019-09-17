@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.entity.components
 
-import com.almasb.fxgl.core.Disposable
 import com.almasb.fxgl.core.View
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.ComponentHelper
@@ -18,10 +17,13 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
 
 class ViewComponentTest {
 
@@ -32,18 +34,17 @@ class ViewComponentTest {
         view = ViewComponent()
     }
 
-    @Test
-    fun `Add and remove children`() {
+    @ParameterizedTest
+    @MethodSource("childProvider")
+    fun `Add and remove children`(node: Node) {
         assertThat(view.children.size, `is`(0))
 
-        val rect = Rectangle()
-
-        view.addChild(rect)
+        view.addChild(node)
 
         assertThat(view.children.size, `is`(1))
-        assertThat(view.children[0], `is`<Node>(rect))
+        assertThat(view.children[0], `is`<Node>(node))
 
-        view.removeChild(rect)
+        view.removeChild(node)
 
         assertThat(view.children.size, `is`(0))
     }
@@ -90,14 +91,24 @@ class ViewComponentTest {
     fun `Clear children`() {
         assertThat(view.children.size, `is`(0))
 
+        val child = TestView()
+        val child2 = TestView()
+
+        view.addChild(child)
+        view.addChild(child2, false)
+
         view.addChild(Rectangle())
         view.addChild(Rectangle(), false)
 
-        assertThat(view.children.size, `is`(2))
+        assertThat(view.children.size, `is`(4))
+        assertFalse(child.isDisposed)
+        assertFalse(child2.isDisposed)
 
         view.clearChildren()
 
         assertThat(view.children.size, `is`(0))
+        assertTrue(child.isDisposed)
+        assertTrue(child2.isDisposed)
     }
 
     @Test
@@ -147,6 +158,13 @@ class ViewComponentTest {
         view.parent.fireEvent(e1)
 
         assertThat(count, `is`(1))
+    }
+
+    companion object {
+        @JvmStatic
+        fun childProvider(): Stream<Node> {
+            return Stream.of(Rectangle(), TestView())
+        }
     }
 
     private class TestView : Parent(), View {

@@ -6,14 +6,12 @@
 
 package com.almasb.fxgl.core.util
 
-import org.junit.jupiter.api.Assertions.*
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
+import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.function.Executable
-import java.lang.Exception
-import java.lang.IllegalArgumentException
-import java.lang.IllegalStateException
-import java.lang.RuntimeException
 
 /**
  *
@@ -21,6 +19,15 @@ import java.lang.RuntimeException
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class UtilsTest {
+
+    @Test
+    fun `Try catch root runs normall if no exception`() {
+        var s = tryCatchRoot(Supplier { "Test" })
+        assertThat(s, `is`("Test"))
+
+        s = tryCatchRoot { "Hello" }
+        assertThat(s, `is`("Hello"))
+    }
 
     @Test
     fun `Try catch root throws root exception and not last exception`() {

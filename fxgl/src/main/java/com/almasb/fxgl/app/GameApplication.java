@@ -7,7 +7,6 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.util.Platform;
-import com.almasb.fxgl.core.util.RuntimeInfo;
 import com.almasb.fxgl.dev.DevService;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.saving.DataFile;
@@ -18,29 +17,27 @@ import javafx.stage.Stage;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
-
 /**
  * To use FXGL, extend this class and implement necessary methods.
  * The initialization process can be seen below (irrelevant phases are omitted):
- * <p>
+ *
  * <ol>
  * <li>Instance fields of YOUR subclass of GameApplication</li>
  * <li>initSettings()</li>
  * <li>Services configuration (after this you can safely call any FXGL.* methods)</li>
- * <p>Executed on JavaFX UI thread:</p>
+ * Executed on JavaFX UI thread:
  * <li>initAchievements()</li>
  * <li>initInput()</li>
  * <li>preInit()</li>
- * <p>NOT executed on JavaFX UI thread:</p>
+ * NOT executed on JavaFX UI thread:
  * <li>initAssets()</li>
  * <li>initGameVars()</li>
  * <li>initGame() OR loadState()</li>
  * <li>initPhysics()</li>
  * <li>initUI()</li>
- * <p>Start of main game loop execution on JavaFX UI thread</p>
+ * Start of main game loop execution on JavaFX UI thread
  * </ol>
- * <p>
+ *
  * Unless explicitly stated, methods are not thread-safe and must be
  * executed on the JavaFX Application (UI) Thread.
  * By default all callbacks are executed on the JavaFX Application (UI) Thread.
@@ -92,11 +89,16 @@ public abstract class GameApplication {
 
         app.initLogger(settings);
 
+        // this _should_ be a workaround for the JavaFX bug on linux discussed at https://github.com/AlmasB/FXGL/issues/579
+        if (settings.isLinux()) {
+            System.setProperty("quantum.multithreaded", "false");
+        }
+
         FXGLApplication.launchFX(app, settings, args);
     }
 
     private static GameApplication newInstance() {
-        var appClass = getCallingClass(GameApplication.class, "launch");
+        var appClass = ReflectionUtils.getCallingClass(GameApplication.class, "launch");
 
         return ReflectionUtils.newInstance(appClass);
     }

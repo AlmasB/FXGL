@@ -556,7 +556,7 @@ public class Array<T> implements Iterable<T> {
     public void shuffle() {
         T[] items = this.items;
         for (int i = size - 1; i >= 0; i--) {
-            int ii = FXGLMath.random(i);
+            int ii = FXGLMath.random(0, i);
             T temp = items[i];
             items[i] = items[ii];
             items[ii] = temp;
@@ -714,6 +714,7 @@ public class Array<T> implements Iterable<T> {
     /**
      * Creates a new array with the specified component type and length.
      */
+    @SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
     private static Object newArray(Class c, int size) {
         return java.lang.reflect.Array.newInstance(c, size);
     }

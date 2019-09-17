@@ -11,11 +11,9 @@ import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.audio.getDummyAudio
 import com.almasb.fxgl.audio.impl.DesktopAudioService
-import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
-import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.texture.getDummyImage
 import com.almasb.fxgl.ui.FontFactory
@@ -29,7 +27,6 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import java.io.IOException
 import java.io.InputStream
-import java.io.ObjectInputStream
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -83,7 +80,7 @@ class AssetLoader {
 
     private val audioService = DesktopAudioService()
 
-    private val cachedAssets = ObjectMap<String, Any>()
+    private val cachedAssets = hashMapOf<String, Any>()
 
     /**
      * Loads texture as [Image] with given name from /assets/textures/.

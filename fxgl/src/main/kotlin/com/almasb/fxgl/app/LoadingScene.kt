@@ -6,12 +6,8 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.util.BiConsumer
-import com.almasb.fxgl.core.util.forEach
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.saving.DataFile
-import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.Scene
 import com.almasb.sslogger.Logger
 import javafx.concurrent.Task
 import javafx.scene.control.ProgressBar
@@ -72,7 +68,7 @@ open class LoadingScene : FXGLScene() {
         text.textProperty().bind(task.messageProperty())
     }
 
-    override fun onEnter(prevState: Scene) {
+    override fun onCreate() {
         val initTask = InitAppTask(FXGL.getApp(), dataFile)
         initTask.setOnSucceeded {
             loadingFinished = true

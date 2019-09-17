@@ -7,7 +7,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>11.4</version>
+        <version>dev-SNAPSHOT</version>
     </parent>
 
     <artifactId>fxgl</artifactId>
@@ -82,6 +82,18 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-scene</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-minigames</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-notification</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
@@ -94,8 +106,21 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-cutscene</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-time</artifactId>
             <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-test</artifactId>
+            <version>${fxgl.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -134,7 +159,15 @@
             <!-- Create javadoc.jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
 
             <!-- Attach kotlin sources -->

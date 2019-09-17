@@ -19,8 +19,6 @@ import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.TriggerView
 import com.almasb.fxgl.saving.SaveFile
-import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.MenuType
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.FXGLScrollPane
 import com.almasb.fxgl.ui.FXGLUIConfig.getUIFactory
@@ -90,7 +88,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         // we don't data-bind the name because menu subclasses
         // might use some fancy UI without Text / Label
-        controller.profileNameProperty().addListener { o, oldName, newName ->
+        controller.profileNameProperty().addListener { _, oldName, newName ->
             if (!oldName.isEmpty()) {
                 // remove last node which *should* be profile view
                 contentRoot.children.removeAt(contentRoot.children.size - 1)
@@ -316,7 +314,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         val triggerView = TriggerView(trigger)
         triggerView.triggerProperty().bind(getInput().triggerProperty(action))
 
-        triggerView.setOnMouseClicked { event ->
+        triggerView.setOnMouseClicked {
             pressAnyKeyState.actionContext = action
             controller.pushSubScene(pressAnyKeyState)
         }
@@ -348,7 +346,6 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         if (getSettings().isFullScreenAllowed) {
             val cbFullScreen = getUIFactory().newCheckBox()
-            cbFullScreen.isSelected = false
             cbFullScreen.selectedProperty().bindBidirectional(getSettings().fullScreen)
 
             vbox.children.add(HBox(25.0, getUIFactory().newText(getLocalizedString("menu.fullscreen") + ": "), cbFullScreen))
@@ -487,7 +484,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
                 }
             }
 
-            sceneProperty().addListener { o, oldScene, newScene ->
+            sceneProperty().addListener { _, _, newScene ->
                 if (newScene != null) {
                     onOpen()
                 } else {
@@ -622,11 +619,11 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     /**
      * @param fileName name of the save file
      */
-    protected fun fireDelete(fileName: SaveFile) {
-        log.debug("fireDelete()")
-
-        //listener.onDelete(fileName)
-    }
+//    protected fun fireDelete(fileName: SaveFile) {
+//        log.debug("fireDelete()")
+//
+//        //listener.onDelete(fileName)
+//    }
 
     /**
      * Can only be fired from game menu.

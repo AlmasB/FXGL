@@ -35,8 +35,6 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.almasb.fxgl.core.util.BackportKt.forEach;
-
 /**
  * Manages physics entities, collision handling and performs the physics tick.
  * <p>
@@ -87,6 +85,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         return isCollidable(e1) && isCollidable(e2);
     }
 
+    @SuppressWarnings("PMD.UselessParentheses")
     private boolean needManualCheck(Entity e1, Entity e2) {
         // if no physics -> check manually
 
@@ -216,7 +215,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
             if (b != null) {
                 List<Fixture> fixtures = List.copyOf(b.getFixtures());
 
-                forEach(fixtures, b::destroyFixture);
+                fixtures.forEach(b::destroyFixture);
 
                 createFixtures(entity);
                 createSensors(entity);
@@ -228,6 +227,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         entity.getTransformComponent().scaleYProperty().addListener(scaleChangeListener);
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private void onPhysicsParticleEntityAdded(Entity entity) {
         if (!jboxWorld.isLocked()) {
             createPhysicsParticles(entity);
@@ -624,7 +624,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         if (physics.getSensorHandlers().isEmpty())
             return;
 
-        forEach(physics.getSensorHandlers().keys(), box -> {
+        physics.getSensorHandlers().keySet().forEach(box -> {
             box.bindXY(e.getTransformComponent());
 
             Shape polygonShape = createShape(box, e);
@@ -744,6 +744,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         return shape;
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private void createPhysicsParticles(Entity e) {
 //        double x = e.getX();
 //        double y = e.getY();

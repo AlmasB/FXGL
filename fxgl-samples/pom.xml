@@ -5,7 +5,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>11.4</version>
+        <version>dev-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -27,12 +27,6 @@
             <artifactId>fxgl-trade</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-minigames</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -46,6 +40,15 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- Do NOT check code quality as this is a development module and is not shipped -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>

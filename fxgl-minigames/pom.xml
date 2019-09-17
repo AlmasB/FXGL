@@ -5,7 +5,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>11.4</version>
+        <version>dev-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -27,6 +27,12 @@
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-animation</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-scene</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 
@@ -57,6 +63,14 @@
             </plugin>
 
             <!-- Create javadoc.jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

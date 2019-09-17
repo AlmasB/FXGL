@@ -6,13 +6,9 @@
 
 package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.core.View;
-import com.almasb.fxgl.core.collection.Array;
-import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.util.EmptyRunnable;
-import com.almasb.fxgl.core.util.Optional;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.entity.components.BoundingBoxComponent;
 import com.almasb.fxgl.entity.components.TransformComponent;
@@ -24,12 +20,9 @@ import javafx.geometry.Rectangle2D;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
-import static com.almasb.fxgl.core.util.BackportKt.forEach;
 
 /**
  * A generic game object.
@@ -50,9 +43,53 @@ import static com.almasb.fxgl.core.util.BackportKt.forEach;
  */
 public class Entity {
 
-    private PropertyMap properties = new PropertyMap();
+    private static class ComponentMap {
+        private Map<Class<? extends Component>, Component> components = new HashMap<>();
+        private List<Component> componentList = new ArrayList<>();
 
-    private ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
+        void update(double tpf) {
+            for (int i = 0; i < componentList.size(); i++) {
+                Component c = componentList.get(i);
+                if (!c.isPaused()) {
+                    c.onUpdate(tpf);
+                }
+            }
+        }
+
+        <T extends Component> boolean has(Class<T> type) {
+            return components.containsKey(type);
+        }
+
+        void add(Component c) {
+            components.put(c.getClass(), c);
+            componentList.add(c);
+        }
+
+        void remove(Class<? extends Component> type) {
+            var c = components.remove(type);
+            componentList.remove(c);
+        }
+
+        <T extends Component> Component get(Class<T> type) {
+            return components.get(type);
+        }
+
+        Set<Class<? extends Component>> types() {
+            return components.keySet();
+        }
+
+        List<Component> getAll() {
+            return new ArrayList<>(componentList);
+        }
+
+        void clear() {
+            components.clear();
+            componentList.clear();
+        }
+    }
+
+    private PropertyMap properties = new PropertyMap();
+    private ComponentMap components = new ComponentMap();
 
     private List<ComponentListener> componentListeners = new ArrayList<>();
 
@@ -145,11 +182,7 @@ public class Entity {
 
         updating = true;
 
-        for (Component c : components.values()) {
-            if (!c.isPaused()) {
-                c.onUpdate(tpf);
-            }
-        }
+        components.update(tpf);
 
         updating = false;
     }
@@ -245,7 +278,7 @@ public class Entity {
      * @return true iff entity has a component of given type
      */
     public final boolean hasComponent(Class<? extends Component> type) {
-        return components.containsKey(type);
+        return components.has(type);
     }
 
     /**
@@ -274,13 +307,10 @@ public class Entity {
     }
 
     /**
-     * Warning: object allocation.
-     * Cannot be called during update.
-     *
-     * @return array of components
+     * @return a new list containing all components of this entity
      */
-    public final Array<Component> getComponents() {
-        return components.values().toArray();
+    public final List<Component> getComponents() {
+        return components.getAll();
     }
 
     /**
@@ -304,7 +334,7 @@ public class Entity {
         component.onAdded();
         notifyComponentAdded(component);
 
-        components.put(component.getClass(), component);
+        components.add(component);
     }
 
     /**
@@ -333,7 +363,7 @@ public class Entity {
     }
 
     private void removeAllComponents() {
-        forEach(components.values(), this::removeComponent);
+        getComponents().forEach(this::removeComponent);
 
         components.clear();
     }
@@ -342,14 +372,11 @@ public class Entity {
     private void injectFields(Component component) {
         ComponentHelper.setEntity(component, this);
 
-        forEach(
-                findFieldsByTypeRecursive(component, Component.class),
-                field -> {
-                    getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
-                        inject(field, component, comp);
-                    });
-                }
-        );
+        findFieldsByTypeRecursive(component, Component.class).forEach(field -> {
+            getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
+                inject(field, component, comp);
+            });
+        });
     }
 
     private void removeComponent(Component component) {
@@ -361,11 +388,11 @@ public class Entity {
     }
 
     private <T extends Component> void notifyComponentAdded(T c) {
-        forEach(componentListeners, l -> l.onAdded(c));
+        componentListeners.forEach(l -> l.onAdded(c));
     }
 
     private <T extends Component> void notifyComponentRemoved(T c) {
-        forEach(componentListeners, l -> l.onRemoved(c));
+        componentListeners.forEach(l -> l.onRemoved(c));
     }
 
     private void checkNotUpdating() {
@@ -418,7 +445,7 @@ public class Entity {
     }
 
     private void checkNotRequiredByAny(Class<? extends Component> type) {
-        for (Class<? extends Component> t : components.keys()) {
+        for (Class<? extends Component> t : components.types()) {
             checkNotRequiredBy(t, type);
         }
     }
@@ -746,11 +773,13 @@ public class Entity {
 
     @Override
     public String toString() {
-        // we want core components to be shown first for readability
-        List<String> coreComponentsAsString = new ArrayList<>(components.size());
-        List<String> otherComponentsAsString = new ArrayList<>(components.size());
+        List<Component> comps = getComponents();
 
-        forEach(components.values(), c -> {
+        // we want core components to be shown first for readability
+        List<String> coreComponentsAsString = new ArrayList<>(comps.size());
+        List<String> otherComponentsAsString = new ArrayList<>(comps.size());
+
+        comps.forEach(c -> {
             if (isCoreComponent(c.getClass())) {
                 coreComponentsAsString.add(c.toString());
             } else {

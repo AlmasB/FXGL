@@ -40,10 +40,10 @@ public class SmokeSample extends GameApplication {
         getInput().addAction(new UserAction("Change Color") {
             @Override
             protected void onActionBegin() {
-                Color randomColor = Color.color(FXGLMath.random(), FXGLMath.random(), FXGLMath.random());
+                Color randomColor = Color.color(FXGLMath.randomDouble(), FXGLMath.randomDouble(), FXGLMath.randomDouble());
                 emitter.setBlendMode(BlendMode.SRC_OVER);
                 e.setStartColor(randomColor);
-                e.setEndColor(Color.color(FXGLMath.random(), FXGLMath.random(), FXGLMath.random()));
+                e.setEndColor(Color.color(FXGLMath.randomDouble(), FXGLMath.randomDouble(), FXGLMath.randomDouble()));
             }
         }, MouseButton.PRIMARY);
     }
@@ -60,7 +60,7 @@ public class SmokeSample extends GameApplication {
         e.setStartColor(Color.color(0.6, 0.55, 0.5, 0.47));
         e.setEndColor(Color.BLACK);
         e.setExpireFunction(i -> Duration.seconds(16));
-        e.setVelocityFunction(i -> new Point2D(FXGLMath.random() - 0.5, 0));
+        e.setVelocityFunction(i -> new Point2D(FXGLMath.randomDouble() - 0.5, 0));
 
 //        Entities.builder()
 //                .at(getWidth() / 2, getHeight() - 100)

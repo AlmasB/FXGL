@@ -76,83 +76,94 @@ class AchievementManager : EngineService {
         // only interested in non-achieved achievements
         achievements.filter { !it.isAchieved }.forEach {
 
-            // TODO: cleanup
             if (!vars.exists(it.varName)) {
                 log.warning("Achievement ${it.name} cannot find property ${it.varName}")
             } else {
                 when (it.varValue) {
                     is Int -> {
-                        var listener: PropertyChangeListener<Int>? = null
-
-                        listener = object : PropertyChangeListener<Int> {
-                            var halfReached = false
-
-                            override fun onChange(prev: Int, now: Int) {
-
-                                if (!halfReached && now >= it.varValue / 2) {
-                                    halfReached = true
-                                    eventBus.fireEvent(AchievementProgressEvent(it, now.toDouble(), it.varValue.toDouble()))
-                                }
-
-                                if (now >= it.varValue) {
-                                    it.setAchieved()
-                                    eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
-
-                                    vars.removeListener(it.varName, listener!!)
-                                }
-                            }
-                        }
-
-                        vars.addListener(it.varName, listener)
+                        registerIntAchievement(vars, it, it.varValue)
                     }
 
                     is Double -> {
-                        var listener: PropertyChangeListener<Double>? = null
-
-                        listener = object : PropertyChangeListener<Double> {
-                            var halfReached = false
-
-                            override fun onChange(prev: Double, now: Double) {
-
-                                if (!halfReached && now >= it.varValue / 2) {
-                                    halfReached = true
-                                    eventBus.fireEvent(AchievementProgressEvent(it, now, it.varValue))
-                                }
-
-                                if (now >= it.varValue) {
-                                    it.setAchieved()
-                                    eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
-
-                                    vars.removeListener(it.varName, listener!!)
-                                }
-                            }
-                        }
-
-                        vars.addListener(it.varName, listener)
+                        registerDoubleAchievement(vars, it, it.varValue)
                     }
 
                     is Boolean -> {
-                        var listener: PropertyChangeListener<Boolean>? = null
-
-                        listener = object : PropertyChangeListener<Boolean> {
-
-                            override fun onChange(prev: Boolean, now: Boolean) {
-                                if (now) {
-                                    it.setAchieved()
-                                    eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
-
-                                    vars.removeListener(it.varName, listener!!)
-                                }
-                            }
-                        }
-
-                        vars.addListener(it.varName, listener)
+                        registerBooleanAchievement(vars, it, it.varValue)
                     }
 
                     else -> throw IllegalArgumentException("Unknown value type for achievement: " + it.varValue)
                 }
             }
         }
+    }
+
+    private fun registerIntAchievement(vars: PropertyMap, a: Achievement, value: Int) {
+        var listener: PropertyChangeListener<Int>? = null
+
+        listener = object : PropertyChangeListener<Int> {
+            var halfReached = false
+
+            override fun onChange(prev: Int, now: Int) {
+
+                if (!halfReached && now >= value / 2) {
+                    halfReached = true
+                    eventBus.fireEvent(AchievementProgressEvent(a, now.toDouble(), value.toDouble()))
+                }
+
+                if (now >= value) {
+                    a.setAchieved()
+                    eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, a))
+
+                    vars.removeListener(a.varName, listener!!)
+                }
+            }
+        }
+
+        vars.addListener(a.varName, listener)
+    }
+
+    private fun registerDoubleAchievement(vars: PropertyMap, a: Achievement, value: Double) {
+        var listener: PropertyChangeListener<Double>? = null
+
+        listener = object : PropertyChangeListener<Double> {
+            var halfReached = false
+
+            override fun onChange(prev: Double, now: Double) {
+
+                if (!halfReached && now >= value / 2) {
+                    halfReached = true
+                    eventBus.fireEvent(AchievementProgressEvent(a, now, value))
+                }
+
+                if (now >= value) {
+                    a.setAchieved()
+                    eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, a))
+
+                    vars.removeListener(a.varName, listener!!)
+                }
+            }
+        }
+
+        vars.addListener(a.varName, listener)
+    }
+
+    private fun registerBooleanAchievement(vars: PropertyMap, a: Achievement, value: Boolean) {
+        var listener: PropertyChangeListener<Boolean>? = null
+
+        listener = object : PropertyChangeListener<Boolean> {
+
+            override fun onChange(prev: Boolean, now: Boolean) {
+                if (now == value) {
+                    a.setAchieved()
+                    eventBus.fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, a))
+
+                    vars.removeListener(a.varName, listener!!)
+                }
+            }
+        }
+
+        vars.addListener(a.varName, listener)
     }
 
     override fun onExit() {

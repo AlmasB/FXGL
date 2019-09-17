@@ -6,11 +6,11 @@
 
 package com.almasb.fxgl.entity.component
 
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.entity.components.BooleanComponent
 import com.almasb.fxgl.entity.components.DoubleComponent
 import com.almasb.fxgl.entity.components.IntegerComponent
 import com.almasb.fxgl.entity.components.StringComponent
-import com.almasb.fxgl.core.serialization.Bundle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue

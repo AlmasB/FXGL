@@ -1,0 +1,5 @@
+Player1: Hello.
+Player2: Hi.
+Player1: This is an example of a cutscene dialogue. Very long piece of text that should be moved to the next line on screen given current font and size. This is an example of a cutscene dialogue. Very long piece of text that should be moved to the next line on screen given current font and size. This is an example of a cutscene dialogue. Very long piece of text that should be moved to the next line on screen given current font and size. This is an example of a cutscene dialogue. Very long piece of text that should be moved to the next line on screen given current font and size.
+Player2: This is an example of a single line.
+Player2: Another line of text.

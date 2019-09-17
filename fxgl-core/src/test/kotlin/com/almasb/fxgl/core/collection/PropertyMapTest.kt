@@ -8,9 +8,10 @@ package com.almasb.fxgl.core.collection
 
 import javafx.beans.property.StringProperty
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.containsInAnyOrder
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

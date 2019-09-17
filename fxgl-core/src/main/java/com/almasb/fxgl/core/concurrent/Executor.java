@@ -31,21 +31,38 @@ public interface Executor extends java.util.concurrent.Executor {
     ScheduledFuture<?> schedule(Runnable action, Duration delay);
 
     /**
-     * Instantly starts a non-blocking async task.
+     * Starts an async task on a background thread.
      *
-     * @param func the code to run
-     * @param <T> return type of the code block
-     * @return async object
+     * @param func function to run for result
+     * @param <T> result type
+     * @return an async object
      */
-    <T> Async<T> async(Callable<T> func);
+    <T> AsyncTask<T> startAsync(Callable<T> func);
 
     /**
-     * Instantly starts a non-blocking async task.
+     * Starts an async task on a background thread.
      *
-     * @param func the code to run
-     * @return async object
+     * @param func function to run
+     * @return an async object
      */
-    Async<Void> async(Runnable func);
+    AsyncTask<?> startAsync(Runnable func);
+
+    /**
+     * Starts an async task on a JavaFX thread.
+     *
+     * @param func function to run for result
+     * @param <T> result type
+     * @return an async object
+     */
+    <T> AsyncTask<T> startAsyncFX(Callable<T> func);
+
+    /**
+     * Starts an async task on a JavaFX thread.
+     *
+     * @param func function to run
+     * @return an async object
+     */
+    AsyncTask<?> startAsyncFX(Runnable func);
 
     /**
      * Shuts down all background threads used by this executor.

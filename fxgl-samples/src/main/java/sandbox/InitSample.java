@@ -7,11 +7,9 @@
 package sandbox;
 
 import com.almasb.fxgl.animation.Interpolators;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -23,7 +21,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -172,7 +169,7 @@ public class InitSample extends GameApplication {
 
         getGameScene().addUINode(t);
 
-        Canvas canvas = new Canvas(FXGL.getAppWidth(), FXGL.getAppHeight());
+        Canvas canvas = new Canvas(getAppWidth(), getAppHeight());
         g = canvas.getGraphicsContext2D();
         g.setFill(Color.YELLOWGREEN);
 
@@ -181,7 +178,7 @@ public class InitSample extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        g.clearRect(0, 0, FXGL.getAppWidth(), FXGL.getAppHeight());
+        g.clearRect(0, 0, getAppWidth(), getAppHeight());
 
 //        var points = Debug.INSTANCE.getPoints();
 //

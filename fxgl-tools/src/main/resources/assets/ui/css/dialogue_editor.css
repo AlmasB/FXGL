@@ -1,0 +1,82 @@
+.dialogue-editor-node-view {
+    -fx-border-color: azure;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-radius: 5 5 5 5;
+    -fx-background-radius: 10 10 10 10;
+    -fx-background-color: rgba(0, 0, 0, 0.55);
+}
+
+.dialogue-editor-node-view .title {
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-radius: 5 5 0 0;
+    -fx-background-radius: 4 4 0 0;
+}
+
+.dialogue-editor-text-area .scroll-pane {
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
+}
+
+.dialogue-editor-condition-view .text-field {
+    -fx-border-color: white;
+    -fx-border-width: 1;
+    -fx-border-style: solid;
+    -fx-border-radius: 15 15 15 15;
+    -fx-background-radius: 15 15 15 15;
+    -fx-background-color: rgba(255, 255, 255, 0.55);
+}
+
+/* Main UI tab pane */
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: black;
+}
+
+.tab-pane {
+    -fx-tab-min-width: 100px;
+}
+
+.tab {
+    -fx-background-insets: 0 1 0 1, 0, 0;
+}
+
+.tab-pane .tab {
+    -fx-background-color: gray;
+    -fx-opacity: 0.3;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: white;
+    -fx-opacity: 1.0;
+}
+
+.tab .tab-label {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.tab:selected .tab-label {
+    -fx-text-fill: black;
+}
+
+.tab-pane:top *.tab-header-area {
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 5 2 0 800;
+    -fx-border-color: azure;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-radius: 5 5 5 5;
+}
+
+.fxgl-context-menu {
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-radius: 5 5 5 5;
+    -fx-background-radius: 10 10 10 10;
+    -fx-background-color: linear-gradient(from 50% 0% to 50% 100%, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.75) 100%)
+}

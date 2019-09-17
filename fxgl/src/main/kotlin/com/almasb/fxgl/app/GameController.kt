@@ -9,14 +9,14 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.saving.SaveFile
 import com.almasb.fxgl.saving.UserProfile
-import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.scene.SubSceneStack
 import javafx.beans.property.StringProperty
 
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-interface GameController {
+interface GameController : SubSceneStack {
 
     fun startNewGame()
 
@@ -47,8 +47,5 @@ interface GameController {
     fun saveScreenshot(): Boolean
 
     fun restoreDefaultProfileSettings()
-
-    fun pushSubScene(subScene: SubScene)
-
-    fun popSubScene()
 }
+

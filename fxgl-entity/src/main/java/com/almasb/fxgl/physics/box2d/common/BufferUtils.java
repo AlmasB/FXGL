@@ -14,7 +14,7 @@ public class BufferUtils {
      */
     public static <T> T[] reallocateBuffer(Class<T> klass, T[] oldBuffer, int oldCapacity,
                                            int newCapacity) {
-        assert (newCapacity > oldCapacity);
+        assert newCapacity > oldCapacity;
         @SuppressWarnings("unchecked")
         T[] newBuffer = (T[]) Array.newInstance(klass, newCapacity);
         if (oldBuffer != null) {
@@ -34,7 +34,7 @@ public class BufferUtils {
      * Reallocate a buffer.
      */
     public static int[] reallocateBuffer(int[] oldBuffer, int oldCapacity, int newCapacity) {
-        assert (newCapacity > oldCapacity);
+        assert newCapacity > oldCapacity;
         int[] newBuffer = new int[newCapacity];
         if (oldBuffer != null) {
             System.arraycopy(oldBuffer, 0, newBuffer, 0, oldCapacity);
@@ -46,7 +46,7 @@ public class BufferUtils {
      * Reallocate a buffer.
      */
     public static float[] reallocateBuffer(float[] oldBuffer, int oldCapacity, int newCapacity) {
-        assert (newCapacity > oldCapacity);
+        assert newCapacity > oldCapacity;
         float[] newBuffer = new float[newCapacity];
         if (oldBuffer != null) {
             System.arraycopy(oldBuffer, 0, newBuffer, 0, oldCapacity);
@@ -60,8 +60,8 @@ public class BufferUtils {
      */
     public static <T> T[] reallocateBuffer(Class<T> klass, T[] buffer, int userSuppliedCapacity,
                                            int oldCapacity, int newCapacity, boolean deferred) {
-        assert (newCapacity > oldCapacity);
-        assert (userSuppliedCapacity == 0 || newCapacity <= userSuppliedCapacity);
+        assert newCapacity > oldCapacity;
+        assert userSuppliedCapacity == 0 || newCapacity <= userSuppliedCapacity;
         if ((!deferred || buffer != null) && userSuppliedCapacity == 0) {
             buffer = reallocateBuffer(klass, buffer, oldCapacity, newCapacity);
         }
@@ -74,8 +74,8 @@ public class BufferUtils {
      */
     public static int[] reallocateBuffer(int[] buffer, int userSuppliedCapacity, int oldCapacity,
                                          int newCapacity, boolean deferred) {
-        assert (newCapacity > oldCapacity);
-        assert (userSuppliedCapacity == 0 || newCapacity <= userSuppliedCapacity);
+        assert newCapacity > oldCapacity;
+        assert userSuppliedCapacity == 0 || newCapacity <= userSuppliedCapacity;
         if ((!deferred || buffer != null) && userSuppliedCapacity == 0) {
             buffer = reallocateBuffer(buffer, oldCapacity, newCapacity);
         }
@@ -88,8 +88,8 @@ public class BufferUtils {
      */
     public static float[] reallocateBuffer(float[] buffer, int userSuppliedCapacity, int oldCapacity,
                                            int newCapacity, boolean deferred) {
-        assert (newCapacity > oldCapacity);
-        assert (userSuppliedCapacity == 0 || newCapacity <= userSuppliedCapacity);
+        assert newCapacity > oldCapacity;
+        assert userSuppliedCapacity == 0 || newCapacity <= userSuppliedCapacity;
         if ((!deferred || buffer != null) && userSuppliedCapacity == 0) {
             buffer = reallocateBuffer(buffer, oldCapacity, newCapacity);
         }

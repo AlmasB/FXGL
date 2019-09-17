@@ -1,8 +1,15 @@
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
+
+
 package com.almasb.fxgl.entity.components
 
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.SerializableComponent
-import com.almasb.fxgl.core.serialization.Bundle
 import javafx.beans.property.*
 
 /**

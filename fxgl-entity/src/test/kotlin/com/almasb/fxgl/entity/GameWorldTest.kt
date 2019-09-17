@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.core.util.Optional
+import java.util.Optional
 import com.almasb.fxgl.core.util.Predicate
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.IDComponent
@@ -100,7 +100,7 @@ class GameWorldTest {
         gameWorld.addEntity(e)
         gameWorld.removeEntity(e)
 
-        assertTrue(e.components.isNotEmpty)
+        assertTrue(e.components.isNotEmpty())
     }
 
     @Test
@@ -113,7 +113,7 @@ class GameWorldTest {
 
         gameWorld.onUpdate(0.0)
 
-        assertTrue(e.components.isEmpty)
+        assertTrue(e.components.isEmpty())
     }
 
     @Test
@@ -432,8 +432,8 @@ class GameWorldTest {
 
         assertAll(
                 Executable { assertThat(count, `is`(2)) },
-                Executable { assertTrue(e.components.isEmpty) },
-                Executable { assertTrue(e2.components.isEmpty) }
+                Executable { assertTrue(e.components.isEmpty()) },
+                Executable { assertTrue(e2.components.isEmpty()) }
         )
     }
 
@@ -449,7 +449,7 @@ class GameWorldTest {
 
         gameWorld.clear()
 
-        assertTrue(e.components.isEmpty)
+        assertTrue(e.components.isEmpty())
     }
 
     @Test

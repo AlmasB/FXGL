@@ -1,3 +1,9 @@
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
+
 /**
  *
  */
@@ -10,6 +16,7 @@ module com.almasb.fxgl.core {
     exports com.almasb.fxgl.core;
     exports com.almasb.fxgl.core.collection;
     exports com.almasb.fxgl.core.concurrent;
+    exports com.almasb.fxgl.core.fsm;
     exports com.almasb.fxgl.core.math;
     exports com.almasb.fxgl.core.pool;
     exports com.almasb.fxgl.core.reflect;

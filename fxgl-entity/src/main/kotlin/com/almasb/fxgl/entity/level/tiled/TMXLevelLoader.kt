@@ -17,7 +17,6 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import java.lang.IllegalArgumentException
 import java.net.URL
 import java.nio.ByteBuffer
 import java.nio.ByteOrder

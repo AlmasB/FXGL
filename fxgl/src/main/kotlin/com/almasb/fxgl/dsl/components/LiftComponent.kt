@@ -18,7 +18,6 @@ import javafx.util.Duration
  */
 class LiftComponent : Component() {
 
-    // TODO: can we extract the data into LiftData, in which case we just have 1 var per axis
     /**
      * Move in X axis.
      */

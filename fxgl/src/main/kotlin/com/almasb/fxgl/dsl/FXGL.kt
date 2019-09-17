@@ -18,7 +18,7 @@ import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.core.util.BiConsumer
 import com.almasb.fxgl.core.util.Consumer
-import com.almasb.fxgl.core.util.Optional
+import com.almasb.fxgl.cutscene.CutsceneService
 import com.almasb.fxgl.dev.DevService
 import com.almasb.fxgl.dsl.handlers.CollectibleHandler
 import com.almasb.fxgl.dsl.handlers.OneTimeCollisionHandler
@@ -28,6 +28,7 @@ import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.tiled.TMXLevelLoader
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.UserAction
+import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.texture.Texture
@@ -44,6 +45,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.text.Text
 import javafx.util.Duration
+import java.util.*
 
 /**
  * Represents the FXGL facade and provides access to engine subsystems
@@ -121,20 +123,24 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getAchievementService() = engine.getService(AchievementManager::class.java)
 
+    @JvmStatic fun getCutsceneService() = engine.getService(CutsceneService::class.java)
+
+    @JvmStatic fun getMiniGameService() = engine.getService(MiniGameService::class.java)
+
     /**
      * @return time per frame (in this frame)
      */
     @JvmStatic fun tpf() = engine.tpf
 
-    @JvmStatic fun getGameState() = engine.playState.gameState
-    @JvmStatic fun getGameWorld() = engine.playState.gameWorld
-    @JvmStatic fun getPhysicsWorld() = engine.playState.physicsWorld
-    @JvmStatic fun getGameScene() = engine.playState
+    @JvmStatic fun getGameState() = engine.playScene.gameState
+    @JvmStatic fun getGameWorld() = engine.playScene.gameWorld
+    @JvmStatic fun getPhysicsWorld() = engine.playScene.physicsWorld
+    @JvmStatic fun getGameScene() = engine.playScene
 
     /**
      * @return play state timer
      */
-    @JvmStatic fun getGameTimer(): Timer = engine.playState.timer
+    @JvmStatic fun getGameTimer(): Timer = engine.playScene.timer
 
     /**
      * @return 'always-on' (regardless of active scene) engine timer
@@ -144,7 +150,7 @@ class FXGL private constructor() { companion object {
     /**
      * @return play state input
      */
-    @JvmStatic fun getInput(): Input = engine.playState.input
+    @JvmStatic fun getInput(): Input = engine.playScene.input
 
     /**
      * @return new instance on each call
@@ -415,7 +421,7 @@ class FXGL private constructor() { companion object {
 
 /* MATH */
 
-    @JvmStatic fun random() = FXGLMath.random()
+    @JvmStatic fun random() = FXGLMath.randomDouble()
 
     @JvmStatic fun random(min: Int, max: Int) = FXGLMath.random(min, max)
 
@@ -501,7 +507,7 @@ class FXGL private constructor() { companion object {
      * @param text UI object
      */
     @JvmStatic fun centerTextBind(text: Text, x: Double, y: Double) {
-        text.layoutBoundsProperty().addListener { o, old, bounds ->
+        text.layoutBoundsProperty().addListener { _, _, bounds ->
             text.translateX = x - bounds.width / 2
             text.translateY = y - bounds.height / 2
         }

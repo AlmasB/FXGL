@@ -4,7 +4,7 @@
 
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>11.4</version>
+    <version>dev-SNAPSHOT</version>
     
     <packaging>pom</packaging>
 
@@ -14,12 +14,14 @@
 
     <modules>
         <module>fxgl-core</module>
+        <module>fxgl-cutscene</module>
         <module>fxgl-time</module>
         <module>fxgl-events</module>
         <module>fxgl-io</module>
         <module>fxgl-entity</module>
         <module>fxgl-animation</module>
         <module>fxgl-ui</module>
+        <module>fxgl-scene</module>
         <module>fxgl</module>
         <module>fxgl-media</module>
         <module>fxgl-input</module>
@@ -31,6 +33,7 @@
         <module>fxgl-minigames</module>
         <module>fxgl-samples</module>
         <module>fxgl-nativesamples</module>
+        <module>fxgl-tools</module>
         <module>fxgl-zdeploy</module>
     </modules>
 
@@ -86,8 +89,10 @@
         <maven.gpg.version>1.6</maven.gpg.version>
         <sonatype.nexus.staging.version>1.6.7</sonatype.nexus.staging.version>
         <maven.compiler.version>3.8.0</maven.compiler.version>
+        <maven.pmd.version>3.12.0</maven.pmd.version>
+        <maven.license.version>3.0</maven.license.version>
         <maven.source.version>3.0.1</maven.source.version>
-        <maven.javadoc.version>3.0.0-M1</maven.javadoc.version>
+        <maven.javadoc.version>3.1.1</maven.javadoc.version>
         <maven.jar.version>3.1.1</maven.jar.version>
         <maven.shade.version>3.0.0</maven.shade.version>
         <jacoco.version>0.8.3</jacoco.version>
@@ -96,13 +101,13 @@
 
         <!-- dependencies -->
         <jfx.version>12.0.1</jfx.version>
-        <kotlin.version>1.3.21</kotlin.version>
+        <kotlin.version>1.3.41</kotlin.version>
         <sslogger.version>1.0</sslogger.version>
         <attach.version>4.0.2</attach.version>
 
         <!-- test dependencies -->
-        <junit.jupiter.version>5.4.0</junit.jupiter.version>
-        <junit.platform.version>1.4.0</junit.platform.version>
+        <junit.jupiter.version>5.5.1</junit.jupiter.version>
+        <junit.platform.version>1.5.1</junit.platform.version>
         <hamcrest.version>1.3</hamcrest.version>
     </properties>
 
@@ -201,7 +206,27 @@
                     </executions>
                 </plugin>
 
-                <!-- Create javadoc.jar -->
+                <!-- Create javadoc.jar for Java sources -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven.javadoc.version}</version>
+
+                    <!-- Ignore errors in javadoc comments -->
+                    <configuration>
+                        <additionalJOption>-Xdoclint:none</additionalJOption>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>aggregate-jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Create empty javadoc.jar for Kotlin only sources -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
@@ -245,6 +270,53 @@
         </pluginManagement>
 
         <plugins>
+            <!-- Check code quality -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven.pmd.version}</version>
+                <configuration>
+                    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+                    <targetJdk>${maven.compiler.target}</targetJdk>
+                    <verbose>true</verbose>
+                    <linkXRef>false</linkXRef>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Check license headers -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${maven.license.version}</version>
+                <configuration>
+                    <header>LICENSE_HEADER</header>
+                    <strictCheck>false</strictCheck>
+                    <includes>
+                        <include>**/*.java</include>
+                        <include>**/*.kt</include>
+                    </includes>
+                    <excludes>
+                        <exclude>src/test/**</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Sign artifact using gpg -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

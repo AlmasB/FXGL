@@ -6,10 +6,7 @@
 
 package com.almasb.fxgl.ui
 
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.scene.Node
-import javafx.scene.input.KeyCode
-import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
 import javafx.scene.text.TextFlow
 

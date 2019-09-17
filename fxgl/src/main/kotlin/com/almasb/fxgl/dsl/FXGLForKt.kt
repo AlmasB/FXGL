@@ -143,7 +143,7 @@ fun onCollision(typeA: Enum<*>, typeB: Enum<*>, action: (Entity, Entity) -> Unit
 
 fun onCollisionEnd(typeA: Enum<*>, typeB: Enum<*>, action: (Entity, Entity) -> Unit) = FXGL.onCollisionEnd(typeA, typeB, BiConsumer(action))
 
-fun random() = FXGLMath.random()
+fun random() = FXGLMath.randomDouble()
 
 fun random(min: Int, max: Int) = FXGLMath.random(min, max)
 
