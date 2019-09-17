@@ -556,7 +556,7 @@ public class Array<T> implements Iterable<T> {
     public void shuffle() {
         T[] items = this.items;
         for (int i = size - 1; i >= 0; i--) {
-            int ii = FXGLMath.random(i);
+            int ii = FXGLMath.random(0, i);
             T temp = items[i];
             items[i] = items[ii];
             items[ii] = temp;

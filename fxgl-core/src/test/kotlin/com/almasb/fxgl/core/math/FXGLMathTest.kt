@@ -8,11 +8,16 @@ package com.almasb.fxgl.core.math
 
 import com.almasb.fxgl.core.math.FXGLMath.*
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers
+import org.hamcrest.collection.IsIn
+import org.hamcrest.collection.IsIn.isOneOf
 import org.hamcrest.number.IsCloseTo.closeTo
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import java.util.*
 
 /**
  *
@@ -89,6 +94,53 @@ class FXGLMathTest {
         assertThat(atan2Deg(1.0, 1.0), closeTo(45.0, 1.0))
         assertThat(atan2Deg(-1.0, 1.0), closeTo(-45.0, 1.0))
         assertThat(atan2Deg(-1.0, -1.0), closeTo(-135.0, 1.0))
+    }
+
+    @Test
+    fun `Random values`() {
+        val originalRandom = getRandom()
+
+        val random = Random(17092019)
+
+        setRandom(random)
+
+        val bools = arrayListOf<Boolean>()
+        val chanceBools = arrayListOf<Boolean>()
+
+        repeat(100) {
+            // assert does not fail
+            randomColor()
+
+            assertThat(randomSign(), isOneOf(1, -1))
+            assertThat(FXGLMath.random(-1, 2), isOneOf(-1, 0, 1, 2))
+            assertThat(FXGLMath.random(-1L, 2L), isOneOf(-1L, 0L, 1L, 2L))
+
+            var value = FXGLMath.random(0.0, 2.5)
+
+            assertThat(value, Matchers.greaterThan(-0.0))
+            assertThat(value, Matchers.lessThan(2.5))
+
+            value = randomDouble()
+
+            assertThat(value, Matchers.greaterThanOrEqualTo(0.0))
+            assertThat(value, Matchers.lessThan(1.0))
+
+            val value2 = randomFloat()
+
+            assertThat(value2, Matchers.greaterThanOrEqualTo(0.0f))
+            assertThat(value2, Matchers.lessThan(1.0f))
+
+            assertThat(randomPoint2D().magnitude(), closeTo(1.0, 0.0001))
+            assertThat(randomVec2().length().toDouble(), closeTo(1.0, 0.0001))
+
+            bools += randomBoolean()
+            chanceBools += randomBoolean(0.35)
+        }
+
+        assertThat(bools.filter { it }.size, `is`(not(100)))
+        assertThat(chanceBools.filter { it }.size, `is`(not(100)))
+
+        setRandom(originalRandom)
     }
 
     @Test

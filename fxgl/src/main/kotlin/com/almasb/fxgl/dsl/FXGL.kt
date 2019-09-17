@@ -421,7 +421,7 @@ class FXGL private constructor() { companion object {
 
 /* MATH */
 
-    @JvmStatic fun random() = FXGLMath.random()
+    @JvmStatic fun random() = FXGLMath.randomDouble()
 
     @JvmStatic fun random(min: Int, max: Int) = FXGLMath.random(min, max)
 

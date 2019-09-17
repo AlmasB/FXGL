@@ -299,7 +299,7 @@ enum class Interpolators : EasingInterpolator {
             // which is captured by "if" above
             // and 1.0 is exclusive in FXGLMath.random()
             do {
-                result = FXGLMath.random()
+                result = FXGLMath.randomDouble()
             } while (result == 0.0)
 
             return result

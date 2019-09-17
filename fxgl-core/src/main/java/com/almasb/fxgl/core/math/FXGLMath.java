@@ -145,7 +145,11 @@ public final class FXGLMath {
 
     /* RANDOM BEGIN */
 
-    private static final Random random = new Random();
+    private static Random random = new Random();
+
+    public static void setRandom(Random random) {
+        FXGLMath.random = random;
+    }
 
     /**
      * @return random object used to generate random sequences
@@ -162,14 +166,6 @@ public final class FXGLMath {
     }
 
     /**
-     * @param range the end inclusive value
-     * @return a random number between 0 (inclusive) and the specified value (inclusive)
-     */
-    public static int random(int range) {
-        return random.nextInt(range + 1);
-    }
-
-    /**
      * @param start start value
      * @param end end value
      * @return a random number between start (inclusive) and end (inclusive)
@@ -179,20 +175,35 @@ public final class FXGLMath {
     }
 
     /**
-     * @param range the end inclusive value
-     * @return a random number between 0 (inclusive) and the specified value (inclusive)
-     */
-    public static long random(long range) {
-        return (long) (random.nextDouble() * range);
-    }
-
-    /**
      * @param start start value
      * @param end end value
      * @return a random number between start (inclusive) and end (inclusive)
      */
     public static long random(long start, long end) {
         return start + (long) (random.nextDouble() * (end - start));
+    }
+
+    /**
+     * @param start start inclusive value
+     * @param end end exclusive value
+     * @return a random number between start (inclusive) and end (exclusive)
+     */
+    public static double random(double start, double end) {
+        return start + random.nextDouble() * (end - start);
+    }
+
+    /**
+     * @return random number between 0.0 (inclusive) and 1.0 (exclusive)
+     */
+    public static double randomDouble() {
+        return random.nextDouble();
+    }
+
+    /**
+     * @return random number between 0.0 (inclusive) and 1.0 (exclusive)
+     */
+    public static float randomFloat() {
+        return random.nextFloat();
     }
 
     /**
@@ -207,38 +218,7 @@ public final class FXGLMath {
      * @return true if a random value between 0 and 1 is less than the specified value
      */
     public static boolean randomBoolean(double chance) {
-        return random() < chance;
-    }
-
-    /**
-     * @return random number between 0.0 (inclusive) and 1.0 (exclusive)
-     */
-    public static double random() {
-        return random.nextDouble();
-    }
-
-    /**
-     * @return random number between 0.0 (inclusive) and 1.0 (exclusive)
-     */
-    public static float randomFloat() {
-        return random.nextFloat();
-    }
-
-    /**
-     * @param range end exclusive value
-     * @return a random number between 0 (inclusive) and the specified value (exclusive)
-     */
-    public static double random(double range) {
-        return random.nextDouble() * range;
-    }
-
-    /**
-     * @param start start inclusive value
-     * @param end end exclusive value
-     * @return a random number between start (inclusive) and end (exclusive)
-     */
-    public static double random(double start, double end) {
-        return start + random.nextDouble() * (end - start);
+        return randomDouble() < chance;
     }
 
     /**
@@ -246,23 +226,6 @@ public final class FXGLMath {
      */
     public static int randomSign() {
         return 1 | (random.nextInt() >> 31);
-    }
-
-    /**
-     * @param min the lower limit
-     * @param max the upper limit
-     * @param mode the point around which the values are more likely
-     * @return a triangularly distributed random number between {@code min} (inclusive) and {@code max} (exclusive),
-     * where values around {@code mode} are more likely
-     */
-    public static double randomTriangular(double min, double max, double mode) {
-        double u = random.nextDouble();
-        double d = max - min;
-
-        if (u <= (mode - min) / d)
-            return min + Math.sqrt(u * d * (mode - min));
-
-        return max - Math.sqrt((1 - u) * d * (max - mode));
     }
 
     /**
@@ -297,7 +260,7 @@ public final class FXGLMath {
     }
 
     public static Color randomColor() {
-        return Color.color(random(), random(), random());
+        return Color.color(randomDouble(), randomDouble(), randomDouble());
     }
 
     /**

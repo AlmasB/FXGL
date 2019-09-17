@@ -253,7 +253,7 @@ class Viewport
 
     fun shakeTranslational(power: Double) {
         shakePowerTranslate = power
-        shakeAngle = FXGLMath.random() * FXGLMath.PI2
+        shakeAngle = FXGLMath.randomDouble() * FXGLMath.PI2
 
         // only record origin if not shaking, so that we don't record 'false' origin
         if (!shakingTranslate)
@@ -360,7 +360,7 @@ class Viewport
 
         if (shakingTranslate) {
             shakePowerTranslate *= 0.9
-            shakeAngle += 180 + FXGLMath.random() * FXGLMath.PI2 / 6
+            shakeAngle += 180 + FXGLMath.randomDouble() * FXGLMath.PI2 / 6
             offset.set((shakePowerTranslate * FXGLMath.cos(shakeAngle)).toFloat(),
                     (shakePowerTranslate * FXGLMath.sin(shakeAngle)).toFloat())
 

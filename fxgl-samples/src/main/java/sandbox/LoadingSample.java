@@ -64,8 +64,8 @@ public class LoadingSample extends GameApplication {
 
             r.setStroke(Color.BLACK);
 
-            r.setTranslateX(FXGLMath.random(FXGL.getAppWidth()));
-            r.setTranslateY(FXGLMath.random(2));
+            r.setTranslateX(FXGLMath.random(0, FXGL.getAppWidth()));
+            r.setTranslateY(FXGLMath.random(0, 2));
 
 
 
