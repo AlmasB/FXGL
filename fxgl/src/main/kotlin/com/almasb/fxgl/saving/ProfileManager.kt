@@ -9,7 +9,7 @@ package com.almasb.fxgl.saving
 import com.almasb.fxgl.app.ProgressDialog
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
-import com.almasb.fxgl.core.local.Local
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.FileExtension
 import com.almasb.sslogger.Logger
@@ -198,6 +198,8 @@ class ProfileManager(val fs: FS,
     }
 
     /**
+     * TODO: extract FXGL ref, should probably return Task<> rather than void, so runAsyncFX can be
+     * called from outside
      * Asynchronously (with a progress dialog) loads save files into observable list [saveFiles].
      */
     fun querySaveFiles() {
@@ -208,6 +210,6 @@ class ProfileManager(val fs: FS,
                     saveFiles.setAll(files)
                     Collections.sort(saveFiles, SaveFile)
                 }
-                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loadingSaveFiles")))
+                .runAsyncFXWithDialog(ProgressDialog(FXGL.localize("menu.loadingSaveFiles")))
     }
 }

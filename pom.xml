@@ -27,6 +27,7 @@
         <module>fxgl-input</module>
         <module>fxgl-effects</module>
         <module>fxgl-test</module>
+        <module>fxgl-localization</module>
         <module>fxgl-notification</module>
         <module>fxgl-achievement</module>
         <module>fxgl-trade</module>

@@ -7,12 +7,8 @@
 /**
  *
  */
-module com.almasb.fxgl.ui {
-    requires com.almasb.fxgl.animation;
+module com.almasb.fxgl.localization {
     requires com.almasb.fxgl.core;
-    requires com.almasb.fxgl.localization;
 
-    requires javafx.controls;
-
-    exports com.almasb.fxgl.ui;
+    exports com.almasb.fxgl.localization;
 }

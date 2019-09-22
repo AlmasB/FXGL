@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.ui
 
-import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.core.util.Predicate
@@ -261,6 +260,6 @@ class FXGLDialogFactory : DialogFactory {
     }
 
     private fun localizedStringProperty(key: String): ObservableStringValue {
-        return Local.localizedStringProperty(key)
+        return FXGLUIConfig.getLocalizationService().localizedStringProperty(key)
     }
 }

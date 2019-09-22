@@ -8,7 +8,6 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
-import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.dsl.FXGL
 import javafx.geometry.Point2D
@@ -64,12 +63,12 @@ class FXGLPauseMenu : PauseMenu() {
     }
 
     private fun createContent(): Parent {
-        val btnResume = FXGL.getUIFactory().newButton(Local.localizedStringProperty("menu.resume"))
+        val btnResume = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("menu.resume"))
         btnResume.setOnAction {
             requestHide()
         }
 
-        val btnExit = FXGL.getUIFactory().newButton(Local.localizedStringProperty("menu.exit"))
+        val btnExit = FXGL.getUIFactory().newButton(FXGL.localizedStringProperty("menu.exit"))
         btnExit.setOnAction {
             FXGL.getGameController().exit()
         }
