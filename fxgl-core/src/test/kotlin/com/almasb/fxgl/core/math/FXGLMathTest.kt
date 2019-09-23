@@ -7,6 +7,7 @@
 package com.almasb.fxgl.core.math
 
 import com.almasb.fxgl.core.math.FXGLMath.*
+import javafx.geometry.Rectangle2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
@@ -87,6 +88,15 @@ class FXGLMathTest {
 //    }
 
     @Test
+    fun `atan2`() {
+        //                   y / x
+        assertThat(atan2(0.0, 0.0), `is`(0.0))
+        assertThat(atan2(-1.0, 0.0), closeTo(-HALF_PI, 0.01))
+        assertThat(atan2(1.0, 0.0), closeTo(HALF_PI, 0.01))
+        assertThat(atan2(1.0, -1.0), closeTo(2.352, 0.01))
+    }
+
+    @Test
     fun `atan2 deg`() {
         //                   y / x
         assertThat(atan2Deg(0.0, 1.0), `is`(0.0))
@@ -100,7 +110,7 @@ class FXGLMathTest {
     fun `Random values`() {
         val originalRandom = getRandom()
 
-        val random = Random(17092019)
+        val random = getRandom(17092019)
 
         setRandom(random)
 
@@ -132,6 +142,13 @@ class FXGLMathTest {
 
             assertThat(randomPoint2D().magnitude(), closeTo(1.0, 0.0001))
             assertThat(randomVec2().length().toDouble(), closeTo(1.0, 0.0001))
+
+            val p = randomPoint(Rectangle2D(0.0, 0.0, 2.0, 5.0))
+
+            assertThat(p.x, Matchers.greaterThanOrEqualTo(0.0))
+            assertThat(p.x, Matchers.lessThan(2.0))
+            assertThat(p.y, Matchers.greaterThanOrEqualTo(0.0))
+            assertThat(p.y, Matchers.lessThan(5.0))
 
             bools += randomBoolean()
             chanceBools += randomBoolean(0.35)

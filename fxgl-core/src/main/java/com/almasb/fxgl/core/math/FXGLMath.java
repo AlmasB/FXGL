@@ -239,24 +239,17 @@ public final class FXGLMath {
     }
 
     /**
+     * @return new random vector of unit length as Point2D
+     */
+    public static Point2D randomPoint2D() {
+        return randomVec2().toPoint2D();
+    }
+
+    /**
      * @return new random vector of unit length as Vec2
      */
     public static Vec2 randomVec2() {
         return new Vec2(random(-1.0, 1.0), random(-1.0, 1.0)).normalizeLocal();
-    }
-
-    /**
-     * @return new random vector of unit length as Point2D
-     */
-    public static Point2D randomPoint2D() {
-        double x = random(-1.0, 1.0);
-        double y = random(-1.0, 1.0);
-
-        double length = Math.sqrt(x * x + y * y);
-        if (length < EPSILON)
-            return Point2D.ZERO;
-
-        return new Point2D(x / length, y / length);
     }
 
     public static Color randomColor() {
@@ -287,23 +280,6 @@ public final class FXGLMath {
 
     public static double sqrt(double x) {
         return Math.sqrt(x);
-    }
-
-    /**
-     * @param value the value
-     * @return the next power of two, or the specified value if the value is already a power of two
-     */
-    public static int nextPowerOfTwo(int value) {
-        if (value == 0)
-            return 1;
-
-        value--;
-        value |= value >> 1;
-        value |= value >> 2;
-        value |= value >> 4;
-        value |= value >> 8;
-        value |= value >> 16;
-        return value + 1;
     }
 
     /**
