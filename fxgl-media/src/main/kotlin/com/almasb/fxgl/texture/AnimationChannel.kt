@@ -71,6 +71,15 @@ class AnimationChannel(val image: Image,
         (data.frameStart..data.frameEnd).map { it to FrameData((it % framesPerRow) * data.frameWidth, (it / framesPerRow) * data.frameHeight, data.frameWidth, data.frameHeight) }
     })
 
+    @JvmOverloads constructor(images: List<Image>,
+                channelDuration: Duration,
+                numFrames: Int = images.size
+    ) : this(
+            merge(images),
+            channelDuration,
+            numFrames
+    )
+
     /**
      * Stores the animation frame numbers in sequence.
      * For example, 13, 14, 17, 18, 20, 22.

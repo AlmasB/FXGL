@@ -7,17 +7,26 @@
 package sandbox;
 
 import com.almasb.fxgl.animation.Animation;
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.texture.AnimatedTexture;
+import com.almasb.fxgl.texture.AnimationChannel;
+import com.almasb.fxgl.texture.ImagesKt;
 import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -32,6 +41,7 @@ public class AnimSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("AnimSample");
         settings.setVersion("0.1");
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     private Animation<?> anim;
@@ -50,6 +60,14 @@ public class AnimSample extends GameApplication {
         onKeyDown(KeyCode.E, "e", () -> anim.resume());
     }
 
+    private LazyValue<Image> image = new LazyValue<>(() -> {
+        var images = IntStream.rangeClosed(1, 8)
+                .mapToObj(i -> image("anim/Attack (" + i + ").png"))
+                .collect(Collectors.toList());
+
+        return ImagesKt.merge(images);
+    });
+
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new EFactory());
@@ -66,6 +84,15 @@ public class AnimSample extends GameApplication {
                 .to(new Point2D(200, 100))
                 .build();
         anim.start();
+
+        // animation channel from multiple images
+
+        var channel = new AnimationChannel(image.get(), Duration.seconds(1), 8);
+
+        entityBuilder()
+                .at(200, 50)
+                .view(new AnimatedTexture(channel).loop())
+                .buildAndAttach();
     }
 
     @Override

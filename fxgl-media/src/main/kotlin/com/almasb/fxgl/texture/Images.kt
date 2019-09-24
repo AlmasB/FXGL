@@ -8,6 +8,7 @@ package com.almasb.fxgl.texture
 
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.math.FXGLMath.*
+import javafx.geometry.HorizontalDirection
 import javafx.scene.Group
 import javafx.scene.effect.BlendMode
 import javafx.scene.image.Image
@@ -46,6 +47,22 @@ private val image: Image by lazy {
 }
 
 fun getDummyImage() = image
+
+fun merge(images: List<Image>): Image {
+    if (images.isEmpty())
+        return getDummyImage()
+
+    if (images.size == 1)
+        return images.first()
+
+    var texture = Texture(images.first())
+
+    images.drop(1).forEach {
+        texture = texture.superTexture(Texture(it), HorizontalDirection.RIGHT)
+    }
+
+    return texture.image
+}
 
 data class Pixel(val x: Int, val y: Int, val color: Color, val parent: Image) {
 
