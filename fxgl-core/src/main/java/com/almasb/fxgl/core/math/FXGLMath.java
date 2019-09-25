@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.core.math;
 
-import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
@@ -291,12 +290,6 @@ public final class FXGLMath {
     public static double map(double value, double currentRangeStart, double currentRangeStop, double targetRangeStart, double targetRangeStop) {
         return targetRangeStart + (targetRangeStop - targetRangeStart) * ((value - currentRangeStart) / (currentRangeStop - currentRangeStart));
     }
-
-    private static final int BIG_ENOUGH_INT = 16 * 1024;
-    private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
-    private static final double CEIL = 0.9999999;
-    private static final double BIG_ENOUGH_CEIL = 16384.999999999996;
-    private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5f;
 
     public static float abs(float value) {
         return value > 0 ? value : -value;
