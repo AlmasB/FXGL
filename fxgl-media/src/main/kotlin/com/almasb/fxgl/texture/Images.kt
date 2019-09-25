@@ -7,7 +7,6 @@
 package com.almasb.fxgl.texture
 
 import com.almasb.fxgl.core.concurrent.Async
-import com.almasb.fxgl.core.math.FXGLMath.*
 import javafx.geometry.HorizontalDirection
 import javafx.scene.Group
 import javafx.scene.effect.BlendMode
@@ -15,6 +14,9 @@ import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 private val image: Image by lazy {
     val group = Group()

@@ -195,37 +195,21 @@ class FXGLMathTest {
     }
 
     @Test
-    fun `floor`() {
-        assertThat(FXGLMath.floor(0.5), `is`(0))
-        assertThat(FXGLMath.floor(0.9), `is`(0))
-        assertThat(FXGLMath.floor(1.0), `is`(1))
-        assertThat(FXGLMath.floor(-0.5), `is`(-1))
-        assertThat(FXGLMath.floor(-1.5), `is`(-2))
+    fun `Map test`() {
+        assertThat(map(0.5, 0.0, 1.0, 100.0, 200.0), closeTo(150.0, 0.1))
     }
 
     @Test
-    fun `floor positive`() {
-        assertThat(FXGLMath.floorPositive(0.5), `is`(0))
-        assertThat(FXGLMath.floorPositive(0.9), `is`(0))
-        assertThat(FXGLMath.floorPositive(1.0), `is`(1))
-
-        // this is the diff between just "floor"
-        assertThat(FXGLMath.floorPositive(-0.5), `is`(0))
-        assertThat(FXGLMath.floorPositive(-1.5), `is`(-1))
+    fun `abs test double`() {
+        assertThat(abs(0.0), isOneOf(0.0, -0.0))
+        assertThat(abs(1.0), `is`(1.0))
+        assertThat(abs(-1.0), `is`(1.0))
     }
 
     @Test
-    fun `Is close to under tolerance`() {
-        assertTrue(isCloseToZero(0.0, 0.0))
-        assertFalse(isCloseToZero(0.1, 0.0))
-
-        assertTrue(isCloseToZero(0.1, 0.1))
-        assertFalse(isCloseToZero(-0.2, 0.1))
-
-        assertTrue(isCloseToZero(0.01, 0.1))
-
-        assertTrue(isCloseToZero(0.09, 0.1))
-
-        assertFalse(isCloseToZero(0.11, 0.1))
+    fun `abs test float`() {
+        assertThat(abs(0.0f), isOneOf(0.0f, -0.0f))
+        assertThat(abs(1.0f), `is`(1.0f))
+        assertThat(abs(-1.0f), `is`(1.0f))
     }
 }
