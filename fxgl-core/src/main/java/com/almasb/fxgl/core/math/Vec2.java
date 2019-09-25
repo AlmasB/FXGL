@@ -473,14 +473,20 @@ public final class Vec2 implements Serializable, Poolable {
         return a.x * b.y - a.y * b.x;
     }
 
-    public static void crossToOutUnsafe(Vec2 a, float s, Vec2 out) {
-        out.x = s * a.y;
-        out.y = -s * a.x;
+    /**
+     * Computes a perpendicular vector to "in" (CCW), scales it and populates the "out" vector.
+     */
+    public static void crossToOutUnsafe(Vec2 in, float scale, Vec2 out) {
+        out.x = scale * in.y;
+        out.y = -scale * in.x;
     }
 
-    public static void crossToOutUnsafe(float s, Vec2 a, Vec2 out) {
-        out.x = -s * a.y;
-        out.y = s * a.x;
+    /**
+     * Computes a perpendicular vector to "in" (CW), scales it and populates the "out" vector.
+     */
+    public static void crossToOutUnsafe(float scale, Vec2 in, Vec2 out) {
+        out.x = -scale * in.y;
+        out.y = scale * in.x;
     }
 
     public static void minToOut(Vec2 a, Vec2 b, Vec2 out) {
