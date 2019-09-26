@@ -6,10 +6,14 @@
 
 package com.almasb.fxgl.physics
 
+import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
@@ -25,6 +29,74 @@ import java.util.stream.Stream
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class HitBoxTest {
+
+    private lateinit var conv: PhysicsUnitConverter
+    private lateinit var e: Entity
+
+    @BeforeEach
+    fun setUp() {
+        conv = PhysicsWorld(600, 50.0)
+        e = Entity()
+    }
+
+    @Test
+    fun `Circle shape`() {
+        val box = HitBox(BoundingShape.circle(10.0))
+
+        assertTrue(box.shape.data is CircleShapeData)
+        assertThat((box.shape.data as CircleShapeData).radius, Matchers.`is`(10.0))
+
+        val shape = box.toBox2DShape(e.boundingBoxComponent, conv)
+
+        assertThat(shape.type, `is`(ShapeType.CIRCLE))
+    }
+
+    @Test
+    fun `Box shape`() {
+        val box = HitBox(BoundingShape.box(10.0, 4.0))
+
+        assertTrue(box.shape.data is BoxShapeData)
+        assertThat((box.shape.data as BoxShapeData).width, Matchers.`is`(10.0))
+        assertThat((box.shape.data as BoxShapeData).height, Matchers.`is`(4.0))
+
+        val shape = box.toBox2DShape(e.boundingBoxComponent, conv)
+
+        assertThat(shape.type, `is`(ShapeType.POLYGON))
+    }
+
+    @Test
+    fun `Polygon shape`() {
+        val box = HitBox(BoundingShape.polygon(
+                Point2D(0.0, 0.0),
+                Point2D(3.0, 0.0),
+                Point2D(3.0, 3.0),
+                Point2D(0.0, 3.0)
+        ))
+
+        assertTrue(box.shape.data is PolygonShapeData)
+        assertThat((box.shape.data as PolygonShapeData).points.size, `is`(4))
+
+        val shape = box.toBox2DShape(e.boundingBoxComponent, conv)
+
+        assertThat(shape.type, `is`(ShapeType.POLYGON))
+    }
+
+    @Test
+    fun `Chain shape`() {
+        val box = HitBox(BoundingShape.chain(
+                Point2D(0.0, 0.0),
+                Point2D(3.0, 0.0),
+                Point2D(3.0, 3.0),
+                Point2D(0.0, 3.0)
+        ))
+
+        assertTrue(box.shape.data is ChainShapeData)
+        assertThat((box.shape.data as ChainShapeData).points.size, `is`(4))
+
+        val shape = box.toBox2DShape(e.boundingBoxComponent, conv)
+
+        assertThat(shape.type, `is`(ShapeType.CHAIN))
+    }
 
     @Test
     fun `Test centers`() {

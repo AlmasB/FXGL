@@ -28,12 +28,6 @@ sealed class BoundingShapeData {
 class CircleShapeData(val radius: Double) : BoundingShapeData() {
 
     override fun toBox2DShape(box: HitBox, bboxComp: BoundingBoxComponent, conv: PhysicsUnitConverter): Shape {
-        //    /**
-//     * @param w circle diameter
-//     * @param boundsCenterLocal center of bounds in local coordinates
-//     * @return circle shape
-//     */
-
         // take world center bounds and subtract from entity center (all in pixels) to get local center
         // because box2d operates on vector offsets from the body center, also in local coordinates
         val boundsCenterLocal = box.centerWorld.subtract(bboxComp.centerWorld)
