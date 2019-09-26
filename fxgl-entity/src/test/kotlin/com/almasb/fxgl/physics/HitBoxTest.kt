@@ -108,7 +108,7 @@ class HitBoxTest {
     fun `To String`() {
         val box = HitBox("Test", Point2D(10.0, 10.0), BoundingShape.box(30.0, 30.0))
 
-        assertThat(box.toString(), `is`("HitBox(Test,POLYGON)"))
+        assertThat(box.toString(), `is`("HitBox(Test,Box)"))
 
         val box2 = HitBox(Point2D(10.0, 10.0), BoundingShape.chain(
                 Point2D(0.0, 0.0),
@@ -117,6 +117,6 @@ class HitBoxTest {
                 Point2D(0.0, 3.0)
         ))
 
-        assertTrue(box2.toString().endsWith("CHAIN)"))
+        assertTrue(box2.toString().endsWith("Chain)"))
     }
 }

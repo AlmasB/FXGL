@@ -19,12 +19,11 @@ import javafx.geometry.Point2D
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class BoundingShape private constructor(
-        internal val type: ShapeType,
 
         /**
          * The data is in local coord system.
          */
-        internal val data: BoundingShapeData,
+        val data: BoundingShapeData,
 
         val size: Dimension2D) {
 
@@ -59,7 +58,7 @@ class BoundingShape private constructor(
          * @return circular bounding shape
          */
         @JvmStatic fun circle(radius: Double): BoundingShape {
-            return BoundingShape(ShapeType.CIRCLE, CircleShapeData(radius), Dimension2D(radius*2, radius*2))
+            return BoundingShape(CircleShapeData(radius), Dimension2D(radius*2, radius*2))
         }
 
         /**
@@ -70,7 +69,7 @@ class BoundingShape private constructor(
          * @return rectangular bounding shape
          */
         @JvmStatic fun box(width: Double, height: Double): BoundingShape {
-            return BoundingShape(ShapeType.POLYGON, BoxShapeData(width, height), Dimension2D(width, height))
+            return BoundingShape(BoxShapeData(width, height), Dimension2D(width, height))
         }
 
         /**
@@ -99,7 +98,7 @@ class BoundingShape private constructor(
                 }
             }
 
-            return BoundingShape(ShapeType.CHAIN, ChainShapeData(points as Array<Point2D>), Dimension2D(maxX, maxY))
+            return BoundingShape(ChainShapeData(points as Array<Point2D>), Dimension2D(maxX, maxY))
         }
 
         @JvmStatic fun polygon(points: List<Point2D>): BoundingShape {
@@ -145,11 +144,11 @@ class BoundingShape private constructor(
                 }
             }
 
-            return BoundingShape(ShapeType.POLYGON, PolygonShapeData(points as Array<Point2D>), Dimension2D(maxX, maxY))
+            return BoundingShape(PolygonShapeData(points as Array<Point2D>), Dimension2D(maxX, maxY))
         }
     }
 
     override fun toString(): String {
-        return type.toString()
+        return data.toString()
     }
 }

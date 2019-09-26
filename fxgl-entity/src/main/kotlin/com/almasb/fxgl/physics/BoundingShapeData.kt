@@ -21,6 +21,8 @@ import javafx.geometry.Point2D
 sealed class BoundingShapeData {
 
     abstract fun toBox2DShape(box: HitBox, bboxComp: BoundingBoxComponent, conv: PhysicsUnitConverter): Shape
+
+    override fun toString(): String = javaClass.simpleName.substringBefore("ShapeData")
 }
 
 class CircleShapeData(val radius: Double) : BoundingShapeData() {
