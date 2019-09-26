@@ -14,20 +14,15 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityWorldListener;
 import com.almasb.fxgl.entity.components.BoundingBoxComponent;
 import com.almasb.fxgl.entity.components.CollidableComponent;
-import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactFilter;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactImpulse;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.collision.Manifold;
-import com.almasb.fxgl.physics.box2d.collision.shapes.ChainShape;
-import com.almasb.fxgl.physics.box2d.collision.shapes.CircleShape;
-import com.almasb.fxgl.physics.box2d.collision.shapes.PolygonShape;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.sslogger.Logger;
 import javafx.beans.value.ChangeListener;
-import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 
 import java.io.Serializable;
@@ -36,12 +31,12 @@ import java.util.List;
 
 /**
  * Manages collision handling and performs the physics tick.
- * Contains several static and instance methods to convert pixel coordinates to meters and vice versa.
+ * Contains methods to convert pixel coordinates to meters and vice versa.
  * Collision handling unifies how different collisions (with and without PhysicsComponent) are processed.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class PhysicsWorld implements EntityWorldListener, ContactListener {
+public final class PhysicsWorld implements EntityWorldListener, ContactListener, PhysicsUnitConverter {
 
     private static final Logger log = Logger.get(PhysicsWorld.class);
 
@@ -631,109 +626,12 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     private Shape createShape(HitBox box, Entity e) {
-        // take world center bounds and subtract from entity center (all in pixels) to get local center
-        // because box2d operates on vector offsets from the body center, also in local coordinates
-        Point2D boundsCenterWorld = new Point2D((box.getMinXWorld() + box.getMaxXWorld()) / 2, (box.getMinYWorld() + box.getMaxYWorld()) / 2);
-        Point2D boundsCenterLocal = boundsCenterWorld.subtract(e.getCenter());
-
-        double w = box.getMaxXWorld() - box.getMinXWorld();
-        double h = box.getMaxYWorld() - box.getMinYWorld();
-
-        BoundingShape boundingShape = box.getShape();
-
-        switch (boundingShape.type) {
-            case CIRCLE:
-                return circle(w, boundsCenterLocal);
-
-            case POLYGON:
-
-                // TODO: clean up
-                if (boundingShape.data instanceof Dimension2D) {
-                    return polygonAsBox(w, h, boundsCenterLocal);
-                } else {
-                    return polygon((Point2D[]) boundingShape.data, boundsCenterLocal, e.getBoundingBoxComponent().getCenterLocal(), e.getTransformComponent(), box, e.getBoundingBoxComponent());
-                }
-
-            case CHAIN:
-
-                if (e.getComponent(PhysicsComponent.class).body.getType() != BodyType.STATIC) {
-                    throw new IllegalArgumentException("BoundingShape.chain() can only be used with BodyType.STATIC");
-                }
-
-                return chain((Point2D[]) boundingShape.data, boundsCenterLocal, e.getBoundingBoxComponent().getCenterLocal());
-
-            case EDGE:
-            default:
-                log.warning("Unsupported hit box shape");
-                throw new UnsupportedOperationException("Using unsupported shape: " + boundingShape.type);
-        }
-    }
-
-    /**
-     * @param w circle diameter
-     * @param boundsCenterLocal center of bounds in local coordinates
-     * @return circle shape
-     */
-    private Shape circle(double w, Point2D boundsCenterLocal) {
-        CircleShape shape = new CircleShape();
-        shape.setRadius(toMetersF(w / 2));
-        shape.center.set(toVector(boundsCenterLocal));
-
-        return shape;
-    }
-
-    private Shape polygonAsBox(double w, double h, Point2D boundsCenterLocal) {
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(toMetersF(w / 2), toMetersF(h / 2), toVector(boundsCenterLocal), 0);
-
-        return shape;
-    }
-
-    private Shape polygon(Point2D[] points, Point2D boundsCenterLocal, Point2D bboxCenterLocal, TransformComponent t, HitBox box, BoundingBoxComponent bboxComp) {
-
-        Vec2[] vertices = new Vec2[points.length];
-
-        var bboxCenterLocalNew = new Point2D(
-                bboxCenterLocal.getX() * t.getScaleX() + (1 - t.getScaleX()) * t.getScaleOrigin().getX(),
-                bboxCenterLocal.getY() * t.getScaleY() + (1 - t.getScaleY()) * t.getScaleOrigin().getY()
-        );
-
-        var boundsCenterLocalNew = new Point2D(
-                boundsCenterLocal.getX() * t.getScaleX() + (1 - t.getScaleX()) * t.getScaleOrigin().getX(),
-                boundsCenterLocal.getY() * t.getScaleY() + (1 - t.getScaleY()) * t.getScaleOrigin().getY()
-        );
-
-        for (int i = 0; i < vertices.length; i++) {
-
-            var p = new Point2D(
-                    (points[i].getX() + box.getMinX()) * t.getScaleX() + (1 - t.getScaleX()) * t.getScaleOrigin().getX(),
-                    (points[i].getY() + box.getMinY()) * t.getScaleY() + (1 - t.getScaleY()) * t.getScaleOrigin().getY()
-            );
-
-            vertices[i] = toVector(p.subtract(boundsCenterLocalNew))
-                    .subLocal(toVector(bboxCenterLocalNew))
-                    .addLocal(toVector(boundsCenterLocalNew))
-                    .subLocal(toMeters(bboxComp.getMinXLocal()), -toMeters(bboxComp.getMinYLocal()));
+        if (e.getComponent(PhysicsComponent.class).body.getType() != BodyType.STATIC
+                && box.getShape().isChain()) {
+            throw new IllegalArgumentException("BoundingShape.chain() can only be used with BodyType.STATIC");
         }
 
-        PolygonShape shape = new PolygonShape();
-        shape.set(vertices);
-
-        return shape;
-    }
-
-    private Shape chain(Point2D[] points, Point2D boundsCenterLocal, Point2D bboxCenterLocal) {
-
-        Vec2[] vertices = new Vec2[points.length];
-
-        for (int i = 0; i < vertices.length; i++) {
-            vertices[i] = toVector(points[i].subtract(boundsCenterLocal)).subLocal(toVector(bboxCenterLocal));
-        }
-
-        ChainShape shape = new ChainShape();
-        shape.createLoop(vertices, vertices.length);
-
-        return shape;
+        return box.toBox2DShape(e.getBoundingBoxComponent(), this);
     }
 
     @SuppressWarnings("PMD.UnusedFormalParameter")
@@ -811,53 +709,14 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
         return new RaycastResult(entity, point);
     }
-
-    /**
-     * Converts pixels to meters
-     *
-     * @param pixels value in pixels
-     * @return value in meters
-     */
-    public float toMetersF(double pixels) {
-        return (float) toMeters(pixels);
-    }
-
+    @Override
     public double toMeters(double pixels) {
         return pixels * METERS_PER_PIXELS;
     }
 
-    /**
-     * Converts meters to pixels
-     *
-     * @param meters value in meters
-     * @return value in pixels
-     */
-    public float toPixelsF(double meters) {
-        return (float) toPixels(meters);
-    }
-
+    @Override
     public double toPixels(double meters) {
         return meters * PIXELS_PER_METER;
-    }
-
-    /**
-     * Converts a vector of type Point2D to vector of type Vec2
-     *
-     * @param v vector in pixels
-     * @return vector in meters
-     */
-    public Vec2 toVector(Point2D v) {
-        return new Vec2(toMetersF(v.getX()), toMetersF(-v.getY()));
-    }
-
-    /**
-     * Converts a vector of type Vec2 to vector of type Point2D
-     *
-     * @param v vector in meters
-     * @return vector in pixels
-     */
-    public Point2D toVector(Vec2 v) {
-        return new Point2D(toPixels(v.x), toPixels(-v.y));
     }
 
     /**
@@ -866,6 +725,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param p point in pixel space
      * @return point in physics space
      */
+    @Override
     public Vec2 toPoint(Point2D p) {
         return new Vec2(toMetersF(p.getX()), toMetersF(appHeight - p.getY()));
     }
@@ -876,6 +736,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param p point in physics space
      * @return point in pixel space
      */
+    @Override
     public Point2D toPoint(Vec2 p) {
         return new Point2D(toPixels(p.x), toPixels(toMeters(appHeight) - p.y));
     }

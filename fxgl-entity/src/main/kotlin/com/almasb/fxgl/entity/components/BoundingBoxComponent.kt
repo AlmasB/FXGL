@@ -45,7 +45,7 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
         }
     }
 
-    private lateinit var transform: TransformComponent
+    lateinit var transform: TransformComponent
 
     /**
      * Contains all hit boxes (collision bounding boxes) for this entity.

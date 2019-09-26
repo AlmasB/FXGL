@@ -102,60 +102,62 @@ class DevService : EngineService {
     private fun addDebugView(entity: Entity) {
         val group = Group()
 
-        entity.boundingBoxComponent.hitBoxesProperty().forEach {
-
-
-            if (it.shape.isCircle) {
-
-                val bboxView = Circle(it.width / 2, it.width / 2, it.width / 2)
-                bboxView.fill = null
-
-                bboxView.translateX = it.minX
-                bboxView.translateY = it.minY
-
-                bboxView.strokeWidth = 2.0
-                bboxView.strokeProperty().bind(FXGL.getSettings().devBBoxColor)
-
-                group.children += bboxView
-
-            } else if (it.shape.isPolygon) {
-
-                val data = it.shape.data
-
-                // TODO: clean up
-                if (data is Dimension2D) {
-                    val bboxView = Rectangle()
-                    bboxView.fill = null
-
-                    bboxView.translateX = it.minX
-                    bboxView.translateY = it.minY
-
-                    bboxView.strokeWidth = 2.0
-                    bboxView.strokeProperty().bind(FXGL.getSettings().devBBoxColor)
-
-                    bboxView.widthProperty().value = it.width
-                    bboxView.heightProperty().value = it.height
-                    bboxView.visibleProperty().bind(
-                            bboxView.widthProperty().greaterThan(0).and(bboxView.heightProperty().greaterThan(0))
-                    )
-
-                    group.children += bboxView
-                } else {
-                    val polygonPoints = data as Array<Point2D>
-
-                    val polygonView = Polygon(*polygonPoints.flatMap { listOf(it.x, it.y) }.toDoubleArray())
-
-                    polygonView.translateX = it.minX
-                    polygonView.translateY = it.minY
-
-                    polygonView.fill = null
-                    polygonView.strokeWidth = 2.0
-                    polygonView.strokeProperty().bind(FXGL.getSettings().devBBoxColor)
-
-                    group.children += polygonView
-                }
-            }
-        }
+        // TODO:
+//
+//        entity.boundingBoxComponent.hitBoxesProperty().forEach {
+//
+//
+//            if (it.shape.isCircle) {
+//
+//                val bboxView = Circle(it.width / 2, it.width / 2, it.width / 2)
+//                bboxView.fill = null
+//
+//                bboxView.translateX = it.minX
+//                bboxView.translateY = it.minY
+//
+//                bboxView.strokeWidth = 2.0
+//                bboxView.strokeProperty().bind(FXGL.getSettings().devBBoxColor)
+//
+//                group.children += bboxView
+//
+//            } else if (it.shape.isPolygon) {
+//
+//                val data = it.shape.data
+//
+//                // TODO: clean up
+//                if (data is Dimension2D) {
+//                    val bboxView = Rectangle()
+//                    bboxView.fill = null
+//
+//                    bboxView.translateX = it.minX
+//                    bboxView.translateY = it.minY
+//
+//                    bboxView.strokeWidth = 2.0
+//                    bboxView.strokeProperty().bind(FXGL.getSettings().devBBoxColor)
+//
+//                    bboxView.widthProperty().value = it.width
+//                    bboxView.heightProperty().value = it.height
+//                    bboxView.visibleProperty().bind(
+//                            bboxView.widthProperty().greaterThan(0).and(bboxView.heightProperty().greaterThan(0))
+//                    )
+//
+//                    group.children += bboxView
+//                } else {
+//                    val polygonPoints = data as Array<Point2D>
+//
+//                    val polygonView = Polygon(*polygonPoints.flatMap { listOf(it.x, it.y) }.toDoubleArray())
+//
+//                    polygonView.translateX = it.minX
+//                    polygonView.translateY = it.minY
+//
+//                    polygonView.fill = null
+//                    polygonView.strokeWidth = 2.0
+//                    polygonView.strokeProperty().bind(FXGL.getSettings().devBBoxColor)
+//
+//                    group.children += polygonView
+//                }
+//            }
+//        }
 
         entity.viewComponent.addChild(group)
 
