@@ -104,7 +104,7 @@ class DevService : EngineService {
 
         entity.boundingBoxComponent.hitBoxesProperty().forEach {
 
-            val shape: Shape = when (val data = it.shape.data) {
+            val shape: Shape = when (val data = it.shape) {
                 is CircleShapeData -> {
                     Circle(data.radius, data.radius, data.radius)
                 }

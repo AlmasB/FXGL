@@ -627,7 +627,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
     private Shape createShape(HitBox box, Entity e) {
         if (e.getComponent(PhysicsComponent.class).body.getType() != BodyType.STATIC
-                && box.getShape().isChain()) {
+                && box.getShape() instanceof ChainShapeData) {
             throw new IllegalArgumentException("BoundingShape.chain() can only be used with BodyType.STATIC");
         }
 

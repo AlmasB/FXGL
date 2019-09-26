@@ -43,8 +43,8 @@ class HitBoxTest {
     fun `Circle shape`() {
         val box = HitBox(BoundingShape.circle(10.0))
 
-        assertTrue(box.shape.data is CircleShapeData)
-        assertThat((box.shape.data as CircleShapeData).radius, Matchers.`is`(10.0))
+        assertTrue(box.shape is CircleShapeData)
+        assertThat((box.shape as CircleShapeData).radius, Matchers.`is`(10.0))
 
         val shape = box.toBox2DShape(e.boundingBoxComponent, conv)
 
@@ -55,9 +55,9 @@ class HitBoxTest {
     fun `Box shape`() {
         val box = HitBox(BoundingShape.box(10.0, 4.0))
 
-        assertTrue(box.shape.data is BoxShapeData)
-        assertThat((box.shape.data as BoxShapeData).width, Matchers.`is`(10.0))
-        assertThat((box.shape.data as BoxShapeData).height, Matchers.`is`(4.0))
+        assertTrue(box.shape is BoxShapeData)
+        assertThat((box.shape as BoxShapeData).width, Matchers.`is`(10.0))
+        assertThat((box.shape as BoxShapeData).height, Matchers.`is`(4.0))
 
         val shape = box.toBox2DShape(e.boundingBoxComponent, conv)
 
@@ -73,8 +73,8 @@ class HitBoxTest {
                 Point2D(0.0, 3.0)
         ))
 
-        assertTrue(box.shape.data is PolygonShapeData)
-        assertThat((box.shape.data as PolygonShapeData).points.size, `is`(4))
+        assertTrue(box.shape is PolygonShapeData)
+        assertThat((box.shape as PolygonShapeData).points.size, `is`(4))
 
         val shape = box.toBox2DShape(e.boundingBoxComponent, conv)
 
@@ -90,8 +90,8 @@ class HitBoxTest {
                 Point2D(0.0, 3.0)
         ))
 
-        assertTrue(box.shape.data is ChainShapeData)
-        assertThat((box.shape.data as ChainShapeData).points.size, `is`(4))
+        assertTrue(box.shape is ChainShapeData)
+        assertThat((box.shape as ChainShapeData).points.size, `is`(4))
 
         val shape = box.toBox2DShape(e.boundingBoxComponent, conv)
 

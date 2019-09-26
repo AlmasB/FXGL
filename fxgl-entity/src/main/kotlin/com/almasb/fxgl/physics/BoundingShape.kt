@@ -6,48 +6,22 @@
 
 package com.almasb.fxgl.physics
 
-
+import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.components.BoundingBoxComponent
-import com.almasb.fxgl.physics.box2d.collision.shapes.Shape
-import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType
+import com.almasb.fxgl.physics.box2d.collision.shapes.*
 import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 
 /**
- * Defines bounding shapes to be used for hit boxes.
+ * Defines bounding shapes to be used for hit boxes in local coord system.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class BoundingShape private constructor(
+sealed class BoundingShape(val size: Dimension2D) {
 
-        /**
-         * The data is in local coord system.
-         */
-        val data: BoundingShapeData,
+    abstract fun toBox2DShape(box: HitBox, bboxComp: BoundingBoxComponent, conv: PhysicsUnitConverter): Shape
 
-        val size: Dimension2D) {
-
-    /**
-     * @return true if the type of this shape is a circle
-     */
-    val isCircle: Boolean
-        get() = data is CircleShapeData
-
-    val isBox: Boolean
-        get() = data is BoxShapeData
-
-    /**
-     * @return true if the type of this shape is a polygon
-     */
-    val isPolygon: Boolean
-        get() = data is PolygonShapeData
-
-    val isChain: Boolean
-        get() = data is ChainShapeData
-
-    fun toBox2DShape(box: HitBox, bbox: BoundingBoxComponent, converter: PhysicsUnitConverter): Shape {
-        return data.toBox2DShape(box, bbox, converter)
-    }
+    override fun toString(): String = javaClass.simpleName.substringBefore("ShapeData")
 
     companion object {
 
@@ -58,7 +32,7 @@ class BoundingShape private constructor(
          * @return circular bounding shape
          */
         @JvmStatic fun circle(radius: Double): BoundingShape {
-            return BoundingShape(CircleShapeData(radius), Dimension2D(radius*2, radius*2))
+            return CircleShapeData(radius)
         }
 
         /**
@@ -69,7 +43,7 @@ class BoundingShape private constructor(
          * @return rectangular bounding shape
          */
         @JvmStatic fun box(width: Double, height: Double): BoundingShape {
-            return BoundingShape(BoxShapeData(width, height), Dimension2D(width, height))
+            return BoxShapeData(width, height)
         }
 
         /**
@@ -98,7 +72,7 @@ class BoundingShape private constructor(
                 }
             }
 
-            return BoundingShape(ChainShapeData(points as Array<Point2D>), Dimension2D(maxX, maxY))
+            return ChainShapeData(Dimension2D(maxX, maxY), points as Array<Point2D>)
         }
 
         @JvmStatic fun polygon(points: List<Point2D>): BoundingShape {
@@ -144,11 +118,94 @@ class BoundingShape private constructor(
                 }
             }
 
-            return BoundingShape(PolygonShapeData(points as Array<Point2D>), Dimension2D(maxX, maxY))
+            return PolygonShapeData(Dimension2D(maxX, maxY), points as Array<Point2D>)
         }
     }
+}
 
-    override fun toString(): String {
-        return data.toString()
+class CircleShapeData(val radius: Double) : BoundingShape(Dimension2D(radius * 2, radius * 2)) {
+
+    override fun toBox2DShape(box: HitBox, bboxComp: BoundingBoxComponent, conv: PhysicsUnitConverter): Shape {
+        // take world center bounds and subtract from entity center (all in pixels) to get local center
+        // because box2d operates on vector offsets from the body center, also in local coordinates
+        val boundsCenterLocal = box.centerWorld.subtract(bboxComp.centerWorld)
+
+        val shape = CircleShape()
+        shape.radius = conv.toMetersF(radius)
+        shape.center.set(conv.toVector(boundsCenterLocal))
+
+        return shape
+    }
+}
+
+class BoxShapeData(val width: Double, val height: Double) : BoundingShape(Dimension2D(width, height)) {
+
+    override fun toBox2DShape(box: HitBox, bboxComp: BoundingBoxComponent, conv: PhysicsUnitConverter): Shape {
+        val boundsCenterLocal = box.centerWorld.subtract(bboxComp.centerWorld)
+
+        val shape = PolygonShape()
+        shape.setAsBox(conv.toMetersF(width / 2), conv.toMetersF(height / 2), conv.toVector(boundsCenterLocal), 0f)
+
+        return shape
+    }
+}
+
+class PolygonShapeData(size: Dimension2D, val points: Array<Point2D>) : BoundingShape(size) {
+
+    override fun toBox2DShape(box: HitBox, bboxComp: BoundingBoxComponent, conv: PhysicsUnitConverter): Shape {
+        val boundsCenterLocal = box.centerWorld.subtract(bboxComp.centerWorld)
+        val bboxCenterLocal = bboxComp.centerLocal
+        val t = bboxComp.transform
+
+        val vertices = arrayOfNulls<Vec2>(points.size)
+
+        val bboxCenterLocalNew = Point2D(
+                bboxCenterLocal.x * t.scaleX + (1 - t.scaleX) * t.scaleOrigin.x,
+                bboxCenterLocal.y * t.scaleY + (1 - t.scaleY) * t.scaleOrigin.y
+        )
+
+        val boundsCenterLocalNew = Point2D(
+                boundsCenterLocal.x * t.scaleX + (1 - t.scaleX) * t.scaleOrigin.x,
+                boundsCenterLocal.y * t.scaleY + (1 - t.scaleY) * t.scaleOrigin.y
+        )
+
+        for (i in vertices.indices) {
+
+            val p = Point2D(
+                    (points[i].x + box.minX) * t.scaleX + (1 - t.scaleX) * t.scaleOrigin.x,
+                    (points[i].y + box.minY) * t.scaleY + (1 - t.scaleY) * t.scaleOrigin.y
+            )
+
+            vertices[i] = conv.toVector(p.subtract(boundsCenterLocalNew))
+                    .subLocal(conv.toVector(bboxCenterLocalNew))
+                    .addLocal(conv.toVector(boundsCenterLocalNew))
+                    .subLocal(conv.toMeters(bboxComp.getMinXLocal()), -conv.toMeters(bboxComp.getMinYLocal()))
+        }
+
+        val shape = PolygonShape()
+        shape.set(vertices)
+
+        return shape
+    }
+}
+
+/**
+ * Effectively, a polyline.
+ */
+class ChainShapeData(size: Dimension2D, val points: Array<Point2D>) : BoundingShape(size) {
+
+    override fun toBox2DShape(box: HitBox, bboxComp: BoundingBoxComponent, conv: PhysicsUnitConverter): Shape {
+        val boundsCenterLocal = box.centerWorld.subtract(bboxComp.centerWorld)
+
+        val vertices = arrayOfNulls<Vec2>(points.size)
+
+        for (i in vertices.indices) {
+            vertices[i] = conv.toVector(points[i].subtract(boundsCenterLocal)).subLocal(conv.toVector(bboxComp.centerLocal))
+        }
+
+        val shape = ChainShape()
+        shape.createLoop(vertices, vertices.size)
+
+        return shape
     }
 }
