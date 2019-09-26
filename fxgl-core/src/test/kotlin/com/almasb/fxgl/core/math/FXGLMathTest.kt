@@ -7,6 +7,7 @@
 package com.almasb.fxgl.core.math
 
 import com.almasb.fxgl.core.math.FXGLMath.*
+import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
@@ -211,5 +212,33 @@ class FXGLMathTest {
         assertThat(abs(0.0f), isOneOf(0.0f, -0.0f))
         assertThat(abs(1.0f), `is`(1.0f))
         assertThat(abs(-1.0f), `is`(1.0f))
+    }
+
+    @Test
+    fun `Bezier`() {
+        val p1 = bezier(Point2D(0.0, 0.0), Point2D(50.0, 0.0), Point2D(100.0, 0.0), 0.3)
+
+        assertThat(p1, `is`(Point2D(30.0, 0.0)))
+
+        val p2 = bezier(Point2D(0.0, 0.0), Point2D(20.0, 0.0), Point2D(80.0, 0.0), Point2D(100.0, 0.0), 0.5)
+
+        assertThat(p2, `is`(Point2D(50.0, 0.0)))
+    }
+
+    @Test
+    fun `Noises`() {
+        for (y in 0..250) {
+            for (x in 0..250) {
+                val v1 = noise2D(x.toDouble(), y.toDouble())
+                val v2 = noise3D(x.toDouble(), y.toDouble(), x*y.toDouble())
+
+                assertThat(v1, Matchers.allOf(Matchers.greaterThan(-1.0), Matchers.lessThan(1.0)))
+                assertThat(v2, Matchers.allOf(Matchers.greaterThan(-1.0), Matchers.lessThan(1.0)))
+
+                val v3 = noise1D(x+y.toDouble())
+
+                assertThat(v3, Matchers.allOf(Matchers.greaterThanOrEqualTo(-0.0), Matchers.lessThan(1.0)))
+            }
+        }
     }
 }
