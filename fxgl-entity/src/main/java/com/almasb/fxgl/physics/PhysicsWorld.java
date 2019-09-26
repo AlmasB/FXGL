@@ -15,7 +15,6 @@ import com.almasb.fxgl.entity.EntityWorldListener;
 import com.almasb.fxgl.entity.components.BoundingBoxComponent;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.entity.components.TransformComponent;
-import com.almasb.fxgl.entity.components.TypeComponent;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactFilter;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactImpulse;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
@@ -36,12 +35,9 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Manages physics entities, collision handling and performs the physics tick.
- * <p>
- * Contains several static and instance methods
- * to convert pixels coordinates to meters and vice versa.
- * <p>
- * Collision handling unifies how they are processed.
+ * Manages collision handling and performs the physics tick.
+ * Contains several static and instance methods to convert pixel coordinates to meters and vice versa.
+ * Collision handling unifies how different collisions (with and without PhysicsComponent) are processed.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -61,90 +57,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     private Array<CollisionPair> collisions = new UnorderedArray<>(128);
 
     private int appHeight;
-
-    /**
-     * Note: certain modifications to the jbox2d world directly may not be
-     * recognized by FXGL.
-     *
-     * @return raw jbox2d physics world
-     */
-    public World getJBox2DWorld() {
-        return jboxWorld;
-    }
-
-    private boolean isCollidable(Entity e) {
-        if (!e.isActive())
-            return false;
-
-        return e.getComponentOptional(CollidableComponent.class)
-                .map(c -> c.getValue())
-                .orElse(false);
-    }
-
-    private boolean areCollidable(Entity e1, Entity e2) {
-        return isCollidable(e1) && isCollidable(e2);
-    }
-
-    @SuppressWarnings("PMD.UselessParentheses")
-    private boolean needManualCheck(Entity e1, Entity e2) {
-        // if no physics -> check manually
-
-        BodyType type1 = e1.getComponentOptional(PhysicsComponent.class)
-                .map(p -> p.body.getType())
-                .orElse(null);
-
-        if (type1 == null)
-            return true;
-
-        BodyType type2 = e2.getComponentOptional(PhysicsComponent.class)
-                .map(p -> p.body.getType())
-                .orElse(null);
-
-        if (type2 == null)
-            return true;
-
-        // if one is kinematic and the other is static -> check manually
-        return (type1 == BodyType.KINEMATIC && type2 == BodyType.STATIC)
-                || (type2 == BodyType.KINEMATIC && type1 == BodyType.STATIC);
-    }
-
-    /**
-     * @param e1 entity 1
-     * @param e2 entity 2
-     * @return collision handler for e1 and e2 based on their types or null if no such handler exists
-     */
-    private CollisionHandler getHandler(Entity e1, Entity e2) {
-        if (!e1.isActive() || !e2.isActive())
-            return null;
-
-        Object type1 = e1.getComponent(TypeComponent.class).getValue();
-        Object type2 = e2.getComponent(TypeComponent.class).getValue();
-
-        for (CollisionHandler handler : collisionHandlers) {
-            if (handler.equal(type1, type2)) {
-                return handler;
-            }
-        }
-
-        return null;
-    }
-
-    private CollisionPair getPair(Entity e1, Entity e2) {
-        int index = getPairIndex(e1, e2);
-
-        return index == -1 ? null : collisions.get(index);
-    }
-
-    private int getPairIndex(Entity e1, Entity e2) {
-        for (int i = 0; i < collisions.size(); i++) {
-            CollisionPair pair = collisions.get(i);
-            if (pair.equal(e1, e2)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
 
     public PhysicsWorld(int appHeight, double ppm) {
         this.appHeight = appHeight;
@@ -376,6 +288,87 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         }
     }
 
+    /**
+     * Note: certain modifications to the jbox2d world directly may not be
+     * recognized by FXGL.
+     *
+     * @return raw jbox2d physics world
+     */
+    public World getJBox2DWorld() {
+        return jboxWorld;
+    }
+
+    private boolean isCollidable(Entity e) {
+        if (!e.isActive())
+            return false;
+
+        return e.getComponentOptional(CollidableComponent.class)
+                .map(CollidableComponent::getValue)
+                .orElse(false);
+    }
+
+    private boolean areCollidable(Entity e1, Entity e2) {
+        return isCollidable(e1) && isCollidable(e2);
+    }
+
+    @SuppressWarnings("PMD.UselessParentheses")
+    private boolean needManualCheck(Entity e1, Entity e2) {
+        // if no physics -> check manually
+
+        BodyType type1 = e1.getComponentOptional(PhysicsComponent.class)
+                .map(p -> p.body.getType())
+                .orElse(null);
+
+        if (type1 == null)
+            return true;
+
+        BodyType type2 = e2.getComponentOptional(PhysicsComponent.class)
+                .map(p -> p.body.getType())
+                .orElse(null);
+
+        if (type2 == null)
+            return true;
+
+        // if one is kinematic and the other is static -> check manually
+        return (type1 == BodyType.KINEMATIC && type2 == BodyType.STATIC)
+                || (type2 == BodyType.KINEMATIC && type1 == BodyType.STATIC);
+    }
+
+    /**
+     * @param e1 entity 1
+     * @param e2 entity 2
+     * @return collision handler for e1 and e2 based on their types or null if no such handler exists
+     */
+    private CollisionHandler getHandler(Entity e1, Entity e2) {
+        if (!e1.isActive() || !e2.isActive())
+            return null;
+
+        for (CollisionHandler handler : collisionHandlers) {
+            if (handler.equal(e1.getType(), e2.getType())) {
+                return handler;
+            }
+        }
+
+        return null;
+    }
+
+    private CollisionPair getPair(Entity e1, Entity e2) {
+        int index = getPairIndex(e1, e2);
+
+        return index == -1 ? null : collisions.get(index);
+    }
+
+    private int getPairIndex(Entity e1, Entity e2) {
+        for (int i = 0; i < collisions.size(); i++) {
+            CollisionPair pair = collisions.get(i);
+            if (pair.equal(e1, e2)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     private void notifySensorCollisionBegin(Entity eWithSensor, Entity eTriggered, HitBox box) {
         var handler = eWithSensor.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
         handler.onCollisionBegin(eTriggered);
@@ -396,7 +389,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     /**
      * Perform collision detection for all entities that have
-     * setCollidable(true) and if at least one entity is not PhysicsEntity.
+     * setCollidable(true) and if at least one entity does not have PhysicsComponent.
      * Subsequently fire collision handlers for all entities that have
      * setCollidable(true).
      */
@@ -509,8 +502,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
             CollisionPair pair = it.next();
 
             // if a pair no longer qualifies for collision then just remove it
-            if (!pair.getA().isActive() || !pair.getB().isActive()
-                    || !isCollidable(pair.getA()) || !isCollidable(pair.getB())) {
+            if (!isCollidable(pair.getA()) || !isCollidable(pair.getB())) {
 
                 // tell the pair that collision ended
                 pair.collisionEnd();
