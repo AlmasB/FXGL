@@ -65,6 +65,8 @@ class CollisionPairTest {
         e2.type = T.T2
 
         val pair1 = CollisionPair()
+        assertThat(pair1.hashCode(), `is`(0))
+
         pair1.init(e1, e2, object : CollisionHandler(T.T1, T.T2) {})
 
         val pair2 = CollisionPair()
