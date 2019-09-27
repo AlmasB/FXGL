@@ -381,6 +381,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     public void postSolve(Contact contact, ContactImpulse impulse) { }
 
     private Array<Entity> collidables = new UnorderedArray<>(128);
+    private CollisionResult collisionResult = new CollisionResult();
 
     /**
      * Perform collision detection for all entities that have
@@ -417,14 +418,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
                     continue;
 
                 // check if colliding
-                CollisionResult result = e1.getBoundingBoxComponent().checkCollision(e2.getBoundingBoxComponent());
+                var collision = e1.getBoundingBoxComponent().checkCollision(e2.getBoundingBoxComponent(), collisionResult);
 
-                if (result.hasCollided()) {
-
-                    collisionBeginFor(handler, e1, e2, result.getBoxA(), result.getBoxB());
-
-                    // put result back to pool only if collided
-                    Pools.free(result);
+                if (collision) {
+                    collisionBeginFor(handler, e1, e2, collisionResult.getBoxA(), collisionResult.getBoxB());
                 } else {
                     collisionEndFor(e1, e2);
                 }

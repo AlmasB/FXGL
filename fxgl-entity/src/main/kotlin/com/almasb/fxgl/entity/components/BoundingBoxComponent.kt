@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.entity.components
 
-import com.almasb.fxgl.core.pool.Pool
-import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
@@ -33,17 +31,6 @@ import javafx.geometry.Rectangle2D
 class BoundingBoxComponent(vararg boxes: HitBox) :
         Component(),
         SerializableComponent {
-
-    companion object {
-
-        init {
-            Pools.set(CollisionResult::class.java, object : Pool<CollisionResult>() {
-                override fun newObject(): CollisionResult {
-                    return CollisionResult()
-                }
-            })
-        }
-    }
 
     lateinit var transform: TransformComponent
 
@@ -276,49 +263,22 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
                 .min() ?: 0.0
     }
 
+    private val dummy = CollisionResult()
+
     /**
-     * Internal GC-friendly (and has less checks than JavaFX's BoundingBox)
-     * check for collision between two hit boxes.
-     * Assuming hit boxes are bound to x, y of entities so the coords
-     * are correctly translated into the world coord space.
+     * Checks for collision with another bounding box.
      *
-     * @param box1 hit box 1
-     * @param box2 hit box 2
-     * @return true iff box1 is colliding with box2
+     * @return true iff this bbox is colliding with other based on
+     * their hit boxes, in current frame
      */
-    private fun checkCollision(box1: HitBox, box2: HitBox): Boolean {
-        return box2.maxXWorld >= box1.minXWorld &&
-                box2.maxYWorld >= box1.minYWorld &&
-                box2.minXWorld <= box1.maxXWorld &&
-                box2.minYWorld <= box1.maxYWorld
-    }
-
-    private fun checkCollision(box1: HitBox, box2: HitBox, angle1: Double, angle2: Double,
-                               t1: TransformComponent, t2: TransformComponent): Boolean {
-        return SAT.isColliding(box1, box2, angle1, angle2, t1, t2)
-    }
+    fun isCollidingWith(other: BoundingBoxComponent): Boolean = checkCollision(other, dummy)
 
     /**
-     * Checks for collision with another bounding box. Returns collision result
-     * containing the first hit box that triggered collision.
-     * If no collision - [CollisionResult.NO_COLLISION] will be returned.
-     * If there is collision, the CollisionResult object must be put into pooler
-     * after using the data.
-     *
-     * @param other bounding box to check collision against
-     * @return collision result
-     */
-    fun checkCollision(other: BoundingBoxComponent): CollisionResult {
-        return checkCollisionInternal(other, true)
-    }
-
-    /**
-     * GC-friendly (no object allocations) version of [.checkCollision].
-     *
      * @param other bbox of other entity
+     * @param result to populate hit boxes
      * @return [CollisionResult.NO_COLLISION] if no collision, else [CollisionResult.COLLISION]
      */
-    private fun checkCollisionInternal(other: BoundingBoxComponent, reportBoxes: Boolean): CollisionResult {
+    fun checkCollision(other: BoundingBoxComponent, result: CollisionResult): Boolean {
         for (i in hitBoxes.indices) {
             val box1 = hitBoxes[i]
 
@@ -337,28 +297,35 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
                 }
 
                 if (collision) {
-                    if (reportBoxes) {
-                        val result = Pools.obtain(CollisionResult::class.java)
-                        result.init(box1, box2)
-
-                        return result
-                    } else {
-                        return CollisionResult.COLLISION
-                    }
+                    result.init(box1, box2)
+                    return true
                 }
             }
         }
 
-        return CollisionResult.NO_COLLISION
+        return false
     }
 
     /**
-     * @param other the other entity
-     * @return true iff this entity is colliding with other based on
-     * their hit boxes, in current frame
+     * Internal GC-friendly (and has fewer checks than JavaFX's BoundingBox)
+     * check for collision between two hit boxes.
+     * Assuming hit boxes are bound to x, y of entities so the coords
+     * are correctly translated into the world coord space.
+     *
+     * @param box1 hit box 1
+     * @param box2 hit box 2
+     * @return true iff box1 is colliding with box2
      */
-    fun isCollidingWith(other: BoundingBoxComponent): Boolean {
-        return checkCollisionInternal(other, false) != CollisionResult.NO_COLLISION
+    private fun checkCollision(box1: HitBox, box2: HitBox): Boolean {
+        return box2.maxXWorld >= box1.minXWorld &&
+                box2.maxYWorld >= box1.minYWorld &&
+                box2.minXWorld <= box1.maxXWorld &&
+                box2.minYWorld <= box1.maxYWorld
+    }
+
+    private fun checkCollision(box1: HitBox, box2: HitBox, angle1: Double, angle2: Double,
+                               t1: TransformComponent, t2: TransformComponent): Boolean {
+        return SAT.isColliding(box1, box2, angle1, angle2, t1, t2)
     }
 
     /**
