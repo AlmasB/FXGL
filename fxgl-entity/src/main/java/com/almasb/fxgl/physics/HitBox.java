@@ -320,10 +320,6 @@ public final class HitBox implements Serializable {
         return shape.toBox2DShape(this, bbox, converter);
     }
 
-    public HitBox copy() {
-        return new HitBox(name, new Point2D(bounds.getMinX(), bounds.getMinY()), shape);
-    }
-
     @Override
     public String toString() {
         return "HitBox(" + name + "," + shape + ")";
