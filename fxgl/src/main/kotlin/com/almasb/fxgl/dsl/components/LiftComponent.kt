@@ -19,107 +19,94 @@ import javafx.util.Duration
 class LiftComponent : Component() {
 
     private class LiftData() {
-        /**
-         * Move in X axis.
-         */
+
         var isHorizontal = false
+        var isGoingPositive = true
+        var speed = 0.0
+        var distance = 0.0
+        var duration: Duration = Duration.ZERO
 
-        /**
-         * Move in Y axis.
-         */
-        var isVertical = false
-
-        var isGoingUp = false
-        var isGoingRight = true
-
-        var speedX = 0.0
-        var speedY = 0.0
-
-        var distanceX = 0.0
-        var distanceY = 0.0
-
-        var durationX: Duration = Duration.ZERO
-        var durationY: Duration = Duration.ZERO
-
-        internal lateinit var timerX: LocalTimer
-        internal lateinit var timerY: LocalTimer
+        internal lateinit var timer: LocalTimer
     }
 
-    private val liftData = LiftData()
+    private val liftDataX = LiftData()
+    private val liftDataY = LiftData()
 
     override fun onAdded() {
-        liftData.timerX = FXGL.newLocalTimer()
-        liftData.timerX.capture()
+        initTimer(liftDataX)
+        initTimer(liftDataY)
+    }
 
-        liftData.timerY = FXGL.newLocalTimer()
-        liftData.timerY.capture()
+    private fun initTimer(liftData: LiftData) {
+        liftData.timer = FXGL.newLocalTimer()
+        liftData.timer.capture()
     }
 
     override fun onUpdate(tpf: Double) {
-        if (liftData.isHorizontal) {
-            if (liftData.timerX.elapsed(liftData.durationX)) {
-                liftData.isGoingRight = !liftData.isGoingRight
-                liftData.timerX.capture()
+        if (liftDataX.isHorizontal) {
+            if (liftDataX.timer.elapsed(liftDataX.duration)) {
+                liftDataX.isGoingPositive = !liftDataX.isGoingPositive
+                liftDataX.timer.capture()
             }
 
-            entity.translateX(if (liftData.isGoingRight) liftData.speedX * tpf else -liftData.speedX * tpf)
+            entity.translateX(if (liftDataX.isGoingPositive) liftDataX.speed * tpf else -liftDataX.speed * tpf)
         }
 
-        if (liftData.isVertical) {
-            if (liftData.timerY.elapsed(liftData.durationY)) {
-                liftData.isGoingUp = !liftData.isGoingUp
-                liftData.timerY.capture()
+        if (!liftDataY.isHorizontal) {
+            if (liftDataY.timer.elapsed(liftDataY.duration)) {
+                liftDataY.isGoingPositive = !liftDataY.isGoingPositive
+                liftDataY.timer.capture()
             }
 
-            entity.translateY(if (liftData.isGoingUp) -liftData.speedY * tpf else liftData.speedY * tpf)
+            entity.translateY(if (liftDataY.isGoingPositive) -liftDataY.speed * tpf else liftDataY.speed * tpf)
         }
     }
 
     fun xAxisDistanceDuration(distance: Double, duration: Duration) = this.apply {
-        liftData.distanceX = distance
-        liftData.durationX = duration
-        liftData.speedX = distance / duration.toSeconds()
+        liftDataX.distance = distance
+        liftDataX.duration = duration
+        liftDataX.speed = distance / duration.toSeconds()
 
-        liftData.isHorizontal = true
+        liftDataX.isHorizontal = true
     }
 
     fun xAxisSpeedDuration(speed: Double, duration: Duration) = this.apply {
-        liftData.speedX = speed
-        liftData.durationX = duration
-        liftData.distanceX = speed * duration.toSeconds()
+        liftDataX.speed = speed
+        liftDataX.duration = duration
+        liftDataX.distance = speed * duration.toSeconds()
 
-        liftData.isHorizontal = true
+        liftDataX.isHorizontal = true
     }
 
     fun xAxisSpeedDistance(speed: Double, distance: Double) = this.apply {
-        liftData.speedX = speed
-        liftData.distanceX = distance
-        liftData.durationX = Duration.seconds(distance / speed)
+        liftDataX.speed = speed
+        liftDataX.distance = distance
+        liftDataX.duration = Duration.seconds(distance / speed)
 
-        liftData.isHorizontal = true
+        liftDataX.isHorizontal = true
     }
 
     fun yAxisDistanceDuration(distance: Double, duration: Duration) = this.apply {
-        liftData.distanceY = distance
-        liftData.durationY = duration
-        liftData.speedY = distance / duration.toSeconds()
+        liftDataY.distance = distance
+        liftDataY.duration = duration
+        liftDataY.speed = distance / duration.toSeconds()
 
-        liftData.isVertical = true
+        liftDataY.isHorizontal = false
     }
 
     fun yAxisSpeedDuration(speed: Double, duration: Duration) = this.apply {
-        liftData.speedY = speed
-        liftData.durationY = duration
-        liftData.distanceY = speed * duration.toSeconds()
+        liftDataY.speed = speed
+        liftDataY.duration = duration
+        liftDataY.distance = speed * duration.toSeconds()
 
-        liftData.isVertical = true
+        liftDataY.isHorizontal = false
     }
 
     fun yAxisSpeedDistance(speed: Double, distance: Double) = this.apply {
-        liftData.speedY = speed
-        liftData.distanceY = distance
-        liftData.durationY = Duration.seconds(distance / speed)
+        liftDataY.speed = speed
+        liftDataY.distance = distance
+        liftDataY.duration = Duration.seconds(distance / speed)
 
-        liftData.isVertical = true
+        liftDataY.isHorizontal = false
     }
 }
