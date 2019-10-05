@@ -9,6 +9,7 @@ package com.almasb.fxgl.physics;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pools;
+import com.almasb.fxgl.core.util.EmptyRunnable;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
@@ -45,7 +46,7 @@ public final class PhysicsComponent extends Component {
 
     private boolean raycastIgnored = false;
 
-    private Runnable onInitPhysics;
+    private Runnable onInitPhysics = EmptyRunnable.INSTANCE;
 
     private PhysicsWorld physicsWorld;
 
@@ -60,9 +61,7 @@ public final class PhysicsComponent extends Component {
     }
 
     void onInitPhysics() {
-        if (onInitPhysics != null) {
-            onInitPhysics.run();
-        }
+        onInitPhysics.run();
     }
 
     /**
