@@ -70,7 +70,6 @@ public class BenchmarkSample extends GameApplication {
         set("tpf", tpf);
     }
 
-    // TODO: will fail if not public
     public static class BenchmarkFactory implements EntityFactory {
 
         @Preload(10000)
