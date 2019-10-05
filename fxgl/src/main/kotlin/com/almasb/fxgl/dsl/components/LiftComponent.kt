@@ -19,15 +19,31 @@ import javafx.util.Duration
  */
 class LiftComponent : Component() {
 
-    private class LiftData() {
+    private class LiftData {
 
         var isOn = false
+
+        // moving in the direction of the axis
         var isGoingPositive = true
-        var speed = 0.0
+
         var distance = 0.0
         var duration: Duration = Duration.ZERO
+        var speed = 0.0
 
         internal lateinit var timer: LocalTimer
+
+        fun initTimer() {
+            timer = FXGL.newLocalTimer()
+            timer.capture()
+        }
+
+        fun enable(distance: Double, duration: Duration, speed: Double) {
+            this.distance = distance
+            this.duration = duration
+            this.speed = speed
+
+            isOn = true
+        }
 
         fun update(tpf: Double): Double {
             if (timer.elapsed(duration)) {
@@ -42,13 +58,8 @@ class LiftComponent : Component() {
     private val liftDataY = LiftData()
 
     override fun onAdded() {
-        initTimer(liftDataX)
-        initTimer(liftDataY)
-    }
-
-    private fun initTimer(liftData: LiftData) {
-        liftData.timer = FXGL.newLocalTimer()
-        liftData.timer.capture()
+        liftDataX.initTimer()
+        liftDataY.initTimer()
     }
 
     override fun onUpdate(tpf: Double) {
@@ -63,50 +74,26 @@ class LiftComponent : Component() {
     }
 
     fun xAxisDistanceDuration(distance: Double, duration: Duration) = this.apply {
-        liftDataX.distance = distance
-        liftDataX.duration = duration
-        liftDataX.speed = distance / duration.toSeconds()
-
-        liftDataX.isOn = true
+        liftDataX.enable(distance, duration, distance / duration.toSeconds())
     }
 
     fun xAxisSpeedDuration(speed: Double, duration: Duration) = this.apply {
-        liftDataX.speed = speed
-        liftDataX.duration = duration
-        liftDataX.distance = speed * duration.toSeconds()
-
-        liftDataX.isOn = true
+        liftDataX.enable(speed * duration.toSeconds(), duration, speed)
     }
 
     fun xAxisSpeedDistance(speed: Double, distance: Double) = this.apply {
-        liftDataX.speed = speed
-        liftDataX.distance = distance
-        liftDataX.duration = Duration.seconds(distance / speed)
-
-        liftDataX.isOn = true
+        liftDataX.enable(distance, Duration.seconds(distance / speed), speed)
     }
 
     fun yAxisDistanceDuration(distance: Double, duration: Duration) = this.apply {
-        liftDataY.distance = distance
-        liftDataY.duration = duration
-        liftDataY.speed = distance / duration.toSeconds()
-
-        liftDataY.isOn = true
+        liftDataY.enable(distance, duration, distance / duration.toSeconds())
     }
 
     fun yAxisSpeedDuration(speed: Double, duration: Duration) = this.apply {
-        liftDataY.speed = speed
-        liftDataY.duration = duration
-        liftDataY.distance = speed * duration.toSeconds()
-
-        liftDataY.isOn = true
+        liftDataY.enable(speed * duration.toSeconds(), duration, speed)
     }
 
     fun yAxisSpeedDistance(speed: Double, distance: Double) = this.apply {
-        liftDataY.speed = speed
-        liftDataY.distance = distance
-        liftDataY.duration = Duration.seconds(distance / speed)
-
-        liftDataY.isOn = true
+        liftDataY.enable(distance, Duration.seconds(distance / speed), speed)
     }
 }
