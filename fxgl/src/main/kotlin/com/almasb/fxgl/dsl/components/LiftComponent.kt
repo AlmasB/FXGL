@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.dsl.components
 
+import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.time.LocalTimer
@@ -20,13 +21,21 @@ class LiftComponent : Component() {
 
     private class LiftData() {
 
-        var isHorizontal = false
+        var isOn = false
         var isGoingPositive = true
         var speed = 0.0
         var distance = 0.0
         var duration: Duration = Duration.ZERO
 
         internal lateinit var timer: LocalTimer
+
+        fun update(tpf: Double): Double {
+            if (timer.elapsed(duration)) {
+                isGoingPositive = !isGoingPositive
+                timer.capture()
+            }
+            return if (isGoingPositive) speed * tpf else -speed * tpf
+        }
     }
 
     private val liftDataX = LiftData()
@@ -43,23 +52,14 @@ class LiftComponent : Component() {
     }
 
     override fun onUpdate(tpf: Double) {
-        if (liftDataX.isHorizontal) {
-            if (liftDataX.timer.elapsed(liftDataX.duration)) {
-                liftDataX.isGoingPositive = !liftDataX.isGoingPositive
-                liftDataX.timer.capture()
-            }
-
-            entity.translateX(if (liftDataX.isGoingPositive) liftDataX.speed * tpf else -liftDataX.speed * tpf)
+        val vector = Vec2()
+        if (liftDataX.isOn) {
+            vector.x = liftDataX.update(tpf).toFloat()
         }
-
-        if (!liftDataY.isHorizontal) {
-            if (liftDataY.timer.elapsed(liftDataY.duration)) {
-                liftDataY.isGoingPositive = !liftDataY.isGoingPositive
-                liftDataY.timer.capture()
-            }
-
-            entity.translateY(if (liftDataY.isGoingPositive) -liftDataY.speed * tpf else liftDataY.speed * tpf)
+        if (liftDataY.isOn) {
+            vector.y = liftDataY.update(tpf).toFloat()
         }
+        entity.translate(vector)
     }
 
     fun xAxisDistanceDuration(distance: Double, duration: Duration) = this.apply {
@@ -67,7 +67,7 @@ class LiftComponent : Component() {
         liftDataX.duration = duration
         liftDataX.speed = distance / duration.toSeconds()
 
-        liftDataX.isHorizontal = true
+        liftDataX.isOn = true
     }
 
     fun xAxisSpeedDuration(speed: Double, duration: Duration) = this.apply {
@@ -75,7 +75,7 @@ class LiftComponent : Component() {
         liftDataX.duration = duration
         liftDataX.distance = speed * duration.toSeconds()
 
-        liftDataX.isHorizontal = true
+        liftDataX.isOn = true
     }
 
     fun xAxisSpeedDistance(speed: Double, distance: Double) = this.apply {
@@ -83,7 +83,7 @@ class LiftComponent : Component() {
         liftDataX.distance = distance
         liftDataX.duration = Duration.seconds(distance / speed)
 
-        liftDataX.isHorizontal = true
+        liftDataX.isOn = true
     }
 
     fun yAxisDistanceDuration(distance: Double, duration: Duration) = this.apply {
@@ -91,7 +91,7 @@ class LiftComponent : Component() {
         liftDataY.duration = duration
         liftDataY.speed = distance / duration.toSeconds()
 
-        liftDataY.isHorizontal = false
+        liftDataY.isOn = true
     }
 
     fun yAxisSpeedDuration(speed: Double, duration: Duration) = this.apply {
@@ -99,7 +99,7 @@ class LiftComponent : Component() {
         liftDataY.duration = duration
         liftDataY.distance = speed * duration.toSeconds()
 
-        liftDataY.isHorizontal = false
+        liftDataY.isOn = true
     }
 
     fun yAxisSpeedDistance(speed: Double, distance: Double) = this.apply {
@@ -107,6 +107,6 @@ class LiftComponent : Component() {
         liftDataY.distance = distance
         liftDataY.duration = Duration.seconds(distance / speed)
 
-        liftDataY.isHorizontal = false
+        liftDataY.isOn = true
     }
 }
