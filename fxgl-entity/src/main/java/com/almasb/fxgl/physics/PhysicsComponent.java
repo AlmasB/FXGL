@@ -129,8 +129,8 @@ public final class PhysicsComponent extends Component {
     }
 
     public void removeSensor(HitBox box) {
-        // TODO: but we didn't remove the fixture
         box.unbind();
+        getPhysicsWorld().destroyFixture(body, box);
         sensorHandlers.remove(box);
     }
 

@@ -682,6 +682,14 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 //        e.getComponent(PhysicsParticleComponent.class).setGroup(jboxWorld.createParticleGroup(def));
     }
 
+    void destroyFixture(Body body, HitBox box) {
+        body.getFixtures()
+                .stream()
+                .filter(f -> f.getHitBox() == box)
+                .findAny()
+                .ifPresent(body::destroyFixture);
+    }
+
     /**
      * Destroy body and remove from physics world.
      *
