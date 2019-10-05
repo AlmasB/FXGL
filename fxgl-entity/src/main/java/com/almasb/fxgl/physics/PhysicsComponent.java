@@ -53,6 +53,12 @@ public final class PhysicsComponent extends Component {
         physicsWorld = world;
     }
 
+    private PhysicsWorld getPhysicsWorld() {
+        if (physicsWorld == null)
+            throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
+        return physicsWorld;
+    }
+
     void onInitPhysics() {
         if (onInitPhysics != null) {
             onInitPhysics.run();
@@ -189,7 +195,7 @@ public final class PhysicsComponent extends Component {
      * @param vector x and y in pixels
      */
     public void setLinearVelocity(Point2D vector) {
-        setBodyLinearVelocity(physicsWorld.toVector(vector));
+        setBodyLinearVelocity(getPhysicsWorld().toVector(vector));
     }
 
     /**
@@ -236,7 +242,7 @@ public final class PhysicsComponent extends Component {
      * @return linear velocity in pixels per second.
      */
     public Point2D getLinearVelocity() {
-        return physicsWorld.toVector(getBody().getLinearVelocity());
+        return getPhysicsWorld().toVector(getBody().getLinearVelocity());
     }
 
     /**
@@ -256,7 +262,7 @@ public final class PhysicsComponent extends Component {
      * @param wake if this impulse should wake up the body
      */
     public void applyLinearImpulse(Point2D impulse, Point2D point, boolean wake) {
-        applyBodyLinearImpulse(physicsWorld.toVector(impulse), physicsWorld.toPoint(point), wake);
+        applyBodyLinearImpulse(getPhysicsWorld().toVector(impulse), getPhysicsWorld().toPoint(point), wake);
     }
 
     /**
@@ -277,7 +283,7 @@ public final class PhysicsComponent extends Component {
      * @param point the world position of the point of application (in pixel)
      */
     public void applyForce(Point2D force, Point2D point) {
-        applyBodyForce(physicsWorld.toVector(force), physicsWorld.toPoint(point));
+        applyBodyForce(getPhysicsWorld().toVector(force), getPhysicsWorld().toPoint(point));
     }
 
     /**
@@ -296,7 +302,7 @@ public final class PhysicsComponent extends Component {
      * @param force the world force vector (in pixel/sec)
      */
     public void applyForceToCenter(Point2D force) {
-        applyBodyForceToCenter(physicsWorld.toVector(force));
+        applyBodyForceToCenter(getPhysicsWorld().toVector(force));
     }
 
     /**
@@ -336,11 +342,11 @@ public final class PhysicsComponent extends Component {
         // but they are not coordinates of the entity
 
         minMeters.set(
-                getBody().getPosition().x - physicsWorld.toMetersF(entity.getWidth() / 2),
-                getBody().getPosition().y + physicsWorld.toMetersF(entity.getHeight() / 2)
+                getBody().getPosition().x - getPhysicsWorld().toMetersF(entity.getWidth() / 2),
+                getBody().getPosition().y + getPhysicsWorld().toMetersF(entity.getHeight() / 2)
         );
 
-        Point2D minWorld = physicsWorld.toPoint(minMeters);
+        Point2D minWorld = getPhysicsWorld().toPoint(minMeters);
 
         // hence we do the following, as entity.x = minXWorld - minXLocal
 
@@ -372,7 +378,7 @@ public final class PhysicsComponent extends Component {
         double w = getEntity().getWidth();
         double h = getEntity().getHeight();
 
-        Vec2 positionMeters = physicsWorld.toPoint(new Point2D(
+        Vec2 positionMeters = getPhysicsWorld().toPoint(new Point2D(
                 point.getX() + w / 2,
                 point.getY() + h / 2
         ));
