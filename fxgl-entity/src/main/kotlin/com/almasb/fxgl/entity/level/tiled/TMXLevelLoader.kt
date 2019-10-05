@@ -118,7 +118,7 @@ class TMXLevelLoader : LevelLoader {
 
                         // non-zero gid means view is read from the tileset
                         if (tiledObject.gid != 0) {
-                            e.viewComponent.addChild(tilesetLoader.loadView(tiledObject.gid))
+                            e.viewComponent.addChild(tilesetLoader.loadView(tiledObject.gid, tiledObject.isFlippedHorizontal, tiledObject.isFlippedVertical))
                         }
                     }
                 }
@@ -313,7 +313,24 @@ class TMXLevelLoader : LevelLoader {
         obj.rotation = start.getFloat("rotation")
         obj.width = start.getInt("width")
         obj.height = start.getInt("height")
-        obj.gid = start.getInt("gid")
+
+        // gid is stored as UInt, so parsing as int gives incorrect representation
+        val gidUInt = start.getUInt("gid")
+
+        // from https://doc.mapeditor.org/en/stable/reference/tmx-map-format/#tile-flipping
+        // Bit 32 (31th) is used for storing whether the tile is horizontally flipped,
+        // Bit 31 (30th) is used for the vertically flipped
+        val FLIPPED_HORIZONTALLY_FLAG = (1 shl 31).toUInt()
+        val FLIPPED_VERTICALLY_FLAG   = (1 shl 30).toUInt()
+        val FLIPPED_DIAGONALLY_FLAG   = (1 shl 29).toUInt()
+
+        obj.isFlippedHorizontal = gidUInt and FLIPPED_HORIZONTALLY_FLAG != 0.toUInt()
+        obj.isFlippedVertical = gidUInt and FLIPPED_VERTICALLY_FLAG != 0.toUInt()
+
+        // get rid of the metadata, leaving us with gid
+        val gid = (gidUInt and (FLIPPED_HORIZONTALLY_FLAG or FLIPPED_VERTICALLY_FLAG or FLIPPED_DIAGONALLY_FLAG).inv()).toInt()
+
+        obj.gid = gid
 
         (layer.objects as MutableList).add(obj)
     }
@@ -415,6 +432,10 @@ private fun StartElement.getInt(attrName: String): Int {
 
 private fun StartElement.getFloat(attrName: String): Float {
     return this.getString(attrName).toFloatOrNull() ?: 0.0f
+}
+
+private fun StartElement.getUInt(attrName: String): UInt {
+    return this.getString(attrName).toUIntOrNull() ?: 0.toUInt()
 }
 
 private fun StartElement.getString(attrName: String): String {

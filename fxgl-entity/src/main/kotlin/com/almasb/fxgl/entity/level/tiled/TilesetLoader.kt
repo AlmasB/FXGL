@@ -23,7 +23,10 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
 
     private val imageCache = hashMapOf<String, Image>()
 
-    fun loadView(gidArg: Int): Node {
+    fun loadView(gidArg: Int, isFlippedHorizontal: Boolean, isFlippedVertical: Boolean): Node {
+        println(isFlippedHorizontal)
+        println(isFlippedVertical)
+
         var gid = gidArg
 
         val tileset = findTileset(gid, map.tilesets)
@@ -47,7 +50,10 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
                 tilex * w + tileset.margin + tilex * tileset.spacing,
                 tiley * h + tileset.margin + tiley * tileset.spacing)
 
-        return ImageView(buffer)
+        return ImageView(buffer).also {
+            it.scaleX = if (isFlippedHorizontal) -1.0 else 1.0
+            it.scaleY = if (isFlippedVertical) -1.0 else 1.0
+        }
     }
 
     fun loadView(layerName: String): Node {
