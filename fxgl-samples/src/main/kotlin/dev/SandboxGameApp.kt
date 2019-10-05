@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.GameSettings
 import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.entity.Entity
-import dev.KotlinGameApp.AIType.GUARD
+import dev.SandboxGameApp.AIType.GUARD
 import javafx.beans.property.IntegerProperty
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
@@ -20,7 +20,7 @@ import javafx.scene.text.Text
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class KotlinGameApp : GameApplication() {
+class SandboxGameApp : GameApplication() {
     override fun initSettings(settings: GameSettings) {
         with(settings) {
             width = 720
@@ -115,5 +115,5 @@ class KotlinGameApp : GameApplication() {
 
 
 fun main() {
-    GameApplication.launch(KotlinGameApp::class.java, emptyArray())
+    GameApplication.launch(SandboxGameApp::class.java, emptyArray())
 }
