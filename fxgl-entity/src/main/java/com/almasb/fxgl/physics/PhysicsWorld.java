@@ -26,8 +26,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Manages collision handling and performs the physics tick.
@@ -97,6 +99,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     private Array<Entity> delayedParticlesAdd = new UnorderedArray<>();
     private Array<Body> delayedBodiesRemove = new UnorderedArray<>();
 
+    private Map<Entity, ChangeListener<Number> > scaleListeners = new HashMap<>();
+
     @Override
     public void onEntityAdded(Entity entity) {
         entities.add(entity);
@@ -129,7 +133,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
             }
         };
 
-        // TODO: clean listeners on remove
+        scaleListeners.put(entity, scaleChangeListener);
+
         entity.getTransformComponent().scaleXProperty().addListener(scaleChangeListener);
         entity.getTransformComponent().scaleYProperty().addListener(scaleChangeListener);
     }
@@ -153,6 +158,15 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     }
 
     private void onPhysicsEntityRemoved(Entity entity) {
+        if (scaleListeners.containsKey(entity)) {
+            ChangeListener<Number> scaleChangeListener = scaleListeners.get(entity);
+
+            entity.getTransformComponent().scaleXProperty().removeListener(scaleChangeListener);
+            entity.getTransformComponent().scaleYProperty().removeListener(scaleChangeListener);
+
+            scaleListeners.remove(entity);
+        }
+
         if (!jboxWorld.isLocked()) {
             destroyBody(entity);
         } else {
@@ -204,8 +218,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     public void beginContact(Contact contact) {
         Entity e1 = contact.getFixtureA().getBody().getEntity();
         Entity e2 = contact.getFixtureB().getBody().getEntity();
-
-        // TODO: we do not have sensor collision(), ony begin() and end()
 
         // check sensors first
 
