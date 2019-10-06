@@ -68,11 +68,11 @@ class CircuitBreakerView(miniGame: CircuitBreakerMiniGame = CircuitBreakerMiniGa
             for (x in 0 until miniGame.maze.width) {
                 val cell = miniGame.maze.getMazeCell(x, y)
 
-                if (cell.hasLeftWall()) {
+                if (cell.hasLeftWall) {
                     g.strokeLine(x*ratioX, y*ratioY, x * ratioX, (y+1)*ratioY)
                 }
 
-                if (cell.hasTopWall()) {
+                if (cell.hasTopWall) {
                     g.strokeLine(x*ratioX, y*ratioY, (x+1) * ratioX, y*ratioY)
                 }
             }
