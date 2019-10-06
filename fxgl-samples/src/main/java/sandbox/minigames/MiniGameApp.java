@@ -9,6 +9,7 @@ package sandbox.minigames;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.minigames.MiniGameService;
+import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerView;
 import com.almasb.fxgl.minigames.lockpicking.LockPickView;
 import com.almasb.fxgl.minigames.triggersequence.TriggerSequenceView;
 import com.almasb.fxgl.ui.FXGLButton;
@@ -48,7 +49,7 @@ public class MiniGameApp extends GameApplication {
         onKeyDown(KeyCode.G, "Hello2", () -> {
 
             var manager = getMiniGameService();
-            manager.startMiniGame(new LockPickView(), (result) -> {
+            manager.startMiniGame(new CircuitBreakerView(), (result) -> {
                 System.out.println(result.isSuccess() ? "SUCCESS" : "FAIL");
             });
         });

@@ -15,6 +15,7 @@ module com.almasb.fxgl.minigames {
     requires javafx.controls;
 
     exports com.almasb.fxgl.minigames;
+    exports com.almasb.fxgl.minigames.circuitbreaker;
     exports com.almasb.fxgl.minigames.sweetspot;
     exports com.almasb.fxgl.minigames.lockpicking;
     exports com.almasb.fxgl.minigames.triggermash;
