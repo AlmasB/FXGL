@@ -50,7 +50,7 @@ public class MiniGameApp extends GameApplication {
         onKeyDown(KeyCode.G, "Hello2", () -> {
 
             var manager = getMiniGameService();
-            manager.startCircuitBreaker(23, 10, 10, 100, Duration.seconds(1), (result) -> {
+            manager.startCircuitBreaker(10, 10, 10, 100, Duration.seconds(1), (result) -> {
                 System.out.println(result.isSuccess() ? "SUCCESS" : "FAIL");
             });
 //            manager.startMiniGame(new CircuitBreakerView(), (result) -> {

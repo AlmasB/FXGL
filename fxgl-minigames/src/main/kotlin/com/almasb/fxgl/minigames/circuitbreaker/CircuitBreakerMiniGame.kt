@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.minigames.circuitbreaker
 
+import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.minigames.MiniGame
 import com.almasb.fxgl.minigames.MiniGameResult
 import com.almasb.fxgl.minigames.MiniGameView
@@ -14,6 +15,7 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
 import javafx.util.Duration
+import kotlin.math.floor
 
 private const val WIDTH = 700.0
 private const val HEIGHT = 500.0
@@ -124,8 +126,7 @@ class CircuitBreakerMiniGame(mazeWidth: Int, mazeHeight: Int,
 
         playerPosition = playerPosition.add(direction.multiply(tpf * playerSpeed))
 
-        if (playerPosition.x < 0 || playerPosition.y < 0 ||
-                playerPosition.x > WIDTH || playerPosition.y > HEIGHT) {
+        if (isPlayerCollidingWithBounds() || isPlayerCollidingWithWalls()) {
             isDone = true
             result = CircuitBreakerResult(false)
         }
@@ -134,6 +135,43 @@ class CircuitBreakerMiniGame(mazeWidth: Int, mazeHeight: Int,
             isDone = true
             result = CircuitBreakerResult(true)
         }
+    }
+
+    private fun isPlayerCollidingWithBounds(): Boolean {
+        return playerPosition.x < 0 || playerPosition.y < 0 ||
+                playerPosition.x + playerSize > WIDTH || playerPosition.y + playerSize > HEIGHT
+    }
+
+    private fun isPlayerCollidingWithWalls(): Boolean {
+        val tl = getMazeCell(playerPosition)
+        val tr = getMazeCell(playerPosition.add(playerSize, 0.0))
+        val bl = getMazeCell(playerPosition.add(0.0, playerSize))
+        val br = getMazeCell(playerPosition.add(playerSize, playerSize))
+
+        if (tl !== tr && tr.hasLeftWall)
+            return true
+
+        if (tl !== bl && bl.hasTopWall)
+            return true
+
+        if (tr !== br && br.hasTopWall)
+            return true
+
+        if (bl !== br && br.hasLeftWall)
+            return true
+
+        return false
+    }
+
+    private fun getMazeCell(p: Point2D): MazeCell {
+        val x = floor(FXGLMath.map(p.x, 0.0, WIDTH, 0.0, maze.width.toDouble())).toInt()
+        val y = floor(FXGLMath.map(p.y, 0.0, HEIGHT, 0.0, maze.height.toDouble())).toInt()
+
+        check (x < maze.width && y < maze.height) {
+            "Bug: point $p is at ($x,$y) is outside of the maze (${maze.width},${maze.height})"
+        }
+
+        return maze.getMazeCell(x, y)
     }
 
     fun press(key: KeyCode) {
