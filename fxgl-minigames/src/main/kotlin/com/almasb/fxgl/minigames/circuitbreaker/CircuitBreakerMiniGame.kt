@@ -13,14 +13,13 @@ import javafx.geometry.Point2D
 import javafx.scene.canvas.Canvas
 import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
+import javafx.util.Duration
 
-private const val CHAR_SIZE = 15.0
-private const val CHAR_SPEED = 130.0
-
-private const val WIDTH = 800.0
+private const val WIDTH = 700.0
 private const val HEIGHT = 500.0
 
-class CircuitBreakerView(miniGame: CircuitBreakerMiniGame = CircuitBreakerMiniGame()) : MiniGameView<CircuitBreakerMiniGame>(miniGame) {
+class CircuitBreakerView(miniGame: CircuitBreakerMiniGame = CircuitBreakerMiniGame(10, 10, 15.0, 135.0, Duration.seconds(2.0)))
+    : MiniGameView<CircuitBreakerMiniGame>(miniGame) {
 
     private val canvas = Canvas(WIDTH, HEIGHT)
     private val g = canvas.graphicsContext2D
@@ -34,7 +33,7 @@ class CircuitBreakerView(miniGame: CircuitBreakerMiniGame = CircuitBreakerMiniGa
     }
 
     override fun onUpdate(tpf: Double) {
-        val charPosition = miniGame.charPosition
+        val charPosition = miniGame.playerPosition
 
         g.clearRect(0.0, 0.0, WIDTH, HEIGHT)
 
@@ -48,9 +47,9 @@ class CircuitBreakerView(miniGame: CircuitBreakerMiniGame = CircuitBreakerMiniGa
         g.strokeRect(0.0, 0.0, WIDTH, HEIGHT)
 
         g.fill = Color.BLACK
-        g.fillOval(charPosition.x, charPosition.y, CHAR_SIZE, CHAR_SIZE)
+        g.fillOval(charPosition.x, charPosition.y, miniGame.playerSize, miniGame.playerSize)
 
-        lineData += oldPosition.add(CHAR_SIZE / 2, CHAR_SIZE / 2) to charPosition.add(CHAR_SIZE / 2, CHAR_SIZE / 2)
+        lineData += oldPosition.add(miniGame.playerSize / 2, miniGame.playerSize / 2) to charPosition.add(miniGame.playerSize / 2, miniGame.playerSize / 2)
 
         g.stroke = Color.BLACK
         g.lineWidth = 2.5
@@ -79,8 +78,8 @@ class CircuitBreakerView(miniGame: CircuitBreakerMiniGame = CircuitBreakerMiniGa
         }
 
         g.fill = Color.YELLOW
-        g.fillOval(miniGame.startPoint.x, miniGame.startPoint.y, CHAR_SIZE, CHAR_SIZE)
-        g.fillOval(miniGame.endPoint.x, miniGame.endPoint.y, CHAR_SIZE, CHAR_SIZE)
+        g.fillOval(miniGame.startPoint.x, miniGame.startPoint.y, miniGame.playerSize, miniGame.playerSize)
+        g.fillOval(miniGame.endPoint.x, miniGame.endPoint.y, miniGame.playerSize, miniGame.playerSize)
 
         oldPosition = charPosition
     }
@@ -94,16 +93,24 @@ class CircuitBreakerView(miniGame: CircuitBreakerMiniGame = CircuitBreakerMiniGa
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class CircuitBreakerMiniGame : MiniGame<CircuitBreakerResult>() {
+class CircuitBreakerMiniGame(mazeWidth: Int, mazeHeight: Int, 
+                             val playerSize: Double, 
+                             val playerSpeed: Double,
+                             private val initialDelay: Duration) : MiniGame<CircuitBreakerResult>() {
 
-    val maze = Maze(10, 10)
+    val maze = Maze(mazeWidth, mazeHeight)
 
     val startPoint = Point2D(WIDTH / maze.width * 0.5, HEIGHT / maze.height * 0.5)
     val endPoint = Point2D(WIDTH - WIDTH / maze.width * 0.5, HEIGHT - HEIGHT / maze.height * 0.5)
 
+    private val DIR_UP = Point2D(0.0, -1.0)
+    private val DIR_DOWN = Point2D(0.0, 1.0)
+    private val DIR_LEFT = Point2D(-1.0, 0.0)
+    private val DIR_RIGHT = Point2D(1.0, 0.0)
+
     private var direction = Point2D(1.0, 0.0)
 
-    var charPosition = startPoint
+    var playerPosition = startPoint
         private set
 
     private var t = 0.0
@@ -111,19 +118,19 @@ class CircuitBreakerMiniGame : MiniGame<CircuitBreakerResult>() {
     override fun onUpdate(tpf: Double) {
         t += tpf
 
-        if (t < 2.0) {
+        if (t < initialDelay.toSeconds()) {
             return
         }
 
-        charPosition = charPosition.add(direction.multiply(tpf * CHAR_SPEED))
+        playerPosition = playerPosition.add(direction.multiply(tpf * playerSpeed))
 
-        if (charPosition.x < 0 || charPosition.y < 0 ||
-                charPosition.x > WIDTH || charPosition.y > HEIGHT) {
+        if (playerPosition.x < 0 || playerPosition.y < 0 ||
+                playerPosition.x > WIDTH || playerPosition.y > HEIGHT) {
             isDone = true
             result = CircuitBreakerResult(false)
         }
 
-        if (charPosition.distance(endPoint) < CHAR_SIZE) {
+        if (playerPosition.distance(endPoint) < playerSize) {
             isDone = true
             result = CircuitBreakerResult(true)
         }
@@ -131,10 +138,25 @@ class CircuitBreakerMiniGame : MiniGame<CircuitBreakerResult>() {
 
     fun press(key: KeyCode) {
         when (key) {
-            KeyCode.W -> { direction = Point2D(0.0, -1.0) }
-            KeyCode.S -> { direction = Point2D(0.0, 1.0) }
-            KeyCode.A -> { direction = Point2D(-1.0, 0.0) }
-            KeyCode.D -> { direction = Point2D(1.0, 0.0) }
+            KeyCode.W, KeyCode.UP -> {
+                if (direction !== DIR_DOWN)
+                    direction = DIR_UP
+            }
+
+            KeyCode.S, KeyCode.DOWN -> {
+                if (direction !== DIR_UP)
+                    direction = DIR_DOWN
+            }
+
+            KeyCode.A, KeyCode.LEFT -> {
+                if (direction !== DIR_RIGHT)
+                    direction = DIR_LEFT
+            }
+
+            KeyCode.D, KeyCode.RIGHT -> {
+                if (direction !== DIR_LEFT)
+                    direction = DIR_RIGHT
+            }
             else -> {}
         }
     }

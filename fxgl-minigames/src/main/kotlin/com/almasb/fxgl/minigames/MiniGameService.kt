@@ -11,6 +11,9 @@ import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Consumer
+import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerMiniGame
+import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerResult
+import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerView
 import com.almasb.fxgl.minigames.lockpicking.LockPickResult
 import com.almasb.fxgl.minigames.lockpicking.LockPickView
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotMiniGame
@@ -21,6 +24,7 @@ import com.almasb.fxgl.scene.SubSceneStack
 import javafx.event.EventHandler
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
+import javafx.util.Duration
 
 /**
  *
@@ -46,6 +50,18 @@ class MiniGameService : EngineService {
 
     fun startLockPicking(callback: Consumer<LockPickResult>) {
         startMiniGame(LockPickView()) { callback.accept(it) }
+    }
+
+    fun startCircuitBreaker(numHorizontalTiles: Int,
+                            numVerticalTiles: Int,
+                            playerSize: Double,
+                            playerSpeed: Double,
+                            miniGameDelay: Duration,
+                            callback: Consumer<CircuitBreakerResult>) {
+
+        val miniGame = CircuitBreakerMiniGame(numHorizontalTiles, numVerticalTiles, playerSize, playerSpeed, miniGameDelay)
+
+        startMiniGame(CircuitBreakerView(miniGame)) { callback.accept(it) }
     }
 
     // TODO: start mini game in the in-game mode, not a different subscene

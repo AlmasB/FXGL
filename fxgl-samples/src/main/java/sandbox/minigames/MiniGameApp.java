@@ -16,6 +16,7 @@ import com.almasb.fxgl.ui.FXGLButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -49,9 +50,12 @@ public class MiniGameApp extends GameApplication {
         onKeyDown(KeyCode.G, "Hello2", () -> {
 
             var manager = getMiniGameService();
-            manager.startMiniGame(new CircuitBreakerView(), (result) -> {
+            manager.startCircuitBreaker(23, 10, 10, 100, Duration.seconds(1), (result) -> {
                 System.out.println(result.isSuccess() ? "SUCCESS" : "FAIL");
             });
+//            manager.startMiniGame(new CircuitBreakerView(), (result) -> {
+//                System.out.println(result.isSuccess() ? "SUCCESS" : "FAIL");
+//            });
         });
 
         onKeyDown(KeyCode.H, "Hello3", () -> {
