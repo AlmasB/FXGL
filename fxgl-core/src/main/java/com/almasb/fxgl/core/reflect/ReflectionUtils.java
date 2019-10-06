@@ -78,6 +78,7 @@ public final class ReflectionUtils {
         Map<A, F> map = new HashMap<>();
 
         findMethods(instance, annotationClass).forEach((annotation, method) -> {
+                method.setAccessible(true);
                 // we create an instance implementing F on the fly
                 // so that high-level calling code stays clean
                 F function = (F) Proxy.newProxyInstance(functionClass.getClassLoader(),
