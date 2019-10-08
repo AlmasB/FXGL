@@ -33,6 +33,7 @@ import javafx.scene.paint.Color
 import javafx.stage.StageStyle
 import java.util.*
 import java.util.Collections.unmodifiableList
+import kotlin.math.roundToInt
 
 enum class MenuItem {
 
@@ -235,6 +236,14 @@ class GameSettings(
 
         var achievements: List<Achievement> = arrayListOf()
 ) {
+
+    fun setHeightFromRatio(ratio: Double) {
+        height = (width / ratio).roundToInt()
+    }
+
+    fun setWidthFromRatio(ratio: Double) {
+        width = (height * ratio).roundToInt()
+    }
 
     fun toReadOnly(): ReadOnlyGameSettings {
         return ReadOnlyGameSettings(
