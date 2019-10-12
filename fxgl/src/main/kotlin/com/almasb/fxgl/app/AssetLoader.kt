@@ -199,7 +199,8 @@ class AssetLoader {
                 return newTexture
             }
         } catch (e: Exception) {
-            throw loadFailed(name, e)
+            log.warning("Failed to load texture $name", e)
+            return Texture(getDummyImage())
         }
     }
 
@@ -487,18 +488,5 @@ class AssetLoader {
     fun clearCache() {
         log.debug("Clearing assets cache")
         cachedAssets.clear()
-    }
-    
-    /**
-     * Constructs new IllegalArgumentException with "load failed" message
-     * and with relevant information about the asset.
-     *
-     * @param assetName name of the asset load of which failed
-     * @param error the error that occurred
-     * @return instance of IAE to be thrown
-     */
-    private fun loadFailed(assetName: String, error: Throwable): IllegalArgumentException {
-        log.fatal("Loading failed for asset: " + assetName + ". Cause: " + error.message)
-        return IllegalArgumentException("Failed to load asset: " + assetName + ". Cause: " + error.message)
     }
 }

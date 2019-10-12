@@ -89,6 +89,8 @@ class AssetLoaderTest {
         assertThat(texture.image.width, `is`(32.0))
         assertThat(texture.image.height, `is`(32.0))
 
+        assertTrue(texture.image === assetLoader.loadTexture("brick.png", 32.0, 32.0).image)
+
         texture.dispose()
 
         texture = assetLoader.loadTexture("bla-bla", 32.0, 32.0)
@@ -101,6 +103,7 @@ class AssetLoaderTest {
         var sound = assetLoader.loadSound("intro.wav")
 
         assertThat(sound, `is`(notNullValue()))
+        assertTrue(sound === assetLoader.loadSound("intro.wav"))
 
         sound = assetLoader.loadSound("bla-bla")
 
@@ -228,6 +231,13 @@ class AssetLoaderTest {
         assertThat(stream, `is`(notNullValue()))
 
         stream.close()
+    }
+
+    @Test
+    fun `getStream throws if no valid stream`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            assetLoader.getStream("bla-bla")
+        }
     }
 
     @Test
