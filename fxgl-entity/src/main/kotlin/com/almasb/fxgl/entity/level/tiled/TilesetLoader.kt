@@ -6,11 +6,13 @@
 
 package com.almasb.fxgl.entity.level.tiled
 
+import com.almasb.fxgl.texture.Texture
 import com.almasb.sslogger.Logger
 import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.image.WritableImage
+import javafx.scene.paint.Color
 import java.net.URL
 
 /**
@@ -135,8 +137,7 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
         val image = if (tileset.transparentcolor.isEmpty())
             Image(ext + imageName)
         else
-            Image(ext + imageName)
-            //FXGL.getAssetLoader().loadTexture(imageName, Color.web(tileset.transparentcolor)).getImage()
+            Texture(Image(ext + imageName)).transparentColor(Color.web(tileset.transparentcolor)).image
 
         if (image.isError)
             throw IllegalArgumentException("${ext + imageName} cannot be loaded")

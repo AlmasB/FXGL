@@ -18,6 +18,12 @@
             <version>${fxgl.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-media</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
         <!-- Pull in common test classes from fxgl-test -->
         <dependency>
             <groupId>com.github.almasb</groupId>

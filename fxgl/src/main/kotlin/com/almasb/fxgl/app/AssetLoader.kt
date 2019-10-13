@@ -174,37 +174,6 @@ class AssetLoader {
     }
 
     /**
-     *
-     * @param name texture name
-     * @param transparency replaces this color with Color.TRANSPARENT
-     * @return texture
-     */
-    fun loadTexture(name: String, transparency: Color): Texture {
-        val cacheKey = TEXTURES_DIR + name + "T" + transparency
-
-        val asset = getAssetFromCache(cacheKey)
-        if (asset != null) {
-            return Texture(Image::class.java.cast(asset))
-        }
-
-        try {
-            getStream(TEXTURES_DIR + name).use {
-                val texture = Texture(Image(it))
-
-                val newTexture = texture.transparentColor(transparency)
-                texture.dispose()
-
-                cachedAssets.put(cacheKey, newTexture.image)
-
-                return newTexture
-            }
-        } catch (e: Exception) {
-            log.warning("Failed to load texture $name", e)
-            return Texture(getDummyImage())
-        }
-    }
-
-    /**
      * Loads sound with given name from /assets/sounds/.
      * Either returns a valid sound or throws an exception in case of errors.
      *
