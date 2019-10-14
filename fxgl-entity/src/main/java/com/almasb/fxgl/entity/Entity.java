@@ -412,7 +412,7 @@ public class Entity {
 
                 return Optional.of(new ComponentMethod(c, method));
             } catch (NoSuchMethodException e) {
-                // ignore
+                continue;
             }
         }
 
