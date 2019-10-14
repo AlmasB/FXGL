@@ -268,4 +268,20 @@ public final class ReflectionUtils {
             throw new ReflectionException(e);
         }
     }
+
+    /**
+     * Converts Integer.class to int.class, Double.class to double.class and so on.
+     *
+     * @return primitive class, or the same class object if the class does not have a primitive counterpart
+     */
+    public static Class<?> convertToPrimitive(Class<?> type) {
+        Map<Class<?>, Class<?>> wrappersToPrimitives = Map.of(
+                Integer.class, int.class,
+                Double.class, double.class,
+                Boolean.class, boolean.class,
+                Character.class, char.class
+        );
+
+        return wrappersToPrimitives.getOrDefault(type, type);
+    }
 }

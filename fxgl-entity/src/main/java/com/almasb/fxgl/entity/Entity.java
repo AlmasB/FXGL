@@ -8,6 +8,7 @@ package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.util.EmptyRunnable;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.entity.components.BoundingBoxComponent;
@@ -20,6 +21,7 @@ import javafx.geometry.Rectangle2D;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.*;
 
 import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
@@ -88,8 +90,24 @@ public class Entity {
         }
     }
 
+    private static class ComponentMethod {
+        private Method method;
+        private Component component;
+
+        ComponentMethod(Component component, Method method) {
+            this.component = component;
+            this.method = method;
+        }
+
+        <T> T call(Object... args) throws Exception {
+            return (T) method.invoke(component, args);
+        }
+    }
+
     private PropertyMap properties = new PropertyMap();
     private ComponentMap components = new ComponentMap();
+
+    private Map<String, ComponentMethod> componentMethods = new HashMap<>();
 
     private List<ComponentListener> componentListeners = new ArrayList<>();
 
@@ -145,6 +163,7 @@ public class Entity {
         properties.clear();
 
         componentListeners.clear();
+        componentMethods.clear();
 
         world = null;
         onActive = EmptyRunnable.INSTANCE;
@@ -360,6 +379,44 @@ public class Entity {
         components.remove(type);
 
         return true;
+    }
+
+    public <T> T call(String componentMethodName, Object... args) {
+        ComponentMethod method;
+
+        if (componentMethods.containsKey(componentMethodName)) {
+            method = componentMethods.get(componentMethodName);
+        } else {
+            var types = Arrays.stream(args)
+                    .map(Object::getClass)
+                    .map(ReflectionUtils::convertToPrimitive)
+                    .toArray(Class[]::new);
+
+            method = findMethod(componentMethodName, types)
+                    .orElseThrow(() -> new IllegalArgumentException("Cannot find method: " + componentMethodName));
+
+            componentMethods.put(componentMethodName, method);
+        }
+
+        try {
+            return method.call(args);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Cannot call: " + componentMethodName, e);
+        }
+    }
+
+    private Optional<ComponentMethod> findMethod(String name, Class<?>... types) {
+        for (Component c : components.getAll()) {
+            try {
+                var method = c.getClass().getDeclaredMethod(name, types);
+
+                return Optional.of(new ComponentMethod(c, method));
+            } catch (NoSuchMethodException e) {
+                // ignore
+            }
+        }
+
+        return Optional.empty();
     }
 
     private void removeAllComponents() {

@@ -739,6 +739,31 @@ class EntityTest {
         assertThat(entity.typeComponent.value, `is`<Serializable>(TT.O))
     }
 
+    @Test
+    fun `Call a component method directly`() {
+        entity.addComponent(ComponentWithMethod())
+
+        assertThat(entity.call("myMethod", "hello world"), `is`(11))
+        assertThat(entity.call("myMethod", "hw"), `is`(2))
+        assertThat(entity.call("myMethodWithTwoParams", "hw", 3), `is`(5))
+    }
+
+    @Test
+    fun `Fail when calling a component method and no suitable method found`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            entity.call<Any>("bla-bla")
+        }
+    }
+
+    @Test
+    fun `Fail when calling a component method and call fails`() {
+        entity.addComponent(ComponentWithMethod())
+
+        assertThrows(IllegalArgumentException::class.java) {
+            entity.call<Any>("myMethod", 4)
+        }
+    }
+
 //    @Test
 //    fun `View`() {
 //        val r = Rectangle()
@@ -769,6 +794,13 @@ class EntityTest {
     }
 
     /* MOCK CLASSES */
+
+    private class ComponentWithMethod : Component() {
+
+        fun myMethod(s: String) = s.length
+
+        fun myMethodWithTwoParams(s: String, i: Int) = s.length + i
+    }
 
     private inner class TestControl : Component() {
         override fun onUpdate(tpf: Double) {}
