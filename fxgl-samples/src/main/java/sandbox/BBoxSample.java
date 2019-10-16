@@ -8,15 +8,20 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.components.EffectComponent;
 import com.almasb.fxgl.dsl.components.LiftComponent;
+import com.almasb.fxgl.dsl.components.RandomMoveComponent;
+import com.almasb.fxgl.dsl.effects.SlowTimeEffect;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.entity.components.TimeComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import dev.DeveloperWASDControl;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -51,10 +56,10 @@ public class BBoxSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        getInput().addAction(new UserAction("Change view") {
+        getInput().addAction(new UserAction("Slow Time") {
             @Override
             protected void onActionBegin() {
-                //player.setView(new EntityView(new Rectangle(40, 30, Color.BLUE)));
+                player.getComponent(EffectComponent.class).startEffect(new SlowTimeEffect(0.2, Duration.seconds(3)));
             }
         }, KeyCode.F);
 
@@ -112,9 +117,11 @@ public class BBoxSample extends GameApplication {
                 .at(100, 150)
                 .viewWithBBox("brick.png")
                 .with(new CollidableComponent(true), new DeveloperWASDControl())
+                .with(new RandomMoveComponent(new Rectangle2D(0, 0, getAppWidth(), getAppHeight()), 500))
                 //.with(new LiftComponent().xAxisSpeedDuration(400, Duration.seconds(1)))
-                .with(new LiftComponent().yAxisSpeedDuration(150, Duration.seconds(3)).xAxisSpeedDuration(100, Duration.seconds(3)))
                 //.with(new IntervalPauseComponent(Map.of(LiftComponent.class, Duration.seconds(2))))
+                .with(new EffectComponent())
+                .with(new TimeComponent(1.0))
                 .zIndex(250)
                 .buildAndAttach();
 
@@ -130,6 +137,7 @@ public class BBoxSample extends GameApplication {
                 .at(100, 100)
                 .viewWithBBox(new Rectangle(40, 40, Color.RED))
                 .with(new CollidableComponent(true))
+                .with(new LiftComponent().yAxisSpeedDuration(150, Duration.seconds(3)).xAxisSpeedDuration(100, Duration.seconds(3)))
                 .zIndex(250)
                 .buildAndAttach();
 
