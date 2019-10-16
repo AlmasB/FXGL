@@ -374,6 +374,8 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun byID(name: String, id: Int): Optional<Entity> = getGameWorld().getEntityByID(name, id)
 
+    @JvmStatic fun byType(vararg types: Enum<*>): List<Entity> = getGameWorld().getEntitiesByType(*types)
+
     /**
      * @param mapFileName name of the .json file or the .tmx file
      */
