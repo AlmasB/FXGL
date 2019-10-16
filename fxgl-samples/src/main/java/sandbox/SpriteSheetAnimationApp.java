@@ -11,6 +11,7 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.view.ChildViewComponent;
 import com.almasb.fxgl.dsl.components.view.HealthBarViewComponent;
+import com.almasb.fxgl.dsl.components.view.TextViewComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.texture.Texture;
@@ -48,14 +49,15 @@ public class SpriteSheetAnimationApp extends GameApplication {
         player = FXGL.entityBuilder()
                 .at(200, 200)
                 .with(new AnimationComponent())
-                .with(new HealthBarViewComponent(0, 100))
+                .with(new HealthBarViewComponent(0, 40))
                 .with(new StatusViewComponent())
+                .with(new TextViewComponent(0, 65, "Character Name"))
                 .buildAndAttach();
     }
 
     public static class StatusViewComponent extends ChildViewComponent {
         public StatusViewComponent() {
-            super(0, 0, false);
+            super(0, 0, true);
 
             Texture t = FXGL.texture("brick.png", 16, 16);
 

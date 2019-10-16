@@ -15,7 +15,7 @@ import javafx.scene.Group
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-open class ChildViewComponent
+abstract class ChildViewComponent
 @JvmOverloads constructor(x: Double = 0.0,
                           y: Double = 0.0,
                           val isTransformApplied: Boolean = true) : Component() {
