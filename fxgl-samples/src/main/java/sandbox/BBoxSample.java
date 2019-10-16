@@ -11,7 +11,6 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.components.EffectComponent;
 import com.almasb.fxgl.dsl.components.LiftComponent;
 import com.almasb.fxgl.dsl.components.RandomMoveComponent;
-import com.almasb.fxgl.dsl.effects.FlashEffect;
 import com.almasb.fxgl.dsl.effects.SlowTimeEffect;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.CollidableComponent;
