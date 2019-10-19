@@ -8,6 +8,8 @@ package com.almasb.fxgl.input
 
 import com.almasb.fxgl.input.virtual.*
 import com.almasb.sslogger.Logger
+import javafx.beans.property.ReadOnlyDoubleProperty
+import javafx.beans.property.ReadOnlyDoubleWrapper
 import javafx.collections.FXCollections
 import javafx.event.Event
 import javafx.event.EventHandler
@@ -27,14 +29,27 @@ class Input {
         @JvmStatic fun isIllegal(key: KeyCode) = key in ILLEGAL_KEYS
     }
 
+    private val mouseXWorldProp = ReadOnlyDoubleWrapper()
+    private val mouseYWorldProp = ReadOnlyDoubleWrapper()
+    private val mouseXUIProp = ReadOnlyDoubleWrapper()
+    private val mouseYUIProp = ReadOnlyDoubleWrapper()
+
+    fun mouseXWorldProperty(): ReadOnlyDoubleProperty = mouseXWorldProp.readOnlyProperty
+    fun mouseYWorldProperty(): ReadOnlyDoubleProperty = mouseYWorldProp.readOnlyProperty
+
+    fun mouseXUIProperty(): ReadOnlyDoubleProperty = mouseXUIProp.readOnlyProperty
+    fun mouseYUIProperty(): ReadOnlyDoubleProperty = mouseYUIProp.readOnlyProperty
+
     /**
      * Cursor point in game coordinate space.
      */
-    var mouseXWorld = 0.0
-        private set
+    var mouseXWorld: Double
+        get() = mouseXWorldProp.value
+        private set(value) { mouseXWorldProp.value = value }
 
-    var mouseYWorld = 0.0
-        private set
+    var mouseYWorld: Double
+        get() = mouseYWorldProp.value
+        private set(value) { mouseYWorldProp.value = value }
 
     val mousePositionWorld
         get() = Point2D(mouseXWorld, mouseYWorld)
@@ -43,11 +58,13 @@ class Input {
      * Cursor point in screen coordinate space.
      * Useful for UI manipulation.
      */
-    var mouseXUI = 0.0
-        private set
+    var mouseXUI: Double
+        get() = mouseXUIProp.value
+        private set(value) { mouseXUIProp.value = value }
 
-    var mouseYUI = 0.0
-        private set
+    var mouseYUI: Double
+        get() = mouseYUIProp.value
+        private set(value) { mouseYUIProp.value = value }
 
     val mousePositionUI
         get() = Point2D(mouseXUI, mouseYUI)
