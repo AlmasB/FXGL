@@ -131,7 +131,7 @@ class CircleShapeData(val radius: Double) : BoundingShape(Dimension2D(radius * 2
         val boundsCenterLocal = box.centerWorld.subtract(bboxComp.centerWorld)
 
         val shape = CircleShape()
-        shape.radius = conv.toMetersF(radius)
+        shape.radius = conv.toMetersF(box.width / 2.0)
         shape.center.set(conv.toVector(boundsCenterLocal))
 
         return shape
@@ -144,7 +144,7 @@ class BoxShapeData(val width: Double, val height: Double) : BoundingShape(Dimens
         val boundsCenterLocal = box.centerWorld.subtract(bboxComp.centerWorld)
 
         val shape = PolygonShape()
-        shape.setAsBox(conv.toMetersF(width / 2), conv.toMetersF(height / 2), conv.toVector(boundsCenterLocal), 0f)
+        shape.setAsBox(conv.toMetersF(box.width / 2), conv.toMetersF(box.height / 2), conv.toVector(boundsCenterLocal), 0f)
 
         return shape
     }

@@ -191,14 +191,14 @@ public final class HitBox implements Serializable {
      * @return width of this hit box
      */
     public double getWidth() {
-        return bounds.getWidth();
+        return getMaxXWorld() - getMinXWorld();
     }
 
     /**
      * @return height of this hit box
      */
     public double getHeight() {
-        return bounds.getHeight();
+        return getMaxYWorld() - getMinYWorld();
     }
 
     /**
@@ -298,6 +298,9 @@ public final class HitBox implements Serializable {
     public Point2D getCenterWorld() {
         return new Point2D((getMinXWorld() + getMaxXWorld()) / 2, (getMinYWorld() + getMaxYWorld()) / 2);
     }
+
+    // TODO: anything that uses "bounds" is not quite correct since it doesn't account for transforms
+    // instead, we should use min and max world
 
     /**
      * @return center point of this hit box, local to 0,0 (top,left) of the entity
