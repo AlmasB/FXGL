@@ -57,6 +57,14 @@ class LiftComponent : Component() {
     private val liftDataX = LiftData()
     private val liftDataY = LiftData()
 
+    var isGoingRight: Boolean
+        get() = liftDataX.isGoingPositive
+        set(value) { liftDataX.isGoingPositive = value }
+
+    var isGoingUp: Boolean
+        get() = !liftDataY.isGoingPositive
+        set(value) { liftDataY.isGoingPositive = !value }
+
     override fun onAdded() {
         liftDataX.initTimer()
         liftDataY.initTimer()
