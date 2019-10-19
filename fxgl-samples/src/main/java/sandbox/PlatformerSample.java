@@ -9,6 +9,7 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.components.FollowComponent;
+import com.almasb.fxgl.dsl.views.MinimapView;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
@@ -200,6 +201,14 @@ public class PlatformerSample extends GameApplication {
                 .viewWithBBox(new Rectangle(width, height, Color.BLUE))
                 .with(physics)
                 .buildAndAttach();
+    }
+
+    @Override
+    protected void initUI() {
+        var minimap = new MinimapView(getGameWorld(), 800, 600, 200, 100);
+        minimap.setEntityColor(Color.GREEN);
+
+        addUINode(minimap, getAppWidth() - 210, getAppHeight() - 110);
     }
 
     public static void main(String[] args) {
