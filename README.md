@@ -117,7 +117,11 @@ If you want to build FXGL from sources or want to contribute,
 please see the [Contribution Guide](CONTRIBUTING.md) (including non-code).
 FXGL is fully modular, so new contributors do not need to understand the entire codebase, only the module to which the contribution is made.
 
-You can support the FXGL development / show interest by simply starring the repo.
+You can support the FXGL development / show interest by simply starring the repo or becoming a [sponsor](https://github.com/sponsors/AlmasB).
+
+### Sponsors
+
+* @Marsl10
 
 ### Contact
 
