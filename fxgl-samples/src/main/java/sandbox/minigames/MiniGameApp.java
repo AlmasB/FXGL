@@ -8,6 +8,7 @@ package sandbox.minigames;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.input.KeyTrigger;
 import com.almasb.fxgl.minigames.MiniGameService;
 import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerView;
 import com.almasb.fxgl.minigames.lockpicking.LockPickView;
@@ -86,7 +87,16 @@ public class MiniGameApp extends GameApplication {
         addUINode(debugText, 600, 300);
         addUINode(btn, 150, 150);
         addUINode(new FXGLButton("Lockpicking"), 150, 200);
-        addUINode(new FXGLButton("Trigger Mash"), 150, 400);
+
+        var btnMash = new FXGLButton("Trigger Mash");
+
+        btnMash.setOnAction(e -> {
+            getMiniGameService().startTriggerMash(new KeyTrigger(KeyCode.J), (result) -> {
+                debugText.setText(result.isSuccess() ? "Success" : "Fail");
+            });
+        });
+
+        addUINode(btnMash, 150, 400);
 
         var btnCheck = new FXGLButton("Skill Check");
 

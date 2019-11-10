@@ -8,6 +8,8 @@ package com.almasb.fxgl.minigames.triggermash
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationDSL
+import com.almasb.fxgl.input.KeyTrigger
+import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.minigames.MiniGame
 import com.almasb.fxgl.minigames.MiniGameResult
 import com.almasb.fxgl.minigames.MiniGameView
@@ -31,7 +33,7 @@ import javafx.util.Duration
 import kotlin.math.max
 import kotlin.math.min
 
-class TriggerMashView(miniGame: TriggerMashMiniGame = TriggerMashMiniGame()) : MiniGameView<TriggerMashMiniGame>(miniGame) {
+class TriggerMashView(trigger: Trigger, miniGame: TriggerMashMiniGame = TriggerMashMiniGame(trigger)) : MiniGameView<TriggerMashMiniGame>(miniGame) {
 
     private val animation: Animation<*>
 
@@ -69,12 +71,16 @@ class TriggerMashView(miniGame: TriggerMashMiniGame = TriggerMashMiniGame()) : M
     }
 
     override fun onKeyPress(key: KeyCode) {
-        animation.start()
-        miniGame.boost()
+        if (miniGame.trigger is KeyTrigger) {
+            if ((miniGame.trigger as KeyTrigger).key == key) {
+                animation.start()
+                miniGame.boost()
+            }
+        }
     }
 }
 
-class CircleTriggerMashView(miniGame: TriggerMashMiniGame = TriggerMashMiniGame()) : MiniGameView<TriggerMashMiniGame>(miniGame) {
+class CircleTriggerMashView(trigger: Trigger, miniGame: TriggerMashMiniGame = TriggerMashMiniGame(trigger)) : MiniGameView<TriggerMashMiniGame>(miniGame) {
 
     private val animation: Animation<*>
 
@@ -134,8 +140,12 @@ class CircleTriggerMashView(miniGame: TriggerMashMiniGame = TriggerMashMiniGame(
     }
 
     override fun onKeyPress(key: KeyCode) {
-        animation.start()
-        miniGame.boost()
+        if (miniGame.trigger is KeyTrigger) {
+            if ((miniGame.trigger as KeyTrigger).key == key) {
+                animation.start()
+                miniGame.boost()
+            }
+        }
     }
 }
 
@@ -143,10 +153,7 @@ class CircleTriggerMashView(miniGame: TriggerMashMiniGame = TriggerMashMiniGame(
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class TriggerMashMiniGame : MiniGame<TriggerMashResult>() {
-
-    // TODO: fxgl-input dep + trigger
-    var trigger = KeyCode.G
+class TriggerMashMiniGame(var trigger: Trigger) : MiniGame<TriggerMashResult>() {
 
     var decayRate = 0.1
     var boostRate = 1.7

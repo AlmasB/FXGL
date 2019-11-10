@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Consumer
+import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerMiniGame
 import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerResult
 import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerView
@@ -19,6 +20,9 @@ import com.almasb.fxgl.minigames.lockpicking.LockPickView
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotMiniGame
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotResult
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotView
+import com.almasb.fxgl.minigames.triggermash.TriggerMashMiniGame
+import com.almasb.fxgl.minigames.triggermash.TriggerMashResult
+import com.almasb.fxgl.minigames.triggermash.TriggerMashView
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.scene.SubSceneStack
 import javafx.event.EventHandler
@@ -46,6 +50,18 @@ class MiniGameService : EngineService {
         miniGame.randomizeRange(successRange)
 
         startMiniGame(SweetSpotView(miniGame)) { callback.accept(it) }
+    }
+
+    fun startTriggerMash(trigger: Trigger, callback: Consumer<TriggerMashResult>) {
+        startTriggerMash(trigger, 1.7, 0.1, callback)
+    }
+
+    fun startTriggerMash(trigger: Trigger, boostRate: Double, decayRate: Double, callback: Consumer<TriggerMashResult>) {
+        val miniGame = TriggerMashMiniGame(trigger)
+        miniGame.boostRate = boostRate
+        miniGame.decayRate = decayRate
+
+        startMiniGame(TriggerMashView(trigger, miniGame)) { callback.accept(it) }
     }
 
     fun startLockPicking(callback: Consumer<LockPickResult>) {
@@ -108,6 +124,8 @@ class MiniGameSubScene<S : MiniGameResult, T : MiniGame<S>>(
         // TODO: allow only if not repeated, or use the same model as UserAction (begin, run, end)
 
         input.addEventHandler(KeyEvent.KEY_PRESSED, EventHandler {
+
+
             view.onKeyPress(it.code)
         })
 
