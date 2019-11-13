@@ -9,7 +9,10 @@ package com.almasb.fxgl.minigames.triggersequence
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationDSL
 import com.almasb.fxgl.animation.Interpolators
+import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.KeyTrigger
+import com.almasb.fxgl.input.Trigger
+import com.almasb.fxgl.input.TriggerListener
 import com.almasb.fxgl.input.view.TriggerView
 import com.almasb.fxgl.minigames.MiniGame
 import com.almasb.fxgl.minigames.MiniGameResult
@@ -84,24 +87,32 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
         animationBad.onUpdate(tpf)
     }
 
-    override fun onKeyPress(key: KeyCode) {
-        circle.opacity = 1.0
+    override fun onInitInput(input: Input) {
+        input.addTriggerListener(object : TriggerListener() {
+            override fun onActionBegin(trigger: Trigger) {
+                if (trigger is KeyTrigger) {
+                    val key = trigger.key
 
-        if (triggerViews.children.isNotEmpty())
-            triggerViews.children.removeAt(0)
+                    circle.opacity = 1.0
 
-        if (miniGame.press(key)) {
-            animationGood.start()
-            bg.fill = Color.GREEN
+                    if (triggerViews.children.isNotEmpty())
+                        triggerViews.children.removeAt(0)
 
-            circle.children[1] = good
+                    if (miniGame.press(key)) {
+                        animationGood.start()
+                        bg.fill = Color.GREEN
 
-        } else {
-            animationBad.start()
-            bg.fill = Color.RED
+                        circle.children[1] = good
 
-            circle.children[1] = bad
-        }
+                    } else {
+                        animationBad.start()
+                        bg.fill = Color.RED
+
+                        circle.children[1] = bad
+                    }
+                }
+            }
+        })
     }
 }
 

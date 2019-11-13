@@ -11,7 +11,7 @@ import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Consumer
-import com.almasb.fxgl.input.Trigger
+import com.almasb.fxgl.input.KeyTrigger
 import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerMiniGame
 import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerResult
 import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerView
@@ -25,9 +25,6 @@ import com.almasb.fxgl.minigames.triggermash.TriggerMashResult
 import com.almasb.fxgl.minigames.triggermash.TriggerMashView
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.scene.SubSceneStack
-import javafx.event.EventHandler
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
 import javafx.util.Duration
 
 /**
@@ -52,11 +49,11 @@ class MiniGameService : EngineService {
         startMiniGame(SweetSpotView(miniGame)) { callback.accept(it) }
     }
 
-    fun startTriggerMash(trigger: Trigger, callback: Consumer<TriggerMashResult>) {
+    fun startTriggerMash(trigger: KeyTrigger, callback: Consumer<TriggerMashResult>) {
         startTriggerMash(trigger, 1.7, 0.1, callback)
     }
 
-    fun startTriggerMash(trigger: Trigger, boostRate: Double, decayRate: Double, callback: Consumer<TriggerMashResult>) {
+    fun startTriggerMash(trigger: KeyTrigger, boostRate: Double, decayRate: Double, callback: Consumer<TriggerMashResult>) {
         val miniGame = TriggerMashMiniGame(trigger)
         miniGame.boostRate = boostRate
         miniGame.decayRate = decayRate
@@ -121,17 +118,7 @@ class MiniGameSubScene<S : MiniGameResult, T : MiniGame<S>>(
 
         contentRoot.children += view
 
-        // TODO: allow only if not repeated, or use the same model as UserAction (begin, run, end)
-
-        input.addEventHandler(KeyEvent.KEY_PRESSED, EventHandler {
-
-
-            view.onKeyPress(it.code)
-        })
-
-        input.addEventHandler(MouseEvent.MOUSE_PRESSED, EventHandler {
-            view.onButtonPress(it.button)
-        })
+        view.onInitInput(input)
     }
 
     override fun onUpdate(tpf: Double) {

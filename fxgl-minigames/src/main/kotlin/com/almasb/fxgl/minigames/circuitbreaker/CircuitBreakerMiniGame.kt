@@ -7,6 +7,8 @@
 package com.almasb.fxgl.minigames.circuitbreaker
 
 import com.almasb.fxgl.core.math.FXGLMath
+import com.almasb.fxgl.input.Input
+import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.minigames.MiniGame
 import com.almasb.fxgl.minigames.MiniGameResult
 import com.almasb.fxgl.minigames.MiniGameView
@@ -86,8 +88,30 @@ class CircuitBreakerView(miniGame: CircuitBreakerMiniGame = CircuitBreakerMiniGa
         oldPosition = charPosition
     }
 
-    override fun onKeyPress(key: KeyCode) {
-        miniGame.press(key)
+    override fun onInitInput(input: Input) {
+        input.addAction(object : UserAction("Up") {
+            override fun onAction() {
+                miniGame.up()
+            }
+        }, KeyCode.W)
+
+        input.addAction(object : UserAction("Down") {
+            override fun onAction() {
+                miniGame.down()
+            }
+        }, KeyCode.S)
+
+        input.addAction(object : UserAction("Left") {
+            override fun onAction() {
+                miniGame.left()
+            }
+        }, KeyCode.A)
+
+        input.addAction(object : UserAction("Right") {
+            override fun onAction() {
+                miniGame.right()
+            }
+        }, KeyCode.D)
     }
 }
 
@@ -174,29 +198,24 @@ class CircuitBreakerMiniGame(mazeWidth: Int, mazeHeight: Int,
         return maze.getMazeCell(x, y)
     }
 
-    fun press(key: KeyCode) {
-        when (key) {
-            KeyCode.W, KeyCode.UP -> {
-                if (direction !== DIR_DOWN)
-                    direction = DIR_UP
-            }
+    fun up() {
+        if (direction !== DIR_DOWN)
+            direction = DIR_UP
+    }
 
-            KeyCode.S, KeyCode.DOWN -> {
-                if (direction !== DIR_UP)
-                    direction = DIR_DOWN
-            }
+    fun down() {
+        if (direction !== DIR_UP)
+            direction = DIR_DOWN
+    }
 
-            KeyCode.A, KeyCode.LEFT -> {
-                if (direction !== DIR_RIGHT)
-                    direction = DIR_LEFT
-            }
+    fun left() {
+        if (direction !== DIR_RIGHT)
+            direction = DIR_LEFT
+    }
 
-            KeyCode.D, KeyCode.RIGHT -> {
-                if (direction !== DIR_LEFT)
-                    direction = DIR_RIGHT
-            }
-            else -> {}
-        }
+    fun right() {
+        if (direction !== DIR_LEFT)
+            direction = DIR_RIGHT
     }
 }
 

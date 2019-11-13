@@ -8,8 +8,9 @@ package com.almasb.fxgl.minigames.triggermash
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationDSL
+import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.KeyTrigger
-import com.almasb.fxgl.input.Trigger
+import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.minigames.MiniGame
 import com.almasb.fxgl.minigames.MiniGameResult
 import com.almasb.fxgl.minigames.MiniGameView
@@ -17,7 +18,6 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Point2D
 import javafx.geometry.VPos
 import javafx.scene.effect.DropShadow
-import javafx.scene.input.KeyCode
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.paint.CycleMethod
@@ -33,7 +33,7 @@ import javafx.util.Duration
 import kotlin.math.max
 import kotlin.math.min
 
-class TriggerMashView(trigger: Trigger, miniGame: TriggerMashMiniGame = TriggerMashMiniGame(trigger)) : MiniGameView<TriggerMashMiniGame>(miniGame) {
+class TriggerMashView(trigger: KeyTrigger, miniGame: TriggerMashMiniGame = TriggerMashMiniGame(trigger)) : MiniGameView<TriggerMashMiniGame>(miniGame) {
 
     private val animation: Animation<*>
 
@@ -70,17 +70,18 @@ class TriggerMashView(trigger: Trigger, miniGame: TriggerMashMiniGame = TriggerM
         animation.onUpdate(tpf)
     }
 
-    override fun onKeyPress(key: KeyCode) {
-        if (miniGame.trigger is KeyTrigger) {
-            if ((miniGame.trigger as KeyTrigger).key == key) {
+    override fun onInitInput(input: Input) {
+        input.addAction(object : UserAction("Button Mash") {
+            override fun onActionBegin() {
                 animation.start()
                 miniGame.boost()
             }
-        }
+
+        }, miniGame.trigger.key)
     }
 }
 
-class CircleTriggerMashView(trigger: Trigger, miniGame: TriggerMashMiniGame = TriggerMashMiniGame(trigger)) : MiniGameView<TriggerMashMiniGame>(miniGame) {
+class CircleTriggerMashView(trigger: KeyTrigger, miniGame: TriggerMashMiniGame = TriggerMashMiniGame(trigger)) : MiniGameView<TriggerMashMiniGame>(miniGame) {
 
     private val animation: Animation<*>
 
@@ -139,13 +140,14 @@ class CircleTriggerMashView(trigger: Trigger, miniGame: TriggerMashMiniGame = Tr
         animation.onUpdate(tpf)
     }
 
-    override fun onKeyPress(key: KeyCode) {
-        if (miniGame.trigger is KeyTrigger) {
-            if ((miniGame.trigger as KeyTrigger).key == key) {
+    override fun onInitInput(input: Input) {
+        input.addAction(object : UserAction("Button Mash") {
+            override fun onActionBegin() {
                 animation.start()
                 miniGame.boost()
             }
-        }
+
+        }, miniGame.trigger.key)
     }
 }
 
@@ -153,7 +155,7 @@ class CircleTriggerMashView(trigger: Trigger, miniGame: TriggerMashMiniGame = Tr
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class TriggerMashMiniGame(var trigger: Trigger) : MiniGame<TriggerMashResult>() {
+class TriggerMashMiniGame(var trigger: KeyTrigger) : MiniGame<TriggerMashResult>() {
 
     var decayRate = 0.1
     var boostRate = 1.7
