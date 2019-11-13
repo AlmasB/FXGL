@@ -110,6 +110,9 @@ class Input {
      */
     private val currentActions = FXCollections.observableArrayList<UserAction>()
 
+    private val activeTriggers = arrayListOf<Trigger>()
+    private val listeners = arrayListOf<TriggerListener>()
+
     /**
      * If action events should be processed.
      */
@@ -160,6 +163,12 @@ class Input {
         for (i in currentActions.indices) {
             currentActions[i].action()
         }
+
+        activeTriggers.forEach { trigger ->
+            listeners.forEach {
+                it.action(trigger)
+            }
+        }
     }
 
     /**
@@ -204,6 +213,20 @@ class Input {
     }
 
     private fun handlePressed(event: InputEvent) {
+        val newTrigger = if (event.eventType == MouseEvent.MOUSE_PRESSED) {
+            MouseTrigger((event as MouseEvent).button)
+        } else {
+            KeyTrigger((event as KeyEvent).code)
+        }
+
+        if (newTrigger !in activeTriggers) {
+            activeTriggers += newTrigger
+
+            listeners.forEach {
+                it.begin(newTrigger)
+            }
+        }
+
         bindings.filter { (act, trigger) -> act !in currentActions && trigger.isTriggered(event) }
                 .forEach { (act, _) ->
                     currentActions.add(act)
@@ -214,6 +237,15 @@ class Input {
     }
 
     private fun handleReleased(event: InputEvent) {
+        val releasedTriggers = activeTriggers.filter { it.isReleased(event) }
+        releasedTriggers.forEach { trigger ->
+            listeners.forEach {
+                it.end(trigger)
+            }
+        }
+
+        activeTriggers -= releasedTriggers
+
         bindings.filter { (act, trigger) -> act in currentActions && trigger.isReleased(event) }
                 .forEach { (act, _) ->
                     currentActions.remove(act)
@@ -221,6 +253,14 @@ class Input {
                     if (processInput)
                         act.end()
                 }
+    }
+
+    fun addTriggerListener(triggerListener: TriggerListener) {
+        listeners += triggerListener
+    }
+
+    fun removeTriggerListener(triggerListener: TriggerListener) {
+        listeners -= triggerListener
     }
 
     /**
@@ -239,6 +279,7 @@ class Input {
         }
 
         currentActions.clear()
+        activeTriggers.clear()
     }
 
     /**
