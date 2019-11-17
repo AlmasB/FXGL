@@ -21,6 +21,8 @@ class TiledObject(var id: Int = 0,
                   var y: Int = 0,
                   var rotation: Float = 0.0f,
                   var gid: Int = 0,
+                  var isFlippedHorizontal: Boolean = false,
+                  var isFlippedVertical: Boolean = false,
                   var properties: Map<String, Any> = hashMapOf(),
                   var propertytypes: Map<String, String> = hashMapOf()) {
 }

@@ -24,9 +24,7 @@ class BoundingShapeTest {
     @ParameterizedTest
     @MethodSource("dataProvider")
     fun `Polygon shape`(shape: BoundingShape) {
-        val dataArray = shape.data as Array<Point2D>
-
-        assertThat(dataArray.toList(), contains(Point2D(0.0, 0.0), Point2D(1.0, 0.0), Point2D(1.0, 1.0), Point2D(0.0, 1.0)))
+        assertThat((shape as PolygonShapeData).points.toList(), contains(Point2D(0.0, 0.0), Point2D(1.0, 0.0), Point2D(1.0, 1.0), Point2D(0.0, 1.0)))
     }
 
     @Test

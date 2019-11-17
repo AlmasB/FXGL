@@ -23,6 +23,7 @@ import com.almasb.sslogger.Logger
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.image.Image
+import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import java.io.IOException
@@ -173,36 +174,6 @@ class AssetLoader {
     }
 
     /**
-     *
-     * @param name texture name
-     * @param transparency replaces this color with Color.TRANSPARENT
-     * @return texture
-     */
-    fun loadTexture(name: String, transparency: Color): Texture {
-        val cacheKey = TEXTURES_DIR + name + "T" + transparency
-
-        val asset = getAssetFromCache(cacheKey)
-        if (asset != null) {
-            return Texture(Image::class.java.cast(asset))
-        }
-
-        try {
-            getStream(TEXTURES_DIR + name).use {
-                val texture = Texture(Image(it))
-
-                val newTexture = texture.transparentColor(transparency)
-                texture.dispose()
-
-                cachedAssets.put(cacheKey, newTexture.image)
-
-                return newTexture
-            }
-        } catch (e: Exception) {
-            throw loadFailed(name, e)
-        }
-    }
-
-    /**
      * Loads sound with given name from /assets/sounds/.
      * Either returns a valid sound or throws an exception in case of errors.
      *
@@ -279,18 +250,6 @@ class AssetLoader {
     }
 
     /**
-     * Loads JSON file with given name from /assets/json/.
-     * Either returns a valid JSON content or throws exception in case of errors.
-     *
-     * @param name JSON file name, e.g. level_data.json
-     * @return JSON content as String
-     * @throws IllegalArgumentException if asset not found or loading error
-     */
-    fun loadJSON(name: String): List<String> {
-        return readAllLines(JSON_DIR + name)
-    }
-
-    /**
      * @param name level file name in /assets/levels/
      * @param levelLoader level loader to use to load this level
      * @param entityFactory entity factory to use when spawning entities in this level
@@ -319,7 +278,12 @@ class AssetLoader {
                 return bundle
             }
         } catch (e: Exception) {
-            throw loadFailed(name, e)
+            log.warning("Failed to load resource bundle $name", e)
+            return object : ListResourceBundle() {
+                override fun getContents(): Array<Array<Any>> {
+                    return emptyArray()
+                }
+            }
         }
     }
 
@@ -359,7 +323,9 @@ class AssetLoader {
                 return UI(root, controller)
             }
         } catch (e: Exception) {
-            throw loadFailed(name, e)
+            log.warning("Failed to load FXML $name", e)
+            log.warning("Failed to load UI, so controller.init() will not be called")
+            return UI(Pane(), controller)
         }
     }
 
@@ -376,7 +342,8 @@ class AssetLoader {
         try {
             return CSS(getURL(CSS_DIR + name).toExternalForm())
         } catch (e: Exception) {
-            throw loadFailed(name, e)
+            log.warning("Failed to load css $name", e)
+            return CSS("")
         }
     }
 
@@ -403,32 +370,16 @@ class AssetLoader {
 
         try {
             getStream(FONTS_DIR + name).use {
-                var font: Font? = Font.loadFont(it, 12.0)
-                if (font == null)
-                    font = Font.font(12.0)
-                val fontFactory = FontFactory(font!!)
-                cachedAssets.put(FONTS_DIR + name, fontFactory)
+                val font = Font.loadFont(it, 12.0) ?: throw IllegalArgumentException("Font.loadFont($name) returned null")
+
+                val fontFactory = FontFactory(font)
+                cachedAssets[FONTS_DIR + name] = fontFactory
                 return fontFactory
             }
         } catch (e: Exception) {
-            throw loadFailed(name, e)
+            log.warning("Failed to load font $name", e)
+            return FontFactory(Font.font(12.0))
         }
-    }
-
-    /**
-     * Returns a valid URL to resource or throws [IllegalArgumentException].
-     *
-     * @param name resource name
-     * @return URL to resource
-     */
-    private fun getURL(name: String): URL {
-        log.debug("Loading from file system: $name")
-
-        // try /assets/ from user module using their class
-        return GameApplication.FXGLApplication.app?.javaClass?.getResource(name)
-                // try /fxglassets/ from fxgl.all module using this javaclass
-                ?: javaClass.getResource("/fxgl${name.substring(1)}")
-                ?: throw IllegalArgumentException("Asset \"$name\" was not found!")
     }
 
     /**
@@ -453,13 +404,29 @@ class AssetLoader {
     }
 
     /**
+     * Returns a valid URL to resource or throws [IllegalArgumentException].
+     *
+     * @param name resource name
+     * @return URL to resource
+     */
+    private fun getURL(name: String): URL {
+        log.debug("Loading from file system: $name")
+
+        // try /assets/ from user module using their class
+        return GameApplication.FXGLApplication.app?.javaClass?.getResource(name)
+                // try /fxglassets/ from fxgl.all module using this javaclass
+                ?: javaClass.getResource("/fxgl${name.substring(1)}")
+                ?: throw IllegalArgumentException("Asset \"$name\" was not found!")
+    }
+
+    /**
      * Load an asset from cache.
      *
      * @param name asset name
      * @return asset object or null if not found
      */
     private fun getAssetFromCache(name: String): Any? {
-        val asset = cachedAssets.get(name)
+        val asset = cachedAssets[name]
         if (asset != null) {
             log.debug("Loading from cache: $name")
             return asset
@@ -479,7 +446,8 @@ class AssetLoader {
         try {
             return getStream(name).bufferedReader().readLines()
         } catch (e: Exception) {
-            throw loadFailed(name, e)
+            log.warning("Failed to load plain text file $name", e)
+            return emptyList()
         }
     }
 
@@ -489,18 +457,5 @@ class AssetLoader {
     fun clearCache() {
         log.debug("Clearing assets cache")
         cachedAssets.clear()
-    }
-    
-    /**
-     * Constructs new IllegalArgumentException with "load failed" message
-     * and with relevant information about the asset.
-     *
-     * @param assetName name of the asset load of which failed
-     * @param error the error that occurred
-     * @return instance of IAE to be thrown
-     */
-    private fun loadFailed(assetName: String, error: Throwable): IllegalArgumentException {
-        log.fatal("Loading failed for asset: " + assetName + ". Cause: " + error.message)
-        return IllegalArgumentException("Failed to load asset: " + assetName + ". Cause: " + error.message)
     }
 }

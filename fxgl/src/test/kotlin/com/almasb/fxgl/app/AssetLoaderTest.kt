@@ -11,10 +11,9 @@ import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.DisabledOnOs
-import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.extension.ExtendWith
 
 /**
@@ -61,46 +60,68 @@ class AssetLoaderTest {
 
     @Test
     fun loadImage() {
-        val image = assetLoader.loadImage("brick.png")
+        var image = assetLoader.loadImage("brick.png")
 
         assertThat(image.width, `is`(64.0))
         assertThat(image.height, `is`(64.0))
+
+        image = assetLoader.loadImage("bla-bla")
+
+        assertThat(image, `is`(notNullValue()))
     }
 
     @Test
     fun loadTexture() {
-        val texture = assetLoader.loadTexture("brick.png")
+        var texture = assetLoader.loadTexture("brick.png")
 
         assertThat(texture.image.width, `is`(64.0))
         assertThat(texture.image.height, `is`(64.0))
+
+        texture = assetLoader.loadTexture("bla-bla")
+
+        assertThat(texture, `is`(notNullValue()))
     }
 
     @Test
     fun loadResizedTexture() {
-        val texture = assetLoader.loadTexture("brick.png", 32.0, 32.0)
+        var texture = assetLoader.loadTexture("brick.png", 32.0, 32.0)
 
         assertThat(texture.image.width, `is`(32.0))
         assertThat(texture.image.height, `is`(32.0))
 
+        assertTrue(texture.image === assetLoader.loadTexture("brick.png", 32.0, 32.0).image)
+
         texture.dispose()
+
+        texture = assetLoader.loadTexture("bla-bla", 32.0, 32.0)
+
+        assertThat(texture, `is`(notNullValue()))
     }
 
     @Test
     fun loadSound() {
-        val sound = assetLoader.loadSound("intro.wav")
+        var sound = assetLoader.loadSound("intro.wav")
+
+        assertThat(sound, `is`(notNullValue()))
+        assertTrue(sound === assetLoader.loadSound("intro.wav"))
+
+        sound = assetLoader.loadSound("bla-bla")
 
         assertThat(sound, `is`(notNullValue()))
     }
 
     @Test
-    // setting up potentially missing libavformat for jfxmedia is an overkill, so just skip
-    @DisabledOnOs(OS.LINUX)
     fun loadMusic() {
-        val music = assetLoader.loadMusic("intro.mp3")
+        // Note: the loading might fail on linux if missing libavformat for jfxmedia, but dummy music object should be loaded
+        var music = assetLoader.loadMusic("intro.mp3")
 
         assertThat(music, `is`(notNullValue()))
 
         music.dispose()
+
+        music = assetLoader.loadMusic("bla-bla")
+
+        assertThat(music, `is`(notNullValue()))
     }
 
     @Test
@@ -112,23 +133,39 @@ class AssetLoaderTest {
 
             assertThat(actualLines, `is`(expectedLines))
         }
+
+        val lines = assetLoader.loadText("bla-bla")
+
+        assertThat(lines.size, `is`(0))
+
+        assertTrue(assetLoader.loadText("test1.txt") === assetLoader.loadText("test1.txt"))
     }
 
     @Test
     fun loadResourceBundle() {
         val resourceBundle = assetLoader.loadResourceBundle("test.properties")
+        val resourceBundle2 = assetLoader.loadResourceBundle("test.properties")
+
+        assertTrue(resourceBundle === resourceBundle2)
 
         assertThat(resourceBundle, `is`(notNullValue()))
         assertThat(resourceBundle.getString("testKey"), `is`("testValue"))
+
+        val bundle = assetLoader.loadResourceBundle("bla-bla")
+        assertThat(bundle, `is`(notNullValue()))
     }
 
     @Test
     fun loadCursorImage() {
-        val cursorImage = assetLoader.loadCursorImage("test_cursor.png")
+        var cursorImage = assetLoader.loadCursorImage("test_cursor.png")
 
         assertThat(cursorImage, `is`(notNullValue()))
         assertThat(cursorImage.width, `is`(64.0))
         assertThat(cursorImage.height, `is`(64.0))
+
+        cursorImage = assetLoader.loadCursorImage("bla-bla")
+
+        assertThat(cursorImage, `is`(notNullValue()))
     }
 
     @Test
@@ -140,7 +177,13 @@ class AssetLoaderTest {
             }
         }
 
-        val ui = assetLoader.loadUI("test_ui.fxml", controller)
+        var ui = assetLoader.loadUI("test_ui.fxml", controller)
+
+        assertThat(ui, `is`(notNullValue()))
+        assertThat(ui.root, `is`(notNullValue()))
+        assertThat(count, `is`(1))
+
+        ui = assetLoader.loadUI("bla-bla", controller)
 
         assertThat(ui, `is`(notNullValue()))
         assertThat(ui.root, `is`(notNullValue()))
@@ -149,16 +192,24 @@ class AssetLoaderTest {
 
     @Test
     fun loadCSS() {
-        val css = assetLoader.loadCSS("test.css")
+        var css = assetLoader.loadCSS("test.css")
+
+        assertThat(css, `is`(notNullValue()))
+
+        css = assetLoader.loadCSS("bla-bla")
 
         assertThat(css, `is`(notNullValue()))
     }
 
     @Test
     fun loadFont() {
-        val fontFactory = assetLoader.loadFont("test.ttf")
+        var fontFactory = assetLoader.loadFont("test.ttf")
 
         assertThat(fontFactory, `is`(notNullValue()))
+
+        val fontFactory2 = assetLoader.loadFont("test.ttf")
+
+        assertTrue(fontFactory === fontFactory2)
 
         val font = fontFactory.newFont(18.0)
 
@@ -166,6 +217,11 @@ class AssetLoaderTest {
         assertThat(font.family, `is`("Elektra"))
         assertThat(font.name, `is`("Elektra"))
         assertThat(font.size, `is`(18.0))
+
+        fontFactory = assetLoader.loadFont("bla-bla")
+
+        assertThat(fontFactory, `is`(notNullValue()))
+        assertThat(fontFactory.newFont(18.0), `is`(notNullValue()))
     }
 
     @Test
@@ -177,18 +233,12 @@ class AssetLoaderTest {
         stream.close()
     }
 
-//    @Test
-//    fun `Load all file names from given asset directory`() {
-//        val filenames = assetLoader.loadFileNames("/assets/ui/")
-//
-//        assertThat(filenames,
-//                hasItems(
-//                "css/test.css",
-//                "cursors/test_cursor.png",
-//                "fonts/test.ttf",
-//                "test_ui.fxml"
-//                ))
-//    }
+    @Test
+    fun `getStream throws if no valid stream`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            assetLoader.getStream("bla-bla")
+        }
+    }
 
     @Test
     fun `Check loaded from cache when present`() {

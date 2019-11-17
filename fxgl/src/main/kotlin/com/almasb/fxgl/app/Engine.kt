@@ -11,7 +11,6 @@ import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
-import com.almasb.fxgl.core.local.Local
 import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
 import com.almasb.fxgl.core.reflect.ReflectionUtils.inject
 import com.almasb.fxgl.core.serialization.Bundle
@@ -21,6 +20,8 @@ import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
+import com.almasb.fxgl.localization.Language
+import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.Scene
@@ -106,6 +107,7 @@ internal class Engine(
     internal val display by lazy { dialogScene as Display }
     internal val executor by lazy { Async }
     internal val fs by lazy { FS(settings.isDesktop) }
+    internal val local by lazy { LocalizationService() }
 
     internal val devPane by lazy { DevPane(playScene, settings) }
 
@@ -196,15 +198,11 @@ internal class Engine(
     private fun initAndLoadLocalization() {
         log.debug("Loading localizations")
 
-        val builtInLangs = listOf("english", "french", "german", "russian", "hungarian")
-
-        builtInLangs.forEach {
-            Local.addLanguage(it, assetLoader.loadResourceBundle("languages/$it.properties"))
+        Language.builtInLanguages.forEach {
+            local.addLanguageData(it, assetLoader.loadResourceBundle("languages/${it.name.toLowerCase()}.properties"))
         }
 
-        settings.language.value = Local.languages.find { it.name == "english" }
-
-        Local.selectedLanguageProperty().bind(settings.language)
+        local.selectedLanguageProperty().bind(settings.language)
     }
 
     private fun initAndRegisterFontFactories() {
@@ -221,6 +219,7 @@ internal class Engine(
         log.debug("Setting UI factory")
 
         FXGLUIConfig.setUIFactory(settings.uiFactory)
+        FXGLUIConfig.setLocalizationService(local)
     }
 
     private fun initAndShowMainWindow() {
@@ -549,7 +548,7 @@ internal class Engine(
     }
 
     private fun showConfirmExitDialog() {
-        display.showConfirmationBox(Local.getLocalizedString("dialog.exitGame")) { yes ->
+        display.showConfirmationBox(local.getLocalizedString("dialog.exitGame")) { yes ->
             if (yes)
                 exit()
         }

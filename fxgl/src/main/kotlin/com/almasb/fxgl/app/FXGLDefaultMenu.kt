@@ -8,8 +8,6 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
-import com.almasb.fxgl.core.local.Local
-import com.almasb.fxgl.core.local.Local.localizedStringProperty
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
 import com.almasb.fxgl.core.util.Supplier
 import com.almasb.fxgl.dsl.FXGL
@@ -309,7 +307,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         val btnRestore = MenuButton("menu.restore")
         btnRestore.setOnAction(EventHandler{ e ->
-            FXGL.getDisplay().showConfirmationBox(Local.getLocalizedString("menu.settingsRestore")) { yes ->
+            FXGL.getDisplay().showConfirmationBox(FXGL.localize("menu.settingsRestore")) { yes ->
                 if (yes!!) {
                     switchMenuContentTo(EMPTY)
                     //listener.restoreDefaultSettings()
@@ -386,7 +384,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             btn = FXGLButton()
             btn.alignment = Pos.CENTER_LEFT
             btn.style = "-fx-background-color: transparent"
-            btn.textProperty().bind(localizedStringProperty(stringKey))
+            btn.textProperty().bind(FXGL.localizedStringProperty(stringKey))
 
             p.isMouseTransparent = true
 

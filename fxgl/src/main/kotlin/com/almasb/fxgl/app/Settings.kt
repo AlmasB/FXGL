@@ -10,10 +10,11 @@ import com.almasb.fxgl.achievement.Achievement
 import com.almasb.fxgl.achievement.AchievementManager
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
-import com.almasb.fxgl.core.local.Language
+import com.almasb.fxgl.localization.Language
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.cutscene.CutsceneService
+import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
@@ -32,6 +33,7 @@ import javafx.scene.paint.Color
 import javafx.stage.StageStyle
 import java.util.*
 import java.util.Collections.unmodifiableList
+import kotlin.math.roundToInt
 
 enum class MenuItem {
 
@@ -234,6 +236,14 @@ class GameSettings(
 
         var achievements: List<Achievement> = arrayListOf()
 ) {
+
+    fun setHeightFromRatio(ratio: Double) {
+        height = (width / ratio).roundToInt()
+    }
+
+    fun setWidthFromRatio(ratio: Double) {
+        width = (height * ratio).roundToInt()
+    }
 
     fun toReadOnly(): ReadOnlyGameSettings {
         return ReadOnlyGameSettings(
@@ -534,7 +544,7 @@ class ReadOnlyGameSettings internal constructor(
     These are saved by the Settings, so engine services do not need to save their copy of these.
      */
 
-    val language = SimpleObjectProperty<Language>()
+    val language = SimpleObjectProperty(Language.ENGLISH)
 
     /**
      * Allows toggling fullscreen on/off from code.

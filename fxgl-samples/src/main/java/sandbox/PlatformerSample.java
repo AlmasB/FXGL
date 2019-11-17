@@ -8,6 +8,8 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.components.FollowComponent;
+import com.almasb.fxgl.dsl.views.MinimapView;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
@@ -19,6 +21,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
@@ -112,6 +115,12 @@ public class PlatformerSample extends GameApplication {
         player.getComponent(PhysicsComponent.class).onGroundProperty().addListener((o, oldValue, newValue) -> {
             System.out.println(newValue ? "On Ground" : "In the air");
         });
+
+        entityBuilder()
+                .at(300, 150)
+                .view(new Circle(25, Color.RED))
+                .with(new FollowComponent(player, 150, 50, 200))
+                .buildAndAttach();
     }
 
     private void createPlatforms() {
@@ -192,6 +201,14 @@ public class PlatformerSample extends GameApplication {
                 .viewWithBBox(new Rectangle(width, height, Color.BLUE))
                 .with(physics)
                 .buildAndAttach();
+    }
+
+    @Override
+    protected void initUI() {
+        var minimap = new MinimapView(getGameWorld(), 800, 600, 200, 100);
+        minimap.setEntityColor(Color.GREEN);
+
+        addUINode(minimap, getAppWidth() - 210, getAppHeight() - 110);
     }
 
     public static void main(String[] args) {

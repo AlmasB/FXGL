@@ -7,6 +7,8 @@
 package com.almasb.fxgl.core.math
 
 import com.almasb.fxgl.core.math.FXGLMath.*
+import javafx.geometry.Point2D
+import javafx.geometry.Rectangle2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
@@ -87,6 +89,15 @@ class FXGLMathTest {
 //    }
 
     @Test
+    fun `atan2`() {
+        //                   y / x
+        assertThat(atan2(0.0, 0.0), `is`(0.0))
+        assertThat(atan2(-1.0, 0.0), closeTo(-HALF_PI, 0.01))
+        assertThat(atan2(1.0, 0.0), closeTo(HALF_PI, 0.01))
+        assertThat(atan2(1.0, -1.0), closeTo(2.352, 0.01))
+    }
+
+    @Test
     fun `atan2 deg`() {
         //                   y / x
         assertThat(atan2Deg(0.0, 1.0), `is`(0.0))
@@ -100,7 +111,7 @@ class FXGLMathTest {
     fun `Random values`() {
         val originalRandom = getRandom()
 
-        val random = Random(17092019)
+        val random = getRandom(17092019)
 
         setRandom(random)
 
@@ -132,6 +143,13 @@ class FXGLMathTest {
 
             assertThat(randomPoint2D().magnitude(), closeTo(1.0, 0.0001))
             assertThat(randomVec2().length().toDouble(), closeTo(1.0, 0.0001))
+
+            val p = randomPoint(Rectangle2D(0.0, 0.0, 2.0, 5.0))
+
+            assertThat(p.x, Matchers.greaterThanOrEqualTo(0.0))
+            assertThat(p.x, Matchers.lessThan(2.0))
+            assertThat(p.y, Matchers.greaterThanOrEqualTo(0.0))
+            assertThat(p.y, Matchers.lessThan(5.0))
 
             bools += randomBoolean()
             chanceBools += randomBoolean(0.35)
@@ -178,37 +196,49 @@ class FXGLMathTest {
     }
 
     @Test
-    fun `floor`() {
-        assertThat(FXGLMath.floor(0.5), `is`(0))
-        assertThat(FXGLMath.floor(0.9), `is`(0))
-        assertThat(FXGLMath.floor(1.0), `is`(1))
-        assertThat(FXGLMath.floor(-0.5), `is`(-1))
-        assertThat(FXGLMath.floor(-1.5), `is`(-2))
+    fun `Map test`() {
+        assertThat(map(0.5, 0.0, 1.0, 100.0, 200.0), closeTo(150.0, 0.1))
     }
 
     @Test
-    fun `floor positive`() {
-        assertThat(FXGLMath.floorPositive(0.5), `is`(0))
-        assertThat(FXGLMath.floorPositive(0.9), `is`(0))
-        assertThat(FXGLMath.floorPositive(1.0), `is`(1))
-
-        // this is the diff between just "floor"
-        assertThat(FXGLMath.floorPositive(-0.5), `is`(0))
-        assertThat(FXGLMath.floorPositive(-1.5), `is`(-1))
+    fun `abs test double`() {
+        assertThat(abs(0.0), isOneOf(0.0, -0.0))
+        assertThat(abs(1.0), `is`(1.0))
+        assertThat(abs(-1.0), `is`(1.0))
     }
 
     @Test
-    fun `Is close to under tolerance`() {
-        assertTrue(isCloseToZero(0.0, 0.0))
-        assertFalse(isCloseToZero(0.1, 0.0))
+    fun `abs test float`() {
+        assertThat(abs(0.0f), isOneOf(0.0f, -0.0f))
+        assertThat(abs(1.0f), `is`(1.0f))
+        assertThat(abs(-1.0f), `is`(1.0f))
+    }
 
-        assertTrue(isCloseToZero(0.1, 0.1))
-        assertFalse(isCloseToZero(-0.2, 0.1))
+    @Test
+    fun `Bezier`() {
+        val p1 = bezier(Point2D(0.0, 0.0), Point2D(50.0, 0.0), Point2D(100.0, 0.0), 0.3)
 
-        assertTrue(isCloseToZero(0.01, 0.1))
+        assertThat(p1, `is`(Point2D(30.0, 0.0)))
 
-        assertTrue(isCloseToZero(0.09, 0.1))
+        val p2 = bezier(Point2D(0.0, 0.0), Point2D(20.0, 0.0), Point2D(80.0, 0.0), Point2D(100.0, 0.0), 0.5)
 
-        assertFalse(isCloseToZero(0.11, 0.1))
+        assertThat(p2, `is`(Point2D(50.0, 0.0)))
+    }
+
+    @Test
+    fun `Noises`() {
+        for (y in 0..250) {
+            for (x in 0..250) {
+                val v1 = noise2D(x.toDouble(), y.toDouble())
+                val v2 = noise3D(x.toDouble(), y.toDouble(), x*y.toDouble())
+
+                assertThat(v1, Matchers.allOf(Matchers.greaterThan(-1.0), Matchers.lessThan(1.0)))
+                assertThat(v2, Matchers.allOf(Matchers.greaterThan(-1.0), Matchers.lessThan(1.0)))
+
+                val v3 = noise1D(x+y.toDouble())
+
+                assertThat(v3, Matchers.allOf(Matchers.greaterThanOrEqualTo(-0.0), Matchers.lessThan(1.0)))
+            }
+        }
     }
 }

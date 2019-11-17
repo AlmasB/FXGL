@@ -273,8 +273,6 @@ class GameWorld {
      */
     private val entitySpawners = hashMapOf<String, EntitySpawner>()
 
-    private val entityPreloader = EntityPreloader(entitySpawners)
-
     /**
      * @param entityFactory factory for creating entities
      */
@@ -293,16 +291,16 @@ class GameWorld {
                     }
                 }
 
-        ReflectionUtils.findMethods(entityFactory, Preload::class.java)
-                .forEach { preload, method ->
-
-                    val ann = method.getDeclaredAnnotation(Spawns::class.java)
-                    val entityAliases = ann.value.split(",".toRegex())
-
-                    val numToPreload = preload.value
-
-                    entityPreloader.addForPreloading(entityAliases, numToPreload)
-                }
+//        ReflectionUtils.findMethods(entityFactory, Preload::class.java)
+//                .forEach { preload, method ->
+//
+//                    val ann = method.getDeclaredAnnotation(Spawns::class.java)
+//                    val entityAliases = ann.value.split(",".toRegex())
+//
+//                    val numToPreload = preload.value
+//
+//                    entityPreloader.addForPreloading(entityAliases, numToPreload)
+//                }
 
         entityFactories.put(entityFactory, entityNames)
     }
@@ -391,9 +389,9 @@ class GameWorld {
             data.put("type", entityName)
         }
 
-        if (entityPreloader.isPreloadingEnabled(entityName)) {
-            return entityPreloader.obtain(entityName, data)
-        }
+//        if (entityPreloader.isPreloadingEnabled(entityName)) {
+//            return entityPreloader.obtain(entityName, data)
+//        }
 
         return tryCatchRoot { spawner.apply(data) }
     }

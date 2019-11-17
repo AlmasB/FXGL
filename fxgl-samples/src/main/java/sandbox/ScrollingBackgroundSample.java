@@ -92,7 +92,6 @@ public class ScrollingBackgroundSample extends GameApplication {
         //getGameScene().addGameView();
     }
 
-    // TODO: debug messages console dev pane
     static class DebugComponent extends AccumulatedUpdateComponent {
         public DebugComponent() {
             super(10);
@@ -100,7 +99,7 @@ public class ScrollingBackgroundSample extends GameApplication {
 
         @Override
         public void onAccumulatedUpdate(double tpfSum) {
-            //System.out.println(tpfSum);
+            getDevPane().pushMessage("tpfSum:" + tpfSum);
         }
     }
 

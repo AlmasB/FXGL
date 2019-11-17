@@ -8,15 +8,20 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.components.EffectComponent;
 import com.almasb.fxgl.dsl.components.LiftComponent;
+import com.almasb.fxgl.dsl.components.RandomMoveComponent;
+import com.almasb.fxgl.dsl.effects.SlowTimeEffect;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.entity.components.TimeComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import dev.DeveloperWASDControl;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -51,16 +56,18 @@ public class BBoxSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        getInput().addAction(new UserAction("Change view") {
+        getInput().addAction(new UserAction("Slow Time") {
             @Override
             protected void onActionBegin() {
-                //player.setView(new EntityView(new Rectangle(40, 30, Color.BLUE)));
+                player.getComponent(EffectComponent.class).startEffect(new SlowTimeEffect(0.2, Duration.seconds(3)));
             }
         }, KeyCode.F);
 
         getInput().addAction(new UserAction("Change view 1") {
             @Override
             protected void onActionBegin() {
+                //byType(Type.NPC).get(0).getComponent(EffectComponent.class).startEffect(new FlashEffect(Color.RED, Duration.seconds(0.75)));
+
                 //player.setView(texture("bird.png").toAnimatedTexture(2, Duration.seconds(0.33)).play());
             }
         }, KeyCode.G);
@@ -112,9 +119,11 @@ public class BBoxSample extends GameApplication {
                 .at(100, 150)
                 .viewWithBBox("brick.png")
                 .with(new CollidableComponent(true), new DeveloperWASDControl())
+                .with(new RandomMoveComponent(new Rectangle2D(0, 0, getAppWidth(), getAppHeight()), 500))
                 //.with(new LiftComponent().xAxisSpeedDuration(400, Duration.seconds(1)))
-                .with(new LiftComponent().yAxisSpeedDuration(150, Duration.seconds(3)).xAxisSpeedDuration(100, Duration.seconds(3)))
                 //.with(new IntervalPauseComponent(Map.of(LiftComponent.class, Duration.seconds(2))))
+                .with(new EffectComponent())
+                .with(new TimeComponent(1.0))
                 .zIndex(250)
                 .buildAndAttach();
 
@@ -126,20 +135,22 @@ public class BBoxSample extends GameApplication {
         // entity 2
 
         entityBuilder()
-                .type(Type.NPC)
                 .at(100, 100)
                 .viewWithBBox(new Rectangle(40, 40, Color.RED))
                 .with(new CollidableComponent(true))
+                .with(new LiftComponent().yAxisSpeedDuration(150, Duration.seconds(3)).xAxisSpeedDuration(100, Duration.seconds(3)))
+                .with(new EffectComponent())
                 .zIndex(250)
                 .buildAndAttach();
 
         // entity 3
 
         entityBuilder()
-                .type(Type.PLAYER)
+                .type(Type.NPC)
                 .at(400, 150)
                 .bbox(new HitBox(new Point2D(5, 5), BoundingShape.circle(20)))
                 .view(texture("enemy1.png").toAnimatedTexture(2, Duration.seconds(1)).loop())
+                .with(new EffectComponent())
                 .buildAndAttach();
     }
 

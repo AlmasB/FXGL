@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.core.math;
 
-import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
@@ -239,24 +238,17 @@ public final class FXGLMath {
     }
 
     /**
+     * @return new random vector of unit length as Point2D
+     */
+    public static Point2D randomPoint2D() {
+        return randomVec2().toPoint2D();
+    }
+
+    /**
      * @return new random vector of unit length as Vec2
      */
     public static Vec2 randomVec2() {
         return new Vec2(random(-1.0, 1.0), random(-1.0, 1.0)).normalizeLocal();
-    }
-
-    /**
-     * @return new random vector of unit length as Point2D
-     */
-    public static Point2D randomPoint2D() {
-        double x = random(-1.0, 1.0);
-        double y = random(-1.0, 1.0);
-
-        double length = Math.sqrt(x * x + y * y);
-        if (length < EPSILON)
-            return Point2D.ZERO;
-
-        return new Point2D(x / length, y / length);
     }
 
     public static Color randomColor() {
@@ -290,23 +282,6 @@ public final class FXGLMath {
     }
 
     /**
-     * @param value the value
-     * @return the next power of two, or the specified value if the value is already a power of two
-     */
-    public static int nextPowerOfTwo(int value) {
-        if (value == 0)
-            return 1;
-
-        value--;
-        value |= value >> 1;
-        value |= value >> 2;
-        value |= value >> 4;
-        value |= value >> 8;
-        value |= value >> 16;
-        return value + 1;
-    }
-
-    /**
      * Map value of a given range to a target range.
      *
      * @param value the value to map
@@ -316,98 +291,12 @@ public final class FXGLMath {
         return targetRangeStart + (targetRangeStop - targetRangeStart) * ((value - currentRangeStart) / (currentRangeStop - currentRangeStart));
     }
 
-    public static double interpolate(double fromValue, double toValue, double progress, Interpolator interpolator) {
-        return interpolator.interpolate(fromValue, toValue, progress);
-    }
-
-    public static Point2D interpolate(Point2D fromValue, Point2D toValue, double progress, Interpolator interpolator) {
-        double x = interpolate(fromValue.getX(), toValue.getX(), progress, interpolator);
-        double y = interpolate(fromValue.getY(), toValue.getY(), progress, interpolator);
-
-        return new Point2D(x, y);
-    }
-
-    private static final int BIG_ENOUGH_INT = 16 * 1024;
-    private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
-    private static final double CEIL = 0.9999999;
-    private static final double BIG_ENOUGH_CEIL = 16384.999999999996;
-    private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5f;
-
     public static float abs(float value) {
         return value > 0 ? value : -value;
     }
 
     public static double abs(double value) {
         return value > 0 ? value : -value;
-    }
-
-    public static double min(double a, double b) {
-        return a <= b ? a : b;
-    }
-
-    public static double max(double a, double b) {
-        return a >= b ? a : b;
-    }
-
-    /**
-     * @param value from -(2^14) to (double.MAX_VALUE - 2^14)
-     * @return the largest integer less than or equal to the specified double
-     */
-    public static int floor(double value) {
-        return (int) (value + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
-    }
-
-    /**
-     * Note: this method simply casts the double to int.
-     *
-     * @param value a positive value
-     * @return the largest integer less than or equal to the specified double
-     */
-    public static int floorPositive(double value) {
-        return (int) value;
-    }
-
-    /**
-     * @param value from -(2^14) to (double.MAX_VALUE - 2^14)
-     * @return the smallest integer greater than or equal to the specified double
-     */
-    public static int ceil(double value) {
-        return (int) (value + BIG_ENOUGH_CEIL) - BIG_ENOUGH_INT;
-    }
-
-    /**
-     * @param value a positive double
-     * @return the smallest integer greater than or equal to the specified double
-     */
-    public static int ceilPositive(double value) {
-        return (int) (value + CEIL);
-    }
-
-    /**
-     * @param value from -(2^14) to (double.MAX_VALUE - 2^14)
-     * @return the closest integer to the specified double
-     */
-    public static int round(double value) {
-        return (int) (value + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT;
-    }
-
-    /**
-     * @param value a positive double
-     * @return the closest integer to the specified double
-     */
-    public static int roundPositive(double value) {
-        return (int) (value + 0.5);
-    }
-
-    /**
-     * Note: prone to floating point errors if the arguments are not doubles.
-     *
-     * @param value the value to check
-     * @param tolerance represent an upper bound below which the value is considered zero
-     * @return true if the value is close to zero, i.e. true if difference between value and 0 is less than or equal to tolerance
-     */
-    public static boolean isCloseToZero(double value, double tolerance) {
-        return Math.abs(value) <= tolerance;
     }
 
     public static Point2D bezier(Point2D p1, Point2D p2, Point2D p3, double t) {

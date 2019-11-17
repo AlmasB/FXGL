@@ -74,6 +74,8 @@ class Timer {
      * [whileCondition] is initially true.
      * The action will start for the first time after given interval.
      * The action will be removed from schedule when [whileCondition] becomes "false".
+     * Note: you must retain the reference to the [whileCondition] property to avoid it being
+     * garbage collected, otherwise the [action] may never stop.
      *
      * @return timer action
      */

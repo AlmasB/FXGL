@@ -378,10 +378,23 @@ class Vec2Test {
         assertFalse(v1 == v2)
     }
 
-
     @Test
     fun `Equals should return false if passed a different type`() {
         val v1 = Vec2(1f, 1f)
         assertFalse(v1.equals(1))
+    }
+
+    @Test
+    fun `Cross to out unsafe`() {
+        val v1 = Vec2(1f, 1f)
+        val v2 = Vec2()
+
+        Vec2.crossToOutUnsafe(v1, 5.0f, v2)
+
+        assertThat(v2, `is`(Vec2(5.0, -5.0)))
+
+        Vec2.crossToOutUnsafe(5.0f, v1, v2)
+
+        assertThat(v2, `is`(Vec2(-5.0, 5.0)))
     }
 }

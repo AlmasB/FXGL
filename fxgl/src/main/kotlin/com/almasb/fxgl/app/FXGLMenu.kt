@@ -6,13 +6,11 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.local.Local
-import com.almasb.fxgl.core.local.Local.getLocalizedString
-import com.almasb.fxgl.core.local.Local.localizedStringProperty
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.core.util.Supplier
 import com.almasb.fxgl.dsl.*
+import com.almasb.fxgl.dsl.FXGL.Companion.localizedStringProperty
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.Trigger
@@ -94,7 +92,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
                 contentRoot.children.removeAt(contentRoot.children.size - 1)
             }
 
-            contentRoot.children.add(createProfileView(getLocalizedString("profile.profile") + ": " + newName))
+            contentRoot.children.add(createProfileView(FXGL.localize("profile.profile") + ": " + newName))
         }
     }
 
@@ -298,7 +296,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             rect.arcWidth = 15.0
             rect.arcHeight = 15.0
 
-            val text = getUIFactory().newText(getLocalizedString("menu.pressAnyKey"), 24.0)
+            val text = getUIFactory().newText(FXGL.localize("menu.pressAnyKey"), 24.0)
 
             val pane = StackPane(rect, text)
             pane.translateX = (getAppWidth() / 2 - 125).toDouble()
@@ -337,7 +335,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun createContentVideo(): MenuContent {
         log.debug("createContentVideo()")
 
-        val languageBox = getUIFactory().newChoiceBox(FXCollections.observableArrayList(Local.languages))
+        val languageBox = getUIFactory().newChoiceBox(FXCollections.observableArrayList(FXGL.getLocalizationService().languages))
         languageBox.value = getSettings().language.value
 
         getSettings().language.bindBidirectional(languageBox.valueProperty())
@@ -348,7 +346,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             val cbFullScreen = getUIFactory().newCheckBox()
             cbFullScreen.selectedProperty().bindBidirectional(getSettings().fullScreen)
 
-            vbox.children.add(HBox(25.0, getUIFactory().newText(getLocalizedString("menu.fullscreen") + ": "), cbFullScreen))
+            vbox.children.add(HBox(25.0, getUIFactory().newText(FXGL.localize("menu.fullscreen") + ": "), cbFullScreen))
         }
 
         return MenuContent(
@@ -545,12 +543,12 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 //    }
 
 //    override fun onDelete(saveFile: SaveFile) {
-//        getDisplay().showConfirmationBox(Local.getLocalizedString("menu.deleteSave")+"[${saveFile.name}]?", { yes ->
+//        getDisplay().showConfirmationBox(Local.FXGL.localize("menu.deleteSave")+"[${saveFile.name}]?", { yes ->
 //
 //            if (yes) {
 //                saveLoadManager
 //                        .deleteSaveFileTask(saveFile)
-//                        .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.deleting")+": ${saveFile.name}"))
+//                        .runAsyncFXWithDialog(ProgressDialog(Local.FXGL.localize("menu.deleting")+": ${saveFile.name}"))
 //            }
 //        })
 //    }
@@ -580,9 +578,9 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireLoad(saveFile: SaveFile) {
         log.debug("fireLoad()")
 
-        val text = getLocalizedString("menu.loadSave") +
+        val text = FXGL.localize("menu.loadSave") +
                 " [${saveFile.name}]?\n" +
-                getLocalizedString("menu.unsavedProgress")
+                FXGL.localize("menu.unsavedProgress")
 
         getDisplay().showConfirmationBox(text) { yes ->
             if (yes)
@@ -597,7 +595,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireSave() {
         log.debug("fireSave()")
 
-        getDisplay().showInputBoxWithCancel(getLocalizedString("menu.enterSaveName"), InputPredicates.ALPHANUM, Consumer { saveFileName ->
+        getDisplay().showInputBoxWithCancel(FXGL.localize("menu.enterSaveName"), InputPredicates.ALPHANUM, Consumer { saveFileName ->
 
             if (saveFileName.isEmpty())
                 return@Consumer
@@ -605,7 +603,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             controller.saveGame(saveFileName)
 
 //            if (saveLoadManager.saveFileExists(saveFileName)) {
-//                getDisplay().showConfirmationBox(getLocalizedString("menu.overwrite") +" [$saveFileName]?", { yes ->
+//                getDisplay().showConfirmationBox(FXGL.localize("menu.overwrite") +" [$saveFileName]?", { yes ->
 //
 //                    if (yes)
 //                        doSave(saveFileName)
@@ -638,7 +636,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireExit() {
         log.debug("fireExit()")
 
-        val text = getLocalizedString("dialog.exitGame")
+        val text = FXGL.localize("dialog.exitGame")
 
         getDisplay().showConfirmationBox(text) { yes ->
             if (yes)
@@ -649,8 +647,8 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireExitToMainMenu() {
         log.debug("fireExitToMainMenu()")
 
-        val text = getLocalizedString("menu.exitMainMenu") + "\n" +
-                getLocalizedString("menu.unsavedProgress")
+        val text = FXGL.localize("menu.exitMainMenu") + "\n" +
+                FXGL.localize("menu.unsavedProgress")
 
         getDisplay().showConfirmationBox(text) { yes ->
             if (yes)

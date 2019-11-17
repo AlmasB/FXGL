@@ -558,6 +558,13 @@ class InputTest {
         assertThat(input.mousePositionWorld, `is`(Point2D(10.0 + 15.0, 15.0 + 15.0)))
         assertThat(input.mousePositionUI, `is`(Point2D(10.0, 15.0)))
 
+        // check the properties too
+
+        assertThat(input.mouseXWorldProperty().value, `is`(10.0 + 15.0))
+        assertThat(input.mouseYWorldProperty().value, `is`(15.0 + 15.0))
+        assertThat(input.mouseXUIProperty().value, `is`(10.0))
+        assertThat(input.mouseYUIProperty().value, `is`(15.0))
+
         input.onMouseEvent(MouseEventData(e2, Point2D(15.0, 15.0), 1.0, 1.0))
         assertThat(count, `is`(0))
 

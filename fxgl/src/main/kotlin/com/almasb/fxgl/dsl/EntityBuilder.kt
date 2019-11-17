@@ -12,7 +12,7 @@ import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.CollidableComponent
 import com.almasb.fxgl.physics.BoundingShape
-import com.almasb.fxgl.physics.BoundingShape.box
+import com.almasb.fxgl.physics.BoundingShape.Companion.box
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsComponent
 import javafx.geometry.Point2D

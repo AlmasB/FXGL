@@ -6,15 +6,21 @@
 
 package sandbox.minigames;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.input.KeyTrigger;
+import com.almasb.fxgl.input.Trigger;
+import com.almasb.fxgl.input.TriggerListener;
 import com.almasb.fxgl.minigames.MiniGameService;
+import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerView;
 import com.almasb.fxgl.minigames.lockpicking.LockPickView;
 import com.almasb.fxgl.minigames.triggersequence.TriggerSequenceView;
 import com.almasb.fxgl.ui.FXGLButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -25,6 +31,7 @@ public class MiniGameApp extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1066);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     //            var view = new SweetSpotView();
@@ -48,9 +55,12 @@ public class MiniGameApp extends GameApplication {
         onKeyDown(KeyCode.G, "Hello2", () -> {
 
             var manager = getMiniGameService();
-            manager.startMiniGame(new LockPickView(), (result) -> {
+            manager.startCircuitBreaker(10, 10, 10, 100, Duration.seconds(1), (result) -> {
                 System.out.println(result.isSuccess() ? "SUCCESS" : "FAIL");
             });
+//            manager.startMiniGame(new CircuitBreakerView(), (result) -> {
+//                System.out.println(result.isSuccess() ? "SUCCESS" : "FAIL");
+//            });
         });
 
         onKeyDown(KeyCode.H, "Hello3", () -> {
@@ -60,6 +70,25 @@ public class MiniGameApp extends GameApplication {
 
     @Override
     protected void initGame() {
+        getInput().addTriggerListener(new TriggerListener() {
+            @Override
+            protected void onActionBegin(Trigger trigger) {
+                System.out.println("Begin: " + trigger);
+            }
+
+            @Override
+            protected void onAction(Trigger trigger) {
+                System.out.println("On: " + trigger);
+            }
+
+            @Override
+            protected void onActionEnd(Trigger trigger) {
+                System.out.println("End: " + trigger);
+            }
+        });
+
+
+
         debugText = getUIFactory().newText("", Color.BLACK, 36.0);
 
         getGameScene().setBackgroundRepeat("bg_10.png");
@@ -81,7 +110,16 @@ public class MiniGameApp extends GameApplication {
         addUINode(debugText, 600, 300);
         addUINode(btn, 150, 150);
         addUINode(new FXGLButton("Lockpicking"), 150, 200);
-        addUINode(new FXGLButton("Trigger Mash"), 150, 400);
+
+        var btnMash = new FXGLButton("Trigger Mash");
+
+        btnMash.setOnAction(e -> {
+            getMiniGameService().startTriggerMash(new KeyTrigger(KeyCode.J), (result) -> {
+                debugText.setText(result.isSuccess() ? "Success" : "Fail");
+            });
+        });
+
+        addUINode(btnMash, 150, 400);
 
         var btnCheck = new FXGLButton("Skill Check");
 

@@ -41,7 +41,14 @@ class AnimatedPoint2D(from: Point2D, to: Point2D)
     : AnimatedValue<Point2D>(from, to) {
 
     override fun animate(val1: Point2D, val2: Point2D, progress: Double, interpolator: Interpolator): Point2D {
-        return FXGLMath.interpolate(val1, val2, progress, interpolator)
+        return interpolate(val1, val2, progress, interpolator)
+    }
+
+    private fun interpolate(fromValue: Point2D, toValue: Point2D, progress: Double, interpolator: Interpolator): Point2D {
+        val x = interpolator.interpolate(fromValue.x, toValue.x, progress)
+        val y = interpolator.interpolate(fromValue.y, toValue.y, progress)
+
+        return Point2D(x, y)
     }
 }
 
@@ -77,10 +84,10 @@ class AnimatedColor(from: Color, to: Color)
 
     override fun animate(val1: Color, val2: Color, progress: Double, interpolator: Interpolator): Color {
         return Color.color(
-                FXGLMath.interpolate(val1.red, val2.red, progress, interpolator),
-                FXGLMath.interpolate(val1.green, val2.green, progress, interpolator),
-                FXGLMath.interpolate(val1.blue, val2.blue, progress, interpolator),
-                FXGLMath.interpolate(val1.opacity, val2.opacity, progress, interpolator)
+                interpolator.interpolate(val1.red, val2.red, progress),
+                interpolator.interpolate(val1.green, val2.green, progress),
+                interpolator.interpolate(val1.blue, val2.blue, progress),
+                interpolator.interpolate(val1.opacity, val2.opacity, progress)
         )
     }
 }

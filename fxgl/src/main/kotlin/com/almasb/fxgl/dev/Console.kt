@@ -9,6 +9,7 @@ package com.almasb.fxgl.dev
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.ui.FontType
+import javafx.application.Platform
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
@@ -135,8 +136,9 @@ class Console : Pane() {
     }
 
     fun pushMessage(message: String) {
-        // TODO: very rarely this crashes, why? a javafx bug?
-        output.appendText(message + "\n")
+        Platform.runLater {
+            output.appendText(message + "\n")
+        }
     }
 
     private fun parse(input: String) {

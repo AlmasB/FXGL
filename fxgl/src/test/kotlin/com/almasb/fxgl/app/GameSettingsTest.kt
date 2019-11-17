@@ -102,4 +102,20 @@ class GameSettingsTest {
         assertFalse(settings.isLinux)
         assertFalse(settings.isMac)
     }
+
+    @Test
+    fun `Test setting of height and width from ratio`() {
+        val settingsInitial = GameSettings()
+
+        assertThat(settingsInitial.width, `is`(800))
+        assertThat(settingsInitial.height, `is`(600))
+
+        settingsInitial.width = 100;
+        settingsInitial.setHeightFromRatio(0.5);
+        assertThat(settingsInitial.height,  `is`(200))
+
+        settingsInitial.height = 400;
+        settingsInitial.setWidthFromRatio(1.3);
+        assertThat(settingsInitial.width,  `is`(520))
+    }
 }

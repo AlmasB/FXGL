@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.minigames
 
+import com.almasb.fxgl.input.Input
 import javafx.scene.Parent
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
@@ -16,9 +17,7 @@ import javafx.scene.input.MouseButton
  */
 abstract class MiniGameView<T : MiniGame<*>>(val miniGame: T) : Parent() {
 
-    open fun onKeyPress(key: KeyCode) {}
-
-    open fun onButtonPress(btn: MouseButton) {}
+    open fun onInitInput(input: Input) {}
 
     open fun onUpdate(tpf: Double) {}
 }

@@ -14,38 +14,31 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityWorldListener;
 import com.almasb.fxgl.entity.components.BoundingBoxComponent;
 import com.almasb.fxgl.entity.components.CollidableComponent;
-import com.almasb.fxgl.entity.components.TransformComponent;
-import com.almasb.fxgl.entity.components.TypeComponent;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactFilter;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactImpulse;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.collision.Manifold;
-import com.almasb.fxgl.physics.box2d.collision.shapes.ChainShape;
-import com.almasb.fxgl.physics.box2d.collision.shapes.CircleShape;
-import com.almasb.fxgl.physics.box2d.collision.shapes.PolygonShape;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.sslogger.Logger;
 import javafx.beans.value.ChangeListener;
-import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Manages physics entities, collision handling and performs the physics tick.
- * <p>
- * Contains several static and instance methods
- * to convert pixels coordinates to meters and vice versa.
- * <p>
- * Collision handling unifies how they are processed.
+ * Manages collision handling and performs the physics tick.
+ * Contains methods to convert pixel coordinates to meters and vice versa.
+ * Collision handling unifies how different collisions (with and without PhysicsComponent) are processed.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class PhysicsWorld implements EntityWorldListener, ContactListener {
+public final class PhysicsWorld implements EntityWorldListener, ContactListener, PhysicsUnitConverter {
 
     private static final Logger log = Logger.get(PhysicsWorld.class);
 
@@ -61,90 +54,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     private Array<CollisionPair> collisions = new UnorderedArray<>(128);
 
     private int appHeight;
-
-    /**
-     * Note: certain modifications to the jbox2d world directly may not be
-     * recognized by FXGL.
-     *
-     * @return raw jbox2d physics world
-     */
-    public World getJBox2DWorld() {
-        return jboxWorld;
-    }
-
-    private boolean isCollidable(Entity e) {
-        if (!e.isActive())
-            return false;
-
-        return e.getComponentOptional(CollidableComponent.class)
-                .map(c -> c.getValue())
-                .orElse(false);
-    }
-
-    private boolean areCollidable(Entity e1, Entity e2) {
-        return isCollidable(e1) && isCollidable(e2);
-    }
-
-    @SuppressWarnings("PMD.UselessParentheses")
-    private boolean needManualCheck(Entity e1, Entity e2) {
-        // if no physics -> check manually
-
-        BodyType type1 = e1.getComponentOptional(PhysicsComponent.class)
-                .map(p -> p.body.getType())
-                .orElse(null);
-
-        if (type1 == null)
-            return true;
-
-        BodyType type2 = e2.getComponentOptional(PhysicsComponent.class)
-                .map(p -> p.body.getType())
-                .orElse(null);
-
-        if (type2 == null)
-            return true;
-
-        // if one is kinematic and the other is static -> check manually
-        return (type1 == BodyType.KINEMATIC && type2 == BodyType.STATIC)
-                || (type2 == BodyType.KINEMATIC && type1 == BodyType.STATIC);
-    }
-
-    /**
-     * @param e1 entity 1
-     * @param e2 entity 2
-     * @return collision handler for e1 and e2 based on their types or null if no such handler exists
-     */
-    private CollisionHandler getHandler(Entity e1, Entity e2) {
-        if (!e1.isActive() || !e2.isActive())
-            return null;
-
-        Object type1 = e1.getComponent(TypeComponent.class).getValue();
-        Object type2 = e2.getComponent(TypeComponent.class).getValue();
-
-        for (CollisionHandler handler : collisionHandlers) {
-            if (handler.equal(type1, type2)) {
-                return handler;
-            }
-        }
-
-        return null;
-    }
-
-    private CollisionPair getPair(Entity e1, Entity e2) {
-        int index = getPairIndex(e1, e2);
-
-        return index == -1 ? null : collisions.get(index);
-    }
-
-    private int getPairIndex(Entity e1, Entity e2) {
-        for (int i = 0; i < collisions.size(); i++) {
-            CollisionPair pair = collisions.get(i);
-            if (pair.equal(e1, e2)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
 
     public PhysicsWorld(int appHeight, double ppm) {
         this.appHeight = appHeight;
@@ -190,6 +99,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     private Array<Entity> delayedParticlesAdd = new UnorderedArray<>();
     private Array<Body> delayedBodiesRemove = new UnorderedArray<>();
 
+    private Map<Entity, ChangeListener<Number> > scaleListeners = new HashMap<>();
+
     @Override
     public void onEntityAdded(Entity entity) {
         entities.add(entity);
@@ -222,7 +133,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
             }
         };
 
-        // TODO: clean listeners on remove
+        scaleListeners.put(entity, scaleChangeListener);
+
         entity.getTransformComponent().scaleXProperty().addListener(scaleChangeListener);
         entity.getTransformComponent().scaleYProperty().addListener(scaleChangeListener);
     }
@@ -246,6 +158,15 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     private void onPhysicsEntityRemoved(Entity entity) {
+        if (scaleListeners.containsKey(entity)) {
+            ChangeListener<Number> scaleChangeListener = scaleListeners.get(entity);
+
+            entity.getTransformComponent().scaleXProperty().removeListener(scaleChangeListener);
+            entity.getTransformComponent().scaleYProperty().removeListener(scaleChangeListener);
+
+            scaleListeners.remove(entity);
+        }
+
         if (!jboxWorld.isLocked()) {
             destroyBody(entity);
         } else {
@@ -297,8 +218,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     public void beginContact(Contact contact) {
         Entity e1 = contact.getFixtureA().getBody().getEntity();
         Entity e2 = contact.getFixtureB().getBody().getEntity();
-
-        // TODO: we do not have sensor collision(), ony begin() and end()
 
         // check sensors first
 
@@ -376,6 +295,87 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         }
     }
 
+    /**
+     * Note: certain modifications to the jbox2d world directly may not be
+     * recognized by FXGL.
+     *
+     * @return raw jbox2d physics world
+     */
+    public World getJBox2DWorld() {
+        return jboxWorld;
+    }
+
+    private boolean isCollidable(Entity e) {
+        if (!e.isActive())
+            return false;
+
+        return e.getComponentOptional(CollidableComponent.class)
+                .map(CollidableComponent::getValue)
+                .orElse(false);
+    }
+
+    private boolean areCollidable(Entity e1, Entity e2) {
+        return isCollidable(e1) && isCollidable(e2);
+    }
+
+    @SuppressWarnings("PMD.UselessParentheses")
+    private boolean needManualCheck(Entity e1, Entity e2) {
+        // if no physics -> check manually
+
+        BodyType type1 = e1.getComponentOptional(PhysicsComponent.class)
+                .map(p -> p.body.getType())
+                .orElse(null);
+
+        if (type1 == null)
+            return true;
+
+        BodyType type2 = e2.getComponentOptional(PhysicsComponent.class)
+                .map(p -> p.body.getType())
+                .orElse(null);
+
+        if (type2 == null)
+            return true;
+
+        // if one is kinematic and the other is static -> check manually
+        return (type1 == BodyType.KINEMATIC && type2 == BodyType.STATIC)
+                || (type2 == BodyType.KINEMATIC && type1 == BodyType.STATIC);
+    }
+
+    /**
+     * @param e1 entity 1
+     * @param e2 entity 2
+     * @return collision handler for e1 and e2 based on their types or null if no such handler exists
+     */
+    private CollisionHandler getHandler(Entity e1, Entity e2) {
+        if (!e1.isActive() || !e2.isActive())
+            return null;
+
+        for (CollisionHandler handler : collisionHandlers) {
+            if (handler.equal(e1.getType(), e2.getType())) {
+                return handler;
+            }
+        }
+
+        return null;
+    }
+
+    private CollisionPair getPair(Entity e1, Entity e2) {
+        int index = getPairIndex(e1, e2);
+
+        return index == -1 ? null : collisions.get(index);
+    }
+
+    private int getPairIndex(Entity e1, Entity e2) {
+        for (int i = 0; i < collisions.size(); i++) {
+            CollisionPair pair = collisions.get(i);
+            if (pair.equal(e1, e2)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     private void notifySensorCollisionBegin(Entity eWithSensor, Entity eTriggered, HitBox box) {
         var handler = eWithSensor.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
         handler.onCollisionBegin(eTriggered);
@@ -393,10 +393,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     public void postSolve(Contact contact, ContactImpulse impulse) { }
 
     private Array<Entity> collidables = new UnorderedArray<>(128);
+    private CollisionResult collisionResult = new CollisionResult();
 
     /**
      * Perform collision detection for all entities that have
-     * setCollidable(true) and if at least one entity is not PhysicsEntity.
+     * setCollidable(true) and if at least one entity does not have PhysicsComponent.
      * Subsequently fire collision handlers for all entities that have
      * setCollidable(true).
      */
@@ -429,14 +430,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
                     continue;
 
                 // check if colliding
-                CollisionResult result = e1.getBoundingBoxComponent().checkCollision(e2.getBoundingBoxComponent());
+                var collision = e1.getBoundingBoxComponent().checkCollision(e2.getBoundingBoxComponent(), collisionResult);
 
-                if (result.hasCollided()) {
-
-                    collisionBeginFor(handler, e1, e2, result.getBoxA(), result.getBoxB());
-
-                    // put result back to pool only if collided
-                    Pools.free(result);
+                if (collision) {
+                    collisionBeginFor(handler, e1, e2, collisionResult.getBoxA(), collisionResult.getBoxB());
                 } else {
                     collisionEndFor(e1, e2);
                 }
@@ -509,8 +506,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
             CollisionPair pair = it.next();
 
             // if a pair no longer qualifies for collision then just remove it
-            if (!pair.getA().isActive() || !pair.getB().isActive()
-                    || !isCollidable(pair.getA()) || !isCollidable(pair.getB())) {
+            if (!isCollidable(pair.getA()) || !isCollidable(pair.getB())) {
 
                 // tell the pair that collision ended
                 pair.collisionEnd();
@@ -639,109 +635,12 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     private Shape createShape(HitBox box, Entity e) {
-        // take world center bounds and subtract from entity center (all in pixels) to get local center
-        // because box2d operates on vector offsets from the body center, also in local coordinates
-        Point2D boundsCenterWorld = new Point2D((box.getMinXWorld() + box.getMaxXWorld()) / 2, (box.getMinYWorld() + box.getMaxYWorld()) / 2);
-        Point2D boundsCenterLocal = boundsCenterWorld.subtract(e.getCenter());
-
-        double w = box.getMaxXWorld() - box.getMinXWorld();
-        double h = box.getMaxYWorld() - box.getMinYWorld();
-
-        BoundingShape boundingShape = box.getShape();
-
-        switch (boundingShape.type) {
-            case CIRCLE:
-                return circle(w, boundsCenterLocal);
-
-            case POLYGON:
-
-                // TODO: clean up
-                if (boundingShape.data instanceof Dimension2D) {
-                    return polygonAsBox(w, h, boundsCenterLocal);
-                } else {
-                    return polygon((Point2D[]) boundingShape.data, boundsCenterLocal, e.getBoundingBoxComponent().getCenterLocal(), e.getTransformComponent(), box, e.getBoundingBoxComponent());
-                }
-
-            case CHAIN:
-
-                if (e.getComponent(PhysicsComponent.class).body.getType() != BodyType.STATIC) {
-                    throw new IllegalArgumentException("BoundingShape.chain() can only be used with BodyType.STATIC");
-                }
-
-                return chain((Point2D[]) boundingShape.data, boundsCenterLocal, e.getBoundingBoxComponent().getCenterLocal());
-
-            case EDGE:
-            default:
-                log.warning("Unsupported hit box shape");
-                throw new UnsupportedOperationException("Using unsupported shape: " + boundingShape.type);
-        }
-    }
-
-    /**
-     * @param w circle diameter
-     * @param boundsCenterLocal center of bounds in local coordinates
-     * @return circle shape
-     */
-    private Shape circle(double w, Point2D boundsCenterLocal) {
-        CircleShape shape = new CircleShape();
-        shape.setRadius(toMetersF(w / 2));
-        shape.center.set(toVector(boundsCenterLocal));
-
-        return shape;
-    }
-
-    private Shape polygonAsBox(double w, double h, Point2D boundsCenterLocal) {
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(toMetersF(w / 2), toMetersF(h / 2), toVector(boundsCenterLocal), 0);
-
-        return shape;
-    }
-
-    private Shape polygon(Point2D[] points, Point2D boundsCenterLocal, Point2D bboxCenterLocal, TransformComponent t, HitBox box, BoundingBoxComponent bboxComp) {
-
-        Vec2[] vertices = new Vec2[points.length];
-
-        var bboxCenterLocalNew = new Point2D(
-                bboxCenterLocal.getX() * t.getScaleX() + (1 - t.getScaleX()) * t.getScaleOrigin().getX(),
-                bboxCenterLocal.getY() * t.getScaleY() + (1 - t.getScaleY()) * t.getScaleOrigin().getY()
-        );
-
-        var boundsCenterLocalNew = new Point2D(
-                boundsCenterLocal.getX() * t.getScaleX() + (1 - t.getScaleX()) * t.getScaleOrigin().getX(),
-                boundsCenterLocal.getY() * t.getScaleY() + (1 - t.getScaleY()) * t.getScaleOrigin().getY()
-        );
-
-        for (int i = 0; i < vertices.length; i++) {
-
-            var p = new Point2D(
-                    (points[i].getX() + box.getMinX()) * t.getScaleX() + (1 - t.getScaleX()) * t.getScaleOrigin().getX(),
-                    (points[i].getY() + box.getMinY()) * t.getScaleY() + (1 - t.getScaleY()) * t.getScaleOrigin().getY()
-            );
-
-            vertices[i] = toVector(p.subtract(boundsCenterLocalNew))
-                    .subLocal(toVector(bboxCenterLocalNew))
-                    .addLocal(toVector(boundsCenterLocalNew))
-                    .subLocal(toMeters(bboxComp.getMinXLocal()), -toMeters(bboxComp.getMinYLocal()));
+        if (e.getComponent(PhysicsComponent.class).body.getType() != BodyType.STATIC
+                && box.getShape() instanceof ChainShapeData) {
+            throw new IllegalArgumentException("BoundingShape.chain() can only be used with BodyType.STATIC");
         }
 
-        PolygonShape shape = new PolygonShape();
-        shape.set(vertices);
-
-        return shape;
-    }
-
-    private Shape chain(Point2D[] points, Point2D boundsCenterLocal, Point2D bboxCenterLocal) {
-
-        Vec2[] vertices = new Vec2[points.length];
-
-        for (int i = 0; i < vertices.length; i++) {
-            vertices[i] = toVector(points[i].subtract(boundsCenterLocal)).subLocal(toVector(bboxCenterLocal));
-        }
-
-        ChainShape shape = new ChainShape();
-        shape.createLoop(vertices, vertices.length);
-
-        return shape;
+        return box.toBox2DShape(e.getBoundingBoxComponent(), this);
     }
 
     @SuppressWarnings("PMD.UnusedFormalParameter")
@@ -783,6 +682,14 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 //        e.getComponent(PhysicsParticleComponent.class).setGroup(jboxWorld.createParticleGroup(def));
     }
 
+    void destroyFixture(Body body, HitBox box) {
+        body.getFixtures()
+                .stream()
+                .filter(f -> f.getHitBox() == box)
+                .findAny()
+                .ifPresent(body::destroyFixture);
+    }
+
     /**
      * Destroy body and remove from physics world.
      *
@@ -819,53 +726,14 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
         return new RaycastResult(entity, point);
     }
-
-    /**
-     * Converts pixels to meters
-     *
-     * @param pixels value in pixels
-     * @return value in meters
-     */
-    public float toMetersF(double pixels) {
-        return (float) toMeters(pixels);
-    }
-
+    @Override
     public double toMeters(double pixels) {
         return pixels * METERS_PER_PIXELS;
     }
 
-    /**
-     * Converts meters to pixels
-     *
-     * @param meters value in meters
-     * @return value in pixels
-     */
-    public float toPixelsF(double meters) {
-        return (float) toPixels(meters);
-    }
-
+    @Override
     public double toPixels(double meters) {
         return meters * PIXELS_PER_METER;
-    }
-
-    /**
-     * Converts a vector of type Point2D to vector of type Vec2
-     *
-     * @param v vector in pixels
-     * @return vector in meters
-     */
-    public Vec2 toVector(Point2D v) {
-        return new Vec2(toMetersF(v.getX()), toMetersF(-v.getY()));
-    }
-
-    /**
-     * Converts a vector of type Vec2 to vector of type Point2D
-     *
-     * @param v vector in meters
-     * @return vector in pixels
-     */
-    public Point2D toVector(Vec2 v) {
-        return new Point2D(toPixels(v.x), toPixels(-v.y));
     }
 
     /**
@@ -874,6 +742,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param p point in pixel space
      * @return point in physics space
      */
+    @Override
     public Vec2 toPoint(Point2D p) {
         return new Vec2(toMetersF(p.getX()), toMetersF(appHeight - p.getY()));
     }
@@ -884,6 +753,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param p point in physics space
      * @return point in pixel space
      */
+    @Override
     public Point2D toPoint(Vec2 p) {
         return new Point2D(toPixels(p.x), toPixels(toMeters(appHeight) - p.y));
     }

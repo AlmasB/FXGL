@@ -11,16 +11,21 @@ import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Consumer
+import com.almasb.fxgl.input.KeyTrigger
+import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerMiniGame
+import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerResult
+import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerView
 import com.almasb.fxgl.minigames.lockpicking.LockPickResult
 import com.almasb.fxgl.minigames.lockpicking.LockPickView
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotMiniGame
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotResult
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotView
+import com.almasb.fxgl.minigames.triggermash.TriggerMashMiniGame
+import com.almasb.fxgl.minigames.triggermash.TriggerMashResult
+import com.almasb.fxgl.minigames.triggermash.TriggerMashView
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.scene.SubSceneStack
-import javafx.event.EventHandler
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
+import javafx.util.Duration
 
 /**
  *
@@ -44,8 +49,32 @@ class MiniGameService : EngineService {
         startMiniGame(SweetSpotView(miniGame)) { callback.accept(it) }
     }
 
+    fun startTriggerMash(trigger: KeyTrigger, callback: Consumer<TriggerMashResult>) {
+        startTriggerMash(trigger, 1.7, 0.1, callback)
+    }
+
+    fun startTriggerMash(trigger: KeyTrigger, boostRate: Double, decayRate: Double, callback: Consumer<TriggerMashResult>) {
+        val miniGame = TriggerMashMiniGame(trigger)
+        miniGame.boostRate = boostRate
+        miniGame.decayRate = decayRate
+
+        startMiniGame(TriggerMashView(trigger, miniGame)) { callback.accept(it) }
+    }
+
     fun startLockPicking(callback: Consumer<LockPickResult>) {
         startMiniGame(LockPickView()) { callback.accept(it) }
+    }
+
+    fun startCircuitBreaker(numHorizontalTiles: Int,
+                            numVerticalTiles: Int,
+                            playerSize: Double,
+                            playerSpeed: Double,
+                            miniGameDelay: Duration,
+                            callback: Consumer<CircuitBreakerResult>) {
+
+        val miniGame = CircuitBreakerMiniGame(numHorizontalTiles, numVerticalTiles, playerSize, playerSpeed, miniGameDelay)
+
+        startMiniGame(CircuitBreakerView(miniGame)) { callback.accept(it) }
     }
 
     // TODO: start mini game in the in-game mode, not a different subscene
@@ -89,15 +118,7 @@ class MiniGameSubScene<S : MiniGameResult, T : MiniGame<S>>(
 
         contentRoot.children += view
 
-        // TODO: allow only if not repeated, or use the same model as UserAction (begin, run, end)
-
-        input.addEventHandler(KeyEvent.KEY_PRESSED, EventHandler {
-            view.onKeyPress(it.code)
-        })
-
-        input.addEventHandler(MouseEvent.MOUSE_PRESSED, EventHandler {
-            view.onButtonPress(it.button)
-        })
+        view.onInitInput(input)
     }
 
     override fun onUpdate(tpf: Double) {

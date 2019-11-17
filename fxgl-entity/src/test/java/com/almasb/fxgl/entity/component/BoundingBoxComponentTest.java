@@ -238,17 +238,18 @@ public class BoundingBoxComponentTest {
         Entity entity2 = new Entity();
         entity2.getBoundingBoxComponent().addHitBox(new HitBox("TEST2", BoundingShape.box(40, 40)));
 
-        CollisionResult result = bbox.checkCollision(entity2.getBoundingBoxComponent());
-        assertThat(result.hasCollided(), is(true));
+        CollisionResult result = new CollisionResult();
+        var collision = bbox.checkCollision(entity2.getBoundingBoxComponent(), result);
+
+        assertThat(collision, is(true));
         assertThat(result.getBoxA(), is(bbox.hitBoxesProperty().get(0)));
         assertThat(result.getBoxB(), is(entity2.getBoundingBoxComponent().hitBoxesProperty().get(0)));
 
         Entity entity3 = new Entity();
         entity3.getBoundingBoxComponent().addHitBox(new HitBox("TEST3", new Point2D(45, 0), BoundingShape.box(40, 40)));
 
-        result = bbox.checkCollision(entity3.getBoundingBoxComponent());
-        assertThat(result.hasCollided(), is(false));
-        assertThat(result == CollisionResult.NO_COLLISION, is(true));
+        collision = bbox.checkCollision(entity3.getBoundingBoxComponent(), result);
+        assertThat(collision, is(false));
     }
 
     @Test

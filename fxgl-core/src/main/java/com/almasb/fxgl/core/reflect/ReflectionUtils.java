@@ -78,6 +78,7 @@ public final class ReflectionUtils {
         Map<A, F> map = new HashMap<>();
 
         findMethods(instance, annotationClass).forEach((annotation, method) -> {
+                method.setAccessible(true);
                 // we create an instance implementing F on the fly
                 // so that high-level calling code stays clean
                 F function = (F) Proxy.newProxyInstance(functionClass.getClassLoader(),
@@ -266,5 +267,21 @@ public final class ReflectionUtils {
         } catch (Exception e) {
             throw new ReflectionException(e);
         }
+    }
+
+    /**
+     * Converts Integer.class to int.class, Double.class to double.class and so on.
+     *
+     * @return primitive class, or the same class object if the class does not have a primitive counterpart
+     */
+    public static Class<?> convertToPrimitive(Class<?> type) {
+        Map<Class<?>, Class<?>> wrappersToPrimitives = Map.of(
+                Integer.class, int.class,
+                Double.class, double.class,
+                Boolean.class, boolean.class,
+                Character.class, char.class
+        );
+
+        return wrappersToPrimitives.getOrDefault(type, type);
     }
 }

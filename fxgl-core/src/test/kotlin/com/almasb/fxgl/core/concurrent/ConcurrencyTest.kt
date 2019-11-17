@@ -176,10 +176,16 @@ class ConcurrencyTest {
 
     @Test
     fun `IOTask name`() {
-        val task = IOTask.ofVoid("someName") { }
+        var count = 0
+
+        val task = IOTask.ofVoid("someName") { count = 1 }
 
         assertThat(task.name, `is`("someName"))
         assertThat(IOTask.ofVoid {  }.name, `is`("NoName"))
+
+        task.run()
+
+        assertThat(count, `is`(1))
     }
 
     @Test

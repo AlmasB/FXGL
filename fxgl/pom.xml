@@ -7,11 +7,151 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>11.5</version>
+        <version>dev-SNAPSHOT</version>
     </parent>
 
     <artifactId>fxgl</artifactId>
     <packaging>jar</packaging>
+
+    <profiles>
+        <profile>
+            <id>uber-jar</id>
+
+            <dependencies>
+                <!-- Linux specific dependencies -->
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-swing</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>linux</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-fxml</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>linux</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-graphics</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>linux</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-media</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>linux</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-controls</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>linux</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-base</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>linux</classifier>
+                </dependency>
+
+                <!-- Windows specific dependencies -->
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-swing</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-fxml</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-graphics</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-media</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-controls</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-base</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+
+                <!-- Mac specific dependencies -->
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-swing</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>mac</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-fxml</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>mac</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-graphics</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>mac</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-media</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>mac</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-controls</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>mac</classifier>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-base</artifactId>
+                    <version>${jfx.version}</version>
+                    <classifier>mac</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -107,6 +247,12 @@
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-cutscene</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-localization</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 

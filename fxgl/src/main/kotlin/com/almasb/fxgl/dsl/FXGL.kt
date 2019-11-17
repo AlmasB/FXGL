@@ -119,6 +119,8 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getFS() = engine.fs
 
+    @JvmStatic fun getLocalizationService() = engine.local
+
     @JvmStatic fun getNotificationService() = engine.getService(NotificationService::class.java)
 
     @JvmStatic fun getAchievementService() = engine.getService(AchievementManager::class.java)
@@ -372,6 +374,8 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun byID(name: String, id: Int): Optional<Entity> = getGameWorld().getEntityByID(name, id)
 
+    @JvmStatic fun byType(vararg types: Enum<*>): List<Entity> = getGameWorld().getEntitiesByType(*types)
+
     /**
      * @param mapFileName name of the .json file or the .tmx file
      */
@@ -523,6 +527,12 @@ class FXGL private constructor() { companion object {
 
     /* DEBUG */
     @JvmStatic fun debug(message: String) = getDevPane().pushMessage(message)
+
+/* LOCALIZATION */
+
+    @JvmStatic fun localize(key: String) = getLocalizationService().getLocalizedString(key)
+
+    @JvmStatic fun localizedStringProperty(key: String) = getLocalizationService().localizedStringProperty(key)
 
 /* EXTENSIONS */
 

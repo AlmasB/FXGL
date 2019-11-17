@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.dsl.components
 
+import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.time.LocalTimer
@@ -18,104 +19,89 @@ import javafx.util.Duration
  */
 class LiftComponent : Component() {
 
-    /**
-     * Move in X axis.
-     */
-    var isHorizontal = false
+    private class LiftData {
 
-    /**
-     * Move in Y axis.
-     */
-    var isVertical = false
+        var isOn = false
 
-    var isGoingUp = false
-    var isGoingRight = true
+        // moving in the direction of the axis
+        var isGoingPositive = true
 
-    var speedX = 0.0
-    var speedY = 0.0
+        var distance = 0.0
+        var duration: Duration = Duration.ZERO
+        var speed = 0.0
 
-    var distanceX = 0.0
-    var distanceY = 0.0
+        internal lateinit var timer: LocalTimer
 
-    var durationX: Duration = Duration.ZERO
-    var durationY: Duration = Duration.ZERO
+        fun initTimer() {
+            timer = FXGL.newLocalTimer()
+            timer.capture()
+        }
 
-    private lateinit var timerX: LocalTimer
-    private lateinit var timerY: LocalTimer
+        fun enable(distance: Double, duration: Duration, speed: Double) {
+            this.distance = distance
+            this.duration = duration
+            this.speed = speed
+
+            isOn = true
+        }
+
+        fun update(tpf: Double): Double {
+            if (timer.elapsed(duration)) {
+                isGoingPositive = !isGoingPositive
+                timer.capture()
+            }
+            return if (isGoingPositive) speed * tpf else -speed * tpf
+        }
+    }
+
+    private val liftDataX = LiftData()
+    private val liftDataY = LiftData()
+
+    var isGoingRight: Boolean
+        get() = liftDataX.isGoingPositive
+        set(value) { liftDataX.isGoingPositive = value }
+
+    var isGoingUp: Boolean
+        get() = !liftDataY.isGoingPositive
+        set(value) { liftDataY.isGoingPositive = !value }
 
     override fun onAdded() {
-        timerX = FXGL.newLocalTimer()
-        timerX.capture()
-
-        timerY = FXGL.newLocalTimer()
-        timerY.capture()
+        liftDataX.initTimer()
+        liftDataY.initTimer()
     }
 
     override fun onUpdate(tpf: Double) {
-        if (isHorizontal) {
-            if (timerX.elapsed(durationX)) {
-                isGoingRight = !isGoingRight
-                timerX.capture()
-            }
-
-            entity.translateX(if (isGoingRight) speedX * tpf else -speedX * tpf)
+        val vector = Vec2()
+        if (liftDataX.isOn) {
+            vector.x = liftDataX.update(tpf).toFloat()
         }
-
-        if (isVertical) {
-            if (timerY.elapsed(durationY)) {
-                isGoingUp = !isGoingUp
-                timerY.capture()
-            }
-
-            entity.translateY(if (isGoingUp) -speedY * tpf else speedY * tpf)
+        if (liftDataY.isOn) {
+            vector.y = liftDataY.update(tpf).toFloat()
         }
+        entity.translate(vector)
     }
 
     fun xAxisDistanceDuration(distance: Double, duration: Duration) = this.apply {
-        distanceX = distance
-        durationX = duration
-        speedX = distance / duration.toSeconds()
-
-        isHorizontal = true
+        liftDataX.enable(distance, duration, distance / duration.toSeconds())
     }
 
     fun xAxisSpeedDuration(speed: Double, duration: Duration) = this.apply {
-        speedX = speed
-        durationX = duration
-        distanceX = speed * duration.toSeconds()
-
-        isHorizontal = true
+        liftDataX.enable(speed * duration.toSeconds(), duration, speed)
     }
 
     fun xAxisSpeedDistance(speed: Double, distance: Double) = this.apply {
-        speedX = speed
-        distanceX = distance
-        durationX = Duration.seconds(distance / speed)
-
-        isHorizontal = true
+        liftDataX.enable(distance, Duration.seconds(distance / speed), speed)
     }
 
     fun yAxisDistanceDuration(distance: Double, duration: Duration) = this.apply {
-        distanceY = distance
-        durationY = duration
-        speedY = distance / duration.toSeconds()
-
-        isVertical = true
+        liftDataY.enable(distance, duration, distance / duration.toSeconds())
     }
 
     fun yAxisSpeedDuration(speed: Double, duration: Duration) = this.apply {
-        speedY = speed
-        durationY = duration
-        distanceY = speed * duration.toSeconds()
-
-        isVertical = true
+        liftDataY.enable(speed * duration.toSeconds(), duration, speed)
     }
 
     fun yAxisSpeedDistance(speed: Double, distance: Double) = this.apply {
-        speedY = speed
-        distanceY = distance
-        durationY = Duration.seconds(distance / speed)
-
-        isVertical = true
+        liftDataY.enable(distance, Duration.seconds(distance / speed), speed)
     }
 }
