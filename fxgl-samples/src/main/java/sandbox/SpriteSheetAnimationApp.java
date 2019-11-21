@@ -46,19 +46,13 @@ public class SpriteSheetAnimationApp extends GameApplication {
         }, KeyCode.A);
     }
 
-
     @Override
     protected void initGame() {
-        SimpleDoubleProperty health = new SimpleDoubleProperty(2000.0);
-        GenericBarViewComponent barView = new GenericBarViewComponent(0.0, 40.0, Color.VIOLET, health);
-        health.setValue(1000.0);
-        barView.getBar().setWidth(150.0);
-        barView.getBar().setHeight(8.0);
 
         player = FXGL.entityBuilder()
                 .at(200, 200)
                 .with(new AnimationComponent())
-                .with(barView)
+                .with(new GenericBarViewComponent(0.0, 45.0, Color.PURPLE, new SimpleDoubleProperty(1000.0), 100.0, 8.0))
                 .with(new StatusViewComponent())
                 .with(new TextViewComponent(0, 65, "Character Name"))
                 .buildAndAttach();

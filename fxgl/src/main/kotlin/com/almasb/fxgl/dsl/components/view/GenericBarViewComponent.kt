@@ -21,31 +21,32 @@ open class GenericBarViewComponent constructor(
         y: Double,
         color: Color,
         initialValue: Double,
-        maxValue: Double = initialValue
+        maxValue: Double = initialValue,
+        width: Double = 100.0,
+        height: Double = 10.0
 ) : ChildViewComponent(x, y, false) {
 
     /**
      * Utility constructor to setup the [GenericBarViewComponent] bound to the given [property].
      */
-    constructor(x: Double, y: Double, color: Color, property: DoubleProperty
-    ) : this(x, y, color, property.value) {
+    constructor(x: Double, y: Double, color: Color, property: DoubleProperty, width: Double, height: Double
+    ) : this(x, y, color, property.value, property.value, width, height) {
         valueProperty().bind(property)
     }
 
     val bar = ProgressBar()
 
     init {
-
         bar.setMinValue(0.0)
         bar.setMaxValue(maxValue)
-        bar.setWidth(100.0)
+        bar.setWidth(width)
+        bar.setHeight(height)
         bar.isLabelVisible = false
         bar.setLabelPosition(Position.RIGHT)
         bar.setFill(color)
         bar.currentValue = initialValue
 
         viewRoot.children.add(bar)
-
     }
 
     fun valueProperty(): DoubleProperty = bar.currentValueProperty()
