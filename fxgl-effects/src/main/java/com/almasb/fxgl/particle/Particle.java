@@ -19,6 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Ellipse;
+import javafx.scene.transform.Scale;
 import javafx.util.Duration;
 
 /**
@@ -104,6 +105,9 @@ public class Particle implements Poolable {
     private ImageView imageView = new ImageView();
     private AnimatedColor colorAnimation = new AnimatedColor(Color.BLACK, Color.WHITE);
 
+    private Scale scaleTransform = new Scale();
+    private double originalSize;
+
     public Node getView() {
         return imageView.getImage() != null ? imageView : view;
     }
@@ -142,7 +146,7 @@ public class Particle implements Poolable {
             boolean allowRotation,
             Function<Double, Point2D> equation) {
 
-        init(control, image, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode, Interpolator.LINEAR, allowRotation, equation);
+        init(control, image, position, vel, acceleration, radius, Point2D.ZERO, scale, expireTime, startColor, endColor, blendMode, Interpolator.LINEAR, allowRotation, equation);
     }
 
     public Particle() {
@@ -157,6 +161,7 @@ public class Particle implements Poolable {
             Point2D vel,
             Point2D acceleration,
             double radius,
+            Point2D scaleOrigin,
             Point2D scale,
             Duration expireTime,
             Paint startColor,
@@ -183,7 +188,20 @@ public class Particle implements Poolable {
         this.equation = equation;
         this.control = control;
 
+        originalSize = radius;
+
+        scaleTransform.setPivotX(scaleOrigin.getX());
+        scaleTransform.setPivotY(scaleOrigin.getY());
+
         imageView.setImage(image);
+        imageView.getTransforms().setAll(scaleTransform);
+
+        view.setCenterX(radius);
+        view.setCenterY(radius);
+        view.setRadiusX(radius);
+        view.setRadiusY(radius);
+        view.getTransforms().setAll(scaleTransform);
+
         colorAnimation = new AnimatedColor((Color)startColor, (Color)endColor);
     }
 
@@ -256,10 +274,19 @@ public class Particle implements Poolable {
 
             if (image != null) {
 
-                imageView.setScaleX(radius.x * 2 / image.getWidth());
-                imageView.setScaleY(radius.y * 2 / image.getHeight());
-                imageView.setLayoutX(x);
-                imageView.setLayoutY(y);
+                var scale = 1.0;
+
+                scaleTransform.setX(radius.x * 2 / image.getWidth());
+                scaleTransform.setY(radius.y * 2 / image.getHeight());
+
+                // From https://stackoverflow.com/questions/17113234/affine-transform-scale-around-a-point
+                // x = S(x – c) + c = Sx + (c – Sc)
+                var sx = (scaleTransform.getPivotX() - scale * (scaleTransform.getPivotX() )) + scale * x;
+                var sy = (scaleTransform.getPivotY() - scale * (scaleTransform.getPivotY() )) + scale * y;
+
+                imageView.setLayoutX(sx);
+                imageView.setLayoutY(sy);
+
                 imageView.setOpacity(alpha);
                 imageView.setBlendMode(blendMode);
 
@@ -269,14 +296,24 @@ public class Particle implements Poolable {
 
             } else {
 
+                view.setFill(colorAnimation.getValue(progress, interpolator));
+
                 view.setRadiusX(radius.x);
                 view.setRadiusY(radius.y);
                 view.setCenterX(radius.x);
                 view.setCenterY(radius.y);
-                view.setLayoutX(x);
-                view.setLayoutY(y);
+
+                var scale = 1.0;
+
+                // From https://stackoverflow.com/questions/17113234/affine-transform-scale-around-a-point
+                // x = S(x – c) + c = Sx + (c – Sc)
+                var sx = (scaleTransform.getPivotX() + x - scale * (scaleTransform.getPivotX() + x)) + scale * x;
+                var sy = (scaleTransform.getPivotY() + y - scale * (scaleTransform.getPivotY() + y)) + scale * y;
+
+                view.setLayoutX(sx);
+                view.setLayoutY(sy);
+
                 view.setOpacity(alpha);
-                view.setFill(colorAnimation.getValue(progress, interpolator));
                 view.setBlendMode(blendMode);
 
                 if (allowRotation) {
