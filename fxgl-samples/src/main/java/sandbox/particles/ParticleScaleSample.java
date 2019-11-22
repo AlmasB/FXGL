@@ -34,18 +34,20 @@ public class ParticleScaleSample extends GameApplication {
         emitter.setSpawnPointFunction(i -> new Point2D(0, 0));
         emitter.setSourceImage(texture("brick.png"));
         emitter.setBlendMode(BlendMode.SRC_OVER);
-        emitter.setSize(2, 7);
+        emitter.setSize(12, 14);
         emitter.setScaleFunction(i -> new Point2D(0, 0));
-        emitter.setScaleOriginFunction(i -> new Point2D(32, 232));
+
+        emitter.setEntityScaleFunction(() -> new Point2D(1.75, 1.75));
+        emitter.setScaleOriginFunction(i -> new Point2D(12, 32));
 
         var e = entityBuilder()
                 .at(250, 250)
                 .viewWithBBox("brick.png")
-                //.scale(0.3, 0.3)
+                .scale(1.75, 1.75)
                 .with(new ParticleComponent(emitter))
                 .buildAndAttach();
 
-        e.getTransformComponent().setScaleOrigin(new Point2D(32, 232));
+        e.getTransformComponent().setScaleOrigin(new Point2D(12, 32));
     }
 
     public static void main(String[] args) {

@@ -106,48 +106,15 @@ public class Particle implements Poolable {
     private AnimatedColor colorAnimation = new AnimatedColor(Color.BLACK, Color.WHITE);
 
     private Scale scaleTransform = new Scale();
-    private double originalSize;
+    private Vec2 scaleOrigin = new Vec2();
+
+    private Vec2 entityScale = new Vec2();
 
     public Node getView() {
         return imageView.getImage() != null ? imageView : view;
     }
 
     private Consumer<Particle> control = null;
-
-    public Particle(
-            Consumer<Particle> control,
-            Point2D position,
-            Point2D vel,
-            Point2D acceleration,
-            double radius,
-            Point2D scale,
-            Duration expireTime,
-            Paint startColor,
-            Paint endColor,
-            BlendMode blendMode,
-            boolean allowRotation,
-            Function<Double, Point2D> equation) {
-
-        this(control, null, position, vel, acceleration, radius, scale, expireTime, startColor, endColor, blendMode, allowRotation, equation);
-    }
-
-    public Particle(
-            Consumer<Particle> control,
-            Image image,
-            Point2D position,
-            Point2D vel,
-            Point2D acceleration,
-            double radius,
-            Point2D scale,
-            Duration expireTime,
-            Paint startColor,
-            Paint endColor,
-            BlendMode blendMode,
-            boolean allowRotation,
-            Function<Double, Point2D> equation) {
-
-        init(control, image, position, vel, acceleration, radius, Point2D.ZERO, scale, expireTime, startColor, endColor, blendMode, Interpolator.LINEAR, allowRotation, equation);
-    }
 
     public Particle() {
         // pooler ctor
@@ -162,7 +129,8 @@ public class Particle implements Poolable {
             Point2D acceleration,
             double radius,
             Point2D scaleOrigin,
-            Point2D scale,
+            Point2D scaleFunction,
+            Point2D entityScale,
             Duration expireTime,
             Paint startColor,
             Paint endColor,
@@ -175,7 +143,8 @@ public class Particle implements Poolable {
         this.startPosition.set(position);
         this.position.set(position);
         this.radius.set((float) radius, (float) radius);
-        this.scale.set(scale);
+        this.scale.set(scaleFunction);
+        this.entityScale.set(entityScale);
         this.velocity.set(vel);
         this.acceleration.set(acceleration);
         this.startColor = startColor;
@@ -188,19 +157,10 @@ public class Particle implements Poolable {
         this.equation = equation;
         this.control = control;
 
-        originalSize = radius;
-
-        scaleTransform.setPivotX(scaleOrigin.getX());
-        scaleTransform.setPivotY(scaleOrigin.getY());
+        this.scaleOrigin.set(scaleOrigin);
 
         imageView.setImage(image);
         imageView.getTransforms().setAll(scaleTransform);
-
-        view.setCenterX(radius);
-        view.setCenterY(radius);
-        view.setRadiusX(radius);
-        view.setRadiusY(radius);
-        view.getTransforms().setAll(scaleTransform);
 
         colorAnimation = new AnimatedColor((Color)startColor, (Color)endColor);
     }
@@ -214,6 +174,8 @@ public class Particle implements Poolable {
         acceleration.setZero();
         radius.setZero();
         scale.setZero();
+        scaleOrigin.setZero();
+        entityScale.setZero();
         startColor = Color.TRANSPARENT;
         endColor = Color.TRANSPARENT;
         blendMode = BlendMode.SRC_OVER;
@@ -273,26 +235,8 @@ public class Particle implements Poolable {
             double alpha = life / initialLife;
 
             if (image != null) {
-
-                var scale = 1.0;
-
                 scaleTransform.setX(radius.x * 2 / image.getWidth());
                 scaleTransform.setY(radius.y * 2 / image.getHeight());
-
-                // From https://stackoverflow.com/questions/17113234/affine-transform-scale-around-a-point
-                // x = S(x – c) + c = Sx + (c – Sc)
-                var sx = (scaleTransform.getPivotX() - scale * (scaleTransform.getPivotX() )) + scale * x;
-                var sy = (scaleTransform.getPivotY() - scale * (scaleTransform.getPivotY() )) + scale * y;
-
-                imageView.setLayoutX(sx);
-                imageView.setLayoutY(sy);
-
-                imageView.setOpacity(alpha);
-                imageView.setBlendMode(blendMode);
-
-                if (allowRotation) {
-                    imageView.setRotate(moveVector.angle());
-                }
 
             } else {
 
@@ -302,23 +246,21 @@ public class Particle implements Poolable {
                 view.setRadiusY(radius.y);
                 view.setCenterX(radius.x);
                 view.setCenterY(radius.y);
+            }
 
-                var scale = 1.0;
+            // From https://stackoverflow.com/questions/17113234/affine-transform-scale-around-a-point
+            // x = S(x – c) + c = Sx + (c – Sc)
+            var sx = (scaleOrigin.x + x - entityScale.x * (scaleOrigin.x + x)) + entityScale.y * x;
+            var sy = (scaleOrigin.y + y - entityScale.y * (scaleOrigin.y + y)) + entityScale.y * y;
 
-                // From https://stackoverflow.com/questions/17113234/affine-transform-scale-around-a-point
-                // x = S(x – c) + c = Sx + (c – Sc)
-                var sx = (scaleTransform.getPivotX() + x - scale * (scaleTransform.getPivotX() + x)) + scale * x;
-                var sy = (scaleTransform.getPivotY() + y - scale * (scaleTransform.getPivotY() + y)) + scale * y;
+            getView().setLayoutX(sx);
+            getView().setLayoutY(sy);
 
-                view.setLayoutX(sx);
-                view.setLayoutY(sy);
+            getView().setOpacity(alpha);
+            getView().setBlendMode(blendMode);
 
-                view.setOpacity(alpha);
-                view.setBlendMode(blendMode);
-
-                if (allowRotation) {
-                    view.setRotate(moveVector.angle());
-                }
+            if (allowRotation) {
+                getView().setRotate(moveVector.angle());
             }
         }
 

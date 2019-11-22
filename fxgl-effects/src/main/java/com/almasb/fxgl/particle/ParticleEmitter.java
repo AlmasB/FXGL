@@ -317,6 +317,12 @@ public final class ParticleEmitter {
         this.scaleFunction = scaleFunction;
     }
 
+    private Supplier<Point2D> entityScaleFunction = () -> new Point2D(1, 1);
+
+    public void setEntityScaleFunction(Supplier<Point2D> entityScaleFunction) {
+        this.entityScaleFunction = entityScaleFunction;
+    }
+
     private Function<Integer, Duration> expireFunction = (i) -> Duration.seconds(1);
 
     /**
@@ -414,6 +420,7 @@ public final class ParticleEmitter {
                 getRandomSize(),
                 scaleOriginFunction.apply(i),
                 scaleFunction.apply(i),
+                entityScaleFunction.get(),
                 expireFunction.apply(i),
                 getStartColor(),
                 getEndColor(),
