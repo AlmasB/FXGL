@@ -16,7 +16,7 @@ import javafx.scene.paint.Color
  * Can be fully customized using its [bar] property.
  * @author Marvin Buff (marvinbuff@hotmail.com)
  */
-open class GenericBarViewComponent constructor(
+open class GenericBarViewComponent @JvmOverloads constructor(
         x: Double,
         y: Double,
         color: Color,
