@@ -1,3 +1,8 @@
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
 package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
@@ -8,10 +13,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 /**
- * FXGL - JavaFX Game Library. The MIT License (MIT).
- * Copyright (c) AlmasB (almaslvl@gmail.com).
- * See LICENSE for details.
- *
  * This is a sample class for testing image rescaling.
  */
 public class ImageSample extends GameApplication {
