@@ -66,6 +66,22 @@ fun merge(images: List<Image>): Image {
     return texture.image
 }
 
+fun resize(url : String, targetWidth: Int, targetHeight: Int): Image {
+    return resize(url, targetWidth, targetHeight, false)
+}
+
+fun resize(image : Image, targetWidth: Int, targetHeight: Int): Image {
+    return resize(image.url, targetWidth, targetHeight, false)
+}
+
+fun resize(url : String, targetWidth: Int, targetHeight: Int, preserveRatio: Boolean): Image {
+    return Image(url, targetWidth.toDouble(), targetHeight.toDouble(), preserveRatio, false)
+}
+
+fun resize(image : Image, targetWidth: Int, targetHeight: Int, preserveRatio: Boolean): Image {
+    return Image(image.url, targetWidth.toDouble(), targetHeight.toDouble(), preserveRatio, false)
+}
+
 data class Pixel(val x: Int, val y: Int, val color: Color, val parent: Image) {
 
     val A = color.opacity
