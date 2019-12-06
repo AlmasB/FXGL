@@ -18,6 +18,8 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
+
+
 private val image: Image by lazy {
     val group = Group()
     val size = 32.0
@@ -64,6 +66,41 @@ fun merge(images: List<Image>): Image {
     }
 
     return texture.image
+}
+
+/**
+ * Resize image, with preserveRatio set to false by default.
+ * If preserveRatio is true, vertical scaling will be dependent on horizontal scaling and original image proportion will be reserved.
+ */
+fun resize(image : Image, targetWidth: Int, targetHeight: Int): Image {
+    return resize(image, targetWidth, targetHeight, false)
+}
+
+/**
+ * Resize image.
+ * If preserveRatio is true, vertical scaling will be dependent on horizontal scaling and original image proportion will be reserved.
+ */
+fun resize(image : Image, targetWidth: Int, targetHeight: Int, preserveRatio: Boolean): Image {
+    val width = image.width.toInt()
+    val height = image.height.toInt()
+    val scaleHorizontal = width.toDouble() / targetWidth
+    var scaleVertical = height.toDouble() / targetHeight
+    if (preserveRatio)
+        scaleVertical = scaleHorizontal
+
+    val output = WritableImage(targetWidth, targetHeight)
+
+    val reader = image.pixelReader
+    val writer = output.pixelWriter
+
+    for (y in 0 until targetHeight)
+        for (x in 0 until targetWidth)
+        {
+            val argb = reader.getArgb((x * scaleHorizontal).toInt(), (y * scaleVertical).toInt())
+            writer.setArgb(x, y, argb)
+        }
+
+    return output
 }
 
 data class Pixel(val x: Int, val y: Int, val color: Color, val parent: Image) {
