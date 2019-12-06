@@ -25,6 +25,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
+import java.time.Duration;
+
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
@@ -39,7 +41,7 @@ public class PlatformerSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
+        settings.setWidth(1200);
         settings.setHeight(600);
         settings.setTitle("PlatformerSample");
         settings.setVersion("0.1");
@@ -69,7 +71,7 @@ public class PlatformerSample extends GameApplication {
                 PhysicsComponent physics = player.getComponent(PhysicsComponent.class);
 
                 if (physics.isOnGround()) {
-                    physics.setVelocityY(-300);
+                    physics.setVelocityY(-500);
                 }
 
                 getDevPane().addDebugPoint(player.getCenter());
@@ -119,7 +121,7 @@ public class PlatformerSample extends GameApplication {
         entityBuilder()
                 .at(300, 150)
                 .view(new Circle(25, Color.RED))
-                .with(new FollowComponent(player, 150, 50, 200))
+                .with(new FollowComponent(player, 150, 50, 60).setMoveDelay(Duration.ofSeconds(2)))
                 .buildAndAttach();
     }
 
