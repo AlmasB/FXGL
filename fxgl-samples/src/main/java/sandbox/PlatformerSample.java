@@ -24,8 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
-
-import java.time.Duration;
+import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -121,7 +120,7 @@ public class PlatformerSample extends GameApplication {
         entityBuilder()
                 .at(300, 150)
                 .view(new Circle(25, Color.RED))
-                .with(new FollowComponent(player, 150, 50, 60).setMoveDelay(Duration.ofSeconds(2)))
+                .with(new FollowComponent(player, 150, 50, 60).setMoveDelay(Duration.seconds(2)))
                 .buildAndAttach();
     }
 
