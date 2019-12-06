@@ -12,6 +12,7 @@ import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Point2D
+import javafx.scene.Cursor
 import javafx.scene.ImageCursor
 import javafx.scene.effect.Effect
 import javafx.scene.image.Image
@@ -86,6 +87,13 @@ abstract class FXGLScene
      */
     fun setCursor(image: Image, hotspot: Point2D) {
         root.cursor = ImageCursor(image, hotspot.x, hotspot.y)
+    }
+
+    /**
+     * Makes cursor invisible.
+     */
+    fun setCursorInvisible() {
+        root.cursor = Cursor.NONE
     }
 
     /**
