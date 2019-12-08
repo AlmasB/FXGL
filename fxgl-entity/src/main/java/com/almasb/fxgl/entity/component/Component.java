@@ -7,6 +7,8 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.entity.Entity;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  * A component is used to add data and behavior to an entity.
@@ -17,7 +19,7 @@ public abstract class Component {
 
     protected Entity entity;
 
-    private boolean paused = false;
+    private BooleanProperty paused = new SimpleBooleanProperty(false);
 
     /**
      * @return entity to which this component is attached
@@ -31,15 +33,19 @@ public abstract class Component {
     }
 
     public final boolean isPaused() {
-        return paused;
+        return paused.getValue();
     }
 
     public final void pause() {
-        paused = true;
+        paused.setValue(true);
     }
 
     public final void resume() {
-        paused = false;
+        paused.setValue(false);
+    }
+
+    public BooleanProperty pausedProperty() {
+        return paused;
     }
 
     /**
@@ -64,7 +70,6 @@ public abstract class Component {
     public void onRemoved() {
 
     }
-
     @Override
     public String toString() {
         String simpleName = getClass().getSimpleName();
