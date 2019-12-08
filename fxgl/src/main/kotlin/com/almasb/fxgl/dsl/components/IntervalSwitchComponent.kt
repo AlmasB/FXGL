@@ -6,22 +6,21 @@
 
 package com.almasb.fxgl.dsl.components
 
-import com.almasb.fxgl.dsl.getGameTimer
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.components.BooleanComponent
+import com.almasb.fxgl.time.LocalTimer
 import javafx.util.Duration
 
 class IntervalSwitchComponent(initValue: Boolean = false,
-                              private val interval: Duration = Duration.ZERO): BooleanComponent(initValue) {
+                              var interval: Duration = Duration.ZERO): BooleanComponent(initValue) {
 
-    private val timer = getGameTimer()
-
-    override fun onAdded() {
-        onUpdate()
-    }
+    private val timer: LocalTimer = FXGL.newLocalTimer()
 
     fun onUpdate() {
         // after a certain interval set valueProperty() to false, then to true and so on.
-        value = !value
-        timer.runOnceAfter(Runnable { onUpdate() }, interval)
+        if (timer.elapsed(interval)) {
+            value = !value
+            timer.capture()
+        }
     }
 }
