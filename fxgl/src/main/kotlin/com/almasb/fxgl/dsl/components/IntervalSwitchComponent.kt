@@ -7,6 +7,8 @@ import javafx.util.Duration
 class IntervalSwitchComponent(initValue: Boolean = false,
                               private val interval: Duration = Duration.ZERO): BooleanComponent(initValue) {
 
+    private val timer = getGameTimer()
+
     override fun onAdded() {
         onUpdate()
     }
@@ -14,6 +16,6 @@ class IntervalSwitchComponent(initValue: Boolean = false,
     fun onUpdate() {
         // after a certain interval set valueProperty() to false, then to true and so on.
         value = !value
-        getGameTimer().runOnceAfter(Runnable { onUpdate() }, interval)
+        timer.runOnceAfter(Runnable { onUpdate() }, interval)
     }
 }
