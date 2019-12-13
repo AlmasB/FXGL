@@ -49,6 +49,8 @@ You should now see something like this:
 
 <img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl11_IDEA.jpg" width="400" />
 
+Note: if you have problems running samples / tests with error `RunWithFX`, try right-click on the `fxgl-test` module and rebuild `fxgl-test` module.
+
 ## Running all tests
 
 In IntelliJ,
