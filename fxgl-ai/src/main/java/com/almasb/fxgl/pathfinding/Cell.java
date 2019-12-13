@@ -42,4 +42,9 @@ public abstract class Cell {
     public final Object getUserData() {
         return userData;
     }
+
+    @Override
+    public String toString() {
+        return "Cell(" + x + "," + y + ")";
+    }
 }
