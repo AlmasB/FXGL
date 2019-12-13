@@ -30,6 +30,7 @@
         <module>fxgl-localization</module>
         <module>fxgl-notification</module>
         <module>fxgl-achievement</module>
+        <module>fxgl-ai</module>
         <module>fxgl-trade</module>
         <module>fxgl-minigames</module>
         <module>fxgl-samples</module>
