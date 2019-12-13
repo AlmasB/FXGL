@@ -45,6 +45,7 @@ public class Maze extends Grid<MazeCell> {
         });
     }
 
+    @SuppressWarnings("PMD.UselessParentheses")
     private void generateMaze(int[][] maze, int cx, int cy) {
         DIR[] dirs = DIR.values();
         Collections.shuffle(Arrays.asList(dirs));
@@ -59,6 +60,7 @@ public class Maze extends Grid<MazeCell> {
         }
     }
 
+    @SuppressWarnings("PMD.UselessParentheses")
     private static boolean between(int v, int upper) {
         return (v >= 0) && (v < upper);
     }

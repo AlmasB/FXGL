@@ -19,11 +19,7 @@ import javafx.scene.text.Text;
  */
 public class AStarGridView extends Parent {
 
-    private AStarGrid grid;
-
     public AStarGridView(AStarGrid grid, int cellWidth, int cellHeight) {
-        this.grid = grid;
-
         var rectGroup = new Group();
         var linesGroup = new Group();
         var coordGroup = new Group();
