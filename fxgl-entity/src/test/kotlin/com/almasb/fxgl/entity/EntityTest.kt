@@ -302,7 +302,11 @@ class EntityTest {
         val control = ValueUpdateControl()
         entity.addComponent(control)
 
+        assertFalse(control.pausedProperty().value)
+
         control.pause()
+
+        assertTrue(control.pausedProperty().value)
 
         entity.update(0.017)
 
