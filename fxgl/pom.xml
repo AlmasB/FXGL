@@ -204,6 +204,12 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-ai</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-media</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
