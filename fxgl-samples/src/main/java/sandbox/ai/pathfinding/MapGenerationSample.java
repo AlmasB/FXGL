@@ -16,13 +16,20 @@ import com.almasb.fxgl.procedural.BiomeMapGenerator;
 import com.almasb.fxgl.procedural.HeightMapGenerator;
 import com.almasb.fxgl.texture.ColoredTexture;
 import com.almasb.fxgl.texture.Texture;
+import javafx.collections.FXCollections;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import static com.almasb.fxgl.core.math.FXGLMath.map;
+import static com.almasb.fxgl.core.math.FXGLMath.noise2D;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * Shows how to use PCG maps.
+ * Some concepts in this file are adapted from https://www.redblobgames.com/maps/terrain-from-noise/
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -30,8 +37,8 @@ public class MapGenerationSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
+        settings.setWidth(800 + 200);
+        settings.setHeight(800);
         settings.setTitle("MapGenerationSample");
         settings.setVersion("0.1");
     }
@@ -53,7 +60,7 @@ public class MapGenerationSample extends GameApplication {
         // tile size
         int size = 5;
 
-        int W = getAppWidth() / size;
+        int W = (getAppWidth() - 200) / size;
         int H = getAppHeight() / size;
 
         Grid<BiomeMapGenerator.BiomeData> map = new Grid<>(BiomeMapGenerator.BiomeData.class, W, H, new BiomeMapGenerator(W, H, 2.4));
@@ -79,6 +86,7 @@ public class MapGenerationSample extends GameApplication {
         });
     }
 
+    // TODO: interactive sample where the apply() func can be edited
     private static class CustomHeightMapGenerator extends HeightMapGenerator {
 
         public CustomHeightMapGenerator(int width, int height) {
@@ -90,10 +98,11 @@ public class MapGenerationSample extends GameApplication {
             var nx = x * 1.0 / getWidth() - 0.5;
             var ny = y * 1.0 / getHeight() - 0.5;
 
-            double e = FXGLMath.noise2D(nx, ny)
-                    + 0.5 * FXGLMath.noise2D(2 * nx, 2 * ny)
-                    + 0.25 * FXGLMath.noise2D(9 * nx, 9 * ny);
-            double noiseValue = Math.pow(e, 3.3);
+            double noiseValue = noise2D(nx, ny)
+                    + 0.5 * noise2D(getAppWidth() / 400.0 * nx, getAppHeight() / 400.0 * ny)
+                    + 0.2 * noise2D(7 * nx, 7 * ny);
+
+            noiseValue *= noiseValue;
 
             if (noiseValue < 0) {
                 noiseValue = 0;
@@ -111,7 +120,7 @@ public class MapGenerationSample extends GameApplication {
         // tile size
         int size = 5;
 
-        int W = getAppWidth() / size;
+        int W = (getAppWidth() - 200) / size;
         int H = getAppHeight() / size;
 
         Grid<HeightMapGenerator.HeightData> map = new Grid<>(HeightMapGenerator.HeightData.class, W, H, new CustomHeightMapGenerator(W, H));
@@ -137,41 +146,63 @@ public class MapGenerationSample extends GameApplication {
         });
     }
 
+    private Interpolators interpolator = Interpolators.LINEAR;
+
     private void coloredMap() {
         // tile size
         int size = 1;
 
-        int W = getAppWidth() / size;
+        int W = (getAppWidth() - 200) / size;
         int H = getAppHeight() / size;
 
         Grid<HeightMapGenerator.HeightData> map = new Grid<>(HeightMapGenerator.HeightData.class, W, H, new CustomHeightMapGenerator(W, H));
 
         AnimatedColor water = new AnimatedColor(Color.DARKBLUE, Color.AQUA);
         AnimatedColor land = new AnimatedColor(Color.DARKGREEN, Color.LIGHTGREEN);
-        AnimatedColor desert = new AnimatedColor(Color.YELLOW, Color.LIGHTYELLOW);
-        AnimatedColor snow = new AnimatedColor(Color.BROWN, Color.WHITESMOKE);
+        AnimatedColor desert = new AnimatedColor(Color.GREENYELLOW, Color.LIGHTYELLOW);
+        AnimatedColor snow = new AnimatedColor(Color.GREEN, Color.WHITESMOKE);
 
         WritableImage image = new WritableImage(W, H);
 
-        var interpolator = Interpolators.LINEAR.EASE_OUT();
-
         map.forEach(cell -> {
+
             AnimatedColor anim;
+
+            double adjustedValue;
 
             if (cell.getHeight() < 0.2) {
                 anim = water;
+                adjustedValue = map(cell.getHeight(), 0.0, 0.2, 0.0, 1.0);
             } else if (cell.getHeight() < 0.4) {
                 anim = land;
+                adjustedValue = map(cell.getHeight(), 0.2, 0.4, 0.0, 1.0);
             } else if (cell.getHeight() < 0.9) {
                 anim = desert;
+                adjustedValue = map(cell.getHeight(), 0.4, 0.9, 0.0, 1.0);
             } else {
                 anim = snow;
+                adjustedValue = map(cell.getHeight(), 0.9, 1.0, 0.0, 1.0);
             }
 
-            image.getPixelWriter().setColor(cell.getX(), cell.getY(), anim.getValue(cell.getHeight(), interpolator));
+            image.getPixelWriter().setColor(cell.getX(), cell.getY(), anim.getValue(adjustedValue, interpolator.EASE_OUT()));
         });
 
         getGameScene().addUINode(new Texture(image));
+    }
+
+    @Override
+    protected void initUI() {
+        var choiceBox = new ChoiceBox<Interpolators>();
+        choiceBox.setItems(FXCollections.observableArrayList(Interpolators.values()));
+        choiceBox.setValue(Interpolators.LINEAR);
+
+        var btn = new Button("Generate");
+        btn.setOnAction(e -> {
+            interpolator = choiceBox.getValue();
+            getGameController().startNewGame();
+        });
+
+        addUINode(new VBox(btn, choiceBox), getAppWidth() - 200, 0);
     }
 
     public static void main(String[] args) {
