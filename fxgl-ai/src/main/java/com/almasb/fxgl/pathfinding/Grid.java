@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -39,7 +38,7 @@ public class Grid<T extends Cell> {
     }
 
     @SuppressWarnings("unchecked")
-    public Grid(Class<T> type, int width, int height, BiFunction<Integer, Integer, T> initFunction) {
+    public Grid(Class<T> type, int width, int height, CellGenerator<T> populateFunction) {
         if (width <= 0 || height <= 0)
             throw new IllegalArgumentException("Cannot create grid with 0 or negative size");
 
@@ -48,10 +47,10 @@ public class Grid<T extends Cell> {
 
         data = (T[][]) Array.newInstance(type, width, height);
 
-        populate(initFunction);
+        populate(populateFunction);
     }
 
-    public final void populate(BiFunction<Integer, Integer, T> populateFunction) {
+    public final void populate(CellGenerator<T> populateFunction) {
         for (int y = 0; y < data[0].length; y++) {
             for (int x = 0; x < data.length; x++) {
                 set(x, y, populateFunction.apply(x, y));
