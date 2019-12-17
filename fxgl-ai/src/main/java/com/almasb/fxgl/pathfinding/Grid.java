@@ -136,6 +136,45 @@ public class Grid<T extends Cell> {
         }
     }
 
+    public final Optional<T> getRight(Cell cell) {
+        return getRight(cell.getX(), cell.getY());
+    }
+
+    public final Optional<T> getLeft(Cell cell) {
+        return getLeft(cell.getX(), cell.getY());
+    }
+
+    public final Optional<T> getUp(Cell cell) {
+        return getUp(cell.getX(), cell.getY());
+    }
+
+    public final Optional<T> getDown(Cell cell) {
+        return getDown(cell.getX(), cell.getY());
+    }
+
+    public final Optional<T> getRight(int x, int y) {
+        return getOptional(x + 1, y);
+    }
+
+    public final Optional<T> getLeft(int x, int y) {
+        return getOptional(x - 1, y);
+    }
+
+    public final Optional<T> getUp(int x, int y) {
+        return getOptional(x, y - 1);
+    }
+
+    public final Optional<T> getDown(int x, int y) {
+        return getOptional(x, y + 1);
+    }
+
+    private Optional<T> getOptional(int x, int y) {
+        if (isWithin(x, y))
+            return Optional.of(get(x, y));
+
+        return Optional.empty();
+    }
+
     /**
      * @return a random cell from the grid
      */

@@ -22,8 +22,6 @@ public final class AStarMoveComponent extends Component {
     private CellMoveComponent moveComponent;
 
     private AStarPathfinder pathfinder;
-    private int cellWidth;
-    private int cellHeight;
 
     private List<AStarCell> path = new ArrayList<>();
 
@@ -31,26 +29,8 @@ public final class AStarMoveComponent extends Component {
      * Cell width and height are required to compute the cell position of the entity to
      * which this component is attached.
      */
-    public AStarMoveComponent(AStarPathfinder pathfinder, int cellWidth, int cellHeight) {
+    public AStarMoveComponent(AStarPathfinder pathfinder) {
         this.pathfinder = pathfinder;
-        this.cellWidth = cellWidth;
-        this.cellHeight = cellHeight;
-    }
-
-    public int getCellWidth() {
-        return cellWidth;
-    }
-
-    public int getCellHeight() {
-        return cellHeight;
-    }
-
-    public void setCellWidth(int cellWidth) {
-        this.cellWidth = cellWidth;
-    }
-
-    public void setCellHeight(int cellHeight) {
-        this.cellHeight = cellHeight;
     }
 
     public boolean isMoving() {
@@ -65,6 +45,26 @@ public final class AStarMoveComponent extends Component {
         return pathfinder.getGrid();
     }
 
+    public void moveToRightCell() {
+        getGrid().getRight(moveComponent.getCellX(), moveComponent.getCellY())
+                .ifPresent(this::moveToCell);
+    }
+
+    public void moveToLeftCell() {
+        getGrid().getLeft(moveComponent.getCellX(), moveComponent.getCellY())
+                .ifPresent(this::moveToCell);
+    }
+
+    public void moveToUpCell() {
+        getGrid().getUp(moveComponent.getCellX(), moveComponent.getCellY())
+                .ifPresent(this::moveToCell);
+    }
+
+    public void moveToDownCell() {
+        getGrid().getDown(moveComponent.getCellX(), moveComponent.getCellY())
+                .ifPresent(this::moveToCell);
+    }
+
     public void moveToCell(AStarCell cell) {
         moveToCell(cell.getX(), cell.getY());
     }
@@ -73,9 +73,8 @@ public final class AStarMoveComponent extends Component {
      * Entity's center is used to position it in the cell.
      */
     public void moveToCell(int x, int y) {
-        var center = entity.getCenter();
-        int startX = (int) (center.getX() / cellWidth);
-        int startY = (int) (center.getY() / cellHeight);
+        int startX = moveComponent.getCellX();
+        int startY = moveComponent.getCellY();
 
         moveToCell(startX, startY, x, y);
     }

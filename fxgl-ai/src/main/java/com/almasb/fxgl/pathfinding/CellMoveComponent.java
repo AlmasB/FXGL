@@ -39,6 +39,42 @@ public final class CellMoveComponent extends Component {
         return isMoving;
     }
 
+    public int getCellWidth() {
+        return cellWidth;
+    }
+
+    public int getCellHeight() {
+        return cellHeight;
+    }
+
+    public void setCellWidth(int cellWidth) {
+        this.cellWidth = cellWidth;
+    }
+
+    public void setCellHeight(int cellHeight) {
+        this.cellHeight = cellHeight;
+    }
+
+    /**
+     * Note: entity's center is used to compute this.
+     *
+     * @return the cell x where entity is currently at
+     */
+    public int getCellX() {
+        var center = entity.getCenter();
+        return (int) (center.getX() / cellWidth);
+    }
+
+    /**
+     * Note: entity's center is used to compute this.
+     *
+     * @return the cell y where entity is currently at
+     */
+    public int getCellY() {
+        var center = entity.getCenter();
+        return (int) (center.getY() / cellHeight);
+    }
+
     public void moveToCell(Cell cell) {
         moveToCell(cell.getX(), cell.getY());
     }
