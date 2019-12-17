@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.pathfinding;
 
+import static java.lang.Math.abs;
+
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -41,6 +43,17 @@ public abstract class Cell {
      */
     public final Object getUserData() {
         return userData;
+    }
+
+    /**
+     * Note: only horizontal and vertical movements are used to compute,
+     * i.e. Manhattan distance (no diagonal movement).
+     * Distance from 0,0 to 2,2 is therefore 4.
+     *
+     * @return distance in number of cells from this cell to other
+     */
+    public int distance(Cell other) {
+        return abs(getX() - other.getX()) + abs(getY() - other.getY());
     }
 
     @Override
