@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.pathfinding.astar;
 
+import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.pathfinding.CellMoveComponent;
@@ -21,16 +22,19 @@ public final class AStarMoveComponent extends Component {
 
     private CellMoveComponent moveComponent;
 
-    private AStarPathfinder pathfinder;
+    private LazyValue<AStarPathfinder> pathfinder;
 
     private List<AStarCell> path = new ArrayList<>();
 
+    public AStarMoveComponent(AStarGrid grid) {
+        this(new LazyValue<>(() -> grid));
+    }
+
     /**
-     * Cell width and height are required to compute the cell position of the entity to
-     * which this component is attached.
+     * This ctor is for cases when the grid has not been constructed yet.
      */
-    public AStarMoveComponent(AStarPathfinder pathfinder) {
-        this.pathfinder = pathfinder;
+    public AStarMoveComponent(LazyValue<AStarGrid> grid) {
+        pathfinder = new LazyValue<>(() -> new AStarPathfinder(grid.get()));
     }
 
     public boolean isMoving() {
@@ -42,7 +46,7 @@ public final class AStarMoveComponent extends Component {
     }
 
     public AStarGrid getGrid() {
-        return pathfinder.getGrid();
+        return pathfinder.get().getGrid();
     }
 
     public void moveToRightCell() {
@@ -84,7 +88,7 @@ public final class AStarMoveComponent extends Component {
      * This can be used to explicitly specify the start X and Y of the entity.
      */
     public void moveToCell(int startX, int startY, int targetX, int targetY) {
-        path = pathfinder.findPath(startX, startY, targetX, targetY);
+        path = pathfinder.get().findPath(startX, startY, targetX, targetY);
     }
 
     @Override
