@@ -58,6 +58,10 @@ public class AStarCell extends Cell {
         return state;
     }
 
+    public final boolean isWalkable() {
+        return state.isWalkable();
+    }
+
     /**
      * @return F cost (G + H)
      */
