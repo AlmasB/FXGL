@@ -9,6 +9,7 @@ package com.almasb.fxgl.core.fsm
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -106,12 +107,26 @@ class StateMachineTest {
     }
 
     @Test
+    fun `Parent state is also active when substate allows concurrency`() {
+        val subState3 = TestState(true, true)
+
+        machine.changeState(subState3)
+
+        assertThat(machine.activeStates, contains(initialState, subState3))
+    }
+
+    @Test
     fun `New parent state is not set if substates are present`() {
         machine.changeState(subState1)
 
         machine.changeState(state2)
 
         assertThat(machine.parentState, `is`(initialState))
+    }
+
+    @Test
+    fun `State is not popped if there are none`() {
+        assertFalse(machine.popSubState())
     }
 
     @Test
