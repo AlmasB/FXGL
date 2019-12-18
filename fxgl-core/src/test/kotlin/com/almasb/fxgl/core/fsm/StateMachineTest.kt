@@ -75,7 +75,7 @@ class StateMachineTest {
     }
 
     @Test
-    fun `Allow substate conccurency`() {
+    fun `Allow substate concurrency`() {
         assertThat(machine.activeStates, contains(initialState))
 
         machine.changeState(subState1)
