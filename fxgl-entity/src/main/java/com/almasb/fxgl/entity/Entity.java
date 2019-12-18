@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
-import static java.lang.Math.abs;
 
 /**
  * A generic game object.
