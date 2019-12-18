@@ -76,17 +76,25 @@ class StateMachineTest {
 
     @Test
     fun `Allow substate concurrency`() {
+        val runResult = arrayListOf<TestState>()
+
         assertThat(machine.activeStates, contains(initialState))
 
         machine.changeState(subState1)
 
         assertThat(machine.activeStates, contains(subState1))
 
+        machine.runOnActiveStates { runResult += it }
+        assertThat(runResult, contains(subState1))
+
         val subState3 = TestState(true, true)
 
         machine.changeState(subState3)
 
         assertThat(machine.activeStates, contains(subState1, subState3))
+        runResult.clear()
+        machine.runOnActiveStates { runResult += it }
+        assertThat(runResult, contains(subState1, subState3))
 
         machine.changeState(subState2)
 
