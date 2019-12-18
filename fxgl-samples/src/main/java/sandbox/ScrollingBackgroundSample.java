@@ -83,11 +83,11 @@ public class ScrollingBackgroundSample extends GameApplication {
 //                .buildAndAttach();
 
         getGameScene().getViewport().bindToEntity(player, 0, 0);
-        getGameScene().getViewport().setLazy(true);
-
+        //getGameScene().getViewport().setLazy(true);
+        getGameScene().getViewport().setFloating(true);
 
         entityBuilder()
-                .view(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_wrap.png", 1066, 600),
+                .view(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_wrap.png", 1066, 800),
                         Orientation.HORIZONTAL))
                 .zIndex(-1)
                 .buildAndAttach();

@@ -10,7 +10,9 @@ import com.almasb.fxgl.animation.AnimatedColor;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.app.GameView;
 import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.pathfinding.Grid;
 import com.almasb.fxgl.procedural.BiomeMapGenerator;
 import com.almasb.fxgl.procedural.HeightMapGenerator;
@@ -152,8 +154,8 @@ public class MapGenerationSample extends GameApplication {
         // tile size
         int size = 1;
 
-        int W = (getAppWidth() - 200) / size;
-        int H = getAppHeight() / size;
+        int W = (getAppWidth() + 200) / size;
+        int H = (getAppHeight() + 200) / size;
 
         Grid<HeightMapGenerator.HeightData> map = new Grid<>(HeightMapGenerator.HeightData.class, W, H, new CustomHeightMapGenerator(W, H));
 
@@ -187,7 +189,13 @@ public class MapGenerationSample extends GameApplication {
             image.getPixelWriter().setColor(cell.getX(), cell.getY(), anim.getValue(adjustedValue, interpolator.EASE_OUT()));
         });
 
-        getGameScene().addUINode(new Texture(image));
+        getGameScene().getViewport().bindToEntity(new Entity(), 0, 0);
+
+        var t = new Texture(image);
+        t.setTranslateX(-100);
+        t.setTranslateY(-100);
+
+        getGameScene().addGameView(new GameView(t, 0));
     }
 
     @Override

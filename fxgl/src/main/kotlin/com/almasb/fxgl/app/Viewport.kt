@@ -7,6 +7,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.animation.AnimatedValue
+import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.FXGLMath.*
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.core.util.EmptyRunnable
@@ -105,6 +106,11 @@ class Viewport
     private val maxY = SimpleIntegerProperty(Integer.MAX_VALUE)
 
     var isLazy = false
+
+    /**
+     * Currently only supported for non-lazy and entity bound viewports.
+     */
+    var isFloating = false
 
     /**
      * This is only used for visual effects and acts like a viewport overlay.
@@ -284,6 +290,8 @@ class Viewport
 
     private var onFadeFlashFinish: Runnable = EmptyRunnable
 
+    private var t = 0.0
+
     fun flash(onFinished: Runnable) {
         if (isFlashing || isFading)
             return
@@ -313,6 +321,8 @@ class Viewport
     }
 
     fun onUpdate(tpf: Double) {
+        t += tpf * 0.25
+
         if (isFlashing || isFading) {
             updateFadeFlash(tpf)
         }
@@ -366,6 +376,14 @@ class Viewport
         if (!isLazy) {
             x = offsetX + boundX!!.doubleValue()
             y = offsetY + boundY!!.doubleValue()
+
+            // TODO: this should be easier to implement if we keep origin (x, y) data
+            // without any transforms, so at any time we know where the origin is
+            if (isFloating) {
+                x += (noise1D(t) - 0.5) * 50
+                y += (noise1D(t + 1500) - 0.5) * 50
+            }
+
             return
         }
 
