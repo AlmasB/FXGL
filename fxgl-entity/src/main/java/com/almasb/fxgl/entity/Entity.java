@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
+import static java.lang.Math.abs;
 
 /**
  * A generic game object.
@@ -638,6 +639,31 @@ public class Entity {
 
     public final DoubleProperty yProperty() {
         return transform.yProperty();
+    }
+
+    /**
+     * Set top left point of this entity in a way that given entity's center
+     * will be located at given (x, y) in world coordinates.
+     * Note: bounding box is used to compute the entity's center.
+     */
+    public final void setPositionCenter(double x, double y) {
+        setPosition(x, y, bbox.getCenterLocal());
+    }
+
+    /**
+     * Set top left point of this entity in a way that given anchor (in local coordinates) of this entity
+     * will be located at given (x, y) in world coordinates.
+     */
+    public final void setPosition(double x, double y, Point2D localAnchor) {
+        setPosition(x - localAnchor.getX(), y - localAnchor.getY());
+    }
+
+    /**
+     * @param localAnchor in local coordinates
+     * @return world coordinates of the point that corresponds to local anchor
+     */
+    public final Point2D getPosition(Point2D localAnchor) {
+        return new Point2D(getX() + localAnchor.getX(), getY() + localAnchor.getY());
     }
 
     /**
