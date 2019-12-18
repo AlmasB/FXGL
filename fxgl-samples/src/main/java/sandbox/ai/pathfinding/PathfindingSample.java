@@ -9,6 +9,7 @@ package sandbox.ai.pathfinding;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.pathfinding.CellMoveComponent;
 import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.astar.AStarGrid;
 import com.almasb.fxgl.pathfinding.astar.AStarPathfinder;
@@ -79,6 +80,13 @@ public class PathfindingSample extends GameApplication {
                 }
             });
         });
+
+        var e = entityBuilder()
+                .viewWithBBox(new Rectangle(20, 20))
+                .with(new CellMoveComponent(CELL_WIDTH, CELL_HEIGHT, 100))
+                .buildAndAttach();
+
+        e.getComponent(CellMoveComponent.class).setPositionToCell(1, 1);
     }
 
     public static void main(String[] args) {

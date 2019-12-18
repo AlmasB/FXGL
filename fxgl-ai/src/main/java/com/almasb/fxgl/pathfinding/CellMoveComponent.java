@@ -75,6 +75,24 @@ public final class CellMoveComponent extends Component {
         return (int) (center.getY() / cellHeight);
     }
 
+    /**
+     * Sets position of the entity to given cell.
+     */
+    public void setPositionToCell(Cell cell) {
+        setPositionToCell(cell.getX(), cell.getY());
+    }
+
+    /**
+     * Sets position of the entity to given cell, identified using given cell X, Y.
+     */
+    public void setPositionToCell(int cellX, int cellY) {
+        // cell center
+        int cx = cellX * cellWidth + cellWidth / 2;
+        int cy = cellY * cellHeight + cellHeight / 2;
+
+        entity.setPositionCenter(cx, cy);
+    }
+
     public void moveToCell(Cell cell) {
         moveToCell(cell.getX(), cell.getY());
     }
