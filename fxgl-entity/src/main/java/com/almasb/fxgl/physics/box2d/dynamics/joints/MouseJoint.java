@@ -5,6 +5,7 @@
  */
 package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.common.*;
 import com.almasb.fxgl.physics.box2d.dynamics.SolverData;
@@ -137,7 +138,7 @@ public class MouseJoint extends Joint {
         float mass = m_bodyB.getMass();
 
         // Frequency
-        float omega = 2.0f * JBoxUtils.PI * m_frequencyHz;
+        float omega = 2.0f * (float) FXGLMath.PI * m_frequencyHz;
 
         // Damping coefficient
         float d = 2.0f * mass * m_dampingRatio * omega;

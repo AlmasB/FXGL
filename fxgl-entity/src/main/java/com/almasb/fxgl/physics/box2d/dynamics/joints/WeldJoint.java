@@ -187,7 +187,7 @@ public class WeldJoint extends Joint {
             float C = aB - aA - m_referenceAngle;
 
             // Frequency
-            float omega = 2.0f * JBoxUtils.PI * m_frequencyHz;
+            float omega = 2.0f * (float) FXGLMath.PI * m_frequencyHz;
 
             // Damping coefficient
             float d = 2.0f * m * m_dampingRatio * omega;

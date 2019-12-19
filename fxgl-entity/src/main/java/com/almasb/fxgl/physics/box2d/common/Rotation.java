@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.physics.box2d.common;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 
 import java.io.Serializable;
@@ -47,7 +48,7 @@ public final class Rotation implements Serializable {
     }
 
     public float getAngle() {
-        return JBoxUtils.atan2(s, c);
+        return (float) FXGLMath.atan2(s, c);
     }
 
     @Override

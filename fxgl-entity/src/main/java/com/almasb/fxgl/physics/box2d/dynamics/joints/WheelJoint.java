@@ -276,7 +276,7 @@ public class WheelJoint extends Joint {
                 float C = Vec2.dot(d, m_ax);
 
                 // Frequency
-                float omega = 2.0f * JBoxUtils.PI * m_frequencyHz;
+                float omega = 2.0f * (float) FXGLMath.PI * m_frequencyHz;
 
                 // Damping coefficient
                 float d = 2.0f * m_springMass * m_dampingRatio * omega;

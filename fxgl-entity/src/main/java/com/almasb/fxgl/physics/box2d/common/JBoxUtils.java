@@ -28,16 +28,12 @@
 
 package com.almasb.fxgl.physics.box2d.common;
 
-import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 
 /**
  * A few math methods that don't fit very well anywhere else.
  */
 public final class JBoxUtils {
-    public static final float PI = (float) Math.PI;
-    public static final float TWOPI = (float) (Math.PI * 2);
-    public static final float HALF_PI = PI / 2;
 
     private static final float[] sinLUT = new float[JBoxSettings.SINCOS_LUT_LENGTH];
 
@@ -52,17 +48,17 @@ public final class JBoxUtils {
     }
 
     public static float cos(float x) {
-        return sinLUT(HALF_PI - x);
+        return sinLUT((float) Math.PI / 2 - x);
     }
 
     public static float sinLUT(float x) {
-        x %= TWOPI;
+        x %= (float) (Math.PI * 2);
 
         if (x < 0) {
-            x += TWOPI;
+            x += (float) (Math.PI * 2);
         }
 
-        return sinLUT[round(x / JBoxSettings.SINCOS_LUT_PRECISION) % JBoxSettings.SINCOS_LUT_LENGTH];
+        return sinLUT[floor(x / JBoxSettings.SINCOS_LUT_PRECISION + .5f) % JBoxSettings.SINCOS_LUT_LENGTH];
     }
 
     public static int floor(float x) {
@@ -73,49 +69,9 @@ public final class JBoxUtils {
         return y;
     }
 
-    public static int round(float x) {
-        return floor(x + .5f);
-    }
-
-    public static float map(float val, float fromMin, float fromMax,
-                                  float toMin, float toMax) {
-        float mult = (val - fromMin) / (fromMax - fromMin);
-        return toMin + mult * (toMax - toMin);
-    }
-
     /** Returns the closest value to 'a' that is in between 'low' and 'high' */
     public static float clamp(float a, float low, float high) {
         return Math.max(low, Math.min(a, high));
-    }
-
-    public static Vec2 clamp(Vec2 a, Vec2 low, Vec2 high) {
-        Vec2 min = new Vec2();
-        min.x = a.x < high.x ? a.x : high.x;
-        min.y = a.y < high.y ? a.y : high.y;
-        min.x = low.x > min.x ? low.x : min.x;
-        min.y = low.y > min.y ? low.y : min.y;
-        return min;
-    }
-
-    public static float atan2(float y, float x) {
-        if (x == 0.0f) {
-            if (y > 0.0f) return HALF_PI;
-            if (y == 0.0f) return 0.0f;
-            return -HALF_PI;
-        }
-        float atan;
-        float z = y / x;
-        if (FXGLMath.abs(z) < 1.0f) {
-            atan = z / (1.0f + 0.28f * z * z);
-            if (x < 0.0f) {
-                if (y < 0.0f) return atan - PI;
-                return atan + PI;
-            }
-        } else {
-            atan = HALF_PI - z / (z * z + 0.28f);
-            if (y < 0.0f) return atan - PI;
-        }
-        return atan;
     }
 
     public static float sqrt(float x) {
