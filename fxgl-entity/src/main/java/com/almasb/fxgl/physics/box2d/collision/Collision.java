@@ -13,7 +13,6 @@ import com.almasb.fxgl.physics.box2d.collision.shapes.EdgeShape;
 import com.almasb.fxgl.physics.box2d.collision.shapes.PolygonShape;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;

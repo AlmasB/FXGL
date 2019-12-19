@@ -12,7 +12,6 @@ import com.almasb.fxgl.physics.box2d.callbacks.TreeRayCastCallback;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 
 /**
  * A dynamic tree arranges data in a binary tree to accelerate queries such as volume queries and

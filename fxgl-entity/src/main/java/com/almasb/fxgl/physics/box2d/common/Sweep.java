@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.physics.box2d.common;
 
-import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 
 import java.io.Serializable;

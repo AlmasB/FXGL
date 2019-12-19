@@ -20,7 +20,6 @@ import com.almasb.fxgl.physics.box2d.collision.broadphase.DefaultBroadPhaseBuffe
 import com.almasb.fxgl.physics.box2d.collision.broadphase.DynamicTree;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Sweep;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
