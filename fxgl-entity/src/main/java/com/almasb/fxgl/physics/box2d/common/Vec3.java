@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * @author Daniel Murphy
  */
-public class Vec3 implements Serializable {
+public final class Vec3 implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public float x, y, z;
@@ -52,10 +52,6 @@ public class Vec3 implements Serializable {
         return this;
     }
 
-    public Vec3 add(Vec3 argVec) {
-        return new Vec3(x + argVec.x, y + argVec.y, z + argVec.z);
-    }
-
     public Vec3 subLocal(Vec3 argVec) {
         x -= argVec.x;
         y -= argVec.y;
@@ -63,23 +59,11 @@ public class Vec3 implements Serializable {
         return this;
     }
 
-    public Vec3 sub(Vec3 argVec) {
-        return new Vec3(x - argVec.x, y - argVec.y, z - argVec.z);
-    }
-
     public Vec3 mulLocal(float argScalar) {
         x *= argScalar;
         y *= argScalar;
         z *= argScalar;
         return this;
-    }
-
-    public Vec3 mul(float argScalar) {
-        return new Vec3(x * argScalar, y * argScalar, z * argScalar);
-    }
-
-    public Vec3 negate() {
-        return new Vec3(-x, -y, -z);
     }
 
     public Vec3 negateLocal() {
@@ -127,23 +111,15 @@ public class Vec3 implements Serializable {
         return true;
     }
 
-    public final static float dot(Vec3 a, Vec3 b) {
+    public static float dot(Vec3 a, Vec3 b) {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
 
-    public final static Vec3 cross(Vec3 a, Vec3 b) {
+    public static Vec3 cross(Vec3 a, Vec3 b) {
         return new Vec3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
     }
 
-    public final static void crossToOut(Vec3 a, Vec3 b, Vec3 out) {
-        final float tempy = a.z * b.x - a.x * b.z;
-        final float tempz = a.x * b.y - a.y * b.x;
-        out.x = a.y * b.z - a.z * b.y;
-        out.y = tempy;
-        out.z = tempz;
-    }
-
-    public final static void crossToOutUnsafe(Vec3 a, Vec3 b, Vec3 out) {
+    public static void crossToOutUnsafe(Vec3 a, Vec3 b, Vec3 out) {
         assert out != b;
         assert out != a;
         out.x = a.y * b.z - a.z * b.y;
