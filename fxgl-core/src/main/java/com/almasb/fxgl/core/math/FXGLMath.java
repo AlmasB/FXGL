@@ -35,6 +35,10 @@ public final class FXGLMath {
     public static final double PI2 = PI * 2;
     public static final double HALF_PI = PI / 2;
 
+    public static final float PI_F = (float) Math.PI;
+    public static final float PI2_F = (float) (Math.PI * 2);
+    public static final float HALF_PI_F = PI_F / 2;
+
     public static final double E = Math.E;
 
     private static final int SIN_BITS = 14; // 16KB. Adjust for accuracy.

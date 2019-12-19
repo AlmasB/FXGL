@@ -28,6 +28,7 @@
 
 package com.almasb.fxgl.physics.box2d.common;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 
 /**
@@ -52,10 +53,10 @@ public final class JBoxUtils {
     }
 
     public static float sinLUT(float x) {
-        x %= (float) (Math.PI * 2);
+        x %= FXGLMath.PI2_F;
 
         if (x < 0) {
-            x += (float) (Math.PI * 2);
+            x += FXGLMath.PI2_F;
         }
 
         return sinLUT[floor(x / JBoxSettings.SINCOS_LUT_PRECISION + .5f) % JBoxSettings.SINCOS_LUT_LENGTH];
