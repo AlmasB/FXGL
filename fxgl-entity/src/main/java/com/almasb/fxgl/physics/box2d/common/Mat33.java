@@ -42,7 +42,7 @@ public final class Mat33 implements Serializable {
      * Solve A * x = b, where b is a column vector. This is more efficient than computing the inverse
      * in one-shot cases.
      */
-    public final void solve22ToOut(Vec2 b, Vec2 out) {
+    public void solve22ToOut(Vec2 b, Vec2 out) {
         final float a11 = ex.x, a12 = ey.x, a21 = ex.y, a22 = ey.y;
         float det = a11 * a22 - a12 * a21;
         if (det != 0.0f) {
@@ -58,7 +58,7 @@ public final class Mat33 implements Serializable {
      *
      * @param out the result
      */
-    public final void solve33ToOut(Vec3 b, Vec3 out) {
+    public void solve33ToOut(Vec3 b, Vec3 out) {
         assert b != out;
         Vec3.crossToOutUnsafe(ey, ez, out);
         float det = Vec3.dot(ex, out);
