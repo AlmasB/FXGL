@@ -49,7 +49,7 @@ public final class JBoxUtils {
     }
 
     public static float cos(float x) {
-        return sinLUT((float) Math.PI / 2 - x);
+        return sinLUT(FXGLMath.HALF_PI_F - x);
     }
 
     public static float sinLUT(float x) {
@@ -88,86 +88,4 @@ public final class JBoxUtils {
     public static float distance(Vec2 v1, Vec2 v2) {
         return sqrt(distanceSquared(v1, v2));
     }
-
-    // from Body
-
-//    /**
-//     * Get the world coordinates of a point given the local coordinates.
-//     *
-//     * @param localPoint a point on the body measured relative the the body's origin.
-//     * @return the same point expressed in world coordinates.
-//     */
-//    public Vec2 getWorldPoint(Vec2 localPoint) {
-//        Vec2 v = new Vec2();
-//        getWorldPointToOut(localPoint, v);
-//        return v;
-//    }
-//
-
-//
-//    /**
-//     * Get the world coordinates of a vector given the local coordinates.
-//     *
-//     * @param localVector a vector fixed in the body.
-//     * @return the same vector expressed in world coordinates.
-//     */
-//    public Vec2 getWorldVector(Vec2 localVector) {
-//        Vec2 out = new Vec2();
-//        getWorldVectorToOut(localVector, out);
-//        return out;
-//    }
-//
-//
-//    /**
-//     * Gets a local vector given a world vector.
-//     *
-//     * @param worldVector vector in world coordinates.
-//     * @return the corresponding local vector.
-//     */
-//    public Vec2 getLocalVector(Vec2 worldVector) {
-//        Vec2 out = new Vec2();
-//        getLocalVectorToOut(worldVector, out);
-//        return out;
-//    }
-//
-//
-//    public void getLocalVectorToOutUnsafe(Vec2 worldVector, Vec2 out) {
-//        Rotation.mulTransUnsafe(m_xf.q, worldVector, out);
-//    }
-//
-//    /**
-//     * Get the world linear velocity of a world point attached to this body.
-//     *
-//     * @param worldPoint point in world coordinates.
-//     * @return the world velocity of a point.
-//     */
-//    public Vec2 getLinearVelocityFromWorldPoint(Vec2 worldPoint) {
-//        Vec2 out = new Vec2();
-//        getLinearVelocityFromWorldPointToOut(worldPoint, out);
-//        return out;
-//    }
-//
-//    public void getLinearVelocityFromWorldPointToOut(Vec2 worldPoint, Vec2 out) {
-//        float tempX = worldPoint.x - m_sweep.c.x;
-//        float tempY = worldPoint.y - m_sweep.c.y;
-//        out.x = -m_angularVelocity * tempY + m_linearVelocity.x;
-//        out.y = m_angularVelocity * tempX + m_linearVelocity.y;
-//    }
-//
-//    /**
-//     * Get the world velocity of a local point.
-//     *
-//     * @param localPoint point in local coordinates.
-//     * @return the world velocity of a point.
-//     */
-//    public Vec2 getLinearVelocityFromLocalPoint(Vec2 localPoint) {
-//        Vec2 out = new Vec2();
-//        getLinearVelocityFromLocalPointToOut(localPoint, out);
-//        return out;
-//    }
-//
-//    public void getLinearVelocityFromLocalPointToOut(Vec2 localPoint, Vec2 out) {
-//        getWorldPointToOut(localPoint, out);
-//        getLinearVelocityFromWorldPointToOut(out, out);
-//    }
 }
