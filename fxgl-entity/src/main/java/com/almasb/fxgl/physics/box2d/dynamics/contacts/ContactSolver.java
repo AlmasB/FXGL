@@ -21,9 +21,6 @@ import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactVelocityConstraint
  */
 public final class ContactSolver {
 
-    @SuppressWarnings("PMD.UnusedPrivateField")
-    private static final float k_errorTol = 1e-3f;
-
     /**
      * For each solver, this is the initial number of constraints in the array, which expands as
      * needed.
