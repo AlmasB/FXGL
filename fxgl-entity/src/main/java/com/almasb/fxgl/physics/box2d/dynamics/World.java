@@ -588,7 +588,7 @@ public final class World {
                     // Beta is the fraction of the remaining portion of the .
                     float beta = toiOutput.t;
                     if (toiOutput.state == TOIOutputState.TOUCHING) {
-                        alpha = JBoxUtils.min(alpha0 + (1.0f - alpha0) * beta, 1.0f);
+                        alpha = Math.min(alpha0 + (1.0f - alpha0) * beta, 1.0f);
                     } else {
                         alpha = 1.0f;
                     }

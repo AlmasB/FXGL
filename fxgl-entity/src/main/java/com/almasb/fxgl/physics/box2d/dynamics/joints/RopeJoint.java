@@ -170,7 +170,7 @@ public class RopeJoint extends Joint {
 
         float impulse = -m_mass * Cdot;
         float oldImpulse = m_impulse;
-        m_impulse = JBoxUtils.min(0.0f, m_impulse + impulse);
+        m_impulse = Math.min(0.0f, m_impulse + impulse);
         impulse = m_impulse - oldImpulse;
 
         float Px = impulse * m_u.x;

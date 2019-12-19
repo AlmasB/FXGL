@@ -1291,7 +1291,7 @@ public final class Collision {
                 tempx = vB.x - m_v2.x;
                 tempy = vB.y - m_v2.y;
                 float s2 = n.x * tempx + n.y * tempy;
-                float s = JBoxUtils.min(s1, s2);
+                float s = Math.min(s1, s2);
 
                 if (s > m_radius) {
                     // No collision

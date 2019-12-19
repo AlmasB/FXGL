@@ -123,8 +123,8 @@ public class VoronoiDiagram {
             Generator g = m_generatorBuffer[k];
             g.center.x = inverseRadius * (g.center.x - lower.x);
             g.center.y = inverseRadius * (g.center.y - lower.y);
-            int x = JBoxUtils.max(0, JBoxUtils.min((int) g.center.x, m_countX - 1));
-            int y = JBoxUtils.max(0, JBoxUtils.min((int) g.center.y, m_countY - 1));
+            int x = Math.max(0, Math.min((int) g.center.x, m_countX - 1));
+            int y = Math.max(0, Math.min((int) g.center.y, m_countY - 1));
             queue.push(taskPool.pop().set(x, y, x + y * m_countX, g));
         }
         while (!queue.empty()) {

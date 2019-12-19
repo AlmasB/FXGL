@@ -170,7 +170,7 @@ public final class AABB {
             }
 
             // Pull the max down
-            tmax = JBoxUtils.min(tmax, t2);
+            tmax = Math.min(tmax, t2);
 
             if (tmin > tmax) {
                 argPool.pushVec2(4);
@@ -207,7 +207,7 @@ public final class AABB {
             }
 
             // Pull the max down
-            tmax = JBoxUtils.min(tmax, t2);
+            tmax = Math.min(tmax, t2);
 
             if (tmin > tmax) {
                 argPool.pushVec2(4);
