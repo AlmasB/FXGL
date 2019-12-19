@@ -16,33 +16,18 @@ import java.io.Serializable;
 public final class Mat22 implements Serializable {
     private static final long serialVersionUID = 2L;
 
-    public final Vec2 ex, ey;
-
-    /**
-     * Construct zero matrix. Note: this is NOT an identity matrix!
-     */
-    public Mat22() {
-        ex = new Vec2();
-        ey = new Vec2();
-    }
-
-    /**
-     * Create a matrix with given vectors as columns.
-     *
-     * @param c1 Column 1 of matrix
-     * @param c2 Column 2 of matrix
-     */
-    public Mat22(Vec2 c1, Vec2 c2) {
-        ex = c1.clone();
-        ey = c2.clone();
-    }
+    public final Vec2 ex = new Vec2();
+    public final Vec2 ey = new Vec2();
 
     /**
      * Return a clone of this matrix.
      */
     @Override
     public Mat22 clone() {
-        return new Mat22(ex, ey);
+        Mat22 mat = new Mat22();
+        mat.ex.set(ex);
+        mat.ey.set(ey);
+        return mat;
     }
 
     /**
@@ -87,8 +72,8 @@ public final class Mat22 implements Serializable {
     public int hashCode() {
         int prime = 31;
         int result = 1;
-        result = prime * result + ((ex == null) ? 0 : ex.hashCode());
-        result = prime * result + ((ey == null) ? 0 : ey.hashCode());
+        result = prime * result + ex.hashCode();
+        result = prime * result + ey.hashCode();
         return result;
     }
 
