@@ -401,7 +401,7 @@ public class Entity {
         try {
             return method.call(args);
         } catch (Exception e) {
-            String message = "Failed to call: " + format(componentMethodName, args) + " Cause: " + ReflectionUtils.getRootCause(e);
+            String message = "Failed to call: " + format(componentMethodName, args) + " Cause: " + getRootCause(e);
 
             throw new IllegalArgumentException(message, e);
         }
