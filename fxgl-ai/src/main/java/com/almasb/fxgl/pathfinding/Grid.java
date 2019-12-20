@@ -101,23 +101,17 @@ public class Grid<T extends Cell> {
     /**
      * Note: returned cells are in the grid (i.e. bounds are checked).
      * Diagonal cells are not included.
+     * The order is left, up, right, down.
      *
      * @return a new list of neighboring cells to given (x, y)
      */
     public final List<T> getNeighbors(int x, int y) {
-        // each pair is used as a Point2D (int)
-        // Key = X, Value = Y
-        List<Pair<Integer, Integer>> points = List.of(
-                new Pair<>(x - 1, y),
-                new Pair<>(x + 1, y),
-                new Pair<>(x, y - 1),
-                new Pair<>(x, y + 1)
-        );
-
-        return points.stream()
-                .filter((p) -> isWithin(p.getKey(), p.getValue()))
-                .map((p) -> get(p.getKey(), p.getValue()))
-                .collect(Collectors.toList());
+        List<T> result = new ArrayList<>();
+        getLeft(x, y).ifPresent(result::add);
+        getUp(x, y).ifPresent(result::add);
+        getRight(x, y).ifPresent(result::add);
+        getDown(x, y).ifPresent(result::add);
+        return result;
     }
 
     public final T get(int x, int y) {
