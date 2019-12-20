@@ -793,18 +793,46 @@ class EntityTest {
 
     @Test
     fun `Fail when calling a component method and no suitable method found`() {
-        assertThrows(IllegalArgumentException::class.java) {
+        var e = assertThrows(IllegalArgumentException::class.java) {
             entity.call<Any>("bla-bla")
         }
+
+        assertThat(e.message, `is`("Cannot find method: bla-bla()"))
+
+        e = assertThrows(IllegalArgumentException::class.java) {
+            entity.call<Any>("bla-bla", 3)
+        }
+
+        assertThat(e.message, `is`("Cannot find method: bla-bla(int)"))
+
+        e = assertThrows(IllegalArgumentException::class.java) {
+            entity.call<Any>("bla-bla", "hi")
+        }
+
+        assertThat(e.message, `is`("Cannot find method: bla-bla(class java.lang.String)"))
     }
 
     @Test
     fun `Fail when calling a component method and call fails`() {
         entity.addComponent(ComponentWithMethod())
 
-        assertThrows(IllegalArgumentException::class.java) {
-            entity.call<Any>("myMethod", 4)
+        var e = assertThrows(IllegalArgumentException::class.java) {
+            entity.call<Any>("methodThatFails")
         }
+
+        assertThat(e.message, `is`("Failed to call: methodThatFails() Cause: java.lang.IllegalStateException: Test Fail"))
+
+        e = assertThrows(IllegalArgumentException::class.java) {
+            entity.call<Any>("methodThatFailsInt", 3)
+        }
+
+        assertThat(e.message, `is`("Failed to call: methodThatFailsInt(3) Cause: java.lang.IllegalStateException: Test Fail 3"))
+
+        e = assertThrows(IllegalArgumentException::class.java) {
+            entity.call<Any>("methodThatFailsStringInt", "hi", 5)
+        }
+
+        assertThat(e.message, `is`("Failed to call: methodThatFailsStringInt(hi, 5) Cause: java.lang.IllegalStateException: Test Fail hi, 5"))
     }
 
 //    @Test
@@ -843,6 +871,18 @@ class EntityTest {
         fun myMethod(s: String) = s.length
 
         fun myMethodWithTwoParams(s: String, i: Int) = s.length + i
+
+        fun methodThatFails() {
+            throw IllegalStateException("Test Fail")
+        }
+
+        fun methodThatFailsInt(i: Int) {
+            throw IllegalStateException("Test Fail $i")
+        }
+
+        fun methodThatFailsStringInt(s: String, i: Int) {
+            throw IllegalStateException("Test Fail $s, $i")
+        }
     }
 
     private inner class TestControl : Component() {

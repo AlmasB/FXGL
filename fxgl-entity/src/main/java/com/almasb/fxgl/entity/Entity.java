@@ -393,7 +393,7 @@ public class Entity {
                     .toArray(Class[]::new);
 
             method = findMethod(componentMethodName, types)
-                    .orElseThrow(() -> new IllegalArgumentException("Cannot find method: " + componentMethodName));
+                    .orElseThrow(() -> new IllegalArgumentException("Cannot find method: " + format(componentMethodName, types)));
 
             componentMethods.put(componentMethodName, method);
         }
@@ -401,8 +401,19 @@ public class Entity {
         try {
             return method.call(args);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Cannot call: " + componentMethodName, e);
+            String message = "Failed to call: " + format(componentMethodName, args) + " Cause: " + ReflectionUtils.getRootCause(e);
+
+            throw new IllegalArgumentException(message, e);
         }
+    }
+
+    /**
+     * @return a method name formatted as method signature
+     */
+    private String format(String methodName, Object[] args) {
+        String argsString = Arrays.toString(args);
+
+        return methodName + "(" + argsString.substring(1, argsString.length() - 1) + ")";
     }
 
     private Optional<ComponentMethod> findMethod(String name, Class<?>... types) {
