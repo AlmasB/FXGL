@@ -8,7 +8,6 @@ package com.almasb.fxgl.pathfinding;
 
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.util.Consumer;
-import javafx.util.Pair;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
