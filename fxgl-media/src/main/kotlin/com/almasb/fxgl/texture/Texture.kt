@@ -291,6 +291,8 @@ open class Texture : ImageView, View {
      */
     fun transparentColor(color: Color) = replaceColor(color, Color.TRANSPARENT)
 
+    fun blend(node: Node, blendMode: BlendMode) = blend(toImage(node), blendMode)
+
     /**
      * @param backgroundImage the image with which to blend
      * @param blendMode blend mode

@@ -9,11 +9,13 @@ package com.almasb.fxgl.texture
 import com.almasb.fxgl.core.concurrent.Async
 import javafx.geometry.HorizontalDirection
 import javafx.scene.Group
+import javafx.scene.Node
 import javafx.scene.effect.BlendMode
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
+import java.util.concurrent.Callable
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -51,6 +53,8 @@ private val image: Image by lazy {
 }
 
 fun getDummyImage() = image
+
+fun toImage(node: Node): Image = Async.startAsyncFX(Callable { node.snapshot(null, null) }).await()
 
 fun merge(images: List<Image>): Image {
     if (images.isEmpty())
