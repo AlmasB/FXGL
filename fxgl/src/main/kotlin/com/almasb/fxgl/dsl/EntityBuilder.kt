@@ -28,6 +28,10 @@ class EntityBuilder {
     fun from(data: SpawnData) = this.also {
         at(data.x, data.y)
 
+        if (data.hasKey("type")) {
+            type(data.get("type"))
+        }
+
         data.data.forEach { entity.setProperty(it.key, it.value) }
     }
 
