@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.View
 import javafx.geometry.HorizontalDirection
 import javafx.geometry.Rectangle2D
 import javafx.geometry.VerticalDirection
+import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.effect.BlendMode
 import javafx.scene.image.Image
@@ -299,6 +300,31 @@ open class Texture : ImageView, View {
      * @return new texture using a blended image of this texture
      */
     fun blend(backgroundImage: Image, blendMode: BlendMode) = Texture(backgroundImage.map(image, blendMode.operation()))
+
+    @JvmOverloads fun outline(color: Color, offset: Int = 1): Texture {
+        val view = Group()
+
+        // using nodes rather than pixel reader / writer is less tricky and possibly faster
+        // because when writing pixels we have to go through each pixel to check its transparency
+        // so we don't overwrite the underlying pixel
+        val coloredTexture = toColor(color)
+
+        val outline1 = coloredTexture
+        outline1.translateX = offset.toDouble()
+
+        val outline2 = coloredTexture.copy()
+        outline2.translateX = -offset.toDouble()
+
+        val outline3 = coloredTexture.copy()
+        outline3.translateY = offset.toDouble()
+
+        val outline4 = coloredTexture.copy()
+        outline4.translateY = -offset.toDouble()
+
+        view.children.addAll(outline1, outline2, outline3, outline4, copy())
+
+        return Texture(toImage(view))
+    }
 
     /**
      * Set texture data by copying it from other texture.

@@ -156,6 +156,7 @@ class TextureTest {
         assertThat(texture.replaceColor(Color.WHITE, Color.GRAY).image, `is`(not(image)))
         assertThat(texture.replaceColor(Color.TRANSPARENT, Color.GRAY).image, `is`(not(image)))
         assertThat(texture.transparentColor(Color.PURPLE).image, `is`(not(image)))
+        assertThat(texture.outline(Color.PURPLE).image, `is`(not(image)))
     }
 
     @ParameterizedTest

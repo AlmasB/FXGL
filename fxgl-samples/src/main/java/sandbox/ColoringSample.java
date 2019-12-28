@@ -11,7 +11,6 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.texture.ImagesKt;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.layout.HBox;
@@ -48,26 +47,9 @@ public class ColoringSample extends GameApplication {
                 new Stop(0, Color.RED),
                 new Stop(1, Color.YELLOW));
 
-        Group view = new Group();
-
-        Texture outline1 = original.toColor(Color.BLACK);
-        outline1.setTranslateX(1);
-
-        Texture outline2 = original.toColor(Color.BLACK);
-        outline2.setTranslateX(-1);
-
-        Texture outline3 = original.toColor(Color.BLACK);
-        outline3.setTranslateY(1);
-
-        Texture outline4 = original.toColor(Color.BLACK);
-        outline4.setTranslateY(-1);
-
-        view.getChildren().addAll(outline1, outline2, outline3, outline4, original.copy());
-
         HBox hbox = new HBox(20,
                 makeBox("Original", original),
-                makeBox("Outline", view),
-                //makeBox("Grayscale", original.toGrayscale()),
+                makeBox("Outline", original.outline(Color.BLUE)),
                 makeBox("Darker", original.darker()),
                 makeBox("Brighter", original.brighter()),
                 makeBox("Invert", original.invert()),
