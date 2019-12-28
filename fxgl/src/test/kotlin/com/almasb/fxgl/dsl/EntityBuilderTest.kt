@@ -12,6 +12,8 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -42,5 +44,16 @@ class EntityBuilderTest {
 
         assertThat(e.position, `is`(Point2D(15.0, 22.0)))
         assertThat(e.type, `is`<Any>(EBTType.TWO))
+    }
+
+    @Test
+    fun `from does not fail if type is not enum`() {
+        val data = SpawnData(15.0, 22.0).put("type", "someValue")
+
+        val e = builder
+                .from(data)
+                .build()
+
+        assertTrue(e.type !is String)
     }
 }

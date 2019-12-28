@@ -29,7 +29,10 @@ class EntityBuilder {
         at(data.x, data.y)
 
         if (data.hasKey("type")) {
-            type(data.get("type"))
+            val value = data.get<Any>("type")
+            if (value is Enum<*>) {
+                type(value)
+            }
         }
 
         data.data.forEach { entity.setProperty(it.key, it.value) }
