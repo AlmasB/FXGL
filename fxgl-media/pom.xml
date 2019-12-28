@@ -23,6 +23,13 @@
             <artifactId>javafx-media</artifactId>
             <version>${jfx.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-test</artifactId>
+            <version>${fxgl.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
