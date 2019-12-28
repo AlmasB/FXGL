@@ -17,7 +17,7 @@ import com.almasb.fxgl.entity.component.Component
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ParticleComponent(val emitter: ParticleEmitter) : Component() {
+open class ParticleComponent(val emitter: ParticleEmitter) : Component() {
 
     var onFinished: Runnable = EmptyRunnable
 
