@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.concurrent.Async
 import javafx.geometry.HorizontalDirection
 import javafx.scene.Group
 import javafx.scene.Node
+import javafx.scene.SnapshotParameters
 import javafx.scene.effect.BlendMode
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
@@ -54,7 +55,11 @@ private val image: Image by lazy {
 
 fun getDummyImage() = image
 
-fun toImage(node: Node): Image = Async.startAsyncFX(Callable { node.snapshot(null, null) }).await()
+fun toImage(node: Node): Image = Async.startAsyncFX(Callable {
+    val params = SnapshotParameters()
+    params.fill = Color.TRANSPARENT
+    node.snapshot(params, null)
+}).await()
 
 fun merge(images: List<Image>): Image {
     if (images.isEmpty())
