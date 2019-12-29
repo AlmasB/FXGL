@@ -17,7 +17,7 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class TrailViewComponent(t: Texture) : ParticleComponent(ParticleEmitters.newSparkEmitter()) {
+class TrailParticleComponent(t: Texture) : ParticleComponent(ParticleEmitters.newSparkEmitter()) {
 
     init {
         emitter.blendMode = BlendMode.SRC_OVER

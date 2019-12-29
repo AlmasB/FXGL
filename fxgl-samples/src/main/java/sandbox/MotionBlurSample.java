@@ -9,7 +9,7 @@ package sandbox;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.components.view.TrailViewComponent;
+import com.almasb.fxgl.dsl.components.view.TrailParticleComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
@@ -77,7 +77,7 @@ public class MotionBlurSample extends GameApplication {
                     .build();
 
             if (index % 2 == 1) {
-                e.addComponent(new TrailViewComponent(texture("ball.png", 64, 64)));
+                e.addComponent(new TrailParticleComponent(texture("ball.png", 64, 64)));
             }
 
             var interpolator = Interpolators.LINEAR.EASE_OUT();
