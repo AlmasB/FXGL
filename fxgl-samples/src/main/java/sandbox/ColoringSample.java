@@ -56,8 +56,6 @@ public class ColoringSample extends GameApplication {
                 makeBox("Saturate", original.saturate().saturate().saturate())
         );
 
-        // TODO: blend() via map operation needs to ensure the largest image size is chosen
-
         HBox hbox2 = new HBox(20,
                 makeBox("Soft: self", original.blend(original.copy(), BlendMode.SOFT_LIGHT)),
                 makeBox("Add: red", original.blend(new Rectangle(original.getWidth(), original.getHeight(), Color.RED), BlendMode.ADD)),
