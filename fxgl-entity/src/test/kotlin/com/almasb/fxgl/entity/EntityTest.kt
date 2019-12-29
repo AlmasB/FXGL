@@ -396,32 +396,36 @@ class EntityTest {
 
     @Test
     fun `Set position x y using anchor`() {
-        entity.setPosition(15.0, 10.0, Point2D(0.0, 0.0))
+        entity.setAnchoredPosition(15.0, 10.0, Point2D(0.0, 0.0))
 
         assertThat(entity.position, `is`(Point2D(15.0, 10.0)))
 
-        entity.setPosition(15.0, 10.0, Point2D(15.0, 10.0))
+        entity.setAnchoredPosition(15.0, 10.0, Point2D(15.0, 10.0))
 
         assertThat(entity.position, `is`(Point2D(0.0, 0.0)))
 
         // bbox has no effect to setting position using an anchor
         entity.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(20.0, 20.0)))
 
-        entity.setPosition(15.0, 10.0, Point2D(15.0, 10.0))
+        entity.setAnchoredPosition(15.0, 10.0, Point2D(15.0, 10.0))
 
         assertThat(entity.position, `is`(Point2D(0.0, 0.0)))
     }
 
     @Test
     fun `Set position center`() {
-        entity.setPositionCenter(15.0, 34.0)
+        entity.setLocalAnchorFromCenter()
+
+        entity.setAnchoredPosition(15.0, 34.0)
 
         assertThat(entity.position, `is`(Point2D(15.0, 34.0)))
 
         // bbox has an effect on setPositionCenter() computation
         entity.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(20.0, 20.0)))
 
-        entity.setPositionCenter(15.0, 34.0)
+        entity.setLocalAnchorFromCenter()
+
+        entity.setAnchoredPosition(15.0, 34.0)
 
         assertThat(entity.position, `is`(Point2D(5.0, 24.0)))
     }
@@ -430,7 +434,7 @@ class EntityTest {
     fun `Get position using local anchor`() {
         entity.setPosition(-50.0, -30.0)
 
-        assertThat(entity.getPosition(Point2D(30.0, 5.0)), `is`(Point2D(-20.0, -25.0)))
+        assertThat(entity.getAnchoredPosition(Point2D(30.0, 5.0)), `is`(Point2D(-20.0, -25.0)))
     }
 
     @Test

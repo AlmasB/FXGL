@@ -651,28 +651,42 @@ public class Entity {
         return transform.yProperty();
     }
 
-    /**
-     * Set top left point of this entity in a way that given entity's center
-     * will be located at given (x, y) in world coordinates.
-     * Note: bounding box is used to compute the entity's center.
-     */
-    public final void setPositionCenter(double x, double y) {
-        setPosition(x, y, bbox.getCenterLocal());
+    public final Point2D getLocalAnchor() {
+        return transform.getLocalAnchor();
+    }
+
+    public final void setLocalAnchorFromCenter() {
+        setLocalAnchor(bbox.getCenterLocal());
+    }
+
+    public final void setLocalAnchor(Point2D localAnchor) {
+        transform.setLocalAnchor(localAnchor);
+    }
+
+    public final void setAnchoredPosition(double x, double y) {
+        transform.setAnchoredPosition(new Point2D(x, y));
+    }
+
+    public final void setAnchoredPosition(Point2D p) {
+        transform.setAnchoredPosition(p);
+    }
+
+    public final void setAnchoredPosition(double x, double y, Point2D localAnchor) {
+        setPosition(x - localAnchor.getX(), y - localAnchor.getY());
     }
 
     /**
-     * Set top left point of this entity in a way that given anchor (in local coordinates) of this entity
-     * will be located at given (x, y) in world coordinates.
+     * @return world coordinates of the point that corresponds to local anchor
      */
-    public final void setPosition(double x, double y, Point2D localAnchor) {
-        setPosition(x - localAnchor.getX(), y - localAnchor.getY());
+    public final Point2D getAnchoredPosition() {
+        return transform.getAnchoredPosition();
     }
 
     /**
      * @param localAnchor in local coordinates
      * @return world coordinates of the point that corresponds to local anchor
      */
-    public final Point2D getPosition(Point2D localAnchor) {
+    public final Point2D getAnchoredPosition(Point2D localAnchor) {
         return new Point2D(getX() + localAnchor.getX(), getY() + localAnchor.getY());
     }
 

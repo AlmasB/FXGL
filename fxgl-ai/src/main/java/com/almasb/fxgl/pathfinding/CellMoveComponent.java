@@ -90,7 +90,7 @@ public final class CellMoveComponent extends Component {
         int cx = cellX * cellWidth + cellWidth / 2;
         int cy = cellY * cellHeight + cellHeight / 2;
 
-        entity.setPositionCenter(cx, cy);
+        entity.setAnchoredPosition(cx, cy, entity.getBoundingBoxComponent().getCenterLocal());
     }
 
     public void moveToCell(Cell cell) {
