@@ -102,7 +102,7 @@ class AchievementManager : EngineService {
         var listener: PropertyChangeListener<Int>? = null
 
         listener = object : PropertyChangeListener<Int> {
-            var halfReached = false
+            private var halfReached = false
 
             override fun onChange(prev: Int, now: Int) {
 
@@ -127,7 +127,7 @@ class AchievementManager : EngineService {
         var listener: PropertyChangeListener<Double>? = null
 
         listener = object : PropertyChangeListener<Double> {
-            var halfReached = false
+            private var halfReached = false
 
             override fun onChange(prev: Double, now: Double) {
 

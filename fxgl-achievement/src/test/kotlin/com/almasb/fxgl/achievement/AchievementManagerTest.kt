@@ -23,7 +23,6 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.lang.invoke.MethodHandles
 import java.util.stream.Stream
 
-
 /**
  *
  *
@@ -75,9 +74,9 @@ class AchievementManagerTest {
 
         achievementManager.registerAchievement(a1)
 
-        assertThrows(IllegalArgumentException::class.java, {
+        assertThrows(IllegalArgumentException::class.java) {
             achievementManager.registerAchievement(a2)
-        })
+        }
     }
 
     @Test
@@ -131,6 +130,33 @@ class AchievementManagerTest {
         // but it should not be possible to modify the old map
 //        map.setValue("varName", varValue)
 //        assertFalse(a.isAchieved)
+    }
+
+    @Test
+    fun `Bind to vars does not fail if manager has achievements for non-existing var`() {
+        assertDoesNotThrow {
+            val a = Achievement("TestAchievement", "TestDescription", "varName", 3)
+
+            achievementManager.registerAchievement(a)
+
+            val map = PropertyMap()
+
+            achievementManager.bindToVars(map)
+        }
+    }
+
+    @Test
+    fun `Bind to vars throws if achievement value is not int double or bool`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            val a = Achievement("TestAchievement", "TestDescription", "varName", "hi")
+
+            achievementManager.registerAchievement(a)
+
+            val map = PropertyMap()
+            map.setValue("varName", "hi")
+
+            achievementManager.bindToVars(map)
+        }
     }
 
     companion object {
