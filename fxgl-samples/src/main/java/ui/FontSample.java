@@ -9,9 +9,6 @@ package ui;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.ui.FontType;
-import com.almasb.fxgl.ui.MDIWindow;
-import javafx.geometry.Insets;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -24,10 +21,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  */
 public class FontSample extends GameApplication {
     @Override
-    protected void initSettings(GameSettings settings) {
-        settings.setWidth(1000);
-        settings.setHeight(700);
-    }
+    protected void initSettings(GameSettings settings) { }
 
     @Override
     protected void initUI() {
@@ -66,7 +60,7 @@ public class FontSample extends GameApplication {
 
         Text text = new Text("This is TEXT_FONT: The MIT License (MIT)\n" +
                 "\n" +
-                "Copyright (c) 2015-2018 Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)\n" +
+                "Copyright (c) 2015-2020 Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)\n" +
                 "\n" +
                 "Permission is hereby granted, free of charge, to any person obtaining a copy\n" +
                 "of this software and associated documentation files (the \"Software\"), to deal\n" +
@@ -88,20 +82,7 @@ public class FontSample extends GameApplication {
 
         text.setFont(fontText);
 
-        VBox box = new VBox(text);
-        box.setPadding(new Insets(10));
-
-        MDIWindow window = new MDIWindow();
-        window.setPrefSize(770, 400);
-        window.setContentPane(box);
-        window.setCanResize(false);
-        //window.setB(Color.color(0.95, 0.95, 0.95));
-
-        // TODO: why do we have setPosition() and also can set via add ui node?
-        // we use setLayout() internally, any difference to translate()?
-        //window.setPosition(x, y);
-
-        addUINode(window, 0, 0);
+        addUINode(text, x, y);
     }
 
     private void addExampleFontMono(int x, int y) {
