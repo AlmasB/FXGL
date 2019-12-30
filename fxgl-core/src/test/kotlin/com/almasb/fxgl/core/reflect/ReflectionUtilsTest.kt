@@ -8,6 +8,7 @@ package com.almasb.fxgl.core.reflect
 
 import com.almasb.fxgl.core.util.Function
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.isA
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -184,6 +185,21 @@ class ReflectionUtilsTest {
     fun `Is anonymous class`() {
         assertFalse(ReflectionUtils.isAnonymousClass(TestClass1::class.java))
         assertTrue(ReflectionUtils.isAnonymousClass(Runnable { }.javaClass))
+    }
+
+    @Test
+    fun `Convert to primitive`() {
+        assertTrue(ReflectionUtils.convertToPrimitive(Integer::class.java) == (Int::class.javaPrimitiveType))
+        assertTrue(ReflectionUtils.convertToPrimitive(Integer::class.java) != (Int::class.javaObjectType))
+
+        assertTrue(ReflectionUtils.convertToPrimitive(Double::class.java) == (Double::class.javaPrimitiveType))
+        assertTrue(ReflectionUtils.convertToPrimitive(Double::class.java) != (Double::class.javaObjectType))
+
+        assertTrue(ReflectionUtils.convertToPrimitive(Boolean::class.java) == (Boolean::class.javaPrimitiveType))
+        assertTrue(ReflectionUtils.convertToPrimitive(Boolean::class.java) != (Boolean::class.javaObjectType))
+
+        assertTrue(ReflectionUtils.convertToPrimitive(Char::class.java) == (Char::class.javaPrimitiveType))
+        assertTrue(ReflectionUtils.convertToPrimitive(Char::class.java) != (Char::class.javaObjectType))
     }
 
     @Test
