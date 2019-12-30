@@ -15,4 +15,6 @@ module com.almasb.fxgl.ai {
     exports com.almasb.fxgl.pathfinding.astar;
     exports com.almasb.fxgl.pathfinding.maze;
     exports com.almasb.fxgl.procedural;
+
+    opens com.almasb.fxgl.pathfinding.astar to com.almasb.fxgl.core;
 }

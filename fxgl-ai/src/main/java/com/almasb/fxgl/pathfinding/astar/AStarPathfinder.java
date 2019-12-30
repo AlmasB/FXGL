@@ -49,12 +49,15 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
      * @return          path as list of nodes from start (excl) to target (incl) or empty list if no path found
      */
     public List<AStarCell> findPath(AStarCell[][] grid, AStarCell start, AStarCell target, AStarCell... busyNodes) {
-        if (target.getState() == CellState.NOT_WALKABLE)
+        if (start == target || target.getState() == CellState.NOT_WALKABLE)
             return Collections.emptyList();
 
+        // reset grid cells data
         for (int y = 0; y < grid[0].length; y++) {
             for (int x = 0; x < grid.length; x++) {
                 grid[x][y].setHCost(Math.abs(target.getX() - x) + Math.abs(target.getY() - y));
+                grid[x][y].setParent(null);
+                grid[x][y].setGCost(0);
             }
         }
 
