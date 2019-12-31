@@ -189,6 +189,48 @@ class ConcurrencyTest {
     }
 
     @Test
+    fun `IOTask default executor and fail action`() {
+        var message = ""
+        var count = 0
+
+        val latch = CountDownLatch(2)
+
+        IOTask.setDefaultExecutor { it.run() }
+        IOTask.setDefaultFailAction {
+            message = it.message ?: ""
+
+            // first we runAsync then we runAsyncFX
+            if (count == 0) {
+                assertFalse(Platform.isFxApplicationThread())
+            } else if (count == 1) {
+                assertTrue(Platform.isFxApplicationThread())
+            }
+
+            count++
+
+            latch.countDown()
+        }
+
+        val task = IOTask.ofVoid("someName") {
+            throw RuntimeException("Exception test")
+        }
+
+        task.runAsync()
+
+        assertThat(count, `is`(1))
+        assertThat(message, `is`("Exception test"))
+
+        task.runAsyncFX()
+
+        assertTimeout(ofSeconds(1)) {
+            latch.await()
+        }
+
+        assertThat(count, `is`(2))
+        assertThat(message, `is`("Exception test"))
+    }
+
+    @Test
     fun `IOTask correctly handles successful run`() {
         var result = ""
         var exceptionMessage = "NoMessage"
