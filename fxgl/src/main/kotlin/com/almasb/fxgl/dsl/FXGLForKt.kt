@@ -12,9 +12,12 @@ import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.core.util.BiConsumer
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
+import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.texture.Texture
 import javafx.beans.property.*
 import javafx.event.Event
+import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.image.Image
@@ -115,17 +118,27 @@ fun loopBGM(assetName: String) = FXGL.loopBGM(assetName)
 
 fun play(assetName: String) = FXGL.play(assetName)
 
+fun onKeyDown(key: KeyCode, action: () -> Unit) = FXGL.onKeyDown(key, Runnable(action))
+
 fun onKeyDown(key: KeyCode, actionName: String, action: () -> Unit) = FXGL.onKeyDown(key, actionName, Runnable(action))
 
 fun onKey(key: KeyCode, action: () -> Unit) = FXGL.onKey(key, Runnable(action))
 
 fun onKey(key: KeyCode, actionName: String, action: () -> Unit) = FXGL.onKey(key, actionName, Runnable(action))
 
+fun onKeyUp(key: KeyCode, action: () -> Unit) = FXGL.onKeyUp(key, Runnable(action))
+
 fun onKeyUp(key: KeyCode, actionName: String, action: () -> Unit) = FXGL.onKeyUp(key, actionName, Runnable(action))
+
+fun onBtnDown(btn: MouseButton, action: () -> Unit) = FXGL.onBtnDown(btn, Runnable(action))
 
 fun onBtnDown(btn: MouseButton, actionName: String, action: () -> Unit) = FXGL.onBtnDown(btn, actionName, Runnable(action))
 
+fun onBtn(btn: MouseButton, action: () -> Unit) = FXGL.onBtn(btn, Runnable(action))
+
 fun onBtn(btn: MouseButton, actionName: String, action: () -> Unit) = FXGL.onBtn(btn, actionName, Runnable(action))
+
+fun onBtnUp(btn: MouseButton, action: () -> Unit) = FXGL.onBtnUp(btn, Runnable(action))
 
 fun onBtnUp(btn: MouseButton, actionName: String, action: () -> Unit) = FXGL.onBtnUp(btn, actionName, Runnable(action))
 
@@ -158,6 +171,9 @@ fun free(instance: Any) = Pools.free(instance)
 
 fun fire(event: Event) = FXGL.getEventBus().fireEvent(event)
 
+fun <T : Event> onEvent(eventType: EventType<T>, eventHandler: (T) -> Unit): Subscriber =
+        FXGL.onEvent(eventType, EventHandler { eventHandler(it) })
+
 /* NOTIFICATIONS */
 
 //fun notify(message: String) = getNotificationService().pushNotification(message)
@@ -176,11 +192,11 @@ fun addUINode(node: Node, x: Double, y: Double) = FXGL.addUINode(node, x, y)
 
 fun removeUINode(node: Node) = FXGL.removeUINode(node)
 
-fun runOnce(action: () -> Unit, delay: Duration) = FXGL.getGameTimer().runOnceAfter(action, delay)
+fun runOnce(action: () -> Unit, delay: Duration) = FXGL.runOnce(Runnable(action), delay)
 
-fun run(action: () -> Unit, interval: Duration) = FXGL.getGameTimer().runAtInterval(Runnable(action), interval)
+fun run(action: () -> Unit, interval: Duration) = FXGL.run(Runnable(action), interval)
 
-fun run(action: () -> Unit, interval: Duration, limit: Int) = FXGL.getGameTimer().runAtInterval(Runnable(action), interval, limit)
+fun run(action: () -> Unit, interval: Duration, limit: Int) = FXGL.run(Runnable(action), interval, limit)
 
 /* EXTENSIONS */
 
