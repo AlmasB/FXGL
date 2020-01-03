@@ -484,16 +484,7 @@ public class Entity {
 
         checkNotDuplicate(type);
 
-        List<Required> requiredList = new ArrayList<>();
-
-        Annotation[] annotations = type.getAnnotations();
-        for (Annotation a : annotations) {
-            if (a.annotationType().equals(Required.class)) {
-                requiredList.add((Required) a);
-            }
-        }
-
-        for (Required r : requiredList) {
+        for (Required r : type.getAnnotationsByType(Required.class)) {
             if (!hasComponent(r.value())) {
                 throw new IllegalStateException("Required component: [" + r.value().getSimpleName() + "] for: " + type.getSimpleName() + " is missing");
             }

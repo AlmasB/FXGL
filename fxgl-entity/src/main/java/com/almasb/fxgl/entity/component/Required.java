@@ -6,10 +6,7 @@
 
 package com.almasb.fxgl.entity.component;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Adds a new dependency to this component on the provided component.
@@ -20,6 +17,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(RequiredComponents.class)
 public @interface Required {
     Class<? extends Component> value();
 }
