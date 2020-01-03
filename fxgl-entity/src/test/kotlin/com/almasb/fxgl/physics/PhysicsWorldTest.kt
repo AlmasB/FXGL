@@ -67,6 +67,46 @@ class PhysicsWorldTest {
     }
 
     @Test
+    fun `Entity addition and removal updates jbox2d world`() {
+        val e1 = Entity().also {
+            it.addComponent(PhysicsComponent())
+        }
+
+        val e2 = Entity().also {
+            it.addComponent(PhysicsComponent())
+        }
+
+        val gameWorld = GameWorld()
+        gameWorld.addEntities(e1, e2)
+
+        assertThat(physicsWorld.jBox2DWorld.bodies.size(), `is`(0))
+
+        physicsWorld.onEntityAdded(e1)
+        physicsWorld.onEntityAdded(e2)
+
+        assertThat(physicsWorld.jBox2DWorld.bodies.size(), `is`(2))
+
+        physicsWorld.onEntityRemoved(e1)
+        physicsWorld.onEntityRemoved(e2)
+
+        assertThat(physicsWorld.jBox2DWorld.bodies.size(), `is`(0))
+    }
+
+    // onEntityRemoved should be called from the game world
+    @Test
+    fun `Clear does not remove jbox2d bodies`() {
+        val e1 = Entity().also {
+            it.addComponent(PhysicsComponent())
+        }
+
+        physicsWorld.onEntityAdded(e1)
+
+        physicsWorld.clear()
+
+        assertThat(physicsWorld.jBox2DWorld.bodies.size(), `is`(1))
+    }
+
+    @Test
     fun `Making entity not collidable mid-collision correctly triggers onCollisionEnd`() {
         val e1 = Entity()
         e1.type = EntityType.TYPE1
