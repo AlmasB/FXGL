@@ -431,10 +431,20 @@ class EntityTest {
     }
 
     @Test
-    fun `Get position using local anchor`() {
+    fun `Get set position using local anchor`() {
         entity.setPosition(-50.0, -30.0)
 
         assertThat(entity.getAnchoredPosition(Point2D(30.0, 5.0)), `is`(Point2D(-20.0, -25.0)))
+
+        entity.localAnchor = Point2D(30.0, 30.0)
+
+        assertThat(entity.localAnchor, `is`(Point2D(30.0, 30.0)))
+
+        entity.setAnchoredPosition(Point2D(-50.0, 30.0))
+
+        assertThat(entity.anchoredPosition, `is`(Point2D(-50.0, 30.0)))
+
+        assertThat(entity.position, `is`(Point2D(-80.0, 0.0)))
     }
 
     @Test
