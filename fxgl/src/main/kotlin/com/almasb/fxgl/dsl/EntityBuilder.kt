@@ -59,8 +59,24 @@ class EntityBuilder {
         entity.anchoredPosition = position
     }
 
+    fun rotationOrigin(x: Double, y: Double) = this.also {
+        entity.transformComponent.rotationOrigin = Point2D(x, y)
+    }
+
+    fun rotationOrigin(point: Point2D) = this.also {
+        entity.transformComponent.rotationOrigin = point
+    }
+
     fun rotate(angle: Double) = this.also {
         entity.rotateBy(angle)
+    }
+
+    fun scaleOrigin(x: Double, y: Double) = this.also {
+        entity.transformComponent.scaleOrigin = Point2D(x, y)
+    }
+
+    fun scaleOrigin(point: Point2D) = this.also {
+        entity.transformComponent.scaleOrigin = point
     }
 
     fun scale(x: Double, y: Double) = this.also {
