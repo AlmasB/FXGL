@@ -20,7 +20,6 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -513,16 +512,7 @@ public class Entity {
      * Fails with IAE if [requiringType] has a dependency on [type].
      */
     private void checkNotRequiredBy(Class<? extends Component> requiringType, Class<? extends Component> type) {
-        List<Required> requiredList = new ArrayList<>();
-
-        Annotation[] annotations = requiringType.getAnnotations();
-        for (Annotation a : annotations) {
-            if (a.annotationType().equals(Required.class)) {
-                requiredList.add((Required) a);
-            }
-        }
-
-        for (Required required : requiredList) {
+        for (Required required : requiringType.getAnnotationsByType(Required.class)) {
             if (required.value().equals(type)) {
                 throw new IllegalArgumentException("Required component: [" + required.value().getSimpleName() + "] by: " + requiringType.getSimpleName());
             }
