@@ -54,6 +54,11 @@ class EntityBuilder {
         entity.setPosition(p)
     }
 
+    fun atAnchored(localAnchor: Point2D, position: Point2D) = this.also {
+        entity.localAnchor = localAnchor
+        entity.anchoredPosition = position
+    }
+
     fun rotate(angle: Double) = this.also {
         entity.rotateBy(angle)
     }
