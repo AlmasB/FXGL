@@ -380,6 +380,14 @@ public class Entity {
         return true;
     }
 
+    /**
+     * Call a method of a component attached to this entity.
+     * For example: given AttackComponent with method attack(), you can call
+     * entity.call("attack"), which is equivalent to
+     * entity.getComponent(AttackComponent.class).attack().
+     *
+     * Note: avoid using more than one component with same method names.
+     */
     public <T> T call(String componentMethodName, Object... args) {
         ComponentMethod method;
 
