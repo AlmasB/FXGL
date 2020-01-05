@@ -48,7 +48,7 @@ public class BasicGameApp extends GameApplication {
 ## Getting Started
 
 - Version for Java 8-10: `0.5.4` (not updated)
-- Version for Java 11+: `11.6` (frequent updates)
+- Version for Java 11+: `11.7` (frequent updates)
 
 FXGL 11 supports Java 11+ and has a more scalable architecture,
 but currently supports only a subset of features from `0.5.4`.
@@ -74,7 +74,7 @@ Already have `pom.xml`? Then add: (use `0.5.4` for Java 8-10). **Note:** make su
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>11.6</version>
+    <version>11.7</version>
 </dependency>
 ```
 
@@ -92,7 +92,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:11.6'
+    compile 'com.github.almasb:fxgl:11.7'
 }
 ```
 
