@@ -21,9 +21,6 @@ import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactVelocityConstraint
  */
 public final class ContactSolver {
 
-    @SuppressWarnings("PMD.UnusedPrivateField")
-    private static final float k_errorTol = 1e-3f;
-
     /**
      * For each solver, this is the initial number of constraints in the array, which expands as
      * needed.
@@ -56,7 +53,7 @@ public final class ContactSolver {
 
         if (m_positionConstraints.length < m_count) {
             ContactPositionConstraint[] old = m_positionConstraints;
-            m_positionConstraints = new ContactPositionConstraint[JBoxUtils.max(old.length * 2, m_count)];
+            m_positionConstraints = new ContactPositionConstraint[Math.max(old.length * 2, m_count)];
             System.arraycopy(old, 0, m_positionConstraints, 0, old.length);
             for (int i = old.length; i < m_positionConstraints.length; i++) {
                 m_positionConstraints[i] = new ContactPositionConstraint();
@@ -65,7 +62,7 @@ public final class ContactSolver {
 
         if (m_velocityConstraints.length < m_count) {
             ContactVelocityConstraint[] old = m_velocityConstraints;
-            m_velocityConstraints = new ContactVelocityConstraint[JBoxUtils.max(old.length * 2, m_count)];
+            m_velocityConstraints = new ContactVelocityConstraint[Math.max(old.length * 2, m_count)];
             System.arraycopy(old, 0, m_velocityConstraints, 0, old.length);
             for (int i = old.length; i < m_velocityConstraints.length; i++) {
                 m_velocityConstraints[i] = new ContactVelocityConstraint();
@@ -774,7 +771,7 @@ public final class ContactSolver {
                 float rBy = point.y - cB.y;
 
                 // Track max constraint error.
-                minSeparation = JBoxUtils.min(minSeparation, separation);
+                minSeparation = Math.min(minSeparation, separation);
 
                 // Prevent large corrections and allow slop.
                 final float C =
@@ -871,7 +868,7 @@ public final class ContactSolver {
                 float rBy = point.y - cB.y;
 
                 // Track max constraint error.
-                minSeparation = JBoxUtils.min(minSeparation, separation);
+                minSeparation = Math.min(minSeparation, separation);
 
                 // Prevent large corrections and allow slop.
                 float C =

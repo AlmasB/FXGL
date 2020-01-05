@@ -28,6 +28,13 @@ class EntityBuilder {
     fun from(data: SpawnData) = this.also {
         at(data.x, data.y)
 
+        if (data.hasKey("type")) {
+            val value = data.get<Any>("type")
+            if (value is Enum<*>) {
+                type(value)
+            }
+        }
+
         data.data.forEach { entity.setProperty(it.key, it.value) }
     }
 
@@ -47,8 +54,29 @@ class EntityBuilder {
         entity.setPosition(p)
     }
 
+    fun atAnchored(localAnchor: Point2D, position: Point2D) = this.also {
+        entity.localAnchor = localAnchor
+        entity.anchoredPosition = position
+    }
+
+    fun rotationOrigin(x: Double, y: Double) = this.also {
+        entity.transformComponent.rotationOrigin = Point2D(x, y)
+    }
+
+    fun rotationOrigin(point: Point2D) = this.also {
+        entity.transformComponent.rotationOrigin = point
+    }
+
     fun rotate(angle: Double) = this.also {
         entity.rotateBy(angle)
+    }
+
+    fun scaleOrigin(x: Double, y: Double) = this.also {
+        entity.transformComponent.scaleOrigin = Point2D(x, y)
+    }
+
+    fun scaleOrigin(point: Point2D) = this.also {
+        entity.transformComponent.scaleOrigin = point
     }
 
     fun scale(x: Double, y: Double) = this.also {

@@ -716,7 +716,7 @@ public class Distance {
             ++simplex.m_count;
         }
 
-        GJK_MAX_ITERS = JBoxUtils.max(GJK_MAX_ITERS, iter);
+        GJK_MAX_ITERS = Math.max(GJK_MAX_ITERS, iter);
 
         // Prepare output.
         simplex.getWitnessPoints(output.pointA, output.pointB);

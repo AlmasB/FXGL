@@ -73,15 +73,6 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         get() = Point2D(x, y)
         set(value) { setPosition(value.x, value.y) }
 
-    // these are currently unused for simplicity
-//    var positionOriginX: Double
-//        get() = propPositionOriginX.value
-//        set(value) { propPositionOriginX.value = value }
-//
-//    var positionOriginY: Double
-//        get() = propPositionOriginY.value
-//        set(value) { propPositionOriginY.value = value }
-
     var scaleOrigin: Point2D
         get() = Point2D(propScaleOriginX.value, propScaleOriginY.value)
         set(value) {
@@ -197,6 +188,22 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     fun rotateToVector(vector: Point2D) {
         propAngle.value = Math.toDegrees(Math.atan2(vector.y, vector.x))
     }
+
+    /**
+     * Point in pixels in local coordinates relative to (0, 0) of this transform component.
+     */
+    var localAnchor: Point2D = Point2D.ZERO
+
+    /**
+     * Position with local anchor offset, i.e.
+     * set top left point of this entity in a way that given entity's local anchor
+     * will be located at given (x, y) in world coordinates.
+     */
+    var anchoredPosition: Point2D
+        get() = Point2D(x + localAnchor.x, y + localAnchor.y)
+        set(value) {
+            setPosition(value.x - localAnchor.x, value.y - localAnchor.y)
+        }
 
     override fun toString(): String {
         return "Transform($x, $y, $angle, $scaleX, $scaleY)"

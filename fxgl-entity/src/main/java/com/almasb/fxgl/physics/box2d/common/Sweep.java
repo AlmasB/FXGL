@@ -5,6 +5,7 @@
  */
 package com.almasb.fxgl.physics.box2d.common;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 
 import java.io.Serializable;
@@ -33,7 +34,7 @@ public final class Sweep implements Serializable {
     public float alpha0;
 
     public void normalize() {
-        float d = JBoxUtils.TWOPI * JBoxUtils.floor(a0 / JBoxUtils.TWOPI);
+        float d = FXGLMath.PI2_F * JBoxUtils.floor(a0 / FXGLMath.PI2_F);
         a0 -= d;
         a -= d;
     }

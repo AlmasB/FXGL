@@ -12,7 +12,6 @@ import com.almasb.fxgl.physics.box2d.callbacks.TreeRayCastCallback;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 
 /**
  * A dynamic tree arranges data in a binary tree to accelerate queries such as volume queries and
@@ -408,7 +407,7 @@ public class DynamicTree implements BroadPhaseStrategy {
             assert child1 != null;
             assert child2 != null;
 
-            index.height = 1 + JBoxUtils.max(child1.height, child2.height);
+            index.height = 1 + Math.max(child1.height, child2.height);
             index.aabb.combine(child1.aabb, child2.aabb);
 
             index = index.parent;
@@ -449,7 +448,7 @@ public class DynamicTree implements BroadPhaseStrategy {
                 DynamicTreeNode child2 = index.child2;
 
                 index.aabb.combine(child1.aabb, child2.aabb);
-                index.height = 1 + JBoxUtils.max(child1.height, child2.height);
+                index.height = 1 + Math.max(child1.height, child2.height);
 
                 index = index.parent;
             }
@@ -514,8 +513,8 @@ public class DynamicTree implements BroadPhaseStrategy {
                 A.aabb.combine(B.aabb, G.aabb);
                 C.aabb.combine(A.aabb, F.aabb);
 
-                A.height = 1 + JBoxUtils.max(B.height, G.height);
-                C.height = 1 + JBoxUtils.max(A.height, F.height);
+                A.height = 1 + Math.max(B.height, G.height);
+                C.height = 1 + Math.max(A.height, F.height);
             } else {
                 C.child2 = iG;
                 A.child2 = iF;
@@ -523,8 +522,8 @@ public class DynamicTree implements BroadPhaseStrategy {
                 A.aabb.combine(B.aabb, F.aabb);
                 C.aabb.combine(A.aabb, G.aabb);
 
-                A.height = 1 + JBoxUtils.max(B.height, F.height);
-                C.height = 1 + JBoxUtils.max(A.height, G.height);
+                A.height = 1 + Math.max(B.height, F.height);
+                C.height = 1 + Math.max(A.height, G.height);
             }
 
             return iC;
@@ -564,8 +563,8 @@ public class DynamicTree implements BroadPhaseStrategy {
                 A.aabb.combine(C.aabb, E.aabb);
                 B.aabb.combine(A.aabb, D.aabb);
 
-                A.height = 1 + JBoxUtils.max(C.height, E.height);
-                B.height = 1 + JBoxUtils.max(A.height, D.height);
+                A.height = 1 + Math.max(C.height, E.height);
+                B.height = 1 + Math.max(A.height, D.height);
             } else {
                 B.child2 = iE;
                 A.child1 = iD;
@@ -573,8 +572,8 @@ public class DynamicTree implements BroadPhaseStrategy {
                 A.aabb.combine(C.aabb, D.aabb);
                 B.aabb.combine(A.aabb, E.aabb);
 
-                A.height = 1 + JBoxUtils.max(C.height, D.height);
-                B.height = 1 + JBoxUtils.max(A.height, E.height);
+                A.height = 1 + Math.max(C.height, D.height);
+                B.height = 1 + Math.max(A.height, E.height);
             }
 
             return iB;

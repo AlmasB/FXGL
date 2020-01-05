@@ -83,6 +83,8 @@ open class AnimationBuilder() {
 
     /* BEGIN BUILT-IN ANIMATIONS */
 
+    fun <T> animate(value: AnimatedValue<T>) = GenericAnimationBuilder<T>(this, value)
+
     fun translate(vararg entities: Entity) = TranslationAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }
@@ -326,6 +328,20 @@ open class AnimationBuilder() {
                         }
                     }
             )
+        }
+    }
+
+    class GenericAnimationBuilder<T>(animationBuilder: AnimationBuilder, val animValue: AnimatedValue<T>) : AM(animationBuilder) {
+
+        private var progressConsumer: Consumer<T> = Consumer {  }
+
+        fun onProgress(progressConsumer: Consumer<T>): GenericAnimationBuilder<T> {
+            this.progressConsumer = progressConsumer
+            return this
+        }
+
+        override fun build(): Animation<T> {
+            return makeBuilder().build(animValue, progressConsumer)
         }
     }
 }

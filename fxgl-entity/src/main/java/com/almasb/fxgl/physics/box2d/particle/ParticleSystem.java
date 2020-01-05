@@ -421,7 +421,7 @@ public class ParticleSystem {
                     pair.indexA = a;
                     pair.indexB = b;
                     pair.flags = contact.flags;
-                    pair.strength = JBoxUtils.min(groupA.m_strength, groupB.m_strength);
+                    pair.strength = Math.min(groupA.m_strength, groupB.m_strength);
                     pair.distance = JBoxUtils.distance(m_positionBuffer.data[a], m_positionBuffer.data[b]);
                     m_pairCount++;
                 }
@@ -782,7 +782,7 @@ public class ParticleSystem {
             float w = m_accumulationBuffer[i];
             float h =
                     pressurePerWeight
-                            * JBoxUtils.max(0.0f, JBoxUtils.min(w, JBoxSettings.maxParticleWeight)
+                            * Math.max(0.0f, Math.min(w, JBoxSettings.maxParticleWeight)
                             - JBoxSettings.minParticleWeight);
             m_accumulationBuffer[i] = h;
         }
@@ -1337,8 +1337,8 @@ public class ParticleSystem {
             for (int i = group.m_firstIndex; i < group.m_lastIndex; i++) {
                 j = newIndices[i];
                 if (j >= 0) {
-                    firstIndex = JBoxUtils.min(firstIndex, j);
-                    lastIndex = JBoxUtils.max(lastIndex, j + 1);
+                    firstIndex = Math.min(firstIndex, j);
+                    lastIndex = Math.max(lastIndex, j + 1);
                 } else {
                     modified = true;
                 }
@@ -1668,14 +1668,14 @@ public class ParticleSystem {
                 lowerBound(
                         m_proxyBuffer,
                         m_proxyCount,
-                        computeTag(m_inverseDiameter * JBoxUtils.min(point1.x, point2.x) - 1, m_inverseDiameter
-                                * JBoxUtils.min(point1.y, point2.y) - 1));
+                        computeTag(m_inverseDiameter * Math.min(point1.x, point2.x) - 1, m_inverseDiameter
+                                * Math.min(point1.y, point2.y) - 1));
         int lastProxy =
                 upperBound(
                         m_proxyBuffer,
                         m_proxyCount,
-                        computeTag(m_inverseDiameter * JBoxUtils.max(point1.x, point2.x) + 1, m_inverseDiameter
-                                * JBoxUtils.max(point1.y, point2.y) + 1));
+                        computeTag(m_inverseDiameter * Math.max(point1.x, point2.x) + 1, m_inverseDiameter
+                                * Math.max(point1.y, point2.y) + 1));
         float fraction = 1;
         // solving the following equation:
         // ((1-t)*point1+t*point2-position)^2=diameter^2
@@ -1713,7 +1713,7 @@ public class ParticleSystem {
                 point.x = point1.x + t * vx;
                 point.y = point1.y + t * vy;
                 float f = callback.reportParticle(i, point, n, t);
-                fraction = JBoxUtils.min(fraction, f);
+                fraction = Math.min(fraction, f);
                 if (fraction <= 0) {
                     break;
                 }
@@ -1933,7 +1933,7 @@ public class ParticleSystem {
                         triad.indexB = b;
                         triad.indexC = c;
                         triad.flags = af | bf | cf;
-                        triad.strength = JBoxUtils.min(groupA.m_strength, groupB.m_strength);
+                        triad.strength = Math.min(groupA.m_strength, groupB.m_strength);
                         final float midPointx = (float) 1 / 3 * (pa.x + pb.x + pc.x);
                         final float midPointy = (float) 1 / 3 * (pa.y + pb.y + pc.y);
                         triad.pa.x = pa.x - midPointx;

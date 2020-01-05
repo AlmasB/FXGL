@@ -8,12 +8,15 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.animation.AnimatedValue
 import com.almasb.fxgl.core.math.FXGLMath
+import com.almasb.fxgl.core.math.FXGLMath.*
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.Entity
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.NumberBinding
+import javafx.beans.property.ReadOnlyDoubleProperty
+import javafx.beans.property.ReadOnlyDoubleWrapper
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Point2D
@@ -45,12 +48,6 @@ class Viewport
          */
         val height: Double) {
 
-    /**
-     * @return current visible viewport area
-     */
-    val visibleArea: Rectangle2D
-        get() = Rectangle2D(getX(), getY(), width, height)
-
     /*
     Moving origin X and Y moves the viewport.
     Moving the camera does nothing.
@@ -60,29 +57,40 @@ class Viewport
     /**
      * Origin x.
      */
-    private val x = SimpleDoubleProperty()
-    fun getX() = x.get()
-    fun xProperty() = x
-    fun setX(x: Double) = xProperty().set(x)
+    private val xProp = ReadOnlyDoubleWrapper()
 
     /**
      * Origin y.
      */
-    private val y = SimpleDoubleProperty()
-    fun getY() = y.get()
-    fun yProperty() = y
-    fun setY(y: Double) = yProperty().set(y)
+    private val yProp = ReadOnlyDoubleWrapper()
 
-    private val zoom = SimpleDoubleProperty(1.0)
-    fun getZoom() = zoom.get()
-    fun zoomProperty() = zoom
-    fun setZoom(value: Double) = zoomProperty().set(value)
+    fun xProperty(): ReadOnlyDoubleProperty = xProp.readOnlyProperty
+    fun yProperty(): ReadOnlyDoubleProperty = yProp.readOnlyProperty
+
+    var x: Double
+        get() = xProp.value
+        set(value) { xProp.value = value }
+
+    var y: Double
+        get() = yProp.value
+        set(value) { yProp.value = value }
 
     /**
      * @return viewport origin (x, y)
      */
     val origin: Point2D
-        get() = Point2D(getX(), getY())
+        get() = Point2D(x, y)
+
+    /**
+     * @return current visible viewport area
+     */
+    val visibleArea: Rectangle2D
+        get() = Rectangle2D(x, y, width, height)
+
+    private val zoom = SimpleDoubleProperty(1.0)
+    fun getZoom() = zoom.get()
+    fun zoomProperty() = zoom
+    fun setZoom(value: Double) = zoomProperty().set(value)
 
     private val angle = SimpleDoubleProperty()
     fun getAngle() = angle.value
@@ -100,14 +108,15 @@ class Viewport
     var isLazy = false
 
     /**
-     * This is only used for visual effects.
+     * Currently only supported for non-lazy and entity bound viewports.
+     */
+    var isFloating = false
+
+    /**
+     * This is only used for visual effects and acts like a viewport overlay.
      * Its x and y follow the actual x and y of viewport.
      */
-    val camera = Entity()
-
-    init {
-        //bindToEntity(camera, 0.0, 0.0)
-    }
+    internal val camera = Entity()
 
     /**
      * Binds the viewport to entity so that it follows the given entity.
@@ -118,9 +127,7 @@ class Viewport
      * the code above centers the camera on player.
      *
      * @param entity the entity to follow
-     *
      * @param distX distance in X between origin and entity
-     *
      * @param distY distance in Y between origin and entity
      */
     fun bindToEntity(entity: Entity, distX: Double, distY: Double) {
@@ -178,12 +185,8 @@ class Viewport
      * Unbind viewport.
      */
     fun unbind() {
-        xProperty().unbind()
-        yProperty().unbind()
         zoomProperty().unbind()
     }
-
-
 
     /**
      * Set bounds to viewport so that the viewport will not move outside the bounds
@@ -202,10 +205,14 @@ class Viewport
     }
 
     fun focusOn(entity: Entity) {
-        val newOrigin = entity.center.subtract(FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() / 2.0)
+        focusOn(entity.center)
+    }
 
-        setX(newOrigin.x)
-        setY(newOrigin.y)
+    fun focusOn(point: Point2D) {
+        val newOrigin = point.subtract(FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() / 2.0)
+
+        x = newOrigin.x
+        y = newOrigin.y
     }
 
     // adapted from https://gamedev.stackexchange.com/questions/1828/realistic-camera-screen-shake-from-explosion
@@ -253,11 +260,11 @@ class Viewport
 
     fun shakeTranslational(power: Double) {
         shakePowerTranslate = power
-        shakeAngle = FXGLMath.randomDouble() * FXGLMath.PI2
+        shakeAngle = randomDouble() * PI2
 
         // only record origin if not shaking, so that we don't record 'false' origin
         if (!shakingTranslate)
-            originBeforeShake.set(x.floatValue(), y.floatValue())
+            originBeforeShake.set(xProp.floatValue(), yProp.floatValue())
 
         shakingTranslate = true
     }
@@ -282,6 +289,8 @@ class Viewport
     private var isFading = false
 
     private var onFadeFlashFinish: Runnable = EmptyRunnable
+
+    private var t = 0.0
 
     fun flash(onFinished: Runnable) {
         if (isFlashing || isFading)
@@ -312,114 +321,126 @@ class Viewport
     }
 
     fun onUpdate(tpf: Double) {
+        t += tpf * 0.25
+
         if (isFlashing || isFading) {
-            flashTime += tpf
-
-            if (flashTime > 1.0) {
-                flashTime = 1.0
-                isFlashing = false
-                isFading = false
-                camera.viewComponent.removeChild(flashRect)
-
-                onFadeFlashFinish.run()
-            }
-
-            val ratio = flashTime / 1.0
-
-            val progress = if (isFading) 1 - ratio else ratio
-            val opacity = flashAnimatedValue.getValue(progress)
-
-            flashRect.opacity = opacity
+            updateFadeFlash(tpf)
         }
 
-        // TODO: cleanup
-        boundX?.let {
-            if (!isLazy) {
-                setX(boundX!!.doubleValue())
-                setY(boundY!!.doubleValue())
-            } else {
-                val sourceX = getX()
-                val sourceY = getY()
-
-                /*(Asymptotic average:
-
-                x = 0.9x + 0.1target;
-                OR
-                x += (target - x) * 0.1 * timeScale;
-                Use 0.01 for 60fps
-
-                timeScale 0 for pause, 0.1 for slow)*/
-
-                setX(sourceX * 0.9 + boundX!!.doubleValue() * 0.1)
-                setY(sourceY * 0.9 + boundY!!.doubleValue() * 0.1)
-            }
+        if (boundX != null) {
+            setOriginFromBoundEntity()
         }
 
         if (!shakingRotate && !shakingTranslate)
             return
 
         if (shakingTranslate) {
-            shakePowerTranslate *= 0.9
-            shakeAngle += 180 + FXGLMath.randomDouble() * FXGLMath.PI2 / 6
-            offset.set((shakePowerTranslate * FXGLMath.cos(shakeAngle)).toFloat(),
-                    (shakePowerTranslate * FXGLMath.sin(shakeAngle)).toFloat())
-
-            if (boundX != null) {
-                if (!isLazy) {
-                    setX(offset.x + boundX!!.doubleValue())
-                    setY(offset.y + boundY!!.doubleValue())
-                } else {
-                    val sourceX = offset.x + getX()
-                    val sourceY = offset.y + getY()
-
-                    setX(sourceX * 0.9 + boundX!!.doubleValue() * 0.1)
-                    setY(sourceY * 0.9 + boundY!!.doubleValue() * 0.1)
-                }
-
-            } else {
-                setX(offset.x + originBeforeShake.x.toDouble())
-                setY(offset.y + originBeforeShake.y.toDouble())
-            }
-
-            if (FXGLMath.abs(offset.x) < 0.5 && FXGLMath.abs(offset.y) < 0.5) {
-                if (boundX != null) {
-                    if (!isLazy) {
-                        setX(0.0 + boundX!!.doubleValue())
-                        setY(0.0 + boundY!!.doubleValue())
-                    } else {
-                        val sourceX = 0.0 + getX()
-                        val sourceY = 0.0 + getY()
-
-                        setX(sourceX * 0.9 + boundX!!.doubleValue() * 0.1)
-                        setY(sourceY * 0.9 + boundY!!.doubleValue() * 0.1)
-                    }
-                } else {
-                    setX(originBeforeShake.x.toDouble())
-                    setY(originBeforeShake.y.toDouble())
-                }
-
-                shakingTranslate = false
-            }
+            shakeTranslate()
         }
 
         if (shakingRotate) {
-            val maxAngle = 10.0
-
-            shakePowerRotate *= 0.9
-
-            // we can't use (FXGLMath.noise1D(time) - 0.5) yet
-            // as it will just "shake" once and get to initial position
-            setAngle(maxAngle * shakePowerRotate * FXGLMath.random(-1.0, 1.0))
-
-            if (FXGLMath.abs(angle.value - angleBeforeShake) < 0.5) {
-                setAngle(0.0)
-
-                shakingRotate = false
-            }
+            shakeRotate()
         }
 
-        // update camera's overlay location based on viewport X Y
-        camera.x = getX()
-        camera.y = getY()
+        updateCameraPosition()
+    }
+
+    private fun shakeTranslate() {
+        shakePowerTranslate *= 0.9
+        shakeAngle += 180 + randomDouble() * PI2 / 6
+        offset.set(
+                (shakePowerTranslate * cos(shakeAngle)).toFloat(),
+                (shakePowerTranslate * sin(shakeAngle)).toFloat()
+        )
+
+        if (boundX != null) {
+            setOriginFromBoundEntity(offset.x, offset.y)
+        } else {
+            x = offset.x + originBeforeShake.x.toDouble()
+            y = offset.y + originBeforeShake.y.toDouble()
+        }
+
+        if (abs(offset.x) < 0.5 && abs(offset.y) < 0.5) {
+            if (boundX != null) {
+                setOriginFromBoundEntity()
+            } else {
+                x = originBeforeShake.x.toDouble()
+                y = originBeforeShake.y.toDouble()
+            }
+
+            shakingTranslate = false
+        }
+    }
+
+    private fun setOriginFromBoundEntity(offsetX: Float = 0.0f, offsetY: Float = 0.0f) {
+        if (!isLazy) {
+            x = offsetX + boundX!!.doubleValue()
+            y = offsetY + boundY!!.doubleValue()
+
+            // TODO: this should be easier to implement if we keep origin (x, y) data
+            // without any transforms, so at any time we know where the origin is
+            if (isFloating) {
+                x += (noise1D(t) - 0.5) * 50
+                y += (noise1D(t + 1500) - 0.5) * 50
+            }
+
+            return
+        }
+
+        val sourceX = offsetX + x
+        val sourceY = offsetY + y
+
+        /*(Asymptotic average:
+
+            x = 0.9x + 0.1target;
+            OR
+            x += (target - x) * 0.1 * timeScale;
+            Use 0.01 for 60fps
+
+            timeScale 0 for pause, 0.1 for slow)*/
+
+        x = sourceX * 0.9 + boundX!!.doubleValue() * 0.1
+        y = sourceY * 0.9 + boundY!!.doubleValue() * 0.1
+    }
+
+    private fun updateFadeFlash(tpf: Double) {
+        flashTime += tpf
+
+        if (flashTime > 1.0) {
+            flashTime = 1.0
+            isFlashing = false
+            isFading = false
+            camera.viewComponent.removeChild(flashRect)
+
+            onFadeFlashFinish.run()
+        }
+
+        val ratio = flashTime / 1.0
+
+        val progress = if (isFading) 1 - ratio else ratio
+        val opacity = flashAnimatedValue.getValue(progress)
+
+        flashRect.opacity = opacity
+    }
+
+    private fun shakeRotate() {
+        val maxAngle = 10.0
+
+        shakePowerRotate *= 0.9
+
+        // we can't use (FXGLMath.noise1D(time) - 0.5) yet
+        // as it will just "shake" once and get to initial position
+        setAngle(maxAngle * shakePowerRotate * random(-1.0, 1.0))
+
+        if (abs(angle.value - angleBeforeShake) < 0.5) {
+            setAngle(0.0)
+
+            shakingRotate = false
+        }
+    }
+
+    private fun updateCameraPosition() {
+        camera.x = x
+        camera.y = y
     }
 }

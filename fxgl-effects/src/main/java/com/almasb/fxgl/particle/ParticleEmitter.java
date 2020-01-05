@@ -297,6 +297,15 @@ public final class ParticleEmitter {
         this.spawnPointFunction = spawnPointFunction;
     }
 
+    private Function<Integer, Point2D> scaleOriginFunction = (i) -> Point2D.ZERO;
+
+    /**
+     * Set scale origin for each particle.
+     */
+    public void setScaleOriginFunction(Function<Integer, Point2D> scaleOriginFunction) {
+        this.scaleOriginFunction = scaleOriginFunction;
+    }
+
     private Function<Integer, Point2D> scaleFunction = (i) -> Point2D.ZERO;
 
     /**
@@ -306,6 +315,12 @@ public final class ParticleEmitter {
      */
     public void setScaleFunction(Function<Integer, Point2D> scaleFunction) {
         this.scaleFunction = scaleFunction;
+    }
+
+    private Supplier<Point2D> entityScaleFunction = () -> new Point2D(1, 1);
+
+    public void setEntityScaleFunction(Supplier<Point2D> entityScaleFunction) {
+        this.entityScaleFunction = entityScaleFunction;
     }
 
     private Function<Integer, Duration> expireFunction = (i) -> Duration.seconds(1);
@@ -403,7 +418,9 @@ public final class ParticleEmitter {
                 velocityFunction.apply(i),
                 accelerationFunction.get(),
                 getRandomSize(),
+                scaleOriginFunction.apply(i),
                 scaleFunction.apply(i),
+                entityScaleFunction.get(),
                 expireFunction.apply(i),
                 getStartColor(),
                 getEndColor(),

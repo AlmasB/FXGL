@@ -9,14 +9,19 @@ package com.almasb.fxgl.texture
 import com.almasb.fxgl.core.concurrent.Async
 import javafx.geometry.HorizontalDirection
 import javafx.scene.Group
+import javafx.scene.Node
+import javafx.scene.SnapshotParameters
 import javafx.scene.effect.BlendMode
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
+import java.util.concurrent.Callable
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+
+
 
 private val image: Image by lazy {
     val group = Group()
@@ -50,6 +55,12 @@ private val image: Image by lazy {
 
 fun getDummyImage() = image
 
+fun toImage(node: Node): Image = Async.startAsyncFX(Callable {
+    val params = SnapshotParameters()
+    params.fill = Color.TRANSPARENT
+    node.snapshot(params, null)
+}).await()
+
 fun merge(images: List<Image>): Image {
     if (images.isEmpty())
         return getDummyImage()
@@ -64,6 +75,41 @@ fun merge(images: List<Image>): Image {
     }
 
     return texture.image
+}
+
+/**
+ * Resize image, with preserveRatio set to false by default.
+ * If preserveRatio is true, vertical scaling will be dependent on horizontal scaling and original image proportion will be reserved.
+ */
+fun resize(image : Image, targetWidth: Int, targetHeight: Int): Image {
+    return resize(image, targetWidth, targetHeight, false)
+}
+
+/**
+ * Resize image.
+ * If preserveRatio is true, vertical scaling will be dependent on horizontal scaling and original image proportion will be reserved.
+ */
+fun resize(image : Image, targetWidth: Int, targetHeight: Int, preserveRatio: Boolean): Image {
+    val width = image.width.toInt()
+    val height = image.height.toInt()
+    val scaleHorizontal = width.toDouble() / targetWidth
+    var scaleVertical = height.toDouble() / targetHeight
+    if (preserveRatio)
+        scaleVertical = scaleHorizontal
+
+    val output = WritableImage(targetWidth, targetHeight)
+
+    val reader = image.pixelReader
+    val writer = output.pixelWriter
+
+    for (y in 0 until targetHeight)
+        for (x in 0 until targetWidth)
+        {
+            val argb = reader.getArgb((x * scaleHorizontal).toInt(), (y * scaleVertical).toInt())
+            writer.setArgb(x, y, argb)
+        }
+
+    return output
 }
 
 data class Pixel(val x: Int, val y: Int, val color: Color, val parent: Image) {
@@ -426,7 +472,6 @@ fun Image.map(f: (Pixel) -> Pixel): Image {
     val newImage = WritableImage(w, h)
     val writer = newImage.pixelWriter
 
-    // https://github.com/AlmasB/FXGL/issues/489
     for (y in 0 until h) {
         for (x in 0 until w) {
 

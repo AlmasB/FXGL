@@ -41,18 +41,18 @@ class KeepOnScreenComponent : Component() {
 
     private fun blockWithBBox() {
         if (isHorizontal) {
-            if (getEntity().x < viewport.getX()) {
-                getEntity().x = viewport.getX()
-            } else if (getEntity().rightX > viewport.getX() + viewport.width) {
-                getEntity().x = viewport.getX() + viewport.width - getEntity().width
+            if (getEntity().x < viewport.x) {
+                getEntity().x = viewport.x
+            } else if (getEntity().rightX > viewport.x + viewport.width) {
+                getEntity().x = viewport.x + viewport.width - getEntity().width
             }
         }
 
         if (isVertical) {
-            if (getEntity().y < viewport.getY()) {
-                getEntity().y = viewport.getY()
-            } else if (getEntity().bottomY > viewport.getY() + viewport.height) {
-                getEntity().y = viewport.getY() + viewport.height - getEntity().height
+            if (getEntity().y < viewport.y) {
+                getEntity().y = viewport.y
+            } else if (getEntity().bottomY > viewport.y + viewport.height) {
+                getEntity().y = viewport.y + viewport.height - getEntity().height
             }
         }
     }

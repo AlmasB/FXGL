@@ -10,11 +10,11 @@ import com.almasb.fxgl.achievement.Achievement
 import com.almasb.fxgl.achievement.AchievementManager
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
-import com.almasb.fxgl.localization.Language
+import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.cutscene.CutsceneService
-import com.almasb.fxgl.localization.LocalizationService
+import com.almasb.fxgl.localization.Language
 import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
@@ -196,6 +196,13 @@ class GameSettings(
          */
         var secondsIn24h: Int = 60,
 
+        /**
+         * Seed used to initialize the random number generator in FXGLMath.
+         * Default value is -1, which means do not use the seed.
+         * Any other value is supplied directly to FXGLMath random.
+         */
+        var randomSeed: Long = -1L,
+
         /* EXPERIMENTAL */
 
         var isExperimentalTiledLargeMap: Boolean = false,
@@ -279,6 +286,7 @@ class GameSettings(
                 soundMenuSelect,
                 pixelsPerMeter,
                 secondsIn24h,
+                randomSeed,
                 isExperimentalTiledLargeMap,
                 isExperimentalNative,
                 configClass,
@@ -414,6 +422,8 @@ class ReadOnlyGameSettings internal constructor(
          * Set how many real seconds are in 24 game hours, default = 60.
          */
         val secondsIn24h: Int,
+
+        val randomSeed: Long,
 
         /* EXPERIMENTAL */
 
@@ -579,6 +589,10 @@ class ReadOnlyGameSettings internal constructor(
     val configClass: Optional<Class<*>>
         get() = Optional.ofNullable(configClassInternal)
 
+    init {
+        applySettings()
+    }
+
     override fun save(profile: UserProfile) {
         val bundle = Bundle("menusettings")
 
@@ -595,6 +609,13 @@ class ReadOnlyGameSettings internal constructor(
 
         globalMusicVolume = bundle.get("globalMusicVolume")
         globalSoundVolume = bundle.get("globalSoundVolume")
+
+        applySettings()
+    }
+
+    private fun applySettings() {
+        if (randomSeed != -1L)
+            FXGLMath.setRandom(Random(randomSeed))
     }
 
     override fun toString(): String {

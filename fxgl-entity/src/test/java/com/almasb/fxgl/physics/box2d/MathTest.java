@@ -29,13 +29,13 @@ public class MathTest {
 //        for (int i = 0; i < RAND_ITERS; i++) {
 //            float a = r.nextFloat() * MAX - MAX / 2;
 //            float b = r.nextFloat() * MAX - MAX / 2;
-//            assertEquals(Math.max(a, b), JBoxUtils.max(a, b));
+//            assertEquals(Math.max(a, b), Math.max(a, b));
 //        }
 //
 //        for (int i = 0; i < RAND_ITERS; i++) {
 //            float a = r.nextFloat() * MAX - MAX / 2;
 //            float b = r.nextFloat() * MAX - MAX / 2;
-//            assertEquals(Math.min(a, b), JBoxUtils.min(a, b));
+//            assertEquals(Math.min(a, b), Math.min(a, b));
 //        }
 //
 //        for (int i = 0; i < RAND_ITERS; i++) {

@@ -4,7 +4,7 @@
 
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>11.6</version>
+    <version>dev-SNAPSHOT</version>
     
     <packaging>pom</packaging>
 
@@ -30,6 +30,7 @@
         <module>fxgl-localization</module>
         <module>fxgl-notification</module>
         <module>fxgl-achievement</module>
+        <module>fxgl-ai</module>
         <module>fxgl-trade</module>
         <module>fxgl-minigames</module>
         <module>fxgl-samples</module>

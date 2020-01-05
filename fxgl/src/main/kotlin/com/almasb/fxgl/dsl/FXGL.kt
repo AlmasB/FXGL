@@ -26,6 +26,7 @@ import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.tiled.TMXLevelLoader
+import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.minigames.MiniGameService
@@ -38,6 +39,8 @@ import com.almasb.fxgl.time.Timer
 import javafx.animation.Interpolator
 import javafx.beans.property.*
 import javafx.event.Event
+import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.image.Image
@@ -250,6 +253,12 @@ class FXGL private constructor() { companion object {
 
 /* INPUT */
 
+    private var actionCounter = 0
+
+    @JvmStatic fun onKeyDown(key: KeyCode,  action: Runnable) {
+        onKeyDown(key, "action${actionCounter++}", action)
+    }
+
     @JvmStatic fun onKeyDown(key: KeyCode, actionName: String, action: Runnable) {
         getInput().addAction(object : UserAction(actionName) {
             override fun onActionBegin() {
@@ -257,8 +266,6 @@ class FXGL private constructor() { companion object {
             }
         }, key)
     }
-
-    private var actionCounter = 0
 
     @JvmStatic fun onKey(key: KeyCode, action: Runnable) {
         onKey(key, "action${actionCounter++}", action)
@@ -272,12 +279,20 @@ class FXGL private constructor() { companion object {
         }, key)
     }
 
+    @JvmStatic fun onKeyUp(key: KeyCode, action: Runnable) {
+        onKeyUp(key, "action${actionCounter++}", action)
+    }
+
     @JvmStatic fun onKeyUp(key: KeyCode, actionName: String, action: Runnable) {
         getInput().addAction(object : UserAction(actionName) {
             override fun onActionEnd() {
                 action.run()
             }
         }, key)
+    }
+
+    @JvmStatic fun onBtnDown(btn: MouseButton, action: Runnable) {
+        onBtnDown(btn, "action${actionCounter++}", action)
     }
 
     @JvmStatic fun onBtnDown(btn: MouseButton, actionName: String, action: Runnable) {
@@ -288,12 +303,20 @@ class FXGL private constructor() { companion object {
         }, btn)
     }
 
+    @JvmStatic fun onBtn(btn: MouseButton, action: Runnable) {
+        onBtn(btn, "action${actionCounter++}", action)
+    }
+
     @JvmStatic fun onBtn(btn: MouseButton, actionName: String, action: Runnable) {
         getInput().addAction(object : UserAction(actionName) {
             override fun onAction() {
                 action.run()
             }
         }, btn)
+    }
+
+    @JvmStatic fun onBtnUp(btn: MouseButton, action: Runnable) {
+        onBtnUp(btn, "action${actionCounter++}", action)
     }
 
     @JvmStatic fun onBtnUp(btn: MouseButton, actionName: String, action: Runnable) {
@@ -440,6 +463,9 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun fire(event: Event) = getEventBus().fireEvent(event)
 
+    @JvmStatic fun <T : Event> onEvent(eventType: EventType<T>, eventHandler: EventHandler<in T>): Subscriber =
+            getEventBus().addEventHandler(eventType, eventHandler)
+
 /* NOTIFICATIONS */
 
 //@JvmStatic fun notify(message: String) = getNotificationService().pushNotification(message)
@@ -468,13 +494,14 @@ class FXGL private constructor() { companion object {
         getGameScene().removeUINode(node)
     }
 
-    @JvmStatic fun addVarText(x: Double, y: Double, varName: String): Text {
+    @JvmStatic fun addVarText(varName: String, x: Double, y: Double): Text {
         return getUIFactory().newText(getip(varName).asString())
-                .apply {
-                    translateX = x
-                    translateY = y
-                }
-                .also { getGameScene().addUINode(it) }
+                .also { addUINode(it, x, y) }
+    }
+
+    @JvmStatic fun addText(message: String, x: Double, y: Double): Text {
+        return getUIFactory().newText(message)
+                .also { addUINode(it, x, y) }
     }
 
     @JvmStatic fun centerTextX(text: Text, minX: Double, maxX: Double) {

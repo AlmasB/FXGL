@@ -21,6 +21,10 @@ import javafx.util.Duration
  * Adapted from jfxtras-window.
  *
  * TODO: clean up
+// TODO: why do we have setPosition() and also can set via add ui node?
+// we use setLayout() internally, any difference to translate()?
+//window.setPosition(x, y);
+ *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

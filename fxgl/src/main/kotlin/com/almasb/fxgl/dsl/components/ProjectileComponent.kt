@@ -28,7 +28,7 @@ class ProjectileComponent(direction: Point2D, speed: Double) : Component() {
         get() = velocity.normalize()
         set(direction) {
             velocity = direction.normalize().multiply(speed)
-            entity.rotateToVector(velocity)
+            updateRotation()
         }
 
     var speed: Double = speed
@@ -36,11 +36,29 @@ class ProjectileComponent(direction: Point2D, speed: Double) : Component() {
             field = value
 
             velocity = velocity.normalize().multiply(speed)
-            getEntity().rotateToVector(velocity)
+            updateRotation()
         }
 
+    private var isAllowRotation: Boolean = true
+
+    /**
+     * Allow to disable / enable projectile rotation towards direction of travel.
+     */
+    fun allowRotation(allowRotation: Boolean): ProjectileComponent {
+        isAllowRotation = allowRotation
+        return this
+    }
+
+    /**
+     * Checks if rotation is enabled, if so then rotate.
+     */
+    private fun updateRotation(){
+        if (isAllowRotation)
+            entity.rotateToVector(velocity)
+    }
+
     override fun onAdded() {
-        entity.rotateToVector(velocity)
+        updateRotation()
     }
 
     override fun onUpdate(tpf: Double) {

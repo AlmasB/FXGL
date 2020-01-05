@@ -568,9 +568,9 @@ public class PrismaticJoint extends Joint {
             m_impulse.addLocal(df);
 
             if (m_limitState == LimitState.AT_LOWER) {
-                m_impulse.z = JBoxUtils.max(m_impulse.z, 0.0f);
+                m_impulse.z = Math.max(m_impulse.z, 0.0f);
             } else if (m_limitState == LimitState.AT_UPPER) {
-                m_impulse.z = JBoxUtils.min(m_impulse.z, 0.0f);
+                m_impulse.z = Math.min(m_impulse.z, 0.0f);
             }
 
             // f2(1:2) = invK(1:2,1:2) * (-Cdot(1:2) - K(1:2,3) * (f2(3) - f1(3))) +
@@ -693,21 +693,21 @@ public class PrismaticJoint extends Joint {
                 C2 =
                         JBoxUtils.clamp(translation, -JBoxSettings.maxLinearCorrection,
                                 JBoxSettings.maxLinearCorrection);
-                linearError = JBoxUtils.max(linearError, FXGLMath.abs(translation));
+                linearError = Math.max(linearError, FXGLMath.abs(translation));
                 active = true;
             } else if (translation <= m_lowerTranslation) {
                 // Prevent large linear corrections and allow some slop.
                 C2 =
                         JBoxUtils.clamp(translation - m_lowerTranslation + JBoxSettings.linearSlop,
                                 -JBoxSettings.maxLinearCorrection, 0.0f);
-                linearError = JBoxUtils.max(linearError, m_lowerTranslation - translation);
+                linearError = Math.max(linearError, m_lowerTranslation - translation);
                 active = true;
             } else if (translation >= m_upperTranslation) {
                 // Prevent large linear corrections and allow some slop.
                 C2 =
                         JBoxUtils.clamp(translation - m_upperTranslation - JBoxSettings.linearSlop, 0.0f,
                                 JBoxSettings.maxLinearCorrection);
-                linearError = JBoxUtils.max(linearError, translation - m_upperTranslation);
+                linearError = Math.max(linearError, translation - m_upperTranslation);
                 active = true;
             }
         }

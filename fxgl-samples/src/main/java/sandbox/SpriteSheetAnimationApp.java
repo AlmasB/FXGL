@@ -15,6 +15,7 @@ import com.almasb.fxgl.dsl.components.view.TextViewComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.texture.Texture;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
@@ -47,10 +48,11 @@ public class SpriteSheetAnimationApp extends GameApplication {
 
     @Override
     protected void initGame() {
+
         player = FXGL.entityBuilder()
                 .at(200, 200)
                 .with(new AnimationComponent())
-                .with(new GenericBarViewComponent(0.0, 40.0, Color.GREEN, 2999.0, 4003.0))
+                .with(new GenericBarViewComponent(0.0, 45.0, Color.PURPLE, new SimpleDoubleProperty(1000.0), 100.0, 8.0))
                 .with(new StatusViewComponent())
                 .with(new TextViewComponent(0, 65, "Character Name"))
                 .buildAndAttach();

@@ -13,7 +13,6 @@ import com.almasb.fxgl.physics.box2d.collision.shapes.EdgeShape;
 import com.almasb.fxgl.physics.box2d.collision.shapes.PolygonShape;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
@@ -1291,7 +1290,7 @@ public final class Collision {
                 tempx = vB.x - m_v2.x;
                 tempy = vB.y - m_v2.y;
                 float s2 = n.x * tempx + n.y * tempy;
-                float s = JBoxUtils.min(s1, s2);
+                float s = Math.min(s1, s2);
 
                 if (s > m_radius) {
                     // No collision

@@ -302,7 +302,11 @@ class EntityTest {
         val control = ValueUpdateControl()
         entity.addComponent(control)
 
+        assertFalse(control.pausedProperty().value)
+
         control.pause()
+
+        assertTrue(control.pausedProperty().value)
 
         entity.update(0.017)
 
@@ -388,6 +392,59 @@ class EntityTest {
         entity.setPosition(15.0, 33.0)
 
         assertThat(entity.position, `is`(Point2D(15.0, 33.0)))
+    }
+
+    @Test
+    fun `Set position x y using anchor`() {
+        entity.setAnchoredPosition(15.0, 10.0, Point2D(0.0, 0.0))
+
+        assertThat(entity.position, `is`(Point2D(15.0, 10.0)))
+
+        entity.setAnchoredPosition(15.0, 10.0, Point2D(15.0, 10.0))
+
+        assertThat(entity.position, `is`(Point2D(0.0, 0.0)))
+
+        // bbox has no effect to setting position using an anchor
+        entity.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(20.0, 20.0)))
+
+        entity.setAnchoredPosition(15.0, 10.0, Point2D(15.0, 10.0))
+
+        assertThat(entity.position, `is`(Point2D(0.0, 0.0)))
+    }
+
+    @Test
+    fun `Set position center`() {
+        entity.setLocalAnchorFromCenter()
+
+        entity.setAnchoredPosition(15.0, 34.0)
+
+        assertThat(entity.position, `is`(Point2D(15.0, 34.0)))
+
+        // bbox has an effect on setPositionCenter() computation
+        entity.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(20.0, 20.0)))
+
+        entity.setLocalAnchorFromCenter()
+
+        entity.setAnchoredPosition(15.0, 34.0)
+
+        assertThat(entity.position, `is`(Point2D(5.0, 24.0)))
+    }
+
+    @Test
+    fun `Get set position using local anchor`() {
+        entity.setPosition(-50.0, -30.0)
+
+        assertThat(entity.getAnchoredPosition(Point2D(30.0, 5.0)), `is`(Point2D(-20.0, -25.0)))
+
+        entity.localAnchor = Point2D(30.0, 30.0)
+
+        assertThat(entity.localAnchor, `is`(Point2D(30.0, 30.0)))
+
+        entity.setAnchoredPosition(Point2D(-50.0, 30.0))
+
+        assertThat(entity.anchoredPosition, `is`(Point2D(-50.0, 30.0)))
+
+        assertThat(entity.position, `is`(Point2D(-80.0, 0.0)))
     }
 
     @Test
@@ -750,18 +807,46 @@ class EntityTest {
 
     @Test
     fun `Fail when calling a component method and no suitable method found`() {
-        assertThrows(IllegalArgumentException::class.java) {
+        var e = assertThrows(IllegalArgumentException::class.java) {
             entity.call<Any>("bla-bla")
         }
+
+        assertThat(e.message, `is`("Cannot find method: bla-bla()"))
+
+        e = assertThrows(IllegalArgumentException::class.java) {
+            entity.call<Any>("bla-bla", 3)
+        }
+
+        assertThat(e.message, `is`("Cannot find method: bla-bla(int)"))
+
+        e = assertThrows(IllegalArgumentException::class.java) {
+            entity.call<Any>("bla-bla", "hi")
+        }
+
+        assertThat(e.message, `is`("Cannot find method: bla-bla(class java.lang.String)"))
     }
 
     @Test
     fun `Fail when calling a component method and call fails`() {
         entity.addComponent(ComponentWithMethod())
 
-        assertThrows(IllegalArgumentException::class.java) {
-            entity.call<Any>("myMethod", 4)
+        var e = assertThrows(IllegalArgumentException::class.java) {
+            entity.call<Any>("methodThatFails")
         }
+
+        assertThat(e.message, `is`("Failed to call: methodThatFails() Cause: java.lang.IllegalStateException: Test Fail"))
+
+        e = assertThrows(IllegalArgumentException::class.java) {
+            entity.call<Any>("methodThatFailsInt", 3)
+        }
+
+        assertThat(e.message, `is`("Failed to call: methodThatFailsInt(3) Cause: java.lang.IllegalStateException: Test Fail 3"))
+
+        e = assertThrows(IllegalArgumentException::class.java) {
+            entity.call<Any>("methodThatFailsStringInt", "hi", 5)
+        }
+
+        assertThat(e.message, `is`("Failed to call: methodThatFailsStringInt(hi, 5) Cause: java.lang.IllegalStateException: Test Fail hi, 5"))
     }
 
 //    @Test
@@ -800,6 +885,18 @@ class EntityTest {
         fun myMethod(s: String) = s.length
 
         fun myMethodWithTwoParams(s: String, i: Int) = s.length + i
+
+        fun methodThatFails() {
+            throw IllegalStateException("Test Fail")
+        }
+
+        fun methodThatFailsInt(i: Int) {
+            throw IllegalStateException("Test Fail $i")
+        }
+
+        fun methodThatFailsStringInt(s: String, i: Int) {
+            throw IllegalStateException("Test Fail $s, $i")
+        }
     }
 
     private inner class TestControl : Component() {

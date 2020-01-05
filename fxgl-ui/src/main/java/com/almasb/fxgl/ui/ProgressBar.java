@@ -10,6 +10,7 @@ import javafx.animation.*;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -65,6 +66,8 @@ public final class ProgressBar extends Parent {
 
     private Timeline timeline = new Timeline();
 
+    private ChangeListener<Number> update;
+
     public ProgressBar() {
         this(true);
     }
@@ -97,7 +100,7 @@ public final class ProgressBar extends Parent {
         label.setTextFill(Color.GOLD);
         label.textProperty().bind(currentValue.asString("%.0f").concat("/").concat(maxValue.asString("%.0f")));
 
-        currentValue.addListener((obs, oldValue, newValue) -> {
+        update = (obs, oldValue, newValue) -> {
             if (!showChanges)
                 return;
 
@@ -107,31 +110,32 @@ public final class ProgressBar extends Parent {
 
             // text value animation
 
-            Text text = new Text((diff >= 0 ? "+" : "") + diff);
-            text.setTranslateX(newWidth + (diff > 0 ? 5 : 25));
-            text.setTranslateY(height.get() / 2);
-            text.setFill(traceFill);
-            text.setFont(Font.font(14));
+            if (diff != 0) { //allows reacting to width changes without showing a label
+                Text text = new Text((diff > 0 ? "+" : "") + diff);
+                text.setTranslateX(newWidth + (diff > 0 ? 5 : 25));
+                text.setTranslateY(height.get() / 2);
+                text.setFill(traceFill);
+                text.setFont(Font.font(14));
 
-            barGroup.getChildren().add(text);
+                barGroup.getChildren().add(text);
 
-            TranslateTransition tt = new TranslateTransition(Duration.seconds(0.66), text);
-            tt.setToY(0);
+                TranslateTransition tt = new TranslateTransition(Duration.seconds(0.66), text);
+                tt.setToY(0);
 
-            FadeTransition ft = new FadeTransition(Duration.seconds(0.66), text);
-            ft.setToValue(0);
+                FadeTransition ft = new FadeTransition(Duration.seconds(0.66), text);
+                ft.setToValue(0);
 
-            ParallelTransition pt = new ParallelTransition(ft);
-            pt.setOnFinished(e -> barGroup.getChildren().remove(text));
-            pt.play();
-
+                ParallelTransition pt = new ParallelTransition(ft);
+                pt.setOnFinished(e -> barGroup.getChildren().remove(text));
+                pt.play();
+            }
 
             // trace shown as a flash
 
             Rectangle trace = new Rectangle(Math.abs(newWidth - innerBar.getWidth()), height.get() - 6);
             trace.setArcWidth(innerBar.getArcWidth());
             trace.setArcHeight(innerBar.getArcHeight());
-            trace.setTranslateX(innerBar.getWidth() < newWidth ? innerBar.getWidth() : newWidth);
+            trace.setTranslateX(Math.min(innerBar.getWidth(), newWidth));
             trace.setTranslateY(3);
             trace.setFill(traceFill);
             trace.setOpacity(0.55);
@@ -152,7 +156,9 @@ public final class ProgressBar extends Parent {
             timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0.66),
                     new KeyValue(innerBar.widthProperty(), newWidth)));
             timeline.play();
-        });
+        };
+
+        currentValue.addListener(update);
 
         barGroup.getChildren().addAll(backgroundBar, innerBar);
         getChildren().addAll(barGroup, label);
@@ -255,7 +261,7 @@ public final class ProgressBar extends Parent {
             throw new IllegalArgumentException("Width must be > 0");
 
         width.set(value);
-        currentValue.set(currentValue.get() + 0.001);
+        update.changed(currentValue, currentValue.get(), currentValue.get());
     }
 
     public void setHeight(double value) {
@@ -263,7 +269,6 @@ public final class ProgressBar extends Parent {
             throw new IllegalArgumentException("Height must be > 0");
 
         height.set(value);
-        currentValue.set(currentValue.get() + 0.001);
     }
 
     public void setMinValue(double value) {

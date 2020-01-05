@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.texture
 
+import com.almasb.fxgl.test.RunWithFX
 import javafx.geometry.HorizontalDirection
 import javafx.geometry.Rectangle2D
 import javafx.geometry.VerticalDirection
@@ -20,6 +21,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.function.Executable
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
@@ -29,6 +31,7 @@ import org.junit.jupiter.params.provider.EnumSource
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@ExtendWith(RunWithFX::class)
 class TextureTest {
 
     private lateinit var texture: Texture
@@ -156,6 +159,7 @@ class TextureTest {
         assertThat(texture.replaceColor(Color.WHITE, Color.GRAY).image, `is`(not(image)))
         assertThat(texture.replaceColor(Color.TRANSPARENT, Color.GRAY).image, `is`(not(image)))
         assertThat(texture.transparentColor(Color.PURPLE).image, `is`(not(image)))
+        assertThat(texture.outline(Color.PURPLE).image, `is`(not(image)))
     }
 
     @ParameterizedTest

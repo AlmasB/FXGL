@@ -20,8 +20,6 @@ import com.almasb.fxgl.physics.box2d.dynamics.contacts.*;
 
 import java.util.HashMap;
 
-import static com.almasb.fxgl.physics.box2d.common.JBoxSettings.CONTACT_STACK_INIT_SIZE;
-
 /**
  * Provides object pooling for all objects used in the engine. Objects retrieved from here should
  * only be used temporarily, and then pushed back (with the exception of arrays).
@@ -29,6 +27,8 @@ import static com.almasb.fxgl.physics.box2d.common.JBoxSettings.CONTACT_STACK_IN
  * @author Daniel Murphy
  */
 public class DefaultWorldPool implements IWorldPool {
+
+    private static final int CONTACT_STACK_INIT_SIZE = 10;
 
     private final OrderedStack<Vec2> vecs;
     private final OrderedStack<Vec3> vec3s;

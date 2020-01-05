@@ -380,7 +380,7 @@ public final class PolygonShape extends Shape {
             return;
         }
 
-        int n = JBoxUtils.min(num, JBoxSettings.maxPolygonVertices);
+        int n = Math.min(num, JBoxSettings.maxPolygonVertices);
 
         // Perform welding and copy vertices into local buffer.
         Vec2[] ps = new Vec2[JBoxSettings.maxPolygonVertices];

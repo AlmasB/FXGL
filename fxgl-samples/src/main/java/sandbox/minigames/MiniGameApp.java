@@ -12,9 +12,8 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.input.KeyTrigger;
 import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.TriggerListener;
-import com.almasb.fxgl.minigames.MiniGameService;
-import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerView;
-import com.almasb.fxgl.minigames.lockpicking.LockPickView;
+import com.almasb.fxgl.minigames.sweetspot.SweetSpotMiniGame;
+import com.almasb.fxgl.minigames.sweetspot.SweetSpotView;
 import com.almasb.fxgl.minigames.triggersequence.TriggerSequenceView;
 import com.almasb.fxgl.ui.FXGLButton;
 import javafx.scene.input.KeyCode;
@@ -46,6 +45,7 @@ public class MiniGameApp extends GameApplication {
     int i = 1;
 
     private Text debugText;
+    private Text debugText2;
 
     @Override
     protected void initInput() {
@@ -90,6 +90,9 @@ public class MiniGameApp extends GameApplication {
 
 
         debugText = getUIFactory().newText("", Color.BLACK, 36.0);
+        debugText2 = getUIFactory().newText("", Color.BLACK, 36.0);
+
+        addUINode(debugText2, 0, 50);
 
         getGameScene().setBackgroundRepeat("bg_10.png");
 
@@ -124,17 +127,33 @@ public class MiniGameApp extends GameApplication {
         var btnCheck = new FXGLButton("Skill Check");
 
         btnCheck.setOnAction(e -> {
-            var manager = new MiniGameService();
-            manager.startSweetSpot(10, (result) -> {
-
+            var manager = getMiniGameService();
+            var game = new SweetSpotMiniGame();
+            game.randomizeRange(35);
+            manager.startMiniGameInGame(new SweetSpotView(game), result -> {
                 debugText.setText(result.isSuccess() ? "Success" : "Fail");
-                //addUINode(getUIFactory().newText(result.isSuccess() ? "SUCCESS" : "FAIL", Color.BLACK, 24.0), 20, i++ * 50);
             });
+
+
+//            manager.startSweetSpot(10, (result) -> {
+//
+//                debugText.setText(result.isSuccess() ? "Success" : "Fail");
+//                //addUINode(getUIFactory().newText(result.isSuccess() ? "SUCCESS" : "FAIL", Color.BLACK, 24.0), 20, i++ * 50);
+//            });
         });
 
         addUINode(btnCheck, 150, 250);
 
         //addUINode(new Rectangle(2, 2), getAppWidth() / 2 - 1, getAppHeight() / 2 - 1);
+    }
+
+    private double t = 0.0;
+
+    @Override
+    protected void onUpdate(double tpf) {
+        t += tpf;
+
+        debugText2.setText("(int) t" + (int) t);
     }
 
     public static void main(String[] args) {

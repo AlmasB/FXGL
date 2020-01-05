@@ -20,7 +20,6 @@ import com.almasb.fxgl.physics.box2d.collision.broadphase.DefaultBroadPhaseBuffe
 import com.almasb.fxgl.physics.box2d.collision.broadphase.DynamicTree;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Sweep;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
@@ -588,7 +587,7 @@ public final class World {
                     // Beta is the fraction of the remaining portion of the .
                     float beta = toiOutput.t;
                     if (toiOutput.state == TOIOutputState.TOUCHING) {
-                        alpha = JBoxUtils.min(alpha0 + (1.0f - alpha0) * beta, 1.0f);
+                        alpha = Math.min(alpha0 + (1.0f - alpha0) * beta, 1.0f);
                     } else {
                         alpha = 1.0f;
                     }

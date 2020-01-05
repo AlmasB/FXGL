@@ -20,7 +20,6 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -381,6 +380,14 @@ public class Entity {
         return true;
     }
 
+    /**
+     * Call a method of a component attached to this entity.
+     * For example: given AttackComponent with method attack(), you can call
+     * entity.call("attack"), which is equivalent to
+     * entity.getComponent(AttackComponent.class).attack().
+     *
+     * Note: avoid using more than one component with same method names.
+     */
     public <T> T call(String componentMethodName, Object... args) {
         ComponentMethod method;
 
@@ -393,7 +400,7 @@ public class Entity {
                     .toArray(Class[]::new);
 
             method = findMethod(componentMethodName, types)
-                    .orElseThrow(() -> new IllegalArgumentException("Cannot find method: " + componentMethodName));
+                    .orElseThrow(() -> new IllegalArgumentException("Cannot find method: " + format(componentMethodName, types)));
 
             componentMethods.put(componentMethodName, method);
         }
@@ -401,8 +408,19 @@ public class Entity {
         try {
             return method.call(args);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Cannot call: " + componentMethodName, e);
+            String message = "Failed to call: " + format(componentMethodName, args) + " Cause: " + getRootCause(e);
+
+            throw new IllegalArgumentException(message, e);
         }
+    }
+
+    /**
+     * @return a method name formatted as method signature
+     */
+    private String format(String methodName, Object[] args) {
+        String argsString = Arrays.toString(args);
+
+        return methodName + "(" + argsString.substring(1, argsString.length() - 1) + ")";
     }
 
     private Optional<ComponentMethod> findMethod(String name, Class<?>... types) {
@@ -473,16 +491,7 @@ public class Entity {
 
         checkNotDuplicate(type);
 
-        List<Required> requiredList = new ArrayList<>();
-
-        Annotation[] annotations = type.getAnnotations();
-        for (Annotation a : annotations) {
-            if (a.annotationType().equals(Required.class)) {
-                requiredList.add((Required) a);
-            }
-        }
-
-        for (Required r : requiredList) {
+        for (Required r : type.getAnnotationsByType(Required.class)) {
             if (!hasComponent(r.value())) {
                 throw new IllegalStateException("Required component: [" + r.value().getSimpleName() + "] for: " + type.getSimpleName() + " is missing");
             }
@@ -511,16 +520,7 @@ public class Entity {
      * Fails with IAE if [requiringType] has a dependency on [type].
      */
     private void checkNotRequiredBy(Class<? extends Component> requiringType, Class<? extends Component> type) {
-        List<Required> requiredList = new ArrayList<>();
-
-        Annotation[] annotations = requiringType.getAnnotations();
-        for (Annotation a : annotations) {
-            if (a.annotationType().equals(Required.class)) {
-                requiredList.add((Required) a);
-            }
-        }
-
-        for (Required required : requiredList) {
+        for (Required required : requiringType.getAnnotationsByType(Required.class)) {
             if (required.value().equals(type)) {
                 throw new IllegalArgumentException("Required component: [" + required.value().getSimpleName() + "] by: " + requiringType.getSimpleName());
             }
@@ -638,6 +638,45 @@ public class Entity {
 
     public final DoubleProperty yProperty() {
         return transform.yProperty();
+    }
+
+    public final Point2D getLocalAnchor() {
+        return transform.getLocalAnchor();
+    }
+
+    public final void setLocalAnchorFromCenter() {
+        setLocalAnchor(bbox.getCenterLocal());
+    }
+
+    public final void setLocalAnchor(Point2D localAnchor) {
+        transform.setLocalAnchor(localAnchor);
+    }
+
+    public final void setAnchoredPosition(double x, double y) {
+        transform.setAnchoredPosition(new Point2D(x, y));
+    }
+
+    public final void setAnchoredPosition(Point2D p) {
+        transform.setAnchoredPosition(p);
+    }
+
+    public final void setAnchoredPosition(double x, double y, Point2D localAnchor) {
+        setPosition(x - localAnchor.getX(), y - localAnchor.getY());
+    }
+
+    /**
+     * @return world coordinates of the point that corresponds to local anchor
+     */
+    public final Point2D getAnchoredPosition() {
+        return transform.getAnchoredPosition();
+    }
+
+    /**
+     * @param localAnchor in local coordinates
+     * @return world coordinates of the point that corresponds to local anchor
+     */
+    public final Point2D getAnchoredPosition(Point2D localAnchor) {
+        return new Point2D(getX() + localAnchor.getX(), getY() + localAnchor.getY());
     }
 
     /**

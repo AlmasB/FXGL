@@ -22,8 +22,6 @@ public class JBoxSettings {
      */
     public static final float PI = (float) Math.PI;
 
-    public static final int CONTACT_STACK_INIT_SIZE = 10;
-
     /**
      * smaller the precision, the larger the table. If a small table is used (eg, precision is .006 or
      * greater), make sure you set the table to lerp it's results. Accuracy chart is in the JBoxUtils

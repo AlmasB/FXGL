@@ -13,6 +13,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.dsl.views.ScrollingBackgroundView;
 import javafx.geometry.Orientation;
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
@@ -52,6 +53,8 @@ public class ScrollingBackgroundSample extends GameApplication {
         }, KeyCode.A);
 
         onKeyDown(KeyCode.F, "shake", () -> {
+
+            //getGameScene().getViewport().focusOn(new Point2D(2000, getAppHeight() / 2));
             getGameScene().getViewport().shakeTranslational(5);
         });
     }
@@ -80,10 +83,11 @@ public class ScrollingBackgroundSample extends GameApplication {
 //                .buildAndAttach();
 
         getGameScene().getViewport().bindToEntity(player, 0, 0);
-        getGameScene().getViewport().setLazy(true);
+        //getGameScene().getViewport().setLazy(true);
+        getGameScene().getViewport().setFloating(true);
 
         entityBuilder()
-                .view(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_wrap.png", 1066, 600),
+                .view(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_wrap.png", 1066, 800),
                         Orientation.HORIZONTAL))
                 .zIndex(-1)
                 .buildAndAttach();

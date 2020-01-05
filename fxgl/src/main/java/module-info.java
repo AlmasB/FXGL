@@ -10,6 +10,7 @@
 module com.almasb.fxgl.all {
     requires transitive com.almasb.fxgl.core;
     requires transitive com.almasb.fxgl.achievement;
+    requires transitive com.almasb.fxgl.ai;
     requires transitive com.almasb.fxgl.animation;
     requires transitive com.almasb.fxgl.cutscene;
     requires transitive com.almasb.fxgl.effects;

@@ -6,7 +6,9 @@
 
 package sandbox;
 
+import com.almasb.fxgl.animation.AnimatedPoint2D;
 import com.almasb.fxgl.animation.Animation;
+import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -93,13 +95,15 @@ public class AnimSample extends GameApplication {
                 .at(200, 50)
                 .view(new AnimatedTexture(channel).loop())
                 .buildAndAttach();
-    }
 
-    @Override
-    protected void onUpdate(double tpf) {
-
-
-
+        // generic animation builder
+        animationBuilder()
+                .interpolator(Interpolators.ELASTIC.EASE_OUT())
+                .duration(Duration.seconds(2))
+                .onFinished(() -> System.out.println("Done!"))
+                .animate(new AnimatedPoint2D(new Point2D(50, 50), new Point2D(200, 200)))
+                .onProgress(value -> System.out.println(value))
+                .buildAndPlay();
     }
 
     public static class EFactory implements EntityFactory {

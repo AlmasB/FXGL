@@ -9,7 +9,10 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.collision.Distance.DistanceProxy;
 import com.almasb.fxgl.physics.box2d.collision.Distance.SimplexCache;
-import com.almasb.fxgl.physics.box2d.common.*;
+import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
+import com.almasb.fxgl.physics.box2d.common.Rotation;
+import com.almasb.fxgl.physics.box2d.common.Sweep;
+import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 
 /**
@@ -107,7 +110,7 @@ public class TimeOfImpact {
 
         float totalRadius = proxyA.m_radius + proxyB.m_radius;
         // djm: whats with all these constants?
-        float target = JBoxUtils.max(JBoxSettings.linearSlop, totalRadius - 3.0f * JBoxSettings.linearSlop);
+        float target = Math.max(JBoxSettings.linearSlop, totalRadius - 3.0f * JBoxSettings.linearSlop);
         float tolerance = 0.25f * JBoxSettings.linearSlop;
 
         assert target > tolerance;
@@ -245,7 +248,7 @@ public class TimeOfImpact {
                     }
                 }
 
-                toiMaxRootIters = JBoxUtils.max(toiMaxRootIters, rootIterCount);
+                toiMaxRootIters = Math.max(toiMaxRootIters, rootIterCount);
 
                 ++pushBackIter;
 
@@ -272,7 +275,7 @@ public class TimeOfImpact {
         }
 
         // System.out.printf("final sweeps: %f, %f, %f; %f, %f, %f", input.s)
-        toiMaxIters = JBoxUtils.max(toiMaxIters, iter);
+        toiMaxIters = Math.max(toiMaxIters, iter);
     }
 }
 

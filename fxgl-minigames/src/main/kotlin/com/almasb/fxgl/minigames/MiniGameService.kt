@@ -77,13 +77,28 @@ class MiniGameService : EngineService {
         startMiniGame(CircuitBreakerView(miniGame)) { callback.accept(it) }
     }
 
-    // TODO: start mini game in the in-game mode, not a different subscene
     fun <S : MiniGameResult, T : MiniGame<S>> startMiniGame(view: MiniGameView<T>, callback: Consumer<S>) {
         startMiniGame(view) { callback.accept(it) }
     }
 
     fun <S : MiniGameResult, T : MiniGame<S>> startMiniGame(view: MiniGameView<T>, callback: (S) -> Unit) {
-        val scene = MiniGameSubScene(sceneStack, appWidth, appHeight, view, callback)
+        val scene = MiniGameSubScene(sceneStack, appWidth, appHeight, false, view, callback)
+
+        sceneStack.pushSubScene(scene)
+    }
+
+    /**
+     * Starts the mini game in GameScene rather than a subscene.
+     */
+    fun <S : MiniGameResult, T : MiniGame<S>> startMiniGameInGame(view: MiniGameView<T>, callback: Consumer<S>) {
+        startMiniGameInGame(view) { callback.accept(it) }
+    }
+
+    /**
+     * Starts the mini game in GameScene rather than a subscene.
+     */
+    fun <S : MiniGameResult, T : MiniGame<S>> startMiniGameInGame(view: MiniGameView<T>, callback: (S) -> Unit) {
+        val scene = MiniGameSubScene(sceneStack, appWidth, appHeight, true, view, callback)
 
         sceneStack.pushSubScene(scene)
     }
@@ -110,6 +125,7 @@ class MiniGameService : EngineService {
 class MiniGameSubScene<S : MiniGameResult, T : MiniGame<S>>(
         private val sceneStack: SubSceneStack,
         appWidth: Int, appHeight: Int,
+        override val isAllowConcurrency: Boolean = false,
         val view: MiniGameView<T>, val callback: (S) -> Unit) : SubScene() {
 
     init {

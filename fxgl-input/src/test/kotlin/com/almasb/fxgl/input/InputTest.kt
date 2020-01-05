@@ -626,6 +626,68 @@ class InputTest {
         assertThat(calls, `is`(0))
     }
 
+    @Test
+    fun `Trigger listeners`() {
+        var resultBegin: Trigger? = null
+        var resultAction: Trigger? = null
+        var resultEnd: Trigger? = null
+
+        val listener = object : TriggerListener() {
+            override fun onActionBegin(trigger: Trigger) {
+                resultBegin = trigger
+            }
+
+            override fun onAction(trigger: Trigger) {
+                resultAction = trigger
+            }
+
+            override fun onActionEnd(trigger: Trigger) {
+                resultEnd = trigger
+            }
+        }
+
+        input.addTriggerListener(listener)
+
+        assertNull(resultBegin)
+        assertNull(resultAction)
+        assertNull(resultEnd)
+
+        input.mockButtonPress(MouseButton.SECONDARY)
+
+        assertTrue(resultBegin is MouseTrigger)
+        assertThat((resultBegin as MouseTrigger).button, `is`(MouseButton.SECONDARY))
+        assertNull(resultAction)
+        assertNull(resultEnd)
+
+        resultBegin = null
+
+        input.update(0.016)
+
+        assertTrue(resultAction is MouseTrigger)
+        assertThat((resultAction as MouseTrigger).button, `is`(MouseButton.SECONDARY))
+        assertNull(resultBegin)
+        assertNull(resultEnd)
+
+        resultAction = null
+
+        input.mockButtonRelease(MouseButton.SECONDARY)
+
+        assertTrue(resultEnd is MouseTrigger)
+        assertThat((resultEnd as MouseTrigger).button, `is`(MouseButton.SECONDARY))
+        assertNull(resultBegin)
+        assertNull(resultAction)
+
+        resultEnd = null
+
+        input.removeTriggerListener(listener)
+
+        input.mockButtonPress(MouseButton.SECONDARY)
+
+        assertNull(resultBegin)
+        assertNull(resultAction)
+        assertNull(resultEnd)
+    }
+
 //    @Test
 //    fun `Serialization`() {
 //        val action = object : UserAction("Action") {}

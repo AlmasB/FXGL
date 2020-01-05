@@ -373,7 +373,7 @@ class Island {
                     minSleepTime = 0.0f;
                 } else {
                     b.setSleepTime(b.getSleepTime() + h);
-                    minSleepTime = JBoxUtils.min(minSleepTime, b.getSleepTime());
+                    minSleepTime = Math.min(minSleepTime, b.getSleepTime());
                 }
             }
 
