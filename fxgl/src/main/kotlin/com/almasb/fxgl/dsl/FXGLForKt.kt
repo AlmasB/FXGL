@@ -203,3 +203,5 @@ fun run(action: () -> Unit, interval: Duration, limit: Int) = FXGL.run(Runnable(
 fun entityBuilder() = EntityBuilder()
 
 fun animationBuilder() = AnimationBuilder()
+
+fun eventBuilder() = EventBuilder()

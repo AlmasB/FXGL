@@ -567,7 +567,7 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun animationBuilder() = AnimationBuilder()
 
-
+    @JvmStatic fun eventBuilder() = EventBuilder()
 }
 }
 
