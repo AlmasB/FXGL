@@ -12,6 +12,7 @@ import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.core.serialization.SerializableType
 import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.cutscene.CutsceneService
 import com.almasb.fxgl.localization.Language
@@ -19,8 +20,6 @@ import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
-import com.almasb.fxgl.saving.UserProfile
-import com.almasb.fxgl.saving.UserProfileSavable
 import com.almasb.fxgl.ui.DialogFactory
 import com.almasb.fxgl.ui.FXGLDialogFactory
 import com.almasb.fxgl.ui.FXGLUIFactory
@@ -458,7 +457,7 @@ class ReadOnlyGameSettings internal constructor(
 
         val achievements: List<Achievement>
 
-) : UserProfileSavable {
+) : SerializableType {
 
     /* STATIC - cannot be modified at runtime */
 
@@ -593,18 +592,13 @@ class ReadOnlyGameSettings internal constructor(
         applySettings()
     }
 
-    override fun save(profile: UserProfile) {
-        val bundle = Bundle("menusettings")
-
+    override fun write(bundle: Bundle) {
         bundle.put("fullscreen", fullScreen.value)
         bundle.put("globalMusicVolume", globalMusicVolume)
         bundle.put("globalSoundVolume", globalSoundVolume)
-
-        profile.putBundle(bundle)
     }
 
-    override fun load(profile: UserProfile) {
-        val bundle = profile.getBundle("menusettings")
+    override fun read(bundle: Bundle) {
         fullScreen.value = bundle.get("fullscreen")
 
         globalMusicVolume = bundle.get("globalMusicVolume")

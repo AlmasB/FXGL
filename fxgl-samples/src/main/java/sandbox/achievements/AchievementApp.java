@@ -11,7 +11,7 @@ import com.almasb.fxgl.achievement.AchievementEvent;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.MenuItem;
-import com.almasb.fxgl.saving.DataFile;
+import com.almasb.fxgl.profile.DataFile;
 import javafx.scene.input.KeyCode;
 
 import java.util.EnumSet;

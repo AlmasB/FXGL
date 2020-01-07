@@ -7,7 +7,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.saving.DataFile
+import com.almasb.fxgl.profile.DataFile
 import com.almasb.sslogger.Logger
 import javafx.concurrent.Task
 import javafx.scene.control.ProgressBar

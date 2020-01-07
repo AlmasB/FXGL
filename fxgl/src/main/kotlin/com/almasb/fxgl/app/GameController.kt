@@ -7,8 +7,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.collection.PropertyMap
-import com.almasb.fxgl.saving.SaveFile
-import com.almasb.fxgl.saving.UserProfile
+import com.almasb.fxgl.profile.SaveFile
 import com.almasb.fxgl.scene.SubSceneStack
 import javafx.beans.property.StringProperty
 
@@ -28,15 +27,11 @@ interface GameController : SubSceneStack {
 
     fun gotoPlay()
 
-    fun saveGame(fileName: String)
+    fun saveGame(saveFile: SaveFile)
 
     fun loadGame(saveFile: SaveFile)
 
     fun loadGameFromLastSave()
-
-    fun saveProfile()
-
-    fun loadFromProfile(profile: UserProfile): Boolean
 
     fun onGameReady(vars: PropertyMap)
 
@@ -46,6 +41,6 @@ interface GameController : SubSceneStack {
 
     fun saveScreenshot(): Boolean
 
-    fun restoreDefaultProfileSettings()
+    fun restoreDefaultSettings()
 }
 

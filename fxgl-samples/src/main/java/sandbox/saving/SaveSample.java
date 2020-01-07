@@ -13,7 +13,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.core.serialization.Bundle;
-import com.almasb.fxgl.saving.DataFile;
+import com.almasb.fxgl.profile.DataFile;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;

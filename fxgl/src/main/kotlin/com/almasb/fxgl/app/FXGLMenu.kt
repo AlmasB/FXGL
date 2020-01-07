@@ -16,7 +16,7 @@ import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.TriggerView
-import com.almasb.fxgl.saving.SaveFile
+import com.almasb.fxgl.profile.SaveFile
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.FXGLScrollPane
 import com.almasb.fxgl.ui.FXGLUIConfig.getUIFactory
@@ -600,7 +600,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             if (saveFileName.isEmpty())
                 return@Consumer
 
-            controller.saveGame(saveFileName)
+            //controller.saveGame(saveFileName)
 
 //            if (saveLoadManager.saveFileExists(saveFileName)) {
 //                getDisplay().showConfirmationBox(FXGL.localize("menu.overwrite") +" [$saveFileName]?", { yes ->

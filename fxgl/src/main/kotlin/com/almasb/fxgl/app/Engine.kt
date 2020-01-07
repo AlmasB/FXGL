@@ -23,7 +23,8 @@ import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.localization.Language
 import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.physics.PhysicsWorld
-import com.almasb.fxgl.saving.*
+import com.almasb.fxgl.profile.DataFile
+import com.almasb.fxgl.profile.SaveFile
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneListener
 import com.almasb.fxgl.scene.SubScene
@@ -127,7 +128,7 @@ internal class Engine(
     /**
      * Stores the default profile data. This is used to restore default settings.
      */
-    private lateinit var defaultProfile: UserProfile
+    //private lateinit var defaultProfile: UserProfile
 
     private val environmentVars = hashMapOf<String, Any>()
 
@@ -443,13 +444,13 @@ internal class Engine(
     }
 
     private fun initEventHandlers() {
-        eventBus.addEventHandler(SaveEvent.ANY, EventHandler { e ->
-            settings.save(e.profile)
-        })
-
-        eventBus.addEventHandler(LoadEvent.ANY, EventHandler { e ->
-            settings.load(e.profile)
-        })
+//        eventBus.addEventHandler(SaveEvent.ANY, EventHandler { e ->
+//            settings.save(e.profile)
+//        })
+//
+//        eventBus.addEventHandler(LoadEvent.ANY, EventHandler { e ->
+//            settings.load(e.profile)
+//        })
     }
 
     private fun runPreInit() {
@@ -464,9 +465,9 @@ internal class Engine(
     }
 
     private fun generateDefaultProfile() {
-        log.debug("generateDefaultProfile()")
-
-        defaultProfile = createProfile()
+//        log.debug("generateDefaultProfile()")
+//
+//        defaultProfile = createProfile()
     }
 
     private fun injectDependenciesIntoServices() {
@@ -584,8 +585,8 @@ internal class Engine(
         mainWindow.setScene(playScene)
     }
 
-    override fun saveGame(fileName: String) {
-        doSave(fileName)
+    override fun saveGame(saveFile: SaveFile) {
+        //doSave(fileName)
     }
 
     private fun doSave(saveFileName: String) {
@@ -636,45 +637,45 @@ internal class Engine(
         }
     }
 
-    override fun saveProfile() {
-//        saveLoadManager.saveProfileTask(createProfile())
-//                .onFailure { error -> "Failed to save profile: ${profileName.value} - $error" }
-//                .run() // we execute synchronously to avoid incomplete save since we might be shutting down
-    }
-
-    /**
-     * @return true if loaded successfully, false if couldn't load
-     */
-    override fun loadFromProfile(profile: UserProfile): Boolean {
-        if (!profile.isCompatible(settings.title, settings.version))
-            return false
-
-        eventBus.fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
-        return true
-    }
+//    override fun saveProfile() {
+////        saveLoadManager.saveProfileTask(createProfile())
+////                .onFailure { error -> "Failed to save profile: ${profileName.value} - $error" }
+////                .run() // we execute synchronously to avoid incomplete save since we might be shutting down
+//    }
+//
+//    /**
+//     * @return true if loaded successfully, false if couldn't load
+//     */
+//    override fun loadFromProfile(profile: UserProfile): Boolean {
+//        if (!profile.isCompatible(settings.title, settings.version))
+//            return false
+//
+//        eventBus.fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
+//        return true
+//    }
 
     override fun profileNameProperty(): StringProperty {
         return profileName
     }
 
-    override fun restoreDefaultProfileSettings() {
-        log.debug("restoreDefaultSettings()")
-
-        eventBus.fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
+    override fun restoreDefaultSettings() {
+//        log.debug("restoreDefaultSettings()")
+//
+//        eventBus.fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
     }
 
     /**
      * @return user profile with current settings
      */
-    private fun createProfile(): UserProfile {
-        log.debug("Creating default profile")
-
-        val profile = UserProfile(settings.title, settings.version)
-
-        eventBus.fireEvent(SaveEvent(profile))
-
-        return profile
-    }
+//    private fun createProfile(): UserProfile {
+//        log.debug("Creating default profile")
+//
+//        val profile = UserProfile(settings.title, settings.version)
+//
+//        eventBus.fireEvent(SaveEvent(profile))
+//
+//        return profile
+//    }
 
     override fun pushSubScene(subScene: SubScene) {
         mainWindow.pushState(subScene)

@@ -22,6 +22,7 @@ module com.almasb.fxgl.all {
     requires transitive com.almasb.fxgl.media;
     requires transitive com.almasb.fxgl.minigames;
     requires transitive com.almasb.fxgl.notification;
+    requires transitive com.almasb.fxgl.profiles;
     requires transitive com.almasb.fxgl.scene;
     requires transitive com.almasb.fxgl.time;
     requires transitive com.almasb.fxgl.ui;
@@ -44,5 +45,4 @@ module com.almasb.fxgl.all {
     exports com.almasb.fxgl.dsl.handlers;
     exports com.almasb.fxgl.dsl.views;
     exports com.almasb.fxgl.gameplay;
-    exports com.almasb.fxgl.saving;
 }
