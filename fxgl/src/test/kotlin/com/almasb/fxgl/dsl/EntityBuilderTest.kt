@@ -8,6 +8,7 @@ package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.entity.SpawnData
 import javafx.geometry.Point2D
+import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert
@@ -55,5 +56,19 @@ class EntityBuilderTest {
                 .build()
 
         assertTrue(e.type !is String)
+    }
+
+    @Test
+    fun `Bbox generation from view`() {
+        val e = builder
+                .viewWithBBox(Rectangle(40.0, 30.0))
+                .build()
+
+        assertThat(e.boundingBoxComponent.hitBoxesProperty().size, `is`(1))
+
+        val box = e.boundingBoxComponent.hitBoxesProperty()[0]
+
+        assertThat(box.width, `is`(40.0))
+        assertThat(box.height, `is`(30.0))
     }
 }
