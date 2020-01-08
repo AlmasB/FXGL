@@ -28,14 +28,15 @@ data class SaveFile
 
         val profileName: String,
 
-        val saveFileExt: String = "sav",
+        val saveFileExt: String,
 
         /**
          * Date and time of the save.
+         * By default the moment this save file object was created.
          */
         val dateTime: LocalDateTime = LocalDateTime.now(),
 
-        var data: DataFile = DataFile()
+        val data: DataFile = DataFile()
 
         ) : Serializable {
 
@@ -47,6 +48,7 @@ data class SaveFile
 
     val relativePathName: String = "$profileName/$name.$saveFileExt"
 
+    // TODO: this should be outside
     override fun toString() = "%-25.25s %s".format(name, dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm")))
 }
 
@@ -57,10 +59,13 @@ class DataFile : Serializable {
     }
 
     /**
-     * K - bundle name, V - bundle
+     * K - bundle name, V - bundle.
      */
     private val bundles = hashMapOf<String, Bundle>()
 
+    /**
+     * Stores a bundle. Bundles with same name are not allowed.
+     */
     fun putBundle(bundle: Bundle) {
         require(!bundles.containsKey(bundle.name)) {
             "Bundle \"" + bundle.name + "\" already exists!"
@@ -72,37 +77,8 @@ class DataFile : Serializable {
     fun getBundle(name: String): Bundle {
         return bundles[name] ?: throw IllegalArgumentException("Bundle \"$name\" doesn't exist!")
     }
+
+    override fun toString(): String {
+        return "DataFile($bundles)"
+    }
 }
-
-
-//
-///**
-// *
-// * @param appTitle app title
-// * @param appVersion app version
-// * @return true iff title and version are compatible with the app
-// */
-//fun isCompatible(appTitle: String, appVersion: String): Boolean {
-//    return this.appTitle == appTitle && this.appVersion == appVersion
-//}
-//
-///**
-// * https://github.com/AlmasB/FXGL/issues/576
-// * Stores a bundle in the user profile. Bundles with same
-// * name are not allowed.
-// *
-// * @param bundle the bundle to store
-// */
-
-//
-///**
-// * https://github.com/AlmasB/FXGL/issues/576
-// * @param name bundle name
-// * @return bundle with given name
-// */
-
-//
-//fun log(logger: Logger) {
-//    logger.info("Logging profile data")
-//    logger.info(bundles.toString())
-//}

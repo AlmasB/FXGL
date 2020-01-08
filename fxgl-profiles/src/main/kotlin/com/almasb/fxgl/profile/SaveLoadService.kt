@@ -12,21 +12,13 @@ import com.almasb.fxgl.io.FileExtension
 import com.almasb.sslogger.Logger
 import java.util.*
 
-class SaveLoadService(val fs: FS) {
+class SaveLoadService(private val fs: FS) {
 
     private val log = Logger.get(javaClass)
 
     private val PROFILES_DIR = "profiles/"
 
     private val saveLoadHandlers = arrayListOf<SaveLoadHandler>()
-
-    //    private val saveFiles = FXCollections.observableArrayList<SaveFile>()
-
-    //
-//    /**
-//     * @return read only view of observable save files
-//     */
-//    fun saveFilesProperty(): ObservableList<SaveFile> = FXCollections.unmodifiableObservableList(saveFiles)
 
     fun addHandler(saveLoadHandler: SaveLoadHandler) {
         saveLoadHandlers += saveLoadHandler
@@ -44,14 +36,10 @@ class SaveLoadService(val fs: FS) {
         saveLoadHandlers.forEach { it.onLoad(dataFile) }
     }
 
-    /**
-     * @param saveFileName save file name
-     * @return true iff file exists
-     */
     fun saveFileExists(saveFile: SaveFile): Boolean {
         log.debug("Checking if save file exists: $saveFile")
 
-        return fs.exists(saveFile.relativePathName)
+        return fs.exists(PROFILES_DIR + saveFile.relativePathName)
     }
 
     /**
@@ -173,50 +161,14 @@ class SaveLoadService(val fs: FS) {
 
 
 
-
+//    private val saveFiles = FXCollections.observableArrayList<SaveFile>()
 
 //
 //    /**
-//     * Saves user profile to "profiles/".
-//     * Creates "saves/" in that directory.
-//     *
-//     * @param profile the profile to save
-//     * @return saving task
+//     * @return read only view of observable save files
 //     */
-//    fun saveProfileTask(profile: UserProfile): IOTask<Void> {
-//        log.debug("Saving profile: $profileName")
-//
-//        return fs.writeDataTask(profile, profileDir + profileFileName)
-//                .then {
-//                    IOTask.ofVoid("checkSavesDir($saveDir)") {
-//                        if (!fs.exists(saveDir)) {
-//                            createSavesDir()
-//                        }
-//                    }
-//                }
-//    }
-//
-//    private fun createSavesDir() {
-//        log.debug("Creating saves dir")
-//
-//        fs.createDirectoryTask(saveDir)
-//                .then { fs.writeDataTask(listOf("This directory contains save files."), saveDir + "Readme.txt") }
-//                .onFailure { e ->
-//                    log.warning("Failed to create saves dir: $e")
-//                    Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e)
-//                }
-//                .run()
-//    }
-//
-//    /**
-//     * Loads user profile from "profiles/".
-//     *
-//     * @return saving task
-//     */
-//    fun loadProfileTask(): IOTask<UserProfile> {
-//        log.debug("Loading profile: $profileName")
-//        return fs.readDataTask(profileDir + profileFileName)
-//    }
+//    fun saveFilesProperty(): ObservableList<SaveFile> = FXCollections.unmodifiableObservableList(saveFiles)
+
 
 
 //

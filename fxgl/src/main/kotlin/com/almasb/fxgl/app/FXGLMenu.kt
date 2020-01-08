@@ -589,7 +589,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             if (saveFileName.isEmpty())
                 return@Consumer
 
-            val saveFile = SaveFile(saveFileName, controller.profileNameProperty().value)
+            val saveFile = SaveFile(saveFileName, controller.profileNameProperty().value, getSettings().saveFileExt)
 
             if (saveLoadService.saveFileExists(saveFile)) {
                 getDisplay().showConfirmationBox(localize("menu.overwrite") +" [$saveFileName]?") { yes ->
