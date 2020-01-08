@@ -32,7 +32,6 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.physics.CollisionHandler
-import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
@@ -133,7 +132,7 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getMiniGameService() = engine.getService(MiniGameService::class.java)
 
-    @JvmStatic fun getSaveLoadService() = engine.getService(SaveLoadService::class.java)
+    @JvmStatic fun getSaveLoadService() = engine.saveLoadService
 
     /**
      * @return time per frame (in this frame)

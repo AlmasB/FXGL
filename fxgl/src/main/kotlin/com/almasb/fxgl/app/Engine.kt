@@ -36,6 +36,7 @@ import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.fxgl.ui.FXGLUIConfig
 import com.almasb.fxgl.ui.FontType
 import com.almasb.sslogger.Logger
+import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.embed.swing.SwingFXUtils
@@ -111,6 +112,7 @@ internal class Engine(
     internal val executor by lazy { Async }
     internal val fs by lazy { FS(settings.isDesktop) }
     internal val local by lazy { LocalizationService() }
+    internal val saveLoadService by lazy { SaveLoadService(fs) }
 
     internal val devPane by lazy { DevPane(playScene, settings) }
 
@@ -447,7 +449,7 @@ internal class Engine(
     }
 
     private fun initEventHandlers() {
-        getService(SaveLoadService::class.java).addHandler(object : SaveLoadHandler {
+        saveLoadService.addHandler(object : SaveLoadHandler {
             override fun onSave(dataFile: DataFile) {
                 // settings.write()
                 // services.write()
@@ -564,16 +566,26 @@ internal class Engine(
 
     // GAME CONTROLLER CALLBACKS
 
+    private var dataFile: DataFile? = null
+
     override fun startNewGame() {
         log.debug("Starting new game")
-        loadScene.dataFile = DataFile.EMPTY
         mainWindow.setScene(loadScene)
     }
 
     private fun startLoadedGame(dataFile: DataFile) {
+        this.dataFile = dataFile
+
         log.debug("Starting loaded game")
-        loadScene.dataFile = dataFile
         mainWindow.setScene(loadScene)
+    }
+
+    override fun onGameReady(vars: PropertyMap) {
+        services.forEach { it.onGameReady(vars) }
+
+        dataFile?.let {
+            saveLoadService.load(it)
+        }
     }
 
     override fun gotoIntro() {
@@ -593,29 +605,18 @@ internal class Engine(
     }
 
     override fun saveGame(saveFile: SaveFile) {
-        getService(SaveLoadService::class.java).save(saveFile.data)
+        saveLoadService.save(saveFile.data)
 
-//        val dataFile = app.saveState()
-//        val saveFile = SaveFile(saveFileName, LocalDateTime.now())
-
-//        saveLoadManager
-//                .saveTask(dataFile, saveFile)
-//                //.onSuccess { hasSaves.value = true }
-//                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.savingData") + ": $saveFileName"))
-
-        getService(SaveLoadService::class.java).writeSaveFileTask(saveFile).run()
+        saveLoadService.writeSaveFileTask(saveFile)
+                .runAsyncFXWithDialog(ProgressDialog(local.getLocalizedString("menu.savingData") + ": ${saveFile.name}"))
     }
 
     override fun loadGame(saveFile: SaveFile) {
-        getService(SaveLoadService::class.java).readSaveFileTask(saveFile).run()
-
-        getService(SaveLoadService::class.java).load(saveFile.data)
-
-
-//        saveLoadManager
-//                .loadTask(saveFile)
-//                .onSuccess { startLoadedGame(it) }
-//                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading") + ": ${saveFile.name}"))
+        saveLoadService.readSaveFileTask(saveFile)
+                .onSuccess {
+                    saveLoadService.load(it.data)
+                }
+                .runAsyncFXWithDialog(ProgressDialog(local.getLocalizedString("menu.loading") + ": ${saveFile.name}"))
     }
 
     override fun loadGameFromLastSave() {
@@ -686,18 +687,10 @@ internal class Engine(
         mainWindow.popState()
     }
 
-    override fun onGameReady(vars: PropertyMap) {
-        services.forEach { it.onGameReady(vars) }
-    }
-
     override fun exit() {
         log.debug("Exiting FXGL")
 
         services.forEach { it.onExit() }
-
-        if (settings.isMenuEnabled) {
-            //menuHandler.saveProfile()
-        }
 
         log.debug("Shutting down background threads")
         executor.shutdownNow()
@@ -709,6 +702,6 @@ internal class Engine(
         log.debug("Closing logger and exiting JavaFX")
 
         Logger.close()
-        javafx.application.Platform.exit()
+        Platform.exit()
     }
 }

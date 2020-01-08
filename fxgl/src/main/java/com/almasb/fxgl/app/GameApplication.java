@@ -9,7 +9,6 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.util.Platform;
 import com.almasb.fxgl.dev.DevService;
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.profile.DataFile;
 import com.almasb.sslogger.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -26,13 +25,11 @@ import java.util.ResourceBundle;
  * <li>initSettings()</li>
  * <li>Services configuration (after this you can safely call any FXGL.* methods)</li>
  * Executed on JavaFX UI thread:
- * <li>initAchievements()</li>
  * <li>initInput()</li>
- * <li>preInit()</li>
+ * <li>onPreInit()</li>
  * NOT executed on JavaFX UI thread:
- * <li>initAssets()</li>
  * <li>initGameVars()</li>
- * <li>initGame() OR loadState()</li>
+ * <li>initGame()</li>
  * <li>initPhysics()</li>
  * <li>initUI()</li>
  * Start of main game loop execution on JavaFX UI thread
@@ -205,30 +202,6 @@ public abstract class GameApplication {
      * @param tpf time per frame
      */
     protected void onUpdate(double tpf) {}
-
-    // TODO: remove
-
-    /**
-     * Called when MenuEvent.SAVE occurs.
-     *
-     * @return data with required info about current state
-     * @throws UnsupportedOperationException if was not overridden
-     */
-    protected DataFile saveState() {
-        log.warning("Called saveState(), but it wasn't overridden!");
-        throw new UnsupportedOperationException("Default implementation is not available");
-    }
-
-    /**
-     * Called when MenuEvent.LOAD occurs.
-     *
-     * @param dataFile previously saved data
-     * @throws UnsupportedOperationException if was not overridden
-     */
-    protected void loadState(DataFile dataFile) {
-        log.warning("Called loadState(), but it wasn't overridden!");
-        throw new UnsupportedOperationException("Default implementation is not available");
-    }
 
     public static final class FXGLApplication extends Application {
 

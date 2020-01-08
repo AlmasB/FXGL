@@ -12,7 +12,7 @@ package com.almasb.fxgl.profile
  */
 interface SaveLoadHandler {
 
-    fun onSave(dataFile: DataFile)
+    fun onSave(data: DataFile)
 
-    fun onLoad(dataFile: DataFile)
+    fun onLoad(data: DataFile)
 }

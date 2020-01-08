@@ -10,17 +10,19 @@ import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.core.util.Supplier
 import com.almasb.fxgl.dsl.*
-import com.almasb.fxgl.dsl.FXGL.Companion.localizedStringProperty
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.TriggerView
 import com.almasb.fxgl.profile.SaveFile
+import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.FXGLScrollPane
 import com.almasb.fxgl.ui.FXGLUIConfig.getUIFactory
+import com.almasb.fxgl.ui.FontType
 import com.almasb.sslogger.Logger
+import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import javafx.collections.FXCollections
 import javafx.event.EventHandler
@@ -29,11 +31,8 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.geometry.VPos
 import javafx.scene.Node
-import javafx.scene.control.Button
-import javafx.scene.control.CheckBox
+import javafx.scene.control.*
 import javafx.scene.control.ScrollPane.ScrollBarPolicy
-import javafx.scene.control.Slider
-import javafx.scene.control.Tooltip
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.*
@@ -69,6 +68,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     }
 
     protected val controller: GameController = getGameController()
+    protected val saveLoadService: SaveLoadService = FXGL.getSaveLoadService()
 
     protected val menuRoot = Pane()
     protected val menuContentRoot = Pane()
@@ -174,59 +174,55 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
      */
     protected fun createContentLoad(): MenuContent {
         log.debug("createContentLoad()")
-//
-//        val list = getUIFactory().newListView<SaveFile>()
-//
-//        val FONT_SIZE = 16.0
-//
-//        list.setCellFactory { param ->
-//            object : ListCell<SaveFile>() {
-//                override fun updateItem(item: SaveFile?, empty: Boolean) {
-//                    super.updateItem(item, empty)
-//
-//                    if (empty || item == null) {
-//                        text = null
-//                        graphic = null
-//                    } else {
-//
-//                        val text = getUIFactory().newText(item.toString())
-//                        text.font = getUIFactory().newFont(FontType.MONO, FONT_SIZE)
-//
-//                        graphic = text
-//                    }
-//                }
-//            }
-//        }
-//
-//        list.setItems(saveLoadManager.saveFiles())
-//        list.prefHeightProperty().bind(Bindings.size(list.items).multiply(FONT_SIZE))
-//
-//        // this runs async
-//        //listener.getSaveLoadManager().querySaveFiles()
-//
-//        val btnLoad = getUIFactory().newButton(localizedStringProperty("menu.load"))
-//        btnLoad.disableProperty().bind(list.selectionModel.selectedItemProperty().isNull)
-//
-//        btnLoad.setOnAction { e ->
-//            val saveFile = list.selectionModel.selectedItem
-//
-//            fireLoad(saveFile)
-//        }
-//
-//        val btnDelete = getUIFactory().newButton(localizedStringProperty("menu.delete"))
-//        btnDelete.disableProperty().bind(list.selectionModel.selectedItemProperty().isNull)
-//
-//        btnDelete.setOnAction { e ->
-//            val saveFile = list.selectionModel.selectedItem
-//
-//            fireDelete(saveFile)
-//        }
-//
-//        val hbox = HBox(50.0, btnLoad, btnDelete)
-//        hbox.setAlignment(Pos.CENTER)
-//
-//        return MenuContent(list, hbox)
-        return MenuContent()
+
+        val list = getUIFactory().newListView<SaveFile>()
+
+        val FONT_SIZE = 16.0
+
+        list.setCellFactory { param ->
+            object : ListCell<SaveFile>() {
+                override fun updateItem(item: SaveFile?, empty: Boolean) {
+                    super.updateItem(item, empty)
+
+                    if (empty || item == null) {
+                        text = null
+                        graphic = null
+                    } else {
+
+                        val text = getUIFactory().newText(item.toString())
+                        text.font = getUIFactory().newFont(FontType.MONO, FONT_SIZE)
+
+                        graphic = text
+                    }
+                }
+            }
+        }
+
+        list.items.addAll(saveLoadService.readSaveFilesTask(controller.profileNameProperty().value, "sav").run())
+        list.prefHeightProperty().bind(Bindings.size(list.items).multiply(FONT_SIZE).add(16))
+
+        val btnLoad = getUIFactory().newButton(localizedStringProperty("menu.load"))
+        btnLoad.disableProperty().bind(list.selectionModel.selectedItemProperty().isNull)
+
+        btnLoad.setOnAction { e ->
+            val saveFile = list.selectionModel.selectedItem
+
+            fireLoad(saveFile)
+        }
+
+        val btnDelete = getUIFactory().newButton(localizedStringProperty("menu.delete"))
+        btnDelete.disableProperty().bind(list.selectionModel.selectedItemProperty().isNull)
+
+        btnDelete.setOnAction { e ->
+            val saveFile = list.selectionModel.selectedItem
+
+            fireDelete(saveFile)
+        }
+
+        val hbox = HBox(50.0, btnLoad, btnDelete)
+        hbox.alignment = Pos.CENTER
+
+        return MenuContent(list, hbox)
     }
 
     /**
@@ -296,7 +292,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             rect.arcWidth = 15.0
             rect.arcHeight = 15.0
 
-            val text = getUIFactory().newText(FXGL.localize("menu.pressAnyKey"), 24.0)
+            val text = getUIFactory().newText(localize("menu.pressAnyKey"), 24.0)
 
             val pane = StackPane(rect, text)
             pane.translateX = (getAppWidth() / 2 - 125).toDouble()
@@ -335,7 +331,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun createContentVideo(): MenuContent {
         log.debug("createContentVideo()")
 
-        val languageBox = getUIFactory().newChoiceBox(FXCollections.observableArrayList(FXGL.getLocalizationService().languages))
+        val languageBox = getUIFactory().newChoiceBox(FXCollections.observableArrayList(getLocalizationService().languages))
         languageBox.value = getSettings().language.value
 
         getSettings().language.bindBidirectional(languageBox.valueProperty())
@@ -346,7 +342,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             val cbFullScreen = getUIFactory().newCheckBox()
             cbFullScreen.selectedProperty().bindBidirectional(getSettings().fullScreen)
 
-            vbox.children.add(HBox(25.0, getUIFactory().newText(FXGL.localize("menu.fullscreen") + ": "), cbFullScreen))
+            vbox.children.add(HBox(25.0, getUIFactory().newText(localize("menu.fullscreen") + ": "), cbFullScreen))
         }
 
         return MenuContent(
@@ -529,11 +525,6 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         menuContentRoot.children.add(node)
     }
 
-//
-//    override fun getSaveLoadManager(): SaveLoadManager {
-//        return saveLoadManager
-//    }
-//
 //    fun isProfileSelected() = profileName.value.isNotEmpty()
 //
 //    private val hasSaves = ReadOnlyBooleanWrapper(false)
@@ -543,12 +534,12 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 //    }
 
 //    override fun onDelete(saveFile: SaveFile) {
-//        getDisplay().showConfirmationBox(Local.FXGL.localize("menu.deleteSave")+"[${saveFile.name}]?", { yes ->
+//        getDisplay().showConfirmationBox(Local.localize("menu.deleteSave")+"[${saveFile.name}]?", { yes ->
 //
 //            if (yes) {
 //                saveLoadManager
 //                        .deleteSaveFileTask(saveFile)
-//                        .runAsyncFXWithDialog(ProgressDialog(Local.FXGL.localize("menu.deleting")+": ${saveFile.name}"))
+//                        .runAsyncFXWithDialog(ProgressDialog(Local.localize("menu.deleting")+": ${saveFile.name}"))
 //            }
 //        })
 //    }
@@ -578,9 +569,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireLoad(saveFile: SaveFile) {
         log.debug("fireLoad()")
 
-        val text = FXGL.localize("menu.loadSave") +
-                " [${saveFile.name}]?\n" +
-                FXGL.localize("menu.unsavedProgress")
+        val text = localize("menu.loadSave") + " [${saveFile.name}]?\n" + localize("menu.unsavedProgress")
 
         getDisplay().showConfirmationBox(text) { yes ->
             if (yes)
@@ -595,33 +584,34 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireSave() {
         log.debug("fireSave()")
 
-        getDisplay().showInputBoxWithCancel(FXGL.localize("menu.enterSaveName"), InputPredicates.ALPHANUM, Consumer { saveFileName ->
+        getDisplay().showInputBoxWithCancel(localize("menu.enterSaveName"), InputPredicates.ALPHANUM, Consumer { saveFileName ->
 
             if (saveFileName.isEmpty())
                 return@Consumer
 
-            controller.saveGame(SaveFile(saveFileName, "DEFAULT", "sav"))
+            val saveFile = SaveFile(saveFileName, controller.profileNameProperty().value)
 
-//            if (saveLoadManager.saveFileExists(saveFileName)) {
-//                getDisplay().showConfirmationBox(FXGL.localize("menu.overwrite") +" [$saveFileName]?", { yes ->
-//
-//                    if (yes)
-//                        doSave(saveFileName)
-//                })
-//            } else {
-//                doSave(saveFileName)
-//            }
+            if (saveLoadService.saveFileExists(saveFile)) {
+                getDisplay().showConfirmationBox(localize("menu.overwrite") +" [$saveFileName]?") { yes ->
+
+                    if (yes)
+                        controller.saveGame(saveFile)
+                }
+            } else {
+                controller.saveGame(saveFile)
+            }
         })
     }
 
     /**
      * @param fileName name of the save file
      */
-//    protected fun fireDelete(fileName: SaveFile) {
-//        log.debug("fireDelete()")
-//
-//        //listener.onDelete(fileName)
-//    }
+    protected fun fireDelete(saveFile: SaveFile) {
+        log.debug("fireDelete()")
+
+        saveLoadService.deleteSaveFileTask(saveFile)
+                .run()
+    }
 
     /**
      * Can only be fired from game menu.
@@ -636,7 +626,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireExit() {
         log.debug("fireExit()")
 
-        val text = FXGL.localize("dialog.exitGame")
+        val text = localize("dialog.exitGame")
 
         getDisplay().showConfirmationBox(text) { yes ->
             if (yes)
@@ -647,8 +637,8 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireExitToMainMenu() {
         log.debug("fireExitToMainMenu()")
 
-        val text = FXGL.localize("menu.exitMainMenu") + "\n" +
-                FXGL.localize("menu.unsavedProgress")
+        val text = localize("menu.exitMainMenu") + "\n" +
+                localize("menu.unsavedProgress")
 
         getDisplay().showConfirmationBox(text) { yes ->
             if (yes)

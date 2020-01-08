@@ -20,7 +20,6 @@ import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
-import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.ui.DialogFactory
 import com.almasb.fxgl.ui.FXGLDialogFactory
 import com.almasb.fxgl.ui.FXGLUIFactory
@@ -219,8 +218,7 @@ class GameSettings(
                 NotificationServiceProvider::class.java,
                 AchievementManager::class.java,
                 CutsceneService::class.java,
-                MiniGameService::class.java,
-                SaveLoadService::class.java
+                MiniGameService::class.java
         ),
 
         /**

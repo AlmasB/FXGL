@@ -6,23 +6,17 @@
 
 package com.almasb.fxgl.profile
 
-import com.almasb.fxgl.core.EngineService
-import com.almasb.fxgl.core.Inject
-import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.IOTask
-import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.io.FS
+import com.almasb.fxgl.io.FileExtension
 import com.almasb.sslogger.Logger
 import java.util.*
 
-class SaveLoadService : EngineService {
+class SaveLoadService(val fs: FS) {
 
     private val log = Logger.get(javaClass)
 
     private val PROFILES_DIR = "profiles/"
-
-    @Inject("FS")
-    private lateinit var fs: FS
 
     private val saveLoadHandlers = arrayListOf<SaveLoadHandler>()
 
@@ -129,6 +123,30 @@ class SaveLoadService : EngineService {
     }
 
     /**
+     * Loads save files with save file extension from SAVE_DIR.
+     *
+     * @return saving task
+     */
+    fun readSaveFilesTask(profileName: String, saveFileExt: String): IOTask<List<SaveFile>> {
+        log.debug("Loading save files")
+
+        return fs.loadFileNamesTask(PROFILES_DIR + profileName, true, listOf(FileExtension(saveFileExt)))
+                .then { fileNames ->
+                    IOTask.of<List<SaveFile>>("readSaveFiles") {
+
+                        val list = ArrayList<SaveFile>()
+                        for (name in fileNames) {
+                            val file = fs.readDataTask<SaveFile>(PROFILES_DIR + profileName + "/" + name).run()
+                            if (file != null) {
+                                list.add(file)
+                            }
+                        }
+                        list
+                    }
+                }
+    }
+
+    /**
      * A task that reads all profile names.
      */
     fun readProfileNamesTask(): IOTask<List<String>> {
@@ -144,26 +162,6 @@ class SaveLoadService : EngineService {
     fun deleteProfileTask(profileName: String): IOTask<Void> {
         log.debug("Deleting profile: $profileName")
         return fs.deleteDirectoryTask("./$PROFILES_DIR$profileName")
-    }
-
-    override fun onMainLoopStarting() {
-
-    }
-
-    override fun onGameReady(vars: PropertyMap) {
-        // TODO: auto (de)serialize these
-    }
-
-    override fun onExit() {
-    }
-
-    override fun onUpdate(tpf: Double) {
-    }
-
-    override fun write(bundle: Bundle) {
-    }
-
-    override fun read(bundle: Bundle) {
     }
 }
 
@@ -220,30 +218,7 @@ class SaveLoadService : EngineService {
 //        return fs.readDataTask(profileDir + profileFileName)
 //    }
 
-//
-//    /**
-//     * Loads save files with save file extension from SAVE_DIR.
-//     *
-//     * @return saving task
-//     */
-//    fun loadSaveFilesTask(): IOTask<List<SaveFile>> {
-//        log.debug("Loading save files")
-//
-//        return fs.loadFileNamesTask(saveDir, true, listOf<FileExtension>(FileExtension(saveFileExt)))
-//                .then { fileNames ->
-//                    IOTask.of<List<SaveFile>>("readSaveFiles") {
-//
-//                        val list = ArrayList<SaveFile>()
-//                        for (name in fileNames) {
-//                            val file = fs.readDataTask<SaveFile>(saveDir + name).run()
-//                            if (file != null) {
-//                                list.add(file)
-//                            }
-//                        }
-//                        list
-//                    }
-//                }
-//    }
+
 //
 //    /**
 //     * Loads last modified save file from saves directory.

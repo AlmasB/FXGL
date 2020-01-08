@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.profile.DataFile
 import com.almasb.sslogger.Logger
 import javafx.concurrent.Task
 import javafx.scene.control.ProgressBar
@@ -26,7 +25,6 @@ open class LoadingScene : FXGLScene() {
     protected val text = Text()
 
     private var loadingFinished = false
-    internal var dataFile = DataFile.EMPTY
 
     init {
         val settings = FXGL.getSettings()
@@ -69,7 +67,7 @@ open class LoadingScene : FXGLScene() {
     }
 
     override fun onCreate() {
-        val initTask = InitAppTask(FXGL.getApp(), dataFile)
+        val initTask = InitAppTask(FXGL.getApp())
         initTask.setOnSucceeded {
             loadingFinished = true
         }
@@ -91,8 +89,7 @@ open class LoadingScene : FXGLScene() {
      * Initializes game, physics and UI.
      * This task is rerun every time the game application is restarted.
      */
-    private class InitAppTask(private val app: GameApplication,
-                              private val dataFile: DataFile) : Task<Void>() {
+    private class InitAppTask(private val app: GameApplication) : Task<Void>() {
 
         companion object {
             private val log = Logger.get<InitAppTask>()
@@ -133,11 +130,7 @@ open class LoadingScene : FXGLScene() {
                 FXGL.getGameState().setValue(name, value)
             }
 
-            if (dataFile === DataFile.EMPTY) {
-                app.initGame()
-            } else {
-                app.loadState(dataFile)
-            }
+            app.initGame()
         }
 
         private fun initPhysics() {

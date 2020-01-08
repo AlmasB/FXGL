@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.profile
 
+import com.almasb.fxgl.core.serialization.Bundle
 import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -27,14 +28,14 @@ data class SaveFile
 
         val profileName: String,
 
-        val saveFileExt: String,
+        val saveFileExt: String = "sav",
 
         /**
          * Date and time of the save.
          */
         val dateTime: LocalDateTime = LocalDateTime.now(),
 
-        val data: DataFile = DataFile.EMPTY
+        var data: DataFile = DataFile()
 
         ) : Serializable {
 
@@ -49,24 +50,31 @@ data class SaveFile
     override fun toString() = "%-25.25s %s".format(name, dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm")))
 }
 
-data class DataFile(
-
-        /**
-         * The actual serializable game data structure.
-         */
-        val data: Serializable) : Serializable {
+class DataFile : Serializable {
 
     companion object {
         private val serialVersionUid: Long = 2
+    }
 
-        @JvmStatic val EMPTY = DataFile("")
+    /**
+     * K - bundle name, V - bundle
+     */
+    private val bundles = hashMapOf<String, Bundle>()
+
+    fun putBundle(bundle: Bundle) {
+        require(!bundles.containsKey(bundle.name)) {
+            "Bundle \"" + bundle.name + "\" already exists!"
+        }
+
+        bundles[bundle.name] = bundle
+    }
+
+    fun getBundle(name: String): Bundle {
+        return bundles[name] ?: throw IllegalArgumentException("Bundle \"$name\" doesn't exist!")
     }
 }
 
-///**
-// * K - bundle name, V - bundle
-// */
-//private val bundles: MutableMap<String, Bundle> = HashMap()
+
 //
 ///**
 // *
@@ -85,22 +93,14 @@ data class DataFile(
 // *
 // * @param bundle the bundle to store
 // */
-//fun putBundle(bundle: Bundle) {
-//    require(!bundles.containsKey(bundle.name)) {
-//        "Bundle \"" + bundle.name + "\" already exists!"
-//    }
-//
-//    bundles[bundle.name] = bundle
-//}
+
 //
 ///**
 // * https://github.com/AlmasB/FXGL/issues/576
 // * @param name bundle name
 // * @return bundle with given name
 // */
-//fun getBundle(name: String): Bundle {
-//    return bundles[name] ?: throw IllegalArgumentException("Bundle \"$name\" doesn't exist!")
-//}
+
 //
 //fun log(logger: Logger) {
 //    logger.info("Logging profile data")

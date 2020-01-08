@@ -78,6 +78,14 @@ fun getAchievementService() = FXGL.getAchievementService()
 
 fun getNotificationService() = FXGL.getNotificationService()
 
+fun getLocalizationService() = FXGL.getLocalizationService()
+
+fun getCutsceneService() = FXGL.getCutsceneService()
+
+fun getMiniGameService() = FXGL.getMiniGameService()
+
+fun getSaveLoadService() = FXGL.getSaveLoadService()
+
 fun set(varName: String, value: Any) = FXGL.set(varName, value)
 
 fun geti(varName: String): Int = FXGL.getGameState().getInt(varName)
@@ -197,6 +205,12 @@ fun runOnce(action: () -> Unit, delay: Duration) = FXGL.runOnce(Runnable(action)
 fun run(action: () -> Unit, interval: Duration) = FXGL.run(Runnable(action), interval)
 
 fun run(action: () -> Unit, interval: Duration, limit: Int) = FXGL.run(Runnable(action), interval, limit)
+
+/* LOCALIZATION */
+
+fun localize(key: String) = FXGL.localize(key)
+
+fun localizedStringProperty(key: String) = FXGL.localizedStringProperty(key)
 
 /* EXTENSIONS */
 
