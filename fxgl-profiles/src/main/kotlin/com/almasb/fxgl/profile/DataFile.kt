@@ -16,9 +16,8 @@ import java.time.format.DateTimeFormatter
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-data class SaveFile(
-
-        // TODO: data file
+data class SaveFile
+@JvmOverloads constructor(
 
         /**
          * Save file name without the extension.
@@ -26,16 +25,26 @@ data class SaveFile(
          */
         val name: String,
 
+        val profileName: String,
+
+        val saveFileExt: String,
+
         /**
          * Date and time of the save.
          */
-        val dateTime: LocalDateTime) : Serializable {
+        val dateTime: LocalDateTime = LocalDateTime.now(),
+
+        val data: DataFile = DataFile.EMPTY
+
+        ) : Serializable {
 
     companion object RECENT_FIRST : Comparator<SaveFile> {
         private val serialVersionUid: Long = 1
 
         override fun compare(o1: SaveFile, o2: SaveFile) = o2.dateTime.compareTo(o1.dateTime)
     }
+
+    val relativePathName: String = "$profileName/$name.$saveFileExt"
 
     override fun toString() = "%-25.25s %s".format(name, dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm")))
 }

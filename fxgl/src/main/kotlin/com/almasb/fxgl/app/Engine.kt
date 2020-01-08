@@ -25,6 +25,8 @@ import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.profile.DataFile
 import com.almasb.fxgl.profile.SaveFile
+import com.almasb.fxgl.profile.SaveLoadHandler
+import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneListener
 import com.almasb.fxgl.scene.SubScene
@@ -158,6 +160,7 @@ internal class Engine(
         environmentVars["overlayRoot"] = overlayRoot
         environmentVars["masterTimer"] = engineTimer
         environmentVars["eventBus"] = eventBus
+        environmentVars["FS"] = fs
         environmentVars["sceneStack"] = this
 
         settings.javaClass.declaredMethods.filter { it.name.startsWith("is") || it.name.startsWith("get") || it.name.endsWith("Property") }.forEach {
@@ -444,13 +447,17 @@ internal class Engine(
     }
 
     private fun initEventHandlers() {
-//        eventBus.addEventHandler(SaveEvent.ANY, EventHandler { e ->
-//            settings.save(e.profile)
-//        })
-//
-//        eventBus.addEventHandler(LoadEvent.ANY, EventHandler { e ->
-//            settings.load(e.profile)
-//        })
+        getService(SaveLoadService::class.java).addHandler(object : SaveLoadHandler {
+            override fun onSave(dataFile: DataFile) {
+                // settings.write()
+                // services.write()
+            }
+
+            override fun onLoad(dataFile: DataFile) {
+                // settings.read()
+                // services.read()
+            }
+        })
     }
 
     private fun runPreInit() {
@@ -586,20 +593,25 @@ internal class Engine(
     }
 
     override fun saveGame(saveFile: SaveFile) {
-        //doSave(fileName)
-    }
+        getService(SaveLoadService::class.java).save(saveFile.data)
 
-    private fun doSave(saveFileName: String) {
-        val dataFile = app.saveState()
-        val saveFile = SaveFile(saveFileName, LocalDateTime.now())
+//        val dataFile = app.saveState()
+//        val saveFile = SaveFile(saveFileName, LocalDateTime.now())
 
 //        saveLoadManager
 //                .saveTask(dataFile, saveFile)
 //                //.onSuccess { hasSaves.value = true }
 //                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.savingData") + ": $saveFileName"))
+
+        getService(SaveLoadService::class.java).writeSaveFileTask(saveFile).run()
     }
 
     override fun loadGame(saveFile: SaveFile) {
+        getService(SaveLoadService::class.java).readSaveFileTask(saveFile).run()
+
+        getService(SaveLoadService::class.java).load(saveFile.data)
+
+
 //        saveLoadManager
 //                .loadTask(saveFile)
 //                .onSuccess { startLoadedGame(it) }
@@ -613,6 +625,25 @@ internal class Engine(
 //                .onSuccess { startLoadedGame(it) }
 //                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading") + "..."))
     }
+
+
+//    override fun saveProfile() {
+////        saveLoadManager.saveProfileTask(createProfile())
+////                .onFailure { error -> "Failed to save profile: ${profileName.value} - $error" }
+////                .run() // we execute synchronously to avoid incomplete save since we might be shutting down
+//    }
+//
+//    /**
+//     * @return true if loaded successfully, false if couldn't load
+//     */
+//    override fun loadFromProfile(profile: UserProfile): Boolean {
+//        if (!profile.isCompatible(settings.title, settings.version))
+//            return false
+//
+//        eventBus.fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
+//        return true
+//    }
+
 
     /**
      * Saves a screenshot of the current scene into a ".png" file,
@@ -637,23 +668,6 @@ internal class Engine(
         }
     }
 
-//    override fun saveProfile() {
-////        saveLoadManager.saveProfileTask(createProfile())
-////                .onFailure { error -> "Failed to save profile: ${profileName.value} - $error" }
-////                .run() // we execute synchronously to avoid incomplete save since we might be shutting down
-//    }
-//
-//    /**
-//     * @return true if loaded successfully, false if couldn't load
-//     */
-//    override fun loadFromProfile(profile: UserProfile): Boolean {
-//        if (!profile.isCompatible(settings.title, settings.version))
-//            return false
-//
-//        eventBus.fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
-//        return true
-//    }
-
     override fun profileNameProperty(): StringProperty {
         return profileName
     }
@@ -663,19 +677,6 @@ internal class Engine(
 //
 //        eventBus.fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
     }
-
-    /**
-     * @return user profile with current settings
-     */
-//    private fun createProfile(): UserProfile {
-//        log.debug("Creating default profile")
-//
-//        val profile = UserProfile(settings.title, settings.version)
-//
-//        eventBus.fireEvent(SaveEvent(profile))
-//
-//        return profile
-//    }
 
     override fun pushSubScene(subScene: SubScene) {
         mainWindow.pushState(subScene)

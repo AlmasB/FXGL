@@ -600,7 +600,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             if (saveFileName.isEmpty())
                 return@Consumer
 
-            //controller.saveGame(saveFileName)
+            controller.saveGame(SaveFile(saveFileName, "DEFAULT", "sav"))
 
 //            if (saveLoadManager.saveFileExists(saveFileName)) {
 //                getDisplay().showConfirmationBox(FXGL.localize("menu.overwrite") +" [$saveFileName]?", { yes ->

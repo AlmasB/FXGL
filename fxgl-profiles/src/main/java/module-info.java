@@ -12,4 +12,5 @@ module com.almasb.fxgl.profiles {
     requires com.almasb.fxgl.io;
 
     exports com.almasb.fxgl.profile;
+    opens com.almasb.fxgl.profile to com.almasb.fxgl.core;
 }
