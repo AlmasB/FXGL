@@ -136,6 +136,8 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     }
 
     override fun onUpdate(tpf: Double) {
+        super.onUpdate(tpf)
+
         animations.forEach { it.onUpdate(tpf) }
 
         val frequency = 1.7
@@ -268,7 +270,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             itemSave.setOnAction(EventHandler{ fireSave() })
 
             val itemLoad = MenuButton("menu.load")
-            itemLoad.setMenuContent(Supplier { this.createContentLoad() })
+            itemLoad.setMenuContent(Supplier { createContentLoad() }, isCached = false)
 
             box.add(itemSave)
             box.add(itemLoad)
@@ -427,10 +429,10 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             parent = menu
         }
 
-        fun setMenuContent(contentSupplier: Supplier<MenuContent>) {
+        fun setMenuContent(contentSupplier: Supplier<MenuContent>, isCached: Boolean = true) {
 
             btn.addEventHandler(ActionEvent.ACTION) { event ->
-                if (cachedContent == null)
+                if (cachedContent == null || !isCached)
                     cachedContent = contentSupplier.get()
 
                 switchMenuContentTo(cachedContent!!)

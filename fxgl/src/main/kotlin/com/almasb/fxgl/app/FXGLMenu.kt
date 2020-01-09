@@ -86,13 +86,20 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         // we don't data-bind the name because menu subclasses
         // might use some fancy UI without Text / Label
-        controller.profileNameProperty().addListener { _, oldName, newName ->
-            if (!oldName.isEmpty()) {
-                // remove last node which *should* be profile view
-                contentRoot.children.removeAt(contentRoot.children.size - 1)
-            }
+//        controller.profileNameProperty().addListener { _, oldName, newName ->
+//            if (!oldName.isEmpty()) {
+//                // remove last node which *should* be profile view
+//                contentRoot.children.removeAt(contentRoot.children.size - 1)
+//            }
+//
+//            contentRoot.children.add(createProfileView(FXGL.localize("profile.profile") + ": " + newName))
+//        }
+    }
 
-            contentRoot.children.add(createProfileView(FXGL.localize("profile.profile") + ": " + newName))
+    override fun onUpdate(tpf: Double) {
+        // TODO: extract hardcoded string
+        if (type == MenuType.MAIN_MENU && getSettings().isUserProfileEnabled && getSettings().profileName.value == "DEFAULT") {
+            showProfileDialog()
         }
     }
 
@@ -170,7 +177,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected abstract fun createProfileView(profileName: String): Node
 
     /**
-     * @return menu content containing list of save files and loadTask/delete buttons
+     * @return menu content containing list of save files and load/delete buttons
      */
     protected fun createContentLoad(): MenuContent {
         log.debug("createContentLoad()")
@@ -198,7 +205,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             }
         }
 
-        list.items.addAll(saveLoadService.readSaveFilesTask(controller.profileNameProperty().value, "sav").run())
+        list.items.addAll(saveLoadService.readSaveFilesTask(getSettings().profileName.value, getSettings().saveFileExt).run())
         list.prefHeightProperty().bind(Bindings.size(list.items).multiply(FONT_SIZE).add(16))
 
         val btnLoad = getUIFactory().newButton(localizedStringProperty("menu.load"))
@@ -589,7 +596,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             if (saveFileName.isEmpty())
                 return@Consumer
 
-            val saveFile = SaveFile(saveFileName, controller.profileNameProperty().value, getSettings().saveFileExt)
+            val saveFile = SaveFile(saveFileName, getSettings().profileName.value, getSettings().saveFileExt)
 
             if (saveLoadService.saveFileExists(saveFile)) {
                 getDisplay().showConfirmationBox(localize("menu.overwrite") +" [$saveFileName]?") { yes ->
@@ -644,5 +651,88 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             if (yes)
                 controller.gotoMainMenu()
         }
+    }
+
+    /**
+     * Show profile dialog so that user selects existing or creates new profile.
+     * The dialog is only dismissed when profile is chosen either way.
+     */
+    protected fun showProfileDialog() {
+        val profilesBox = getUIFactory().newChoiceBox(FXCollections.observableArrayList<String>())
+
+        val btnNew = getUIFactory().newButton(localizedStringProperty("multiplayer.new"))
+        val btnSelect = getUIFactory().newButton(localizedStringProperty("multiplayer.select"))
+        btnSelect.disableProperty().bind(profilesBox.valueProperty().isNull)
+        val btnDelete = getUIFactory().newButton(localizedStringProperty("menu.delete"))
+        btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull)
+
+        btnNew.setOnAction {
+            getDisplay().showInputBox(localize("profile.new"), InputPredicates.ALPHANUM, Consumer { name ->
+                saveLoadService.createProfileTask(name)
+                        .onSuccess { showProfileDialog() }
+                        .onFailure { error ->
+                            getDisplay().showErrorBox("$error") {
+                                showProfileDialog()
+                            }
+                        }
+                        .runAsyncFXWithDialog(ProgressDialog(localize("profile.loadingProfile") +": $name"))
+            })
+        }
+
+        btnSelect.setOnAction {
+            val name = profilesBox.value
+
+            getSettings().profileName.set(name)
+
+//            saveLoadService.
+//                    .onSuccess { profile ->
+//                        val ok = loadFromProfile(profile)
+//
+//                        if (!ok) {
+//                            getDisplay().showErrorBox(getLocalizedString("profile.corrupted")+": $name", { showProfileDialog() })
+//                        } else {
+//                            profileName.set(name)
+//
+//                            saveLoadManager.loadLastModifiedSaveFileTask()
+//                                    .onSuccess { hasSaves.value = true }
+//                                    .onFailure { hasSaves.value = false }
+//                                    .runAsyncFXWithDialog(ProgressDialog(getLocalizedString("menu.loadingLast")))
+//                        }
+//                    }
+//                    .onFailure { error ->
+//                        getDisplay().showErrorBox(getLocalizedString("profile.corrupted")+(": $name\nError: $error"), { this.showProfileDialog() })
+//                    }
+//                    .runAsyncFXWithDialog(ProgressDialog(getLocalizedString("profile.loadingProfile")+": $name"))
+        }
+
+        btnDelete.setOnAction {
+            val name = profilesBox.value
+
+            saveLoadService.deleteProfileTask(name)
+                    .onSuccess { showProfileDialog() }
+                    .onFailure { error ->
+                        getDisplay().showErrorBox("$error") {
+                            showProfileDialog()
+                        }
+                    }
+                    .runAsyncFXWithDialog(ProgressDialog(localize("profile.deletingProfile") +": $name"))
+        }
+
+        saveLoadService.readProfileNamesTask()
+                .onSuccess { names ->
+                    profilesBox.items.addAll(names)
+
+                    if (!profilesBox.items.isEmpty()) {
+                        profilesBox.selectionModel.selectFirst()
+                    }
+
+                    getDisplay().showBox(localize("profile.selectOrCreate"), profilesBox, btnSelect, btnNew, btnDelete)
+                }
+                .onFailure { error ->
+                    log.warning("$error")
+
+                    getDisplay().showBox(localize("profile.selectOrCreate"), profilesBox, btnSelect, btnNew, btnDelete)
+                }
+                .runAsyncFXWithDialog(ProgressDialog(localize("profile.loadingProfiles")))
     }
 }

@@ -27,6 +27,7 @@ import com.almasb.fxgl.ui.UIFactory
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.SimpleStringProperty
 import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
 import javafx.stage.StageStyle
@@ -130,6 +131,8 @@ class GameSettings(
          * Setting to true enables main and game menu.
          */
         var isMenuEnabled: Boolean = false,
+
+        var isUserProfileEnabled: Boolean = false,
 
         /**
          * Setting to true will enable profiler that reports on performance
@@ -264,6 +267,7 @@ class GameSettings(
                 isPreserveResizeRatio,
                 isIntroEnabled,
                 isMenuEnabled,
+                isUserProfileEnabled,
                 isProfilingEnabled,
                 isDeveloperMenuEnabled,
                 isCloseConfirmation,
@@ -361,6 +365,8 @@ class ReadOnlyGameSettings internal constructor(
          * Setting to true enables main and game menu.
          */
         val isMenuEnabled: Boolean,
+
+        val isUserProfileEnabled: Boolean,
 
         /**
          * Setting to true will enable profiler that reports on performance
@@ -477,11 +483,6 @@ class ReadOnlyGameSettings internal constructor(
     val urlLeaderboard = "http://fxgl-top.herokuapp.com/"
 
     /**
-     * link to google forms feedback
-     */
-    val urlGoogleForms = "https://goo.gl/forms/6wrMnOBxTE1fEpOy2"
-
-    /**
      * how often to check for updates
      */
     val versionCheckDays = 7
@@ -491,19 +492,7 @@ class ReadOnlyGameSettings internal constructor(
      */
     val profileDir = "profiles/"
 
-    /**
-     * profile data is saved as this file
-     */
-    val profileName = "user.profile"
-
-    /**
-     * save files are saved in this directory
-     */
-    val saveDir = "saves/"
-
-    val saveFileExt = ".sav"
-
-    val dataFileExt = ".dat"
+    val saveFileExt = "sav"
 
     val platform: Platform
         get() = runtimeInfo.platform
@@ -560,6 +549,8 @@ class ReadOnlyGameSettings internal constructor(
      * [isFullScreenAllowed] must be true, otherwise it's no-op.
      */
     val fullScreen = SimpleBooleanProperty(isFullScreenFromStart)
+
+    val profileName = SimpleStringProperty("DEFAULT")
 
     @get:JvmName("globalMusicVolumeProperty")
     val globalMusicVolumeProperty = SimpleDoubleProperty(0.5)

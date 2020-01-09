@@ -46,6 +46,7 @@ public class SaveSample extends GameApplication {
         settings.setTitle("SaveSample");
         settings.setVersion("0.1");
         settings.setMenuEnabled(true);
+        settings.setUserProfileEnabled(true);
         settings.setEnabledMenuItems(EnumSet.allOf(MenuItem.class));
     }
 
@@ -103,9 +104,7 @@ public class SaveSample extends GameApplication {
     }
 
     @Override
-    protected void initGame() {
-        initGame(new Point2D(100, 100), new Point2D(200, 100));
-
+    protected void onPreInit() {
         getSaveLoadService().addHandler(new SaveLoadHandler() {
             @Override
             public void onSave(DataFile data) {
@@ -127,6 +126,11 @@ public class SaveSample extends GameApplication {
                 System.out.println(bundleEnemy);
             }
         });
+    }
+
+    @Override
+    protected void initGame() {
+        initGame(new Point2D(100, 100), new Point2D(200, 100));
     }
 
     private void initGame(Point2D playerPos, Point2D enemyPos) {

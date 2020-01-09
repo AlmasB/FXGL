@@ -15,6 +15,7 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
 import com.almasb.fxgl.core.reflect.ReflectionUtils.inject
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dev.DevPane
+import com.almasb.fxgl.dsl.getSettings
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.GameState
@@ -37,8 +38,6 @@ import com.almasb.fxgl.ui.FXGLUIConfig
 import com.almasb.fxgl.ui.FontType
 import com.almasb.sslogger.Logger
 import javafx.application.Platform
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.property.StringProperty
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
 import javafx.scene.Group
@@ -126,13 +125,6 @@ internal class Engine(
      * of every other UI element. For things like notifications.
      */
     private val overlayRoot = Group()
-
-    private val profileName = SimpleStringProperty("no-profile")
-
-    /**
-     * Stores the default profile data. This is used to restore default settings.
-     */
-    //private lateinit var defaultProfile: UserProfile
 
     private val environmentVars = hashMapOf<String, Any>()
 
@@ -293,7 +285,7 @@ internal class Engine(
 
         initAppScenes()
         initPauseResumeListener()
-        initEventHandlers()
+        initSaveLoadHandler()
     }
 
     private fun prepareToStartLoop() {
@@ -448,14 +440,16 @@ internal class Engine(
         }
     }
 
-    private fun initEventHandlers() {
+    private fun initSaveLoadHandler() {
         saveLoadService.addHandler(object : SaveLoadHandler {
-            override fun onSave(dataFile: DataFile) {
+            override fun onSave(data: DataFile) {
+                // TODO:
+
                 // settings.write()
                 // services.write()
             }
 
-            override fun onLoad(dataFile: DataFile) {
+            override fun onLoad(data: DataFile) {
                 // settings.read()
                 // services.read()
             }
@@ -469,14 +463,6 @@ internal class Engine(
         app.initInput()
 
         SystemActions.bind(playScene.input)
-
-        generateDefaultProfile()
-    }
-
-    private fun generateDefaultProfile() {
-//        log.debug("generateDefaultProfile()")
-//
-//        defaultProfile = createProfile()
     }
 
     private fun injectDependenciesIntoServices() {
@@ -586,6 +572,8 @@ internal class Engine(
         dataFile?.let {
             saveLoadService.load(it)
         }
+
+        dataFile = null
     }
 
     override fun gotoIntro() {
@@ -613,38 +601,17 @@ internal class Engine(
 
     override fun loadGame(saveFile: SaveFile) {
         saveLoadService.readSaveFileTask(saveFile)
-                .onSuccess {
-                    saveLoadService.load(it.data)
-                }
+                .onSuccess { startLoadedGame(it.data) }
                 .runAsyncFXWithDialog(ProgressDialog(local.getLocalizedString("menu.loading") + ": ${saveFile.name}"))
     }
 
     override fun loadGameFromLastSave() {
-//        saveLoadManager
-//                .loadLastModifiedSaveFileTask()
-//                .then { saveLoadManager.loadTask(it) }
-//                .onSuccess { startLoadedGame(it) }
-//                .runAsyncFXWithDialog(ProgressDialog(Local.getLocalizedString("menu.loading") + "..."))
+        saveLoadService
+                .loadLastModifiedSaveFileTask(getSettings().profileName.value, getSettings().saveFileExt)
+                .then { saveLoadService.readSaveFileTask(it) }
+                .onSuccess { startLoadedGame(it.data) }
+                .runAsyncFXWithDialog(ProgressDialog(local.getLocalizedString("menu.loading") + "..."))
     }
-
-
-//    override fun saveProfile() {
-////        saveLoadManager.saveProfileTask(createProfile())
-////                .onFailure { error -> "Failed to save profile: ${profileName.value} - $error" }
-////                .run() // we execute synchronously to avoid incomplete save since we might be shutting down
-//    }
-//
-//    /**
-//     * @return true if loaded successfully, false if couldn't load
-//     */
-//    override fun loadFromProfile(profile: UserProfile): Boolean {
-//        if (!profile.isCompatible(settings.title, settings.version))
-//            return false
-//
-//        eventBus.fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
-//        return true
-//    }
-
 
     /**
      * Saves a screenshot of the current scene into a ".png" file,
@@ -667,10 +634,6 @@ internal class Engine(
             log.warning("saveScreenshot($fileName.png) failed: $e")
             return false
         }
-    }
-
-    override fun profileNameProperty(): StringProperty {
-        return profileName
     }
 
     override fun restoreDefaultSettings() {

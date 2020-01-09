@@ -10,12 +10,14 @@ import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.FileExtension
 import com.almasb.sslogger.Logger
+import java.io.FileNotFoundException
 import java.util.*
 
 class SaveLoadService(private val fs: FS) {
 
     private val log = Logger.get(javaClass)
 
+    // TODO: this should be read from settings
     private val PROFILES_DIR = "profiles/"
 
     private val saveLoadHandlers = arrayListOf<SaveLoadHandler>()
@@ -42,6 +44,8 @@ class SaveLoadService(private val fs: FS) {
         return fs.exists(PROFILES_DIR + saveFile.relativePathName)
     }
 
+    // TODO: API rename for consistency
+
     /**
      * Save serializable data onto a disk file system under saves directory,
      * which is created if necessary in the directory where the game is start from.
@@ -61,14 +65,6 @@ class SaveLoadService(private val fs: FS) {
         log.debug("Saving data: ${saveFile.name}")
 
         return fs.writeDataTask(saveFile, PROFILES_DIR + saveFile.relativePathName)
-                .then {
-                    IOTask.ofVoid("updateSaves") {
-//                        Async.startAsyncFX {
-//                            saveFiles.add(saveFile)
-//                            Collections.sort(saveFiles, SaveFile)
-//                        }
-                    }
-                }
     }
 
     private fun createProfilesDirTask(): IOTask<*> {
@@ -103,11 +99,6 @@ class SaveLoadService(private val fs: FS) {
         log.debug("Deleting save file: ${saveFile.name}")
 
         return fs.deleteFileTask(PROFILES_DIR + saveFile.relativePathName)
-                .then {
-                    IOTask.ofVoid("updateSaves") {
-                        //Async.startAsyncFX<Boolean> { saveFiles.remove(saveFile) }
-                    }
-                }
     }
 
     /**
@@ -124,7 +115,7 @@ class SaveLoadService(private val fs: FS) {
 
                         val list = ArrayList<SaveFile>()
                         for (name in fileNames) {
-                            val file = fs.readDataTask<SaveFile>(PROFILES_DIR + profileName + "/" + name).run()
+                            val file = fs.readDataTask<SaveFile>("$PROFILES_DIR$profileName/$name").run()
                             if (file != null) {
                                 list.add(file)
                             }
@@ -132,6 +123,29 @@ class SaveLoadService(private val fs: FS) {
                         list
                     }
                 }
+    }
+
+    /**
+     * Loads last modified save file from saves directory.
+     */
+    fun loadLastModifiedSaveFileTask(profileName: String, saveFileExt: String): IOTask<SaveFile> {
+        log.debug("Loading last modified save file")
+
+        return readSaveFilesTask(profileName, saveFileExt).then { files ->
+            IOTask.of("findLastSave") {
+                if (files.isEmpty()) {
+                    throw FileNotFoundException("No save files found")
+                }
+
+                Collections.sort(files, SaveFile.RECENT_FIRST)
+                files[0]
+            }
+        }
+    }
+
+    fun createProfileTask(profileName: String): IOTask<Void> {
+        log.debug("Creating profile: $profileName")
+        return fs.createDirectoryTask("./$PROFILES_DIR$profileName")
     }
 
     /**
@@ -152,58 +166,3 @@ class SaveLoadService(private val fs: FS) {
         return fs.deleteDirectoryTask("./$PROFILES_DIR$profileName")
     }
 }
-
-
-
-
-
-
-
-
-
-//    private val saveFiles = FXCollections.observableArrayList<SaveFile>()
-
-//
-//    /**
-//     * @return read only view of observable save files
-//     */
-//    fun saveFilesProperty(): ObservableList<SaveFile> = FXCollections.unmodifiableObservableList(saveFiles)
-
-
-
-//
-//    /**
-//     * Loads last modified save file from saves directory.
-//     *
-//     * @return saving task
-//     */
-//    fun loadLastModifiedSaveFileTask(): IOTask<SaveFile> {
-//        log.debug("Loading last modified save file")
-//
-//        return loadSaveFilesTask().then { files ->
-//            IOTask.of("findLastSave") {
-//                if (files.isEmpty()) {
-//                    throw FileNotFoundException("No save files found")
-//                }
-//
-//                Collections.sort(files, SaveFile)
-//                files[0]
-//            }
-//        }
-//    }
-//
-//    /**
-//     * TODO: extract FXGL ref, should probably return Task<> rather than void, so runAsyncFX can be
-//     * called from outside
-//     * Asynchronously (with a progress dialog) loads save files into observable list [saveFiles].
-//     */
-//    fun querySaveFiles() {
-//        log.debug("Querying save files")
-//
-////        loadSaveFilesTask()
-////                .onSuccess { files ->
-////                    saveFiles.setAll(files)
-////                    Collections.sort(saveFiles, SaveFile)
-////                }
-////                .runAsyncFXWithDialog(ProgressDialog(FXGL.localize("menu.loadingSaveFiles")))
-//    }

@@ -9,7 +9,6 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.profile.SaveFile
 import com.almasb.fxgl.scene.SubSceneStack
-import javafx.beans.property.StringProperty
 
 /**
  *
@@ -36,8 +35,6 @@ interface GameController : SubSceneStack {
     fun onGameReady(vars: PropertyMap)
 
     fun exit()
-
-    fun profileNameProperty(): StringProperty
 
     fun saveScreenshot(): Boolean
 
