@@ -7,28 +7,35 @@
 package com.almasb.fxgl.core
 
 import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.serialization.SerializableType
 
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-interface EngineService : Updatable, SerializableType {
+abstract class EngineService : Updatable, SerializableType {
 
     /**
      * Called when the engine is fully initialized and just before the main loop.
      * This occurs once per application lifetime.
      */
-    fun onMainLoopStarting()
+    open fun onMainLoopStarting() { }
 
     /**
      * Called when initGame(), initPhysics(), initUI() all completed and
      * the game is ready to be played.
      */
-    fun onGameReady(vars: PropertyMap)
+    open fun onGameReady(vars: PropertyMap) { }
+
+    override fun onUpdate(tpf: Double) { }
 
     /**
      * Called just before the engine exits and the application shuts down.
      */
-    fun onExit()
+    open fun onExit() { }
+
+    override fun write(bundle: Bundle) { }
+
+    override fun read(bundle: Bundle) { }
 }

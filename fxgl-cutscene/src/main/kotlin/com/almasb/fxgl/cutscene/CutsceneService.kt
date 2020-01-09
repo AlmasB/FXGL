@@ -18,7 +18,7 @@ import com.almasb.fxgl.scene.SubSceneStack
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class CutsceneService : EngineService {
+class CutsceneService : EngineService() {
 
     @Inject("width")
     private var appWidth: Int = 0

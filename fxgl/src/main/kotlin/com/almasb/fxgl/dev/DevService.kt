@@ -8,8 +8,6 @@ package com.almasb.fxgl.dev
 
 import com.almasb.fxgl.app.GameView
 import com.almasb.fxgl.core.EngineService
-import com.almasb.fxgl.core.collection.PropertyMap
-import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
@@ -29,7 +27,7 @@ import javafx.scene.shape.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DevService : EngineService {
+class DevService : EngineService() {
 
     private val console by lazy { Console() }
 
@@ -80,21 +78,6 @@ class DevService : EngineService {
                 }
             }
         })
-    }
-
-    override fun onExit() {
-    }
-
-    override fun onUpdate(tpf: Double) {
-    }
-
-    override fun onGameReady(vars: PropertyMap) {
-    }
-
-    override fun write(bundle: Bundle) {
-    }
-
-    override fun read(bundle: Bundle) {
     }
 
     private val debugViews = hashMapOf<Entity, GameView>()

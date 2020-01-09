@@ -15,7 +15,6 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
 import com.almasb.fxgl.core.reflect.ReflectionUtils.inject
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dev.DevPane
-import com.almasb.fxgl.dsl.getSettings
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.GameState
@@ -25,7 +24,6 @@ import com.almasb.fxgl.localization.Language
 import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.profile.DataFile
-import com.almasb.fxgl.profile.SaveFile
 import com.almasb.fxgl.profile.SaveLoadHandler
 import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.scene.Scene
@@ -61,30 +59,30 @@ internal class Engine(
 
     private val log = Logger.get(javaClass)
 
-    /**
-     * @return true iff FXGL is running for the first time
-     * @implNote we actually check if "system/" exists in running dir, so if it was
-     *            deleted, then this method also returns true
-     */
-    private var isFirstRun: Boolean = false
-
     internal lateinit var bundle: Bundle
 
     private lateinit var mainWindow: MainWindow
-    internal lateinit var playScene: GameScene
 
+    internal lateinit var playScene: GameScene
     private lateinit var loadScene: LoadingScene
     private lateinit var dialogScene: DialogSubState
+
     private var intro: FXGLScene? = null
     private var mainMenu: FXGLScene? = null
     private var gameMenu: FXGLScene? = null
-
     private var pauseMenu: PauseMenu? = null
 
     private val loop = LoopRunner { loop(it) }
 
     val tpf: Double
         get() = loop.tpf
+
+
+
+
+
+
+
 
     /* SUBSYSTEMS */
 
@@ -101,9 +99,16 @@ internal class Engine(
         if (servicesCache.containsKey(serviceClass))
             return servicesCache[serviceClass] as T
 
-        return (services.find { it is T  }?.also { servicesCache.put(serviceClass, it) }
+        return (services.find { it is T  }?.also { servicesCache[serviceClass] = it }
                 ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
     }
+
+
+
+
+
+
+
 
     internal val assetLoader by lazy { AssetLoader() }
     internal val eventBus by lazy { EventBus() }
@@ -212,7 +217,6 @@ internal class Engine(
         settings.uiFactory.registerFontFactory(FontType.TEXT, assetLoader.loadFont(settings.fontText))
     }
 
-
     private fun initAndSetUIFactory() {
         log.debug("Setting UI factory")
 
@@ -270,7 +274,7 @@ internal class Engine(
         IOTask.setDefaultExecutor(executor)
         IOTask.setDefaultFailAction { display.showErrorBox(it) }
 
-        isFirstRun = !fs.exists("system/")
+        val isFirstRun = !fs.exists("system/")
 
         if (!settings.isExperimentalNative) {
             if (isFirstRun) {
@@ -292,7 +296,8 @@ internal class Engine(
         // these things need to be called early before the main loop
         // so that menus can correctly display input controls, etc.
         // this is called once per application lifetime
-        runPreInit()
+        app.initInput()
+        SystemActions.bind(playScene.input)
 
         injectDependenciesIntoServices()
 
@@ -456,15 +461,6 @@ internal class Engine(
         })
     }
 
-    private fun runPreInit() {
-        log.debug("Running preInit()")
-
-        // 2. register user actions
-        app.initInput()
-
-        SystemActions.bind(playScene.input)
-    }
-
     private fun injectDependenciesIntoServices() {
         services.forEach { service ->
             findFieldsByAnnotation(service, Inject::class.java).forEach { field ->
@@ -559,7 +555,11 @@ internal class Engine(
         mainWindow.setScene(loadScene)
     }
 
-    private fun startLoadedGame(dataFile: DataFile) {
+    override fun saveGame(dataFile: DataFile) {
+        saveLoadService.save(dataFile)
+    }
+
+    override fun loadGame(dataFile: DataFile) {
         this.dataFile = dataFile
 
         log.debug("Starting loaded game")
@@ -592,27 +592,6 @@ internal class Engine(
         mainWindow.setScene(playScene)
     }
 
-    override fun saveGame(saveFile: SaveFile) {
-        saveLoadService.save(saveFile.data)
-
-        saveLoadService.writeSaveFileTask(saveFile)
-                .runAsyncFXWithDialog(ProgressDialog(local.getLocalizedString("menu.savingData") + ": ${saveFile.name}"))
-    }
-
-    override fun loadGame(saveFile: SaveFile) {
-        saveLoadService.readSaveFileTask(saveFile)
-                .onSuccess { startLoadedGame(it.data) }
-                .runAsyncFXWithDialog(ProgressDialog(local.getLocalizedString("menu.loading") + ": ${saveFile.name}"))
-    }
-
-    override fun loadGameFromLastSave() {
-        saveLoadService
-                .loadLastModifiedSaveFileTask(getSettings().profileName.value, getSettings().saveFileExt)
-                .then { saveLoadService.readSaveFileTask(it) }
-                .onSuccess { startLoadedGame(it.data) }
-                .runAsyncFXWithDialog(ProgressDialog(local.getLocalizedString("menu.loading") + "..."))
-    }
-
     /**
      * Saves a screenshot of the current scene into a ".png" file,
      * named by title + version + time.
@@ -637,9 +616,7 @@ internal class Engine(
     }
 
     override fun restoreDefaultSettings() {
-//        log.debug("restoreDefaultSettings()")
-//
-//        eventBus.fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
+        log.debug("restoreDefaultSettings()")
     }
 
     override fun pushSubScene(subScene: SubScene) {

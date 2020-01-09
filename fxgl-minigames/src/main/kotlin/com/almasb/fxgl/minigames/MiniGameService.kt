@@ -31,7 +31,7 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class MiniGameService : EngineService {
+class MiniGameService : EngineService() {
 
     @Inject("width")
     private var appWidth: Int = 0

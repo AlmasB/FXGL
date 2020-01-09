@@ -20,7 +20,7 @@ import java.util.*
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class AchievementManager : EngineService {
+class AchievementManager : EngineService() {
 
     private val log = Logger.get(javaClass)
 

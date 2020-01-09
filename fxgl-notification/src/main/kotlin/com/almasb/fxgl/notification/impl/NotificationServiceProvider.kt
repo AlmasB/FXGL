@@ -22,7 +22,7 @@ import java.util.*
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class NotificationServiceProvider : NotificationService {
+class NotificationServiceProvider : NotificationService() {
 
     private val ANIMATION_DURATION = Duration.seconds(1.0)
     private val NOTIFICATION_DURATION = Duration.seconds(3.0)

@@ -98,9 +98,7 @@ class FXGL private constructor() { companion object {
     /**
      * Note: the system bundle is saved on exit and loaded on init.
      * This bundle is meant to be used by the FXGL system only.
-     * If you want to save global (non-gameplay) data use user profiles instead.
-     *
-     * @return FXGL system data bundle
+     * If you want to save data, use [getSaveLoadService].
      */
     @JvmStatic fun getSystemBundle() = engine.bundle
 

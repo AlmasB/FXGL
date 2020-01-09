@@ -7,7 +7,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.collection.PropertyMap
-import com.almasb.fxgl.profile.SaveFile
+import com.almasb.fxgl.profile.DataFile
 import com.almasb.fxgl.scene.SubSceneStack
 
 /**
@@ -15,8 +15,6 @@ import com.almasb.fxgl.scene.SubSceneStack
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 interface GameController : SubSceneStack {
-
-    fun startNewGame()
 
     fun gotoIntro()
 
@@ -26,11 +24,19 @@ interface GameController : SubSceneStack {
 
     fun gotoPlay()
 
-    fun saveGame(saveFile: SaveFile)
+    fun startNewGame()
 
-    fun loadGame(saveFile: SaveFile)
+    /**
+     * Saves game data into given data file.
+     * This method does not write to file system.
+     */
+    fun saveGame(dataFile: DataFile)
 
-    fun loadGameFromLastSave()
+    /**
+     * Loads game data from given data file.
+     * This method does not read from the file system.
+     */
+    fun loadGame(dataFile: DataFile)
 
     fun onGameReady(vars: PropertyMap)
 

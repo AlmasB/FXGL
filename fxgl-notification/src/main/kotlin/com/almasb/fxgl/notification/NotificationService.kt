@@ -14,20 +14,20 @@ import javafx.scene.paint.Color
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-interface NotificationService : EngineService {
+abstract class NotificationService : EngineService() {
 
     /**
      * Current background color for notifications.
      */
-    var backgroundColor: Color
+    abstract var backgroundColor: Color
 
     /**
      * Current text color for notifications.
      */
-    var textColor: Color
+    abstract var textColor: Color
 
     /**
      * Push a notification with given [message].
      */
-    fun pushNotification(message: String)
+    abstract fun pushNotification(message: String)
 }

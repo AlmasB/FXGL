@@ -532,14 +532,6 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         menuContentRoot.children.add(node)
     }
 
-//    fun isProfileSelected() = profileName.value.isNotEmpty()
-//
-//    private val hasSaves = ReadOnlyBooleanWrapper(false)
-//
-//    override fun hasSavesProperty(): ReadOnlyBooleanProperty {
-//        return hasSaves.readOnlyProperty
-//    }
-
 //    override fun onDelete(saveFile: SaveFile) {
 //        getDisplay().showConfirmationBox(Local.localize("menu.deleteSave")+"[${saveFile.name}]?", { yes ->
 //
@@ -567,7 +559,14 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireContinue() {
         log.debug("fireContinue()")
 
-        controller.loadGameFromLastSave()
+        // TODO:
+        //    override fun loadGameFromLastSave() {
+//        saveLoadService
+//                .loadLastModifiedSaveFileTask(getSettings().profileName.value, getSettings().saveFileExt)
+//                .then { saveLoadService.readSaveFileTask(it) }
+//                .onSuccess { startLoadedGame(it.data) }
+//                .runAsyncFXWithDialog(ProgressDialog(local.getLocalizedString("menu.loading") + "..."))
+//    }
     }
 
     /**
@@ -579,8 +578,12 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         val text = localize("menu.loadSave") + " [${saveFile.name}]?\n" + localize("menu.unsavedProgress")
 
         getDisplay().showConfirmationBox(text) { yes ->
-            if (yes)
-                controller.loadGame(saveFile)
+
+            if (yes) {
+                saveLoadService.readSaveFileTask(saveFile)
+                        .onSuccess { controller.loadGame(it.data) }
+                        .runAsyncFXWithDialog(ProgressDialog(localize("menu.loading") + ": ${saveFile.name}"))
+            }
         }
     }
 
@@ -602,12 +605,19 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
                 getDisplay().showConfirmationBox(localize("menu.overwrite") +" [$saveFileName]?") { yes ->
 
                     if (yes)
-                        controller.saveGame(saveFile)
+                        doSave(saveFile)
                 }
             } else {
-                controller.saveGame(saveFile)
+                doSave(saveFile)
             }
         })
+    }
+
+    private fun doSave(saveFile: SaveFile) {
+        controller.saveGame(saveFile.data)
+
+        saveLoadService.writeSaveFileTask(saveFile)
+                .runAsyncFXWithDialog(ProgressDialog(localize("menu.savingData") + ": ${saveFile.name}"))
     }
 
     /**
