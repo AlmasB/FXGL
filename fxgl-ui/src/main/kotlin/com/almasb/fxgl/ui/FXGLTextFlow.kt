@@ -8,6 +8,7 @@ package com.almasb.fxgl.ui
 
 import javafx.scene.Node
 import javafx.scene.paint.Color
+import javafx.scene.text.Text
 import javafx.scene.text.TextFlow
 
 /**
@@ -29,7 +30,9 @@ class FXGLTextFlow : TextFlow() {
     }
 
     fun append(message: String, color: Color, fontSize: Double): FXGLTextFlow {
-        val text = FXGLUIConfig.getUIFactory().newText(message, color, fontSize)
+        // TODO:
+        val text = Text(message)
+        //val text = FXGLUIConfig.getUIFactory().newText(message, color, fontSize)
         return append(text)
     }
 //

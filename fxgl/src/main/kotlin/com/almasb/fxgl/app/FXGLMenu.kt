@@ -19,7 +19,6 @@ import com.almasb.fxgl.profile.SaveFile
 import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.FXGLScrollPane
-import com.almasb.fxgl.ui.FXGLUIConfig.getUIFactory
 import com.almasb.fxgl.ui.FontType
 import com.almasb.sslogger.Logger
 import javafx.beans.binding.Bindings

@@ -14,9 +14,10 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
 import com.almasb.fxgl.dsl.FXGL.Companion.random
 import com.almasb.fxgl.dsl.FXGL.Companion.texture
+import com.almasb.fxgl.dsl.getUIFactory
+import com.almasb.fxgl.dsl.localizedStringProperty
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
-import com.almasb.fxgl.ui.FXGLButton
 import com.almasb.sslogger.Logger
 import javafx.animation.FadeTransition
 import javafx.beans.binding.Bindings
@@ -378,15 +379,14 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         private var cachedContent: MenuContent? = null
 
         private val p = Polygon(0.0, 0.0, 220.0, 0.0, 250.0, 35.0, 0.0, 35.0)
-        val btn: FXGLButton
+        val btn: Button
 
         private var isAnimating = false
 
         init {
-            btn = FXGLButton()
+            btn = getUIFactory().newButton(localizedStringProperty(stringKey))
             btn.alignment = Pos.CENTER_LEFT
             btn.style = "-fx-background-color: transparent"
-            btn.textProperty().bind(FXGL.localizedStringProperty(stringKey))
 
             p.isMouseTransparent = true
 

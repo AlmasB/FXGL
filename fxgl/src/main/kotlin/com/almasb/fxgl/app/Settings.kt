@@ -21,10 +21,8 @@ import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
-import com.almasb.fxgl.ui.DialogFactory
-import com.almasb.fxgl.ui.FXGLDialogFactory
+import com.almasb.fxgl.ui.FXGLDialogFactoryServiceProvider
 import com.almasb.fxgl.ui.FXGLUIFactoryServiceProvider
-import com.almasb.fxgl.ui.UIFactoryService
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
@@ -221,6 +219,7 @@ class GameSettings(
                 SystemBundleService::class.java,
 
                 FXGLUIFactoryServiceProvider::class.java,
+                FXGLDialogFactoryServiceProvider::class.java,
 
                 AudioPlayer::class.java,
                 NotificationServiceProvider::class.java,
@@ -233,11 +232,6 @@ class GameSettings(
          * Provide a custom scene factory.
          */
         var sceneFactory: SceneFactory = SceneFactory(),
-
-        /**
-         * Provide a custom dialog factory.
-         */
-        var dialogFactory: DialogFactory = FXGLDialogFactory(),
 
         var notificationViewClass: Class<out NotificationView> = XboxNotificationView::class.java,
 
@@ -293,7 +287,6 @@ class GameSettings(
                 configClass,
                 unmodifiableList(engineServices),
                 sceneFactory,
-                dialogFactory,
                 notificationViewClass,
                 unmodifiableList(achievements))
     }
@@ -444,11 +437,6 @@ class ReadOnlyGameSettings internal constructor(
          * Provide a custom scene factory.
          */
         val sceneFactory: SceneFactory,
-
-        /**
-         * Provide a custom dialog factory.
-         */
-        val dialogFactory: DialogFactory,
 
         val notificationViewClass: Class<out NotificationView>,
 
@@ -607,7 +595,6 @@ class ReadOnlyGameSettings internal constructor(
                 "App Mode: " + applicationMode + '\n'.toString() +
                 "Menu Key: " + menuKey + '\n'.toString() +
                 "Stage Style: " + stageStyle + '\n'.toString() +
-                "Scene Factory: " + sceneFactory.javaClass + '\n'.toString() +
-                "Dialog Factory: " + dialogFactory.javaClass + '\n'.toString()
+                "Scene Factory: " + sceneFactory.javaClass + '\n'.toString()
     }
 }

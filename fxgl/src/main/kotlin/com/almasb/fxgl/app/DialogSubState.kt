@@ -37,7 +37,7 @@ class DialogSubState(
 ) : SubScene(), Display {
 
     private val window = FXGL.getUIFactory().newWindow()
-    private val dialogFactory = FXGL.getSettings().dialogFactory
+    private val dialogFactory = FXGL.getDialogFactoryService()
 
     private val states = ArrayDeque<DialogData>()
 

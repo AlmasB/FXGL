@@ -65,11 +65,13 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
             = fontFactories[type]?.newFont(size) ?: throw IllegalStateException("No font factory found for $type")
 
     override fun newButton(text: String): Button {
-        return FXGLButton(text)
+        return FXGLButton(text).also {
+            it.font = newFont(22.0)
+        }
     }
 
     override fun newButton(text: StringBinding): Button {
-        val btn = FXGLButton(text.value)
+        val btn = newButton(text.value)
         btn.textProperty().bind(text)
         return btn
     }
@@ -87,7 +89,9 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
     }
 
     override fun <T> newSpinner(items: ObservableList<T>): Spinner<T> {
-        return FXGLSpinner(items)
+        return FXGLSpinner(items).also {
+            it.editor.font = newFont(18.0)
+        }
     }
 
     override fun <T : Any> newListView(items: ObservableList<T>): ListView<T> {

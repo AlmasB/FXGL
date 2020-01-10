@@ -174,7 +174,6 @@ internal class Engine(
 
         initAndLoadLocalization()
         initAndRegisterFontFactories()
-        initAndSetUIFactory()
         initAndShowMainWindow()
         initFatalExceptionHandler()
 
@@ -213,13 +212,6 @@ internal class Engine(
         uiFactory.registerFontFactory(FontType.GAME, assetLoader.loadFont(settings.fontGame))
         uiFactory.registerFontFactory(FontType.MONO, assetLoader.loadFont(settings.fontMono))
         uiFactory.registerFontFactory(FontType.TEXT, assetLoader.loadFont(settings.fontText))
-    }
-
-    private fun initAndSetUIFactory() {
-        log.debug("Setting UI factory")
-
-        FXGLUIConfig.setUIFactory(getService(UIFactoryService::class.java))
-        FXGLUIConfig.setLocalizationService(local)
     }
 
     private fun initAndShowMainWindow() {
@@ -271,6 +263,10 @@ internal class Engine(
     private fun initEngine() {
         IOTask.setDefaultExecutor(executor)
         IOTask.setDefaultFailAction { display.showErrorBox(it) }
+
+        // TODO: possibly auto parse all services to make them available
+        environmentVars["uiFactoryService"] = getService(UIFactoryService::class.java)
+        environmentVars["localizationService"] = local
 
         injectDependenciesIntoServices()
 

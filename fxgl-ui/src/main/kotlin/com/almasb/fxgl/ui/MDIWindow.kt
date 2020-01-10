@@ -63,7 +63,9 @@ open class MDIWindow : Region() {
 
     // CUSTOM
 
-    private val header = FXGLUIConfig.getUIFactory().newTextFlow()
+    // TODO:
+    //private val header = FXGLUIConfig.getUIFactory().newTextFlow()
+    private val header = FXGLTextFlow()
 
     private val minimizeButton = makeMinimizeButton()
     private val closeButton = makeCloseButton()

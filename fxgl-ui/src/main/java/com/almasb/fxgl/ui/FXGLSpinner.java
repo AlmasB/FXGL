@@ -17,6 +17,5 @@ public class FXGLSpinner<T> extends Spinner<T> {
     public FXGLSpinner(ObservableList<T> items) {
         super(items);
         getStyleClass().setAll("fxgl-spinner");
-        getEditor().setFont(FXGLUIConfig.getUIFactory().newFont(18));
     }
 }

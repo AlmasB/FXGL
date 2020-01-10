@@ -69,7 +69,7 @@ object MockUIFactoryService : UIFactoryService() {
     }
 
     override fun newButton(text: StringBinding): Button {
-        val btn = FXGLButton(text.value)
+        val btn = Button(text.value)
         btn.textProperty().bind(text)
         return btn
     }
