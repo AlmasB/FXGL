@@ -8,10 +8,9 @@
 package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.achievement.AchievementManager
+import com.almasb.fxgl.app.*
 import com.almasb.fxgl.app.Engine
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.app.GameController
-import com.almasb.fxgl.app.ReadOnlyGameSettings
+import com.almasb.fxgl.app.tasks.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.core.math.FXGLMath
@@ -100,7 +99,7 @@ class FXGL private constructor() { companion object {
      * This bundle is meant to be used by the FXGL system only.
      * If you want to save data, use [getSaveLoadService].
      */
-    @JvmStatic fun getSystemBundle() = engine.bundle
+    @JvmStatic fun getSystemBundle() = engine.getService(SystemBundleService::class.java).bundle
 
     @JvmStatic fun getDevPane() = engine.devPane
 
@@ -130,7 +129,7 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getMiniGameService() = engine.getService(MiniGameService::class.java)
 
-    @JvmStatic fun getSaveLoadService() = engine.saveLoadService
+    @JvmStatic fun getSaveLoadService() = engine.saveLoadManager
 
     /**
      * @return time per frame (in this frame)

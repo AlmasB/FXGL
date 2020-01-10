@@ -17,6 +17,12 @@ import com.almasb.fxgl.core.serialization.SerializableType
 abstract class EngineService : Updatable, SerializableType {
 
     /**
+     * Called during the engine initialization phase, after
+     * all services were added and dependencies marked with [Inject] injected.
+     */
+    open fun onInit() {}
+
+    /**
      * Called when the engine is fully initialized and just before the main loop.
      * This occurs once per application lifetime.
      */

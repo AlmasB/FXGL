@@ -8,6 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.achievement.Achievement
 import com.almasb.fxgl.achievement.AchievementManager
+import com.almasb.fxgl.app.tasks.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.math.FXGLMath
@@ -217,6 +218,8 @@ class GameSettings(
         /* CUSTOMIZABLE SERVICES BELOW */
 
         var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
+                SystemBundleService::class.java,
+
                 AudioPlayer::class.java,
                 NotificationServiceProvider::class.java,
                 AchievementManager::class.java,

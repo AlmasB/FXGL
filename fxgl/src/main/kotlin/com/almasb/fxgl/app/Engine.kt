@@ -13,7 +13,6 @@ import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
 import com.almasb.fxgl.core.reflect.ReflectionUtils.inject
-import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dev.DevPane
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
@@ -59,7 +58,7 @@ internal class Engine(
 
     private val log = Logger.get(javaClass)
 
-    internal lateinit var bundle: Bundle
+
 
     private lateinit var mainWindow: MainWindow
 
@@ -116,7 +115,7 @@ internal class Engine(
     internal val executor by lazy { Async }
     internal val fs by lazy { FS(settings.isDesktop) }
     internal val local by lazy { LocalizationService() }
-    internal val saveLoadService by lazy { SaveLoadService(fs) }
+    internal val saveLoadManager by lazy { SaveLoadService(fs) }
 
     internal val devPane by lazy { DevPane(playScene, settings) }
 
@@ -274,22 +273,27 @@ internal class Engine(
         IOTask.setDefaultExecutor(executor)
         IOTask.setDefaultFailAction { display.showErrorBox(it) }
 
-        val isFirstRun = !fs.exists("system/")
+        injectDependenciesIntoServices()
 
-        if (!settings.isExperimentalNative) {
-            if (isFirstRun) {
-                createRequiredDirs()
-                loadDefaultSystemData()
-            } else {
-                loadSystemData()
-            }
-        } else {
-            loadDefaultSystemData()
-        }
+        services.forEach { it.onInit() }
 
         initAppScenes()
         initPauseResumeListener()
         initSaveLoadHandler()
+    }
+
+    private fun injectDependenciesIntoServices() {
+        services.forEach { service ->
+            findFieldsByAnnotation(service, Inject::class.java).forEach { field ->
+                val injectKey = field.getDeclaredAnnotation(Inject::class.java).value
+
+                if (injectKey !in environmentVars) {
+                    throw IllegalArgumentException("Cannot inject @Inject($injectKey). No value present for $injectKey")
+                }
+
+                inject(field, service, environmentVars[injectKey])
+            }
+        }
     }
 
     private fun prepareToStartLoop() {
@@ -299,51 +303,9 @@ internal class Engine(
         app.initInput()
         SystemActions.bind(playScene.input)
 
-        injectDependenciesIntoServices()
-
         services.forEach { it.onMainLoopStarting() }
 
         app.onPreInit()
-    }
-
-    private fun createRequiredDirs() {
-        fs.createDirectoryTask("system/")
-                .then { fs.writeDataTask(listOf("This directory contains FXGL system data files."), "system/Readme.txt") }
-                .onFailure { e ->
-                    log.warning("Failed to create system dir: $e")
-                    Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e)
-                }
-                .run()
-    }
-
-    private fun saveSystemData() {
-        log.debug("Saving FXGL system data")
-
-        fs.writeDataTask(bundle, "system/fxgl.bundle")
-                .onFailure { log.warning("Failed to save: $it") }
-                .run()
-    }
-
-    private fun loadSystemData() {
-        log.debug("Loading FXGL system data")
-
-        fs.readDataTask<Bundle>("system/fxgl.bundle")
-                .onSuccess {
-                    bundle = it
-                    log.debug("$bundle")
-                }
-                .onFailure {
-                    log.warning("Failed to load: $it")
-                    loadDefaultSystemData()
-                }
-                .run()
-    }
-
-    private fun loadDefaultSystemData() {
-        log.debug("Loading default FXGL system data")
-
-        // populate with default info
-        bundle = Bundle("FXGL")
     }
 
     private fun initAppScenes() {
@@ -446,7 +408,7 @@ internal class Engine(
     }
 
     private fun initSaveLoadHandler() {
-        saveLoadService.addHandler(object : SaveLoadHandler {
+        saveLoadManager.addHandler(object : SaveLoadHandler {
             override fun onSave(data: DataFile) {
                 // TODO:
 
@@ -461,24 +423,10 @@ internal class Engine(
         })
     }
 
-    private fun injectDependenciesIntoServices() {
-        services.forEach { service ->
-            findFieldsByAnnotation(service, Inject::class.java).forEach { field ->
-                val injectKey = field.getDeclaredAnnotation(Inject::class.java).value
-
-                if (injectKey !in environmentVars) {
-                    throw IllegalArgumentException("Cannot inject @Inject($injectKey). No value present for $injectKey")
-                }
-
-                inject(field, service, environmentVars[injectKey])
-            }
-        }
-    }
-
     private fun loop(tpf: Double) {
         engineTimer.update(tpf)
 
-        mainWindow.onUpdate(tpf)
+        mainWindow.update(tpf)
 
         services.forEach { it.onUpdate(tpf) }
     }
@@ -556,7 +504,7 @@ internal class Engine(
     }
 
     override fun saveGame(dataFile: DataFile) {
-        saveLoadService.save(dataFile)
+        saveLoadManager.save(dataFile)
     }
 
     override fun loadGame(dataFile: DataFile) {
@@ -570,7 +518,7 @@ internal class Engine(
         services.forEach { it.onGameReady(vars) }
 
         dataFile?.let {
-            saveLoadService.load(it)
+            saveLoadManager.load(it)
         }
 
         dataFile = null
@@ -635,12 +583,7 @@ internal class Engine(
         log.debug("Shutting down background threads")
         executor.shutdownNow()
 
-        if (!settings.isExperimentalNative) {
-            saveSystemData()
-        }
-
         log.debug("Closing logger and exiting JavaFX")
-
         Logger.close()
         Platform.exit()
     }

@@ -12,8 +12,4 @@ package com.almasb.fxgl.core
  */
 abstract class EngineTask : EngineService() {
 
-    var isCompleted = false
-        protected set
-
-    abstract fun onEngineInit()
 }

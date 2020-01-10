@@ -1,0 +1,87 @@
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
+
+package com.almasb.fxgl.app.tasks
+
+import com.almasb.fxgl.core.EngineTask
+import com.almasb.fxgl.core.Inject
+import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.io.FS
+import com.almasb.sslogger.Logger
+
+internal class SystemBundleService : EngineTask() {
+
+    private val log = Logger.get(javaClass)
+
+    @Inject("isExperimentalNative")
+    private var isExperimentalNative = false
+
+    @Inject("FS")
+    private lateinit var fs: FS
+
+    internal lateinit var bundle: Bundle
+
+    override fun onInit() {
+        val isFirstRun = !fs.exists("system/")
+
+        if (!isExperimentalNative) {
+            if (isFirstRun) {
+                createRequiredDirs()
+                loadDefaultSystemData()
+            } else {
+                loadSystemData()
+            }
+        } else {
+            loadDefaultSystemData()
+        }
+    }
+
+    override fun onExit() {
+        if (!isExperimentalNative) {
+            saveSystemData()
+        }
+    }
+
+    private fun createRequiredDirs() {
+        fs.createDirectoryTask("system/")
+                .then { fs.writeDataTask(listOf("This directory contains FXGL system data files."), "system/Readme.txt") }
+                .onFailure { e ->
+                    log.warning("Failed to create system dir: $e")
+                    Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e)
+                }
+                .run()
+    }
+
+    private fun saveSystemData() {
+        log.debug("Saving FXGL system data")
+
+        fs.writeDataTask(bundle, "system/fxgl.bundle")
+                .onFailure { log.warning("Failed to save: $it") }
+                .run()
+    }
+
+    private fun loadSystemData() {
+        log.debug("Loading FXGL system data")
+
+        fs.readDataTask<Bundle>("system/fxgl.bundle")
+                .onSuccess {
+                    bundle = it
+                    log.debug("$bundle")
+                }
+                .onFailure {
+                    log.warning("Failed to load: $it")
+                    loadDefaultSystemData()
+                }
+                .run()
+    }
+
+    private fun loadDefaultSystemData() {
+        log.debug("Loading default FXGL system data")
+
+        // populate with default info
+        bundle = Bundle("FXGL")
+    }
+}

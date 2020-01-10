@@ -199,7 +199,7 @@ internal class MainWindow(
         }
     }
 
-    fun onUpdate(tpf: Double) {
+    fun update(tpf: Double) {
         stateMachine.runOnActiveStates { it.update(tpf) }
     }
 

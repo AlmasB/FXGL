@@ -134,7 +134,7 @@ class MainWindowTest {
 
         assertThat(window.currentScene, `is`<Scene>(subscene))
 
-        window.onUpdate(1.0)
+        window.update(1.0)
 
         assertThat(t, `is`(1.0))
 
@@ -142,7 +142,7 @@ class MainWindowTest {
 
         assertThat(window.currentScene, `is`(not<Scene>(subscene)))
 
-        window.onUpdate(1.0)
+        window.update(1.0)
 
         assertThat(t, `is`(1.0))
 
@@ -157,7 +157,7 @@ class MainWindowTest {
         window.pushState(subscene)
         window.pushState(subscene2)
 
-        window.onUpdate(1.0)
+        window.update(1.0)
 
         assertThat(t, `is`(3.0))
     }
