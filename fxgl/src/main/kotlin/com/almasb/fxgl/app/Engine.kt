@@ -29,7 +29,10 @@ import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneListener
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.time.Timer
-import com.almasb.fxgl.ui.*
+import com.almasb.fxgl.ui.Display
+import com.almasb.fxgl.ui.ErrorDialog
+import com.almasb.fxgl.ui.FontType
+import com.almasb.fxgl.ui.UIFactoryService
 import com.almasb.sslogger.Logger
 import javafx.application.Platform
 import javafx.embed.swing.SwingFXUtils
@@ -334,9 +337,7 @@ internal class Engine(
         if (settings.isMenuEnabled) {
             mainMenu = sceneFactory.newMainMenu()
             gameMenu = sceneFactory.newGameMenu()
-        }
 
-        if (settings.isMenuEnabled) {
             val menuKeyHandler = object : EventHandler<KeyEvent> {
                 private var canSwitchGameMenu = true
 
