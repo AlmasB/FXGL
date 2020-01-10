@@ -29,10 +29,7 @@ import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneListener
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.time.Timer
-import com.almasb.fxgl.ui.Display
-import com.almasb.fxgl.ui.ErrorDialog
-import com.almasb.fxgl.ui.FXGLUIConfig
-import com.almasb.fxgl.ui.FontType
+import com.almasb.fxgl.ui.*
 import com.almasb.sslogger.Logger
 import javafx.application.Platform
 import javafx.embed.swing.SwingFXUtils
@@ -208,18 +205,20 @@ internal class Engine(
     }
 
     private fun initAndRegisterFontFactories() {
-        log.debug("Registering font factories")
+        log.debug("Registering font factories with UI factory")
 
-        settings.uiFactory.registerFontFactory(FontType.UI, assetLoader.loadFont(settings.fontUI))
-        settings.uiFactory.registerFontFactory(FontType.GAME, assetLoader.loadFont(settings.fontGame))
-        settings.uiFactory.registerFontFactory(FontType.MONO, assetLoader.loadFont(settings.fontMono))
-        settings.uiFactory.registerFontFactory(FontType.TEXT, assetLoader.loadFont(settings.fontText))
+        val uiFactory = getService(UIFactoryService::class.java)
+
+        uiFactory.registerFontFactory(FontType.UI, assetLoader.loadFont(settings.fontUI))
+        uiFactory.registerFontFactory(FontType.GAME, assetLoader.loadFont(settings.fontGame))
+        uiFactory.registerFontFactory(FontType.MONO, assetLoader.loadFont(settings.fontMono))
+        uiFactory.registerFontFactory(FontType.TEXT, assetLoader.loadFont(settings.fontText))
     }
 
     private fun initAndSetUIFactory() {
         log.debug("Setting UI factory")
 
-        FXGLUIConfig.setUIFactory(settings.uiFactory)
+        FXGLUIConfig.setUIFactory(getService(UIFactoryService::class.java))
         FXGLUIConfig.setLocalizationService(local)
     }
 

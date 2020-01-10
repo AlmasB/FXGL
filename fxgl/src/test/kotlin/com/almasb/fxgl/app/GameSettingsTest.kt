@@ -45,9 +45,6 @@ class GameSettingsTest {
             settings.menuKey = KeyCode.ENTER
             settings.credits = Arrays.asList("TestCredit1", "TestCredit2")
             settings.applicationMode = ApplicationMode.RELEASE
-
-            // mock
-            settings.uiFactory = MockUIFactory
         }
     }
 

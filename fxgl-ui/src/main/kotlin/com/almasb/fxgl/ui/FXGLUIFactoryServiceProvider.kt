@@ -20,7 +20,7 @@ import javafx.scene.text.Text
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGLUIFactory : UIFactory {
+class FXGLUIFactoryServiceProvider : UIFactoryService() {
 
     private val fontFactories = hashMapOf<FontType, FontFactory>()
 

@@ -35,6 +35,7 @@ import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.time.Timer
+import com.almasb.fxgl.ui.UIFactoryService
 import javafx.animation.Interpolator
 import javafx.beans.property.*
 import javafx.event.Event
@@ -105,7 +106,10 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getDevService() = engine.getService(DevService::class.java)
 
-    @JvmStatic fun getUIFactory() = getSettings().uiFactory
+    @Deprecated("Use getUIFactoryService()")
+    @JvmStatic fun getUIFactory() = engine.getService(UIFactoryService::class.java)
+
+    @JvmStatic fun getUIFactoryService() = engine.getService(UIFactoryService::class.java)
 
     @JvmStatic fun getAssetLoader() = engine.assetLoader
 

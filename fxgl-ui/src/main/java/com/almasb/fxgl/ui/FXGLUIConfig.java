@@ -13,14 +13,14 @@ import com.almasb.fxgl.localization.LocalizationService;
  */
 public final class FXGLUIConfig {
 
-    private static UIFactory uiFactory;
+    private static UIFactoryService uiFactory;
     private static LocalizationService localizationService;
 
-    public static void setUIFactory(UIFactory uiFactory) {
+    public static void setUIFactory(UIFactoryService uiFactory) {
         FXGLUIConfig.uiFactory = uiFactory;
     }
 
-    public static UIFactory getUIFactory() {
+    public static UIFactoryService getUIFactory() {
         return uiFactory;
     }
 

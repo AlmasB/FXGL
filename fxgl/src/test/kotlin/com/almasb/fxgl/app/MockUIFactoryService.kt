@@ -20,7 +20,7 @@ import javafx.scene.text.Text
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object MockUIFactory : UIFactory {
+object MockUIFactoryService : UIFactoryService() {
     override fun registerFontFactory(type: FontType?, fontFactory: FontFactory?) {
     }
 

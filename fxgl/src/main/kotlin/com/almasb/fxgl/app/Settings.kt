@@ -23,8 +23,8 @@ import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
 import com.almasb.fxgl.ui.DialogFactory
 import com.almasb.fxgl.ui.FXGLDialogFactory
-import com.almasb.fxgl.ui.FXGLUIFactory
-import com.almasb.fxgl.ui.UIFactory
+import com.almasb.fxgl.ui.FXGLUIFactoryServiceProvider
+import com.almasb.fxgl.ui.UIFactoryService
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
@@ -220,6 +220,8 @@ class GameSettings(
         var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
                 SystemBundleService::class.java,
 
+                FXGLUIFactoryServiceProvider::class.java,
+
                 AudioPlayer::class.java,
                 NotificationServiceProvider::class.java,
                 AchievementManager::class.java,
@@ -236,13 +238,6 @@ class GameSettings(
          * Provide a custom dialog factory.
          */
         var dialogFactory: DialogFactory = FXGLDialogFactory(),
-
-        /**
-         * Provide a custom UI factory.
-         */
-        @get:JvmName("getUIFactory")
-        @set:JvmName("setUIFactory")
-        var uiFactory: UIFactory = FXGLUIFactory(),
 
         var notificationViewClass: Class<out NotificationView> = XboxNotificationView::class.java,
 
@@ -299,7 +294,6 @@ class GameSettings(
                 unmodifiableList(engineServices),
                 sceneFactory,
                 dialogFactory,
-                uiFactory,
                 notificationViewClass,
                 unmodifiableList(achievements))
     }
@@ -455,12 +449,6 @@ class ReadOnlyGameSettings internal constructor(
          * Provide a custom dialog factory.
          */
         val dialogFactory: DialogFactory,
-
-        /**
-         * Provide a custom UI factory.
-         */
-        @get:JvmName("getUIFactory")
-        val uiFactory: UIFactory,
 
         val notificationViewClass: Class<out NotificationView>,
 
@@ -620,7 +608,6 @@ class ReadOnlyGameSettings internal constructor(
                 "Menu Key: " + menuKey + '\n'.toString() +
                 "Stage Style: " + stageStyle + '\n'.toString() +
                 "Scene Factory: " + sceneFactory.javaClass + '\n'.toString() +
-                "Dialog Factory: " + dialogFactory.javaClass + '\n'.toString() +
-                "UI Factory: " + uiFactory.javaClass + '\n'.toString()
+                "Dialog Factory: " + dialogFactory.javaClass + '\n'.toString()
     }
 }
