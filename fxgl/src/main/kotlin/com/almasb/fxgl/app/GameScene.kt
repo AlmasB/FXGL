@@ -10,7 +10,6 @@ import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.components.ViewComponent
-import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.ui.UI
 import com.almasb.sslogger.Logger
@@ -33,7 +32,6 @@ import javafx.scene.transform.Scale
  */
 class GameScene
 internal constructor(width: Int, height: Int,
-                     val gameState: GameState,
                      val gameWorld: GameWorld,
                      val physicsWorld: PhysicsWorld) : FXGLScene(width, height), EntityWorldListener {
 

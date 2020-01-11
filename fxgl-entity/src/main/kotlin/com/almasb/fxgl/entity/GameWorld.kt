@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.core.collection.Array
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.reflect.ReflectionUtils
@@ -35,6 +36,8 @@ class GameWorld {
     companion object {
         private val log = Logger.get("GameWorld")
     }
+
+    val properties = PropertyMap()
 
     private val updateList = Array<Entity>()
 
@@ -66,7 +69,7 @@ class GameWorld {
      * @param entity the entity to add to world
      */
     fun addEntity(entity: Entity) {
-        require(!entity.isActive){ "Entity is already attached to world" }
+        require(!entity.isActive) { "Entity is already attached to world" }
 
         waitingList.add(entity)
         entities.add(entity)

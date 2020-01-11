@@ -8,7 +8,6 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
-import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.particle.ParticleComponent
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.physics.PhysicsWorld
@@ -34,19 +33,16 @@ class GameSceneTest {
 
     private lateinit var gameScene: GameScene
     private lateinit var world: GameWorld
-    private lateinit var state: GameState
 
     @BeforeEach
     fun setUp() {
         world = GameWorld()
-        state = GameState()
-        gameScene = GameScene(800, 600, state, world, PhysicsWorld(600, 50.0))
+        gameScene = GameScene(800, 600, world, PhysicsWorld(600, 50.0))
     }
 
     @Test
     fun `Creation`() {
         assertThat(gameScene.gameWorld, `is`(world))
-        assertThat(gameScene.gameState, `is`(state))
     }
 
     @Test

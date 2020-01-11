@@ -16,7 +16,6 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils.inject
 import com.almasb.fxgl.dev.DevPane
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.event.EventBus
-import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.localization.Language
@@ -324,7 +323,6 @@ internal class Engine(
 
         loadScene = sceneFactory.newLoadingScene()
         playScene = GameScene(settings.width, settings.height,
-                GameState(),
                 GameWorld(),
                 PhysicsWorld(settings.height, settings.pixelsPerMeter)
         )

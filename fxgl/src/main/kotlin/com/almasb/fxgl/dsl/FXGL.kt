@@ -8,8 +8,10 @@
 package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.achievement.AchievementManager
-import com.almasb.fxgl.app.*
 import com.almasb.fxgl.app.Engine
+import com.almasb.fxgl.app.GameApplication
+import com.almasb.fxgl.app.GameController
+import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.app.tasks.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
@@ -143,8 +145,11 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun tpf() = engine.tpf
 
-    @JvmStatic fun getGameState() = engine.playScene.gameState
+    @Deprecated("Use getWorldProperties()")
+    @JvmStatic fun getGameState() = engine.playScene.gameWorld.properties
+
     @JvmStatic fun getGameWorld() = engine.playScene.gameWorld
+    @JvmStatic fun getWorldProperties() = engine.playScene.gameWorld.properties
     @JvmStatic fun getPhysicsWorld() = engine.playScene.physicsWorld
     @JvmStatic fun getGameScene() = engine.playScene
 

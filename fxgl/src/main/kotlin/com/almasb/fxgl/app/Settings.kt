@@ -16,6 +16,7 @@ import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.serialization.SerializableType
 import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.cutscene.CutsceneService
+import com.almasb.fxgl.gameplay.GameDifficulty
 import com.almasb.fxgl.localization.Language
 import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
@@ -23,10 +24,7 @@ import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
 import com.almasb.fxgl.ui.FXGLDialogFactoryServiceProvider
 import com.almasb.fxgl.ui.FXGLUIFactoryServiceProvider
-import javafx.beans.property.SimpleBooleanProperty
-import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.*
 import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
 import javafx.stage.StageStyle
@@ -530,6 +528,17 @@ class ReadOnlyGameSettings internal constructor(
     val fullScreen = SimpleBooleanProperty(isFullScreenFromStart)
 
     val profileName = SimpleStringProperty("DEFAULT")
+
+    // TODO: consistent API
+    // probably should go with get() set() and Property() as per JavaFX convention
+
+    private val gameDifficultyProp = SimpleObjectProperty(GameDifficulty.MEDIUM)
+
+    fun gameDifficultyProperty(): ObjectProperty<GameDifficulty> = gameDifficultyProp
+
+    var gameDifficulty: GameDifficulty
+        get() = gameDifficultyProp.value
+        set(value) { gameDifficultyProp.value = value }
 
     @get:JvmName("globalMusicVolumeProperty")
     val globalMusicVolumeProperty = SimpleDoubleProperty(0.5)

@@ -200,8 +200,8 @@ class Console : Pane() {
     }
 
     private fun vars() {
-        FXGL.getGameState().properties.keys().forEach {
-            pushMessage("${it} = ${FXGL.getGameState().properties.getValue<Any>(it)}")
+        FXGL.getWorldProperties().keys().forEach {
+            pushMessage("${it} = ${FXGL.getWorldProperties().getValue<Any>(it)}")
         }
     }
 

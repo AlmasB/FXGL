@@ -164,10 +164,10 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
         pane.hgap = 25.0
         pane.vgap = 10.0
 
-        FXGL.getGameState().properties.keys().forEachIndexed { index, key ->
+        FXGL.getWorldProperties().keys().forEachIndexed { index, key ->
             val textKey = FXGL.getUIFactory().newText(key, Color.WHITE, 18.0)
 
-            val value = FXGL.getGameState().properties.getValueObservable(key)
+            val value = FXGL.getWorldProperties().getValueObservable(key)
             val textValue = FXGL.getUIFactory().newText("", Color.WHITE, 18.0)
 
             when (value.javaClass) {

@@ -116,7 +116,7 @@ open class LoadingScene : FXGLScene() {
             FXGL.getPhysicsWorld().clear()
             FXGL.getPhysicsWorld().clearCollisionHandlers()
             FXGL.getGameScene().clear()
-            FXGL.getGameState().clear()
+            FXGL.getWorldProperties().clear()
             FXGL.getGameTimer().clear()
         }
 
@@ -127,7 +127,7 @@ open class LoadingScene : FXGLScene() {
             app.initGameVars(vars)
 
             vars.forEach { (name, value) ->
-                FXGL.getGameState().setValue(name, value)
+                FXGL.getWorldProperties().setValue(name, value)
             }
 
             app.initGame()
@@ -145,7 +145,7 @@ open class LoadingScene : FXGLScene() {
 
         private fun initComplete() {
             update("Initialization Complete", 3)
-            FXGL.getGameController().onGameReady(FXGL.getGameState().properties)
+            FXGL.getGameController().onGameReady(FXGL.getWorldProperties())
         }
 
         private fun update(message: String, step: Int) {
