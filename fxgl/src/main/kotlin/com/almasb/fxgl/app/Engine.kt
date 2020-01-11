@@ -249,6 +249,18 @@ internal class Engine(
             removeOverlay(oldScene)
             addOverlay(newScene)
         }
+
+        if (settings.isMobile) {
+            // no-op
+        } else {
+            mainWindow.iconifiedProperty().addListener { _, _, isMinimized ->
+                if (isMinimized) {
+                    loop.pause()
+                } else {
+                    loop.resume()
+                }
+            }
+        }
     }
 
     private fun addOverlay(scene: Scene) {
@@ -276,7 +288,6 @@ internal class Engine(
         services.forEach { it.onInit() }
 
         initAppScenes()
-        initPauseResumeListener()
         initSaveLoadHandler()
     }
 
@@ -387,20 +398,6 @@ internal class Engine(
         }
 
         log.debug("Application scenes initialized")
-    }
-
-    private fun initPauseResumeListener() {
-        if (settings.isMobile) {
-            // no-op
-        } else {
-            stage.iconifiedProperty().addListener { _, _, isMinimized ->
-                if (isMinimized) {
-                    loop.pause()
-                } else {
-                    loop.resume()
-                }
-            }
-        }
     }
 
     private fun initSaveLoadHandler() {
