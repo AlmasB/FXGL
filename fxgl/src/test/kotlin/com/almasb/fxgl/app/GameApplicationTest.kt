@@ -71,4 +71,18 @@ class GameApplicationTest {
             MockGameApplication.COUNTDOWN.await()
         }
     }
+
+    @Test
+    fun `Default GameApplication methods are no-op`() {
+        val app = object : GameApplication() {
+            override fun initSettings(settings: GameSettings) { }
+        }
+
+        app.initInput()
+        app.onPreInit()
+        app.initGame()
+        app.initPhysics()
+        app.initUI()
+        app.onUpdate(0.016)
+    }
 }
