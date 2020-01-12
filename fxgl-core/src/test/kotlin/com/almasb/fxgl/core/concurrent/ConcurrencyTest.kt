@@ -354,6 +354,42 @@ class ConcurrencyTest {
         }
     }
 
+    @Test
+    fun `IOTask Async FX with dialog`() {
+        assertTimeout(ofSeconds(1)) {
+            var count = 0
+
+            val task = IOTask.of {
+                "MyString"
+            }
+
+            var result = ""
+
+            val latch = CountDownLatch(1)
+
+            task.onSuccess {
+                result = it
+
+                latch.countDown()
+            }
+
+            task.runAsyncFXWithDialog(object : IOTask.UIDialogHandler {
+                override fun dismiss() {
+                    count++
+                }
+
+                override fun show() {
+                    count++
+                }
+            })
+
+            latch.await()
+
+            assertThat(count, `is`(2))
+            assertThat(result, `is`("MyString"))
+        }
+    }
+
     class SomeIOTask : IOTask<String>() {
         override fun onExecute(): String {
             return "RESULT"
