@@ -79,7 +79,7 @@ open class LoadingScene : FXGLScene() {
 
     override fun onUpdate(tpf: Double) {
         if (loadingFinished) {
-            FXGL.getGameController().gotoPlay()
+            controller.gotoPlay()
             loadingFinished = false
         }
     }

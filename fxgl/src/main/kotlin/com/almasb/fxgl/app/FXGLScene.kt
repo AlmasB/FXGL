@@ -29,6 +29,8 @@ import javafx.scene.shape.Rectangle
 abstract class FXGLScene
 @JvmOverloads constructor(width: Int = FXGL.getAppWidth(), height: Int = FXGL.getAppHeight()) : Scene() {
 
+    protected val controller: GameController = FXGL.getGameController()
+
     val viewport = Viewport(width.toDouble(), height.toDouble())
 
     val paddingTop = Rectangle()

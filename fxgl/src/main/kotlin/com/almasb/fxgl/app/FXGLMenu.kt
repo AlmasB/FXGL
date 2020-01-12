@@ -66,7 +66,6 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         private val log = Logger.get("Menu")
     }
 
-    protected val controller: GameController = getGameController()
     protected val saveLoadService: SaveLoadService = FXGL.getSaveLoadService()
 
     protected val menuRoot = Pane()
