@@ -9,6 +9,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.profile.DataFile
 import com.almasb.fxgl.scene.SubSceneStack
+import javafx.concurrent.Task
 
 /**
  *
@@ -21,6 +22,18 @@ interface GameController : SubSceneStack {
     fun gotoMainMenu()
 
     fun gotoGameMenu()
+
+    /**
+     * Switches the current scene to loading scene.
+     * Once the given loading task is completed, the scene is switched to play.
+     */
+    fun gotoLoading(loadingTask: Runnable)
+
+    /**
+     * Switches the current scene to loading scene.
+     * Once the given loading task is completed, the scene is switched to play.
+     */
+    fun gotoLoading(loadingTask: Task<*>)
 
     fun gotoPlay()
 

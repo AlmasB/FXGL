@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.app.scene
 
-import com.almasb.fxgl.app.LoadingScene
-
 /**
  * Factory for scenes used in FXGL.
  *
@@ -34,7 +32,7 @@ open class SceneFactory {
      *
      * @return loading scene
      */
-    open fun newLoadingScene(): LoadingScene = LoadingScene()
+    open fun newLoadingScene(): LoadingScene = FXGLLoadingScene()
 
     /**
      * Called to construct main menu.

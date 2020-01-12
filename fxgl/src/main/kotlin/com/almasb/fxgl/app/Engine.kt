@@ -6,10 +6,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.scene.DialogSubState
-import com.almasb.fxgl.app.scene.FXGLScene
-import com.almasb.fxgl.app.scene.GameScene
-import com.almasb.fxgl.app.scene.PauseMenu
+import com.almasb.fxgl.app.scene.*
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
@@ -38,6 +35,7 @@ import com.almasb.fxgl.ui.FontType
 import com.almasb.fxgl.ui.UIFactoryService
 import com.almasb.sslogger.Logger
 import javafx.application.Platform
+import javafx.concurrent.Task
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
 import javafx.scene.Group
@@ -495,6 +493,8 @@ internal class Engine(
 
     override fun startNewGame() {
         log.debug("Starting new game")
+
+        loadScene.pushNewTask(InitAppTask(app))
         mainWindow.setScene(loadScene)
     }
 
@@ -503,9 +503,11 @@ internal class Engine(
     }
 
     override fun loadGame(dataFile: DataFile) {
+        // TODO: can we modify task.onSucceeded from this class ...
         this.dataFile = dataFile
 
         log.debug("Starting loaded game")
+        loadScene.pushNewTask(InitAppTask(app))
         mainWindow.setScene(loadScene)
     }
 
@@ -529,6 +531,16 @@ internal class Engine(
 
     override fun gotoGameMenu() {
         mainWindow.setScene(gameMenu!!)
+    }
+
+    override fun gotoLoading(loadingTask: Runnable) {
+        loadScene.pushNewTask(loadingTask)
+        mainWindow.setScene(loadScene)
+    }
+
+    override fun gotoLoading(loadingTask: Task<*>) {
+        loadScene.pushNewTask(loadingTask)
+        mainWindow.setScene(loadScene)
     }
 
     override fun gotoPlay() {
