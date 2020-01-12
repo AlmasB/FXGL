@@ -153,6 +153,7 @@ class AssetLoaderTest {
 
         val bundle = assetLoader.loadResourceBundle("bla-bla")
         assertThat(bundle, `is`(notNullValue()))
+        assertThat(bundle.keySet().size, `is`(0))
     }
 
     @Test
