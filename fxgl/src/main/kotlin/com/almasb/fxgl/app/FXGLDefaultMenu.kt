@@ -61,7 +61,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     private var t = 0.0
 
     init {
-        if (FXGL.getAppWidth() < 600 || FXGL.getAppHeight() < 600)
+        if (appWidth < 800 || appHeight < 600)
             log.warning("FXGLDefaultMenu is not designed for resolutions < 800x600")
 
         val menu = if (type === MenuType.MAIN_MENU)
@@ -70,12 +70,12 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             createMenuBodyGameMenu()
 
         val menuX = 50.0
-        val menuY = FXGL.getAppHeight() / 2 - menu.layoutHeight / 2
+        val menuY = appHeight / 2.0 - menu.layoutHeight / 2
 
         menuRoot.translateX = menuX
         menuRoot.translateY = menuY
 
-        menuContentRoot.translateX = (FXGL.getAppWidth() - 500).toDouble()
+        menuContentRoot.translateX = appWidth - 500.0
         menuContentRoot.translateY = menuY
 
         // particle smoke
@@ -90,7 +90,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         emitter.setVelocityFunction { i -> Point2D(random() * 2.5, -random() * random(80, 120)) }
         emitter.setExpireFunction { i -> Duration.seconds(random(4, 7).toDouble()) }
         emitter.setScaleFunction { i -> Point2D(0.15, 0.10) }
-        emitter.setSpawnPointFunction { i -> Point2D(random(0, FXGL.getAppWidth() - 200).toDouble(), 120.0) }
+        emitter.setSpawnPointFunction { i -> Point2D(random(0.0, appWidth - 200.0), 120.0) }
 
         particleSystem!!.addParticleEmitter(emitter, 0.0, FXGL.getAppHeight().toDouble())
 
@@ -205,11 +205,11 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         val titleRoot = StackPane()
         titleRoot.children.addAll(bg, box)
 
-        titleRoot.translateX = FXGL.getAppWidth() / 2 - (textWidth + 30) / 2
+        titleRoot.translateX = appWidth / 2.0 - (textWidth + 30) / 2
         titleRoot.translateY = 50.0
 
         particleSystem = ParticleSystem()
-        particleSystem!!.addParticleEmitter(emitter, (FXGL.getAppWidth() / 2 - 30).toDouble(), titleRoot.translateY + 34)
+        particleSystem!!.addParticleEmitter(emitter, appWidth / 2.0 - 30, titleRoot.translateY + 34)
 
         return titleRoot
     }

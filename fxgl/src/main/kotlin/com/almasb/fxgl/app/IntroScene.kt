@@ -73,9 +73,6 @@ abstract class IntroScene : FXGLScene() {
  */
 class FXGLIntroScene : IntroScene() {
 
-    private val w = FXGL.getAppWidth().toDouble()
-    private val h = FXGL.getAppHeight().toDouble()
-
     private val animation: Transition
 
     private val particleSystem = ParticleSystem()
@@ -83,6 +80,9 @@ class FXGLIntroScene : IntroScene() {
     private val indices = hashMapOf<Particle, Double>()
 
     init {
+        val w = appWidth.toDouble()
+        val h = appHeight.toDouble()
+
         // set up particle system
         val emitter = initEmitter()
 
@@ -193,7 +193,7 @@ class FXGLIntroScene : IntroScene() {
     private fun makeLetter(letter: String) = Text(letter).apply {
         font = FXGL.getUIFactory().newFont(122.0)
         fill = Color.color(0.9, 0.95, 0.96)
-        translateY = h / 2 - 150
+        translateY = appHeight / 2.0 - 150
         opacity = 0.96
 
         effect = Glow(0.35)

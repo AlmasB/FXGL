@@ -27,33 +27,28 @@ open class LoadingScene : FXGLScene() {
     private var loadingFinished = false
 
     init {
-        val settings = FXGL.getSettings()
-
         with(progress) {
-            setPrefSize(settings.width - 200.0, 10.0)
+            setPrefSize(appWidth - 200.0, 10.0)
             translateX = 100.0
-            translateY = settings.height - 100.0
+            translateY = appHeight - 100.0
         }
 
         with(text) {
-            if (!settings.isExperimentalNative) {
-                font = FXGL.getUIFactory().newFont(24.0)
-            }
-
+            font = FXGL.getUIFactoryService().newFont(24.0)
             fill = Color.WHITE
         }
 
         FXGL.centerTextBind(
                 text,
-                settings.width / 2.0,
-                settings.height * 4 / 5.0
+                appWidth / 2.0,
+                appHeight * 4 / 5.0
         )
 
         contentRoot.children.addAll(
-                Rectangle(settings.width.toDouble(),
-                        settings.height.toDouble(),
-                        Color.rgb(0, 0, 10)),
-                progress, text)
+                Rectangle(appWidth.toDouble(), appHeight.toDouble(), Color.rgb(0, 0, 10)),
+                progress,
+                text
+        )
     }
 
     /**

@@ -27,11 +27,14 @@ import javafx.scene.shape.Rectangle
  * Base class for all FXGL scenes.
  */
 abstract class FXGLScene
-@JvmOverloads constructor(width: Int = FXGL.getAppWidth(), height: Int = FXGL.getAppHeight()) : Scene() {
+@JvmOverloads constructor(
+        val appWidth: Int = FXGL.getAppWidth(),
+        val appHeight: Int = FXGL.getAppHeight()
+) : Scene() {
 
-    protected val controller: GameController = FXGL.getGameController()
+    protected val controller: GameController by lazy { FXGL.getGameController() }
 
-    val viewport = Viewport(width.toDouble(), height.toDouble())
+    val viewport = Viewport(appWidth.toDouble(), appHeight.toDouble())
 
     val paddingTop = Rectangle()
     val paddingBot = Rectangle()
@@ -56,9 +59,15 @@ abstract class FXGLScene
         root.children.addAll(paddingTop, paddingBot, paddingLeft, paddingRight)
     }
 
+    /**
+     * @return preferred (scaled) width
+     */
     val width: Double
         get() = root.prefWidth
 
+    /**
+     * @return preferred (scaled) height
+     */
     val height: Double
         get() = root.prefHeight
 
