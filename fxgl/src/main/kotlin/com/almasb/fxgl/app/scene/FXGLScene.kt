@@ -4,8 +4,10 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.app
+package com.almasb.fxgl.app.scene
 
+import com.almasb.fxgl.app.CSS
+import com.almasb.fxgl.app.GameController
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.scene.Scene
 import javafx.beans.property.BooleanProperty

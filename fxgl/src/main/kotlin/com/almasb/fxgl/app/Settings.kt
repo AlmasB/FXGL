@@ -8,6 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.achievement.Achievement
 import com.almasb.fxgl.achievement.AchievementManager
+import com.almasb.fxgl.app.scene.SceneFactory
 import com.almasb.fxgl.app.tasks.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService

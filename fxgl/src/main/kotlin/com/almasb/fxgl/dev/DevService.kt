@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.dev
 
-import com.almasb.fxgl.app.GameView
+import com.almasb.fxgl.app.scene.GameView
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.Entity

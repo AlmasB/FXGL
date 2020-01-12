@@ -4,7 +4,9 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.app
+package com.almasb.fxgl.app.scene
+
+import com.almasb.fxgl.app.LoadingScene
 
 /**
  * Factory for scenes used in FXGL.

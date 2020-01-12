@@ -38,6 +38,7 @@ module com.almasb.fxgl.all {
     opens com.almasb.fxgl.app.tasks to com.almasb.fxgl.core;
 
     exports com.almasb.fxgl.app;
+    exports com.almasb.fxgl.app.scene;
     exports com.almasb.fxgl.dev;
     exports com.almasb.fxgl.dsl;
     exports com.almasb.fxgl.dsl.components;

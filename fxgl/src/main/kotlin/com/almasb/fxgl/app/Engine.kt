@@ -6,6 +6,10 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.scene.DialogSubState
+import com.almasb.fxgl.app.scene.FXGLScene
+import com.almasb.fxgl.app.scene.GameScene
+import com.almasb.fxgl.app.scene.PauseMenu
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap

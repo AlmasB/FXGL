@@ -4,10 +4,11 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.app
+package com.almasb.fxgl.app.scene
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
+import com.almasb.fxgl.app.MenuItem
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
 import com.almasb.fxgl.core.util.Supplier
 import com.almasb.fxgl.dsl.FXGL

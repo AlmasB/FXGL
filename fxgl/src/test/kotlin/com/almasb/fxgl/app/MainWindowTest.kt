@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene

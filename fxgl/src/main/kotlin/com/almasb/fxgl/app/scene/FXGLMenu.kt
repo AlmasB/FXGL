@@ -4,8 +4,10 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.app
+package com.almasb.fxgl.app.scene
 
+import com.almasb.fxgl.app.ApplicationMode
+import com.almasb.fxgl.app.ProgressDialog
 import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.core.util.Supplier
@@ -683,7 +685,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
                                 showProfileDialog()
                             }
                         }
-                        .runAsyncFXWithDialog(ProgressDialog(localize("profile.loadingProfile") +": $name"))
+                        .runAsyncFXWithDialog(ProgressDialog(localize("profile.loadingProfile") + ": $name"))
             })
         }
 
@@ -723,7 +725,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
                             showProfileDialog()
                         }
                     }
-                    .runAsyncFXWithDialog(ProgressDialog(localize("profile.deletingProfile") +": $name"))
+                    .runAsyncFXWithDialog(ProgressDialog(localize("profile.deletingProfile") + ": $name"))
         }
 
         saveLoadService.readProfileNamesTask()

@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.dev
 
-import com.almasb.fxgl.app.GameScene
+import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getGameWorld

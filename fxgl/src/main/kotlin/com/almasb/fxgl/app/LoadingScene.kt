@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.sslogger.Logger
 import javafx.concurrent.Task
@@ -15,6 +16,7 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 
 /**
+ * TODO: move to app.scene package once deps are resolved
  * Loading scene to be used during loading tasks.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)

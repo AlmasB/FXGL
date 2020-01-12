@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.scene.GameScene
+import com.almasb.fxgl.app.scene.GameView
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.particle.ParticleComponent
