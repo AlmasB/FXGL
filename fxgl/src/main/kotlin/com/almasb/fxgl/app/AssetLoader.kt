@@ -24,9 +24,7 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.image.Image
 import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
 import javafx.scene.text.Font
-import java.io.IOException
 import java.io.InputStream
 import java.net.URL
 import java.nio.charset.StandardCharsets
@@ -386,21 +384,16 @@ class AssetLoader {
      * Opens a stream to resource with given name.
      * The caller is responsible for closing the stream.
      * Either returns a valid stream or throws an exception.
-
+     *
      * This is useful for loading resources that do not fall under any asset category.
      * Resource is anything located within the source root / resource root, whether "src/" or "resources/".
      * The resource name must always begin with "/", e.g. "/assets/textures/player.png".
-
+     *
      * @param name resource name
      * @return resource stream
-     * @throws IllegalArgumentException if any error occurs or stream is null
      */
     fun getStream(name: String): InputStream {
-        try {
-            return getURL(name).openStream() ?: throw IOException("Input stream to \"$name\" is null!")
-        } catch (e: IOException) {
-            throw IllegalArgumentException("Failed to obtain input stream to URL: $e")
-        }
+        return getURL(name).openStream()
     }
 
     /**
