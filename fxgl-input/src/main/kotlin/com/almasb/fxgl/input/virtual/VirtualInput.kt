@@ -23,8 +23,8 @@ private const val ARROW_CIRCLE_SIZE = 25.0*2;
 private const val XBOX_OUTER_CIRCLE_SIZE = 25.0*2;
 private const val XBOX_INNER_CIRCLE_SIZE = 18.0*2;
 
-private const val PS_INNER_CIRCLE_SIZE = 25.0*2;
-private const val PS_OUTER_CIRCLE_SIZE = 18.0*2;
+private const val PS_OUTER_CIRCLE_SIZE = 25.0*2;
+private const val PS_INNER_CIRCLE_SIZE = 18.0*2;
 
 
 /**
@@ -119,7 +119,9 @@ abstract class VirtualMenuKey(private val input: Input, private val key: KeyCode
     abstract fun createView(): Node
 }
 
-//-------------------------------------- Pause button --------------------------------------------------
+/**
+    *Pause Button
+ */
 class FXGLVirtualMenuKey(input: Input, key: KeyCode, isMenuEnabled: Boolean) : VirtualMenuKey(input, key, isMenuEnabled) {
 
     override fun createView(): Node {
@@ -145,7 +147,6 @@ class FXGLVirtualMenuKey(input: Input, key: KeyCode, isMenuEnabled: Boolean) : V
         return Group(bg, rect1, rect2)
     }
 }
-//--------------------------------------------------------------------------
 
 /**
  * Default virtual dpad.
@@ -260,10 +261,10 @@ class PSVirtualController(input: Input) : VirtualController(input) {
             else -> Group()
         }
 
-        val innerCircle = Circle(PS_INNER_CIRCLE_SIZE, Color.color(0.1, 0.1, 0.1))
-        val outerCircle = Circle(PS_OUTER_CIRCLE_SIZE, Color.TRANSPARENT)
+        val outerCircle = Circle(PS_OUTER_CIRCLE_SIZE, Color.color(0.1, 0.1, 0.1))
+        val innerCircle = Circle(PS_INNER_CIRCLE_SIZE, Color.TRANSPARENT)
 
-        root.children.addAll(innerCircle, outerCircle, node)
+        root.children.addAll(outerCircle, innerCircle, node)
 
 //        bg1.fillProperty().bind(
 //                Bindings.`when`(root.pressedProperty()).then(color).otherwise(Color.TRANSPARENT)
