@@ -11,6 +11,7 @@ import com.almasb.fxgl.pathfinding.Pathfinder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -57,6 +58,28 @@ public class AStarPathfinderTest {
             grid.get(4, i).setState(CellState.NOT_WALKABLE);
         path = pathfinder.findPath(3, 0, 5, 0);
         assertTrue(path.isEmpty());
+    }
+
+    @Test
+    public void testFindPathWithBusyCells() {
+        grid.get(3, 0).setState(CellState.NOT_WALKABLE);
+        grid.get(3, 1).setState(CellState.NOT_WALKABLE);
+        grid.get(3, 2).setState(CellState.NOT_WALKABLE);
+        grid.get(3, 3).setState(CellState.NOT_WALKABLE);
+        grid.get(3, 5).setState(CellState.NOT_WALKABLE);
+        grid.get(1, 4).setState(CellState.NOT_WALKABLE);
+
+
+        List<AStarCell> path = pathfinder.findPath(1, 1, 4, 5, new ArrayList<>());
+        System.out.println(path);
+        assertPathEquals(path,
+                2, 1,
+                2, 2,
+                2, 3,
+                2, 4,
+                3, 4,
+                4, 4,
+                4, 5);
     }
     
     private void assertPathEquals(List<AStarCell> path, int... points) {
