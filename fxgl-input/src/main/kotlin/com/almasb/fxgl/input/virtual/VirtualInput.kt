@@ -18,6 +18,15 @@ import javafx.scene.shape.*
 import javafx.scene.text.Font
 import javafx.scene.text.Text
 
+private const val ARROW_CIRCLE_SIZE = 25.0*2;
+
+private const val XBOX_OUTER_CIRCLE_SIZE = 25.0*2;
+private const val XBOX_INNER_CIRCLE_SIZE = 18.0*2;
+
+private const val PS_INNER_CIRCLE_SIZE = 25.0*2;
+private const val PS_OUTER_CIRCLE_SIZE = 18.0*2;
+
+
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -25,25 +34,25 @@ import javafx.scene.text.Text
 abstract class VirtualInput(private val input: Input) {
 
     fun createView(): Group = Group(createViewUp(), createViewRight(), createViewDown(), createViewLeft()).apply {
-        val offset = 45.0
+        val offsetFromCentre = 45.0*2
 
         val up = children[0]
         val right = children[1]
         val down = children[2]
         val left = children[3]
 
-        val dpadCenter = Point2D(offset, offset)
+        val dpadCenter = Point2D(offsetFromCentre, offsetFromCentre)
 
         up.translateX = dpadCenter.x
-        up.translateY = dpadCenter.y - offset
+        up.translateY = dpadCenter.y - offsetFromCentre
 
         down.translateX = dpadCenter.x
-        down.translateY = dpadCenter.y + offset
+        down.translateY = dpadCenter.y + offsetFromCentre
 
-        left.translateX = dpadCenter.x - offset
+        left.translateX = dpadCenter.x - offsetFromCentre
         left.translateY = dpadCenter.y
 
-        right.translateX = dpadCenter.x + offset
+        right.translateX = dpadCenter.x + offsetFromCentre
         right.translateY = dpadCenter.y
 
         opacity = 0.7
@@ -110,6 +119,7 @@ abstract class VirtualMenuKey(private val input: Input, private val key: KeyCode
     abstract fun createView(): Node
 }
 
+//-------------------------------------- Pause button --------------------------------------------------
 class FXGLVirtualMenuKey(input: Input, key: KeyCode, isMenuEnabled: Boolean) : VirtualMenuKey(input, key, isMenuEnabled) {
 
     override fun createView(): Node {
@@ -135,6 +145,7 @@ class FXGLVirtualMenuKey(input: Input, key: KeyCode, isMenuEnabled: Boolean) : V
         return Group(bg, rect1, rect2)
     }
 }
+//--------------------------------------------------------------------------
 
 /**
  * Default virtual dpad.
@@ -144,7 +155,7 @@ class FXGLVirtualDpad(input: Input) : VirtualDpad(input) {
     override fun createView(btn: VirtualButton): Node {
         val root = StackPane()
 
-        val bg = Circle(25.0, Color.BLACK)
+        val arrowCircle = Circle(ARROW_CIRCLE_SIZE, Color.BLACK)
 
         val triangle = Polygon(
                 20.0, 10.0,
@@ -166,7 +177,7 @@ class FXGLVirtualDpad(input: Input) : VirtualDpad(input) {
             else -> {}
         }
 
-        root.children.addAll(bg, triangle)
+        root.children.addAll(arrowCircle, triangle)
 
         return root
     }
@@ -188,16 +199,16 @@ class XboxVirtualController(input: Input) : VirtualController(input) {
             else -> Color.BLACK
         }
 
-        val bg0 = Circle(25.0, color.darker())
-        val bg1 = Circle(18.0, Color.TRANSPARENT)
+        val outerCircle = Circle(XBOX_OUTER_CIRCLE_SIZE, color.darker())
+        val innerCircle = Circle(XBOX_INNER_CIRCLE_SIZE, Color.TRANSPARENT)
 
         val text = Text(btn.toString())
         text.fill = Color.WHITE
         text.font = Font.font(26.0)
 
-        root.children.addAll(bg0, bg1, text)
+        root.children.addAll(outerCircle, innerCircle, text)
 
-        bg1.fillProperty().bind(
+        innerCircle.fillProperty().bind(
                 Bindings.`when`(root.pressedProperty()).then(color).otherwise(Color.TRANSPARENT)
         )
 
@@ -249,10 +260,10 @@ class PSVirtualController(input: Input) : VirtualController(input) {
             else -> Group()
         }
 
-        val bg0 = Circle(25.0, Color.color(0.1, 0.1, 0.1))
-        val bg1 = Circle(18.0, Color.TRANSPARENT)
+        val innerCircle = Circle(PS_INNER_CIRCLE_SIZE, Color.color(0.1, 0.1, 0.1))
+        val outerCircle = Circle(PS_OUTER_CIRCLE_SIZE, Color.TRANSPARENT)
 
-        root.children.addAll(bg0, bg1, node)
+        root.children.addAll(innerCircle, outerCircle, node)
 
 //        bg1.fillProperty().bind(
 //                Bindings.`when`(root.pressedProperty()).then(color).otherwise(Color.TRANSPARENT)
