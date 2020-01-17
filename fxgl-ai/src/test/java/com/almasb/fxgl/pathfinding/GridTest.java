@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -79,6 +81,53 @@ public class GridTest {
             assertThat(cell.getX(), allOf(greaterThanOrEqualTo(0), lessThan(3)));
             assertThat(cell.getY(), allOf(greaterThanOrEqualTo(16), lessThan(20)));
         }
+
+        assertThat(grid.getRandomCell(new Random(), c -> false).isPresent(), is(false));
+    }
+
+    @Test
+    public void testDirections() {
+
+        // right cell
+
+        Optional<MockCell> rightCell = grid.getRight(grid.get(1, 1));
+
+        assertThat(rightCell.isPresent(), is(true));
+        assertThat(rightCell.get().getX(), is(2));
+        assertThat(rightCell.get().getY(), is(1));
+
+        assertThat(grid.getRight(grid.get(GRID_SIZE-1, 0)).isPresent(), is(false));
+
+        // left Cell
+
+        Optional<MockCell> leftCell = grid.getLeft(grid.get(1, 1));
+
+        assertThat(leftCell.isPresent(), is(true));
+        assertThat(leftCell.get().getX(), is(0));
+        assertThat(leftCell.get().getY(), is(1));
+
+        assertThat(grid.getLeft(grid.get(0, 1)).isPresent(), is(false));
+
+        // up Cell
+
+        Optional<MockCell> upCell = grid.getUp(grid.get(1, 1));
+
+        assertThat(upCell.isPresent(), is(true));
+        assertThat(upCell.get().getX(), is(1));
+        assertThat(upCell.get().getY(), is(0));
+
+        assertThat(grid.getUp(grid.get(1,  0)).isPresent(), is(false));
+
+
+        // down cell
+
+        Optional<MockCell> downCell = grid.getDown(grid.get(1, 1));
+
+        assertThat(downCell.isPresent(), is(true));
+        assertThat(downCell.get().getX(), is(1));
+        assertThat(downCell.get().getY(), is(2));
+
+        assertThat(grid.getDown(grid.get(1,  GRID_SIZE - 1)).isPresent(), is(false));
     }
 
     public static class MockCell extends Cell {
