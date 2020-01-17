@@ -173,11 +173,11 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         val textWidth = text.layoutBounds.width + text2.layoutBounds.width
 
-        val bg = Rectangle(textWidth + 30, 65.0, null)
-        bg.stroke = Color.WHITE
-        bg.strokeWidth = 4.0
-        bg.arcWidth = 25.0
-        bg.arcHeight = 25.0
+        val border = Rectangle(textWidth + 30, 65.0, null)
+        border.stroke = Color.WHITE
+        border.strokeWidth = 4.0
+        border.arcWidth = 25.0
+        border.arcHeight = 25.0
 
         val emitter = ParticleEmitters.newExplosionEmitter(50)
 
@@ -204,13 +204,13 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         box.alignment = Pos.CENTER
 
         val titleRoot = StackPane()
-        titleRoot.children.addAll(bg, box)
+        titleRoot.children.addAll(border, box)
 
         titleRoot.translateX = appWidth / 2.0 - (textWidth + 30) / 2
         titleRoot.translateY = 50.0
 
         particleSystem = ParticleSystem()
-        particleSystem!!.addParticleEmitter(emitter, appWidth / 2.0 - 30, titleRoot.translateY + 34)
+        particleSystem!!.addParticleEmitter(emitter, appWidth / 2.0 - 30, titleRoot.translateY + border.height - 16)
 
         return titleRoot
     }
