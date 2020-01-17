@@ -111,4 +111,13 @@ public class AStarGridTest {
 
         assertThat(cell.getHCost(), is(6));
     }
+
+    @Test
+    public void testToString() {
+        var cell = grid.get(6,5);
+
+        cell.setState(CellState.WALKABLE);
+
+        assertThat(cell.toString(), is("A* Cell[x=6,y=5,WALKABLE]"));
+    }
 }
