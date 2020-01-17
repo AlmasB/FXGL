@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -71,7 +72,6 @@ public class AStarPathfinderTest {
 
 
         List<AStarCell> path = pathfinder.findPath(1, 1, 4, 5, new ArrayList<>());
-        System.out.println(path);
         assertPathEquals(path,
                 2, 1,
                 2, 2,
@@ -79,6 +79,17 @@ public class AStarPathfinderTest {
                 2, 4,
                 3, 4,
                 4, 4,
+                4, 5);
+        path = pathfinder.findPath(1, 1, 4, 5, Collections.singletonList(grid.get(3, 4)));
+        assertPathEquals(path,
+                2, 1,
+                2, 2,
+                2, 3,
+                2, 4,
+                2, 5,
+                2, 6,
+                3, 6,
+                4, 6,
                 4, 5);
     }
     
