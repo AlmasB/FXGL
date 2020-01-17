@@ -102,4 +102,22 @@ public class AStarGridTest {
         assertThat(grid.getWalkableCells(), not(hasItem(grid.get(2, 1))));
         assertThat(grid.getWalkableCells().size(), is(9 - 2));
     }
+
+    @Test
+    public void testGetHCostReturn() {
+        var cell = grid.get(5,6);
+
+        cell.setHCost(6);
+
+        assertThat(cell.getHCost(), is(6));
+    }
+
+    @Test
+    public void testToString() {
+        var cell = grid.get(6,5);
+
+        cell.setState(CellState.WALKABLE);
+
+        assertThat(cell.toString(), is("A* Cell[x=6,y=5,WALKABLE]"));
+    }
 }
