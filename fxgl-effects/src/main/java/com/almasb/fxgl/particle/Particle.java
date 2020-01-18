@@ -8,8 +8,6 @@ package com.almasb.fxgl.particle;
 import com.almasb.fxgl.animation.AnimatedColor;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Poolable;
-import com.almasb.fxgl.core.util.Consumer;
-import com.almasb.fxgl.core.util.Function;
 import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -21,6 +19,9 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.transform.Scale;
 import javafx.util.Duration;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Simple particle represented by a Shape or an Image.

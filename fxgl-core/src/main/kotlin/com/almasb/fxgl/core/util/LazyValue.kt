@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.core.util
 
+import java.util.function.Supplier
+
 /**
  * A lazy value is only initialized when [get] is invoked.
  * Subsequent calls to [get] returns the same value (instance).

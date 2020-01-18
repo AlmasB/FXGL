@@ -8,6 +8,7 @@
 package com.almasb.fxgl.core.util
 
 import com.almasb.fxgl.core.reflect.ReflectionUtils
+import java.util.function.Supplier
 
 /**
  *

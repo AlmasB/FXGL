@@ -7,7 +7,7 @@
 package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.animation.*
-import com.almasb.fxgl.core.util.Consumer
+import java.util.function.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.scene.Scene

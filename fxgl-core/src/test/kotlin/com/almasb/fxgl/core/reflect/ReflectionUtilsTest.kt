@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.core.reflect
 
-import com.almasb.fxgl.core.util.Function
+import java.util.function.Function
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.isA
 import org.hamcrest.MatcherAssert.assertThat

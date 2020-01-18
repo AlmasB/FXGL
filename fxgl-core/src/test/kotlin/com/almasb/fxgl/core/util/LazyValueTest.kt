@@ -9,6 +9,7 @@ package com.almasb.fxgl.core.util
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
+import java.util.function.Supplier
 
 /**
  *

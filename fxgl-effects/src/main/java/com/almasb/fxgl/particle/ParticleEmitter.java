@@ -9,9 +9,6 @@ import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.pool.Pools;
-import com.almasb.fxgl.core.util.Consumer;
-import com.almasb.fxgl.core.util.Function;
-import com.almasb.fxgl.core.util.Supplier;
 import com.almasb.fxgl.texture.Texture;
 import javafx.animation.Interpolator;
 import javafx.beans.property.*;
@@ -21,6 +18,10 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * A general particle emitter.

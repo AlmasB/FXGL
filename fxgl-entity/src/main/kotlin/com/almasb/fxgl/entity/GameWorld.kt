@@ -11,7 +11,7 @@ import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.core.util.Predicate
+import java.util.function.Predicate
 import com.almasb.fxgl.core.util.tryCatchRoot
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.IDComponent

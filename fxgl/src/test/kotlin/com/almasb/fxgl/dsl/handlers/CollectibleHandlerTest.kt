@@ -12,7 +12,7 @@ import com.almasb.fxgl.entity.components.CollidableComponent
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsWorld
-import com.almasb.fxgl.core.util.Consumer
+import java.util.function.Consumer
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat

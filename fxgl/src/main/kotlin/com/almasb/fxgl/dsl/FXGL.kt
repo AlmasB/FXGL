@@ -17,8 +17,6 @@ import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.pool.Pools
-import com.almasb.fxgl.core.util.BiConsumer
-import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.cutscene.CutsceneService
 import com.almasb.fxgl.dev.DevService
 import com.almasb.fxgl.dsl.handlers.CollectibleHandler
@@ -52,6 +50,8 @@ import javafx.scene.input.MouseButton
 import javafx.scene.text.Text
 import javafx.util.Duration
 import java.util.*
+import java.util.function.BiConsumer
+import java.util.function.Consumer
 
 /**
  * Represents the FXGL facade and provides access to engine subsystems

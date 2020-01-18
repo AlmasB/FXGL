@@ -6,9 +6,9 @@
 
 package com.almasb.fxgl.app.scene
 
-import com.almasb.fxgl.core.util.Consumer
+import java.util.function.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
-import com.almasb.fxgl.core.util.Predicate
+import java.util.function.Predicate
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.DialogBox

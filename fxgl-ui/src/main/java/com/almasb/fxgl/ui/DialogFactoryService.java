@@ -7,8 +7,8 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.core.EngineService;
-import com.almasb.fxgl.core.util.Consumer;
-import com.almasb.fxgl.core.util.Predicate;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;

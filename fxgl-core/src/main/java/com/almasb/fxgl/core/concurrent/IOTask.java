@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.core.concurrent;
 
-import com.almasb.fxgl.core.util.Consumer;
-import com.almasb.fxgl.core.util.Function;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import javafx.concurrent.Task;
 
 import java.util.concurrent.Callable;

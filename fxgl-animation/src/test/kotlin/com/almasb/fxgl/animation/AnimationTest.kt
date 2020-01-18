@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.animation
 
-import com.almasb.fxgl.core.util.Consumer
 import javafx.animation.Interpolator
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
@@ -14,6 +13,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import java.util.function.Consumer
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

@@ -10,7 +10,7 @@ import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.MenuItem
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
-import com.almasb.fxgl.core.util.Supplier
+import java.util.function.Supplier
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
 import com.almasb.fxgl.dsl.FXGL.Companion.random

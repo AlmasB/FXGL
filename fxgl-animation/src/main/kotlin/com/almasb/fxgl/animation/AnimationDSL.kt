@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.animation
 
-import com.almasb.fxgl.core.util.Consumer
+import java.util.function.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import javafx.animation.Interpolator
 import javafx.beans.property.DoubleProperty

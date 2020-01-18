@@ -8,9 +8,9 @@ package com.almasb.fxgl.app.scene
 
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.ProgressDialog
-import com.almasb.fxgl.core.util.Consumer
+import java.util.function.Consumer
 import com.almasb.fxgl.core.util.InputPredicates
-import com.almasb.fxgl.core.util.Supplier
+import java.util.function.Supplier
 import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier

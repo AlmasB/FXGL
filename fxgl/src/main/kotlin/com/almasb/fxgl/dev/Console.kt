@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.dev
 
-import com.almasb.fxgl.core.util.Consumer
+import java.util.function.Consumer
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.ui.FontType
 import javafx.application.Platform

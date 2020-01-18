@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.core.util.Function;
+import java.util.function.Function;
 
 /**
  * A function that spawns an entity given spawn data.

@@ -10,7 +10,7 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.fxgl.core.util.Consumer
+import java.util.function.Consumer
 import com.almasb.fxgl.input.KeyTrigger
 import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerMiniGame
 import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerResult

@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.tools.dialogues
 
-import com.almasb.fxgl.core.util.Consumer
+import java.util.function.Consumer
 import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
 import com.almasb.fxgl.dsl.*
