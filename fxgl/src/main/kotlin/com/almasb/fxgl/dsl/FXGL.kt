@@ -98,6 +98,8 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getAppHeight() = engine.settings.height
 
+    @JvmStatic fun getPrimaryStage() = engine.mainWindow.stage
+
     /**
      * Note: the system bundle is saved on exit and loaded on init.
      * This bundle is meant to be used by the FXGL system only.

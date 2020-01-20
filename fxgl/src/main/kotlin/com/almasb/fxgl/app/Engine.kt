@@ -61,7 +61,7 @@ internal class Engine(
 
 
 
-    private lateinit var mainWindow: MainWindow
+    lateinit var mainWindow: MainWindow
 
     internal lateinit var playScene: GameScene
     private lateinit var loadScene: LoadingScene
