@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.localization
 
+import com.almasb.fxgl.core.EngineService
 import com.almasb.sslogger.Logger
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
@@ -17,7 +18,7 @@ import java.util.concurrent.Callable
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class LocalizationService  {
+class LocalizationService : EngineService() {
 
     private val log = Logger.get(javaClass)
 

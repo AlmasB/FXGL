@@ -7,7 +7,7 @@
 package com.almasb.fxgl.profile
 
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.fxgl.io.FS
+import com.almasb.fxgl.io.FileSystemService
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -49,7 +49,7 @@ class SaveLoadServiceTest {
 
     @BeforeEach
     fun setUp() {
-        saveLoadService = SaveLoadService(FS(isDesktop = true))
+        saveLoadService = SaveLoadService(FileSystemService(isDesktop = true))
     }
 
     @Test

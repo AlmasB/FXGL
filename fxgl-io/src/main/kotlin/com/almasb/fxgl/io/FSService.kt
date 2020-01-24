@@ -9,6 +9,8 @@ package com.almasb.fxgl.io
 import java.io.Serializable
 
 /**
+ * // TODO: rename
+ *
  * All file names used here are full paths relative to root.
  * Example: ./profiles/ProfileName/save1.dat
  * On desktop it's the running dir, on mobile it's the private storage root.

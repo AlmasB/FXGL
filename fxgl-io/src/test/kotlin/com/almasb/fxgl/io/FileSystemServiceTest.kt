@@ -15,7 +15,7 @@ import java.nio.file.Paths.get as path
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FSTest {
+class FileSystemServiceTest {
 
     companion object {
         @BeforeAll
@@ -63,7 +63,7 @@ class FSTest {
         }
     }
 
-    private val fs = FS(true)
+    private val fs = FileSystemService(true)
 
     @Test
     fun `Exists correctly reports dirs and files`() {

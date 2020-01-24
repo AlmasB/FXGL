@@ -17,8 +17,11 @@ import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.serialization.SerializableType
 import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.cutscene.CutsceneService
+import com.almasb.fxgl.event.EventBusService
 import com.almasb.fxgl.gameplay.GameDifficulty
+import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.localization.Language
+import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
@@ -215,6 +218,18 @@ class GameSettings(
         /* CUSTOMIZABLE SERVICES BELOW */
 
         var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
+
+
+
+                /* CORE SERVICES */
+
+                EventBusService::class.java,
+                FileSystemService::class.java,
+
+                LocalizationService::class.java,
+
+                /* NON-CORE SERVICES */
+
                 SystemBundleService::class.java,
 
                 FXGLUIFactoryServiceProvider::class.java,

@@ -12,13 +12,11 @@ import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
-import com.almasb.fxgl.core.reflect.ReflectionUtils.findFieldsByAnnotation
-import com.almasb.fxgl.core.reflect.ReflectionUtils.inject
+import com.almasb.fxgl.core.reflect.ReflectionUtils.*
 import com.almasb.fxgl.dev.DevPane
 import com.almasb.fxgl.entity.GameWorld
-import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.input.UserAction
-import com.almasb.fxgl.io.FS
+import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.localization.Language
 import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.physics.PhysicsWorld
@@ -59,77 +57,25 @@ internal class Engine(
 
     private val log = Logger.get(javaClass)
 
-
-
-    lateinit var mainWindow: MainWindow
-
-    internal lateinit var playScene: GameScene
-    private lateinit var loadScene: LoadingScene
-    private lateinit var dialogScene: DialogSubState
-
-    private var intro: FXGLScene? = null
-    private var mainMenu: FXGLScene? = null
-    private var gameMenu: FXGLScene? = null
-    private var pauseMenu: PauseMenu? = null
-
     private val loop = LoopRunner { loop(it) }
 
     val tpf: Double
         get() = loop.tpf
-
-
-
-
-
-
-
-
-    /* SUBSYSTEMS */
-
-    private val services = arrayListOf<EngineService>()
-    private val servicesCache = hashMapOf<Class<out EngineService>, EngineService>()
-
-    fun addService(engineService: EngineService) {
-        log.debug("Adding new engine service: ${engineService.javaClass}")
-
-        services += engineService
-    }
-
-    inline fun <reified T : EngineService> getService(serviceClass: Class<T>): T {
-        if (servicesCache.containsKey(serviceClass))
-            return servicesCache[serviceClass] as T
-
-        return (services.find { it is T  }?.also { servicesCache[serviceClass] = it }
-                ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
-    }
-
-
-
-
-
-
-
-
-    internal val assetLoader by lazy { AssetLoader() }
-    internal val eventBus by lazy { EventBus() }
-    internal val display by lazy { dialogScene as Display }
-    internal val executor by lazy { Async }
-    internal val fs by lazy { FS(settings.isDesktop) }
-    internal val local by lazy { LocalizationService() }
-    internal val saveLoadManager by lazy { SaveLoadService(fs) }
-
-    internal val devPane by lazy { DevPane(playScene, settings) }
 
     /**
      * The 'always on' engine timer.
      */
     internal val engineTimer = Timer()
 
+    // TODO: move to window service
     /**
      * The root for the overlay group that is constantly visible and on top
      * of every other UI element. For things like notifications.
      */
     private val overlayRoot = Group()
+
+    private val services = arrayListOf<EngineService>()
+    private val servicesCache = hashMapOf<Class<out EngineService>, EngineService>()
 
     private val environmentVars = hashMapOf<String, Any>()
 
@@ -139,6 +85,14 @@ internal class Engine(
         logVersion()
 
         initEnvironmentVars()
+
+        // TODO: refactor
+
+        environmentVars["masterTimer"] = engineTimer
+        environmentVars["overlayRoot"] = overlayRoot
+        environmentVars["sceneStack"] = this
+
+        logEnvironmentVars()
     }
 
     private fun logVersion() {
@@ -156,22 +110,95 @@ internal class Engine(
     private fun initEnvironmentVars() {
         log.debug("Initializing environment variables")
 
-        environmentVars["overlayRoot"] = overlayRoot
-        environmentVars["masterTimer"] = engineTimer
-        environmentVars["eventBus"] = eventBus
-        environmentVars["FS"] = fs
-        environmentVars["sceneStack"] = this
-
         settings.javaClass.declaredMethods.filter { it.name.startsWith("is") || it.name.startsWith("get") || it.name.endsWith("Property") }.forEach {
             environmentVars[it.name.removePrefix("get").decapitalize()] = it.invoke(settings)
         }
+    }
 
+    private fun logEnvironmentVars() {
         log.debug("Logging environment variables")
 
         environmentVars.forEach { (key, value) ->
             log.debug("$key: $value")
         }
     }
+
+    fun addService(engineService: EngineService) {
+        log.debug("Adding new engine service: ${engineService.javaClass}")
+
+        services += engineService
+    }
+
+    inline fun <reified T : EngineService> getService(serviceClass: Class<T>): T {
+        if (servicesCache.containsKey(serviceClass))
+            return servicesCache[serviceClass] as T
+
+        return (services.find { it is T  }?.also { servicesCache[serviceClass] = it }
+                ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
+    }
+
+    private fun loop(tpf: Double) {
+        engineTimer.update(tpf)
+
+        mainWindow.update(tpf)
+
+        services.forEach { it.onUpdate(tpf) }
+    }
+
+
+
+
+
+
+
+
+    private fun initFatalExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler { _, error -> handleFatalError(error) }
+    }
+
+    private fun initEngine() {
+        IOTask.setDefaultExecutor(executor)
+        IOTask.setDefaultFailAction { display.showErrorBox(it) }
+
+        injectDependenciesIntoServices()
+        injectServicesIntoServices()
+
+        services.forEach { it.onInit() }
+
+        initAppScenes()
+        initSaveLoadHandler()
+    }
+
+    private fun injectDependenciesIntoServices() {
+        services.forEach { service ->
+            findFieldsByAnnotation(service, Inject::class.java).forEach { field ->
+                val injectKey = field.getDeclaredAnnotation(Inject::class.java).value
+
+                if (injectKey !in environmentVars) {
+                    throw IllegalArgumentException("Cannot inject @Inject($injectKey). No value present for $injectKey")
+                }
+
+                inject(field, service, environmentVars[injectKey])
+            }
+        }
+    }
+
+    private fun injectServicesIntoServices() {
+        services.forEach { service ->
+            findFieldsByTypeRecursive(service, EngineService::class.java).forEach { field ->
+
+                val provider = services.find { field.type.isAssignableFrom(it.javaClass) }
+                        ?: throw IllegalStateException("No provider found for ${field.type}")
+
+                inject(field, service, provider)
+            }
+        }
+    }
+
+
+
+
+
 
     fun startLoop() {
         val start = System.nanoTime()
@@ -197,6 +224,123 @@ internal class Engine(
         }
     }
 
+    private fun prepareToStartLoop() {
+        // these things need to be called early before the main loop
+        // so that menus can correctly display input controls, etc.
+        // this is called once per application lifetime
+        app.initInput()
+        SystemActions.bind(playScene.input)
+
+        services.forEach { it.onMainLoopStarting() }
+
+        app.onPreInit()
+    }
+
+
+    private var handledOnce = false
+
+    private fun handleFatalError(e: Throwable) {
+        if (handledOnce) {
+            // just ignore to avoid spamming dialogs
+            return
+        }
+
+        handledOnce = true
+
+        val error = if (e is Exception) e else RuntimeException(e)
+
+        if (Logger.isConfigured()) {
+            log.fatal("Uncaught Exception:", error)
+            log.fatal("Application will now exit")
+        } else {
+            println("Uncaught Exception:")
+            error.printStackTrace()
+            println("Application will now exit")
+        }
+
+        // stop main loop from running as we cannot continue
+        loop.stop()
+
+        // assume we are running on JavaFX Application thread
+        // block with error dialog so that user can read the error
+        ErrorDialog(error).showAndWait()
+
+        if (loop.isStarted) {
+            // exit normally
+            exit()
+        } else {
+            if (Logger.isConfigured()) {
+                Logger.close()
+            }
+
+            // we failed during launch, so abnormal exit
+            System.exit(-1)
+        }
+    }
+
+    override fun exit() {
+        log.debug("Exiting FXGL")
+
+        services.forEach { it.onExit() }
+
+        log.debug("Shutting down background threads")
+        executor.shutdownNow()
+
+        log.debug("Closing logger and exiting JavaFX")
+        Logger.close()
+        Platform.exit()
+    }
+
+
+
+
+
+
+
+
+    // TODO: use @InjectService
+//    environmentVars["uiFactoryService"] = getService(UIFactoryService::class.java)
+//    environmentVars["localizationService"] = local
+//        environmetVars["eventBus"] = eventBus
+//        environmentVars["FS"] = fs
+
+
+
+
+
+
+
+    lateinit var mainWindow: MainWindow
+
+    internal lateinit var playScene: GameScene
+    private lateinit var loadScene: LoadingScene
+    private lateinit var dialogScene: DialogSubState
+
+    private var intro: FXGLScene? = null
+    private var mainMenu: FXGLScene? = null
+    private var gameMenu: FXGLScene? = null
+    private var pauseMenu: PauseMenu? = null
+
+
+
+
+
+    internal val assetLoader by lazy { AssetLoader() }
+
+    internal val display by lazy { dialogScene as Display }
+    internal val executor by lazy { Async }
+    internal val fs by lazy { FileSystemService(settings.isDesktop) }
+    internal val local by lazy { LocalizationService() }
+    internal val saveLoadManager by lazy { SaveLoadService(fs) }
+
+    internal val devPane by lazy { DevPane(playScene, settings) }
+
+
+
+
+
+
+
     private fun initAndLoadLocalization() {
         log.debug("Loading localizations")
 
@@ -205,6 +349,14 @@ internal class Engine(
         }
 
         local.selectedLanguageProperty().bind(settings.language)
+    }
+
+    private fun showConfirmExitDialog() {
+        // TODO: local.getLocalizedString("dialog.exitGame")
+        display.showConfirmationBox("Exit Game?") { yes ->
+            if (yes)
+                exit()
+        }
     }
 
     private fun initAndRegisterFontFactories() {
@@ -272,51 +424,23 @@ internal class Engine(
         scene.root.children -= overlayRoot
     }
 
-    private fun initFatalExceptionHandler() {
-        Thread.setDefaultUncaughtExceptionHandler { _, error -> handleFatalError(error) }
-    }
 
-    private fun initEngine() {
-        IOTask.setDefaultExecutor(executor)
-        IOTask.setDefaultFailAction { display.showErrorBox(it) }
 
-        // TODO: possibly auto parse all services to make them available
-        environmentVars["uiFactoryService"] = getService(UIFactoryService::class.java)
-        environmentVars["localizationService"] = local
 
-        injectDependenciesIntoServices()
 
-        services.forEach { it.onInit() }
 
-        initAppScenes()
-        initSaveLoadHandler()
-    }
 
-    private fun injectDependenciesIntoServices() {
-        services.forEach { service ->
-            findFieldsByAnnotation(service, Inject::class.java).forEach { field ->
-                val injectKey = field.getDeclaredAnnotation(Inject::class.java).value
 
-                if (injectKey !in environmentVars) {
-                    throw IllegalArgumentException("Cannot inject @Inject($injectKey). No value present for $injectKey")
-                }
 
-                inject(field, service, environmentVars[injectKey])
-            }
-        }
-    }
 
-    private fun prepareToStartLoop() {
-        // these things need to be called early before the main loop
-        // so that menus can correctly display input controls, etc.
-        // this is called once per application lifetime
-        app.initInput()
-        SystemActions.bind(playScene.input)
 
-        services.forEach { it.onMainLoopStarting() }
 
-        app.onPreInit()
-    }
+
+
+
+
+
+
 
     private fun initAppScenes() {
         log.debug("Initializing application scenes")
@@ -416,54 +540,9 @@ internal class Engine(
         })
     }
 
-    private fun loop(tpf: Double) {
-        engineTimer.update(tpf)
 
-        mainWindow.update(tpf)
 
-        services.forEach { it.onUpdate(tpf) }
-    }
 
-    private var handledOnce = false
-
-    private fun handleFatalError(e: Throwable) {
-        if (handledOnce) {
-            // just ignore to avoid spamming dialogs
-            return
-        }
-
-        handledOnce = true
-
-        val error = if (e is Exception) e else RuntimeException(e)
-
-        if (Logger.isConfigured()) {
-            log.fatal("Uncaught Exception:", error)
-            log.fatal("Application will now exit")
-        } else {
-            println("Uncaught Exception:")
-            error.printStackTrace()
-            println("Application will now exit")
-        }
-
-        // stop main loop from running as we cannot continue
-        loop.stop()
-
-        // assume we are running on JavaFX Application thread
-        // block with error dialog so that user can read the error
-        ErrorDialog(error).showAndWait()
-
-        if (loop.isStarted) {
-            // exit normally
-            exit()
-        } else {
-            if (Logger.isConfigured()) {
-                Logger.close()
-            }
-
-            // we failed during launch, so abnormal exit
-            System.exit(-1)
-        }
-    }
 
     /**
      * @return true if can show close dialog
@@ -478,13 +557,6 @@ internal class Engine(
                 || (settings.isIntroEnabled && mainWindow.currentScene === intro)
 
         return !isNotOK
-    }
-
-    private fun showConfirmExitDialog() {
-        display.showConfirmationBox(local.getLocalizedString("dialog.exitGame")) { yes ->
-            if (yes)
-                exit()
-        }
     }
 
     // GAME CONTROLLER CALLBACKS
@@ -582,16 +654,4 @@ internal class Engine(
         mainWindow.popState()
     }
 
-    override fun exit() {
-        log.debug("Exiting FXGL")
-
-        services.forEach { it.onExit() }
-
-        log.debug("Shutting down background threads")
-        executor.shutdownNow()
-
-        log.debug("Closing logger and exiting JavaFX")
-        Logger.close()
-        Platform.exit()
-    }
 }

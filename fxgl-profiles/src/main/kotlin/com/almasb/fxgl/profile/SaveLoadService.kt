@@ -7,13 +7,13 @@
 package com.almasb.fxgl.profile
 
 import com.almasb.fxgl.core.concurrent.IOTask
-import com.almasb.fxgl.io.FS
+import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.io.FileExtension
 import com.almasb.sslogger.Logger
 import java.io.FileNotFoundException
 import java.util.*
 
-class SaveLoadService(private val fs: FS) {
+class SaveLoadService(private val fs: FileSystemService) {
 
     private val log = Logger.get(javaClass)
 

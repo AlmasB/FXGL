@@ -6,10 +6,7 @@
 
 package com.almasb.fxgl.ui
 
-import com.almasb.fxgl.core.Inject
-import java.util.function.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
-import java.util.function.Predicate
 import com.almasb.fxgl.localization.LocalizationService
 import javafx.beans.binding.StringBinding
 import javafx.beans.property.DoubleProperty
@@ -26,6 +23,8 @@ import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.scene.text.Text
+import java.util.function.Consumer
+import java.util.function.Predicate
 
 /**
  *
@@ -34,10 +33,8 @@ import javafx.scene.text.Text
  */
 class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
 
-    @Inject("uiFactoryService")
     private lateinit var uiFactory: UIFactoryService
 
-    @Inject("localizationService")
     private lateinit var local: LocalizationService
 
     /**

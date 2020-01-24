@@ -9,7 +9,7 @@ package com.almasb.fxgl.app.tasks
 import com.almasb.fxgl.core.EngineTask
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.fxgl.io.FS
+import com.almasb.fxgl.io.FileSystemService
 import com.almasb.sslogger.Logger
 
 internal class SystemBundleService : EngineTask() {
@@ -19,8 +19,10 @@ internal class SystemBundleService : EngineTask() {
     @Inject("isExperimentalNative")
     private var isExperimentalNative = false
 
-    @Inject("FS")
-    private lateinit var fs: FS
+    // TODO:
+    // @InjectService
+//    @Inject("FS")
+    private lateinit var fs: FileSystemService
 
     internal lateinit var bundle: Bundle
 

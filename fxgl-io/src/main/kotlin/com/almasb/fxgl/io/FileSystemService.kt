@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.io
 
+import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.sslogger.Logger
 import java.io.File
@@ -19,14 +21,22 @@ import java.io.Serializable
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FS(isDesktop: Boolean) {
+class FileSystemService
+@JvmOverloads constructor(isDesktop: Boolean = true) : EngineService() {
 
-    private val log = Logger.get<FS>()
+    private val log = Logger.get<FileSystemService>()
 
-    private val fs: FSService = FSServiceImpl(isDesktop)
+    @Inject("isDesktop")
+    private var isDesktop = true
+
+    private lateinit var fs: FSService
 
     init {
-        log.debug("Loaded ${fs.javaClass.simpleName}")
+        //log.debug("Loaded ${fs.javaClass.simpleName}")
+    }
+
+    override fun onInit() {
+        fs = FSServiceImpl(isDesktop)
     }
 
     /**
