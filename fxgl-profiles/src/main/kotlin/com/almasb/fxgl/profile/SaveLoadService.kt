@@ -6,16 +6,19 @@
 
 package com.almasb.fxgl.profile
 
+import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.concurrent.IOTask
-import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.io.FileExtension
+import com.almasb.fxgl.io.FileSystemService
 import com.almasb.sslogger.Logger
 import java.io.FileNotFoundException
 import java.util.*
 
-class SaveLoadService(private val fs: FileSystemService) {
+class SaveLoadService : EngineService() {
 
     private val log = Logger.get(javaClass)
+
+    private lateinit var fs: FileSystemService
 
     // TODO: this should be read from settings
     private val PROFILES_DIR = "profiles/"

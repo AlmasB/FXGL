@@ -6,54 +6,19 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.scene.*
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
-import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
-import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.reflect.ReflectionUtils.*
-import com.almasb.fxgl.dev.DevPane
-import com.almasb.fxgl.entity.GameWorld
-import com.almasb.fxgl.input.UserAction
-import com.almasb.fxgl.io.FileSystemService
-import com.almasb.fxgl.localization.Language
-import com.almasb.fxgl.localization.LocalizationService
-import com.almasb.fxgl.physics.PhysicsWorld
-import com.almasb.fxgl.profile.DataFile
-import com.almasb.fxgl.profile.SaveLoadHandler
-import com.almasb.fxgl.profile.SaveLoadService
-import com.almasb.fxgl.scene.Scene
-import com.almasb.fxgl.scene.SceneListener
-import com.almasb.fxgl.scene.SubScene
-import com.almasb.fxgl.time.Timer
-import com.almasb.fxgl.ui.Display
 import com.almasb.fxgl.ui.ErrorDialog
-import com.almasb.fxgl.ui.FontType
-import com.almasb.fxgl.ui.UIFactoryService
 import com.almasb.sslogger.Logger
 import javafx.application.Platform
-import javafx.concurrent.Task
-import javafx.embed.swing.SwingFXUtils
-import javafx.event.EventHandler
-import javafx.scene.Group
-import javafx.scene.ImageCursor
-import javafx.scene.input.KeyEvent
-import javafx.stage.Stage
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.time.LocalDateTime
-import javax.imageio.ImageIO
 
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class Engine(
-        internal val app: GameApplication,
-        internal val settings: ReadOnlyGameSettings,
-        private val stage: Stage
-) : GameController {
+internal class Engine(val settings: ReadOnlyGameSettings)  {
 
     private val log = Logger.get(javaClass)
 
@@ -61,18 +26,6 @@ internal class Engine(
 
     val tpf: Double
         get() = loop.tpf
-
-    /**
-     * The 'always on' engine timer.
-     */
-    internal val engineTimer = Timer()
-
-    // TODO: move to window service
-    /**
-     * The root for the overlay group that is constantly visible and on top
-     * of every other UI element. For things like notifications.
-     */
-    private val overlayRoot = Group()
 
     private val services = arrayListOf<EngineService>()
     private val servicesCache = hashMapOf<Class<out EngineService>, EngineService>()
@@ -82,17 +35,17 @@ internal class Engine(
     init {
         log.debug("Initializing FXGL")
 
+        initFatalExceptionHandler()
+
         logVersion()
 
         initEnvironmentVars()
 
-        // TODO: refactor
-
-        environmentVars["masterTimer"] = engineTimer
-        environmentVars["overlayRoot"] = overlayRoot
-        environmentVars["sceneStack"] = this
-
         logEnvironmentVars()
+    }
+
+    private fun initFatalExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler { _, error -> handleFatalError(error) }
     }
 
     private fun logVersion() {
@@ -137,36 +90,30 @@ internal class Engine(
                 ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
     }
 
-    private fun loop(tpf: Double) {
-        engineTimer.update(tpf)
+    fun startLoop() {
+        val start = System.nanoTime()
 
-        mainWindow.update(tpf)
+        // give control back to FX thread while we do heavy init stuff
+        Async.startAsync {
+            initServices()
 
-        services.forEach { it.onUpdate(tpf) }
+            // finish init on FX thread
+            Async.startAsyncFX {
+
+                services.forEach { it.onMainLoopStarting() }
+
+                log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
+
+                loop.start()
+            }
+        }
     }
 
-
-
-
-
-
-
-
-    private fun initFatalExceptionHandler() {
-        Thread.setDefaultUncaughtExceptionHandler { _, error -> handleFatalError(error) }
-    }
-
-    private fun initEngine() {
-        IOTask.setDefaultExecutor(executor)
-        IOTask.setDefaultFailAction { display.showErrorBox(it) }
-
+    private fun initServices() {
         injectDependenciesIntoServices()
         injectServicesIntoServices()
 
         services.forEach { it.onInit() }
-
-        initAppScenes()
-        initSaveLoadHandler()
     }
 
     private fun injectDependenciesIntoServices() {
@@ -195,47 +142,9 @@ internal class Engine(
         }
     }
 
-
-
-
-
-
-    fun startLoop() {
-        val start = System.nanoTime()
-
-        initAndLoadLocalization()
-        initAndRegisterFontFactories()
-        initAndShowMainWindow()
-        initFatalExceptionHandler()
-
-        // give control back to FX thread while we do heavy init stuff
-
-        executor.startAsync {
-            initEngine()
-
-            // finish init on FX thread
-            executor.startAsyncFX {
-                prepareToStartLoop()
-
-                log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
-
-                loop.start()
-            }
-        }
+    private fun loop(tpf: Double) {
+        services.forEach { it.onUpdate(tpf) }
     }
-
-    private fun prepareToStartLoop() {
-        // these things need to be called early before the main loop
-        // so that menus can correctly display input controls, etc.
-        // this is called once per application lifetime
-        app.initInput()
-        SystemActions.bind(playScene.input)
-
-        services.forEach { it.onMainLoopStarting() }
-
-        app.onPreInit()
-    }
-
 
     private var handledOnce = false
 
@@ -278,380 +187,42 @@ internal class Engine(
         }
     }
 
-    override fun exit() {
+    fun exit() {
         log.debug("Exiting FXGL")
+
+        loop.stop()
 
         services.forEach { it.onExit() }
 
         log.debug("Shutting down background threads")
-        executor.shutdownNow()
+        Async.shutdownNow()
 
         log.debug("Closing logger and exiting JavaFX")
         Logger.close()
         Platform.exit()
     }
 
-
-
-
-
-
-
-
-    // TODO: use @InjectService
-//    environmentVars["uiFactoryService"] = getService(UIFactoryService::class.java)
-//    environmentVars["localizationService"] = local
-//        environmetVars["eventBus"] = eventBus
-//        environmentVars["FS"] = fs
-
-
-
-
-
-
-
-    lateinit var mainWindow: MainWindow
-
-    internal lateinit var playScene: GameScene
-    private lateinit var loadScene: LoadingScene
-    private lateinit var dialogScene: DialogSubState
-
-    private var intro: FXGLScene? = null
-    private var mainMenu: FXGLScene? = null
-    private var gameMenu: FXGLScene? = null
-    private var pauseMenu: PauseMenu? = null
-
-
-
-
-
-    internal val assetLoader by lazy { AssetLoader() }
-
-    internal val display by lazy { dialogScene as Display }
-    internal val executor by lazy { Async }
-    internal val fs by lazy { FileSystemService(settings.isDesktop) }
-    internal val local by lazy { LocalizationService() }
-    internal val saveLoadManager by lazy { SaveLoadService(fs) }
-
-    internal val devPane by lazy { DevPane(playScene, settings) }
-
-
-
-
-
-
-
-    private fun initAndLoadLocalization() {
-        log.debug("Loading localizations")
-
-        Language.builtInLanguages.forEach {
-            local.addLanguageData(it, assetLoader.loadResourceBundle("languages/${it.name.toLowerCase()}.properties"))
-        }
-
-        local.selectedLanguageProperty().bind(settings.language)
-    }
-
-    private fun showConfirmExitDialog() {
-        // TODO: local.getLocalizedString("dialog.exitGame")
-        display.showConfirmationBox("Exit Game?") { yes ->
-            if (yes)
-                exit()
-        }
-    }
-
-    private fun initAndRegisterFontFactories() {
-        log.debug("Registering font factories with UI factory")
-
-        val uiFactory = getService(UIFactoryService::class.java)
-
-        uiFactory.registerFontFactory(FontType.UI, assetLoader.loadFont(settings.fontUI))
-        uiFactory.registerFontFactory(FontType.GAME, assetLoader.loadFont(settings.fontGame))
-        uiFactory.registerFontFactory(FontType.MONO, assetLoader.loadFont(settings.fontMono))
-        uiFactory.registerFontFactory(FontType.TEXT, assetLoader.loadFont(settings.fontText))
-    }
-
-    private fun initAndShowMainWindow() {
-        val startupScene = settings.sceneFactory.newStartup()
-
-        addOverlay(startupScene)
-
-        // get window up ASAP
-        mainWindow = MainWindow(stage, startupScene, settings)
-        mainWindow.addIcons(assetLoader.loadImage(settings.appIcon))
-
-        settings.cssList.forEach {
-            log.debug("Applying CSS: $it")
-            mainWindow.addCSS(assetLoader.loadCSS(it))
-        }
-        mainWindow.defaultCursor = ImageCursor(assetLoader.loadCursorImage("fxgl_default.png"), 7.0, 6.0)
-
-        mainWindow.show()
-        mainWindow.onClose = {
-            if (settings.isCloseConfirmation) {
-                if (canShowCloseDialog()) {
-                    showConfirmExitDialog()
-                }
-            } else {
-                exit()
-            }
-        }
-
-        mainWindow.currentSceneProperty.addListener { _, oldScene, newScene ->
-            log.debug("Removing overlay from $oldScene and adding to $newScene")
-
-            removeOverlay(oldScene)
-            addOverlay(newScene)
-        }
-
-        if (settings.isMobile) {
-            // no-op
-        } else {
-            mainWindow.iconifiedProperty().addListener { _, _, isMinimized ->
-                if (isMinimized) {
-                    loop.pause()
-                } else {
-                    loop.resume()
-                }
-            }
-        }
-    }
-
-    private fun addOverlay(scene: Scene) {
-        scene.root.children += overlayRoot
-    }
-
-    private fun removeOverlay(scene: Scene) {
-        scene.root.children -= overlayRoot
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private fun initAppScenes() {
-        log.debug("Initializing application scenes")
-
-        val sceneFactory = settings.sceneFactory
-
-        loadScene = sceneFactory.newLoadingScene()
-        playScene = GameScene(settings.width, settings.height,
-                GameWorld(),
-                PhysicsWorld(settings.height, settings.pixelsPerMeter)
-        )
-
-        playScene.isSingleStep = settings.isSingleStep
-
-        // app is only updated in Game Scene
-        playScene.addListener(object : SceneListener {
-            override fun onUpdate(tpf: Double) {
-                app.onUpdate(tpf)
-            }
-        })
-
-        // we need dialog state before intro and menus
-        dialogScene = DialogSubState(mainWindow.currentFXGLSceneProperty)
-
-        if (settings.isIntroEnabled) {
-            intro = sceneFactory.newIntro()
-        }
-
-        if (settings.isMenuEnabled) {
-            mainMenu = sceneFactory.newMainMenu()
-            gameMenu = sceneFactory.newGameMenu()
-
-            val menuKeyHandler = object : EventHandler<KeyEvent> {
-                private var canSwitchGameMenu = true
-
-                private fun onMenuKey(pressed: Boolean) {
-                    if (!pressed) {
-                        canSwitchGameMenu = true
-                        return
-                    }
-
-                    if (canSwitchGameMenu) {
-                        // we only care if menu key was pressed in one of these states
-                        if (mainWindow.currentScene === gameMenu) {
-                            canSwitchGameMenu = false
-                            gotoPlay()
-
-                        } else if (mainWindow.currentScene === playScene) {
-                            canSwitchGameMenu = false
-                            gotoGameMenu()
-                        }
-                    }
-                }
-
-                override fun handle(event: KeyEvent) {
-                    if (event.code == settings.menuKey) {
-                        onMenuKey(event.eventType == KeyEvent.KEY_PRESSED)
-                    }
-                }
-            }
-
-            playScene.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
-            gameMenu!!.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
-        } else {
-
-            pauseMenu = sceneFactory.newPauseMenu()
-
-            playScene.input.addAction(object : UserAction("Pause") {
-                override fun onActionBegin() {
-                    pauseMenu!!.requestShow {
-                        mainWindow.pushState(pauseMenu!!)
-                    }
-                }
-
-                override fun onActionEnd() {
-                    pauseMenu!!.unlockSwitch()
-                }
-            }, settings.menuKey)
-        }
-
-        log.debug("Application scenes initialized")
-    }
-
-    private fun initSaveLoadHandler() {
-        saveLoadManager.addHandler(object : SaveLoadHandler {
-            override fun onSave(data: DataFile) {
-                // TODO:
-
-                // settings.write()
-                // services.write()
-            }
-
-            override fun onLoad(data: DataFile) {
-                // settings.read()
-                // services.read()
-            }
-        })
-    }
-
-
-
-
-
-    /**
-     * @return true if can show close dialog
-     */
-    private fun canShowCloseDialog(): Boolean {
-        // do not allow close dialog if
-        // 1. a dialog is shown
-        // 2. we are loading a game
-        // 3. we are showing intro
-        val isNotOK = mainWindow.currentScene === dialogScene
-                || mainWindow.currentScene === loadScene
-                || (settings.isIntroEnabled && mainWindow.currentScene === intro)
-
-        return !isNotOK
-    }
-
-    // GAME CONTROLLER CALLBACKS
-
-    private var dataFile: DataFile? = null
-
-    override fun startNewGame() {
-        log.debug("Starting new game")
-
-        loadScene.pushNewTask(InitAppTask(app))
-        mainWindow.setScene(loadScene)
-    }
-
-    override fun saveGame(dataFile: DataFile) {
-        saveLoadManager.save(dataFile)
-    }
-
-    override fun loadGame(dataFile: DataFile) {
-        // TODO: can we modify task.onSucceeded from this class ...
-        this.dataFile = dataFile
-
-        log.debug("Starting loaded game")
-        loadScene.pushNewTask(InitAppTask(app))
-        mainWindow.setScene(loadScene)
-    }
-
-    override fun onGameReady(vars: PropertyMap) {
-        services.forEach { it.onGameReady(vars) }
-
-        dataFile?.let {
-            saveLoadManager.load(it)
-        }
-
-        dataFile = null
-    }
-
-    override fun gotoIntro() {
-        mainWindow.setScene(intro!!)
-    }
-
-    override fun gotoMainMenu() {
-        mainWindow.setScene(mainMenu!!)
-    }
-
-    override fun gotoGameMenu() {
-        mainWindow.setScene(gameMenu!!)
-    }
-
-    override fun gotoLoading(loadingTask: Runnable) {
-        loadScene.pushNewTask(loadingTask)
-        mainWindow.setScene(loadScene)
-    }
-
-    override fun gotoLoading(loadingTask: Task<*>) {
-        loadScene.pushNewTask(loadingTask)
-        mainWindow.setScene(loadScene)
-    }
-
-    override fun gotoPlay() {
-        mainWindow.setScene(playScene)
-    }
-
-    /**
-     * Saves a screenshot of the current scene into a ".png" file,
-     * named by title + version + time.
-     */
-    override fun saveScreenshot(): Boolean {
-        val fxImage = mainWindow.takeScreenshot()
-        val img = SwingFXUtils.fromFXImage(fxImage, null)
-
-        var fileName = "./" + settings.title + settings.version + LocalDateTime.now()
-        fileName = fileName.replace(":", "_")
-
-        try {
-            val name = if (fileName.endsWith(".png")) fileName else "$fileName.png"
-
-            Files.newOutputStream(Paths.get(name)).use {
-                return ImageIO.write(img, "png", it)
-            }
-        } catch (e: Exception) {
-            log.warning("saveScreenshot($fileName.png) failed: $e")
-            return false
-        }
-    }
-
-    override fun restoreDefaultSettings() {
-        log.debug("restoreDefaultSettings()")
-    }
-
-    override fun pushSubScene(subScene: SubScene) {
-        mainWindow.pushState(subScene)
-    }
-
-    override fun popSubScene() {
-        mainWindow.popState()
-    }
-
+    //    internal val assetLoader by lazy { AssetLoader() }
+//    internal val display by lazy { dialogScene as Display }
+
+
+
+
+    // TODO: refactor below
+//    internal val saveLoadManager by lazy { SaveLoadService(fs) }
+//    private fun initSaveLoadHandler() {
+//        saveLoadManager.addHandler(object : SaveLoadHandler {
+//            override fun onSave(data: DataFile) {
+//                // TODO:
+//
+//                // settings.write()
+//                // services.write()
+//            }
+//
+//            override fun onLoad(data: DataFile) {
+//                // settings.read()
+//                // services.read()
+//            }
+//        })
+//    }
 }

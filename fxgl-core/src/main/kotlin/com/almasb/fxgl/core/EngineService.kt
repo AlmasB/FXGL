@@ -19,21 +19,27 @@ abstract class EngineService : Updatable, SerializableType {
     /**
      * Called during the engine initialization phase, after
      * all services were added and dependencies marked with [Inject] injected.
+     * This is called on a background thread.
      */
     open fun onInit() {}
 
     /**
      * Called when the engine is fully initialized and just before the main loop.
      * This occurs once per application lifetime.
+     * This is called on a JavaFX thread.
      */
     open fun onMainLoopStarting() { }
 
     /**
      * Called when initGame(), initPhysics(), initUI() all completed and
      * the game is ready to be played.
+     * This is called on a background thread.
      */
     open fun onGameReady(vars: PropertyMap) { }
 
+    /**
+     * This is called on a JavaFX thread.
+     */
     override fun onUpdate(tpf: Double) { }
 
     /**

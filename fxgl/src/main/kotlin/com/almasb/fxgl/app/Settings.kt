@@ -7,7 +7,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.achievement.Achievement
-import com.almasb.fxgl.achievement.AchievementManager
+import com.almasb.fxgl.achievement.AchievementService
 import com.almasb.fxgl.app.scene.SceneFactory
 import com.almasb.fxgl.app.tasks.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
@@ -26,6 +26,7 @@ import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
+import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.ui.FXGLDialogFactoryServiceProvider
 import com.almasb.fxgl.ui.FXGLUIFactoryServiceProvider
 import javafx.beans.property.*
@@ -232,12 +233,14 @@ class GameSettings(
 
                 SystemBundleService::class.java,
 
+                SaveLoadService::class.java,
+
                 FXGLUIFactoryServiceProvider::class.java,
                 FXGLDialogFactoryServiceProvider::class.java,
 
                 AudioPlayer::class.java,
                 NotificationServiceProvider::class.java,
-                AchievementManager::class.java,
+                AchievementService::class.java,
                 CutsceneService::class.java,
                 MiniGameService::class.java
         ),

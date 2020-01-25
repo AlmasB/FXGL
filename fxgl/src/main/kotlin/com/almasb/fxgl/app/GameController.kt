@@ -15,7 +15,7 @@ import javafx.concurrent.Task
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-interface GameController : SubSceneStack {
+interface GameController {
 
     fun gotoIntro()
 
@@ -54,8 +54,6 @@ interface GameController : SubSceneStack {
     fun onGameReady(vars: PropertyMap)
 
     fun exit()
-
-    fun saveScreenshot(): Boolean
 
     fun restoreDefaultSettings()
 }

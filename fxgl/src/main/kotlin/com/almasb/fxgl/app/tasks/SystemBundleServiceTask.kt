@@ -19,9 +19,6 @@ internal class SystemBundleService : EngineTask() {
     @Inject("isExperimentalNative")
     private var isExperimentalNative = false
 
-    // TODO:
-    // @InjectService
-//    @Inject("FS")
     private lateinit var fs: FileSystemService
 
     internal lateinit var bundle: Bundle

@@ -5,6 +5,7 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.app.services.WindowService;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.util.Platform;
 import com.almasb.fxgl.dev.DevService;
@@ -213,7 +214,11 @@ public abstract class GameApplication {
          */
         @Override
         public void start(Stage stage) {
-            var engine = new Engine(app, settings, stage);
+            var engine = new Engine(settings);
+
+            // we want the window up and running asap
+            var windowService = new WindowService(app, settings, stage);
+            engine.addService(windowService);
 
             settings.getEngineServices().forEach(serviceClass ->
                     engine.addService(ReflectionUtils.newInstance(serviceClass))

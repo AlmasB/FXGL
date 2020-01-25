@@ -7,10 +7,8 @@
 package com.almasb.fxgl.minigames
 
 import com.almasb.fxgl.core.EngineService
-import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
-import java.util.function.Consumer
 import com.almasb.fxgl.input.KeyTrigger
 import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerMiniGame
 import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerResult
@@ -23,9 +21,10 @@ import com.almasb.fxgl.minigames.sweetspot.SweetSpotView
 import com.almasb.fxgl.minigames.triggermash.TriggerMashMiniGame
 import com.almasb.fxgl.minigames.triggermash.TriggerMashResult
 import com.almasb.fxgl.minigames.triggermash.TriggerMashView
+import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
-import com.almasb.fxgl.scene.SubSceneStack
 import javafx.util.Duration
+import java.util.function.Consumer
 
 /**
  *
@@ -33,14 +32,7 @@ import javafx.util.Duration
  */
 class MiniGameService : EngineService() {
 
-    @Inject("width")
-    private var appWidth: Int = 0
-
-    @Inject("height")
-    private var appHeight: Int = 0
-
-    @Inject("sceneStack")
-    private lateinit var sceneStack: SubSceneStack
+    private lateinit var sceneService: SceneService
 
     fun startSweetSpot(successRange: Int, callback: Consumer<SweetSpotResult>) {
         val miniGame = SweetSpotMiniGame()
@@ -82,9 +74,9 @@ class MiniGameService : EngineService() {
     }
 
     fun <S : MiniGameResult, T : MiniGame<S>> startMiniGame(view: MiniGameView<T>, callback: (S) -> Unit) {
-        val scene = MiniGameSubScene(sceneStack, appWidth, appHeight, false, view, callback)
+        val scene = MiniGameSubScene(sceneService, false, view, callback)
 
-        sceneStack.pushSubScene(scene)
+        sceneService.pushSubScene(scene)
     }
 
     /**
@@ -98,9 +90,9 @@ class MiniGameService : EngineService() {
      * Starts the mini game in GameScene rather than a subscene.
      */
     fun <S : MiniGameResult, T : MiniGame<S>> startMiniGameInGame(view: MiniGameView<T>, callback: (S) -> Unit) {
-        val scene = MiniGameSubScene(sceneStack, appWidth, appHeight, true, view, callback)
+        val scene = MiniGameSubScene(sceneService, true, view, callback)
 
-        sceneStack.pushSubScene(scene)
+        sceneService.pushSubScene(scene)
     }
 
     override fun onMainLoopStarting() {
@@ -123,14 +115,13 @@ class MiniGameService : EngineService() {
 }
 
 class MiniGameSubScene<S : MiniGameResult, T : MiniGame<S>>(
-        private val sceneStack: SubSceneStack,
-        appWidth: Int, appHeight: Int,
+        private val sceneService: SceneService,
         override val isAllowConcurrency: Boolean = false,
         val view: MiniGameView<T>, val callback: (S) -> Unit) : SubScene() {
 
     init {
-        view.translateX = appWidth / 2 - view.layoutBounds.width / 2
-        view.translateY = appHeight / 2 - view.layoutBounds.height / 2
+        view.translateX = sceneService.appWidth / 2 - view.layoutBounds.width / 2
+        view.translateY = sceneService.appHeight / 2 - view.layoutBounds.height / 2
 
         contentRoot.children += view
 
@@ -142,7 +133,7 @@ class MiniGameSubScene<S : MiniGameResult, T : MiniGame<S>>(
         view.onUpdate(tpf)
 
         if (view.miniGame.isDone) {
-            sceneStack.popSubScene()
+            sceneService.popSubScene()
 
             callback(view.miniGame.result)
         }

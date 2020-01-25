@@ -11,8 +11,8 @@ import com.almasb.fxgl.animation.AnimationDSL
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.KeyView
+import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
-import com.almasb.fxgl.scene.SubSceneStack
 import com.almasb.sslogger.Logger
 import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
@@ -29,7 +29,7 @@ import java.util.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHeight: Int) : SubScene() {
+class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
     private val log = Logger.get<DialogueScene>()
 
@@ -44,6 +44,9 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
     internal lateinit var gameVars: PropertyMap
 
     init {
+        val appWidth = sceneService.appWidth
+        val appHeight = sceneService.appHeight
+
         val topLine = Rectangle(appWidth.toDouble(), 150.0)
         topLine.translateY = -150.0
 
@@ -119,7 +122,7 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
     private fun endCutscene() {
         boxPlayerLines.opacity = 0.0
         animation2.onFinished = Runnable {
-            sceneStack.popSubScene()
+            sceneService.popSubScene()
             onClose()
         }
         animation.startReverse()
@@ -133,7 +136,7 @@ class DialogueScene(private val sceneStack: SubSceneStack, appWidth: Int, appHei
 
         nextLine()
 
-        sceneStack.pushSubScene(this)
+        sceneService.pushSubScene(this)
     }
 
     private var currentLine = 0

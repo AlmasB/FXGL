@@ -7,11 +7,12 @@
 
 package com.almasb.fxgl.dsl
 
-import com.almasb.fxgl.achievement.AchievementManager
+import com.almasb.fxgl.achievement.AchievementService
 import com.almasb.fxgl.app.Engine
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.GameController
 import com.almasb.fxgl.app.ReadOnlyGameSettings
+import com.almasb.fxgl.app.services.WindowService
 import com.almasb.fxgl.app.tasks.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
@@ -29,9 +30,13 @@ import com.almasb.fxgl.event.EventBusService
 import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.UserAction
+import com.almasb.fxgl.io.FileSystemService
+import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.physics.CollisionHandler
+import com.almasb.fxgl.profile.SaveLoadService
+import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
@@ -87,19 +92,19 @@ class FXGL private constructor() { companion object {
     /**
      * @return instance of the running game application
      */
-    @JvmStatic fun getApp() = engine.app
+    @JvmStatic fun getApp() = engine.getService(WindowService::class.java).app
 
     /**
      * @return instance of the running game application cast to the actual type
      */
     @Suppress("UNCHECKED_CAST")
-    @JvmStatic fun <T : GameApplication> getAppCast() = engine.app as T
+    @JvmStatic fun <T : GameApplication> getAppCast() = getApp() as T
 
     @JvmStatic fun getAppWidth() = engine.settings.width
 
     @JvmStatic fun getAppHeight() = engine.settings.height
 
-    @JvmStatic fun getPrimaryStage() = engine.mainWindow.stage
+    @JvmStatic fun getPrimaryStage() = engine.getService(WindowService::class.java).stage
 
     /**
      * Note: the system bundle is saved on exit and loaded on init.
@@ -129,19 +134,22 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getExecutor() = engine.executor
 
-    @JvmStatic fun getFS() = engine.fs
+    @Deprecated("Use getFileSystemService()")
+    @JvmStatic fun getFS() = engine.getService(FileSystemService::class.java)
 
-    @JvmStatic fun getLocalizationService() = engine.local
+    @JvmStatic fun getFileSystemService() = engine.getService(FileSystemService::class.java)
+
+    @JvmStatic fun getLocalizationService() = engine.getService(LocalizationService::class.java)
 
     @JvmStatic fun getNotificationService() = engine.getService(NotificationService::class.java)
 
-    @JvmStatic fun getAchievementService() = engine.getService(AchievementManager::class.java)
+    @JvmStatic fun getAchievementService() = engine.getService(AchievementService::class.java)
 
     @JvmStatic fun getCutsceneService() = engine.getService(CutsceneService::class.java)
 
     @JvmStatic fun getMiniGameService() = engine.getService(MiniGameService::class.java)
 
-    @JvmStatic fun getSaveLoadService() = engine.saveLoadManager
+    @JvmStatic fun getSaveLoadService() = engine.getService(SaveLoadService::class.java)
 
     /**
      * @return time per frame (in this frame)
@@ -164,7 +172,7 @@ class FXGL private constructor() { companion object {
     /**
      * @return 'always-on' (regardless of active scene) engine timer
      */
-    @JvmStatic fun getEngineTimer(): Timer = engine.engineTimer
+    @JvmStatic fun getEngineTimer(): Timer = engine.getService(SceneService::class.java).timer
 
     /**
      * @return play state input

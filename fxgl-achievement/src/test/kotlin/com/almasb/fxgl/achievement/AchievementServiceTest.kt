@@ -28,16 +28,16 @@ import java.util.stream.Stream
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AchievementManagerTest {
+class AchievementServiceTest {
 
-    private lateinit var achievementManager: AchievementManager
+    private lateinit var achievementManager: AchievementService
 
     private val a1 = Achievement("TestAchievement", "TestDescription", "", 0)
     private val a2 = Achievement("TestAchievement2", "TestDescription2", "", 0)
 
     @BeforeEach
     fun setUp() {
-        achievementManager = AchievementManager()
+        achievementManager = AchievementService()
         val lookup = MethodHandles.lookup()
 
         inject(lookup, achievementManager, "achievementsFromSettings", listOf(a2))
@@ -88,7 +88,7 @@ class AchievementManagerTest {
         achievementManager.getAchievementByName("TestAchievement").setAchieved()
         achievementManager.write(bundle)
 
-        val newAchievementManager = AchievementManager()
+        val newAchievementManager = AchievementService()
         newAchievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription", "", 0))
         newAchievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription", "", 0))
         newAchievementManager.read(bundle)

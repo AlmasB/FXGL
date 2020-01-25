@@ -88,7 +88,7 @@
                         <list>com.almasb.fxgl.audio.AudioPlayer</list>
                         <list>com.almasb.fxgl.notification.impl.NotificationServiceProvider</list>
                         <list>com.almasb.fxgl.notification.view.XboxNotificationView</list>
-                        <list>com.almasb.fxgl.achievement.AchievementManager</list>
+                        <list>com.almasb.fxgl.achievement.AchievementService</list>
 
                         <!-- Components -->
 
