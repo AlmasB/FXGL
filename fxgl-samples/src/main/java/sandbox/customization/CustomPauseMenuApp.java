@@ -149,7 +149,7 @@ public class CustomPauseMenuApp extends GameApplication {
             if (animation.isAnimating())
                 return;
 
-            animation.setOnFinished(() -> FXGL.getGameController().popSubScene());
+            animation.setOnFinished(() -> FXGL.getSceneService().popSubScene());
             animation.startReverse();
         }
     }

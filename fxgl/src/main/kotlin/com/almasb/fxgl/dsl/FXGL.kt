@@ -12,13 +12,17 @@ import com.almasb.fxgl.app.Engine
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.GameController
 import com.almasb.fxgl.app.ReadOnlyGameSettings
+import com.almasb.fxgl.app.services.AssetLoaderService
 import com.almasb.fxgl.app.services.WindowService
 import com.almasb.fxgl.app.tasks.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
+import com.almasb.fxgl.core.concurrent.Async
+import com.almasb.fxgl.core.concurrent.Executor
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.cutscene.CutsceneService
+import com.almasb.fxgl.dev.DevPane
 import com.almasb.fxgl.dev.DevService
 import com.almasb.fxgl.dsl.handlers.CollectibleHandler
 import com.almasb.fxgl.dsl.handlers.OneTimeCollisionHandler
@@ -35,6 +39,7 @@ import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.physics.CollisionHandler
+import com.almasb.fxgl.profile.DataFile
 import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.texture.Texture
@@ -42,9 +47,11 @@ import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.DialogFactoryService
+import com.almasb.fxgl.ui.Display
 import com.almasb.fxgl.ui.UIFactoryService
 import javafx.animation.Interpolator
 import javafx.beans.property.*
+import javafx.concurrent.Task
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -74,7 +81,51 @@ class FXGL private constructor() { companion object {
         engine = e
     }
 
-    @JvmStatic fun getGameController(): GameController = engine
+    @JvmStatic
+    internal fun getEngineInternal() = engine
+
+    private val controller = object : GameController {
+        override fun gotoIntro() {
+            getWindowService().gotoIntro()
+        }
+
+        override fun gotoMainMenu() {
+            getWindowService().gotoMainMenu()
+        }
+
+        override fun gotoGameMenu() {
+            getWindowService().gotoGameMenu()
+        }
+
+        override fun gotoLoading(loadingTask: Runnable) {
+            getWindowService().gotoLoading(loadingTask)
+        }
+
+        override fun gotoLoading(loadingTask: Task<*>) {
+            getWindowService().gotoLoading(loadingTask)
+        }
+
+        override fun gotoPlay() {
+            getWindowService().gotoPlay()
+        }
+
+        override fun startNewGame() {
+            getWindowService().startNewGame()
+        }
+
+        override fun saveGame(dataFile: DataFile) {
+        }
+
+        override fun loadGame(dataFile: DataFile) {
+        }
+
+        override fun exit() {
+            engine.exit()
+        }
+
+    }
+
+    @JvmStatic fun getGameController(): GameController = controller
 
 /* STATIC ACCESSORS */
 
@@ -113,7 +164,7 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun getSystemBundle() = engine.getService(SystemBundleService::class.java).bundle
 
-    @JvmStatic fun getDevPane() = engine.devPane
+    @JvmStatic fun getDevPane(): DevPane = TODO("WIP refactoring")
 
     @JvmStatic fun getDevService() = engine.getService(DevService::class.java)
 
@@ -124,15 +175,15 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getDialogFactoryService() = engine.getService(DialogFactoryService::class.java)
 
-    @JvmStatic fun getAssetLoader() = engine.assetLoader
+    @JvmStatic fun getAssetLoader() = engine.getService(AssetLoaderService::class.java).assetLoader
 
     @JvmStatic fun getEventBus() = engine.getService(EventBusService::class.java).eventBus
 
     @JvmStatic fun getAudioPlayer() = engine.getService(AudioPlayer::class.java)
 
-    @JvmStatic fun getDisplay() = engine.display
+    @JvmStatic fun getDisplay(): Display = engine.getService(WindowService::class.java).dialogScene
 
-    @JvmStatic fun getExecutor() = engine.executor
+    @JvmStatic fun getExecutor(): Executor = Async
 
     @Deprecated("Use getFileSystemService()")
     @JvmStatic fun getFS() = engine.getService(FileSystemService::class.java)
@@ -151,23 +202,27 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getSaveLoadService() = engine.getService(SaveLoadService::class.java)
 
+    @JvmStatic fun getWindowService() = engine.getService(WindowService::class.java)
+
+    @JvmStatic fun getSceneService() = engine.getService(SceneService::class.java)
+
     /**
      * @return time per frame (in this frame)
      */
     @JvmStatic fun tpf() = engine.tpf
 
     @Deprecated("Use getWorldProperties()")
-    @JvmStatic fun getGameState() = engine.playScene.gameWorld.properties
+    @JvmStatic fun getGameState() = getWorldProperties()
 
-    @JvmStatic fun getGameWorld() = engine.playScene.gameWorld
-    @JvmStatic fun getWorldProperties() = engine.playScene.gameWorld.properties
-    @JvmStatic fun getPhysicsWorld() = engine.playScene.physicsWorld
-    @JvmStatic fun getGameScene() = engine.playScene
+    @JvmStatic fun getGameWorld() = getGameScene().gameWorld
+    @JvmStatic fun getWorldProperties() = getGameScene().gameWorld.properties
+    @JvmStatic fun getPhysicsWorld() = getGameScene().physicsWorld
+    @JvmStatic fun getGameScene() = engine.getService(WindowService::class.java).playScene
 
     /**
      * @return play state timer
      */
-    @JvmStatic fun getGameTimer(): Timer = engine.playScene.timer
+    @JvmStatic fun getGameTimer(): Timer = getGameScene().timer
 
     /**
      * @return 'always-on' (regardless of active scene) engine timer
@@ -177,7 +232,7 @@ class FXGL private constructor() { companion object {
     /**
      * @return play state input
      */
-    @JvmStatic fun getInput(): Input = engine.playScene.input
+    @JvmStatic fun getInput(): Input = getGameScene().input
 
     /**
      * @return new instance on each call

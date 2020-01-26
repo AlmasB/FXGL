@@ -6,9 +6,8 @@
 
 package com.almasb.fxgl.app.scene
 
-import java.util.function.Consumer
+import com.almasb.fxgl.app.services.WindowService
 import com.almasb.fxgl.core.util.EmptyRunnable
-import java.util.function.Predicate
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.DialogBox
@@ -26,6 +25,8 @@ import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import java.util.*
+import java.util.function.Consumer
+import java.util.function.Predicate
 
 /**
  *
@@ -33,10 +34,13 @@ import java.util.*
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class DialogSubState(
-        private val currentSceneProperty: ReadOnlyObjectProperty<FXGLScene>
+        private val currentSceneProperty: ReadOnlyObjectProperty<FXGLScene>,
+
+        // TODO: shouldn't be a reference to window service
+        private val windowService: WindowService
 ) : SubScene(), Display {
 
-    private val window = FXGL.getUIFactory().newWindow()
+    private val window = FXGL.getUIFactoryService().newWindow()
     private val dialogFactory = FXGL.getDialogFactoryService()
 
     private val states = ArrayDeque<DialogData>()
@@ -122,13 +126,13 @@ class DialogSubState(
         savedEffect = scene.effect
         scene.effect = bgBlur
 
-        FXGL.getGameController().pushSubScene(this)
+        windowService.pushSubScene(this)
     }
 
     private fun closeInScene(scene: FXGLScene) {
         scene.effect = savedEffect
 
-        FXGL.getGameController().popSubScene()
+        windowService.popSubScene()
     }
 
     override fun showMessageBox(message: String) {

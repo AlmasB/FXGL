@@ -48,7 +48,7 @@ public class ShopSample extends GameApplication {
         getInput().addAction(new UserAction("Open Shop Menu") {
             @Override
             protected void onActionBegin() {
-                getGameController().pushSubScene(shopState);
+                getSceneService().pushSubScene(shopState);
             }
         }, KeyCode.F);
     }

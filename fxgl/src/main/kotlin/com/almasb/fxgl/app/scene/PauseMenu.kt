@@ -63,7 +63,7 @@ abstract class PauseMenu : SubScene() {
     }
 
     protected open fun onHide() {
-        FXGL.getGameController().popSubScene()
+        FXGL.getSceneService().popSubScene()
     }
 }
 
@@ -128,7 +128,7 @@ class FXGLPauseMenu : PauseMenu() {
             return
 
         animation.onFinished = Runnable {
-            FXGL.getGameController().popSubScene()
+            FXGL.getSceneService().popSubScene()
         }
         animation.startReverse()
     }

@@ -38,7 +38,7 @@ public class ArcadeShopSample extends GameApplication {
         getInput().addAction(new UserAction("Open Shop") {
             @Override
             protected void onActionBegin() {
-                getGameController().pushSubScene(shopState);
+                getSceneService().pushSubScene(shopState);
             }
         }, KeyCode.F);
     }

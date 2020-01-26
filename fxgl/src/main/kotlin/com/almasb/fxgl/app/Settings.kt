@@ -9,6 +9,8 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.achievement.Achievement
 import com.almasb.fxgl.achievement.AchievementService
 import com.almasb.fxgl.app.scene.SceneFactory
+import com.almasb.fxgl.app.services.AssetLoaderService
+import com.almasb.fxgl.app.tasks.LocalLoadingTask
 import com.almasb.fxgl.app.tasks.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
@@ -219,17 +221,12 @@ class GameSettings(
         /* CUSTOMIZABLE SERVICES BELOW */
 
         var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
-
-
-
-                /* CORE SERVICES */
-
                 EventBusService::class.java,
                 FileSystemService::class.java,
 
                 LocalizationService::class.java,
-
-                /* NON-CORE SERVICES */
+                AssetLoaderService::class.java,
+                LocalLoadingTask::class.java,
 
                 SystemBundleService::class.java,
 

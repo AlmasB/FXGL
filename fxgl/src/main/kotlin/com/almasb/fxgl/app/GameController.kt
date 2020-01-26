@@ -6,9 +6,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.profile.DataFile
-import com.almasb.fxgl.scene.SubSceneStack
 import javafx.concurrent.Task
 
 /**
@@ -51,10 +49,6 @@ interface GameController {
      */
     fun loadGame(dataFile: DataFile)
 
-    fun onGameReady(vars: PropertyMap)
-
     fun exit()
-
-    fun restoreDefaultSettings()
 }
 

@@ -71,7 +71,7 @@ internal class InitAppTask(private val app: GameApplication) : Task<Void>() {
 
     private fun initComplete() {
         update("Initialization Complete", 3)
-        FXGL.getGameController().onGameReady(FXGL.getWorldProperties())
+        FXGL.getEngineInternal().onGameReady(FXGL.getWorldProperties())
     }
 
     private fun update(message: String, step: Int) {

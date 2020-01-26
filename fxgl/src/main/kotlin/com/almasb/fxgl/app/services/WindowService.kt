@@ -11,7 +11,6 @@ import com.almasb.fxgl.app.InitAppTask
 import com.almasb.fxgl.app.MainWindow
 import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.app.scene.*
-import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.input.UserAction
@@ -27,7 +26,6 @@ import javafx.concurrent.Task
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
 import javafx.scene.Group
-import javafx.scene.ImageCursor
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import java.nio.file.Files
@@ -154,7 +152,7 @@ class WindowService(
         })
 
         // we need dialog state before intro and menus
-        dialogScene = DialogSubState(mainWindow.currentFXGLSceneProperty)
+        dialogScene = DialogSubState(mainWindow.currentFXGLSceneProperty, this)
 
         if (settings.isIntroEnabled) {
             intro = sceneFactory.newIntro()
@@ -261,59 +259,57 @@ class WindowService(
 
     private var dataFile: DataFile? = null
 
-    override fun startNewGame() {
+    fun startNewGame() {
         log.debug("Starting new game")
 
         loadScene.pushNewTask(InitAppTask(app))
         mainWindow.setScene(loadScene)
     }
 
-    override fun saveGame(dataFile: DataFile) {
-        saveLoadManager.save(dataFile)
+    fun saveGame(dataFile: DataFile) {
+        //saveLoadManager.save(dataFile)
     }
 
-    override fun loadGame(dataFile: DataFile) {
+    fun loadGame(dataFile: DataFile) {
         // TODO: can we modify task.onSucceeded from this class ...
-        this.dataFile = dataFile
-
-        log.debug("Starting loaded game")
-        loadScene.pushNewTask(InitAppTask(app))
-        mainWindow.setScene(loadScene)
+//        this.dataFile = dataFile
+//
+//        log.debug("Starting loaded game")
+//        loadScene.pushNewTask(InitAppTask(app))
+//        mainWindow.setScene(loadScene)
     }
 
     override fun onGameReady(vars: PropertyMap) {
-        services.forEach { it.onGameReady(vars) }
-
-        dataFile?.let {
-            saveLoadManager.load(it)
-        }
-
-        dataFile = null
+//        dataFile?.let {
+//            saveLoadManager.load(it)
+//        }
+//
+//        dataFile = null
     }
 
-    override fun gotoIntro() {
+    fun gotoIntro() {
         mainWindow.setScene(intro!!)
     }
 
-    override fun gotoMainMenu() {
+    fun gotoMainMenu() {
         mainWindow.setScene(mainMenu!!)
     }
 
-    override fun gotoGameMenu() {
+    fun gotoGameMenu() {
         mainWindow.setScene(gameMenu!!)
     }
 
-    override fun gotoLoading(loadingTask: Runnable) {
+    fun gotoLoading(loadingTask: Runnable) {
         loadScene.pushNewTask(loadingTask)
         mainWindow.setScene(loadScene)
     }
 
-    override fun gotoLoading(loadingTask: Task<*>) {
+    fun gotoLoading(loadingTask: Task<*>) {
         loadScene.pushNewTask(loadingTask)
         mainWindow.setScene(loadScene)
     }
 
-    override fun gotoPlay() {
+    fun gotoPlay() {
         mainWindow.setScene(playScene)
     }
 
@@ -321,7 +317,7 @@ class WindowService(
      * Saves a screenshot of the current scene into a ".png" file,
      * named by title + version + time.
      */
-    override fun saveScreenshot(): Boolean {
+    fun saveScreenshot(): Boolean {
         val fxImage = mainWindow.takeScreenshot()
         val img = SwingFXUtils.fromFXImage(fxImage, null)
 

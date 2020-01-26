@@ -8,9 +8,7 @@ package com.almasb.fxgl.app.scene
 
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.ProgressDialog
-import java.util.function.Consumer
 import com.almasb.fxgl.core.util.InputPredicates
-import java.util.function.Supplier
 import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
@@ -41,6 +39,8 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.util.Duration
 import java.util.*
+import java.util.function.Consumer
+import java.util.function.Supplier
 
 /**
  * This is a base class for main/game menus. It provides several
@@ -283,14 +283,14 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
                 val rebound = getInput().rebind(actionContext!!, e.getCode(), InputModifier.from(e))
 
                 if (rebound)
-                    controller.popSubScene()
+                    FXGL.getSceneService().popSubScene()
             })
 
             input.addEventHandler(MouseEvent.MOUSE_PRESSED, EventHandler { e ->
                 val rebound = getInput().rebind(actionContext!!, e.getButton(), InputModifier.from(e))
 
                 if (rebound)
-                    controller.popSubScene()
+                    FXGL.getSceneService().popSubScene()
             })
 
             val rect = Rectangle(250.0, 100.0)
@@ -317,7 +317,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         triggerView.setOnMouseClicked {
             pressAnyKeyState.actionContext = action
-            controller.pushSubScene(pressAnyKeyState)
+            FXGL.getSceneService().pushSubScene(pressAnyKeyState)
         }
 
         val hBox = HBox()

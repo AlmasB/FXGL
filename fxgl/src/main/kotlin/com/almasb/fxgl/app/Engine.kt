@@ -8,6 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.reflect.ReflectionUtils.*
 import com.almasb.fxgl.ui.ErrorDialog
@@ -15,6 +16,8 @@ import com.almasb.sslogger.Logger
 import javafx.application.Platform
 
 /**
+ * FXGL engine is mostly a collection of services, all controlled
+ * via callbacks driven by the main loop.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -146,6 +149,10 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         services.forEach { it.onUpdate(tpf) }
     }
 
+    fun onGameReady(vars: PropertyMap) {
+        services.forEach { it.onGameReady(vars) }
+    }
+
     private var handledOnce = false
 
     private fun handleFatalError(e: Throwable) {
@@ -203,7 +210,6 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
     }
 
     //    internal val assetLoader by lazy { AssetLoader() }
-//    internal val display by lazy { dialogScene as Display }
 
 
 

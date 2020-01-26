@@ -41,7 +41,7 @@ public class TradeSample extends GameApplication {
         tradeSubScene = new TradeSubScene();
 
         onKeyDown(KeyCode.F, "f", () -> {
-            getGameController().pushSubScene(tradeSubScene);
+            getSceneService().pushSubScene(tradeSubScene);
         });
     }
 
@@ -73,7 +73,7 @@ public class TradeSample extends GameApplication {
             this.getInput().addAction(new UserAction("Close") {
                 @Override
                 protected void onActionBegin() {
-                    getGameController().popSubScene();
+                    getSceneService().popSubScene();
                 }
             }, KeyCode.F);
 
