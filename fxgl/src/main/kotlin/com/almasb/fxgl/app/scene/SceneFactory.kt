@@ -15,10 +15,11 @@ open class SceneFactory {
 
     /**
      * Called to construct startup scene.
+     * This cannot be overridden.
      *
      * @return startup scene
      */
-    open fun newStartup(): StartupScene = FXGLStartupScene()
+    fun newStartup(): StartupScene = FXGLStartupScene()
 
     /**
      * Called to construct intro scene.

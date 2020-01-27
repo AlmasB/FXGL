@@ -4,15 +4,15 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.app.tasks
+package com.almasb.fxgl.app.services
 
-import com.almasb.fxgl.core.EngineTask
+import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.io.FileSystemService
 import com.almasb.sslogger.Logger
 
-internal class SystemBundleService : EngineTask() {
+internal class SystemBundleService : EngineService() {
 
     private val log = Logger.get(javaClass)
 

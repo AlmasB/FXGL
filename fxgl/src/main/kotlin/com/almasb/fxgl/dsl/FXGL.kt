@@ -13,8 +13,8 @@ import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.GameController
 import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.app.services.AssetLoaderService
+import com.almasb.fxgl.app.services.SystemBundleService
 import com.almasb.fxgl.app.services.WindowService
-import com.almasb.fxgl.app.tasks.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.core.concurrent.Async
@@ -120,7 +120,7 @@ class FXGL private constructor() { companion object {
         }
 
         override fun exit() {
-            engine.exit()
+            engine.stopLoopAndExit()
         }
 
     }
@@ -155,7 +155,7 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getAppHeight() = engine.settings.height
 
-    @JvmStatic fun getPrimaryStage() = engine.getService(WindowService::class.java).stage
+    @JvmStatic fun getPrimaryStage() = engine.getService(WindowService::class.java).mainWindow.stage
 
     /**
      * Note: the system bundle is saved on exit and loaded on init.

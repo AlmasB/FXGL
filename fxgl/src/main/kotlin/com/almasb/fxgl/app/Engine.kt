@@ -33,7 +33,8 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
     private val services = arrayListOf<EngineService>()
     private val servicesCache = hashMapOf<Class<out EngineService>, EngineService>()
 
-    private val environmentVars = hashMapOf<String, Any>()
+    // TODO: make this a local var?
+    internal val environmentVars = hashMapOf<String, Any>()
 
     init {
         log.debug("Initializing FXGL")
@@ -41,10 +42,6 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         initFatalExceptionHandler()
 
         logVersion()
-
-        initEnvironmentVars()
-
-        logEnvironmentVars()
     }
 
     private fun initFatalExceptionHandler() {
@@ -63,22 +60,6 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
 
-    private fun initEnvironmentVars() {
-        log.debug("Initializing environment variables")
-
-        settings.javaClass.declaredMethods.filter { it.name.startsWith("is") || it.name.startsWith("get") || it.name.endsWith("Property") }.forEach {
-            environmentVars[it.name.removePrefix("get").decapitalize()] = it.invoke(settings)
-        }
-    }
-
-    private fun logEnvironmentVars() {
-        log.debug("Logging environment variables")
-
-        environmentVars.forEach { (key, value) ->
-            log.debug("$key: $value")
-        }
-    }
-
     fun addService(engineService: EngineService) {
         log.debug("Adding new engine service: ${engineService.javaClass}")
 
@@ -93,7 +74,7 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
                 ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
     }
 
-    fun startLoop() {
+    fun initServicesAndStartLoop() {
         val start = System.nanoTime()
 
         // give control back to FX thread while we do heavy init stuff
@@ -113,10 +94,38 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
     }
 
     private fun initServices() {
+        initEnvironmentVars()
+        logEnvironmentVars()
+
+        settings.engineServices.forEach {
+            addService(newInstance(it))
+        }
+
+        // TODO:
+        //        if (settings.getApplicationMode() != ApplicationMode.RELEASE && settings.isDeveloperMenuEnabled()) {
+        //        engine.addService(new DevService());
+        //        }
+
         injectDependenciesIntoServices()
         injectServicesIntoServices()
 
         services.forEach { it.onInit() }
+    }
+
+    private fun initEnvironmentVars() {
+        log.debug("Initializing environment variables")
+
+        settings.javaClass.declaredMethods.filter { it.name.startsWith("is") || it.name.startsWith("get") || it.name.endsWith("Property") }.forEach {
+            environmentVars[it.name.removePrefix("get").decapitalize()] = it.invoke(settings)
+        }
+    }
+
+    private fun logEnvironmentVars() {
+        log.debug("Logging environment variables")
+
+        environmentVars.forEach { (key, value) ->
+            log.debug("$key: $value")
+        }
     }
 
     private fun injectDependenciesIntoServices() {
@@ -183,7 +192,7 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
 
         if (loop.isStarted) {
             // exit normally
-            exit()
+            stopLoopAndExit()
         } else {
             if (Logger.isConfigured()) {
                 Logger.close()
@@ -194,7 +203,7 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         }
     }
 
-    fun exit() {
+    fun stopLoopAndExit() {
         log.debug("Exiting FXGL")
 
         loop.stop()
@@ -208,27 +217,4 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         Logger.close()
         Platform.exit()
     }
-
-    //    internal val assetLoader by lazy { AssetLoader() }
-
-
-
-
-    // TODO: refactor below
-//    internal val saveLoadManager by lazy { SaveLoadService(fs) }
-//    private fun initSaveLoadHandler() {
-//        saveLoadManager.addHandler(object : SaveLoadHandler {
-//            override fun onSave(data: DataFile) {
-//                // TODO:
-//
-//                // settings.write()
-//                // services.write()
-//            }
-//
-//            override fun onLoad(data: DataFile) {
-//                // settings.read()
-//                // services.read()
-//            }
-//        })
-//    }
 }

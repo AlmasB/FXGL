@@ -10,8 +10,9 @@ import com.almasb.fxgl.achievement.Achievement
 import com.almasb.fxgl.achievement.AchievementService
 import com.almasb.fxgl.app.scene.SceneFactory
 import com.almasb.fxgl.app.services.AssetLoaderService
-import com.almasb.fxgl.app.tasks.LocalLoadingTask
-import com.almasb.fxgl.app.tasks.SystemBundleService
+import com.almasb.fxgl.app.services.ConfigureServicesService
+import com.almasb.fxgl.app.services.SystemBundleService
+import com.almasb.fxgl.app.services.WindowService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.math.FXGLMath
@@ -221,12 +222,18 @@ class GameSettings(
         /* CUSTOMIZABLE SERVICES BELOW */
 
         var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
+                // TODO: this has to run first
+                ConfigureServicesService::class.java,
+
+
+                WindowService::class.java,
+
                 EventBusService::class.java,
                 FileSystemService::class.java,
 
                 LocalizationService::class.java,
                 AssetLoaderService::class.java,
-                LocalLoadingTask::class.java,
+
 
                 SystemBundleService::class.java,
 

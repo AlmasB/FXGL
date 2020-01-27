@@ -4,11 +4,10 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.app.tasks
+package com.almasb.fxgl.app.services
 
 import com.almasb.fxgl.app.AssetLoader
-import com.almasb.fxgl.app.services.AssetLoaderService
-import com.almasb.fxgl.core.EngineTask
+import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
@@ -24,7 +23,7 @@ import javafx.beans.property.ObjectProperty
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class LocalLoadingTask : EngineTask() {
+class ConfigureServicesService : EngineService() {
 
     private val log = Logger.get(javaClass)
 

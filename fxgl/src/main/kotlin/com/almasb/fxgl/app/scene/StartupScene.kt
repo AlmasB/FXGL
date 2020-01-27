@@ -9,7 +9,6 @@ package com.almasb.fxgl.app.scene
 import com.almasb.fxgl.dsl.getAppHeight
 import com.almasb.fxgl.dsl.getAppWidth
 import com.almasb.fxgl.dsl.getSettings
-import com.almasb.fxgl.dsl.texture
 import com.almasb.sslogger.Logger
 import javafx.scene.Node
 import javafx.scene.layout.Pane
@@ -22,6 +21,9 @@ import javafx.scene.shape.Rectangle
  *
  * As soon as the main loop starts, this scene will be switched instantly, so
  * there is no need to do animation in this state.
+ *
+ * Since we are trying to open a window as soon as possible, in this scene there are
+ * no services that are ready.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -49,15 +51,15 @@ class FXGLStartupScene : StartupScene() {
     init {
         val bg = Rectangle(getAppWidth().toDouble(), getAppHeight().toDouble())
 
-        val logo = texture("fxgl_logo.png", 877 * 0.25, 213 * 0.25)
-        logo.translateX = getAppWidth() / 2 - logo.width / 2
-        logo.translateY = getAppHeight() / 2 - logo.height * 2
+//        val logo = texture("fxgl_logo.png", 877 * 0.25, 213 * 0.25)
+//        logo.translateX = getAppWidth() / 2 - logo.width / 2
+//        logo.translateY = getAppHeight() / 2 - logo.height * 2
 
         val symbol = makeSymbol()
         symbol.translateX = getAppWidth() / 2 - 53.0
         symbol.translateY = getAppHeight() / 2 + 45.0
 
-        contentRoot.children.addAll(bg, logo, symbol)
+        contentRoot.children.addAll(bg, symbol)
     }
 
     private fun makeSymbol(): Node {

@@ -11,7 +11,9 @@ import com.almasb.fxgl.app.InitAppTask
 import com.almasb.fxgl.app.MainWindow
 import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.app.scene.*
+import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.PhysicsWorld
@@ -27,7 +29,6 @@ import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.input.KeyEvent
-import javafx.stage.Stage
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
@@ -37,15 +38,21 @@ import javax.imageio.ImageIO
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class WindowService(
-        internal val app: GameApplication,
-        private val settings: ReadOnlyGameSettings,
-        internal val stage: Stage
-) : SceneService() {
+class WindowService : SceneService() {
 
     private val log = Logger.get(javaClass)
 
-    internal var mainWindow: MainWindow
+    // TODO: do we really need this here?
+    @Inject("app")
+    lateinit var app: GameApplication
+
+    @Inject("settings")
+    lateinit var settings: ReadOnlyGameSettings
+
+    @Inject("mainWindow")
+    internal lateinit var mainWindow: MainWindow
+
+    private lateinit var assetLoaderService: AssetLoaderService
 
     /**
      * The root for the overlay group that is constantly visible and on top
@@ -53,8 +60,11 @@ class WindowService(
      */
     override val overlayRoot = Group()
 
-    override val appWidth = settings.width
-    override val appHeight = settings.height
+    override val appWidth
+        get() = settings.width
+
+    override val appHeight
+        get() = settings.height
 
     /**
      * Always-on timer.
@@ -72,42 +82,9 @@ class WindowService(
     private var gameMenu: FXGLScene? = null
     private var pauseMenu: PauseMenu? = null
 
-    init {
-        log.debug("Initializing window service")
-
-        val startupScene = settings.sceneFactory.newStartup()
-
-        addOverlay(startupScene)
-
-        // get window up ASAP
-        mainWindow = MainWindow(stage, startupScene, settings)
-
-
+    override fun onInit() {
         //mainWindow.addIcons(assetLoader.loadImage(settings.appIcon))
-
-//        settings.cssList.forEach {
-//            log.debug("Applying CSS: $it")
-//            mainWindow.addCSS(assetLoader.loadCSS(it))
-//        }
         //mainWindow.defaultCursor = ImageCursor(assetLoader.loadCursorImage("fxgl_default.png"), 7.0, 6.0)
-
-        mainWindow.show()
-        mainWindow.onClose = {
-//            if (settings.isCloseConfirmation) {
-//                if (canShowCloseDialog()) {
-//                    showConfirmExitDialog()
-//                }
-//            } else {
-//                exit()
-//            }
-        }
-
-        mainWindow.currentSceneProperty.addListener { _, oldScene, newScene ->
-            log.debug("Removing overlay from $oldScene and adding to $newScene")
-
-            removeOverlay(oldScene)
-            addOverlay(newScene)
-        }
 
 //        if (settings.isMobile) {
 //            // no-op
@@ -120,9 +97,29 @@ class WindowService(
 //                }
 //            }
 //        }
-    }
 
-    override fun onInit() {
+        settings.cssList.forEach {
+            log.debug("Applying CSS: $it")
+            mainWindow.addCSS(assetLoaderService.assetLoader.loadCSS(it))
+        }
+
+        mainWindow.onClose = {
+            if (settings.isCloseConfirmation) {
+                if (canShowCloseDialog()) {
+                    showConfirmExitDialog()
+                }
+            } else {
+                FXGL.getGameController().exit()
+            }
+        }
+
+        mainWindow.currentSceneProperty.addListener { _, oldScene, newScene ->
+            log.debug("Removing overlay from $oldScene and adding to $newScene")
+
+            removeOverlay(oldScene)
+            addOverlay(newScene)
+        }
+
         initAppScenes()
     }
 

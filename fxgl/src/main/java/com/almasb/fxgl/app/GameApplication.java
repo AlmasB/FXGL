@@ -5,10 +5,8 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.app.services.WindowService;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.util.Platform;
-import com.almasb.fxgl.dev.DevService;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.sslogger.*;
 import javafx.application.Application;
@@ -216,21 +214,21 @@ public abstract class GameApplication {
         public void start(Stage stage) {
             var engine = new Engine(settings);
 
-            // we want the window up and running asap
-            var windowService = new WindowService(app, settings, stage);
-            engine.addService(windowService);
-
-            settings.getEngineServices().forEach(serviceClass ->
-                    engine.addService(ReflectionUtils.newInstance(serviceClass))
-            );
-
-            if (settings.getApplicationMode() != ApplicationMode.RELEASE && settings.isDeveloperMenuEnabled()) {
-                engine.addService(new DevService());
-            }
-
+            // after this call, all FXGL.* calls (apart from those accessing services) are valid
             FXGL.inject$fxgl(engine);
 
-            engine.startLoop();
+            var startupScene = settings.getSceneFactory().newStartup();
+
+            // get window up ASAP
+            var mainWindow = new MainWindow(stage, startupScene, settings);
+            mainWindow.show();
+
+            // TODO: possibly a better way exists of doing below
+            engine.getEnvironmentVars$fxgl().put("app", app);
+            engine.getEnvironmentVars$fxgl().put("settings", settings);
+            engine.getEnvironmentVars$fxgl().put("mainWindow", mainWindow);
+
+            engine.initServicesAndStartLoop();
         }
 
         static void launchFX(GameApplication app, ReadOnlyGameSettings settings, String[] args) {
