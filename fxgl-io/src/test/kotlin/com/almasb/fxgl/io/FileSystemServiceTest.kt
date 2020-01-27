@@ -63,7 +63,7 @@ class FileSystemServiceTest {
         }
     }
 
-    private val fs = FileSystemService(true)
+    private val fs = FileSystemService(true).also { it.onInit() }
 
     @Test
     fun `Exists correctly reports dirs and files`() {
