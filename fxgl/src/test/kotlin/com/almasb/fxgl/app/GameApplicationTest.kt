@@ -61,7 +61,7 @@ class GameApplicationTest {
     }
 
     @Test
-    //@EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     fun `High-level FXGL system test`() {
         Thread(Runnable {
             GameApplication.launch(MockGameApplication::class.java, arrayOf())
