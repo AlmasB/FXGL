@@ -9,7 +9,9 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.achievement.Achievement
 import com.almasb.fxgl.achievement.AchievementService
 import com.almasb.fxgl.app.scene.SceneFactory
-import com.almasb.fxgl.app.services.*
+import com.almasb.fxgl.app.services.AssetLoaderService
+import com.almasb.fxgl.app.services.ConfigureServicesService
+import com.almasb.fxgl.app.services.FXGLDialogService
 import com.almasb.fxgl.app.services.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
@@ -24,6 +26,7 @@ import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.localization.Language
 import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.minigames.MiniGameService
+import com.almasb.fxgl.net.NetService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
@@ -246,7 +249,9 @@ class GameSettings(
                 NotificationServiceProvider::class.java,
                 AchievementService::class.java,
                 CutsceneService::class.java,
-                MiniGameService::class.java
+                MiniGameService::class.java,
+
+                NetService::class.java
         ),
 
         /**
