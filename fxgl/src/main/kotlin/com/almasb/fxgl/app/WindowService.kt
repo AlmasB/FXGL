@@ -4,16 +4,13 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.app.services
+package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.app.InitAppTask
-import com.almasb.fxgl.app.MainWindow
-import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.scene.LoadingScene
 import com.almasb.fxgl.app.scene.PauseMenu
+import com.almasb.fxgl.app.services.AssetLoaderService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.dsl.FXGL
@@ -149,7 +146,7 @@ class WindowService : SceneService() {
         // app is only updated in Game Scene
         playScene.addListener(object : SceneListener {
             override fun onUpdate(tpf: Double) {
-                //app.onUpdate(tpf)
+                app.onUpdate(tpf)
             }
         })
 
@@ -216,11 +213,14 @@ class WindowService : SceneService() {
         // TODO:
         //SystemActions.bind(playScene.input)
 
+        // TODO: is there a way to move app from this to another package
+        // so we can move WindowService to services package
+
         // these things need to be called early before the main loop
         // so that menus can correctly display input controls, etc.
         // this is called once per application lifetime
-        //app.initInput()
-        //app.onPreInit()
+        app.initInput()
+        app.onPreInit()
     }
 
     private fun addOverlay(scene: Scene) {

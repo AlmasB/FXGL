@@ -35,6 +35,7 @@ module com.almasb.fxgl.all {
 
     opens com.almasb.fxgl.dsl to com.almasb.fxgl.core;
     opens com.almasb.fxgl.dev to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.app to com.almasb.fxgl.core;
     opens com.almasb.fxgl.app.services to com.almasb.fxgl.core;
 
     exports com.almasb.fxgl.app;

@@ -14,7 +14,7 @@ import com.almasb.fxgl.app.GameController
 import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.app.services.AssetLoaderService
 import com.almasb.fxgl.app.services.SystemBundleService
-import com.almasb.fxgl.app.services.WindowService
+import com.almasb.fxgl.app.WindowService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.core.concurrent.Async
