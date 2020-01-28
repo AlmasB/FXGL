@@ -9,10 +9,8 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.achievement.Achievement
 import com.almasb.fxgl.achievement.AchievementService
 import com.almasb.fxgl.app.scene.SceneFactory
-import com.almasb.fxgl.app.services.AssetLoaderService
-import com.almasb.fxgl.app.services.ConfigureServicesService
+import com.almasb.fxgl.app.services.*
 import com.almasb.fxgl.app.services.SystemBundleService
-import com.almasb.fxgl.app.services.WindowService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.math.FXGLMath
@@ -227,6 +225,8 @@ class GameSettings(
 
 
                 WindowService::class.java,
+
+                FXGLDialogService::class.java,
 
                 EventBusService::class.java,
                 FileSystemService::class.java,

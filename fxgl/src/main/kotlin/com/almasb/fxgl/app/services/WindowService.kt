@@ -10,12 +10,16 @@ import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.InitAppTask
 import com.almasb.fxgl.app.MainWindow
 import com.almasb.fxgl.app.ReadOnlyGameSettings
-import com.almasb.fxgl.app.scene.*
+import com.almasb.fxgl.app.scene.FXGLScene
+import com.almasb.fxgl.app.scene.GameScene
+import com.almasb.fxgl.app.scene.LoadingScene
+import com.almasb.fxgl.app.scene.PauseMenu
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.input.UserAction
+import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.profile.DataFile
 import com.almasb.fxgl.scene.Scene
@@ -23,6 +27,7 @@ import com.almasb.fxgl.scene.SceneListener
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.time.Timer
+import com.almasb.fxgl.ui.DialogService
 import com.almasb.sslogger.Logger
 import javafx.concurrent.Task
 import javafx.embed.swing.SwingFXUtils
@@ -54,6 +59,9 @@ class WindowService : SceneService() {
 
     private lateinit var assetLoaderService: AssetLoaderService
 
+    private lateinit var localService: LocalizationService
+    private lateinit var dialogService: DialogService
+
     /**
      * The root for the overlay group that is constantly visible and on top
      * of every other UI element. For things like notifications.
@@ -73,9 +81,6 @@ class WindowService : SceneService() {
 
     internal lateinit var playScene: GameScene
     private lateinit var loadScene: LoadingScene
-
-    // TODO: this behaves a lot like a service ...
-    internal lateinit var dialogScene: DialogSubState
 
     private var intro: FXGLScene? = null
     private var mainMenu: FXGLScene? = null
@@ -147,9 +152,6 @@ class WindowService : SceneService() {
                 //app.onUpdate(tpf)
             }
         })
-
-        // we need dialog state before intro and menus
-        dialogScene = DialogSubState(mainWindow.currentFXGLSceneProperty, this)
 
         if (settings.isIntroEnabled) {
             intro = sceneFactory.newIntro()
@@ -237,22 +239,20 @@ class WindowService : SceneService() {
         // 1. a dialog is shown
         // 2. we are loading a game
         // 3. we are showing intro
-        val isNotOK = mainWindow.currentScene === dialogScene
-                || mainWindow.currentScene === loadScene
+
+        // TODO: mainWindow.currentScene === dialogScene ||
+        val isNotOK =  mainWindow.currentScene === loadScene
                 || (settings.isIntroEnabled && mainWindow.currentScene === intro)
 
         return !isNotOK
     }
 
     private fun showConfirmExitDialog() {
-        // TODO: local.getLocalizedString("dialog.exitGame")
-//        display.showConfirmationBox("Exit Game?") { yes ->
-//            if (yes)
-//                exit()
-//        }
+        dialogService.showConfirmationBox(localService.getLocalizedString("dialog.exitGame")) { yes ->
+            if (yes)
+                FXGL.getGameController().exit()
+        }
     }
-
-    // GAME CONTROLLER CALLBACKS
 
     private var dataFile: DataFile? = null
 

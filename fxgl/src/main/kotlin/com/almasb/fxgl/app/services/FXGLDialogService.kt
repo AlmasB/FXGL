@@ -4,16 +4,13 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.app.scene
+package com.almasb.fxgl.app.services
 
-import com.almasb.fxgl.app.services.WindowService
+import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.core.util.EmptyRunnable
-import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.scene.SubScene
-import com.almasb.fxgl.ui.DialogBox
-import com.almasb.fxgl.ui.Display
+import com.almasb.fxgl.ui.*
 import javafx.beans.property.DoubleProperty
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.effect.BoxBlur
@@ -29,45 +26,42 @@ import java.util.function.Consumer
 import java.util.function.Predicate
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DialogSubState(
-        private val currentSceneProperty: ReadOnlyObjectProperty<FXGLScene>,
+class FXGLDialogService : DialogService() {
 
-        // TODO: shouldn't be a reference to window service
-        private val windowService: WindowService
-) : SubScene(), Display {
+    private lateinit var uiFactory: UIFactoryService
+    private lateinit var dialogFactory: DialogFactoryService
+    private lateinit var sceneService: WindowService
 
-    private val window = FXGL.getUIFactoryService().newWindow()
-    private val dialogFactory = FXGL.getDialogFactoryService()
+    private lateinit var window: MDIWindow
+
+    private lateinit var dialogScene: SubScene
 
     private val states = ArrayDeque<DialogData>()
 
-    init {
-        val width = FXGL.getSettings().width.toDouble()
-        val height = FXGL.getSettings().height.toDouble()
-
-        contentRoot.setPrefSize(width, height)
-        contentRoot.background = Background(BackgroundFill(Color.rgb(127, 127, 123, 0.5), null, null))
+    override fun onInit() {
+        window = uiFactory.newWindow()
 
         window.canResize = false
         window.canMove = false
         window.canMinimize = false
         window.canClose = false
 
+        val width = sceneService.appWidth.toDouble()
+        val height = sceneService.appHeight.toDouble()
+
         window.layoutXProperty().bind(window.widthProperty().divide(2).negate().add(width / 2))
         window.layoutYProperty().bind(window.heightProperty().divide(2).negate().add(height / 2))
 
-        contentRoot.children.add(window)
+        dialogScene = DialogSubScene(window, width, height)
 
         // keep traversal input within this node
         initTraversalPolicy()
     }
 
     private fun initTraversalPolicy() {
-        window.addEventFilter(KeyEvent.KEY_PRESSED, {
+        window.addEventFilter(KeyEvent.KEY_PRESSED) {
             if (it.code == KeyCode.TAB
                     || it.code == KeyCode.UP
                     || it.code == KeyCode.DOWN
@@ -75,11 +69,11 @@ class DialogSubState(
                     || it.code == KeyCode.RIGHT) {
                 it.consume()
             }
-        })
+        }
     }
 
     val isShowing: Boolean
-        get() = contentRoot.scene != null
+        get() = dialogScene.contentRoot.scene != null
 
     /**
      * Replaces all content of the internal window by given node.
@@ -103,15 +97,15 @@ class DialogSubState(
 
     private fun show() {
         if (!isShowing) {
-            openInScene(currentSceneProperty.value)
+            openInScene(sceneService.mainWindow.currentFXGLSceneProperty.value)
 
-            contentRoot.requestFocus()
+            dialogScene.contentRoot.requestFocus()
         }
     }
 
     private fun close() {
         if (states.isEmpty()) {
-            closeInScene(currentSceneProperty.value)
+            closeInScene(sceneService.mainWindow.currentFXGLSceneProperty.value)
         } else {
             val data = states.pop()
             window.title = data.title
@@ -126,13 +120,13 @@ class DialogSubState(
         savedEffect = scene.effect
         scene.effect = bgBlur
 
-        windowService.pushSubScene(this)
+        sceneService.pushSubScene(dialogScene)
     }
 
     private fun closeInScene(scene: FXGLScene) {
         scene.effect = savedEffect
 
-        windowService.popSubScene()
+        sceneService.popSubScene()
     }
 
     override fun showMessageBox(message: String) {
@@ -140,19 +134,19 @@ class DialogSubState(
     }
 
     override fun showMessageBox(message: String, callback: Runnable) {
-        val dialog = dialogFactory.messageDialog(message, {
+        val dialog = dialogFactory.messageDialog(message) {
             close()
             callback.run()
-        })
+        }
 
         show("Message", dialog)
     }
 
     override fun showConfirmationBox(message: String, resultCallback: Consumer<Boolean>) {
-        val dialog = dialogFactory.confirmationDialog(message, {
+        val dialog = dialogFactory.confirmationDialog(message) {
             close()
             resultCallback.accept(it)
-        })
+        }
 
         show("Confirm", dialog)
     }
@@ -183,20 +177,20 @@ class DialogSubState(
         showErrorBox(error, EmptyRunnable)
     }
 
-    internal fun showErrorBox(error: Throwable, callback: Runnable) {
-        val dialog = dialogFactory.errorDialog(error, {
+    private fun showErrorBox(error: Throwable, callback: Runnable) {
+        val dialog = dialogFactory.errorDialog(error) {
             close()
             callback.run()
-        })
+        }
 
         show("Error", dialog)
     }
 
     override fun showErrorBox(errorMessage: String, callback: Runnable) {
-        val dialog = dialogFactory.errorDialog(errorMessage, {
+        val dialog = dialogFactory.errorDialog(errorMessage) {
             close()
             callback.run()
-        })
+        }
 
         show("Error", dialog)
     }
@@ -208,27 +202,36 @@ class DialogSubState(
     }
 
     override fun showProgressBox(message: String): DialogBox {
-        val dialog = dialogFactory.progressDialogIndeterminate(message, {
+        val dialog = dialogFactory.progressDialogIndeterminate(message) {
             close()
-        })
+        }
 
         show("Progress", dialog)
 
         return object : DialogBox {
             override fun close() {
-                this@DialogSubState.close()
+                this@FXGLDialogService.close()
             }
         }
     }
 
     override fun showProgressBox(message: String, observable: DoubleProperty, callback: Runnable) {
-        val dialog = dialogFactory.progressDialog(message, observable, {
+        val dialog = dialogFactory.progressDialog(message, observable) {
             close()
             callback.run()
-        })
+        }
 
         show("Progress", dialog)
     }
 
-    private class DialogData internal constructor(internal var title: String, internal var contentPane: Pane)
+    private class DialogData(val title: String, val contentPane: Pane)
+
+    private class DialogSubScene(window: MDIWindow, width: Double, height: Double) : SubScene() {
+        init {
+            contentRoot.setPrefSize(width, height)
+            contentRoot.background = Background(BackgroundFill(Color.rgb(127, 127, 123, 0.5), null, null))
+
+            contentRoot.children.add(window)
+        }
+    }
 }

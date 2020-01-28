@@ -47,7 +47,7 @@ import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.DialogFactoryService
-import com.almasb.fxgl.ui.Display
+import com.almasb.fxgl.ui.DialogService
 import com.almasb.fxgl.ui.UIFactoryService
 import javafx.animation.Interpolator
 import javafx.beans.property.*
@@ -181,7 +181,10 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getAudioPlayer() = engine.getService(AudioPlayer::class.java)
 
-    @JvmStatic fun getDisplay(): Display = engine.getService(WindowService::class.java).dialogScene
+    @Deprecated("Use getDialogService()")
+    @JvmStatic fun getDisplay(): DialogService = getDialogService()
+
+    @JvmStatic fun getDialogService() = engine.getService(DialogService::class.java)
 
     @JvmStatic fun getExecutor(): Executor = Async
 

@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.ui;
 
+import com.almasb.fxgl.core.EngineService;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -18,7 +19,7 @@ import java.util.function.Predicate;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface Display {
+public abstract class DialogService extends EngineService {
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button. On
@@ -26,7 +27,7 @@ public interface Display {
      *
      * @param message the message to show
      */
-    void showMessageBox(String message);
+    public abstract void showMessageBox(String message);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button. On
@@ -35,7 +36,7 @@ public interface Display {
      * @param message the message to show
      * @param callback the function to be called when dialog is dismissed
      */
-    void showMessageBox(String message, Runnable callback);
+    public abstract void showMessageBox(String message, Runnable callback);
 
     /**
      * Shows a blocking message box with YES and NO buttons. The callback is
@@ -44,7 +45,7 @@ public interface Display {
      * @param message        message to show
      * @param resultCallback the function to be called
      */
-    void showConfirmationBox(String message, Consumer<Boolean> resultCallback);
+    public abstract void showConfirmationBox(String message, Consumer<Boolean> resultCallback);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback
@@ -53,7 +54,7 @@ public interface Display {
      * @param message        message to show
      * @param resultCallback the function to be called
      */
-    void showInputBox(String message, Consumer<String> resultCallback);
+    public abstract void showInputBox(String message, Consumer<String> resultCallback);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback
@@ -63,7 +64,7 @@ public interface Display {
      * @param filter  filter to validate input
      * @param resultCallback the function to be called
      */
-    void showInputBox(String message, Predicate<String> filter, Consumer<String> resultCallback);
+    public abstract void showInputBox(String message, Predicate<String> filter, Consumer<String> resultCallback);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK and CANCEL buttons and input field.
@@ -73,14 +74,14 @@ public interface Display {
      * @param filter the filter to validate input
      * @param resultCallback result function to call back or empty string if use cancelled the dialog
      */
-    void showInputBoxWithCancel(String message, Predicate<String> filter, Consumer<String> resultCallback);
+    public abstract void showInputBoxWithCancel(String message, Predicate<String> filter, Consumer<String> resultCallback);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) dialog with the error.
      *
      * @param error the error to show
      */
-    void showErrorBox(Throwable error);
+    public abstract void showErrorBox(Throwable error);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) dialog with the error.
@@ -88,7 +89,7 @@ public interface Display {
      * @param errorMessage error message to show
      * @param callback the function to be called when dialog is dismissed
      */
-    void showErrorBox(String errorMessage, Runnable callback);
+    public abstract void showErrorBox(String errorMessage, Runnable callback);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) generic dialog.
@@ -97,7 +98,7 @@ public interface Display {
      * @param content the content
      * @param buttons buttons present
      */
-    void showBox(String message, Node content, Button... buttons);
+    public abstract void showBox(String message, Node content, Button... buttons);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) progress dialog.
@@ -106,12 +107,12 @@ public interface Display {
      * @param message message to show
      * @return dialog handler
      */
-    DialogBox showProgressBox(String message);
+    public abstract DialogBox showProgressBox(String message);
 
     /**
      * @param message message to show
      * @param progress [0..1]
      * @param callback called when dialog is dismissed (when progress >= 1)
      */
-    void showProgressBox(String message, DoubleProperty progress, Runnable callback);
+    public abstract void showProgressBox(String message, DoubleProperty progress, Runnable callback);
 }
