@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.app.services
 
-import com.almasb.fxgl.app.AssetLoader
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.concurrent.Async
@@ -42,19 +41,15 @@ class ConfigureServicesService : EngineService() {
     private lateinit var local: LocalizationService
     private lateinit var uiFactoryService: UIFactoryService
 
-    private lateinit var assetLoaderService: AssetLoaderService
-
-    private lateinit var assetLoader: AssetLoader
+    private lateinit var assetLoader: AssetLoaderService
 
     override fun onInit() {
-        assetLoader = assetLoaderService.assetLoader
-
         initAndLoadLocalization()
         initAndRegisterFontFactories()
 
         // TODO: refactor
         IOTask.setDefaultExecutor(Async)
-        IOTask.setDefaultFailAction { FXGL.getDisplay().showErrorBox(it) }
+        IOTask.setDefaultFailAction { FXGL.getDialogService().showErrorBox(it) }
     }
 
     private fun initAndLoadLocalization() {

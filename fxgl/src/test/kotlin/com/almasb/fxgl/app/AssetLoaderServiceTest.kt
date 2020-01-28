@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.services.AssetLoaderService
 import com.almasb.fxgl.test.RunWithFX
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
@@ -22,7 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @ExtendWith(RunWithFX::class)
-class AssetLoaderTest {
+class AssetLoaderServiceTest {
 
     private val TEXT_ASSETS = arrayOf("test1.txt")
     private val TEXT_DATA = arrayOf("Lorem ipsum dolor sit amet, consectetuer adipiscing elit.\n" +
@@ -44,11 +45,11 @@ class AssetLoaderTest {
             "tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet\n" +
             "rci eget eros faucibus tincidunt")
 
-    private lateinit var assetLoader: AssetLoader
+    private lateinit var assetLoader: AssetLoaderService
 
     @BeforeEach
     fun setUp() {
-        assetLoader = AssetLoader()
+        assetLoader = AssetLoaderService()
     }
 
     @Test

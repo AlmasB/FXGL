@@ -100,7 +100,7 @@ class WindowService : SceneService() {
 
         settings.cssList.forEach {
             log.debug("Applying CSS: $it")
-            mainWindow.addCSS(assetLoaderService.assetLoader.loadCSS(it))
+            mainWindow.addCSS(assetLoaderService.loadCSS(it))
         }
 
         mainWindow.onClose = {
@@ -209,8 +209,8 @@ class WindowService : SceneService() {
 
     override fun onMainLoopStarting() {
         if (!settings.isExperimentalNative) {
-            mainWindow.addIcons(assetLoaderService.assetLoader.loadImage(settings.appIcon))
-            mainWindow.defaultCursor = ImageCursor(assetLoaderService.assetLoader.loadCursorImage("fxgl_default.png"), 7.0, 6.0)
+            mainWindow.addIcons(assetLoaderService.loadImage(settings.appIcon))
+            mainWindow.defaultCursor = ImageCursor(assetLoaderService.loadCursorImage("fxgl_default.png"), 7.0, 6.0)
         }
 
         // TODO:
