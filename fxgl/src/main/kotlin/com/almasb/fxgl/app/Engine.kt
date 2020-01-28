@@ -217,4 +217,12 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         Logger.close()
         Platform.exit()
     }
+
+    fun pauseLoop() {
+        loop.pause()
+    }
+
+    fun resumeLoop() {
+        loop.resume()
+    }
 }

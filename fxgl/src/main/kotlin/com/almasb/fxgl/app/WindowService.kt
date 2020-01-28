@@ -30,6 +30,7 @@ import javafx.concurrent.Task
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
 import javafx.scene.Group
+import javafx.scene.ImageCursor
 import javafx.scene.input.KeyEvent
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -85,20 +86,17 @@ class WindowService : SceneService() {
     private var pauseMenu: PauseMenu? = null
 
     override fun onInit() {
-        //mainWindow.addIcons(assetLoader.loadImage(settings.appIcon))
-        //mainWindow.defaultCursor = ImageCursor(assetLoader.loadCursorImage("fxgl_default.png"), 7.0, 6.0)
-
-//        if (settings.isMobile) {
-//            // no-op
-//        } else {
-//            mainWindow.iconifiedProperty().addListener { _, _, isMinimized ->
-//                if (isMinimized) {
-//                    loop.pause()
-//                } else {
-//                    loop.resume()
-//                }
-//            }
-//        }
+        if (settings.isMobile) {
+            // no-op
+        } else {
+            mainWindow.iconifiedProperty().addListener { _, _, isMinimized ->
+                if (isMinimized) {
+                    FXGL.getEngineInternal().pauseLoop()
+                } else {
+                    FXGL.getEngineInternal().resumeLoop()
+                }
+            }
+        }
 
         settings.cssList.forEach {
             log.debug("Applying CSS: $it")
@@ -210,6 +208,11 @@ class WindowService : SceneService() {
     }
 
     override fun onMainLoopStarting() {
+        if (!settings.isExperimentalNative) {
+            mainWindow.addIcons(assetLoaderService.assetLoader.loadImage(settings.appIcon))
+            mainWindow.defaultCursor = ImageCursor(assetLoaderService.assetLoader.loadCursorImage("fxgl_default.png"), 7.0, 6.0)
+        }
+
         // TODO:
         //SystemActions.bind(playScene.input)
 
