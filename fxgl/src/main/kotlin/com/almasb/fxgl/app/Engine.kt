@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
+import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.reflect.ReflectionUtils.*
 import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.sslogger.Logger
@@ -75,25 +76,20 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
     }
 
     fun initServicesAndStartLoop() {
-        val start = System.nanoTime()
+        // give control back to FX thread while we do heavy init stuff in the background
+        IOTask.ofVoid { initServices() }
+                .onSuccess {
+                    services.forEach { it.onMainLoopStarting() }
 
-        // give control back to FX thread while we do heavy init stuff
-        Async.startAsync {
-            initServices()
-
-            // finish init on FX thread
-            Async.startAsyncFX {
-
-                services.forEach { it.onMainLoopStarting() }
-
-                log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
-
-                loop.start()
-            }
-        }
+                    loop.start()
+                }
+                .onFailure { handleFatalError(it) }
+                .runAsyncFX(Async)
     }
 
     private fun initServices() {
+        val start = System.nanoTime()
+
         initEnvironmentVars()
         logEnvironmentVars()
 
@@ -110,6 +106,8 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         injectServicesIntoServices()
 
         services.forEach { it.onInit() }
+
+        log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
     }
 
     private fun initEnvironmentVars() {
