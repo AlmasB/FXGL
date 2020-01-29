@@ -12,9 +12,9 @@ import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.reflect.ReflectionUtils.*
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.sslogger.Logger
-import javafx.application.Platform
 
 /**
  * FXGL engine is mostly a collection of services, all controlled
@@ -172,15 +172,6 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
 
         val error = if (e is Exception) e else RuntimeException(e)
 
-        if (Logger.isConfigured()) {
-            log.fatal("Uncaught Exception:", error)
-            log.fatal("Application will now exit")
-        } else {
-            println("Uncaught Exception:")
-            error.printStackTrace()
-            println("Application will now exit")
-        }
-
         // stop main loop from running as we cannot continue
         loop.stop()
 
@@ -188,20 +179,21 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         // block with error dialog so that user can read the error
         ErrorDialog(error).showAndWait()
 
+        log.fatal("Uncaught Exception:", error)
+        log.fatal("Application will now exit")
+
         if (loop.isStarted) {
             // exit normally
-            stopLoopAndExit()
+            FXGL.getGameController().exit()
         } else {
-            if (Logger.isConfigured()) {
-                Logger.close()
-            }
+            Logger.close()
 
             // we failed during launch, so abnormal exit
             System.exit(-1)
         }
     }
 
-    fun stopLoopAndExit() {
+    fun stopLoopAndExitServices() {
         log.debug("Exiting FXGL")
 
         loop.stop()
@@ -210,10 +202,6 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
 
         log.debug("Shutting down background threads")
         Async.shutdownNow()
-
-        log.debug("Closing logger and exiting JavaFX")
-        Logger.close()
-        Platform.exit()
     }
 
     fun pauseLoop() {

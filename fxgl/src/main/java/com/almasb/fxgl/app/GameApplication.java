@@ -207,15 +207,17 @@ public abstract class GameApplication {
         public static GameApplication app;
         private static ReadOnlyGameSettings settings;
 
+        private Engine engine;
+
         /**
          * This is the main entry point as run by the JavaFX platform.
          */
         @Override
         public void start(Stage stage) {
-            var engine = new Engine(settings);
+            engine = new Engine(settings);
 
             // after this call, all FXGL.* calls (apart from those accessing services) are valid
-            FXGL.inject$fxgl(engine);
+            FXGL.inject$fxgl(engine, this);
 
             var startupScene = settings.getSceneFactory().newStartup();
 
@@ -229,6 +231,15 @@ public abstract class GameApplication {
             engine.getEnvironmentVars$fxgl().put("mainWindow", mainWindow);
 
             engine.initServicesAndStartLoop();
+        }
+
+        public void exitFXGL() {
+            if (engine != null)
+                engine.stopLoopAndExitServices();
+
+            log.debug("Closing logger and exiting JavaFX");
+            Logger.close();
+            javafx.application.Platform.exit();
         }
 
         static void launchFX(GameApplication app, ReadOnlyGameSettings settings, String[] args) {

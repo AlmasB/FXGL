@@ -72,10 +72,12 @@ import java.util.function.Consumer
 class FXGL private constructor() { companion object {
     
     private lateinit var engine: Engine
+    private lateinit var fxApp: GameApplication.FXGLApplication
 
     @JvmStatic
-    internal fun inject(e: Engine) {
+    internal fun inject(e: Engine, a: GameApplication.FXGLApplication) {
         engine = e
+        fxApp = a
     }
 
     @JvmStatic
@@ -117,7 +119,7 @@ class FXGL private constructor() { companion object {
         }
 
         override fun exit() {
-            engine.stopLoopAndExit()
+            fxApp.exitFXGL()
         }
 
     }
