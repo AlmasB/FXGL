@@ -9,10 +9,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.achievement.Achievement
 import com.almasb.fxgl.achievement.AchievementService
 import com.almasb.fxgl.app.scene.SceneFactory
-import com.almasb.fxgl.app.services.AssetLoaderService
-import com.almasb.fxgl.app.services.ConfigureServicesService
-import com.almasb.fxgl.app.services.FXGLDialogService
-import com.almasb.fxgl.app.services.SystemBundleService
+import com.almasb.fxgl.app.services.*
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.math.FXGLMath
@@ -251,7 +248,8 @@ class GameSettings(
                 CutsceneService::class.java,
                 MiniGameService::class.java,
 
-                NetService::class.java
+                NetService::class.java,
+                UpdaterService::class.java
         ),
 
         /**

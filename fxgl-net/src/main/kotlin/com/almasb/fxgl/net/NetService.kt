@@ -7,7 +7,6 @@
 package com.almasb.fxgl.net
 
 import com.almasb.fxgl.core.EngineService
-import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.concurrent.IOTask
 import java.io.InputStream
 import java.net.URL
@@ -19,9 +18,6 @@ import java.net.URL
  */
 class NetService : EngineService() {
 
-    @Inject("urlPOM")
-    private lateinit var urlPOM: String
-
     /**
      * Note: the caller is responsible for closing the stream.
      *
@@ -30,21 +26,6 @@ class NetService : EngineService() {
      */
     fun openStreamTask(url: String): IOTask<InputStream> = IOTask.of("openStream($url)") {
         URL(url).openStream()
-    }
-
-    /**
-     * Loads pom.xml from GitHub server's master branch and parses the "version" tag.
-     *
-     * @return task that returns latest stable FXGL version
-     */
-    fun getLatestVersionTask(): IOTask<String> = openStreamTask(urlPOM).then {
-        IOTask.of("latestVersion") {
-            it.reader().useLines { lines ->
-                return@of lines.first { "<version>" in it }
-                        .trim()
-                        .removeSurrounding("<version>", "</version>")
-            }
-        }
     }
 }
 

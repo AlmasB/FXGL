@@ -33,6 +33,7 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.minigames.MiniGameService
+import com.almasb.fxgl.net.NetService
 import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.profile.DataFile
@@ -204,6 +205,8 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getWindowService() = engine.getService(WindowService::class.java)
 
     @JvmStatic fun getSceneService() = engine.getService(SceneService::class.java)
+
+    @JvmStatic fun getNetService() = engine.getService(NetService::class.java)
 
     /**
      * @return time per frame (in this frame)
