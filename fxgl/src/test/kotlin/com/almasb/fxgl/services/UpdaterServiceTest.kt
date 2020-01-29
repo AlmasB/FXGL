@@ -7,6 +7,7 @@
 package com.almasb.fxgl.services
 
 import com.almasb.fxgl.app.services.UpdaterService
+import com.almasb.fxgl.net.NetService
 import com.almasb.fxgl.test.InjectInTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -29,6 +30,7 @@ class UpdaterServiceTest {
         val lookup = MethodHandles.lookup()
 
         InjectInTest.inject(lookup, updater, "urlPOM", "https://raw.githubusercontent.com/AlmasB/FXGL/master/pom.xml")
+        InjectInTest.inject(lookup, updater, "netService", NetService())
     }
 
     @Test

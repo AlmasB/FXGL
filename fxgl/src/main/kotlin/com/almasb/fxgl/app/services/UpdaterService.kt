@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.net.NetService
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.sslogger.Logger
 
@@ -24,6 +25,8 @@ internal class UpdaterService : EngineService() {
     private val log = Logger.get(javaClass)
 
     private lateinit var updateCheckTimer: LocalTimer
+
+    private lateinit var netService: NetService
 
     @Inject("urlPOM")
     private lateinit var urlPOM: String
@@ -40,7 +43,7 @@ internal class UpdaterService : EngineService() {
      * @return whether we need check for updates
      */
     private fun shouldCheckForUpdate(): Boolean {
-        return true
+        return false
         // TODO:
 //        if (FXGL.getSettings().applicationMode === ApplicationMode.RELEASE)
 //            return false
@@ -84,7 +87,7 @@ internal class UpdaterService : EngineService() {
      *
      * @return task that returns latest stable FXGL version
      */
-    fun getLatestVersionTask(): IOTask<String> = FXGL.getNetService()
+    fun getLatestVersionTask(): IOTask<String> = netService
             .openStreamTask(urlPOM)
             .thenWrap {
                 it.reader().useLines { lines ->
