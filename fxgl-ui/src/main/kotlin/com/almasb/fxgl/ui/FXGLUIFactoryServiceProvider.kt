@@ -7,6 +7,7 @@
 package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.ui.FontType.UI
+import com.almasb.sslogger.Logger
 import javafx.beans.binding.StringBinding
 import javafx.beans.binding.StringExpression
 import javafx.collections.ObservableList
@@ -21,6 +22,8 @@ import javafx.scene.text.Text
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class FXGLUIFactoryServiceProvider : UIFactoryService() {
+
+    private val log = Logger.get(javaClass)
 
     private val fontFactories = hashMapOf<FontType, FontFactory>()
 
@@ -61,8 +64,18 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
         return newFont(UI, size)
     }
 
-    override fun newFont(type: FontType, size: Double): Font
-            = fontFactories[type]?.newFont(size) ?: throw IllegalStateException("No font factory found for $type")
+    override fun newFont(type: FontType, size: Double): Font {
+        val font = fontFactories[type]?.newFont(size)
+
+        if (font != null) {
+            return font
+        }
+
+        log.warning("No font factory found for $type. Using default")
+
+        return Font.font(size)
+    }
+
 
     override fun newButton(text: String): Button {
         return FXGLButton(text).also {
