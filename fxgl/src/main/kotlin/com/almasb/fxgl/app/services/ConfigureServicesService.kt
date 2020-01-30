@@ -29,6 +29,9 @@ class ConfigureServicesService : EngineService() {
     @Inject("language")
     private lateinit var language: ObjectProperty<Language>
 
+    @Inject("supportedLanguages")
+    private lateinit var supportedLanguages: List<Language>
+
     @Inject("fontUI")
     private lateinit var fontUI: String
     @Inject("fontGame")
@@ -55,7 +58,7 @@ class ConfigureServicesService : EngineService() {
     private fun initAndLoadLocalization() {
         log.debug("Loading localizations")
 
-        Language.builtInLanguages.forEach {
+        supportedLanguages.forEach {
             local.addLanguageData(it, assetLoader.loadResourceBundle("languages/${it.name.toLowerCase()}.properties"))
         }
 

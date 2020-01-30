@@ -21,6 +21,11 @@ import com.almasb.fxgl.event.EventBusService
 import com.almasb.fxgl.gameplay.GameDifficulty
 import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.localization.Language
+import com.almasb.fxgl.localization.Language.Companion.ENGLISH
+import com.almasb.fxgl.localization.Language.Companion.FRENCH
+import com.almasb.fxgl.localization.Language.Companion.GERMAN
+import com.almasb.fxgl.localization.Language.Companion.HUNGARIAN
+import com.almasb.fxgl.localization.Language.Companion.RUSSIAN
 import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.net.NetService
@@ -259,7 +264,11 @@ class GameSettings(
 
         var notificationViewClass: Class<out NotificationView> = XboxNotificationView::class.java,
 
-        var achievements: List<Achievement> = arrayListOf()
+        var achievements: List<Achievement> = arrayListOf(),
+
+        var supportedLanguages: List<Language> = arrayListOf(
+                ENGLISH, FRENCH, GERMAN, RUSSIAN, HUNGARIAN
+        )
 ) {
 
     fun setHeightFromRatio(ratio: Double) {
@@ -312,7 +321,8 @@ class GameSettings(
                 unmodifiableList(engineServices),
                 sceneFactory,
                 notificationViewClass,
-                unmodifiableList(achievements))
+                unmodifiableList(achievements),
+                unmodifiableList(supportedLanguages))
     }
 }
 
@@ -464,7 +474,9 @@ class ReadOnlyGameSettings internal constructor(
 
         val notificationViewClass: Class<out NotificationView>,
 
-        val achievements: List<Achievement>
+        val achievements: List<Achievement>,
+
+        val supportedLanguages: List<Language>
 
 ) : SerializableType {
 
@@ -545,7 +557,7 @@ class ReadOnlyGameSettings internal constructor(
     These are saved by the Settings, so engine services do not need to save their copy of these.
      */
 
-    val language = SimpleObjectProperty(Language.ENGLISH)
+    val language = SimpleObjectProperty(ENGLISH)
 
     /**
      * Allows toggling fullscreen on/off from code.
