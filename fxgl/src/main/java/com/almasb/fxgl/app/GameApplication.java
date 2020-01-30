@@ -5,6 +5,7 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.util.Platform;
 import com.almasb.fxgl.dsl.FXGL;
@@ -236,6 +237,9 @@ public abstract class GameApplication {
         public void exitFXGL() {
             if (engine != null)
                 engine.stopLoopAndExitServices();
+
+            log.debug("Shutting down background threads");
+            Async.INSTANCE.shutdownNow();
 
             log.debug("Closing logger and exiting JavaFX");
             Logger.close();

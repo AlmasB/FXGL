@@ -61,7 +61,7 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
 
-    fun addService(engineService: EngineService) {
+    private fun addService(engineService: EngineService) {
         log.debug("Adding new engine service: ${engineService.javaClass}")
 
         services += engineService
@@ -75,8 +75,11 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
                 ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
     }
 
+    /**
+     * This method starts initialization of services on a background thread and returns immediately.
+     * The loop is started on the JavaFX thread, as soon as the services are finished initializing.
+     */
     fun initServicesAndStartLoop() {
-        // give control back to FX thread while we do heavy init stuff in the background
         IOTask.ofVoid { initServices() }
                 .onSuccess {
                     services.forEach { it.onMainLoopStarting() }
@@ -96,11 +99,6 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         settings.engineServices.forEach {
             addService(newInstance(it))
         }
-
-        // TODO:
-        //        if (settings.getApplicationMode() != ApplicationMode.RELEASE && settings.isDeveloperMenuEnabled()) {
-        //        engine.addService(new DevService());
-        //        }
 
         injectDependenciesIntoServices()
         injectServicesIntoServices()
@@ -186,6 +184,7 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
             // exit normally
             FXGL.getGameController().exit()
         } else {
+            // TODO: this needs to happen in GameApplication
             Logger.close()
 
             // we failed during launch, so abnormal exit
@@ -199,9 +198,6 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         loop.stop()
 
         services.forEach { it.onExit() }
-
-        log.debug("Shutting down background threads")
-        Async.shutdownNow()
     }
 
     fun pauseLoop() {
