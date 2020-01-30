@@ -9,6 +9,7 @@ import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.util.Platform;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.ui.ErrorDialog;
 import com.almasb.sslogger.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -215,6 +216,11 @@ public abstract class GameApplication {
          */
         @Override
         public void start(Stage stage) {
+            // any exception on the JavaFX thread will be caught and reported
+            Thread.setDefaultUncaughtExceptionHandler((thread, e) -> handleFatalError(e));
+
+            log.debug("Initializing FXGL");
+
             engine = new Engine(settings);
 
             // after this call, all FXGL.* calls (apart from those accessing services) are valid
@@ -234,8 +240,32 @@ public abstract class GameApplication {
             engine.initServicesAndStartLoop();
         }
 
+        private boolean isError = false;
+
+        private void handleFatalError(Throwable error) {
+            if (isError) {
+                // just ignore to avoid spamming dialogs
+                return;
+            }
+
+            isError = true;
+
+            // stop main loop from running as we cannot continue
+            engine.getLoop().stop();
+
+            // block with error dialog so that user can read the error
+            new ErrorDialog(error).showAndWait();
+
+            log.fatal("Uncaught Exception:", error);
+            log.fatal("Application will now exit");
+
+            exitFXGL();
+        }
+
         public void exitFXGL() {
-            if (engine != null)
+            log.debug("Exiting FXGL");
+
+            if (engine != null && !isError)
                 engine.stopLoopAndExitServices();
 
             log.debug("Shutting down background threads");

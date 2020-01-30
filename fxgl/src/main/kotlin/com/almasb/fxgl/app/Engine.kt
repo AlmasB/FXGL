@@ -12,9 +12,8 @@ import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.reflect.ReflectionUtils.*
-import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.ui.ErrorDialog
 import com.almasb.sslogger.Logger
+import javafx.util.Duration
 
 /**
  * FXGL engine is mostly a collection of services, all controlled
@@ -26,7 +25,7 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
 
     private val log = Logger.get(javaClass)
 
-    private val loop = LoopRunner { loop(it) }
+    val loop = LoopRunner { loop(it) }
 
     val tpf: Double
         get() = loop.tpf
@@ -35,18 +34,10 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
     private val servicesCache = hashMapOf<Class<out EngineService>, EngineService>()
 
     // TODO: make this a local var?
-    internal val environmentVars = hashMapOf<String, Any>()
+    internal val environmentVars = HashMap<String, Any>()
 
     init {
-        log.debug("Initializing FXGL")
-
-        initFatalExceptionHandler()
-
         logVersion()
-    }
-
-    private fun initFatalExceptionHandler() {
-        Thread.setDefaultUncaughtExceptionHandler { _, error -> handleFatalError(error) }
     }
 
     private fun logVersion() {
@@ -59,12 +50,6 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         log.info("FXGL-$version ($build) on ${settings.platform} (J:$jVersion FX:$fxVersion)")
         log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
-    }
-
-    private fun addService(engineService: EngineService) {
-        log.debug("Adding new engine service: ${engineService.javaClass}")
-
-        services += engineService
     }
 
     inline fun <reified T : EngineService> getService(serviceClass: Class<T>): T {
@@ -80,32 +65,39 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
      * The loop is started on the JavaFX thread, as soon as the services are finished initializing.
      */
     fun initServicesAndStartLoop() {
-        IOTask.ofVoid { initServices() }
-                .onSuccess {
-                    services.forEach { it.onMainLoopStarting() }
+        IOTask.ofVoid {
+            initEnvironmentVars()
+            initServices()
+        }
+        .onSuccess {
+            services.forEach { it.onMainLoopStarting() }
 
-                    loop.start()
-                }
-                .onFailure { handleFatalError(it) }
-                .runAsyncFX(Async)
+            loop.start()
+        }
+        .onFailure {
+            throw it
+        }
+        .runAsyncFX(Async)
     }
 
     private fun initServices() {
         val start = System.nanoTime()
 
-        initEnvironmentVars()
-        logEnvironmentVars()
-
         settings.engineServices.forEach {
-            addService(newInstance(it))
+            services += (newInstance(it))
         }
 
-        injectDependenciesIntoServices()
-        injectServicesIntoServices()
+        services.forEach {
+            injectDependenciesIntoService(it)
+        }
 
-        services.forEach { it.onInit() }
+        services.forEach {
+            it.onInit()
+        }
 
         log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
+
+        Async.schedule({ logEnvironmentVarsAndServices() }, Duration.seconds(3.0))
     }
 
     private fun initEnvironmentVars() {
@@ -116,37 +108,37 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         }
     }
 
-    private fun logEnvironmentVars() {
+    private fun injectDependenciesIntoService(service: EngineService) {
+        findFieldsByAnnotation(service, Inject::class.java).forEach { field ->
+            val injectKey = field.getDeclaredAnnotation(Inject::class.java).value
+
+            if (injectKey !in environmentVars) {
+                throw IllegalArgumentException("Cannot inject @Inject($injectKey). No value present for $injectKey")
+            }
+
+            inject(field, service, environmentVars[injectKey])
+        }
+
+        findFieldsByTypeRecursive(service, EngineService::class.java).forEach { field ->
+
+            val provider = services.find { field.type.isAssignableFrom(it.javaClass) }
+                    ?: throw IllegalStateException("No provider found for ${field.type}")
+
+            inject(field, service, provider)
+        }
+    }
+
+    private fun logEnvironmentVarsAndServices() {
         log.debug("Logging environment variables")
 
         environmentVars.forEach { (key, value) ->
             log.debug("$key: $value")
         }
-    }
 
-    private fun injectDependenciesIntoServices() {
-        services.forEach { service ->
-            findFieldsByAnnotation(service, Inject::class.java).forEach { field ->
-                val injectKey = field.getDeclaredAnnotation(Inject::class.java).value
+        log.debug("Logging services")
 
-                if (injectKey !in environmentVars) {
-                    throw IllegalArgumentException("Cannot inject @Inject($injectKey). No value present for $injectKey")
-                }
-
-                inject(field, service, environmentVars[injectKey])
-            }
-        }
-    }
-
-    private fun injectServicesIntoServices() {
-        services.forEach { service ->
-            findFieldsByTypeRecursive(service, EngineService::class.java).forEach { field ->
-
-                val provider = services.find { field.type.isAssignableFrom(it.javaClass) }
-                        ?: throw IllegalStateException("No provider found for ${field.type}")
-
-                inject(field, service, provider)
-            }
+        services.forEach {
+            log.debug("${it.javaClass}")
         }
     }
 
@@ -158,43 +150,7 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         services.forEach { it.onGameReady(vars) }
     }
 
-    private var handledOnce = false
-
-    private fun handleFatalError(e: Throwable) {
-        if (handledOnce) {
-            // just ignore to avoid spamming dialogs
-            return
-        }
-
-        handledOnce = true
-
-        val error = if (e is Exception) e else RuntimeException(e)
-
-        // stop main loop from running as we cannot continue
-        loop.stop()
-
-        // assume we are running on JavaFX Application thread
-        // block with error dialog so that user can read the error
-        ErrorDialog(error).showAndWait()
-
-        log.fatal("Uncaught Exception:", error)
-        log.fatal("Application will now exit")
-
-        if (loop.isStarted) {
-            // exit normally
-            FXGL.getGameController().exit()
-        } else {
-            // TODO: this needs to happen in GameApplication
-            Logger.close()
-
-            // we failed during launch, so abnormal exit
-            System.exit(-1)
-        }
-    }
-
     fun stopLoopAndExitServices() {
-        log.debug("Exiting FXGL")
-
         loop.stop()
 
         services.forEach { it.onExit() }
