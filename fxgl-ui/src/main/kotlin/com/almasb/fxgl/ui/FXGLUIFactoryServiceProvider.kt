@@ -75,8 +75,7 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
 
         return Font.font(size)
     }
-
-
+    
     override fun newButton(text: String): Button {
         return FXGLButton(text).also {
             it.font = newFont(22.0)
