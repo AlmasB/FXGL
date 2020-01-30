@@ -322,10 +322,9 @@ class GameSettings(
                 sceneFactory,
                 notificationViewClass,
                 unmodifiableList(achievements),
-                unmodifiableList(supportedLanguages))
+                unmodifiableList(supportedLanguages.sortedBy { it.name }))
     }
 }
-
 
 /**
  * A copy of GameSettings with public getters only.

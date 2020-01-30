@@ -338,7 +338,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun createContentVideo(): MenuContent {
         log.debug("createContentVideo()")
 
-        val languageBox = getUIFactory().newChoiceBox(FXCollections.observableArrayList(getLocalizationService().languages))
+        val languageBox = getUIFactory().newChoiceBox(FXCollections.observableArrayList(getSettings().supportedLanguages))
         languageBox.value = getSettings().language.value
 
         getSettings().language.bindBidirectional(languageBox.valueProperty())
