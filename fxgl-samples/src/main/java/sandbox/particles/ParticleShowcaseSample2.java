@@ -6,18 +6,23 @@
 
 package sandbox.particles;
 
+import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
+import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
 import javafx.geometry.Point2D;
+import javafx.scene.effect.Bloom;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -25,7 +30,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class ParticleShowcaseSample extends GameApplication {
+public class ParticleShowcaseSample2 extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidthFromRatio(16/9.0);
@@ -138,37 +143,161 @@ public class ParticleShowcaseSample extends GameApplication {
         onKeyDown(KeyCode.R, () -> {
             emitter.setAllowParticleRotation(!emitter.isAllowParticleRotation());
         });
+
+        onBtnDown(MouseButton.PRIMARY, () -> {
+            emitter = ParticleEmitters.newExplosionEmitter(40);
+
+            // TODO: integrate with demo with settings
+
+            emitter.setMaxEmissions(3);
+            emitter.setNumParticles(450);
+            emitter.setEmissionRate(0.86);
+            emitter.setSize(1, 24);
+            emitter.setScaleFunction(i -> FXGLMath.randomPoint2D().multiply(0.01));
+            emitter.setExpireFunction(i -> Duration.seconds(random(0.25, 3)));
+            emitter.setInterpolator(Interpolators.SMOOTH.EASE_IN_OUT());
+            emitter.setAccelerationFunction(() -> new Point2D(0, random(0, 2)));
+            //emitter.setVelocityFunction(i -> Point2D.ZERO);
+            //emitter.setVelocityFunction(i -> FXGLMath.randomPoint2D().multiply(random(1, 15)));
+
+            var name = names[index++];
+
+            System.out.println("Using " + name);
+
+
+            if (index == names.length) {
+                index = 0;
+            }
+
+            var c = FXGLMath.randomColor();
+            emitter.setSourceImage(texture("particles/" + name, 32, 32).multiplyColor(c));
+            emitter.setAllowParticleRotation(true);
+
+//            emitter.setControl(p -> {
+//                var x = p.position.x;
+//                var y = p.position.y;
+//
+//                var noiseValue = FXGLMath.noise2D(x * 0.002 * t, y * 0.002 * t);
+//                var angle = FXGLMath.toDegrees((noiseValue + 1) * Math.PI * 1.5);
+//
+//                angle %= 360.0;
+//
+//                var v = Vec2.fromAngle(angle).normalizeLocal().mulLocal(FXGLMath.random(1.0, 15));
+//
+//                var vx = p.velocity.x * 0.8f + v.x * 0.2f;
+//                var vy = p.velocity.y * 0.8f + v.y * 0.2f;
+//
+//                p.velocity.x = vx;
+//                p.velocity.y = vy;
+//            });
+
+            e = entityBuilder()
+                    .with(new ParticleComponent(emitter))
+                    .with(new ExpireCleanComponent(Duration.seconds(6)))
+                    .buildAndAttach();
+
+            e.xProperty().bind(getInput().mouseXWorldProperty().subtract(10));
+            e.yProperty().bind(getInput().mouseYWorldProperty().subtract(10));
+
+            var tank = entityBuilder()
+                    .type(Type.PLAYER)
+                    .at(e.getPosition().subtract(16, 16))
+                    .viewWithBBox(texture("tank_player.png"))
+                    .with(new ExpireCleanComponent(Duration.seconds(3)))
+                    .scale(0, 0)
+                    .buildAndAttach();
+
+            tank.getViewComponent().setOpacity(0);
+
+            animationBuilder()
+                    .delay(Duration.seconds(0.5))
+                    .fadeIn(tank)
+                    .buildAndPlay();
+
+            animationBuilder()
+                    .delay(Duration.seconds(0.5))
+                    .scale(tank)
+                    .from(new Point2D(0, 0))
+                    .to(new Point2D(1, 1))
+                    .buildAndPlay();
+        });
+
+        onKeyDown(KeyCode.F, () -> {
+            entityBuilder()
+                    .type(Type.BULLET)
+                    .at(getInput().getMouseXWorld(), getInput().getMouseYWorld())
+                    .viewWithBBox("tank_bullet.png")
+                    .with(new ProjectileComponent(new Point2D(1, 0), 870))
+                    .collidable()
+                    .buildAndAttach();
+        });
     }
 
     double t = 0.0;
+
+    private enum Type {
+        BULLET, ENEMY, PLAYER
+    }
 
     @Override
     protected void initGame() {
         getGameScene().setBackgroundColor(Color.BLACK);
         //getGameScene().setCursorInvisible();
 
-        emitter = ParticleEmitters.newExplosionEmitter(300);
+        var shield = new Circle(32, 32, 45, null);
+        shield.setStroke(Color.LIGHTBLUE);
+        shield.setStrokeWidth(2.5);
+        shield.setEffect(new Bloom());
 
-        emitter.setMaxEmissions(Integer.MAX_VALUE);
-        emitter.setNumParticles(50);
-        emitter.setEmissionRate(0.86);
-        emitter.setSize(1, 24);
-        emitter.setScaleFunction(i -> FXGLMath.randomPoint2D().multiply(0.01));
-        emitter.setExpireFunction(i -> Duration.seconds(random(0.25, 2.5)));
-        emitter.setAccelerationFunction(() -> Point2D.ZERO);
-        //emitter.setVelocityFunction(i -> Point2D.ZERO);
-        emitter.setVelocityFunction(i -> FXGLMath.randomPoint2D().multiply(random(1, 45)));
+        entityBuilder()
+                .at(700, 300)
+                .type(Type.ENEMY)
+                .view("tank_enemy.png")
+                .viewWithBBox(shield)
+                .collidable()
+                .buildAndAttach();
+    }
 
-        //emitter.setSourceImage(texture("particles/star_09.png", 32, 32));
-        emitter.setAllowParticleRotation(true);
+    @Override
+    protected void initPhysics() {
+        onCollisionBegin(Type.BULLET, Type.ENEMY, (bullet, enemy) -> {
+            bullet.removeFromWorld();
 
-        emitter.setControl(p -> {
-//            if (p.getView().getParent() != null && p.getView().getParent().getEffect() == null) {
-//                p.getView().getParent().setEffect(new BoxBlur(5, 5, 2));
-//            }
+            spawnParticles(enemy);
+        });
+    }
+
+    private void spawnParticles(Entity enemy) {
+        var emitter1 = ParticleEmitters.newExplosionEmitter(30);
+
+        // TODO: integrate with demo with settings
+
+        emitter1.setMaxEmissions(1);
+        emitter1.setNumParticles(650);
+        emitter1.setEmissionRate(0.86);
+        emitter1.setSize(1, 14);
+        emitter1.setScaleFunction(i -> FXGLMath.randomPoint2D().multiply(0.01));
+        emitter1.setExpireFunction(i -> Duration.seconds(random(0.25, 3)));
+        emitter1.setInterpolator(Interpolators.EXPONENTIAL.EASE_OUT());
+        emitter1.setAccelerationFunction(() -> new Point2D(0, random(0, 1)));
+        //emitter1.setVelocityFunction(i -> Point2D.ZERO);
+        //emitter1.setVelocityFunction(i -> FXGLMath.randomPoint2D().multiply(random(5, 25)));
+
+        var name = names[index++];
+
+        System.out.println("Using " + name);
 
 
+        if (index == names.length) {
+            index = 0;
+        }
 
+//        var c = FXGLMath.randomColor();
+        var c = Color.ORANGERED;
+        emitter1.setSourceImage(texture("particles/" + "circle_05.png", 32, 32).multiplyColor(c));
+        emitter1.setAllowParticleRotation(true);
+
+        emitter1.setControl(p -> {
             var x = p.position.x;
             var y = p.position.y;
 
@@ -177,7 +306,7 @@ public class ParticleShowcaseSample extends GameApplication {
 
             angle %= 360.0;
 
-            var v = Vec2.fromAngle(angle).normalizeLocal().mulLocal(FXGLMath.random(1.0, 25));
+            var v = Vec2.fromAngle(angle).normalizeLocal().mulLocal(FXGLMath.random(1.0, 5));
 
             var vx = p.velocity.x * 0.8f + v.x * 0.2f;
             var vy = p.velocity.y * 0.8f + v.y * 0.2f;
@@ -186,12 +315,11 @@ public class ParticleShowcaseSample extends GameApplication {
             p.velocity.y = vy;
         });
 
-        e = entityBuilder()
-                .with(new ParticleComponent(emitter))
+        entityBuilder()
+                .at(enemy.getPosition().add(16, 16))
+                .with(new ParticleComponent(emitter1))
+                .with(new ExpireCleanComponent(Duration.seconds(6)))
                 .buildAndAttach();
-
-        e.xProperty().bind(getInput().mouseXWorldProperty().subtract(10));
-        e.yProperty().bind(getInput().mouseYWorldProperty().subtract(10));
     }
 
     boolean up = true;
