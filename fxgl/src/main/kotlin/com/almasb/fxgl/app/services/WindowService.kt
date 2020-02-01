@@ -4,13 +4,16 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.app
+package com.almasb.fxgl.app.services
 
+import com.almasb.fxgl.app.GameApplication
+import com.almasb.fxgl.app.InitAppTask
+import com.almasb.fxgl.app.MainWindow
+import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.scene.LoadingScene
 import com.almasb.fxgl.app.scene.PauseMenu
-import com.almasb.fxgl.app.services.AssetLoaderService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.dsl.FXGL

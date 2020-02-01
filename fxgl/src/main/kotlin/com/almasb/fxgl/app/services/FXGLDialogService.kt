@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.app.services
 
-import com.almasb.fxgl.app.WindowService
 import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.scene.SubScene
