@@ -8,6 +8,7 @@ package com.almasb.fxgl.profile
 
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.io.FileSystemService
+import com.almasb.fxgl.test.InjectInTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.lang.invoke.MethodHandles
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
@@ -51,19 +53,19 @@ class SaveLoadServiceTest {
     fun setUp() {
         saveLoadService = SaveLoadService()
 
-        // TODO: inject FileSystemService(isDesktop = true)
+        InjectInTest.inject(MethodHandles.lookup(), saveLoadService, "fs", FileSystemService().also { it.onInit() })
     }
 
-//    @Test
-//    fun `Test new - save - load`() {
-//        // we do a full clean before so it's important that
-//        // we keep the order, i.e. we save first so we have something to load from
-//        `Save game data`()
-//        `Load game data`()
-//        `Read file names`()
-//        `Delete game data`()
-//        `Delete profile`()
-//    }
+    @Test
+    fun `Test new - save - load`() {
+        // we do a full clean before so it's important that
+        // we keep the order, i.e. we save first so we have something to load from
+        `Save game data`()
+        `Load game data`()
+        `Read file names`()
+        `Delete game data`()
+        `Delete profile`()
+    }
 
     fun `Save game data`() {
         val bundle1 = Bundle("Hello")
