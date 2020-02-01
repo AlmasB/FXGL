@@ -38,9 +38,14 @@ abstract class EngineService : Updatable, SerializableType {
     open fun onGameReady(vars: PropertyMap) { }
 
     /**
-     * This is called on a JavaFX thread.
+     * This is called on a JavaFX thread at each engine tick in any scene.
      */
     override fun onUpdate(tpf: Double) { }
+
+    /**
+     * This is called on a JavaFX thread at each engine tick _only_ in game scene.
+     */
+    open fun onGameUpdate(tpf: Double) { }
 
     /**
      * Called just before the engine exits and the application shuts down.

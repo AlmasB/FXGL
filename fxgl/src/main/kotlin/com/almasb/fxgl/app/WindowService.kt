@@ -141,10 +141,10 @@ class WindowService : SceneService() {
 
         playScene.isSingleStep = settings.isSingleStep
 
-        // app is only updated in Game Scene
+        // onGameUpdate is only updated in Game Scene
         playScene.addListener(object : SceneListener {
             override fun onUpdate(tpf: Double) {
-                app.onUpdate(tpf)
+                FXGL.getEngineInternal().services.forEach { it.onGameUpdate(tpf) }
             }
         })
 
@@ -215,15 +215,6 @@ class WindowService : SceneService() {
 
         // TODO:
         //SystemActions.bind(playScene.input)
-
-        // TODO: is there a way to move app from this to another package
-        // so we can move WindowService to services package
-
-        // these things need to be called early before the main loop
-        // so that menus can correctly display input controls, etc.
-        // this is called once per application lifetime
-        app.initInput()
-        app.onPreInit()
     }
 
     private fun addOverlay(scene: Scene) {

@@ -5,6 +5,7 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.core.EngineService;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.util.Platform;
@@ -286,6 +287,24 @@ public abstract class GameApplication {
             FXGLApplication.app = app;
             FXGLApplication.settings = settings;
             new FXGLApplication().start(stage);
+        }
+    }
+
+    public static class GameApplicationService extends EngineService {
+
+        private GameApplication app = FXGLApplication.app;
+
+        @Override
+        public void onMainLoopStarting() {
+            // these things need to be called early before the main loop
+            // so that menus can correctly display input controls, etc.
+            app.initInput();
+            app.onPreInit();
+        }
+
+        @Override
+        public void onGameUpdate(double tpf) {
+            app.onUpdate(tpf);
         }
     }
 }

@@ -30,7 +30,7 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
     val tpf: Double
         get() = loop.tpf
 
-    private val services = arrayListOf<EngineService>()
+    internal val services = arrayListOf<EngineService>()
     private val servicesCache = hashMapOf<Class<out EngineService>, EngineService>()
 
     // TODO: make this a local var?

@@ -228,6 +228,7 @@ class GameSettings(
                 // TODO: this has to run first
                 ConfigureServicesService::class.java,
 
+                GameApplication.GameApplicationService::class.java,
 
                 WindowService::class.java,
 
