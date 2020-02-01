@@ -10,33 +10,36 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.sslogger.Logger
+import com.gluonhq.attach.storage.StorageService
 import java.io.File
 import java.io.Serializable
 
 /**
  * A wrapper abstraction around the file system access.
  * Enables access of IO via IO tasks.
- * All file names used here are full paths relative to root.
+ * All file names used here are paths relative to root.
  * Example: ./profiles/ProfileName/save1.dat
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FileSystemService
-@JvmOverloads constructor(isDesktop: Boolean = true) : EngineService() {
+class FileSystemService : EngineService() {
 
-    private val log = Logger.get<FileSystemService>()
+    private val log = Logger.get(javaClass)
 
     @Inject("isDesktop")
     private var isDesktop = true
 
-    private lateinit var fs: FSService
-
-    init {
-        //log.debug("Loaded ${fs.javaClass.simpleName}")
-    }
+    private lateinit var fs: FileSystemAccess
 
     override fun onInit() {
-        fs = FSServiceImpl(isDesktop)
+        val rootStorage = if (isDesktop)
+            File(System.getProperty("user.dir") + "/")
+        else
+            StorageService.create()
+                    .flatMap { it.privateStorage }
+                    .orElseThrow { RuntimeException("No private storage present") }
+
+        fs = FileSystemAccess(rootStorage)
     }
 
     /**
@@ -49,9 +52,9 @@ class FileSystemService
     /**
      * Creates [dirName] directory, creating required parent directories if necessary.
      */
-    fun createDirectoryTask(dirName: String): IOTask<Void> = IOTask.ofVoid("createDirectoryTask($dirName)", {
+    fun createDirectoryTask(dirName: String): IOTask<Void> = IOTask.ofVoid("createDirectoryTask($dirName)") {
         fs.createDirectory(dirName)
-    })
+    }
 
     /**
      * Writes binary data to file, creating required directories.
@@ -60,9 +63,9 @@ class FileSystemService
      * @param fileName to save as
      * @return IO task
      */
-    fun writeDataTask(data: Serializable, fileName: String) = IOTask.ofVoid("writeDataTask($fileName)", {
+    fun writeDataTask(data: Serializable, fileName: String) = IOTask.ofVoid("writeDataTask($fileName)") {
         fs.writeData(data, fileName)
-    })
+    }
 
     /**
      * Writes text data to file, creating required directories.
@@ -71,9 +74,9 @@ class FileSystemService
      * @param fileName to save as
      * @return IO task
      */
-    fun writeDataTask(text: List<String>, fileName: String) = IOTask.ofVoid("writeDataTask($fileName)", {
+    fun writeDataTask(text: List<String>, fileName: String) = IOTask.ofVoid("writeDataTask($fileName)") {
         fs.writeData(text, fileName)
-    })
+    }
 
     /**
      * Loads data from file into an object.
@@ -122,9 +125,9 @@ class FileSystemService
      * @return IO task
      */
     fun loadDirectoryNamesTask(dirName: String, recursive: Boolean): IOTask<List<String>>
-            = IOTask.of("loadDirectoryNamesTask($dirName, $recursive)", {
+            = IOTask.of("loadDirectoryNamesTask($dirName, $recursive)") {
         fs.loadDirectoryNames(dirName, recursive)
-    })
+    }
 
     /**
      * Loads (deserializes) last modified file from given [dirName] directory.

@@ -1,13 +1,16 @@
 package com.almasb.fxgl.io
 
+import com.almasb.fxgl.test.InjectInTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
+import java.lang.invoke.MethodHandles
 import java.nio.file.Files
 import java.nio.file.Files.*
 import java.nio.file.Paths.get as path
@@ -18,6 +21,8 @@ import java.nio.file.Paths.get as path
 class FileSystemServiceTest {
 
     companion object {
+        private lateinit var fs: FileSystemService
+
         @BeforeAll
         @JvmStatic fun before() {
             cleanUp()
@@ -34,6 +39,12 @@ class FileSystemServiceTest {
             assertTrue(exists(path("testdir/testsubdir/testsubsubdir")), "test dir is not present before")
             assertTrue(exists(path("testdir/testfile.txt")), "test file is not present before")
             assertTrue(exists(path("testdir/testfile.json")), "test file is not present before")
+
+            fs = FileSystemService()
+
+            InjectInTest.inject(MethodHandles.lookup(), fs, "isDesktop", true)
+
+            fs.onInit()
         }
 
         @AfterAll
@@ -62,8 +73,6 @@ class FileSystemServiceTest {
             assertTrue(!exists(path("testdir")), "test dir is present before")
         }
     }
-
-    private val fs = FileSystemService(true).also { it.onInit() }
 
     @Test
     fun `Exists correctly reports dirs and files`() {

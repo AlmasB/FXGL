@@ -7,34 +7,33 @@
 package com.almasb.fxgl.io
 
 import com.almasb.sslogger.Logger
-import com.gluonhq.attach.storage.StorageService
 import java.io.*
 
 /**
+ * All file names used here are paths relative to root.
+ * Example: ./profiles/ProfileName/save1.dat
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class FSServiceImpl(isDesktop: Boolean) : FSService {
+internal class FileSystemAccess(
+
+        /**
+         * On desktop it's the running dir, on mobile it's the private storage root.
+         */
+        private val rootStorage: File) {
 
     private val log = Logger.get(javaClass)
 
-    private val rootStorage = if (isDesktop)
-        File(System.getProperty("user.dir") + "/")
-    else
-        StorageService.create()
-                .flatMap { it.privateStorage }
-                .orElseThrow { RuntimeException("No private storage present") }
-
-    override fun exists(pathName: String): Boolean {
+    fun exists(pathName: String): Boolean {
         return toFile(pathName).exists()
     }
 
-    override fun createDirectory(dirName: String) {
+    fun createDirectory(dirName: String) {
         val dir = toFile(dirName)
         dir.mkdirs()
     }
 
-    override fun writeData(data: Serializable, fileName: String) {
+    fun writeData(data: Serializable, fileName: String) {
         val file = toFile(fileName)
 
         if (file.parentFile != null && !file.parentFile.exists()) {
@@ -48,14 +47,14 @@ internal class FSServiceImpl(isDesktop: Boolean) : FSService {
         }
     }
 
-    override fun writeData(text: List<String>, fileName: String) {
+    fun writeData(text: List<String>, fileName: String) {
         val file = toFile(fileName)
 
         file.writeText(text.joinToString("\n"))
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T> readData(fileName: String): T {
+    fun <T> readData(fileName: String): T {
         val file = toFile(fileName)
 
         ObjectInputStream(FileInputStream(file)).use {
@@ -64,7 +63,7 @@ internal class FSServiceImpl(isDesktop: Boolean) : FSService {
         }
     }
 
-    override fun loadFileNames(dirName: String, recursive: Boolean): List<String> {
+    fun loadFileNames(dirName: String, recursive: Boolean): List<String> {
         val dir = toFile(dirName)
 
         checkExists(dir)
@@ -76,7 +75,7 @@ internal class FSServiceImpl(isDesktop: Boolean) : FSService {
                 .toList()
     }
 
-    override fun loadFileNames(dirName: String, recursive: Boolean, extensions: List<FileExtension>): List<String> {
+    fun loadFileNames(dirName: String, recursive: Boolean, extensions: List<FileExtension>): List<String> {
         val dir = toFile(dirName)
 
         checkExists(dir)
@@ -88,7 +87,7 @@ internal class FSServiceImpl(isDesktop: Boolean) : FSService {
                 .toList()
     }
 
-    override fun loadDirectoryNames(dirName: String, recursive: Boolean): List<String> {
+    fun loadDirectoryNames(dirName: String, recursive: Boolean): List<String> {
         val dir = toFile(dirName)
 
         checkExists(dir)
@@ -101,7 +100,7 @@ internal class FSServiceImpl(isDesktop: Boolean) : FSService {
                 .toList()
     }
 
-    override fun loadLastModifiedFileName(dirName: String, recursive: Boolean): String {
+    fun loadLastModifiedFileName(dirName: String, recursive: Boolean): String {
         val dir = toFile(dirName)
 
         checkExists(dir)
@@ -114,7 +113,7 @@ internal class FSServiceImpl(isDesktop: Boolean) : FSService {
                 .firstOrNull() ?: throw FileNotFoundException("No files found in $dir")
     }
 
-    override fun deleteFile(fileName: String) {
+    fun deleteFile(fileName: String) {
         val file = toFile(fileName)
 
         checkExists(file)
@@ -122,7 +121,7 @@ internal class FSServiceImpl(isDesktop: Boolean) : FSService {
         file.delete()
     }
 
-    override fun deleteDirectory(dirName: String) {
+    fun deleteDirectory(dirName: String) {
         val file = toFile(dirName)
 
         checkExists(file)
