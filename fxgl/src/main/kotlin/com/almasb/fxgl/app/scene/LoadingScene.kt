@@ -20,8 +20,6 @@ import javafx.scene.text.Text
  */
 abstract class LoadingScene : FXGLScene() {
 
-    private var loadingFinished = false
-
     fun pushNewTask(task: Runnable) {
         pushNewTask(object : Task<Void?>() {
             override fun call(): Void? {
@@ -32,10 +30,8 @@ abstract class LoadingScene : FXGLScene() {
     }
 
     fun pushNewTask(task: Task<*>) {
-        loadingFinished = false
-
         task.setOnSucceeded {
-            loadingFinished = true
+            controller.gotoPlay()
         }
 
         bind(task)
@@ -49,19 +45,12 @@ abstract class LoadingScene : FXGLScene() {
      * @param task the loading task
      */
     protected open fun bind(task: Task<*>) { }
-
-    override fun onUpdate(tpf: Double) {
-        if (loadingFinished) {
-            loadingFinished = false
-            controller.gotoPlay()
-        }
-    }
 }
 
 class FXGLLoadingScene : LoadingScene() {
 
     private val progress = ProgressBar()
-    protected val text = Text()
+    private val text = Text()
 
     init {
         with(progress) {

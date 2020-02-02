@@ -13,8 +13,10 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.ui.ErrorDialog;
 import com.almasb.sslogger.*;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -225,7 +227,7 @@ public abstract class GameApplication {
             engine = new Engine(settings);
 
             // after this call, all FXGL.* calls (apart from those accessing services) are valid
-            FXGL.inject$fxgl(engine, this);
+            FXGL.inject$fxgl(engine, app, this);
 
             var startupScene = settings.getSceneFactory().newStartup();
 
@@ -234,7 +236,6 @@ public abstract class GameApplication {
             mainWindow.show();
 
             // TODO: possibly a better way exists of doing below
-            engine.getEnvironmentVars$fxgl().put("app", app);
             engine.getEnvironmentVars$fxgl().put("settings", settings);
             engine.getEnvironmentVars$fxgl().put("mainWindow", mainWindow);
 
@@ -305,6 +306,50 @@ public abstract class GameApplication {
         @Override
         public void onGameUpdate(double tpf) {
             app.onUpdate(tpf);
+        }
+    }
+
+    /**
+     *  * Clears previous game.
+     *  * Initializes game, physics and UI.
+     *  * This task is rerun every time the game application is restarted.
+     */
+    public static class InitAppTask extends Task<Void> {
+
+        private GameApplication app = FXGLApplication.app;
+
+        @Override
+        protected Void call() throws Exception {
+            var start = System.nanoTime();
+
+            log.debug("Initializing game");
+            updateMessage("Initializing game");
+
+            initGame();
+            app.initPhysics();
+            app.initUI();
+
+            FXGL.getEngineInternal$fxgl().onGameReady(FXGL.getWorldProperties());
+
+            log.infof("Game initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+
+            return null;
+        }
+
+        private void initGame() {
+            var vars = new HashMap<String, Object>();
+            app.initGameVars(vars);
+
+            vars.forEach((name, value) ->
+                    FXGL.getWorldProperties().setValue(name, value)
+            );
+
+            app.initGame();
+        }
+
+        @Override
+        protected void failed() {
+            throw new RuntimeException("Initialization failed", getException());
         }
     }
 }

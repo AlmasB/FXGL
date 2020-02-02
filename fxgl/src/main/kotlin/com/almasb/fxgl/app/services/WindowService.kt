@@ -7,9 +7,9 @@
 package com.almasb.fxgl.app.services
 
 import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.app.InitAppTask
 import com.almasb.fxgl.app.MainWindow
 import com.almasb.fxgl.app.ReadOnlyGameSettings
+import com.almasb.fxgl.app.SystemActions
 import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.scene.LoadingScene
@@ -47,10 +47,6 @@ import javax.imageio.ImageIO
 class WindowService : SceneService() {
 
     private val log = Logger.get(javaClass)
-
-    // TODO: do we really need this here?
-    @Inject("app")
-    lateinit var app: GameApplication
 
     @Inject("settings")
     lateinit var settings: ReadOnlyGameSettings
@@ -216,8 +212,7 @@ class WindowService : SceneService() {
             mainWindow.defaultCursor = ImageCursor(assetLoaderService.loadCursorImage("fxgl_default.png"), 7.0, 6.0)
         }
 
-        // TODO:
-        //SystemActions.bind(playScene.input)
+        SystemActions.bind(playScene.input)
     }
 
     private fun addOverlay(scene: Scene) {
@@ -256,8 +251,23 @@ class WindowService : SceneService() {
     fun startNewGame() {
         log.debug("Starting new game")
 
-        loadScene.pushNewTask(InitAppTask(app))
         mainWindow.setScene(loadScene)
+
+        clearPreviousGame()
+
+        loadScene.pushNewTask(GameApplication.InitAppTask())
+    }
+
+    private fun clearPreviousGame() {
+        log.debug("Clearing previous game")
+
+        FXGL.getGameWorld().clear()
+        FXGL.getPhysicsWorld().clear()
+        FXGL.getPhysicsWorld().clearCollisionHandlers()
+        FXGL.getGameScene().clear()
+        FXGL.getWorldProperties().clear()
+        FXGL.getGameTimer().clear()
+
     }
 
     fun saveGame(dataFile: DataFile) {

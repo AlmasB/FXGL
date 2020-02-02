@@ -77,11 +77,13 @@ class FXGL private constructor() { companion object {
     
     private lateinit var engine: Engine
     private lateinit var fxApp: GameApplication.FXGLApplication
+    private lateinit var app: GameApplication
 
     @JvmStatic
-    internal fun inject(e: Engine, a: GameApplication.FXGLApplication) {
+    internal fun inject(e: Engine, gameApp: GameApplication, a: GameApplication.FXGLApplication) {
         engine = e
         fxApp = a
+        app = gameApp
     }
 
     @JvmStatic
@@ -125,7 +127,6 @@ class FXGL private constructor() { companion object {
         override fun exit() {
             fxApp.exitFXGL()
         }
-
     }
 
     @JvmStatic fun getGameController(): GameController = controller
@@ -146,7 +147,7 @@ class FXGL private constructor() { companion object {
     /**
      * @return instance of the running game application
      */
-    @JvmStatic fun getApp() = engine.getService(WindowService::class.java).app
+    @JvmStatic fun getApp() = app
 
     /**
      * @return instance of the running game application cast to the actual type
