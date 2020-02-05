@@ -17,6 +17,8 @@ class Language(name: String) {
         // this language list is a cross-reference adaptation of Android 10 and iOS 13 languages
         // it will grow as the community members add new languages and translations
 
+        @JvmField val NONE = Language("NONE")
+
         @JvmField val ARABIC = Language("ARABIC")
         @JvmField val CATALAN = Language("CATALAN")
         @JvmField val CHINESE = Language("CHINESE")

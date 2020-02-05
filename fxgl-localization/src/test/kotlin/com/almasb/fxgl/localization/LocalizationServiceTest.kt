@@ -43,6 +43,8 @@ class LocalizationServiceTest {
     @Test
     fun `Localized string does not fail if lang or key not found`() {
         assertDoesNotThrow {
+            local.getLocalizedString("bla-bla")
+
             local.getLocalizedString("bla-bla", Language.ENGLISH)
 
             local.addLanguageData(Language.ENGLISH, mapOf(
@@ -61,5 +63,15 @@ class LocalizationServiceTest {
 
         val result = local.getLocalizedString("data.key", Language.ENGLISH)
         assertThat(result, `is`("This is data"))
+
+        local.addLanguageData(Language.ENGLISH, mapOf(
+                "data.key" to "Data2"
+        ))
+
+        local.selectedLanguage = Language.ENGLISH
+
+        assertThat(local.selectedLanguage, `is`(Language.ENGLISH))
+        assertThat(local.selectedLanguageProperty().value, `is`(Language.ENGLISH))
+        assertThat(local.getLocalizedString("data.key"), `is`("Data2"))
     }
 }

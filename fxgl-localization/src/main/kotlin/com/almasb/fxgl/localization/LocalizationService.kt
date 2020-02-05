@@ -24,18 +24,13 @@ class LocalizationService : EngineService() {
 
     private val languagesData = hashMapOf<Language, HashMap<String, String>>()
 
-    /**
-     * Supported languages in alphabetical order.
-     */
-    val languages: List<Language>
-        get() = languagesData.keys.sortedBy { it.name }
-
-    private val selectedLanguageProp = SimpleObjectProperty<Language>()
+    private val selectedLanguageProp = SimpleObjectProperty(Language.NONE)
 
     fun selectedLanguageProperty() = selectedLanguageProp
 
-    val selectedLanguage: Language
+    var selectedLanguage: Language
         get() = selectedLanguageProp.value
+        set(value) { selectedLanguageProp.value = value }
 
     fun addLanguageData(lang: Language, bundle: ResourceBundle) {
         val map = languagesData[lang] ?: hashMapOf()

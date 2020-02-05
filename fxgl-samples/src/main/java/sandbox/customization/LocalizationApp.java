@@ -8,8 +8,6 @@ package sandbox.customization;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.localization.Language;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -42,7 +40,7 @@ public class LocalizationApp extends GameApplication {
                 new Stop(1.0, Color.AQUA)
         ));
 
-        var languages = new ArrayList<Language>(getLocalizationService().getLanguages());
+        var languages = new ArrayList<>(getSettings().getSupportedLanguages());
         languages.add(new Language("KOREAN"));
         languages.add(new Language("CHINESE"));
 
