@@ -234,6 +234,8 @@ class GameSettings(
 
                 FXGLDialogService::class.java,
 
+                IOTaskExecutorService::class.java,
+
                 EventBusService::class.java,
                 FileSystemService::class.java,
 

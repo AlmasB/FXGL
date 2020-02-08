@@ -13,6 +13,7 @@ import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.GameController
 import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.app.services.AssetLoaderService
+import com.almasb.fxgl.app.services.IOTaskExecutorService
 import com.almasb.fxgl.app.services.SystemBundleService
 import com.almasb.fxgl.app.services.WindowService
 import com.almasb.fxgl.audio.AudioPlayer
@@ -214,6 +215,8 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getSceneService() = engine.getService(SceneService::class.java)
 
     @JvmStatic fun getNetService() = engine.getService(NetService::class.java)
+
+    @JvmStatic fun getTaskService() = engine.getService(IOTaskExecutorService::class.java)
 
     /**
      * @return time per frame (in this frame)

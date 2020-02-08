@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app.scene
 
 import com.almasb.fxgl.app.ApplicationMode
-import com.almasb.fxgl.app.ProgressDialog
 import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.input.Input
@@ -580,9 +579,14 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         getDisplay().showConfirmationBox(text) { yes ->
 
             if (yes) {
-                saveLoadService.readSaveFileTask(saveFile)
+                val task = saveLoadService.readSaveFileTask(saveFile)
                         .onSuccess { controller.loadGame(it.data) }
-                        .runAsyncFXWithDialog(ProgressDialog(localize("menu.loading") + ": ${saveFile.name}"))
+
+                FXGL.getTaskService()
+                        .runAsyncFXWithDialog(
+                                task,
+                                localize("menu.loading") + ": ${saveFile.name}"
+                        )
             }
         }
     }
@@ -616,8 +620,10 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     private fun doSave(saveFile: SaveFile) {
         controller.saveGame(saveFile.data)
 
-        saveLoadService.writeSaveFileTask(saveFile)
-                .runAsyncFXWithDialog(ProgressDialog(localize("menu.savingData") + ": ${saveFile.name}"))
+        FXGL.getTaskService().runAsyncFXWithDialog(
+                saveLoadService.writeSaveFileTask(saveFile),
+                localize("menu.savingData") + ": ${saveFile.name}"
+        )
     }
 
     /**
@@ -678,14 +684,19 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
         btnNew.setOnAction {
             getDisplay().showInputBox(localize("profile.new"), InputPredicates.ALPHANUM, Consumer { name ->
-                saveLoadService.createProfileTask(name)
+
+                val task = saveLoadService.createProfileTask(name)
                         .onSuccess { showProfileDialog() }
                         .onFailure { error ->
                             getDisplay().showErrorBox("$error") {
                                 showProfileDialog()
                             }
                         }
-                        .runAsyncFXWithDialog(ProgressDialog(localize("profile.loadingProfile") + ": $name"))
+
+                FXGL.getTaskService().runAsyncFXWithDialog(
+                        task,
+                        localize("profile.loadingProfile") + ": $name"
+                )
             })
         }
 
@@ -718,17 +729,21 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         btnDelete.setOnAction {
             val name = profilesBox.value
 
-            saveLoadService.deleteProfileTask(name)
+            val task = saveLoadService.deleteProfileTask(name)
                     .onSuccess { showProfileDialog() }
                     .onFailure { error ->
                         getDisplay().showErrorBox("$error") {
                             showProfileDialog()
                         }
                     }
-                    .runAsyncFXWithDialog(ProgressDialog(localize("profile.deletingProfile") + ": $name"))
+
+            FXGL.getTaskService().runAsyncFXWithDialog(
+                    task,
+                    localize("profile.deletingProfile") + ": $name"
+            )
         }
 
-        saveLoadService.readProfileNamesTask()
+        val task = saveLoadService.readProfileNamesTask()
                 .onSuccess { names ->
                     profilesBox.items.addAll(names)
 
@@ -743,6 +758,10 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 
                     getDisplay().showBox(localize("profile.selectOrCreate"), profilesBox, btnSelect, btnNew, btnDelete)
                 }
-                .runAsyncFXWithDialog(ProgressDialog(localize("profile.loadingProfiles")))
+
+        FXGL.getTaskService().runAsyncFXWithDialog(
+                task,
+                localize("profile.loadingProfiles")
+        )
     }
 }

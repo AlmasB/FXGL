@@ -65,7 +65,7 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
      * The loop is started on the JavaFX thread, as soon as the services are finished initializing.
      */
     fun initServicesAndStartLoop() {
-        IOTask.ofVoid {
+        val fxTask = IOTask.ofVoid {
             initEnvironmentVars()
             initServices()
         }
@@ -76,8 +76,9 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         }
         .onFailure {
             throw it
-        }
-        .runAsyncFX(Async)
+        }.toJavaFXTask()
+
+        Async.execute(fxTask)
     }
 
     private fun initServices() {

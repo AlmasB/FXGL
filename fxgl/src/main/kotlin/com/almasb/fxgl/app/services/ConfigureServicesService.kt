@@ -8,9 +8,6 @@ package com.almasb.fxgl.app.services
 
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
-import com.almasb.fxgl.core.concurrent.Async
-import com.almasb.fxgl.core.concurrent.IOTask
-import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.localization.Language
 import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.ui.FontType
@@ -49,10 +46,6 @@ class ConfigureServicesService : EngineService() {
     override fun onInit() {
         initAndLoadLocalization()
         initAndRegisterFontFactories()
-
-        // TODO: refactor
-        IOTask.setDefaultExecutor(Async)
-        IOTask.setDefaultFailAction { FXGL.getDialogService().showErrorBox(it) }
     }
 
     private fun initAndLoadLocalization() {

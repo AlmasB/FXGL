@@ -28,6 +28,8 @@ internal class UpdaterService : EngineService() {
 
     private lateinit var netService: NetService
 
+    private lateinit var taskService: IOTaskExecutorService
+
     @Inject("urlPOM")
     private lateinit var urlPOM: String
 
@@ -61,7 +63,7 @@ internal class UpdaterService : EngineService() {
     private fun checkForUpdates() {
         log.debug("Checking for updates")
 
-        getLatestVersionTask()
+        val task = getLatestVersionTask()
                 .onSuccess { latestVersion ->
 
                     val currentVersion = FXGL.getVersion()
@@ -80,7 +82,8 @@ internal class UpdaterService : EngineService() {
                     // not important, just log it
                     log.warning("Failed to find updates: $error")
                 }
-                .runAsync()
+
+        taskService.runAsync(task)
     }
     /**
      * Loads pom.xml from GitHub server's master branch and parses the "version" tag.
