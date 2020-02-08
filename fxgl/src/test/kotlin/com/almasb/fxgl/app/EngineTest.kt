@@ -8,12 +8,15 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
+import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.test.RunWithFX
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.*
 import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.extension.ExtendWith
+import java.lang.Exception
 import java.lang.IllegalArgumentException
 import java.time.Duration
 import java.util.concurrent.CountDownLatch
@@ -74,6 +77,41 @@ class EngineTest {
         }
     }
 
+    @Test
+    fun `Failed dependencies are thrown to JavaFX thread`() {
+        engine = Engine(GameSettings().also {
+            it.engineServices.clear()
+            it.engineServices.addAll(arrayOf(FailService::class.java))
+        }.toReadOnly())
+
+        var error: Throwable? = null
+
+        var oldHandler: Thread.UncaughtExceptionHandler? = null
+
+        val l = CountDownLatch(1)
+
+        Async.startAsyncFX {
+            oldHandler = Thread.getDefaultUncaughtExceptionHandler()
+
+            Thread.setDefaultUncaughtExceptionHandler { _, e ->
+                error = e
+                l.countDown()
+            }
+        }.await()
+
+        engine.initServicesAndStartLoop()
+
+        assertTimeoutPreemptively(Duration.ofSeconds(3)) {
+            l.await()
+
+            Async.startAsyncFX {
+                Thread.setDefaultUncaughtExceptionHandler(oldHandler)
+            }.await()
+
+            assertNotNull(error)
+        }
+    }
+
     class TestService1 : EngineService() {
 
         lateinit var service: TestService2
@@ -97,5 +135,9 @@ class EngineTest {
         override fun onInit() {
             latch.countDown()
         }
+    }
+
+    class FailService : EngineService() {
+        lateinit var service: TestService2
     }
 }
