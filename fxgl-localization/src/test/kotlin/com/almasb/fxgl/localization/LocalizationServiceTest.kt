@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.*
 
 /**
  *
@@ -64,14 +65,31 @@ class LocalizationServiceTest {
         val result = local.getLocalizedString("data.key", Language.ENGLISH)
         assertThat(result, `is`("This is data"))
 
-        local.addLanguageData(Language.ENGLISH, mapOf(
-                "data.key" to "Data2"
-        ))
+        local.addLanguageData(Language.ENGLISH, PropertyResourceBundle(javaClass.getResourceAsStream("LocalEnglish.properties")))
 
         local.selectedLanguage = Language.ENGLISH
 
         assertThat(local.selectedLanguage, `is`(Language.ENGLISH))
         assertThat(local.selectedLanguageProperty().value, `is`(Language.ENGLISH))
         assertThat(local.getLocalizedString("data.key"), `is`("Data2"))
+    }
+
+    @Test
+    fun `Language bindings are updated automatically`() {
+        local.addLanguageData(Language.ENGLISH, mapOf(
+                "data.key" to "This is data"
+        ))
+
+        local.addLanguageData(Language.GERMAN, mapOf(
+                "data.key" to "This is data in German"
+        ))
+
+        local.selectedLanguage = Language.ENGLISH
+        val binding = local.localizedStringProperty("data.key")
+
+        assertThat(binding.value, `is`("This is data"))
+
+        local.selectedLanguage = Language.GERMAN
+        assertThat(binding.value, `is`("This is data in German"))
     }
 }
