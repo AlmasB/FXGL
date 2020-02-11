@@ -7,19 +7,20 @@
 package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.animation.*
-import java.util.function.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneListener
 import javafx.animation.Interpolator
 import javafx.beans.property.DoubleProperty
+import javafx.beans.value.WritableValue
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
 import javafx.scene.shape.Shape
 import javafx.util.Duration
+import java.util.function.Consumer
 
 /**
  *
@@ -84,6 +85,8 @@ open class AnimationBuilder() {
     /* BEGIN BUILT-IN ANIMATIONS */
 
     fun <T> animate(value: AnimatedValue<T>) = GenericAnimationBuilder<T>(this, value)
+
+    fun <T> animate(property: WritableValue<T>) = PropertyAnimationBuilder<T>(this, property)
 
     fun translate(vararg entities: Entity) = TranslationAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
@@ -342,6 +345,30 @@ open class AnimationBuilder() {
 
         override fun build(): Animation<T> {
             return makeBuilder().build(animValue, progressConsumer)
+        }
+    }
+
+    class PropertyAnimationBuilder<T>(animationBuilder: AnimationBuilder, private val property: WritableValue<T>) : AM(animationBuilder) {
+
+        private var startValue: T = property.value
+        private var endValue: T = property.value
+
+        private var progressConsumer: Consumer<T> = Consumer {
+            property.value = it
+        }
+
+        fun from(startValue: T): PropertyAnimationBuilder<T> {
+            this.startValue = startValue
+            return this
+        }
+
+        fun to(endValue: T): PropertyAnimationBuilder<T> {
+            this.endValue = endValue
+            return this
+        }
+
+        override fun build(): Animation<T> {
+            return makeBuilder().build(AnimatedValue(startValue, endValue), progressConsumer)
         }
     }
 }
