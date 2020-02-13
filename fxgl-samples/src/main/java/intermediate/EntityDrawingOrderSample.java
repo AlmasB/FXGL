@@ -8,10 +8,11 @@ package intermediate;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * Shows how to use z index.
@@ -22,6 +23,15 @@ public class EntityDrawingOrderSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) { }
+
+    @Override
+    protected void initInput() {
+        onKeyDown(KeyCode.F, () -> {
+            getGameWorld().getEntities().get(1).getTransformComponent().setZ(
+                    -getGameWorld().getEntities().get(1).getTransformComponent().getZ()
+            );
+        });
+    }
 
     @Override
     protected void initGame() {

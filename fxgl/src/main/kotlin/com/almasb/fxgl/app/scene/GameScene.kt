@@ -14,6 +14,7 @@ import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.ui.UI
 import com.almasb.sslogger.Logger
 import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.value.ChangeListener
 import javafx.collections.ObservableList
 import javafx.scene.Group
 import javafx.scene.Node
@@ -53,6 +54,10 @@ internal constructor(width: Int, height: Int,
     private val entities = ArrayList<Entity>()
 
     private var isZSortingNeeded = false
+
+    private val zChangeListener = ChangeListener<Number> { _, _, _ ->
+        isZSortingNeeded = true
+    }
 
     /**
      * @return unmodifiable list of UI nodes
@@ -220,6 +225,7 @@ internal constructor(width: Int, height: Int,
     }
 
     fun addGameView(view: GameView) {
+        view.zProperty.addListener(zChangeListener)
         view.node.properties["viewData"] = view
 
         gameRoot.children.add(view.node)
@@ -246,6 +252,7 @@ internal constructor(width: Int, height: Int,
         viewComponent.parent.properties["viewData"]?.let {
             val view = it as GameView
             view.zProperty.unbind()
+            view.zProperty.removeListener(zChangeListener)
 
             removeGameView(view)
         }
