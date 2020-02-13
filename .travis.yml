@@ -12,8 +12,10 @@ jdk:
 - openjdk11
 - openjdk12
 
+before_install:
+- echo "before_install NOOP"
 install:
-- 
+- echo "install NOOP"
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=fxgl/target/site/jacoco/jacoco.xml
