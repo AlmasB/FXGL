@@ -60,7 +60,7 @@ class AnimatedQuadBezierPoint2D
                 Point2D(path.startX, path.startY),
                 Point2D(path.controlX, path.controlY),
                 Point2D(path.endX, path.endY),
-                progress
+                interpolator.interpolate(0.0, 1.0, progress)
         )
     }
 }
@@ -74,7 +74,7 @@ class AnimatedCubicBezierPoint2D
                 Point2D(path.controlX1, path.controlY1),
                 Point2D(path.controlX2, path.controlY2),
                 Point2D(path.endX, path.endY),
-                progress
+                interpolator.interpolate(0.0, 1.0, progress)
         )
     }
 }
