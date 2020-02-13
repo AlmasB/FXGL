@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package sandbox.anim;
 
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
