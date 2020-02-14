@@ -178,7 +178,7 @@ class GameSceneTest {
     }
 
     @Test
-    fun `Clear removes all game and ui views`() {
+    fun `Reset removes all game and ui views`() {
         val gameRoot = gameScene.contentRoot.children[0] as Group
 
         val view1 = GameView(Rectangle(), 1000)
@@ -191,7 +191,7 @@ class GameSceneTest {
 
         gameScene.addUINode(rect)
 
-        gameScene.clear()
+        gameScene.reset()
 
         assertThat(gameRoot.children.size, `is`(0))
         assertThat(gameScene.uiNodes.size, `is`(0))

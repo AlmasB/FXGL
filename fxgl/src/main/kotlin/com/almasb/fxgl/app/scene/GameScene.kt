@@ -204,10 +204,22 @@ internal constructor(width: Int, height: Int,
     }
 
     /**
+     * Resets game world, physics world, game timer.
      * Unbinds viewport, clears game views and UI nodes.
      */
-    fun clear() {
+    internal fun reset() {
         log.debug("Clearing game scene")
+
+        gameWorld.reset()
+
+        // re-add listeners since above calls resets everything
+        gameWorld.addWorldListener(physicsWorld)
+        gameWorld.addWorldListener(this)
+
+        physicsWorld.clear()
+        physicsWorld.clearCollisionHandlers()
+
+        timer.clear()
 
         viewport.unbind()
         gameRoot.children.clear()

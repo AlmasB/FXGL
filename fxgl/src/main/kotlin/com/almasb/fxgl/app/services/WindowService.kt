@@ -261,13 +261,7 @@ class WindowService : SceneService() {
     private fun clearPreviousGame() {
         log.debug("Clearing previous game")
 
-        FXGL.getGameWorld().clear()
-        FXGL.getPhysicsWorld().clear()
-        FXGL.getPhysicsWorld().clearCollisionHandlers()
-        FXGL.getGameScene().clear()
-        FXGL.getWorldProperties().clear()
-        FXGL.getGameTimer().clear()
-
+        playScene.reset()
     }
 
     fun saveGame(dataFile: DataFile) {
