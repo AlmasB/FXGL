@@ -159,7 +159,7 @@ class GameWorld {
 
     /**
      * Resets this game world to its original state (as if newly constructed) by
-     * removing all (including with IrremovableComponent) entities, entity factories and world listeners.
+     * removing all (including with IrremovableComponent) entities, properties, entity factories and world listeners.
      * Do NOT call this method manually.
      * It is called automatically by FXGL during initGame().
      */
@@ -190,6 +190,7 @@ class GameWorld {
             e.clean()
         }
 
+        properties.clear()
         entities.clear()
         entityFactories.clear()
         entitySpawners.clear()

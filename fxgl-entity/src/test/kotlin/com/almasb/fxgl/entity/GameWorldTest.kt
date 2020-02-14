@@ -393,7 +393,9 @@ class GameWorldTest {
 //    }
 
     @Test
-    fun `Reset removes all entities and world listeners`() {
+    fun `Reset removes all entities, properties and world listeners`() {
+        gameWorld.properties.setValue("test", "test")
+
         val e = Entity()
         e.addComponent(IrremovableComponent())
 
@@ -414,6 +416,7 @@ class GameWorldTest {
         gameWorld.reset()
 
         assertTrue(gameWorld.entities.isEmpty())
+        assertTrue(gameWorld.properties.keys().isEmpty())
 
         gameWorld.addEntity(Entity())
         assertThat(i, `is`(0))
