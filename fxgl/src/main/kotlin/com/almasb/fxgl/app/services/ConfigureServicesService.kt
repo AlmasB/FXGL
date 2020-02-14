@@ -8,8 +8,13 @@ package com.almasb.fxgl.app.services
 
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
+import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.localization.Language
 import com.almasb.fxgl.localization.LocalizationService
+import com.almasb.fxgl.profile.DataFile
+import com.almasb.fxgl.profile.SaveLoadHandler
+import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.ui.FontType
 import com.almasb.fxgl.ui.UIFactoryService
 import com.almasb.sslogger.Logger
@@ -43,9 +48,23 @@ class ConfigureServicesService : EngineService() {
 
     private lateinit var assetLoader: AssetLoaderService
 
+    private lateinit var saveLoadService: SaveLoadService
+
     override fun onInit() {
         initAndLoadLocalization()
         initAndRegisterFontFactories()
+
+        saveLoadService.addHandler(object : SaveLoadHandler {
+            override fun onSave(data: DataFile) {
+                val bundle = Bundle("FXGLServices")
+                FXGL.getEngineInternal().write(bundle)
+            }
+
+            override fun onLoad(data: DataFile) {
+                val bundle = data.getBundle("FXGLServices")
+                FXGL.getEngineInternal().read(bundle)
+            }
+        })
     }
 
     private fun initAndLoadLocalization() {
