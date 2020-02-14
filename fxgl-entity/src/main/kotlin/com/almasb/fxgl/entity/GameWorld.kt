@@ -158,12 +158,12 @@ class GameWorld {
     }
 
     /**
-     * Removes all (including with IrremovableComponent) entities and entity factories.
-     * Does NOT clear state listeners.
+     * Resets this game world to its original state (as if newly constructed) by
+     * removing all (including with IrremovableComponent) entities, entity factories and world listeners.
      * Do NOT call this method manually.
      * It is called automatically by FXGL during initGame().
      */
-    fun clear() {
+    fun reset() {
         log.debug("Clearing game world")
 
         waitingList.clear()
@@ -193,6 +193,7 @@ class GameWorld {
         entities.clear()
         entityFactories.clear()
         entitySpawners.clear()
+        worldListeners.clear()
     }
 
     private val worldListeners = Array<EntityWorldListener>()
