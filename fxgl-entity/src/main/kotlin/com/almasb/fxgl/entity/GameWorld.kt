@@ -158,7 +158,7 @@ class GameWorld {
     }
 
     /**
-     * Removes all (including with IrremovableComponent) entities.
+     * Removes all (including with IrremovableComponent) entities and entity factories.
      * Does NOT clear state listeners.
      * Do NOT call this method manually.
      * It is called automatically by FXGL during initGame().
