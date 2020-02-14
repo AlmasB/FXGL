@@ -12,6 +12,7 @@ import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.reflect.ReflectionUtils.*
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.sslogger.Logger
 import javafx.util.Duration
 
@@ -163,5 +164,15 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
 
     fun resumeLoop() {
         loop.resume()
+    }
+
+    fun write(bundle: Bundle) {
+        settings.write(bundle)
+        services.forEach { it.write(bundle) }
+    }
+
+    fun read(bundle: Bundle) {
+        settings.read(bundle)
+        services.forEach { it.read(bundle) }
     }
 }
