@@ -9,6 +9,7 @@ package com.almasb.fxgl.entity.level.tiled
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.SpawnData
+import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
 import com.almasb.fxgl.entity.level.LevelLoadingException
@@ -112,6 +113,8 @@ class TMXLevelLoader : LevelLoader {
                         data.data.forEach {
                             e.setProperty(it.key, it.value)
                         }
+                        
+                        e.addComponent(IDComponent(tiledObject.name, tiledObject.id))
 
                         e.setPosition(data.x, data.y)
                         e.rotation = tiledObject.rotation.toDouble()
