@@ -36,7 +36,8 @@ internal class FileSystemAccess(
     fun writeData(data: Serializable, fileName: String) {
         val file = toFile(fileName)
 
-        file.parentFile?.mkdirs()
+        // due to how toFile() constructs file, parentFile is always non-null
+        file.parentFile.mkdirs()
 
         ObjectOutputStream(FileOutputStream(file)).use {
             log.debug("Writing to: $file")
