@@ -120,6 +120,8 @@ class FXGLDialogService : DialogService() {
         savedEffect = scene.effect
         scene.effect = bgBlur
 
+        dialogScene.contentRoot.translateX = scene.contentRoot.translateX
+
         sceneService.pushSubScene(dialogScene)
     }
 
