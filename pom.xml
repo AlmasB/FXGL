@@ -92,14 +92,14 @@
         <!-- plugins -->
         <maven.gpg.version>1.6</maven.gpg.version>
         <sonatype.nexus.staging.version>1.6.7</sonatype.nexus.staging.version>
-        <maven.compiler.version>3.8.0</maven.compiler.version>
-        <maven.pmd.version>3.12.0</maven.pmd.version>
+        <maven.compiler.version>3.8.1</maven.compiler.version>
+        <maven.pmd.version>3.13.0</maven.pmd.version>
         <maven.license.version>3.0</maven.license.version>
-        <maven.source.version>3.0.1</maven.source.version>
-        <maven.jar.version>3.1.1</maven.jar.version>
-        <maven.shade.version>3.0.0</maven.shade.version>
-        <jacoco.version>0.8.3</jacoco.version>
-        <maven.surefire.version>3.0.0-M3</maven.surefire.version>
+        <maven.source.version>3.2.0</maven.source.version>
+        <maven.jar.version>3.2.0</maven.jar.version>
+        <maven.shade.version>3.2.2</maven.shade.version>
+        <jacoco.version>0.8.5</jacoco.version>
+        <maven.surefire.version>3.0.0-M4</maven.surefire.version>
         <build.helper.version>3.0.0</build.helper.version>
 
         <!-- dependencies -->
@@ -109,8 +109,8 @@
         <attach.version>4.0.2</attach.version>
 
         <!-- test dependencies -->
-        <junit.jupiter.version>5.5.1</junit.jupiter.version>
-        <junit.platform.version>1.5.1</junit.platform.version>
+        <junit.jupiter.version>5.6.0</junit.jupiter.version>
+        <junit.platform.version>1.6.0</junit.platform.version>
         <hamcrest.version>1.3</hamcrest.version>
     </properties>
 
