@@ -33,7 +33,7 @@ class LocalizationService : EngineService() {
         set(value) { selectedLanguageProp.value = value }
 
     fun addLanguageData(lang: Language, bundle: ResourceBundle) {
-        val map = languagesData[lang] ?: hashMapOf()
+        val map = languagesData.getOrDefault(lang, hashMapOf())
         bundle.keySet().forEach {
             map[it] = bundle.getString(it)
         }
@@ -41,7 +41,7 @@ class LocalizationService : EngineService() {
     }
 
     fun addLanguageData(lang: Language, data: Map<String, String>) {
-        val map = languagesData[lang] ?: hashMapOf()
+        val map = languagesData.getOrDefault(lang, hashMapOf())
         map.putAll(data)
         languagesData[lang] = map
     }
