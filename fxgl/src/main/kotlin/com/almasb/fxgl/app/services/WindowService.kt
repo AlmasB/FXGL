@@ -190,6 +190,9 @@ class WindowService : SceneService() {
 
             pauseMenu = sceneFactory.newPauseMenu()
 
+            // pause menu can only be opened from game scene so it is fine to bind to its contentRoot X
+            pauseMenu!!.contentRoot.translateXProperty().bind(playScene.contentRoot.translateXProperty())
+
             playScene.input.addAction(object : UserAction("Pause") {
                 override fun onActionBegin() {
                     pauseMenu!!.requestShow {
