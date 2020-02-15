@@ -11,6 +11,7 @@ services:
 jdk:
 - openjdk11
 - openjdk12
+- openjdk13
 
 before_install:
 - echo "before_install NOOP"
