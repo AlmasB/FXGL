@@ -223,12 +223,12 @@ class FileSystemServiceTest {
 
     @Test
     fun `Fail on mobile if no private storage present`() {
-        fs = FileSystemService()
+        val f = FileSystemService()
 
-        InjectInTest.inject(MethodHandles.lookup(), fs, "isDesktop", false)
+        InjectInTest.inject(MethodHandles.lookup(), f, "isDesktop", false)
 
         assertThrows<RuntimeException> {
-            fs.onInit()
+            f.onInit()
         }
     }
 }
