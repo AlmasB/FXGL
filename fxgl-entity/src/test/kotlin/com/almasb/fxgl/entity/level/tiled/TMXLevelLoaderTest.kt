@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity.level.tiled
 
 import com.almasb.fxgl.entity.*
+import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.test.RunWithFX
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
@@ -73,6 +74,11 @@ class TMXLevelLoaderTest {
         assertTrue(objects.find { it.getInt("id") == 28 }!!.viewComponent.children.isNotEmpty())
         assertTrue(objects.find { it.getInt("id") == 31 }!!.viewComponent.children.isNotEmpty())
         assertTrue(objects.find { it.getInt("id") == 33 }!!.viewComponent.children.isNotEmpty())
+
+        // check that IDComponent was automatically added
+        intArrayOf(14, 15, 17, 18, 28, 31, 33).forEach { id ->
+            assertThat(objects.find { it.getInt("id") == id }!!.getComponent(IDComponent::class.java).id, `is`(id))
+        }
     }
 
     @ParameterizedTest
