@@ -4,12 +4,10 @@ import com.almasb.fxgl.test.InjectInTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder
-import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
+import java.lang.RuntimeException
 import java.lang.invoke.MethodHandles
 import java.nio.file.Files
 import java.nio.file.Files.*
@@ -221,5 +219,16 @@ class FileSystemServiceTest {
                 .run()
 
         assertTrue(exception.isNotEmpty())
+    }
+
+    @Test
+    fun `Fail on mobile if no private storage present`() {
+        fs = FileSystemService()
+
+        InjectInTest.inject(MethodHandles.lookup(), fs, "isDesktop", false)
+
+        assertThrows<RuntimeException> {
+            fs.onInit()
+        }
     }
 }
