@@ -27,12 +27,11 @@ import javafx.util.converter.IntegerStringConverter;
  * @author Charly Zhu (charlyzhu@hotmail.com)
  */
 public class PropertyMapView extends Parent {
-    /**
-     * Creates a editable property map view.
-     */
+
     public PropertyMapView(PropertyMap map) {
         VBox rootBox = new VBox();
         rootBox.setBackground(new Background(new BackgroundFill(Color.gray(1.0), CornerRadii.EMPTY, Insets.EMPTY)));
+        
         for (String key : map.keys()) {
             HBox propertyBox = new HBox();
         
@@ -44,13 +43,14 @@ public class PropertyMapView extends Parent {
             propertyBox.getChildren().add(value);
             rootBox.getChildren().add(propertyBox);
         }
-        this.getChildren().add(rootBox);
+
+        getChildren().add(rootBox);
     }
     
     /**
-     * Gets the display (Node) for the value object.
-     * Returns check box when it is a boolean value and text field when it is string etc.
+     * Makes a check box when it is a boolean value and text field when it is string etc.
      */
+    @SuppressWarnings("unchecked")
     private Node makeView(Object value) {
         if (value instanceof BooleanProperty) {
             CheckBox box = new CheckBox();
@@ -58,11 +58,11 @@ public class PropertyMapView extends Parent {
             return box;
         }
         else if (value instanceof ObjectProperty) {
-            ObjectProperty property = (ObjectProperty) value;
+            ObjectProperty<?> property = (ObjectProperty<?>) value;
             
             // If object is an enum.
             if (property.get().getClass().isEnum())
-                return getEnumDisplay(property);
+                return makeEnumView((ObjectProperty<Enum<?>>) property);
             
             // If object is something else.
             Text text = new Text();
@@ -84,19 +84,19 @@ public class PropertyMapView extends Parent {
         }
     }
     
-    private Node getEnumDisplay (ObjectProperty enumProperty) {
-        Enum enumValue = (Enum) enumProperty.get();
+    private Node makeEnumView(ObjectProperty<Enum<?>> enumProperty) {
+        Enum<?> enumValue = enumProperty.get();
         
         ObservableList<Enum<?>> list = FXCollections.observableArrayList();
         for (Object anEnum : enumValue.getDeclaringClass().getEnumConstants()) {
-            list.add((Enum) anEnum);
+            list.add((Enum<?>) anEnum);
         }
     
-        ChoiceBox<Enum<?>> display = new ChoiceBox<>();
-        display.setItems(list);
-        display.setValue(enumValue);
-        display.valueProperty().bindBidirectional(enumProperty);
+        ChoiceBox<Enum<?>> view = new ChoiceBox<>();
+        view.setItems(list);
+        view.setValue(enumValue);
+        view.valueProperty().bindBidirectional(enumProperty);
         
-        return display;
+        return view;
     }
 }
