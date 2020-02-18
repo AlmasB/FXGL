@@ -552,4 +552,9 @@ class GameWorld {
                 }
         )
     }
+
+    /**
+     * @return entity group of given types
+     */
+    fun getGroup(vararg entityTypes: Enum<*>) = EntityGroup(this, getEntitiesByType(*entityTypes), *entityTypes)
 }
