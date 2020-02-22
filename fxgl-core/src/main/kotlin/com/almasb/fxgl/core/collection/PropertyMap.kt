@@ -176,7 +176,21 @@ class PropertyMap {
 
 class UpdatableObjectProperty<T>(initialValue: T) : SimpleObjectProperty<T>(initialValue) {
 
-    fun forceUpdate() {
-        fireValueChangedEvent()
+    private val listeners = arrayListOf<ChangeListener<in T>>()
+
+    override fun addListener(listener: ChangeListener<in T>) {
+        super.addListener(listener)
+
+        listeners.add(listener)
+    }
+
+    override fun removeListener(listener: ChangeListener<in T>?) {
+        super.removeListener(listener)
+
+        listeners.remove(listener)
+    }
+
+    fun forceUpdateListeners(oldValue: T, newValue: T) {
+        listeners.forEach { it.changed(this, oldValue, newValue) }
     }
 }
