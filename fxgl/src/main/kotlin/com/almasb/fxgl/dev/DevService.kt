@@ -7,7 +7,9 @@
 package com.almasb.fxgl.dev
 
 import com.almasb.fxgl.app.scene.GameView
+import com.almasb.fxgl.app.services.WindowService
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
@@ -29,6 +31,10 @@ import javafx.scene.shape.*
  */
 class DevService : EngineService() {
 
+    private lateinit var windowService: WindowService
+
+    lateinit var devPane: DevPane
+
     private val console by lazy { Console() }
 
     val isConsoleOpen: Boolean
@@ -40,6 +46,11 @@ class DevService : EngineService() {
         }
 
         override fun close() { }
+    }
+
+    override fun onInit() {
+        // TODO: reconsider ctor params for dev pane
+        devPane = DevPane(windowService, FXGL.getSettings())
     }
 
     fun openConsole() {
@@ -134,5 +145,9 @@ class DevService : EngineService() {
         debugViews.remove(entity)?.let { view ->
             entity.viewComponent.removeChild(view.node)
         }
+    }
+
+    override fun onGameReady(vars: PropertyMap) {
+        devPane.onGameReady(vars)
     }
 }

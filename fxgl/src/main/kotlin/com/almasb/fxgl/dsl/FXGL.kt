@@ -169,7 +169,8 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun getSystemBundle() = engine.getService(SystemBundleService::class.java).bundle
 
-    @JvmStatic fun getDevPane(): DevPane = TODO("WIP refactoring")
+    @Deprecated("Use getDevService()")
+    @JvmStatic fun getDevPane(): DevPane = getDevService().devPane
 
     @JvmStatic fun getDevService() = engine.getService(DevService::class.java)
 

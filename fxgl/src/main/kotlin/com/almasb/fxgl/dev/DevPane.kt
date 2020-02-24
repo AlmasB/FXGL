@@ -8,12 +8,15 @@ package com.almasb.fxgl.dev
 
 import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.ReadOnlyGameSettings
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getGameWorld
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
+import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.ui.FXGLCheckBox
 import com.almasb.fxgl.ui.InGamePanel
+import com.almasb.fxgl.ui.PropertyMapView
 import com.almasb.sslogger.Logger
 import javafx.beans.binding.*
 import javafx.beans.property.*
@@ -38,11 +41,11 @@ import javafx.util.StringConverter
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) {
+class DevPane(private val sceneService: SceneService, val settings: ReadOnlyGameSettings) {
 
     private val log = Logger.get(javaClass)
 
-    private val panel = InGamePanel(350.0, scene.height)
+    private val panel = InGamePanel(350.0, sceneService.appHeight.toDouble())
 
     private val debugMessagesBox = VBox(5.0)
 
@@ -51,25 +54,27 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
     val isOpen: Boolean
         get() = panel.isOpen
 
+    private val accordion: Accordion
+
     init {
         panel.styleClass.add("dev-pane")
 
-        val acc =  Accordion(
-                TitledPane("Dev vars", createContentDevVars()),
-                TitledPane("Game vars", createContentGameVars()),
-                TitledPane("Entities", createContentEntities())
+        accordion = Accordion(
+                TitledPane("Dev vars", createContentDevVars())
+                //TitledPane("Game vars", createContentGameVars()),
+                //TitledPane("Entities", createContentEntities())
         )
-        acc.prefWidth = 340.0
+        accordion.prefWidth = 340.0
 
-        val scroll = ScrollPane(acc)
-        scroll.setPrefSize(350.0, scene.height)
+        val scroll = ScrollPane(accordion)
+        scroll.setPrefSize(350.0, sceneService.appHeight.toDouble())
 
         panel.children += scroll
 
         debugMessagesBox.isMouseTransparent = true
         debugMessagesBox.background = Background(BackgroundFill(Color.color(0.7, 0.6, 0.7, 0.6), null, null))
 
-        scene.addUINodes(panel, debugMessagesBox)
+        sceneService.overlayRoot.children.addAll(panel, debugMessagesBox)
     }
 
     private val debugPoints = hashMapOf<Point2D, Node>()
@@ -86,7 +91,7 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
         group.translateX = p.x - n.radius
         group.translateY = p.y - n.radius
 
-        scene.root.children += group
+        sceneService.overlayRoot.children += group
 
         debugPoints[p] = group
     }
@@ -95,7 +100,7 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
      * Removes the view for the given point.
      */
     fun removeDebugPoint(p: Point2D) {
-        debugPoints.remove(p)?.let { scene.root.children -= it }
+        debugPoints.remove(p)?.let { sceneService.overlayRoot.children -= it }
     }
 
     fun pushMessage(message: String) {
@@ -326,6 +331,10 @@ class DevPane(private val scene: GameScene, val settings: ReadOnlyGameSettings) 
         vbox.children.addAll(choiceBox, innerBox)
 
         return vbox
+    }
+
+    fun onGameReady(vars: PropertyMap) {
+        accordion.panes += TitledPane("Game vars", PropertyMapView(vars))
     }
 
     fun open() {
