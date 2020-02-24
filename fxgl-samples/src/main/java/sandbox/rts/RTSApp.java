@@ -29,7 +29,7 @@ public class RTSApp extends GameApplication {
     @Override
     protected void initInput() {
         onBtnDown(MouseButton.PRIMARY, () -> {
-            getGameWorld().getEntities().forEach(e -> e.getComponent(ActionComponent.class).pushAction(new MoveAction(
+            getGameWorld().getEntities().forEach(e -> e.getComponent(ActionComponent.class).addAction(new MoveAction(
                     getInput().getMouseXWorld(), getInput().getMouseYWorld()
             )));
         });
