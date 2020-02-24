@@ -8,14 +8,20 @@ package sandbox.rts;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.components.FollowComponent;
+import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.action.Action;
 import com.almasb.fxgl.entity.action.ActionComponent;
+import com.almasb.fxgl.entity.action.ContinuousAction;
+import com.almasb.fxgl.entity.action.InstantAction;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.input.UserAction;
 import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -28,9 +34,14 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class EntityActionSample extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) { }
+    protected void initSettings(GameSettings settings) {
+        settings.setWidthFromRatio(16/9.0);
+    }
 
     private Entity entity;
+    private Entity mover, mover2;
+
+    private Entity unit, unit2;
 
     @Override
     protected void initInput() {
@@ -43,7 +54,7 @@ public class EntityActionSample extends GameApplication {
                 entity.getComponent(ActionComponent.class)
                         .addAction(new MoveAction(getInput().getMouseXWorld(), getInput().getMouseYWorld()));
             }
-        }, MouseButton.PRIMARY);
+        }, MouseButton.SECONDARY);
 
         getInput().addAction(new UserAction("Queue Move Action") {
             @Override
@@ -51,7 +62,7 @@ public class EntityActionSample extends GameApplication {
                 entity.getComponent(ActionComponent.class)
                         .addAction(new MoveAction(getInput().getMouseXWorld(), getInput().getMouseYWorld()));
             }
-        }, MouseButton.SECONDARY);
+        }, MouseButton.PRIMARY);
 
         getInput().addAction(new UserAction("Remove Current Action") {
             @Override
@@ -66,11 +77,55 @@ public class EntityActionSample extends GameApplication {
 
     @Override
     protected void initGame() {
+        getGameScene().setBackgroundColor(Color.LIGHTGRAY);
+
+        mover = entityBuilder()
+                .at(400, 20)
+                .viewWithBBox(texture("player2rot.png").multiplyColor(Color.RED))
+                .with(new ProjectileComponent(new Point2D(0, 1), 200))
+                .onClick(() -> {
+                    entity.getComponent(ActionComponent.class)
+                            .addAction(new FollowAction(mover));
+                })
+                .buildAndAttach();
+
+        mover2 = entityBuilder()
+                .at(500, 200)
+                .viewWithBBox(texture("player2rot.png").multiplyColor(Color.BLUE))
+                .with(new ProjectileComponent(new Point2D(1, 0), 250))
+                .onClick(() -> {
+                    entity.getComponent(ActionComponent.class)
+                            .addAction(new FollowAction(mover2));
+                })
+                .buildAndAttach();
+
         entity = entityBuilder()
                 .at(400, 300)
-                .view(new Rectangle(40, 40))
+                .viewWithBBox("player2rot.png")
                 .with(new ActionComponent())
+                .with(new FollowComponent(null, 150, 90, 160))
+                .with(new FixRotateComponent())
                 .buildAndAttach();
+
+        unit = entityBuilder()
+                .at(700, 400)
+                .view(new Rectangle(40, 40, Color.GREEN))
+                .with(new FollowComponent(null, 100, 30, 50))
+                .onClick(() -> {
+                    entity.getComponent(ActionComponent.class)
+                            .addAction(new RecruitAction(unit));
+                })
+                .buildAndAttach();
+
+//        unit2 = entityBuilder()
+//                .at(700, 200)
+//                .view(new Rectangle(40, 40, Color.GREEN))
+//                .with(new FollowComponent(null, 50, 60, 130))
+//                .onClick(() -> {
+//                    entity.getComponent(ActionComponent.class)
+//                            .addAction(new RecruitAction(unit2));
+//                })
+//                .buildAndAttach();
     }
 
     private ListView<Action> actionsView;
@@ -89,7 +144,44 @@ public class EntityActionSample extends GameApplication {
         getGameScene().addUINode(actionsView);
     }
 
-    private class MoveAction extends Action {
+    @Override
+    protected void onUpdate(double tpf) {
+        if (mover.getBottomY() > getAppHeight()) {
+            mover.getComponent(ProjectileComponent.class).setDirection(new Point2D(0, -1));
+        } else if (mover.getY() < 0) {
+            mover.getComponent(ProjectileComponent.class).setDirection(new Point2D(0, 1));
+        }
+
+        if (mover2.getRightX() > getAppWidth()) {
+            mover2.getComponent(ProjectileComponent.class).setDirection(new Point2D(-1, 0));
+        } else if (mover2.getX() < 450) {
+            mover2.getComponent(ProjectileComponent.class).setDirection(new Point2D(1, 0));
+        }
+    }
+
+    public static class FixRotateComponent extends Component {
+
+        private Point2D prev;
+
+        @Override
+        public void onAdded() {
+            prev = entity.getPosition();
+        }
+
+        @Override
+        public void onUpdate(double tpf) {
+            var vector = entity.getPosition().subtract(prev);
+
+            var now = entity.getRotation();
+            var next = Math.toDegrees(Math.atan2(vector.getY(), vector.getX()));
+
+            entity.setRotation(now * 0.9 + next * 0.1);
+
+            prev = entity.getPosition();
+        }
+    }
+
+    private static class MoveAction extends Action {
 
         private double x, y;
         private double speed;
@@ -112,6 +204,57 @@ public class EntityActionSample extends GameApplication {
         @Override
         public String toString() {
             return "Move(" + x + "," + y + ")";
+        }
+    }
+
+    private static class FollowAction extends ContinuousAction {
+
+        private Entity target;
+
+        public FollowAction(Entity target) {
+            this.target = target;
+        }
+
+        @Override
+        protected void onStarted() {
+            entity.getComponent(FollowComponent.class).resume();
+        }
+
+        @Override
+        protected void perform(double tpf) {
+            entity.getComponent(FollowComponent.class).setTarget(target);
+        }
+
+        @Override
+        protected void onCancelled() {
+            entity.getComponent(FollowComponent.class).pause();
+        }
+
+        @Override
+        public String toString() {
+            return "Follow";
+        }
+    }
+
+
+    private static class RecruitAction extends InstantAction {
+
+        private Entity target;
+
+        public RecruitAction(Entity target) {
+            this.target = target;
+        }
+
+        @Override
+        protected void performOnce(double tpf) {
+            if (target.distance(entity) < 50) {
+                target.getComponent(FollowComponent.class).setTarget(entity);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "Recruit";
         }
     }
 
