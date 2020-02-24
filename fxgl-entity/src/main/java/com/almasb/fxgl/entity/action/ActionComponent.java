@@ -24,6 +24,9 @@ public final class ActionComponent extends Component {
 
     private CancelPolicy cancelPolicy = CancelPolicy.ONE;
 
+    /**
+     * The head (if exists) of the queue is the current action.
+     */
     private ObservableList<Action> actions = FXCollections.observableArrayList();
 
     private Action currentAction = IDLE;
@@ -104,14 +107,29 @@ public final class ActionComponent extends Component {
     /**
      * Add an action for this entity to execute.
      * If an entity is already executing an action,
-     * this action will be queued.
+     * the added action will be queued.
      *
      * @param action next action to execute
      */
-    public void pushAction(Action action) {
+    public void addAction(Action action) {
         action.setEntity(entity);
         actions.add(action);
         action.onQueued();
+    }
+
+    /**
+     * Removing an action also cancels it.
+     *
+     * @param action the action to remove
+     */
+    public void removeAction(Action action) {
+        if (!actions.isEmpty() && actions.get(0) == action) {
+            action.cancel();
+            return;
+        }
+
+        action.onCancelled();
+        actions.remove(action);
     }
 
     /**
