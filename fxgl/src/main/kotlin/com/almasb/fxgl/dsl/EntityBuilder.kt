@@ -15,8 +15,10 @@ import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.BoundingShape.Companion.box
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsComponent
+import javafx.event.EventHandler
 import javafx.geometry.Point2D
 import javafx.scene.Node
+import javafx.scene.input.MouseEvent
 
 /**
  *
@@ -126,6 +128,14 @@ class EntityBuilder {
 
     fun zIndex(z: Int) = this.also {
         entity.transformComponent.z = z
+    }
+
+    fun onClick(action: () -> Unit) = this.also {
+        onClick(Runnable(action))
+    }
+
+    fun onClick(action: Runnable) = this.also {
+        entity.viewComponent.addEventHandler(MouseEvent.MOUSE_CLICKED, EventHandler { action.run() })
     }
 
     fun collidable() = with(CollidableComponent(true))
