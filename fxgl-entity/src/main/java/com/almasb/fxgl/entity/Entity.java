@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.core.collection.PropertyMap;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.util.EmptyRunnable;
@@ -728,10 +729,21 @@ public class Entity {
     }
 
     /**
-     * @return distance in pixels from this entity to the other
+     * @return distance in pixels from this entity's transform (top-left point) to the other's transform (top-left point)
      */
     public final double distance(Entity other) {
         return transform.distance(other.transform);
+    }
+
+    /**
+     * @return distance in pixels from this entity to the other using their bounding boxes
+     */
+    // Adapted from https://stackoverflow.com/questions/4978323/how-to-calculate-distance-between-two-rectangles-context-a-game-in-lua
+    public final double distanceBBox(Entity other) {
+        var rect1 = bbox.range(0, 0);
+        var rect2 = other.bbox.range(0, 0);
+
+        return FXGLMath.distance(rect1, rect2);
     }
 
     /**
