@@ -867,6 +867,32 @@ public class Entity {
 
     // BBOX END
 
+    // VIEW BEGIN
+
+    /**
+     * @param opacity a value in range [0..1], where 0 is fully transparent and 1 is fully opaque
+     */
+    public final void setOpacity(double opacity) {
+        view.setOpacity(opacity);
+    }
+
+    public final double getOpacity() {
+        return view.getOpacity();
+    }
+
+    /**
+     * Setting invisible allows to prevent the entity from receiving mouse events.
+     */
+    public final void setVisible(boolean isVisible) {
+        view.setVisible(isVisible);
+    }
+
+    public final boolean isVisible() {
+        return view.isVisible();
+    }
+
+    // VIEW END
+
     @Override
     public String toString() {
         List<Component> comps = getComponents();
