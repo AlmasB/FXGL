@@ -36,12 +36,12 @@ class FollowComponent(
 
         target?.let {
             when {
-                (entity.distance(it) < minDistance) -> {
+                (entity.distanceBBox(it) < minDistance) -> {
                     val oppositeVector = entity.center.subtract(it.center).normalize().multiply(speed * tpf)
                     entity.translate(oppositeVector)
                 }
 
-                (entity.distance(it) > maxDistance) -> {
+                (entity.distanceBBox(it) > maxDistance) -> {
                     entity.translateTowards(it.center, speed * tpf)
                 }
 

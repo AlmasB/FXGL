@@ -103,13 +103,13 @@ public class EntityActionSample extends GameApplication {
                 .at(400, 300)
                 .viewWithBBox("player2rot.png")
                 .with(new ActionComponent())
-                .with(new FollowComponent(null, 150, 90, 160))
+                .with(new FollowComponent(null, 150, 40, 100))
                 .with(new FixRotateComponent())
                 .buildAndAttach();
 
         unit = entityBuilder()
                 .at(700, 400)
-                .view(new Rectangle(40, 40, Color.GREEN))
+                .viewWithBBox(new Rectangle(40, 40, Color.GREEN))
                 .with(new FollowComponent(null, 100, 30, 50))
                 .onClick(() -> {
                     entity.getComponent(ActionComponent.class)
