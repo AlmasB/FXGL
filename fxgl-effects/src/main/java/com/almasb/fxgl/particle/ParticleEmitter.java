@@ -356,6 +356,20 @@ public final class ParticleEmitter {
         setSourceImage(texture.getImage());
     }
 
+    private boolean isPaused = false;
+
+    boolean isPaused() {
+        return isPaused;
+    }
+
+    void pause() {
+        isPaused = true;
+    }
+
+    void resume() {
+        isPaused = false;
+    }
+
     /**
      * Emission rate accumulator. Default value 1.0
      * so that when emitter starts working, it will emit in the same frame
@@ -384,7 +398,7 @@ public final class ParticleEmitter {
         double rate = getEmissionRate();
 
         rateAC += rate;
-        if (rateAC < 1 || rate == 0 || isFinished()) {
+        if (rateAC < 1 || rate == 0 || isPaused || isFinished()) {
             return Array.empty();
         }
 
