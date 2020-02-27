@@ -122,6 +122,7 @@ You can support the FXGL development / show interest by simply starring the repo
 ### Sponsors
 
 * @Marsl10
+* @SergeMerzliakov
 
 ### Contact
 
