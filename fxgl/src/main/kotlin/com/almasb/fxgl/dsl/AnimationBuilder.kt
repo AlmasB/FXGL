@@ -17,6 +17,7 @@ import javafx.beans.value.WritableValue
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.shape.CubicCurve
+import javafx.scene.shape.Path
 import javafx.scene.shape.QuadCurve
 import javafx.scene.shape.Shape
 import javafx.util.Duration
@@ -236,6 +237,7 @@ open class AnimationBuilder() {
                 when (curve) {
                     is QuadCurve -> return makeAnim(AnimatedQuadBezierPoint2D(curve))
                     is CubicCurve -> return makeAnim(AnimatedCubicBezierPoint2D(curve))
+                    is Path -> return makeAnim(AnimatedPath(curve))
                     else -> throw IllegalArgumentException("Unsupported path: $curve")
                 }
             }
