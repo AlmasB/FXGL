@@ -274,6 +274,19 @@ class GameSettings(
         )
 ) {
 
+    fun addEngineService(service: Class<out EngineService>) {
+        engineServices.add(service)
+    }
+
+    fun removeEngineService(service: Class<out EngineService>) {
+        engineServices.remove(service)
+    }
+
+    fun setEngineServiceProvider(oldService: Class<out EngineService>, newService: Class<out EngineService>) {
+        engineServices.removeIf { oldService.isAssignableFrom(it) }
+        addEngineService(newService)
+    }
+
     fun setHeightFromRatio(ratio: Double) {
         height = (width / ratio).roundToInt()
     }
