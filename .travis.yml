@@ -1,3 +1,6 @@
+os:
+  - linux
+
 sudo: required
 
 # Ubuntu 16.04
@@ -30,13 +33,11 @@ notifications:
     - almaslvl@gmail.com
     on_success: change
     on_failure: always
-    on_start: never
   webhooks:
     urls:
     - https://webhooks.gitter.im/e/afbf0239aac6566f24d4
     on_success: change
     on_failure: always
-    on_start: never
 env:
   global:
   - secure: fRP4CU2qkv47HOd1PBrkGgwsP6To81AYuzi342fxnNTBv313c5fU+HCLYrYI5xNTYfE2b+Iax+A0ypbBbZ2XU+NtbI4OiAYCcBSiFOxFU/gty5neWvyRKG32qtUSNqdEPmx6EzdAjpFss3fyu6AB+g93SLC6S9IBiOxnS3av7cQ=
