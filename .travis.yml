@@ -1,8 +1,6 @@
 os:
   - linux
 
-sudo: required
-
 # Ubuntu 16.04
 dist: xenial
 language: java
