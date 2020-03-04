@@ -225,37 +225,29 @@ class GameSettings(
         /* CUSTOMIZABLE SERVICES BELOW */
 
         var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
-                // TODO: this has to run first
-                ConfigureServicesService::class.java,
+                // this is the order in which services will be initialized
 
+                // this is the only special service that needs to be initialized first
+                EngineInitializationService::class.java,
+
+                // by design, the order of other services should not matter
                 GameApplication.GameApplicationService::class.java,
-
                 WindowService::class.java,
-
                 FXGLDialogService::class.java,
-
                 IOTaskExecutorService::class.java,
-
                 EventBusService::class.java,
                 FileSystemService::class.java,
-
                 LocalizationService::class.java,
                 AssetLoaderService::class.java,
-
-
                 SystemBundleService::class.java,
-
                 SaveLoadService::class.java,
-
                 FXGLUIFactoryServiceProvider::class.java,
                 FXGLDialogFactoryServiceProvider::class.java,
-
                 AudioPlayer::class.java,
                 NotificationServiceProvider::class.java,
                 AchievementService::class.java,
                 CutsceneService::class.java,
                 MiniGameService::class.java,
-
                 NetService::class.java,
                 UpdaterService::class.java
         ),

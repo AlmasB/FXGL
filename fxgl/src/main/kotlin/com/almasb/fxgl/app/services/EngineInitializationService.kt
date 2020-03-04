@@ -24,7 +24,7 @@ import javafx.beans.property.ObjectProperty
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ConfigureServicesService : EngineService() {
+class EngineInitializationService : EngineService() {
 
     private val log = Logger.get(javaClass)
 
