@@ -14,7 +14,6 @@ import com.almasb.fxgl.core.util.Platform;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.profile.DataFile;
 import com.almasb.fxgl.profile.SaveLoadHandler;
-import com.almasb.fxgl.scene.SceneListener;
 import com.almasb.fxgl.ui.ErrorDialog;
 import com.almasb.sslogger.*;
 import javafx.application.Application;
