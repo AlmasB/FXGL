@@ -15,6 +15,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.profile.DataFile;
 import com.almasb.fxgl.profile.SaveLoadHandler;
 import com.almasb.fxgl.ui.ErrorDialog;
+import com.almasb.fxgl.ui.FontType;
 import com.almasb.sslogger.*;
 import javafx.application.Application;
 import javafx.concurrent.Task;
@@ -260,15 +261,15 @@ public abstract class GameApplication {
         private void postServicesInit() {
             initPauseResumeHandler();
             initSaveLoadHandler();
+            initAndLoadLocalization();
+            initAndRegisterFontFactories();
 
             // onGameUpdate is only updated in Game Scene
             FXGL.getGameScene().addListener(tpf -> engine.onGameUpdate(tpf));
         }
 
         private void initPauseResumeHandler() {
-            if (settings.isMobile()) {
-                // no-op
-            } else {
+            if (!settings.isMobile()) {
                 mainWindow.iconifiedProperty().addListener((obs, o, isMinimized) -> {
                     if (isMinimized) {
                         engine.pauseLoop();
@@ -293,6 +294,28 @@ public abstract class GameApplication {
                     engine.read(bundle);
                 }
             });
+        }
+
+        private void initAndLoadLocalization() {
+            log.debug("Loading localizations");
+
+            settings.getSupportedLanguages().forEach(lang -> {
+                var bundle = FXGL.getAssetLoader().loadResourceBundle("languages/" + lang.getName().toLowerCase() + ".properties");
+                FXGL.getLocalizationService().addLanguageData(lang, bundle);
+            });
+
+            FXGL.getLocalizationService().selectedLanguageProperty().bind(settings.getLanguage());
+        }
+
+        private void initAndRegisterFontFactories() {
+            log.debug("Registering font factories with UI factory");
+
+            var uiFactory = FXGL.getUIFactoryService();
+
+            uiFactory.registerFontFactory(FontType.UI, FXGL.getAssetLoader().loadFont(settings.getFontUI()));
+            uiFactory.registerFontFactory(FontType.GAME, FXGL.getAssetLoader().loadFont(settings.getFontGame()));
+            uiFactory.registerFontFactory(FontType.MONO, FXGL.getAssetLoader().loadFont(settings.getFontMono()));
+            uiFactory.registerFontFactory(FontType.TEXT, FXGL.getAssetLoader().loadFont(settings.getFontText()));
         }
 
         private boolean isError = false;
