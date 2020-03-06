@@ -41,6 +41,8 @@ public abstract class UIFactoryService extends EngineService {
 
     public abstract Text newText(String message, Color textColor, double fontSize);
 
+    public abstract Text newText(String message, Color textColor, FontType type, double fontSize);
+
     public abstract Text newText(StringExpression textBinding);
 
     public abstract Button newButton(String text);
