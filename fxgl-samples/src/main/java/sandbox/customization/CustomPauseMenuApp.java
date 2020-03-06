@@ -102,19 +102,19 @@ public class CustomPauseMenuApp extends GameApplication {
             shape3.setTranslateY(SIZE);
 
             Text textResume = FXGL.getUIFactory().newText("RESUME", Color.WHITE, 24.0);
-            textResume.setFont(FXGL.getUIFactory().newFont(FontType.GAME, 24.0));
+            //textResume.setFont(FXGL.getUIFactory().newFont(FontType.GAME, 24.0));
             textResume.setTranslateX(50);
             textResume.setTranslateY(100);
             textResume.setMouseTransparent(true);
 
             Text textExit = FXGL.getUIFactory().newText("EXIT", Color.WHITE, 24.0);
-            textExit.setFont(FXGL.getUIFactory().newFont(FontType.GAME, 24.0));
+            //textExit.setFont(FXGL.getUIFactory().newFont(FontType.GAME, 24.0));
             textExit.setTranslateX(200);
             textExit.setTranslateY(100);
             textExit.setMouseTransparent(true);
 
             Text textOptions = FXGL.getUIFactory().newText("OPTIONS", Color.WHITE, 24.0);
-            textOptions.setFont(FXGL.getUIFactory().newFont(FontType.GAME, 24.0));
+            //textOptions.setFont(FXGL.getUIFactory().newFont(FontType.GAME, 24.0));
             textOptions.setTranslateX(110);
             textOptions.setTranslateY(195);
             textOptions.setMouseTransparent(true);
