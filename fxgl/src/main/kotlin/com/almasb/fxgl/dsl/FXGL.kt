@@ -230,7 +230,7 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getGameWorld() = getGameScene().gameWorld
     @JvmStatic fun getWorldProperties() = getGameScene().gameWorld.properties
     @JvmStatic fun getPhysicsWorld() = getGameScene().physicsWorld
-    @JvmStatic fun getGameScene() = engine.getService(WindowService::class.java).playScene
+    @JvmStatic fun getGameScene() = engine.getService(WindowService::class.java).gameScene
 
     /**
      * @return play state timer

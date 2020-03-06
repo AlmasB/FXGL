@@ -76,7 +76,7 @@ class WindowService : SceneService() {
      */
     override val timer = Timer()
 
-    internal lateinit var playScene: GameScene
+    internal lateinit var gameScene: GameScene
     private lateinit var loadScene: LoadingScene
 
     private var intro: FXGLScene? = null
@@ -133,15 +133,15 @@ class WindowService : SceneService() {
         val sceneFactory = settings.sceneFactory
 
         loadScene = sceneFactory.newLoadingScene()
-        playScene = GameScene(settings.width, settings.height,
+        gameScene = GameScene(settings.width, settings.height,
                 GameWorld(),
                 PhysicsWorld(settings.height, settings.pixelsPerMeter)
         )
 
-        playScene.isSingleStep = settings.isSingleStep
+        gameScene.isSingleStep = settings.isSingleStep
 
         // onGameUpdate is only updated in Game Scene
-        playScene.addListener(object : SceneListener {
+        gameScene.addListener(object : SceneListener {
             override fun onUpdate(tpf: Double) {
                 FXGL.getEngineInternal().services.forEach { it.onGameUpdate(tpf) }
             }
@@ -170,7 +170,7 @@ class WindowService : SceneService() {
                             canSwitchGameMenu = false
                             gotoPlay()
 
-                        } else if (mainWindow.currentScene === playScene) {
+                        } else if (mainWindow.currentScene === gameScene) {
                             canSwitchGameMenu = false
                             gotoGameMenu()
                         }
@@ -184,16 +184,16 @@ class WindowService : SceneService() {
                 }
             }
 
-            playScene.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
+            gameScene.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
             gameMenu!!.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
         } else {
 
             pauseMenu = sceneFactory.newPauseMenu()
 
             // pause menu can only be opened from game scene so it is fine to bind to its contentRoot X
-            pauseMenu!!.contentRoot.translateXProperty().bind(playScene.contentRoot.translateXProperty())
+            pauseMenu!!.contentRoot.translateXProperty().bind(gameScene.contentRoot.translateXProperty())
 
-            playScene.input.addAction(object : UserAction("Pause") {
+            gameScene.input.addAction(object : UserAction("Pause") {
                 override fun onActionBegin() {
                     pauseMenu!!.requestShow {
                         mainWindow.pushState(pauseMenu!!)
@@ -215,7 +215,7 @@ class WindowService : SceneService() {
             mainWindow.defaultCursor = ImageCursor(assetLoaderService.loadCursorImage("fxgl_default.png"), 7.0, 6.0)
         }
 
-        SystemActions.bind(playScene.input)
+        SystemActions.bind(gameScene.input)
     }
 
     private fun addOverlay(scene: Scene) {
@@ -264,7 +264,7 @@ class WindowService : SceneService() {
     private fun clearPreviousGame() {
         log.debug("Clearing previous game")
 
-        playScene.reset()
+        gameScene.reset()
     }
 
     fun saveGame(dataFile: DataFile) {
@@ -311,7 +311,7 @@ class WindowService : SceneService() {
     }
 
     fun gotoPlay() {
-        mainWindow.setScene(playScene)
+        mainWindow.setScene(gameScene)
     }
 
     /**
