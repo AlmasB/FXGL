@@ -64,6 +64,10 @@ class LocalizationService : EngineService() {
      * @return a string translated to given language
      */
     fun getLocalizedString(key: String, lang: Language): String {
+        if (lang == Language.NONE) {
+            return "Language is NONE"
+        }
+
         if (lang !in languagesData) {
             log.warning("No data for language $lang")
             return "MISSING_LANG!"
