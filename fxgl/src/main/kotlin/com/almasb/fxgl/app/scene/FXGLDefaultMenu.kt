@@ -161,12 +161,12 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     override fun createTitleView(title: String): Node {
         titleColor = SimpleObjectProperty(Color.WHITE)
 
-        val text = FXGL.getUIFactory().newText(title.substring(0, 1), 50.0)
+        val text = FXGL.getUIFactoryService().newText(title.substring(0, 1), 50.0)
         text.fill = null
         text.strokeProperty().bind(titleColor)
         text.strokeWidth = 1.5
 
-        val text2 = FXGL.getUIFactory().newText(title.substring(1, title.length), 50.0)
+        val text2 = FXGL.getUIFactoryService().newText(title.substring(1, title.length), 50.0)
         text2.fill = null
         text2.stroke = titleColor!!.value
         text2.strokeWidth = 1.5
