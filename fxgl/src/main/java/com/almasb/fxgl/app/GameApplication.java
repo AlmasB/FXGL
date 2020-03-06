@@ -7,9 +7,14 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.EngineService;
 import com.almasb.fxgl.core.concurrent.Async;
+import com.almasb.fxgl.core.concurrent.IOTask;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
+import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.core.util.Platform;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.profile.DataFile;
+import com.almasb.fxgl.profile.SaveLoadHandler;
+import com.almasb.fxgl.scene.SceneListener;
 import com.almasb.fxgl.ui.ErrorDialog;
 import com.almasb.sslogger.*;
 import javafx.application.Application;
@@ -212,7 +217,8 @@ public abstract class GameApplication {
         public static GameApplication app;
         private static ReadOnlyGameSettings settings;
 
-        private Engine engine;
+        private static Engine engine;
+        private MainWindow mainWindow;
 
         /**
          * This is the main entry point as run by the JavaFX platform.
@@ -232,14 +238,62 @@ public abstract class GameApplication {
             var startupScene = settings.getSceneFactory().newStartup();
 
             // get window up ASAP
-            var mainWindow = new MainWindow(stage, startupScene, settings);
+            mainWindow = new MainWindow(stage, startupScene, settings);
             mainWindow.show();
 
             // TODO: possibly a better way exists of doing below
             engine.getEnvironmentVars$fxgl().put("settings", settings);
             engine.getEnvironmentVars$fxgl().put("mainWindow", mainWindow);
 
-            engine.initServicesAndStartLoop();
+            // start initialization of services on a background thread
+            // then start the loop on the JavaFX thread
+            var task = IOTask.ofVoid(() -> {
+                            engine.initServices();
+                            postServicesInit();
+                        })
+                        .onSuccess(n -> engine.startLoop())
+                        .onFailure(e -> handleFatalError(e))
+                        .toJavaFXTask();
+
+            Async.INSTANCE.execute(task);
+        }
+
+        private void postServicesInit() {
+            initPauseResumeHandler();
+            initSaveLoadHandler();
+
+            // onGameUpdate is only updated in Game Scene
+            FXGL.getGameScene().addListener(tpf -> engine.onGameUpdate(tpf));
+        }
+
+        private void initPauseResumeHandler() {
+            if (settings.isMobile()) {
+                // no-op
+            } else {
+                mainWindow.iconifiedProperty().addListener((obs, o, isMinimized) -> {
+                    if (isMinimized) {
+                        engine.pauseLoop();
+                    } else {
+                        engine.resumeLoop();
+                    }
+                });
+            }
+        }
+
+        private void initSaveLoadHandler() {
+            FXGL.getSaveLoadService().addHandler(new SaveLoadHandler() {
+                @Override
+                public void onSave(DataFile data) {
+                    var bundle = new Bundle("FXGLServices");
+                    engine.write(bundle);
+                }
+
+                @Override
+                public void onLoad(DataFile data) {
+                    var bundle = data.getBundle("FXGLServices");
+                    engine.read(bundle);
+                }
+            });
         }
 
         private boolean isError = false;
@@ -253,7 +307,7 @@ public abstract class GameApplication {
             isError = true;
 
             // stop main loop from running as we cannot continue
-            engine.getLoop().stop();
+            engine.stopLoop();
 
             // block with error dialog so that user can read the error
             new ErrorDialog(error).showAndWait();
@@ -329,7 +383,7 @@ public abstract class GameApplication {
             app.initPhysics();
             app.initUI();
 
-            FXGL.getEngineInternal$fxgl().onGameReady(FXGL.getWorldProperties());
+            FXGLApplication.engine.onGameReady(FXGL.getWorldProperties());
 
             log.infof("Game initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0);
 

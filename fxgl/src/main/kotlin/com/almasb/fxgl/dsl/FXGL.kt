@@ -87,9 +87,6 @@ class FXGL private constructor() { companion object {
         app = gameApp
     }
 
-    @JvmStatic
-    internal fun getEngineInternal() = engine
-
     private val controller = object : GameController {
         override fun gotoIntro() {
             getWindowService().gotoIntro()

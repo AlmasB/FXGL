@@ -21,7 +21,7 @@ import com.almasb.sslogger.Logger
 import javafx.beans.property.ObjectProperty
 
 /**
- *
+ * TODO: refactor to GameApplication postServicesInit()
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class EngineInitializationService : EngineService() {
@@ -48,23 +48,9 @@ class EngineInitializationService : EngineService() {
 
     private lateinit var assetLoader: AssetLoaderService
 
-    private lateinit var saveLoadService: SaveLoadService
-
     override fun onInit() {
         initAndLoadLocalization()
         initAndRegisterFontFactories()
-
-        saveLoadService.addHandler(object : SaveLoadHandler {
-            override fun onSave(data: DataFile) {
-                val bundle = Bundle("FXGLServices")
-                FXGL.getEngineInternal().write(bundle)
-            }
-
-            override fun onLoad(data: DataFile) {
-                val bundle = data.getBundle("FXGLServices")
-                FXGL.getEngineInternal().read(bundle)
-            }
-        })
     }
 
     private fun initAndLoadLocalization() {

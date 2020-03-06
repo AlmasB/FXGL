@@ -26,12 +26,12 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
 
     private val log = Logger.get(javaClass)
 
-    val loop = LoopRunner { loop(it) }
+    private val loop = LoopRunner { loop(it) }
 
     val tpf: Double
         get() = loop.tpf
 
-    internal val services = arrayListOf<EngineService>()
+    private val services = arrayListOf<EngineService>()
     private val servicesCache = hashMapOf<Class<out EngineService>, EngineService>()
 
     // TODO: make this a local var?
@@ -61,28 +61,9 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
                 ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
     }
 
-    /**
-     * This method starts initialization of services on a background thread and returns immediately.
-     * The loop is started on the JavaFX thread, as soon as the services are finished initializing.
-     */
-    fun initServicesAndStartLoop() {
-        val fxTask = IOTask.ofVoid {
-            initEnvironmentVars()
-            initServices()
-        }
-        .onSuccess {
-            services.forEach { it.onMainLoopStarting() }
+    fun initServices() {
+        initEnvironmentVars()
 
-            loop.start()
-        }
-        .onFailure {
-            throw it
-        }.toJavaFXTask()
-
-        Async.execute(fxTask)
-    }
-
-    private fun initServices() {
         val start = System.nanoTime()
 
         settings.engineServices.forEach {
@@ -148,8 +129,26 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         services.forEach { it.onUpdate(tpf) }
     }
 
+    fun onGameUpdate(tpf: Double) {
+        services.forEach { it.onGameUpdate(tpf) }
+    }
+
     fun onGameReady(vars: PropertyMap) {
         services.forEach { it.onGameReady(vars) }
+    }
+
+    /**
+     * Notifies the services that the loop is starting and starts the loop.
+     * This needs to be called on the JavaFX thread.
+     */
+    fun startLoop() {
+        services.forEach { it.onMainLoopStarting() }
+
+        loop.start()
+    }
+
+    fun stopLoop() {
+        loop.stop()
     }
 
     fun stopLoopAndExitServices() {

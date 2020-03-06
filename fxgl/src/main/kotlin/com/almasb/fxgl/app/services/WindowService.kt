@@ -85,18 +85,6 @@ class WindowService : SceneService() {
     private var pauseMenu: PauseMenu? = null
 
     override fun onInit() {
-        if (settings.isMobile) {
-            // no-op
-        } else {
-            mainWindow.iconifiedProperty().addListener { _, _, isMinimized ->
-                if (isMinimized) {
-                    FXGL.getEngineInternal().pauseLoop()
-                } else {
-                    FXGL.getEngineInternal().resumeLoop()
-                }
-            }
-        }
-
         settings.cssList.forEach {
             log.debug("Applying CSS: $it")
             mainWindow.addCSS(assetLoaderService.loadCSS(it))
@@ -139,13 +127,6 @@ class WindowService : SceneService() {
         )
 
         gameScene.isSingleStep = settings.isSingleStep
-
-        // onGameUpdate is only updated in Game Scene
-        gameScene.addListener(object : SceneListener {
-            override fun onUpdate(tpf: Double) {
-                FXGL.getEngineInternal().services.forEach { it.onGameUpdate(tpf) }
-            }
-        })
 
         if (settings.isIntroEnabled) {
             intro = sceneFactory.newIntro()
