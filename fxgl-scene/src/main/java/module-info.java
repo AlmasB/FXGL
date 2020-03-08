@@ -13,4 +13,6 @@ module com.almasb.fxgl.scene {
     requires com.almasb.fxgl.time;
 
     exports com.almasb.fxgl.scene;
+
+    opens com.almasb.fxgl.scene to com.almasb.fxgl.core;
 }

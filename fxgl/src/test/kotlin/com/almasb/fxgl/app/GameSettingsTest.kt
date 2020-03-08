@@ -45,9 +45,6 @@ class GameSettingsTest {
             settings.menuKey = KeyCode.ENTER
             settings.credits = Arrays.asList("TestCredit1", "TestCredit2")
             settings.applicationMode = ApplicationMode.RELEASE
-
-            // mock
-            settings.uiFactory = MockUIFactory
         }
     }
 
@@ -62,7 +59,7 @@ class GameSettingsTest {
 
             val stage = Async.startAsyncFX(Callable { Stage() }).await()
 
-            val engine = Engine(app, settingsInitial.toReadOnly(), stage)
+            val engine = Engine(settingsInitial.toReadOnly())
 
             settings = engine.settings
         }

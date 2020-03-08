@@ -6,7 +6,9 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.core.concurrent.Async
+import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.test.RunWithFX
@@ -134,7 +136,7 @@ class MainWindowTest {
 
         assertThat(window.currentScene, `is`<Scene>(subscene))
 
-        window.onUpdate(1.0)
+        window.update(1.0)
 
         assertThat(t, `is`(1.0))
 
@@ -142,7 +144,7 @@ class MainWindowTest {
 
         assertThat(window.currentScene, `is`(not<Scene>(subscene)))
 
-        window.onUpdate(1.0)
+        window.update(1.0)
 
         assertThat(t, `is`(1.0))
 
@@ -157,7 +159,7 @@ class MainWindowTest {
         window.pushState(subscene)
         window.pushState(subscene2)
 
-        window.onUpdate(1.0)
+        window.update(1.0)
 
         assertThat(t, `is`(3.0))
     }

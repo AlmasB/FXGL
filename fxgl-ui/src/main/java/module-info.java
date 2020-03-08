@@ -15,4 +15,6 @@ module com.almasb.fxgl.ui {
     requires javafx.controls;
 
     exports com.almasb.fxgl.ui;
+
+    opens com.almasb.fxgl.ui to com.almasb.fxgl.core;
 }

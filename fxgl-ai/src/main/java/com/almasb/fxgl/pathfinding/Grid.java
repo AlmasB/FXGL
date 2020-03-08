@@ -7,7 +7,7 @@
 package com.almasb.fxgl.pathfinding;
 
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.core.util.Consumer;
+import java.util.function.Consumer;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;

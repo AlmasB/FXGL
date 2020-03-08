@@ -189,3 +189,9 @@ internal fun mousePressedEvent(button: MouseButton, shift: Boolean, ctrl: Boolea
             shift, ctrl, alt,
             false, false, false, false, false, false, false, null)
 }
+
+internal fun mouseReleasedEvent(button: MouseButton, shift: Boolean, ctrl: Boolean, alt: Boolean): MouseEvent {
+    return MouseEvent(MouseEvent.MOUSE_RELEASED, 0.0, 0.0, 0.0, 0.0, button, 1,
+            shift, ctrl, alt,
+            false, false, false, false, false, false, false, null)
+}

@@ -7,14 +7,11 @@
 package com.almasb.fxgl.notification.impl
 
 import com.almasb.fxgl.core.Inject
-import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.notification.Notification
 import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.notification.view.NotificationView
-import com.almasb.fxgl.time.Timer
-import javafx.scene.Group
+import com.almasb.fxgl.scene.SceneService
 import javafx.scene.paint.Color
 import javafx.util.Duration
 import java.util.*
@@ -22,7 +19,7 @@ import java.util.*
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class NotificationServiceProvider : NotificationService {
+class NotificationServiceProvider : NotificationService() {
 
     private val ANIMATION_DURATION = Duration.seconds(1.0)
     private val NOTIFICATION_DURATION = Duration.seconds(3.0)
@@ -34,24 +31,15 @@ class NotificationServiceProvider : NotificationService {
 
     private var showing = false
 
-    @Inject("width")
-    private var appWidth: Int = 0
-    @Inject("height")
-    private var appHeight: Int = 0
-
-    @Inject("overlayRoot")
-    private lateinit var root: Group
-
-    @Inject("masterTimer")
-    private lateinit var timer: Timer
+    private lateinit var sceneService: SceneService
 
     @Inject("notificationViewClass")
     private lateinit var notificationViewClass: Class<out NotificationView>
 
     private val notificationView by lazy {
         ReflectionUtils.newInstance(notificationViewClass).also {
-            it.appWidth = appWidth
-            it.appHeight = appHeight
+            it.appWidth = sceneService.appWidth
+            it.appHeight = sceneService.appHeight
         }
     }
 
@@ -83,53 +71,38 @@ class NotificationServiceProvider : NotificationService {
         } else {
             notificationView.playOutAnimation()
 
-            timer.runOnceAfter(this::checkLastPop, ANIMATION_DURATION)
+            sceneService.timer.runOnceAfter(this::checkLastPop, ANIMATION_DURATION)
         }
     }
 
     private fun checkLastPop() {
         if (queue.isEmpty()) {
-            root.children -= notificationView
+            sceneService.overlayRoot.children -= notificationView
             showing = false
         } else {
             // play in animation
             notificationView.playInAnimation()
 
-            timer.runOnceAfter(this::nextNotification, ANIMATION_DURATION)
+            sceneService.timer.runOnceAfter(this::nextNotification, ANIMATION_DURATION)
         }
     }
 
     private fun showFirstNotification() {
         showing = true
-        root.children += notificationView
+        sceneService.overlayRoot.children += notificationView
 
         // play in animation
         notificationView.playInAnimation()
 
-        timer.runOnceAfter(this::nextNotification, ANIMATION_DURATION)
+        sceneService.timer.runOnceAfter(this::nextNotification, ANIMATION_DURATION)
     }
 
     private fun fireAndScheduleNextNotification(notification: Notification) {
         // schedule next
-        timer.runOnceAfter(this::nextNotification, NOTIFICATION_DURATION)
-    }
-
-    override fun onMainLoopStarting() {
-    }
-
-    override fun onGameReady(vars: PropertyMap) {
-    }
-
-    override fun onExit() {
+        sceneService.timer.runOnceAfter(this::nextNotification, NOTIFICATION_DURATION)
     }
 
     override fun onUpdate(tpf: Double) {
         notificationView.onUpdate(tpf)
-    }
-
-    override fun write(bundle: Bundle) {
-    }
-
-    override fun read(bundle: Bundle) {
     }
 }

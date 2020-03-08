@@ -6,19 +6,14 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.collection.PropertyMap
-import com.almasb.fxgl.saving.SaveFile
-import com.almasb.fxgl.saving.UserProfile
-import com.almasb.fxgl.scene.SubSceneStack
-import javafx.beans.property.StringProperty
+import com.almasb.fxgl.profile.DataFile
+import javafx.concurrent.Task
 
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-interface GameController : SubSceneStack {
-
-    fun startNewGame()
+interface GameController {
 
     fun gotoIntro()
 
@@ -26,26 +21,34 @@ interface GameController : SubSceneStack {
 
     fun gotoGameMenu()
 
+    /**
+     * Switches the current scene to loading scene.
+     * Once the given loading task is completed, the scene is switched to play.
+     */
+    fun gotoLoading(loadingTask: Runnable)
+
+    /**
+     * Switches the current scene to loading scene.
+     * Once the given loading task is completed, the scene is switched to play.
+     */
+    fun gotoLoading(loadingTask: Task<*>)
+
     fun gotoPlay()
 
-    fun saveGame(fileName: String)
+    fun startNewGame()
 
-    fun loadGame(saveFile: SaveFile)
+    /**
+     * Saves game data into given data file.
+     * This method does not write to file system.
+     */
+    fun saveGame(dataFile: DataFile)
 
-    fun loadGameFromLastSave()
-
-    fun saveProfile()
-
-    fun loadFromProfile(profile: UserProfile): Boolean
-
-    fun onGameReady(vars: PropertyMap)
+    /**
+     * Loads game data from given data file.
+     * This method does not read from the file system.
+     */
+    fun loadGame(dataFile: DataFile)
 
     fun exit()
-
-    fun profileNameProperty(): StringProperty
-
-    fun saveScreenshot(): Boolean
-
-    fun restoreDefaultProfileSettings()
 }
 

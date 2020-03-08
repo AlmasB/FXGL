@@ -12,4 +12,6 @@ module com.almasb.fxgl.io {
     requires com.gluonhq.attach.storage;
 
     exports com.almasb.fxgl.io;
+
+    opens com.almasb.fxgl.io to com.almasb.fxgl.core;
 }

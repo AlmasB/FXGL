@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.dsl.components
 
-import com.almasb.fxgl.app.Viewport
+import com.almasb.fxgl.app.scene.Viewport
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.component.Component
 

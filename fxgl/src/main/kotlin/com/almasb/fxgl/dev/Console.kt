@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.dev
 
-import com.almasb.fxgl.core.util.Consumer
+import java.util.function.Consumer
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.ui.FontType
 import javafx.application.Platform
@@ -200,8 +200,8 @@ class Console : Pane() {
     }
 
     private fun vars() {
-        FXGL.getGameState().properties.keys().forEach {
-            pushMessage("${it} = ${FXGL.getGameState().properties.getValue<Any>(it)}")
+        FXGL.getWorldProperties().keys().forEach {
+            pushMessage("${it} = ${FXGL.getWorldProperties().getValue<Any>(it)}")
         }
     }
 

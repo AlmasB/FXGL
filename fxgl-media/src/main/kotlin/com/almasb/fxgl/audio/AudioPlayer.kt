@@ -20,7 +20,7 @@ import javafx.beans.property.DoubleProperty
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class AudioPlayer : EngineService {
+class AudioPlayer : EngineService() {
 
     private val log = Logger.get(javaClass)
 

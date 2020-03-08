@@ -6,10 +6,10 @@
 
 package com.almasb.fxgl.dsl.handlers
 
-import com.almasb.fxgl.core.util.BiConsumer
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.components.CollidableComponent
 import com.almasb.fxgl.physics.CollisionHandler
+import java.util.function.BiConsumer
 
 /**
  * A collision handler between a generic entity and a one-time collidable entity.

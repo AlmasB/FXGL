@@ -18,6 +18,7 @@ import com.almasb.fxgl.texture.Texture;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import sandbox.anim.AnimationComponent;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

@@ -33,21 +33,39 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
         // we offset because data is encoded as continuous
         gid -= tileset.firstgid
 
-        // image source
-        val tilex = gid % tileset.columns
-        val tiley = gid / tileset.columns
-
         val w = map.tilewidth
         val h = map.tileheight
 
         val buffer = WritableImage(w, h)
 
-        val sourceImage = loadTilesetImage(tileset)
+        val sourceImage: Image
+        val srcx: Int
+        val srcy: Int
+
+        if (tileset.isSpriteSheet) {
+            // image source
+            val tilex = gid % tileset.columns
+            val tiley = gid / tileset.columns
+
+            sourceImage = loadImage(tileset.image, tileset.transparentcolor)
+
+            srcx = tilex * w + tileset.margin + tilex * tileset.spacing
+            srcy = tiley * h + tileset.margin + tiley * tileset.spacing
+        } else {
+            // tileset is a collection of images
+            val tile = tileset.tiles.find { it.id == gid }
+                    ?: throw IllegalArgumentException("Tile with id=$gid not found")
+
+            sourceImage = loadImage(tile.image, tile.transparentcolor)
+
+            srcx = 0
+            srcy = 0
+        }
 
         buffer.pixelWriter.setPixels(0, 0,
                 w, h, sourceImage.pixelReader,
-                tilex * w + tileset.margin + tilex * tileset.spacing,
-                tiley * h + tileset.margin + tiley * tileset.spacing)
+                srcx,
+                srcy)
 
         return ImageView(buffer).also {
             it.scaleX = if (isFlippedHorizontal) -1.0 else 1.0
@@ -80,10 +98,6 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
             // we offset because data is encoded as continuous
             gid -= tileset.firstgid
 
-            // image source
-            val tilex = gid % tileset.columns
-            val tiley = gid / tileset.columns
-
             // image destination
             val x = i % layer.width
             val y = i / layer.width
@@ -91,12 +105,32 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
             val w = map.tilewidth
             val h = map.tileheight
 
-            val sourceImage = loadTilesetImage(tileset)
+            val sourceImage: Image
+            val srcx: Int
+            val srcy: Int
 
-            val srcx = tilex * w + tileset.margin + tilex * tileset.spacing
-            val srcy = tiley * h + tileset.margin + tiley * tileset.spacing
+            if (tileset.isSpriteSheet) {
+                sourceImage = loadImage(tileset.image, tileset.transparentcolor)
 
-            log.debug("Writing to buffer: dst=${x*w},${y*h}, w=$w,h=$h, src=$srcx,$srcy")
+                // image source
+                val tilex = gid % tileset.columns
+                val tiley = gid / tileset.columns
+
+                srcx = tilex * w + tileset.margin + tilex * tileset.spacing
+                srcy = tiley * h + tileset.margin + tiley * tileset.spacing
+            } else {
+
+                // tileset is a collection of images
+                val tile = tileset.tiles.find { it.id == gid }
+                        ?: throw IllegalArgumentException("Tile with id=$gid not found")
+
+                sourceImage = loadImage(tile.image, tile.transparentcolor)
+
+                srcx = 0
+                srcy = 0
+            }
+
+            log.debug("Writing to buffer: dst=${x * w},${y * h}, w=$w,h=$h, src=$srcx,$srcy")
 
             buffer.pixelWriter.setPixels(x * w, y * h,
                     w, h, sourceImage.pixelReader,
@@ -124,9 +158,8 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
         throw IllegalArgumentException("Tileset for gid=$gid not found")
     }
 
-    private fun loadTilesetImage(tileset: Tileset): Image {
-        var imageName = tileset.image
-        imageName = imageName.substring(imageName.lastIndexOf("/") + 1)
+    private fun loadImage(tilesetImageName: String, transparentcolor: String): Image {
+        val imageName = tilesetImageName.substring(tilesetImageName.lastIndexOf("/") + 1)
 
         if (imageName in imageCache) {
             return imageCache[imageName]!!
@@ -134,10 +167,10 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
 
         val ext = mapURL.toExternalForm().substringBeforeLast("/") + "/"
 
-        val image = if (tileset.transparentcolor.isEmpty())
+        val image = if (transparentcolor.isEmpty())
             Image(ext + imageName)
         else
-            Texture(Image(ext + imageName)).transparentColor(Color.web(tileset.transparentcolor)).image
+            Texture(Image(ext + imageName)).transparentColor(Color.web(transparentcolor)).image
 
         if (image.isError)
             throw IllegalArgumentException("${ext + imageName} cannot be loaded")

@@ -9,11 +9,12 @@ package sandbox.saving;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.MenuItem;
+import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.core.serialization.Bundle;
-import com.almasb.fxgl.saving.DataFile;
+import com.almasb.fxgl.profile.DataFile;
+import com.almasb.fxgl.profile.SaveLoadHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -45,6 +46,7 @@ public class SaveSample extends GameApplication {
         settings.setTitle("SaveSample");
         settings.setVersion("0.1");
         settings.setMenuEnabled(true);
+        settings.setUserProfileEnabled(true);
         settings.setEnabledMenuItems(EnumSet.allOf(MenuItem.class));
     }
 
@@ -101,45 +103,31 @@ public class SaveSample extends GameApplication {
         }, KeyCode.G);
     }
 
-    // 2. override and specify how to serialize
     @Override
-    public DataFile saveState() {
+    protected void onPreInit() {
+        getSaveLoadService().addHandler(new SaveLoadHandler() {
+            @Override
+            public void onSave(DataFile data) {
+                Bundle bundlePlayer = new Bundle("Player");
+                Bundle bundleEnemy = new Bundle("Enemy");
 
-        Bundle bundlePlayer = new Bundle("Player");
-        Bundle bundleEnemy = new Bundle("Enemy");
+                bundlePlayer.put("id", 3);
 
-        //player.save(bundlePlayer);
-        //enemy.save(bundleEnemy);
+                data.putBundle(bundlePlayer);
+                data.putBundle(bundleEnemy);
+            }
 
-        Bundle bundleRoot = new Bundle("Root");
-        bundleRoot.put("player", bundlePlayer);
-        bundleRoot.put("enemy", bundleEnemy);
+            @Override
+            public void onLoad(DataFile data) {
+                Bundle bundlePlayer = data.getBundle("Player");
+                Bundle bundleEnemy = data.getBundle("Enemy");
 
-        return new DataFile(bundleRoot);
+                System.out.println(bundlePlayer);
+                System.out.println(bundleEnemy);
+            }
+        });
     }
 
-    // 3. override and specify how to deserialize
-    // this will be called on "load" game
-    @Override
-    public void loadState(DataFile dataFile) {
-
-        // call "new" initGame
-        initGame();
-
-        // now load state back
-        Bundle bundleRoot = (Bundle) dataFile.getData();
-
-        System.out.println(player);
-        System.out.println(enemy);
-
-        //player.load(bundleRoot.get("player"));
-        //enemy.load(bundleRoot.get("enemy"));
-
-        System.out.println(player);
-        System.out.println(enemy);
-    }
-
-    // while this will be called on "new" game
     @Override
     protected void initGame() {
         initGame(new Point2D(100, 100), new Point2D(200, 100));

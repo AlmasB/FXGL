@@ -343,4 +343,8 @@ public final class FXGLMath {
     public static double noise3D(double x, double y, double z) {
         return SimplexNoise.noise3D(x, y, z);
     }
+
+    public static double distance(Rectangle2D rect1, Rectangle2D rect2) {
+        return Distances.INSTANCE.distance(rect1, rect2);
+    }
 }

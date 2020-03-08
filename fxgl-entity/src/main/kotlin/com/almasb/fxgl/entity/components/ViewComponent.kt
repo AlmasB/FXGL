@@ -52,6 +52,16 @@ class ViewComponent : Component() {
         set(value) { opacityProp.value = value }
 
     /**
+     * If made invisible, all events (e.g. mouse) go through the entity
+     * and do not register on the entity.
+     * In contrast, changing opacity to 0 still allows the entity to receive
+     * events (e.g. mouse clicks).
+     */
+    var isVisible: Boolean
+        get() = parent.isVisible
+        set(value) { parent.isVisible = value }
+
+    /**
      * @return all view children (the order is transform applied first, then without transforms)
      */
     val children: List<Node>

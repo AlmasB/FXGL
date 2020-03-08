@@ -774,6 +774,32 @@ class InputTest {
         }
     }
 
+    @Test
+    fun `Virtual controller correctly handles UI interaction`() {
+        var i = 0
+
+        val action = object : UserAction("Action") {
+            override fun onActionBegin() {
+                i = 1
+            }
+
+            override fun onActionEnd() {
+                i = 2
+            }
+        }
+
+        input.addAction(action, KeyCode.C, VirtualButton.A)
+
+        val controller = input.createXboxVirtualController()
+        val viewForButtonA = controller.createViewDown()
+
+        viewForButtonA.fireEvent(mousePressedEvent(MouseButton.PRIMARY, false, false, false))
+        assertThat(i, `is`(1))
+
+        viewForButtonA.fireEvent(mouseReleasedEvent(MouseButton.PRIMARY, false, false, false))
+        assertThat(i, `is`(2))
+    }
+
     @ParameterizedTest
     @CsvSource("true", "false")
     fun `Virtual menu key`(isMenuEnabled: Boolean) {

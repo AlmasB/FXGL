@@ -8,10 +8,16 @@ package com.almasb.fxgl.animation
 
 import com.almasb.fxgl.core.math.FXGLMath
 import javafx.animation.Interpolator
+import javafx.animation.PathTransition
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
 import javafx.scene.shape.CubicCurve
+import javafx.scene.shape.Path
 import javafx.scene.shape.QuadCurve
+import javafx.scene.shape.Rectangle
+import javafx.util.Duration
+import kotlin.math.abs
+import kotlin.math.min
 
 /**
  * A value that can be animated (progressed) from value1 to value 2.
@@ -60,7 +66,7 @@ class AnimatedQuadBezierPoint2D
                 Point2D(path.startX, path.startY),
                 Point2D(path.controlX, path.controlY),
                 Point2D(path.endX, path.endY),
-                progress
+                interpolator.interpolate(0.0, 1.0, progress)
         )
     }
 }
@@ -74,7 +80,7 @@ class AnimatedCubicBezierPoint2D
                 Point2D(path.controlX1, path.controlY1),
                 Point2D(path.controlX2, path.controlY2),
                 Point2D(path.endX, path.endY),
-                progress
+                interpolator.interpolate(0.0, 1.0, progress)
         )
     }
 }
@@ -89,5 +95,43 @@ class AnimatedColor(from: Color, to: Color)
                 interpolator.interpolate(val1.blue, val2.blue, progress),
                 interpolator.interpolate(val1.opacity, val2.opacity, progress)
         )
+    }
+}
+
+class AnimatedPath
+(val path: Path) : AnimatedValue<Point2D>(Point2D.ZERO, Point2D.ZERO) {
+
+    /**
+     * Maps reference time values [0..1] to points on path at that time.
+     */
+    private val points = hashMapOf<Int, Point2D>()
+
+    init {
+        val dummy = Rectangle()
+        val pt = PathTransition(Duration.seconds(1.0), path, dummy)
+        pt.play()
+
+        var t = 0.0
+        var percent = 0
+
+        while (t < 1.0) {
+            points[percent++] = Point2D(dummy.translateX, dummy.translateY)
+
+            t += 0.01
+
+            pt.jumpTo(Duration.seconds(t))
+        }
+
+        pt.jumpTo(Duration.seconds(1.0))
+
+        points[100] = Point2D(dummy.translateX, dummy.translateY)
+    }
+
+    override fun animate(val1: Point2D, val2: Point2D, progress: Double, interpolator: Interpolator): Point2D {
+        val t = interpolator.interpolate(0.0, 1.0, progress)
+
+        val key = (t * 100).toInt()
+
+        return points[key]!!
     }
 }

@@ -6,10 +6,10 @@
 
 package com.almasb.fxgl.dsl.handlers
 
-import com.almasb.fxgl.core.util.Consumer
 import com.almasb.fxgl.dsl.play
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.physics.CollisionHandler
+import java.util.function.Consumer
 
 /**
  * Generic collectible collision handler.

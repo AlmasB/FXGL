@@ -11,6 +11,7 @@ import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import java.util.*
 
+
 /**
  * Maps property (variable) names to observable JavaFX properties.
  *
@@ -72,7 +73,7 @@ class PropertyMap {
                 is Int -> SimpleIntegerProperty(value)
                 is Double-> SimpleDoubleProperty(value)
                 is String -> SimpleStringProperty(value)
-                else -> SimpleObjectProperty(value)
+                else -> UpdatableObjectProperty(value)
             }
 
             properties.put(propertyName, property)
@@ -170,5 +171,26 @@ class PropertyMap {
 
     override fun toString(): String {
         return properties.toMap().toString()
+    }
+}
+
+class UpdatableObjectProperty<T>(initialValue: T) : SimpleObjectProperty<T>(initialValue) {
+
+    private val listeners = arrayListOf<ChangeListener<in T>>()
+
+    override fun addListener(listener: ChangeListener<in T>) {
+        super.addListener(listener)
+
+        listeners.add(listener)
+    }
+
+    override fun removeListener(listener: ChangeListener<in T>?) {
+        super.removeListener(listener)
+
+        listeners.remove(listener)
+    }
+
+    fun forceUpdateListeners(oldValue: T, newValue: T) {
+        listeners.forEach { it.changed(this, oldValue, newValue) }
     }
 }

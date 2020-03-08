@@ -8,14 +8,13 @@ package dev
 
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.GameSettings
-import com.almasb.fxgl.dsl.fire
-import com.almasb.fxgl.dsl.onBtnDown
-import com.almasb.fxgl.dsl.onEvent
+import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.entity.Entity
 import javafx.beans.property.IntegerProperty
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseButton
+import javafx.util.Duration
 import kotlin.collections.set
 
 /**
@@ -59,6 +58,13 @@ class SandboxGameApp : GameApplication() {
         onEvent(KeyEvent.KEY_PRESSED) { event ->
             println(event.code)
         }
+
+        eventBuilder()
+                .interval(Duration.seconds(2.0))
+                .`when` { true }
+                .thenFire { KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.K, false, false, false, false) }
+                .limit(3)
+                .buildAndStart()
     }
 
 //    override fun initGame() {

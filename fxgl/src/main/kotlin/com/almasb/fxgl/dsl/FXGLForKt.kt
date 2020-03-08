@@ -9,7 +9,6 @@ package com.almasb.fxgl.dsl
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.pool.Pools
-import com.almasb.fxgl.core.util.BiConsumer
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.event.Subscriber
@@ -24,6 +23,7 @@ import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.util.Duration
+import java.util.function.BiConsumer
 
 /**
  * This is just top-level copy-paste from FXGL,
@@ -77,6 +77,14 @@ fun getGameController() = FXGL.getGameController()
 fun getAchievementService() = FXGL.getAchievementService()
 
 fun getNotificationService() = FXGL.getNotificationService()
+
+fun getLocalizationService() = FXGL.getLocalizationService()
+
+fun getCutsceneService() = FXGL.getCutsceneService()
+
+fun getMiniGameService() = FXGL.getMiniGameService()
+
+fun getSaveLoadService() = FXGL.getSaveLoadService()
 
 fun set(varName: String, value: Any) = FXGL.set(varName, value)
 
@@ -198,8 +206,16 @@ fun run(action: () -> Unit, interval: Duration) = FXGL.run(Runnable(action), int
 
 fun run(action: () -> Unit, interval: Duration, limit: Int) = FXGL.run(Runnable(action), interval, limit)
 
+/* LOCALIZATION */
+
+fun localize(key: String) = FXGL.localize(key)
+
+fun localizedStringProperty(key: String) = FXGL.localizedStringProperty(key)
+
 /* EXTENSIONS */
 
 fun entityBuilder() = EntityBuilder()
 
 fun animationBuilder() = AnimationBuilder()
+
+fun eventBuilder() = EventBuilder()

@@ -5,15 +5,23 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.core.EngineService;
+import com.almasb.fxgl.core.concurrent.Async;
+import com.almasb.fxgl.core.concurrent.IOTask;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
+import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.core.util.Platform;
-import com.almasb.fxgl.dev.DevService;
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.saving.DataFile;
+import com.almasb.fxgl.profile.DataFile;
+import com.almasb.fxgl.profile.SaveLoadHandler;
+import com.almasb.fxgl.ui.ErrorDialog;
+import com.almasb.fxgl.ui.FontType;
 import com.almasb.sslogger.*;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -26,13 +34,11 @@ import java.util.ResourceBundle;
  * <li>initSettings()</li>
  * <li>Services configuration (after this you can safely call any FXGL.* methods)</li>
  * Executed on JavaFX UI thread:
- * <li>initAchievements()</li>
  * <li>initInput()</li>
- * <li>preInit()</li>
+ * <li>onPreInit()</li>
  * NOT executed on JavaFX UI thread:
- * <li>initAssets()</li>
  * <li>initGameVars()</li>
- * <li>initGame() OR loadState()</li>
+ * <li>initGame()</li>
  * <li>initPhysics()</li>
  * <li>initUI()</li>
  * Start of main game loop execution on JavaFX UI thread
@@ -206,51 +212,146 @@ public abstract class GameApplication {
      */
     protected void onUpdate(double tpf) {}
 
-    /**
-     * Called when MenuEvent.SAVE occurs.
-     *
-     * @return data with required info about current state
-     * @throws UnsupportedOperationException if was not overridden
-     */
-    protected DataFile saveState() {
-        log.warning("Called saveState(), but it wasn't overridden!");
-        throw new UnsupportedOperationException("Default implementation is not available");
-    }
-
-    /**
-     * Called when MenuEvent.LOAD occurs.
-     *
-     * @param dataFile previously saved data
-     * @throws UnsupportedOperationException if was not overridden
-     */
-    protected void loadState(DataFile dataFile) {
-        log.warning("Called loadState(), but it wasn't overridden!");
-        throw new UnsupportedOperationException("Default implementation is not available");
-    }
-
     public static final class FXGLApplication extends Application {
 
         public static GameApplication app;
         private static ReadOnlyGameSettings settings;
+
+        private static Engine engine;
+        private MainWindow mainWindow;
 
         /**
          * This is the main entry point as run by the JavaFX platform.
          */
         @Override
         public void start(Stage stage) {
-            var engine = new Engine(app, settings, stage);
+            // any exception on the JavaFX thread will be caught and reported
+            Thread.setDefaultUncaughtExceptionHandler((thread, e) -> handleFatalError(e));
 
-            settings.getEngineServices().forEach(serviceClass ->
-                    engine.addService(ReflectionUtils.newInstance(serviceClass))
-            );
+            log.debug("Initializing FXGL");
 
-            if (settings.getApplicationMode() != ApplicationMode.RELEASE && settings.isDeveloperMenuEnabled()) {
-                engine.addService(new DevService());
+            engine = new Engine(settings);
+
+            // after this call, all FXGL.* calls (apart from those accessing services) are valid
+            FXGL.inject$fxgl(engine, app, this);
+
+            var startupScene = settings.getSceneFactory().newStartup();
+
+            // get window up ASAP
+            mainWindow = new MainWindow(stage, startupScene, settings);
+            mainWindow.show();
+
+            // TODO: possibly a better way exists of doing below
+            engine.getEnvironmentVars$fxgl().put("settings", settings);
+            engine.getEnvironmentVars$fxgl().put("mainWindow", mainWindow);
+
+            // start initialization of services on a background thread
+            // then start the loop on the JavaFX thread
+            var task = IOTask.ofVoid(() -> {
+                            engine.initServices();
+                            postServicesInit();
+                        })
+                        .onSuccess(n -> engine.startLoop())
+                        .onFailure(e -> handleFatalError(e))
+                        .toJavaFXTask();
+
+            Async.INSTANCE.execute(task);
+        }
+
+        private void postServicesInit() {
+            initPauseResumeHandler();
+            initSaveLoadHandler();
+            initAndLoadLocalization();
+            initAndRegisterFontFactories();
+
+            // onGameUpdate is only updated in Game Scene
+            FXGL.getGameScene().addListener(tpf -> engine.onGameUpdate(tpf));
+        }
+
+        private void initPauseResumeHandler() {
+            if (!settings.isMobile()) {
+                mainWindow.iconifiedProperty().addListener((obs, o, isMinimized) -> {
+                    if (isMinimized) {
+                        engine.pauseLoop();
+                    } else {
+                        engine.resumeLoop();
+                    }
+                });
+            }
+        }
+
+        private void initSaveLoadHandler() {
+            FXGL.getSaveLoadService().addHandler(new SaveLoadHandler() {
+                @Override
+                public void onSave(DataFile data) {
+                    var bundle = new Bundle("FXGLServices");
+                    engine.write(bundle);
+                }
+
+                @Override
+                public void onLoad(DataFile data) {
+                    var bundle = data.getBundle("FXGLServices");
+                    engine.read(bundle);
+                }
+            });
+        }
+
+        private void initAndLoadLocalization() {
+            log.debug("Loading localizations");
+
+            settings.getSupportedLanguages().forEach(lang -> {
+                var bundle = FXGL.getAssetLoader().loadResourceBundle("languages/" + lang.getName().toLowerCase() + ".properties");
+                FXGL.getLocalizationService().addLanguageData(lang, bundle);
+            });
+
+            FXGL.getLocalizationService().selectedLanguageProperty().bind(settings.getLanguage());
+        }
+
+        private void initAndRegisterFontFactories() {
+            log.debug("Registering font factories with UI factory");
+
+            var uiFactory = FXGL.getUIFactoryService();
+
+            uiFactory.registerFontFactory(FontType.UI, FXGL.getAssetLoader().loadFont(settings.getFontUI()));
+            uiFactory.registerFontFactory(FontType.GAME, FXGL.getAssetLoader().loadFont(settings.getFontGame()));
+            uiFactory.registerFontFactory(FontType.MONO, FXGL.getAssetLoader().loadFont(settings.getFontMono()));
+            uiFactory.registerFontFactory(FontType.TEXT, FXGL.getAssetLoader().loadFont(settings.getFontText()));
+        }
+
+        private boolean isError = false;
+
+        private void handleFatalError(Throwable error) {
+            if (isError) {
+                // just ignore to avoid spamming dialogs
+                return;
             }
 
-            FXGL.inject$fxgl(engine);
+            isError = true;
 
-            engine.startLoop();
+            // stop main loop from running as we cannot continue
+            engine.stopLoop();
+
+            // block with error dialog so that user can read the error
+            new ErrorDialog(error).showAndWait();
+
+            log.fatal("Uncaught Exception:", error);
+            log.fatal("Application will now exit");
+
+            exitFXGL();
+        }
+
+        public void exitFXGL() {
+            log.debug("Exiting FXGL");
+
+            if (engine != null && !isError)
+                engine.stopLoopAndExitServices();
+
+            log.debug("Shutting down background threads");
+            Async.INSTANCE.shutdownNow();
+
+            log.debug("Closing logger and exiting JavaFX");
+            Logger.close();
+            javafx.application.Platform.exit();
         }
 
         static void launchFX(GameApplication app, ReadOnlyGameSettings settings, String[] args) {
@@ -263,6 +364,68 @@ public abstract class GameApplication {
             FXGLApplication.app = app;
             FXGLApplication.settings = settings;
             new FXGLApplication().start(stage);
+        }
+    }
+
+    public static class GameApplicationService extends EngineService {
+
+        private GameApplication app = FXGLApplication.app;
+
+        @Override
+        public void onMainLoopStarting() {
+            // these things need to be called early before the main loop
+            // so that menus can correctly display input controls, etc.
+            app.initInput();
+            app.onPreInit();
+        }
+
+        @Override
+        public void onGameUpdate(double tpf) {
+            app.onUpdate(tpf);
+        }
+    }
+
+    /**
+     *  * Clears previous game.
+     *  * Initializes game, physics and UI.
+     *  * This task is rerun every time the game application is restarted.
+     */
+    public static class InitAppTask extends Task<Void> {
+
+        private GameApplication app = FXGLApplication.app;
+
+        @Override
+        protected Void call() throws Exception {
+            var start = System.nanoTime();
+
+            log.debug("Initializing game");
+            updateMessage("Initializing game");
+
+            initGame();
+            app.initPhysics();
+            app.initUI();
+
+            FXGLApplication.engine.onGameReady(FXGL.getWorldProperties());
+
+            log.infof("Game initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+
+            return null;
+        }
+
+        private void initGame() {
+            var vars = new HashMap<String, Object>();
+            app.initGameVars(vars);
+
+            vars.forEach((name, value) ->
+                    FXGL.getWorldProperties().setValue(name, value)
+            );
+
+            app.initGame();
+        }
+
+        @Override
+        protected void failed() {
+            throw new RuntimeException("Initialization failed", getException());
         }
     }
 }

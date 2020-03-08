@@ -8,7 +8,7 @@ package com.almasb.fxgl.gameplay
 
 /**
  * Represents game difficulty. Based on selected difficulty
- * a game may change its behavior to provide appropriate challenge.
+ * a game may change its behavior to provide appropriate level of challenge.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

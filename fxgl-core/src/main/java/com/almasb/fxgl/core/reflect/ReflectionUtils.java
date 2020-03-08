@@ -7,7 +7,7 @@
 package com.almasb.fxgl.core.reflect;
 
 import com.almasb.fxgl.core.collection.Array;
-import com.almasb.fxgl.core.util.Function;
+import java.util.function.Function;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

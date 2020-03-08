@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.localization
 
+import com.almasb.fxgl.core.EngineService
 import com.almasb.sslogger.Logger
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
@@ -17,27 +18,22 @@ import java.util.concurrent.Callable
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class LocalizationService  {
+class LocalizationService : EngineService() {
 
     private val log = Logger.get(javaClass)
 
     private val languagesData = hashMapOf<Language, HashMap<String, String>>()
 
-    /**
-     * Supported languages in alphabetical order.
-     */
-    val languages: List<Language>
-        get() = languagesData.keys.sortedBy { it.name }
-
-    private val selectedLanguageProp = SimpleObjectProperty<Language>()
+    private val selectedLanguageProp = SimpleObjectProperty(Language.NONE)
 
     fun selectedLanguageProperty() = selectedLanguageProp
 
-    val selectedLanguage: Language
+    var selectedLanguage: Language
         get() = selectedLanguageProp.value
+        set(value) { selectedLanguageProp.value = value }
 
     fun addLanguageData(lang: Language, bundle: ResourceBundle) {
-        val map = languagesData[lang] ?: hashMapOf()
+        val map = languagesData.getOrDefault(lang, hashMapOf())
         bundle.keySet().forEach {
             map[it] = bundle.getString(it)
         }
@@ -45,7 +41,7 @@ class LocalizationService  {
     }
 
     fun addLanguageData(lang: Language, data: Map<String, String>) {
-        val map = languagesData[lang] ?: hashMapOf()
+        val map = languagesData.getOrDefault(lang, hashMapOf())
         map.putAll(data)
         languagesData[lang] = map
     }
@@ -68,6 +64,10 @@ class LocalizationService  {
      * @return a string translated to given language
      */
     fun getLocalizedString(key: String, lang: Language): String {
+        if (lang == Language.NONE) {
+            return "Language is NONE"
+        }
+
         if (lang !in languagesData) {
             log.warning("No data for language $lang")
             return "MISSING_LANG!"

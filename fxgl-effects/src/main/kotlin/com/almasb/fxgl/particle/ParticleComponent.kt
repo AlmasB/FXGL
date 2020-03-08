@@ -31,6 +31,9 @@ open class ParticleComponent(val emitter: ParticleEmitter) : Component() {
 
     private val particles = UnorderedArray<Particle>(256)
 
+    val isEmitterPaused: Boolean
+        get() = emitter.isPaused
+
     override fun onUpdate(tpf: Double) {
         if (parent.world == null) {
             entity.world.addEntity(parent)
@@ -56,6 +59,14 @@ open class ParticleComponent(val emitter: ParticleEmitter) : Component() {
         if (particles.isEmpty && emitter.isFinished) {
             onFinished.run();
         }
+    }
+
+    fun pauseEmitter() {
+        emitter.pause()
+    }
+
+    fun resumeEmitter() {
+        emitter.resume()
     }
 
     override fun onRemoved() {

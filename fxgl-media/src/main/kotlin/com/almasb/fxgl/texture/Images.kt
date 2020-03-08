@@ -61,6 +61,15 @@ fun toImage(node: Node): Image = Async.startAsyncFX(Callable {
     node.snapshot(params, null)
 }).await()
 
+fun toPixels(image: Image): List<Pixel> {
+    val result = arrayListOf<Pixel>()
+    image.map {
+        result += it
+        it
+    }
+    return result
+}
+
 fun merge(images: List<Image>): Image {
     if (images.isEmpty())
         return getDummyImage()

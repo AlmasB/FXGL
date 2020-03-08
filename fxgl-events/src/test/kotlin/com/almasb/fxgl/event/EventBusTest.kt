@@ -12,6 +12,7 @@ import javafx.event.EventType
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertAll
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
@@ -68,5 +69,12 @@ class EventBusTest {
                     assertThat(count, `is`(2))
                 }
         )
+    }
+
+    @Test
+    fun `Service provides an event bus`() {
+        val service = EventBusService()
+
+        assertNotNull(service.eventBus)
     }
 }

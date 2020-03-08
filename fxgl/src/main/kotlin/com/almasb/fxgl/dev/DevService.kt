@@ -6,10 +6,10 @@
 
 package com.almasb.fxgl.dev
 
-import com.almasb.fxgl.app.GameView
+import com.almasb.fxgl.app.scene.GameView
+import com.almasb.fxgl.app.services.WindowService
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.collection.PropertyMap
-import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
@@ -29,7 +29,11 @@ import javafx.scene.shape.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DevService : EngineService {
+class DevService : EngineService() {
+
+    private lateinit var windowService: WindowService
+
+    lateinit var devPane: DevPane
 
     private val console by lazy { Console() }
 
@@ -42,6 +46,11 @@ class DevService : EngineService {
         }
 
         override fun close() { }
+    }
+
+    override fun onInit() {
+        // TODO: reconsider ctor params for dev pane
+        devPane = DevPane(windowService, FXGL.getSettings())
     }
 
     fun openConsole() {
@@ -80,21 +89,6 @@ class DevService : EngineService {
                 }
             }
         })
-    }
-
-    override fun onExit() {
-    }
-
-    override fun onUpdate(tpf: Double) {
-    }
-
-    override fun onGameReady(vars: PropertyMap) {
-    }
-
-    override fun write(bundle: Bundle) {
-    }
-
-    override fun read(bundle: Bundle) {
     }
 
     private val debugViews = hashMapOf<Entity, GameView>()
@@ -151,5 +145,9 @@ class DevService : EngineService {
         debugViews.remove(entity)?.let { view ->
             entity.viewComponent.removeChild(view.node)
         }
+    }
+
+    override fun onGameReady(vars: PropertyMap) {
+        devPane.onGameReady(vars)
     }
 }

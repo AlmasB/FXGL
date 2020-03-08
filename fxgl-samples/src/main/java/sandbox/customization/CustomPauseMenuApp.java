@@ -10,8 +10,8 @@ import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.app.PauseMenu;
-import com.almasb.fxgl.app.SceneFactory;
+import com.almasb.fxgl.app.scene.PauseMenu;
+import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.util.EmptyRunnable;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.level.Level;
@@ -101,20 +101,17 @@ public class CustomPauseMenuApp extends GameApplication {
 
             shape3.setTranslateY(SIZE);
 
-            Text textResume = FXGL.getUIFactory().newText("RESUME", Color.WHITE, 24.0);
-            textResume.setFont(FXGL.getUIFactory().newFont(FontType.GAME, 24.0));
+            Text textResume = FXGL.getUIFactory().newText("RESUME", Color.WHITE, FontType.GAME, 24.0);
             textResume.setTranslateX(50);
             textResume.setTranslateY(100);
             textResume.setMouseTransparent(true);
 
-            Text textExit = FXGL.getUIFactory().newText("EXIT", Color.WHITE, 24.0);
-            textExit.setFont(FXGL.getUIFactory().newFont(FontType.GAME, 24.0));
+            Text textExit = FXGL.getUIFactory().newText("EXIT", Color.WHITE, FontType.GAME, 24.0);
             textExit.setTranslateX(200);
             textExit.setTranslateY(100);
             textExit.setMouseTransparent(true);
 
-            Text textOptions = FXGL.getUIFactory().newText("OPTIONS", Color.WHITE, 24.0);
-            textOptions.setFont(FXGL.getUIFactory().newFont(FontType.GAME, 24.0));
+            Text textOptions = FXGL.getUIFactory().newText("OPTIONS", Color.WHITE, FontType.GAME, 24.0);
             textOptions.setTranslateX(110);
             textOptions.setTranslateY(195);
             textOptions.setMouseTransparent(true);
@@ -149,7 +146,7 @@ public class CustomPauseMenuApp extends GameApplication {
             if (animation.isAnimating())
                 return;
 
-            animation.setOnFinished(() -> FXGL.getGameController().popSubScene());
+            animation.setOnFinished(() -> FXGL.getSceneService().popSubScene());
             animation.startReverse();
         }
     }

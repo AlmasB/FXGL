@@ -22,7 +22,7 @@ public class FXGLButton extends Button {
     public FXGLButton(String text) {
         super(text);
         getStyleClass().setAll("fxgl_button");
-        setFont(FXGLUIConfig.getUIFactory().newFont(22));
+
         setAlignment(Pos.CENTER);
         setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {

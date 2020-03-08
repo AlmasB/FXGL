@@ -9,6 +9,7 @@ package com.almasb.fxgl.entity.level.tiled
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.SpawnData
+import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
 import com.almasb.fxgl.entity.level.LevelLoadingException
@@ -112,6 +113,8 @@ class TMXLevelLoader : LevelLoader {
                         data.data.forEach {
                             e.setProperty(it.key, it.value)
                         }
+                        
+                        e.addComponent(IDComponent(tiledObject.name, tiledObject.id))
 
                         e.setPosition(data.x, data.y)
                         e.rotation = tiledObject.rotation.toDouble()
@@ -136,8 +139,10 @@ class TMXLevelLoader : LevelLoader {
 
         var currentLayer = Layer()
         var currentTileset = Tileset()
+        var currentTile = Tile()
         var currentObject = TiledObject()
 
+        var insideTileTag = false
         var mapPropertiesFinished = false
 
         while (eventReader.hasNext()) {
@@ -154,8 +159,18 @@ class TMXLevelLoader : LevelLoader {
                         parseTileset(currentTileset, start)
                     }
 
+                    "tile" -> {
+                        currentTile = Tile()
+                        parseTile(currentTile, start)
+                        insideTileTag = true
+                    }
+
                     "image" -> {
-                        parseImage(currentTileset, start)
+                        if (insideTileTag) {
+                            parseImage(currentTile, start)
+                        } else {
+                            parseImage(currentTileset, start)
+                        }
                     }
 
                     "layer" -> {
@@ -200,8 +215,18 @@ class TMXLevelLoader : LevelLoader {
                 val endElement = event.asEndElement()
 
                 when (endElement.name.localPart) {
-                    "tileset" -> { tilesets.add(currentTileset) }
-                    "layer", "objectgroup" -> { layers.add(currentLayer) }
+                    "tileset" -> {
+                        tilesets.add(currentTileset)
+                    }
+
+                    "tile" -> {
+                        currentTileset.tiles.add(currentTile)
+                        insideTileTag = false
+                    }
+
+                    "layer", "objectgroup" -> {
+                        layers.add(currentLayer)
+                    }
                 }
             }
         }
@@ -242,11 +267,28 @@ class TMXLevelLoader : LevelLoader {
         tileset.columns = start.getInt("columns")
     }
 
+    private fun parseTile(tile: Tile, start: StartElement) {
+        tile.id = start.getInt("id")
+    }
+
+    /**
+     * Parse "image" tag inside "tileset" tag.
+     */
     private fun parseImage(tileset: Tileset, start: StartElement) {
         tileset.image = start.getString("source")
         tileset.imagewidth = start.getInt("width")
         tileset.imageheight = start.getInt("height")
         tileset.transparentcolor = start.getString("trans")
+    }
+
+    /**
+     * Parse "image" tag inside "tile" tag.
+     */
+    private fun parseImage(tile: Tile, start: StartElement) {
+        tile.image = start.getString("source")
+        tile.imagewidth = start.getInt("width")
+        tile.imageheight = start.getInt("height")
+        tile.transparentcolor = start.getString("trans")
     }
 
     private fun parseTileLayer(layer: Layer, start: StartElement) {

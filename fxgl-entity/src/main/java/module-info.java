@@ -16,6 +16,7 @@ module com.almasb.fxgl.entity {
     opens com.almasb.fxgl.entity.components to com.almasb.fxgl.core;
 
     exports com.almasb.fxgl.entity;
+    exports com.almasb.fxgl.entity.action;
     exports com.almasb.fxgl.entity.component;
     exports com.almasb.fxgl.entity.components;
     exports com.almasb.fxgl.entity.level;

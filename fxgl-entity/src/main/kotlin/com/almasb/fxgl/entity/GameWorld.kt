@@ -7,10 +7,11 @@
 package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.core.collection.Array
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.core.util.Predicate
+import java.util.function.Predicate
 import com.almasb.fxgl.core.util.tryCatchRoot
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.IDComponent
@@ -35,6 +36,8 @@ class GameWorld {
     companion object {
         private val log = Logger.get("GameWorld")
     }
+
+    val properties = PropertyMap()
 
     private val updateList = Array<Entity>()
 
@@ -66,7 +69,7 @@ class GameWorld {
      * @param entity the entity to add to world
      */
     fun addEntity(entity: Entity) {
-        require(!entity.isActive){ "Entity is already attached to world" }
+        require(!entity.isActive) { "Entity is already attached to world" }
 
         waitingList.add(entity)
         entities.add(entity)
@@ -155,12 +158,12 @@ class GameWorld {
     }
 
     /**
-     * Removes all (including with IrremovableComponent) entities.
-     * Does NOT clear state listeners.
+     * Resets this game world to its original state (as if newly constructed) by
+     * removing all (including with IrremovableComponent) entities, properties, entity factories and world listeners.
      * Do NOT call this method manually.
      * It is called automatically by FXGL during initGame().
      */
-    fun clear() {
+    fun reset() {
         log.debug("Clearing game world")
 
         waitingList.clear()
@@ -187,9 +190,11 @@ class GameWorld {
             e.clean()
         }
 
+        properties.clear()
         entities.clear()
         entityFactories.clear()
         entitySpawners.clear()
+        worldListeners.clear()
     }
 
     private val worldListeners = Array<EntityWorldListener>()
@@ -547,4 +552,9 @@ class GameWorld {
                 }
         )
     }
+
+    /**
+     * @return entity group of given types
+     */
+    fun getGroup(vararg entityTypes: Enum<*>) = EntityGroup(this, getEntitiesByType(*entityTypes), *entityTypes)
 }

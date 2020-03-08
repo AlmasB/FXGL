@@ -7,7 +7,7 @@
 package com.almasb.fxgl.entity
 
 import java.util.Optional
-import com.almasb.fxgl.core.util.Predicate
+import java.util.function.Predicate
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.entity.components.IrremovableComponent
@@ -393,7 +393,9 @@ class GameWorldTest {
 //    }
 
     @Test
-    fun `Clear removes all entities`() {
+    fun `Reset removes all entities, properties and world listeners`() {
+        gameWorld.properties.setValue("test", "test")
+
         val e = Entity()
         e.addComponent(IrremovableComponent())
 
@@ -401,13 +403,27 @@ class GameWorldTest {
 
         gameWorld.addEntities(e, e2)
 
-        gameWorld.clear()
+        var i = 0
+
+        gameWorld.addWorldListener(object : EntityWorldListener {
+            override fun onEntityRemoved(entity: Entity?) { }
+
+            override fun onEntityAdded(entity: Entity?) {
+                i = 1
+            }
+        })
+
+        gameWorld.reset()
 
         assertTrue(gameWorld.entities.isEmpty())
+        assertTrue(gameWorld.properties.keys().isEmpty())
+
+        gameWorld.addEntity(Entity())
+        assertThat(i, `is`(0))
     }
 
     @Test
-    fun `Clear correctly cleans all entities`() {
+    fun `Reset correctly cleans all entities`() {
         val e = Entity()
         e.addComponent(EntityTest.CustomDataComponent("hello"))
         gameWorld.addEntity(e)
@@ -428,7 +444,7 @@ class GameWorldTest {
             }
         })
 
-        gameWorld.clear()
+        gameWorld.reset()
 
         assertAll(
                 Executable { assertThat(count, `is`(2)) },
@@ -438,7 +454,7 @@ class GameWorldTest {
     }
 
     @Test
-    fun `Clear correctly cleans entity removed in previous frame`() {
+    fun `Reset correctly cleans entity removed in previous frame`() {
         val e = Entity()
         e.addComponent(EntityTest.CustomDataComponent("hello"))
         gameWorld.addEntity(e)
@@ -447,7 +463,7 @@ class GameWorldTest {
 
         gameWorld.removeEntity(e)
 
-        gameWorld.clear()
+        gameWorld.reset()
 
         assertTrue(e.components.isEmpty())
     }

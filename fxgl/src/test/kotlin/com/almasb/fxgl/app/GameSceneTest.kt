@@ -6,9 +6,10 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.scene.GameScene
+import com.almasb.fxgl.app.scene.GameView
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
-import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.particle.ParticleComponent
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.physics.PhysicsWorld
@@ -34,19 +35,16 @@ class GameSceneTest {
 
     private lateinit var gameScene: GameScene
     private lateinit var world: GameWorld
-    private lateinit var state: GameState
 
     @BeforeEach
     fun setUp() {
         world = GameWorld()
-        state = GameState()
-        gameScene = GameScene(800, 600, state, world, PhysicsWorld(600, 50.0))
+        gameScene = GameScene(800, 600, world, PhysicsWorld(600, 50.0))
     }
 
     @Test
     fun `Creation`() {
         assertThat(gameScene.gameWorld, `is`(world))
-        assertThat(gameScene.gameState, `is`(state))
     }
 
     @Test
@@ -180,7 +178,7 @@ class GameSceneTest {
     }
 
     @Test
-    fun `Clear removes all game and ui views`() {
+    fun `Reset removes all game and ui views`() {
         val gameRoot = gameScene.contentRoot.children[0] as Group
 
         val view1 = GameView(Rectangle(), 1000)
@@ -193,7 +191,7 @@ class GameSceneTest {
 
         gameScene.addUINode(rect)
 
-        gameScene.clear()
+        gameScene.reset()
 
         assertThat(gameRoot.children.size, `is`(0))
         assertThat(gameScene.uiNodes.size, `is`(0))

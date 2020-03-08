@@ -6,10 +6,15 @@
 
 package sandbox;
 
-import com.almasb.fxgl.app.*;
+import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.app.scene.LoadingScene;
+import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.concurrent.Task;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -28,11 +33,25 @@ public class LoadingSample extends GameApplication {
         settings.setVersion("0.1");
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
         settings.setSceneFactory(new SceneFactory() {
             @Override
             public LoadingScene newLoadingScene() {
                 return new MyLoadingScene();
             }
+        });
+    }
+
+    @Override
+    protected void initInput() {
+        FXGL.onKeyDown(KeyCode.L, () -> {
+            FXGL.getGameController().gotoLoading(() -> {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
         });
     }
 
@@ -59,17 +78,11 @@ public class LoadingSample extends GameApplication {
         private Rectangle r = new Rectangle(40, 0, null);
 
         public MyLoadingScene() {
-
-            getContentRoot().getChildren().clear();
-
             r.setStroke(Color.BLACK);
-
             r.setTranslateX(FXGLMath.random(0, FXGL.getAppWidth()));
             r.setTranslateY(FXGLMath.random(0, 2));
 
-
-
-            getContentRoot().getChildren().addAll(r);
+            getContentRoot().getChildren().addAll(new Rectangle(getAppWidth(), getAppHeight(), Color.LIGHTGRAY), r);
         }
 
         @Override
@@ -80,7 +93,6 @@ public class LoadingSample extends GameApplication {
         }
 
         @Override
-        @SuppressWarnings("PMD.UselessOverridingMethod")
         protected void onUpdate(double tpf) {
             super.onUpdate(tpf);
         }

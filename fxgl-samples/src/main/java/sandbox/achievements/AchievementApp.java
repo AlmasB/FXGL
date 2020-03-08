@@ -11,11 +11,9 @@ import com.almasb.fxgl.achievement.AchievementEvent;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.MenuItem;
-import com.almasb.fxgl.saving.DataFile;
 import javafx.scene.input.KeyCode;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -51,17 +49,17 @@ public class AchievementApp extends GameApplication {
 
     @Override
     protected void initInput() {
-        onKeyDown(KeyCode.Q, "save", () -> {
-            var data = saveState();
-
-            getFS().writeDataTask(data, "data.dat").run();
-        });
-
-        onKeyDown(KeyCode.E, "Load", () -> {
-            getFS().<DataFile>readDataTask("data.dat")
-                    .onSuccess(data -> loadState(data))
-                    .run();
-        });
+//        onKeyDown(KeyCode.Q, "save", () -> {
+//            var data = saveState();
+//
+//            getFS().writeDataTask(data, "data.dat").run();
+//        });
+//
+//        onKeyDown(KeyCode.E, "Load", () -> {
+//            getFS().<DataFile>readDataTask("data.dat")
+//                    .onSuccess(data -> loadState(data))
+//                    .run();
+//        });
 
         onKeyDown(KeyCode.A, "Dec", () -> {
             inc("enemiesKilled", -1);
@@ -72,23 +70,24 @@ public class AchievementApp extends GameApplication {
         });
     }
 
-    @Override
-    protected DataFile saveState() {
-        var map = new HashMap<String, Integer>();
-
-        map.put("pixelsMoved", geti("pixelsMoved"));
-        map.put("enemiesKilled", geti("enemiesKilled"));
-
-        return new DataFile(map);
-    }
-
-    @Override
-    protected void loadState(DataFile dataFile) {
-        Map<String, Integer> map = (Map<String, Integer>) dataFile.getData();
-
-        set("pixelsMoved", map.get("pixelsMoved"));
-        set("enemiesKilled", map.get("enemiesKilled"));
-    }
+    // TODO:
+//    @Override
+//    protected DataFile saveState() {
+//        var map = new HashMap<String, Integer>();
+//
+//        map.put("pixelsMoved", geti("pixelsMoved"));
+//        map.put("enemiesKilled", geti("enemiesKilled"));
+//
+//        return new DataFile(map);
+//    }
+//
+//    @Override
+//    protected void loadState(DataFile dataFile) {
+//        Map<String, Integer> map = (Map<String, Integer>) dataFile.getData();
+//
+//        set("pixelsMoved", map.get("pixelsMoved"));
+//        set("enemiesKilled", map.get("enemiesKilled"));
+//    }
 
     public static void main(String[] args) {
         launch(args);

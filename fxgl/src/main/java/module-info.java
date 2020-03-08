@@ -21,7 +21,9 @@ module com.almasb.fxgl.all {
     requires transitive com.almasb.fxgl.localization;
     requires transitive com.almasb.fxgl.media;
     requires transitive com.almasb.fxgl.minigames;
+    requires transitive com.almasb.fxgl.net;
     requires transitive com.almasb.fxgl.notification;
+    requires transitive com.almasb.fxgl.profiles;
     requires transitive com.almasb.fxgl.scene;
     requires transitive com.almasb.fxgl.time;
     requires transitive com.almasb.fxgl.ui;
@@ -34,8 +36,12 @@ module com.almasb.fxgl.all {
 
     opens com.almasb.fxgl.dsl to com.almasb.fxgl.core;
     opens com.almasb.fxgl.dev to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.app to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.app.services to com.almasb.fxgl.core;
 
     exports com.almasb.fxgl.app;
+    exports com.almasb.fxgl.app.services;
+    exports com.almasb.fxgl.app.scene;
     exports com.almasb.fxgl.dev;
     exports com.almasb.fxgl.dsl;
     exports com.almasb.fxgl.dsl.components;
@@ -44,5 +50,4 @@ module com.almasb.fxgl.all {
     exports com.almasb.fxgl.dsl.handlers;
     exports com.almasb.fxgl.dsl.views;
     exports com.almasb.fxgl.gameplay;
-    exports com.almasb.fxgl.saving;
 }

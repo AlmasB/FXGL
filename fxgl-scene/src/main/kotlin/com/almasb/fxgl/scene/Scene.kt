@@ -19,11 +19,6 @@ import java.util.concurrent.CopyOnWriteArrayList
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-interface SubSceneStack {
-    fun pushSubScene(subScene: SubScene)
-
-    fun popSubScene()
-}
 
 abstract class SubScene : Scene() {
 

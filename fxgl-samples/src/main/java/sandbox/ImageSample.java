@@ -7,9 +7,12 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.ImagesKt;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Rectangle;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -24,6 +27,15 @@ public class ImageSample extends GameApplication {
         settings.setTitle("ImageSample");
     }
 
+    private Entity e;
+
+    @Override
+    protected void initInput() {
+        onKeyDown(KeyCode.F, () -> {
+            e.setVisible(!e.isVisible());
+        });
+    }
+
     @Override
     protected void initGame() {
         Image background = image("background.png");
@@ -36,6 +48,11 @@ public class ImageSample extends GameApplication {
             Image processed = ImagesKt.resize(original, 16 * i, 16 * i);
             addUINode(new ImageView(processed), 5 * i  * i, 0.3 * i * i * i);
         }
+
+        e = entityBuilder()
+                .at(50, 300)
+                .view(new Rectangle(40, 40))
+                .buildAndAttach();
     }
 
     public static void main(String[] args) {

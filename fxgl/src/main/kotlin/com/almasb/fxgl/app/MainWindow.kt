@@ -6,13 +6,16 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.core.fsm.StateMachine
 import com.almasb.fxgl.input.MouseEventData
+import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.sslogger.Logger
 import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
+import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.event.Event
@@ -148,6 +151,8 @@ internal class MainWindow(
         log.debug("Set initial scene to $scene")
     }
 
+    fun iconifiedProperty(): ReadOnlyBooleanProperty = stage.iconifiedProperty()
+
     /**
      * Add desktop taskbar / window icon.
      * Multiple images of different sizes can be added: 16x16, 32x32
@@ -199,7 +204,7 @@ internal class MainWindow(
         }
     }
 
-    fun onUpdate(tpf: Double) {
+    fun update(tpf: Double) {
         stateMachine.runOnActiveStates { it.update(tpf) }
     }
 
