@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.scene.ErrorSubScene
 import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.core.fsm.StateMachine
 import com.almasb.fxgl.input.MouseEventData
@@ -367,4 +368,8 @@ internal class MainWindow(
     }
 
     fun takeScreenshot(): Image = fxScene.snapshot(null)
+
+    fun showFatalError(error: Throwable, action: Runnable) {
+        pushState(ErrorSubScene(error, action))
+    }
 }

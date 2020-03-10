@@ -14,7 +14,6 @@ import com.almasb.fxgl.core.util.Platform;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.profile.DataFile;
 import com.almasb.fxgl.profile.SaveLoadHandler;
-import com.almasb.fxgl.ui.ErrorDialog;
 import com.almasb.fxgl.ui.FontType;
 import com.almasb.sslogger.*;
 import javafx.application.Application;
@@ -331,13 +330,14 @@ public abstract class GameApplication {
             // stop main loop from running as we cannot continue
             engine.stopLoop();
 
-            // block with error dialog so that user can read the error
-            new ErrorDialog(error).showAndWait();
-
             log.fatal("Uncaught Exception:", error);
             log.fatal("Application will now exit");
 
-            exitFXGL();
+            if (mainWindow != null) {
+                mainWindow.showFatalError(error, this::exitFXGL);
+            } else {
+                exitFXGL();
+            }
         }
 
         public void exitFXGL() {
