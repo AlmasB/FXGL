@@ -30,6 +30,7 @@ class AnimationDSL {
     private var interpolator: Interpolator = Interpolator.LINEAR
     private var times: Int = 1
     private var onFinished: Runnable = EmptyRunnable
+    private var onCycleFinished: Runnable = EmptyRunnable
     private var isAutoReverse: Boolean = false
 
     private val objects = arrayListOf<Animatable>()
@@ -63,13 +64,18 @@ class AnimationDSL {
         return this
     }
 
+    fun onCycleFinished(onCycleFinished: Runnable): AnimationDSL {
+        this.onCycleFinished = onCycleFinished
+        return this
+    }
+
     fun autoReverse(autoReverse: Boolean): AnimationDSL {
         this.isAutoReverse = autoReverse
         return this
     }
 
     private fun makeBuilder(): com.almasb.fxgl.animation.AnimationBuilder {
-        return com.almasb.fxgl.animation.AnimationBuilder(duration, delay, interpolator, times, onFinished, isAutoReverse)
+        return com.almasb.fxgl.animation.AnimationBuilder(duration, delay, interpolator, times, onFinished, onCycleFinished, isAutoReverse)
     }
 
     fun translate(vararg entities: Node) = TranslationAnimationDSL(this).also {

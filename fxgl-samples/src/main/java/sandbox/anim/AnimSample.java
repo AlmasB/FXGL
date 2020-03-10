@@ -43,7 +43,6 @@ public class AnimSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("AnimSample");
         settings.setVersion("0.1");
-        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     private Animation<?> anim;
@@ -79,30 +78,40 @@ public class AnimSample extends GameApplication {
                 .view(new Rectangle(40, 40, Color.BLUE))
                 .buildAndAttach();
 
-        anim = animationBuilder()
-                .duration(Duration.seconds(2))
-                .translate(e)
-                .from(new Point2D(100, 100))
-                .to(new Point2D(200, 100))
-                .build();
-        anim.start();
+//        anim = animationBuilder()
+//                .duration(Duration.seconds(2))
+//                .translate(e)
+//                .from(new Point2D(100, 100))
+//                .to(new Point2D(200, 100))
+//                .build();
+//        anim.start();
 
         // animation channel from multiple images
 
-        var channel = new AnimationChannel(image.get(), Duration.seconds(1), 8);
-
-        entityBuilder()
-                .at(200, 50)
-                .view(new AnimatedTexture(channel).loop())
-                .buildAndAttach();
+//        var channel = new AnimationChannel(image.get(), Duration.seconds(1), 8);
+//
+//        entityBuilder()
+//                .at(200, 50)
+//                .view(new AnimatedTexture(channel).loop())
+//                .buildAndAttach();
 
         // generic animation builder
+//        animationBuilder()
+//                .interpolator(Interpolators.ELASTIC.EASE_OUT())
+//                .duration(Duration.seconds(2))
+//                .onFinished(() -> System.out.println("Done!"))
+//                .animate(new AnimatedPoint2D(new Point2D(50, 50), new Point2D(200, 200)))
+//                .onProgress(value -> System.out.println(value))
+//                .buildAndPlay();
+
         animationBuilder()
-                .interpolator(Interpolators.ELASTIC.EASE_OUT())
-                .duration(Duration.seconds(2))
-                .onFinished(() -> System.out.println("Done!"))
-                .animate(new AnimatedPoint2D(new Point2D(50, 50), new Point2D(200, 200)))
-                .onProgress(value -> System.out.println(value))
+                .onCycleFinished(() -> System.out.println("Cycle finished"))
+                .onFinished(() -> System.out.println("Anim finished"))
+                .duration(Duration.seconds(1))
+                .repeat(5)
+                .translate(e)
+                .from(new Point2D(100, 100))
+                .to(new Point2D(200, 100))
                 .buildAndPlay();
     }
 

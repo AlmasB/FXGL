@@ -34,6 +34,7 @@ open class AnimationBuilder() {
     protected var interpolator: Interpolator = Interpolator.LINEAR
     protected var times: Int = 1
     protected var onFinished: Runnable = EmptyRunnable
+    protected var onCycleFinished: Runnable = EmptyRunnable
     protected var isAutoReverse: Boolean = false
 
     constructor(copy: AnimationBuilder) : this() {
@@ -42,6 +43,7 @@ open class AnimationBuilder() {
         interpolator = copy.interpolator
         times = copy.times
         onFinished = copy.onFinished
+        onCycleFinished = copy.onCycleFinished
         isAutoReverse = copy.isAutoReverse
     }
 
@@ -74,13 +76,18 @@ open class AnimationBuilder() {
         return this
     }
 
+    fun onCycleFinished(onCycleFinished: Runnable): AnimationBuilder {
+        this.onCycleFinished = onCycleFinished
+        return this
+    }
+
     fun autoReverse(autoReverse: Boolean): AnimationBuilder {
         this.isAutoReverse = autoReverse
         return this
     }
 
     protected fun makeBuilder(): com.almasb.fxgl.animation.AnimationBuilder {
-        return com.almasb.fxgl.animation.AnimationBuilder(duration, delay, interpolator, times, onFinished, isAutoReverse)
+        return com.almasb.fxgl.animation.AnimationBuilder(duration, delay, interpolator, times, onFinished, onCycleFinished, isAutoReverse)
     }
 
     /* BEGIN BUILT-IN ANIMATIONS */

@@ -22,6 +22,7 @@ class AnimationBuilder
         var interpolator: Interpolator = Interpolator.LINEAR,
         var times: Int = 1,
         var onFinished: Runnable = EmptyRunnable,
+        var onCycleFinished: Runnable = EmptyRunnable,
         var isAutoReverse: Boolean = false) {
 
     fun duration(duration: Duration): AnimationBuilder {
@@ -53,6 +54,11 @@ class AnimationBuilder
         return this
     }
 
+    fun onCycleFinished(onCycleFinished: Runnable): AnimationBuilder {
+        this.onCycleFinished = onCycleFinished
+        return this
+    }
+
     fun autoReverse(autoReverse: Boolean): AnimationBuilder {
         this.isAutoReverse = autoReverse
         return this
@@ -78,6 +84,7 @@ abstract class Animation<T>(
 
     var isAutoReverse: Boolean = builder.isAutoReverse
     var onFinished: Runnable = builder.onFinished
+    var onCycleFinished: Runnable = builder.onCycleFinished
 
     var interpolator: Interpolator
         get() = builder.interpolator
@@ -162,6 +169,7 @@ abstract class Animation<T>(
         if ((!isReverse && time >= endTime) || (isReverse && time <= 0.0)) {
             onProgress(animatedValue.getValue(if (isReverse) 0.0 else 1.0))
 
+            onCycleFinished.run()
             count++
 
             if (count >= cycleCount) {
