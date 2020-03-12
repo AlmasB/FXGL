@@ -10,6 +10,7 @@ import javafx.beans.property.*
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import java.util.*
+import kotlin.collections.HashMap
 
 
 /**
@@ -27,6 +28,34 @@ import java.util.*
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class PropertyMap {
+
+    companion object {
+        @JvmStatic fun fromStringMap(map: Map<String, String>): PropertyMap {
+            return from(map.mapValues { toValue(it.value) })
+        }
+
+        /**
+         * Maps [s] to its actual data type, which is one of
+         * int, double, boolean or string.
+         */
+        private fun toValue(s: String): Any {
+            if (s == "true")
+                return true
+
+            if (s == "false")
+                return false
+
+            return s.toIntOrNull() ?: s.toDoubleOrNull() ?: s
+        }
+
+        @JvmStatic fun from(map: Map<String, Any>): PropertyMap {
+            val pMap = PropertyMap()
+            map.forEach { key, value ->
+                pMap.setValue(key, value)
+            }
+            return pMap
+        }
+    }
 
     private val properties = hashMapOf<String, Any>()
 
@@ -149,6 +178,26 @@ class PropertyMap {
         listeners.clear()
 
         properties.clear()
+    }
+
+    /**
+     * Note: the new map will contain new references for values, but the value wrapped by SimpleObjectProperty
+     * will be the same.
+     *
+     * @return a deep copy of this property map
+     */
+    fun copy(): PropertyMap {
+        val map = PropertyMap()
+
+        keys().forEach { name ->
+            map.setValue(name, getValue(name))
+        }
+
+        return map
+    }
+
+    fun toMap(): Map<String, Any> {
+        return keys().map { it to getValue<Any>(it) }.toMap()
     }
 
     private fun get(propertyName: String) = properties.get(propertyName)
