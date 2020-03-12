@@ -263,11 +263,12 @@ class AssetLoaderService : EngineService() {
     /**
      * Loads resource bundle with given name from "/assets/properties/".
      *
+     * Note: for improved mobile support use [loadPropertyMap] instead.
+     *
      * @param name must be under "/assets/properties/", e.g. system.properties, game.properties
      * @return resource bundle
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    @Deprecated("Use loadPropertyMap instead")
     fun loadResourceBundle(name: String): ResourceBundle {
         val asset = getAssetFromCache(PROPERTIES_DIR + name)
         if (asset != null) {

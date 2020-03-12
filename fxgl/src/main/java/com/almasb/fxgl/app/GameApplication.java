@@ -288,8 +288,8 @@ public abstract class GameApplication {
             log.debug("Loading localizations");
 
             settings.getSupportedLanguages().forEach(lang -> {
-                var bundle = FXGL.getAssetLoader().loadResourceBundle("languages/" + lang.getName().toLowerCase() + ".properties");
-                FXGL.getLocalizationService().addLanguageData(lang, bundle);
+                var pMap = FXGL.getAssetLoader().loadPropertyMap("properties/languages/" + lang.getName().toLowerCase() + ".properties");
+                FXGL.getLocalizationService().addLanguageData(lang, pMap.toStringMap());
             });
 
             FXGL.getLocalizationService().selectedLanguageProperty().bind(settings.getLanguage());
