@@ -13,6 +13,7 @@ import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.audio.getDummyAudio
 import com.almasb.fxgl.audio.impl.DesktopAudioService
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
@@ -266,6 +267,7 @@ class AssetLoaderService : EngineService() {
      * @return resource bundle
      * @throws IllegalArgumentException if asset not found or loading error
      */
+    @Deprecated("Use loadPropertyMap instead")
     fun loadResourceBundle(name: String): ResourceBundle {
         val asset = getAssetFromCache(PROPERTIES_DIR + name)
         if (asset != null) {
@@ -286,6 +288,30 @@ class AssetLoaderService : EngineService() {
                 }
             }
         }
+    }
+
+    /**
+     * Loads property map with given name from "/assets/".
+     * Example: loadPropertyMap("languages/english.pmap").
+     */
+    fun loadPropertyMap(name: String): PropertyMap {
+        val asset = getAssetFromCache(ASSETS_DIR + name)
+        if (asset != null) {
+            return asset as PropertyMap
+        }
+
+        val map = readAllLines(ASSETS_DIR + name)
+                .filter { it.contains('=') }
+                .map {
+                    val tokens = it.split("=")
+                    tokens[0].trim() to tokens[1].trim()
+                }
+                .toMap()
+
+        val pMap = PropertyMap.fromStringMap(map)
+
+        cachedAssets[ASSETS_DIR + name] = pMap
+        return pMap
     }
 
     /**
