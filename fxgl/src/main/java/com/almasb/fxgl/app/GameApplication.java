@@ -23,7 +23,6 @@ import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 /**
  * To use FXGL, extend this class and implement necessary methods.
