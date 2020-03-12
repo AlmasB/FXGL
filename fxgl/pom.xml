@@ -332,6 +332,21 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
             </plugin>
 
+            <!-- Filter source code files in src/main/java-templates, e.g. to add {project.version} -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <version>${maven.templating.version}</version>
+                <executions>
+                    <execution>
+                        <id>filter-src</id>
+                        <goals>
+                            <goal>filter-sources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Create uber jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

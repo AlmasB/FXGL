@@ -101,6 +101,7 @@
         <jacoco.version>0.8.5</jacoco.version>
         <maven.surefire.version>3.0.0-M4</maven.surefire.version>
         <build.helper.version>3.0.0</build.helper.version>
+        <maven.templating.version>1.0.0</maven.templating.version>
 
         <!-- dependencies -->
         <jfx.version>13.0.2</jfx.version>
