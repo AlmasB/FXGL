@@ -200,6 +200,10 @@ class PropertyMap {
         return keys().map { it to getValue<Any>(it) }.toMap()
     }
 
+    fun toStringMap(): Map<String, String> {
+        return keys().map { it to getValue<Any>(it).toString() }.toMap()
+    }
+
     private fun get(propertyName: String) = properties.get(propertyName)
             ?: throw IllegalArgumentException("Property $propertyName does not exist")
 
