@@ -167,10 +167,14 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
 
         val ext = mapURL.toExternalForm().substringBeforeLast("/") + "/"
 
+        val stream = URL(ext + imageName).openStream()
+
         val image = if (transparentcolor.isEmpty())
-            Image(ext + imageName)
+            Image(stream)
         else
-            Texture(Image(ext + imageName)).transparentColor(Color.web(transparentcolor)).image
+            Texture(Image(stream)).transparentColor(Color.web(transparentcolor)).image
+
+        stream.close()
 
         if (image.isError)
             throw IllegalArgumentException("${ext + imageName} cannot be loaded")
