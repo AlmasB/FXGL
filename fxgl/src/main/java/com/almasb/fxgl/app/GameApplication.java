@@ -135,7 +135,7 @@ public abstract class GameApplication {
     private void initLogger(ReadOnlyGameSettings settings) {
         Logger.configure(new LoggerConfig());
         // we write all logs to file but adjust console log level based on app mode
-        if (settings.isDesktop()) {
+        if (settings.isDesktop() && !settings.isExperimentalNative()) {
             Logger.addOutput(new FileOutput("FXGL"), LoggerLevel.DEBUG);
         }
         Logger.addOutput(new ConsoleOutput(), settings.getApplicationMode().getLoggerLevel());
