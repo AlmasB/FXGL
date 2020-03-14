@@ -14,6 +14,7 @@ import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
@@ -32,16 +33,11 @@ class ConcurrencyTest {
     companion object {
         private lateinit var executor: Executor
 
-        @AfterAll
+        @BeforeAll
         @JvmStatic
-        fun `tearDown`() {
-            executor.shutdownNow()
+        fun `init`() {
+            executor = Async
         }
-    }
-
-    @BeforeEach
-    fun `init`() {
-        executor = Async
     }
 
     @Test
