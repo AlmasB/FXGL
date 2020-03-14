@@ -25,7 +25,7 @@ import java.util.concurrent.CountDownLatch
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class IOTaskExecutorService {
+class IOTaskExecutorServiceTest {
 
     // TODO:
     // first we runAsync then we runAsyncFX
