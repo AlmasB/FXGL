@@ -160,6 +160,45 @@ class PropertyMapTest {
     }
 
     @Test
+    fun `Copy returns a shallow copy`() {
+        map.setValue("testInt", 3)
+        map.setValue("testDouble", 5.0)
+
+        val copy = map.copy()
+
+        assertFalse(copy === map)
+        assertThat(copy.keys().size, `is`(2))
+        assertThat(copy.getInt("testInt"), `is`(3))
+        assertThat(copy.getDouble("testDouble"), `is`(5.0))
+    }
+
+    @Test
+    fun `To map`() {
+        map.setValue("testInt", 3)
+        map.setValue("testDouble", 5.0)
+
+        val javaMap = map.toMap()
+
+        assertThat(javaMap.size, `is`(2))
+
+        assertTrue(javaMap["testInt"] == 3)
+        assertTrue(javaMap["testDouble"] == 5.0)
+    }
+
+    @Test
+    fun `To String map`() {
+        map.setValue("testInt", 3)
+        map.setValue("testDouble", 5.0)
+
+        val javaMap = map.toStringMap()
+
+        assertThat(javaMap.size, `is`(2))
+
+        assertTrue(javaMap["testInt"] == "3")
+        assertTrue(javaMap["testDouble"] == "5.0")
+    }
+
+    @Test
     fun `To String`() {
         map.setValue("testInt", 3)
         map.setValue("testDouble", 5.0)
