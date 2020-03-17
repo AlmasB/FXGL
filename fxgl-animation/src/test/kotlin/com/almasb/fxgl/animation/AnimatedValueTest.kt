@@ -6,17 +6,22 @@
 
 package com.almasb.fxgl.animation
 
+import com.almasb.fxgl.test.RunWithFX
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
+import javafx.scene.shape.Circle
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
+import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@ExtendWith(RunWithFX::class)
 class AnimatedValueTest {
 
     @Test
@@ -62,5 +67,16 @@ class AnimatedValueTest {
         assertThat(anim.getValue(0.0), `is`(Color.BLACK))
         assertThat(anim.getValue(1.0), `is`(Color.WHITE))
         assertThat(anim.getValue(0.5), `is`(Color.color(0.5, 0.5, 0.5)))
+    }
+
+    @Test
+    fun `Path`() {
+        val rect = Rectangle(160.0, 50.0)
+
+        val anim = AnimatedPath(rect)
+
+        assertThat(anim.getValue(0.0), `is`(Point2D(0.0, 0.0)))
+        assertThat(anim.getValue(1.0), `is`(Point2D(0.0, 0.0)))
+        assertThat(anim.getValue(0.5), `is`(Point2D(160.0, 50.0)))
     }
 }
