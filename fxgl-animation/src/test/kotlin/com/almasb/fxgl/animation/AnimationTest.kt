@@ -176,6 +176,31 @@ class AnimationTest {
     }
 
     @Test
+    fun `On Animation Cycle Finished`() {
+        var count = 0
+
+        val anim = AnimationBuilder()
+                .repeat(2)
+                .interpolator(Interpolator.LINEAR)
+                .duration(Duration.seconds(2.0))
+                .onCycleFinished(Runnable { count = 2 })
+                .onFinished(Runnable { count = 15 })
+                .build(AnimatedValue(1, 3), Consumer { })
+
+        assertThat(count, `is`(0))
+
+        anim.start()
+
+        anim.onUpdate(2.0)
+
+        assertThat(count, `is`(2))
+
+        anim.onUpdate(2.0)
+
+        assertThat(count, `is`(15))
+    }
+
+    @Test
     fun `Animation with a delay`() {
         var count = 0
 
