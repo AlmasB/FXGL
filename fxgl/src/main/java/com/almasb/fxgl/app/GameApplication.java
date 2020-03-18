@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.concurrent.IOTask;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.core.util.Platform;
+import com.almasb.fxgl.dev.profiling.ProfilerService;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.generated.BuildProperties;
 import com.almasb.fxgl.profile.DataFile;
@@ -118,6 +119,10 @@ public abstract class GameApplication {
     private ReadOnlyGameSettings takeUserSettings() {
         var localSettings = new GameSettings();
         initSettings(localSettings);
+
+        if (localSettings.isProfilingEnabled()) {
+            localSettings.getEngineServices().add(ProfilerService.class);
+        }
 
         var platform = Platform.get();
 
