@@ -31,7 +31,8 @@ class AchievementService : EngineService() {
 
     private lateinit var eventBusService: EventBusService
 
-    private lateinit var eventBus: EventBus
+    private val eventBus: EventBus
+        get() = eventBusService.eventBus
 
     private val achievements = mutableListOf<Achievement>()
 
@@ -40,10 +41,6 @@ class AchievementService : EngineService() {
      */
     val achievementsCopy: List<Achievement>
         get() = Collections.unmodifiableList(achievements)
-
-    override fun onInit() {
-        eventBus = eventBusService.eventBus
-    }
 
     /**
      * @param name achievement name
