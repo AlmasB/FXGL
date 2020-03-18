@@ -41,6 +41,10 @@ class EntityGroup(
         world.addWorldListener(this)
     }
 
+    fun forEach(action: (Entity) -> Unit) {
+        entitiesCopy.forEach(action)
+    }
+
     private fun update() {
         entities.addAll(addList)
         entities.removeAll(removeList)
