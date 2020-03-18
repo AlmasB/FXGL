@@ -32,4 +32,15 @@ class AchievementEventTest {
 
         assertThat(event.toString(), `is`("AchievementEvent[type=ACHIEVED, name=testName, description=test description on how to achieve]"))
     }
+
+    @Test
+    fun `test AchievementProgressEvent`() {
+        val a = Achievement("testName", "test description on how to achieve", "varNameToTrack", 500)
+
+        val event = AchievementProgressEvent(a, 250.0, 500.0)
+
+        assertThat(event.achievement, `is`(a))
+        assertThat(event.value, `is`(250.0))
+        assertThat(event.max, `is`(500.0))
+    }
 }
