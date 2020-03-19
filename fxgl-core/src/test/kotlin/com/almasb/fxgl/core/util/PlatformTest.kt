@@ -56,6 +56,7 @@ class PlatformTest {
         val actualOSName = System.getProperty("os.name")
 
         System.setProperty("os.name", osName)
+        System.setProperty("javafx.platform", osName)
 
         val platform = Platform.get()
 
