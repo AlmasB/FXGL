@@ -33,6 +33,12 @@ class NotificationServiceProvider : NotificationService() {
 
     private lateinit var sceneService: SceneService
 
+    private val overlayRoot
+        get() = sceneService.overlayRoot
+
+    private val timer
+        get() = sceneService.timer
+
     @Inject("notificationViewClass")
     private lateinit var notificationViewClass: Class<out NotificationView>
 
@@ -54,11 +60,10 @@ class NotificationServiceProvider : NotificationService() {
     override fun pushNotification(message: String) {
         val notification = Notification(message)
 
-        if (showing) {
-            queue.add(notification)
-        } else {
+        queue.add(notification)
+
+        if (!showing) {
             showFirstNotification()
-            queue.add(notification)
         }
     }
 
@@ -71,35 +76,35 @@ class NotificationServiceProvider : NotificationService() {
         } else {
             notificationView.playOutAnimation()
 
-            sceneService.timer.runOnceAfter(this::checkLastPop, ANIMATION_DURATION)
+            timer.runOnceAfter(this::checkLastPop, ANIMATION_DURATION)
         }
     }
 
     private fun checkLastPop() {
         if (queue.isEmpty()) {
-            sceneService.overlayRoot.children -= notificationView
+            overlayRoot.children -= notificationView
             showing = false
         } else {
             // play in animation
             notificationView.playInAnimation()
 
-            sceneService.timer.runOnceAfter(this::nextNotification, ANIMATION_DURATION)
+            timer.runOnceAfter(this::nextNotification, ANIMATION_DURATION)
         }
     }
 
     private fun showFirstNotification() {
         showing = true
-        sceneService.overlayRoot.children += notificationView
+        overlayRoot.children += notificationView
 
         // play in animation
         notificationView.playInAnimation()
 
-        sceneService.timer.runOnceAfter(this::nextNotification, ANIMATION_DURATION)
+        timer.runOnceAfter(this::nextNotification, ANIMATION_DURATION)
     }
 
     private fun fireAndScheduleNextNotification(notification: Notification) {
         // schedule next
-        sceneService.timer.runOnceAfter(this::nextNotification, NOTIFICATION_DURATION)
+        timer.runOnceAfter(this::nextNotification, NOTIFICATION_DURATION)
     }
 
     override fun onUpdate(tpf: Double) {
