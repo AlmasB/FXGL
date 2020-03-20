@@ -127,6 +127,17 @@ class ViewComponentTest {
     }
 
     @Test
+    fun `Visibility is set to view and the parent`() {
+        assertTrue(view.isVisible)
+        assertTrue(view.parent.isVisible)
+
+        view.isVisible = false
+
+        assertFalse(view.isVisible)
+        assertFalse(view.parent.isVisible)
+    }
+
+    @Test
     fun `Add remove general click listener`() {
         var count = 0
 
