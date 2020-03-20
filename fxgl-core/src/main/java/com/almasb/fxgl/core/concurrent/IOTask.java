@@ -44,7 +44,7 @@ public abstract class IOTask<T> {
         return name;
     }
 
-    public final boolean isHasFailAction() {
+    public final boolean hasFailAction() {
         return hasFailAction;
     }
 

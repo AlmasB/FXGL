@@ -209,9 +209,14 @@ class ConcurrencyTest {
         var exceptionMessage = "NoMessage"
 
         val task = SomeFailingIOTask()
-                .onFailure {
-                    exceptionMessage = it.message.orEmpty()
-                }
+
+        assertFalse(task.hasFailAction())
+
+        task.onFailure {
+            exceptionMessage = it.message.orEmpty()
+        }
+
+        assertTrue(task.hasFailAction())
 
         assertNull(task.run())
 
@@ -225,6 +230,17 @@ class ConcurrencyTest {
 
         val task2 = task.thenWrap { it * 2 }.thenWrap { it.toString() }
         assertThat(task2.run(), `is`("12"))
+    }
+
+    @Test
+    fun `IOTask to JavaFX task`() {
+        val task1 = SomeIOTask().toJavaFXTask()
+        val task2 = SomeFailingIOTask().toJavaFXTask()
+
+        assertDoesNotThrow {
+            task1.run()
+            task2.run()
+        }
     }
 
     class SomeIOTask : IOTask<String>() {
