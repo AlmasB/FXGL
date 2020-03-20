@@ -79,6 +79,9 @@ class TMXLevelLoaderTest {
         intArrayOf(14, 15, 17, 18, 28, 31, 33).forEach { id ->
             assertThat(objects.find { it.getInt("id") == id }!!.getComponent(IDComponent::class.java).id, `is`(id))
         }
+
+        assertThat(level.properties.keys().size, `is`(1))
+        assertThat(level.properties.getInt("testInt"), `is`(33))
     }
 
     @ParameterizedTest

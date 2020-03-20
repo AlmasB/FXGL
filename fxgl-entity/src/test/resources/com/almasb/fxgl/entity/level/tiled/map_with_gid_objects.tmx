@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="34">
+ <properties>
+  <property name="testInt" type="int" value="33"/>
+ </properties>
  <tileset firstgid="1" name="comic_sans_tileset_black" tilewidth="16" tileheight="16" tilecount="256" columns="16">
   <image source="tileset_black.png" width="256" height="256"/>
  </tileset>
