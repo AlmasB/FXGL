@@ -236,7 +236,7 @@ class GameWorld {
     private fun clearLevel() {
         log.debug("Clearing removable entities")
 
-        waitingList.clear()
+        waitingList.removeAll { canRemove(it) }
 
         // we may still have some entities that have been removed but not yet cleaned
         // but we do not want to remove Irremovables
