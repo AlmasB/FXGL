@@ -6,9 +6,7 @@
 
 package com.almasb.fxgl.dsl.components
 
-import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.component.Component
-import com.almasb.fxgl.time.TimerAction
 import javafx.util.Duration
 
 /**
@@ -29,35 +27,22 @@ class ExpireCleanComponent(
 
     private var animate = false
 
-    private var timerAction: TimerAction? = null
-
-    override fun onAdded() {
-        entity.activeProperty().addListener { _, _, isActive ->
-            if (isActive) {
-                timerAction = FXGL.getGameTimer().runOnceAfter({ entity.removeFromWorld() }, expire)
-            } else {
-                timerAction?.expire()
-            }
-        }
-    }
-
-    override fun onUpdate(tpf: Double) {
-        if (timerAction == null) {
-            timerAction = FXGL.getGameTimer().runOnceAfter({ entity.removeFromWorld() }, expire)
-        } else {
-
-            if (animate) {
-                updateOpacity(tpf)
-            }
-        }
-    }
-
     private var time = 0.0
 
-    private fun updateOpacity(tpf: Double) {
+    override fun onUpdate(tpf: Double) {
         time += tpf
 
-        getEntity().viewComponent.opacityProp.value = if (time >= expire.toSeconds()) 0.0 else 1 - time / expire.toSeconds()
+        if (animate) {
+            updateOpacity()
+        }
+
+        if (time >= expire.toSeconds()) {
+            entity.removeFromWorld()
+        }
+    }
+
+    private fun updateOpacity() {
+        entity.opacity = if (time >= expire.toSeconds()) 0.0 else 1 - time / expire.toSeconds()
     }
 
     /**
