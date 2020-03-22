@@ -55,7 +55,11 @@ public abstract class Action {
     }
 
     public final void cancel() {
+        if (isCancelled)
+            return;
+
         isCancelled = true;
+        onCancelled();
     }
 
     /**
@@ -65,6 +69,7 @@ public abstract class Action {
 
     /**
      * Called after this action was started.
+     * This is called at least 1 frame after onQueued was called.
      */
     protected void onStarted() { }
 

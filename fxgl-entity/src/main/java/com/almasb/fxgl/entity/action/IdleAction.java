@@ -13,6 +13,11 @@ package com.almasb.fxgl.entity.action;
  */
 public final class IdleAction extends InstantAction {
 
+    public IdleAction() {
+        // idle action is always complete
+        setComplete();
+    }
+
     @Override
     protected void performOnce(double tpf) {
         // no-op idle
