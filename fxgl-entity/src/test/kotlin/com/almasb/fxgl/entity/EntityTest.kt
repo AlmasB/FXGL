@@ -849,16 +849,18 @@ class EntityTest {
         assertThat(e.message, `is`("Failed to call: methodThatFailsStringInt(hi, 5) Cause: java.lang.IllegalStateException: Test Fail hi, 5"))
     }
 
-//    @Test
-//    fun `View`() {
-//        val r = Rectangle()
-//        val eView = EntityView(r)
-//
-//        entity.view = eView
-//
-//        assertThat(entity.view, `is`<com.almasb.fxgl.core.View>(eView))
-//        assertThat(entity.viewComponent.view, `is`<com.almasb.fxgl.core.View>(eView))
-//    }
+    @Test
+    fun `Opacity and visibility`() {
+        entity.opacity = 0.5
+
+        assertThat(entity.opacity, `is`(0.5))
+        assertThat(entity.viewComponent.opacity, `is`(0.5))
+
+        entity.isVisible = false
+        
+        assertFalse(entity.isVisible)
+        assertFalse(entity.viewComponent.isVisible)
+    }
 
     @Test
     fun `Scale`() {
