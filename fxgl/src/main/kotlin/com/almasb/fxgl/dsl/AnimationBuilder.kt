@@ -244,8 +244,7 @@ open class AnimationBuilder() {
                 when (curve) {
                     is QuadCurve -> return makeAnim(AnimatedQuadBezierPoint2D(curve))
                     is CubicCurve -> return makeAnim(AnimatedCubicBezierPoint2D(curve))
-                    is Path -> return makeAnim(AnimatedPath(curve))
-                    else -> throw IllegalArgumentException("Unsupported path: $curve")
+                    else -> return makeAnim(AnimatedPath(curve))
                 }
             }
 
