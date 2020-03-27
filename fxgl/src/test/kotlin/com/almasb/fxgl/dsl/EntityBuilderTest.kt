@@ -7,9 +7,12 @@
 package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.core.math.Vec2
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.components.CollidableComponent
 import javafx.geometry.Point2D
+import javafx.scene.input.MouseButton
+import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.*
@@ -212,5 +215,22 @@ class EntityBuilderTest {
                 .build()
 
         assertThat(e.getInt("testInt"), `is`(33))
+    }
+
+    @Test
+    fun `OnClick fires when clicked`() {
+        var e2: Entity? = null
+
+        val e = builder
+                .onClick { e2 = it }
+                .build()
+
+        val event = MouseEvent(MouseEvent.MOUSE_CLICKED, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        e.viewComponent.parent.fireEvent(event)
+
+        assertThat(e2, `is`(e))
     }
 }
