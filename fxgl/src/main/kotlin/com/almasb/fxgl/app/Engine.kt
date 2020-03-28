@@ -114,7 +114,7 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
     private fun logEnvironmentVarsAndServices() {
         log.debug("Logging environment variables")
 
-        environmentVars.forEach { (key, value) ->
+        environmentVars.toSortedMap().forEach { (key, value) ->
             log.debug("$key: $value")
         }
 
