@@ -1,10 +1,11 @@
 package com.almasb.fxgl.core.collection;
 
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -438,5 +439,32 @@ public class ArrayTest {
         array.add("Bye");
 
         assertThat(array.toList(), contains("Hello", "World", "Java", "Hi", "Bye"));
+    }
+
+    @Nested
+    class WhenRemovingLastItem {
+        private Array<Integer> testArray;
+
+        @BeforeEach
+        void setUp() {
+            testArray = new Array<>(Integer.class);
+            testArray.addAll(1, 2, 3);
+        }
+
+        @DisplayName("Then the last item in the Array is removed")
+        @Test
+        void testLastItemIsRemoved() {
+            testArray.pop();
+
+            Assertions.assertFalse(Arrays.asList(testArray.getItems()).contains(3));
+        }
+
+        @DisplayName("Then the last item in the Array is returned")
+        @Test
+        void testLastItemIsReturned() {
+            var actualInteger = testArray.pop();
+
+            assertEquals(3, actualInteger);
+        }
     }
 }
