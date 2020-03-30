@@ -136,12 +136,6 @@ class GameSettings(
         var isIntroEnabled: Boolean = false,
 
         /**
-         * Setting to true enables main and game menu.
-         */
-        @Deprecated("Use isMainMenuEnabled or isGameMenuEnabled")
-        var isMenuEnabled: Boolean = false,
-
-        /**
          * Setting to true enables the main menu.
          */
         var isMainMenuEnabled: Boolean = false,
@@ -149,7 +143,7 @@ class GameSettings(
         /**
          * Setting to true enables the game menu.
          */
-        var isGameMenuEnabled: Boolean = false,
+        var isGameMenuEnabled: Boolean = true,
 
         var isUserProfileEnabled: Boolean = false,
 
@@ -306,7 +300,6 @@ class GameSettings(
                 isManualResizeEnabled,
                 isPreserveResizeRatio,
                 isIntroEnabled,
-                isMenuEnabled,
                 isMainMenuEnabled,
                 isGameMenuEnabled,
                 isUserProfileEnabled,
@@ -400,11 +393,6 @@ class ReadOnlyGameSettings internal constructor(
          * be played before the start of the game.
          */
         val isIntroEnabled: Boolean,
-
-        /**
-         * Setting to true enables main and game menu.
-         */
-        val isMenuEnabled: Boolean,
 
         /**
          * Setting to true enables the main menu.
@@ -662,7 +650,6 @@ class ReadOnlyGameSettings internal constructor(
                 "Height: " + height + '\n'.toString() +
                 "Fullscreen: " + isFullScreenAllowed + '\n'.toString() +
                 "Intro: " + isIntroEnabled + '\n'.toString() +
-                "Menus: " + isMenuEnabled + '\n'.toString() +
                 "Profiling: " + isProfilingEnabled + '\n'.toString() +
                 "Single step:" + isSingleStep + '\n'.toString() +
                 "App Mode: " + applicationMode + '\n'.toString() +

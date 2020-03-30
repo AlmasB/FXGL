@@ -36,7 +36,7 @@ public class VirtualControllerSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(850);
         settings.setHeight(700);
-        settings.setMenuEnabled(false);
+        //settings.setMenuEnabled(false);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class VirtualControllerSample extends GameApplication {
 
         addUINode(getInput().createVirtualDpadView(), 500, 150);
 
-        addUINode(getInput().createVirtualMenuKeyView(getSettings().getMenuKey(), getSettings().isMenuEnabled()), 650, 50);
+        addUINode(getInput().createVirtualMenuKeyView(getSettings().getMenuKey(), getSettings().isGameMenuEnabled()), 650, 50);
 
         var keyView = new KeyView(KeyCode.E);
         keyView.keyColorProperty().bind(

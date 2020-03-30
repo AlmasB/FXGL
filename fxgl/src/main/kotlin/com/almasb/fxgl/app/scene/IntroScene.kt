@@ -42,7 +42,7 @@ abstract class IntroScene : FXGLScene() {
 
     override fun onUpdate(tpf: Double) {
         if (introFinished) {
-            if (FXGL.getSettings().isMenuEnabled) {
+            if (FXGL.getSettings().isMainMenuEnabled) {
                 controller.gotoMainMenu()
             } else {
                 controller.startNewGame()

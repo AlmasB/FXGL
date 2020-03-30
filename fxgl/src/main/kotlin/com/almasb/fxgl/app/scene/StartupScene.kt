@@ -38,7 +38,7 @@ abstract class StartupScene : FXGLScene() {
         if (getSettings().isIntroEnabled) {
             controller.gotoIntro()
         } else {
-            if (getSettings().isMenuEnabled) {
+            if (getSettings().isMainMenuEnabled) {
                 controller.gotoMainMenu()
             } else {
                 controller.startNewGame()

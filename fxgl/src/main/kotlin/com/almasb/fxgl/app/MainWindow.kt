@@ -216,6 +216,8 @@ internal class MainWindow(
      * @param scene the scene
      */
     fun setScene(scene: FXGLScene) {
+        popAllSubScenes()
+
         if (scene !in scenes) {
             registerScene(scene)
         }
@@ -281,6 +283,12 @@ internal class MainWindow(
         currentSceneProperty.value = stateMachine.currentState
 
         log.debug("${stateMachine.currentState} <- $prevScene")
+    }
+
+    fun popAllSubScenes() {
+        while (currentScene !== currentFXGLScene) {
+            popState()
+        }
     }
 
     private var windowBorderWidth = 0.0
