@@ -138,7 +138,18 @@ class GameSettings(
         /**
          * Setting to true enables main and game menu.
          */
+        @Deprecated("Use isMainMenuEnabled or isGameMenuEnabled")
         var isMenuEnabled: Boolean = false,
+
+        /**
+         * Setting to true enables the main menu.
+         */
+        var isMainMenuEnabled: Boolean = false,
+
+        /**
+         * Setting to true enables the game menu.
+         */
+        var isGameMenuEnabled: Boolean = false,
 
         var isUserProfileEnabled: Boolean = false,
 
@@ -296,6 +307,8 @@ class GameSettings(
                 isPreserveResizeRatio,
                 isIntroEnabled,
                 isMenuEnabled,
+                isMainMenuEnabled,
+                isGameMenuEnabled,
                 isUserProfileEnabled,
                 isProfilingEnabled,
                 isDeveloperMenuEnabled,
@@ -392,6 +405,16 @@ class ReadOnlyGameSettings internal constructor(
          * Setting to true enables main and game menu.
          */
         val isMenuEnabled: Boolean,
+
+        /**
+         * Setting to true enables the main menu.
+         */
+        var isMainMenuEnabled: Boolean,
+
+        /**
+         * Setting to true enables the game menu.
+         */
+        var isGameMenuEnabled: Boolean,
 
         val isUserProfileEnabled: Boolean,
 
