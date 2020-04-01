@@ -356,6 +356,9 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
     }
 
     /**
+     * Note: pixel overlap (e.g. entity at 0,0 with rectangle being 0,0,800,600) does not count as completely outside.
+     * Entity at -1,0, with rectangle being 0,0,800,600, is completely outside.
+     *
      * @param minX min x
      * @param minY min y
      * @param maxX max x
@@ -363,8 +366,8 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
      * @return true iff entity is completely outside given bounds
      */
     fun isOutside(minX: Double, minY: Double, maxX: Double, maxY: Double): Boolean {
-        return (transform.x + getMinXLocal() + getWidth() <= minX || transform.x + getMinXLocal() >= maxX
-                || transform.y + getMinYLocal() + getHeight() <= minY || transform.y + getMinYLocal() >= maxY)
+        return transform.x + getMinXLocal() + getWidth() < minX || transform.x + getMinXLocal() > maxX
+                || transform.y + getMinYLocal() + getHeight() < minY || transform.y + getMinYLocal() > maxY
     }
 
     /**
