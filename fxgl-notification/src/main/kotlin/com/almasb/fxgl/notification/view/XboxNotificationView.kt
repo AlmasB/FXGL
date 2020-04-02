@@ -7,7 +7,7 @@
 package com.almasb.fxgl.notification.view
 
 import com.almasb.fxgl.animation.Animation
-import com.almasb.fxgl.animation.AnimationDSL
+import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.notification.Notification
 import javafx.geometry.Point2D
 import javafx.scene.shape.Circle
@@ -79,7 +79,7 @@ class XboxNotificationView : NotificationView() {
         children.setAll(circle)
 
         // move the whole view to left
-        translateThis = AnimationDSL()
+        translateThis = AnimationBuilder()
                 .duration(Duration.seconds(0.33))
                 .translate(this)
                 .from(Point2D(translateX, translateY))
@@ -87,7 +87,7 @@ class XboxNotificationView : NotificationView() {
                 .build()
 
         // but move the BG to right, creating the "slide out" effect
-        translateBG = AnimationDSL()
+        translateBG = AnimationBuilder()
                 .onFinished(Runnable {
                     bg.clip = null
                     text1.isVisible = true
@@ -98,7 +98,7 @@ class XboxNotificationView : NotificationView() {
                 .to(Point2D(bg.translateX + 400.0, bg.translateY))
                 .build()
 
-        scale = AnimationDSL()
+        scale = AnimationBuilder()
                 .duration(Duration.seconds(0.3))
                 .onFinished(Runnable {
 
@@ -134,7 +134,7 @@ class XboxNotificationView : NotificationView() {
         centerTextX(text2, 65.0, 395.0)
 
         // move text 2 to replace text 1
-        animText2 = AnimationDSL()
+        animText2 = AnimationBuilder()
                 .duration(Duration.seconds(0.33))
                 .translate(text2)
                 .from(Point2D(text2.translateX, text2.translateY))
@@ -142,7 +142,7 @@ class XboxNotificationView : NotificationView() {
                 .build()
 
         // move text 1 down
-        animText1 = AnimationDSL()
+        animText1 = AnimationBuilder()
                 .onFinished(Runnable {
                     // when done, just swap them and keep text2 for next reuse
                     text1.translateX = text2.translateX
@@ -171,7 +171,7 @@ class XboxNotificationView : NotificationView() {
 
             children.setAll(circle)
 
-            scale = AnimationDSL()
+            scale = AnimationBuilder()
                     .duration(Duration.seconds(0.3))
                     .scale(this)
                     .from(Point2D(1.0, 1.0))

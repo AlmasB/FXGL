@@ -24,7 +24,7 @@ class AnimationTest {
     fun `Set animation interpolator`() {
         val i1 = Interpolators.ELASTIC.EASE_OUT()
 
-        val builder = AnimationBuilder()
+        val builder = AnimationConfig()
         val animValue = AnimatedValue(1.0, 5.0)
 
         val anim = builder
@@ -39,7 +39,7 @@ class AnimationTest {
         anim.interpolator = i2
         assertThat(anim.interpolator, `is`(i2))
 
-        assertThat(anim.builder, `is`(builder))
+        assertThat(anim.config, `is`(builder))
         assertThat(anim.animatedValue, `is`(animValue))
     }
 
@@ -47,7 +47,7 @@ class AnimationTest {
     fun `Simple Animation`() {
         var count = 0.0
 
-        val anim = AnimationBuilder()
+        val anim = AnimationConfig()
                 .interpolator(Interpolator.LINEAR)
                 .duration(Duration.seconds(4.0))
                 .build(AnimatedValue(1.0, 5.0), Consumer { count = it })
@@ -77,7 +77,7 @@ class AnimationTest {
     fun `Infinite Animation`() {
         var count = 0
 
-        val anim = AnimationBuilder()
+        val anim = AnimationConfig()
                 .duration(Duration.seconds(2.0))
                 .repeatInfinitely()
                 .build(AnimatedValue(1, 3), Consumer { count = it })
@@ -106,7 +106,7 @@ class AnimationTest {
     fun `Simple Reverse Animation`() {
         var count = 0.0
 
-        val anim = AnimationBuilder()
+        val anim = AnimationConfig()
                 .interpolator(Interpolator.LINEAR)
                 .duration(Duration.seconds(4.0))
                 .autoReverse(true)
@@ -160,7 +160,7 @@ class AnimationTest {
     fun `On Animation Finished`() {
         var count = 0
 
-        val anim = AnimationBuilder()
+        val anim = AnimationConfig()
                 .interpolator(Interpolator.LINEAR)
                 .duration(Duration.seconds(2.0))
                 .onFinished(Runnable { count = 15 })
@@ -179,7 +179,7 @@ class AnimationTest {
     fun `On Animation Cycle Finished`() {
         var count = 0
 
-        val anim = AnimationBuilder()
+        val anim = AnimationConfig()
                 .repeat(2)
                 .interpolator(Interpolator.LINEAR)
                 .duration(Duration.seconds(2.0))
@@ -204,7 +204,7 @@ class AnimationTest {
     fun `Animation with a delay`() {
         var count = 0
 
-        val anim = AnimationBuilder()
+        val anim = AnimationConfig()
                 .delay(Duration.seconds(1.5))
                 .duration(Duration.seconds(2.0))
                 .build(AnimatedValue(1, 3), Consumer { count = it })
@@ -231,7 +231,7 @@ class AnimationTest {
     fun `Stop animation`() {
         var count = 0
 
-        val anim = AnimationBuilder()
+        val anim = AnimationConfig()
                 .duration(Duration.seconds(3.0))
                 .build(AnimatedValue(1, 4), Consumer { count = it })
 
@@ -253,7 +253,7 @@ class AnimationTest {
     fun `Pause and resume animation`() {
         var count = 0
 
-        val anim = AnimationBuilder()
+        val anim = AnimationConfig()
                 .duration(Duration.seconds(3.0))
                 .build(AnimatedValue(1, 4), Consumer { count = it })
 
@@ -278,7 +278,7 @@ class AnimationTest {
 
     @Test
     fun `Start and stop noop if animation has started stopped`() {
-        val anim = AnimationBuilder()
+        val anim = AnimationConfig()
                 .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
                 .duration(Duration.seconds(3.0))
                 .build(AnimatedValue(1, 4), Consumer { })
@@ -298,7 +298,7 @@ class AnimationTest {
     fun `Start reverse`() {
         var count = 0
 
-        val anim = AnimationBuilder()
+        val anim = AnimationConfig()
                 .duration(Duration.seconds(3.0))
                 .build(AnimatedValue(1, 4), Consumer { count = it })
 
