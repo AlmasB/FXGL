@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test
 class EntityGroupTest {
 
     private enum class EntityType {
-        T1, T2
+        T1, T2, T3
     }
 
     private lateinit var world: GameWorld
@@ -81,5 +81,60 @@ class EntityGroupTest {
         }
 
         assertThat(count, `is`(0))
+    }
+
+    @Test
+    fun `Group only contains given entity types`() {
+        val e1 = Entity()
+        e1.type = EntityType.T1
+
+        val e3 = Entity()
+        e3.type = EntityType.T3
+
+        world.addEntities(e1, e3)
+
+        var count = 0
+
+        group.forEach {
+            assertThat(it, `is`(e1))
+            count++
+        }
+
+        assertThat(count, `is`(1))
+
+        world.removeEntities(e1, e3)
+
+        group.forEach {
+            count++
+        }
+
+        assertThat(count, `is`(1))
+    }
+
+    @Test
+    fun `Group only contains active entities`() {
+        val e1 = Entity()
+        e1.type = EntityType.T1
+
+        val e2 = Entity()
+        e2.type = EntityType.T2
+
+        world.addEntities(e1, e2)
+
+        var count = 0
+
+        group.forEach {
+            count++
+        }
+
+        assertThat(count, `is`(2))
+
+        world.removeEntities(e1)
+
+        group.forEach {
+            count++
+        }
+
+        assertThat(count, `is`(3))
     }
 }
