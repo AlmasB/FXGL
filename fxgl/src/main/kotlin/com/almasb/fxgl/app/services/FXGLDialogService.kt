@@ -21,6 +21,7 @@ import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 import java.util.*
 import java.util.function.Consumer
 import java.util.function.Predicate
@@ -97,7 +98,7 @@ class FXGLDialogService : DialogService() {
 
     private fun show() {
         if (!isShowing) {
-            openInScene(sceneService.mainWindow.currentFXGLSceneProperty.value)
+            sceneService.pushSubScene(dialogScene)
 
             dialogScene.contentRoot.requestFocus()
         }
@@ -105,30 +106,12 @@ class FXGLDialogService : DialogService() {
 
     private fun close() {
         if (states.isEmpty()) {
-            closeInScene(sceneService.mainWindow.currentFXGLSceneProperty.value)
+            sceneService.popSubScene()
         } else {
             val data = states.pop()
             window.title = data.title
             window.contentPane = data.contentPane
         }
-    }
-
-    private val bgBlur = BoxBlur(5.0, 5.0, 3)
-    private var savedEffect: Effect? = null
-
-    private fun openInScene(scene: FXGLScene) {
-        savedEffect = scene.effect
-        scene.effect = bgBlur
-
-        dialogScene.contentRoot.translateX = scene.contentRoot.translateX
-
-        sceneService.pushSubScene(dialogScene)
-    }
-
-    private fun closeInScene(scene: FXGLScene) {
-        scene.effect = savedEffect
-
-        sceneService.popSubScene()
     }
 
     override fun showMessageBox(message: String) {
@@ -233,7 +216,7 @@ class FXGLDialogService : DialogService() {
             contentRoot.setPrefSize(width, height)
             contentRoot.background = Background(BackgroundFill(Color.rgb(127, 127, 123, 0.5), null, null))
 
-            contentRoot.children.add(window)
+            contentRoot.children.addAll(window)
         }
     }
 }
