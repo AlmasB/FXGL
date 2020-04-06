@@ -442,18 +442,18 @@ public class ArrayTest {
     }
 
     @Nested
-    class WhenRemovingLastItem {
+    public class WhenRemovingLastItem {
         private Array<Integer> testArray;
 
         @BeforeEach
-        void setUp() {
+        public void setUp() {
             testArray = new Array<>(Integer.class);
             testArray.addAll(1, 2, 3);
         }
 
         @DisplayName("Then the last item in the Array is removed")
         @Test
-        void testLastItemIsRemoved() {
+        public void testLastItemIsRemoved() {
             testArray.pop();
 
             Assertions.assertFalse(Arrays.asList(testArray.getItems()).contains(3));
@@ -461,7 +461,7 @@ public class ArrayTest {
 
         @DisplayName("Then the last item in the Array is returned")
         @Test
-        void testLastItemIsReturned() {
+        public void testLastItemIsReturned() {
             var actualInteger = testArray.pop();
 
             assertEquals(3, actualInteger);
@@ -469,18 +469,18 @@ public class ArrayTest {
     }
 
     @Nested
-    class WhenClearing {
+    public class WhenClearing {
         private Array<Integer> testArray;
 
         @BeforeEach
-        void setUp() {
+        public void setUp() {
             testArray = new Array<>(Integer.class);
             testArray.addAll(1, 2, 3);
         }
 
         @DisplayName("Then all items in the Array are set to null")
         @Test
-        void testItemsAreRemoved() {
+        public void testItemsAreRemoved() {
             testArray.clear();
 
             Assertions.assertTrue(Arrays.stream(testArray.getItems()).allMatch(Objects::isNull));
