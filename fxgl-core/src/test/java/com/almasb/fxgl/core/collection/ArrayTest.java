@@ -5,7 +5,7 @@ import org.junit.jupiter.api.*;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Objects;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -465,6 +465,25 @@ public class ArrayTest {
             var actualInteger = testArray.pop();
 
             assertEquals(3, actualInteger);
+        }
+    }
+
+    @Nested
+    class WhenClearing {
+        private Array<Integer> testArray;
+
+        @BeforeEach
+        void setUp() {
+            testArray = new Array<>(Integer.class);
+            testArray.addAll(1, 2, 3);
+        }
+
+        @DisplayName("Then all items in the Array are set to null")
+        @Test
+        void testItemsAreRemoved() {
+            testArray.clear();
+
+            Assertions.assertTrue(Arrays.stream(testArray.getItems()).allMatch(Objects::isNull));
         }
     }
 }
