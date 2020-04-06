@@ -15,6 +15,7 @@ import javafx.scene.effect.BlendMode
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
@@ -166,6 +167,7 @@ class TextureTest {
     @EnumSource(BlendMode::class)
     fun `Blending`(blend: BlendMode) {
         assertThat(texture.blend(WritableImage(320, 320), blend).image, `is`(not(image)))
+        assertThat(texture.blend(Rectangle(320.0, 320.0, Color.RED), blend).image, `is`(not(image)))
         assertThat(ColoredTexture(320, 320, Color.BLACK).blend(ColoredTexture(320, 320, Color.WHITE).image, blend).image, `is`(not(image)))
         assertThat(ColoredTexture(320, 320, Color.WHITE).blend(ColoredTexture(320, 320, Color.BLACK).image, blend).image, `is`(not(image)))
     }

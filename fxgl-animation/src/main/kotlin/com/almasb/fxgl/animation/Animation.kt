@@ -15,7 +15,7 @@ import javafx.util.Duration
 /**
  * Animation configuration object.
  */
-class AnimationBuilder
+class AnimationConfig
 @JvmOverloads constructor(
         var duration: Duration = Duration.seconds(1.0),
         var delay: Duration = Duration.ZERO,
@@ -25,41 +25,41 @@ class AnimationBuilder
         var onCycleFinished: Runnable = EmptyRunnable,
         var isAutoReverse: Boolean = false) {
 
-    fun duration(duration: Duration): AnimationBuilder {
+    fun duration(duration: Duration): AnimationConfig {
         this.duration = duration
         return this
     }
 
-    fun delay(delay: Duration): AnimationBuilder {
+    fun delay(delay: Duration): AnimationConfig {
         this.delay = delay
         return this
     }
 
-    fun interpolator(interpolator: Interpolator): AnimationBuilder {
+    fun interpolator(interpolator: Interpolator): AnimationConfig {
         this.interpolator = interpolator
         return this
     }
 
-    fun repeat(times: Int): AnimationBuilder {
+    fun repeat(times: Int): AnimationConfig {
         this.times = times
         return this
     }
 
-    fun repeatInfinitely(): AnimationBuilder {
+    fun repeatInfinitely(): AnimationConfig {
         return repeat(Integer.MAX_VALUE)
     }
 
-    fun onFinished(onFinished: Runnable): AnimationBuilder {
+    fun onFinished(onFinished: Runnable): AnimationConfig {
         this.onFinished = onFinished
         return this
     }
 
-    fun onCycleFinished(onCycleFinished: Runnable): AnimationBuilder {
+    fun onCycleFinished(onCycleFinished: Runnable): AnimationConfig {
         this.onCycleFinished = onCycleFinished
         return this
     }
 
-    fun autoReverse(autoReverse: Boolean): AnimationBuilder {
+    fun autoReverse(autoReverse: Boolean): AnimationConfig {
         this.isAutoReverse = autoReverse
         return this
     }
@@ -79,21 +79,21 @@ class AnimationBuilder
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 abstract class Animation<T>(
-        val builder: AnimationBuilder,
+        val config: AnimationConfig,
         val animatedValue: AnimatedValue<T>): Updatable {
 
-    var isAutoReverse: Boolean = builder.isAutoReverse
-    var onFinished: Runnable = builder.onFinished
-    var onCycleFinished: Runnable = builder.onCycleFinished
+    var isAutoReverse: Boolean = config.isAutoReverse
+    var onFinished: Runnable = config.onFinished
+    var onCycleFinished: Runnable = config.onCycleFinished
 
     var interpolator: Interpolator
-        get() = builder.interpolator
-        set(value) { builder.interpolator = value }
+        get() = config.interpolator
+        set(value) { config.interpolator = value }
 
     private var time = 0.0
 
     // for single cycle
-    private var endTime = builder.duration.toSeconds()
+    private var endTime = config.duration.toSeconds()
 
     private var count = 0
 
@@ -109,11 +109,11 @@ abstract class Animation<T>(
     var isAnimating = false
         private set
 
-    private val delay = builder.delay
+    private val delay = config.delay
 
     private var checkDelay = delay.greaterThan(Duration.ZERO)
 
-    var cycleCount = builder.times
+    var cycleCount = config.times
 
     fun startReverse() {
         if (!isAnimating) {

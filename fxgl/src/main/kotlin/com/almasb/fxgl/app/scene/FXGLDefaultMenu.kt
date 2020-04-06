@@ -15,6 +15,7 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
 import com.almasb.fxgl.dsl.FXGL.Companion.random
 import com.almasb.fxgl.dsl.FXGL.Companion.texture
+import com.almasb.fxgl.dsl.getSettings
 import com.almasb.fxgl.dsl.getUIFactory
 import com.almasb.fxgl.dsl.localizedStringProperty
 import com.almasb.fxgl.particle.ParticleEmitters
@@ -61,11 +62,13 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     private var titleColor: ObjectProperty<Color>? = null
     private var t = 0.0
 
+    private val menu: Node
+
     init {
         if (appWidth < 800 || appHeight < 600)
             log.warning("FXGLDefaultMenu is not designed for resolutions < 800x600")
 
-        val menu = if (type === MenuType.MAIN_MENU)
+        menu = if (type === MenuType.MAIN_MENU)
             createMenuBodyMainMenu()
         else
             createMenuBodyGameMenu()
@@ -99,15 +102,6 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         menuRoot.children.addAll(menu)
         menuContentRoot.children.add(EMPTY)
-
-        activeProperty().addListener { observable, wasActive, isActive ->
-            if (!isActive) {
-                // the scene is no longer active so reset everything
-                // so that next time scene is active everything is loaded properly
-                switchMenuTo(menu)
-                switchMenuContentTo(EMPTY)
-            }
-        }
     }
 
     private val animations = arrayListOf<Animation<*>>()
@@ -137,6 +131,13 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         }
     }
 
+    override fun onDestroy() {
+        // the scene is no longer active so reset everything
+        // so that next time scene is active everything is loaded properly
+        switchMenuTo(menu)
+        switchMenuContentTo(EMPTY)
+    }
+
     override fun onUpdate(tpf: Double) {
         super.onUpdate(tpf)
 
@@ -154,7 +155,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
     override fun createBackground(width: Double, height: Double): Node {
         val bg = Rectangle(width, height)
-        bg.fill = Color.rgb(10, 1, 1)
+        bg.fill = Color.rgb(10, 1, 1, if (type == MenuType.GAME_MENU) 0.5 else 1.0)
         return bg
     }
 
@@ -288,9 +289,15 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             box.add(itemExtra)
         }
 
-        val itemExit = MenuButton("menu.mainMenu")
-        itemExit.setOnAction(EventHandler{ fireExitToMainMenu() })
-        box.add(itemExit)
+        if (getSettings().isMainMenuEnabled) {
+            val itemExit = MenuButton("menu.mainMenu")
+            itemExit.setOnAction(EventHandler{ fireExitToMainMenu() })
+            box.add(itemExit)
+        } else {
+            val itemExit = MenuButton("menu.exit")
+            itemExit.setOnAction(EventHandler{ fireExit() })
+            box.add(itemExit)
+        }
 
         return box
     }

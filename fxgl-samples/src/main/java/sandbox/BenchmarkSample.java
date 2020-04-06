@@ -8,74 +8,97 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.entity.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-
-import java.util.Map;
+import com.almasb.fxgl.dsl.components.RandomMoveComponent;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.EntityFactory;
+import com.almasb.fxgl.entity.SpawnData;
+import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.component.ComponentHelper;
+import com.almasb.fxgl.texture.Texture;
+import javafx.geometry.Rectangle2D;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
- *
+ * A benchmark demo that uses core FXGL features and provides stats.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class BenchmarkSample extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) { }
-
-    @Override
-    protected void initInput() {
-        onKeyDown(KeyCode.F, "spawn", () -> {
-            spawn();
-        });
+    protected void initSettings(GameSettings settings) {
+        settings.setWidth(1280);
+        settings.setHeight(720);
+        settings.setProfilingEnabled(true);
     }
 
-    @Override
-    protected void initGameVars(Map<String, Object> vars) {
-        vars.put("tpf", 0.0);
-    }
+    private static final int NUM_OBJECTS = 2500;
+    private static final boolean IS_JAVAFX = true;
 
-    private void spawn() {
-        var start = System.nanoTime();
+    private int frames;
+    private Component[] components;
 
-        for (int i = 0; i < 10000; i++) {
-            getGameWorld().create("e", new SpawnData(0, 0));
-
-            //var e = new Entity();
-
-//            entityBuilder()
-//                    .at(i * 6, i * 4)
-//                    .buildAndAttach();
-        }
-
-        var result = System.nanoTime() - start;
-        System.out.printf("%.3f sec\n", result / 1000000000.0);
-    }
+    private Texture[] textures;
 
     @Override
     protected void initGame() {
+        frames = 0;
+        components = new Component[NUM_OBJECTS];
+        textures = new Texture[NUM_OBJECTS];
+
         getGameWorld().addEntityFactory(new BenchmarkFactory());
 
-        var text = getUIFactory().newText("", Color.BLUE, 24.0);
-        text.textProperty().bind(getdp("tpf").asString("%.3f"));
+        for (int i = 0; i < NUM_OBJECTS; i++) {
+            if (IS_JAVAFX) {
+                var t = texture("ball.png", 100, 100);
+                textures[i] = t;
 
-        addUINode(text, 100, 100);
+                addUINode(t, random(100, 500), random(100, 500));
+            } else {
+                var e = spawn("ball");
+                e.setUpdateEnabled(false);
+
+                //var c = new ProjectileComponent(new Point2D(random(0.0, 1.0), random(0.0, 1.0)), FXGLMath.map(i, 0, 2000, 10, 60));
+                var c = new RandomMoveComponent(new Rectangle2D(0, 0, getAppWidth(), getAppHeight()), random(10, 400));
+                components[i] = c;
+
+                ComponentHelper.setEntity(c, e);
+            }
+        }
     }
 
     @Override
     protected void onUpdate(double tpf) {
-        set("tpf", tpf);
+        frames++;
+
+        // at 60fps this should finish in 100 sec
+        if (frames == 6000) {
+            getGameController().exit();
+        }
+
+        if (IS_JAVAFX) {
+            for (var t : textures) {
+                t.setTranslateX(t.getTranslateX() + 1);
+            }
+        } else {
+            for (var c : components) {
+                c.onUpdate(tpf);
+            }
+        }
     }
 
     public static class BenchmarkFactory implements EntityFactory {
 
-        @Preload(10000)
-        @Spawns("e")
+        @Spawns("ball")
         public Entity newEntity(SpawnData data) {
-            return new Entity();
+            return entityBuilder()
+                    .from(data)
+                    .viewWithBBox(texture("ball.png", 100, 100))
+                    //.with(new ProjectileComponent(new Point2D(1, 1), 5))
+                    //.with(new RandomMoveComponent(new Rectangle2D(0, 0, getAppWidth(), getAppHeight()), random(10, 200)))
+                    .build();
         }
     }
 

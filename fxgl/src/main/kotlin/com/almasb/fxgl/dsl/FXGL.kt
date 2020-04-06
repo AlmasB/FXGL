@@ -8,6 +8,7 @@
 package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.achievement.AchievementService
+import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.app.Engine
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.GameController
@@ -652,7 +653,7 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun entityBuilder() = EntityBuilder()
 
-    @JvmStatic fun animationBuilder() = AnimationBuilder()
+    @JvmStatic fun animationBuilder() = AnimationBuilder(getGameScene())
 
     @JvmStatic fun eventBuilder() = EventBuilder()
 }

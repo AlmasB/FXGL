@@ -7,7 +7,7 @@
 package com.almasb.fxgl.cutscene
 
 import com.almasb.fxgl.animation.Animation
-import com.almasb.fxgl.animation.AnimationDSL
+import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.scene.SceneService
@@ -44,14 +44,14 @@ class CutsceneScene(private val sceneService: SceneService) : SubScene() {
         val botLine = Rectangle(appWidth.toDouble(), 200.0)
         botLine.translateY = appHeight.toDouble()
 
-        animation = AnimationDSL()
+        animation = AnimationBuilder()
                 .duration(Duration.seconds(0.5))
                 .translate(topLine)
                 .from(Point2D(0.0, -150.0))
                 .to(Point2D.ZERO)
                 .build()
 
-        animation2 = AnimationDSL()
+        animation2 = AnimationBuilder()
                 .duration(Duration.seconds(0.5))
                 .translate(botLine)
                 .from(Point2D(0.0, appHeight.toDouble()))

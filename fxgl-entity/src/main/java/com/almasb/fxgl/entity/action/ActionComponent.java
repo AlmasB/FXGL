@@ -7,7 +7,6 @@
 package com.almasb.fxgl.entity.action;
 
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.sslogger.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -17,8 +16,6 @@ import javafx.collections.ObservableList;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public final class ActionComponent extends Component {
-
-    private static final Logger log = Logger.get(ActionComponent.class);
 
     private final Action IDLE = new IdleAction();
 
@@ -33,21 +30,14 @@ public final class ActionComponent extends Component {
 
     @Override
     public void onUpdate(double tpf) {
-        if (currentAction.isCancelled()) {
+        if (currentAction != IDLE && currentAction.isCancelled()) {
             switch (cancelPolicy) {
                 case ONE:
-                    currentAction.onCancelled();
                     removeCurrentActionAndSetNext();
                     break;
 
                 case ALL:
                     cancelActions();
-                    break;
-
-                default:
-                    log.warning("Unknown cancel policy: " + cancelPolicy);
-                    currentAction.onCancelled();
-                    removeCurrentActionAndSetNext();
                     break;
             }
         }
@@ -55,7 +45,9 @@ public final class ActionComponent extends Component {
         if (currentAction.isComplete()) {
             currentAction.onCompleted();
             removeCurrentActionAndSetNext();
-        } else {
+        }
+
+        if (!currentAction.isCancelled()) {
             currentAction.onUpdate(tpf);
         }
     }
@@ -99,15 +91,14 @@ public final class ActionComponent extends Component {
      * Clears all running and pending actions.
      */
     public void cancelActions() {
-        actions.forEach(Action::onCancelled);
+        actions.forEach(Action::cancel);
         actions.clear();
         removeCurrentActionAndSetNext();
     }
 
     /**
-     * Add an action for this entity to execute.
-     * If an entity is already executing an action,
-     * the added action will be queued.
+     * Add an action to the queue for this entity to execute.
+     * The action is notified that it was put in a queue.
      *
      * @param action next action to execute
      */
@@ -123,12 +114,7 @@ public final class ActionComponent extends Component {
      * @param action the action to remove
      */
     public void removeAction(Action action) {
-        if (!actions.isEmpty() && actions.get(0) == action) {
-            action.cancel();
-            return;
-        }
-
-        action.onCancelled();
+        action.cancel();
         actions.remove(action);
     }
 
@@ -142,7 +128,10 @@ public final class ActionComponent extends Component {
         }
 
         currentAction = getNextAction();
-        currentAction.onStarted();
+
+        // check if the action is cancelled before it started
+        if (!currentAction.isCancelled())
+            currentAction.onStarted();
     }
 
     /**

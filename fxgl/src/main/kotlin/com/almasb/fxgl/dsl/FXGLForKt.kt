@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.dsl
 
+import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.pool.Pools
@@ -216,6 +217,6 @@ fun localizedStringProperty(key: String) = FXGL.localizedStringProperty(key)
 
 fun entityBuilder() = EntityBuilder()
 
-fun animationBuilder() = AnimationBuilder()
+fun animationBuilder() = AnimationBuilder(getGameScene())
 
 fun eventBuilder() = EventBuilder()

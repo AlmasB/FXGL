@@ -30,7 +30,7 @@ public class AchievementApp extends GameApplication {
         settings.getAchievements().add(new Achievement("See the world", "Move 600 pixels", "pixelsMoved", 600));
         settings.getAchievements().add(new Achievement("Killer", "Kill 3 enemies", "enemiesKilled", 3));
 
-        settings.setMenuEnabled(true);
+        settings.setMainMenuEnabled(true);
         settings.setEnabledMenuItems(EnumSet.allOf(MenuItem.class));
     }
 

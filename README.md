@@ -62,6 +62,7 @@ Otherwise, you have the following options:
 * [Sample code demos](fxgl-samples)
 * [FXGL games](https://github.com/AlmasB/FXGLGames) (src)
 * [Game demos](https://github.com/AlmasB/FXGLGames/tree/master/binaries) (.jar)
+* [Published demos](https://fxgl.itch.io/)
 
 ### Maven
 

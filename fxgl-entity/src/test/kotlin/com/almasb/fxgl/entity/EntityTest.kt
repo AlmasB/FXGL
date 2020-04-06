@@ -880,6 +880,17 @@ class EntityTest {
         assertThat(entity.transformComponent.z, `is`(100))
     }
 
+    @Test
+    fun `Distance bbox to another entity`() {
+        entity.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(10.0, 15.0)))
+
+        val e2 = Entity()
+        e2.x = 15.0
+
+        assertThat(entity.distance(e2), `is`(15.0))
+        assertThat(entity.distanceBBox(e2), `is`(5.0))
+    }
+
     /* MOCK CLASSES */
 
     private class ComponentWithMethod : Component() {

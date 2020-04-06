@@ -32,7 +32,8 @@ public class FullscreenApp extends GameApplication {
         settings.setIntroEnabled(true);
         //settings.setFullScreenAllowed(true);
         settings.setFullScreenFromStart(true);
-        settings.setMenuEnabled(true);
+        settings.setMainMenuEnabled(false);
+        settings.setGameMenuEnabled(true);
 
         settings.setSceneFactory(new SceneFactory() {
             @Override

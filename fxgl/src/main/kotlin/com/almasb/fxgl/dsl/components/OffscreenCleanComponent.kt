@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.dsl.components
 
+import com.almasb.fxgl.app.scene.Viewport
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.component.Component
 
@@ -14,8 +15,8 @@ import com.almasb.fxgl.entity.component.Component
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class OffscreenCleanComponent : Component() {
-    private val viewport = FXGL.getGameScene().viewport
+class OffscreenCleanComponent
+@JvmOverloads constructor(val viewport: Viewport = FXGL.getGameScene().viewport) : Component() {
 
     override fun onUpdate(tpf: Double) {
         if (entity.boundingBoxComponent.isOutside(viewport.visibleArea)) {

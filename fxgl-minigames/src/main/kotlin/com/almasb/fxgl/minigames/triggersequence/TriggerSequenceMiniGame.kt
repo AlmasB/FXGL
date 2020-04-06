@@ -7,7 +7,7 @@
 package com.almasb.fxgl.minigames.triggersequence
 
 import com.almasb.fxgl.animation.Animation
-import com.almasb.fxgl.animation.AnimationDSL
+import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.KeyTrigger
@@ -56,7 +56,7 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
 
 
 
-        animationGood = AnimationDSL().duration(Duration.seconds(0.49))
+        animationGood = AnimationBuilder().duration(Duration.seconds(0.49))
                 .interpolator(Interpolators.ELASTIC.EASE_OUT())
                 .onFinished(Runnable { circle.opacity = 0.0 })
                 .translate(circle)
@@ -64,7 +64,7 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
                 .to(Point2D(0.0, -40.0))
                 .build()
 
-        animationBad = AnimationDSL().duration(Duration.seconds(0.49))
+        animationBad = AnimationBuilder().duration(Duration.seconds(0.49))
                 .onFinished(Runnable { circle.opacity = 0.0 })
                 .interpolator(Interpolators.ELASTIC.EASE_OUT())
                 .translate(circle)

@@ -747,7 +747,7 @@ class GameWorldTest {
         gameWorld.addEntities(e1, e2, e3)
 
         assertAll(
-                Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(0.0, 0.0, 100.0, 100.0)), contains(e1)) },
+                Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(0.0, 0.0, 100.0, 100.0)), contains(e1, e2, e3)) },
                 Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(90.0, 0.0, 20.0, 20.0)), contains(e2)) }
         )
     }

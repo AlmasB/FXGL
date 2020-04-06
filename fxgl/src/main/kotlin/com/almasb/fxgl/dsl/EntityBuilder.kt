@@ -19,6 +19,7 @@ import javafx.event.EventHandler
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
+import java.util.function.Consumer
 
 /**
  *
@@ -130,12 +131,12 @@ class EntityBuilder {
         entity.transformComponent.z = z
     }
 
-    fun onClick(action: () -> Unit) = this.also {
-        onClick(Runnable(action))
+    fun onClick(action: (Entity) -> Unit) = this.also {
+        onClick(Consumer(action))
     }
 
-    fun onClick(action: Runnable) = this.also {
-        entity.viewComponent.addEventHandler(MouseEvent.MOUSE_CLICKED, EventHandler { action.run() })
+    fun onClick(action: Consumer<Entity>) = this.also {
+        entity.viewComponent.addEventHandler(MouseEvent.MOUSE_CLICKED, EventHandler { action.accept(entity) })
     }
 
     fun collidable() = with(CollidableComponent(true))

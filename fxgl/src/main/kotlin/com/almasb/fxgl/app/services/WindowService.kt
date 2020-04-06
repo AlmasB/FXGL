@@ -80,9 +80,8 @@ class WindowService : SceneService() {
     private lateinit var loadScene: LoadingScene
 
     private var intro: FXGLScene? = null
-    private var mainMenu: FXGLScene? = null
-    private var gameMenu: FXGLScene? = null
-    private var pauseMenu: PauseMenu? = null
+    private var mainMenu: SubScene? = null
+    private var gameMenu: SubScene? = null
 
     override fun onInit() {
         settings.cssList.forEach {
@@ -132,8 +131,11 @@ class WindowService : SceneService() {
             intro = sceneFactory.newIntro()
         }
 
-        if (settings.isMenuEnabled) {
+        if (settings.isMainMenuEnabled) {
             mainMenu = sceneFactory.newMainMenu()
+        }
+
+        if (settings.isGameMenuEnabled) {
             gameMenu = sceneFactory.newGameMenu()
 
             val menuKeyHandler = object : EventHandler<KeyEvent> {
@@ -149,11 +151,11 @@ class WindowService : SceneService() {
                         // we only care if menu key was pressed in one of these states
                         if (mainWindow.currentScene === gameMenu) {
                             canSwitchGameMenu = false
-                            gotoPlay()
+                            popSubScene()
 
                         } else if (mainWindow.currentScene === gameScene) {
                             canSwitchGameMenu = false
-                            gotoGameMenu()
+                            pushSubScene(gameMenu!!)
                         }
                     }
                 }
@@ -167,25 +169,24 @@ class WindowService : SceneService() {
 
             gameScene.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
             gameMenu!!.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
-        } else {
-
-            pauseMenu = sceneFactory.newPauseMenu()
-
-            // pause menu can only be opened from game scene so it is fine to bind to its contentRoot X
-            pauseMenu!!.contentRoot.translateXProperty().bind(gameScene.contentRoot.translateXProperty())
-
-            gameScene.input.addAction(object : UserAction("Pause") {
-                override fun onActionBegin() {
-                    pauseMenu!!.requestShow {
-                        mainWindow.pushState(pauseMenu!!)
-                    }
-                }
-
-                override fun onActionEnd() {
-                    pauseMenu!!.unlockSwitch()
-                }
-            }, settings.menuKey)
         }
+
+//            pauseMenu = sceneFactory.newPauseMenu()
+//
+//            // pause menu can only be opened from game scene so it is fine to bind to its contentRoot X
+//            pauseMenu!!.contentRoot.translateXProperty().bind(gameScene.contentRoot.translateXProperty())
+//
+//            gameScene.input.addAction(object : UserAction("Pause") {
+//                override fun onActionBegin() {
+//                    pauseMenu!!.requestShow {
+//                        mainWindow.pushState(pauseMenu!!)
+//                    }
+//                }
+//
+//                override fun onActionEnd() {
+//                    pauseMenu!!.unlockSwitch()
+//                }
+//            }, settings.menuKey)
 
         log.debug("Application scenes initialized")
     }
@@ -273,12 +274,19 @@ class WindowService : SceneService() {
         mainWindow.setScene(intro!!)
     }
 
+    private val dummyScene by lazy {
+        object : FXGLScene() {}
+    }
+
     fun gotoMainMenu() {
-        mainWindow.setScene(mainMenu!!)
+        // since mainMenu is a subscene we need an actual scene before it
+        mainWindow.setScene(dummyScene)
+        mainWindow.pushState(mainMenu!!)
     }
 
     fun gotoGameMenu() {
-        mainWindow.setScene(gameMenu!!)
+        // current scene should be gameScene
+        mainWindow.pushState(gameMenu!!)
     }
 
     fun gotoLoading(loadingTask: Runnable) {

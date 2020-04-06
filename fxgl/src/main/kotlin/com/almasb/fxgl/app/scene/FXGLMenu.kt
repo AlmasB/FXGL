@@ -61,13 +61,17 @@ import java.util.function.Supplier
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
+abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
 
     companion object {
         private val log = Logger.get("Menu")
     }
 
     protected val saveLoadService: SaveLoadService = FXGL.getSaveLoadService()
+
+    protected val controller by lazy { FXGL.getGameController() }
+    protected val appWidth by lazy { FXGL.getAppWidth() }
+    protected val appHeight by lazy { FXGL.getAppHeight() }
 
     protected val menuRoot = Pane()
     protected val menuContentRoot = Pane()
@@ -643,7 +647,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireResume() {
         log.debug("fireResume()")
 
-        controller.gotoPlay()
+        FXGL.getSceneService().popSubScene()
     }
 
     protected fun fireExit() {

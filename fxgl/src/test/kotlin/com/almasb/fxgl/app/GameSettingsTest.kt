@@ -38,7 +38,8 @@ class GameSettingsTest {
             settings.title = "Test"
             settings.version = "0.99"
             settings.isIntroEnabled = false
-            settings.isMenuEnabled = false
+            settings.isMainMenuEnabled = false
+            settings.isGameMenuEnabled = false
             settings.isFullScreenAllowed = false
             settings.isProfilingEnabled = false
             settings.isCloseConfirmation = false
@@ -78,7 +79,8 @@ class GameSettingsTest {
         assertThat(settings.title, `is`("Test"))
         assertThat(settings.version, `is`("0.99"))
         assertThat(settings.isIntroEnabled, `is`(false))
-        assertThat(settings.isMenuEnabled, `is`(false))
+        assertThat(settings.isMainMenuEnabled, `is`(false))
+        assertThat(settings.isGameMenuEnabled, `is`(false))
         assertThat(settings.isFullScreenAllowed, `is`(false))
         assertThat(settings.isProfilingEnabled, `is`(false))
         assertThat(settings.isCloseConfirmation, `is`(false))

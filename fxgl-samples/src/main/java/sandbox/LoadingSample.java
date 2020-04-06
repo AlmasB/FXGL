@@ -32,7 +32,7 @@ public class LoadingSample extends GameApplication {
         settings.setTitle("LoadingSample");
         settings.setVersion("0.1");
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(true);
+        settings.setMainMenuEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEBUG);
         settings.setSceneFactory(new SceneFactory() {
             @Override
