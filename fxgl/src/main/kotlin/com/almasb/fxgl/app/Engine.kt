@@ -22,7 +22,7 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class Engine(val settings: ReadOnlyGameSettings)  {
+internal class Engine(val settings: ReadOnlyGameSettings) {
 
     private val log = Logger.get(javaClass)
 
@@ -44,11 +44,18 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
     private fun logVersion() {
         val jVersion = System.getProperty("java.version", "?")
         val fxVersion = System.getProperty("javafx.version", "?")
+        val javaVendorName = System.getProperty("java.vendor", "?")
+        val operatingSystemName = System.getProperty("os.name", "?")
+        val operatingSystemVersion = System.getProperty("os.version", "?")
+        val operatingSystemArchitecture = System.getProperty("os.arch", "?")
 
         val version = settings.runtimeInfo.version
         val build = settings.runtimeInfo.build
 
         log.info("FXGL-$version ($build) on ${settings.platform} (J:$jVersion FX:$fxVersion)")
+        log.info("JRE Vendor Name: $javaVendorName")
+        log.info("Running on OS: $operatingSystemName version $operatingSystemVersion")
+        log.info("Architecture: $operatingSystemArchitecture")
         log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
@@ -57,7 +64,7 @@ internal class Engine(val settings: ReadOnlyGameSettings)  {
         if (servicesCache.containsKey(serviceClass))
             return servicesCache[serviceClass] as T
 
-        return (services.find { it is T  }?.also { servicesCache[serviceClass] = it }
+        return (services.find { it is T }?.also { servicesCache[serviceClass] = it }
                 ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
     }
 
