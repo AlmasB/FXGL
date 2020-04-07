@@ -51,7 +51,7 @@ public class AStarGridView extends Parent {
             linesGroup.getChildren().add(line);
         }
 
-        for (int y = 0; y < grid.getWidth(); y++) {
+        for (int y = 0; y < grid.getHeight(); y++) {
             var line = new Line(0, y*cellHeight, grid.getWidth() * cellWidth, y*cellHeight);
 
             linesGroup.getChildren().add(line);
