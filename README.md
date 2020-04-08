@@ -66,8 +66,7 @@ Otherwise, you have the following options:
 
 ### Maven
 
-* [Maven](https://github.com/AlmasB/FXGL-Maven) project if you use Java
-* [Maven](https://github.com/AlmasB/FXGL-MavenKt) project if you use Kotlin
+* [Maven](https://github.com/AlmasB/FXGL-MavenGradle) project if you use Java and/or Kotlin (Java 11+)
 
 Already have `pom.xml`? Then add: (use `0.5.4` for Java 8-10). **Note:** make sure to set `<release>11</release>` for `maven-compiler-plugin`.
 
@@ -81,9 +80,7 @@ Already have `pom.xml`? Then add: (use `0.5.4` for Java 8-10). **Note:** make su
 
 ### Gradle
 
-* [Gradle](https://github.com/AlmasB/FXGL-Gradle) project if you use Java 8-10
-* [Gradle](https://github.com/AlmasB/FXGL11-Gradle) project if you use Java 11+
-* [Gradle](https://github.com/AlmasB/FXGL-GradleKt) project if you use Kotlin
+* [Gradle](https://github.com/AlmasB/FXGL-MavenGradle) project if you use Java and/or Kotlin (Java 11+)
 
 Already have `build.gradle`? Then add: (use `0.5.4` for Java 8-10). **Note:** in case you have errors, please see templates for Gradle above.
 
