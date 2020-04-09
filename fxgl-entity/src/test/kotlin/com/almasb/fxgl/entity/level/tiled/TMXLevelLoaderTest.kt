@@ -84,6 +84,20 @@ class TMXLevelLoaderTest {
         assertThat(level.properties.getInt("testInt"), `is`(33))
     }
 
+    @Test
+    fun `Load tmx level with incorrect image paths`() {
+        val world = GameWorld()
+        world.addEntityFactory(MyEntityFactory())
+
+        val level = TMXLevelLoader().load(javaClass.getResource("map_incorrect_image_path.tmx"), world)
+
+        assertThat(level.width, `is`(16*10))
+        assertThat(level.height, `is`(16*10))
+
+        // 1 bg + 7 entities
+        assertThat(level.entities.size, `is`(1 + 7))
+    }
+
     @ParameterizedTest
     @CsvSource("sewers_v1_1_2.tmx", "sewers_v1_2_3.tmx")
     fun parse(mapName: String) {
