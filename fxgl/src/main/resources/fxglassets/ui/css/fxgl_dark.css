@@ -305,7 +305,7 @@ Under Apache License 2.0
     -fx-min-height: -fx-pref-height;
     -fx-max-height: -fx-pref-height;
 
-    -fx-background-color: TRANSPARENT;
+    -fx-background-color: WHITE;
     -fx-background-radius: 2;
 
     -fx-border-color: black;
