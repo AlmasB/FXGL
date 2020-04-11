@@ -120,7 +120,7 @@ abstract class VirtualMenuKey(private val input: Input, private val key: KeyCode
 }
 
 /**
-    *Pause Button
+ * Default virtual pause button.
  */
 class FXGLVirtualMenuKey(input: Input, key: KeyCode, isMenuEnabled: Boolean) : VirtualMenuKey(input, key, isMenuEnabled) {
 
