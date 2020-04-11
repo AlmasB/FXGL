@@ -54,8 +54,8 @@ public final class ProgressBar extends Parent {
     private DoubleProperty width = new SimpleDoubleProperty(200.0);
     private DoubleProperty height = new SimpleDoubleProperty(10.0);
 
-    private Rectangle backgroundBar = new Rectangle();
-    private Rectangle innerBar = new Rectangle();
+    private final Rectangle backgroundBar = new Rectangle();
+    private final Rectangle innerBar = new Rectangle();
 
     private Group barGroup = new Group();
 
@@ -178,6 +178,14 @@ public final class ProgressBar extends Parent {
                 }
             }));
         }
+    }
+
+    public Rectangle getBackgroundBar() {
+        return backgroundBar;
+    }
+
+    public Rectangle getInnerBar() {
+        return innerBar;
     }
 
     public void setBackgroundFill(Paint color) {
