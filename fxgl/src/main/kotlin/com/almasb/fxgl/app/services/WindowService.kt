@@ -28,7 +28,7 @@ import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.DialogService
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.concurrent.Task
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler

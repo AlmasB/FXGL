@@ -17,7 +17,7 @@ import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.entity.components.IrremovableComponent
 import com.almasb.fxgl.entity.components.TimeComponent
 import com.almasb.fxgl.entity.level.Level
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import java.util.*

@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.io
 
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import java.io.*
 
 /**

@@ -21,7 +21,7 @@ import com.almasb.fxgl.physics.box2d.collision.Manifold;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
-import com.almasb.sslogger.Logger;
+import com.almasb.fxgl.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 

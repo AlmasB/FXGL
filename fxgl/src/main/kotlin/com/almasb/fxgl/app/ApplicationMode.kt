@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.sslogger.LoggerLevel
+import com.almasb.fxgl.logging.LoggerLevel
 
 /**
  * Runtime mode of the application.

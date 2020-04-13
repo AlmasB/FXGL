@@ -17,9 +17,9 @@ import com.almasb.fxgl.physics.BoxShapeData
 import com.almasb.fxgl.physics.ChainShapeData
 import com.almasb.fxgl.physics.CircleShapeData
 import com.almasb.fxgl.physics.PolygonShapeData
-import com.almasb.sslogger.Logger
-import com.almasb.sslogger.LoggerLevel
-import com.almasb.sslogger.LoggerOutput
+import com.almasb.fxgl.logging.Logger
+import com.almasb.fxgl.logging.LoggerLevel
+import com.almasb.fxgl.logging.LoggerOutput
 import javafx.scene.Group
 import javafx.scene.shape.*
 

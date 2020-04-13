@@ -23,7 +23,7 @@ import com.almasb.fxgl.texture.getDummyImage
 import com.almasb.fxgl.ui.FontFactory
 import com.almasb.fxgl.ui.UI
 import com.almasb.fxgl.ui.UIController
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.image.Image

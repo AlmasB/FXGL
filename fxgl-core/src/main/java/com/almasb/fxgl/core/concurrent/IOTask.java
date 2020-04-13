@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.core.concurrent;
 
-import com.almasb.sslogger.Logger;
+import com.almasb.fxgl.logging.Logger;
 import javafx.concurrent.Task;
 
 import java.util.concurrent.Callable;

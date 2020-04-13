@@ -10,7 +10,7 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.UserAction
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.scene.input.KeyCode
 
 /**

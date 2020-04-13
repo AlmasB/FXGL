@@ -17,7 +17,7 @@ import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.ui.FXGLCheckBox
 import com.almasb.fxgl.ui.InGamePanel
 import com.almasb.fxgl.ui.PropertyMapView
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.*
 import javafx.beans.property.*
 import javafx.collections.FXCollections

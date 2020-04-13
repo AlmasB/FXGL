@@ -10,7 +10,7 @@ import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneListener
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.animation.Interpolator
 import javafx.beans.property.DoubleProperty
 import javafx.beans.value.WritableValue

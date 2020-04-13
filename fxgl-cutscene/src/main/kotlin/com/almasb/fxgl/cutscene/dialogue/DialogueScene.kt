@@ -13,7 +13,7 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
 import javafx.scene.input.KeyCode

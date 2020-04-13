@@ -13,7 +13,7 @@ import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
 import com.almasb.fxgl.entity.level.LevelLoadingException
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
 import java.io.ByteArrayOutputStream
