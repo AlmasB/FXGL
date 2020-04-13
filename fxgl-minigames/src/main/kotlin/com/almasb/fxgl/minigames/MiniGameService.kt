@@ -21,8 +21,12 @@ import com.almasb.fxgl.minigames.sweetspot.SweetSpotView
 import com.almasb.fxgl.minigames.triggermash.TriggerMashMiniGame
 import com.almasb.fxgl.minigames.triggermash.TriggerMashResult
 import com.almasb.fxgl.minigames.triggermash.TriggerMashView
+import com.almasb.fxgl.minigames.triggersequence.TriggerSequenceMiniGame
+import com.almasb.fxgl.minigames.triggersequence.TriggerSequenceResult
+import com.almasb.fxgl.minigames.triggersequence.TriggerSequenceView
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
+import javafx.scene.input.KeyCode
 import javafx.util.Duration
 import java.util.function.Consumer
 
@@ -33,6 +37,13 @@ import java.util.function.Consumer
 class MiniGameService : EngineService() {
 
     private lateinit var sceneService: SceneService
+
+    fun startTriggerSequence(keys: List<KeyCode>, callback: Consumer<TriggerSequenceResult>) {
+        val miniGame = TriggerSequenceMiniGame()
+        miniGame.triggers += keys.map { KeyTrigger(it) }
+
+        startMiniGame(TriggerSequenceView(miniGame)) { callback.accept(it) }
+    }
 
     fun startSweetSpot(successRange: Int, callback: Consumer<SweetSpotResult>) {
         val miniGame = SweetSpotMiniGame()
