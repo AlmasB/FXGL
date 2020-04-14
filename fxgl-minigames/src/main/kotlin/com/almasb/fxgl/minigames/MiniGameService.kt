@@ -15,6 +15,9 @@ import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerResult
 import com.almasb.fxgl.minigames.circuitbreaker.CircuitBreakerView
 import com.almasb.fxgl.minigames.lockpicking.LockPickResult
 import com.almasb.fxgl.minigames.lockpicking.LockPickView
+import com.almasb.fxgl.minigames.randomoccurrence.RandomOccurrenceMiniGame
+import com.almasb.fxgl.minigames.randomoccurrence.RandomOccurrenceResult
+import com.almasb.fxgl.minigames.randomoccurrence.RandomOccurrenceView
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotMiniGame
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotResult
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotView
@@ -37,6 +40,16 @@ import java.util.function.Consumer
 class MiniGameService : EngineService() {
 
     private lateinit var sceneService: SceneService
+
+    /**
+     * Starts the random occurrence mini game with given [successChance] in range [0..1].
+     */
+    fun startRandomOccurrence(successChance: Double, callback: Consumer<RandomOccurrenceResult>) {
+        val miniGame = RandomOccurrenceMiniGame()
+        miniGame.successChance = successChance
+
+        startMiniGame(RandomOccurrenceView(miniGame)) { callback.accept(it) }
+    }
 
     fun startTriggerSequence(keys: List<KeyCode>, callback: Consumer<TriggerSequenceResult>) {
         val miniGame = TriggerSequenceMiniGame()

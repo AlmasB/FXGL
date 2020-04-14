@@ -19,8 +19,6 @@ import com.almasb.fxgl.ui.FXGLButton;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
-import java.util.List;
-
 import static com.almasb.fxgl.dsl.FXGL.*;
 import static javafx.scene.input.KeyCode.*;
 
@@ -57,9 +55,13 @@ public class MiniGameApp extends GameApplication {
 
             var manager = getMiniGameService();
 
-            manager.startTriggerSequence(List.of(E, F, G, W, A, S, D, T), result -> {
+            manager.startRandomOccurrence(0.6, result -> {
                 debugText.setText(result.isSuccess() ? "Success" : "Fail");
             });
+
+//            manager.startTriggerSequence(List.of(E, F, G, W, A, S, D, T), result -> {
+//                debugText.setText(result.isSuccess() ? "Success" : "Fail");
+//            });
 
 //            manager.startCircuitBreaker(10, 10, 10, 100, Duration.seconds(1), (result) -> {
 //                System.out.println(result.isSuccess() ? "SUCCESS" : "FAIL");
@@ -98,7 +100,7 @@ public class MiniGameApp extends GameApplication {
         debugText = getUIFactory().newText("", Color.BLACK, 36.0);
         debugText2 = getUIFactory().newText("", Color.BLACK, 36.0);
 
-        addUINode(debugText2, 0, 50);
+        //addUINode(debugText2, 0, 50);
 
         getGameScene().setBackgroundRepeat("bg_10.png");
 

@@ -18,6 +18,7 @@ module com.almasb.fxgl.minigames {
     exports com.almasb.fxgl.minigames.circuitbreaker;
     exports com.almasb.fxgl.minigames.sweetspot;
     exports com.almasb.fxgl.minigames.lockpicking;
+    exports com.almasb.fxgl.minigames.randomoccurrence;
     exports com.almasb.fxgl.minigames.triggermash;
     exports com.almasb.fxgl.minigames.triggersequence;
 
