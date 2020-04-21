@@ -399,8 +399,6 @@ class Input {
         virtualButtons[virtualButton]?.let { mockKeyRelease(it) }
     }
 
-    fun createVirtualJoystick(): VirtualJoystick = FXGLVirtualJoystick(this)
-
     /**
      * Creates a view containing virtual dpad (4 directional controls).
      */

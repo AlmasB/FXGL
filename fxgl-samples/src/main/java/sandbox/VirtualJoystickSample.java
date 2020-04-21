@@ -9,9 +9,7 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.input.virtual.VirtualJoystick;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
+import com.almasb.fxgl.input.virtual.joystick.FXGLVirtualJoystick;
 
 /**
  *
@@ -19,23 +17,14 @@ import javafx.scene.text.Text;
 public class VirtualJoystickSample extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) { }
-
-    private VirtualJoystick joystick;
-    private Text debug;
-
-    @Override
-    protected void initGame() {
-        joystick = FXGL.getInput().createVirtualJoystick();
-        debug = FXGL.getUIFactoryService().newText("", Color.BLACK, 18.0);
-
-        FXGL.addUINode(joystick, 50, 400);
-        FXGL.addUINode(debug, 500, 60);
+    protected void initSettings(GameSettings settings) {
     }
 
     @Override
-    protected void onUpdate(double tpf) {
-        debug.setText("Vector: " + joystick.getVector());
+    protected void initGame() {
+        FXGLVirtualJoystick joystick = FXGLVirtualJoystick.createDefault();
+
+        FXGL.addUINode(joystick, 100, 400);
     }
 
     public static void main(String[] args) {

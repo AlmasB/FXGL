@@ -7,14 +7,11 @@
 package com.almasb.fxgl.input.virtual
 
 import com.almasb.fxgl.input.Input
+import com.almasb.fxgl.input.virtual.joystick.VirtualJoystick
 import javafx.beans.binding.Bindings
-import javafx.beans.property.ReadOnlyBooleanProperty
-import javafx.beans.property.ReadOnlyBooleanWrapper
-import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node
-import javafx.scene.Parent
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
@@ -121,31 +118,6 @@ abstract class VirtualMenuKey(private val input: Input, private val key: KeyCode
     }
 
     abstract fun createView(): Node
-}
-
-abstract class VirtualJoystick(private val input: Input) : Parent() {
-
-    /**
-     * A point in local coordinates that defines the center of this joystick.
-     * It is used for computing the vector.
-     */
-    abstract val center: Point2D
-
-    val vector: Point2D
-        get() = input.mousePositionUI.subtract(center.add(translateX, translateY))
-}
-
-/**
- * Default virtual joystick.
- */
-class FXGLVirtualJoystick(input: Input) : VirtualJoystick(input) {
-
-    override val center: Point2D
-        get() = TODO("Not yet implemented")
-
-    init {
-        TODO("Not yet implemented")
-    }
 }
 
 /**
