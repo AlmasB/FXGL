@@ -7,6 +7,7 @@
 package com.almasb.fxgl.input
 
 import com.almasb.fxgl.input.virtual.*
+import com.almasb.fxgl.input.virtual.joystick.FXGLVirtualJoystick
 import com.almasb.fxgl.logging.Logger
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyDoubleWrapper
@@ -398,6 +399,8 @@ class Input {
     internal fun releaseVirtual(virtualButton: VirtualButton) {
         virtualButtons[virtualButton]?.let { mockKeyRelease(it) }
     }
+
+    fun createVirtualJoystick(): FXGLVirtualJoystick = FXGLVirtualJoystick.createDefault()
 
     /**
      * Creates a view containing virtual dpad (4 directional controls).

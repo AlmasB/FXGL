@@ -1,13 +1,19 @@
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
+
 package com.almasb.fxgl.input.virtual.joystick
 
-import javafx.scene.Parent
+import javafx.scene.Node
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 
 /**
- * Default virtual joystick.
+ * Default implementation of [VirtualJoystick]. This uses [Circle]s to display the virtual joystick to the player.
  */
-class FXGLVirtualJoystick(override val outerCircle: Circle, override val innerCircle: Circle) : Parent(), VirtualJoystick {
+class FXGLVirtualJoystick(outerNode: Node, innerNode: Node) : VirtualJoystick(outerNode, innerNode) {
     companion object {
         @JvmStatic
         fun createDefault(): FXGLVirtualJoystick {
@@ -25,11 +31,7 @@ class FXGLVirtualJoystick(override val outerCircle: Circle, override val innerCi
         TODO("Not yet implemented")
     }
 
-    override fun addInnerCircleListener() {
-        TODO("Not yet implemented")
-    }
-
     private fun showCircles() {
-        children.addAll(outerCircle, innerCircle)
+        children.addAll(outerNode, innerNode)
     }
 }
