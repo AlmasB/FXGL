@@ -10,7 +10,7 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.io.FileSystemService
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 
 internal class SystemBundleService : EngineService() {
 

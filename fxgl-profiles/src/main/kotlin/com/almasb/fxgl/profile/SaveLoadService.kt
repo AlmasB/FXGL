@@ -10,7 +10,7 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.io.FileExtension
 import com.almasb.fxgl.io.FileSystemService
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import java.io.FileNotFoundException
 import java.util.*
 

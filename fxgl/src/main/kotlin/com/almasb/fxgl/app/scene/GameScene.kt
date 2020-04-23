@@ -12,7 +12,7 @@ import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.components.ViewComponent
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.ui.UI
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.value.ChangeListener
 import javafx.collections.ObservableList

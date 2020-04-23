@@ -10,7 +10,7 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.ui.FontType
 import com.almasb.fxgl.ui.UIFactoryService
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle

@@ -9,7 +9,7 @@ package com.almasb.fxgl.entity.level.tiled
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.texture.getDummyImage
 import com.almasb.fxgl.texture.resize
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView

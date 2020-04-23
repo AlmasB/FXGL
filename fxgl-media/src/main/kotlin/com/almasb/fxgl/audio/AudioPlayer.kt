@@ -11,7 +11,7 @@ import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.property.DoubleProperty
 
 /**

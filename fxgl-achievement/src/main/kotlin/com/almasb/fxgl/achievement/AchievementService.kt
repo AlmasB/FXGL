@@ -13,7 +13,7 @@ import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.event.EventBusService
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import java.util.*
 
 /**

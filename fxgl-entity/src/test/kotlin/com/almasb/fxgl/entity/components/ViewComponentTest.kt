@@ -122,7 +122,6 @@ class ViewComponentTest {
         view.opacity = 0.35
 
         assertThat(view.opacity, `is`(0.35))
-        assertThat(view.devRoot.opacity, `is`(1.0))
         assertThat(view.parent.opacity, `is`(1.0))
     }
 

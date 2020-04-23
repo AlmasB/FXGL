@@ -7,7 +7,7 @@
 package com.almasb.fxgl.localization
 
 import com.almasb.fxgl.core.EngineService
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import javafx.beans.property.SimpleObjectProperty

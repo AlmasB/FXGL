@@ -19,7 +19,7 @@ import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.FXGLScrollPane
 import com.almasb.fxgl.ui.FontType
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import javafx.collections.FXCollections

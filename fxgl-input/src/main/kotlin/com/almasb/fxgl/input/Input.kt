@@ -7,7 +7,7 @@
 package com.almasb.fxgl.input
 
 import com.almasb.fxgl.input.virtual.*
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyDoubleWrapper
 import javafx.collections.FXCollections

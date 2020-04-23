@@ -13,7 +13,7 @@ import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.reflect.ReflectionUtils.*
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.util.Duration
 
 /**

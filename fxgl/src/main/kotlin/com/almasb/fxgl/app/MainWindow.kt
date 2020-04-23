@@ -13,7 +13,7 @@ import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyBooleanProperty

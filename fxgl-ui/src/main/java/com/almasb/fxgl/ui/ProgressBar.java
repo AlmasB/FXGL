@@ -5,7 +5,7 @@
  */
 package com.almasb.fxgl.ui;
 
-import com.almasb.sslogger.Logger;
+import com.almasb.fxgl.logging.Logger;
 import javafx.animation.*;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;

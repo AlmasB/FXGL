@@ -20,7 +20,7 @@ import com.almasb.fxgl.dsl.getUIFactory
 import com.almasb.fxgl.dsl.localizedStringProperty
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.animation.FadeTransition
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding

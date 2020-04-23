@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ FXGL - JavaFX Game Library. The MIT License (MIT).
+  ~ Copyright (c) AlmasB (almaslvl@gmail.com).
+  ~ See LICENSE for details.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -9,28 +15,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>fxgl-core</artifactId>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-graphics</artifactId>
-            <version>${jfx.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-logging</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-test</artifactId>
-            <version>${fxgl.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <artifactId>fxgl-logging</artifactId>
 
     <build>
         <plugins>
