@@ -7,10 +7,13 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.dsl.getGameWorld
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.logging.Logger
+import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.input.KeyCode
 
 /**
@@ -73,13 +76,29 @@ object SystemActions {
 
     private fun sysdump() = object : UserAction("System info dump") {
         override fun onActionBegin() {
-            //log.infof("Scene graph size: %d", DeveloperTools.getChildrenSize(FXGL.getApp().gameScene.root))
+            log.info("--- System info dump begin ---")
+            log.infof("Entities size: %d", getGameWorld().entities.size)
+            log.infof("Components size: %d", getGameWorld().entities.flatMap { it.components }.size)
+            log.infof("Scene graph size: %d", getChildrenSize(FXGL.getWindowService().mainWindow.currentFXGLScene.root))
+            log.info("--- System info dump end ---")
         }
     }
 
     private fun restartGame() = object : UserAction("Restart") {
         override fun onActionBegin() {
             FXGL.getGameController().startNewGame()
+        }
+    }
+
+    /**
+     * Recursively counts number of children of [node].
+     */
+    private fun getChildrenSize(node: Node): Int {
+        log.debug("Counting children for $node")
+
+        return when (node) {
+            is Parent -> node.childrenUnmodifiable.size + node.childrenUnmodifiable.map { getChildrenSize(it) }.sum()
+            else      -> 0
         }
     }
 }
