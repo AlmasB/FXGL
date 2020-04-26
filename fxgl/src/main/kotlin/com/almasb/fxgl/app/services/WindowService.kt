@@ -13,22 +13,19 @@ import com.almasb.fxgl.app.SystemActions
 import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.scene.LoadingScene
-import com.almasb.fxgl.app.scene.PauseMenu
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.GameWorld
-import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.localization.LocalizationService
+import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.profile.DataFile
 import com.almasb.fxgl.scene.Scene
-import com.almasb.fxgl.scene.SceneListener
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.DialogService
-import com.almasb.fxgl.logging.Logger
 import javafx.concurrent.Task
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
@@ -171,23 +168,6 @@ class WindowService : SceneService() {
             gameMenu!!.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
         }
 
-//            pauseMenu = sceneFactory.newPauseMenu()
-//
-//            // pause menu can only be opened from game scene so it is fine to bind to its contentRoot X
-//            pauseMenu!!.contentRoot.translateXProperty().bind(gameScene.contentRoot.translateXProperty())
-//
-//            gameScene.input.addAction(object : UserAction("Pause") {
-//                override fun onActionBegin() {
-//                    pauseMenu!!.requestShow {
-//                        mainWindow.pushState(pauseMenu!!)
-//                    }
-//                }
-//
-//                override fun onActionEnd() {
-//                    pauseMenu!!.unlockSwitch()
-//                }
-//            }, settings.menuKey)
-
         log.debug("Application scenes initialized")
     }
 
@@ -201,11 +181,11 @@ class WindowService : SceneService() {
     }
 
     private fun addOverlay(scene: Scene) {
-        scene.root.children += overlayRoot
+        scene.contentRoot.children += overlayRoot
     }
 
     private fun removeOverlay(scene: Scene) {
-        scene.root.children -= overlayRoot
+        scene.contentRoot.children -= overlayRoot
     }
 
     /**
