@@ -48,7 +48,7 @@ class ShopView<T>(val shop: Shop<T>, width: Int, height: Int) : Pane() {
 
         val textMoney = Text()
         textMoney.fill = Color.YELLOW
-        textMoney.font = Font.font(24.0)
+        textMoney.font = Font.font(22.0)
         textMoney.textProperty().bind(shop.moneyProperty().asString("Money: %d"))
         textMoney.translateX = 25.0
         textMoney.translateY = height.toDouble() - 10

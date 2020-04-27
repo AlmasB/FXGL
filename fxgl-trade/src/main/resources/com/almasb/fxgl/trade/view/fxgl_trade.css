@@ -99,3 +99,27 @@
 	-fx-shape: " ";
 	-fx-padding:0;
 }
+
+/* trade tabs */
+
+.fxgl-trade-tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: green;
+}
+
+.fxgl-trade-tab-pane {
+    -fx-tab-min-width: 160px;
+}
+
+.fxgl-trade-tab-pane .tab {
+    -fx-opacity: 0.3;
+}
+
+.fxgl-trade-tab-pane .tab .tab-label {
+    -fx-text-fill: black;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.fxgl-trade-tab-pane .tab:selected {
+    -fx-opacity: 1.0;
+}

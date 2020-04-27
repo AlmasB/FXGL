@@ -19,6 +19,10 @@ class TradeView<T>(val playerShopView: ShopView<T>, val npcShopView: ShopView<T>
     val tabPane = TabPane()
 
     init {
+        tabPane.styleClass.addAll("fxgl-trade-tab-pane")
+
+        stylesheets.add(javaClass.getResource("fxgl_trade.css").toExternalForm())
+
         val tab1 = Tab("Sell")
         tab1.content = playerShopView
         tab1.isClosable = false
