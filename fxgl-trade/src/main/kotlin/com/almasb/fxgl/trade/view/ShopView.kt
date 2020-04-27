@@ -4,8 +4,10 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.trade
+package com.almasb.fxgl.trade.view
 
+import com.almasb.fxgl.trade.Shop
+import com.almasb.fxgl.trade.TradeItem
 import javafx.collections.ObservableList
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox

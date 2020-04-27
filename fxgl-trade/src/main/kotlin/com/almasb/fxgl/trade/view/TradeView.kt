@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.trade
+package com.almasb.fxgl.trade.view
 
 import javafx.scene.Parent
 import javafx.scene.control.Tab
@@ -19,15 +19,15 @@ class TradeView<T>(val playerShopView: ShopView<T>, val npcShopView: ShopView<T>
     val tabPane = TabPane()
 
     init {
-        val tab1 = Tab("Buy")
+        val tab1 = Tab("Sell")
         tab1.content = playerShopView
         tab1.isClosable = false
 
-        val tab2 = Tab("Sell")
+        val tab2 = Tab("Buy")
         tab2.content = npcShopView
         tab2.isClosable = false
 
-        tabPane.getTabs().addAll(
+        tabPane.tabs.addAll(
                 tab1,
                 tab2
         )
