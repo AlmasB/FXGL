@@ -181,11 +181,19 @@ class WindowService : SceneService() {
     }
 
     private fun addOverlay(scene: Scene) {
-        scene.contentRoot.children += overlayRoot
+        if (scene is FXGLScene) {
+            scene.contentRoot.children += overlayRoot
+        } else {
+            scene.root.children += overlayRoot
+        }
     }
 
     private fun removeOverlay(scene: Scene) {
-        scene.contentRoot.children -= overlayRoot
+        if (scene is FXGLScene) {
+            scene.contentRoot.children -= overlayRoot
+        } else {
+            scene.root.children -= overlayRoot
+        }
     }
 
     /**
