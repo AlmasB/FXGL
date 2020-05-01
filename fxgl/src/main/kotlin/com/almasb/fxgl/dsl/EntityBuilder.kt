@@ -139,6 +139,14 @@ class EntityBuilder {
         entity.viewComponent.addEventHandler(MouseEvent.MOUSE_CLICKED, EventHandler { action.accept(entity) })
     }
 
+    fun onActive(action: (Entity) -> Unit) = this.also {
+        onActive(Consumer(action))
+    }
+
+    fun onActive(action: Consumer<Entity>) = this.also {
+        entity.setOnActive { action.accept(entity) }
+    }
+
     fun collidable() = with(CollidableComponent(true))
 
     fun with(vararg comps: Component) = this.also {
