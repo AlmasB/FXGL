@@ -157,6 +157,8 @@ class GameSettings(
 
         var isDeveloperMenuEnabled: Boolean = false,
 
+        var isClickFeedbackEnabled: Boolean = false,
+
         /**
          * Setting to false will disable asking for confirmation on exit.
          * This is useful for faster compile -> run -> exit.
@@ -305,6 +307,7 @@ class GameSettings(
                 isUserProfileEnabled,
                 isProfilingEnabled,
                 isDeveloperMenuEnabled,
+                isClickFeedbackEnabled,
                 isCloseConfirmation,
                 isSingleStep,
                 applicationMode,
@@ -415,6 +418,8 @@ class ReadOnlyGameSettings internal constructor(
         val isProfilingEnabled: Boolean,
 
         val isDeveloperMenuEnabled: Boolean,
+
+        val isClickFeedbackEnabled: Boolean,
 
         /**
          * Setting to false will disable asking for confirmation on exit.

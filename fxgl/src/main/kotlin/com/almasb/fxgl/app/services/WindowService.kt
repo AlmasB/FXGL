@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app.services
 
+import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.MainWindow
 import com.almasb.fxgl.app.ReadOnlyGameSettings
@@ -16,7 +17,11 @@ import com.almasb.fxgl.app.scene.LoadingScene
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.dsl.animationBuilder
 import com.almasb.fxgl.entity.GameWorld
+import com.almasb.fxgl.input.MouseTrigger
+import com.almasb.fxgl.input.Trigger
+import com.almasb.fxgl.input.TriggerListener
 import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.physics.PhysicsWorld
@@ -26,12 +31,17 @@ import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.DialogService
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.concurrent.Task
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.ImageCursor
 import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
+import javafx.scene.paint.Color
+import javafx.scene.shape.Circle
+import javafx.util.Duration
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
@@ -124,6 +134,10 @@ class WindowService : SceneService() {
 
         gameScene.isSingleStep = settings.isSingleStep
 
+        if (settings.isClickFeedbackEnabled) {
+            addClickFeedbackHandler()
+        }
+
         if (settings.isIntroEnabled) {
             intro = sceneFactory.newIntro()
         }
@@ -169,6 +183,25 @@ class WindowService : SceneService() {
         }
 
         log.debug("Application scenes initialized")
+    }
+
+    private fun addClickFeedbackHandler() {
+        gameScene.input.addEventHandler(MouseEvent.MOUSE_PRESSED, EventHandler {
+            val circle = Circle(gameScene.input.mouseXUI, gameScene.input.mouseYUI, 5.0, null)
+            circle.stroke = Color.GOLD
+            circle.strokeWidth = 2.0
+            circle.opacityProperty().bind(SimpleDoubleProperty(1.0).subtract(circle.radiusProperty().divide(35.0)))
+
+            overlayRoot.children += circle
+
+            animationBuilder()
+                    .interpolator(Interpolators.SMOOTH.EASE_IN())
+                    .onFinished(Runnable { overlayRoot.children -= circle })
+                    .duration(Duration.seconds(0.33))
+                    .animate(circle.radiusProperty())
+                    .to(35.0)
+                    .buildAndPlay()
+        })
     }
 
     override fun onMainLoopStarting() {
