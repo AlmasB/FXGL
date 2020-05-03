@@ -13,6 +13,7 @@ import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.event.Subscriber
+import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.texture.Texture
 import javafx.beans.property.*
 import javafx.event.Event
@@ -218,5 +219,7 @@ fun localizedStringProperty(key: String) = FXGL.localizedStringProperty(key)
 fun entityBuilder() = EntityBuilder()
 
 fun animationBuilder() = AnimationBuilder(getGameScene())
+
+fun animationBuilder(scene: Scene) = AnimationBuilder(scene)
 
 fun eventBuilder() = EventBuilder()

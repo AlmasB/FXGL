@@ -44,6 +44,7 @@ import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.profile.DataFile
 import com.almasb.fxgl.profile.SaveLoadService
+import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.time.LocalTimer
@@ -654,6 +655,8 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun entityBuilder() = EntityBuilder()
 
     @JvmStatic fun animationBuilder() = AnimationBuilder(getGameScene())
+
+    @JvmStatic fun animationBuilder(scene: Scene) = AnimationBuilder(scene)
 
     @JvmStatic fun eventBuilder() = EventBuilder()
 }
