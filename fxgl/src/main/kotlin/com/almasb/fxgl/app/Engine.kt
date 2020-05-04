@@ -53,9 +53,9 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
         val build = settings.runtimeInfo.build
 
         log.info("FXGL-$version ($build) on ${settings.platform} (J:$jVersion FX:$fxVersion)")
-        log.info("JRE Vendor Name: $javaVendorName")
-        log.info("Running on OS: $operatingSystemName version $operatingSystemVersion")
-        log.info("Architecture: $operatingSystemArchitecture")
+        log.debug("JRE Vendor Name: $javaVendorName")
+        log.debug("Running on OS: $operatingSystemName version $operatingSystemVersion")
+        log.debug("Architecture: $operatingSystemArchitecture")
         log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
