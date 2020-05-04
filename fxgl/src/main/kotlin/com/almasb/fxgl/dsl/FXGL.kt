@@ -431,7 +431,7 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun spawnFadeIn(entityName: String, data: SpawnData, duration: Duration): Entity {
         val e = getGameWorld().create(entityName, data)
-        e.viewComponent.opacityProp.value = 0.0
+        e.viewComponent.opacityProperty.value = 0.0
 
         animationBuilder()
                 .duration(duration)

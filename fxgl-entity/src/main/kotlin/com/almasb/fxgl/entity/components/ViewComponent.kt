@@ -45,11 +45,11 @@ class ViewComponent : Component() {
     val z: ReadOnlyIntegerProperty = ReadOnlyIntegerWrapper(0)
 
     @get:JvmName("opacityProperty")
-    val opacityProp = SimpleDoubleProperty(1.0)
+    val opacityProperty = SimpleDoubleProperty(1.0)
 
     var opacity: Double
-        get() = opacityProp.value
-        set(value) { opacityProp.value = value }
+        get() = opacityProperty.value
+        set(value) { opacityProperty.value = value }
 
     /**
      * If made invisible, all events (e.g. mouse) go through the entity
@@ -68,7 +68,7 @@ class ViewComponent : Component() {
         get() = viewRoot.children + viewRootNoTransform.children
 
     init {
-        viewRoot.opacityProperty().bind(opacityProp)
+        viewRoot.opacityProperty().bind(opacityProperty)
         viewRootNoTransform.opacityProperty().bind(viewRoot.opacityProperty())
     }
 

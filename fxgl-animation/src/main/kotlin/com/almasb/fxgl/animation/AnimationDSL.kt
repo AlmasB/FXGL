@@ -439,7 +439,7 @@ private fun Entity.toAnimatable(): Animatable {
         }
 
         override fun opacityProperty(): DoubleProperty {
-            return e.viewComponent.opacityProp
+            return e.viewComponent.opacityProperty
         }
     }
 }
