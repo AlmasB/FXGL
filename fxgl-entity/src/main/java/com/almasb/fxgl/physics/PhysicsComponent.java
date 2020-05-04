@@ -35,6 +35,7 @@ import java.util.Map;
  */
 public final class PhysicsComponent extends Component {
 
+    // TODO: restrict access
     FixtureDef fixtureDef = new FixtureDef();
     BodyDef bodyDef = new BodyDef();
 

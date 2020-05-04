@@ -8,6 +8,7 @@ package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.physics.box2d.dynamics.BodyDef
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
@@ -31,6 +32,26 @@ class PhysicsComponentTest {
             val c = PhysicsComponent()
             c.getBody()
         }
+    }
+
+    @Test
+    fun `Calling apply functions throw if accessing before physics ready`() {
+        assertThrows<IllegalStateException> {
+            val c = PhysicsComponent()
+            c.applyForceToCenter(Point2D.ZERO)
+        }
+    }
+
+    @Test
+    fun `Set body def`() {
+        val c = PhysicsComponent()
+        c.setBodyDef(BodyDef().also { it.type = BodyType.KINEMATIC })
+
+        val world = PhysicsWorld(600, 50.0)
+
+        world.onEntityAdded(Entity().also { it.addComponent(c) })
+
+        assertThat(c.getBody().type, `is`(BodyType.KINEMATIC))
     }
 
     @Test
@@ -248,5 +269,51 @@ class PhysicsComponentTest {
         c.onUpdate(1.0)
 
         assertThat(e.rotation, closeTo(5.0, 0.5))
+    }
+
+    @Test
+    fun `Add ground sensor`() {
+        val c = PhysicsComponent()
+        c.setBodyType(BodyType.DYNAMIC)
+        c.addGroundSensor(HitBox(Point2D(5.0, 10.0), BoundingShape.box(10.0, 5.0)))
+
+        val world = PhysicsWorld(600, 50.0)
+        world.setGravity(0.0, 600.0)
+
+        val e = Entity()
+        e.y = -300.0
+        e.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(10.0, 10.0)))
+        e.addComponent(c)
+
+        world.onEntityAdded(e)
+
+        val ground = Entity()
+        ground.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(250.0, 50.0)))
+        ground.addComponent(PhysicsComponent())
+
+        world.onEntityAdded(ground)
+
+        assertFalse(c.isOnGround)
+        assertFalse(c.onGroundProperty().value)
+
+        // some time has passed
+        repeat(6) {
+            world.onUpdate(1.0)
+            c.onUpdate(1.0)
+        }
+
+        assertTrue(c.isOnGround)
+        assertTrue(c.onGroundProperty().value)
+
+        // launch it in the sky
+        c.velocityY = -3200.0
+
+        repeat(2) {
+            world.onUpdate(1.0)
+            c.onUpdate(1.0)
+        }
+
+        assertFalse(c.isOnGround)
+        assertFalse(c.onGroundProperty().value)
     }
 }
