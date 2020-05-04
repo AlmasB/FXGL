@@ -9,9 +9,7 @@ package com.almasb.fxgl.entity.components
 import com.almasb.fxgl.core.View
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
-import javafx.beans.property.ReadOnlyIntegerProperty
-import javafx.beans.property.ReadOnlyIntegerWrapper
-import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.*
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -51,6 +49,10 @@ class ViewComponent : Component() {
         get() = opacityProperty.value
         set(value) { opacityProperty.value = value }
 
+    @get:JvmName("visibleProperty")
+    val visibleProperty: BooleanProperty
+        get() = parent.visibleProperty()
+
     /**
      * If made invisible, all events (e.g. mouse) go through the entity
      * and do not register on the entity.
@@ -70,6 +72,7 @@ class ViewComponent : Component() {
     init {
         viewRoot.opacityProperty().bind(opacityProperty)
         viewRootNoTransform.opacityProperty().bind(viewRoot.opacityProperty())
+
     }
 
     override fun onAdded() {

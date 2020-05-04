@@ -129,11 +129,13 @@ class ViewComponentTest {
     fun `Visibility is set to view and the parent`() {
         assertTrue(view.isVisible)
         assertTrue(view.parent.isVisible)
+        assertTrue(view.visibleProperty.value)
 
         view.isVisible = false
 
         assertFalse(view.isVisible)
         assertFalse(view.parent.isVisible)
+        assertFalse(view.visibleProperty.value)
     }
 
     @Test
