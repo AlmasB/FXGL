@@ -93,7 +93,6 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
                     if (triggerViews.children.isNotEmpty())
                         triggerViews.children.removeAt(0)
 
-                    // TODO: and the view is between line1 and line2
                     if (miniGame.press(key)) {
                         animationGood.start()
                         bg.fill = Color.GREEN

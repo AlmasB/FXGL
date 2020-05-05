@@ -35,8 +35,6 @@ class WobbleEffect
     private var tick = 0
 
     init {
-        // TODO: fix rounding error
-        // we should also take the last "quad" which may be smaller than chunk size
         val chunkSizeDouble = if (orientation == Orientation.HORIZONTAL)
             texture.image.height / numChunks
         else

@@ -133,7 +133,6 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
      * @return neighbors of the node
      */
     protected List<AStarCell> getValidNeighbors(AStarCell node, AStarCell[][] grid, AStarCell... busyNodes) {
-        // TODO: reuse grid.getNeighbors()
         int x = node.getX();
         int y = node.getY();
         int[] points = {
