@@ -26,16 +26,19 @@ private constructor(private val name: String) {
         private val fatal = ArrayList<LoggerOutput>()
 
         private var config = LoggerConfig()
-        private var configured = false
-        private var closed = false
+        private var isConfigured = false
+        private var isClosed = false
 
-        @JvmStatic fun isConfigured(): Boolean = configured
+        @JvmStatic fun isConfigured(): Boolean = isConfigured
 
         @JvmStatic fun configure(config: LoggerConfig) {
-            check(!configured) { "Logger already configured" }
+            if (isConfigured) {
+                doLog("Logger", "Logger already configured", LoggerLevel.WARNING)
+                return
+            }
 
             this.config = config.copy()
-            configured = true
+            isConfigured = true
         }
 
         @JvmStatic fun addOutput(loggerOutput: LoggerOutput, level: LoggerLevel) {
@@ -104,10 +107,13 @@ private constructor(private val name: String) {
         }
 
         @JvmStatic fun close() {
-            check(!closed) { "Logger already closed" }
+            if (isClosed) {
+                doLog("Logger", "Logger already closed", LoggerLevel.WARNING)
+                return
+            }
 
             outputs.forEach(LoggerOutput::close)
-            closed = true
+            isClosed = true
         }
     }
 
