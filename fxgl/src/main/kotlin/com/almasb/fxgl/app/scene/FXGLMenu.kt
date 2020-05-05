@@ -100,7 +100,7 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
     }
 
     override fun onUpdate(tpf: Double) {
-        // TODO: extract hardcoded string
+        // extract hardcoded string
         if (type == MenuType.MAIN_MENU && getSettings().isUserProfileEnabled && getSettings().profileName.value == "DEFAULT") {
             showProfileDialog()
         }
@@ -562,7 +562,6 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
     protected fun fireContinue() {
         log.debug("fireContinue()")
 
-        // TODO:
         //    override fun loadGameFromLastSave() {
 //        saveLoadService
 //                .loadLastModifiedSaveFileTask(getSettings().profileName.value, getSettings().saveFileExt)

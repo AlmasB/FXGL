@@ -586,9 +586,6 @@ class ReadOnlyGameSettings internal constructor(
 
     val profileName = SimpleStringProperty("DEFAULT")
 
-    // TODO: consistent API
-    // probably should go with get() set() and Property() as per JavaFX convention
-
     private val gameDifficultyProp = SimpleObjectProperty(GameDifficulty.MEDIUM)
 
     fun gameDifficultyProperty(): ObjectProperty<GameDifficulty> = gameDifficultyProp
