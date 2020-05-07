@@ -279,6 +279,8 @@ public abstract class GameApplication {
                 public void onSave(DataFile data) {
                     var bundle = new Bundle("FXGLServices");
                     engine.write(bundle);
+
+                    data.putBundle(bundle);
                 }
 
                 @Override
