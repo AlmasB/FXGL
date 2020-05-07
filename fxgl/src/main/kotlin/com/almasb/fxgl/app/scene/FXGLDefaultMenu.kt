@@ -16,7 +16,7 @@ import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
 import com.almasb.fxgl.dsl.FXGL.Companion.random
 import com.almasb.fxgl.dsl.FXGL.Companion.texture
 import com.almasb.fxgl.dsl.getSettings
-import com.almasb.fxgl.dsl.getUIFactory
+import com.almasb.fxgl.dsl.getUIFactoryService
 import com.almasb.fxgl.dsl.localizedStringProperty
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
@@ -392,7 +392,7 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         private var isAnimating = false
 
         init {
-            btn = getUIFactory().newButton(localizedStringProperty(stringKey))
+            btn = getUIFactoryService().newButton(localizedStringProperty(stringKey))
             btn.alignment = Pos.CENTER_LEFT
             btn.style = "-fx-background-color: transparent"
 

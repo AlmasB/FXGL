@@ -11,10 +11,6 @@ import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getSettings
-import com.almasb.fxgl.dsl.getUIFactory
-import com.almasb.fxgl.input.UserAction
-import com.almasb.fxgl.scene.Scene
-import com.almasb.fxgl.scene.SubScene
 import javafx.beans.binding.StringBinding
 import javafx.geometry.Point2D
 import javafx.geometry.Pos

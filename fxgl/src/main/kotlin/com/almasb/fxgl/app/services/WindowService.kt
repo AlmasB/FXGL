@@ -26,6 +26,7 @@ import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.profile.DataFile
+import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
@@ -62,6 +63,7 @@ class WindowService : SceneService() {
     internal lateinit var mainWindow: MainWindow
 
     private lateinit var assetLoaderService: AssetLoaderService
+    private lateinit var saveLoadService: SaveLoadService
 
     private lateinit var localService: LocalizationService
     private lateinit var dialogService: DialogService
@@ -252,8 +254,6 @@ class WindowService : SceneService() {
         }
     }
 
-    private var dataFile: DataFile? = null
-
     fun startNewGame() {
         log.debug("Starting new game")
 
@@ -271,24 +271,22 @@ class WindowService : SceneService() {
     }
 
     fun saveGame(dataFile: DataFile) {
-        //saveLoadManager.save(dataFile)
+        saveLoadService.save(dataFile)
     }
 
     fun loadGame(dataFile: DataFile) {
-        // TODO: can we modify task.onSucceeded from this class ...
-//        this.dataFile = dataFile
-//
-//        log.debug("Starting loaded game")
-//        loadScene.pushNewTask(InitAppTask(app))
-//        mainWindow.setScene(loadScene)
+        log.debug("Starting loaded game")
+        mainWindow.setScene(loadScene)
+
+        clearPreviousGame()
+
+        loadScene.pushNewTask(Runnable {
+            GameApplication.InitAppTask().run()
+            saveLoadService.load(dataFile)
+        })
     }
 
     override fun onGameReady(vars: PropertyMap) {
-//        dataFile?.let {
-//            saveLoadManager.load(it)
-//        }
-//
-//        dataFile = null
     }
 
     fun gotoIntro() {

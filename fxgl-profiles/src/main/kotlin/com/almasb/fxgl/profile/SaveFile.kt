@@ -12,23 +12,27 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 /**
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
+ */
+
+interface SaveLoadHandler {
+
+    fun onSave(data: DataFile)
+
+    fun onLoad(data: DataFile)
+}
+
+/**
  * Data structure for save files.
  * The actual data saved is in [DataFile].
- *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 data class SaveFile
 @JvmOverloads constructor(
 
         /**
-         * Save file name without the extension.
-         * So "file1.sav" becomes "file1".
+         * Save file name, for example "file1.sav", or "myprofile/file1.sav".
          */
         val name: String,
-
-        val profileName: String,
-
-        val saveFileExt: String,
 
         /**
          * Date and time of the save.
@@ -45,8 +49,6 @@ data class SaveFile
 
         override fun compare(o1: SaveFile, o2: SaveFile) = o2.dateTime.compareTo(o1.dateTime)
     }
-
-    val relativePathName: String = "$profileName/$name.$saveFileExt"
 
     // TODO: this should be outside
     override fun toString() = "%-25.25s %s".format(name, dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm")))

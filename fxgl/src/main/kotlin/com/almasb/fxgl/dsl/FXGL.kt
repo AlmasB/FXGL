@@ -119,9 +119,11 @@ class FXGL private constructor() { companion object {
         }
 
         override fun saveGame(dataFile: DataFile) {
+            getWindowService().saveGame(dataFile)
         }
 
         override fun loadGame(dataFile: DataFile) {
+            getWindowService().loadGame(dataFile)
         }
 
         override fun exit() {
