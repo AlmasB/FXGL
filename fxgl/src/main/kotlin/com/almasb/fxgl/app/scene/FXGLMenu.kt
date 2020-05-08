@@ -37,6 +37,7 @@ import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.util.Duration
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.function.Consumer
 import java.util.function.Supplier
@@ -198,6 +199,8 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
                         text = null
                         graphic = null
                     } else {
+
+                        val nameDate = "%-25.25s %s".format(item.name, item.dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm")))
 
                         val text = getUIFactoryService().newText(item.toString(), Color.WHITE, FontType.MONO, FONT_SIZE)
 

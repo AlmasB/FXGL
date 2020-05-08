@@ -50,8 +50,7 @@ data class SaveFile
         override fun compare(o1: SaveFile, o2: SaveFile) = o2.dateTime.compareTo(o1.dateTime)
     }
 
-    // TODO: this should be outside
-    override fun toString() = "%-25.25s %s".format(name, dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm")))
+    override fun toString() = "SaveFile($name)"
 }
 
 class DataFile : Serializable {
