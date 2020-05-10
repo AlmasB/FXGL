@@ -1,0 +1,123 @@
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
+
+package advanced.platformer;
+
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.input.UserAction;
+import javafx.scene.input.KeyCode;
+
+import static com.almasb.fxgl.dsl.FXGL.*;
+
+/**
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
+ */
+public class RobotPlatformerSample extends GameApplication {
+
+    private RobotComponent getControl() {
+        return getGameWorld().getSingleton(e -> e.hasComponent(RobotComponent.class))
+                .getComponent(RobotComponent.class);
+    }
+
+    @Override
+    protected void initSettings(GameSettings settings) {
+        settings.setTitle("Robot platformer sample");
+        settings.setWidth(1280);
+        settings.setHeight(720);
+    }
+
+    @Override
+    protected void initInput() {
+        onKey(KeyCode.W, () -> getControl().jump());
+        onKey(KeyCode.F, () -> getControl().roll());
+
+        getInput().addAction(new UserAction("Left") {
+            @Override
+            protected void onAction() {
+                getControl().walkLeft();
+            }
+
+            @Override
+            protected void onActionEnd() {
+                getControl().stop();
+            }
+        }, KeyCode.A);
+
+        getInput().addAction(new UserAction("Right") {
+            @Override
+            protected void onAction() {
+                getControl().walkRight();
+            }
+
+            @Override
+            protected void onActionEnd() {
+                getControl().stop();
+            }
+        }, KeyCode.D);
+
+        getInput().addAction(new UserAction("Run Left") {
+            @Override
+            protected void onAction() {
+                getControl().runLeft();
+            }
+
+            @Override
+            protected void onActionEnd() {
+                getControl().stop();
+            }
+        }, KeyCode.Q);
+
+        getInput().addAction(new UserAction("Run Right") {
+            @Override
+            protected void onAction() {
+                getControl().runRight();
+            }
+
+            @Override
+            protected void onActionEnd() {
+                getControl().stop();
+            }
+        }, KeyCode.E);
+
+        getInput().addAction(new UserAction("Crouch Left") {
+            @Override
+            protected void onAction() {
+                getControl().crouchLeft();
+            }
+
+            @Override
+            protected void onActionEnd() {
+                getControl().stop();
+            }
+        }, KeyCode.Z);
+
+        getInput().addAction(new UserAction("Crouch Right") {
+            @Override
+            protected void onAction() {
+                getControl().crouchRight();
+            }
+
+            @Override
+            protected void onActionEnd() {
+                getControl().stop();
+            }
+        }, KeyCode.C);
+    }
+
+    @Override
+    protected void initGame() {
+        getGameWorld().addEntityFactory(new RobotFactory());
+
+        entityBuilder().buildScreenBoundsAndAttach(20);
+
+        spawn("robot", 200, 100);
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
