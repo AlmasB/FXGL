@@ -334,7 +334,7 @@ class DevPane(private val sceneService: SceneService, val settings: ReadOnlyGame
     }
 
     fun onGameReady(vars: PropertyMap) {
-        accordion.panes += TitledPane("Game vars", PropertyMapView(vars))
+        //accordion.panes += TitledPane("Game vars", PropertyMapView(vars))
     }
 
     fun open() {

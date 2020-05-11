@@ -28,12 +28,14 @@ public class RobotPlatformerSample extends GameApplication {
         settings.setTitle("Robot platformer sample");
         settings.setWidth(1280);
         settings.setHeight(720);
+        settings.setDeveloperMenuEnabled(true);
     }
 
     @Override
     protected void initInput() {
         onKey(KeyCode.W, () -> getControl().jump());
         onKey(KeyCode.F, () -> getControl().roll());
+        onKey(KeyCode.X, () -> getControl().die());
 
         getInput().addAction(new UserAction("Left") {
             @Override
@@ -112,9 +114,13 @@ public class RobotPlatformerSample extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new RobotFactory());
 
+        setLevelFromMap("robot/level1.tmx");
+
         entityBuilder().buildScreenBoundsAndAttach(20);
 
         spawn("robot", 200, 100);
+
+        getPhysicsWorld().setGravity(0, 1250);
     }
 
     public static void main(String[] args) {

@@ -6,7 +6,6 @@
 
 package advanced.platformer;
 
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
@@ -19,6 +18,8 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyDef;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.geometry.Point2D;
+
+import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -38,15 +39,25 @@ public class RobotFactory implements EntityFactory {
         physics.setBodyDef(bd);
         physics.addGroundSensor(new HitBox("GROUND_SENSOR", new Point2D(275 / 2 - 3, 260 - 5), BoundingShape.box(6, 10)));
 
-        return FXGL.entityBuilder()
+        return entityBuilder()
                 .from(data)
-                .bbox(new HitBox("main", new Point2D(275 / 2 - 105/2, 275 / 2 - 210/2), BoundingShape.box(105, 210)))
-                .bbox(new HitBox("lower", new Point2D(275 / 2 - 15, 125*2), BoundingShape.box(30, 10)))
+                .bbox(new HitBox("head", new Point2D(110, 50), BoundingShape.box(70, 70)))
+                .bbox(new HitBox("body", new Point2D(110, 120), BoundingShape.box(40, 130)))
+                .bbox(new HitBox("legs", new Point2D(275 / 2 - 25, 125*2), BoundingShape.box(40, 10)))
                 .scaleOrigin(275 / 2, 125*2)
                 .collidable()
                 .with(new StateComponent())
                 .with(physics)
                 .with(new RobotComponent())
+                .build();
+    }
+
+    @Spawns("platform")
+    public Entity newPlatform(SpawnData data) {
+        return entityBuilder()
+                .from(data)
+                .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
+                .with(new PhysicsComponent())
                 .build();
     }
 }
