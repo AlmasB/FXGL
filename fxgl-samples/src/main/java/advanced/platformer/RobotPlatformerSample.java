@@ -8,8 +8,10 @@ package advanced.platformer;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.entity.state.StateComponent;
 import com.almasb.fxgl.input.UserAction;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -121,6 +123,21 @@ public class RobotPlatformerSample extends GameApplication {
         spawn("robot", 200, 100);
 
         getPhysicsWorld().setGravity(0, 1250);
+    }
+
+    @Override
+    protected void initUI() {
+        var text = getUIFactoryService().newText("", Color.BLACK, 26.0);
+        text.textProperty().bind(
+                getGameWorld()
+                        .getEntitiesByComponent(StateComponent.class)
+                        .get(0)
+                        .getComponent(StateComponent.class)
+                        .currentStateProperty()
+                        .asString("State: %s")
+        );
+
+        addUINode(text, 50, 50);
     }
 
     public static void main(String[] args) {

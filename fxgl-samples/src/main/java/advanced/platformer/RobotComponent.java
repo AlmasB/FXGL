@@ -88,14 +88,14 @@ public class RobotComponent extends Component {
     private Map<EntityState, StateData> stateData;
 
     public RobotComponent() {
-        animWalk = new AnimationChannel(image("robot_walk.png"), 7, 275, 275, Duration.seconds(1), 0, 15);
-        animRun = new AnimationChannel(image("robot_run.png"), 7, 275, 275, Duration.seconds(1), 0, 15);
+        animWalk = new AnimationChannel(image("robot_walk.png"), 7, 275, 275, Duration.seconds(0.8), 0, 15);
+        animRun = new AnimationChannel(image("robot_run.png"), 7, 275, 275, Duration.seconds(0.8), 0, 15);
         animStand = new AnimationChannel(image("robot_stand.png"), 7, 275, 275, Duration.seconds(1.5), 0, 29);
         animJump = new AnimationChannel(image("robot_jump.png"), 7, 275, 275, Duration.seconds(0.4), 0, 25);
         animFall = new AnimationChannel(image("robot_jump.png"), 7, 275, 275, Duration.seconds(0.95), 25, 25);
-        animCrouch = new AnimationChannel(image("robot_crouch.png"), 7, 275, 275, Duration.seconds(1), 0, 20);
-        animRoll = new AnimationChannel(image("robot_roll.png"), 7, 275, 275, Duration.seconds(1), 0, 23);
-        animDeath = new AnimationChannel(image("robot_death.png"), 7, 275, 275, Duration.seconds(1), 0, 26);
+        animCrouch = new AnimationChannel(image("robot_crouch.png"), 7, 275, 275, Duration.seconds(0.8), 0, 20);
+        animRoll = new AnimationChannel(image("robot_roll.png"), 7, 275, 275, Duration.seconds(0.9), 0, 23);
+        animDeath = new AnimationChannel(image("robot_death.png"), 7, 275, 275, Duration.seconds(1.1), 0, 26);
 
         stateData = Map.of(
                 STAND, new StateData(animStand, 0),
