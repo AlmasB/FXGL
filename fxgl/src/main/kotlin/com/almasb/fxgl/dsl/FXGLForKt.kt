@@ -218,6 +218,8 @@ fun localizedStringProperty(key: String) = FXGL.localizedStringProperty(key)
 
 fun entityBuilder() = EntityBuilder()
 
+fun entityBuilder(data: SpawnData) = EntityBuilder(data)
+
 fun animationBuilder() = AnimationBuilder(getGameScene())
 
 fun animationBuilder(scene: Scene) = AnimationBuilder(scene)

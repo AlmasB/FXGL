@@ -656,6 +656,8 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun entityBuilder() = EntityBuilder()
 
+    @JvmStatic fun entityBuilder(data: SpawnData) = EntityBuilder(data)
+
     @JvmStatic fun animationBuilder() = AnimationBuilder(getGameScene())
 
     @JvmStatic fun animationBuilder(scene: Scene) = AnimationBuilder(scene)

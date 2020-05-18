@@ -28,6 +28,13 @@ import java.util.function.Consumer
 class EntityBuilder {
     private val entity = Entity()
 
+    constructor() {}
+
+    constructor(data: SpawnData) {
+        from(data)
+    }
+
+    @Deprecated("Use FXGL.entityBuilder(data)")
     fun from(data: SpawnData) = this.also {
         at(data.x, data.y)
 
