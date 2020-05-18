@@ -39,7 +39,7 @@ public class RobotFactory implements EntityFactory {
         physics.setBodyDef(bd);
         physics.addGroundSensor(new HitBox("GROUND_SENSOR", new Point2D(275 / 2 - 3, 260 - 5), BoundingShape.box(6, 10)));
 
-        return entityBuilder()
+        return entityBuilder(data)
                 .from(data)
                 .bbox(new HitBox("head", new Point2D(110, 50), BoundingShape.box(70, 70)))
                 .bbox(new HitBox("body", new Point2D(110, 120), BoundingShape.box(40, 130)))
@@ -54,8 +54,7 @@ public class RobotFactory implements EntityFactory {
 
     @Spawns("platform")
     public Entity newPlatform(SpawnData data) {
-        return entityBuilder()
-                .from(data)
+        return entityBuilder(data)
                 .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .with(new PhysicsComponent())
                 .build();
