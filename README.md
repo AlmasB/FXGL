@@ -111,6 +111,11 @@ Download the latest uber jar from [Releases](https://github.com/AlmasB/FXGL/rele
 
 If your institution wants to use / is using FXGL, drop me an email to discuss how FXGL can aid your course.
 
+Community tutorials:
+
+- [Space Ranger at journaldev](https://www.journaldev.com/40219/space-rangers-game-java-fxgl)
+- [Geometry Wars at webtechie](https://webtechie.be/post/2020-05-07-getting-started-with-fxgl/)
+
 ### Contribution & Support
 
 If you want to build FXGL from sources or want to contribute,
