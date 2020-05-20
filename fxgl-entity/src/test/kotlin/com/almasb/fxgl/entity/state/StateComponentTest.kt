@@ -39,6 +39,7 @@ class StateComponentTest {
         assertFalse(stateComponent.isIdle)
         assertFalse(stateComponent.isIn(EntityState.IDLE))
 
+        assertThat(stateComponent.currentStateProperty().get(), `is`<EntityState>(state))
         assertThat(stateComponent.currentState, `is`<EntityState>(state))
         assertTrue(stateComponent.isIn(state))
 
@@ -46,6 +47,24 @@ class StateComponentTest {
 
         assertTrue(stateComponent.isIdle)
         assertTrue(stateComponent.isIn(EntityState.IDLE))
+    }
+
+    @Test
+    fun `On update`() {
+        var count = 0.0
+
+        val state = object : EntityState() {
+            override fun onUpdate(tpf: Double) {
+                count = tpf
+            }
+        }
+
+        stateComponent.onUpdate(1.0)
+        stateComponent.changeState(state)
+        assertThat(count, `is`(0.0))
+
+        stateComponent.onUpdate(1.0)
+        assertThat(count, `is`(1.0))
     }
 
     @Test
