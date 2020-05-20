@@ -15,10 +15,7 @@ import com.almasb.fxgl.core.fsm.State;
  */
 public class EntityState implements State<EntityState> {
 
-    public static final EntityState IDLE = new EntityState() {
-        @Override
-        protected void onUpdate(double tpf) { }
-    };
+    public static final EntityState IDLE = new EntityState("DEFAULT_IDLE");
 
     private String name;
 

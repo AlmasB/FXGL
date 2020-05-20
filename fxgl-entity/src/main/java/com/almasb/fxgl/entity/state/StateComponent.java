@@ -12,6 +12,8 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 /**
+ * Enables and manages finite state machine behavior of an entity.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public final class StateComponent extends Component {
@@ -41,15 +43,31 @@ public final class StateComponent extends Component {
         return fsm.getCurrentState();
     }
 
+    /**
+     * @return true if the current state is EntityState.IDLE
+     */
+    public boolean isIdle() {
+        return getCurrentState() == EntityState.IDLE;
+    }
+
+    /**
+     * Changes current state to EntityState.IDLE.
+     */
     public void changeStateToIdle() {
         changeState(EntityState.IDLE);
     }
 
+    /**
+     * Changes current state to given state.
+     */
     public void changeState(EntityState state) {
         fsm.changeState(state);
         currentState.setValue(state);
     }
 
+    /**
+     * @return true if the current state matches one of the given states
+     */
     public boolean isIn(EntityState... states) {
         for (var state : states) {
             if (state == getCurrentState()) {
