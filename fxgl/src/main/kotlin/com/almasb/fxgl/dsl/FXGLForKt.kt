@@ -44,6 +44,8 @@ fun <T : GameApplication> getAppCast() = FXGL.getAppCast<T>()
 
 fun getSettings() = FXGL.getSettings()
 
+fun isReleaseMode() = FXGL.isReleaseMode()
+
 fun getAppWidth() = FXGL.getAppWidth()
 
 fun getAppHeight() = FXGL.getAppHeight()

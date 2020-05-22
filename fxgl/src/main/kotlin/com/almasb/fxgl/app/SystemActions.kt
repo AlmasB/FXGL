@@ -8,6 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getGameWorld
+import com.almasb.fxgl.dsl.isReleaseMode
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.UserAction
@@ -63,13 +64,13 @@ object SystemActions {
     private fun devOptions() = object : UserAction("Dev Options") {
 
         override fun onActionBegin() {
-            if (FXGL.getSettings().applicationMode == ApplicationMode.RELEASE)
+            if (isReleaseMode())
                 return
 
-            if (FXGL.getDevPane().isOpen) {
-                FXGL.getDevPane().close()
+            if (FXGL.getDevService().isDevPaneOpen) {
+                FXGL.getDevService().closeDevPane()
             } else {
-                FXGL.getDevPane().open()
+                FXGL.getDevService().openDevPane()
             }
         }
     }

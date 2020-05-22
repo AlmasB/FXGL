@@ -17,6 +17,7 @@ import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.serialization.SerializableType
 import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.cutscene.CutsceneService
+import com.almasb.fxgl.dev.DevService
 import com.almasb.fxgl.event.EventBusService
 import com.almasb.fxgl.gameplay.GameDifficulty
 import com.almasb.fxgl.io.FileSystemService
@@ -252,7 +253,8 @@ class GameSettings(
                 CutsceneService::class.java,
                 MiniGameService::class.java,
                 NetService::class.java,
-                UpdaterService::class.java
+                UpdaterService::class.java,
+                DevService::class.java
         ),
 
         /**
