@@ -169,7 +169,6 @@ class ProfilerService : EngineService() {
     // cache string builder to avoid object allocation
     private val sb = StringBuilder(128)
 
-    // TODO: currentTimeTook should be buffered over several frames
     private fun buildInfoText(): String {
         // first clear the contents
         sb.setLength(0)
