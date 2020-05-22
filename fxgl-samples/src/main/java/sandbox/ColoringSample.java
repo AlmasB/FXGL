@@ -109,7 +109,7 @@ public class ColoringSample extends GameApplication {
         hbox3.setTranslateY(450);
         hbox4.setTranslateY(620);
 
-        Text t = getUIFactory().newText("Texture v Texture Blend", Color.WHITE, 24);
+        Text t = getUIFactoryService().newText("Texture v Texture Blend", Color.WHITE, 24);
         centerText(t, 150, 450);
 
         getGameScene().addUINodes(hbox, hbox2, hbox3, hbox4, t);
@@ -117,7 +117,7 @@ public class ColoringSample extends GameApplication {
 
     private VBox makeBox(String header, Node texture) {
         VBox vbox = new VBox(10,
-                getUIFactory().newText(header, Color.BLACK, 24),
+                getUIFactoryService().newText(header, Color.BLACK, 24),
                 texture);
         vbox.setAlignment(Pos.CENTER);
         return vbox;

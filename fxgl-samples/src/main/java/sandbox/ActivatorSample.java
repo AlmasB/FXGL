@@ -70,7 +70,7 @@ public class ActivatorSample extends GameApplication {
 
     @Override
     protected void initUI() {
-        var text = getUIFactory().newText("", Color.BLACK, 24);
+        var text = getUIFactoryService().newText("", Color.BLACK, 24);
         text.textProperty().bind(new SimpleStringProperty("isActivated: ").concat(button.getComponent(ActivatorComponent.class).valueProperty().asString()));
 
         addUINode(text, 50, 150);

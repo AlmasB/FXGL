@@ -217,13 +217,13 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     }
 
     override fun createVersionView(version: String): Node {
-        val view = FXGL.getUIFactory().newText(version)
+        val view = FXGL.getUIFactoryService().newText(version)
         view.translateY = (FXGL.getAppHeight() - 2).toDouble()
         return view
     }
 
     override fun createProfileView(profileName: String): Node {
-        val view = FXGL.getUIFactory().newText(profileName)
+        val view = FXGL.getUIFactoryService().newText(profileName)
         view.translateY = (FXGL.getAppHeight() - 2).toDouble()
         view.translateX = FXGL.getAppWidth() - view.layoutBounds.width
         return view

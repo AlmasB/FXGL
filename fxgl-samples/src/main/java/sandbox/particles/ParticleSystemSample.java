@@ -104,14 +104,14 @@ public class ParticleSystemSample extends GameApplication {
             emitter.setAccelerationFunction(() -> new Point2D(spinnerAccelX.getValue(), newValue));
         });
 
-        ChoiceBox<BlendMode> choiceBlend = getUIFactory().newChoiceBox(
+        ChoiceBox<BlendMode> choiceBlend = getUIFactoryService().newChoiceBox(
                 FXCollections.observableArrayList(BlendMode.values())
         );
 
         emitter.blendModeProperty().bind(choiceBlend.valueProperty());
         choiceBlend.setValue(BlendMode.ADD);
 
-        ChoiceBox<EasingInterpolator> choiceInterpolator = getUIFactory().newChoiceBox(
+        ChoiceBox<EasingInterpolator> choiceInterpolator = getUIFactoryService().newChoiceBox(
                 FXCollections.observableArrayList(Interpolators.values())
         );
 

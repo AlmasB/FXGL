@@ -40,7 +40,7 @@ class FunctionNodeView(node: DialogueNode = FunctionNode("")) : NodeView(node) {
     val outLink = OutLinkPoint(this)
 
     init {
-        textArea.font = FXGL.getUIFactory().newFont(FontType.MONO, 16.0)
+        textArea.font = FXGL.getUIFactoryService().newFont(FontType.MONO, 16.0)
 
         addInPoint(inLink)
         addOutPoint(outLink)
@@ -52,7 +52,7 @@ class BranchNodeView(node: DialogueNode = BranchNode("")) : NodeView(node) {
     val inLink = InLinkPoint(this)
 
     init {
-        textArea.font = FXGL.getUIFactory().newFont(FontType.MONO, 16.0)
+        textArea.font = FXGL.getUIFactoryService().newFont(FontType.MONO, 16.0)
 
         addInPoint(inLink)
 
@@ -198,7 +198,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
             styleClass.add("dialogue-editor-condition-view")
 
             val text = TextField()
-            text.font = FXGL.getUIFactory().newFont(FontType.MONO, 12.0)
+            text.font = FXGL.getUIFactoryService().newFont(FontType.MONO, 12.0)
             text.text = "\$playerHP > 50"
 
             children.add(text)

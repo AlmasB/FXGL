@@ -53,7 +53,7 @@ public class MotionBlurSample extends GameApplication {
                 text = "Elastic; with trail";
             }
 
-            addUINode(getUIFactory().newText(text, Color.WHITE, 24.0), 50, 80 + y * 100);
+            addUINode(getUIFactoryService().newText(text, Color.WHITE, 24.0), 50, 80 + y * 100);
 
             var line = new Line(0, 100 + y*100, getAppWidth(), 100 + y*100);
             line.setStrokeWidth(2.5);

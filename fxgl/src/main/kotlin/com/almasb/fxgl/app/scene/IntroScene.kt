@@ -191,7 +191,7 @@ class FXGLIntroScene : IntroScene() {
     }
 
     private fun makeLetter(letter: String) = Text(letter).apply {
-        font = FXGL.getUIFactory().newFont(122.0)
+        font = FXGL.getUIFactoryService().newFont(122.0)
         fill = Color.color(0.9, 0.95, 0.96)
         translateY = appHeight / 2.0 - 150
         opacity = 0.96

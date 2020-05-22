@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.dev
 
-import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.dsl.FXGL
@@ -16,7 +15,6 @@ import com.almasb.fxgl.entity.EntityWorldListener
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.ui.FXGLCheckBox
 import com.almasb.fxgl.ui.InGamePanel
-import com.almasb.fxgl.ui.PropertyMapView
 import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.*
 import javafx.beans.property.*
@@ -132,7 +130,7 @@ class DevPane(private val sceneService: SceneService, val settings: ReadOnlyGame
 
                     when (method.returnType) {
                         SimpleBooleanProperty::class.java -> {
-                            val text = FXGL.getUIFactory().newText(method.name, Color.WHITE, 18.0)
+                            val text = FXGL.getUIFactoryService().newText(method.name, Color.WHITE, 18.0)
                             val checkBox = FXGLCheckBox()
 
                             checkBox.selectedProperty().bindBidirectional(method.invoke(settings) as SimpleBooleanProperty)
@@ -142,7 +140,7 @@ class DevPane(private val sceneService: SceneService, val settings: ReadOnlyGame
 
                         SimpleObjectProperty::class.java -> {
                             if (method.name.toLowerCase().contains("color")) {
-                                val text = FXGL.getUIFactory().newText(method.name, Color.WHITE, 18.0)
+                                val text = FXGL.getUIFactoryService().newText(method.name, Color.WHITE, 18.0)
                                 val colorPicker = ColorPicker()
 
                                 colorPicker.valueProperty().bindBidirectional(method.invoke(settings) as SimpleObjectProperty<Color>)
@@ -170,10 +168,10 @@ class DevPane(private val sceneService: SceneService, val settings: ReadOnlyGame
         pane.vgap = 10.0
 
         FXGL.getWorldProperties().keys().forEachIndexed { index, key ->
-            val textKey = FXGL.getUIFactory().newText(key, Color.WHITE, 18.0)
+            val textKey = FXGL.getUIFactoryService().newText(key, Color.WHITE, 18.0)
 
             val value = FXGL.getWorldProperties().getValueObservable(key)
-            val textValue = FXGL.getUIFactory().newText("", Color.WHITE, 18.0)
+            val textValue = FXGL.getUIFactoryService().newText("", Color.WHITE, 18.0)
 
             when (value.javaClass) {
                 SimpleBooleanProperty::class.java -> {
@@ -269,7 +267,7 @@ class DevPane(private val sceneService: SceneService, val settings: ReadOnlyGame
 
                     var index = 0
 
-                    val title = FXGL.getUIFactory().newText(comp.javaClass.simpleName.removeSuffix("Component"), Color.ANTIQUEWHITE, 22.0)
+                    val title = FXGL.getUIFactoryService().newText(comp.javaClass.simpleName.removeSuffix("Component"), Color.ANTIQUEWHITE, 22.0)
 
                     pane.addRow(index++, title)
                     pane.addRow(index++, Rectangle(165.0, 2.0, Color.ANTIQUEWHITE))
@@ -279,10 +277,10 @@ class DevPane(private val sceneService: SceneService, val settings: ReadOnlyGame
                             .sortedBy { it.name }
                             .forEach { method ->
 
-                                val textKey = FXGL.getUIFactory().newText(method.name.removeSuffix("Property"), Color.WHITE, 18.0)
+                                val textKey = FXGL.getUIFactoryService().newText(method.name.removeSuffix("Property"), Color.WHITE, 18.0)
 
                                 val value = method.invoke(comp)
-                                val textValue = FXGL.getUIFactory().newText("", Color.WHITE, 18.0)
+                                val textValue = FXGL.getUIFactoryService().newText("", Color.WHITE, 18.0)
 
                                 when (value) {
                                     is BooleanExpression -> {

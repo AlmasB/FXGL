@@ -43,24 +43,24 @@ public class DialogsSample extends GameApplication {
 
         dialogs.put("Custom", () -> {
             VBox content = new VBox(
-                    getUIFactory().newText("Line 1"),
-                    getUIFactory().newText("Line 2"),
+                    getUIFactoryService().newText("Line 1"),
+                    getUIFactoryService().newText("Line 2"),
                     getAssetLoader().loadTexture("brick.png"),
-                    getUIFactory().newText("Line 3"),
-                    getUIFactory().newText("Line 4")
+                    getUIFactoryService().newText("Line 3"),
+                    getUIFactoryService().newText("Line 4")
             );
 
-            Button btnClose = getUIFactory().newButton("Press me to close");
+            Button btnClose = getUIFactoryService().newButton("Press me to close");
             btnClose.setPrefWidth(300);
 
             getDisplay().showBox("This is a customizable box", content, btnClose);
         });
 
-        ChoiceBox<String> cbDialogs = getUIFactory().newChoiceBox(FXCollections.observableArrayList(dialogs.keySet()));
+        ChoiceBox<String> cbDialogs = getUIFactoryService().newChoiceBox(FXCollections.observableArrayList(dialogs.keySet()));
 
         cbDialogs.getSelectionModel().selectFirst();
 
-        Button btn = getUIFactory().newButton("Open");
+        Button btn = getUIFactoryService().newButton("Open");
         btn.setOnAction(e -> {
             String dialogType = cbDialogs.getSelectionModel().getSelectedItem();
             if (dialogs.containsKey(dialogType)) {
@@ -73,7 +73,7 @@ public class DialogsSample extends GameApplication {
         VBox vbox = new VBox(10);
         vbox.setTranslateX(600);
         vbox.getChildren().addAll(
-                getUIFactory().newText("Dialog Types", Color.BLACK, 18),
+                getUIFactoryService().newText("Dialog Types", Color.BLACK, 18),
                 cbDialogs,
                 btn
         );

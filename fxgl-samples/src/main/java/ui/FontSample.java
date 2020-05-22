@@ -32,7 +32,7 @@ public class FontSample extends GameApplication {
     }
 
     private void addExampleFontUI(int x, int y) {
-        Font fontUI = getUIFactory().newFont(FontType.UI, 14.0);
+        Font fontUI = getUIFactoryService().newFont(FontType.UI, 14.0);
 
         Text text = new Text("This is UI_FONT: Lives: 3, Ammo: 99");
         text.setFont(fontUI);
@@ -41,7 +41,7 @@ public class FontSample extends GameApplication {
     }
 
     private void addExampleFontGame(int x, int y) {
-        Font fontGame = getUIFactory().newFont(FontType.GAME, 20.0);
+        Font fontGame = getUIFactoryService().newFont(FontType.GAME, 20.0);
 
         Text text = new Text("This is GAME_FONT: Blue Rectangle");
         text.setFont(fontGame);
@@ -56,7 +56,7 @@ public class FontSample extends GameApplication {
     }
 
     private void addExampleFontText(int x, int y) {
-        Font fontText = getUIFactory().newFont(FontType.TEXT, 16.0);
+        Font fontText = getUIFactoryService().newFont(FontType.TEXT, 16.0);
 
         Text text = new Text("This is TEXT_FONT: The MIT License (MIT)\n" +
                 "\n" +
@@ -86,7 +86,7 @@ public class FontSample extends GameApplication {
     }
 
     private void addExampleFontMono(int x, int y) {
-        Font fontMono = getUIFactory().newFont(FontType.MONO, 18);
+        Font fontMono = getUIFactoryService().newFont(FontType.MONO, 18);
 
         Text text = new Text("This is MONO_FONT: var e = new Entity();");
         text.setFont(fontMono);

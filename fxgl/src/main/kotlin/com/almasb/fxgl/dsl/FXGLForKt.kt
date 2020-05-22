@@ -48,7 +48,7 @@ fun getAppWidth() = FXGL.getAppWidth()
 
 fun getAppHeight() = FXGL.getAppHeight()
 
-fun getUIFactoryService() = FXGL.getUIFactory()
+fun getUIFactoryService() = FXGL.getUIFactoryService()
 
 fun getAssetLoader() = FXGL.getAssetLoader()
 

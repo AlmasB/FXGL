@@ -97,14 +97,14 @@ public class MiniGameApp extends GameApplication {
 
 
 
-        debugText = getUIFactory().newText("", Color.BLACK, 36.0);
-        debugText2 = getUIFactory().newText("", Color.BLACK, 36.0);
+        debugText = getUIFactoryService().newText("", Color.BLACK, 36.0);
+        debugText2 = getUIFactoryService().newText("", Color.BLACK, 36.0);
 
         //addUINode(debugText2, 0, 50);
 
         getGameScene().setBackgroundRepeat("bg_10.png");
 
-        addUINode(getUIFactory().newText("Mini-games dev area", Color.BLACK, 48.0), 100, 100);
+        addUINode(getUIFactoryService().newText("Mini-games dev area", Color.BLACK, 48.0), 100, 100);
 
         var btn = new FXGLButton("Trigger Sequence");
         btn.setOnAction(e -> {

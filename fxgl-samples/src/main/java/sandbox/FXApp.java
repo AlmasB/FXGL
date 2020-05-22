@@ -102,7 +102,7 @@ public class FXApp extends Application {
             getGameWorld().addEntityFactory(new MyFactory());
             getGameScene().setBackgroundColor(Color.BLACK);
 
-            var text = getUIFactory().newText("", Color.WHITE, 24.0);
+            var text = getUIFactoryService().newText("", Color.WHITE, 24.0);
             text.textProperty().bind(getip("entities").asString("Entities: %d"));
 
             addUINode(text, 25, 25);

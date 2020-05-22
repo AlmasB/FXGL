@@ -108,17 +108,17 @@ public class CustomGameMenuApp extends GameApplication {
 
             shape3.setTranslateY(SIZE);
 
-            Text textResume = FXGL.getUIFactory().newText("RESUME", Color.WHITE, FontType.GAME, 24.0);
+            Text textResume = FXGL.getUIFactoryService().newText("RESUME", Color.WHITE, FontType.GAME, 24.0);
             textResume.setTranslateX(50);
             textResume.setTranslateY(100);
             textResume.setMouseTransparent(true);
 
-            Text textExit = FXGL.getUIFactory().newText("EXIT", Color.WHITE, FontType.GAME, 24.0);
+            Text textExit = FXGL.getUIFactoryService().newText("EXIT", Color.WHITE, FontType.GAME, 24.0);
             textExit.setTranslateX(200);
             textExit.setTranslateY(100);
             textExit.setMouseTransparent(true);
 
-            Text textOptions = FXGL.getUIFactory().newText("OPTIONS", Color.WHITE, FontType.GAME, 24.0);
+            Text textOptions = FXGL.getUIFactoryService().newText("OPTIONS", Color.WHITE, FontType.GAME, 24.0);
             textOptions.setTranslateX(110);
             textOptions.setTranslateY(195);
             textOptions.setMouseTransparent(true);

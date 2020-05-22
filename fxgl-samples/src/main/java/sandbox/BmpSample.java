@@ -46,12 +46,12 @@ public class BmpSample extends GameApplication {
         getGameWorld().addEntityFactory(new MyFactory());
         getGameScene().setBackgroundColor(Color.BLACK);
 
-        var text = getUIFactory().newText("", Color.WHITE, 24.0);
+        var text = getUIFactoryService().newText("", Color.WHITE, 24.0);
         text.textProperty().bind(getip("entities").asString("Entities: %d"));
 
         addUINode(text, 25, 25);
 
-        var text2 = getUIFactory().newText("", Color.WHITE, 24.0);
+        var text2 = getUIFactoryService().newText("", Color.WHITE, 24.0);
         text2.textProperty().bind(new SimpleDoubleProperty(1.0).divide(getdp("tpf")).asString("FPS: %.2f"));
 
         addUINode(text2, 25, 50);

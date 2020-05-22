@@ -586,12 +586,12 @@ class FXGL private constructor() { companion object {
     }
 
     @JvmStatic fun addVarText(varName: String, x: Double, y: Double): Text {
-        return getUIFactory().newText(getip(varName).asString())
+        return getUIFactoryService().newText(getip(varName).asString())
                 .also { addUINode(it, x, y) }
     }
 
     @JvmStatic fun addText(message: String, x: Double, y: Double): Text {
-        return getUIFactory().newText(message)
+        return getUIFactoryService().newText(message)
                 .also { addUINode(it, x, y) }
     }
 

@@ -73,7 +73,7 @@ public class VarsSample extends GameApplication {
 
     @Override
     protected void initUI() {
-        Text uiScore = getUIFactory().newText("", Color.BLACK, 16.0);
+        Text uiScore = getUIFactoryService().newText("", Color.BLACK, 16.0);
         uiScore.textProperty().bind(getip("score").asString());
         uiScore.translateXProperty().bind(getInput().mouseXUIProperty());
         uiScore.translateYProperty().bind(getInput().mouseYUIProperty());

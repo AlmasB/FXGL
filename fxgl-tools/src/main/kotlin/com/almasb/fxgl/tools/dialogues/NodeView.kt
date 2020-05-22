@@ -128,7 +128,7 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
                 }
             }
 
-            val text = FXGL.getUIFactory().newText(name, Color.WHITE, 16.0)
+            val text = FXGL.getUIFactoryService().newText(name, Color.WHITE, 16.0)
 
             alignment = Pos.CENTER_LEFT
             padding = Insets(1.0, 15.0, 1.0, 33.0)
@@ -142,7 +142,7 @@ class CustomButton(symbol: String, size: Double = 24.0) : StackPane() {
 
     init {
         val bg = Rectangle(20.0, 20.0, null)
-        val text = FXGL.getUIFactory().newText(symbol, size)
+        val text = FXGL.getUIFactoryService().newText(symbol, size)
 
         bg.strokeProperty().bind(
                 Bindings.`when`(hoverProperty()).then(Color.WHITE).otherwise(Color.TRANSPARENT)
