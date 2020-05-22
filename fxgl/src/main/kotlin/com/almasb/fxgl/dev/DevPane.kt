@@ -304,7 +304,7 @@ class DevPane(private val sceneService: SceneService, val settings: ReadOnlyGame
                                     }
 
                                     is ObservableList<*> -> {
-                                        // TODO:
+                                        // ignore here
                                     }
 
                                     else -> {
@@ -312,7 +312,11 @@ class DevPane(private val sceneService: SceneService, val settings: ReadOnlyGame
                                     }
                                 }
 
-                                pane.addRow(index++, textKey, textValue)
+                                if (value is ObservableList<*>) {
+                                    pane.addRow(index++, textKey, ListView(value))
+                                } else {
+                                    pane.addRow(index++, textKey, textValue)
+                                }
                             }
 
                     pane.addRow(index++, Text(""))
