@@ -38,7 +38,6 @@ class NotificationServiceTest {
         theRoot = Group()
         theTimer = Timer()
 
-        // TODO: mock scene service?
         val sceneService = object : SceneService() {
             override val overlayRoot: Group
                 get() = theRoot
