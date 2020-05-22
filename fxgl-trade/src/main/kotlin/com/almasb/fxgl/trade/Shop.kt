@@ -29,7 +29,9 @@ interface ShopListener<T> {
     fun onBought(item: TradeItem<T>)
 }
 
-class Shop<T>(initialMoney: Int = 0, items: List<TradeItem<T>>) {
+class Shop<T>(initialMoney: Int, items: List<TradeItem<T>>) {
+
+    constructor(items: List<TradeItem<T>>) : this(0, items)
 
     var listener: ShopListener<T>? = null
 
