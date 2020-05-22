@@ -9,11 +9,10 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.components.AccumulatedUpdateComponent;
+import com.almasb.fxgl.dsl.views.ScrollingBackgroundView;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.dsl.views.ScrollingBackgroundView;
 import javafx.geometry.Orientation;
-import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
@@ -103,7 +102,7 @@ public class ScrollingBackgroundSample extends GameApplication {
 
         @Override
         public void onAccumulatedUpdate(double tpfSum) {
-            getDevPane().pushMessage("tpfSum:" + tpfSum);
+            debug("tpfSum:" + tpfSum);
         }
     }
 
