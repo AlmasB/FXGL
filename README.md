@@ -13,10 +13,10 @@ JavaFX Game Development Framework
 ### Why FXGL?
 
 * No installation or setup required
-* "Out of the box": Java 8-13, Win/Mac/Linux/Android 5.0+([Sample](https://github.com/AlmasB/FXGL-MobileApp))/iOS([alpha](https://github.com/AlmasB/FXGL-MobileApp))/Web([Sample](https://github.com/AlmasB/FXGL-WebApp))
+* "Out of the box": Java 8-14, Win/Mac/Linux/Android 5.0+/iOS 11.0+/Web
 * Simple and clean API, higher level than other engines
 * Superset of JavaFX: no need to learn new UI API
-* Real-world game development techniques: Entity-Component, Event System, Scripting, and [many more](https://github.com/AlmasB/FXGL/wiki/Core-Features)
+* Real-world game development techniques: Entity-Component, interpolated animations, particles, and [many more](https://github.com/AlmasB/FXGL/wiki/Core-Features)
 * Games are easily packaged into a single executable .jar or native images
 
 ### Good for:
@@ -47,26 +47,20 @@ public class BasicGameApp extends GameApplication {
 
 ## Getting Started
 
-- Version for Java 8-10: `0.5.4` (not updated)
-- Version for Java 11+: `11.8` (frequent updates)
+For a quick dive into code, see standalone [basic examples](https://github.com/AlmasB/FXGL/tree/master/fxgl-samples/src/main/java/basics).
+Otherwise, see:
 
-FXGL 11 supports Java 11+ and has a more scalable architecture,
-but currently supports only a subset of features from `0.5.4`.
-
-Want a quick dive into code? See [basic examples](https://github.com/AlmasB/FXGL/tree/master/fxgl-samples/src/main/java/basics).
-Otherwise, you have the following options:
-
-* [Java 11 modules](https://github.com/AlmasB/FXGL/wiki/FXGL-11-%28Java-11-modules%29)
-* [Wiki & Written tutorials](https://github.com/AlmasB/FXGL/wiki)
+* [Wiki & written tutorials](https://github.com/AlmasB/FXGL/wiki)
 * [YouTube tutorials](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
+* [Java 11 modules](https://github.com/AlmasB/FXGL/wiki/FXGL-11-%28Java-11-modules%29)
 * [Sample code demos](fxgl-samples)
-* [FXGL games](https://github.com/AlmasB/FXGLGames) (src)
-* [Game demos](https://github.com/AlmasB/FXGLGames/tree/master/binaries) (.jar)
-* [Published demos](https://fxgl.itch.io/)
+* Full [FXGL games](https://github.com/AlmasB/FXGLGames) (with source)
+* Pre-built [FXGL demos](https://github.com/AlmasB/FXGLGames/tree/master/binaries) (.jar)
+* [Published demos](https://fxgl.itch.io/) on itch.io
 
 ### Maven
 
-* [Maven](https://github.com/AlmasB/FXGL-MavenGradle) project if you use Java and/or Kotlin (Java 11+)
+* [Maven](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin (Java 11+)
 
 Already have `pom.xml`? Then add: (use `0.5.4` for Java 8-10). **Note:** make sure to set `<release>11</release>` for `maven-compiler-plugin`.
 
@@ -74,13 +68,13 @@ Already have `pom.xml`? Then add: (use `0.5.4` for Java 8-10). **Note:** make su
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>11.8</version>
+    <version>11.9</version>
 </dependency>
 ```
 
 ### Gradle
 
-* [Gradle](https://github.com/AlmasB/FXGL-MavenGradle) project if you use Java and/or Kotlin (Java 11+)
+* [Gradle](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin (Java 11+)
 
 Already have `build.gradle`? Then add: (use `0.5.4` for Java 8-10). **Note:** in case you have errors, please see templates for Gradle above.
 
@@ -90,7 +84,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:11.8'
+    compile 'com.github.almasb:fxgl:11.9'
 }
 ```
 
@@ -107,7 +101,12 @@ Download the latest uber jar from [Releases](https://github.com/AlmasB/FXGL/rele
 * Zealand Institute of Business and Technology, Denmark
 * Federal Institute of Education, Science and Technology of Rio Grande do Sul, Brazil
 
-If your institution wants to use / is using FXGL, drop me an email to discuss how FXGL can aid your course.
+If your institution wants to use / is using FXGL, drop me an email to be added to the list.
+
+Community tutorials:
+
+- [Space Ranger](https://www.journaldev.com/40219/space-rangers-game-java-fxgl) at journaldev
+- [Geometry Wars](https://webtechie.be/post/2020-05-07-getting-started-with-fxgl/) at webtechie
 
 ### Contribution & Support
 
@@ -127,4 +126,3 @@ You can support the FXGL development / show interest by simply starring the repo
 * Ask questions on [StackOverflow](https://stackoverflow.com/search?q=fxgl) with tags `javafx` and `fxgl`
 * Tweet with [#fxgl](https://twitter.com/search?src=typd&q=%23fxgl)
 * [Chat](https://gitter.im/AlmasB/FXGL) with the friendly FXGL community
-* ![Email](https://img.shields.io/badge/email-almaslvl@gmail.com-red.svg)
