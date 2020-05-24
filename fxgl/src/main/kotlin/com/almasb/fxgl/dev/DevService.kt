@@ -59,7 +59,6 @@ class DevService : EngineService() {
         if (!isDevEnabled)
             return
 
-        // TODO: reconsider ctor params for dev pane
         devPane = DevPane(windowService, FXGL.getSettings())
     }
 

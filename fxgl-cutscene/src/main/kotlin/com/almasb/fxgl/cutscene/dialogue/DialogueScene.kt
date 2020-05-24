@@ -207,7 +207,6 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             selectLine(localID)
         }
 
-        // TODO:
 //        AnimationBuilder()
 //                .fadeIn(text)
 //                .buildAndPlay(this)
@@ -276,7 +275,6 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         }
     }
 
-    // TODO: syntax check
     private fun String.evaluate(): Boolean {
         val tokens = this.split(" +".toRegex())
         val num1 = tokens[0].toInt()

@@ -135,8 +135,6 @@ abstract class VirtualJoystick(private val input: Input) : Parent() {
     init {
         val vectorObservable = Bindings.createObjectBinding(Callable {
 
-            // TODO: figure out length ratio (force)
-
             input.mousePositionUI.subtract(center.add(translateX, translateY)).normalize()
         }, input.mouseXUIProperty(), input.mouseYUIProperty())
 
