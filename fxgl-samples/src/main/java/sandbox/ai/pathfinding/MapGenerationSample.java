@@ -87,7 +87,6 @@ public class MapGenerationSample extends GameApplication {
         });
     }
 
-    // TODO: interactive sample where the apply() func can be edited
     private static class CustomHeightMapGenerator extends HeightMapGenerator {
 
         public CustomHeightMapGenerator(int width, int height) {

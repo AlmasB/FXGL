@@ -134,7 +134,6 @@ class HitBoxTest {
         assertThat(hitbox2.centerWorld(0.0, 0.0), `is`(Point2D(25.0, 65.0)))
     }
 
-    // TODO:
 //    @ParameterizedTest
 //    @MethodSource("shapeProvider")
 //    fun `Test serialization`(shape: BoundingShape) {

@@ -599,7 +599,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
         BoundingBoxComponent bbox = e.getBoundingBoxComponent();
         PhysicsComponent physics = e.getComponent(PhysicsComponent.class);
 
-        // TODO: same fixture def for every fixture?
         FixtureDef fd = physics.fixtureDef;
 
         for (HitBox box : bbox.hitBoxesProperty()) {

@@ -305,7 +305,6 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         }
 
         nodeView.outPoints.forEach { outPoint ->
-            // TODO: refactor repetition
             outPoint.setOnMouseClicked {
                 if (it.button == MouseButton.PRIMARY) {
                     selectedOutLink = outPoint

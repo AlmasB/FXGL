@@ -20,10 +20,6 @@ import javafx.util.Duration
 /**
  * Adapted from jfxtras-window.
  *
- * TODO: clean up
-// TODO: why do we have setPosition() and also can set via add ui node?
-// we use setLayout() internally, any difference to translate()?
-//window.setPosition(x, y);
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -63,7 +59,6 @@ open class MDIWindow : Region() {
 
     // CUSTOM
 
-    // TODO:
     //private val header = FXGLUIConfig.getUIFactory().newTextFlow()
     private val header = FXGLTextFlow()
 
@@ -326,7 +321,7 @@ open class MDIWindow : Region() {
                 val scaleX = n.localToSceneTransformProperty().getValue().getMxx()
                 val scaleY = n.localToSceneTransformProperty().getValue().getMyy()
 
-                // TODO: getResizableBorderWidth()
+                // getResizableBorderWidth()
                 val border = 5.0 * scaleX
 
                 val diffMinX = Math.abs(n.getLayoutBounds().getMinX() - t.x + getInsets().getLeft())

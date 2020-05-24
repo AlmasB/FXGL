@@ -44,7 +44,6 @@ class ExpandableTextArea(prefWidth: Double, prefHeight: Double) : TextArea() {
     }
 
     private fun computeHeight(): Double {
-        // TODO: this should probably be based on font size?
         var newHeight = text.layoutBounds.height + 20.0
         newHeight = if (abs(prevHeight - newHeight) > 15) newHeight else prevHeight
 

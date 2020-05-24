@@ -150,7 +150,7 @@ class SaveLoadService : EngineService() {
 
 
 
-    // TODO: https://github.com/AlmasB/FXGL/issues/661
+
 
     //    private fun createProfilesDirTask(): IOTask<*> {
 //        log.debug("Creating profiles dir")

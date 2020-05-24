@@ -23,6 +23,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -121,6 +122,8 @@ public class ParticleShowcaseSample2 extends GameApplication {
                     "window_04.png").split("\n");
 
     int index = 0;
+    private int interpolatorIndex = 0;
+    private Text debug;
 
     @Override
     protected void initInput() {
@@ -145,18 +148,24 @@ public class ParticleShowcaseSample2 extends GameApplication {
         });
 
         onBtnDown(MouseButton.PRIMARY, () -> {
-            emitter = ParticleEmitters.newExplosionEmitter(40);
-
-            // TODO: integrate with demo with settings
+            emitter = ParticleEmitters.newExplosionEmitter(60);
 
             emitter.setMaxEmissions(3);
-            emitter.setNumParticles(450);
+            emitter.setNumParticles(350);
             emitter.setEmissionRate(0.86);
             emitter.setSize(1, 24);
-            emitter.setScaleFunction(i -> FXGLMath.randomPoint2D().multiply(0.01));
-            emitter.setExpireFunction(i -> Duration.seconds(random(0.25, 3)));
-            emitter.setInterpolator(Interpolators.SMOOTH.EASE_IN_OUT());
-            emitter.setAccelerationFunction(() -> new Point2D(0, random(0, 2)));
+            emitter.setScaleFunction(i -> FXGLMath.randomPoint2D().multiply(0.02));
+            emitter.setExpireFunction(i -> Duration.seconds(random(1.25, 3.5)));
+
+            var i = Interpolators.values()[interpolatorIndex++];
+
+            if (interpolatorIndex == Interpolators.values().length)
+                interpolatorIndex = 0;
+
+            debug.setText("Easing (out): " + i.toString());
+
+            emitter.setInterpolator(i.EASE_OUT());
+            emitter.setAccelerationFunction(() -> new Point2D(0, random(1, 3)));
             //emitter.setVelocityFunction(i -> Point2D.ZERO);
             //emitter.setVelocityFunction(i -> FXGLMath.randomPoint2D().multiply(random(1, 15)));
 
@@ -169,8 +178,10 @@ public class ParticleShowcaseSample2 extends GameApplication {
                 index = 0;
             }
 
-            var c = FXGLMath.randomColor();
-            emitter.setSourceImage(texture("particles/" + name, 32, 32).multiplyColor(c));
+            // FXGLMath.randomColor();
+            var c = Color.YELLOW;
+            // name before
+            emitter.setSourceImage(texture("particles/" + "flare_01.png", 32, 32).multiplyColor(c));
             emitter.setAllowParticleRotation(true);
 
 //            emitter.setControl(p -> {
@@ -192,34 +203,35 @@ public class ParticleShowcaseSample2 extends GameApplication {
 //            });
 
             e = entityBuilder()
+                    .at(getAppWidth() / 2, getAppHeight() / 2)
                     .with(new ParticleComponent(emitter))
                     .with(new ExpireCleanComponent(Duration.seconds(6)))
                     .buildAndAttach();
 
-            e.xProperty().bind(getInput().mouseXWorldProperty().subtract(10));
-            e.yProperty().bind(getInput().mouseYWorldProperty().subtract(10));
+            //e.xProperty().bind(getInput().mouseXWorldProperty().subtract(10));
+            //e.yProperty().bind(getInput().mouseYWorldProperty().subtract(10));
 
-            var tank = entityBuilder()
-                    .type(Type.PLAYER)
-                    .at(e.getPosition().subtract(16, 16))
-                    .viewWithBBox(texture("tank_player.png"))
-                    .with(new ExpireCleanComponent(Duration.seconds(3)))
-                    .scale(0, 0)
-                    .buildAndAttach();
-
-            tank.getViewComponent().setOpacity(0);
-
-            animationBuilder()
-                    .delay(Duration.seconds(0.5))
-                    .fadeIn(tank)
-                    .buildAndPlay();
-
-            animationBuilder()
-                    .delay(Duration.seconds(0.5))
-                    .scale(tank)
-                    .from(new Point2D(0, 0))
-                    .to(new Point2D(1, 1))
-                    .buildAndPlay();
+//            var tank = entityBuilder()
+//                    .type(Type.PLAYER)
+//                    .at(e.getPosition().subtract(16, 16))
+//                    .viewWithBBox(texture("tank_player.png"))
+//                    .with(new ExpireCleanComponent(Duration.seconds(3)))
+//                    .scale(0, 0)
+//                    .buildAndAttach();
+//
+//            tank.getViewComponent().setOpacity(0);
+//
+//            animationBuilder()
+//                    .delay(Duration.seconds(0.5))
+//                    .fadeIn(tank)
+//                    .buildAndPlay();
+//
+//            animationBuilder()
+//                    .delay(Duration.seconds(0.5))
+//                    .scale(tank)
+//                    .from(new Point2D(0, 0))
+//                    .to(new Point2D(1, 1))
+//                    .buildAndPlay();
         });
 
         onKeyDown(KeyCode.F, () -> {
@@ -249,13 +261,13 @@ public class ParticleShowcaseSample2 extends GameApplication {
         shield.setStrokeWidth(2.5);
         shield.setEffect(new Bloom());
 
-        entityBuilder()
-                .at(700, 300)
-                .type(Type.ENEMY)
-                .view("tank_enemy.png")
-                .viewWithBBox(shield)
-                .collidable()
-                .buildAndAttach();
+//        entityBuilder()
+//                .at(700, 300)
+//                .type(Type.ENEMY)
+//                .view("tank_enemy.png")
+//                .viewWithBBox(shield)
+//                .collidable()
+//                .buildAndAttach();
     }
 
     @Override
@@ -269,8 +281,6 @@ public class ParticleShowcaseSample2 extends GameApplication {
 
     private void spawnParticles(Entity enemy) {
         var emitter1 = ParticleEmitters.newExplosionEmitter(30);
-
-        // TODO: integrate with demo with settings
 
         emitter1.setMaxEmissions(1);
         emitter1.setNumParticles(650);
@@ -320,6 +330,13 @@ public class ParticleShowcaseSample2 extends GameApplication {
                 .with(new ParticleComponent(emitter1))
                 .with(new ExpireCleanComponent(Duration.seconds(6)))
                 .buildAndAttach();
+    }
+
+    @Override
+    protected void initUI() {
+        debug = getUIFactoryService().newText("", Color.WHITE, 24.0);
+
+        addUINode(debug, 100, 100);
     }
 
     boolean up = true;

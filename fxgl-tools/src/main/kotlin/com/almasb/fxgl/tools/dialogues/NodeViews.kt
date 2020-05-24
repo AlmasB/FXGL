@@ -19,7 +19,7 @@ import javafx.scene.text.Font
 import javafx.scene.text.Text
 
 /**
- * TODO: refactor repetition
+ *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -160,7 +160,6 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
                 addContent(field)
 
-                // TODO: implement
                 //children.add(condition)
                 children.add(outPoint)
             }

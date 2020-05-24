@@ -26,16 +26,9 @@ public class FXGLButton extends Button {
         setAlignment(Pos.CENTER);
         setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-
-
-                //FXGL.getAudioPlayer().playSound(FXGL.getSettings().getSoundMenuPress());
                 fire();
             }
         });
-
-        // TODO:
-        //setOnMouseEntered(e -> FXGL.getAudioPlayer().playSound(FXGL.getSettings().getSoundMenuSelect()));
-        //setOnMouseClicked(e -> FXGL.getAudioPlayer().playSound(FXGL.getSettings().getSoundMenuPress()));
     }
 
     @Override

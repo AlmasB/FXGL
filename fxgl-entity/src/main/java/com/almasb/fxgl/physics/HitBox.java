@@ -299,9 +299,6 @@ public final class HitBox implements Serializable {
         return new Point2D((getMinXWorld() + getMaxXWorld()) / 2, (getMinYWorld() + getMaxYWorld()) / 2);
     }
 
-    // TODO: anything that uses "bounds" is not quite correct since it doesn't account for transforms
-    // instead, we should use min and max world
-
     /**
      * @return center point of this hit box, local to 0,0 (top,left) of the entity
      */
