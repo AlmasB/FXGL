@@ -240,7 +240,7 @@ class WindowService : SceneService() {
         // 2. we are loading a game
         // 3. we are showing intro
 
-        // TODO: mainWindow.currentScene === dialogScene ||
+        // mainWindow.currentScene === dialogScene ||
         val isNotOK =  mainWindow.currentScene === loadScene
                 || (settings.isIntroEnabled && mainWindow.currentScene === intro)
 

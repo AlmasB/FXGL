@@ -234,7 +234,6 @@ public abstract class GameApplication {
             mainWindow = new MainWindow(stage, startupScene, settings);
             mainWindow.show();
 
-            // TODO: possibly a better way exists of doing below
             engine.getEnvironmentVars$fxgl().put("settings", settings);
             engine.getEnvironmentVars$fxgl().put("mainWindow", mainWindow);
 

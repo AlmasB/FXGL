@@ -34,7 +34,6 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
     private val services = arrayListOf<EngineService>()
     private val servicesCache = hashMapOf<Class<out EngineService>, EngineService>()
 
-    // TODO: make this a local var?
     internal val environmentVars = HashMap<String, Any>()
 
     init {
