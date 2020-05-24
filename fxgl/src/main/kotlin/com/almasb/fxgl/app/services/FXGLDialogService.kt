@@ -6,22 +6,19 @@
 
 package com.almasb.fxgl.app.services
 
-import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.*
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Button
-import javafx.scene.effect.BoxBlur
-import javafx.scene.effect.Effect
+import javafx.scene.effect.DropShadow
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
 import java.util.*
 import java.util.function.Consumer
 import java.util.function.Predicate
@@ -54,6 +51,8 @@ class FXGLDialogService : DialogService() {
 
         window.layoutXProperty().bind(window.widthProperty().divide(2).negate().add(width / 2))
         window.layoutYProperty().bind(window.heightProperty().divide(2).negate().add(height / 2))
+
+        window.effect = DropShadow(25.0, Color.BLACK)
 
         dialogScene = DialogSubScene(window, width, height)
 
