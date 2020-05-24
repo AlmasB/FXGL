@@ -46,7 +46,6 @@ internal class UpdaterService : EngineService() {
      */
     private fun shouldCheckForUpdate(): Boolean {
         return false
-        // TODO:
 //        if (FXGL.getSettings().applicationMode === ApplicationMode.RELEASE)
 //            return false
 //

@@ -210,7 +210,6 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
             }
         }
 
-        // TODO: use profile name instead of dir name if present
         val task = saveLoadService.readSaveFilesTask("./", getSettings().saveFileExt)
                 .onSuccess {
                     list.items.addAll(it)
@@ -771,7 +770,6 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
     }
 
     private fun makeSaveFileName(rawName: String): String {
-        // TODO: if profile enabled, use that
         return rawName
     }
 }
