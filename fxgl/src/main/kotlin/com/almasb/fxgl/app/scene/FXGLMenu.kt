@@ -202,7 +202,7 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
 
                         val nameDate = "%-25.25s %s".format(item.name, item.dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm")))
 
-                        val text = getUIFactoryService().newText(item.toString(), Color.WHITE, FontType.MONO, FONT_SIZE)
+                        val text = getUIFactoryService().newText(nameDate, Color.WHITE, FontType.MONO, FONT_SIZE)
 
                         graphic = text
                     }
