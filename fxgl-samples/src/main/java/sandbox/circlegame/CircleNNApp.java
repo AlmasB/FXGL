@@ -19,6 +19,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.util.List;
+
 import static com.almasb.fxgl.dsl.FXGL.*;
 import static sandbox.circlegame.CircleNNType.*;
 
@@ -58,9 +60,25 @@ public class CircleNNApp extends GameApplication {
         spawn("block", 200, getAppHeight() - 200 - 64);
         spawn("block", getAppWidth() - 200 - 64, getAppHeight() - 200 - 64);
 
-        for (int i = 0; i < 99; i++) {
-            spawn("circle", getAppWidth() / 2, getAppHeight() / 2);
-        }
+        var spawnPoints = List.of(
+                new Point2D(100, 100),
+                new Point2D(getAppWidth() - 100 - 64, 100),
+                new Point2D(getAppWidth() / 2.0 - 32, 100),
+
+                new Point2D(100, getAppHeight() / 2.0 - 32),
+                new Point2D(getAppWidth() - 100 - 64, getAppHeight() / 2.0 - 32),
+                new Point2D(getAppWidth() / 2.0 - 32, getAppHeight() / 2.0 - 32),
+
+                new Point2D(100, getAppHeight() - 100 - 64),
+                new Point2D(getAppWidth() - 100 - 64, getAppHeight() - 100 - 64),
+                new Point2D(getAppWidth() / 2.0 - 32, getAppHeight() - 100 - 64)
+        );
+
+        spawnPoints.forEach(point -> {
+            for (int i = 0; i < 11; i++) {
+                spawn("circle", point);
+            }
+        });
 
         player = getGameWorld().getRandom(CIRCLE).get();
         //player.setType(PLAYER);
@@ -82,11 +100,14 @@ public class CircleNNApp extends GameApplication {
             if (bullet.getObject("owner") == circle)
                 return;
 
+            var point = circle.getCenter();
+
             circle.call("takeHit");
             bullet.removeFromWorld();
 
             if (!circle.isActive()) {
                 onCircleDied();
+                spawn("explosion", point);
             }
         });
     }
@@ -107,6 +128,8 @@ public class CircleNNApp extends GameApplication {
     }
 
     public void onCircleDied() {
+        getGameScene().getViewport().shakeTranslational(5);
+
         place--;
         textPlace.setText(place + "");
 
@@ -119,6 +142,10 @@ public class CircleNNApp extends GameApplication {
                 .from(new Point2D(1, 1))
                 .to(new Point2D(3, 3))
                 .buildAndPlay();
+
+        if (place == 1) {
+            showMessage("You Win!", () -> getGameController().startNewGame());
+        }
     }
 
     public static void main(String[] args) {

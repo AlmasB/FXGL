@@ -43,7 +43,7 @@ public class CircleComponent extends Component {
             return;
 
         spawn("bullet",
-                new SpawnData(entity.getCenter().subtract(10, 0))
+                new SpawnData(entity.getCenter().subtract(15, 0))
                         .put("owner", entity)
                         .put("dir", dir)
         );
