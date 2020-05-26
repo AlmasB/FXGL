@@ -6,9 +6,10 @@
 
 package sandbox.circlegame;
 
+import com.almasb.fxgl.entity.component.Component;
+
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public enum CircleNNType {
-    CIRCLE, BLOCK, BULLET, PLAYER, POWERUP
+public class PlayerComponent extends Component {
 }

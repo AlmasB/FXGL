@@ -10,26 +10,33 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.time.LocalTimer;
 import javafx.geometry.Point2D;
-import javafx.util.Duration;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
+import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
+import static sandbox.circlegame.CircleNNType.CIRCLE;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class CircleComponent extends Component {
 
-    private static final Duration SHOOT_INTERVAL = Duration.seconds(0.15);
-    private LocalTimer shootTimer = newLocalTimer();
+    // in seconds
+    private double shootInterval = 0.15;
+    private double time = 0.0;
 
     private HealthIntComponent hp;
 
     @Override
     public void onUpdate(double tpf) {
-        if (shootTimer.elapsed(SHOOT_INTERVAL) && shouldShoot()) {
-            getGameWorld().getClosestEntity(entity, e -> e.isType(CircleNNType.CIRCLE))
+        time += tpf;
+
+        // if we can't shoot because of time interval or if we are player
+        if (time < shootInterval || entity.hasComponent(PlayerComponent.class))
+            return;
+
+        if (shouldShoot()) {
+            getGameWorld().getClosestEntity(entity, e -> e.isType(CIRCLE))
                     .ifPresent(closestCircle -> {
                         var dir = closestCircle.getCenter().subtract(entity.getCenter());
 
@@ -39,27 +46,55 @@ public class CircleComponent extends Component {
     }
 
     public void shoot(Point2D dir) {
-        if (!shootTimer.elapsed(SHOOT_INTERVAL))
+        if (time < shootInterval)
             return;
 
         spawn("bullet",
                 new SpawnData(entity.getCenter().subtract(15, 0))
                         .put("owner", entity)
                         .put("dir", dir)
+                        .put("damage", entity.getInt("rank"))
         );
 
-        shootTimer.capture();
+        time = 0.0;
     }
 
     private boolean shouldShoot() {
         return FXGLMath.randomBoolean(0.1);
     }
 
-    public void takeHit() {
-        hp.damage(1);
+    public void onKill() {
+        entity.getProperties().increment("rank", +1);
+    }
+
+    public void takeHit(int damage) {
+        if (isShielded())
+            return;
+
+        hp.damage(damage);
 
         if (hp.isZero()) {
             entity.removeFromWorld();
         }
+    }
+
+    public void applyPowerup(PowerupType type) {
+        type.accept(entity);
+    }
+
+    public double getShootInterval() {
+        return shootInterval;
+    }
+
+    public void setShootInterval(double shootInterval) {
+        this.shootInterval = shootInterval;
+    }
+
+    public boolean isShielded() {
+        return entity.getBoolean("isShielded");
+    }
+
+    public void setShielded(boolean isShielded) {
+        entity.setProperty("isShielded", isShielded);
     }
 }

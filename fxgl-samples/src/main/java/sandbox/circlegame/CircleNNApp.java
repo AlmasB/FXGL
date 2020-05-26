@@ -9,10 +9,13 @@ package sandbox.circlegame;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.components.KeepOnScreenComponent;
 import com.almasb.fxgl.dsl.components.RandomMoveComponent;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -30,8 +33,8 @@ import static sandbox.circlegame.CircleNNType.*;
 public class CircleNNApp extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1280);
-        settings.setHeight(720);
+        settings.setWidth(1750);
+        settings.setHeightFromRatio(16/9.0);
         settings.setDeveloperMenuEnabled(true);
     }
 
@@ -81,13 +84,22 @@ public class CircleNNApp extends GameApplication {
         });
 
         player = getGameWorld().getRandom(CIRCLE).get();
-        //player.setType(PLAYER);
         player.removeComponent(RandomMoveComponent.class);
         player.removeComponent(BlockCollisionComponent.class);
         player.addComponent(new KeepOnScreenComponent());
-        player.getComponent(CircleComponent.class).pause();
+        player.addComponent(new PlayerComponent());
 
         place = 99;
+
+        run(() -> {
+            var powerupType = PowerupType.SHIELD;
+            //var powerupType = FXGLMath.random(PowerupType.values()).get();
+
+            spawn("powerup",
+                    new SpawnData(FXGLMath.randomPoint(new Rectangle2D(0, 0, getAppWidth(), getAppHeight())))
+                            .put("powerupType", powerupType)
+            );
+        }, Duration.seconds(3));
     }
 
     @Override
@@ -102,13 +114,27 @@ public class CircleNNApp extends GameApplication {
 
             var point = circle.getCenter();
 
-            circle.call("takeHit");
-            bullet.removeFromWorld();
+            int damage = bullet.getInt("damage");
+
+            circle.getComponent(CircleComponent.class).takeHit(damage);
 
             if (!circle.isActive()) {
+                Entity killer = bullet.getObject("owner");
+
+                if (killer.isActive()) {
+                    killer.getComponent(CircleComponent.class).onKill();
+                }
+
                 onCircleDied();
                 spawn("explosion", point);
             }
+
+            bullet.removeFromWorld();
+        });
+
+        onCollisionBegin(CIRCLE, POWERUP, (circle, powerup) -> {
+            circle.getComponent(CircleComponent.class).applyPowerup(powerup.getObject("powerupType"));
+            powerup.removeFromWorld();
         });
     }
 
