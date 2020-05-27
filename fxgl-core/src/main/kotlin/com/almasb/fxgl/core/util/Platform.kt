@@ -23,6 +23,18 @@ enum class Platform {
 
     companion object {
         @JvmStatic fun get(): Platform {
+            // check if running on mobile first
+            val fxPlatformName = System.getProperty("javafx.platform", "")
+
+            if (fxPlatformName.contains("ios", ignoreCase = true)) {
+                return IOS
+            }
+
+            if (fxPlatformName.contains("android", ignoreCase = true)) {
+                return ANDROID
+            }
+
+            // if we got here then not running on mobile
             val osName = System.getProperty("os.name")
 
             if (osName.contains("mac", ignoreCase = true)) {
@@ -35,14 +47,6 @@ enum class Platform {
 
             if (osName.contains("win", ignoreCase = true)) {
                 return WINDOWS
-            }
-
-            if (osName.contains("iOS", ignoreCase = true)) {
-                return IOS
-            }
-
-            if (osName.contains("android", ignoreCase = true)) {
-                return ANDROID
             }
 
             return BROWSER

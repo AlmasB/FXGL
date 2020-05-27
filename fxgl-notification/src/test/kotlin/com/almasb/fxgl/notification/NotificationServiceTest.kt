@@ -38,7 +38,6 @@ class NotificationServiceTest {
         theRoot = Group()
         theTimer = Timer()
 
-        // TODO: mock scene service?
         val sceneService = object : SceneService() {
             override val overlayRoot: Group
                 get() = theRoot
@@ -81,12 +80,44 @@ class NotificationServiceTest {
 
         // animation in
         theTimer.update(1.0)
+        notificationService.onUpdate(1.0)
 
         // notification up
         theTimer.update(3.0)
+        notificationService.onUpdate(3.0)
 
         // animation out
         theTimer.update(1.0)
+        notificationService.onUpdate(1.0)
+
+        assertTrue(theRoot.children.isEmpty())
+    }
+
+    @Test
+    fun `Test push multiple notifications`() {
+        assertTrue(theRoot.children.isEmpty())
+        notificationService.pushNotification("")
+        notificationService.pushNotification("")
+
+        assertTrue(theRoot.children.isNotEmpty())
+
+        // animation in
+        theTimer.update(1.0)
+        notificationService.onUpdate(1.0)
+
+        // notification 1 up
+        theTimer.update(3.0)
+        notificationService.onUpdate(3.0)
+
+        assertTrue(theRoot.children.isNotEmpty())
+
+        // notification 2 up
+        theTimer.update(3.0)
+        notificationService.onUpdate(3.0)
+
+        // animation out
+        theTimer.update(1.0)
+        notificationService.onUpdate(1.0)
 
         assertTrue(theRoot.children.isEmpty())
     }

@@ -12,14 +12,16 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.scene.SubScene;
 import com.almasb.fxgl.trade.Shop;
+import com.almasb.fxgl.trade.ShopListener;
 import com.almasb.fxgl.trade.TradeItem;
-import com.almasb.fxgl.trade.ShopView;
-import com.almasb.fxgl.trade.TradeView;
+import com.almasb.fxgl.trade.view.ShopView;
+import com.almasb.fxgl.trade.view.TradeView;
 import javafx.scene.input.KeyCode;
 
 import java.util.List;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
+import static com.almasb.fxgl.dsl.FXGL.getSceneService;
+import static com.almasb.fxgl.dsl.FXGL.onKeyDown;
 
 /**
  * This is an example of a minimalistic FXGL game application.
@@ -57,6 +59,19 @@ public class TradeSample extends GameApplication {
                     new TradeItem<>(item2, "Longsword", "Item Description", 30, 35, 1)
             ));
 
+            playerShop.setListener(new ShopListener<Entity>() {
+                @Override
+                public void onSold(TradeItem<Entity> item) {
+                    System.out.println("player sold " + item);
+                }
+
+                @Override
+                public void onBought(TradeItem<Entity> item) {
+                    System.out.println("player bought " + item);
+                }
+            });
+
+
             var npcShop = new Shop<Entity>(2000, List.of(
                     new TradeItem<>(item3, "10mm Pistol", "Item Description", 30, 165, 3)
             ));
@@ -86,7 +101,7 @@ public class TradeSample extends GameApplication {
 
                     TradeItem<Entity> item = (TradeItem<Entity>) shopView.getListView().getSelectionModel().getSelectedItem();
 
-                    System.out.println("Item is : " + item);
+                    System.out.println("selected item is : " + item);
 
                     if (item == null)
                         return;

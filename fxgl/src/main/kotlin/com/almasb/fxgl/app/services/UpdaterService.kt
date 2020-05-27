@@ -12,7 +12,7 @@ import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.net.NetService
 import com.almasb.fxgl.time.LocalTimer
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 
 /**
  * Handles everything related to FXGL update.
@@ -46,7 +46,6 @@ internal class UpdaterService : EngineService() {
      */
     private fun shouldCheckForUpdate(): Boolean {
         return false
-        // TODO:
 //        if (FXGL.getSettings().applicationMode === ApplicationMode.RELEASE)
 //            return false
 //

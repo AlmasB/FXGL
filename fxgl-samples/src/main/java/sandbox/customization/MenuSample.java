@@ -10,6 +10,10 @@ import com.almasb.fxgl.achievement.Achievement;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.MenuItem;
+import com.almasb.fxgl.dsl.FXGL;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -22,7 +26,9 @@ public class MenuSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setMenuEnabled(true);
+        settings.setMainMenuEnabled(true);
+        settings.setGameMenuEnabled(true);
+        settings.setFullScreenAllowed(true);
         settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
         settings.getCredits().addAll(Arrays.asList(
                 "Short Name - Lead Programmer",
@@ -44,6 +50,15 @@ public class MenuSample extends GameApplication {
 
         settings.getAchievements().add(new Achievement("Name", "description", "", 0));
         settings.getAchievements().add(new Achievement("Name2", "description2", "", 1));
+    }
+
+    @Override
+    protected void initGame() {
+        FXGL.entityBuilder()
+                .at(300, 300)
+                .view(new Rectangle(100, 100, Color.BLUE))
+                .view(new Text("Example"))
+                .buildAndAttach();
     }
 
     public static void main(String[] args) {

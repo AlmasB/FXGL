@@ -7,13 +7,16 @@
 package com.almasb.fxgl.cutscene.dialogue
 
 import com.almasb.fxgl.animation.Animation
-import com.almasb.fxgl.animation.AnimationDSL
+import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.input.KeyTrigger
+import com.almasb.fxgl.input.Trigger
+import com.almasb.fxgl.input.TriggerListener
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
 import javafx.scene.input.KeyCode
@@ -53,14 +56,14 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         val botLine = Rectangle(appWidth.toDouble(), 200.0)
         botLine.translateY = appHeight.toDouble()
 
-        animation = AnimationDSL()
+        animation = AnimationBuilder()
                 .duration(Duration.seconds(0.5))
                 .translate(topLine)
                 .from(Point2D(0.0, -150.0))
                 .to(Point2D.ZERO)
                 .build()
 
-        animation2 = AnimationDSL()
+        animation2 = AnimationBuilder()
                 .duration(Duration.seconds(0.5))
                 .translate(botLine)
                 .from(Point2D(0.0, appHeight.toDouble()))
@@ -99,6 +102,29 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
                 nextLine()
             }
         }, KeyCode.ENTER)
+
+        input.addTriggerListener(object : TriggerListener() {
+            override fun onActionBegin(trigger: Trigger) {
+                // only allow 1,2,3 select
+                if (currentNode.type != DialogueNodeType.CHOICE) {
+                    return
+                }
+
+                if (trigger is KeyTrigger && trigger.key.toString().startsWith("DIGIT")) {
+                    val idString = trigger.key.toString().removePrefix("DIGIT")
+
+                    // careful, these are unsafe operations assuming that properties[] are present
+                    val localID: Int? = boxPlayerLines.children
+                            .find { it.properties["idString"] == idString }
+                            ?.properties
+                            ?.get("localID") as? Int
+
+                    localID?.let {
+                        selectLine(it)
+                    }
+                }
+            }
+        })
     }
 
     override fun onCreate() {
@@ -193,13 +219,17 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     }
 
     private fun populatePlayerLine(localID: Int, data: String) {
-        val text = Text("${localID + 1}. ${data}")
+        val idString = "${localID + 1}"
+
+        val text = Text("${idString}. ${data}")
         text.font = Font.font(18.0)
         text.fillProperty().bind(
                 Bindings.`when`(text.hoverProperty())
                         .then(Color.YELLOW)
                         .otherwise(Color.WHITE)
         )
+        text.properties["idString"] = idString
+        text.properties["localID"] = localID
 
         //text.opacity = 0.0
 
@@ -207,8 +237,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             selectLine(localID)
         }
 
-        // TODO:
-//        AnimationDSL()
+//        AnimationBuilder()
 //                .fadeIn(text)
 //                .buildAndPlay(this)
 
@@ -276,7 +305,6 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         }
     }
 
-    // TODO: syntax check
     private fun String.evaluate(): Boolean {
         val tokens = this.split(" +".toRegex())
         val num1 = tokens[0].toInt()

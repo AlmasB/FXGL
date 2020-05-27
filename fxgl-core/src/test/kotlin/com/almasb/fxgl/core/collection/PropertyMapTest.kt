@@ -8,8 +8,7 @@ package com.almasb.fxgl.core.collection
 
 import javafx.beans.property.StringProperty
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -157,6 +156,86 @@ class PropertyMapTest {
 
         map.setValue("key", 7)
         assertThat(count, `is`(1))
+    }
+
+    @Test
+    fun `Copy returns a shallow copy`() {
+        map.setValue("testInt", 3)
+        map.setValue("testDouble", 5.0)
+
+        val copy = map.copy()
+
+        assertFalse(copy === map)
+        assertThat(copy.keys().size, `is`(2))
+        assertThat(copy.getInt("testInt"), `is`(3))
+        assertThat(copy.getDouble("testDouble"), `is`(5.0))
+    }
+
+    @Test
+    fun `From map`() {
+        val javaMap = mapOf(
+                "testInt" to 3,
+                "testDouble" to 5.0,
+                "testBoolean" to false,
+                "testString" to "Hello world",
+                "testList" to listOf(3, 5)
+        )
+
+        map = PropertyMap.from(javaMap)
+
+        assertThat(map.keys().size, `is`(5))
+        assertThat(map.getInt("testInt"), `is`(3))
+        assertThat(map.getDouble("testDouble"), `is`(5.0))
+        assertThat(map.getBoolean("testBoolean"), `is`(false))
+        assertThat(map.getString("testString"), `is`("Hello world"))
+
+        val list = map.getObject<List<Int>>("testList")
+
+        assertThat(list, contains(3, 5))
+    }
+
+    @Test
+    fun `From String map`() {
+        val javaMap = mapOf(
+                "testInt" to "3",
+                "testDouble" to "5.0",
+                "testBoolean" to "false",
+                "testString" to "Hello world"
+        )
+
+        map = PropertyMap.fromStringMap(javaMap)
+
+        assertThat(map.keys().size, `is`(4))
+        assertThat(map.getInt("testInt"), `is`(3))
+        assertThat(map.getDouble("testDouble"), `is`(5.0))
+        assertThat(map.getBoolean("testBoolean"), `is`(false))
+        assertThat(map.getString("testString"), `is`("Hello world"))
+    }
+
+    @Test
+    fun `To map`() {
+        map.setValue("testInt", 3)
+        map.setValue("testDouble", 5.0)
+
+        val javaMap = map.toMap()
+
+        assertThat(javaMap.size, `is`(2))
+
+        assertTrue(javaMap["testInt"] == 3)
+        assertTrue(javaMap["testDouble"] == 5.0)
+    }
+
+    @Test
+    fun `To String map`() {
+        map.setValue("testInt", 3)
+        map.setValue("testDouble", 5.0)
+
+        val javaMap = map.toStringMap()
+
+        assertThat(javaMap.size, `is`(2))
+
+        assertTrue(javaMap["testInt"] == "3")
+        assertTrue(javaMap["testDouble"] == "5.0")
     }
 
     @Test

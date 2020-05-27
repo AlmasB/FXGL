@@ -73,7 +73,7 @@ public class PlatformerSample extends GameApplication {
                     physics.setVelocityY(-500);
                 }
 
-                getDevPane().addDebugPoint(player.getCenter());
+                //getDevPane().addDebugPoint(player.getCenter());
             }
         }, KeyCode.W);
 

@@ -9,9 +9,7 @@ package com.almasb.fxgl.entity.components
 import com.almasb.fxgl.core.View
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
-import javafx.beans.property.ReadOnlyIntegerProperty
-import javafx.beans.property.ReadOnlyIntegerWrapper
-import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.*
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -33,23 +31,27 @@ class ViewComponent : Component() {
 
     // no scale or rotate is applied
     private val viewRootNoTransform = Group()
-    internal val devRoot = Group()
+    private val devRoot = Group()
 
     private val updateableViews = arrayListOf<View>()
 
     /**
      * This node is managed by FXGL and is part of active scene graph, do NOT modify children.
      */
-    val parent: Parent = Group(viewRoot, viewRootNoTransform, devRoot)
+    val parent: Parent = Group()
 
     val z: ReadOnlyIntegerProperty = ReadOnlyIntegerWrapper(0)
 
     @get:JvmName("opacityProperty")
-    val opacityProp = SimpleDoubleProperty(1.0)
+    val opacityProperty = SimpleDoubleProperty(1.0)
 
     var opacity: Double
-        get() = opacityProp.value
-        set(value) { opacityProp.value = value }
+        get() = opacityProperty.value
+        set(value) { opacityProperty.value = value }
+
+    @get:JvmName("visibleProperty")
+    val visibleProperty: BooleanProperty
+        get() = parent.visibleProperty()
 
     /**
      * If made invisible, all events (e.g. mouse) go through the entity
@@ -68,8 +70,9 @@ class ViewComponent : Component() {
         get() = viewRoot.children + viewRootNoTransform.children
 
     init {
-        viewRoot.opacityProperty().bind(opacityProp)
+        viewRoot.opacityProperty().bind(opacityProperty)
         viewRootNoTransform.opacityProperty().bind(viewRoot.opacityProperty())
+
     }
 
     override fun onAdded() {
@@ -130,9 +133,9 @@ class ViewComponent : Component() {
      */
     @JvmOverloads fun addChild(node: Node, isTransformApplied: Boolean = true) {
         if (isTransformApplied) {
-            viewRoot.children += node
+            addToGroup(viewRoot, node)
         } else {
-            viewRootNoTransform.children += node
+            addToGroup(viewRootNoTransform, node)
         }
 
         if (node is View)
@@ -143,11 +146,45 @@ class ViewComponent : Component() {
      * Remove a child from this view.
      */
     fun removeChild(node: Node) {
-        viewRoot.children -= node
-        viewRootNoTransform.children -= node
+        removeFromGroup(viewRoot, node)
+        removeFromGroup(viewRootNoTransform, node)
 
         if (node is View)
             updateableViews -= node
+    }
+
+    /**
+     * Internal use only.
+     */
+    fun addDevChild(node: Node) {
+        addToGroup(devRoot, node, true)
+    }
+
+    /**
+     * Internal use only.
+     */
+    fun removeDevChild(node: Node) {
+        removeFromGroup(devRoot, node)
+    }
+
+    private fun addToGroup(group: Group, child: Node, addLast: Boolean = false) {
+        if (!(parent as Group).children.contains(group)) {
+            if (addLast) {
+                parent.children += group
+            } else {
+                parent.children.add(0, group)
+            }
+        }
+
+        group.children += child
+    }
+
+    private fun removeFromGroup(group: Group, child: Node) {
+        group.children -= child
+
+        if (group.children.isEmpty()) {
+            (parent as Group).children -= group
+        }
     }
 
     /**

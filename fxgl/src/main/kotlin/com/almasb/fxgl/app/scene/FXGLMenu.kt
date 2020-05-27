@@ -19,7 +19,7 @@ import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.FXGLScrollPane
 import com.almasb.fxgl.ui.FontType
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import javafx.collections.FXCollections
@@ -37,6 +37,7 @@ import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.util.Duration
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.function.Consumer
 import java.util.function.Supplier
@@ -61,13 +62,17 @@ import java.util.function.Supplier
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
+abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
 
     companion object {
         private val log = Logger.get("Menu")
     }
 
     protected val saveLoadService: SaveLoadService = FXGL.getSaveLoadService()
+
+    protected val controller by lazy { FXGL.getGameController() }
+    protected val appWidth by lazy { FXGL.getAppWidth() }
+    protected val appHeight by lazy { FXGL.getAppHeight() }
 
     protected val menuRoot = Pane()
     protected val menuContentRoot = Pane()
@@ -96,7 +101,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     }
 
     override fun onUpdate(tpf: Double) {
-        // TODO: extract hardcoded string
+        // extract hardcoded string
         if (type == MenuType.MAIN_MENU && getSettings().isUserProfileEnabled && getSettings().profileName.value == "DEFAULT") {
             showProfileDialog()
         }
@@ -181,7 +186,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun createContentLoad(): MenuContent {
         log.debug("createContentLoad()")
 
-        val list = getUIFactory().newListView<SaveFile>()
+        val list = getUIFactoryService().newListView<SaveFile>()
 
         val FONT_SIZE = 16.0
 
@@ -195,8 +200,9 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
                         graphic = null
                     } else {
 
-                        val text = getUIFactory().newText(item.toString())
-                        text.font = getUIFactory().newFont(FontType.MONO, FONT_SIZE)
+                        val nameDate = "%-25.25s %s".format(item.name, item.dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm")))
+
+                        val text = getUIFactoryService().newText(nameDate, Color.WHITE, FontType.MONO, FONT_SIZE)
 
                         graphic = text
                     }
@@ -204,10 +210,16 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             }
         }
 
-        list.items.addAll(saveLoadService.readSaveFilesTask(getSettings().profileName.value, getSettings().saveFileExt).run())
+        val task = saveLoadService.readSaveFilesTask("./", getSettings().saveFileExt)
+                .onSuccess {
+                    list.items.addAll(it)
+                }
+
+        FXGL.getTaskService().runAsyncFXWithDialog(task, localize("menu.load"))
+
         list.prefHeightProperty().bind(Bindings.size(list.items).multiply(FONT_SIZE).add(16))
 
-        val btnLoad = getUIFactory().newButton(localizedStringProperty("menu.load"))
+        val btnLoad = getUIFactoryService().newButton(localizedStringProperty("menu.load"))
         btnLoad.disableProperty().bind(list.selectionModel.selectedItemProperty().isNull)
 
         btnLoad.setOnAction { e ->
@@ -216,7 +228,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             fireLoad(saveFile)
         }
 
-        val btnDelete = getUIFactory().newButton(localizedStringProperty("menu.delete"))
+        val btnDelete = getUIFactoryService().newButton(localizedStringProperty("menu.delete"))
         btnDelete.disableProperty().bind(list.selectionModel.selectedItemProperty().isNull)
 
         btnDelete.setOnAction { e ->
@@ -298,7 +310,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             rect.arcWidth = 15.0
             rect.arcHeight = 15.0
 
-            val text = getUIFactory().newText(localize("menu.pressAnyKey"), 24.0)
+            val text = getUIFactoryService().newText(localize("menu.pressAnyKey"), 24.0)
 
             val pane = StackPane(rect, text)
             pane.translateX = (getAppWidth() / 2 - 125).toDouble()
@@ -309,7 +321,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     }
 
     private fun addNewInputBinding(action: UserAction, trigger: Trigger, grid: GridPane) {
-        val actionName = getUIFactory().newText(action.name, Color.WHITE, 18.0)
+        val actionName = getUIFactoryService().newText(action.name, Color.WHITE, 18.0)
 
         val triggerView = TriggerView(trigger)
         triggerView.triggerProperty().bind(getInput().triggerProperty(action))
@@ -337,7 +349,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun createContentVideo(): MenuContent {
         log.debug("createContentVideo()")
 
-        val languageBox = getUIFactory().newChoiceBox(FXCollections.observableArrayList(getSettings().supportedLanguages))
+        val languageBox = getUIFactoryService().newChoiceBox(FXCollections.observableArrayList(getSettings().supportedLanguages))
         languageBox.value = getSettings().language.value
 
         getSettings().language.bindBidirectional(languageBox.valueProperty())
@@ -345,14 +357,14 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         val vbox = VBox()
 
         if (getSettings().isFullScreenAllowed) {
-            val cbFullScreen = getUIFactory().newCheckBox()
+            val cbFullScreen = getUIFactoryService().newCheckBox()
             cbFullScreen.selectedProperty().bindBidirectional(getSettings().fullScreen)
 
-            vbox.children.add(HBox(25.0, getUIFactory().newText(localize("menu.fullscreen") + ": "), cbFullScreen))
+            vbox.children.add(HBox(25.0, getUIFactoryService().newText(localize("menu.fullscreen") + ": "), cbFullScreen))
         }
 
         return MenuContent(
-                HBox(25.0, getUIFactory().newText(localizedStringProperty("menu.language").concat(":")), languageBox),
+                HBox(25.0, getUIFactoryService().newText(localizedStringProperty("menu.language").concat(":")), languageBox),
                 vbox
         )
     }
@@ -366,15 +378,15 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         val sliderMusic = Slider(0.0, 1.0, 1.0)
         sliderMusic.valueProperty().bindBidirectional(getSettings().globalMusicVolumeProperty)
 
-        val textMusic = getUIFactory().newText(localizedStringProperty("menu.music.volume").concat(": "))
-        val percentMusic = getUIFactory().newText("")
+        val textMusic = getUIFactoryService().newText(localizedStringProperty("menu.music.volume").concat(": "))
+        val percentMusic = getUIFactoryService().newText("")
         percentMusic.textProperty().bind(sliderMusic.valueProperty().multiply(100).asString("%.0f"))
 
         val sliderSound = Slider(0.0, 1.0, 1.0)
         sliderSound.valueProperty().bindBidirectional(getSettings().globalSoundVolumeProperty)
 
-        val textSound = getUIFactory().newText(localizedStringProperty("menu.sound.volume").concat(": "))
-        val percentSound = getUIFactory().newText("")
+        val textSound = getUIFactoryService().newText(localizedStringProperty("menu.sound.volume").concat(": "))
+        val percentSound = getUIFactoryService().newText("")
         percentSound.textProperty().bind(sliderSound.valueProperty().multiply(100).asString("%.0f"))
 
         val hboxMusic = HBox(15.0, textMusic, sliderMusic, percentMusic)
@@ -413,7 +425,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
                 log.warning("Credit name length > 45: $credit")
             }
 
-            vbox.children.add(getUIFactory().newText(credit))
+            vbox.children.add(getUIFactoryService().newText(credit))
         }
 
         pane.content = vbox
@@ -443,7 +455,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             checkBox.isDisable = true
             checkBox.selectedProperty().bind(a.achievedProperty())
 
-            val text = getUIFactory().newText(a.name)
+            val text = getUIFactoryService().newText(a.name)
             val tooltip = Tooltip(a.description)
             tooltip.showDelay = Duration.seconds(0.1)
 
@@ -558,7 +570,6 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireContinue() {
         log.debug("fireContinue()")
 
-        // TODO:
         //    override fun loadGameFromLastSave() {
 //        saveLoadService
 //                .loadLastModifiedSaveFileTask(getSettings().profileName.value, getSettings().saveFileExt)
@@ -579,14 +590,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         getDisplay().showConfirmationBox(text) { yes ->
 
             if (yes) {
-                val task = saveLoadService.readSaveFileTask(saveFile)
-                        .onSuccess { controller.loadGame(it.data) }
-
-                FXGL.getTaskService()
-                        .runAsyncFXWithDialog(
-                                task,
-                                localize("menu.loading") + ": ${saveFile.name}"
-                        )
+                controller.loadGame(saveFile.data)
             }
         }
     }
@@ -603,9 +607,9 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
             if (saveFileName.isEmpty())
                 return@Consumer
 
-            val saveFile = SaveFile(saveFileName, getSettings().profileName.value, getSettings().saveFileExt)
+            val saveFile = SaveFile(makeSaveFileName(saveFileName + "." + getSettings().saveFileExt))
 
-            if (saveLoadService.saveFileExists(saveFile)) {
+            if (saveLoadService.saveFileExists(saveFile.name)) {
                 getDisplay().showConfirmationBox(localize("menu.overwrite") +" [$saveFileName]?") { yes ->
 
                     if (yes)
@@ -621,7 +625,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
         controller.saveGame(saveFile.data)
 
         FXGL.getTaskService().runAsyncFXWithDialog(
-                saveLoadService.writeSaveFileTask(saveFile),
+                saveLoadService.writeTask(saveFile.name, saveFile.data),
                 localize("menu.savingData") + ": ${saveFile.name}"
         )
     }
@@ -632,8 +636,8 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireDelete(saveFile: SaveFile) {
         log.debug("fireDelete()")
 
-        saveLoadService.deleteSaveFileTask(saveFile)
-                .run()
+//        saveLoadService.deleteSaveFileTask(saveFile)
+//                .run()
     }
 
     /**
@@ -643,7 +647,7 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
     protected fun fireResume() {
         log.debug("fireResume()")
 
-        controller.gotoPlay()
+        FXGL.getSceneService().popSubScene()
     }
 
     protected fun fireExit() {
@@ -674,29 +678,29 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
      * The dialog is only dismissed when profile is chosen either way.
      */
     protected fun showProfileDialog() {
-        val profilesBox = getUIFactory().newChoiceBox(FXCollections.observableArrayList<String>())
+        val profilesBox = getUIFactoryService().newChoiceBox(FXCollections.observableArrayList<String>())
 
-        val btnNew = getUIFactory().newButton(localizedStringProperty("multiplayer.new"))
-        val btnSelect = getUIFactory().newButton(localizedStringProperty("multiplayer.select"))
+        val btnNew = getUIFactoryService().newButton(localizedStringProperty("multiplayer.new"))
+        val btnSelect = getUIFactoryService().newButton(localizedStringProperty("multiplayer.select"))
         btnSelect.disableProperty().bind(profilesBox.valueProperty().isNull)
-        val btnDelete = getUIFactory().newButton(localizedStringProperty("menu.delete"))
+        val btnDelete = getUIFactoryService().newButton(localizedStringProperty("menu.delete"))
         btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull)
 
         btnNew.setOnAction {
             getDisplay().showInputBox(localize("profile.new"), InputPredicates.ALPHANUM, Consumer { name ->
 
-                val task = saveLoadService.createProfileTask(name)
-                        .onSuccess { showProfileDialog() }
-                        .onFailure { error ->
-                            getDisplay().showErrorBox("$error") {
-                                showProfileDialog()
-                            }
-                        }
-
-                FXGL.getTaskService().runAsyncFXWithDialog(
-                        task,
-                        localize("profile.loadingProfile") + ": $name"
-                )
+//                val task = saveLoadService.createProfileTask(name)
+//                        .onSuccess { showProfileDialog() }
+//                        .onFailure { error ->
+//                            getDisplay().showErrorBox("$error") {
+//                                showProfileDialog()
+//                            }
+//                        }
+//
+//                FXGL.getTaskService().runAsyncFXWithDialog(
+//                        task,
+//                        localize("profile.loadingProfile") + ": $name"
+//                )
             })
         }
 
@@ -726,42 +730,46 @@ abstract class FXGLMenu(protected val type: MenuType) : FXGLScene() {
 //                    .runAsyncFXWithDialog(ProgressDialog(getLocalizedString("profile.loadingProfile")+": $name"))
         }
 
-        btnDelete.setOnAction {
-            val name = profilesBox.value
+//        btnDelete.setOnAction {
+//            val name = profilesBox.value
+//
+//            val task = saveLoadService.deleteProfileTask(name)
+//                    .onSuccess { showProfileDialog() }
+//                    .onFailure { error ->
+//                        getDisplay().showErrorBox("$error") {
+//                            showProfileDialog()
+//                        }
+//                    }
+//
+//            FXGL.getTaskService().runAsyncFXWithDialog(
+//                    task,
+//                    localize("profile.deletingProfile") + ": $name"
+//            )
+//        }
+//
+//        val task = saveLoadService.readProfileNamesTask()
+//                .onSuccess { names ->
+//                    profilesBox.items.addAll(names)
+//
+//                    if (!profilesBox.items.isEmpty()) {
+//                        profilesBox.selectionModel.selectFirst()
+//                    }
+//
+//                    getDisplay().showBox(localize("profile.selectOrCreate"), profilesBox, btnSelect, btnNew, btnDelete)
+//                }
+//                .onFailure { error ->
+//                    log.warning("$error")
+//
+//                    getDisplay().showBox(localize("profile.selectOrCreate"), profilesBox, btnSelect, btnNew, btnDelete)
+//                }
+//
+//        FXGL.getTaskService().runAsyncFXWithDialog(
+//                task,
+//                localize("profile.loadingProfiles")
+//        )
+    }
 
-            val task = saveLoadService.deleteProfileTask(name)
-                    .onSuccess { showProfileDialog() }
-                    .onFailure { error ->
-                        getDisplay().showErrorBox("$error") {
-                            showProfileDialog()
-                        }
-                    }
-
-            FXGL.getTaskService().runAsyncFXWithDialog(
-                    task,
-                    localize("profile.deletingProfile") + ": $name"
-            )
-        }
-
-        val task = saveLoadService.readProfileNamesTask()
-                .onSuccess { names ->
-                    profilesBox.items.addAll(names)
-
-                    if (!profilesBox.items.isEmpty()) {
-                        profilesBox.selectionModel.selectFirst()
-                    }
-
-                    getDisplay().showBox(localize("profile.selectOrCreate"), profilesBox, btnSelect, btnNew, btnDelete)
-                }
-                .onFailure { error ->
-                    log.warning("$error")
-
-                    getDisplay().showBox(localize("profile.selectOrCreate"), profilesBox, btnSelect, btnNew, btnDelete)
-                }
-
-        FXGL.getTaskService().runAsyncFXWithDialog(
-                task,
-                localize("profile.loadingProfiles")
-        )
+    private fun makeSaveFileName(rawName: String): String {
+        return rawName
     }
 }

@@ -7,7 +7,7 @@
 package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.ui.FontType.UI
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import javafx.beans.binding.StringExpression

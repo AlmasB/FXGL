@@ -9,7 +9,7 @@ package com.almasb.fxgl.app.scene
 import com.almasb.fxgl.dsl.getAppHeight
 import com.almasb.fxgl.dsl.getAppWidth
 import com.almasb.fxgl.dsl.getSettings
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
@@ -38,7 +38,7 @@ abstract class StartupScene : FXGLScene() {
         if (getSettings().isIntroEnabled) {
             controller.gotoIntro()
         } else {
-            if (getSettings().isMenuEnabled) {
+            if (getSettings().isMainMenuEnabled) {
                 controller.gotoMainMenu()
             } else {
                 controller.startNewGame()

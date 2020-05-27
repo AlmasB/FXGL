@@ -54,7 +54,6 @@ public class MassUnitsRTSSample extends GameApplication {
     @Override
     protected void initInput() {
         onBtn(MouseButton.SECONDARY, "Obstacle", () -> {
-            // TODO: move cell width height to grid and add convenience methods for below?
             var x = (int) ((getInput().getMouseXWorld()) / CELL_WIDTH);
             var y = (int) ((getInput().getMouseYWorld()) / CELL_HEIGHT);
 

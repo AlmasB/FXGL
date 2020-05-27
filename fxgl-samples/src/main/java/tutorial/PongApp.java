@@ -84,8 +84,8 @@ public class PongApp extends GameApplication {
 
     @Override
     protected void initUI() {
-        Text textScore1 = getUIFactory().newText("", Color.BLACK, 22);
-        Text textScore2 = getUIFactory().newText("", Color.BLACK, 22);
+        Text textScore1 = getUIFactoryService().newText("", Color.BLACK, 22);
+        Text textScore2 = getUIFactoryService().newText("", Color.BLACK, 22);
 
         textScore1.setTranslateX(10);
         textScore1.setTranslateY(50);

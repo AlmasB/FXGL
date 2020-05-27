@@ -13,7 +13,7 @@ import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.event.EventBusService
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import java.util.*
 
 /**
@@ -31,7 +31,8 @@ class AchievementService : EngineService() {
 
     private lateinit var eventBusService: EventBusService
 
-    private lateinit var eventBus: EventBus
+    private val eventBus: EventBus
+        get() = eventBusService.eventBus
 
     private val achievements = mutableListOf<Achievement>()
 
@@ -40,10 +41,6 @@ class AchievementService : EngineService() {
      */
     val achievementsCopy: List<Achievement>
         get() = Collections.unmodifiableList(achievements)
-
-    override fun onInit() {
-        eventBus = eventBusService.eventBus
-    }
 
     /**
      * @param name achievement name

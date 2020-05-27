@@ -8,10 +8,9 @@
 package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.achievement.AchievementService
+import com.almasb.fxgl.animation.AnimationBuilder
+import com.almasb.fxgl.app.*
 import com.almasb.fxgl.app.Engine
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.app.GameController
-import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.app.services.AssetLoaderService
 import com.almasb.fxgl.app.services.IOTaskExecutorService
 import com.almasb.fxgl.app.services.SystemBundleService
@@ -43,6 +42,7 @@ import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.profile.DataFile
 import com.almasb.fxgl.profile.SaveLoadService
+import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.time.LocalTimer
@@ -117,9 +117,11 @@ class FXGL private constructor() { companion object {
         }
 
         override fun saveGame(dataFile: DataFile) {
+            getWindowService().saveGame(dataFile)
         }
 
         override fun loadGame(dataFile: DataFile) {
+            getWindowService().loadGame(dataFile)
         }
 
         override fun exit() {
@@ -137,6 +139,8 @@ class FXGL private constructor() { companion object {
      * @return FXGL system settings
      */
     @JvmStatic fun getSettings(): ReadOnlyGameSettings = engine.settings
+
+    @JvmStatic fun isReleaseMode() = engine.settings.applicationMode == ApplicationMode.RELEASE
 
     @JvmStatic fun isBrowser() = engine.settings.isBrowser
     @JvmStatic fun isDesktop() = engine.settings.isDesktop
@@ -165,9 +169,6 @@ class FXGL private constructor() { companion object {
      * If you want to save data, use [getSaveLoadService].
      */
     @JvmStatic fun getSystemBundle() = engine.getService(SystemBundleService::class.java).bundle
-
-    @Deprecated("Use getDevService()")
-    @JvmStatic fun getDevPane(): DevPane = getDevService().devPane
 
     @JvmStatic fun getDevService() = engine.getService(DevService::class.java)
 
@@ -429,7 +430,7 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun spawnFadeIn(entityName: String, data: SpawnData, duration: Duration): Entity {
         val e = getGameWorld().create(entityName, data)
-        e.viewComponent.opacityProp.value = 0.0
+        e.viewComponent.opacityProperty.value = 0.0
 
         animationBuilder()
                 .duration(duration)
@@ -582,12 +583,12 @@ class FXGL private constructor() { companion object {
     }
 
     @JvmStatic fun addVarText(varName: String, x: Double, y: Double): Text {
-        return getUIFactory().newText(getip(varName).asString())
+        return getUIFactoryService().newText(getip(varName).asString())
                 .also { addUINode(it, x, y) }
     }
 
     @JvmStatic fun addText(message: String, x: Double, y: Double): Text {
-        return getUIFactory().newText(message)
+        return getUIFactoryService().newText(message)
                 .also { addUINode(it, x, y) }
     }
 
@@ -640,7 +641,7 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun run(action: Runnable, interval: Duration, limit: Int) = getGameTimer().runAtInterval(action, interval, limit)
 
     /* DEBUG */
-    @JvmStatic fun debug(message: String) = getDevPane().pushMessage(message)
+    @JvmStatic fun debug(message: String) = getDevService().pushDebugMessage(message)
 
 /* LOCALIZATION */
 
@@ -652,7 +653,11 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun entityBuilder() = EntityBuilder()
 
-    @JvmStatic fun animationBuilder() = AnimationBuilder()
+    @JvmStatic fun entityBuilder(data: SpawnData) = EntityBuilder(data)
+
+    @JvmStatic fun animationBuilder() = AnimationBuilder(getGameScene())
+
+    @JvmStatic fun animationBuilder(scene: Scene) = AnimationBuilder(scene)
 
     @JvmStatic fun eventBuilder() = EventBuilder()
 }

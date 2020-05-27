@@ -45,7 +45,7 @@ public class InterpolatorSample extends GameApplication {
     protected void initGame() {
         player = entityBuilder()
                 .at(200, 250)
-                .view(getUIFactory().newText("HELLO WORLD", Color.BLACK, 28.0))
+                .view(getUIFactoryService().newText("HELLO WORLD", Color.BLACK, 28.0))
                 .buildAndAttach();
     }
 

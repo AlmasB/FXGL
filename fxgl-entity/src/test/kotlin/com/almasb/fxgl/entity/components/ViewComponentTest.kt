@@ -122,8 +122,20 @@ class ViewComponentTest {
         view.opacity = 0.35
 
         assertThat(view.opacity, `is`(0.35))
-        assertThat(view.devRoot.opacity, `is`(1.0))
         assertThat(view.parent.opacity, `is`(1.0))
+    }
+
+    @Test
+    fun `Visibility is set to view and the parent`() {
+        assertTrue(view.isVisible)
+        assertTrue(view.parent.isVisible)
+        assertTrue(view.visibleProperty.value)
+
+        view.isVisible = false
+
+        assertFalse(view.isVisible)
+        assertFalse(view.parent.isVisible)
+        assertFalse(view.visibleProperty.value)
     }
 
     @Test

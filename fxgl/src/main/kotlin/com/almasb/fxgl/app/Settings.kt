@@ -17,6 +17,7 @@ import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.serialization.SerializableType
 import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.cutscene.CutsceneService
+import com.almasb.fxgl.dev.DevService
 import com.almasb.fxgl.event.EventBusService
 import com.almasb.fxgl.gameplay.GameDifficulty
 import com.almasb.fxgl.io.FileSystemService
@@ -136,9 +137,14 @@ class GameSettings(
         var isIntroEnabled: Boolean = false,
 
         /**
-         * Setting to true enables main and game menu.
+         * Setting to true enables the main menu.
          */
-        var isMenuEnabled: Boolean = false,
+        var isMainMenuEnabled: Boolean = false,
+
+        /**
+         * Setting to true enables the game menu.
+         */
+        var isGameMenuEnabled: Boolean = true,
 
         var isUserProfileEnabled: Boolean = false,
 
@@ -151,6 +157,8 @@ class GameSettings(
         var isProfilingEnabled: Boolean = false,
 
         var isDeveloperMenuEnabled: Boolean = false,
+
+        var isClickFeedbackEnabled: Boolean = false,
 
         /**
          * Setting to false will disable asking for confirmation on exit.
@@ -245,7 +253,8 @@ class GameSettings(
                 CutsceneService::class.java,
                 MiniGameService::class.java,
                 NetService::class.java,
-                UpdaterService::class.java
+                UpdaterService::class.java,
+                DevService::class.java
         ),
 
         /**
@@ -295,10 +304,12 @@ class GameSettings(
                 isManualResizeEnabled,
                 isPreserveResizeRatio,
                 isIntroEnabled,
-                isMenuEnabled,
+                isMainMenuEnabled,
+                isGameMenuEnabled,
                 isUserProfileEnabled,
                 isProfilingEnabled,
                 isDeveloperMenuEnabled,
+                isClickFeedbackEnabled,
                 isCloseConfirmation,
                 isSingleStep,
                 applicationMode,
@@ -389,9 +400,14 @@ class ReadOnlyGameSettings internal constructor(
         val isIntroEnabled: Boolean,
 
         /**
-         * Setting to true enables main and game menu.
+         * Setting to true enables the main menu.
          */
-        val isMenuEnabled: Boolean,
+        var isMainMenuEnabled: Boolean,
+
+        /**
+         * Setting to true enables the game menu.
+         */
+        var isGameMenuEnabled: Boolean,
 
         val isUserProfileEnabled: Boolean,
 
@@ -404,6 +420,8 @@ class ReadOnlyGameSettings internal constructor(
         val isProfilingEnabled: Boolean,
 
         val isDeveloperMenuEnabled: Boolean,
+
+        val isClickFeedbackEnabled: Boolean,
 
         /**
          * Setting to false will disable asking for confirmation on exit.
@@ -570,9 +588,6 @@ class ReadOnlyGameSettings internal constructor(
 
     val profileName = SimpleStringProperty("DEFAULT")
 
-    // TODO: consistent API
-    // probably should go with get() set() and Property() as per JavaFX convention
-
     private val gameDifficultyProp = SimpleObjectProperty(GameDifficulty.MEDIUM)
 
     fun gameDifficultyProperty(): ObjectProperty<GameDifficulty> = gameDifficultyProp
@@ -639,7 +654,6 @@ class ReadOnlyGameSettings internal constructor(
                 "Height: " + height + '\n'.toString() +
                 "Fullscreen: " + isFullScreenAllowed + '\n'.toString() +
                 "Intro: " + isIntroEnabled + '\n'.toString() +
-                "Menus: " + isMenuEnabled + '\n'.toString() +
                 "Profiling: " + isProfilingEnabled + '\n'.toString() +
                 "Single step:" + isSingleStep + '\n'.toString() +
                 "App Mode: " + applicationMode + '\n'.toString() +

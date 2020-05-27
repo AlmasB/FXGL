@@ -293,16 +293,7 @@ enum class Interpolators : EasingInterpolator {
             if (ratio == 0.0 || ratio == 1.0)
                 return ratio
 
-            var result: Double
-
-            // we don't want 0.0 to be at any point except for the start
-            // which is captured by "if" above
-            // and 1.0 is exclusive in FXGLMath.random()
-            do {
-                result = FXGLMath.randomDouble()
-            } while (result == 0.0)
-
-            return result
+            return FXGLMath.randomDouble()
         }
     },
 
@@ -317,16 +308,7 @@ enum class Interpolators : EasingInterpolator {
             if (ratio == 0.0 || ratio == 1.0)
                 return ratio
 
-            var result: Double
-
-            // we don't want 0.0 to be at any point except for the start
-            // which is captured by "if" above
-            // and 1.0 is exclusive in FXGLMath.noise1D
-            do {
-                result = FXGLMath.noise1D(ratio * 2)
-            } while (result == 0.0)
-
-            return result
+            return FXGLMath.noise1D(ratio * 2)
         }
     }
 }

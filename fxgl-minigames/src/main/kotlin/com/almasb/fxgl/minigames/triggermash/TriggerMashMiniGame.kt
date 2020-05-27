@@ -7,7 +7,7 @@
 package com.almasb.fxgl.minigames.triggermash
 
 import com.almasb.fxgl.animation.Animation
-import com.almasb.fxgl.animation.AnimationDSL
+import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.KeyTrigger
 import com.almasb.fxgl.input.UserAction
@@ -55,7 +55,7 @@ class TriggerMashView(trigger: KeyTrigger, miniGame: TriggerMashMiniGame = Trigg
         val letterCircle = Circle(35.0, null)
         letterCircle.stroke = Color.color(0.76, 0.9, 0.0, 0.76)
 
-        animation = AnimationDSL().duration(Duration.seconds(0.09))
+        animation = AnimationBuilder().duration(Duration.seconds(0.09))
                 .autoReverse(true)
                 .repeat(2)
                 .scale(letter, letterCircle)
@@ -117,7 +117,7 @@ class CircleTriggerMashView(trigger: KeyTrigger, miniGame: TriggerMashMiniGame =
         val letterCircle = Circle(100.0, 100.0, 20.0, null)
         letterCircle.stroke = Color.color(0.76, 0.9, 0.0, 0.76)
 
-        animation = AnimationDSL().duration(Duration.seconds(0.09))
+        animation = AnimationBuilder().duration(Duration.seconds(0.09))
                 .autoReverse(true)
                 .repeat(2)
                 .scale(letter, letterCircle)

@@ -9,7 +9,7 @@ package com.almasb.fxgl.io
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.concurrent.IOTask
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import com.gluonhq.attach.storage.StorageService
 import java.io.File
 import java.io.Serializable

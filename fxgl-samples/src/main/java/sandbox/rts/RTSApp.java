@@ -24,6 +24,7 @@ public class RTSApp extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.setTitle("FXGL RTS Game");
+        settings.setClickFeedbackEnabled(true);
     }
 
     @Override

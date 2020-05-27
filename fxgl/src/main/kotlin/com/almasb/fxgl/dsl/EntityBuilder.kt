@@ -19,6 +19,7 @@ import javafx.event.EventHandler
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
+import java.util.function.Consumer
 
 /**
  *
@@ -27,6 +28,13 @@ import javafx.scene.input.MouseEvent
 class EntityBuilder {
     private val entity = Entity()
 
+    constructor() {}
+
+    constructor(data: SpawnData) {
+        from(data)
+    }
+
+    @Deprecated("Use FXGL.entityBuilder(data)")
     fun from(data: SpawnData) = this.also {
         at(data.x, data.y)
 
@@ -130,12 +138,20 @@ class EntityBuilder {
         entity.transformComponent.z = z
     }
 
-    fun onClick(action: () -> Unit) = this.also {
-        onClick(Runnable(action))
+    fun onClick(action: (Entity) -> Unit) = this.also {
+        onClick(Consumer(action))
     }
 
-    fun onClick(action: Runnable) = this.also {
-        entity.viewComponent.addEventHandler(MouseEvent.MOUSE_CLICKED, EventHandler { action.run() })
+    fun onClick(action: Consumer<Entity>) = this.also {
+        entity.viewComponent.addEventHandler(MouseEvent.MOUSE_CLICKED, EventHandler { action.accept(entity) })
+    }
+
+    fun onActive(action: (Entity) -> Unit) = this.also {
+        onActive(Consumer(action))
+    }
+
+    fun onActive(action: Consumer<Entity>) = this.also {
+        entity.setOnActive { action.accept(entity) }
     }
 
     fun collidable() = with(CollidableComponent(true))

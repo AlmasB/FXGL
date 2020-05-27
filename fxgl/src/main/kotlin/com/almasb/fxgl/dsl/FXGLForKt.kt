@@ -6,12 +6,14 @@
 
 package com.almasb.fxgl.dsl
 
+import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.event.Subscriber
+import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.texture.Texture
 import javafx.beans.property.*
 import javafx.event.Event
@@ -42,11 +44,13 @@ fun <T : GameApplication> getAppCast() = FXGL.getAppCast<T>()
 
 fun getSettings() = FXGL.getSettings()
 
+fun isReleaseMode() = FXGL.isReleaseMode()
+
 fun getAppWidth() = FXGL.getAppWidth()
 
 fun getAppHeight() = FXGL.getAppHeight()
 
-fun getUIFactory() = FXGL.getUIFactory()
+fun getUIFactoryService() = FXGL.getUIFactoryService()
 
 fun getAssetLoader() = FXGL.getAssetLoader()
 
@@ -216,6 +220,10 @@ fun localizedStringProperty(key: String) = FXGL.localizedStringProperty(key)
 
 fun entityBuilder() = EntityBuilder()
 
-fun animationBuilder() = AnimationBuilder()
+fun entityBuilder(data: SpawnData) = EntityBuilder(data)
+
+fun animationBuilder() = AnimationBuilder(getGameScene())
+
+fun animationBuilder(scene: Scene) = AnimationBuilder(scene)
 
 fun eventBuilder() = EventBuilder()

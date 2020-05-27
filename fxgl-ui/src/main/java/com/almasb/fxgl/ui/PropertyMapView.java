@@ -36,7 +36,6 @@ public class PropertyMapView extends Parent {
     private static final Map<Class<?>, PropertyViewChangeListener<?, ?>> converters = new HashMap<>();
 
     static {
-        // TODO: abstract superclass to remove duplicate code?
         PropertyViewChangeListener<Vec2, HBox> l = new PropertyViewChangeListener<>() {
 
             private boolean ignoreChangeView = false;
@@ -130,8 +129,6 @@ public class PropertyMapView extends Parent {
     }
 
     /**
-     * // TODO: cleanup using general converters
-     *
      * Makes a check box when it is a boolean value and text field when it is string etc.
      */
     @SuppressWarnings("unchecked")

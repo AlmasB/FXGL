@@ -6,13 +6,14 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.scene.ErrorSubScene
 import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.core.fsm.StateMachine
 import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyBooleanProperty
@@ -215,6 +216,8 @@ internal class MainWindow(
      * @param scene the scene
      */
     fun setScene(scene: FXGLScene) {
+        popAllSubScenes()
+
         if (scene !in scenes) {
             registerScene(scene)
         }
@@ -244,18 +247,14 @@ internal class MainWindow(
     fun pushState(newScene: SubScene) {
         log.debug("Push state: $newScene")
 
-        if (newScene !in scenes) {
-            registerScene(newScene)
-        }
-
         val prevScene = stateMachine.currentState
 
         stateMachine.changeState(newScene)
 
         prevScene.input.clearAll()
 
-        // push view
-        currentFXGLScene.root.children.add(newScene.root)
+        // push view to content root, which is correctly offset, scaled etc.
+        currentFXGLScene.contentRoot.children.add(newScene.root)
 
         currentSceneProperty.value = stateMachine.currentState
 
@@ -275,11 +274,17 @@ internal class MainWindow(
         prevScene.input.clearAll()
 
         // pop view
-        currentFXGLScene.root.children.remove(prevScene.root)
+        currentFXGLScene.contentRoot.children.remove(prevScene.root)
 
         currentSceneProperty.value = stateMachine.currentState
 
         log.debug("${stateMachine.currentState} <- $prevScene")
+    }
+
+    fun popAllSubScenes() {
+        while (currentScene !== currentFXGLScene) {
+            popState()
+        }
     }
 
     private var windowBorderWidth = 0.0
@@ -367,4 +372,8 @@ internal class MainWindow(
     }
 
     fun takeScreenshot(): Image = fxScene.snapshot(null)
+
+    fun showFatalError(error: Throwable, action: Runnable) {
+        pushState(ErrorSubScene(error, action))
+    }
 }

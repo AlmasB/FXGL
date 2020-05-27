@@ -377,7 +377,7 @@ class Viewport
             x = offsetX + boundX!!.doubleValue()
             y = offsetY + boundY!!.doubleValue()
 
-            // TODO: this should be easier to implement if we keep origin (x, y) data
+            // this should be easier to implement if we keep origin (x, y) data
             // without any transforms, so at any time we know where the origin is
             if (isFloating) {
                 x += (noise1D(t) - 0.5) * 50

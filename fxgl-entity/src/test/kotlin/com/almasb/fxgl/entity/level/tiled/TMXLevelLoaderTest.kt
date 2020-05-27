@@ -79,6 +79,23 @@ class TMXLevelLoaderTest {
         intArrayOf(14, 15, 17, 18, 28, 31, 33).forEach { id ->
             assertThat(objects.find { it.getInt("id") == id }!!.getComponent(IDComponent::class.java).id, `is`(id))
         }
+
+        assertThat(level.properties.keys().size, `is`(1))
+        assertThat(level.properties.getInt("testInt"), `is`(33))
+    }
+
+    @Test
+    fun `Load tmx level with incorrect image paths`() {
+        val world = GameWorld()
+        world.addEntityFactory(MyEntityFactory())
+
+        val level = TMXLevelLoader().load(javaClass.getResource("map_incorrect_image_path.tmx"), world)
+
+        assertThat(level.width, `is`(16*10))
+        assertThat(level.height, `is`(16*10))
+
+        // 1 bg + 7 entities
+        assertThat(level.entities.size, `is`(1 + 7))
     }
 
     @ParameterizedTest

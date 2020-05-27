@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.animation.AnimationTimer
 
 /**

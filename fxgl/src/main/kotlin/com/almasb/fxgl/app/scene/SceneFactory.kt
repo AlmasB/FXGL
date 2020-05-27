@@ -48,11 +48,4 @@ open class SceneFactory {
      * @return game menu
      */
     open fun newGameMenu(): FXGLMenu = FXGLDefaultMenu(MenuType.GAME_MENU)
-
-    /**
-     * Called to construct pause menu.
-     *
-     * @return pause menu
-     */
-    open fun newPauseMenu(): PauseMenu = FXGLPauseMenu()
 }

@@ -8,15 +8,18 @@ package com.almasb.fxgl.input.virtual
 
 import com.almasb.fxgl.input.Input
 import javafx.beans.binding.Bindings
+import javafx.beans.property.*
 import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.*
 import javafx.scene.text.Font
 import javafx.scene.text.Text
+import java.util.concurrent.Callable
 
 private const val ARROW_CIRCLE_SIZE = 25.0*2;
 
@@ -119,8 +122,84 @@ abstract class VirtualMenuKey(private val input: Input, private val key: KeyCode
     abstract fun createView(): Node
 }
 
+abstract class VirtualJoystick(private val input: Input) : Parent() {
+
+    /**
+     * A point in local coordinates that defines the center of this joystick.
+     * It is used for computing the vector.
+     */
+    abstract val center: Point2D
+
+    private val vectorProp = ReadOnlyObjectWrapper(Point2D.ZERO)
+
+    init {
+        val vectorObservable = Bindings.createObjectBinding(Callable {
+
+            input.mousePositionUI.subtract(center.add(translateX, translateY)).normalize()
+        }, input.mouseXUIProperty(), input.mouseYUIProperty())
+
+        vectorProp.bind(
+                Bindings.`when`(pressedProperty())
+                        .then(vectorObservable)
+                        .otherwise(Point2D.ZERO)
+        )
+    }
+
+    /**
+     * Vector from the center point to user pointer.
+     * Returns (0,0) if the user pointer is outside the joystick.
+     */
+    val vector: Point2D
+        get() = vectorProp.value
+
+    fun vectorProperty(): ReadOnlyObjectProperty<Point2D> = vectorProp.readOnlyProperty
+}
+
 /**
-    *Pause Button
+ * Default virtual joystick.
+ */
+class FXGLVirtualJoystick(input: Input) : VirtualJoystick(input) {
+
+    override val center: Point2D
+        get() = Point2D(100.0, 100.0)
+
+    init {
+        val outerCircle = Circle(100.0, 100.0, 100.0, Color.color(0.5, 0.5, 0.5, 0.3))
+        outerCircle.stroke = Color.GRAY
+        outerCircle.strokeWidth = 4.0
+
+        val innerCircle = Circle(100.0, 100.0, 30.0, Color.color(0.3, 0.3, 0.3, 0.85))
+
+        val innerCirclePositionObservable = Bindings.createObjectBinding(Callable {
+            val vector = input.mousePositionUI.subtract(center.add(translateX, translateY))
+
+            if (vector.magnitude() > 100) {
+                vector.normalize().multiply(100.0).add(center)
+            } else {
+                vector.add(center)
+            }
+        }, input.mouseXUIProperty(), input.mouseYUIProperty())
+
+        innerCircle.centerXProperty().bind(
+                Bindings.`when`(pressedProperty())
+                        .then(Bindings.createDoubleBinding(Callable { innerCirclePositionObservable.value.x }, innerCirclePositionObservable))
+                        .otherwise(100.0)
+        )
+        innerCircle.centerYProperty().bind(
+                Bindings.`when`(pressedProperty())
+                        .then(Bindings.createDoubleBinding(Callable { innerCirclePositionObservable.value.y }, innerCirclePositionObservable))
+                        .otherwise(100.0)
+        )
+
+        val line1 = Line(0.0, 100.0, 200.0, 100.0)
+        val line2 = Line(100.0, 0.0, 100.0, 200.0)
+
+        children.addAll(outerCircle, line1, line2, innerCircle)
+    }
+}
+
+/**
+ * Default virtual pause button.
  */
 class FXGLVirtualMenuKey(input: Input, key: KeyCode, isMenuEnabled: Boolean) : VirtualMenuKey(input, key, isMenuEnabled) {
 

@@ -10,19 +10,15 @@ import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.test.InjectInTest
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.lang.invoke.MethodHandles
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.time.LocalDateTime
 
 /**
  *
@@ -57,64 +53,61 @@ class SaveLoadServiceTest {
     }
 
     @Test
-    fun `Test new - save - load`() {
+    fun `Test write - read`() {
         // we do a full clean before so it's important that
         // we keep the order, i.e. we save first so we have something to load from
-        `Save game data`()
-        `Load game data`()
+        `Write game data`()
+        `Read game data`()
         `Read file names`()
         `Delete game data`()
-        `Delete profile`()
+        //`Delete profile`()
     }
 
-    fun `Save game data`() {
+    fun `Write game data`() {
         val bundle1 = Bundle("Hello")
         bundle1.put("id", 9)
 
         val data1 = DataFile()
         data1.putBundle(bundle1)
 
-        val save1 = SaveFile("TestSave", "TestProfileName", "sav", LocalDateTime.now(), data1)
+        saveLoadService.writeTask("profiles/TestSave.sav", data1).run()
 
-        saveLoadService.writeSaveFileTask(save1).run()
-
-        assertTrue(saveLoadService.saveFileExists(SaveFile("TestSave", "TestProfileName", "sav")))
-        assertFalse(saveLoadService.saveFileExists(SaveFile("TestSave2", "TestProfileName", "sav")))
-        assertTrue(Files.exists(Paths.get("profiles/TestProfileName/TestSave.sav")), "Save file was not created")
+        assertTrue(saveLoadService.saveFileExists("profiles/TestSave.sav"))
     }
 
-    fun `Load game data`() {
-        val saveFile = saveLoadService.readSaveFileTask(SaveFile("TestSave", "TestProfileName", "sav")).run()
+    fun `Read game data`() {
+        val saveFile = saveLoadService.readTask("profiles/TestSave.sav").run()
 
-        assertThat(saveFile, `is`(notNullValue()))
+        assertNotNull(saveFile)
 
         assertThat(saveFile.data.getBundle("Hello").get("id"), `is`(9))
     }
 
     fun `Read file names`() {
-        val profileNames = saveLoadService.readProfileNamesTask().run()
+        saveLoadService.writeTask("profiles/TestSave2.sav", DataFile()).run()
 
-        assertThat(profileNames, Matchers.contains("TestProfileName"))
+        assertTrue(saveLoadService.saveFileExists("profiles/TestSave2.sav"))
 
-        val saveFiles = saveLoadService.readSaveFilesTask("TestProfileName", "sav").run()
+        val saveFiles = saveLoadService.readSaveFilesTask("profiles", "sav").run()
 
-        assertThat(saveFiles.size, `is`(1))
-        assertThat(saveFiles[0].name, `is`("TestSave"))
+        assertThat(saveFiles.size, `is`(2))
+        assertThat(saveFiles[0].name, `is`("profiles/TestSave.sav"))
+        assertThat(saveFiles[1].name, `is`("profiles/TestSave2.sav"))
     }
 
     fun `Delete game data`() {
-        assertTrue(saveLoadService.saveFileExists(SaveFile("TestSave", "TestProfileName", "sav")))
+        assertTrue(saveLoadService.saveFileExists("profiles/TestSave.sav"))
 
-        saveLoadService.deleteSaveFileTask(SaveFile("TestSave", "TestProfileName", "sav")).run()
+        saveLoadService.deleteSaveFileTask("profiles/TestSave.sav").run()
 
-        assertFalse(saveLoadService.saveFileExists(SaveFile("TestSave", "TestProfileName", "sav")))
+        assertFalse(saveLoadService.saveFileExists("profiles/TestSave.sav"))
     }
-
-    fun `Delete profile`() {
-        assertTrue(Files.exists(Paths.get("profiles/TestProfileName")))
-
-        saveLoadService.deleteProfileTask("TestProfileName").run()
-
-        assertFalse(Files.exists(Paths.get("profiles/TestProfileName")))
-    }
+//
+//    fun `Delete profile`() {
+//        assertTrue(Files.exists(Paths.get("profiles/TestProfileName")))
+//
+//        saveLoadService.deleteProfileTask("TestProfileName").run()
+//
+//        assertFalse(Files.exists(Paths.get("profiles/TestProfileName")))
+//    }
 }

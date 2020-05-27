@@ -37,7 +37,8 @@ class IOTaskExecutorService : EngineService() {
     fun <T> runAsyncFX(task: IOTask<T>) {
         val fxTask = task.toJavaFXTask()
         fxTask.setOnFailed {
-            dialogService.showErrorBox(fxTask.exception ?: RuntimeException("Unknown error"))
+            if (!task.hasFailAction())
+                dialogService.showErrorBox(fxTask.exception ?: RuntimeException("Unknown error"))
         }
 
         executor.execute(fxTask)
@@ -57,7 +58,9 @@ class IOTaskExecutorService : EngineService() {
         }
         fxTask.setOnFailed {
             dialog.close()
-            dialogService.showErrorBox(fxTask.exception ?: RuntimeException("Unknown error"))
+
+            if (!task.hasFailAction())
+                dialogService.showErrorBox(fxTask.exception ?: RuntimeException("Unknown error"))
         }
 
         executor.execute(fxTask)

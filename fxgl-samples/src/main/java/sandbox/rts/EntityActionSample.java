@@ -83,7 +83,7 @@ public class EntityActionSample extends GameApplication {
                 .at(400, 20)
                 .viewWithBBox(texture("player2rot.png").multiplyColor(Color.RED))
                 .with(new ProjectileComponent(new Point2D(0, 1), 200))
-                .onClick(() -> {
+                .onClick(e -> {
                     entity.getComponent(ActionComponent.class)
                             .addAction(new FollowAction(mover));
                 })
@@ -93,7 +93,7 @@ public class EntityActionSample extends GameApplication {
                 .at(500, 200)
                 .viewWithBBox(texture("player2rot.png").multiplyColor(Color.BLUE))
                 .with(new ProjectileComponent(new Point2D(1, 0), 250))
-                .onClick(() -> {
+                .onClick(e -> {
                     entity.getComponent(ActionComponent.class)
                             .addAction(new FollowAction(mover2));
                 })
@@ -111,7 +111,7 @@ public class EntityActionSample extends GameApplication {
                 .at(700, 400)
                 .viewWithBBox(new Rectangle(40, 40, Color.GREEN))
                 .with(new FollowComponent(null, 100, 30, 50))
-                .onClick(() -> {
+                .onClick(e -> {
                     entity.getComponent(ActionComponent.class)
                             .addAction(new RecruitAction(unit));
                 })

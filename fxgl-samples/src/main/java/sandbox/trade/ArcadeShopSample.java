@@ -65,7 +65,7 @@ public class ArcadeShopSample extends GameApplication {
 
     @Override
     protected void initUI() {
-        Text text = getUIFactory().newText("", Color.BLACK, 16);
+        Text text = getUIFactoryService().newText("", Color.BLACK, 16);
         text.textProperty().bind(getGameState().intProperty("bonus.atk.value").asString("ATK: %d ")
                 .concat(getGameState().intProperty("bonus.def.value").asString("DEF: %d "))
                 .concat(getGameState().intProperty("bonus.hp.value").asString("HP: %d")));

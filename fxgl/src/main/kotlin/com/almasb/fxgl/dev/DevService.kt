@@ -11,21 +11,22 @@ import com.almasb.fxgl.app.services.WindowService
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.dsl.isReleaseMode
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
 import com.almasb.fxgl.physics.BoxShapeData
 import com.almasb.fxgl.physics.ChainShapeData
 import com.almasb.fxgl.physics.CircleShapeData
 import com.almasb.fxgl.physics.PolygonShapeData
-import com.almasb.sslogger.Logger
-import com.almasb.sslogger.LoggerLevel
-import com.almasb.sslogger.LoggerOutput
+import com.almasb.fxgl.logging.Logger
+import com.almasb.fxgl.logging.LoggerLevel
+import com.almasb.fxgl.logging.LoggerOutput
 import javafx.scene.Group
 import javafx.scene.shape.*
 
 /**
- * TODO: all dev calls should point to dev service
- * TODO: ensure that calls are still valid and noop when app mode is release
+ * Provides developer options when the application is in DEVELOPER or DEBUG modes.
+ * In RELEASE mode all public functions are NO-OP and return immediately.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -33,12 +34,15 @@ class DevService : EngineService() {
 
     private lateinit var windowService: WindowService
 
-    lateinit var devPane: DevPane
+    private lateinit var devPane: DevPane
 
     private val console by lazy { Console() }
 
     val isConsoleOpen: Boolean
         get() = console.isOpen()
+
+    val isDevPaneOpen: Boolean
+        get() = devPane.isOpen
 
     private val consoleOutput = object : LoggerOutput {
         override fun append(message: String) {
@@ -47,21 +51,56 @@ class DevService : EngineService() {
 
         override fun close() { }
     }
+    
+    private val isDevEnabled: Boolean
+        get() = !isReleaseMode() && FXGL.getSettings().isDeveloperMenuEnabled
 
     override fun onInit() {
-        // TODO: reconsider ctor params for dev pane
+        if (!isDevEnabled)
+            return
+
         devPane = DevPane(windowService, FXGL.getSettings())
     }
 
     fun openConsole() {
+        if (!isDevEnabled)
+            return
+
         console.open()
     }
 
     fun closeConsole() {
+        if (!isDevEnabled)
+            return
+
         console.close()
     }
 
+    fun openDevPane() {
+        if (!isDevEnabled)
+            return
+
+        devPane.open()
+    }
+
+    fun closeDevPane() {
+        if (!isDevEnabled)
+            return
+
+        devPane.close()
+    }
+
+    fun pushDebugMessage(message: String) {
+        if (!isDevEnabled)
+            return
+
+        devPane.pushMessage(message)
+    }
+
     override fun onMainLoopStarting() {
+        if (!isDevEnabled)
+            return
+
         Logger.addOutput(consoleOutput, LoggerLevel.DEBUG)
 
         FXGL.getSettings().devShowBBox.addListener { _, _, isSelected ->
@@ -148,6 +187,9 @@ class DevService : EngineService() {
     }
 
     override fun onGameReady(vars: PropertyMap) {
+        if (!isDevEnabled)
+            return
+
         devPane.onGameReady(vars)
     }
 }

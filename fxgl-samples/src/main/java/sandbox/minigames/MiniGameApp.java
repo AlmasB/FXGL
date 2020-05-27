@@ -16,12 +16,11 @@ import com.almasb.fxgl.minigames.sweetspot.SweetSpotMiniGame;
 import com.almasb.fxgl.minigames.sweetspot.SweetSpotView;
 import com.almasb.fxgl.minigames.triggersequence.TriggerSequenceView;
 import com.almasb.fxgl.ui.FXGLButton;
-import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
+import static javafx.scene.input.KeyCode.*;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -49,21 +48,30 @@ public class MiniGameApp extends GameApplication {
 
     @Override
     protected void initInput() {
-        onKeyDown(KeyCode.F, "Hello", () -> {
+        onKeyDown(F, "Hello", () -> {
         });
 
-        onKeyDown(KeyCode.G, "Hello2", () -> {
+        onKeyDown(G, "Hello2", () -> {
 
             var manager = getMiniGameService();
-            manager.startCircuitBreaker(10, 10, 10, 100, Duration.seconds(1), (result) -> {
-                System.out.println(result.isSuccess() ? "SUCCESS" : "FAIL");
+
+            manager.startRandomOccurrence(0.6, result -> {
+                debugText.setText(result.isSuccess() ? "Success" : "Fail");
             });
+
+//            manager.startTriggerSequence(List.of(E, F, G, W, A, S, D, T), result -> {
+//                debugText.setText(result.isSuccess() ? "Success" : "Fail");
+//            });
+
+//            manager.startCircuitBreaker(10, 10, 10, 100, Duration.seconds(1), (result) -> {
+//                System.out.println(result.isSuccess() ? "SUCCESS" : "FAIL");
+//            });
 //            manager.startMiniGame(new CircuitBreakerView(), (result) -> {
 //                System.out.println(result.isSuccess() ? "SUCCESS" : "FAIL");
 //            });
         });
 
-        onKeyDown(KeyCode.H, "Hello3", () -> {
+        onKeyDown(H, "Hello3", () -> {
 
         });
     }
@@ -89,14 +97,14 @@ public class MiniGameApp extends GameApplication {
 
 
 
-        debugText = getUIFactory().newText("", Color.BLACK, 36.0);
-        debugText2 = getUIFactory().newText("", Color.BLACK, 36.0);
+        debugText = getUIFactoryService().newText("", Color.BLACK, 36.0);
+        debugText2 = getUIFactoryService().newText("", Color.BLACK, 36.0);
 
-        addUINode(debugText2, 0, 50);
+        //addUINode(debugText2, 0, 50);
 
         getGameScene().setBackgroundRepeat("bg_10.png");
 
-        addUINode(getUIFactory().newText("Mini-games dev area", Color.BLACK, 48.0), 100, 100);
+        addUINode(getUIFactoryService().newText("Mini-games dev area", Color.BLACK, 48.0), 100, 100);
 
         var btn = new FXGLButton("Trigger Sequence");
         btn.setOnAction(e -> {
@@ -111,18 +119,18 @@ public class MiniGameApp extends GameApplication {
         });
 
         addUINode(debugText, 600, 300);
-        addUINode(btn, 150, 150);
-        addUINode(new FXGLButton("Lockpicking"), 150, 200);
+        //addUINode(btn, 150, 150);
+        //addUINode(new FXGLButton("Lockpicking"), 150, 200);
 
         var btnMash = new FXGLButton("Trigger Mash");
 
         btnMash.setOnAction(e -> {
-            getMiniGameService().startTriggerMash(new KeyTrigger(KeyCode.J), (result) -> {
+            getMiniGameService().startTriggerMash(new KeyTrigger(J), (result) -> {
                 debugText.setText(result.isSuccess() ? "Success" : "Fail");
             });
         });
 
-        addUINode(btnMash, 150, 400);
+        //addUINode(btnMash, 150, 400);
 
         var btnCheck = new FXGLButton("Skill Check");
 
@@ -142,7 +150,7 @@ public class MiniGameApp extends GameApplication {
 //            });
         });
 
-        addUINode(btnCheck, 150, 250);
+        //addUINode(btnCheck, 150, 250);
 
         //addUINode(new Rectangle(2, 2), getAppWidth() / 2 - 1, getAppHeight() / 2 - 1);
     }

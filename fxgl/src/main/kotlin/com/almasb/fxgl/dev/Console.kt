@@ -63,7 +63,7 @@ class Console : Pane() {
             translateY = 50.0
             prefWidth = FXGL.getAppWidth() - 50.0 - 50.0
             prefHeight = FXGL.getAppHeight() - 100.0 - 100.0
-            font = FXGL.getUIFactory().newFont(FontType.MONO, 14.0)
+            font = FXGL.getUIFactoryService().newFont(FontType.MONO, 14.0)
             isEditable = false
             isFocusTraversable = false
 

@@ -24,7 +24,7 @@ class ArcadeShopState : SubScene() {
     private val items = FXCollections.observableArrayList<ArcadeShopItem>()
 
     init {
-        val listView = FXGL.getUIFactory().newListView<ArcadeShopItem>(items)
+        val listView = FXGL.getUIFactoryService().newListView<ArcadeShopItem>(items)
         listView.cellFactory = Callback {
 
             val cell = object : ListCell<ArcadeShopItem>() {

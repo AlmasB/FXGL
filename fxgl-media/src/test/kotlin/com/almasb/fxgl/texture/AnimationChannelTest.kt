@@ -10,7 +10,9 @@ import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.hasItems
 import org.junit.jupiter.api.Test
 
@@ -32,11 +34,9 @@ class AnimationChannelTest {
         assertThat(channel.frameDuration, `is`(0.1))
         assertThat(channel.getFrameWidth(0), `is`(32))
         assertThat(channel.getFrameHeight(0), `is`(32))
-        //assertThat(channel.framesPerRow, `is`(10))
         assertThat(channel.image, `is`(image))
 
-        assertThat(channel.sequence.size, `is`(10))
-        assertThat(channel.sequence, hasItems(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
+        assertThat(channel.sequence, contains(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
     }
 
     @Test
@@ -46,10 +46,39 @@ class AnimationChannelTest {
         assertThat(channel.frameDuration, `is`(1.0))
         assertThat(channel.getFrameWidth(0), `is`(32))
         assertThat(channel.getFrameHeight(0), `is`(32))
-        //assertThat(channel.framesPerRow, `is`(10))
         assertThat(channel.image, `is`(image))
 
-        assertThat(channel.sequence.size, `is`(3))
-        assertThat(channel.sequence, hasItems(10, 11, 12))
+        assertThat(channel.sequence, contains(10, 11, 12))
+    }
+
+    @Test
+    fun `Channel 3`() {
+        val channel = AnimationChannel(image, Duration.seconds(1.0), 10, listOf(
+                AnimationChannelData(0, 15, 10, 10),
+                AnimationChannelData(16, 19, 40, 40)
+        ))
+
+        assertThat(channel.frameDuration, `is`(0.05))
+        assertThat(channel.getFrameWidth(0), `is`(10))
+        assertThat(channel.getFrameHeight(0), `is`(10))
+        assertThat(channel.getFrameWidth(16), `is`(40))
+        assertThat(channel.getFrameHeight(16), `is`(40))
+        assertThat(channel.image, `is`(image))
+
+        assertThat(channel.sequence, contains(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19))
+    }
+
+    @Test
+    fun `Channel 4`() {
+        val channel = AnimationChannel(listOf(image, image), Duration.seconds(2.0), 2)
+
+        assertThat(channel.frameDuration, `is`(1.0))
+        assertThat(channel.getFrameWidth(0), `is`(320))
+        assertThat(channel.getFrameHeight(0), `is`(320))
+        assertThat(channel.getFrameWidth(1), `is`(320))
+        assertThat(channel.getFrameHeight(1), `is`(320))
+        assertThat(channel.image, `is`(not(image)))
+
+        assertThat(channel.sequence, contains(0, 1))
     }
 }

@@ -36,3 +36,6 @@ testprofiles/
 
 # SpaceInvaders #
 hiscore.dat
+
+# Common save file ext #
+*.sav

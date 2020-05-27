@@ -30,7 +30,6 @@ class FXGLTextFlow : TextFlow() {
     }
 
     fun append(message: String, color: Color, fontSize: Double): FXGLTextFlow {
-        // TODO:
         val text = Text(message)
         //val text = FXGLUIConfig.getUIFactory().newText(message, color, fontSize)
         return append(text)

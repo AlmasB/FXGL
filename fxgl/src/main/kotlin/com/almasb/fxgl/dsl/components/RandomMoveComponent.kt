@@ -27,8 +27,8 @@ class RandomMoveComponent
 
     private val angleAdjustRate = random(0.0, 0.5)
 
-    private val velocity = Vec2()
-    private var directionAngle = toDegrees(random(-1, 1) * PI2)
+    val velocity = Vec2()
+    var directionAngle = toDegrees(random(-1, 1) * PI2)
 
     private val rotationSpeed = random(-100, 100)
 

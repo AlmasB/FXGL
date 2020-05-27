@@ -10,7 +10,7 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.io.FileExtension
 import com.almasb.fxgl.io.FileSystemService
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import java.io.FileNotFoundException
 import java.util.*
 
@@ -18,10 +18,9 @@ class SaveLoadService : EngineService() {
 
     private val log = Logger.get(javaClass)
 
-    private lateinit var fs: FileSystemService
-
-    // TODO: this should be read from settings
     private val PROFILES_DIR = "profiles/"
+
+    private lateinit var fs: FileSystemService
 
     private val saveLoadHandlers = arrayListOf<SaveLoadHandler>()
 
@@ -33,92 +32,112 @@ class SaveLoadService : EngineService() {
         saveLoadHandlers -= saveLoadHandler
     }
 
+    /**
+     * Ask all handlers to save their data to given [dataFile].
+     * Note: this doesn't perform any IO operations.
+     */
     fun save(dataFile: DataFile) {
         saveLoadHandlers.forEach { it.onSave(dataFile) }
     }
 
+    /**
+     * Ask all handlers to load their data from given [dataFile].
+     * Note: this doesn't perform any IO operations.
+     */
     fun load(dataFile: DataFile) {
         saveLoadHandlers.forEach { it.onLoad(dataFile) }
     }
 
-    fun saveFileExists(saveFile: SaveFile): Boolean {
-        log.debug("Checking if save file exists: $saveFile")
+    fun saveFileExists(saveFileName: String): Boolean {
+        log.debug("Checking if save file exists: $saveFileName")
 
-        return fs.exists(PROFILES_DIR + saveFile.relativePathName)
+        return fs.exists(saveFileName)
     }
-
-    // TODO: API rename for consistency
 
     /**
-     * Save serializable data onto a disk file system under saves directory,
-     * which is created if necessary in the directory where the game is start from.
-     *
-     *
+     * Calls [save] first, then writes the resulting data file to file system.
      * All extra directories will also be created if necessary.
-     *
-     * @param dataFile data file
-     * @param saveFile save file
-     * @return saving task
      */
-    fun writeSaveFileTask(saveFile: SaveFile): IOTask<Void> {
-        if (!fs.exists(PROFILES_DIR)) {
-            createProfilesDirTask().run()
-        }
+    fun saveAndWriteTask(saveFileName: String): IOTask<Void> {
+        return IOTask.of {
+            val dataFile = DataFile()
 
-        log.debug("Saving data: ${saveFile.name}")
+            save(dataFile)
 
-        return fs.writeDataTask(saveFile, PROFILES_DIR + saveFile.relativePathName)
+            dataFile
+        }.then { writeTask(saveFileName, it) }
     }
 
-    private fun createProfilesDirTask(): IOTask<*> {
-        log.debug("Creating profiles dir")
+    fun writeTask(saveFileName: String, dataFile: DataFile): IOTask<Void> {
+        val saveFile = SaveFile(saveFileName, data = dataFile)
 
-        return fs.createDirectoryTask(PROFILES_DIR)
-                .then { fs.writeDataTask(Collections.singletonList("This directory contains user profiles."), PROFILES_DIR + "Readme.txt") }
-                .onFailure {
-                    log.warning("Failed to create profiles dir: $it")
-                    Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), it)
+        log.debug("writeTask: ${saveFile.name}")
+
+        return fs.writeDataTask(saveFile, saveFile.name)
+    }
+
+    /**
+     * Reads serializable data from external file on disk file system.
+     * Then calls [load].
+     */
+    fun readAndLoadTask(saveFileName: String): IOTask<Void> {
+        log.debug("readAndLoadTask: $saveFileName")
+
+        return readTask(saveFileName)
+                .then { saveFile ->
+                    IOTask.ofVoid {
+                        load(saveFile.data)
+                    }
                 }
     }
 
     /**
-     * Load serializable data from external
-     * file on disk file system from saves directory which is
-     * in the directory where the game is start from.
-     *
-     * @param saveFile save file to load
-     * @return saving task
+     * Reads serializable data from external file on disk file system.
      */
-    fun readSaveFileTask(saveFile: SaveFile): IOTask<SaveFile> {
-        log.debug("Loading data: ${saveFile.name}")
-        return fs.readDataTask(PROFILES_DIR + saveFile.relativePathName)
+    fun readTask(saveFileName: String): IOTask<SaveFile> {
+        return fs.readDataTask<SaveFile>(saveFileName)
     }
 
     /**
-     * @param saveFile save file to delete
-     * @return saving task
+     * @param saveFileName save file to delete
      */
-    fun deleteSaveFileTask(saveFile: SaveFile): IOTask<Void> {
-        log.debug("Deleting save file: ${saveFile.name}")
+    fun deleteSaveFileTask(saveFileName: String): IOTask<Void> {
+        log.debug("Deleting save file: $saveFileName")
 
-        return fs.deleteFileTask(PROFILES_DIR + saveFile.relativePathName)
+        return fs.deleteFileTask(saveFileName)
     }
 
+//    /**
+//     * Loads last modified save file from saves directory.
+//     */
+//    fun loadLastModifiedSaveFileTask(profileName: String, saveFileExt: String): IOTask<SaveFile> {
+//        log.debug("Loading last modified save file")
+//
+//        return readSaveFilesTask(profileName, saveFileExt).then { files ->
+//            IOTask.of("findLastSave") {
+//                if (files.isEmpty()) {
+//                    throw FileNotFoundException("No save files found")
+//                }
+//
+//                Collections.sort(files, SaveFile.RECENT_FIRST)
+//                files[0]
+//            }
+//        }
+//    }
+//
     /**
-     * Loads save files with save file extension from SAVE_DIR.
-     *
-     * @return saving task
+     * Reads save files with save file extension from given directory [dirName].
      */
-    fun readSaveFilesTask(profileName: String, saveFileExt: String): IOTask<List<SaveFile>> {
-        log.debug("Loading save files")
+    fun readSaveFilesTask(dirName: String, saveFileExt: String): IOTask<List<SaveFile>> {
+        log.debug("Reading save files from $dirName")
 
-        return fs.loadFileNamesTask(PROFILES_DIR + profileName, true, listOf(FileExtension(saveFileExt)))
+        return fs.loadFileNamesTask(dirName, true, listOf(FileExtension(saveFileExt)))
                 .then { fileNames ->
                     IOTask.of<List<SaveFile>>("readSaveFiles") {
 
                         val list = ArrayList<SaveFile>()
                         for (name in fileNames) {
-                            val file = fs.readDataTask<SaveFile>("$PROFILES_DIR$profileName/$name").run()
+                            val file = fs.readDataTask<SaveFile>("$dirName/$name").run()
                             if (file != null) {
                                 list.add(file)
                             }
@@ -128,44 +147,41 @@ class SaveLoadService : EngineService() {
                 }
     }
 
-    /**
-     * Loads last modified save file from saves directory.
-     */
-    fun loadLastModifiedSaveFileTask(profileName: String, saveFileExt: String): IOTask<SaveFile> {
-        log.debug("Loading last modified save file")
 
-        return readSaveFilesTask(profileName, saveFileExt).then { files ->
-            IOTask.of("findLastSave") {
-                if (files.isEmpty()) {
-                    throw FileNotFoundException("No save files found")
-                }
 
-                Collections.sort(files, SaveFile.RECENT_FIRST)
-                files[0]
-            }
-        }
-    }
 
-    fun createProfileTask(profileName: String): IOTask<Void> {
-        log.debug("Creating profile: $profileName")
-        return fs.createDirectoryTask("./$PROFILES_DIR$profileName")
-    }
 
-    /**
-     * A task that reads all profile names.
-     */
-    fun readProfileNamesTask(): IOTask<List<String>> {
-        log.debug("Reading profile names")
-        return fs.loadDirectoryNamesTask("./$PROFILES_DIR", recursive = false)
-    }
 
-    /**
-     * Delete profile.
-     *
-     * @param profileName name of profile to delete
-     */
-    fun deleteProfileTask(profileName: String): IOTask<Void> {
-        log.debug("Deleting profile: $profileName")
-        return fs.deleteDirectoryTask("./$PROFILES_DIR$profileName")
-    }
+    //    private fun createProfilesDirTask(): IOTask<*> {
+//        log.debug("Creating profiles dir")
+//
+//        return fs.createDirectoryTask(PROFILES_DIR)
+//                .then { fs.writeDataTask(Collections.singletonList("This directory contains user profiles."), PROFILES_DIR + "Readme.txt") }
+//                .onFailure {
+//                    log.warning("Failed to create profiles dir: $it")
+//                    Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), it)
+//                }
+//    }
+//    fun createProfileTask(profileName: String): IOTask<Void> {
+//        log.debug("Creating profile: $profileName")
+//        return fs.createDirectoryTask("./$PROFILES_DIR$profileName")
+//    }
+//
+//    /**
+//     * A task that reads all profile names.
+//     */
+//    fun readProfileNamesTask(): IOTask<List<String>> {
+//        log.debug("Reading profile names")
+//        return fs.loadDirectoryNamesTask("./$PROFILES_DIR", recursive = false)
+//    }
+//
+//    /**
+//     * Delete profile.
+//     *
+//     * @param profileName name of profile to delete
+//     */
+//    fun deleteProfileTask(profileName: String): IOTask<Void> {
+//        log.debug("Deleting profile: $profileName")
+//        return fs.deleteDirectoryTask("./$PROFILES_DIR$profileName")
+//    }
 }

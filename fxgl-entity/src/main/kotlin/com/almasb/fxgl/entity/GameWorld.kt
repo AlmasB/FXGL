@@ -11,17 +11,18 @@ import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import java.util.function.Predicate
 import com.almasb.fxgl.core.util.tryCatchRoot
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.entity.components.IrremovableComponent
 import com.almasb.fxgl.entity.components.TimeComponent
 import com.almasb.fxgl.entity.level.Level
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import java.util.*
+import java.util.function.Function
+import java.util.function.Predicate
 import kotlin.NoSuchElementException
 import kotlin.collections.ArrayList
 
@@ -235,7 +236,7 @@ class GameWorld {
     private fun clearLevel() {
         log.debug("Clearing removable entities")
 
-        waitingList.clear()
+        waitingList.removeAll { canRemove(it) }
 
         // we may still have some entities that have been removed but not yet cleaned
         // but we do not want to remove Irremovables
@@ -276,7 +277,7 @@ class GameWorld {
     /**
      * Maps entity spawn name to the method that creates the entity.
      */
-    private val entitySpawners = hashMapOf<String, EntitySpawner>()
+    private val entitySpawners = hashMapOf<String, Function<SpawnData, Entity>>()
 
     /**
      * @param entityFactory factory for creating entities
@@ -284,9 +285,9 @@ class GameWorld {
     fun addEntityFactory(entityFactory: EntityFactory) {
         val entityNames = arrayListOf<String>()
 
-        ReflectionUtils.findMethodsMapToFunctions(entityFactory, Spawns::class.java, EntitySpawner::class.java)
+        ReflectionUtils.findMethodsMapToFunctions<SpawnData, Entity, Spawns>(entityFactory, Spawns::class.java)
                 .forEach { annotation, entitySpawner ->
-
+                    
                     val entityAliases = annotation.value.split(",".toRegex())
                     entityAliases.forEach { entityName ->
                         checkDuplicateSpawners(entityFactory, entityName)

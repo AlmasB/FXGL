@@ -11,19 +11,19 @@ import com.almasb.fxgl.core.concurrent.IOTask;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.core.util.Platform;
+import com.almasb.fxgl.dev.profiling.ProfilerService;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.generated.BuildProperties;
+import com.almasb.fxgl.logging.*;
 import com.almasb.fxgl.profile.DataFile;
 import com.almasb.fxgl.profile.SaveLoadHandler;
-import com.almasb.fxgl.ui.ErrorDialog;
 import com.almasb.fxgl.ui.FontType;
-import com.almasb.sslogger.*;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 /**
  * To use FXGL, extend this class and implement necessary methods.
@@ -120,6 +120,10 @@ public abstract class GameApplication {
         var localSettings = new GameSettings();
         initSettings(localSettings);
 
+        if (localSettings.isProfilingEnabled()) {
+            localSettings.getEngineServices().add(ProfilerService.class);
+        }
+
         var platform = Platform.get();
 
         // if user set platform as browser, we keep it that way
@@ -127,18 +131,7 @@ public abstract class GameApplication {
             platform = Platform.BROWSER;
         }
 
-        var version = "11.x";
-        var build = "?";
-
-        try {
-            var bundle = ResourceBundle.getBundle("com.almasb.fxgl.app.system");
-            version = bundle.getString("fxgl.version");
-            build = bundle.getString("fxgl.build");
-        } catch (Exception e) {
-            System.out.println("Warning: Could not load com.almasb.fxgl.app.system.properties");
-        }
-
-        var runtimeInfo = new RuntimeInfo(platform, version, build);
+        var runtimeInfo = new RuntimeInfo(platform, BuildProperties.VERSION, BuildProperties.BUILD);
         localSettings.setRuntimeInfo(runtimeInfo);
         localSettings.setExperimentalNative(localSettings.isExperimentalNative() || platform.isMobile());
         return localSettings.toReadOnly();
@@ -147,7 +140,7 @@ public abstract class GameApplication {
     private void initLogger(ReadOnlyGameSettings settings) {
         Logger.configure(new LoggerConfig());
         // we write all logs to file but adjust console log level based on app mode
-        if (settings.isDesktop()) {
+        if (settings.isDesktop() && !settings.isExperimentalNative()) {
             Logger.addOutput(new FileOutput("FXGL"), LoggerLevel.DEBUG);
         }
         Logger.addOutput(new ConsoleOutput(), settings.getApplicationMode().getLoggerLevel());
@@ -241,7 +234,6 @@ public abstract class GameApplication {
             mainWindow = new MainWindow(stage, startupScene, settings);
             mainWindow.show();
 
-            // TODO: possibly a better way exists of doing below
             engine.getEnvironmentVars$fxgl().put("settings", settings);
             engine.getEnvironmentVars$fxgl().put("mainWindow", mainWindow);
 
@@ -286,6 +278,8 @@ public abstract class GameApplication {
                 public void onSave(DataFile data) {
                     var bundle = new Bundle("FXGLServices");
                     engine.write(bundle);
+
+                    data.putBundle(bundle);
                 }
 
                 @Override
@@ -300,8 +294,8 @@ public abstract class GameApplication {
             log.debug("Loading localizations");
 
             settings.getSupportedLanguages().forEach(lang -> {
-                var bundle = FXGL.getAssetLoader().loadResourceBundle("languages/" + lang.getName().toLowerCase() + ".properties");
-                FXGL.getLocalizationService().addLanguageData(lang, bundle);
+                var pMap = FXGL.getAssetLoader().loadPropertyMap("languages/" + lang.getName().toLowerCase() + ".lang");
+                FXGL.getLocalizationService().addLanguageData(lang, pMap.toStringMap());
             });
 
             FXGL.getLocalizationService().selectedLanguageProperty().bind(settings.getLanguage());
@@ -331,13 +325,14 @@ public abstract class GameApplication {
             // stop main loop from running as we cannot continue
             engine.stopLoop();
 
-            // block with error dialog so that user can read the error
-            new ErrorDialog(error).showAndWait();
-
             log.fatal("Uncaught Exception:", error);
             log.fatal("Application will now exit");
 
-            exitFXGL();
+            if (mainWindow != null) {
+                mainWindow.showFatalError(error, this::exitFXGL);
+            } else {
+                exitFXGL();
+            }
         }
 
         public void exitFXGL() {

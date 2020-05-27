@@ -61,7 +61,7 @@ class MainUI : BorderPane() {
         val pane = Pane(tabPane, toolbar)
 
         val menuFile = Menu("")
-        menuFile.graphic = getUIFactory().newText("File").also {
+        menuFile.graphic = getUIFactoryService().newText("File").also {
             it.setOnMouseClicked {
                 contextMenu.show(pane, 0.0, toolbar.prefHeight)
             }
@@ -69,7 +69,7 @@ class MainUI : BorderPane() {
         menuFile.style = "-fx-background-color: black"
 
         val menuPreferences = Menu("")
-        menuPreferences.graphic = getUIFactory().newText("Preferences").also {
+        menuPreferences.graphic = getUIFactoryService().newText("Preferences").also {
             it.setOnMouseClicked {
                 openPreferencesDialog()
             }

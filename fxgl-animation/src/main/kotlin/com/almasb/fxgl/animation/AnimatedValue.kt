@@ -11,10 +11,7 @@ import javafx.animation.Interpolator
 import javafx.animation.PathTransition
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
-import javafx.scene.shape.CubicCurve
-import javafx.scene.shape.Path
-import javafx.scene.shape.QuadCurve
-import javafx.scene.shape.Rectangle
+import javafx.scene.shape.*
 import javafx.util.Duration
 import kotlin.math.abs
 import kotlin.math.min
@@ -99,7 +96,7 @@ class AnimatedColor(from: Color, to: Color)
 }
 
 class AnimatedPath
-(val path: Path) : AnimatedValue<Point2D>(Point2D.ZERO, Point2D.ZERO) {
+(val path: Shape) : AnimatedValue<Point2D>(Point2D.ZERO, Point2D.ZERO) {
 
     /**
      * Maps reference time values [0..1] to points on path at that time.

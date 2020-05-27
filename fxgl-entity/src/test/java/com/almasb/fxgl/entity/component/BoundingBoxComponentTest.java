@@ -295,12 +295,12 @@ public class BoundingBoxComponentTest {
 
         assertTrue(bbox.isWithin(50, 50, 60, 60));
         assertTrue(bbox.isWithin(55, 55, 60, 60));
-        assertFalse(bbox.isWithin(0, 0, 50, 60));
+        assertTrue(bbox.isWithin(0, 0, 50, 60));
         assertFalse(bbox.isWithin(100, 50, 140, 60));
         assertFalse(bbox.isWithin(50, 120, 90, 60));
 
         assertTrue(bbox.isWithin(0, 0, 51, 51));
-        assertFalse(bbox.isWithin(0, 0, 50, 50));
+        assertTrue(bbox.isWithin(0, 0, 50, 50));
         assertFalse(bbox.isWithin(0, 0, 49, 49));
         assertFalse(bbox.isWithin(91, 0, 49, 49));
     }
@@ -309,9 +309,11 @@ public class BoundingBoxComponentTest {
     public void testIsOutside() throws Exception {
         bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 60)));
 
-        assertTrue(bbox.isOutside(-10, -10, 0, 0));
-        assertTrue(bbox.isOutside(40, 60, 100, 100));
-        assertTrue(bbox.isOutside(-10, 0, 0, 60));
+        assertTrue(bbox.isOutside(-10, -10, -1, 0));
+        assertFalse(bbox.isOutside(-10, -10, 0, 0));
+        assertFalse(bbox.isOutside(40, 60, 100, 100));
+        assertTrue(bbox.isOutside(41, 60, 100, 100));
+        assertFalse(bbox.isOutside(-10, 0, 0, 60));
         assertFalse(bbox.isOutside(10, 10, 20, 20));
 
         assertTrue(bbox.isOutside(new Rectangle2D(-10, 0, 0, 60)));

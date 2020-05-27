@@ -48,7 +48,7 @@ class EffectComponent : Component() {
      * the old one.
      */
     fun startEffect(effect: Effect) {
-        if (effect.javaClass in effectTypes) {
+        if (hasEffect(effect.javaClass)) {
             // we know effect is present
             val oldEffect = effects.find { it.javaClass == effect.javaClass }!!
             oldEffect.onEnd(entity)
@@ -80,6 +80,8 @@ class EffectComponent : Component() {
         effects.forEach { it.onEnd(entity) }
         effects.clear()
     }
+
+    fun hasEffect(effectClass: Class<out Effect>) = effectClass in effectTypes
 }
 
 /**

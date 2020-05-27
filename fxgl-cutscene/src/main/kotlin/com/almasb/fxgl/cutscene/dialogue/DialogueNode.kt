@@ -45,7 +45,6 @@ class BranchNode(text: String) : DialogueNode(DialogueNodeType.BRANCH, text)
 
 class ChoiceNode(text: String) : DialogueNode(DialogueNodeType.CHOICE, text)  {
 
-    // TODO: perhaps hide the map and use addOption / removeOption to be safe
     /**
      * Maps option id to option text.
      * Options start at id 0.

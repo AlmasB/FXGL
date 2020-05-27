@@ -6,15 +6,13 @@
 
 package com.almasb.fxgl.app.services
 
-import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.*
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Button
-import javafx.scene.effect.BoxBlur
-import javafx.scene.effect.Effect
+import javafx.scene.effect.DropShadow
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.Background
@@ -53,6 +51,8 @@ class FXGLDialogService : DialogService() {
 
         window.layoutXProperty().bind(window.widthProperty().divide(2).negate().add(width / 2))
         window.layoutYProperty().bind(window.heightProperty().divide(2).negate().add(height / 2))
+
+        window.effect = DropShadow(25.0, Color.BLACK)
 
         dialogScene = DialogSubScene(window, width, height)
 
@@ -97,7 +97,7 @@ class FXGLDialogService : DialogService() {
 
     private fun show() {
         if (!isShowing) {
-            openInScene(sceneService.mainWindow.currentFXGLSceneProperty.value)
+            sceneService.pushSubScene(dialogScene)
 
             dialogScene.contentRoot.requestFocus()
         }
@@ -105,30 +105,12 @@ class FXGLDialogService : DialogService() {
 
     private fun close() {
         if (states.isEmpty()) {
-            closeInScene(sceneService.mainWindow.currentFXGLSceneProperty.value)
+            sceneService.popSubScene()
         } else {
             val data = states.pop()
             window.title = data.title
             window.contentPane = data.contentPane
         }
-    }
-
-    private val bgBlur = BoxBlur(5.0, 5.0, 3)
-    private var savedEffect: Effect? = null
-
-    private fun openInScene(scene: FXGLScene) {
-        savedEffect = scene.effect
-        scene.effect = bgBlur
-
-        dialogScene.contentRoot.translateX = scene.contentRoot.translateX
-
-        sceneService.pushSubScene(dialogScene)
-    }
-
-    private fun closeInScene(scene: FXGLScene) {
-        scene.effect = savedEffect
-
-        sceneService.popSubScene()
     }
 
     override fun showMessageBox(message: String) {
@@ -233,7 +215,7 @@ class FXGLDialogService : DialogService() {
             contentRoot.setPrefSize(width, height)
             contentRoot.background = Background(BackgroundFill(Color.rgb(127, 127, 123, 0.5), null, null))
 
-            contentRoot.children.add(window)
+            contentRoot.children.addAll(window)
         }
     }
 }

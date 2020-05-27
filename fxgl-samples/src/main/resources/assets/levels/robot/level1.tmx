@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="18" height="10" tilewidth="70" tileheight="70" infinite="0" nextlayerid="4" nextobjectid="28">
+ <properties>
+  <property name="star1time" type="float" value="7"/>
+ </properties>
+ <tileset firstgid="1" name="tiles_spritesheet" tilewidth="70" tileheight="70" spacing="2" tilecount="156" columns="12">
+  <image source="tiles_spritesheet.png" width="914" height="936"/>
+ </tileset>
+ <layer id="3" name="Tile Layer 1" width="18" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,104,104,104,0,0,
+0,0,0,0,0,0,0,0,0,0,0,104,104,0,0,0,0,0,
+0,0,0,0,0,0,0,104,104,104,104,0,0,0,0,0,0,0,
+0,0,0,104,104,104,104,0,0,0,0,0,0,0,0,0,0,0,
+116,104,104,104,104,104,104,104,104,104,104,104,104,104,92,0,0,0
+</data>
+ </layer>
+ <objectgroup id="2" name="Object Layer 1">
+  <object id="1" type="platform" x="0" y="630" width="1050" height="70"/>
+  <object id="15" type="platform" x="910" y="350" width="210" height="70"/>
+  <object id="25" type="platform" x="210" y="560" width="280" height="70"/>
+  <object id="26" type="platform" x="490" y="490" width="280" height="70"/>
+  <object id="27" type="platform" x="770" y="420" width="140" height="70"/>
+ </objectgroup>
+</map>

@@ -8,11 +8,12 @@ package sandbox.view;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import javafx.beans.binding.Bindings;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
 import java.util.Map;
 
@@ -40,8 +41,14 @@ public class DevMenuSample extends GameApplication {
 
             System.out.println(getop("pos").hashCode());
 
-            // TODO: check without using "new" and see if updates, if not use forceUpdateListeners()
-            set("pos", new Vec2(550, 550));
+            // this works because it's a "new" object
+            //set("pos", new Vec2(550, 550));
+
+            Vec2 v = geto("pos");
+            v.set(FXGLMath.randomPoint(new Rectangle2D(0, 0, getAppWidth(), getAppHeight())));
+
+            // this doesn't at the moment since it's the "same" object. Need to fix, so listeners are fired.
+            set("pos", v);
             System.out.println(geto("pos").toString());
         });
     }
@@ -49,7 +56,6 @@ public class DevMenuSample extends GameApplication {
     @Override
     protected void initGame() {
         var text = addVarText("score", 600, 300);
-        text.setFont(Font.font(22));
         text.fillProperty().bind(
                 Bindings.when(getbp("isRed")).then(Color.RED).otherwise(Color.BLUE)
         );

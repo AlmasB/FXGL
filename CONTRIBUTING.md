@@ -49,7 +49,11 @@ You should now see something like this:
 
 <img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl11_IDEA.jpg" width="400" />
 
-Note: if you have problems running samples / tests with error `RunWithFX`, try right-click on the `fxgl-test` module and rebuild `fxgl-test` module.
+Next:
+1. Add, in the fxgl module, `src/main/java-templates` as sources root in IntelliJ.
+2. Right-click on the `fxgl-test` module and rebuild `fxgl-test` module.
+
+You should now be able to run samples and tests.
 
 ## Running all tests
 
@@ -75,5 +79,4 @@ The project uses the following guidelines:
 * When using text in UI, use localization (e.g. english.properties).
 * Short license header in each new file and `@author`.
 
-Code quality reports are available from [Codacy](https://www.codacy.com/app/AlmasB/FXGL/dashboard).
 If in doubt, skim through the existing source code to get a feel for it.

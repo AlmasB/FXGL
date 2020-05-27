@@ -7,7 +7,7 @@
 package com.almasb.fxgl.input
 
 import com.almasb.fxgl.input.virtual.*
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyDoubleWrapper
 import javafx.collections.FXCollections
@@ -18,6 +18,8 @@ import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.input.*
+import java.util.*
+import kotlin.collections.LinkedHashMap
 
 class Input {
 
@@ -25,6 +27,11 @@ class Input {
         private val ILLEGAL_KEYS = arrayOf(KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.ALT)
 
         private val log = Logger.get<Input>()
+
+        /**
+         * How many keys to remember.
+         */
+        private const val QUEUE_SIZE = 50
 
         @JvmStatic fun isIllegal(key: KeyCode) = key in ILLEGAL_KEYS
     }
@@ -85,6 +92,7 @@ class Input {
      * Registered action bindings.
      */
     private val bindings = LinkedHashMap<UserAction, ObservableTrigger>()
+    private val sequenceBindings = LinkedHashMap<UserAction, InputSequence>()
 
     /**
      * A new copy map of existing bindings.
@@ -112,6 +120,8 @@ class Input {
 
     private val activeTriggers = arrayListOf<Trigger>()
     private val listeners = arrayListOf<TriggerListener>()
+
+    private val inputQueue = ArrayDeque<KeyCode>()
 
     /**
      * If action events should be processed.
@@ -216,7 +226,13 @@ class Input {
         val newTrigger = if (event.eventType == MouseEvent.MOUSE_PRESSED) {
             MouseTrigger((event as MouseEvent).button)
         } else {
-            KeyTrigger((event as KeyEvent).code)
+            KeyTrigger((event as KeyEvent).code).also {
+                inputQueue.addLast(it.key)
+
+                while (inputQueue.size > QUEUE_SIZE) {
+                    inputQueue.removeFirst()
+                }
+            }
         }
 
         if (newTrigger !in activeTriggers) {
@@ -234,6 +250,16 @@ class Input {
                     if (processInput)
                         act.begin()
                 }
+
+        if (event.eventType == KeyEvent.KEY_PRESSED) {
+            sequenceBindings.filter { (act, seq) -> act !in currentActions && seq.matches(inputQueue) }
+                    .forEach { (act, _) ->
+                        currentActions.add(act)
+
+                        if (processInput)
+                            act.begin()
+                    }
+        }
     }
 
     private fun handleReleased(event: InputEvent) {
@@ -253,6 +279,18 @@ class Input {
                     if (processInput)
                         act.end()
                 }
+
+        if (event.eventType == KeyEvent.KEY_RELEASED) {
+            val key = (event as KeyEvent).code
+
+            sequenceBindings.filter { (act, seq) -> act in currentActions && seq.lastKey == key }
+                    .forEach { (act, _) ->
+                        currentActions.remove(act)
+
+                        if (processInput)
+                            act.end()
+                    }
+        }
     }
 
     fun addTriggerListener(triggerListener: TriggerListener) {
@@ -280,6 +318,10 @@ class Input {
 
         currentActions.clear()
         activeTriggers.clear()
+    }
+
+    fun addAction(action: UserAction, sequence: InputSequence) {
+        sequenceBindings[action] = sequence
     }
 
     /**
@@ -356,6 +398,8 @@ class Input {
     internal fun releaseVirtual(virtualButton: VirtualButton) {
         virtualButtons[virtualButton]?.let { mockKeyRelease(it) }
     }
+
+    fun createVirtualJoystick(): VirtualJoystick = FXGLVirtualJoystick(this)
 
     /**
      * Creates a view containing virtual dpad (4 directional controls).

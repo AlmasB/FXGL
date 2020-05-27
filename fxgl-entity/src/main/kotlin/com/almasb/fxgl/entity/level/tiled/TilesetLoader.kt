@@ -7,12 +7,15 @@
 package com.almasb.fxgl.entity.level.tiled
 
 import com.almasb.fxgl.texture.Texture
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.texture.getDummyImage
+import com.almasb.fxgl.texture.resize
+import com.almasb.fxgl.logging.Logger
 import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
+import java.lang.Exception
 import java.net.URL
 
 /**
@@ -47,7 +50,7 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
             val tilex = gid % tileset.columns
             val tiley = gid / tileset.columns
 
-            sourceImage = loadImage(tileset.image, tileset.transparentcolor)
+            sourceImage = loadImage(tileset.image, tileset.transparentcolor, tileset.imagewidth, tileset.imageheight)
 
             srcx = tilex * w + tileset.margin + tilex * tileset.spacing
             srcy = tiley * h + tileset.margin + tiley * tileset.spacing
@@ -56,7 +59,7 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
             val tile = tileset.tiles.find { it.id == gid }
                     ?: throw IllegalArgumentException("Tile with id=$gid not found")
 
-            sourceImage = loadImage(tile.image, tile.transparentcolor)
+            sourceImage = loadImage(tile.image, tile.transparentcolor, tile.imagewidth, tile.imageheight)
 
             srcx = 0
             srcy = 0
@@ -110,7 +113,7 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
             val srcy: Int
 
             if (tileset.isSpriteSheet) {
-                sourceImage = loadImage(tileset.image, tileset.transparentcolor)
+                sourceImage = loadImage(tileset.image, tileset.transparentcolor, tileset.imagewidth, tileset.imageheight)
 
                 // image source
                 val tilex = gid % tileset.columns
@@ -124,7 +127,7 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
                 val tile = tileset.tiles.find { it.id == gid }
                         ?: throw IllegalArgumentException("Tile with id=$gid not found")
 
-                sourceImage = loadImage(tile.image, tile.transparentcolor)
+                sourceImage = loadImage(tile.image, tile.transparentcolor, tile.imagewidth, tile.imageheight)
 
                 srcx = 0
                 srcy = 0
@@ -158,22 +161,37 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
         throw IllegalArgumentException("Tileset for gid=$gid not found")
     }
 
-    private fun loadImage(tilesetImageName: String, transparentcolor: String): Image {
+    private fun loadImage(tilesetImageName: String, transparentcolor: String, w: Int, h: Int): Image {
         val imageName = tilesetImageName.substring(tilesetImageName.lastIndexOf("/") + 1)
 
         if (imageName in imageCache) {
             return imageCache[imageName]!!
         }
 
-        val ext = mapURL.toExternalForm().substringBeforeLast("/") + "/"
+        val image = try {
+            val ext = mapURL.toExternalForm().substringBeforeLast("/") + "/"
 
-        val image = if (transparentcolor.isEmpty())
-            Image(ext + imageName)
-        else
-            Texture(Image(ext + imageName)).transparentColor(Color.web(transparentcolor)).image
+            val stream = URL(ext + imageName).openStream()
 
-        if (image.isError)
-            throw IllegalArgumentException("${ext + imageName} cannot be loaded")
+            var img = if (transparentcolor.isEmpty())
+                Image(stream)
+            else
+                Texture(Image(stream)).transparentColor(Color.web(transparentcolor)).image
+
+            stream.close()
+
+            if (img.isError) {
+                log.warning("${ext + imageName} cannot be loaded")
+                img = resize(getDummyImage(), w, h)
+            }
+
+            img
+
+        } catch (e: Exception) {
+            log.warning("$imageName cannot be loaded using mapURL=$mapURL", e)
+
+            resize(getDummyImage(), w, h)
+        }
 
         imageCache[imageName] = image
 

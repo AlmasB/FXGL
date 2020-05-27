@@ -747,7 +747,7 @@ class GameWorldTest {
         gameWorld.addEntities(e1, e2, e3)
 
         assertAll(
-                Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(0.0, 0.0, 100.0, 100.0)), contains(e1)) },
+                Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(0.0, 0.0, 100.0, 100.0)), contains(e1, e2, e3)) },
                 Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(90.0, 0.0, 20.0, 20.0)), contains(e2)) }
         )
     }
@@ -773,6 +773,21 @@ class GameWorldTest {
     }
 
     /* SPECIAL CASES */
+
+    @Test
+    fun `Entities with IrremovableComponent are correctly added to update list after same frame setLevel`() {
+        val e = Entity()
+        e.addComponent(IrremovableComponent())
+        e.addComponent(TestValueComponent())
+
+        gameWorld.addEntity(e)
+
+        gameWorld.setLevel(Level(0, 0, emptyList()))
+        assertThat(gameWorld.entities, contains(e))
+
+        gameWorld.onUpdate(0.016)
+        assertThat(e.getComponent(TestValueComponent::class.java).count, `is`(1))
+    }
 
     @Test
     fun `Time component is honored`() {
@@ -848,6 +863,14 @@ class GameWorldTest {
             val e = Entity()
             e.setPosition(data.x, data.y)
             return e
+        }
+    }
+
+    class TestValueComponent : Component() {
+        var count = 0
+
+        override fun onUpdate(tpf: Double) {
+            count++
         }
     }
 }

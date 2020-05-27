@@ -15,11 +15,29 @@ import javafx.collections.ObservableList
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Shop<T>(initialMoney: Int = 0, items: List<TradeItem<T>>) {
 
-    private val propMoney = SimpleIntegerProperty(initialMoney)
+interface ShopListener<T> {
+
+    /**
+     * Called when this shop sells [item] to another shop.
+     */
+    fun onSold(item: TradeItem<T>)
+
+    /**
+     * Called when this shop buys [item] from another shop.
+     */
+    fun onBought(item: TradeItem<T>)
+}
+
+class Shop<T>(initialMoney: Int, items: List<TradeItem<T>>) {
+
+    constructor(items: List<TradeItem<T>>) : this(0, items)
+
+    var listener: ShopListener<T>? = null
 
     val items: ObservableList<TradeItem<T>> = FXCollections.observableArrayList(items)
+
+    private val propMoney = SimpleIntegerProperty(initialMoney)
 
     fun moneyProperty(): IntegerProperty = propMoney
 
@@ -39,13 +57,18 @@ class Shop<T>(initialMoney: Int = 0, items: List<TradeItem<T>>) {
         if (money < cost)
             return false
 
+        // transaction is successful
         money -= cost
         other.money += cost
+
+        val copy = item.copy().also { it.quantity = qty }
+        listener?.onBought(copy)
+        other.listener?.onSold(copy)
 
         item.quantity -= qty
 
         if (item in items) {
-            items.find { it.item === item.item }!!.quantity += qty
+            items.find { it == item }!!.quantity += qty
         } else {
             items += item.copy().also { it.quantity = qty }
         }
@@ -57,3 +80,4 @@ class Shop<T>(initialMoney: Int = 0, items: List<TradeItem<T>>) {
         return true
     }
 }
+

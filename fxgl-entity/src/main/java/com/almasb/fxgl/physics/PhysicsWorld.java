@@ -21,7 +21,7 @@ import com.almasb.fxgl.physics.box2d.collision.Manifold;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
-import com.almasb.sslogger.Logger;
+import com.almasb.fxgl.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 
@@ -599,7 +599,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
         BoundingBoxComponent bbox = e.getBoundingBoxComponent();
         PhysicsComponent physics = e.getComponent(PhysicsComponent.class);
 
-        // TODO: same fixture def for every fixture?
         FixtureDef fd = physics.fixtureDef;
 
         for (HitBox box : bbox.hitBoxesProperty()) {

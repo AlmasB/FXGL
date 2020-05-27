@@ -7,6 +7,7 @@
 package com.almasb.fxgl.trade
 
 /**
+ * A generic trade item that is used as a wrapper around an actual item of type T.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -23,6 +24,9 @@ class TradeItem<T>(
         return item.hashCode()
     }
 
+    /**
+     * Two trade items are equal only if they both reference the _same_ item.
+     */
     override fun equals(other: Any?): Boolean {
         if (other !is TradeItem<*>)
             return false

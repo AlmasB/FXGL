@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.event
 
-import com.almasb.sslogger.Logger
+import com.almasb.fxgl.logging.Logger
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
