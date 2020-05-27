@@ -24,6 +24,7 @@ import static sandbox.circlegame.CircleNNType.CIRCLE;
  */
 public enum PowerupType implements Consumer<Entity> {
     // hourglass - https://opengameart.org/content/hourglass-icon
+    // https://kenney.nl/assets/game-icons
 
     SLOW_TIME("hourglass.png", seconds(3)) {
         @Override
