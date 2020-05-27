@@ -79,5 +79,4 @@ The project uses the following guidelines:
 * When using text in UI, use localization (e.g. english.properties).
 * Short license header in each new file and `@author`.
 
-Code quality reports are available from [Codacy](https://www.codacy.com/app/AlmasB/FXGL/dashboard).
 If in doubt, skim through the existing source code to get a feel for it.
