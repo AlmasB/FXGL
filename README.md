@@ -108,11 +108,6 @@ Community tutorials:
 - [Space Ranger](https://www.journaldev.com/40219/space-rangers-game-java-fxgl) at journaldev
 - [Geometry Wars](https://webtechie.be/post/2020-05-07-getting-started-with-fxgl/) at webtechie
 
-Community tutorials:
-
-- [Space Ranger at journaldev](https://www.journaldev.com/40219/space-rangers-game-java-fxgl)
-- [Geometry Wars at webtechie](https://webtechie.be/post/2020-05-07-getting-started-with-fxgl/)
-
 ### Contribution & Support
 
 If you want to build FXGL from sources or want to contribute,
