@@ -28,6 +28,7 @@
         <module>fxgl-effects</module>
         <module>fxgl-test</module>
         <module>fxgl-localization</module>
+        <module>fxgl-logging</module>
         <module>fxgl-notification</module>
         <module>fxgl-achievement</module>
         <module>fxgl-ai</module>
@@ -39,7 +40,6 @@
         <module>fxgl-nativesamples</module>
         <module>fxgl-tools</module>
         <module>fxgl-zdeploy</module>
-        <module>fxgl-logging</module>
     </modules>
 
     <licenses>
