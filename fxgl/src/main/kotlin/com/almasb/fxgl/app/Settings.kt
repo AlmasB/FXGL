@@ -161,6 +161,13 @@ class GameSettings(
         var isClickFeedbackEnabled: Boolean = false,
 
         /**
+         * If true, entity builder will preload entities on a background thread to speed up
+         * entity building.
+         * Default: true.
+         */
+        var isEntityPreloadEnabled: Boolean = true,
+
+        /**
          * Setting to false will disable asking for confirmation on exit.
          * This is useful for faster compile -> run -> exit.
          */
@@ -310,6 +317,7 @@ class GameSettings(
                 isProfilingEnabled,
                 isDeveloperMenuEnabled,
                 isClickFeedbackEnabled,
+                isEntityPreloadEnabled,
                 isCloseConfirmation,
                 isSingleStep,
                 applicationMode,
@@ -422,6 +430,13 @@ class ReadOnlyGameSettings internal constructor(
         val isDeveloperMenuEnabled: Boolean,
 
         val isClickFeedbackEnabled: Boolean,
+
+        /**
+         * If true, entity builder will preload entities on a background thread to speed up
+         * entity building.
+         * Default: true.
+         */
+        val isEntityPreloadEnabled: Boolean,
 
         /**
          * Setting to false will disable asking for confirmation on exit.
