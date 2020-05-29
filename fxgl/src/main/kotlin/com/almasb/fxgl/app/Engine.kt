@@ -10,7 +10,6 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
-import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.reflect.ReflectionUtils.*
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
@@ -70,8 +69,6 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
     fun initServices() {
         initEnvironmentVars()
 
-        val start = System.nanoTime()
-
         settings.engineServices.forEach {
             services += (newInstance(it))
         }
@@ -83,8 +80,6 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
         services.forEach {
             it.onInit()
         }
-
-        log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
 
         Async.schedule({ logEnvironmentVarsAndServices() }, Duration.seconds(3.0))
     }

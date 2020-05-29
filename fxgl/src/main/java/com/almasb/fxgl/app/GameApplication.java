@@ -21,9 +21,12 @@ import com.almasb.fxgl.ui.FontType;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.stage.Stage;
+import kotlin.Unit;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static kotlin.system.TimingKt.measureNanoTime;
 
 /**
  * To use FXGL, extend this class and implement necessary methods.
@@ -240,8 +243,14 @@ public abstract class GameApplication {
             // start initialization of services on a background thread
             // then start the loop on the JavaFX thread
             var task = IOTask.ofVoid(() -> {
-                            engine.initServices();
-                            postServicesInit();
+                            var time = measureNanoTime(() -> {
+                                engine.initServices();
+                                postServicesInit();
+
+                                return Unit.INSTANCE;
+                            });
+
+                            log.infof("FXGL initialization took: %.3f sec", time / 1000000000.0);
                         })
                         .onSuccess(n -> engine.startLoop())
                         .onFailure(e -> handleFatalError(e))
@@ -391,18 +400,21 @@ public abstract class GameApplication {
 
         @Override
         protected Void call() throws Exception {
-            var start = System.nanoTime();
+            var time = measureNanoTime(() -> {
 
-            log.debug("Initializing game");
-            updateMessage("Initializing game");
+                log.debug("Initializing game");
+                updateMessage("Initializing game");
 
-            initGame();
-            app.initPhysics();
-            app.initUI();
+                initGame();
+                app.initPhysics();
+                app.initUI();
 
-            FXGLApplication.engine.onGameReady(FXGL.getWorldProperties());
+                FXGLApplication.engine.onGameReady(FXGL.getWorldProperties());
 
-            log.infof("Game initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+                return Unit.INSTANCE;
+            });
+
+            log.infof("Game initialization took: %.3f sec", time / 1000000000.0);
 
             return null;
         }
