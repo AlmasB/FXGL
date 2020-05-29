@@ -12,10 +12,14 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import kotlin.Unit;
 import kotlin.system.TimingKt;
+
+import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -31,6 +35,7 @@ public class BenchmarkSpawnManyEntitiesSample extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.setProfilingEnabled(true);
+        settings.setEntityPreloadEnabled(true);
     }
 
     private static final int NUM_OBJECTS = 2500;
@@ -53,13 +58,23 @@ public class BenchmarkSpawnManyEntitiesSample extends GameApplication {
     }
 
     @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("loading", 0);
+    }
+
+    @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new BenchmarkFactory2());
     }
 
     @Override
-    protected void onUpdate(double tpf) {
+    protected void initUI() {
+        var text = getUIFactoryService().newText("", Color.BLACK, 18.0);
+        getip("loading").addListener((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> text.setText("" + newValue));
+        });
 
+        addUINode(text, 200, 50);
     }
 
     public static class BenchmarkFactory2 implements EntityFactory {
