@@ -28,6 +28,11 @@ class StateComponentTest {
     }
 
     @Test
+    fun `EntityState does not allow concurrency`() {
+        assertFalse(EntityState.IDLE.isAllowConcurrency)
+    }
+
+    @Test
     fun `State component correctly manages state transitions`() {
         assertTrue(stateComponent.isIdle)
         assertTrue(stateComponent.isIn(EntityState.IDLE))
