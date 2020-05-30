@@ -135,7 +135,7 @@ class AchievementServiceTest {
         // check for values that are below target
         // still should be achieved since we already achieved once
 
-        map2.setValue("varName", initialValue)
+        map.setValue("varName", initialValue)
         assertTrue(a.isAchieved)
     }
 
