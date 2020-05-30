@@ -44,6 +44,11 @@ class InputTest {
         action.begin()
         action.action()
         action.end()
+
+        val listener = object : TriggerListener() {}
+        listener.begin(KeyTrigger(KeyCode.A))
+        listener.action(KeyTrigger(KeyCode.A))
+        listener.end(KeyTrigger(KeyCode.A))
     }
 
     @Test
