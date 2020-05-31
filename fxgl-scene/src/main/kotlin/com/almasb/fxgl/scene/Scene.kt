@@ -77,6 +77,11 @@ abstract class Scene : State<Scene> {
         listeners.forEach { it.onUpdate(tpf) }
     }
 
+    /**
+     * Binds the scene size to given properties.
+     * [scaledWidth] and [scaledHeight] are the values in pixels this scene (the root) will be drawn at.
+     * [scaleRatioX] and [scaleRatioY] are the ratios by which to scale the content root inside the scene.
+     */
     open fun bindSize(scaledWidth: DoubleProperty, scaledHeight: DoubleProperty, scaleRatioX: DoubleProperty, scaleRatioY: DoubleProperty) {
         root.prefWidthProperty().bind(scaledWidth)
         root.prefHeightProperty().bind(scaledHeight)
