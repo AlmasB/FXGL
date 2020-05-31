@@ -188,18 +188,18 @@ public class ParticleSystem {
                 m_velocityBuffer.data =
                         reallocateBuffer(m_velocityBuffer, m_internalAllocatedCapacity, capacity, false);
                 m_accumulationBuffer =
-                        BufferUtils.reallocateBuffer(m_accumulationBuffer, 0, m_internalAllocatedCapacity,
+                        reallocateBuffer(m_accumulationBuffer, 0, m_internalAllocatedCapacity,
                                 capacity, false);
                 m_accumulation2Buffer =
-                        BufferUtils.reallocateBuffer(Vec2.class, m_accumulation2Buffer, 0,
+                        reallocateBuffer(Vec2.class, m_accumulation2Buffer, 0,
                                 m_internalAllocatedCapacity, capacity, true);
                 m_depthBuffer =
-                        BufferUtils.reallocateBuffer(m_depthBuffer, 0, m_internalAllocatedCapacity, capacity,
+                        reallocateBuffer(m_depthBuffer, 0, m_internalAllocatedCapacity, capacity,
                                 true);
                 m_colorBuffer.data =
                         reallocateBuffer(m_colorBuffer, m_internalAllocatedCapacity, capacity, true);
                 m_groupBuffer =
-                        BufferUtils.reallocateBuffer(ParticleGroup.class, m_groupBuffer, 0,
+                        reallocateBuffer(ParticleGroup.class, m_groupBuffer, 0,
                                 m_internalAllocatedCapacity, capacity, false);
                 m_userDataBuffer.data =
                         reallocateBuffer(m_userDataBuffer, m_internalAllocatedCapacity, capacity, true);
@@ -229,7 +229,7 @@ public class ParticleSystem {
             int oldCapacity = m_proxyCapacity;
             int newCapacity = m_proxyCount != 0 ? 2 * m_proxyCount : JBoxSettings.minParticleBufferCapacity;
             m_proxyBuffer =
-                    BufferUtils.reallocateBuffer(Proxy.class, m_proxyBuffer, oldCapacity, newCapacity);
+                    reallocateBuffer(Proxy.class, m_proxyBuffer, oldCapacity, newCapacity);
             m_proxyCapacity = newCapacity;
         }
         m_proxyBuffer[m_proxyCount++].index = index;
@@ -353,7 +353,7 @@ public class ParticleSystem {
                         int newCapacity =
                                 m_pairCount != 0 ? 2 * m_pairCount : JBoxSettings.minParticleBufferCapacity;
                         m_pairBuffer =
-                                BufferUtils.reallocateBuffer(Pair.class, m_pairBuffer, oldCapacity, newCapacity);
+                                reallocateBuffer(Pair.class, m_pairBuffer, oldCapacity, newCapacity);
                         m_pairCapacity = newCapacity;
                     }
                     Pair pair = m_pairBuffer[m_pairCount];
@@ -414,7 +414,7 @@ public class ParticleSystem {
                         int newCapacity =
                                 m_pairCount != 0 ? 2 * m_pairCount : JBoxSettings.minParticleBufferCapacity;
                         m_pairBuffer =
-                                BufferUtils.reallocateBuffer(Pair.class, m_pairBuffer, oldCapacity, newCapacity);
+                                reallocateBuffer(Pair.class, m_pairBuffer, oldCapacity, newCapacity);
                         m_pairCapacity = newCapacity;
                     }
                     Pair pair = m_pairBuffer[m_pairCount];
@@ -553,7 +553,7 @@ public class ParticleSystem {
                 int newCapacity =
                         m_contactCount != 0 ? 2 * m_contactCount : JBoxSettings.minParticleBufferCapacity;
                 m_contactBuffer =
-                        BufferUtils.reallocateBuffer(ParticleContact.class, m_contactBuffer, oldCapacity,
+                        reallocateBuffer(ParticleContact.class, m_contactBuffer, oldCapacity,
                                 newCapacity);
                 m_contactCapacity = newCapacity;
             }
@@ -1401,18 +1401,18 @@ public class ParticleSystem {
         newIndices.mid = mid;
         newIndices.end = end;
 
-        BufferUtils.rotate(m_flagsBuffer.data, start, mid, end);
-        BufferUtils.rotate(m_positionBuffer.data, start, mid, end);
-        BufferUtils.rotate(m_velocityBuffer.data, start, mid, end);
-        BufferUtils.rotate(m_groupBuffer, start, mid, end);
+        rotate(m_flagsBuffer.data, start, mid, end);
+        rotate(m_positionBuffer.data, start, mid, end);
+        rotate(m_velocityBuffer.data, start, mid, end);
+        rotate(m_groupBuffer, start, mid, end);
         if (m_depthBuffer != null) {
-            BufferUtils.rotate(m_depthBuffer, start, mid, end);
+            rotate(m_depthBuffer, start, mid, end);
         }
         if (m_colorBuffer.data != null) {
-            BufferUtils.rotate(m_colorBuffer.data, start, mid, end);
+            rotate(m_colorBuffer.data, start, mid, end);
         }
         if (m_userDataBuffer.data != null) {
-            BufferUtils.rotate(m_userDataBuffer.data, start, mid, end);
+            rotate(m_userDataBuffer.data, start, mid, end);
         }
 
         // update proxies
@@ -1744,14 +1744,14 @@ public class ParticleSystem {
     static <T> T[] reallocateBuffer(ParticleBuffer<T> buffer, int oldCapacity, int newCapacity,
                                     boolean deferred) {
         assert newCapacity > oldCapacity;
-        return BufferUtils.reallocateBuffer(buffer.dataClass, buffer.data, buffer.userSuppliedCapacity,
+        return reallocateBuffer(buffer.dataClass, buffer.data, buffer.userSuppliedCapacity,
                 oldCapacity, newCapacity, deferred);
     }
 
     static int[] reallocateBuffer(ParticleBufferInt buffer, int oldCapacity, int newCapacity,
                                   boolean deferred) {
         assert newCapacity > oldCapacity;
-        return BufferUtils.reallocateBuffer(buffer.data, buffer.userSuppliedCapacity, oldCapacity,
+        return reallocateBuffer(buffer.data, buffer.userSuppliedCapacity, oldCapacity,
                 newCapacity, deferred);
     }
 
@@ -1859,7 +1859,7 @@ public class ParticleSystem {
                                     ? 2 * system.m_triadCount
                                     : JBoxSettings.minParticleBufferCapacity;
                     system.m_triadBuffer =
-                            BufferUtils.reallocateBuffer(Triad.class, system.m_triadBuffer, oldCapacity,
+                            reallocateBuffer(Triad.class, system.m_triadBuffer, oldCapacity,
                                     newCapacity);
                     system.m_triadCapacity = newCapacity;
                 }
@@ -1924,7 +1924,7 @@ public class ParticleSystem {
                                             ? 2 * system.m_triadCount
                                             : JBoxSettings.minParticleBufferCapacity;
                             system.m_triadBuffer =
-                                    BufferUtils.reallocateBuffer(Triad.class, system.m_triadBuffer, oldCapacity,
+                                    reallocateBuffer(Triad.class, system.m_triadBuffer, oldCapacity,
                                             newCapacity);
                             system.m_triadCapacity = newCapacity;
                         }
@@ -2043,7 +2043,7 @@ public class ParticleSystem {
                                                 ? 2 * system.m_bodyContactCount
                                                 : JBoxSettings.minParticleBufferCapacity;
                                 system.m_bodyContactBuffer =
-                                        BufferUtils.reallocateBuffer(ParticleBodyContact.class,
+                                        reallocateBuffer(ParticleBodyContact.class,
                                                 system.m_bodyContactBuffer, oldCapacity, newCapacity);
                                 system.m_bodyContactCapacity = newCapacity;
                             }
@@ -2160,6 +2160,141 @@ public class ParticleSystem {
 
         static boolean IsTriadInvalid(final Triad triad) {
             return triad.indexA < 0 || triad.indexB < 0 || triad.indexC < 0;
+        }
+    }
+
+    private static <T> T[] reallocateBuffer(Class<T> klass, T[] oldBuffer, int oldCapacity,
+                                           int newCapacity) {
+        assert newCapacity > oldCapacity;
+        @SuppressWarnings("unchecked")
+        T[] newBuffer = (T[]) Array.newInstance(klass, newCapacity);
+        if (oldBuffer != null) {
+            System.arraycopy(oldBuffer, 0, newBuffer, 0, oldCapacity);
+        }
+        for (int i = oldCapacity; i < newCapacity; i++) {
+            try {
+                newBuffer[i] = klass.newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return newBuffer;
+    }
+
+    private static int[] reallocateBuffer(int[] oldBuffer, int oldCapacity, int newCapacity) {
+        assert newCapacity > oldCapacity;
+        int[] newBuffer = new int[newCapacity];
+        if (oldBuffer != null) {
+            System.arraycopy(oldBuffer, 0, newBuffer, 0, oldCapacity);
+        }
+        return newBuffer;
+    }
+
+    private static float[] reallocateBuffer(float[] oldBuffer, int oldCapacity, int newCapacity) {
+        assert newCapacity > oldCapacity;
+        float[] newBuffer = new float[newCapacity];
+        if (oldBuffer != null) {
+            System.arraycopy(oldBuffer, 0, newBuffer, 0, oldCapacity);
+        }
+        return newBuffer;
+    }
+
+    /**
+     * Reallocate a buffer. A 'deferred' buffer is reallocated only if it is not NULL. If
+     * 'userSuppliedCapacity' is not zero, buffer is user supplied and must be kept.
+     */
+    private static <T> T[] reallocateBuffer(Class<T> klass, T[] buffer, int userSuppliedCapacity,
+                                           int oldCapacity, int newCapacity, boolean deferred) {
+        assert newCapacity > oldCapacity;
+        assert userSuppliedCapacity == 0 || newCapacity <= userSuppliedCapacity;
+        if ((!deferred || buffer != null) && userSuppliedCapacity == 0) {
+            buffer = reallocateBuffer(klass, buffer, oldCapacity, newCapacity);
+        }
+        return buffer;
+    }
+
+    /**
+     * Reallocate an int buffer. A 'deferred' buffer is reallocated only if it is not NULL. If
+     * 'userSuppliedCapacity' is not zero, buffer is user supplied and must be kept.
+     */
+    private static int[] reallocateBuffer(int[] buffer, int userSuppliedCapacity, int oldCapacity,
+                                         int newCapacity, boolean deferred) {
+        assert newCapacity > oldCapacity;
+        assert userSuppliedCapacity == 0 || newCapacity <= userSuppliedCapacity;
+        if ((!deferred || buffer != null) && userSuppliedCapacity == 0) {
+            buffer = reallocateBuffer(buffer, oldCapacity, newCapacity);
+        }
+        return buffer;
+    }
+
+    /**
+     * Reallocate a float buffer. A 'deferred' buffer is reallocated only if it is not NULL. If
+     * 'userSuppliedCapacity' is not zero, buffer is user supplied and must be kept.
+     */
+    private static float[] reallocateBuffer(float[] buffer, int userSuppliedCapacity, int oldCapacity,
+                                           int newCapacity, boolean deferred) {
+        assert newCapacity > oldCapacity;
+        assert userSuppliedCapacity == 0 || newCapacity <= userSuppliedCapacity;
+        if ((!deferred || buffer != null) && userSuppliedCapacity == 0) {
+            buffer = reallocateBuffer(buffer, oldCapacity, newCapacity);
+        }
+        return buffer;
+    }
+
+    /**
+     * Rotate an array, see std::rotate
+     */
+    private static <T> void rotate(T[] ray, int first, int new_first, int last) {
+        int next = new_first;
+        while (next != first) {
+            T temp = ray[first];
+            ray[first] = ray[next];
+            ray[next] = temp;
+            first++;
+            next++;
+            if (next == last) {
+                next = new_first;
+            } else if (first == new_first) {
+                new_first = next;
+            }
+        }
+    }
+
+    /**
+     * Rotate an array, see std::rotate
+     */
+    private static void rotate(int[] ray, int first, int new_first, int last) {
+        int next = new_first;
+        while (next != first) {
+            int temp = ray[first];
+            ray[first] = ray[next];
+            ray[next] = temp;
+            first++;
+            next++;
+            if (next == last) {
+                next = new_first;
+            } else if (first == new_first) {
+                new_first = next;
+            }
+        }
+    }
+
+    /**
+     * Rotate an array, see std::rotate
+     */
+    private static void rotate(float[] ray, int first, int new_first, int last) {
+        int next = new_first;
+        while (next != first) {
+            float temp = ray[first];
+            ray[first] = ray[next];
+            ray[next] = temp;
+            first++;
+            next++;
+            if (next == last) {
+                next = new_first;
+            } else if (first == new_first) {
+                new_first = next;
+            }
         }
     }
 }
