@@ -127,4 +127,11 @@ class SceneTest {
         assertThat(scale.x, `is`(4.0))
         assertThat(scale.y, `is`(2.0))
     }
+
+    @Test
+    fun `toString returns class name`() {
+        assertThat(TestScene().toString(), `is`("TestScene"))
+    }
+
+    private class TestScene : Scene()
 }
