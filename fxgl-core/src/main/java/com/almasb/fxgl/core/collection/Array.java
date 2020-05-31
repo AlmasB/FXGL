@@ -696,21 +696,6 @@ public class Array<T> implements Iterable<T> {
         return buffer.toString();
     }
 
-    /** @see #Array(Class) */
-    public static <T> Array<T> of(Class<T> arrayType) {
-        return new Array<T>(arrayType);
-    }
-
-    /** @see #Array(boolean, int, Class) */
-    public static <T> Array<T> of(boolean ordered, int capacity, Class<T> arrayType) {
-        return new Array<T>(ordered, capacity, arrayType);
-    }
-
-    /** @see #Array(Object[]) */
-    public static <T> Array<T> with(T... array) {
-        return new Array(array);
-    }
-
     /**
      * Creates a new array with the specified component type and length.
      */
