@@ -6,14 +6,13 @@
 
 package com.almasb.fxgl.core.reflect
 
-import java.util.function.Function
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.isA
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.function.Function
 
 /**
  *
@@ -179,12 +178,6 @@ class ReflectionUtilsTest {
         assertThrows<ReflectionException> {
             ReflectionUtils.getDeclaredField(null, "")
         }
-    }
-
-    @Test
-    fun `Is anonymous class`() {
-        assertFalse(ReflectionUtils.isAnonymousClass(TestClass1::class.java))
-        assertTrue(ReflectionUtils.isAnonymousClass(Runnable { }.javaClass))
     }
 
     @Test

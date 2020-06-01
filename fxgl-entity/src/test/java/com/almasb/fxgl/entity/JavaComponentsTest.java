@@ -30,19 +30,6 @@ public class JavaComponentsTest {
     }
 
     @Test
-    public void testAnonymousComponent() {
-        assertThrows(IllegalArgumentException.class, () -> entity.addComponent(new Component() {}));
-    }
-
-    @Test
-    public void testAnonymousControl() {
-        assertThrows(IllegalArgumentException.class, () -> entity.addComponent(new Component() {
-                @Override
-                public void onUpdate(double tpf) { }
-        }));
-    }
-
-    @Test
     public void testRequiredPartial() {
         assertThrows(IllegalStateException.class, () -> entity.addComponent(new RComponent()));
 

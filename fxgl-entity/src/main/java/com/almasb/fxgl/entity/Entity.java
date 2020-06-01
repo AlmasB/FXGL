@@ -488,20 +488,12 @@ public class Entity {
     }
 
     private void checkRequirementsMet(Class<? extends Component> type) {
-        checkNotAnonymous(type);
-
         checkNotDuplicate(type);
 
         for (Required r : type.getAnnotationsByType(Required.class)) {
             if (!hasComponent(r.value())) {
                 throw new IllegalStateException("Required component: [" + r.value().getSimpleName() + "] for: " + type.getSimpleName() + " is missing");
             }
-        }
-    }
-
-    private void checkNotAnonymous(Class<? extends Component> type) {
-        if (isAnonymousClass(type)) {
-            throw new IllegalArgumentException("Anonymous components are not allowed: " + type.getName());
         }
     }
 

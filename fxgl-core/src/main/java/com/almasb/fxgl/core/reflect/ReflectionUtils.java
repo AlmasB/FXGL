@@ -218,10 +218,6 @@ public final class ReflectionUtils {
         }
     }
 
-    public static boolean isAnonymousClass(Class<?> type) {
-        return type.isAnonymousClass() || type.getCanonicalName() == null;
-    }
-
     public static Throwable getRootCause(Throwable e) {
         Throwable cause;
         Throwable result = e;
