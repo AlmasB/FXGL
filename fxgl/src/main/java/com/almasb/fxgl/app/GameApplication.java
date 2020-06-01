@@ -5,28 +5,14 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.core.EngineService;
-import com.almasb.fxgl.core.concurrent.Async;
-import com.almasb.fxgl.core.concurrent.IOTask;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
-import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.core.util.Platform;
 import com.almasb.fxgl.dev.profiling.ProfilerService;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.generated.BuildProperties;
 import com.almasb.fxgl.logging.*;
-import com.almasb.fxgl.profile.DataFile;
-import com.almasb.fxgl.profile.SaveLoadHandler;
-import com.almasb.fxgl.ui.FontType;
-import javafx.application.Application;
-import javafx.concurrent.Task;
 import javafx.stage.Stage;
-import kotlin.Unit;
 
-import java.util.HashMap;
 import java.util.Map;
-
-import static kotlin.system.TimingKt.measureNanoTime;
 
 /**
  * To use FXGL, extend this class and implement necessary methods.
@@ -98,7 +84,7 @@ public abstract class GameApplication {
 
         app.initLogger(settings);
 
-        // this _should_ be a workaround for the JavaFX bug on linux discussed at https://github.com/AlmasB/FXGL/issues/579
+        // this is a workaround for the JavaFX bug on linux discussed at https://github.com/AlmasB/FXGL/issues/579
         if (settings.isLinux()) {
             System.setProperty("quantum.multithreaded", "false");
         }
@@ -154,8 +140,6 @@ public abstract class GameApplication {
 
     /**
      * Initialize app settings.
-     *
-     * @param settings app settings
      */
     protected abstract void initSettings(GameSettings settings);
 
@@ -207,232 +191,4 @@ public abstract class GameApplication {
      * @param tpf time per frame
      */
     protected void onUpdate(double tpf) {}
-
-    public static final class FXGLApplication extends Application {
-
-        public static GameApplication app;
-        private static ReadOnlyGameSettings settings;
-
-        private static Engine engine;
-        private MainWindow mainWindow;
-
-        /**
-         * This is the main entry point as run by the JavaFX platform.
-         */
-        @Override
-        public void start(Stage stage) {
-            // any exception on the JavaFX thread will be caught and reported
-            Thread.setDefaultUncaughtExceptionHandler((thread, e) -> handleFatalError(e));
-
-            log.debug("Initializing FXGL");
-
-            engine = new Engine(settings);
-
-            // after this call, all FXGL.* calls (apart from those accessing services) are valid
-            FXGL.inject$fxgl(engine, app, this);
-
-            var startupScene = settings.getSceneFactory().newStartup();
-
-            // get window up ASAP
-            mainWindow = new MainWindow(stage, startupScene, settings);
-            mainWindow.show();
-
-            engine.getEnvironmentVars$fxgl().put("settings", settings);
-            engine.getEnvironmentVars$fxgl().put("mainWindow", mainWindow);
-
-            // start initialization of services on a background thread
-            // then start the loop on the JavaFX thread
-            var task = IOTask.ofVoid(() -> {
-                            var time = measureNanoTime(() -> {
-                                engine.initServices();
-                                postServicesInit();
-
-                                return Unit.INSTANCE;
-                            });
-
-                            log.infof("FXGL initialization took: %.3f sec", time / 1000000000.0);
-                        })
-                        .onSuccess(n -> engine.startLoop())
-                        .onFailure(e -> handleFatalError(e))
-                        .toJavaFXTask();
-
-            Async.INSTANCE.execute(task);
-        }
-
-        private void postServicesInit() {
-            initPauseResumeHandler();
-            initSaveLoadHandler();
-            initAndLoadLocalization();
-            initAndRegisterFontFactories();
-
-            // onGameUpdate is only updated in Game Scene
-            FXGL.getGameScene().addListener(tpf -> engine.onGameUpdate(tpf));
-        }
-
-        private void initPauseResumeHandler() {
-            if (!settings.isMobile()) {
-                mainWindow.iconifiedProperty().addListener((obs, o, isMinimized) -> {
-                    if (isMinimized) {
-                        engine.pauseLoop();
-                    } else {
-                        engine.resumeLoop();
-                    }
-                });
-            }
-        }
-
-        private void initSaveLoadHandler() {
-            FXGL.getSaveLoadService().addHandler(new SaveLoadHandler() {
-                @Override
-                public void onSave(DataFile data) {
-                    var bundle = new Bundle("FXGLServices");
-                    engine.write(bundle);
-
-                    data.putBundle(bundle);
-                }
-
-                @Override
-                public void onLoad(DataFile data) {
-                    var bundle = data.getBundle("FXGLServices");
-                    engine.read(bundle);
-                }
-            });
-        }
-
-        private void initAndLoadLocalization() {
-            log.debug("Loading localizations");
-
-            settings.getSupportedLanguages().forEach(lang -> {
-                var pMap = FXGL.getAssetLoader().loadPropertyMap("languages/" + lang.getName().toLowerCase() + ".lang");
-                FXGL.getLocalizationService().addLanguageData(lang, pMap.toStringMap());
-            });
-
-            FXGL.getLocalizationService().selectedLanguageProperty().bind(settings.getLanguage());
-        }
-
-        private void initAndRegisterFontFactories() {
-            log.debug("Registering font factories with UI factory");
-
-            var uiFactory = FXGL.getUIFactoryService();
-
-            uiFactory.registerFontFactory(FontType.UI, FXGL.getAssetLoader().loadFont(settings.getFontUI()));
-            uiFactory.registerFontFactory(FontType.GAME, FXGL.getAssetLoader().loadFont(settings.getFontGame()));
-            uiFactory.registerFontFactory(FontType.MONO, FXGL.getAssetLoader().loadFont(settings.getFontMono()));
-            uiFactory.registerFontFactory(FontType.TEXT, FXGL.getAssetLoader().loadFont(settings.getFontText()));
-        }
-
-        private boolean isError = false;
-
-        private void handleFatalError(Throwable error) {
-            if (isError) {
-                // just ignore to avoid spamming dialogs
-                return;
-            }
-
-            isError = true;
-
-            // stop main loop from running as we cannot continue
-            engine.stopLoop();
-
-            log.fatal("Uncaught Exception:", error);
-            log.fatal("Application will now exit");
-
-            if (mainWindow != null) {
-                mainWindow.showFatalError(error, this::exitFXGL);
-            } else {
-                exitFXGL();
-            }
-        }
-
-        public void exitFXGL() {
-            log.debug("Exiting FXGL");
-
-            if (engine != null && !isError)
-                engine.stopLoopAndExitServices();
-
-            log.debug("Shutting down background threads");
-            Async.INSTANCE.shutdownNow();
-
-            log.debug("Closing logger and exiting JavaFX");
-            Logger.close();
-            javafx.application.Platform.exit();
-        }
-
-        static void launchFX(GameApplication app, ReadOnlyGameSettings settings, String[] args) {
-            FXGLApplication.app = app;
-            FXGLApplication.settings = settings;
-            launch(args);
-        }
-
-        static void customLaunchFX(GameApplication app, ReadOnlyGameSettings settings, Stage stage) {
-            FXGLApplication.app = app;
-            FXGLApplication.settings = settings;
-            new FXGLApplication().start(stage);
-        }
-    }
-
-    public static class GameApplicationService extends EngineService {
-
-        private GameApplication app = FXGLApplication.app;
-
-        @Override
-        public void onMainLoopStarting() {
-            // these things need to be called early before the main loop
-            // so that menus can correctly display input controls, etc.
-            app.initInput();
-            app.onPreInit();
-        }
-
-        @Override
-        public void onGameUpdate(double tpf) {
-            app.onUpdate(tpf);
-        }
-    }
-
-    /**
-     *  * Clears previous game.
-     *  * Initializes game, physics and UI.
-     *  * This task is rerun every time the game application is restarted.
-     */
-    public static class InitAppTask extends Task<Void> {
-
-        private GameApplication app = FXGLApplication.app;
-
-        @Override
-        protected Void call() throws Exception {
-            var time = measureNanoTime(() -> {
-
-                log.debug("Initializing game");
-                updateMessage("Initializing game");
-
-                initGame();
-                app.initPhysics();
-                app.initUI();
-
-                FXGLApplication.engine.onGameReady(FXGL.getWorldProperties());
-
-                return Unit.INSTANCE;
-            });
-
-            log.infof("Game initialization took: %.3f sec", time / 1000000000.0);
-
-            return null;
-        }
-
-        private void initGame() {
-            var vars = new HashMap<String, Object>();
-            app.initGameVars(vars);
-
-            vars.forEach((name, value) ->
-                    FXGL.getWorldProperties().setValue(name, value)
-            );
-
-            app.initGame();
-        }
-
-        @Override
-        protected void failed() {
-            throw new RuntimeException("Initialization failed", getException());
-        }
-    }
 }

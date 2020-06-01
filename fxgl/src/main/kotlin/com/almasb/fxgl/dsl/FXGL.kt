@@ -10,11 +10,9 @@ package com.almasb.fxgl.dsl
 import com.almasb.fxgl.achievement.AchievementService
 import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.app.*
-import com.almasb.fxgl.app.Engine
 import com.almasb.fxgl.app.services.AssetLoaderService
 import com.almasb.fxgl.app.services.IOTaskExecutorService
 import com.almasb.fxgl.app.services.SystemBundleService
-import com.almasb.fxgl.app.services.WindowService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.core.concurrent.Async
@@ -22,7 +20,6 @@ import com.almasb.fxgl.core.concurrent.Executor
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.cutscene.CutsceneService
-import com.almasb.fxgl.dev.DevPane
 import com.almasb.fxgl.dev.DevService
 import com.almasb.fxgl.dsl.handlers.CollectibleHandler
 import com.almasb.fxgl.dsl.handlers.OneTimeCollisionHandler
@@ -77,11 +74,11 @@ import java.util.function.Consumer
 class FXGL private constructor() { companion object {
     
     private lateinit var engine: Engine
-    private lateinit var fxApp: GameApplication.FXGLApplication
+    private lateinit var fxApp: FXGLApplication
     private lateinit var app: GameApplication
 
     @JvmStatic
-    internal fun inject(e: Engine, gameApp: GameApplication, a: GameApplication.FXGLApplication) {
+    internal fun inject(e: Engine, gameApp: GameApplication, a: FXGLApplication) {
         engine = e
         fxApp = a
         app = gameApp
@@ -161,7 +158,7 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getAppHeight() = engine.settings.height
 
-    @JvmStatic fun getPrimaryStage() = engine.getService(WindowService::class.java).mainWindow.stage
+    //@JvmStatic fun getPrimaryStage() = engine.getService(WindowService::class.java).mainWindow.stage
 
     /**
      * Note: the system bundle is saved on exit and loaded on init.
@@ -209,7 +206,7 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getSaveLoadService() = engine.getService(SaveLoadService::class.java)
 
-    @JvmStatic fun getWindowService() = engine.getService(WindowService::class.java)
+    @JvmStatic fun getWindowService() = engine.getService(FXGLApplication.GameApplicationService::class.java)
 
     @JvmStatic fun getSceneService() = engine.getService(SceneService::class.java)
 
@@ -228,7 +225,7 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getGameWorld() = getGameScene().gameWorld
     @JvmStatic fun getWorldProperties() = getGameScene().gameWorld.properties
     @JvmStatic fun getPhysicsWorld() = getGameScene().physicsWorld
-    @JvmStatic fun getGameScene() = engine.getService(WindowService::class.java).gameScene
+    @JvmStatic fun getGameScene() = engine.getService(FXGLApplication.GameApplicationService::class.java).gameScene
 
     /**
      * @return play state timer

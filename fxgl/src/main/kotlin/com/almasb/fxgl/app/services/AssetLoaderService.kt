@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app.services
 
+import com.almasb.fxgl.app.FXGLApplication
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.audio.AudioType
 import com.almasb.fxgl.audio.Music
@@ -434,9 +435,15 @@ class AssetLoaderService : EngineService() {
      */
     private fun getURL(name: String): URL {
         log.debug("Loading from file system: $name")
+        
+        val app = try {
+            FXGLApplication.app
+        } catch (e: UninitializedPropertyAccessException) {
+            null
+        }
 
         // try /assets/ from user module using their class
-        return GameApplication.FXGLApplication.app?.javaClass?.getResource(name)
+        return app?.javaClass?.getResource(name)
                 // try /fxglassets/ from fxgl.all module using this javaclass
                 ?: javaClass.getResource("/fxgl${name.substring(1)}")
                 ?: throw IllegalArgumentException("Asset \"$name\" was not found!")

@@ -80,7 +80,7 @@ object SystemActions {
             log.info("--- System info dump begin ---")
             log.infof("Entities size: %d", getGameWorld().entities.size)
             log.infof("Components size: %d", getGameWorld().entities.flatMap { it.components }.size)
-            log.infof("Scene graph size: %d", getChildrenSize(FXGL.getWindowService().mainWindow.currentFXGLScene.root))
+            //log.infof("Scene graph size: %d", getChildrenSize(FXGL.getWindowService().mainWindow.currentFXGLScene.root))
             log.info("--- System info dump end ---")
         }
     }
