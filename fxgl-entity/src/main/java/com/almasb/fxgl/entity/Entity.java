@@ -738,7 +738,6 @@ public class Entity {
     /**
      * @return distance in pixels from this entity to the other using their bounding boxes
      */
-    // Adapted from https://stackoverflow.com/questions/4978323/how-to-calculate-distance-between-two-rectangles-context-a-game-in-lua
     public final double distanceBBox(Entity other) {
         var rect1 = bbox.range(0, 0);
         var rect2 = other.bbox.range(0, 0);
