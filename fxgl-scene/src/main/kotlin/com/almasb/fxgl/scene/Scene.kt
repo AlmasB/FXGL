@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.fsm.State
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
@@ -13,7 +14,6 @@ import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.scene.transform.Scale
-import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  *
@@ -44,7 +44,9 @@ abstract class Scene : State<Scene> {
     override val isSubState: Boolean = false
     override val isAllowConcurrency: Boolean = false
 
-    private val listeners = CopyOnWriteArrayList<SceneListener>()
+    private val listeners = Array<SceneListener>()
+    private val listenersToAdd = Array<SceneListener>()
+    private val listenersToRemove = Array<SceneListener>()
 
     init {
         root.background = null
@@ -62,17 +64,23 @@ abstract class Scene : State<Scene> {
     }
 
     fun addListener(l: SceneListener) {
-        listeners += l
+        listenersToAdd.add(l)
     }
 
     fun removeListener(l: SceneListener) {
-        listeners -= l
+        listenersToRemove.add(l)
     }
 
     fun update(tpf: Double) {
         input.update(tpf)
         timer.update(tpf)
         onUpdate(tpf)
+
+        listeners.addAll(listenersToAdd)
+        listeners.removeAllByIdentity(listenersToRemove)
+
+        listenersToAdd.clear()
+        listenersToRemove.clear()
 
         listeners.forEach { it.onUpdate(tpf) }
     }
