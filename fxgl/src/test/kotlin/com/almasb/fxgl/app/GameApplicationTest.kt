@@ -9,6 +9,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.test.RunWithFX
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertTimeout
+import org.junit.jupiter.api.assertTimeoutPreemptively
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Duration
@@ -67,7 +68,7 @@ class GameApplicationTest {
             GameApplication.launch(MockGameApplication::class.java, arrayOf())
         }).start()
 
-        assertTimeout(Duration.ofSeconds(10)) {
+        assertTimeoutPreemptively(Duration.ofSeconds(10)) {
             MockGameApplication.COUNTDOWN.await()
         }
     }
