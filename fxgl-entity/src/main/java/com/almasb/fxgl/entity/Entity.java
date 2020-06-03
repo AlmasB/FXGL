@@ -336,7 +336,7 @@ public class Entity {
      * Adds given component to this entity.
      *
      * @param component the component
-     * @throws IllegalArgumentException if a component with same type already registered or anonymous
+     * @throws IllegalArgumentException if a component with same type already registered
      * @throws IllegalStateException if components required by the given component are missing
      */
     public final void addComponent(Component component) {
