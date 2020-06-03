@@ -9,6 +9,7 @@ package com.almasb.fxgl.physics
 import com.almasb.fxgl.entity.Entity
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -79,5 +80,24 @@ class CollisionPairTest {
 
         assertThat(pair1, `is`(pair2))
         assertTrue(pair1.hashCode() == pair2.hashCode())
+    }
+
+    @Test
+    fun `Unordered pair equality`() {
+        val e1 = Entity()
+        val e2 = Entity()
+        val e3 = Entity()
+        val e4 = Entity()
+
+        val pair = Pair(e1, e2)
+
+        // this is to check for all possible cases
+        assertTrue(pair.equal(e1, e2))
+        assertTrue(pair.equal(e2, e1))
+        assertFalse(pair.equal(e1, e3))
+        assertFalse(pair.equal(e3, e1))
+        assertFalse(pair.equal(e3, e2))
+        assertFalse(pair.equal(e2, e3))
+        assertFalse(pair.equal(e3, e4))
     }
 }
