@@ -28,39 +28,12 @@
 
 package com.almasb.fxgl.physics.box2d.common;
 
-import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 
 /**
  * A few math methods that don't fit very well anywhere else.
  */
 public final class JBoxUtils {
-
-    private static final float[] sinLUT = new float[JBoxSettings.SINCOS_LUT_LENGTH];
-
-    static {
-        for (int i = 0; i < JBoxSettings.SINCOS_LUT_LENGTH; i++) {
-            sinLUT[i] = (float) Math.sin(i * JBoxSettings.SINCOS_LUT_PRECISION);
-        }
-    }
-
-    public static float sin(float x) {
-        return sinLUT(x);
-    }
-
-    public static float cos(float x) {
-        return sinLUT(FXGLMath.HALF_PI_F - x);
-    }
-
-    public static float sinLUT(float x) {
-        x %= FXGLMath.PI2_F;
-
-        if (x < 0) {
-            x += FXGLMath.PI2_F;
-        }
-
-        return sinLUT[floor(x / JBoxSettings.SINCOS_LUT_PRECISION + .5f) % JBoxSettings.SINCOS_LUT_LENGTH];
-    }
 
     public static int floor(float x) {
         int y = (int) x;

@@ -19,6 +19,14 @@ import java.io.Serializable;
 public final class Rotation implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private static final float[] sinLUT = new float[JBoxSettings.SINCOS_LUT_LENGTH];
+
+    static {
+        for (int i = 0; i < JBoxSettings.SINCOS_LUT_LENGTH; i++) {
+            sinLUT[i] = (float) Math.sin(i * JBoxSettings.SINCOS_LUT_PRECISION);
+        }
+    }
+
     public float s, c; // sin and cos
 
     public Rotation() {
@@ -30,8 +38,8 @@ public final class Rotation implements Serializable {
     }
 
     public Rotation set(float angle) {
-        s = JBoxUtils.sin(angle);
-        c = JBoxUtils.cos(angle);
+        s = sin(angle);
+        c = cos(angle);
         return this;
     }
 
@@ -116,5 +124,23 @@ public final class Rotation implements Serializable {
     public static void mulTransUnsafe(Rotation q, Vec2 v, Vec2 out) {
         out.x = q.c * v.x + q.s * v.y;
         out.y = -q.s * v.x + q.c * v.y;
+    }
+
+    private static float sin(float x) {
+        return sinLUT(x);
+    }
+
+    private static float cos(float x) {
+        return sinLUT(FXGLMath.HALF_PI_F - x);
+    }
+
+    private static float sinLUT(float x) {
+        x %= FXGLMath.PI2_F;
+
+        if (x < 0) {
+            x += FXGLMath.PI2_F;
+        }
+
+        return sinLUT[JBoxUtils.floor(x / JBoxSettings.SINCOS_LUT_PRECISION + .5f) % JBoxSettings.SINCOS_LUT_LENGTH];
     }
 }
