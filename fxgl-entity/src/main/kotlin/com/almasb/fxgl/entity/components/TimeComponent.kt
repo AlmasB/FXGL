@@ -12,4 +12,5 @@ package com.almasb.fxgl.entity.components
 class TimeComponent
 @JvmOverloads constructor(value: Double = 1.0) : DoubleComponent(value) {
 
+    override fun isComponentInjectionRequired(): Boolean = false
 }

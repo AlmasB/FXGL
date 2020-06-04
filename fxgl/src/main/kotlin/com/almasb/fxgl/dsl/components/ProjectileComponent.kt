@@ -64,4 +64,6 @@ class ProjectileComponent(direction: Point2D, speed: Double) : Component() {
     override fun onUpdate(tpf: Double) {
         entity.translate(velocity.multiply(tpf))
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

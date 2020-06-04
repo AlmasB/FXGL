@@ -51,4 +51,8 @@ class TypeComponent
             private const val serialVersionUID = -1L
         }
     }
+
+    override fun isComponentInjectionRequired(): Boolean {
+        return false
+    }
 }

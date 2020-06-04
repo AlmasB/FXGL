@@ -209,4 +209,6 @@ class ViewComponent : Component() {
         viewRoot.children.clear()
         viewRootNoTransform.children.clear()
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

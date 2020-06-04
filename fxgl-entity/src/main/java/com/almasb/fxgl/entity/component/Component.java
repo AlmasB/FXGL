@@ -70,6 +70,18 @@ public abstract class Component {
     public void onRemoved() {
 
     }
+
+    /**
+     * To gain performance during entity creation / component addition, you can override this to return false.
+     * Then components will not be injected, so you will need to manage dependencies manually.
+     * You can do so in onAdded().
+     *
+     * @return whether this component requires injection of other components into it (default true)
+     */
+    public boolean isComponentInjectionRequired() {
+        return true;
+    }
+
     @Override
     public String toString() {
         String simpleName = getClass().getSimpleName();

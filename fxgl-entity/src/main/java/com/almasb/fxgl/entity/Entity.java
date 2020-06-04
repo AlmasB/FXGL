@@ -448,6 +448,9 @@ public class Entity {
     private void injectFields(Component component) {
         ComponentHelper.setEntity(component, this);
 
+        if (!component.isComponentInjectionRequired())
+            return;
+
         findFieldsByTypeRecursive(component, Component.class).forEach(field -> {
             getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
                 inject(field, component, comp);

@@ -140,4 +140,9 @@ public final class ActionComponent extends Component {
     public Action getNextAction() {
         return hasNextActions() ? actions.get(0) : IDLE;
     }
+
+    @Override
+    public boolean isComponentInjectionRequired() {
+        return false;
+    }
 }

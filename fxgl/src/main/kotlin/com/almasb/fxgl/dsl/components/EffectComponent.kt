@@ -82,6 +82,8 @@ class EffectComponent : Component() {
     }
 
     fun hasEffect(effectClass: Class<out Effect>) = effectClass in effectTypes
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }
 
 /**

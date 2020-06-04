@@ -40,4 +40,6 @@ class AutoRotationComponent : Component() {
         isSmoothing = true
         return this
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

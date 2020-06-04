@@ -155,6 +155,8 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
     }
 
     override fun onAdded() {
+        transform = entity.transformComponent
+
         minXWorld.bind(minXLocal.add(transform.xProperty()))
         minYWorld.bind(minYLocal.add(transform.yProperty()))
 
@@ -393,6 +395,10 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
 
     override fun read(bundle: Bundle) {
         hitBoxes.addAll(bundle.get<ArrayList<HitBox>>("hitBoxes"))
+    }
+
+    override fun isComponentInjectionRequired(): Boolean {
+        return false
     }
 
     override fun toString(): String {

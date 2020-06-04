@@ -50,4 +50,6 @@ class OffscreenPauseComponent : AccumulatedUpdateComponent(3) {
 
         components.clear()
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

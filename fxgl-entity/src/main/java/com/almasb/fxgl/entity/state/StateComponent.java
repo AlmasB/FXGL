@@ -77,4 +77,9 @@ public final class StateComponent extends Component {
 
         return false;
     }
+
+    @Override
+    public boolean isComponentInjectionRequired() {
+        return false;
+    }
 }
