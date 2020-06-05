@@ -171,6 +171,68 @@ class InputTest {
     }
 
     @Test
+    fun `Input sequence`() {
+        var calls = 0
+
+        input.addAction(object : UserAction("Test") {
+            override fun onActionBegin() {
+                calls++
+            }
+
+            override fun onAction() {
+                calls++
+            }
+
+            override fun onActionEnd() {
+                calls = 99
+            }
+        }, InputSequence(KeyCode.A, KeyCode.D, KeyCode.F))
+
+        input.mockKeyPress(KeyCode.A)
+        input.mockKeyRelease(KeyCode.A)
+        assertThat(calls, `is`(0))
+
+        input.mockKeyPress(KeyCode.D)
+        input.mockKeyRelease(KeyCode.D)
+        assertThat(calls, `is`(0))
+
+        input.mockKeyPress(KeyCode.D)
+        input.mockKeyRelease(KeyCode.D)
+        assertThat(calls, `is`(0))
+
+        input.mockKeyPress(KeyCode.F)
+        input.mockKeyRelease(KeyCode.F)
+        assertThat(calls, `is`(0))
+
+        input.mockKeyPress(KeyCode.A)
+        input.mockKeyRelease(KeyCode.A)
+        assertThat(calls, `is`(0))
+
+        input.mockKeyPress(KeyCode.D)
+        input.mockKeyRelease(KeyCode.D)
+        assertThat(calls, `is`(0))
+
+        input.mockKeyPress(KeyCode.F)
+        assertThat(calls, `is`(1))
+
+        input.update(1.0)
+        assertThat(calls, `is`(2))
+
+        input.update(1.0)
+        assertThat(calls, `is`(3))
+
+        input.update(1.0)
+        assertThat(calls, `is`(4))
+
+        input.mockKeyRelease(KeyCode.F)
+
+        assertThat(calls, `is`(99))
+
+        input.update(1.0)
+        assertThat(calls, `is`(99))
+    }
+
+    @Test
     fun `Test update`() {
         var calls = 0
 
