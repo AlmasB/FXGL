@@ -31,11 +31,15 @@ class ViewTest {
     @Test
     fun `Key view`() {
         KeyCode.values().forEach {
+            KeyView(it)
+            KeyView(it, Color.GOLD)
+
             val view = KeyView(it, Color.WHITE, 15.0)
             view.backgroundColor = Color.AQUAMARINE
             view.keyColor = Color.RED
 
             assertThat(view.backgroundColor, `is`<Paint>(Color.AQUAMARINE))
+            assertThat(view.backgroundColorProperty().value, `is`<Paint>(Color.AQUAMARINE))
             assertThat(view.keyColor, `is`<Paint>(Color.RED))
         }
     }
