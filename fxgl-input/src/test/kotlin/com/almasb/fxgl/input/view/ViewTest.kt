@@ -64,6 +64,7 @@ class ViewTest {
         view.trigger = trigger
 
         assertThat(view.triggerProperty().value, `is`<Trigger>(trigger))
+        assertThat(view.colorProperty().value, `is`<Color>(Color.BLUE))
         assertTrue(view.children.isNotEmpty())
 
         nodes.forEach {
