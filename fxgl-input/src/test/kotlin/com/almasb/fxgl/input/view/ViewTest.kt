@@ -43,6 +43,13 @@ class ViewTest {
     @Test
     fun `MouseButton view`() {
         val view = MouseButtonView(MouseButton.PRIMARY, Color.BLUE, 20.0)
+        assertThat(view.color, `is`<Paint>(Color.BLUE))
+
+        view.color = Color.RED
+        assertThat(view.color, `is`<Paint>(Color.RED))
+
+        view.backgroundColor = Color.YELLOW
+        assertThat(view.backgroundColor, `is`<Paint>(Color.YELLOW))
     }
 
     @Test
