@@ -657,6 +657,10 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun animationBuilder(scene: Scene) = AnimationBuilder(scene)
 
     @JvmStatic fun eventBuilder() = EventBuilder()
+
+    @JvmStatic fun onKeyBuilder(key: KeyCode) = KeyInputBuilder(key)
+
+    @JvmStatic fun onKeyBuilder(key: KeyCode, name: String) = KeyInputBuilder(key, name)
 }
 }
 
