@@ -842,6 +842,15 @@ class InputTest {
     }
 
     @Test
+    fun `Virtual controller view`() {
+        val psView = input.createPSVirtualControllerView()
+        val xboxView = input.createXboxVirtualControllerView()
+
+        assertTrue(psView.children.isNotEmpty())
+        assertTrue(xboxView.children.isNotEmpty())
+    }
+
+    @Test
     fun `Virtual controller correctly handles UI interaction`() {
         var i = 0
 
@@ -886,4 +895,6 @@ class InputTest {
             assertThat(i, `is`(0))
         }
     }
+
+
 }
