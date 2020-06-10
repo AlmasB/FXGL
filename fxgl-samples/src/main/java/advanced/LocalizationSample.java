@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox.customization;
+package advanced;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -23,14 +23,14 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class LocalizationApp extends GameApplication {
+public class LocalizationSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(650);
         settings.setHeight(357);
     }
 
-    int i = 0;
+    private int i = 0;
 
     @Override
     protected void initGame() {
