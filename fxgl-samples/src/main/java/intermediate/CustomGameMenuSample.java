@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox.customization;
+package intermediate;
 
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.animation.Interpolators;
@@ -15,8 +15,6 @@ import com.almasb.fxgl.app.scene.MenuType;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.util.EmptyRunnable;
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.entity.level.Level;
-import com.almasb.fxgl.entity.level.text.TextLevelLoader;
 import com.almasb.fxgl.ui.FontType;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
@@ -29,12 +27,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import sandbox.MyEntityFactory;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class CustomGameMenuApp extends GameApplication {
+public class CustomGameMenuSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setSceneFactory(new SceneFactory() {
@@ -44,17 +41,6 @@ public class CustomGameMenuApp extends GameApplication {
                 return new MyPauseMenu();
             }
         });
-    }
-
-    @Override
-    protected void initGame() {
-        FXGL.getGameWorld().addEntityFactory(new MyEntityFactory());
-
-        Level level = FXGL.getAssetLoader().loadLevel("test_level.txt", new TextLevelLoader(30, 30, '0'));
-
-        FXGL.getGameWorld().setLevel(level);
-
-        FXGL.spawn("rect", 750, 550);
     }
 
     public static class MyPauseMenu extends FXGLMenu {

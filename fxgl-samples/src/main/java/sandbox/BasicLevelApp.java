@@ -14,6 +14,7 @@ import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.level.Level;
 import com.almasb.fxgl.entity.level.text.TextLevelLoader;
 import com.almasb.fxgl.ui.FXGLButton;
+import sandbox.levels.MyEntityFactory;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

@@ -10,6 +10,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.ui.FXGLCheckBox;
+import sandbox.levels.MyEntityFactory;
 
 import java.util.HashMap;
 import java.util.Map;
