@@ -32,14 +32,32 @@ class DistancesTest {
 
             // arguments are in order: rect1, rect2, distance between them
             return Stream.of(
+                    // overlapping
+                    arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(0.0, 5.0, 5.0, 10.0), 0.0),
+
+                    // top
+                    arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(0.0, -15.0, 10.0, 10.0), 5.0),
+
+                    // bot
+                    arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(0.0, 15.0, 10.0, 10.0), 5.0),
+
                     // right
                     arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(15.0, 0.0, 10.0, 10.0), 5.0),
 
                     // top right
                     arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(15.0, -20.0, 10.0, 10.0), 11.18),
 
+                    // bot right
+                    arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(15.0, 20.0, 10.0, 10.0), 11.18),
+
                     // left
-                    arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(-15.0, 0.0, 10.0, 10.0), 5.0)
+                    arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(-15.0, 0.0, 10.0, 10.0), 5.0),
+
+                    // top left
+                    arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(-15.0, -20.0, 10.0, 10.0), 11.18),
+
+                    // bot left
+                    arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(-15.0, 20.0, 10.0, 10.0), 11.18)
             )
         }
     }
