@@ -76,18 +76,26 @@ class KeyView
 
             KeyCode.DOWN -> {
                 text.text = "\u2193"
+                background.width = text.layoutBounds.width * 1.25
+                border.width = text.layoutBounds.width * 1.26
             }
 
             KeyCode.UP -> {
                 text.text = "\u2191"
+                background.width = text.layoutBounds.width * 1.25
+                border.width = text.layoutBounds.width * 1.26
             }
 
             KeyCode.LEFT -> {
                 text.text = "\u2190"
+                background.width = text.layoutBounds.width * 1.25
+                border.width = text.layoutBounds.width * 1.26
             }
 
             KeyCode.RIGHT -> {
                 text.text = "\u2192"
+                background.width = text.layoutBounds.width * 1.25
+                border.width = text.layoutBounds.width * 1.26
             }
 
             KeyCode.ENTER -> {
@@ -102,7 +110,38 @@ class KeyView
                 border.width = text.layoutBounds.width * 1.26
             }
 
-            else -> {}
+            KeyCode.BACK_SPACE -> {
+                text.text = "\u232B"
+                background.width = text.layoutBounds.width * 2
+                border.width = text.layoutBounds.width * 2
+            }
+
+            KeyCode.ESCAPE -> {
+                text.text = "Esc"
+                background.width = text.layoutBounds.width * 1.25
+                border.width = text.layoutBounds.width * 1.26
+            }
+
+            KeyCode.TAB -> {
+                text.text = "TAB \u21B9"
+                background.width = text.layoutBounds.width * 1.25
+                border.width = text.layoutBounds.width * 1.26
+            }
+
+            KeyCode.EQUALS -> {
+                text.text = "="
+            }
+
+            KeyCode.PLUS -> {
+                text.text = "+"
+            }
+
+            KeyCode.MINUS -> {
+                text.text = "-"
+            }
+
+            else -> {
+            }
         }
 
         children.addAll(background, border, text)
