@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package advanced;
 
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.animation.Interpolators;
@@ -26,14 +26,12 @@ import java.util.List;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class FullscreenApp extends GameApplication {
+public class FullscreenSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setIntroEnabled(true);
-        //settings.setFullScreenAllowed(true);
+        settings.setFullScreenAllowed(true);
         settings.setFullScreenFromStart(true);
-        settings.setMainMenuEnabled(false);
-        settings.setGameMenuEnabled(true);
 
         settings.setSceneFactory(new SceneFactory() {
             @Override
