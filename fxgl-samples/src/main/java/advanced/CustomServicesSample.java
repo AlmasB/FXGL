@@ -4,9 +4,8 @@
  * See LICENSE for details.
  */
 
-package sandbox.customization;
+package advanced;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.notification.NotificationService;
@@ -16,6 +15,7 @@ import javafx.scene.paint.Color;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
+ * Shows how to provide custom services.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -24,8 +24,6 @@ public class CustomServicesSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setEngineServiceProvider(NotificationService.class, MyNotificationServiceProvider.class);
-
-        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
@@ -46,7 +44,7 @@ public class CustomServicesSample extends GameApplication {
 
         @Override
         public Color getTextColor() {
-            return null;
+            return Color.WHITE;
         }
 
         @Override
@@ -56,7 +54,7 @@ public class CustomServicesSample extends GameApplication {
 
         @Override
         public Color getBackgroundColor() {
-            return null;
+            return Color.BLACK;
         }
     }
 

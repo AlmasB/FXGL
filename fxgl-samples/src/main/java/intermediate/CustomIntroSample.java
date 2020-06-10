@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox.customization;
+package intermediate;
 
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.animation.Interpolators;
@@ -24,9 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Shows how to customize and provide own intro.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class CustomIntroApp extends GameApplication {
+public class CustomIntroSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setIntroEnabled(true);
