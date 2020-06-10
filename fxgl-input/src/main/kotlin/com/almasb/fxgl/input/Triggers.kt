@@ -92,18 +92,16 @@ data class KeyTrigger
         return event.code == key && modifier.isTriggered(event)
     }
 
-    @Suppress("NON_EXHAUSTIVE_WHEN")
     override fun isReleased(event: InputEvent): Boolean {
         if (event !is KeyEvent)
             return false
 
-        when (event.code) {
-            KeyCode.CONTROL -> return modifier == InputModifier.CTRL
-            KeyCode.SHIFT -> return modifier == InputModifier.SHIFT
-            KeyCode.ALT -> return modifier == InputModifier.ALT
+        return when (event.code) {
+            KeyCode.CONTROL -> modifier == InputModifier.CTRL
+            KeyCode.SHIFT -> modifier == InputModifier.SHIFT
+            KeyCode.ALT -> modifier == InputModifier.ALT
+            else -> event.code == key
         }
-
-        return event.code == key
     }
 
     override fun toString() = (if (modifier == InputModifier.NONE) "" else "$modifier+") + key.getName()
