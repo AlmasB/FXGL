@@ -38,8 +38,17 @@ class DistancesTest {
                     // top right
                     arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(15.0, -20.0, 10.0, 10.0), 11.18),
 
+                    // bot right
+                    arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(15.0, 20.0, 10.0, 10.0), 11.18),
+
                     // left
-                    arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(-15.0, 0.0, 10.0, 10.0), 5.0)
+                    arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(-15.0, 0.0, 10.0, 10.0), 5.0),
+
+                    // top left
+                    arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(-15.0, -20.0, 10.0, 10.0), 11.18),
+
+                    // bot left
+                    arguments(Rectangle2D(0.0, 0.0, 10.0, 10.0), Rectangle2D(-15.0, 20.0, 10.0, 10.0), 11.18)
             )
         }
     }
