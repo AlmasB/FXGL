@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package advanced;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -18,6 +18,8 @@ import javafx.scene.layout.VBox;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
+ * Shows how to use 9-slice UI builder.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class UINineSliceSample extends GameApplication {

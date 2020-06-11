@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package basics;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.Vec2;
@@ -25,11 +25,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class VarsSample extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
-        settings.setTitle("VarsSample");
-    }
+    protected void initSettings(GameSettings settings) { }
 
     @Override
     protected void initInput() {
@@ -58,17 +54,19 @@ public class VarsSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        getGameState().<Vec2>addListener("vector", (prev, now) -> System.out.println(prev + " " + now));
+        getWorldProperties().<Vec2>addListener("vector", (prev, now) -> System.out.println(prev + " " + now));
 
-        System.out.println(getGameState().getDouble("testDouble"));
+        System.out.println(getd("testDouble"));
 
-        System.out.println(getGameState().getBoolean("testBoolean"));
+        System.out.println(getb("testBoolean"));
 
-        System.out.println(getGameState().<Vec2>getObject("vector").x);
+        Vec2 vector = geto("vector");
 
-        System.out.println(getGameState().<Vec2>objectProperty("vector").get().y);
+        System.out.println(vector.x);
 
-        getGameState().setValue("vector", new Vec2(300, 300));
+        System.out.println(getWorldProperties().<Vec2>objectProperty("vector").get().y);
+
+        set("vector", new Vec2(300, 300));
     }
 
     @Override
@@ -78,7 +76,7 @@ public class VarsSample extends GameApplication {
         uiScore.translateXProperty().bind(getInput().mouseXUIProperty());
         uiScore.translateYProperty().bind(getInput().mouseYUIProperty());
 
-        getGameScene().addUINode(uiScore);
+        addUINode(uiScore);
     }
 
     @Override
