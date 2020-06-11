@@ -71,23 +71,28 @@ public class CustomLoadingSample extends GameApplication {
 
         public MyLoadingScene() {
 
-            var circle = new Circle(10, 10, 10, Color.BLUE);
-            circle.setTranslateX(getAppWidth() / 2.0);
-            circle.setTranslateY(getAppHeight() / 3.0);
+            getContentRoot().getChildren().addAll(new Rectangle(getAppWidth(), getAppHeight(), Color.LIGHTGRAY));
 
-            var largeCircle = new Circle(100);
+            var largeCircle = new Circle(45);
             largeCircle.setTranslateX(getAppWidth() / 2.0);
             largeCircle.setTranslateY(getAppHeight() / 3.0);
 
-            animationBuilder(this)
-                    .duration(Duration.seconds(2.5))
-                    .repeatInfinitely()
-                    .interpolator(Interpolators.EXPONENTIAL.EASE_IN())
-                    .translate(circle)
-                    .alongPath(largeCircle)
-                    .buildAndPlay();
+            for (int i = 0; i < 3; i++) {
+                var circle = new Circle(10, 10, 10, Color.BLUE);
+                circle.setTranslateX(getAppWidth() / 2.0);
+                circle.setTranslateY(getAppHeight() / 3.0);
 
-            getContentRoot().getChildren().addAll(new Rectangle(getAppWidth(), getAppHeight(), Color.LIGHTGRAY), circle);
+                getContentRoot().getChildren().addAll(circle);
+
+                animationBuilder(this)
+                        .delay(Duration.seconds(i * 0.4))
+                        .duration(Duration.seconds(1.6))
+                        .repeatInfinitely()
+                        .interpolator(Interpolators.SMOOTH.EASE_IN_OUT())
+                        .translate(circle)
+                        .alongPath(largeCircle)
+                        .buildAndPlay();
+            }
         }
     }
 
