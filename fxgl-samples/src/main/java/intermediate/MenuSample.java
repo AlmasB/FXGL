@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox.customization;
+package intermediate;
 
 import com.almasb.fxgl.achievement.Achievement;
 import com.almasb.fxgl.app.GameApplication;

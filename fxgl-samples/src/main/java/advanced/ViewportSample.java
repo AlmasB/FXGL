@@ -4,9 +4,8 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package advanced;
 
-import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import dev.DeveloperWASDControl;
@@ -17,19 +16,12 @@ import javafx.scene.shape.Rectangle;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
- * Shows how to use input service and bind actions to triggers.
+ * Shows how to apply viewport effects.
  */
-public class InputSample3 extends GameApplication {
+public class ViewportSample extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
-        settings.setTitle("InputSample3");
-        settings.setVersion("0.1");
-    }
-
-    private Animation<?> a;
+    protected void initSettings(GameSettings settings) { }
 
     @Override
     protected void initInput() {
@@ -37,6 +29,8 @@ public class InputSample3 extends GameApplication {
 
         onKeyDown(KeyCode.E, "Lazy", () -> {
             getGameScene().getViewport().setLazy(!getGameScene().getViewport().isLazy());
+
+            System.out.println("isLazy: " + getGameScene().getViewport().isLazy());
         });
 
         onKeyDown(KeyCode.F, "Flash", () -> {
@@ -44,9 +38,7 @@ public class InputSample3 extends GameApplication {
         });
 
         onKeyDown(KeyCode.G, "Fade", () -> {
-            getGameScene().getViewport().fade(() -> {
-                System.out.println("Fade finished");
-            });
+            getGameScene().getViewport().fade(() -> System.out.println("Fade finished"));
         });
     }
 
@@ -64,16 +56,6 @@ public class InputSample3 extends GameApplication {
 
         getGameScene().getViewport().setBounds(30, 30, 1600 - 30, 1200 - 30);
         getGameScene().getViewport().bindToEntity(e, getAppWidth() / 2, getAppHeight() / 2);
-
-        //a = translateAnim(getGameScene().getViewport().getCamera(), new Point2D(0, 0), new Point2D(400, 400), Duration.ZERO, Duration.seconds(1.5), () -> {}, Interpolators.EXPONENTIAL.EASE_OUT());
-
-        a.setAutoReverse(true);
-        a.setCycleCount(2);
-    }
-
-    @Override
-    public void onUpdate(double tpf) {
-        a.onUpdate(tpf);
     }
 
     public static void main(String[] args) {

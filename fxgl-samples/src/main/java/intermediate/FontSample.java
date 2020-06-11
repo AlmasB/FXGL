@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package ui;
+package intermediate;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;

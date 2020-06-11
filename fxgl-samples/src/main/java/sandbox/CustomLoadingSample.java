@@ -6,34 +6,28 @@
 
 package sandbox;
 
-import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.LoadingScene;
 import com.almasb.fxgl.app.scene.SceneFactory;
-import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.dsl.FXGL;
-import javafx.concurrent.Task;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
+
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
- * This is an example of a minimalistic FXGL game application.
+ * Shows how to provide a custom loading scene.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class LoadingSample extends GameApplication {
+public class CustomLoadingSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
-        settings.setTitle("LoadingSample");
-        settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMainMenuEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEBUG);
         settings.setSceneFactory(new SceneFactory() {
             @Override
             public LoadingScene newLoadingScene() {
@@ -44,8 +38,8 @@ public class LoadingSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        FXGL.onKeyDown(KeyCode.L, () -> {
-            FXGL.getGameController().gotoLoading(() -> {
+        onKeyDown(KeyCode.L, () -> {
+            getGameController().gotoLoading(() -> {
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
@@ -75,26 +69,25 @@ public class LoadingSample extends GameApplication {
 
     public class MyLoadingScene extends LoadingScene {
 
-        private Rectangle r = new Rectangle(40, 0, null);
-
         public MyLoadingScene() {
-            r.setStroke(Color.BLACK);
-            r.setTranslateX(FXGLMath.random(0, FXGL.getAppWidth()));
-            r.setTranslateY(FXGLMath.random(0, 2));
 
-            getContentRoot().getChildren().addAll(new Rectangle(getAppWidth(), getAppHeight(), Color.LIGHTGRAY), r);
-        }
+            var circle = new Circle(10, 10, 10, Color.BLUE);
+            circle.setTranslateX(getAppWidth() / 2.0);
+            circle.setTranslateY(getAppHeight() / 3.0);
 
-        @Override
-        public void bind(Task<?> task) {
-            task.progressProperty().addListener((observable, oldValue, progress) -> {
-                r.setHeight(FXGL.getAppHeight() * progress.doubleValue());
-            });
-        }
+            var largeCircle = new Circle(100);
+            largeCircle.setTranslateX(getAppWidth() / 2.0);
+            largeCircle.setTranslateY(getAppHeight() / 3.0);
 
-        @Override
-        protected void onUpdate(double tpf) {
-            super.onUpdate(tpf);
+            animationBuilder(this)
+                    .duration(Duration.seconds(2.5))
+                    .repeatInfinitely()
+                    .interpolator(Interpolators.EXPONENTIAL.EASE_IN())
+                    .translate(circle)
+                    .alongPath(largeCircle)
+                    .buildAndPlay();
+
+            getContentRoot().getChildren().addAll(new Rectangle(getAppWidth(), getAppHeight(), Color.LIGHTGRAY), circle);
         }
     }
 

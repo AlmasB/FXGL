@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package sandbox.input;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -15,7 +15,7 @@ import com.almasb.fxgl.input.UserAction;
 import javafx.scene.input.KeyCode;
 
 /**
- * Shows how to use input service and bind actions to triggers.
+ * Shows how to use input sequence.
  */
 public class InputSequenceSample extends GameApplication {
 
