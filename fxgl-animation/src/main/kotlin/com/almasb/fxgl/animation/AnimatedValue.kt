@@ -121,6 +121,8 @@ class AnimatedPath
 
         pt.jumpTo(Duration.seconds(1.0))
 
+        // hack to ensure that points[0] is not (0, 0)
+        points[0] = points[1]!!
         points[100] = Point2D(dummy.translateX, dummy.translateY)
     }
 
