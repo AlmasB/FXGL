@@ -7,6 +7,7 @@
 package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.core.util.EmptyRunnable
+import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.UserAction
 import javafx.scene.input.KeyCode
 
@@ -14,20 +15,20 @@ import javafx.scene.input.KeyCode
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class KeyInputBuilder(key: KeyCode, name: String) {
+class KeyInputBuilder(input: Input, key: KeyCode, name: String) {
 
     companion object {
         private var counter = 0
     }
 
-    constructor(key: KeyCode) : this(key, "AUTO-${counter++}")
+    constructor(input: Input, key: KeyCode) : this(input, key, "AUTO-${counter++}")
 
     private var onActionBegin: Runnable = EmptyRunnable
     private var onAction: Runnable = EmptyRunnable
     private var onActionEnd: Runnable = EmptyRunnable
 
     init {
-        getInput().addAction(object : UserAction(name) {
+        input.addAction(object : UserAction(name) {
             override fun onActionBegin() {
                 onActionBegin.run()
             }
