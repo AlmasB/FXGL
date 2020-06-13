@@ -46,6 +46,6 @@ class BundleTest {
         bundle.put("key", "someValue")
         bundle.put("key2", 33)
 
-        assertThat(bundle.toString(), `is`("Bundle Test: {Test.key2=33, Test.key=someValue}"))
+        assertThat(bundle.toString(), `is`("Bundle Test: {key2=33, key=someValue}"))
     }
 }
