@@ -11,8 +11,7 @@ import com.almasb.fxgl.test.RunWithFX
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -57,6 +56,16 @@ class AssetLoaderServiceTest {
         assertThrows(IllegalArgumentException::class.java, {
             assetLoader.getStream("nothing.jpg")
         })
+    }
+
+    @Test
+    fun `textureExists false if asset not found`() {
+        assertFalse(assetLoader.textureExists("nothing.jpg"))
+    }
+
+    @Test
+    fun `textureExists true if asset found`() {
+        assertTrue(assetLoader.textureExists("brick.jpg"))
     }
 
     @Test

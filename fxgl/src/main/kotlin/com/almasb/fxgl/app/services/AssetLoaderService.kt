@@ -119,6 +119,18 @@ class AssetLoaderService : EngineService() {
         }
     }
 
+
+
+    fun assetExists(assetName: String): Boolean{
+        return getAssetFromCache(assetName) != null
+                || FXGLApplication.app.javaClass.getResource(assetName)
+                // try /fxglassets/ from fxgl.all module using this javaclass
+                ?: javaClass.getResource("/fxgl${assetName.substring(1)}") != null
+    }
+    fun textureExists(name: String): Boolean = assetExists(TEXTURES_DIR + name)
+    fun imageExists(name: String): Boolean = assetExists(TEXTURES_DIR + name)
+    fun textExists(name: String): Boolean = assetExists(TEXT_DIR + name)
+
     /**
      * Loads texture with given name from /assets/textures/.
      * Either returns a valid texture or throws an exception in case of errors.
