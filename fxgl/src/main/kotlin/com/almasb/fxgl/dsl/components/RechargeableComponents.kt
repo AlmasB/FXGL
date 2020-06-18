@@ -9,6 +9,8 @@ package com.almasb.fxgl.dsl.components
 import com.almasb.fxgl.entity.components.DoubleComponent
 import com.almasb.fxgl.entity.components.IntegerComponent
 import javafx.beans.binding.BooleanBinding
+import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.SimpleIntegerProperty
 import kotlin.math.max
 import kotlin.math.min
 
@@ -40,9 +42,17 @@ class ManaIntComponent(maxValue: Int) : RechargeableIntComponent(maxValue)
  */
 abstract class RechargeableDoubleComponent
 @JvmOverloads constructor(
-        var maxValue: Double,
+        maxValue: Double,
         initialValue: Double = maxValue
 ) : DoubleComponent(initialValue) {
+
+    private val maxValueProp = SimpleDoubleProperty(maxValue)
+
+    fun maxValueProperty() = maxValueProp
+
+    var maxValue: Double
+        get() = maxValueProp.value
+        set(value) { maxValueProp.value = value }
 
     /**
      * Set component value to 0.
@@ -139,9 +149,17 @@ abstract class RechargeableDoubleComponent
  */
 abstract class RechargeableIntComponent
 @JvmOverloads constructor(
-        var maxValue: Int,
+        maxValue: Int,
         initialValue: Int = maxValue
 ) : IntegerComponent(initialValue) {
+
+    private val maxValueProp = SimpleIntegerProperty(maxValue)
+
+    fun maxValueProperty() = maxValueProp
+
+    var maxValue: Int
+        get() = maxValueProp.value
+        set(value) { maxValueProp.value = value }
 
     /**
      * Set component value to 0.
