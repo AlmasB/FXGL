@@ -303,7 +303,7 @@ class TMXLevelLoader : LevelLoader {
     private fun parseData(layer: Layer, data: String, start: StartElement) {
         when (start.getString("encoding")) {
             "csv" -> {
-                layer.data = data.replace("\n", "").split(",").map { it.toInt() }
+                layer.data = data.replace("\n", "").split(",").map { it.trim().toInt() }
             }
 
             "base64" -> {

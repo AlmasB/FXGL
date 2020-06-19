@@ -45,12 +45,13 @@ class TMXLevelLoaderTest {
         assertThat(level.entities.size, `is`(4 + 2))
     }
 
-    @Test
-    fun `Load tmx level with gid objects`() {
+    @ParameterizedTest
+    @CsvSource("map_with_gid_objects.tmx", "map_with_indented_csv_data.tmx")
+    fun `Load tmx level with gid objects`(mapName: String) {
         val world = GameWorld()
         world.addEntityFactory(MyEntityFactory())
 
-        val level = TMXLevelLoader().load(javaClass.getResource("map_with_gid_objects.tmx"), world)
+        val level = TMXLevelLoader().load(javaClass.getResource(mapName), world)
 
         assertThat(level.width, `is`(16*10))
         assertThat(level.height, `is`(16*10))
