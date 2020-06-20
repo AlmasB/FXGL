@@ -77,7 +77,11 @@ class TMXLevelLoader : LevelLoader {
 
         return map.layers.filter { it.type == "tilelayer" }
                 .map { layer ->
-                    Entity().also { it.viewComponent.addChild(tilesetLoader.loadView(layer.name)) }
+                    Entity().also {
+                        it.type = "TiledMapLayer"
+                        it.setProperty("layer", layer)
+                        it.viewComponent.addChild(tilesetLoader.loadView(layer.name))
+                    }
                 }
     }
 
