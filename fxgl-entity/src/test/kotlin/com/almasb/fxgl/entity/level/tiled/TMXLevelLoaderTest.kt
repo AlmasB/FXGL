@@ -10,6 +10,7 @@ import com.almasb.fxgl.entity.*
 import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.test.RunWithFX
 import javafx.geometry.Point2D
+import javafx.scene.image.ImageView
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
 import org.hamcrest.CoreMatchers.`is`
@@ -97,6 +98,21 @@ class TMXLevelLoaderTest {
 
         // 1 bg + 7 entities
         assertThat(level.entities.size, `is`(1 + 7))
+    }
+
+    @Test
+    fun `Load tmx level with different tileset sizes`() {
+        val world = GameWorld()
+        world.addEntityFactory(MyEntityFactory())
+
+        val level = TMXLevelLoader().load(javaClass.getResource("complex/test_map.tmx"), world)
+
+        val portal = level.entities.find { it.type == "portal" }!!
+
+        val view = portal.viewComponent.children[0] as ImageView
+
+        assertThat(view.image.width, `is`(128.0))
+        assertThat(view.image.height, `is`(64.0))
     }
 
     @ParameterizedTest
@@ -219,6 +235,37 @@ class TMXLevelLoaderTest {
 
         @Spawns("type2,type3,Wall,Player,Coin")
         fun newCircle(data: SpawnData): Entity {
+            return Entity()
+        }
+
+        @Spawns("char")
+        fun newCharacter(data: SpawnData): Entity {
+
+            return Entity()
+        }
+
+        @Spawns("player")
+        fun newPlayer(data: SpawnData): Entity {
+            return Entity()
+        }
+
+        @Spawns("item")
+        fun newItem(data: SpawnData): Entity {
+            return Entity()
+        }
+
+        @Spawns("nav")
+        fun newWalkableCell(data: SpawnData): Entity {
+            return Entity()
+        }
+
+        @Spawns("portal")
+        fun newPortal(data: SpawnData): Entity {
+            return Entity().also { it.type = "portal" }
+        }
+
+        @Spawns("cellSelection")
+        fun newCellSelection(data: SpawnData): Entity {
             return Entity()
         }
     }

@@ -36,8 +36,8 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
         // we offset because data is encoded as continuous
         gid -= tileset.firstgid
 
-        val w = map.tilewidth
-        val h = map.tileheight
+        val w = tileset.tilewidth
+        val h = tileset.tileheight
 
         val buffer = WritableImage(w, h)
 
@@ -105,8 +105,8 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
             val x = i % layer.width
             val y = i / layer.width
 
-            val w = map.tilewidth
-            val h = map.tileheight
+            val w = tileset.tilewidth
+            val h = tileset.tileheight
 
             val sourceImage: Image
             val srcx: Int
@@ -133,9 +133,9 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
                 srcy = 0
             }
 
-            log.debug("Writing to buffer: dst=${x * w},${y * h}, w=$w,h=$h, src=$srcx,$srcy")
+            log.debug("Writing to buffer: dst=${x * map.tilewidth},${y * map.tileheight}, w=$w,h=$h, src=$srcx,$srcy")
 
-            buffer.pixelWriter.setPixels(x * w, y * h,
+            buffer.pixelWriter.setPixels(x * map.tilewidth, y * map.tileheight,
                     w, h, sourceImage.pixelReader,
                     srcx,
                     srcy)
