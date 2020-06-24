@@ -18,6 +18,7 @@ import javafx.scene.input.MouseEvent
 class MouseEventData(
         val event: MouseEvent,
         val viewportOrigin: Point2D,
+        val viewportZoom: Double,
         val scaleRatioX: Double,
         val scaleRatioY: Double
 )

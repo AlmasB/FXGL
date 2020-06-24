@@ -361,7 +361,7 @@ internal class MainWindow(
 
     private fun addMouseHandler(handler: (MouseEventData) -> Unit) {
         fxScene.addEventHandler(MouseEvent.ANY) {
-            handler(MouseEventData(it, Point2D(currentFXGLScene.viewport.x, currentFXGLScene.viewport.y), scaleRatioX.value, scaleRatioY.value))
+            handler(MouseEventData(it, Point2D(currentFXGLScene.viewport.x, currentFXGLScene.viewport.y), currentFXGLScene.viewport.getZoom(), scaleRatioX.value, scaleRatioY.value))
         }
     }
 
