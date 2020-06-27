@@ -19,6 +19,7 @@ module com.almasb.fxgl.all {
     requires transitive com.almasb.fxgl.input;
     requires transitive com.almasb.fxgl.io;
     requires transitive com.almasb.fxgl.localization;
+    requires transitive com.almasb.fxgl.logging;
     requires transitive com.almasb.fxgl.media;
     requires transitive com.almasb.fxgl.minigames;
     requires transitive com.almasb.fxgl.net;
@@ -34,6 +35,8 @@ module com.almasb.fxgl.all {
     requires transitive javafx.controls;
     requires transitive javafx.fxml;
     requires transitive javafx.swing;
+
+    requires com.fasterxml.jackson.databind;
 
     opens com.almasb.fxgl.dsl to com.almasb.fxgl.core;
     opens com.almasb.fxgl.dev to com.almasb.fxgl.core;

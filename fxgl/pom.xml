@@ -287,6 +287,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-test</artifactId>
             <version>${fxgl.version}</version>

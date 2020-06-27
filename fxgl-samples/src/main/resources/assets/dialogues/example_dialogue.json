@@ -1,0 +1,88 @@
+{
+  "uniqueID" : 8,
+  "nodes" : {
+    "0" : {
+      "type" : "START",
+      "text" : "Hello! This is is an example dialogue. NPCs, like me, will sometimes give out quests with potentially interesting rewards, including rare items."
+    },
+    "1" : {
+      "type" : "END",
+      "text" : "This is the end of the example dialogue. Bye!"
+    },
+    "2" : {
+      "type" : "TEXT",
+      "text" : "Most quests in this game are optional and you can complete them in your own time. Some quests also have entry requirements, for example you must be a certain level or have a certain item."
+    },
+    "6" : {
+      "type" : "TEXT",
+      "text" : "Unfortunately, there is no opiton 3. Please choose one of the other two."
+    },
+    "7" : {
+      "type" : "TEXT",
+      "text" : "Wonderful! In the future, NPCs will also be able to buy items from you that you no longer need. NPCs usually do not wander, though this is not true for all NPCs."
+    }
+  },
+  "choiceNodes" : {
+    "3" : {
+      "type" : "CHOICE",
+      "text" : "Would you like me to repeat info on quests or is it clear?",
+      "options" : {
+        "0" : "Thanks, I got it.",
+        "1" : "Please repeat.",
+        "2" : "Option 3 please..."
+      }
+    }
+  },
+  "edges" : [ {
+    "sourceID" : 0,
+    "targetID" : 2
+  }, {
+    "sourceID" : 2,
+    "targetID" : 3
+  }, {
+    "sourceID" : 6,
+    "targetID" : 3
+  }, {
+    "sourceID" : 7,
+    "targetID" : 1
+  } ],
+  "choiceEdges" : [ {
+    "sourceID" : 3,
+    "optionID" : 1,
+    "targetID" : 2
+  }, {
+    "sourceID" : 3,
+    "optionID" : 2,
+    "targetID" : 6
+  }, {
+    "sourceID" : 3,
+    "optionID" : 0,
+    "targetID" : 7
+  } ],
+  "uiMetadata" : {
+    "0" : {
+      "x" : 50.0,
+      "y" : 450.0
+    },
+    "1" : {
+      "x" : 1433.0,
+      "y" : 291.0
+    },
+    "2" : {
+      "x" : 284.0,
+      "y" : 64.0
+    },
+    "3" : {
+      "x" : 604.5,
+      "y" : 480.0
+    },
+    "6" : {
+      "x" : 663.0,
+      "y" : 768.0
+    },
+    "7" : {
+      "x" : 1028.5,
+      "y" : 129.0
+    }
+  }
+}

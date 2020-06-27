@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.cutscene.dialogue
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import javafx.beans.property.SimpleStringProperty
 
 /**
@@ -13,22 +15,80 @@ import javafx.beans.property.SimpleStringProperty
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 
-data class SerializableTextNode(val type: DialogueNodeType, val text: String)
+/*
+ * We can't use jackson-module-kotlin yet since no module-info.java is provided.
+ * So we resort to manually annotating constructors.
+ */
 
-data class SerializableChoiceNode(val type: DialogueNodeType, val text: String, val options: Map<Int, String>)
+data class SerializableTextNode
+@JsonCreator constructor(
+        @JsonProperty("type")
+        val type: DialogueNodeType,
 
-data class SerializableEdge(val sourceID: Int, val targetID: Int)
+        @JsonProperty("text")
+        val text: String
+)
 
-data class SerializableChoiceEdge(val sourceID: Int, val optionID: Int, val targetID: Int)
+data class SerializableChoiceNode
+@JsonCreator constructor(
+        @JsonProperty("type")
+        val type: DialogueNodeType,
 
-data class SerializablePoint2D(val x: Double, val y: Double)
+        @JsonProperty("text")
+        val text: String,
 
-data class SerializableGraph(
+        @JsonProperty("options")
+        val options: Map<Int, String>
+)
+
+data class SerializableEdge
+@JsonCreator constructor(
+
+        @JsonProperty("sourceID")
+        val sourceID: Int,
+
+        @JsonProperty("targetID")
+        val targetID: Int
+)
+
+data class SerializableChoiceEdge
+@JsonCreator constructor(
+
+        @JsonProperty("sourceID")
+        val sourceID: Int,
+
+        @JsonProperty("optionID")
+        val optionID: Int,
+
+        @JsonProperty("targetID")
+        val targetID: Int
+)
+
+data class SerializablePoint2D
+@JsonCreator constructor(
+
+        @JsonProperty("x")
+        val x: Double,
+
+        @JsonProperty("y")
+        val y: Double
+)
+
+data class SerializableGraph
+@JsonCreator constructor(
+        @JsonProperty("uniqueID")
         val uniqueID: Int,
+
+        @JsonProperty("nodes")
         val nodes: Map<Int, SerializableTextNode>,
+
+        @JsonProperty("choiceNodes")
         val choiceNodes: Map<Int, SerializableChoiceNode>,
 
+        @JsonProperty("edges")
         val edges: List<SerializableEdge>,
+
+        @JsonProperty("choiceEdges")
         val choiceEdges: List<SerializableChoiceEdge>
 ) {
 

@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app.services
 
 import com.almasb.fxgl.app.FXGLApplication
-import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.audio.AudioType
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
@@ -15,16 +14,20 @@ import com.almasb.fxgl.audio.getDummyAudio
 import com.almasb.fxgl.audio.impl.DesktopAudioService
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.cutscene.dialogue.DialogueGraph
+import com.almasb.fxgl.cutscene.dialogue.DialogueGraphSerializer
+import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
+import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.texture.getDummyImage
 import com.almasb.fxgl.ui.FontFactory
 import com.almasb.fxgl.ui.UI
 import com.almasb.fxgl.ui.UIController
-import com.almasb.fxgl.logging.Logger
+import com.fasterxml.jackson.databind.ObjectMapper
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.image.Image
@@ -74,6 +77,7 @@ class AssetLoaderService : EngineService() {
     private val PROPERTIES_DIR = ASSETS_DIR + "properties/"
     private val AI_DIR = ASSETS_DIR + "ai/"
     private val LEVELS_DIR = ASSETS_DIR + "levels/"
+    private val DIALOGUES_DIR = ASSETS_DIR + "dialogues/"
 
     private val UI_DIR = ASSETS_DIR + "ui/"
     private val CSS_DIR = UI_DIR + "css/"
@@ -259,6 +263,25 @@ class AssetLoaderService : EngineService() {
      */
     fun loadLevel(name: String, levelLoader: LevelLoader): Level {
         return levelLoader.load(getURL(LEVELS_DIR + name), FXGL.getGameWorld())
+    }
+
+    fun loadDialogueGraph(name: String): DialogueGraph {
+        val asset = getAssetFromCache(DIALOGUES_DIR + name)
+        if (asset != null) {
+            return DialogueGraphSerializer.fromSerializable(asset as SerializableGraph)
+        }
+
+        try {
+            getStream(DIALOGUES_DIR + name).use {
+                val graph = ObjectMapper().readValue(it, SerializableGraph::class.java)
+
+                cachedAssets[DIALOGUES_DIR + name] = graph
+                return DialogueGraphSerializer.fromSerializable(graph)
+            }
+        } catch (e: Exception) {
+            log.warning("Failed to load dialogue graph $name", e)
+            return DialogueGraph()
+        }
     }
 
     /**

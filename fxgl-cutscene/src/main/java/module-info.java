@@ -13,6 +13,8 @@ module com.almasb.fxgl.cutscene {
     requires com.almasb.fxgl.input;
     requires com.almasb.fxgl.scene;
 
+    requires com.fasterxml.jackson.annotation;
+
     exports com.almasb.fxgl.cutscene;
     exports com.almasb.fxgl.cutscene.dialogue;
 
