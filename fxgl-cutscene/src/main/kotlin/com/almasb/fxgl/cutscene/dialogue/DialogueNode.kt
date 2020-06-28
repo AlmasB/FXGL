@@ -15,6 +15,11 @@ enum class DialogueNodeType {
     START, END, TEXT, CHOICE, FUNCTION, BRANCH
 }
 
+interface FunctionCallHandler {
+
+    fun handle(functionName: String, args: Array<String>): Any
+}
+
 /* NODES */
 
 /**

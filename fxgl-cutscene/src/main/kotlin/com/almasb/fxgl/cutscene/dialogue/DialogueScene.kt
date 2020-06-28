@@ -9,6 +9,7 @@ package com.almasb.fxgl.cutscene.dialogue
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.input.KeyTrigger
 import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.input.TriggerListener
@@ -42,7 +43,10 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     private val topText = Text()
     private val boxPlayerLines = VBox(5.0)
 
+    private var onFinished: Runnable = EmptyRunnable
+
     private lateinit var graph: DialogueGraph
+    private lateinit var functionHandler: FunctionCallHandler
 
     internal lateinit var gameVars: PropertyMap
 
@@ -155,8 +159,10 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         animation2.startReverse()
     }
 
-    fun start(cutscene: DialogueGraph) {
+    fun start(cutscene: DialogueGraph, functionHandler: FunctionCallHandler, onFinished: Runnable) {
         this.graph = cutscene
+        this.functionHandler = functionHandler
+        this.onFinished = onFinished
 
         currentNode = graph.startNode
 
@@ -265,6 +271,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         currentLine = 0
         message.clear()
         boxPlayerLines.children.clear()
+        onFinished.run()
     }
 
     private fun String.parseVariables(): String {
@@ -291,16 +298,18 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     }
 
     private fun String.parseAndExecuteFunctions() {
-        val funcNames = this.split("\n".toRegex())
-                .map { it.removeSuffix("()") }
+        val funcCalls = this.split("\n".toRegex())
 
-        funcNames.forEach { name ->
-            if (gameVars.exists("f_$name")) {
-                val func = gameVars.getObject<Runnable>("f_$name")
+        funcCalls.forEach {
+            val tokens = it.trim().split(" +".toRegex())
 
-                func.run()
-            } else {
-                log.warning("Function $name does not exist in the game variables.")
+            if (tokens.isNotEmpty()) {
+                val funcName = tokens[0].trim()
+
+                if (funcName.isNotEmpty()) {
+                    // TODO: tokens with $... expanded?
+                    functionHandler.handle(funcName, tokens.drop(1).map { it.trim() }.toTypedArray())
+                }
             }
         }
     }
