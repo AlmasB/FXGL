@@ -26,7 +26,7 @@ public class DialogueEditorApp extends GameApplication {
         settings.setTitle("FXGL Dialogue Editor");
         settings.setVersion("1.0");
         settings.getCSSList().add("dialogue_editor.css");
-        settings.setIntroEnabled(true);
+        settings.setIntroEnabled(false);
     }
 
     @Override
