@@ -598,14 +598,14 @@ class InputTest {
         val e0 = MouseEvent(MouseEvent.MOUSE_CLICKED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
                 false, false, false,
                 false, false, false, false, false, false, false, null)
-        input.onMouseEvent(e0, Point2D.ZERO, 1.0, 1.0, 1.0)
+        input.onMouseEvent(e0, Point2D.ZERO, Point2D.ZERO, 1.0, 1.0, 1.0)
         assertThat(count, `is`(0))
 
         val e1 = MouseEvent(MouseEvent.MOUSE_PRESSED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
                 false, false, false,
                 false, false, false, false, false, false, false, null)
 
-        input.onMouseEvent(e1, Point2D.ZERO, 1.0, 1.0, 1.0)
+        input.onMouseEvent(e1, Point2D.ZERO, Point2D.ZERO, 1.0, 1.0, 1.0)
         assertThat(count, `is`(1))
         assertThat(input.mousePositionWorld, `is`(Point2D(10.0, 15.0)))
         assertThat(input.mousePositionUI, `is`(Point2D(10.0, 15.0)))
@@ -614,10 +614,10 @@ class InputTest {
                 false, false, false,
                 false, false, false, false, false, false, false, null)
 
-        input.onMouseEvent(e2, Point2D.ZERO, 1.0, 1.0, 1.0)
+        input.onMouseEvent(e2, Point2D.ZERO, Point2D.ZERO, 1.0, 1.0, 1.0)
         assertThat(count, `is`(0))
 
-        input.onMouseEvent(MouseEventData(e1, Point2D(15.0, 15.0), 1.0, 1.0, 1.0))
+        input.onMouseEvent(MouseEventData(e1, Point2D.ZERO, Point2D(15.0, 15.0), 1.0, 1.0, 1.0))
         assertThat(count, `is`(1))
 
         // the viewport (15.0, 15.0) affects the position world, but not UI
@@ -632,18 +632,52 @@ class InputTest {
         assertThat(input.mouseXUIProperty().value, `is`(10.0))
         assertThat(input.mouseYUIProperty().value, `is`(15.0))
 
-        input.onMouseEvent(MouseEventData(e2, Point2D(15.0, 15.0), 1.0, 1.0, 1.0))
+        input.onMouseEvent(MouseEventData(e2, Point2D.ZERO, Point2D(15.0, 15.0), 1.0, 1.0, 1.0))
         assertThat(count, `is`(0))
 
         input.registerInput = false
 
         // should now ignore any events
 
-        input.onMouseEvent(e1, Point2D.ZERO, 1.0, 1.0, 1.0)
+        input.onMouseEvent(e1, Point2D.ZERO, Point2D.ZERO, 1.0, 1.0, 1.0)
         assertThat(count, `is`(0))
 
-        input.onMouseEvent(e2, Point2D.ZERO, 1.0, 1.0, 1.0)
+        input.onMouseEvent(e2, Point2D.ZERO, Point2D.ZERO, 1.0, 1.0, 1.0)
         assertThat(count, `is`(0))
+    }
+
+    @Test
+    fun `On mouse event with content root translation`() {
+        val e0 = MouseEvent(MouseEvent.MOUSE_CLICKED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        input.onMouseEvent(e0, Point2D(5.0, 15.0), Point2D.ZERO, 1.0, 1.0, 1.0)
+
+        assertThat(input.mousePositionWorld, `is`(Point2D(5.0, 0.0)))
+    }
+
+    @Test
+    fun `On mouse event with scaling and zoom`() {
+        val e0 = MouseEvent(MouseEvent.MOUSE_CLICKED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        // scale
+        input.onMouseEvent(e0, Point2D.ZERO, Point2D.ZERO, 1.0, 2.0, 2.0)
+
+        assertThat(input.mousePositionWorld, `is`(Point2D(5.0, 7.5)))
+
+        // zoom
+        input.onMouseEvent(e0, Point2D.ZERO, Point2D.ZERO, 0.5, 1.0, 1.0)
+
+        assertThat(input.mousePositionWorld, `is`(Point2D(20.0, 30.0)))
+
+        // scale and zoom
+
+        input.onMouseEvent(e0, Point2D.ZERO, Point2D.ZERO, 2.0, 0.5, 0.5)
+
+        assertThat(input.mousePositionWorld, `is`(Point2D(10.0, 15.0)))
     }
 
     @Test

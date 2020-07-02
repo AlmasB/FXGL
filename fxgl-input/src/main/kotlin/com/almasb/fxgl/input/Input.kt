@@ -210,13 +210,13 @@ class Input {
      * Called automatically by FXGL on mouse event.
      */
     fun onMouseEvent(eventData: MouseEventData) {
-        onMouseEvent(eventData.event, eventData.viewportOrigin, eventData.viewportZoom, eventData.scaleRatioX, eventData.scaleRatioY)
+        onMouseEvent(eventData.event, eventData.contentRootTranslation, eventData.viewportOrigin, eventData.viewportZoom, eventData.scaleRatioX, eventData.scaleRatioY)
     }
 
     /**
      * Called automatically by FXGL on mouse event.
      */
-    fun onMouseEvent(mouseEvent: MouseEvent, viewportOrigin: Point2D, viewportZoom: Double, scaleRatioX: Double, scaleRatioY: Double) {
+    fun onMouseEvent(mouseEvent: MouseEvent, contentRootTranslation: Point2D, viewportOrigin: Point2D, viewportZoom: Double, scaleRatioX: Double, scaleRatioY: Double) {
         if (!registerInput)
             return
 
@@ -226,8 +226,8 @@ class Input {
             handleReleased(mouseEvent)
         }
 
-        mouseXUI = mouseEvent.sceneX
-        mouseYUI = mouseEvent.sceneY
+        mouseXUI = mouseEvent.sceneX - contentRootTranslation.x
+        mouseYUI = mouseEvent.sceneY - contentRootTranslation.y
 
         mouseXWorld = mouseXUI / scaleRatioX / viewportZoom + viewportOrigin.x
         mouseYWorld = mouseYUI / scaleRatioY / viewportZoom + viewportOrigin.y
