@@ -105,6 +105,9 @@ class Viewport
     private val maxX = SimpleIntegerProperty(Integer.MAX_VALUE)
     private val maxY = SimpleIntegerProperty(Integer.MAX_VALUE)
 
+    private val zoomedWidth = SimpleDoubleProperty(width).divide(zoom)
+    private val zoomedHeight = SimpleDoubleProperty(height).divide(zoom)
+
     var isLazy = false
 
     /**
@@ -141,8 +144,8 @@ class Viewport
         boundX = Bindings.`when`(bx.lessThan(minX)).then(minX).otherwise(bx)
         boundY = Bindings.`when`(by.lessThan(minY)).then(minY).otherwise(by)
 
-        boundX = Bindings.`when`(bx.greaterThan(maxX.subtract(width))).then(maxX.subtract(width)).otherwise(boundX)
-        boundY = Bindings.`when`(by.greaterThan(maxY.subtract(height))).then(maxY.subtract(height)).otherwise(boundY)
+        boundX = Bindings.`when`(bx.greaterThan(maxX.subtract(zoomedWidth))).then(maxX.subtract(zoomedWidth)).otherwise(boundX)
+        boundY = Bindings.`when`(by.greaterThan(maxY.subtract(zoomedHeight))).then(maxY.subtract(zoomedHeight)).otherwise(boundY)
     }
 
 //    fun bindToFit(xMargin: Double, yMargin: Double, vararg entities: Entity) {
