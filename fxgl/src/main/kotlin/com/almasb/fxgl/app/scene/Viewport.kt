@@ -85,7 +85,7 @@ class Viewport
      * @return current visible viewport area
      */
     val visibleArea: Rectangle2D
-        get() = Rectangle2D(x, y, width, height)
+        get() = Rectangle2D(x, y, zoomedWidth.value, zoomedHeight.value)
 
     private val zoom = SimpleDoubleProperty(1.0)
     fun getZoom() = zoom.get()
