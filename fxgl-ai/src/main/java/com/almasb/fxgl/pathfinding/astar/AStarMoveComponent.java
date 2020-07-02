@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.pathfinding.astar;
 
+import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.core.util.EmptyRunnable;
 import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.Required;
@@ -13,6 +15,7 @@ import com.almasb.fxgl.pathfinding.CellMoveComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -26,6 +29,8 @@ public final class AStarMoveComponent extends Component {
 
     private List<AStarCell> path = new ArrayList<>();
 
+    private Runnable delayedPathCalc = EmptyRunnable.INSTANCE;
+
     public AStarMoveComponent(AStarGrid grid) {
         this(new LazyValue<>(() -> grid));
     }
@@ -37,6 +42,16 @@ public final class AStarMoveComponent extends Component {
         pathfinder = new LazyValue<>(() -> new AStarPathfinder(grid.get()));
     }
 
+    @Override
+    public void onAdded() {
+        moveComponent.atDestinationProperty().addListener((o, old, isAtDestination) -> {
+            if (isAtDestination) {
+                delayedPathCalc.run();
+                delayedPathCalc = EmptyRunnable.INSTANCE;
+            }
+        });
+    }
+
     public boolean isMoving() {
         return moveComponent.isMoving();
     }
@@ -45,8 +60,20 @@ public final class AStarMoveComponent extends Component {
         return path.isEmpty();
     }
 
+    /**
+     * @return true when the path is empty and entity is no longer moving
+     */
+    public boolean isAtDestination() {
+        return !isMoving() && isPathEmpty();
+    }
+
     public AStarGrid getGrid() {
         return pathfinder.get().getGrid();
+    }
+
+    public void stopMovementAt(int cellX, int cellY) {
+        path.clear();
+        moveComponent.setPositionToCell(cellX, cellY);
     }
 
     public void moveToRightCell() {
@@ -69,12 +96,21 @@ public final class AStarMoveComponent extends Component {
                 .ifPresent(this::moveToCell);
     }
 
+    public void moveToRandomCell() {
+        moveToRandomCell(FXGLMath.getRandom());
+    }
+
+    public void moveToRandomCell(Random random) {
+        getGrid().getRandomCell(random, AStarCell::isWalkable)
+                .ifPresent(this::moveToCell);
+    }
+
     public void moveToCell(AStarCell cell) {
         moveToCell(cell.getX(), cell.getY());
     }
 
     /**
-     * Entity's center is used to position it in the cell.
+     * Entity's anchored position is used to position it in the cell.
      */
     public void moveToCell(int x, int y) {
         int startX = moveComponent.getCellX();
@@ -84,20 +120,27 @@ public final class AStarMoveComponent extends Component {
     }
 
     /**
-     * Entity's center is used to position it in the cell.
+     * Entity's anchored position is used to position it in the cell.
      * This can be used to explicitly specify the start X and Y of the entity.
      */
     public void moveToCell(int startX, int startY, int targetX, int targetY) {
-        path = pathfinder.get().findPath(startX, startY, targetX, targetY);
+        if (moveComponent.isAtDestination()) {
+            path = pathfinder.get().findPath(startX, startY, targetX, targetY);
+        } else {
+            delayedPathCalc = () -> {
+                path = pathfinder.get().findPath(moveComponent.getCellX(), moveComponent.getCellY(), targetX, targetY);
+            };
+        }
     }
 
     @Override
     public void onUpdate(double tpf) {
-        if (path.isEmpty() || moveComponent.isMoving())
+        if (path.isEmpty() || !moveComponent.isAtDestination())
             return;
 
         var next = path.remove(0);
 
+        // move to next adjacent cell
         moveComponent.moveToCell(next.getX(), next.getY());
     }
 }
