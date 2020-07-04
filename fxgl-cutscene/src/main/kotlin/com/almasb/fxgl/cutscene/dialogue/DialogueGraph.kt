@@ -61,6 +61,13 @@ class ChoiceNode(text: String) : DialogueNode(DialogueNodeType.CHOICE, text)  {
     val options = hashMapOf<Int, StringProperty>()
 
     /**
+     * Maps option id to option condition.
+     * Options start at id 0.
+     * These are ids that are local to this choice node.
+     */
+    val conditions = hashMapOf<Int, StringProperty>()
+
+    /**
      * Returns last option id present in the options map, or -1 if there are no options.
      */
     val lastOptionID: Int

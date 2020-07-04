@@ -122,11 +122,21 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
                 optionText.bindBidirectional(field.textProperty())
 
+                val condition = Condition()
+                condition.prefWidth = 155.0
+                condition.prefHeight = 16.0
+                condition.translateX = -160.0
+                condition.translateYProperty().bind(outPoint.translateYProperty().add(-6))
+
+                node.conditions[i]!!.bindBidirectional(condition.text.textProperty())
+
+                conditions += condition
 
                 outPoints.add(outPoint)
 
                 addContent(field)
 
+                children.add(condition)
                 children.add(outPoint)
             }
 
@@ -151,7 +161,9 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
                 condition.prefWidth = 155.0
                 condition.prefHeight = 16.0
                 condition.translateX = -160.0
-                condition.translateYProperty().bind(outPoint.translateYProperty())
+                condition.translateYProperty().bind(outPoint.translateYProperty().add(-6))
+
+                node.conditions[i] = SimpleStringProperty().also { it.bindBidirectional(condition.text.textProperty()) }
 
                 conditions += condition
 
@@ -160,7 +172,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
                 addContent(field)
 
-                //children.add(condition)
+                children.add(condition)
                 children.add(outPoint)
             }
         }
@@ -193,10 +205,11 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
     }
 
     private class Condition : StackPane() {
+        val text = TextField()
+
         init {
             styleClass.add("dialogue-editor-condition-view")
 
-            val text = TextField()
             text.font = FXGL.getUIFactoryService().newFont(FontType.MONO, 12.0)
             text.text = "\$playerHP > 50"
 
@@ -213,7 +226,6 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
         node.options[nextID] = SimpleStringProperty().also { it.bindBidirectional(field.textProperty()) }
 
-
         val outPoint = OutLinkPoint(this)
         outPoint.translateXProperty().bind(widthProperty().add(-25.0))
         outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(53 + nextID * 35.0))
@@ -221,10 +233,21 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
         outPoint.choiceOptionID = nextID
         outPoint.choiceLocalOptionProperty.bind(field.textProperty())
 
+        val condition = Condition()
+        condition.prefWidth = 155.0
+        condition.prefHeight = 16.0
+        condition.translateX = -160.0
+        condition.translateYProperty().bind(outPoint.translateYProperty().add(-6))
+
+        node.conditions[nextID] = SimpleStringProperty().also { it.bindBidirectional(condition.text.textProperty()) }
+
+        conditions += condition
+
         outPoints.add(outPoint)
 
         addContent(field)
 
+        children.add(condition)
         children.add(outPoint)
 
         prefHeightProperty().bind(outPoint.translateYProperty().add(35.0))
@@ -232,12 +255,19 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
     private fun removeLastOption() {
         contentRoot.children.removeAt(contentRoot.children.size - 1)
+
         val point = outPoints.removeAt(outPoints.size - 1)
         children -= point
 
+        val condition = conditions.removeAt(conditions.size - 1)
+        children -= condition
+
         val node = this.node as ChoiceNode
 
-        node.options.remove(node.lastOptionID)
+        val lastID = node.lastOptionID
+
+        node.options.remove(lastID)
+        node.conditions.remove(lastID)
 
         prefHeightProperty().bind(outPoints.last().translateYProperty().add(35.0))
     }

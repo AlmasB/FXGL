@@ -38,7 +38,10 @@ data class SerializableChoiceNode
         val text: String,
 
         @JsonProperty("options")
-        val options: Map<Int, String>
+        val options: Map<Int, String>,
+
+        @JsonProperty("conditions")
+        val conditions: Map<Int, String>
 )
 
 data class SerializableEdge
@@ -105,7 +108,7 @@ object DialogueGraphSerializer {
         val choiceNodesS = dialogueGraph.nodes
                 .filterValues { it.type == DialogueNodeType.CHOICE }
                 .mapValues { (_, n) ->
-                    SerializableChoiceNode(n.type, n.text, (n as ChoiceNode).options.mapValues { it.value.value })
+                    SerializableChoiceNode(n.type, n.text, (n as ChoiceNode).options.mapValues { it.value.value }, n.conditions.mapValues { it.value.value })
                 }
 
         val edgesS = dialogueGraph.edges
@@ -139,6 +142,10 @@ object DialogueGraphSerializer {
 
             n.options.forEach { option ->
                 node.options[option.key] = SimpleStringProperty(option.value)
+            }
+
+            n.conditions.forEach { option ->
+                node.conditions[option.key] = SimpleStringProperty(option.value)
             }
 
             graph.nodes[id] = node
