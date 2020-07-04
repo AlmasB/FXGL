@@ -211,7 +211,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
             styleClass.add("dialogue-editor-condition-view")
 
             text.font = FXGL.getUIFactoryService().newFont(FontType.MONO, 12.0)
-            text.text = "\$playerHP > 50"
+            text.promptText = "condition"
 
             children.add(text)
         }

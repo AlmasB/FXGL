@@ -37,7 +37,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
     private val log = Logger.get<DialogueScene>()
 
-    private val animation: Animation<*>
+    private val animation1: Animation<*>
     private val animation2: Animation<*>
 
     private val topText = Text()
@@ -60,7 +60,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         val botLine = Rectangle(appWidth.toDouble(), 200.0)
         botLine.translateY = appHeight.toDouble()
 
-        animation = AnimationBuilder()
+        animation1 = AnimationBuilder()
                 .duration(Duration.seconds(0.5))
                 .translate(topLine)
                 .from(Point2D(0.0, -150.0))
@@ -79,11 +79,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         topText.wrappingWidth = appWidth.toDouble() - 155.0
         topText.translateX = 50.0
         topText.translateY = 40.0
-        topText.opacity = 0.0
 
-//        botText.fill = Color.WHITE
-//        botText.font = Font.font(18.0)
-//        botText.wrappingWidth = appWidth.toDouble() - 155.0
         boxPlayerLines.translateX = 50.0
         boxPlayerLines.translateY = appHeight.toDouble() - 160.0
         boxPlayerLines.opacity = 0.0
@@ -95,9 +91,13 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         keyView.opacityProperty().bind(boxPlayerLines.opacityProperty())
         topText.opacityProperty().bind(boxPlayerLines.opacityProperty())
 
-        contentRoot.children.addAll(topLine, botLine, topText, boxPlayerLines, keyView)
+        initUserActions()
 
-        input.addAction(object : UserAction("Next RPG Line") {
+        contentRoot.children.addAll(topLine, botLine, topText, boxPlayerLines, keyView)
+    }
+
+    private fun initUserActions() {
+        val userAction = object : UserAction("Next RPG Line") {
             override fun onActionBegin() {
                 if (currentNode.type == DialogueNodeType.CHOICE) {
                     return
@@ -105,9 +105,9 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
                 nextLine()
             }
-        }, KeyCode.ENTER)
+        }
 
-        input.addTriggerListener(object : TriggerListener() {
+        val digitTriggerListener = object : TriggerListener() {
             override fun onActionBegin(trigger: Trigger) {
                 // only allow 1,2,3 select
                 if (currentNode.type != DialogueNodeType.CHOICE) {
@@ -128,7 +128,10 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
                     }
                 }
             }
-        })
+        }
+
+        input.addAction(userAction, KeyCode.ENTER)
+        input.addTriggerListener(digitTriggerListener)
     }
 
     override fun onCreate() {
@@ -136,12 +139,12 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             onOpen()
         }
 
-        animation.start()
+        animation1.start()
         animation2.start()
     }
 
     override fun onUpdate(tpf: Double) {
-        animation.onUpdate(tpf)
+        animation1.onUpdate(tpf)
         animation2.onUpdate(tpf)
 
         if (message.isNotEmpty()) {
@@ -155,7 +158,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             sceneService.popSubScene()
             onClose()
         }
-        animation.startReverse()
+        animation1.startReverse()
         animation2.startReverse()
     }
 
@@ -175,11 +178,12 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     private lateinit var currentNode: DialogueNode
     private val message = ArrayDeque<Char>()
 
+    private var stringID = 1
+
     private fun nextLine(nextNode: DialogueNode? = null) {
         // do not allow to move to next line while the text animation is going
         if (message.isNotEmpty())
             return
-
 
         if (currentLine == 0 && currentNode.type == DialogueNodeType.START) {
             currentNode.text.parseVariables().forEach { message.addLast(it) }
@@ -208,15 +212,21 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
                 if (currentNode.type == DialogueNodeType.CHOICE) {
                     val choiceNode = currentNode as ChoiceNode
 
-                    choiceNode.options.forEach { id, option ->
-                        populatePlayerLine(id, option.value.parseVariables())
+                    stringID = 0
+
+                    choiceNode.conditions.forEach { id, condition ->
+
+                        // TODO: condition might be empty ...
+                        if (condition.value.evaluate()) {
+                            val option = choiceNode.options[id]!!
+
+                            populatePlayerLine(id, option.value.parseVariables())
+                        }
                     }
                 }
 
                 topText.text = ""
             }
-
-
 
         } else {
             topText.text = ""
@@ -225,7 +235,8 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     }
 
     private fun populatePlayerLine(localID: Int, data: String) {
-        val idString = "${localID + 1}"
+        stringID++
+        val idString = "$stringID"
 
         val text = Text("${idString}. ${data}")
         text.font = Font.font(18.0)
@@ -237,15 +248,9 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         text.properties["idString"] = idString
         text.properties["localID"] = localID
 
-        //text.opacity = 0.0
-
         text.setOnMouseClicked {
             selectLine(localID)
         }
-
-//        AnimationBuilder()
-//                .fadeIn(text)
-//                .buildAndPlay(this)
 
         boxPlayerLines.children.add(text)
     }
