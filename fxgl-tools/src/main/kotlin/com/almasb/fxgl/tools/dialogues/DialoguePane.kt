@@ -20,14 +20,11 @@ import javafx.collections.ListChangeListener
 import javafx.collections.MapChangeListener
 import javafx.geometry.Point2D
 import javafx.scene.Group
-import javafx.scene.control.ContextMenu
-import javafx.scene.control.MenuItem
 import javafx.scene.effect.Glow
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Circle
 import javafx.scene.transform.Scale
-import javafx.scene.transform.Translate
 import javafx.util.Duration
 
 /**
@@ -352,7 +349,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
 
                         if (outPoint.choiceOptionID != -1) {
-                            graph.addEdge(selectedNodeView!!.node, outPoint.choiceOptionID, nodeView.node)
+                            graph.addChoiceEdge(selectedNodeView!!.node, outPoint.choiceOptionID, nodeView.node)
                         } else {
                             graph.addEdge(selectedNodeView!!.node, nodeView.node)
                         }
@@ -369,7 +366,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     private fun disconnectOutLink(outPoint: OutLinkPoint) {
         outPoint.other?.let { inPoint ->
             if (outPoint.choiceOptionID != -1) {
-                graph.removeEdge(outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node)
+                graph.removeChoiceEdge(outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node)
             } else {
                 graph.removeEdge(outPoint.owner.node, inPoint.owner.node)
             }

@@ -155,7 +155,7 @@ object DialogueGraphSerializer {
             val source = graph.getNodeByID(it.sourceID)
             val target = graph.getNodeByID(it.targetID)
 
-            graph.addEdge(source, it.optionID, target)
+            graph.addChoiceEdge(source, it.optionID, target)
         }
 
         return graph

@@ -11,6 +11,10 @@ import javafx.beans.property.StringProperty
 import javafx.collections.FXCollections
 import java.io.Serializable
 
+/**
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
+ */
+
 enum class DialogueNodeType {
     START, END, TEXT, CHOICE, FUNCTION, BRANCH
 }
@@ -22,11 +26,10 @@ interface FunctionCallHandler {
 
 /* NODES */
 
-/**
- * @author Almas Baimagambetov (almaslvl@gmail.com)
- */
-sealed class DialogueNode(val type: DialogueNodeType,
-                            text: String) {
+sealed class DialogueNode(
+        val type: DialogueNodeType,
+        text: String
+) {
 
     val textProperty: StringProperty = SimpleStringProperty(text)
 
@@ -81,7 +84,16 @@ class DialogueChoiceEdge(source: DialogueNode, val optionID: Int, target: Dialog
 
 /* GRAPH */
 
-class DialogueGraph(internal var uniqueID: Int = 0) : Serializable {
+/**
+ * A simplified graph implementation with minimal integrity checks.
+ */
+class DialogueGraph(
+
+        /**
+         * Counter for node ids in this graph.
+         */
+        internal var uniqueID: Int = 0
+) {
 
     val nodes = FXCollections.observableMap(hashMapOf<Int, DialogueNode>())
     val edges = FXCollections.observableArrayList<DialogueEdge>()
@@ -108,22 +120,32 @@ class DialogueGraph(internal var uniqueID: Int = 0) : Serializable {
         edges.removeIf { it.source === node || it.target === node }
     }
 
+    /**
+     * Adds a dialogue edge between [source] and [target].
+     */
     fun addEdge(source: DialogueNode, target: DialogueNode) {
         edges += DialogueEdge(source, target)
     }
 
-    fun addEdge(source: DialogueNode, optionID: Int, target: DialogueNode) {
+    /**
+     * Adds a choice dialog edge between [source] and [target].
+     */
+    fun addChoiceEdge(source: DialogueNode, optionID: Int, target: DialogueNode) {
+        // TODO: source has to be ChoiceNode, otherwise it does not make sense
         edges += DialogueChoiceEdge(source, optionID, target)
     }
 
+    /**
+     * Removes a dialogue edge between [source] and [target].
+     */
     fun removeEdge(source: DialogueNode, target: DialogueNode) {
         edges.removeIf { it.source === source && it.target === target }
     }
 
     /**
-     * Remove choice or branch edge.
+     * Remove a choice dialogue edge between [source] and [target].
      */
-    fun removeEdge(source: DialogueNode, optionID: Int, target: DialogueNode) {
+    fun removeChoiceEdge(source: DialogueNode, optionID: Int, target: DialogueNode) {
         edges.removeIf { it is DialogueChoiceEdge
                 && it.source === source
                 && it.optionID == optionID
