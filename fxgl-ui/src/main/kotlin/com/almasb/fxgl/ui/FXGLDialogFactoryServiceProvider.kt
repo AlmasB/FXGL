@@ -100,6 +100,22 @@ class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
         field.maxWidth = Math.max(text.layoutBounds.width, 200.0)
         field.font = uiFactory.newFont(18.0)
 
+        field.focusedProperty().addListener { _, _, isFocused ->
+            if (!isFocused && field.scene != null) {
+                field.requestFocus()
+            }
+        }
+
+        field.sceneProperty().addListener { _, _, scene ->
+            if (scene != null) {
+                field.requestFocus()
+            }
+        }
+
+        field.setOnAction {
+            callback.accept(field.text)
+        }
+
         val btnOK = uiFactory.newButton(localizedStringProperty("dialog.ok"))
 
         field.textProperty().addListener { _, _, newInput ->
