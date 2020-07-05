@@ -105,9 +105,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
         children.addAll(contentRoot)
 
-        // start and end (start cannot be removed)
+        // start and end
 
-        createNode(StartNodeView().also { it.closeButton.isVisible = false }, 50.0, getAppHeight() / 2.0)
+        createNode(StartNodeView(), 50.0, getAppHeight() / 2.0)
         createNode(EndNodeView(), getAppWidth() - 370.0, getAppHeight() / 2.0)
 
         initContextMenu()
@@ -301,6 +301,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         attachMouseHandler(nodeView)
 
         nodeViews.children.add(nodeView)
+        
+        // START node cannot be removed
+        if (nodeView.node.type == START) {
+            nodeView.closeButton.isVisible = false
+        }
     }
 
     private fun attachMouseHandler(nodeView: NodeView) {
