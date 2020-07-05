@@ -10,7 +10,7 @@ package com.almasb.fxgl.dsl
 import com.almasb.fxgl.achievement.AchievementService
 import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.app.*
-import com.almasb.fxgl.app.services.AssetLoaderService
+import com.almasb.fxgl.app.services.FXGLAssetLoaderService
 import com.almasb.fxgl.app.services.IOTaskExecutorService
 import com.almasb.fxgl.app.services.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
@@ -178,7 +178,7 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getDialogFactoryService() = engine.getService(DialogFactoryService::class.java)
 
-    @JvmStatic fun getAssetLoader() = engine.getService(AssetLoaderService::class.java)
+    @JvmStatic fun getAssetLoader() = engine.getService(FXGLAssetLoaderService::class.java)
 
     @JvmStatic fun getEventBus() = engine.getService(EventBusService::class.java).eventBus
 

@@ -13,6 +13,8 @@ import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.audio.getDummyAudio
 import com.almasb.fxgl.audio.impl.DesktopAudioService
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.asset.AssetLoaderService
+import com.almasb.fxgl.core.asset.AssetType
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraph
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraphSerializer
@@ -64,7 +66,7 @@ import java.util.*
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class AssetLoaderService : EngineService() {
+class FXGLAssetLoaderService : AssetLoaderService() {
 
     private val ASSETS_DIR = "/assets/"
     private val TEXTURES_DIR = ASSETS_DIR + "textures/"
@@ -89,6 +91,15 @@ class AssetLoaderService : EngineService() {
     private val audioService = DesktopAudioService()
 
     private val cachedAssets = hashMapOf<String, Any>()
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> load(assetType: AssetType, fileName: String): T {
+        if (assetType == AssetType.DIALOGUE) {
+            return loadDialogueGraph(fileName) as T
+        }
+
+        TODO()
+    }
 
     /**
      * Loads texture as [Image] with given name from /assets/textures/.

@@ -248,7 +248,7 @@ class GameSettings(
                 EventBusService::class.java,
                 FileSystemService::class.java,
                 LocalizationService::class.java,
-                AssetLoaderService::class.java,
+                FXGLAssetLoaderService::class.java,
                 SystemBundleService::class.java,
                 SaveLoadService::class.java,
                 FXGLUIFactoryServiceProvider::class.java,

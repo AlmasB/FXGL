@@ -10,7 +10,7 @@ import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.scene.LoadingScene
-import com.almasb.fxgl.app.services.AssetLoaderService
+import com.almasb.fxgl.app.services.FXGLAssetLoaderService
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
@@ -277,7 +277,7 @@ class FXGLApplication : Application() {
 
         private val log = Logger.get(javaClass)
 
-        private lateinit var assetLoaderService: AssetLoaderService
+        private lateinit var assetLoaderService: FXGLAssetLoaderService
         private lateinit var saveLoadService: SaveLoadService
 
         private lateinit var localService: LocalizationService
