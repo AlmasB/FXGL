@@ -44,6 +44,13 @@ class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
     }
 }
 
+class SubDialogueNodeView(node: DialogueNode = SubDialogueNode("")) : NodeView(node) {
+    init {
+        addInPoint(InLinkPoint(this))
+        addOutPoint(OutLinkPoint(this))
+    }
+}
+
 class FunctionNodeView(node: DialogueNode = FunctionNode("")) : NodeView(node) {
     init {
         addInPoint(InLinkPoint(this))

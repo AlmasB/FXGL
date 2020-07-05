@@ -6,17 +6,17 @@
 
 package com.almasb.fxgl.cutscene.dialogue
 
+import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.collections.FXCollections
-import java.io.Serializable
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 
 enum class DialogueNodeType {
-    START, END, TEXT, CHOICE, FUNCTION, BRANCH
+    START, END, TEXT, SUBDIALOGUE, CHOICE, FUNCTION, BRANCH
 }
 
 interface FunctionCallHandler {
@@ -41,17 +41,19 @@ sealed class DialogueNode(
     }
 }
 
-class StartNode(text: String) : DialogueNode(DialogueNodeType.START, text)
+class StartNode(text: String) : DialogueNode(START, text)
 
-class EndNode(text: String) : DialogueNode(DialogueNodeType.END, text)
+class EndNode(text: String) : DialogueNode(END, text)
 
-class TextNode(text: String) : DialogueNode(DialogueNodeType.TEXT, text)
+class TextNode(text: String) : DialogueNode(TEXT, text)
 
-class FunctionNode(text: String) : DialogueNode(DialogueNodeType.FUNCTION, text)
+class SubDialogueNode(text: String) : DialogueNode(SUBDIALOGUE, text)
 
-class BranchNode(text: String) : DialogueNode(DialogueNodeType.BRANCH, text)
+class FunctionNode(text: String) : DialogueNode(FUNCTION, text)
 
-class ChoiceNode(text: String) : DialogueNode(DialogueNodeType.CHOICE, text)  {
+class BranchNode(text: String) : DialogueNode(BRANCH, text)
+
+class ChoiceNode(text: String) : DialogueNode(CHOICE, text)  {
 
     /**
      * Maps option id to option text.
@@ -106,7 +108,7 @@ class DialogueGraph(
     val edges = FXCollections.observableArrayList<DialogueEdge>()
 
     val startNode: StartNode
-        get() = nodes.values.find { it.type == DialogueNodeType.START } as? StartNode
+        get() = nodes.values.find { it.type == START } as? StartNode
                 ?: throw IllegalStateException("No start node in this graph.")
 
     /**
@@ -160,6 +162,8 @@ class DialogueGraph(
         }
     }
 
+    fun containsNode(node: DialogueNode): Boolean = node in nodes.values
+
     /**
      * @return node id in this graph or -1 if node is not in this graph
      */
@@ -182,6 +186,64 @@ class DialogueGraph(
 
     fun nextNode(node: DialogueNode, optionID: Int): DialogueNode? {
         return edges.find { it is DialogueChoiceEdge && it.source === node && it.optionID == optionID }?.target
+    }
+
+    fun appendGraph(source: DialogueNode, target: DialogueNode, graph: DialogueGraph) {
+        // TODO: a lot of assumptions here
+
+        val start = graph.startNode
+        val endNodes = graph.nodes.values.filter { it.type == END }
+
+        // convert start and end nodes into text nodes and add them to this graph
+
+        val newStart = TextNode(start.text)
+        val newEndNodes = endNodes.map { TextNode(it.text) }
+
+        addNode(newStart)
+        newEndNodes.forEach { addNode(it) }
+
+        // add the rest of the nodes "as is" to this graph
+        graph.nodes.values
+                .minus(start)
+                .minus(endNodes)
+                .forEach { addNode(it) }
+
+        // add the "internal" graph edges to this graph
+        graph.edges
+                .filter { containsNode(it.source) && containsNode(it.target) }
+                .forEach {
+                    if (it is DialogueChoiceEdge) {
+                        addChoiceEdge(it.source, it.optionID, it.target)
+                    } else {
+                        addEdge(it.source, it.target)
+                    }
+                }
+
+        // add the "external" graph edges
+        // form new chain source -> start -> ... -> endNodes -> target
+
+        addEdge(source, newStart)
+        newEndNodes.forEach { addEdge(it, target) }
+
+        addEdge(newStart, graph.nextNode(start)!!)
+        newEndNodes.forEach { endNode ->
+            graph.edges
+                    .filter { it.target.type == END }
+                    .forEach {
+                        if (it is DialogueChoiceEdge) {
+                            addChoiceEdge(it.source, it.optionID, endNode)
+                        } else {
+                            addEdge(it.source, endNode)
+                        }
+                    }
+        }
+    }
+
+    fun copy(): DialogueGraph {
+        val copy = DialogueGraph(uniqueID)
+        copy.nodes.putAll(nodes)
+        copy.edges.addAll(edges)
+        return copy
     }
 }
 

@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.cutscene.dialogue
 
+import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import javafx.beans.property.SimpleStringProperty
@@ -102,11 +103,11 @@ object DialogueGraphSerializer {
 
     fun toSerializable(dialogueGraph: DialogueGraph): SerializableGraph {
         val nodesS = dialogueGraph.nodes
-                .filterValues { it.type != DialogueNodeType.CHOICE }
+                .filterValues { it.type != CHOICE }
                 .mapValues { (_, n) -> SerializableTextNode(n.type, n.text) }
 
         val choiceNodesS = dialogueGraph.nodes
-                .filterValues { it.type == DialogueNodeType.CHOICE }
+                .filterValues { it.type == CHOICE }
                 .mapValues { (_, n) ->
                     SerializableChoiceNode(n.type, n.text, (n as ChoiceNode).options.mapValues { it.value.value }, n.conditions.mapValues { it.value.value })
                 }
@@ -126,11 +127,12 @@ object DialogueGraphSerializer {
         val graph = DialogueGraph(sGraph.uniqueID)
         sGraph.nodes.forEach { (id, n) ->
             val node = when (n.type) {
-                DialogueNodeType.START -> StartNode(n.text)
-                DialogueNodeType.END -> EndNode(n.text)
-                DialogueNodeType.TEXT -> TextNode(n.text)
-                DialogueNodeType.FUNCTION -> FunctionNode(n.text)
-                DialogueNodeType.BRANCH -> BranchNode(n.text)
+                START -> StartNode(n.text)
+                END -> EndNode(n.text)
+                TEXT -> TextNode(n.text)
+                FUNCTION -> FunctionNode(n.text)
+                BRANCH -> BranchNode(n.text)
+                SUBDIALOGUE -> SubDialogueNode(n.text)
                 else -> throw IllegalArgumentException("Unknown node type: ${n.type}")
             }
 

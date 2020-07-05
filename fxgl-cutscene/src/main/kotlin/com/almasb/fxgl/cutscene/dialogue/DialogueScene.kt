@@ -8,8 +8,11 @@ package com.almasb.fxgl.cutscene.dialogue
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationBuilder
+import com.almasb.fxgl.core.asset.AssetLoaderService
+import com.almasb.fxgl.core.asset.AssetType
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.util.EmptyRunnable
+import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
 import com.almasb.fxgl.input.KeyTrigger
 import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.input.TriggerListener
@@ -49,6 +52,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     private lateinit var functionHandler: FunctionCallHandler
 
     internal lateinit var gameVars: PropertyMap
+    internal lateinit var assetLoader: AssetLoaderService
 
     init {
         val appWidth = sceneService.appWidth
@@ -99,7 +103,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     private fun initUserActions() {
         val userAction = object : UserAction("Next RPG Line") {
             override fun onActionBegin() {
-                if (currentNode.type == DialogueNodeType.CHOICE) {
+                if (currentNode.type == CHOICE) {
                     return
                 }
 
@@ -110,7 +114,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         val digitTriggerListener = object : TriggerListener() {
             override fun onActionBegin(trigger: Trigger) {
                 // only allow 1,2,3 select
-                if (currentNode.type != DialogueNodeType.CHOICE) {
+                if (currentNode.type != CHOICE) {
                     return
                 }
 
@@ -162,16 +166,36 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         animation2.startReverse()
     }
 
-    fun start(cutscene: DialogueGraph, functionHandler: FunctionCallHandler, onFinished: Runnable) {
-        this.graph = cutscene
+    fun start(dialogueGraph: DialogueGraph, functionHandler: FunctionCallHandler, onFinished: Runnable) {
+        graph = dialogueGraph.copy()
         this.functionHandler = functionHandler
         this.onFinished = onFinished
+
+        // while graph has subdialogue nodes, expand
+        while (graph.nodes.any { it.value.type == SUBDIALOGUE }) {
+            val subDialogueNode = graph.nodes.values.find { it.type == SUBDIALOGUE }!!
+
+            val subGraph = loadSubDialogue(subDialogueNode as SubDialogueNode)
+
+            val source = graph.edges.find { it.target === subDialogueNode }!!.source
+            val target = graph.nextNode(subDialogueNode)!!
+
+            // break the chain source -> subdialogue -> target
+            graph.removeNode(subDialogueNode)
+
+            // connect the source and target with a graph
+            graph.appendGraph(source, target, subGraph)
+        }
 
         currentNode = graph.startNode
 
         nextLine()
 
         sceneService.pushSubScene(this)
+    }
+
+    private fun loadSubDialogue(subDialogueNode: SubDialogueNode): DialogueGraph {
+        return assetLoader.load(AssetType.DIALOGUE, subDialogueNode.text)
     }
 
     private var currentLine = 0
@@ -185,21 +209,21 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         if (message.isNotEmpty())
             return
 
-        if (currentLine == 0 && currentNode.type == DialogueNodeType.START) {
+        if (currentLine == 0 && currentNode.type == START) {
             currentNode.text.parseVariables().forEach { message.addLast(it) }
             currentLine++
             return
         }
 
-        val isDone = currentNode.type == DialogueNodeType.END
+        val isDone = currentNode.type == END
         if (!isDone) {
             currentNode = nextNode ?: nextNode()
 
-            if (currentNode.type == DialogueNodeType.FUNCTION) {
+            if (currentNode.type == FUNCTION) {
                 currentNode.text.parseAndCallFunctions()
 
                 nextLine(nextNode())
-            } else if (currentNode.type == DialogueNodeType.BRANCH) {
+            } else if (currentNode.type == BRANCH) {
                 val branchNode = currentNode as BranchNode
 
                 val choiceLocalID: Int
@@ -217,7 +241,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             } else {
                 currentNode.text.parseVariables().forEach { message.addLast(it) }
 
-                if (currentNode.type == DialogueNodeType.CHOICE) {
+                if (currentNode.type == CHOICE) {
                     val choiceNode = currentNode as ChoiceNode
 
                     stringID = 0
