@@ -114,6 +114,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
                 optionText.bindBidirectional(field.textProperty())
 
                 val condition = Condition()
+                condition.text.text = node.conditions[i]!!.value
                 condition.prefWidth = 155.0
                 condition.prefHeight = 16.0
                 condition.translateX = -160.0
