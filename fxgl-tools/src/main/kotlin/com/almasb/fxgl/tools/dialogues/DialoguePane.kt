@@ -301,7 +301,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         attachMouseHandler(nodeView)
 
         nodeViews.children.add(nodeView)
-        
+
         // START node cannot be removed
         if (nodeView.node.type == START) {
             nodeView.closeButton.isVisible = false

@@ -8,6 +8,7 @@ package com.almasb.fxgl.tools.dialogues
 
 import com.almasb.fxgl.cutscene.dialogue.*
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.dsl.getUIFactoryService
 import com.almasb.fxgl.ui.FontType
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleStringProperty
@@ -24,38 +25,40 @@ import javafx.scene.text.Text
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 
-class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
-
-    val inLink = InLinkPoint(this)
-    val outLink = OutLinkPoint(this)
-
+class StartNodeView(node: DialogueNode = StartNode("")) : NodeView(node) {
     init {
-        addInPoint(inLink)
-        addOutPoint(outLink)
+        addOutPoint(OutLinkPoint(this))
+    }
+}
+
+class EndNodeView(node: DialogueNode = EndNode("")) : NodeView(node) {
+    init {
+        addInPoint(InLinkPoint(this))
+    }
+}
+
+class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
+    init {
+        addInPoint(InLinkPoint(this))
+        addOutPoint(OutLinkPoint(this))
     }
 }
 
 class FunctionNodeView(node: DialogueNode = FunctionNode("")) : NodeView(node) {
-
-    val inLink = InLinkPoint(this)
-    val outLink = OutLinkPoint(this)
-
     init {
-        textArea.font = FXGL.getUIFactoryService().newFont(FontType.MONO, 16.0)
+        addInPoint(InLinkPoint(this))
+        addOutPoint(OutLinkPoint(this))
 
-        addInPoint(inLink)
-        addOutPoint(outLink)
+        textArea.font = getUIFactoryService().newFont(FontType.MONO, 16.0)
     }
 }
 
 class BranchNodeView(node: DialogueNode = BranchNode("")) : NodeView(node) {
 
-    val inLink = InLinkPoint(this)
-
     init {
-        textArea.font = FXGL.getUIFactoryService().newFont(FontType.MONO, 16.0)
+        addInPoint(InLinkPoint(this))
 
-        addInPoint(inLink)
+        textArea.font = getUIFactoryService().newFont(FontType.MONO, 16.0)
 
         for (i in 0..1) {
 
@@ -64,17 +67,14 @@ class BranchNodeView(node: DialogueNode = BranchNode("")) : NodeView(node) {
             field.fill = Color.WHITE
             field.font = Font.font(14.0)
 
-            val outPoint = OutLinkPoint(this)
-            outPoint.translateXProperty().bind(widthProperty().add(-25.0))
-            outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(48 + i * 28.0))
-
-            outPoint.choiceOptionID = i
-
-            outPoints.add(outPoint)
-
             addContent(field)
 
-            children.add(outPoint)
+            val outPoint = OutLinkPoint(this)
+            outPoint.choiceOptionID = i
+
+            addOutPoint(outPoint)
+
+            outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(48 + i * 28.0))
         }
 
         prefHeightProperty().bind(outPoints.last().translateYProperty().add(35.0))
@@ -83,22 +83,12 @@ class BranchNodeView(node: DialogueNode = BranchNode("")) : NodeView(node) {
     }
 }
 
-class StartNodeView(node: DialogueNode = StartNode("")) : NodeView(node) {
 
-    val outLink = OutLinkPoint(this)
 
-    init {
-        addOutPoint(outLink)
-    }
-}
 
-class EndNodeView(node: DialogueNode = EndNode("")) : NodeView(node) {
 
-    init {
-        val inLink = InLinkPoint(this)
-        addInPoint(inLink)
-    }
-}
+
+
 
 class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
