@@ -19,10 +19,11 @@ import javafx.scene.text.Font
 import javafx.scene.text.Text
 
 /**
- *
+ * All specific node views.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+
 class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
 
     val inLink = InLinkPoint(this)
