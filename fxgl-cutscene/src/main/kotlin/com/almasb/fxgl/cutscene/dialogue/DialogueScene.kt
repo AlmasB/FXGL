@@ -196,14 +196,22 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             currentNode = nextNode ?: nextNode()
 
             if (currentNode.type == DialogueNodeType.FUNCTION) {
-                currentNode.text.parseAndExecuteFunctions()
+                currentNode.text.parseAndCallFunctions()
 
                 nextLine(nextNode())
             } else if (currentNode.type == DialogueNodeType.BRANCH) {
                 val branchNode = currentNode as BranchNode
 
-                // evaluate branchNode.text
-                val choiceLocalID = if (branchNode.text.evaluate()) 0 else 1
+                val choiceLocalID: Int
+
+                if (branchNode.text.trim().isNotEmpty()) {
+                    val result = callBooleanFunction(branchNode.text)
+
+                    choiceLocalID = if (result) 0 else 1
+                } else {
+                    log.warning("Branch node has no function call: ${branchNode.text}. Assuming true branch.")
+                    choiceLocalID = 0
+                }
 
                 nextLine(nextNodeFromChoice(choiceLocalID))
             } else {
@@ -216,8 +224,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
                     choiceNode.conditions.forEach { id, condition ->
 
-                        // TODO: condition might be empty ...
-                        if (condition.value.evaluate()) {
+                        if (condition.value.trim().isEmpty() || callBooleanFunction(condition.value)) {
                             val option = choiceNode.options[id]!!
 
                             populatePlayerLine(id, option.value.parseVariables())
@@ -302,53 +309,34 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         return result
     }
 
-    private fun String.parseAndExecuteFunctions() {
+    private fun String.parseAndCallFunctions() {
         val funcCalls = this.split("\n".toRegex())
 
-        funcCalls.forEach {
-            val tokens = it.trim().split(" +".toRegex())
-
-            if (tokens.isNotEmpty()) {
-                val funcName = tokens[0].trim()
-
-                if (funcName.isNotEmpty()) {
-                    // TODO: tokens with $... expanded?
-                    functionHandler.handle(funcName, tokens.drop(1).map { it.trim() }.toTypedArray())
-                }
+        funcCalls.forEach { line ->
+            if (line.trim().isNotEmpty()) {
+                callFunction(line)
             }
         }
     }
 
-    private fun String.evaluate(): Boolean {
-        val tokens = this.split(" +".toRegex())
-        val num1 = tokens[0].toInt()
-        val num2 = tokens[2].toInt()
+    private fun callBooleanFunction(line: String): Boolean {
+        val result = callFunction(line)
 
-        return when (tokens[1]) {
-
-            "<" -> {
-                num1 < num2
-            }
-
-            ">" -> {
-                num1 > num2
-            }
-
-            "<=" -> {
-                num1 <= num2
-            }
-
-            ">=" -> {
-                num1 >= num2
-            }
-
-            "==" -> {
-                num1 == num2
-            }
-
-            else -> {
-                throw IllegalArgumentException("Parse error")
-            }
+        if (result !is Boolean) {
+            log.warning("A boolean function call did not return a boolean: ${line}. Assuming result <true>.")
+            return true
         }
+
+        return result
+    }
+
+    private fun callFunction(line: String): Any {
+        val tokens = line.trim().split(" +".toRegex())
+
+        require(tokens.isNotEmpty()) { "Empty function call: $line" }
+
+        val funcName = tokens[0].trim()
+
+        return functionHandler.handle(funcName, tokens.drop(1).map { it.trim().parseVariables() }.toTypedArray())
     }
 }
