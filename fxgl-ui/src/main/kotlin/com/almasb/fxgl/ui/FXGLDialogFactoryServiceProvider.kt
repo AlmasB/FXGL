@@ -113,7 +113,12 @@ class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
         }
 
         field.setOnAction {
-            callback.accept(field.text)
+            val newInput = field.text
+
+            if (newInput.isEmpty() || !filter.test(newInput))
+                return@setOnAction
+                
+            callback.accept(newInput)
         }
 
         val btnOK = uiFactory.newButton(localizedStringProperty("dialog.ok"))
