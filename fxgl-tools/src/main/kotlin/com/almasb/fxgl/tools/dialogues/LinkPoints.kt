@@ -30,7 +30,7 @@ sealed class LinkPoint(val owner: NodeView) : Pane() {
         get() = connectedProperty.value
         protected set(value) { connectedProperty.value = value }
 
-    protected val bg = Circle(8.0, 8.0, 8.0)
+    private val bg = Circle(8.0, 8.0, 8.0)
 
     init {
         bg.fillProperty().bind(
@@ -47,6 +47,9 @@ sealed class LinkPoint(val owner: NodeView) : Pane() {
 
 class InLinkPoint(owner: NodeView) : LinkPoint(owner) {
 
+    /**
+     * Out points connected to this in point.
+     */
     val connectedPoints = FXCollections.observableArrayList<OutLinkPoint>()
 
     init {

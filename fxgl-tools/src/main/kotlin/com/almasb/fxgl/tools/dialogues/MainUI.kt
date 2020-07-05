@@ -48,7 +48,6 @@ class MainUI : BorderPane() {
         toolbar.style = "-fx-background-color: black"
         toolbar.alignment = Pos.CENTER_LEFT
 
-
         val contextMenu = FXGLContextMenu()
         contextMenu.addItem("New") { openNewDialog() }
         contextMenu.addItem("Open...") { openLoadDialog() }
@@ -56,7 +55,6 @@ class MainUI : BorderPane() {
         contextMenu.addItem("Save As...") { currentTab?.let { openSaveAsDialog(it) } }
         contextMenu.addItem("Save All") { onSaveAll() }
         contextMenu.addItem("Exit") { getGameController().exit() }
-
 
         val pane = Pane(tabPane, toolbar)
 

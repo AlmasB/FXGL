@@ -9,6 +9,7 @@ package com.almasb.fxgl.tools.dialogues
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.cutscene.dialogue.*
+import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
 import com.almasb.fxgl.dsl.animationBuilder
 import com.almasb.fxgl.dsl.getAppHeight
 import com.almasb.fxgl.dsl.getAppWidth
@@ -37,8 +38,6 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     companion object {
         private val log = Logger.get<DialoguePane>()
 
-        val highContrastProperty = SimpleBooleanProperty(false)
-
         private val branch: (DialogueNode) -> NodeView = { BranchNodeView(it) }
         private val end: (DialogueNode) -> NodeView = { EndNodeView(it) }
         private val start: (DialogueNode) -> NodeView = { StartNodeView(it) }
@@ -47,21 +46,21 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         private val choice: (DialogueNode) -> NodeView = { ChoiceNodeView(it) }
 
         val nodeConstructors = linkedMapOf<DialogueNodeType, () -> DialogueNode>(
-                DialogueNodeType.TEXT to { TextNode("") },
-                DialogueNodeType.CHOICE to { ChoiceNode("") },
-                DialogueNodeType.BRANCH to { BranchNode("") },
-                DialogueNodeType.FUNCTION to { FunctionNode("") },
-                DialogueNodeType.END to { EndNode("") },
-                DialogueNodeType.START to { StartNode("") }
+                TEXT to { TextNode("") },
+                CHOICE to { ChoiceNode("") },
+                BRANCH to { BranchNode("") },
+                FUNCTION to { FunctionNode("") },
+                END to { EndNode("") },
+                START to { StartNode("") }
         )
 
         val nodeViewConstructors = linkedMapOf<DialogueNodeType, (DialogueNode) -> NodeView>(
-                DialogueNodeType.TEXT to text,
-                DialogueNodeType.CHOICE to choice,
-                DialogueNodeType.BRANCH to branch,
-                DialogueNodeType.FUNCTION to function,
-                DialogueNodeType.END to end,
-                DialogueNodeType.START to start
+                TEXT to text,
+                CHOICE to choice,
+                BRANCH to branch,
+                FUNCTION to function,
+                END to end,
+                START to start
         )
     }
 
@@ -75,7 +74,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     private val views = Group()
     private val edgeViews = Group()
-    val nodeViews = Group()
+    private val nodeViews = Group()
 
     val isDirtyProperty = SimpleBooleanProperty(false)
 
