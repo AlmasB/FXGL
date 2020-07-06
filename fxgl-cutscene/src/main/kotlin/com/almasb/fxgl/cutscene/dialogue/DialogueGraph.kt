@@ -239,6 +239,9 @@ class DialogueGraph(
         }
     }
 
+    /**
+     * @return a shallow copy of the graph (i.e. nodes and edges are the same references as in this graph)
+     */
     fun copy(): DialogueGraph {
         val copy = DialogueGraph(uniqueID)
         copy.nodes.putAll(nodes)
