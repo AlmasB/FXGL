@@ -6,12 +6,14 @@
 
 package com.almasb.fxgl.cutscene.dialogue
 
+import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.contains
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 /**
  *
@@ -24,6 +26,48 @@ class DialogueGraphTest {
     @BeforeEach
     fun setUp() {
         graph = DialogueGraph()
+    }
+
+    @Test
+    fun `Node types`() {
+        assertThat(StartNode("").type, `is`(START))
+        assertThat(EndNode("").type, `is`(END))
+        assertThat(TextNode("").type, `is`(TEXT))
+        assertThat(SubDialogueNode("").type, `is`(SUBDIALOGUE))
+        assertThat(FunctionNode("").type, `is`(FUNCTION))
+        assertThat(BranchNode("").type, `is`(BRANCH))
+        assertThat(ChoiceNode("").type, `is`(CHOICE))
+
+        assertThat(StartNode("").toString(), `is`("StartNode"))
+        assertThat(EndNode("").toString(), `is`("EndNode"))
+
+        assertThat(StartNode("StartText").text, `is`("StartText"))
+        assertThat(EndNode("EndText").text, `is`("EndText"))
+    }
+
+    @Test
+    fun `Edge toString`() {
+        val node1 = TextNode("")
+        val node2 = TextNode("")
+
+        assertThat(DialogueEdge(node1, node2).toString(), `is`("TextNode -> TextNode"))
+
+        val node3 = ChoiceNode("")
+
+        assertThat(DialogueChoiceEdge(node3, 0, node2).toString(), `is`("ChoiceNode, 0 -> TextNode"))
+    }
+
+    @Test
+    fun `Graph start node`() {
+        assertThrows<IllegalStateException> {
+            graph.startNode
+        }
+
+        val start = StartNode("")
+
+        graph.addNode(start)
+
+        assertThat(graph.startNode, `is`(start))
     }
 
     @Test
@@ -94,5 +138,21 @@ class DialogueGraphTest {
         graph.removeChoiceEdge(node1, 0, node2)
 
         assertTrue(graph.edges.isEmpty())
+    }
+
+    @Test
+    fun `Copy`() {
+        val node1 = ChoiceNode("")
+        val node2 = TextNode("")
+
+        graph.addNode(node1)
+        graph.addNode(node2)
+        graph.addChoiceEdge(node1, 0, node2)
+
+        val copy = graph.copy()
+
+        assertThat(copy.uniqueID, `is`(graph.uniqueID))
+        assertThat(copy.nodes, `is`(graph.nodes))
+        assertThat(copy.edges, `is`(graph.edges))
     }
 }
