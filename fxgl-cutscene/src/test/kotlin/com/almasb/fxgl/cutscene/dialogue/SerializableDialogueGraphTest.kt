@@ -29,12 +29,21 @@ class SerializableDialogueGraphTest {
         graph.addNode(function)
         graph.addNode(end)
 
+        graph.addEdge(start, choice)
+        graph.addChoiceEdge(choice, 0, function)
+        graph.addChoiceEdge(choice, 1, end)
+        graph.addEdge(function, end)
+
         val sGraph = DialogueGraphSerializer.toSerializable(graph)
 
         val copy = DialogueGraphSerializer.fromSerializable(sGraph)
 
         assertThat(copy.uniqueID, `is`(graph.uniqueID))
         assertThat(copy.nodes.mapValues { it.toString() }, `is`(graph.nodes.mapValues { it.toString() }))
-        assertThat(copy.edges.map { it.toString() }, `is`(graph.edges.map { it.toString() }))
+
+        val edges1 = graph.edges.map { it.toString() }
+        val edges2 = copy.edges.map { it.toString() }
+
+        assertThat(edges1, containsInAnyOrder(*edges2.toTypedArray()))
     }
 }
