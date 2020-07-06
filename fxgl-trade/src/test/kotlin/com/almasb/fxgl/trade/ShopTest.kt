@@ -38,6 +38,21 @@ class ShopTest {
         val shop1 = Shop(items1)
         val shop2 = Shop(items2)
 
+        var count = 0
+
+        val listener = object : ShopListener<String> {
+            override fun onSold(item: TradeItem<String>) {
+                count++
+            }
+
+            override fun onBought(item: TradeItem<String>) {
+                count++
+            }
+        }
+
+        shop1.listener = listener
+        shop2.listener = listener
+
         var wasBought = shop2.buyFrom(shop1, items1[0], 1)
 
         // no money
@@ -53,9 +68,14 @@ class ShopTest {
         // we wanted to buy an item that is not in shop
         assertFalse(wasBought)
 
+        assertThat(count, `is`(0))
+
         shop2.money = 100
 
         wasBought = shop2.buyFrom(shop1, items1[0], 1)
+
+        // buy + sell
+        assertThat(count, `is`(2))
 
         assertTrue(wasBought)
         assertThat(shop1.items, hasItem(items1[0]))
@@ -71,6 +91,9 @@ class ShopTest {
 
         // buy again (the last one since qty was 2)
         wasBought = shop2.buyFrom(shop1, items1[0], 1)
+
+        // buy + sell
+        assertThat(count, `is`(4))
 
         assertTrue(wasBought)
         assertThat(shop1.money, `is`(6))
