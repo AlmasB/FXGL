@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.core.Disposable
+import java.util.function.Consumer
 
 /**
  * A group of entities of particular types.
@@ -42,6 +43,10 @@ class EntityGroup(
     }
 
     fun forEach(action: (Entity) -> Unit) {
+        entitiesCopy.forEach(action)
+    }
+
+    fun forEach(action: Consumer<Entity>) {
         entitiesCopy.forEach(action)
     }
 
