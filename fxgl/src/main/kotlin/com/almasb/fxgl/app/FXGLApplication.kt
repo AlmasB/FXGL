@@ -432,7 +432,7 @@ class FXGLApplication : Application() {
                 mainWindow.defaultCursor = ImageCursor(assetLoaderService.loadCursorImage("fxgl_default.png"), 7.0, 6.0)
             }
 
-            SystemActions.bind(gameScene.input)
+            SystemActions.bind(mainWindow.input)
         }
 
         private fun addOverlay(scene: Scene) {
