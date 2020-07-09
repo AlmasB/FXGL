@@ -307,6 +307,9 @@ class FXGLApplication : Application() {
         private var mainMenu: SubScene? = null
         private var gameMenu: SubScene? = null
 
+        internal val window: MainWindow
+            get() = mainWindow
+
         override fun onInit() {
             settings.cssList.forEach {
                 log.debug("Applying CSS: $it")

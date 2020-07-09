@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.dev.DebugCameraScene
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getGameWorld
 import com.almasb.fxgl.dsl.getSettings
@@ -94,10 +95,16 @@ object SystemActions {
     }
 
     private fun toggleDebugCamera() = object : UserAction("Toggle Debug Camera") {
-        override fun onActionBegin() {
-            val isEnabled = getSettings().devEnableDebugCamera.value
+        private val debugCameraScene by lazy { DebugCameraScene() }
 
-            getSettings().devEnableDebugCamera.value = !isEnabled
+        override fun onActionBegin() {
+            getSettings().devEnableDebugCamera.value = !getSettings().devEnableDebugCamera.value
+
+            if (getSettings().devEnableDebugCamera.value) {
+                FXGL.getSceneService().pushSubScene(debugCameraScene)
+            } else {
+                FXGL.getSceneService().popSubScene()
+            }
         }
     }
 
