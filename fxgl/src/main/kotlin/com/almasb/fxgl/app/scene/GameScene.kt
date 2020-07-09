@@ -85,7 +85,6 @@ internal constructor(width: Int, height: Int,
     }
 
     private fun initViewport(w: Double, h: Double) {
-        val viewport = viewport
         gameRoot.layoutXProperty().bind(viewport.xProperty().negate())
         gameRoot.layoutYProperty().bind(viewport.yProperty().negate())
 
