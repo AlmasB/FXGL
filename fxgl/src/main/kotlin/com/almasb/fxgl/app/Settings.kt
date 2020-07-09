@@ -583,6 +583,9 @@ class ReadOnlyGameSettings internal constructor(
     @get:JvmName("devShowPositionProperty")
     val devShowPosition = SimpleBooleanProperty(false)
 
+    @get:JvmName("devEnableDebugCameraProperty")
+    val devEnableDebugCamera = SimpleBooleanProperty(false)
+
     /*
     Usage of below:
     1. UI objects should bi-directionally bind to these properties.

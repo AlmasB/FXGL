@@ -8,6 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getGameWorld
+import com.almasb.fxgl.dsl.getSettings
 import com.almasb.fxgl.dsl.isReleaseMode
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
@@ -40,6 +41,7 @@ object SystemActions {
 
             input.addAction(sysdump(), KeyCode.DIGIT9, InputModifier.CTRL)
             input.addAction(restartGame(), KeyCode.R, InputModifier.CTRL)
+            input.addAction(toggleDebugCamera(), KeyCode.C, InputModifier.CTRL)
         }
     }
 
@@ -88,6 +90,14 @@ object SystemActions {
     private fun restartGame() = object : UserAction("Restart") {
         override fun onActionBegin() {
             FXGL.getGameController().startNewGame()
+        }
+    }
+
+    private fun toggleDebugCamera() = object : UserAction("Toggle Debug Camera") {
+        override fun onActionBegin() {
+            val isEnabled = getSettings().devEnableDebugCamera.value
+
+            getSettings().devEnableDebugCamera.value = !isEnabled
         }
     }
 
