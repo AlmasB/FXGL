@@ -9,6 +9,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.app.scene.ErrorSubScene
 import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.core.fsm.StateMachine
+import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.MouseEventData
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.scene.Scene
@@ -75,6 +76,11 @@ internal class MainWindow(
 
     private val stateMachine = StateMachine(scene)
 
+    /**
+     * Input that is active in any scene.
+     */
+    internal val input = Input()
+
     init {
         fxScene = createFXScene(scene.root)
 
@@ -83,15 +89,18 @@ internal class MainWindow(
         initStage()
 
         addKeyHandler { e ->
+            input.onKeyEvent(e)
             stateMachine.runOnActiveStates { it.input.onKeyEvent(e) }
         }
 
         addMouseHandler { e ->
+            input.onMouseEvent(e)
             stateMachine.runOnActiveStates { it.input.onMouseEvent(e) }
         }
 
         // reroute any events to current state input
         addGlobalHandler { e ->
+            input.fireEvent(e)
             stateMachine.runOnActiveStates { it.input.fireEvent(e) }
         }
     }
@@ -206,6 +215,7 @@ internal class MainWindow(
     }
 
     fun update(tpf: Double) {
+        input.update(tpf)
         stateMachine.runOnActiveStates { it.update(tpf) }
     }
 
