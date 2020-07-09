@@ -64,15 +64,15 @@ class DebugCameraScene : SubScene() {
     }
 
     override fun onCreate() {
-        FXGL.getWindowService().window.currentFXGLScene.root.layoutXProperty().bind(negativeCameraX)
-        FXGL.getWindowService().window.currentFXGLScene.root.layoutYProperty().bind(negativeCameraY)
+        FXGL.getWindowService().window.currentFXGLScene.root.translateXProperty().bind(negativeCameraX)
+        FXGL.getWindowService().window.currentFXGLScene.root.translateYProperty().bind(negativeCameraY)
     }
 
     override fun onDestroy() {
         negativeCameraX.value = 0.0
         negativeCameraY.value = 0.0
 
-        FXGL.getWindowService().window.currentFXGLScene.root.layoutXProperty().unbind()
-        FXGL.getWindowService().window.currentFXGLScene.root.layoutYProperty().unbind()
+        FXGL.getWindowService().window.currentFXGLScene.root.translateXProperty().unbind()
+        FXGL.getWindowService().window.currentFXGLScene.root.translateYProperty().unbind()
     }
 }

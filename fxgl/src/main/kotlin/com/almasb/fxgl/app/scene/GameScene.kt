@@ -85,8 +85,8 @@ internal constructor(width: Int, height: Int,
     }
 
     private fun initViewport(w: Double, h: Double) {
-        gameRoot.layoutXProperty().bind(viewport.xProperty().negate())
-        gameRoot.layoutYProperty().bind(viewport.yProperty().negate())
+        gameRoot.translateXProperty().bind(viewport.xProperty().negate())
+        gameRoot.translateYProperty().bind(viewport.yProperty().negate())
 
         val scale = Scale()
         scale.pivotXProperty().bind(viewport.xProperty())
