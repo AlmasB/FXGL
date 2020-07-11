@@ -15,9 +15,12 @@ import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.core.util.PauseMenuBGGen
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.animationBuilder
 import com.almasb.fxgl.entity.GameWorld
+import com.almasb.fxgl.input.InputSequence
+import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.physics.PhysicsWorld
@@ -28,6 +31,7 @@ import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneListener
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.texture.toImage
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.DialogService
 import com.almasb.fxgl.ui.FontType
@@ -38,6 +42,8 @@ import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.ImageCursor
+import javafx.scene.image.ImageView
+import javafx.scene.input.KeyCode.*
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
@@ -268,13 +274,6 @@ class FXGLApplication : Application() {
 
     class GameApplicationService : SceneService() {
 
-        override fun onGameUpdate(tpf: Double) {
-            app.onUpdate(tpf)
-        }
-
-
-
-
         private val log = Logger.get(javaClass)
 
         private lateinit var assetLoaderService: FXGLAssetLoaderService
@@ -334,6 +333,10 @@ class FXGLApplication : Application() {
             }
 
             initAppScenes()
+        }
+
+        override fun onGameUpdate(tpf: Double) {
+            app.onUpdate(tpf)
         }
 
         override fun onUpdate(tpf: Double) {
@@ -436,6 +439,28 @@ class FXGLApplication : Application() {
             }
 
             SystemActions.bind(mainWindow.input)
+
+            mainWindow.input.addAction(object : UserAction("") {
+                private val subScene = object : SubScene() {
+                    private val view by lazy {
+                        ImageView(PauseMenuBGGen.generate().toImage()).also {
+                            it.scaleX = 4.0
+                            it.scaleY = 4.0
+                            it.translateX = appWidth / 2.0
+                            it.translateY = appHeight / 2.0
+                        }
+                    }
+
+                    override fun onCreate() {
+                        contentRoot.children.setAll(view)
+
+                        timer.runOnceAfter({ popSubScene() }, Duration.seconds(3.0))
+                    }
+                }
+                override fun onActionBegin() {
+                    pushSubScene(subScene)
+                }
+            }, InputSequence(F, X, G, L, A, L, M, A, S, B))
         }
 
         private fun addOverlay(scene: Scene) {

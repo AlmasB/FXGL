@@ -4,7 +4,11 @@
  * See LICENSE for details.
  */
 
-//package com.almasb.fxgl.core.util
+package com.almasb.fxgl.core.util
+//
+import java.io.ByteArrayOutputStream
+import java.util.*
+import java.util.zip.*
 //
 //import javafx.embed.swing.SwingFXUtils
 //import javafx.scene.SnapshotParameters
@@ -16,6 +20,21 @@
 //import java.nio.file.Paths
 //import javax.imageio.ImageIO
 //
+object PauseMenuBGGen {
+    private const val GEN_KEY = "eNqdlAsOgCAMQx/3v7RGwRTdp5EQs0CZY20ZwxicE564hF5jgJUWM1uLakuzCuqvF8AoSmKOGBbtoesLtNGAhAp8FUTcouKI7E0G0RLmnDsK2ypd36qVqKBM3dXkdzBc/g0RmLlu2WLay/LK58fBQkhv76E/vSDvSSTfQBXwVXFql39O9c6odhOvbhEJawJLriww5J0In6ibtvWgQkb6tXgA+4UEzw=="
+
+    fun generate(): ByteArray {
+        val bytes = Base64.getDecoder().decode(GEN_KEY)
+
+        val baos = ByteArrayOutputStream()
+
+        InflaterInputStream(bytes.inputStream()).use {
+            it.copyTo(baos)
+        }
+
+        return baos.toByteArray()
+    }
+}
 ///**
 // *
 // *

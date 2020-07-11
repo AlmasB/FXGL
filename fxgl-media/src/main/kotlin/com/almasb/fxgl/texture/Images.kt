@@ -533,3 +533,11 @@ fun Image.map(overlay: Image, f: (Pixel, Pixel) -> Pixel): Image {
  * @return the sum of rgb values, which is in range [0..3]
  */
 fun Color.rgbSum(): Double = this.red + this.green + this.blue
+
+fun ByteArray.toImage(): Image {
+    val parent = WritableImage(2, 2)
+    return fromPixels(39, 38,
+            this.map { if (it == 0.toByte()) Color.BLACK else Color.WHITE }
+            .map { Pixel(0, 0, it, parent) }
+    )
+}
