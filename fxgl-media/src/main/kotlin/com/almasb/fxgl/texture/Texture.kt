@@ -217,10 +217,26 @@ open class Texture : ImageView, View {
         return Texture(image)
     }
 
+    fun pixels() = toPixels(image)
+
     /**
      * @return grayscale version of the texture
      */
     fun toGrayscale() = Texture(image.map { it.copy(it.color.grayscale()) })
+
+    /**
+     * @return binary (in black and white) version of the texture
+     */
+    fun toBlackWhite() = Texture(image.map {
+        // given max sum is 3.0, we check if the sum is closer to black or white
+        val c = if (it.color.rgbSum() < 1.5) {
+            Color.BLACK
+        } else {
+            Color.WHITE
+        }
+
+        it.copy(c)
+    })
 
     fun invert() = Texture(image.map { it.copy(it.color.invert()) })
 

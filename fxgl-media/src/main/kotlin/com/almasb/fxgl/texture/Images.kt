@@ -21,8 +21,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-
-
 private val image: Image by lazy {
     val group = Group()
     val size = 32.0
@@ -68,6 +66,19 @@ fun toPixels(image: Image): List<Pixel> {
         it
     }
     return result
+}
+
+fun fromPixels(width: Int, height: Int, pixels: List<Pixel>): Image {
+    val image = WritableImage(width, height)
+    var index = 0
+
+    for (y in 0 until height) {
+        for (x in 0 until width) {
+            image.pixelWriter.setColor(x, y, pixels[index++].color)
+        }
+    }
+
+    return image
 }
 
 fun merge(images: List<Image>): Image {
@@ -517,3 +528,8 @@ fun Image.map(overlay: Image, f: (Pixel, Pixel) -> Pixel): Image {
 
     return newImage
 }
+
+/**
+ * @return the sum of rgb values, which is in range [0..3]
+ */
+fun Color.rgbSum(): Double = this.red + this.green + this.blue
