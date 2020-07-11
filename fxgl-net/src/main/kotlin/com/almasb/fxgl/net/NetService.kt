@@ -27,6 +27,14 @@ class NetService : EngineService() {
     fun openStreamTask(url: String): IOTask<InputStream> = IOTask.of("openStream($url)") {
         URL(url).openStream()
     }
+
+    fun newTCPServer(port: Int): Server {
+        TODO("WIP")
+    }
+
+    fun newTCPClient(ip: String, port: Int): Client {
+        TODO("WIP")
+    }
 }
 
 
