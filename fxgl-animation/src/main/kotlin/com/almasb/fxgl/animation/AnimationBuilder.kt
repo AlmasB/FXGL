@@ -9,7 +9,6 @@ package com.almasb.fxgl.animation
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.scene.Scene
-import com.almasb.fxgl.scene.SceneListener
 import com.almasb.fxgl.logging.Logger
 import javafx.animation.Interpolator
 import javafx.beans.property.DoubleProperty
@@ -211,16 +210,15 @@ open class AnimationBuilder
         }
 
         fun buildAndPlay(scene: Scene) {
-            build().also {
-                val l = it.toListener()
+            build().also { animation ->
 
-                it.onFinished = Runnable {
-                    scene.removeListener(l)
+                animation.onFinished = Runnable {
+                    scene.removeListener(animation)
                     onFinished.run()
                 }
 
-                it.start()
-                scene.addListener(l)
+                animation.start()
+                scene.addListener(animation)
             }
         }
     }
@@ -440,15 +438,6 @@ private fun Entity.toAnimatable(): Animatable {
 
         override fun opacityProperty(): DoubleProperty {
             return e.viewComponent.opacityProperty
-        }
-    }
-}
-
-private fun Animation<*>.toListener(): SceneListener {
-    val a = this
-    return object : SceneListener {
-        override fun onUpdate(tpf: Double) {
-            a.onUpdate(tpf)
         }
     }
 }

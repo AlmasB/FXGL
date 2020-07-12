@@ -11,6 +11,7 @@ import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.scene.LoadingScene
 import com.almasb.fxgl.app.services.FXGLAssetLoaderService
+import com.almasb.fxgl.core.Updatable
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
@@ -28,7 +29,6 @@ import com.almasb.fxgl.profile.DataFile
 import com.almasb.fxgl.profile.SaveLoadHandler
 import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.scene.Scene
-import com.almasb.fxgl.scene.SceneListener
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.texture.toImage
@@ -134,11 +134,7 @@ class FXGLApplication : Application() {
         initAndRegisterFontFactories()
 
         // onGameUpdate is only updated in Game Scene
-        FXGL.getGameScene().addListener(object : SceneListener {
-            override fun onUpdate(tpf: Double) {
-                engine.onGameUpdate(tpf)
-            }
-        })
+        FXGL.getGameScene().addListener(Updatable { tpf -> engine.onGameUpdate(tpf) })
     }
 
     private fun initPauseResumeHandler() {

@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.core.Updatable
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.fsm.State
 import com.almasb.fxgl.input.Input
@@ -44,9 +45,9 @@ abstract class Scene : State<Scene> {
     override val isSubState: Boolean = false
     override val isAllowConcurrency: Boolean = false
 
-    private val listeners = Array<SceneListener>()
-    private val listenersToAdd = Array<SceneListener>()
-    private val listenersToRemove = Array<SceneListener>()
+    private val listeners = Array<Updatable>()
+    private val listenersToAdd = Array<Updatable>()
+    private val listenersToRemove = Array<Updatable>()
 
     init {
         root.background = null
@@ -63,11 +64,11 @@ abstract class Scene : State<Scene> {
         contentRoot.children -= node
     }
 
-    fun addListener(l: SceneListener) {
+    fun addListener(l: Updatable) {
         listenersToAdd.add(l)
     }
 
-    fun removeListener(l: SceneListener) {
+    fun removeListener(l: Updatable) {
         listenersToRemove.add(l)
     }
 

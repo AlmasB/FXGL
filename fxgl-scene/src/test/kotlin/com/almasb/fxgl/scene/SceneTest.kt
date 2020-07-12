@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.core.Updatable
 import com.almasb.fxgl.time.Timer
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.scene.Group
@@ -34,7 +35,7 @@ class SceneTest {
 
         var count = 0.0
 
-        val listener = object : SceneListener {
+        val listener = object : Updatable {
             override fun onUpdate(tpf: Double) {
                 count = tpf
             }
