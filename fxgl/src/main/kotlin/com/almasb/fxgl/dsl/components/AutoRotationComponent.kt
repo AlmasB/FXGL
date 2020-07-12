@@ -8,6 +8,7 @@ package com.almasb.fxgl.dsl.components
 
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.entity.component.Component
+import kotlin.math.abs
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -24,7 +25,15 @@ class AutoRotationComponent : Component() {
     }
 
     override fun onUpdate(tpf: Double) {
-        val nextAngle = FXGLMath.toDegrees(FXGLMath.atan2(entity.y - prevY, entity.x - prevX))
+        val angle = FXGLMath.toDegrees(FXGLMath.atan2(entity.y - prevY, entity.x - prevX))
+
+        val angles = doubleArrayOf(
+                angle,
+                angle + 360,
+                angle - 360
+        )
+
+        val nextAngle = angles.minBy { abs(it - entity.rotation) }!!
 
         if (!isSmoothing) {
             entity.rotation = nextAngle
