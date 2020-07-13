@@ -10,10 +10,11 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.input.Input;
 import javafx.geometry.Point2D;
+import javafx.scene.input.KeyCode;
 
-import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
-import static com.almasb.fxgl.dsl.FXGL.spawn;
+import static com.almasb.fxgl.dsl.FXGL.*;
 import static sandbox.circlegame.CircleNNType.CIRCLE;
 
 /**
@@ -27,8 +28,31 @@ public class CircleComponent extends Component {
 
     private HealthIntComponent hp;
 
+    private Input input = new Input();
+
+    @Override
+    public void onAdded() {
+        onKeyBuilder(input, KeyCode.W)
+                .onAction(() -> entity.translateY(-5));
+
+        onKeyBuilder(input, KeyCode.S)
+                .onAction(() -> entity.translateY(5));
+
+        onKeyBuilder(input, KeyCode.A)
+                .onAction(() -> entity.translateX(-5));
+
+        onKeyBuilder(input, KeyCode.D)
+                .onAction(() -> entity.translateX(5));
+    }
+
+    public Input getInput() {
+        return input;
+    }
+
     @Override
     public void onUpdate(double tpf) {
+        input.update(tpf);
+
         time += tpf;
 
         // if we can't shoot because of time interval or if we are player
