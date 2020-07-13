@@ -11,6 +11,7 @@ import com.almasb.fxgl.scene.Scene
 import javafx.animation.Interpolator
 import javafx.geometry.Point2D
 import javafx.scene.Node
+import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
@@ -242,5 +243,54 @@ class AnimationBuilderTest {
 
         assertThat(e.scaleX, `is`(3.0))
         assertThat(e.scaleY, `is`(3.0))
+    }
+
+    @Test
+    fun `JavaFX property animation`() {
+        val rect = Rectangle()
+
+        val anim = builder.animate(rect.widthProperty())
+                .from(10.0)
+                .to(110.0)
+                .build()
+
+        anim.start()
+        assertThat(rect.width, `is`(10.0))
+
+        anim.onUpdate(0.5)
+        assertThat(rect.width, `is`(60.0))
+
+        anim.onUpdate(0.5)
+        assertThat(rect.width, `is`(110.0))
+
+        // animation stopped at this point
+        anim.onUpdate(0.5)
+        assertThat(rect.width, `is`(110.0))
+    }
+
+    @Test
+    fun `Generic animated value animation`() {
+        val color = AnimatedColor(Color.BLACK, Color.WHITE)
+
+        var value = Color.BLACK
+
+        val anim = builder.animate(color)
+                .onProgress(Consumer { value = it })
+                .build()
+
+        anim.start()
+        assertThat(value, `is`(Color.BLACK))
+
+        anim.onUpdate(0.5)
+        assertThat(value.red, `is`(0.5))
+        assertThat(value.green, `is`(0.5))
+        assertThat(value.blue, `is`(0.5))
+
+        anim.onUpdate(0.5)
+        assertThat(value, `is`(Color.WHITE))
+
+        // animation stopped at this point
+        anim.onUpdate(0.5)
+        assertThat(value, `is`(Color.WHITE))
     }
 }
