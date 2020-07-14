@@ -61,13 +61,19 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
             </plugin>
-
+            
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>${jfx.maven.plugin.version}</version>
                 <configuration>
-                    <launcher>fxgl-dialogue-editor</launcher>
+                    <stripDebug>true</stripDebug>
+                    <compress>2</compress>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <noManPages>true</noManPages>
+                    <launcher>start-fxgl-dialogue-editor</launcher>
+                    <jlinkImageName>chron</jlinkImageName>
+                    <jlinkZipName>fxgl-dialogue-editor</jlinkZipName>
                     <mainClass>${mainClassName}</mainClass>
                 </configuration>
             </plugin>
