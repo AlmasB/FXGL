@@ -35,9 +35,8 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
     }
 
     /**
-     * Plays given animation channel from start to end.
-     * The channel cannot be reset while playing, but
-     * you can call this method instead to reset the channel.
+     * Plays given animation channel from start to end once.
+     * The animation will stop at the last frame.
      */
     fun playAnimationChannel(channel: AnimationChannel) {
         animationChannel = channel
@@ -47,9 +46,18 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
 
     /**
      * Loops given channel.
-     * Calling this again on the same channel will have no effect
-     * and the channel will not be reset,
-     * but calling with a different channel will switch to that channel.
+     *
+     * Note: if the given channel is already playing or looping, then noop.
+     */
+    fun loopNoOverride(channel: AnimationChannel) {
+        if (animationChannel === channel)
+            return
+
+        loopAnimationChannel(channel)
+    }
+
+    /**
+     * Loops given channel.
      */
     fun loopAnimationChannel(channel: AnimationChannel) {
         animationChannel = channel
@@ -58,9 +66,8 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
     }
 
     /**
-     * Play the last animation channel (or default) from start to end.
-     * The channel cannot be reset while playing, but
-     * you can call this method instead to reset the channel.
+     * Play the last animation channel (or default) from start to end once.
+     * The animation will stop at the last frame.
      */
     fun play(): AnimatedTexture {
         playAnimationChannel(animationChannel)
@@ -69,9 +76,6 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
 
     /**
      * Loops the last animation channel (or default).
-     * Calling this again on the same channel will have no effect
-     * and the channel will not be reset,
-     * but calling with a different channel will switch to that channel.
      */
     fun loop(): AnimatedTexture {
         loopAnimationChannel(animationChannel)
