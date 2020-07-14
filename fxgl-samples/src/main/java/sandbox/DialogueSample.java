@@ -17,14 +17,12 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  */
 public class DialogueSample extends GameApplication {
     @Override
-    protected void initSettings(GameSettings settings) {
-
-    }
+    protected void initSettings(GameSettings settings) { }
 
     @Override
     protected void initGame() {
         runOnce(() -> {
-            var dialogueGraph = getAssetLoader().loadDialogueGraph("example_dialogue.json");
+            var dialogueGraph = getAssetLoader().loadDialogueGraph("simple.json");
 
             getCutsceneService().startDialogueScene(dialogueGraph);
         }, Duration.seconds(0.5));

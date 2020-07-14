@@ -1,0 +1,40 @@
+{
+  "uniqueID" : 4,
+  "nodes" : {
+    "0" : {
+      "type" : "START",
+      "text" : "Simple start."
+    },
+    "1" : {
+      "type" : "END",
+      "text" : "Simple end."
+    },
+    "2" : {
+      "type" : "TEXT",
+      "text" : "Simple text."
+    }
+  },
+  "choiceNodes" : { },
+  "edges" : [ {
+    "sourceID" : 0,
+    "targetID" : 2
+  }, {
+    "sourceID" : 2,
+    "targetID" : 1
+  } ],
+  "choiceEdges" : [ ],
+  "uiMetadata" : {
+    "0" : {
+      "x" : 50.0,
+      "y" : 450.0
+    },
+    "1" : {
+      "x" : 1230.5,
+      "y" : 450.0
+    },
+    "2" : {
+      "x" : 665.5,
+      "y" : 274.5
+    }
+  }
+}
