@@ -168,6 +168,14 @@ class GameSettings(
         var isEntityPreloadEnabled: Boolean = true,
 
         /**
+         * If true, allows FXGL to make write calls to the file system, for example
+         * to create log files.
+         * In cases where running from a directory that requires elevated privileges,
+         * it is recommended to disable this setting.
+         */
+        var isFileSystemWriteAllowed: Boolean = true,
+
+        /**
          * Setting to false will disable asking for confirmation on exit.
          * This is useful for faster compile -> run -> exit.
          */
@@ -317,6 +325,7 @@ class GameSettings(
                 isDeveloperMenuEnabled,
                 isClickFeedbackEnabled,
                 isEntityPreloadEnabled,
+                isFileSystemWriteAllowed,
                 isCloseConfirmation,
                 isSingleStep,
                 applicationMode,
@@ -436,6 +445,14 @@ class ReadOnlyGameSettings internal constructor(
          * Default: true.
          */
         val isEntityPreloadEnabled: Boolean,
+
+        /**
+         * If true, allows FXGL to make write calls to the file system, for example
+         * to create log files.
+         * In cases where running from a directory that requires elevated privileges,
+         * it is recommended to disable this setting.
+         */
+        val isFileSystemWriteAllowed: Boolean,
 
         /**
          * Setting to false will disable asking for confirmation on exit.
