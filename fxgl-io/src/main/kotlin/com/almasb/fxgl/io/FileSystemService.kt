@@ -29,6 +29,9 @@ class FileSystemService : EngineService() {
     @Inject("isDesktop")
     private var isDesktop = true
 
+    @Inject("isFileSystemWriteAllowed")
+    private var isFileSystemWriteAllowed = true
+
     private lateinit var fs: FileSystemAccess
 
     override fun onInit() {
@@ -53,6 +56,8 @@ class FileSystemService : EngineService() {
      * Creates [dirName] directory, creating required parent directories if necessary.
      */
     fun createDirectoryTask(dirName: String): IOTask<Void> = IOTask.ofVoid("createDirectoryTask($dirName)") {
+        checkWriteAllowed()
+
         fs.createDirectory(dirName)
     }
 
@@ -64,6 +69,8 @@ class FileSystemService : EngineService() {
      * @return IO task
      */
     fun writeDataTask(data: Serializable, fileName: String) = IOTask.ofVoid("writeDataTask($fileName)") {
+        checkWriteAllowed()
+
         fs.writeData(data, fileName)
     }
 
@@ -75,6 +82,8 @@ class FileSystemService : EngineService() {
      * @return IO task
      */
     fun writeDataTask(text: List<String>, fileName: String) = IOTask.ofVoid("writeDataTask($fileName)") {
+        checkWriteAllowed()
+
         fs.writeData(text, fileName)
     }
 
@@ -149,6 +158,8 @@ class FileSystemService : EngineService() {
      * @return IO task
      */
     fun deleteFileTask(fileName: String): IOTask<Void> = IOTask.ofVoid("deleteFileTask($fileName)") {
+        checkWriteAllowed()
+
         fs.deleteFile(fileName)
     }
 
@@ -159,9 +170,18 @@ class FileSystemService : EngineService() {
      * @return IO task
      */
     fun deleteDirectoryTask(dirName: String): IOTask<Void> = IOTask.ofVoid("deleteDirectoryTask($dirName)") {
+        checkWriteAllowed()
+
         fs.deleteDirectory(dirName)
     }
 
     private fun normalize(dirName: String): String
             = if (dirName.endsWith(File.separatorChar)) dirName else dirName + File.separatorChar
+
+    private fun checkWriteAllowed() {
+        check(isFileSystemWriteAllowed) {
+            log.warning("Attempted to make a write call but FS write is not allowed")
+            "isFileSystemWriteAllowed is false"
+        }
+    }
 }

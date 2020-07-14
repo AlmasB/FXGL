@@ -41,6 +41,7 @@ class FileSystemServiceTest {
             fs = FileSystemService()
 
             InjectInTest.inject(MethodHandles.lookup(), fs, "isDesktop", true)
+            InjectInTest.inject(MethodHandles.lookup(), fs, "isFileSystemWriteAllowed", true)
 
             fs.onInit()
         }
@@ -226,9 +227,27 @@ class FileSystemServiceTest {
         val f = FileSystemService()
 
         InjectInTest.inject(MethodHandles.lookup(), f, "isDesktop", false)
+        InjectInTest.inject(MethodHandles.lookup(), f, "isFileSystemWriteAllowed", true)
 
         assertThrows<RuntimeException> {
             f.onInit()
         }
+    }
+
+    @Test
+    fun `FS is not changed if FS write is not allowed`() {
+        val f = FileSystemService()
+
+        InjectInTest.inject(MethodHandles.lookup(), f, "isDesktop", true)
+        InjectInTest.inject(MethodHandles.lookup(), f, "isFileSystemWriteAllowed", false)
+
+        val text = listOf("Test Line1", "Test Line2")
+
+        assertFalse(exists(path("bla-bla-bla.txt")))
+
+        f.writeDataTask(text, "bla-bla-bla.txt").run()
+
+        // still not created because isFileSystemWriteAllowed = false
+        assertFalse(exists(path("bla-bla-bla.txt")))
     }
 }
