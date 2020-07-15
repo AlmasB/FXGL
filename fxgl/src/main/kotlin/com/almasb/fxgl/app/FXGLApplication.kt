@@ -166,11 +166,20 @@ class FXGLApplication : Application() {
     }
 
     private fun initAndLoadLocalization() {
-        log.debug("Loading localizations");
+        log.debug("Loading default localization")
 
-        settings.supportedLanguages.forEach { lang ->
-            val pMap = FXGL.getAssetLoader().loadPropertyMap("languages/" + lang.name.toLowerCase() + ".lang")
-            FXGL.getLocalizationService().addLanguageData(lang, pMap.toStringMap())
+        val defaultLang = settings.language.value
+
+        val langData = FXGL.getAssetLoader().loadPropertyMap("languages/" + defaultLang.name.toLowerCase() + ".lang")
+
+        FXGL.getLocalizationService().addLanguageData(defaultLang, langData.toStringMap())
+
+        settings.supportedLanguages.filter { it != defaultLang }.forEach { lang ->
+            FXGL.getLocalizationService().addLanguageDataLazy(lang) {
+                FXGL.getAssetLoader()
+                        .loadPropertyMap("languages/" + lang.name.toLowerCase() + ".lang")
+                        .toStringMap()
+            }
         }
 
         FXGL.getLocalizationService().selectedLanguageProperty().bind(settings.language)
