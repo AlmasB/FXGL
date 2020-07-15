@@ -8,12 +8,13 @@ package com.almasb.fxgl.app.scene
 
 import com.almasb.fxgl.dsl.getAppHeight
 import com.almasb.fxgl.dsl.getAppWidth
+import com.almasb.fxgl.logging.stackTraceToString
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.MDIWindow
-import javafx.scene.control.*
+import javafx.scene.control.Button
+import javafx.scene.control.ScrollPane
+import javafx.scene.control.TextArea
 import javafx.scene.layout.VBox
-import java.io.PrintWriter
-import java.io.StringWriter
 
 class ErrorSubScene(val error: Throwable, val action: Runnable) : SubScene() {
 
@@ -61,12 +62,5 @@ class ErrorSubScene(val error: Throwable, val action: Runnable) : SubScene() {
                 "Line:  $line"
     }
 
-    private fun makeStackTrace(): String {
-        val sw = StringWriter()
-        val pw = PrintWriter(sw)
-        error.printStackTrace(pw)
-        pw.close()
-
-        return sw.toString()
-    }
+    private fun makeStackTrace() = error.stackTraceToString()
 }
