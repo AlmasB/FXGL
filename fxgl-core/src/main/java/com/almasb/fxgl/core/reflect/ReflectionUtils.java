@@ -103,7 +103,7 @@ public final class ReflectionUtils {
         try {
             return (T) method.invoke(instance, args);
         } catch (Exception e) {
-            throw new ReflectionException("Cannot call " + method.getName() + " Error: " + e);
+            throw new ReflectionException("Cannot call " + method.getName() + " Error: " + e, e);
         }
     }
 
