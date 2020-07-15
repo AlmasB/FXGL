@@ -128,10 +128,14 @@ class FXGLApplication : Application() {
     }
 
     private fun postServicesInit() {
+        // fonts take a (relatively) long time to load, so load them in parallel
+        Async.startAsync {
+            initAndRegisterFontFactories()
+        }
+
         initPauseResumeHandler()
         initSaveLoadHandler()
         initAndLoadLocalization()
-        initAndRegisterFontFactories()
 
         // onGameUpdate is only updated in Game Scene
         FXGL.getGameScene().addListener(Updatable { tpf -> engine.onGameUpdate(tpf) })
