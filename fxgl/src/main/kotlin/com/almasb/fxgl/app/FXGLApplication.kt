@@ -226,17 +226,17 @@ class FXGLApplication : Application() {
     }
 
     fun exitFXGL() {
-        log.debug("Exiting FXGL");
+        log.debug("Exiting FXGL")
 
         if (engine != null && !isError)
-            engine.stopLoopAndExitServices();
+            engine.stopLoopAndExitServices()
 
-        log.debug("Shutting down background threads");
-        Async.shutdownNow();
+        log.debug("Shutting down background threads")
+        Async.shutdownNow()
 
-        log.debug("Closing logger and exiting JavaFX");
-        Logger.close();
-        javafx.application.Platform.exit();
+        log.debug("Closing logger and exiting JavaFX")
+        Logger.close()
+        javafx.application.Platform.exit()
     }
 
     /**
