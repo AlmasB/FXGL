@@ -395,4 +395,10 @@ internal class MainWindow(
     fun showFatalError(error: Throwable, action: Runnable) {
         pushState(ErrorSubScene(error, action))
     }
+
+    fun close() {
+        log.debug("Closing main window")
+
+        stage.close()
+    }
 }
