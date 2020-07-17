@@ -41,6 +41,8 @@ private constructor(private val name: String) {
 
             this.config = config.copy()
             isConfigured = true
+
+            doLog("Logger", "Configured Logger", LoggerLevel.DEBUG)
         }
 
         @JvmStatic fun addOutput(loggerOutput: LoggerOutput, level: LoggerLevel) {
@@ -113,6 +115,8 @@ private constructor(private val name: String) {
                 doLog("Logger", "Logger already closed", LoggerLevel.WARNING)
                 return
             }
+
+            doLog("Logger", "Closing Logger", LoggerLevel.DEBUG)
 
             outputs.forEach(LoggerOutput::close)
             isClosed = true

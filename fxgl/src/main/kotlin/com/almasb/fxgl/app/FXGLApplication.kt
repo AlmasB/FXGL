@@ -243,10 +243,8 @@ class FXGLApplication : Application() {
         if (!isError)
             engine.stopLoopAndExitServices()
 
-        log.debug("Shutting down background threads")
         Async.shutdownNow()
 
-        log.debug("Closing logger and exiting JavaFX")
         Logger.close()
         javafx.application.Platform.exit()
     }

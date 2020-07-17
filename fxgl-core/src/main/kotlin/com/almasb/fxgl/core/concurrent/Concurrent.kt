@@ -7,6 +7,7 @@
 
 package com.almasb.fxgl.core.concurrent
 
+import com.almasb.fxgl.logging.Logger
 import javafx.application.Platform
 import javafx.util.Duration
 import java.util.concurrent.*
@@ -19,6 +20,8 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 
 object Async : Executor {
+
+    private val log = Logger.get(javaClass)
 
     private val service = Executors.newCachedThreadPool(FXGLThreadFactory)
     private val schedulerService = Executors.newScheduledThreadPool(2, FXGLThreadFactory)
@@ -46,6 +49,8 @@ object Async : Executor {
     })
 
     override fun shutdownNow() {
+        log.debug("Shutting down background threads")
+
         service.shutdownNow()
         schedulerService.shutdownNow()
     }
