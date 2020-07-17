@@ -14,14 +14,6 @@ package com.almasb.fxgl.app.scene
 open class SceneFactory {
 
     /**
-     * Called to construct startup scene.
-     * This cannot be overridden.
-     *
-     * @return startup scene
-     */
-    fun newStartup(): StartupScene = FXGLStartupScene()
-
-    /**
      * Called to construct intro scene.
      *
      * @return intro scene

@@ -10,6 +10,7 @@ import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.scene.LoadingScene
+import com.almasb.fxgl.app.scene.StartupScene
 import com.almasb.fxgl.app.services.FXGLAssetLoaderService
 import com.almasb.fxgl.core.Updatable
 import com.almasb.fxgl.core.collection.PropertyMap
@@ -19,6 +20,7 @@ import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.core.util.PauseMenuBGGen
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.animationBuilder
+import com.almasb.fxgl.dsl.getGameController
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.input.InputSequence
 import com.almasb.fxgl.input.UserAction
@@ -104,10 +106,8 @@ class FXGLApplication : Application() {
         // after this call, all FXGL.* calls (apart from those accessing services) are valid
         FXGL.inject(engine, app, this)
 
-        val startupScene = settings.sceneFactory.newStartup()
-
         // get window up ASAP
-        mainWindow = MainWindow(stage, startupScene, settings)
+        mainWindow = MainWindow(stage, StartupScene(settings.width, settings.height), settings)
         mainWindow.show()
 
         // start initialization of services on a background thread
@@ -120,7 +120,10 @@ class FXGLApplication : Application() {
 
                     log.infof("FXGL initialization took: %.3f sec", time / 1000000000.0)
                 }
-                .onSuccess { engine.startLoop() }
+                .onSuccess {
+                    engine.startLoop()
+                    setFirstSceneAfterStartup()
+                }
                 .onFailure { handleFatalError(it) }
                 .toJavaFXTask()
 
@@ -198,6 +201,19 @@ class FXGLApplication : Application() {
         uiFactory.registerFontFactory(FontType.GAME, FXGL.getAssetLoader().loadFont(settings.fontGame))
         uiFactory.registerFontFactory(FontType.MONO, FXGL.getAssetLoader().loadFont(settings.fontMono))
         uiFactory.registerFontFactory(FontType.TEXT, FXGL.getAssetLoader().loadFont(settings.fontText))
+    }
+
+    private fun setFirstSceneAfterStartup() {
+        // Start -> (Intro) -> (Menu) -> Game
+        if (settings.isIntroEnabled) {
+            getGameController().gotoIntro()
+        } else {
+            if (settings.isMainMenuEnabled) {
+                getGameController().gotoMainMenu()
+            } else {
+                getGameController().startNewGame()
+            }
+        }
     }
 
     private var isError = false
@@ -543,15 +559,16 @@ class FXGLApplication : Application() {
             })
         }
 
-        override fun onGameReady(vars: PropertyMap) {
-        }
-
         fun gotoIntro() {
             mainWindow.setScene(intro!!)
         }
 
         private val dummyScene by lazy {
-            object : FXGLScene() {}
+            object : FXGLScene() {
+                override fun toString(): String {
+                    return "FXGLMainMenuDummyScene"
+                }
+            }
         }
 
         fun gotoMainMenu() {
@@ -610,7 +627,6 @@ class FXGLApplication : Application() {
             mainWindow.popState()
         }
     }
-
 }
 
 
