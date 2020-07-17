@@ -245,8 +245,9 @@ class FXGLApplication : Application() {
 
         Async.shutdownNow()
 
+        mainWindow.close()
+
         Logger.close()
-        javafx.application.Platform.exit()
     }
 
     /**
