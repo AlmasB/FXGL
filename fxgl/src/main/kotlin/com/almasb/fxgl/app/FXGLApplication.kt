@@ -159,14 +159,14 @@ class FXGLApplication : Application() {
     private fun initSaveLoadHandler() {
         FXGL.getSaveLoadService().addHandler(object : SaveLoadHandler {
             override fun onSave(data: DataFile) {
-                var bundle = Bundle("FXGLServices")
+                val bundle = Bundle("FXGLServices")
                 engine.write(bundle)
 
                 data.putBundle(bundle)
             }
 
             override fun onLoad(data: DataFile) {
-                var bundle = data.getBundle("FXGLServices")
+                val bundle = data.getBundle("FXGLServices")
                 engine.read(bundle)
             }
         })
@@ -232,19 +232,15 @@ class FXGLApplication : Application() {
         log.fatal("Uncaught Exception:", error)
         log.fatal("Application will now exit")
 
-        if (mainWindow != null) {
-            mainWindow.showFatalError(error, Runnable {
-                exitFXGL()
-            })
-        } else {
+        mainWindow.showFatalError(error, Runnable {
             exitFXGL()
-        }
+        })
     }
 
     fun exitFXGL() {
         log.debug("Exiting FXGL")
 
-        if (engine != null && !isError)
+        if (!isError)
             engine.stopLoopAndExitServices()
 
         log.debug("Shutting down background threads")
@@ -295,7 +291,6 @@ class FXGLApplication : Application() {
             throw RuntimeException("Initialization failed", exception)
         }
     }
-
 
     class GameApplicationService : SceneService() {
 
