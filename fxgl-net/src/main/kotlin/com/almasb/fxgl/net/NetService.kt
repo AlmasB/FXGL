@@ -8,6 +8,8 @@ package com.almasb.fxgl.net
 
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.concurrent.IOTask
+import com.almasb.fxgl.net.tcp.TCPClient
+import com.almasb.fxgl.net.tcp.TCPServer
 import java.io.InputStream
 import java.net.URL
 
@@ -29,11 +31,11 @@ class NetService : EngineService() {
     }
 
     fun newTCPServer(port: Int): Server {
-        TODO("WIP")
+        return TCPServer(port)
     }
 
     fun newTCPClient(ip: String, port: Int): Client {
-        TODO("WIP")
+        return TCPClient(ip, port)
     }
 }
 
