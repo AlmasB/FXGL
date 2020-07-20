@@ -39,6 +39,7 @@ public abstract class MessageHandler<T> {
             write(message);
         } catch (Exception e) {
             // TODO:
+            log.warning("Error during send()", e);
         }
     }
 

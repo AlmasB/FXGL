@@ -8,9 +8,6 @@ package com.almasb.fxgl.net.messagehandlers;
 
 import com.almasb.fxgl.net.MessageHandler;
 
-import java.io.DataInputStream;
-import java.io.PrintWriter;
-
 /**
  * TODO: check out / in work
  *
@@ -20,8 +17,8 @@ import java.io.PrintWriter;
  */
 public abstract class StringMessageHandler extends MessageHandler<String> {
 
-    private PrintWriter out;
-    private DataInputStream in;
+//    private PrintWriter out;
+//    private DataInputStream in;
 
 //    @Override
 //    public final void onInitialize(OutputStream out, InputStream in) {

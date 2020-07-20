@@ -64,6 +64,7 @@ public final class SocketConnection {
         }
     }
 
+    @SuppressWarnings("PMD.EmptyCatchBlock")
     public void receive() {
         if (handler != null) {
             try {
