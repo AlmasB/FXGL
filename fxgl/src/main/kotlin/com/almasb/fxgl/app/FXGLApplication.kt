@@ -22,6 +22,7 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.animationBuilder
 import com.almasb.fxgl.dsl.getGameController
 import com.almasb.fxgl.entity.GameWorld
+import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputSequence
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.localization.LocalizationService
@@ -312,6 +313,9 @@ class FXGLApplication : Application() {
 
         override val appHeight
             get() = settings.height
+
+        override val input: Input
+            get() = mainWindow.input
 
         /**
          * Always-on timer.

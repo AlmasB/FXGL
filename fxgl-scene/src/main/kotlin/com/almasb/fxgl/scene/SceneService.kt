@@ -7,6 +7,7 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
 import javafx.scene.Group
 
@@ -25,6 +26,11 @@ abstract class SceneService : EngineService() {
     abstract val appWidth: Int
 
     abstract val appHeight: Int
+
+    /**
+     * Always-on input.
+     */
+    abstract val input: Input
 
     /**
      * Always-on timer.

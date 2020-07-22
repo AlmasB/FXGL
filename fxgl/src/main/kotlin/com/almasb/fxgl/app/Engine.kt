@@ -58,11 +58,11 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
 
-    inline fun <reified T : EngineService> getService(serviceClass: Class<T>): T {
+    fun <T : EngineService> getService(serviceClass: Class<T>): T {
         if (servicesCache.containsKey(serviceClass))
             return servicesCache[serviceClass] as T
 
-        return (services.find { it is T }?.also { servicesCache[serviceClass] = it }
+        return (services.find { serviceClass.isAssignableFrom(it.javaClass) }?.also { servicesCache[serviceClass] = it }
                 ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
     }
 

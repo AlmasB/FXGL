@@ -15,6 +15,7 @@ import com.almasb.fxgl.app.services.IOTaskExecutorService
 import com.almasb.fxgl.app.services.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
+import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.Executor
 import com.almasb.fxgl.core.math.FXGLMath
@@ -161,6 +162,8 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getAppCenter() = Point2D(getAppWidth() / 2.0, getAppHeight() / 2.0)
 
     //@JvmStatic fun getPrimaryStage() = engine.getService(WindowService::class.java).mainWindow.stage
+
+    @JvmStatic fun <T : EngineService> getService(serviceClass: Class<T>): T = engine.getService(serviceClass)
 
     /**
      * Note: the system bundle is saved on exit and loaded on init.

@@ -7,6 +7,7 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.core.Updatable
+import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.scene.Group
@@ -67,6 +68,8 @@ class SceneTest {
                 get() = 600
             override val appHeight: Int
                 get() = 600
+            override val input: Input
+                get() = Input()
             override val timer: Timer
                 get() = Timer()
 
