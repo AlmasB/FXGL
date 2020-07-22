@@ -13,7 +13,7 @@ import com.almasb.fxgl.core.concurrent.IOTask;
  * @author Jordan O'Hara (jordanohara96@gmail.com)
  * @author Byron Filer (byronfiler348@gmail.com)
  */
-public abstract class Client extends Endpoint {
+public abstract class Client<T> extends Endpoint<T> {
 
     public final IOTask<Void> connectTask() {
         return IOTask.ofVoid(this::connect);

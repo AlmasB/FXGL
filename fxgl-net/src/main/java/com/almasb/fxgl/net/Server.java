@@ -15,7 +15,7 @@ import javafx.beans.property.ReadOnlyBooleanWrapper;
  * @author Jordan O'Hara (jordanohara96@gmail.com)
  * @author Byron Filer (byronfiler348@gmail.com)
  * */
-public abstract class Server extends Endpoint {
+public abstract class Server<T> extends Endpoint<T> {
 
     private ReadOnlyBooleanWrapper isListeningProperty = new ReadOnlyBooleanWrapper(false);
 

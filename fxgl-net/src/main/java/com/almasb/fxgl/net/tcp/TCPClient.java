@@ -7,7 +7,7 @@
 package com.almasb.fxgl.net.tcp;
 
 import com.almasb.fxgl.net.Client;
-import com.almasb.fxgl.net.SocketConnection;
+import com.almasb.fxgl.net.Connection;
 
 import java.net.Socket;
 
@@ -16,27 +16,24 @@ import java.net.Socket;
  * @author Jordan O'Hara (jordanohara96@gmail.com)
  * @author Byron Filer (byronfiler348@gmail.com)
  */
-public class TCPClient extends Client {
+public class TCPClient<T> extends Client<T> {
 
     private String ip;
     private int port;
+    private Class<T> messageType;
 
-    public TCPClient(String ip, int port) {
+    public TCPClient(String ip, int port, Class<T> messageType) {
         this.ip = ip;
         this.port = port;
+        this.messageType = messageType;
     }
 
     @Override
     public void connect() {
         try {
             Socket socket = new Socket(ip, port);
-            socket.setTcpNoDelay(true);
 
-            var connection = new SocketConnection(socket, 1);
-
-            onNewConnection(connection);
-
-            new ConnectionThread(connection).start();
+            openNewConnection(socket, 1, messageType);
 
         } catch (Exception e) {
 
@@ -47,6 +44,6 @@ public class TCPClient extends Client {
 
     @Override
     public void disconnect() {
-        getConnections().forEach(SocketConnection::terminate);
+        getConnections().forEach(Connection::terminate);
     }
 }

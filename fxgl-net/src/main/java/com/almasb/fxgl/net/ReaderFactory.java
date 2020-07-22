@@ -6,10 +6,12 @@
 
 package com.almasb.fxgl.net;
 
+import java.io.InputStream;
+
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface MessageHandler<T> {
+public interface ReaderFactory<T> {
 
-    void onReceive(Connection<T> connection, T message);
+    MessageReader<T> create(InputStream out);
 }

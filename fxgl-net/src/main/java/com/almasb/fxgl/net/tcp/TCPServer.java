@@ -8,7 +8,6 @@ package com.almasb.fxgl.net.tcp;
 
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.net.Server;
-import com.almasb.fxgl.net.SocketConnection;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -19,17 +18,19 @@ import java.net.Socket;
  * @author Jordan O'Hara (jordanohara96@gmail.com)
  * @author Byron Filer (byronfiler348@gmail.com)
  * */
-public final class TCPServer extends Server {
+public final class TCPServer<T> extends Server<T> {
 
     private static final Logger log = Logger.get(TCPServer.class);
 
     private boolean isStopped = false;
 
     private int port;
+    private Class<T> messageType;
     private ServerSocket serverSocket;
 
-    public TCPServer(int port) {
+    public TCPServer(int port, Class<T> messageType) {
         this.port = port;
+        this.messageType = messageType;
     }
 
     @Override
@@ -43,13 +44,8 @@ public final class TCPServer extends Server {
 
             while (!isStopped) {
                 Socket socket = serverSocket.accept();
-                socket.setTcpNoDelay(true);
 
-                var connection = new SocketConnection(socket, connectionNum);
-
-                onNewConnection(connection);
-
-                new ConnectionThread(connection).start();
+                openNewConnection(socket, connectionNum++, messageType);
             }
 
         } catch (Exception e) {

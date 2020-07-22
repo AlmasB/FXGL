@@ -9,7 +9,7 @@ package com.almasb.fxgl.net;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface MessageHandler<T> {
+public interface MessageReader<T> {
 
-    void onReceive(Connection<T> connection, T message);
+    T read() throws Exception;
 }

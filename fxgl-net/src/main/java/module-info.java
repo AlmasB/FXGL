@@ -12,5 +12,4 @@ module com.almasb.fxgl.net {
     requires kotlin.stdlib;
 
     exports com.almasb.fxgl.net;
-    exports com.almasb.fxgl.net.messagehandlers;
 }

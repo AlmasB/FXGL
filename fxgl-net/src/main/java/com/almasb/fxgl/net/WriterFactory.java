@@ -6,10 +6,12 @@
 
 package com.almasb.fxgl.net;
 
+import java.io.OutputStream;
+
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface MessageHandler<T> {
+public interface WriterFactory<T> {
 
-    void onReceive(Connection<T> connection, T message);
+    MessageWriter<T> create(OutputStream out);
 }
