@@ -35,6 +35,8 @@ public final class TCPServer<T> extends Server<T> {
 
     @Override
     protected void start() {
+        log.debug("Starting to listen at: " + port + " type: " + messageType);
+
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             this.serverSocket = serverSocket;
 

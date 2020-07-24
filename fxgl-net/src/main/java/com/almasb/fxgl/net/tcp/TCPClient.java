@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.net.tcp;
 
+import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.net.Client;
 import com.almasb.fxgl.net.Connection;
 
@@ -17,6 +18,8 @@ import java.net.Socket;
  * @author Byron Filer (byronfiler348@gmail.com)
  */
 public class TCPClient<T> extends Client<T> {
+
+    private static final Logger log = Logger.get(TCPClient.class);
 
     private String ip;
     private int port;
@@ -30,6 +33,8 @@ public class TCPClient<T> extends Client<T> {
 
     @Override
     public void connect() {
+        log.debug("Connecting to " + ip + ":" + port + " type: " + messageType);
+
         try {
             Socket socket = new Socket(ip, port);
 
