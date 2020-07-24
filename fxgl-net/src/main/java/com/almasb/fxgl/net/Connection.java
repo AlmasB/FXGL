@@ -35,8 +35,6 @@ public final class Connection<T> {
 
     private Socket socket;
     private int connectionNum;
-    private MessageWriter<T> writer;
-    private MessageReader<T> reader;
 
     private PropertyMap localSessionData = new PropertyMap();
 
@@ -45,11 +43,9 @@ public final class Connection<T> {
 
     private BlockingQueue<T> messageQueue = new ArrayBlockingQueue<>(100);
 
-    public Connection(Socket socket, int connectionNum, MessageWriter<T> writer, MessageReader<T> reader) {
+    public Connection(Socket socket, int connectionNum) {
         this.socket = socket;
         this.connectionNum = connectionNum;
-        this.writer = writer;
-        this.reader = reader;
     }
 
     public PropertyMap getLocalSessionData() {
@@ -88,7 +84,7 @@ public final class Connection<T> {
         messageHandlersFX.remove(handler);
     }
 
-    void send() {
+    void send(MessageWriter<T> writer) {
         try {
             var message = messageQueue.take();
 
@@ -113,7 +109,7 @@ public final class Connection<T> {
     }
 
     @SuppressWarnings("PMD.EmptyCatchBlock")
-    void receive() {
+    void receive(MessageReader<T> reader) {
         try {
             var message = reader.read();
 
@@ -164,17 +160,3 @@ public final class Connection<T> {
         isConnectedProperty.set(false);
     }
 }
-
-
-
-
-//    public void setMessageHandler(OLDMH<?> handler) {
-//        this.handler = handler;
-//
-//        try {
-//            handler.setConnection(this);
-//            handler.onInitialize(socket.getOutputStream(), socket.getInputStream());
-//        } catch (Exception e) {
-//            log.warning("Failed to initialize message handler", e);
-//        }
-//    }

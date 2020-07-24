@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.net;
 
+import com.almasb.fxgl.logging.Logger;
+
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.function.Consumer;
  * @author Byron Filer (byronfiler348@gmail.com)
  */
 public abstract class Endpoint<T> {
+
+    private static final Logger log = Logger.get(Endpoint.class);
 
     // TODO: observable?
     private List<Connection<T>> connections = new ArrayList<>();
@@ -35,6 +39,13 @@ public abstract class Endpoint<T> {
         }
     }
 
+    /**
+     * The given callback function is called when a new connection with another Endpoint has been established.
+     * Message handlers should be added within the callback function.
+     * It is also safe to call connection.send() or broadcast() within the callback function.
+     * Such messages will arrive in correct order provided that the other Endpoint also added message handlers
+     * within the callback function.
+     */
     public final void setOnConnected(Consumer<Connection<T>> onConnected) {
         this.onConnected = onConnected;
     }
@@ -44,24 +55,40 @@ public abstract class Endpoint<T> {
     }
 
     protected final void openNewConnection(Socket socket, int connectionNum, Class<T> messageType) throws Exception {
+        log.debug(getClass().getSimpleName() + " opening new connection (" + connectionNum + ") from " + socket.getInetAddress() + ":" + socket.getPort() + " type: " + messageType);
+
         socket.setTcpNoDelay(true);
 
-        var writer = Writers.INSTANCE.getWriter(messageType, socket.getOutputStream());
-        var reader = Readers.INSTANCE.getReader(messageType, socket.getInputStream());
-
-        var connection = new Connection<T>(socket, connectionNum, writer, reader);
+        var connection = new Connection<T>(socket, connectionNum);
 
         onConnectionOpened(connection);
 
-        new ConnectionThread("ConnectionSendThread-" + connectionNum, () -> {
-            while (connection.isConnected()) {
-                connection.send();
+        new ConnectionThread(getClass().getSimpleName() + "_SendThread-" + connectionNum, () -> {
+
+            try {
+                var writer = Writers.INSTANCE.getWriter(messageType, socket.getOutputStream());
+
+                while (connection.isConnected()) {
+                    connection.send(writer);
+                }
+            } catch (Exception e) {
+
+                // TODO:
+                e.printStackTrace();
             }
         }).start();
 
-        new ConnectionThread("ConnectionRecvThread-" + connectionNum, () -> {
-            while (connection.isConnected()) {
-                connection.receive();
+        new ConnectionThread(getClass().getSimpleName() +"_RecvThread-" + connectionNum, () -> {
+            try {
+                var reader = Readers.INSTANCE.getReader(messageType, socket.getInputStream());
+
+                while (connection.isConnected()) {
+                    connection.receive(reader);
+                }
+            } catch (Exception e) {
+
+                // TODO:
+                e.printStackTrace();
             }
 
             onConnectionClosed(connection);
@@ -69,12 +96,16 @@ public abstract class Endpoint<T> {
     }
 
     private void onConnectionOpened(Connection<T> connection) {
+        log.debug(getClass().getSimpleName() + " successfully opened connection (" + connection.getConnectionNum() + ")");
+
         connections.add(connection);
 
         onConnected.accept(connection);
     }
 
     private void onConnectionClosed(Connection<T> connection) {
+        log.debug(getClass().getSimpleName() + " connection (" + connection.getConnectionNum() + ") was closed");
+
         connections.remove(connection);
 
         onDisconnected.accept(connection);
