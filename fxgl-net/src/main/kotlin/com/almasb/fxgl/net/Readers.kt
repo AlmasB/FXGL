@@ -8,10 +8,7 @@ package com.almasb.fxgl.net
 
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.io.ObjectInputStream
+import java.io.*
 
 
 /**
@@ -55,22 +52,23 @@ class BundleMessageReader(stream: InputStream) : MessageReader<Bundle> {
     }
 }
 
-class ByteArrayMessageReader(private val stream: InputStream) : MessageReader<ByteArray> {
+class ByteArrayMessageReader(stream: InputStream) : MessageReader<ByteArray> {
+    private val stream = DataInputStream(stream)
+
     override fun read(): ByteArray {
+        val len = stream.readInt()
 
-        val result = ByteArrayOutputStream()
-        val buffer = ByteArray(1024)
-        var length: Int
+        val buffer = ByteArray(len)
 
-        while (stream.read(buffer).also { length = it } != -1) {
-            result.write(buffer, 0, length)
+        var bytesReadSoFar = 0
 
-            if (length < buffer.size) {
-                break
-            }
+        while (bytesReadSoFar != len) {
+            val bytesReadNow = stream.read(buffer, bytesReadSoFar, len - bytesReadSoFar)
+
+            bytesReadSoFar += bytesReadNow
         }
 
-        return result.toByteArray()
+        return buffer
     }
 }
 

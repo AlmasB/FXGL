@@ -53,9 +53,12 @@ class BundleMessageWriter(out: OutputStream) : MessageWriter<Bundle> {
     }
 }
 
-class ByteArrayMessageWriter(private val out: OutputStream) : MessageWriter<ByteArray> {
+class ByteArrayMessageWriter(out: OutputStream) : MessageWriter<ByteArray> {
+
+    private val out = DataOutputStream(out)
 
     override fun write(message: ByteArray) {
+        out.writeInt(message.size)
         out.write(message)
     }
 }
