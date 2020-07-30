@@ -209,6 +209,14 @@ class PropertyMap {
         return keys().map { it to getValue<Any>(it) }.toMap()
     }
 
+    /***
+     * provides functionality of Map.forEach for PropertyMap
+     * @param action - lambda or method reference with signature (String, Any)
+     */
+    fun forEach(action: (String, Any) -> Unit) {
+        properties.forEach(action)
+    }
+
     fun toStringMap(): Map<String, String> {
         return keys().map { it to getValue<Any>(it).toString() }.toMap()
     }

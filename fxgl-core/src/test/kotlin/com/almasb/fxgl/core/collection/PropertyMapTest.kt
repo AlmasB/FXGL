@@ -6,11 +6,13 @@
 @file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.core.collection
 
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.StringProperty
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.containsInAnyOrder
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -249,6 +251,25 @@ class PropertyMapTest {
 
         assertTrue(s.contains("testDouble=DoubleProperty [value: 5.0]"))
         assertTrue(s.contains("testInt=IntegerProperty [value: 3]"))
+    }
+
+    private var timesCounter = 0
+    private var sumCounter = 0
+
+    @Test
+    fun `forEach test`() {
+        map.setValue("testElement1", 2)
+        map.setValue("testElement2", 2)
+
+        map.forEach { key, value -> this.counter(key, value) }
+
+        assertEquals(2, timesCounter)
+        assertEquals(4, sumCounter)
+    }
+
+    private fun counter(key: String, value: Any) {
+        timesCounter++
+        sumCounter += (value as SimpleIntegerProperty).value
     }
 
     private class MyClass(val i: Int)
