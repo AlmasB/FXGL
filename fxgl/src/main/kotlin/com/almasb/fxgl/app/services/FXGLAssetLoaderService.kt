@@ -19,6 +19,7 @@ import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraph
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraphSerializer
 import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
+import com.almasb.fxgl.cutscene.dialogue.StartNode
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
@@ -291,7 +292,12 @@ class FXGLAssetLoaderService : AssetLoaderService() {
             }
         } catch (e: Exception) {
             log.warning("Failed to load dialogue graph $name", e)
-            return DialogueGraph()
+            val dummyGraph = DialogueGraph()
+
+            // add a start node, so the dialogue can play and not crash at runtime
+            dummyGraph.addNode(StartNode("Failed to load dialogue graph $name : $e"))
+
+            return dummyGraph
         }
     }
 
