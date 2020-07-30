@@ -292,11 +292,16 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     }
 
     private fun nextNode(): DialogueNode {
-        return graph.nextNode(currentNode) ?: throw IllegalStateException("No next node from $currentNode")
+        return graph.nextNode(currentNode) ?: makeDummyEndNode("No next node from $currentNode")
     }
 
     private fun nextNodeFromChoice(optionID: Int): DialogueNode {
-        return graph.nextNode(currentNode, optionID) ?: throw IllegalStateException("No next node from $currentNode using option $optionID")
+        return graph.nextNode(currentNode, optionID) ?: makeDummyEndNode("No next node from $currentNode using option $optionID")
+    }
+
+    private fun makeDummyEndNode(text: String): DialogueNode {
+        log.warning(text)
+        return EndNode(text)
     }
 
     private fun onOpen() {

@@ -9,7 +9,12 @@ package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.achievement.AchievementService
 import com.almasb.fxgl.animation.AnimationBuilder
-import com.almasb.fxgl.app.*
+import com.almasb.fxgl.app.ApplicationMode
+import com.almasb.fxgl.app.Engine
+import com.almasb.fxgl.app.FXGLApplication
+import com.almasb.fxgl.app.GameApplication
+import com.almasb.fxgl.app.GameController
+import com.almasb.fxgl.app.ReadOnlyGameSettings
 import com.almasb.fxgl.app.services.FXGLAssetLoaderService
 import com.almasb.fxgl.app.services.IOTaskExecutorService
 import com.almasb.fxgl.app.services.SystemBundleService
@@ -50,7 +55,16 @@ import com.almasb.fxgl.ui.DialogFactoryService
 import com.almasb.fxgl.ui.DialogService
 import com.almasb.fxgl.ui.UIFactoryService
 import javafx.animation.Interpolator
-import javafx.beans.property.*
+import javafx.beans.binding.StringExpression
+import javafx.beans.property.BooleanProperty
+import javafx.beans.property.DoubleProperty
+import javafx.beans.property.IntegerProperty
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
 import javafx.concurrent.Task
 import javafx.event.Event
 import javafx.event.EventHandler
@@ -62,7 +76,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.text.Text
 import javafx.util.Duration
-import java.util.*
+import java.util.Optional
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 
@@ -73,7 +87,7 @@ import java.util.function.Consumer
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class FXGL private constructor() { companion object {
-    
+
     private lateinit var engine: Engine
     private lateinit var fxApp: FXGLApplication
     private lateinit var app: GameApplication
@@ -187,7 +201,7 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getAudioPlayer() = engine.getService(AudioPlayer::class.java)
 
-    @Deprecated("Use getDialogService()")
+    @Deprecated("Use getDialogService()", replaceWith = ReplaceWith("getDialogService()"))
     @JvmStatic fun getDisplay(): DialogService = getDialogService()
 
     @JvmStatic fun getDialogService() = engine.getService(DialogService::class.java)
@@ -224,7 +238,7 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun tpf() = engine.tpf
 
-    @Deprecated("Use getWorldProperties()")
+    @Deprecated("Use getWorldProperties()", replaceWith = ReplaceWith("getWorldProperties()"))
     @JvmStatic fun getGameState() = getWorldProperties()
 
     @JvmStatic fun getGameWorld() = getGameScene().gameWorld
@@ -274,31 +288,31 @@ class FXGL private constructor() { companion object {
 
 /* VARS */
 
-    @JvmStatic fun set(varName: String, value: Any) = getGameState().setValue(varName, value)
+    @JvmStatic fun set(varName: String, value: Any) = getWorldProperties().setValue(varName, value)
 
-    @JvmStatic fun geti(varName: String): Int = getGameState().getInt(varName)
+    @JvmStatic fun geti(varName: String): Int = getWorldProperties().getInt(varName)
 
-    @JvmStatic fun getd(varName: String): Double = getGameState().getDouble(varName)
+    @JvmStatic fun getd(varName: String): Double = getWorldProperties().getDouble(varName)
 
-    @JvmStatic fun getb(varName: String): Boolean = getGameState().getBoolean(varName)
+    @JvmStatic fun getb(varName: String): Boolean = getWorldProperties().getBoolean(varName)
 
-    @JvmStatic fun gets(varName: String): String = getGameState().getString(varName)
+    @JvmStatic fun gets(varName: String): String = getWorldProperties().getString(varName)
 
-    @JvmStatic fun <T> geto(varName: String): T = getGameState().getObject(varName)
+    @JvmStatic fun <T> geto(varName: String): T = getWorldProperties().getObject(varName)
 
-    @JvmStatic fun getip(varName: String): IntegerProperty = getGameState().intProperty(varName)
+    @JvmStatic fun getip(varName: String): IntegerProperty = getWorldProperties().intProperty(varName)
 
-    @JvmStatic fun getdp(varName: String): DoubleProperty = getGameState().doubleProperty(varName)
+    @JvmStatic fun getdp(varName: String): DoubleProperty = getWorldProperties().doubleProperty(varName)
 
-    @JvmStatic fun getbp(varName: String): BooleanProperty = getGameState().booleanProperty(varName)
+    @JvmStatic fun getbp(varName: String): BooleanProperty = getWorldProperties().booleanProperty(varName)
 
-    @JvmStatic fun getsp(varName: String): StringProperty = getGameState().stringProperty(varName)
+    @JvmStatic fun getsp(varName: String): StringProperty = getWorldProperties().stringProperty(varName)
 
-    @JvmStatic fun <T> getop(varName: String): ObjectProperty<T> = getGameState().objectProperty(varName)
+    @JvmStatic fun <T> getop(varName: String): ObjectProperty<T> = getWorldProperties().objectProperty(varName)
 
-    @JvmStatic fun inc(varName: String, value: Int) = getGameState().increment(varName, value)
+    @JvmStatic fun inc(varName: String, value: Int) = getWorldProperties().increment(varName, value)
 
-    @JvmStatic fun inc(varName: String, value: Double) = getGameState().increment(varName, value)
+    @JvmStatic fun inc(varName: String, value: Double) = getWorldProperties().increment(varName, value)
 
 /* ASSET LOADING */
 
@@ -315,7 +329,7 @@ class FXGL private constructor() { companion object {
 /* AUDIO */
 
     /**
-     * @param bgmName name of the background music file to loop
+     * @param assetName name of the background music file to loop
      * @return the music object that is played in a loop
      */
     @JvmStatic fun loopBGM(assetName: String): Music {
@@ -330,14 +344,18 @@ class FXGL private constructor() { companion object {
      * @param assetName name of the music file
      */
     @JvmStatic fun play(assetName: String) {
-        if (assetName.endsWith(".wav")) {
-            val sound = getAssetLoader().loadSound(assetName)
-            getAudioPlayer().playSound(sound)
-        } else if (assetName.endsWith(".mp3")) {
-            val music = getAssetLoader().loadMusic(assetName)
-            getAudioPlayer().playMusic(music)
-        } else {
-            throw IllegalArgumentException("Unsupported audio format: $assetName")
+        when {
+            assetName.endsWith(".wav") -> {
+                val sound = getAssetLoader().loadSound(assetName)
+                getAudioPlayer().playSound(sound)
+            }
+            assetName.endsWith(".mp3") -> {
+                val music = getAssetLoader().loadMusic(assetName)
+                getAudioPlayer().playMusic(music)
+            }
+            else -> {
+                throw IllegalArgumentException("Unsupported audio format: $assetName")
+            }
         }
     }
 
@@ -482,7 +500,7 @@ class FXGL private constructor() { companion object {
     }
 
     @JvmStatic fun despawnWithDelay(e: Entity, delay: Duration) {
-        com.almasb.fxgl.dsl.runOnce({ e.removeFromWorld() }, delay)
+        runOnce({ e.removeFromWorld() }, delay)
     }
 
     @JvmStatic fun byID(name: String, id: Int): Optional<Entity> = getGameWorld().getEntityByID(name, id)
@@ -562,11 +580,11 @@ class FXGL private constructor() { companion object {
 
 /* DIALOGS */
 
-    @JvmStatic fun showMessage(message: String) = getDisplay().showMessageBox(message)
+    @JvmStatic fun showMessage(message: String) = getDialogService().showMessageBox(message)
 
-    @JvmStatic fun showMessage(message: String, callback: Runnable) = getDisplay().showMessageBox(message, callback)
+    @JvmStatic fun showMessage(message: String, callback: Runnable) = getDialogService().showMessageBox(message, callback)
 
-    @JvmStatic fun showConfirm(message: String, callback: Consumer<Boolean>) = getDisplay().showConfirmationBox(message, callback)
+    @JvmStatic fun showConfirm(message: String, callback: Consumer<Boolean>) = getDialogService().showConfirmationBox(message, callback)
 
 /* UI */
 
@@ -584,9 +602,37 @@ class FXGL private constructor() { companion object {
         getGameScene().removeUINode(node)
     }
 
-    @JvmStatic fun addVarText(varName: String, x: Double, y: Double): Text {
-        return getUIFactoryService().newText(getip(varName).asString())
-                .also { addUINode(it, x, y) }
+    /**
+     * Returns new Text initialized with property value, whose name was passed to the function
+     * @param propertyName name of the property in PropertyMap
+     * @param x x coordinate
+     * @param y y coordinate
+     * @throws IllegalArgumentException if property was not found in PropertyMap
+     * @return Text()
+     */
+    @JvmStatic fun addVarText(propertyName: String, x: Double, y: Double) : Text {
+        if (!getWorldProperties().exists(propertyName))
+            throw IllegalArgumentException("Property with name '$propertyName' does not exists in PropertyMap.")
+
+        return getUIFactoryService().newText(getPropertyValueAsStringExpression(propertyName))
+                    .also { addUINode(it, x, y) }
+    }
+
+    /**
+     * Returns property value as String
+     * @param propertyName name of the property in PropertyMap
+     * @return StringExpression value of property
+     * @throws IllegalArgumentException if property has unknown type (unknown in terms of 'when' clauses)
+     */
+    @JvmStatic private fun getPropertyValueAsStringExpression(propertyName: String): StringExpression {
+        return when (val property = getWorldProperties().getValueObservable(propertyName)) {
+            is SimpleBooleanProperty -> property.asString()
+            is SimpleIntegerProperty -> property.asString()
+            is SimpleDoubleProperty -> property.asString()
+            is SimpleStringProperty -> property
+            is ObjectProperty<*> -> property.asString()
+            else -> throw IllegalArgumentException("Property with name '$propertyName' has unknown type: ${property.javaClass}")
+        }
     }
 
     @JvmStatic fun addText(message: String, x: Double, y: Double): Text {
