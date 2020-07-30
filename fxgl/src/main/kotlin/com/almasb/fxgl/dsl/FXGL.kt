@@ -55,6 +55,7 @@ import com.almasb.fxgl.ui.DialogFactoryService
 import com.almasb.fxgl.ui.DialogService
 import com.almasb.fxgl.ui.UIFactoryService
 import javafx.animation.Interpolator
+import javafx.beans.binding.StringExpression
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.IntegerProperty
@@ -601,11 +602,6 @@ class FXGL private constructor() { companion object {
         getGameScene().removeUINode(node)
     }
 
-    @JvmStatic fun addVarText(varName: String, x: Double, y: Double): Text {
-        return getUIFactoryService().newText(getip(varName).asString())
-                .also { addUINode(it, x, y) }
-    }
-
     /**
      * Returns new Text initialized with property value, whose name was passed to the function
      * @param propertyName name of the property in PropertyMap
@@ -614,27 +610,27 @@ class FXGL private constructor() { companion object {
      * @throws IllegalArgumentException if property was not found in PropertyMap
      * @return Text()
      */
-    @JvmStatic fun addPropText(propertyName: String, x: Double, y: Double) : Text {
+    @JvmStatic fun addVarText(propertyName: String, x: Double, y: Double) : Text {
         if (!getWorldProperties().exists(propertyName))
             throw IllegalArgumentException("Property with name '$propertyName' does not exists in PropertyMap.")
 
-        return getUIFactoryService().newText(getPropertyValueAsString(propertyName))
+        return getUIFactoryService().newText(getPropertyValueAsStringExpression(propertyName))
                     .also { addUINode(it, x, y) }
     }
 
     /**
      * Returns property value as String
      * @param propertyName name of the property in PropertyMap
-     * @return string value of property
+     * @return StringExpression value of property
      * @throws IllegalArgumentException if property has unknown type (unknown in terms of 'when' clauses)
      */
-    @JvmStatic private fun getPropertyValueAsString(propertyName: String): String? {
+    @JvmStatic private fun getPropertyValueAsStringExpression(propertyName: String): StringExpression {
         return when (val property = getWorldProperties().getValueObservable(propertyName)) {
-            is SimpleBooleanProperty -> property.asString().get()
-            is SimpleIntegerProperty -> property.asString().get()
-            is SimpleDoubleProperty -> property.asString().get()
-            is SimpleStringProperty -> property.get()
-            is ObjectProperty<*> -> property.asString().get()
+            is SimpleBooleanProperty -> property.asString()
+            is SimpleIntegerProperty -> property.asString()
+            is SimpleDoubleProperty -> property.asString()
+            is SimpleStringProperty -> property
+            is ObjectProperty<*> -> property.asString()
             else -> throw IllegalArgumentException("Property with name '$propertyName' has unknown type: ${property.javaClass}")
         }
     }
