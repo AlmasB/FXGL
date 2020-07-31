@@ -35,28 +35,39 @@ class WobbleEffect
     private var tick = 0
 
     init {
-        val chunkSizeDouble = if (orientation == Orientation.HORIZONTAL)
+        val chunkSize = if (orientation == Orientation.HORIZONTAL)
             texture.image.height / numChunks
         else
             texture.image.width / numChunks
 
-        val chunkSize = chunkSizeDouble.toInt().toDouble()
+        val endVal = if (orientation == Orientation.HORIZONTAL)
+            texture.image.height
+        else
+            texture.image.width
 
+        texture.image.pixelReader
 
+        var prevMinVal = 0.0
 
         for (i in 0 until numChunks) {
             val quad: Texture
 
+            val minVal = prevMinVal
+            val maxVal = if (i == numChunks - 1)
+                endVal
+            else
+                (minVal + chunkSize).toInt().toDouble()
+
             if (orientation == Orientation.HORIZONTAL) {
-                quad = texture.subTexture(Rectangle2D(0.0, i * chunkSize, texture.image.width, chunkSize))
-                quad.translateY = i * chunkSize
+                quad = texture.subTexture(Rectangle2D(0.0, minVal, texture.image.width, maxVal - minVal))
+                quad.translateY = minVal
             } else {
-                quad = texture.subTexture(Rectangle2D(i * chunkSize, 0.0, chunkSize, texture.image.height))
-                quad.translateX = i * chunkSize
+                quad = texture.subTexture(Rectangle2D(minVal, 0.0, maxVal - minVal, texture.image.height))
+                quad.translateX = minVal
             }
+            prevMinVal = maxVal
 
             quads.add(quad)
-
             newView.children.add(quad)
         }
     }
