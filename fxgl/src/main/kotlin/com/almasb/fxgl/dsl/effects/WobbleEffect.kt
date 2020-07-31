@@ -45,8 +45,6 @@ class WobbleEffect
         else
             texture.image.width
 
-        texture.image.pixelReader
-
         var prevMinVal = 0.0
 
         for (i in 0 until numChunks) {
