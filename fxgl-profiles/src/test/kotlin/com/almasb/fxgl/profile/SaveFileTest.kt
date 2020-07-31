@@ -50,7 +50,7 @@ class SaveFileTest {
 
         assertThat(value, `is`(3))
 
-        assertThat(dataFile.toString(), `is`("DataFile({test=Bundle test: {test.testInt=3}})"))
+        assertThat(dataFile.toString(), `is`("DataFile({test=Bundle test: {testInt=3}})"))
     }
 
     @EnabledIfEnvironmentVariable(named = "CI", matches = "true")

@@ -22,6 +22,7 @@ class LocalizationService : EngineService() {
 
     private val log = Logger.get(javaClass)
 
+    private val languagesDataSuppliers = hashMapOf<Language, () -> Map<String, String>>()
     private val languagesData = hashMapOf<Language, HashMap<String, String>>()
 
     private val selectedLanguageProp = SimpleObjectProperty(Language.NONE)
@@ -38,6 +39,10 @@ class LocalizationService : EngineService() {
             map[it] = bundle.getString(it)
         }
         languagesData[lang] = map
+    }
+
+    fun addLanguageDataLazy(lang: Language, dataSupplier: () -> Map<String, String>) {
+        languagesDataSuppliers[lang] = dataSupplier
     }
 
     fun addLanguageData(lang: Language, data: Map<String, String>) {
@@ -69,8 +74,12 @@ class LocalizationService : EngineService() {
         }
 
         if (lang !in languagesData) {
-            log.warning("No data for language $lang")
-            return "MISSING_LANG!"
+            if (lang in languagesDataSuppliers) {
+                addLanguageData(lang, languagesDataSuppliers[lang]!!.invoke())
+            } else {
+                log.warning("No data for language $lang")
+                return "MISSING_LANG!"
+            }
         }
 
         val data = languagesData[lang]!!

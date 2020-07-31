@@ -8,6 +8,9 @@ package com.almasb.fxgl.net
 
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.concurrent.IOTask
+import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.net.tcp.TCPClient
+import com.almasb.fxgl.net.tcp.TCPServer
 import java.io.InputStream
 import java.net.URL
 
@@ -26,6 +29,22 @@ class NetService : EngineService() {
      */
     fun openStreamTask(url: String): IOTask<InputStream> = IOTask.of("openStream($url)") {
         URL(url).openStream()
+    }
+
+    fun newTCPServer(port: Int): Server<Bundle> {
+        return TCPServer(port, Bundle::class.java)
+    }
+
+    fun <T> newTCPServer(port: Int, messageType: Class<T>): Server<T> {
+        return TCPServer(port, messageType)
+    }
+
+    fun newTCPClient(ip: String, port: Int): Client<Bundle> {
+        return TCPClient(ip, port, Bundle::class.java)
+    }
+
+    fun <T> newTCPClient(ip: String, port: Int,  messageType: Class<T>): Client<T> {
+        return TCPClient(ip, port, messageType)
     }
 }
 

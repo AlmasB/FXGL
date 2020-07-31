@@ -7,7 +7,6 @@
 package com.almasb.fxgl.dev
 
 import com.almasb.fxgl.app.scene.GameView
-import com.almasb.fxgl.app.services.WindowService
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.dsl.FXGL
@@ -21,6 +20,7 @@ import com.almasb.fxgl.physics.PolygonShapeData
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.logging.LoggerLevel
 import com.almasb.fxgl.logging.LoggerOutput
+import com.almasb.fxgl.scene.SceneService
 import javafx.scene.Group
 import javafx.scene.shape.*
 
@@ -32,7 +32,7 @@ import javafx.scene.shape.*
  */
 class DevService : EngineService() {
 
-    private lateinit var windowService: WindowService
+    private lateinit var sceneService: SceneService
 
     private lateinit var devPane: DevPane
 
@@ -59,7 +59,7 @@ class DevService : EngineService() {
         if (!isDevEnabled)
             return
 
-        devPane = DevPane(windowService, FXGL.getSettings())
+        devPane = DevPane(sceneService, FXGL.getSettings())
     }
 
     fun openConsole() {

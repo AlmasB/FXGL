@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.core.Updatable
+import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.fsm.State
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
@@ -13,7 +15,6 @@ import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.scene.transform.Scale
-import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  *
@@ -44,7 +45,9 @@ abstract class Scene : State<Scene> {
     override val isSubState: Boolean = false
     override val isAllowConcurrency: Boolean = false
 
-    private val listeners = CopyOnWriteArrayList<SceneListener>()
+    private val listeners = Array<Updatable>()
+    private val listenersToAdd = Array<Updatable>()
+    private val listenersToRemove = Array<Updatable>()
 
     init {
         root.background = null
@@ -61,12 +64,12 @@ abstract class Scene : State<Scene> {
         contentRoot.children -= node
     }
 
-    fun addListener(l: SceneListener) {
-        listeners += l
+    fun addListener(l: Updatable) {
+        listenersToAdd.add(l)
     }
 
-    fun removeListener(l: SceneListener) {
-        listeners -= l
+    fun removeListener(l: Updatable) {
+        listenersToRemove.add(l)
     }
 
     fun update(tpf: Double) {
@@ -74,9 +77,20 @@ abstract class Scene : State<Scene> {
         timer.update(tpf)
         onUpdate(tpf)
 
+        listeners.addAll(listenersToAdd)
+        listeners.removeAllByIdentity(listenersToRemove)
+
+        listenersToAdd.clear()
+        listenersToRemove.clear()
+
         listeners.forEach { it.onUpdate(tpf) }
     }
 
+    /**
+     * Binds the scene size to given properties.
+     * [scaledWidth] and [scaledHeight] are the values in pixels this scene (the root) will be drawn at.
+     * [scaleRatioX] and [scaleRatioY] are the ratios by which to scale the content root inside the scene.
+     */
     open fun bindSize(scaledWidth: DoubleProperty, scaledHeight: DoubleProperty, scaleRatioX: DoubleProperty, scaleRatioY: DoubleProperty) {
         root.prefWidthProperty().bind(scaledWidth)
         root.prefHeightProperty().bind(scaledHeight)

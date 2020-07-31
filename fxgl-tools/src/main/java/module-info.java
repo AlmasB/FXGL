@@ -12,6 +12,4 @@ open module com.almasb.fxgl.tools {
     requires com.almasb.fxgl.all;
 
     requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.module.kotlin;
-    requires jackson.annotations;
 }

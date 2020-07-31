@@ -8,17 +8,16 @@ package tutorial;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.CollidableComponent;
-import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.physics.CollisionHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+
 import java.util.Map;
+
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -38,46 +37,29 @@ public class BasicGameApp extends GameApplication {
 
     @Override
     protected void initInput() {
-        Input input = FXGL.getInput();
+        onKey(KeyCode.D, () -> {
+            player.translateX(5); // move right 5 pixels
+            inc("pixelsMoved", +5);
+        });
 
-        input.addAction(new UserAction("Move Right") {
-            @Override
-            protected void onAction() {
-                player.translateX(5); // move right 5 pixels
-                FXGL.getGameState().increment("pixelsMoved", +5);
-            }
-        }, KeyCode.D);
+        onKey(KeyCode.A, () -> {
+            player.translateX(-5); // move left 5 pixels
+            inc("pixelsMoved", -5);
+        });
 
-        input.addAction(new UserAction("Move Left") {
-            @Override
-            protected void onAction() {
-                player.translateX(-5); // move left 5 pixels
-                FXGL.getGameState().increment("pixelsMoved", +5);
-            }
-        }, KeyCode.A);
+        onKey(KeyCode.W, () -> {
+            player.translateY(-5); // move up 5 pixels
+            inc("pixelsMoved", +5);
+        });
 
-        input.addAction(new UserAction("Move Up") {
-            @Override
-            protected void onAction() {
-                player.translateY(-5); // move up 5 pixels
-                FXGL.getGameState().increment("pixelsMoved", +5);
-            }
-        }, KeyCode.W);
+        onKey(KeyCode.S, () -> {
+            player.translateY(5); // move down 5 pixels
+            inc("pixelsMoved", +5);
+        });
 
-        input.addAction(new UserAction("Move Down") {
-            @Override
-            protected void onAction() {
-                player.translateY(5); // move down 5 pixels
-                FXGL.getGameState().increment("pixelsMoved", +5);
-            }
-        }, KeyCode.S);
-
-        input.addAction(new UserAction("Play Sound") {
-            @Override
-            protected void onActionBegin() {
-                FXGL.play("drop.wav");
-            }
-        }, KeyCode.F);
+        onKeyDown(KeyCode.F, () -> {
+            play("drop.wav");
+        });
     }
 
     @Override
@@ -89,30 +71,26 @@ public class BasicGameApp extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = FXGL.entityBuilder()
+        player = entityBuilder()
                 .type(EntityType.PLAYER)
                 .at(300, 300)
                 .viewWithBBox("brick.png")
                 .with(new CollidableComponent(true))
                 .buildAndAttach();
 
-        FXGL.entityBuilder()
+        entityBuilder()
                 .type(EntityType.COIN)
                 .at(500, 200)
-                .viewWithBBox(new Circle(15, Color.YELLOW))
+                .viewWithBBox(new Circle(15, 15, 15, Color.YELLOW))
                 .with(new CollidableComponent(true))
                 .buildAndAttach();
     }
 
     @Override
     protected void initPhysics() {
-        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.COIN) {
-
-            // order of types is the same as passed into the constructor
-            @Override
-            protected void onCollisionBegin(Entity player, Entity coin) {
-                coin.removeFromWorld();
-            }
+        // order of types on the right is the same as on the left
+        onCollisionBegin(EntityType.PLAYER, EntityType.COIN, (player, coin) -> {
+            coin.removeFromWorld();
         });
     }
 
@@ -121,16 +99,15 @@ public class BasicGameApp extends GameApplication {
         Text textPixels = new Text();
         textPixels.setTranslateX(50); // x = 50
         textPixels.setTranslateY(100); // y = 100
+        textPixels.textProperty().bind(getip("pixelsMoved").asString());
 
-        textPixels.textProperty().bind(FXGL.getGameState().intProperty("pixelsMoved").asString());
+        addUINode(textPixels); // add to the scene graph
 
-        FXGL.getGameScene().addUINode(textPixels); // add to the scene graph
-
-        var brickTexture = FXGL.getAssetLoader().loadTexture("brick.png");
+        var brickTexture = texture("brick.png");
         brickTexture.setTranslateX(50);
         brickTexture.setTranslateY(450);
 
-        FXGL.getGameScene().addUINode(brickTexture);
+        addUINode(brickTexture);
     }
 
     public static void main(String[] args) {

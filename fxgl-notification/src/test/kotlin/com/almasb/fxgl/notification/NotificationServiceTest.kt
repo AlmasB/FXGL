@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.notification
 
+import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.XboxNotificationView
 import com.almasb.fxgl.scene.SceneService
@@ -45,6 +46,8 @@ class NotificationServiceTest {
                 get() = 800
             override val appHeight: Int
                 get() = 600
+            override val input: Input
+                get() = Input()
             override val timer: Timer
                 get() = theTimer
 

@@ -103,7 +103,7 @@ public final class ReflectionUtils {
         try {
             return (T) method.invoke(instance, args);
         } catch (Exception e) {
-            throw new ReflectionException("Cannot call " + method.getName() + " Error: " + e);
+            throw new ReflectionException("Cannot call " + method.getName() + " Error: " + e, e);
         }
     }
 
@@ -216,10 +216,6 @@ public final class ReflectionUtils {
         } catch (Exception e) {
             throw new ReflectionException(e);
         }
-    }
-
-    public static boolean isAnonymousClass(Class<?> type) {
-        return type.isAnonymousClass() || type.getCanonicalName() == null;
     }
 
     public static Throwable getRootCause(Throwable e) {

@@ -11,8 +11,8 @@ import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
 import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.tools.dialogues.ui.FXGLContextMenu
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.beans.binding.Bindings
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -48,7 +48,6 @@ class MainUI : BorderPane() {
         toolbar.style = "-fx-background-color: black"
         toolbar.alignment = Pos.CENTER_LEFT
 
-
         val contextMenu = FXGLContextMenu()
         contextMenu.addItem("New") { openNewDialog() }
         contextMenu.addItem("Open...") { openLoadDialog() }
@@ -56,7 +55,6 @@ class MainUI : BorderPane() {
         contextMenu.addItem("Save As...") { currentTab?.let { openSaveAsDialog(it) } }
         contextMenu.addItem("Save All") { onSaveAll() }
         contextMenu.addItem("Exit") { getGameController().exit() }
-
 
         val pane = Pane(tabPane, toolbar)
 
@@ -151,7 +149,7 @@ class MainUI : BorderPane() {
                 .forEach { onSave(it) }
     }
 
-    private val mapper = jacksonObjectMapper().also { it.enable(SerializationFeature.INDENT_OUTPUT) }
+    private val mapper = ObjectMapper().also { it.enable(SerializationFeature.INDENT_OUTPUT) }
 
     private fun openSaveAsDialog(tab: DialogueTab) {
         val chooser = FileChooser()

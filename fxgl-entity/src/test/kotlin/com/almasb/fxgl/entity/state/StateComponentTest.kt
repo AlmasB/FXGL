@@ -28,6 +28,16 @@ class StateComponentTest {
     }
 
     @Test
+    fun `State component does not require component injection`() {
+        assertFalse(stateComponent.isComponentInjectionRequired)
+    }
+
+    @Test
+    fun `EntityState does not allow concurrency`() {
+        assertFalse(EntityState.IDLE.isAllowConcurrency)
+    }
+
+    @Test
     fun `State component correctly manages state transitions`() {
         assertTrue(stateComponent.isIdle)
         assertTrue(stateComponent.isIn(EntityState.IDLE))

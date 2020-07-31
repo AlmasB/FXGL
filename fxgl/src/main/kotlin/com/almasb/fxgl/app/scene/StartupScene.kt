@@ -6,10 +6,6 @@
 
 package com.almasb.fxgl.app.scene
 
-import com.almasb.fxgl.dsl.getAppHeight
-import com.almasb.fxgl.dsl.getAppWidth
-import com.almasb.fxgl.dsl.getSettings
-import com.almasb.fxgl.logging.Logger
 import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
@@ -27,37 +23,14 @@ import javafx.scene.shape.Rectangle
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class StartupScene : FXGLScene() {
+class StartupScene(appWidth: Int, appHeight: Int) : FXGLScene(appWidth, appHeight) {
 
-    private val log = Logger.get(javaClass)
-
-    override fun onUpdate(tpf: Double) {
-        log.debug("STARTUP")
-
-        // Start -> (Intro) -> (Menu) -> Game
-        if (getSettings().isIntroEnabled) {
-            controller.gotoIntro()
-        } else {
-            if (getSettings().isMainMenuEnabled) {
-                controller.gotoMainMenu()
-            } else {
-                controller.startNewGame()
-            }
-        }
-    }
-}
-
-class FXGLStartupScene : StartupScene() {
     init {
-        val bg = Rectangle(getAppWidth().toDouble(), getAppHeight().toDouble())
-
-//        val logo = texture("fxgl_logo.png", 877 * 0.25, 213 * 0.25)
-//        logo.translateX = getAppWidth() / 2 - logo.width / 2
-//        logo.translateY = getAppHeight() / 2 - logo.height * 2
+        val bg = Rectangle(appWidth.toDouble(), appHeight.toDouble())
 
         val symbol = makeSymbol()
-        symbol.translateX = getAppWidth() / 2 - 53.0
-        symbol.translateY = getAppHeight() / 2 + 45.0
+        symbol.translateX = bg.width / 2 - 53.0
+        symbol.translateY = bg.height / 2 + 45.0
 
         contentRoot.children.addAll(bg, symbol)
     }

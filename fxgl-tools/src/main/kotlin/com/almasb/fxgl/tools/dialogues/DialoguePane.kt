@@ -9,6 +9,7 @@ package com.almasb.fxgl.tools.dialogues
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.cutscene.dialogue.*
+import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
 import com.almasb.fxgl.dsl.animationBuilder
 import com.almasb.fxgl.dsl.getAppHeight
 import com.almasb.fxgl.dsl.getAppWidth
@@ -20,14 +21,11 @@ import javafx.collections.ListChangeListener
 import javafx.collections.MapChangeListener
 import javafx.geometry.Point2D
 import javafx.scene.Group
-import javafx.scene.control.ContextMenu
-import javafx.scene.control.MenuItem
 import javafx.scene.effect.Glow
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Circle
 import javafx.scene.transform.Scale
-import javafx.scene.transform.Translate
 import javafx.util.Duration
 
 /**
@@ -40,37 +38,37 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     companion object {
         private val log = Logger.get<DialoguePane>()
 
-        val highContrastProperty = SimpleBooleanProperty(false)
-
         private val branch: (DialogueNode) -> NodeView = { BranchNodeView(it) }
         private val end: (DialogueNode) -> NodeView = { EndNodeView(it) }
         private val start: (DialogueNode) -> NodeView = { StartNodeView(it) }
         private val function: (DialogueNode) -> NodeView = { FunctionNodeView(it) }
         private val text: (DialogueNode) -> NodeView = { TextNodeView(it) }
+        private val subdialogue: (DialogueNode) -> NodeView = { SubDialogueNodeView(it) }
         private val choice: (DialogueNode) -> NodeView = { ChoiceNodeView(it) }
 
         val nodeConstructors = linkedMapOf<DialogueNodeType, () -> DialogueNode>(
-                DialogueNodeType.TEXT to { TextNode("") },
-                DialogueNodeType.CHOICE to { ChoiceNode("") },
-                DialogueNodeType.BRANCH to { BranchNode("") },
-                DialogueNodeType.FUNCTION to { FunctionNode("") },
-                DialogueNodeType.END to { EndNode("") },
-                DialogueNodeType.START to { StartNode("") }
+                TEXT to { TextNode("") },
+                CHOICE to { ChoiceNode("") },
+                BRANCH to { BranchNode("") },
+                FUNCTION to { FunctionNode("") },
+                END to { EndNode("") },
+                START to { StartNode("") },
+                SUBDIALOGUE to { SubDialogueNode("") }
         )
 
         val nodeViewConstructors = linkedMapOf<DialogueNodeType, (DialogueNode) -> NodeView>(
-                DialogueNodeType.TEXT to text,
-                DialogueNodeType.CHOICE to choice,
-                DialogueNodeType.BRANCH to branch,
-                DialogueNodeType.FUNCTION to function,
-                DialogueNodeType.END to end,
-                DialogueNodeType.START to start
+                TEXT to text,
+                CHOICE to choice,
+                BRANCH to branch,
+                FUNCTION to function,
+                END to end,
+                START to start,
+                SUBDIALOGUE to subdialogue
         )
     }
 
     private val contentRoot = Group()
 
-    private var selectedNodeView: NodeView? = null
     private var selectedOutLink: OutLinkPoint? = null
 
     var graph = graph
@@ -78,7 +76,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     private val views = Group()
     private val edgeViews = Group()
-    val nodeViews = Group()
+    private val nodeViews = Group()
 
     val isDirtyProperty = SimpleBooleanProperty(false)
 
@@ -138,11 +136,14 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     private fun initContextMenu() {
         val contextMenu = FXGLContextMenu()
-        nodeConstructors.forEach { type, ctor ->
-            contextMenu.addItem(type.toString()) {
-                graph.addNode(ctor())
-            }
-        }
+
+        nodeConstructors
+                .filter { it.key != START }
+                .forEach { (type, ctor) ->
+                    contextMenu.addItem(type.toString()) {
+                        graph.addNode(ctor())
+                    }
+                }
 
         setOnContextMenuRequested {
             if (it.target !== this)
@@ -184,6 +185,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun onAdded(node: DialogueNode, x: Double, y: Double) {
+        log.debug("Added node: $node")
+
         isDirtyProperty.value = true
 
         val nodeViewConstructor = nodeViewConstructors[node.type] ?: throw IllegalArgumentException("View constructor for ${node.type} does not exist")
@@ -193,13 +196,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun onRemoved(node: DialogueNode) {
-        log.info("Removed node: $node")
+        log.debug("Removed node: $node")
 
         isDirtyProperty.value = true
 
-        val nodeView = nodeViews.children
-                .map { it as NodeView }
-                .find { it.node === node } ?: throw IllegalArgumentException("No view found for node $node")
+        val nodeView = getNodeView(node)
 
         // so that user does not accidentally press it again
         nodeView.closeButton.isVisible = false
@@ -214,17 +215,14 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 .buildAndPlay()
     }
 
-    private fun getNodeView(node: DialogueNode): NodeView {
-        return nodeViews.children.map { it as NodeView }.find { it.node === node }!!
-    }
-
     private fun onAdded(edge: DialogueEdge) {
+        log.debug("Added edge: $edge")
+
         isDirtyProperty.value = true
 
         val (outPoint, inPoint) = if (edge is DialogueChoiceEdge) {
             getNodeView(edge.source).outPoints.find { it.choiceOptionID == edge.optionID }!! to getNodeView(edge.target).inPoint!!
         } else {
-
             getNodeView(edge.source).outPoints.first() to getNodeView(edge.target).inPoint!!
         }
 
@@ -236,16 +234,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun onRemoved(edge: DialogueEdge) {
-        log.info("Removed edge: $edge")
+        log.debug("Removed edge: $edge")
 
         isDirtyProperty.value = true
 
-        val optionID = if (edge is DialogueChoiceEdge) edge.optionID else -1
-
-        val edgeView = edgeViews.children
-                .map { it as EdgeView }
-                .find { it.source.owner.node === edge.source && it.optionID == optionID && it.target.owner.node === edge.target }
-                ?: throw IllegalArgumentException("No edge view found for edge $edge")
+        val edgeView = getEdgeView(edge)
 
         val p1 = Point2D(edgeView.startX, edgeView.startY)
         val p2 = Point2D(edgeView.controlX1, edgeView.controlY1)
@@ -283,6 +276,22 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         edgeViews.children -= edgeView
     }
 
+    private fun getNodeView(node: DialogueNode): NodeView {
+        return nodeViews.children
+                .map { it as NodeView }
+                .find { it.node === node }
+                ?: throw IllegalArgumentException("No view found for node $node")
+    }
+
+    private fun getEdgeView(edge: DialogueEdge): EdgeView {
+        val optionID = if (edge is DialogueChoiceEdge) edge.optionID else -1
+
+        return edgeViews.children
+                .map { it as EdgeView }
+                .find { it.source.owner.node === edge.source && it.optionID == optionID && it.target.owner.node === edge.target }
+                ?: throw IllegalArgumentException("No edge view found for edge $edge")
+    }
+
     private fun createNode(nodeView: NodeView, x: Double, y: Double) {
         graph.addNode(nodeView.node)
 
@@ -295,6 +304,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         attachMouseHandler(nodeView)
 
         nodeViews.children.add(nodeView)
+
+        // START node cannot be removed
+        if (nodeView.node.type == START) {
+            nodeView.closeButton.isVisible = false
+        }
     }
 
     private fun attachMouseHandler(nodeView: NodeView) {
@@ -305,62 +319,51 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         }
 
         nodeView.outPoints.forEach { outPoint ->
-            outPoint.setOnMouseClicked {
-                if (it.button == MouseButton.PRIMARY) {
-                    selectedOutLink = outPoint
-                    selectedNodeView = nodeView
-
-                    log.info("Clicked on $outPoint")
-
-                } else {
-                    if (outPoint.isConnected) {
-                        disconnectOutLink(outPoint)
-                    }
-                }
-            }
+            attachMouseHandler(outPoint)
         }
 
         nodeView.outPoints.addListener { c: ListChangeListener.Change<out OutLinkPoint> ->
             while (c.next()) {
                 c.addedSubList.forEach { outPoint ->
-                    outPoint.setOnMouseClicked {
-                        if (it.button == MouseButton.PRIMARY) {
-                            selectedOutLink = outPoint
-                            selectedNodeView = nodeView
-                        } else {
-                            if (outPoint.isConnected) {
-                                disconnectOutLink(outPoint)
-                            }
-                        }
-                    }
+                    attachMouseHandler(outPoint)
                 }
             }
         }
 
         nodeView.inPoint?.let { inPoint ->
+            attachMouseHandler(inPoint)
+        }
+    }
 
-            inPoint.setOnMouseClicked {
+    private fun attachMouseHandler(outPoint: OutLinkPoint) {
+        outPoint.setOnMouseClicked {
+            if (it.button == MouseButton.PRIMARY) {
+                selectedOutLink = outPoint
+            } else {
+                if (outPoint.isConnected) {
+                    disconnectOutLink(outPoint)
+                }
+            }
+        }
+    }
 
-                if (it.button == MouseButton.PRIMARY) {
+    private fun attachMouseHandler(inPoint: InLinkPoint) {
+        inPoint.setOnMouseClicked {
+            if (it.button == MouseButton.PRIMARY) {
+                selectedOutLink?.let { outPoint ->
 
-                    selectedOutLink?.let { outPoint ->
-
-                        if (outPoint.isConnected) {
-                            disconnectOutLink(outPoint)
-                        }
-
-
-
-                        if (outPoint.choiceOptionID != -1) {
-                            graph.addEdge(selectedNodeView!!.node, outPoint.choiceOptionID, nodeView.node)
-                        } else {
-                            graph.addEdge(selectedNodeView!!.node, nodeView.node)
-                        }
-
-                        // reset selection
-                        selectedOutLink = null
-                        selectedNodeView = null
+                    if (outPoint.isConnected) {
+                        disconnectOutLink(outPoint)
                     }
+
+                    if (outPoint.choiceOptionID != -1) {
+                        graph.addChoiceEdge(outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node)
+                    } else {
+                        graph.addEdge(outPoint.owner.node, inPoint.owner.node)
+                    }
+
+                    // reset selection
+                    selectedOutLink = null
                 }
             }
         }
@@ -369,7 +372,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     private fun disconnectOutLink(outPoint: OutLinkPoint) {
         outPoint.other?.let { inPoint ->
             if (outPoint.choiceOptionID != -1) {
-                graph.removeEdge(outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node)
+                graph.removeChoiceEdge(outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node)
             } else {
                 graph.removeEdge(outPoint.owner.node, inPoint.owner.node)
             }

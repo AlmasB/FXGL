@@ -33,13 +33,13 @@ public class DialogsSample extends GameApplication {
     protected void initUI() {
         Map<String, Runnable> dialogs = new LinkedHashMap<>();
 
-        dialogs.put("Message", () -> getDisplay().showMessageBox("This is a simple message box"));
+        dialogs.put("Message", () -> getDialogService().showMessageBox("This is a simple message box"));
 
-        dialogs.put("Error", () -> getDisplay().showErrorBox("This is a scary error box!", () -> {}));
+        dialogs.put("Error", () -> getDialogService().showErrorBox("This is a scary error box!", () -> {}));
 
-        dialogs.put("Confirmation", () -> getDisplay().showConfirmationBox("This is a confirmation box. Agree?", answer -> System.out.println("You pressed yes? " + answer)));
+        dialogs.put("Confirmation", () -> getDialogService().showConfirmationBox("This is a confirmation box. Agree?", answer -> System.out.println("You pressed yes? " + answer)));
 
-        dialogs.put("Input", () -> getDisplay().showInputBox("This is an input box. You can type stuff...", answer -> System.out.println("You typed: "+ answer)));
+        dialogs.put("Input", () -> getDialogService().showInputBox("This is an input box. You can type stuff...", answer -> System.out.println("You typed: "+ answer)));
 
         dialogs.put("Custom", () -> {
             VBox content = new VBox(
@@ -53,7 +53,7 @@ public class DialogsSample extends GameApplication {
             Button btnClose = getUIFactoryService().newButton("Press me to close");
             btnClose.setPrefWidth(300);
 
-            getDisplay().showBox("This is a customizable box", content, btnClose);
+            getDialogService().showBox("This is a customizable box", content, btnClose);
         });
 
         ChoiceBox<String> cbDialogs = getUIFactoryService().newChoiceBox(FXCollections.observableArrayList(dialogs.keySet()));

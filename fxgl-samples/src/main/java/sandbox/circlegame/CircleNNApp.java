@@ -10,10 +10,12 @@ import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.components.KeepOnScreenComponent;
 import com.almasb.fxgl.dsl.components.RandomMoveComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
+import com.almasb.fxgl.input.InputCapture;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
@@ -41,6 +43,8 @@ public class CircleNNApp extends GameApplication {
     private Entity player;
     private Text textPlace;
     private int place;
+
+    private InputCapture capture;
 
     @Override
     protected void initInput() {
@@ -77,11 +81,14 @@ public class CircleNNApp extends GameApplication {
                 new Point2D(getAppWidth() / 2.0 - 32, getAppHeight() - 100 - 64)
         );
 
-        spawnPoints.forEach(point -> {
-            for (int i = 0; i < 11; i++) {
-                spawn("circle", point);
-            }
-        });
+        spawn("circle", 500.0, 600.0);
+        spawn("circle", 500.0, 600.0);
+
+//        spawnPoints.forEach(point -> {
+//            for (int i = 0; i < 11; i++) {
+//                spawn("circle", point);
+//            }
+//        });
 
         player = getGameWorld().getRandom(CIRCLE).get();
         player.removeComponent(RandomMoveComponent.class);
@@ -89,7 +96,22 @@ public class CircleNNApp extends GameApplication {
         player.addComponent(new KeepOnScreenComponent());
         player.addComponent(new PlayerComponent());
 
-        place = 99;
+        getGameWorld().getEntitiesByType(CIRCLE)
+                .stream()
+                .filter(e -> e != player)
+                .forEach(e -> {
+                    e.getComponent(RandomMoveComponent.class).pause();
+                    e.getComponent(BlockCollisionComponent.class).pause();
+
+                    Bundle bundle = getFileSystemService().<Bundle>readDataTask("editor_json/input/input0.dat").run();
+
+                    var input = new InputCapture();
+                    input.read(bundle);
+
+                    e.getComponent(CircleComponent.class).getInput().applyCapture(input);
+                });
+
+        place = getGameWorld().getEntitiesByType(CIRCLE).size();
 
         run(() -> {
             var powerupType = PowerupType.SHIELD;
@@ -100,6 +122,8 @@ public class CircleNNApp extends GameApplication {
                             .put("powerupType", powerupType)
             );
         }, Duration.seconds(3));
+
+        capture = getInput().startCapture();
     }
 
     @Override
@@ -170,6 +194,14 @@ public class CircleNNApp extends GameApplication {
                 .buildAndPlay();
 
         if (place == 1) {
+
+            getInput().stopCapture();
+
+            var bundle = new Bundle("input");
+            capture.write(bundle);
+
+            getFileSystemService().writeDataTask(bundle, "editor_json/input/input0.dat").run();
+
             showMessage("You Win!", () -> getGameController().startNewGame());
         }
     }

@@ -6,22 +6,25 @@
 
 package com.almasb.fxgl.app.scene
 
+import com.almasb.fxgl.animation.AnimatedColor
+import com.almasb.fxgl.animation.AnimatedCubicBezierPoint2D
+import com.almasb.fxgl.animation.AnimatedPoint2D
 import com.almasb.fxgl.animation.Interpolators
-import com.almasb.fxgl.core.math.FXGLMath
-import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.particle.Particle
-import com.almasb.fxgl.particle.ParticleEmitters
-import com.almasb.fxgl.particle.ParticleSystem
-import javafx.animation.*
-import javafx.scene.Group
-import javafx.scene.effect.BlendMode
-import javafx.scene.effect.GaussianBlur
-import javafx.scene.effect.Glow
+import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
+import com.almasb.fxgl.dsl.FXGL.Companion.random
+import com.almasb.fxgl.dsl.image
+import com.almasb.fxgl.texture.toPixels
+import javafx.geometry.Point2D
+import javafx.scene.canvas.Canvas
+import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
-import javafx.scene.text.Text
+import javafx.scene.shape.CubicCurve
 import javafx.util.Duration
+import java.util.*
+import java.util.function.Consumer
+import java.util.function.Predicate
+import java.util.function.ToDoubleFunction
 
 /**
  * Intro animation / video played before game starts
@@ -73,151 +76,167 @@ abstract class IntroScene : FXGLScene() {
  */
 class FXGLIntroScene : IntroScene() {
 
-    private val animation: Transition
+    private val pixels: List<Pixel>
+    private val pixels2: MutableList<Pixel>
 
-    private val particleSystem = ParticleSystem()
+    private val fxglLogo = image("intro/fxgl_logo.png")
+    private val javafxLogo = image("intro/javafx_logo.png")
 
-    private val indices = hashMapOf<Particle, Double>()
+    private val g: GraphicsContext
+    
+    private var delayIndex = 0.0
 
     init {
-        val w = appWidth.toDouble()
-        val h = appHeight.toDouble()
+        setBackgroundColor(Color.BLACK)
 
-        // set up particle system
-        val emitter = initEmitter()
+        val fxglLogoPixels = toPixels(fxglLogo)
 
-        particleSystem.pane.effect = GaussianBlur(3.0)
-        particleSystem.addParticleEmitter(emitter, 0.0 - 50.0, h + 50.0)
+        pixels = fxglLogoPixels
+                .filter { (_, _, color) -> color != Color.TRANSPARENT }
+                .mapIndexed { index, (x, y, color) ->
+                    Pixel(layoutX = x + (appWidth / 2.0 - fxglLogo.width / 2.0), layoutY = y + (appHeight / 2.0 - fxglLogo.height / 2.0), scaleX = 0.0, scaleY = 0.0, fill = color, index = index)
+                }
 
-        // set up the letters and the two lines that make "11"
-        val f = makeLetter("F")
-        val x = makeLetter("X")
-        val g = makeLetter("G")
-        val l = makeLetter("L")
+        pixels2 = toPixels(javafxLogo)
+                .filter { (_, _, color) -> color != Color.TRANSPARENT }
+                .map { (x, y, color) ->
+                    Pixel(layoutX = x + 0.0, layoutY = y + 0.0, fill = color)
+                }.toMutableList()
 
-        val line = makeLine(w / 2 - 25, 245.0)
-        val line2 = makeLine(w / 2 + 25, 245.0)
+        // add the difference in pixels as TRANSPARENT
+        val numPixels = pixels.size - pixels2.size
 
-        // set up translate animation for letters
-
-        val originX = w / 2 - f.layoutBounds.width * 4 / 2
-        val dx = f.layoutBounds.width
-
-        val f1 = TranslateTransition(Duration.seconds(0.66), f)
-        f1.fromX = -100.0
-        f1.toX = originX
-        f1.interpolator = Interpolators.EXPONENTIAL.EASE_OUT()
-
-        val f2 = TranslateTransition(Duration.seconds(1.0), x)
-        f2.fromX = -100.0
-        f2.toX = originX + dx
-        f2.interpolator = Interpolators.ELASTIC.EASE_OUT()
-
-        val f3 = TranslateTransition(Duration.seconds(1.13), g)
-        f3.fromX = -100.0
-        f3.toX = originX + dx*2
-        f3.interpolator = Interpolators.BOUNCE.EASE_OUT()
-
-        val f4 = TranslateTransition(Duration.seconds(0.66), l)
-        f4.fromX = -100.0
-        f4.toX = originX + dx * 3.2
-        f4.interpolator = Interpolators.BACK.EASE_OUT()
-
-        // set up fade and grow animation for lines
-        val t = Timeline()
-
-        t.keyFrames.addAll(
-                KeyFrame(Duration.seconds(1.0), KeyValue(line.opacityProperty(), 1.0)),
-                KeyFrame(Duration.seconds(1.0), KeyValue(line2.opacityProperty(), 1.0)),
-
-                KeyFrame(Duration.seconds(1.0), KeyValue(line.heightProperty(), 100.0)),
-                KeyFrame(Duration.seconds(1.0), KeyValue(line2.heightProperty(), 100.0))
-        )
-
-        // combine animations
-
-        animation = SequentialTransition(f1, f2, f3, f4, t)
-
-        animation.setOnFinished {
-
-            val t2 = FadeTransition(Duration.seconds(1.2), contentRoot)
-            t2.fromValue = 1.0
-            t2.toValue = 0.5
-
-            t2.setOnFinished {
-                finishIntro()
-            }
-
-            t2.play()
-        }
-
-        // add nodes to scene graph
-        contentRoot.children.addAll(Rectangle(w, h), Group(f, x, g, l), line, line2, particleSystem.pane)
+        val extraPixels = fxglLogoPixels.filter { (_, _, color) -> color == Color.TRANSPARENT }
+                .take(numPixels)
+                .map { (x, y, _) ->
+                    Pixel(layoutX = x + 0.0, layoutY = y + 0.0)
+                }
+        
+        pixels2 += extraPixels
+        
+        val canvas = Canvas(appWidth.toDouble(), appHeight.toDouble())
+        g = canvas.graphicsContext2D
+        
+        contentRoot.children += canvas
     }
 
-    private fun initEmitter() = ParticleEmitters.newFireEmitter().apply {
-        isAllowParticleRotation = true
-        blendMode = BlendMode.SRC_OVER
+    private fun playAnim1() {
+        delayIndex = 0.0
 
-        setVelocityFunction { FXGLMath.randomPoint2D().multiply(1.5) }
+        pixels.stream()
+                .sorted(Comparator.comparingDouble(ToDoubleFunction { p -> p.layoutX }))
+                .forEach(Consumer { p ->
+                    animationBuilder(this)
+                            .delay(Duration.seconds(random(delayIndex, delayIndex + 0.21)))
+                            .duration(Duration.seconds(1.25))
+                            .interpolator(Interpolators.PERLIN.EASE_OUT())
+                            .animate(AnimatedPoint2D(Point2D(0.0, 0.0), Point2D(1.0, 1.0)))
+                            .onProgress(Consumer { scale: Point2D ->
+                                p.scaleX = scale.x
+                                p.scaleY = scale.y
+                            })
+                            .buildAndPlay()
+                    delayIndex += 0.0001
+                })
 
-        setSourceImage(FXGL.texture("particles/explosion.png", 32.0, 32.0).brighter().brighter().saturate().image)
-        setSize(1.5, 8.5)
-        numParticles = 15
-        emissionRate = 1.0
-        setExpireFunction { Duration.seconds(FXGLMath.random(3, 7).toDouble()) }
-        setControl { p ->
+        timer.runOnceAfter({
+            playAnim2()
+        }, Duration.seconds(2.0))
 
-            val index = indices.getOrDefault(p, FXGLMath.random(0.001, 3.05))
+        timer.runOnceAfter({
+            playAnim3()
+        }, Duration.seconds(5.0))
 
-            indices.put(p, index)
-
-            val x = p.position.x.toDouble()
-            val y = p.position.y.toDouble()
-
-            val noiseValue = FXGLMath.noise3D(x / 300, y / 300, (1 - p.life) * index)
-            var angle = FXGLMath.toDegrees((noiseValue + 1) * Math.PI * 1.5)
-
-            angle %= 360.0
-
-            if (FXGLMath.randomBoolean(0.35)) {
-                angle = FXGLMath.map(angle, 0.0, 360.0, -100.0, 50.0)
-            }
-
-            val v = Vec2.fromAngle(angle).normalizeLocal().mulLocal(FXGLMath.random(0.05, 0.35))
-
-            p.acceleration.set(v)
-        }
+        timer.runOnceAfter({
+            finishIntro()
+        }, Duration.seconds(8.0))
     }
 
-    private fun makeLetter(letter: String) = Text(letter).apply {
-        font = FXGL.getUIFactoryService().newFont(122.0)
-        fill = Color.color(0.9, 0.95, 0.96)
-        translateY = appHeight / 2.0 - 150
-        opacity = 0.96
+    private fun playAnim2() {
+        delayIndex = 0.0
 
-        effect = Glow(0.35)
+        pixels2.sortWith(Comparator.comparingDouble(ToDoubleFunction { p -> p.layoutX }))
 
-        stroke = Color.DARKBLUE
-        strokeWidth = 3.5
+        pixels.stream()
+                .filter(Predicate { p ->
+                    val pIndex: Int = p.index
+                    val p2 = pixels2[pIndex]
+                    !(p.fill == Color.TRANSPARENT && p2.fill == Color.TRANSPARENT)
+                })
+                .sorted(Comparator.comparingDouble(ToDoubleFunction { p -> p.layoutX }))
+                .forEach(Consumer { p ->
+                    val pIndex: Int = p.index
+                    val p2 = pixels2[pIndex]
+
+                    animationBuilder(this)
+                            .delay(Duration.seconds(random(delayIndex, delayIndex + 0.21)))
+                            .duration(Duration.seconds(1.05))
+                            .interpolator(Interpolators.BOUNCE.EASE_IN_OUT())
+                            .animate(AnimatedCubicBezierPoint2D(CubicCurve(p.translateX, p.translateY,
+                                    random(200, 400).toDouble(), random(-150, 200).toDouble(),
+                                    random(-300, 100).toDouble(), random(400, 500).toDouble(),
+                                    (appWidth / 2.0 - javafxLogo.width / 2.0) - p.layoutX + p2.layoutX, (appHeight / 2.0 - javafxLogo.height / 2.0) - p.layoutY + p2.layoutY)))
+                            .onProgress(Consumer { point: Point2D ->
+                                p.translateX = point.x
+                                p.translateY = point.y
+                            })
+                            .buildAndPlay()
+
+                    animationBuilder(this)
+                            .delay(Duration.seconds(random(delayIndex, delayIndex + 0.21)))
+                            .duration(Duration.seconds(0.45))
+                            .interpolator(Interpolators.EXPONENTIAL.EASE_IN())
+                            .animate(AnimatedColor(p.fill, p2.fill))
+                            .onProgress(Consumer { color: Color -> p.fill = color })
+                            .buildAndPlay()
+                    delayIndex += 0.0001
+                })
     }
 
-    private fun makeLine(width: Double, height: Double) = Rectangle(10.0, 0.0, Color.color(0.9, 0.95, 0.96)).apply {
-        stroke = Color.DARKBLUE
-        arcWidth = 15.0
-        arcHeight = 15.0
-        strokeWidth = 4.0
-        opacity = 0.0
+    private fun playAnim3() {
+        delayIndex = 0.0
 
-        translateX = width
-        translateY = height
+        pixels.stream()
+                .sorted(Comparator.comparingDouble(ToDoubleFunction { p -> p.layoutX }))
+                .forEach(Consumer { p ->
+                    animationBuilder(this)
+                            .delay(Duration.seconds(random(delayIndex, delayIndex + 0.21)))
+                            .duration(Duration.seconds(1.45))
+                            .interpolator(Interpolators.EXPONENTIAL.EASE_IN())
+                            .animate(AnimatedCubicBezierPoint2D(CubicCurve(p.translateX, p.translateY,
+                                    random(200, 400).toDouble(), random(-150, 200).toDouble(),
+                                    random(-300, 100).toDouble(), random(400, 500).toDouble(),
+                                    (appWidth * 2).toDouble(), (appHeight * 2).toDouble())))
+                            .onProgress(Consumer { point: Point2D ->
+                                p.translateX = point.x
+                                p.translateY = point.y
+                            })
+                            .buildAndPlay()
+                    delayIndex += 0.0001
+                })
     }
 
     override fun onUpdate(tpf: Double) {
         super.onUpdate(tpf)
+        
+        g.clearRect(0.0, 0.0, appWidth.toDouble(), appHeight.toDouble())
 
-        particleSystem.onUpdate(tpf)
+        pixels.forEach { 
+            g.fill = it.fill
+            g.fillRect(it.layoutX + it.translateX, it.layoutY + it.translateY, it.scaleX, it.scaleY)
+        }
     }
 
-    override fun startIntro() = animation.play()
+    override fun startIntro() = playAnim1()
 }
+
+private data class Pixel(
+        var layoutX: Double = 0.0,
+        var layoutY: Double = 0.0,
+        var translateX: Double = 0.0,
+        var translateY: Double = 0.0,
+        var scaleX: Double = 1.0,
+        var scaleY: Double = 1.0,
+        var fill: Color = Color.TRANSPARENT,
+        var index: Int = 0
+)

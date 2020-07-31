@@ -6,8 +6,10 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.dev.DebugCameraScene
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getGameWorld
+import com.almasb.fxgl.dsl.getSettings
 import com.almasb.fxgl.dsl.isReleaseMode
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
@@ -40,6 +42,7 @@ object SystemActions {
 
             input.addAction(sysdump(), KeyCode.DIGIT9, InputModifier.CTRL)
             input.addAction(restartGame(), KeyCode.R, InputModifier.CTRL)
+            input.addAction(toggleDebugCamera(), KeyCode.C, InputModifier.CTRL)
         }
     }
 
@@ -80,7 +83,7 @@ object SystemActions {
             log.info("--- System info dump begin ---")
             log.infof("Entities size: %d", getGameWorld().entities.size)
             log.infof("Components size: %d", getGameWorld().entities.flatMap { it.components }.size)
-            log.infof("Scene graph size: %d", getChildrenSize(FXGL.getWindowService().mainWindow.currentFXGLScene.root))
+            //log.infof("Scene graph size: %d", getChildrenSize(FXGL.getWindowService().mainWindow.currentFXGLScene.root))
             log.info("--- System info dump end ---")
         }
     }
@@ -88,6 +91,20 @@ object SystemActions {
     private fun restartGame() = object : UserAction("Restart") {
         override fun onActionBegin() {
             FXGL.getGameController().startNewGame()
+        }
+    }
+
+    private fun toggleDebugCamera() = object : UserAction("Toggle Debug Camera") {
+        private val debugCameraScene by lazy { DebugCameraScene() }
+
+        override fun onActionBegin() {
+            getSettings().devEnableDebugCamera.value = !getSettings().devEnableDebugCamera.value
+
+            if (getSettings().devEnableDebugCamera.value) {
+                FXGL.getSceneService().pushSubScene(debugCameraScene)
+            } else {
+                FXGL.getSceneService().popSubScene()
+            }
         }
     }
 

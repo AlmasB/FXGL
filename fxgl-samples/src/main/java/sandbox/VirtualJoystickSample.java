@@ -42,7 +42,6 @@ public class VirtualJoystickSample extends GameApplication {
         entity = entityBuilder()
                 .at(300, 300)
                 .viewWithBBox(texture("player2rot.png").brighter().outline(Color.BLACK))
-                // TODO: component should convert degrees correctly to avoid sharp turns when moving between 180 and -180
                 .with(new AutoRotationComponent().withSmoothing())
                 .buildAndAttach();
 

@@ -19,6 +19,7 @@ module com.almasb.fxgl.all {
     requires transitive com.almasb.fxgl.input;
     requires transitive com.almasb.fxgl.io;
     requires transitive com.almasb.fxgl.localization;
+    requires transitive com.almasb.fxgl.logging;
     requires transitive com.almasb.fxgl.media;
     requires transitive com.almasb.fxgl.minigames;
     requires transitive com.almasb.fxgl.net;
@@ -26,6 +27,7 @@ module com.almasb.fxgl.all {
     requires transitive com.almasb.fxgl.profiles;
     requires transitive com.almasb.fxgl.scene;
     requires transitive com.almasb.fxgl.time;
+    requires transitive com.almasb.fxgl.trade;
     requires transitive com.almasb.fxgl.ui;
 
     requires transitive javafx.base;
@@ -34,17 +36,23 @@ module com.almasb.fxgl.all {
     requires transitive javafx.fxml;
     requires transitive javafx.swing;
 
+    requires com.fasterxml.jackson.databind;
+
     opens com.almasb.fxgl.dsl to com.almasb.fxgl.core;
     opens com.almasb.fxgl.dev to com.almasb.fxgl.core;
     opens com.almasb.fxgl.dev.profiling to com.almasb.fxgl.core;
     opens com.almasb.fxgl.app to com.almasb.fxgl.core;
     opens com.almasb.fxgl.app.services to com.almasb.fxgl.core;
 
+    // tmp
+    opens com.almasb.fxgl.dsl.chat to com.almasb.fxgl.core;
+
     exports com.almasb.fxgl.app;
     exports com.almasb.fxgl.app.services;
     exports com.almasb.fxgl.app.scene;
     exports com.almasb.fxgl.dev;
     exports com.almasb.fxgl.dsl;
+    exports com.almasb.fxgl.dsl.chat;
     exports com.almasb.fxgl.dsl.components;
     exports com.almasb.fxgl.dsl.components.view;
     exports com.almasb.fxgl.dsl.effects;

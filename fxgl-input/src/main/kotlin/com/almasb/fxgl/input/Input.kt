@@ -18,6 +18,7 @@ import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.input.*
+import java.security.Key
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
@@ -133,6 +134,10 @@ class Input {
      */
     var registerInput = true
 
+    private var isCapturing = false
+    private var currentCapture: InputCapture? = null
+    private val captureAppliers = arrayListOf<InputCapture.CaptureApplier>()
+
     private val eventHandlers = Group()
 
     /**
@@ -167,6 +172,10 @@ class Input {
     }
 
     fun update(tpf: Double) {
+        if (isCapturing) {
+            currentCapture!!.update(tpf)
+        }
+
         if (!processInput)
             return
 
@@ -179,6 +188,8 @@ class Input {
                 it.action(trigger)
             }
         }
+
+        captureAppliers.forEach { it.update(tpf) }
     }
 
     /**
@@ -199,13 +210,13 @@ class Input {
      * Called automatically by FXGL on mouse event.
      */
     fun onMouseEvent(eventData: MouseEventData) {
-        onMouseEvent(eventData.event, eventData.viewportOrigin, eventData.scaleRatioX, eventData.scaleRatioY)
+        onMouseEvent(eventData.event, eventData.contentRootTranslation, eventData.viewportOrigin, eventData.viewportZoom, eventData.scaleRatioX, eventData.scaleRatioY)
     }
 
     /**
      * Called automatically by FXGL on mouse event.
      */
-    fun onMouseEvent(mouseEvent: MouseEvent, viewportOrigin: Point2D, scaleRatioX: Double, scaleRatioY: Double) {
+    fun onMouseEvent(mouseEvent: MouseEvent, contentRootTranslation: Point2D, viewportOrigin: Point2D, viewportZoom: Double, scaleRatioX: Double, scaleRatioY: Double) {
         if (!registerInput)
             return
 
@@ -215,11 +226,11 @@ class Input {
             handleReleased(mouseEvent)
         }
 
-        mouseXUI = mouseEvent.sceneX
-        mouseYUI = mouseEvent.sceneY
+        mouseXUI = mouseEvent.sceneX - contentRootTranslation.x
+        mouseYUI = mouseEvent.sceneY - contentRootTranslation.y
 
-        mouseXWorld = mouseXUI / scaleRatioX + viewportOrigin.x
-        mouseYWorld = mouseYUI / scaleRatioY + viewportOrigin.y
+        mouseXWorld = mouseXUI / scaleRatioX / viewportZoom + viewportOrigin.x
+        mouseYWorld = mouseYUI / scaleRatioY / viewportZoom + viewportOrigin.y
     }
 
     private fun handlePressed(event: InputEvent) {
@@ -318,6 +329,9 @@ class Input {
 
         currentActions.clear()
         activeTriggers.clear()
+
+        stopCapture()
+        captureAppliers.clear()
     }
 
     fun addAction(action: UserAction, sequence: InputSequence) {
@@ -375,6 +389,38 @@ class Input {
     }
 
     private fun isTriggerBound(trigger: Trigger) = bindings.values.any { it.trigger.value == trigger }
+
+    /* CAPTURE */
+
+    /**
+     * Calling this when capture already started has no effect.
+     *
+     * @return a capture object that is populated with input data until [stopCapture]
+     */
+    fun startCapture(): InputCapture {
+        if (isCapturing)
+            return currentCapture!!
+
+        isCapturing = true
+        currentCapture = InputCapture()
+        addTriggerListener(currentCapture!!)
+
+        return currentCapture!!
+    }
+
+    /**
+     * Calling this without calling [startCapture] first has no effect.
+     */
+    fun stopCapture() {
+        if (isCapturing) {
+            isCapturing = false
+            removeTriggerListener(currentCapture!!)
+        }
+    }
+
+    fun applyCapture(capture: InputCapture) {
+        captureAppliers += InputCapture.CaptureApplier(this, capture)
+    }
 
     /* VIRTUAL */
 
@@ -440,6 +486,20 @@ class Input {
 
     internal fun mockKeyReleaseEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
         fireEvent(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
+    }
+
+    fun mockTriggerPress(trigger: Trigger) {
+        when (trigger) {
+            is KeyTrigger -> mockKeyPress(trigger.key, trigger.modifier)
+            is MouseTrigger -> mockButtonPress(trigger.button, trigger.modifier)
+        }
+    }
+
+    fun mockTriggerRelease(trigger: Trigger) {
+        when (trigger) {
+            is KeyTrigger -> mockKeyRelease(trigger.key, trigger.modifier)
+            is MouseTrigger -> mockButtonRelease(trigger.button, trigger.modifier)
+        }
     }
 
     /**

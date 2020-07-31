@@ -229,4 +229,8 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         scaleX = bundle.get("scaleX")
         scaleY = bundle.get("scaleY")
     }
+
+    override fun isComponentInjectionRequired(): Boolean {
+        return false
+    }
 }

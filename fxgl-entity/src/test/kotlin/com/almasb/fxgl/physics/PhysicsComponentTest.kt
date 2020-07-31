@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.physics.box2d.dynamics.BodyDef
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType
+import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -55,6 +56,23 @@ class PhysicsComponentTest {
     }
 
     @Test
+    fun `Set fixture def`() {
+        val c = PhysicsComponent()
+        c.setFixtureDef(FixtureDef().density(0.5f).restitution(0.25f))
+
+        val world = PhysicsWorld(600, 50.0)
+
+        val e = Entity()
+        e.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(10.0, 10.0)))
+        e.addComponent(c)
+        world.onEntityAdded(e)
+
+        assertThat(c.getBody().fixtures.size, `is`(1))
+        assertThat(c.getBody().fixtures[0].density, `is`(0.5f))
+        assertThat(c.getBody().fixtures[0].restitution, `is`(0.25f))
+    }
+
+    @Test
     fun `Body`() {
         val c = PhysicsComponent()
         assertNull(c.body)
@@ -67,6 +85,8 @@ class PhysicsComponentTest {
 
         world.onEntityAdded(e)
         assertNotNull(c.body)
+
+        e.removeComponent(c.javaClass)
     }
 
     @Test
@@ -167,6 +187,39 @@ class PhysicsComponentTest {
         c.onUpdate(1.0)
 
         assertThat(e.position, `is`(Point2D(100.0, 0.0)))
+    }
+
+    @Test
+    fun `Apply force at a point`() {
+        val c = PhysicsComponent()
+        c.setBodyType(BodyType.DYNAMIC)
+
+        val world = PhysicsWorld(600, 50.0)
+        world.setGravity(0.0, 0.0)
+
+        val e = Entity()
+        e.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(10.0, 10.0)))
+        e.addComponent(c)
+
+        world.onEntityAdded(e)
+
+        assertThat(e.position, `is`(Point2D(0.0, 0.0)))
+
+        // pixels
+        c.applyForce(Point2D(100.0, 0.0), Point2D(100.0, 0.0))
+
+        world.onUpdate(1.0)
+        c.onUpdate(1.0)
+
+        assertThat(e.position, `is`(Point2D(100.0, 0.0)))
+
+        // meters
+        c.applyBodyForce(Vec2(100.0, 0.0), Vec2(-100.0, 0.0))
+
+        world.onUpdate(1.0)
+        c.onUpdate(1.0)
+
+        assertThat(e.position, `is`(Point2D(200.0, 0.0)))
     }
 
     @Test

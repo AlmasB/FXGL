@@ -6,10 +6,12 @@
 
 package com.almasb.fxgl.services
 
+import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.services.UpdaterService
 import com.almasb.fxgl.net.NetService
 import com.almasb.fxgl.test.InjectInTest
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
@@ -29,8 +31,16 @@ class UpdaterServiceTest {
 
         val lookup = MethodHandles.lookup()
 
+        InjectInTest.inject(lookup, updater, "appMode", ApplicationMode.RELEASE)
         InjectInTest.inject(lookup, updater, "urlPOM", "https://raw.githubusercontent.com/AlmasB/FXGL/master/pom.xml")
         InjectInTest.inject(lookup, updater, "netService", NetService())
+    }
+
+    @Test
+    fun `Do not check for updates if in release mode`() {
+        assertFalse(updater.needCheckForUpdate())
+
+        updater.onInit()
     }
 
     @Test
@@ -42,6 +52,6 @@ class UpdaterServiceTest {
                 .onSuccess { result = it }
                 .run()
 
-        Assertions.assertTrue(result.startsWith("11."))
+        assertTrue(result.startsWith("11."))
     }
 }

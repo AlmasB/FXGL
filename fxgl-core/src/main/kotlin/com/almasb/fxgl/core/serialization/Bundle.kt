@@ -19,13 +19,13 @@ class Bundle(val name: String) : Serializable {
         private val serialVersionUID = 1L
     }
 
-    private val data = hashMapOf<String, Any>()
+    val data = hashMapOf<String, Serializable>()
 
     /**
      * Store a [value] with given [key].
      */
     fun put(key: String, value: Serializable) {
-        data["$name.$key"] = value
+        data[key] = value
     }
 
     /**
@@ -33,11 +33,11 @@ class Bundle(val name: String) : Serializable {
      */
     @Suppress("UNCHECKED_CAST")
     fun <T> get(key: String): T {
-        return data["$name.$key"] as T
+        return data[key] as T
     }
 
     fun exists(key: String): Boolean {
-        return data.containsKey("$name.$key")
+        return data.containsKey(key)
     }
 
     override fun toString() = "Bundle $name: $data"

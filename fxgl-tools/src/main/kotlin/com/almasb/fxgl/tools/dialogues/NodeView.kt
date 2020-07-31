@@ -115,18 +115,7 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         init {
             styleClass += "title"
 
-            //style += "-fx-background-color: linear-gradient(from 0% 50% to 100% 50%, rgba(${c.red*255}, ${c.green*255}, ${c.blue*255}, 0.85), transparent);"
-
             style = "-fx-background-color: rgba(${c.red*255}, ${c.green*255}, ${c.blue*255}, 0.85)"
-
-            DialoguePane.highContrastProperty.addListener { _, _, isContrast ->
-                if (isContrast) {
-                    val chigh = c.deriveColor(180.0, 1.0, 1.0, 1.0)
-                    style = "-fx-background-color: rgba(${chigh.red*255}, ${chigh.green*255}, ${chigh.blue*255}, 0.95)"
-                } else {
-                    style = "-fx-background-color: rgba(${c.red*255}, ${c.green*255}, ${c.blue*255}, 0.85)"
-                }
-            }
 
             val text = FXGL.getUIFactoryService().newText(name, Color.WHITE, 16.0)
 

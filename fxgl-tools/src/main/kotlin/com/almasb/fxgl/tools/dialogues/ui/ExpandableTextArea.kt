@@ -13,6 +13,7 @@ import java.util.concurrent.Callable
 import kotlin.math.abs
 
 /**
+ * Text area that expands its height to accommodate the text inside.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -33,7 +34,6 @@ class ExpandableTextArea(prefWidth: Double, prefHeight: Double) : TextArea() {
 
         isWrapText = true
 
-        text.opacity = 0.0
         text.fontProperty().bind(fontProperty())
         text.textProperty().bind(textProperty())
         text.wrappingWidth = prefWidth - 30.0

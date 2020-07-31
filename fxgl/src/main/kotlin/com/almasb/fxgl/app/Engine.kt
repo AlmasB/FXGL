@@ -10,7 +10,6 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
-import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.reflect.ReflectionUtils.*
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
@@ -59,18 +58,16 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
 
-    inline fun <reified T : EngineService> getService(serviceClass: Class<T>): T {
+    fun <T : EngineService> getService(serviceClass: Class<T>): T {
         if (servicesCache.containsKey(serviceClass))
             return servicesCache[serviceClass] as T
 
-        return (services.find { it is T }?.also { servicesCache[serviceClass] = it }
+        return (services.find { serviceClass.isAssignableFrom(it.javaClass) }?.also { servicesCache[serviceClass] = it }
                 ?: throw IllegalArgumentException("Engine does not have service: $serviceClass")) as T
     }
 
     fun initServices() {
         initEnvironmentVars()
-
-        val start = System.nanoTime()
 
         settings.engineServices.forEach {
             services += (newInstance(it))
@@ -83,8 +80,6 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
         services.forEach {
             it.onInit()
         }
-
-        log.infof("FXGL initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
 
         Async.schedule({ logEnvironmentVarsAndServices() }, Duration.seconds(3.0))
     }

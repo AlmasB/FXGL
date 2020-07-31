@@ -30,7 +30,9 @@ sealed class LinkPoint(val owner: NodeView) : Pane() {
         get() = connectedProperty.value
         protected set(value) { connectedProperty.value = value }
 
-    protected val bg = Circle(8.0, 8.0, 8.0)
+    private val bg = Circle(8.0, 8.0, 8.0)
+
+    private val arrow = Arrow()
 
     init {
         bg.fillProperty().bind(
@@ -41,26 +43,30 @@ sealed class LinkPoint(val owner: NodeView) : Pane() {
         )
         bg.strokeWidth = 2.0
 
-        children += bg
+        arrow.strokeProperty().bind(
+                Bindings.`when`(connectedProperty).then(Color.YELLOW.brighter()).otherwise(Color.color(0.9, 0.9, 0.9, 0.7))
+        )
+
+        children.addAll(bg, arrow)
+    }
+
+    protected fun translateArrow(x: Double, y: Double) {
+        arrow.translateX = x
+        arrow.translateY = y
     }
 }
 
 class InLinkPoint(owner: NodeView) : LinkPoint(owner) {
 
+    /**
+     * Out points connected to this in point.
+     */
     val connectedPoints = FXCollections.observableArrayList<OutLinkPoint>()
 
     init {
         connectedProperty.bind(Bindings.isEmpty(connectedPoints).not())
 
-        val arrow = Arrow()
-        arrow.translateX = -5.5
-        arrow.translateY = 8.0 - 2.5
-
-        arrow.strokeProperty().bind(
-                Bindings.`when`(connectedProperty).then(Color.YELLOW.brighter()).otherwise(Color.color(0.9, 0.9, 0.9, 0.7))
-        )
-
-        children += arrow
+        translateArrow(-5.5, 8.0 - 2.5)
     }
 
     override fun toString(): String {
@@ -76,15 +82,7 @@ class OutLinkPoint(owner: NodeView) : LinkPoint(owner) {
     var choiceLocalOptionProperty = SimpleStringProperty("")
 
     init {
-        val arrow = Arrow()
-        arrow.translateX = 16.0 + 2.5
-        arrow.translateY = 8.0 - 2.5
-
-        arrow.strokeProperty().bind(
-                Bindings.`when`(connectedProperty).then(Color.YELLOW.brighter()).otherwise(Color.color(0.9, 0.9, 0.9, 0.7))
-        )
-
-        children += arrow
+        translateArrow(16.0 + 2.5, 8.0 - 2.5)
     }
 
     fun connect(inPoint: InLinkPoint) {
@@ -93,6 +91,9 @@ class OutLinkPoint(owner: NodeView) : LinkPoint(owner) {
         isConnected = true
     }
 
+    /**
+     * @return the in point to which this was connected (if any)
+     */
     fun disconnect(): InLinkPoint? {
         other?.let {
             it.connectedPoints -= this
@@ -122,7 +123,7 @@ private class Arrow : Polygon(
 }
 
 class EdgeView(val edge: DialogueEdge, val source: OutLinkPoint, val target: InLinkPoint) : CubicCurve() {
-    var optionID = if (edge is DialogueChoiceEdge) edge.optionID else -1
+    val optionID = if (edge is DialogueChoiceEdge) edge.optionID else -1
 
     init {
         val outPoint = source

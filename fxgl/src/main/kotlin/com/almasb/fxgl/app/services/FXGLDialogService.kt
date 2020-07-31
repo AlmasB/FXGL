@@ -7,6 +7,7 @@
 package com.almasb.fxgl.app.services
 
 import com.almasb.fxgl.core.util.EmptyRunnable
+import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.*
 import javafx.beans.property.DoubleProperty
@@ -30,7 +31,7 @@ class FXGLDialogService : DialogService() {
 
     private lateinit var uiFactory: UIFactoryService
     private lateinit var dialogFactory: DialogFactoryService
-    private lateinit var sceneService: WindowService
+    private lateinit var sceneService: SceneService
 
     private lateinit var window: MDIWindow
 

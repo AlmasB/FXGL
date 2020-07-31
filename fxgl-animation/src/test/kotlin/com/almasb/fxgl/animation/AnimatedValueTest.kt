@@ -75,7 +75,7 @@ class AnimatedValueTest {
 
         val anim = AnimatedPath(rect)
 
-        assertThat(anim.getValue(0.0), `is`(Point2D(0.0, 0.0)))
+        assertThat(anim.getValue(0.0), `is`(Point2D(0.0, 0.13125)))
         assertThat(anim.getValue(1.0), `is`(Point2D(0.0, 0.0)))
         assertThat(anim.getValue(0.5), `is`(Point2D(160.0, 50.0)))
     }

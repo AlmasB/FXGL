@@ -14,6 +14,7 @@ target/
 
 # IntelliJ IDEA
 .idea/
+.run/
 out/
 *.iml
 

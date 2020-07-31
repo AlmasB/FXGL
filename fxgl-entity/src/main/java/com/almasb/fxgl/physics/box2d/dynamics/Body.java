@@ -11,7 +11,6 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.box2d.collision.broadphase.BroadPhase;
 import com.almasb.fxgl.physics.box2d.collision.shapes.MassData;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Sweep;
 import com.almasb.fxgl.physics.box2d.common.Transform;
@@ -1111,8 +1110,7 @@ public final class Body {
         // Rot.mulToOutUnsafe(xf1.q, m_sweep.localCenter, xf1.p);
         // xf1.p.mulLocal(-1).addLocal(m_sweep.c0);
         // inlined:
-        xf1.q.s = JBoxUtils.sin(m_sweep.a0);
-        xf1.q.c = JBoxUtils.cos(m_sweep.a0);
+        xf1.q.set(m_sweep.a0);
         xf1.p.x = m_sweep.c0.x - xf1.q.c * m_sweep.localCenter.x + xf1.q.s * m_sweep.localCenter.y;
         xf1.p.y = m_sweep.c0.y - xf1.q.s * m_sweep.localCenter.x - xf1.q.c * m_sweep.localCenter.y;
         // end inline
@@ -1129,8 +1127,7 @@ public final class Body {
         // Rot.mulToOutUnsafe(m_xf.q, m_sweep.localCenter, m_xf.p);
         // m_xf.p.mulLocal(-1).addLocal(m_sweep.c);
         //
-        m_xf.q.s = JBoxUtils.sin(m_sweep.a);
-        m_xf.q.c = JBoxUtils.cos(m_sweep.a);
+        m_xf.q.set(m_sweep.a);
         Rotation q = m_xf.q;
         Vec2 v = m_sweep.localCenter;
         m_xf.p.x = m_sweep.c.x - q.c * v.x + q.s * v.y;

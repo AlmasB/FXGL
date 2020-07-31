@@ -14,6 +14,7 @@ module com.almasb.fxgl.core {
     requires transitive com.almasb.fxgl.logging;
 
     exports com.almasb.fxgl.core;
+    exports com.almasb.fxgl.core.asset;
     exports com.almasb.fxgl.core.collection;
     exports com.almasb.fxgl.core.concurrent;
     exports com.almasb.fxgl.core.fsm;

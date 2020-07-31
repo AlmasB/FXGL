@@ -130,6 +130,13 @@ class AchievementServiceTest {
         // but it should not be possible to modify the old map
 //        map.setValue("varName", varValue)
 //        assertFalse(a.isAchieved)
+
+
+        // check for values that are below target
+        // still should be achieved since we already achieved once
+
+        map.setValue("varName", initialValue)
+        assertTrue(a.isAchieved)
     }
 
     @Test

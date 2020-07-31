@@ -336,7 +336,7 @@ public class Entity {
      * Adds given component to this entity.
      *
      * @param component the component
-     * @throws IllegalArgumentException if a component with same type already registered or anonymous
+     * @throws IllegalArgumentException if a component with same type already registered
      * @throws IllegalStateException if components required by the given component are missing
      */
     public final void addComponent(Component component) {
@@ -448,6 +448,9 @@ public class Entity {
     private void injectFields(Component component) {
         ComponentHelper.setEntity(component, this);
 
+        if (!component.isComponentInjectionRequired())
+            return;
+
         findFieldsByTypeRecursive(component, Component.class).forEach(field -> {
             getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
                 inject(field, component, comp);
@@ -488,20 +491,12 @@ public class Entity {
     }
 
     private void checkRequirementsMet(Class<? extends Component> type) {
-        checkNotAnonymous(type);
-
         checkNotDuplicate(type);
 
         for (Required r : type.getAnnotationsByType(Required.class)) {
             if (!hasComponent(r.value())) {
                 throw new IllegalStateException("Required component: [" + r.value().getSimpleName() + "] for: " + type.getSimpleName() + " is missing");
             }
-        }
-    }
-
-    private void checkNotAnonymous(Class<? extends Component> type) {
-        if (isAnonymousClass(type)) {
-            throw new IllegalArgumentException("Anonymous components are not allowed: " + type.getName());
         }
     }
 
@@ -738,7 +733,6 @@ public class Entity {
     /**
      * @return distance in pixels from this entity to the other using their bounding boxes
      */
-    // Adapted from https://stackoverflow.com/questions/4978323/how-to-calculate-distance-between-two-rectangles-context-a-game-in-lua
     public final double distanceBBox(Entity other) {
         var rect1 = bbox.range(0, 0);
         var rect2 = other.bbox.range(0, 0);

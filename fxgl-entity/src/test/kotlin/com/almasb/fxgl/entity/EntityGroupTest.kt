@@ -10,6 +10,7 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.function.Consumer
 
 /**
  *
@@ -104,9 +105,8 @@ class EntityGroupTest {
 
         world.removeEntities(e1, e3)
 
-        group.forEach {
-            count++
-        }
+        // test Java API too
+        group.forEach(Consumer { count++ })
 
         assertThat(count, `is`(1))
     }

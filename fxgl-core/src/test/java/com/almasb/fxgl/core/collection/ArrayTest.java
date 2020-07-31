@@ -21,6 +21,24 @@ public class ArrayTest {
     }
 
     @Test
+    public void constructor_copy() {
+        Array<Integer> array = new Array<>();
+        array.addAll(1, 2, 3, 5);
+
+        Array<Integer> array2 = new Array<>(array);
+
+        assertThat(array2, contains(1, 2, 3, 5));
+    }
+
+    @Test
+    public void constructor_java_array() {
+        Integer[] javaArray = new Integer[] { 1, 2, 3, 5 };
+        Array<Integer> array = new Array<>(javaArray);
+
+        assertThat(array, contains(1, 2, 3, 5));
+    }
+
+    @Test
     public void array_has_correctEmptyStatus() {
         Array<Integer> array = new Array();
         assertAll(

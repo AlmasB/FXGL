@@ -77,7 +77,11 @@ class TMXLevelLoader : LevelLoader {
 
         return map.layers.filter { it.type == "tilelayer" }
                 .map { layer ->
-                    Entity().also { it.viewComponent.addChild(tilesetLoader.loadView(layer.name)) }
+                    Entity().also {
+                        it.type = "TiledMapLayer"
+                        it.setProperty("layer", layer)
+                        it.viewComponent.addChild(tilesetLoader.loadView(layer.name))
+                    }
                 }
     }
 
@@ -303,7 +307,7 @@ class TMXLevelLoader : LevelLoader {
     private fun parseData(layer: Layer, data: String, start: StartElement) {
         when (start.getString("encoding")) {
             "csv" -> {
-                layer.data = data.replace("\n", "").split(",").map { it.toInt() }
+                layer.data = data.replace("\n", "").split(",").map { it.trim().toInt() }
             }
 
             "base64" -> {

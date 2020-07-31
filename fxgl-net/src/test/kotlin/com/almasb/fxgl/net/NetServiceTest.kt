@@ -6,18 +6,43 @@
 
 package com.almasb.fxgl.net
 
+import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.logging.ConsoleOutput
+import com.almasb.fxgl.logging.Logger
+import com.almasb.fxgl.logging.LoggerConfig
+import com.almasb.fxgl.logging.LoggerLevel
+import javafx.beans.property.SimpleIntegerProperty
 import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.*
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertTimeoutPreemptively
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
+import org.junit.jupiter.api.fail
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.time.Duration
+import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class NetServiceTest {
+
+    companion object {
+        private const val TEST_PORT = 60001
+
+        private const val LOREM_IPSUM =
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
+                "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
+                "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+                "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
+        private val LARGE_DATA by lazy { Files.readAllBytes(Paths.get(javaClass.getResource("LongText.txt").toURI())) }
+    }
 
     private lateinit var net: NetService
 
@@ -36,5 +61,140 @@ class NetServiceTest {
                 .count()
 
         assertThat(numLines, greaterThan(0L))
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    fun `TCP Bundle message handler`() {
+        var count = 0
+
+        assertTimeoutPreemptively(Duration.ofSeconds(2)) {
+            val server = net.newTCPServer(TEST_PORT, Bundle::class.java)
+
+            server.setOnConnected {
+                count++
+
+                // run this in a separate thread so we don't block the client
+                // in production this is not necessary
+                Thread(Runnable {
+                    val bundle = Bundle("")
+                    bundle.put("data", "Hello World Test")
+
+                    // send data
+                    it.send(bundle)
+
+                    bundle.put("data2", LARGE_DATA)
+
+                    it.send(bundle)
+
+                    // and wait 0.5 sec before stopping the server
+                    Thread.sleep(500)
+
+                    server.stop()
+                }).start()
+            }
+
+            val client = net.newTCPClient("localhost", TEST_PORT, Bundle::class.java)
+
+            client.setOnConnected {
+                count++
+
+                it.addMessageHandler { connection, message ->
+
+                    if (count == 2) {
+                        val data = message.get<String>("data")
+
+                        assertThat(data, `is`("Hello World Test"))
+
+                        count++
+                    } else if (count == 3) {
+                        val data = message.get<ByteArray>("data2")
+
+                        assertThat(data, `is`(LARGE_DATA))
+
+                        count++
+                    }
+                }
+            }
+
+            server.listeningProperty().addListener { _, _, isListening ->
+                if (isListening) {
+                    client.connectTask().run()
+                }
+            }
+
+            server.startTask()
+                    .onFailure { e -> fail { "Server Start failed $e" } }
+                    .run()
+
+            assertThat(count, `is`(4))
+        }
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    fun `TCP ByteArray message handler`() {
+        var count = 0
+
+        assertTimeoutPreemptively(Duration.ofSeconds(2)) {
+            val server = net.newTCPServer(TEST_PORT, ByteArray::class.java)
+
+            server.setOnConnected {
+                count++
+
+                // run this in a separate thread so we don't block the client
+                // in production this is not necessary
+                Thread(Runnable {
+
+                    // send data
+                    it.send(LOREM_IPSUM.toByteArray(Charsets.UTF_8))
+
+                    it.send(byteArrayOf(1, 99, 2, 98))
+
+                    it.send(LARGE_DATA)
+
+                    // and wait 0.5 sec before stopping
+                    Thread.sleep(500)
+
+                    server.stop()
+                }).start()
+            }
+
+            val client = net.newTCPClient("localhost", TEST_PORT, ByteArray::class.java)
+
+            client.setOnConnected {
+                count++
+
+                it.addMessageHandler { connection, message ->
+
+                    if (count == 2) {
+
+                        assertThat(String(message, Charsets.UTF_8), `is`(LOREM_IPSUM))
+                        count++
+                    } else if (count == 3) {
+
+                        assertThat(message, `is`(byteArrayOf(1, 99, 2, 98)))
+                        count++
+
+                    } else if (count == 4) {
+
+                        assertThat(message, `is`(LARGE_DATA))
+                        count++
+                    }
+                }
+            }
+
+            server.listeningProperty().addListener { _, _, isListening ->
+                if (isListening) {
+                    client.connectTask().run()
+                }
+            }
+
+            server.startTask()
+                    .onFailure { e -> fail { "Server Start failed $e" } }
+                    .run()
+
+            assertThat(count, `is`(5))
+        }
     }
 }

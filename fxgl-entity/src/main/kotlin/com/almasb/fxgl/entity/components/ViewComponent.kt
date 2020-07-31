@@ -72,7 +72,6 @@ class ViewComponent : Component() {
     init {
         viewRoot.opacityProperty().bind(opacityProperty)
         viewRootNoTransform.opacityProperty().bind(viewRoot.opacityProperty())
-
     }
 
     override fun onAdded() {
@@ -210,4 +209,6 @@ class ViewComponent : Component() {
         viewRoot.children.clear()
         viewRootNoTransform.children.clear()
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

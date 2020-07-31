@@ -31,11 +31,15 @@ class ViewTest {
     @Test
     fun `Key view`() {
         KeyCode.values().forEach {
+            KeyView(it)
+            KeyView(it, Color.GOLD)
+
             val view = KeyView(it, Color.WHITE, 15.0)
             view.backgroundColor = Color.AQUAMARINE
             view.keyColor = Color.RED
 
             assertThat(view.backgroundColor, `is`<Paint>(Color.AQUAMARINE))
+            assertThat(view.backgroundColorProperty().value, `is`<Paint>(Color.AQUAMARINE))
             assertThat(view.keyColor, `is`<Paint>(Color.RED))
         }
     }
@@ -43,6 +47,13 @@ class ViewTest {
     @Test
     fun `MouseButton view`() {
         val view = MouseButtonView(MouseButton.PRIMARY, Color.BLUE, 20.0)
+        assertThat(view.color, `is`<Paint>(Color.BLUE))
+
+        view.color = Color.RED
+        assertThat(view.color, `is`<Paint>(Color.RED))
+
+        view.backgroundColor = Color.YELLOW
+        assertThat(view.backgroundColor, `is`<Paint>(Color.YELLOW))
     }
 
     @Test
@@ -64,6 +75,7 @@ class ViewTest {
         view.trigger = trigger
 
         assertThat(view.triggerProperty().value, `is`<Trigger>(trigger))
+        assertThat(view.colorProperty().value, `is`<Color>(Color.BLUE))
         assertTrue(view.children.isNotEmpty())
 
         nodes.forEach {

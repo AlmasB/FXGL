@@ -82,21 +82,15 @@ public class Array<T> implements Iterable<T> {
         System.arraycopy(array.items, 0, items, 0, size);
     }
 
-    /** Creates a new ordered array containing the elements in the specified array. The new array will have the same type of
-     * backing array. The capacity is set to the number of elements, so any subsequent elements added will cause the backing array
-     * to be grown. */
-    public Array(T[] array) {
-        this(true, array, 0, array.length);
-    }
-
-    /** Creates a new array containing the elements in the specified array. The new array will have the same type of backing array.
+    /**
+     * Creates a new ordered array containing the elements in the specified array.
+     * The new array will have the same type of backing array.
      * The capacity is set to the number of elements, so any subsequent elements added will cause the backing array to be grown.
-     * @param ordered If false, methods that remove elements may change the order of other elements in the array, which avoids a
-     *           memory copy. */
-    Array(boolean ordered, T[] array, int start, int count) {
-        this(ordered, count, (Class) array.getClass().getComponentType());
-        size = count;
-        System.arraycopy(array, start, items, 0, size);
+     */
+    public Array(T[] array) {
+        this(true, array.length, array.getClass().getComponentType());
+        size = array.length;
+        System.arraycopy(array, 0, items, 0, size);
     }
 
     /**
@@ -694,21 +688,6 @@ public class Array<T> implements Iterable<T> {
         }
         buffer.append(']');
         return buffer.toString();
-    }
-
-    /** @see #Array(Class) */
-    public static <T> Array<T> of(Class<T> arrayType) {
-        return new Array<T>(arrayType);
-    }
-
-    /** @see #Array(boolean, int, Class) */
-    public static <T> Array<T> of(boolean ordered, int capacity, Class<T> arrayType) {
-        return new Array<T>(ordered, capacity, arrayType);
-    }
-
-    /** @see #Array(Object[]) */
-    public static <T> Array<T> with(T... array) {
-        return new Array(array);
     }
 
     /**

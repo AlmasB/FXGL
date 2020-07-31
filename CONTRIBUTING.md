@@ -50,7 +50,7 @@ You should now see something like this:
 <img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl11_IDEA.jpg" width="400" />
 
 Next:
-1. Add, in the fxgl module, `src/main/java-templates` as sources root in IntelliJ.
+1. In the `fxgl` module, in IntelliJ, right-click on `src/main/java-templates` and mark directory as sources root.
 2. Right-click on the `fxgl-test` module and rebuild `fxgl-test` module.
 
 You should now be able to run samples and tests.

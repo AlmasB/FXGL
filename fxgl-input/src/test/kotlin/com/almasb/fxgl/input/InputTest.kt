@@ -44,6 +44,11 @@ class InputTest {
         action.begin()
         action.action()
         action.end()
+
+        val listener = object : TriggerListener() {}
+        listener.begin(KeyTrigger(KeyCode.A))
+        listener.action(KeyTrigger(KeyCode.A))
+        listener.end(KeyTrigger(KeyCode.A))
     }
 
     @Test
@@ -163,6 +168,68 @@ class InputTest {
         // control will since we specified it as input modifier
         input.mockKeyRelease(KeyCode.CONTROL)
         assertThat(calls, `is`(-1))
+    }
+
+    @Test
+    fun `Input sequence`() {
+        var calls = 0
+
+        input.addAction(object : UserAction("Test") {
+            override fun onActionBegin() {
+                calls++
+            }
+
+            override fun onAction() {
+                calls++
+            }
+
+            override fun onActionEnd() {
+                calls = 99
+            }
+        }, InputSequence(KeyCode.A, KeyCode.D, KeyCode.F))
+
+        input.mockKeyPress(KeyCode.A)
+        input.mockKeyRelease(KeyCode.A)
+        assertThat(calls, `is`(0))
+
+        input.mockKeyPress(KeyCode.D)
+        input.mockKeyRelease(KeyCode.D)
+        assertThat(calls, `is`(0))
+
+        input.mockKeyPress(KeyCode.D)
+        input.mockKeyRelease(KeyCode.D)
+        assertThat(calls, `is`(0))
+
+        input.mockKeyPress(KeyCode.F)
+        input.mockKeyRelease(KeyCode.F)
+        assertThat(calls, `is`(0))
+
+        input.mockKeyPress(KeyCode.A)
+        input.mockKeyRelease(KeyCode.A)
+        assertThat(calls, `is`(0))
+
+        input.mockKeyPress(KeyCode.D)
+        input.mockKeyRelease(KeyCode.D)
+        assertThat(calls, `is`(0))
+
+        input.mockKeyPress(KeyCode.F)
+        assertThat(calls, `is`(1))
+
+        input.update(1.0)
+        assertThat(calls, `is`(2))
+
+        input.update(1.0)
+        assertThat(calls, `is`(3))
+
+        input.update(1.0)
+        assertThat(calls, `is`(4))
+
+        input.mockKeyRelease(KeyCode.F)
+
+        assertThat(calls, `is`(99))
+
+        input.update(1.0)
+        assertThat(calls, `is`(99))
     }
 
     @Test
@@ -531,14 +598,14 @@ class InputTest {
         val e0 = MouseEvent(MouseEvent.MOUSE_CLICKED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
                 false, false, false,
                 false, false, false, false, false, false, false, null)
-        input.onMouseEvent(e0, Point2D.ZERO, 1.0, 1.0)
+        input.onMouseEvent(e0, Point2D.ZERO, Point2D.ZERO, 1.0, 1.0, 1.0)
         assertThat(count, `is`(0))
 
         val e1 = MouseEvent(MouseEvent.MOUSE_PRESSED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
                 false, false, false,
                 false, false, false, false, false, false, false, null)
 
-        input.onMouseEvent(e1, Point2D.ZERO, 1.0, 1.0)
+        input.onMouseEvent(e1, Point2D.ZERO, Point2D.ZERO, 1.0, 1.0, 1.0)
         assertThat(count, `is`(1))
         assertThat(input.mousePositionWorld, `is`(Point2D(10.0, 15.0)))
         assertThat(input.mousePositionUI, `is`(Point2D(10.0, 15.0)))
@@ -547,10 +614,10 @@ class InputTest {
                 false, false, false,
                 false, false, false, false, false, false, false, null)
 
-        input.onMouseEvent(e2, Point2D.ZERO, 1.0, 1.0)
+        input.onMouseEvent(e2, Point2D.ZERO, Point2D.ZERO, 1.0, 1.0, 1.0)
         assertThat(count, `is`(0))
 
-        input.onMouseEvent(MouseEventData(e1, Point2D(15.0, 15.0), 1.0, 1.0))
+        input.onMouseEvent(MouseEventData(e1, Point2D.ZERO, Point2D(15.0, 15.0), 1.0, 1.0, 1.0))
         assertThat(count, `is`(1))
 
         // the viewport (15.0, 15.0) affects the position world, but not UI
@@ -565,18 +632,52 @@ class InputTest {
         assertThat(input.mouseXUIProperty().value, `is`(10.0))
         assertThat(input.mouseYUIProperty().value, `is`(15.0))
 
-        input.onMouseEvent(MouseEventData(e2, Point2D(15.0, 15.0), 1.0, 1.0))
+        input.onMouseEvent(MouseEventData(e2, Point2D.ZERO, Point2D(15.0, 15.0), 1.0, 1.0, 1.0))
         assertThat(count, `is`(0))
 
         input.registerInput = false
 
         // should now ignore any events
 
-        input.onMouseEvent(e1, Point2D.ZERO, 1.0, 1.0)
+        input.onMouseEvent(e1, Point2D.ZERO, Point2D.ZERO, 1.0, 1.0, 1.0)
         assertThat(count, `is`(0))
 
-        input.onMouseEvent(e2, Point2D.ZERO, 1.0, 1.0)
+        input.onMouseEvent(e2, Point2D.ZERO, Point2D.ZERO, 1.0, 1.0, 1.0)
         assertThat(count, `is`(0))
+    }
+
+    @Test
+    fun `On mouse event with content root translation`() {
+        val e0 = MouseEvent(MouseEvent.MOUSE_CLICKED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        input.onMouseEvent(e0, Point2D(5.0, 15.0), Point2D.ZERO, 1.0, 1.0, 1.0)
+
+        assertThat(input.mousePositionWorld, `is`(Point2D(5.0, 0.0)))
+    }
+
+    @Test
+    fun `On mouse event with scaling and zoom`() {
+        val e0 = MouseEvent(MouseEvent.MOUSE_CLICKED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        // scale
+        input.onMouseEvent(e0, Point2D.ZERO, Point2D.ZERO, 1.0, 2.0, 2.0)
+
+        assertThat(input.mousePositionWorld, `is`(Point2D(5.0, 7.5)))
+
+        // zoom
+        input.onMouseEvent(e0, Point2D.ZERO, Point2D.ZERO, 0.5, 1.0, 1.0)
+
+        assertThat(input.mousePositionWorld, `is`(Point2D(20.0, 30.0)))
+
+        // scale and zoom
+
+        input.onMouseEvent(e0, Point2D.ZERO, Point2D.ZERO, 2.0, 0.5, 0.5)
+
+        assertThat(input.mousePositionWorld, `is`(Point2D(10.0, 15.0)))
     }
 
     @Test
@@ -688,6 +789,57 @@ class InputTest {
         assertNull(resultEnd)
     }
 
+    @Test
+    fun `Input capture`() {
+        var calls = 0
+
+        val capture = input.startCapture()
+
+        input.addAction(object : UserAction("Test") {
+            override fun onActionBegin() {
+                calls++
+            }
+
+            override fun onAction() {
+                calls--
+            }
+
+            override fun onActionEnd() {
+                calls++
+            }
+        }, KeyCode.A)
+
+        repeat(100) {
+            input.update(0.016)
+
+            input.mockKeyPress(KeyCode.A)
+            input.mockKeyRelease(KeyCode.A)
+        }
+
+        assertThat(calls, `is`(200))
+
+        input.stopCapture()
+
+        input.applyCapture(capture)
+
+        repeat(50) {
+            input.update(0.016)
+        }
+
+        assertThat(calls, `is`(300))
+
+        repeat(50) {
+            input.update(0.016)
+        }
+
+        assertThat(calls, `is`(400))
+
+        // input capture application should have stopped
+        input.update(0.016)
+
+        assertThat(calls, `is`(400))
+    }
+
 //    @Test
 //    fun `Serialization`() {
 //        val action = object : UserAction("Action") {}
@@ -775,6 +927,15 @@ class InputTest {
     }
 
     @Test
+    fun `Virtual controller view`() {
+        val psView = input.createPSVirtualControllerView()
+        val xboxView = input.createXboxVirtualControllerView()
+
+        assertTrue(psView.children.isNotEmpty())
+        assertTrue(xboxView.children.isNotEmpty())
+    }
+
+    @Test
     fun `Virtual controller correctly handles UI interaction`() {
         var i = 0
 
@@ -819,4 +980,6 @@ class InputTest {
             assertThat(i, `is`(0))
         }
     }
+
+
 }

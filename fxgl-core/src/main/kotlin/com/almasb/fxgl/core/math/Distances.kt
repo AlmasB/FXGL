@@ -11,6 +11,7 @@ import javafx.geometry.Rectangle2D
 
 object Distances {
 
+    // Adapted from https://stackoverflow.com/questions/4978323/how-to-calculate-distance-between-two-rectangles-context-a-game-in-lua
     fun distance(rect1: Rectangle2D, rect2: Rectangle2D): Double {
         val left = rect2.maxX < rect1.minX
         val right = rect2.minX > rect1.maxX

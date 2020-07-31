@@ -19,6 +19,9 @@ internal class SystemBundleService : EngineService() {
     @Inject("isExperimentalNative")
     private var isExperimentalNative = false
 
+    @Inject("isFileSystemWriteAllowed")
+    private var isFileSystemWriteAllowed = true
+
     private lateinit var fs: FileSystemService
 
     internal lateinit var bundle: Bundle
@@ -26,7 +29,7 @@ internal class SystemBundleService : EngineService() {
     override fun onInit() {
         val isFirstRun = !fs.exists("system/")
 
-        if (!isExperimentalNative) {
+        if (!isExperimentalNative && isFileSystemWriteAllowed) {
             if (isFirstRun) {
                 createRequiredDirs()
                 loadDefaultSystemData()
@@ -39,6 +42,9 @@ internal class SystemBundleService : EngineService() {
     }
 
     override fun onExit() {
+        if (!isFileSystemWriteAllowed)
+            return
+
         if (!isExperimentalNative) {
             saveSystemData()
         }

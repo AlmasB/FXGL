@@ -85,7 +85,7 @@ class Viewport
      * @return current visible viewport area
      */
     val visibleArea: Rectangle2D
-        get() = Rectangle2D(x, y, width, height)
+        get() = Rectangle2D(x, y, zoomedWidth.value, zoomedHeight.value)
 
     private val zoom = SimpleDoubleProperty(1.0)
     fun getZoom() = zoom.get()
@@ -104,6 +104,9 @@ class Viewport
     private val minY = SimpleIntegerProperty(Integer.MIN_VALUE)
     private val maxX = SimpleIntegerProperty(Integer.MAX_VALUE)
     private val maxY = SimpleIntegerProperty(Integer.MAX_VALUE)
+
+    private val zoomedWidth = SimpleDoubleProperty(width).divide(zoom)
+    private val zoomedHeight = SimpleDoubleProperty(height).divide(zoom)
 
     var isLazy = false
 
@@ -134,15 +137,15 @@ class Viewport
         val position = entity.transformComponent
 
         // origin X Y with no bounds
-        val bx = position.xProperty().add(-distX)
-        val by = position.yProperty().add(-distY)
+        val bx = position.xProperty().add(SimpleDoubleProperty(-distX).divide(zoom))
+        val by = position.yProperty().add(SimpleDoubleProperty(-distY).divide(zoom))
 
         // origin X Y with bounds applied
-        boundX = Bindings.`when`(bx.lessThan(minX)).then(minX).otherwise(position.xProperty().add(-distX))
-        boundY = Bindings.`when`(by.lessThan(minY)).then(minY).otherwise(position.yProperty().add(-distY))
+        boundX = Bindings.`when`(bx.lessThan(minX)).then(minX).otherwise(bx)
+        boundY = Bindings.`when`(by.lessThan(minY)).then(minY).otherwise(by)
 
-        boundX = Bindings.`when`(bx.greaterThan(maxX.subtract(width))).then(maxX.subtract(width)).otherwise(boundX)
-        boundY = Bindings.`when`(by.greaterThan(maxY.subtract(height))).then(maxY.subtract(height)).otherwise(boundY)
+        boundX = Bindings.`when`(bx.greaterThan(maxX.subtract(zoomedWidth))).then(maxX.subtract(zoomedWidth)).otherwise(boundX)
+        boundY = Bindings.`when`(by.greaterThan(maxY.subtract(zoomedHeight))).then(maxY.subtract(zoomedHeight)).otherwise(boundY)
     }
 
 //    fun bindToFit(xMargin: Double, yMargin: Double, vararg entities: Entity) {

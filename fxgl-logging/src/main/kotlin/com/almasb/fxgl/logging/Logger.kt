@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.logging
 
+import java.io.PrintWriter
+import java.io.StringWriter
 import java.time.LocalTime
 
 /**
@@ -39,6 +41,8 @@ private constructor(private val name: String) {
 
             this.config = config.copy()
             isConfigured = true
+
+            doLog("Logger", "Configured Logger", LoggerLevel.DEBUG)
         }
 
         @JvmStatic fun addOutput(loggerOutput: LoggerOutput, level: LoggerLevel) {
@@ -111,6 +115,8 @@ private constructor(private val name: String) {
                 doLog("Logger", "Logger already closed", LoggerLevel.WARNING)
                 return
             }
+
+            doLog("Logger", "Closing Logger", LoggerLevel.DEBUG)
 
             outputs.forEach(LoggerOutput::close)
             isClosed = true
@@ -194,7 +200,7 @@ private constructor(private val name: String) {
      * Log a fatal level message.
      */
     fun fatal(message: String, error: Throwable) {
-        val trace = errorTraceAsString(error)
+        val trace = error.stackTraceToString()
 
         fatal("$message\n$trace")
     }
@@ -208,19 +214,13 @@ private constructor(private val name: String) {
     fun fatalf(format: String, vararg args: Any) {
         fatal(String.format(format, *args))
     }
+}
 
-    private fun errorTraceAsString(e: Throwable): String {
-        val sb = StringBuilder()
-        sb.append("\nFatal exception occurred: ")
-                .append(e.javaClass.canonicalName)
-                .append(" : ")
-                .append("${e.message}\n")
+fun Throwable.stackTraceToString(): String {
+    val sw = StringWriter()
+    val pw = PrintWriter(sw)
+    this.printStackTrace(pw)
+    pw.close()
 
-        val elements = e.stackTrace
-        for (el in elements) {
-            sb.append("E: ").append(el.toString()).append('\n')
-        }
-
-        return sb.toString()
-    }
+    return sw.toString()
 }

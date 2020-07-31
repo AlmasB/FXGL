@@ -112,11 +112,6 @@ public final class PhysicsComponent extends Component {
             }
 
             @Override
-            protected void onCollision(Entity other) {
-
-            }
-
-            @Override
             protected void onCollisionEnd(Entity other) {
                 groundedList.remove(other);
                 onGroundProperty.setValue(isOnGround());

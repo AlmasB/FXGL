@@ -55,10 +55,11 @@ class EntityTest {
     }
 
     @Test
-    fun `Add component fails if component is anonymous`() {
-        assertThrows(IllegalArgumentException::class.java, {
-            entity.addComponent(object : Component() {})
-        })
+    fun `Add component does not fail if component is anonymous`() {
+        val c = object : Component() {}
+        entity.addComponent(c)
+
+        assertThat(entity.components, hasItem<Component>(c))
     }
 
     @Test
@@ -180,15 +181,6 @@ class EntityTest {
 
         assertThrows(IllegalArgumentException::class.java, {
             entity.addComponent(control)
-        })
-    }
-
-    @Test
-    fun `Add control fails if control is anonymous`() {
-        assertThrows(IllegalArgumentException::class.java, {
-            entity.addComponent(object : Component() {
-                override fun onUpdate(tpf: Double) { }
-            })
         })
     }
 

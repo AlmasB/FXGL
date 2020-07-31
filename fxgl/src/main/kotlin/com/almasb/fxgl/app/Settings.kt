@@ -161,6 +161,21 @@ class GameSettings(
         var isClickFeedbackEnabled: Boolean = false,
 
         /**
+         * If true, entity builder will preload entities on a background thread to speed up
+         * entity building.
+         * Default: true.
+         */
+        var isEntityPreloadEnabled: Boolean = true,
+
+        /**
+         * If true, allows FXGL to make write calls to the file system, for example
+         * to create log files.
+         * In cases where running from a directory that requires elevated privileges,
+         * it is recommended to disable this setting.
+         */
+        var isFileSystemWriteAllowed: Boolean = true,
+
+        /**
          * Setting to false will disable asking for confirmation on exit.
          * This is useful for faster compile -> run -> exit.
          */
@@ -235,14 +250,13 @@ class GameSettings(
         var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
                 // this is the order in which services will be initialized
                 // by design, the order of services should not matter
-                GameApplication.GameApplicationService::class.java,
-                WindowService::class.java,
+                FXGLApplication.GameApplicationService::class.java,
                 FXGLDialogService::class.java,
                 IOTaskExecutorService::class.java,
                 EventBusService::class.java,
                 FileSystemService::class.java,
                 LocalizationService::class.java,
-                AssetLoaderService::class.java,
+                FXGLAssetLoaderService::class.java,
                 SystemBundleService::class.java,
                 SaveLoadService::class.java,
                 FXGLUIFactoryServiceProvider::class.java,
@@ -310,6 +324,8 @@ class GameSettings(
                 isProfilingEnabled,
                 isDeveloperMenuEnabled,
                 isClickFeedbackEnabled,
+                isEntityPreloadEnabled,
+                isFileSystemWriteAllowed,
                 isCloseConfirmation,
                 isSingleStep,
                 applicationMode,
@@ -422,6 +438,21 @@ class ReadOnlyGameSettings internal constructor(
         val isDeveloperMenuEnabled: Boolean,
 
         val isClickFeedbackEnabled: Boolean,
+
+        /**
+         * If true, entity builder will preload entities on a background thread to speed up
+         * entity building.
+         * Default: true.
+         */
+        val isEntityPreloadEnabled: Boolean,
+
+        /**
+         * If true, allows FXGL to make write calls to the file system, for example
+         * to create log files.
+         * In cases where running from a directory that requires elevated privileges,
+         * it is recommended to disable this setting.
+         */
+        val isFileSystemWriteAllowed: Boolean,
 
         /**
          * Setting to false will disable asking for confirmation on exit.
@@ -568,6 +599,9 @@ class ReadOnlyGameSettings internal constructor(
     val devShowBBox = SimpleBooleanProperty(false)
     @get:JvmName("devShowPositionProperty")
     val devShowPosition = SimpleBooleanProperty(false)
+
+    @get:JvmName("devEnableDebugCameraProperty")
+    val devEnableDebugCamera = SimpleBooleanProperty(false)
 
     /*
     Usage of below:
