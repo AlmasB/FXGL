@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.core.concurrent
 
 import com.almasb.fxgl.test.RunWithFX
@@ -12,10 +12,12 @@ import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTimeoutPreemptively
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.junit.jupiter.api.extension.ExtendWith
@@ -42,7 +44,7 @@ class ConcurrencyTest {
 
     @Test
     fun `Test that execute runs in a different thread`() {
-        assertTimeout(ofSeconds(2)) {
+        assertTimeoutPreemptively(ofSeconds(2)) {
             val id1 = Thread.currentThread().id
             var id2 = -1L
 
@@ -63,7 +65,7 @@ class ConcurrencyTest {
     @Test
     @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     fun `Test schedule runs after given delay`() {
-        assertTimeout(ofSeconds(2)) {
+        assertTimeoutPreemptively(ofSeconds(2)) {
             val now = System.currentTimeMillis()
             var diff = -1L
 
@@ -78,13 +80,13 @@ class ConcurrencyTest {
 
             assertThat(diff, `is`(not(-1L)))
             // allow +-200ms error
-            assertTrue(diff > 800 && diff < 1200)
+            assertTrue(diff in 801..1199)
         }
     }
 
     @Test
     fun `Async runs in a different thread`() {
-        assertTimeout(ofSeconds(1)) {
+        assertTimeoutPreemptively(ofSeconds(1)) {
             var count = 0
             val threadID1 = Thread.currentThread().id
             var threadID2 = -333L
@@ -115,7 +117,7 @@ class ConcurrencyTest {
             }
         }.await()
 
-        assertTimeout(ofSeconds(1)) {
+        assertTimeoutPreemptively(ofSeconds(1)) {
             executor.startAsync {
                 throw RuntimeException("Test")
             }.await()
@@ -126,7 +128,7 @@ class ConcurrencyTest {
 
     @Test
     fun `Async FX runs in a FX thread`() {
-        assertTimeout(ofSeconds(1)) {
+        assertTimeoutPreemptively(ofSeconds(1)) {
             var count = 0
             val threadID1 = Thread.currentThread().id
             var threadID2 = -333L
@@ -150,7 +152,7 @@ class ConcurrencyTest {
 
     @Test
     fun `Async FX runs immediately if started in a FX thread`() {
-        assertTimeout(ofSeconds(1)) {
+        assertTimeoutPreemptively(ofSeconds(1)) {
             val latch = CountDownLatch(1)
 
             Platform.runLater {
