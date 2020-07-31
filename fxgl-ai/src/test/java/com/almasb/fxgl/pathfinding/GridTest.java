@@ -91,7 +91,7 @@ public class GridTest {
     @Test
     public void testRandomCell() {
         for (int i = 0; i < 50; i++) {
-            Optional<MockCell> c = grid.getRandomCell(cell -> cell.getX() < 3 && cell.getY() > CELL_HEIGHT);
+            Optional<MockCell> c = grid.getRandomCell(cell -> cell.getX() < 3 && cell.getY() > 15);
             assertTrue(c.isPresent());
 
             MockCell cell = c.get();
