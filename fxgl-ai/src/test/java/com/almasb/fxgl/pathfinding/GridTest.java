@@ -10,18 +10,27 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("java:S5786")
 public class GridTest {
 
     private static final int GRID_SIZE = 20;
+    private static final int CELL_WIDTH = 10;
+    private static final int CELL_HEIGHT = 15;
+
     private Grid<MockCell> grid;
 
     @BeforeEach
@@ -33,6 +42,15 @@ public class GridTest {
     public void testConstructor() {
         grid = new Grid<>(MockCell.class, 5, 5);
         grid.getCells().forEach(Assertions::assertNull);
+        assertEquals(0, grid.getCellWidth());
+        assertEquals(0, grid.getCellHeight());
+    }
+
+    @Test
+    public void testConstructorWithCellSize() {
+        grid = new Grid<>(MockCell.class, 5, 5, CELL_WIDTH, CELL_HEIGHT, new MockCellGenerator());
+        assertEquals(CELL_WIDTH, grid.getCellWidth());
+        assertEquals(CELL_HEIGHT, grid.getCellHeight());
     }
 
     @Test
@@ -140,7 +158,15 @@ public class GridTest {
     public static class MockGrid extends Grid<MockCell> {
 
         public MockGrid(int width, int height) {
-            super(MockCell.class, width, height, (x, y) -> new MockCell(x, y));
+            super(MockCell.class, width, height, MockCell::new);
+        }
+    }
+
+    public static class MockCellGenerator implements CellGenerator<MockCell> {
+
+        @Override
+        public MockCell apply(Integer x, Integer y) {
+            return new MockCell(x,y);
         }
     }
 }
