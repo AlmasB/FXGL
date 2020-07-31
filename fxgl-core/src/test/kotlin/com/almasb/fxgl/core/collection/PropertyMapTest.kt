@@ -253,23 +253,23 @@ class PropertyMapTest {
         assertTrue(s.contains("testInt=IntegerProperty [value: 3]"))
     }
 
-    private var timesCounter = 0
-    private var sumCounter = 0
-
     @Test
     fun `forEach test`() {
+        var timesCounter = 0
+        var sumCounter = 0
+
         map.setValue("testElement1", 2)
         map.setValue("testElement2", 2)
 
-        map.forEach { key, value -> this.counter(key, value) }
+        map.forEach { _, value ->
+            run {
+                timesCounter++
+                sumCounter += (value as SimpleIntegerProperty).value
+            }
+        }
 
         assertEquals(2, timesCounter)
         assertEquals(4, sumCounter)
-    }
-
-    private fun counter(key: String, value: Any) {
-        timesCounter++
-        sumCounter += (value as SimpleIntegerProperty).value
     }
 
     private class MyClass(val i: Int)
