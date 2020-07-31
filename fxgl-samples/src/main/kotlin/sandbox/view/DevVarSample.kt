@@ -21,7 +21,7 @@ const val DOUBLE_PROPERTY = "Double property"
 const val BOOLEAN_PROPERTY = "Boolean property"
 const val OBJECT_PROPERTY = "Object property"
 
-class PropertyMapTest : GameApplication() {
+class DevVarSample : GameApplication() {
 
     private var clickCounter = 0
 
@@ -72,7 +72,7 @@ class PropertyMapTest : GameApplication() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            launch(PropertyMapTest::class.java, args)
+            launch(DevVarSample::class.java, args)
         }
     }
 }
