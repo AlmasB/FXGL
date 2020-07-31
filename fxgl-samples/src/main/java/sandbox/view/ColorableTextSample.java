@@ -8,24 +8,28 @@ package sandbox.view;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.KeyTrigger;
 import com.almasb.fxgl.input.view.TriggerView;
+import com.almasb.fxgl.ui.FXGLTextFlow;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextFlow;
 
-import static com.almasb.fxgl.dsl.FXGL.getGameScene;
+import static com.almasb.fxgl.dsl.FXGL.addUINode;
+import static com.almasb.fxgl.dsl.FXGL.getUIFactoryService;
 
 public class ColorableTextSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
-        settings.setTitle("ColorableTextSample");
+        settings.setWidth(1700);
+        settings.setHeight(900);
     }
 
     @Override
@@ -46,18 +50,46 @@ public class ColorableTextSample extends GameApplication {
             c++;
         }
 
-        VBox vbox = new VBox(20);
-        vbox.setTranslateX(0);
-        vbox.setTranslateY(0);
-        vbox.getChildren().addAll(
+        // Text Flow
+
+        TextFlow t1 = getUIFactoryService().newTextFlow()
+                .append("Press ")
+                .append(KeyCode.V, Color.LIGHTYELLOW)
+                .append(" to use ")
+                .append("Enhanced Vision", Color.DARKGREEN);
+
+        FXGLTextFlow t2 = getUIFactoryService().newTextFlow();
+        t2.append(new TriggerView(new KeyTrigger(KeyCode.A, InputModifier.CTRL))).append("   ");
+        t2.append(new TriggerView(new KeyTrigger(KeyCode.B, InputModifier.SHIFT))).append("   ");
+        t2.append(new TriggerView(new KeyTrigger(KeyCode.C, InputModifier.ALT))).append("   ");
+        t2.append(new TriggerView(new KeyTrigger(KeyCode.SPACE, InputModifier.ALT))).append("   ");
+
+        FXGLTextFlow t3 = getUIFactoryService().newTextFlow();
+        t3.append("Hold: ")
+                .append(MouseButton.PRIMARY, Color.DARKSALMON)
+                .append(" and ")
+                .append(MouseButton.SECONDARY, Color.LIGHTPINK)
+                .append(" to shoot");
+
+        TextFlow t4 = getUIFactoryService().newTextFlow()
+                .append("Discovered Location: ")
+                .append("The New Temple", Color.DARKCYAN, 34);
+
+        addUINode(new VBox(20,
                 box,
                 box2,
                 getKeyTestBox(KeyCode.TAB, Color.PINK),
                 getKeyTestBox(KeyCode.MINUS, Color.PURPLE),
                 getKeyTestBox(KeyCode.PLUS, Color.GRAY)
-        );
+                ));
 
-        getGameScene().addUINode(vbox);
+        addUINode(new VBox(20,
+                t1,
+                t2,
+                t3,
+                t4
+                ),
+                850, 0);
     }
 
     private HBox getKeyTestBox(KeyCode code, Color color) {

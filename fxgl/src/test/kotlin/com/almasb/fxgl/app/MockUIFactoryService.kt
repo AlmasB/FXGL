@@ -49,7 +49,7 @@ object MockUIFactoryService : UIFactoryService() {
     }
 
     override fun newTextFlow(): FXGLTextFlow {
-        return FXGLTextFlow()
+        return FXGLTextFlow(this)
     }
 
     override fun newWindow(): MDIWindow {
