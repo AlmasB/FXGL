@@ -1,0 +1,24 @@
+.fxgl-chat-text-area {
+    -fx-text-fill: lightgray;
+    -fx-background-color: transparent;
+}
+
+.fxgl-chat-text-area .content {
+
+    -fx-background-color: rgba(42, 42, 42, 0.9);
+}
+
+.fxgl-chat-text-input {
+    -fx-text-fill: lightgray;
+    -fx-highlight-fill: derive(-fx-control-inner-background,-20%);
+    -fx-highlight-text-fill: -fx-text-inner-color;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background,-30%);
+    -fx-background-color: rgba(42, 42, 42, 0.9);
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 3, 2;
+    -fx-cursor: text;
+    -fx-padding: 0.333333em 0.583em 0.333333em 0.583em; /* 4 7 4 7 */
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-border-radius: 2;
+}

@@ -23,10 +23,12 @@ import java.util.stream.Collectors;
  */
 public class Grid<T extends Cell> {
 
-    private T[][] data;
+    private final T[][] data;
 
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
+    private final int cellWidth;
+    private final int cellHeight;
 
     /**
      * Note: all cells are initialized to null.
@@ -36,13 +38,22 @@ public class Grid<T extends Cell> {
         this(type, width, height, (x, y) -> null);
     }
 
-    @SuppressWarnings("unchecked")
     public Grid(Class<T> type, int width, int height, CellGenerator<T> populateFunction) {
+        this(type, width, height, 0, 0, populateFunction);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Grid(Class<T> type, int width, int height, int cellWidth, int cellHeight, CellGenerator<T> populateFunction) {
+        if (cellWidth < 0 || cellHeight < 0)
+            throw new IllegalArgumentException("Cannot create grid with cells of negative size");
+
         if (width <= 0 || height <= 0)
             throw new IllegalArgumentException("Cannot create grid with 0 or negative size");
 
         this.width = width;
         this.height = height;
+        this.cellWidth = cellWidth;
+        this.cellHeight = cellHeight;
 
         data = (T[][]) Array.newInstance(type, width, height);
 
@@ -72,6 +83,21 @@ public class Grid<T extends Cell> {
         // data[0].length
         return height;
     }
+
+    /**
+     * @return width of cells
+     */
+    public final int getCellWidth() {
+        return cellWidth;
+    }
+
+    /**
+     * @return height of cells
+     */
+    public final int getCellHeight() {
+        return cellHeight;
+    }
+
 
     /**
      * Checks if given (x,y) is within the bounds of the grid,

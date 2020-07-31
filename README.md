@@ -68,7 +68,7 @@ Already have `pom.xml`? Then add: (use `0.5.4` for Java 8-10). **Note:** make su
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>11.9</version>
+    <version>11.10</version>
 </dependency>
 ```
 
@@ -84,7 +84,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:11.9'
+    compile 'com.github.almasb:fxgl:11.10'
 }
 ```
 
@@ -107,6 +107,14 @@ Community tutorials:
 
 - [Space Ranger](https://www.journaldev.com/40219/space-rangers-game-java-fxgl) at journaldev
 - [Geometry Wars](https://webtechie.be/post/2020-05-07-getting-started-with-fxgl/) at webtechie
+
+Community projects (identified using `fxgl` topic): 
+
+- [SOFTKNK.IO](https://github.com/softknk/softknk.io)
+- [Consume](https://ergoscrit.itch.io/consume)
+- [FXGL Sliding Puzzle](https://github.com/beryx/fxgl-sliding-puzzle)
+
+If you'd like your project featured here, just add a note in the [Chat](https://gitter.im/AlmasB/FXGL).
 
 ### Contribution & Support
 

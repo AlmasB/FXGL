@@ -789,6 +789,57 @@ class InputTest {
         assertNull(resultEnd)
     }
 
+    @Test
+    fun `Input capture`() {
+        var calls = 0
+
+        val capture = input.startCapture()
+
+        input.addAction(object : UserAction("Test") {
+            override fun onActionBegin() {
+                calls++
+            }
+
+            override fun onAction() {
+                calls--
+            }
+
+            override fun onActionEnd() {
+                calls++
+            }
+        }, KeyCode.A)
+
+        repeat(100) {
+            input.update(0.016)
+
+            input.mockKeyPress(KeyCode.A)
+            input.mockKeyRelease(KeyCode.A)
+        }
+
+        assertThat(calls, `is`(200))
+
+        input.stopCapture()
+
+        input.applyCapture(capture)
+
+        repeat(50) {
+            input.update(0.016)
+        }
+
+        assertThat(calls, `is`(300))
+
+        repeat(50) {
+            input.update(0.016)
+        }
+
+        assertThat(calls, `is`(400))
+
+        // input capture application should have stopped
+        input.update(0.016)
+
+        assertThat(calls, `is`(400))
+    }
+
 //    @Test
 //    fun `Serialization`() {
 //        val action = object : UserAction("Action") {}
