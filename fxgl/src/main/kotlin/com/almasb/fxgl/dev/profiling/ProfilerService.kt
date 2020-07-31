@@ -31,7 +31,7 @@ class ProfilerService : EngineService() {
         private val runtime = Runtime.getRuntime()
 
         private const val MB = 1024.0f * 1024.0f
-        private const val TIME_BUFFER_CAPACITY = 30
+        private const val TIME_BUFFER_CAPACITY = 120
     }
 
     private lateinit var sceneService: SceneService
@@ -180,7 +180,7 @@ class ProfilerService : EngineService() {
         // first clear the contents
         sb.setLength(0)
         sb.append("FPS: ").append(currentFPS)
-            .append("\nLast Frame (ms): ").append("%.0f".format(currentTimeTook / 1_000_000.0))
+            .append("\nLast Frame (ms): ").append("%.1f".format(currentTimeTook / 1_000_000.0))
             .append("\nNow Mem (MB): ").append(currentMemoryUsageRounded)
             .append("\nAvg Mem (MB): ").append(avgMemoryUsageRounded)
             .append("\nMin Mem (MB): ").append(minMemoryUsageRounded)
