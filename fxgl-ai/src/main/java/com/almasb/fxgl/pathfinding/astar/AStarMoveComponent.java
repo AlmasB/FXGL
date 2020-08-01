@@ -12,6 +12,7 @@ import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.pathfinding.CellMoveComponent;
+import javafx.beans.value.ObservableValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +45,12 @@ public final class AStarMoveComponent extends Component {
 
     @Override
     public void onAdded() {
-        moveComponent.atDestinationProperty().addListener((o, old, isAtDestination) -> {
-            if (isAtDestination) {
-                delayedPathCalc.run();
-                delayedPathCalc = EmptyRunnable.INSTANCE;
-            }
-        });
+        moveComponent.atDestinationProperty().addListener(this::atDestinationListener);
+    }
+
+    @Override
+    public void onRemoved() {
+        moveComponent.atDestinationProperty().removeListener(this::atDestinationListener);
     }
 
     public boolean isMoving() {
@@ -127,9 +128,12 @@ public final class AStarMoveComponent extends Component {
         if (moveComponent.isAtDestination()) {
             path = pathfinder.get().findPath(startX, startY, targetX, targetY);
         } else {
-            delayedPathCalc = () -> {
-                path = pathfinder.get().findPath(moveComponent.getCellX(), moveComponent.getCellY(), targetX, targetY);
-            };
+            delayedPathCalc = () ->
+                    path = pathfinder.get().findPath(
+                            moveComponent.getCellX(),
+                            moveComponent.getCellY(),
+                            targetX,
+                            targetY);
         }
     }
 
@@ -142,5 +146,13 @@ public final class AStarMoveComponent extends Component {
 
         // move to next adjacent cell
         moveComponent.moveToCell(next.getX(), next.getY());
+    }
+
+    @SuppressWarnings("java:S5411")
+    private void atDestinationListener(ObservableValue<? extends Boolean> o, Boolean old, Boolean isAtDestination) {
+        if (isAtDestination) {
+            delayedPathCalc.run();
+            delayedPathCalc = EmptyRunnable.INSTANCE;
+        }
     }
 }

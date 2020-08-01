@@ -13,6 +13,5 @@ package com.almasb.fxgl.core.util
  */
 object EmptyRunnable : Runnable {
 
-    override fun run() {
-    }
+    override fun run() {}
 }
