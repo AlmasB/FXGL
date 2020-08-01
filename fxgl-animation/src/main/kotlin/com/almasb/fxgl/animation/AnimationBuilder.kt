@@ -315,11 +315,12 @@ open class AnimationBuilder
         }
 
         override fun build(): Animation<*> {
-            objects.forEach { node ->
-                scaleOrigin?.let {
-                    node.setScaleOrigin(it)
+            scaleOrigin?.let { origin ->
+                objects.forEach {
+                    it.setScaleOrigin(origin)
                 }
             }
+
             return makeConfig().build(
                     AnimatedPoint2D(startScale, endScale),
                     Consumer { value ->
@@ -354,11 +355,12 @@ open class AnimationBuilder
         }
 
         override fun build(): Animation<*> {
-            objects.forEach { node ->
-                rotationOrigin?.let {
-                    node.setRotationOrigin(it)
+            rotationOrigin?.let { origin ->
+                objects.forEach {
+                    it.setRotationOrigin(origin)
                 }
             }
+
             return makeConfig().build(AnimatedValue(startAngle, endAngle),
                     Consumer { value ->
                         objects.forEach {
@@ -423,24 +425,15 @@ private fun Node.toAnimatable(): Animatable {
         }
 
         override fun scaleXProperty(): DoubleProperty {
-            return if (scale != null)
-                scale!!.xProperty()
-            else
-                n.scaleXProperty()
+            return scale?.xProperty() ?: n.scaleXProperty()
         }
 
         override fun scaleYProperty(): DoubleProperty {
-            return if (scale != null)
-                scale!!.yProperty()
-            else
-                n.scaleYProperty()
+            return scale?.yProperty() ?: n.scaleYProperty()
         }
 
         override fun rotationProperty(): DoubleProperty {
-            return if (rotate != null)
-                rotate!!.angleProperty()
-            else
-                n.rotateProperty()
+            return rotate?.angleProperty() ?: n.rotateProperty()
         }
 
         override fun opacityProperty(): DoubleProperty {
@@ -448,22 +441,18 @@ private fun Node.toAnimatable(): Animatable {
         }
 
         override fun setScaleOrigin(pivotPoint: Point2D) {
-            scale = Scale()
-            scale?.let {
-                it.pivotXProperty().set(pivotPoint.x)
-                it.pivotYProperty().set(pivotPoint.y)
-                n.transforms.add(it)
-            }
+            scale = Scale(0.0, 0.0, pivotPoint.x, pivotPoint.y)
+                    .also {
+                        n.transforms.add(it)
+                    }
         }
 
         override fun setRotationOrigin(pivotPoint: Point2D) {
-            rotate = Rotate()
-            rotate?.let {
-                it.axis = Rotate.Z_AXIS
-                it.pivotXProperty().set(pivotPoint.x)
-                it.pivotYProperty().set(pivotPoint.y)
-                n.transforms.add(it)
-            }
+            rotate = Rotate(0.0, pivotPoint.x, pivotPoint.y)
+                    .also {
+                        it.axis = Rotate.Z_AXIS
+                        n.transforms.add(it)
+                    }
         }
     }
 }
