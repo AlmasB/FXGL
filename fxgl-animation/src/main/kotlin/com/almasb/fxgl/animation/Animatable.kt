@@ -7,6 +7,7 @@
 package com.almasb.fxgl.animation
 
 import javafx.beans.property.DoubleProperty
+import javafx.geometry.Point2D
 
 /**
  * An object whose position, scale, rotation and opacity can be animated.
@@ -24,4 +25,7 @@ interface Animatable {
     fun rotationProperty(): DoubleProperty
 
     fun opacityProperty(): DoubleProperty
+
+    fun setScaleOrigin(pivotPoint: Point2D)
+    fun setRotationOrigin(pivotPoint: Point2D)
 }
