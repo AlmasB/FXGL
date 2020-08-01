@@ -15,6 +15,8 @@ import javafx.scene.Node
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
+import javafx.scene.text.Text
+import javafx.scene.text.TextFlow
 import javafx.util.Duration
 
 /**
@@ -24,7 +26,7 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-open class MDIWindow : Region() {
+open class MDIWindow() : Region() {
 
     internal enum class ResizeMode {
         NONE,
@@ -59,8 +61,7 @@ open class MDIWindow : Region() {
 
     // CUSTOM
 
-    //private val header = FXGLUIConfig.getUIFactory().newTextFlow()
-    private val header = FXGLTextFlow()
+    private val header = TextFlow()
 
     private val minimizeButton = makeMinimizeButton()
     private val closeButton = makeCloseButton()
@@ -166,7 +167,7 @@ open class MDIWindow : Region() {
 
     private fun updateTitle() {
         header.children.clear()
-        header.append(title, Color.WHITE)
+        header.children.add(Text(title).also { it.fill = Color.WHITE })
     }
 
     init {

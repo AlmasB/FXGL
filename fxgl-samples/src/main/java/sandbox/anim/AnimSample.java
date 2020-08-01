@@ -6,10 +6,7 @@
 
 package sandbox.anim;
 
-import com.almasb.fxgl.animation.AnimatedPoint2D;
 import com.almasb.fxgl.animation.Animation;
-import com.almasb.fxgl.animation.Interpolators;
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.util.LazyValue;
@@ -17,8 +14,6 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-import com.almasb.fxgl.texture.AnimatedTexture;
-import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.texture.ImagesKt;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
@@ -109,9 +104,10 @@ public class AnimSample extends GameApplication {
                 .onFinished(() -> System.out.println("Anim finished"))
                 .duration(Duration.seconds(1))
                 .repeat(5)
-                .translate(e)
-                .from(new Point2D(100, 100))
-                .to(new Point2D(200, 100))
+                .scale(e)
+                .origin(new Point2D(40, 40))
+                .from(new Point2D(1, 1))
+                .to(new Point2D(2, 2))
                 .buildAndPlay();
     }
 

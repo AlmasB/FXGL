@@ -15,6 +15,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
+import java.util.LinkedList
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
@@ -23,12 +24,14 @@ import kotlin.math.roundToLong
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+
 class ProfilerService : EngineService() {
 
     companion object {
         private val runtime = Runtime.getRuntime()
 
         private const val MB = 1024.0f * 1024.0f
+        private const val TIME_BUFFER_CAPACITY = 120
     }
 
     private lateinit var sceneService: SceneService
@@ -41,6 +44,7 @@ class ProfilerService : EngineService() {
     private var fps = 0
     private var currentFPS = 0
     private var currentTimeTook = 0L
+    private val timeBuffer = LinkedList<Long>()
 
     val avgFPS: Int
         get() = fps / frames
@@ -131,7 +135,10 @@ class ProfilerService : EngineService() {
         val timeTook = curNanoTime - prevNanoTime
         prevNanoTime = curNanoTime
 
-        update(fps, timeTook)
+        timeBuffer.addLast(timeTook)
+        if (timeBuffer.size > TIME_BUFFER_CAPACITY) timeBuffer.removeFirst()
+
+        update(fps, timeBuffer.average().toLong())
 
         text.text = buildInfoText()
     }
@@ -173,7 +180,7 @@ class ProfilerService : EngineService() {
         // first clear the contents
         sb.setLength(0)
         sb.append("FPS: ").append(currentFPS)
-            .append("\nLast Frame (ms): ").append("%.0f".format(currentTimeTook / 1_000_000.0))
+            .append("\nLast Frame (ms): ").append("%.1f".format(currentTimeTook / 1_000_000.0))
             .append("\nNow Mem (MB): ").append(currentMemoryUsageRounded)
             .append("\nAvg Mem (MB): ").append(avgMemoryUsageRounded)
             .append("\nMin Mem (MB): ").append(minMemoryUsageRounded)
@@ -186,11 +193,11 @@ class ProfilerService : EngineService() {
         val log = Logger.get(javaClass)
 
         log.info("Processed Frames: $frames")
-        log.info("Average FPS: ${avgFPS}")
-        log.info("Avg Frame Took: ${avgTimeTookRounded} ms")
-        log.info("Avg Memory Usage: ${avgMemoryUsageRounded} MB")
-        log.info("Min Memory Usage: ${minMemoryUsageRounded} MB")
-        log.info("Max Memory Usage: ${maxMemoryUsageRounded} MB")
+        log.info("Average FPS: $avgFPS")
+        log.info("Avg Frame Took: $avgTimeTookRounded ms")
+        log.info("Avg Memory Usage: $avgMemoryUsageRounded MB")
+        log.info("Min Memory Usage: $minMemoryUsageRounded MB")
+        log.info("Max Memory Usage: $maxMemoryUsageRounded MB")
         log.info("Estimated GC runs: $gcRuns")
     }
 }

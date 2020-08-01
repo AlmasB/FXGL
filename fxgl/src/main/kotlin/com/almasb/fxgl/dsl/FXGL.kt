@@ -612,7 +612,7 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun addVarText(propertyName: String, x: Double, y: Double) : Text {
         if (!getWorldProperties().exists(propertyName))
-            throw IllegalArgumentException("Property with name '$propertyName' does not exists in PropertyMap.")
+            throw IllegalArgumentException("Property with name '$propertyName' does not exist in PropertyMap.")
 
         return getUIFactoryService().newText(getPropertyValueAsStringExpression(propertyName))
                     .also { addUINode(it, x, y) }

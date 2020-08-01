@@ -8,9 +8,9 @@ package com.almasb.fxgl.app.scene
 
 import com.almasb.fxgl.dsl.getAppHeight
 import com.almasb.fxgl.dsl.getAppWidth
+import com.almasb.fxgl.dsl.getUIFactoryService
 import com.almasb.fxgl.logging.stackTraceToString
 import com.almasb.fxgl.scene.SubScene
-import com.almasb.fxgl.ui.MDIWindow
 import javafx.scene.control.Button
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.TextArea
@@ -27,7 +27,7 @@ class ErrorSubScene(val error: Throwable, val action: Runnable) : SubScene() {
         val scrollPane = ScrollPane(makeStackTraceArea())
         scrollPane.setPrefSize(getAppWidth().toDouble(), getAppHeight().toDouble())
 
-        val window = MDIWindow()
+        val window = getUIFactoryService().newWindow()
         window.canClose = false
         window.title = "Error Reporter"
         window.contentPane.children += VBox(btnOK, scrollPane)
