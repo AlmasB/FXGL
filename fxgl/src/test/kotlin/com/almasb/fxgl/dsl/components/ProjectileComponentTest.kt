@@ -3,6 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 
 package com.almasb.fxgl.dsl.components
 
@@ -34,6 +35,40 @@ class ProjectileComponentTest {
         assertThat(comp.direction, `is`(Point2D(1.0, 0.0)))
         assertThat(comp.speed, `is`(100.0))
         assertThat(comp.velocity, `is`(Point2D(100.0, 0.0)))
+        assertThat(comp.acceleration, `is`(Point2D(0.0, 0.0)))
+    }
+
+    @Test
+    fun `Creation with acceleration`() {
+        comp = ProjectileComponent(Point2D(0.0, 0.0), 0.0, Point2D(1.0, 1.0))
+        e.addComponent(comp)
+
+        assertThat(comp.acceleration, `is`(Point2D(1.0, 1.0)))
+        assertThat(comp.direction, `is`(Point2D(0.0, 0.0)))
+        assertThat(comp.speed, `is`(0.0))
+    }
+
+    @Test
+    fun `Acceleration change direction and speed`(){
+        val tpf = .01
+        val acceleration = Point2D(100.0, 0.0)
+
+        comp = ProjectileComponent(Point2D(0.0, 0.0), 0.0, acceleration)
+        e.addComponent(comp)
+
+        assertThat(comp.acceleration, `is`(acceleration))
+
+        comp.onUpdate(tpf)
+
+        assertThat(comp.direction, `is`(acceleration.normalize()))
+        assertThat(comp.speed, `is`(acceleration.magnitude().times(tpf)))
+        assertThat(comp.acceleration, `is`(acceleration))
+
+        comp.onUpdate(tpf)
+
+        assertThat(comp.direction, `is`(acceleration.normalize()))
+        assertThat(comp.speed, `is`(acceleration.magnitude().times(2*tpf)))
+        assertThat(comp.acceleration, `is`(acceleration))
     }
 
     @Test

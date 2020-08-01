@@ -18,6 +18,13 @@ import javafx.geometry.Point2D
  */
 class ProjectileComponent(direction: Point2D, speed: Double) : Component() {
 
+    constructor(direction: Point2D, speed: Double, acceleration: Point2D) : this(direction, speed) {
+        this.acceleration = acceleration
+    }
+
+    var acceleration: Point2D = Point2D(0.0, 0.0)
+
+
     var velocity: Point2D = direction.normalize().multiply(speed)
         private set
 
@@ -52,7 +59,7 @@ class ProjectileComponent(direction: Point2D, speed: Double) : Component() {
     /**
      * Checks if rotation is enabled, if so then rotate.
      */
-    private fun updateRotation(){
+    private fun updateRotation() {
         if (isAllowRotation)
             entity.rotateToVector(velocity)
     }
@@ -62,6 +69,8 @@ class ProjectileComponent(direction: Point2D, speed: Double) : Component() {
     }
 
     override fun onUpdate(tpf: Double) {
+        speed = velocity.add(acceleration.multiply(tpf)).magnitude()
+        direction = velocity.add(acceleration.multiply(tpf))
         entity.translate(velocity.multiply(tpf))
     }
 
