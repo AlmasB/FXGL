@@ -48,6 +48,20 @@ class ProjectileComponentTest {
         assertThat(comp.speed, `is`(0.0))
     }
 
+    /***
+     * Set initial acceleration along X axis to 100 units/s squared
+     * initial position and speed (0,0) and 0 accordingly
+     *
+     * after first frame (.01 sec) entity must have:
+     * speed: 1 u/s = ( a * t)
+     * Vavg: (0 + 1) / 2 = .5 u/s
+     * position: (.005, 0) = (Vavg * t)
+     *
+     * after second frame (another .01 sec) entity must have:
+     * speed: 2 u/s = Vprev + (a * t)
+     * Vavg: (1 + 2) / 2 = 1.5 u/s
+     * position (.02, 0) = Pprev + (Vavg * t)
+     */
     @Test
     fun `Acceleration change direction and speed`(){
         val tpf = .01
@@ -63,14 +77,14 @@ class ProjectileComponentTest {
         assertThat(comp.direction, `is`(Point2D(1.0,0.0)))
         assertThat(comp.speed, `is`(1.0))
         assertThat(comp.acceleration, `is`(Point2D(100.0, 0.0)))
-        assertThat(e.position, `is`(Point2D(.01,0.0)))
+        assertThat(e.position, `is`(Point2D(.005,0.0)))
 
         comp.onUpdate(tpf)
 
         assertThat(comp.direction, `is`(Point2D(1.0,0.0)))
         assertThat(comp.speed, `is`(2.0))
         assertThat(comp.acceleration, `is`(Point2D(100.0, 0.0)))
-        assertThat(e.position, `is`(Point2D(.03,0.0)))
+        assertThat(e.position, `is`(Point2D(.02,0.0)))
     }
 
     @Test

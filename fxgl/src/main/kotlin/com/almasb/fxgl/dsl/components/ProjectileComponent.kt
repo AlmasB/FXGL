@@ -69,9 +69,12 @@ class ProjectileComponent(direction: Point2D, speed: Double) : Component() {
     }
 
     override fun onUpdate(tpf: Double) {
+        val prevVelocity = velocity
         speed = velocity.add(acceleration.multiply(tpf)).magnitude()
         direction = velocity.add(acceleration.multiply(tpf))
-        entity.translate(velocity.multiply(tpf))
+        // translating entity by average velocity per frame
+        // i.e. ((initial velocity + final velocity) / 2) * delta time
+        entity.translate(velocity.add(prevVelocity).multiply(tpf / 2.0))
     }
 
     override fun isComponentInjectionRequired(): Boolean = false
