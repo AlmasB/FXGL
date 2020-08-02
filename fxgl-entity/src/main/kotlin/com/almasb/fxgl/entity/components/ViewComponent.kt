@@ -9,13 +9,17 @@ package com.almasb.fxgl.entity.components
 import com.almasb.fxgl.core.View
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
-import javafx.beans.property.*
+import javafx.beans.property.BooleanProperty
+import javafx.beans.property.ReadOnlyIntegerProperty
+import javafx.beans.property.ReadOnlyIntegerWrapper
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.Parent
+import javafx.scene.input.MouseEvent
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
 
