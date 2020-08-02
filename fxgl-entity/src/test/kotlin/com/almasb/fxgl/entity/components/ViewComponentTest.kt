@@ -172,6 +172,40 @@ class ViewComponentTest {
         assertThat(count, `is`(1))
     }
 
+    @Test
+    fun `Add remove on click listener`() {
+        var count = 0
+
+        val l = EventHandler<MouseEvent> { count++ }
+
+        view.addOnClickHandler(l)
+
+        val e0 = MouseEvent(MouseEvent.MOUSE_PRESSED, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        val e1 = MouseEvent(MouseEvent.MOUSE_CLICKED, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        assertThat(count, `is`(0))
+
+        // PRESS does not trigger click
+        view.parent.fireEvent(e0)
+
+        assertThat(count, `is`(0))
+
+        view.parent.fireEvent(e1)
+
+        assertThat(count, `is`(1))
+
+        view.removeOnClickHandler(l)
+
+        view.parent.fireEvent(e1)
+
+        assertThat(count, `is`(1))
+    }
+
     companion object {
         @Suppress("UNUSED")
         @JvmStatic
