@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.core.View
@@ -173,6 +173,7 @@ class ViewComponentTest {
     }
 
     companion object {
+        @Suppress("UNUSED")
         @JvmStatic
         fun childProvider(): Stream<Node> {
             return Stream.of(Rectangle(), TestView())
