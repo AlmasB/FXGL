@@ -25,7 +25,8 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  */
 public class WobbleEffectSample extends GameApplication {
 
-    private static final String[] TEXTURE_NAMES = new String[] {
+    private static final String PROPERTY_NAME = "textureName";
+    private static final String[] TEXTURE_NAMES = new String[]{
             "brick.png",
             "bird.png",
             "coin.png",
@@ -40,34 +41,30 @@ public class WobbleEffectSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        onKeyDown(KeyCode.F, () -> {
-            getGameWorld().getEntities()
-                    .forEach(e -> {
-                        String textureName = e.getString("textureName");
-                        e.getComponent(EffectComponent.class).startEffect(new WobbleEffect(texture(textureName), Duration.seconds(3), 2, 4, Orientation.VERTICAL));
-                    });
-        });
+        onKeyDown(KeyCode.F, () -> getGameWorld().getEntities()
+                .forEach(e -> {
+                    String textureName = e.getString(PROPERTY_NAME);
+                    e.getComponent(EffectComponent.class).startEffect(new WobbleEffect(texture(textureName), Duration.seconds(3), 2, 4, Orientation.VERTICAL));
+                }));
 
-        onKeyDown(KeyCode.G, () -> {
-            getGameWorld().getEntities()
-                    .forEach(e -> {
-                        String textureName = e.getString("textureName");
-                        e.getComponent(EffectComponent.class).startEffect(new WobbleEffect(texture(textureName), Duration.seconds(3), 1, 10, Orientation.HORIZONTAL));
-                    });
-        });
+        onKeyDown(KeyCode.G, () -> getGameWorld().getEntities()
+                .forEach(e -> {
+                    String textureName = e.getString(PROPERTY_NAME);
+                    e.getComponent(EffectComponent.class).startEffect(new WobbleEffect(texture(textureName), Duration.seconds(3), 1, 10, Orientation.HORIZONTAL));
+                }));
     }
 
     @Override
     protected void initGame() {
         getGameScene().setBackgroundColor(Color.LIGHTGRAY);
 
-        int i = 0;
+        double i = 0;
 
         for (String textureName : TEXTURE_NAMES) {
             entityBuilder()
-                    .at(50, 50 + i*75)
+                    .at(50, 50 + i * 75)
                     .view(textureName)
-                    .with("textureName", textureName)
+                    .with(PROPERTY_NAME, textureName)
                     .with(new EffectComponent())
                     .buildAndAttach();
 

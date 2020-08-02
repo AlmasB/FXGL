@@ -13,6 +13,8 @@ import com.almasb.fxgl.dsl.FXGL.Companion.addUINode
 import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
 import com.almasb.fxgl.dsl.FXGL.Companion.getGameScene
 import com.almasb.fxgl.dsl.FXGL.Companion.onKeyDown
+import com.almasb.fxgl.dsl.getUIFactoryService
+import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
 import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
@@ -95,6 +97,11 @@ class ScaleAndRotateSample : GameApplication() {
                     .to(Point2D(2.0,2.0))
                     .buildAndPlay()
         }
+
+        val text = getUIFactoryService().newText("")
+        text.textProperty().bind(Bindings.size(rect.transforms).asString("Num transforms: %d"))
+
+        addUINode(text, 20.0, 20.0)
     }
 
     companion object {
