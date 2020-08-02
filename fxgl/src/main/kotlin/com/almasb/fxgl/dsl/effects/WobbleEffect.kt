@@ -35,23 +35,14 @@ class WobbleEffect
     private var tick = 0
 
     init {
-        val chunkSize = if (orientation == Orientation.HORIZONTAL)
-            texture.image.height / numChunks
-        else
-            texture.image.width / numChunks
+        val chunkSize = getChunkSize()
+        val endVal = getMaxDimension()
+        var minVal = 0.0
 
-        val endVal = if (orientation == Orientation.HORIZONTAL)
-            texture.image.height
-        else
-            texture.image.width
-
-        var prevMinVal = 0.0
-
-        for (i in 0 until numChunks) {
+        while (minVal < endVal) {
             val quad: Texture
 
-            val minVal = prevMinVal
-            val maxVal = if (i == numChunks - 1)
+            val maxVal = if (minVal + chunkSize > endVal)
                 endVal
             else
                 (minVal + chunkSize).toInt().toDouble()
@@ -63,11 +54,26 @@ class WobbleEffect
                 quad = texture.subTexture(Rectangle2D(minVal, 0.0, maxVal - minVal, texture.image.height))
                 quad.translateX = minVal
             }
-            prevMinVal = maxVal
+
+            minVal = maxVal
 
             quads.add(quad)
             newView.children.add(quad)
         }
+    }
+
+    private fun getMaxDimension(): Double {
+        return if (orientation == Orientation.HORIZONTAL)
+            texture.image.height
+        else
+            texture.image.width
+    }
+
+    private fun getChunkSize(): Double {
+        return if (orientation == Orientation.HORIZONTAL)
+            texture.image.height / numChunks
+        else
+            texture.image.width / numChunks
     }
 
     override fun onStart(entity: Entity) {
