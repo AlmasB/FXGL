@@ -35,30 +35,45 @@ class WobbleEffect
     private var tick = 0
 
     init {
-        val chunkSizeDouble = if (orientation == Orientation.HORIZONTAL)
+        val chunkSize = getChunkSize()
+        val endVal = getMaxDimension()
+        var minVal = 0.0
+
+        while (minVal < endVal) {
+            val quad: Texture
+
+            val maxVal = if (minVal + chunkSize > endVal)
+                endVal
+            else
+                (minVal + chunkSize).toInt().toDouble()
+
+            if (orientation == Orientation.HORIZONTAL) {
+                quad = texture.subTexture(Rectangle2D(0.0, minVal, texture.image.width, maxVal - minVal))
+                quad.translateY = minVal
+            } else {
+                quad = texture.subTexture(Rectangle2D(minVal, 0.0, maxVal - minVal, texture.image.height))
+                quad.translateX = minVal
+            }
+
+            minVal = maxVal
+
+            quads.add(quad)
+            newView.children.add(quad)
+        }
+    }
+
+    private fun getMaxDimension(): Double {
+        return if (orientation == Orientation.HORIZONTAL)
+            texture.image.height
+        else
+            texture.image.width
+    }
+
+    private fun getChunkSize(): Double {
+        return if (orientation == Orientation.HORIZONTAL)
             texture.image.height / numChunks
         else
             texture.image.width / numChunks
-
-        val chunkSize = chunkSizeDouble.toInt().toDouble()
-
-
-
-        for (i in 0 until numChunks) {
-            val quad: Texture
-
-            if (orientation == Orientation.HORIZONTAL) {
-                quad = texture.subTexture(Rectangle2D(0.0, i * chunkSize, texture.image.width, chunkSize))
-                quad.translateY = i * chunkSize
-            } else {
-                quad = texture.subTexture(Rectangle2D(i * chunkSize, 0.0, chunkSize, texture.image.height))
-                quad.translateX = i * chunkSize
-            }
-
-            quads.add(quad)
-
-            newView.children.add(quad)
-        }
     }
 
     override fun onStart(entity: Entity) {
