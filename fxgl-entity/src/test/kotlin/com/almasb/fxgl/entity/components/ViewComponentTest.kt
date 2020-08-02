@@ -173,6 +173,7 @@ class ViewComponentTest {
     }
 
     companion object {
+        @Suppress("UNUSED")
         @JvmStatic
         fun childProvider(): Stream<Node> {
             return Stream.of(Rectangle(), TestView())
