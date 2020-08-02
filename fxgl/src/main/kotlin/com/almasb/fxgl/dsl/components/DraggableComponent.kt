@@ -49,4 +49,6 @@ class DraggableComponent : Component() {
         entity.viewComponent.removeEventHandler(MouseEvent.MOUSE_PRESSED, onPress)
         entity.viewComponent.removeEventHandler(MouseEvent.MOUSE_RELEASED, onRelease)
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

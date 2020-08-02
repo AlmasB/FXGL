@@ -57,7 +57,7 @@ open class ParticleComponent(val emitter: ParticleEmitter) : Component() {
         }
 
         if (particles.isEmpty && emitter.isFinished) {
-            onFinished.run();
+            onFinished.run()
         }
     }
 
@@ -75,4 +75,6 @@ open class ParticleComponent(val emitter: ParticleEmitter) : Component() {
 
         parent.removeFromWorld()
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

@@ -59,4 +59,6 @@ class IDComponent
         name = bundle.get("name")
         id = bundle.get("id")
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

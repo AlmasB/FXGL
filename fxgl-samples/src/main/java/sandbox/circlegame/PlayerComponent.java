@@ -12,4 +12,9 @@ import com.almasb.fxgl.entity.component.Component;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class PlayerComponent extends Component {
+
+    @Override
+    public boolean isComponentInjectionRequired() {
+        return false;
+    }
 }

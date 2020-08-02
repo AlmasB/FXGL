@@ -227,4 +227,9 @@ public final class CellMoveComponent extends Component {
             entity.setRotation(270);
         }
     }
+
+    @Override
+    public boolean isComponentInjectionRequired() {
+        return false;
+    }
 }

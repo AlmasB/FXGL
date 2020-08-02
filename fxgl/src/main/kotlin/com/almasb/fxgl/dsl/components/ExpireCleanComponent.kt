@@ -53,4 +53,6 @@ class ExpireCleanComponent(
     fun animateOpacity() = this.apply {
         animate = true
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

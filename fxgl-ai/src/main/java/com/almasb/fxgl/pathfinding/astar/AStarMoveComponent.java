@@ -44,6 +44,9 @@ public final class AStarMoveComponent extends Component {
 
     @Override
     public void onAdded() {
+
+        moveComponent = entity.getComponent(CellMoveComponent.class);
+
         moveComponent.atDestinationProperty().addListener((o, old, isAtDestination) -> {
             if (isAtDestination) {
                 delayedPathCalc.run();
@@ -127,9 +130,7 @@ public final class AStarMoveComponent extends Component {
         if (moveComponent.isAtDestination()) {
             path = pathfinder.get().findPath(startX, startY, targetX, targetY);
         } else {
-            delayedPathCalc = () -> {
-                path = pathfinder.get().findPath(moveComponent.getCellX(), moveComponent.getCellY(), targetX, targetY);
-            };
+            delayedPathCalc = () -> path = pathfinder.get().findPath(moveComponent.getCellX(), moveComponent.getCellY(), targetX, targetY);
         }
     }
 
@@ -142,5 +143,10 @@ public final class AStarMoveComponent extends Component {
 
         // move to next adjacent cell
         moveComponent.moveToCell(next.getX(), next.getY());
+    }
+
+    @Override
+    public boolean isComponentInjectionRequired() {
+        return false;
     }
 }

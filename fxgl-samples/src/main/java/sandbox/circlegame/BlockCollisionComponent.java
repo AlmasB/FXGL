@@ -29,6 +29,7 @@ public class BlockCollisionComponent extends Component {
 
     @Override
     public void onAdded() {
+        randomMove = entity.getComponent(RandomMoveComponent.class);
         blocks = getGameWorld().getEntitiesByType(CircleNNType.BLOCK);
         prevPos = entity.getPosition();
     }
@@ -77,8 +78,8 @@ public class BlockCollisionComponent extends Component {
 
             boolean collision = false;
 
-            for (int j = 0; j < blocks.size(); j++) {
-                if (blocks.get(j).isColliding(entity)) {
+            for (Entity block : blocks) {
+                if (block.isColliding(entity)) {
                     collision = true;
                     break;
                 }
@@ -95,8 +96,8 @@ public class BlockCollisionComponent extends Component {
 
             boolean collision = false;
 
-            for (int j = 0; j < blocks.size(); j++) {
-                if (blocks.get(j).isColliding(entity)) {
+            for (Entity block : blocks) {
+                if (block.isColliding(entity)) {
                     collision = true;
                     break;
                 }
@@ -107,5 +108,10 @@ public class BlockCollisionComponent extends Component {
                 break;
             }
         }
+    }
+
+    @Override
+    public boolean isComponentInjectionRequired() {
+        return false;
     }
 }

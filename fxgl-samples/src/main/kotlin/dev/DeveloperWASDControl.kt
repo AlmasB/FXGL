@@ -69,4 +69,6 @@ class DeveloperWASDControl : Component() {
     fun right() {
         entity.translateX(5 * speed)
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

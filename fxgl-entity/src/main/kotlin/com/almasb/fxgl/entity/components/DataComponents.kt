@@ -39,6 +39,8 @@ abstract class BooleanComponent
     }
 
     override fun toString() = "${javaClass.simpleName.substringBefore("Component")}($value)"
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }
 
 /**
@@ -64,6 +66,8 @@ abstract class IntegerComponent
     }
 
     override fun toString() = "${javaClass.simpleName.substringBefore("Component")}($value)"
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }
 
 /**
@@ -89,6 +93,8 @@ abstract class DoubleComponent
     }
 
     override fun toString() = "${javaClass.simpleName.substringBefore("Component")}($value)"
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }
 
 /**
@@ -114,6 +120,8 @@ abstract class StringComponent
     }
 
     override fun toString() = "${javaClass.simpleName.substringBefore("Component")}($value)"
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }
 
 /**
@@ -130,4 +138,6 @@ abstract class ObjectComponent<T>(initialValue: T) : Component() {
     fun valueProperty() = property
 
     override fun toString() = "${javaClass.simpleName.substringBefore("Component")}($value)"
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }
