@@ -9,11 +9,14 @@ package com.almasb.fxgl.test;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
+import java.util.Map;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class InjectInTest {
+
+    private InjectInTest() {}
 
     /**
      * @param lookup the lookup created by the module where class of instance lives
@@ -32,5 +35,16 @@ public class InjectInTest {
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    /**
+     * Convenience method to mass inject multiple values
+     * @param lookup the lookup created by the module where class of instance lives
+     * @param instance object to inject to
+     * @param fieldsMap Map of field names of instances and values to inject
+     */
+    public static void inject(MethodHandles.Lookup lookup, Object instance, Map<String, Object> fieldsMap) {
+        fieldsMap
+                .forEach((key, value) -> inject(lookup, instance, key, value));
     }
 }

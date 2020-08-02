@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.notification
 
 import com.almasb.fxgl.input.Input
@@ -61,9 +61,11 @@ class NotificationServiceTest {
         val provider = NotificationServiceProvider()
 
         val lookup = MethodHandles.lookup()
+        val injectMap = mapOf(
+                "sceneService" to sceneService,
+                "notificationViewClass" to XboxNotificationView::class.java)
 
-        InjectInTest.inject(lookup, provider, "sceneService", sceneService)
-        InjectInTest.inject(lookup, provider, "notificationViewClass", XboxNotificationView::class.java)
+        InjectInTest.inject(lookup, provider, injectMap)
 
         notificationService = provider
     }
