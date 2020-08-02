@@ -120,11 +120,19 @@ class ViewComponent : Component() {
         parent.addEventHandler(eventType, eventHandler)
     }
 
+    fun addOnClickHandler(eventHandler: EventHandler<MouseEvent>) {
+        addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler)
+    }
+
     /**
      * Remove event handler for event type that occurs on this view.
      */
     fun <T : Event> removeEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>) {
         parent.removeEventHandler(eventType, eventHandler)
+    }
+
+    fun removeOnClickHandler(eventHandler: EventHandler<MouseEvent>) {
+        removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler)
     }
 
     /**
