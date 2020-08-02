@@ -56,19 +56,21 @@ class ProjectileComponentTest {
         comp = ProjectileComponent(Point2D(0.0, 0.0), 0.0, acceleration)
         e.addComponent(comp)
 
-        assertThat(comp.acceleration, `is`(acceleration))
+        assertThat(comp.acceleration, `is`(Point2D(100.0, 0.0)))
 
         comp.onUpdate(tpf)
 
-        assertThat(comp.direction, `is`(acceleration.normalize()))
-        assertThat(comp.speed, `is`(acceleration.magnitude().times(tpf)))
-        assertThat(comp.acceleration, `is`(acceleration))
+        assertThat(comp.direction, `is`(Point2D(1.0,0.0)))
+        assertThat(comp.speed, `is`(1.0))
+        assertThat(comp.acceleration, `is`(Point2D(100.0, 0.0)))
+        assertThat(e.position, `is`(Point2D(.01,0.0)))
 
         comp.onUpdate(tpf)
 
-        assertThat(comp.direction, `is`(acceleration.normalize()))
-        assertThat(comp.speed, `is`(acceleration.magnitude().times(2*tpf)))
-        assertThat(comp.acceleration, `is`(acceleration))
+        assertThat(comp.direction, `is`(Point2D(1.0,0.0)))
+        assertThat(comp.speed, `is`(2.0))
+        assertThat(comp.acceleration, `is`(Point2D(100.0, 0.0)))
+        assertThat(e.position, `is`(Point2D(.03,0.0)))
     }
 
     @Test
