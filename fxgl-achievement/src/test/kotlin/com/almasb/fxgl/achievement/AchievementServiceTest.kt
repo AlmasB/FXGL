@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.achievement
 
 import com.almasb.fxgl.core.collection.PropertyMap
@@ -39,9 +39,11 @@ class AchievementServiceTest {
     fun setUp() {
         achievementManager = AchievementService()
         val lookup = MethodHandles.lookup()
+        val injectMap = mapOf(
+                "achievementsFromSettings" to listOf(a2),
+                "eventBusService" to  EventBusService())
 
-        inject(lookup, achievementManager, "achievementsFromSettings", listOf(a2))
-        inject(lookup, achievementManager, "eventBusService",  EventBusService())
+        inject(lookup, achievementManager, injectMap)
     }
 
     @Test
@@ -63,9 +65,9 @@ class AchievementServiceTest {
 
     @Test
     fun `Fail if achievement not found`() {
-        assertThrows(IllegalArgumentException::class.java, {
+        assertThrows(IllegalArgumentException::class.java) {
             achievementManager.getAchievementByName("NoSuchAchievement")
-        })
+        }
     }
 
     @Test
@@ -167,6 +169,7 @@ class AchievementServiceTest {
     }
 
     companion object {
+        @Suppress("UNUSED")
         @JvmStatic fun varValueProvider(): Stream<Arguments> {
             return Stream.of(
                     arguments(2, 1, 0),

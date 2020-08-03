@@ -1,15 +1,17 @@
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.io
 
 import com.almasb.fxgl.test.InjectInTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
-import java.lang.RuntimeException
 import java.lang.invoke.MethodHandles
-import java.nio.file.Files
 import java.nio.file.Files.*
 import java.nio.file.Paths.get as path
 
@@ -21,6 +23,7 @@ class FileSystemServiceTest {
     companion object {
         private lateinit var fs: FileSystemService
 
+        @Suppress("UNUSED")
         @BeforeAll
         @JvmStatic fun before() {
             cleanUp()
@@ -39,9 +42,11 @@ class FileSystemServiceTest {
             assertTrue(exists(path("testdir/testfile.json")), "test file is not present before")
 
             fs = FileSystemService()
+            val injectMap = mapOf(
+                    "isDesktop" to true,
+                    "isFileSystemWriteAllowed" to true)
 
-            InjectInTest.inject(MethodHandles.lookup(), fs, "isDesktop", true)
-            InjectInTest.inject(MethodHandles.lookup(), fs, "isFileSystemWriteAllowed", true)
+            InjectInTest.inject(MethodHandles.lookup(), fs, injectMap)
 
             fs.onInit()
         }
@@ -118,7 +123,7 @@ class FileSystemServiceTest {
 
         assertTrue(exists(path("somefile.txt")))
 
-        assertThat(Files.readAllLines(path("somefile.txt")), `is`(text))
+        assertThat(readAllLines(path("somefile.txt")), `is`(text))
     }
 
     @Test
@@ -225,9 +230,11 @@ class FileSystemServiceTest {
     @Test
     fun `Fail on mobile if no private storage present`() {
         val f = FileSystemService()
+        val injectMap = mapOf(
+                "isDesktop" to false,
+                "isFileSystemWriteAllowed" to true)
 
-        InjectInTest.inject(MethodHandles.lookup(), f, "isDesktop", false)
-        InjectInTest.inject(MethodHandles.lookup(), f, "isFileSystemWriteAllowed", true)
+        InjectInTest.inject(MethodHandles.lookup(), f, injectMap)
 
         assertThrows<RuntimeException> {
             f.onInit()
@@ -237,9 +244,11 @@ class FileSystemServiceTest {
     @Test
     fun `FS is not changed if FS write is not allowed`() {
         val f = FileSystemService()
+        val injectMap = mapOf(
+                "isDesktop" to true,
+                "isFileSystemWriteAllowed" to false)
 
-        InjectInTest.inject(MethodHandles.lookup(), f, "isDesktop", true)
-        InjectInTest.inject(MethodHandles.lookup(), f, "isFileSystemWriteAllowed", false)
+        InjectInTest.inject(MethodHandles.lookup(), f, injectMap)
 
         val text = listOf("Test Line1", "Test Line2")
 

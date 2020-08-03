@@ -3,15 +3,15 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.services
 
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.services.UpdaterService
 import com.almasb.fxgl.net.NetService
 import com.almasb.fxgl.test.InjectInTest
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
@@ -30,10 +30,12 @@ class UpdaterServiceTest {
         updater = UpdaterService()
 
         val lookup = MethodHandles.lookup()
+        val injectMap = mapOf(
+                "appMode" to ApplicationMode.RELEASE,
+                "urlPOM" to "https://raw.githubusercontent.com/AlmasB/FXGL/master/pom.xml",
+                "netService" to NetService())
 
-        InjectInTest.inject(lookup, updater, "appMode", ApplicationMode.RELEASE)
-        InjectInTest.inject(lookup, updater, "urlPOM", "https://raw.githubusercontent.com/AlmasB/FXGL/master/pom.xml")
-        InjectInTest.inject(lookup, updater, "netService", NetService())
+        InjectInTest.inject(lookup, updater, injectMap)
     }
 
     @Test
