@@ -128,6 +128,7 @@ You can support the FXGL development / show interest by simply starring the repo
 
 * @Marsl10
 * @SergeMerzliakov
+* @mbains
 
 ### Contact
 
