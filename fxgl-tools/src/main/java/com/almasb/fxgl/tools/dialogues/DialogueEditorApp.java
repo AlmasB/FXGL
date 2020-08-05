@@ -34,6 +34,7 @@ public class DialogueEditorApp extends GameApplication {
         // TODO: have a const var name list
         vars.put("isSnapToGrid", true);
         vars.put("isColorMode", true);
+        vars.put("testVar", 0);
     }
 
     @Override
