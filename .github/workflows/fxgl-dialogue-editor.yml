@@ -45,5 +45,5 @@ jobs:
         cp ../../fxgl-tools/target/fxgl-dialogue-editor.zip fxgl/
         git add fxgl/
         git commit -m "upload-build.sh"
-        git push --quiet "https://$env:UP_GH_TOKEN@github.com/AlmasB/builds.git" master
+        git push --quiet https://"$env:UP_GH_TOKEN"@github.com/AlmasB/builds.git master
         echo "Uploaded build"
