@@ -16,6 +16,7 @@ import com.almasb.fxgl.dsl.getAppWidth
 import com.almasb.fxgl.dsl.runOnce
 import com.almasb.fxgl.tools.dialogues.ui.FXGLContextMenu
 import com.almasb.fxgl.logging.Logger
+import com.almasb.fxgl.texture.toImage
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
 import javafx.collections.MapChangeListener
@@ -23,10 +24,13 @@ import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.effect.Glow
 import javafx.scene.input.MouseButton
-import javafx.scene.layout.Pane
+import javafx.scene.layout.*
+import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
+import javafx.scene.shape.Rectangle
 import javafx.scene.transform.Scale
 import javafx.util.Duration
+import kotlin.math.*
 
 /**
  *
@@ -65,6 +69,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 START to start,
                 SUBDIALOGUE to subdialogue
         )
+
+        private const val CELL_SIZE = 40.0
     }
 
     private val contentRoot = Group()
@@ -91,10 +97,20 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     init {
         setPrefSize(getAppWidth().toDouble(), getAppHeight().toDouble())
-        style = "-fx-background-color: gray"
+
+        val cell = Rectangle(CELL_SIZE - 1, CELL_SIZE - 1, Color.GRAY)
+        cell.stroke = Color.WHITESMOKE
+        cell.strokeWidth = 0.2
+
+        val image = toImage(cell)
+
+        val bgGrid = Region()
+        bgGrid.background = Background(BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+                BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)
+        )
 
         contentRoot.children.addAll(
-                edgeViews, views, nodeViews
+                bgGrid, edgeViews, views, nodeViews
         )
 
         contentRoot.transforms += scale
@@ -132,6 +148,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         }
 
         initGraphListeners()
+
+        initGridListener(bgGrid)
     }
 
     private fun initContextMenu() {
@@ -176,6 +194,33 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 }
             }
         }
+    }
+
+    private fun initGridListener(bg: Region) {
+        com.almasb.fxgl.dsl.run({
+            var minX = Double.MAX_VALUE
+            var minY = Double.MAX_VALUE
+            var maxX = -Double.MAX_VALUE
+            var maxY = -Double.MAX_VALUE
+
+            nodeViews.children
+                    .map { it as NodeView }
+                    .forEach {
+                        minX = min(it.layoutX, minX)
+                        minY = min(it.layoutY, minY)
+                        maxX = max(it.layoutX + it.prefWidth, maxX)
+                        maxY = max(it.layoutY + it.prefHeight, maxY)
+                    }
+
+            val margin = 3
+            val div = CELL_SIZE + 1.0
+
+            bg.layoutX = (minX / div).toInt() * div - margin * div
+            bg.layoutY = (minY / div).toInt() * div - margin * div
+
+            bg.prefWidth = ((maxX - bg.layoutX) / div).toInt() * div + margin * div
+            bg.prefHeight = ((maxY - bg.layoutY) / div).toInt() * div + margin * div
+        }, Duration.seconds(0.1))
     }
 
     private fun onAdded(node: DialogueNode) {
