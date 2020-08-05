@@ -40,8 +40,3 @@ jobs:
         asset_path: ./target/fxgl-dialogue-editor.zip
         asset_name: fxgl-dialogue-editor-0.2-win.zip
         asset_content_type: application/zip
-
-
-steps:
-
-  # Step that does that actual cache save and restore
