@@ -44,7 +44,6 @@ jobs:
         git config user.name "up-server"
         cp ../../fxgl-tools/target/fxgl-dialogue-editor.zip fxgl/
         git add fxgl/
-        commit_msg="upload-build.sh"
-        git commit -m "\"$commit_msg\""
+        git commit -m "upload-build.sh"
         git push --quiet "https://$env:UP_GH_TOKEN@github.com/AlmasB/builds.git" master > /dev/null 2>&1
         echo "Uploaded build"
