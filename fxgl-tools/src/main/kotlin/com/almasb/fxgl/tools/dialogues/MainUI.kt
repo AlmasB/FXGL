@@ -37,6 +37,8 @@ class MainUI : BorderPane() {
     private val toolbar = HBox(15.0)
     private val tabPane = TabPane()
 
+    private val preferences by lazy { PreferencesSubScene() }
+
     private val currentTab: DialogueTab?
         get() = tabPane.selectionModel.selectedItem as? DialogueTab
 
@@ -121,9 +123,7 @@ class MainUI : BorderPane() {
     }
 
     private fun openPreferencesDialog() {
-        val alert = Alert(Alert.AlertType.WARNING)
-        alert.contentText = "Preferences NOT IMPLEMENTED yet"
-        alert.show()
+        FXGL.getSceneService().pushSubScene(preferences)
     }
 
     private fun openNewDialog() {

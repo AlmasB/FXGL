@@ -10,6 +10,8 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 
+import java.util.Map;
+
 /**
  * A dialogue editor for FXGL.
  *
@@ -25,6 +27,11 @@ public class DialogueEditorApp extends GameApplication {
         settings.setVersion("1.0");
         settings.getCSSList().add("dialogue_editor.css");
         settings.setIntroEnabled(false);
+    }
+
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("isSnapToGrid", true);
     }
 
     @Override
