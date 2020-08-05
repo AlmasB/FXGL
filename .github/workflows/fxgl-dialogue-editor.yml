@@ -17,7 +17,7 @@ jobs:
       with:
         java-version: 11
     - name: Install FXGL
-      run: mvn -T 4 install -pl :fxgl -am -DskipTests=true -Dgpg.skip=true
+      run: 'mvn -T 4 install -pl :fxgl -am -DskipTests=true -Dgpg.skip=true -Dlicense.skip=true -Dpmd.skip=true'
     - name: Build FXGL dialogue editor for Windows
       run: |
         cd fxgl-tools
