@@ -31,6 +31,7 @@ public class DialogueEditorApp extends GameApplication {
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
+        // TODO: have a const var name list
         vars.put("isSnapToGrid", true);
     }
 

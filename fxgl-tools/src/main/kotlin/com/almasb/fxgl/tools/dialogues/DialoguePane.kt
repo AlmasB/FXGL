@@ -7,13 +7,11 @@
 package com.almasb.fxgl.tools.dialogues
 
 import com.almasb.fxgl.animation.Interpolators
+import com.almasb.fxgl.core.collection.PropertyChangeListener
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.cutscene.dialogue.*
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
-import com.almasb.fxgl.dsl.animationBuilder
-import com.almasb.fxgl.dsl.getAppHeight
-import com.almasb.fxgl.dsl.getAppWidth
-import com.almasb.fxgl.dsl.runOnce
+import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.tools.dialogues.ui.FXGLContextMenu
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.texture.toImage
@@ -70,7 +68,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 SUBDIALOGUE to subdialogue
         )
 
-        private const val CELL_SIZE = 40.0
+        private const val CELL_SIZE = 39.0
+        private const val MARGIN_CELLS = 3
+        private const val CELL_DISTANCE = CELL_SIZE + 1.0
     }
 
     private val contentRoot = Group()
@@ -197,7 +197,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun initGridListener(bg: Region) {
-        com.almasb.fxgl.dsl.run({
+        run({
             var minX = Double.MAX_VALUE
             var minY = Double.MAX_VALUE
             var maxX = -Double.MAX_VALUE
@@ -212,15 +212,23 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                         maxY = max(it.layoutY + it.prefHeight, maxY)
                     }
 
-            val margin = 3
-            val div = CELL_SIZE + 1.0
+            bg.layoutX = (minX / CELL_DISTANCE).toInt() * CELL_DISTANCE - MARGIN_CELLS * CELL_DISTANCE
+            bg.layoutY = (minY / CELL_DISTANCE).toInt() * CELL_DISTANCE - MARGIN_CELLS * CELL_DISTANCE
 
-            bg.layoutX = (minX / div).toInt() * div - margin * div
-            bg.layoutY = (minY / div).toInt() * div - margin * div
-
-            bg.prefWidth = ((maxX - bg.layoutX) / div).toInt() * div + margin * div
-            bg.prefHeight = ((maxY - bg.layoutY) / div).toInt() * div + margin * div
+            bg.prefWidth = ((maxX - bg.layoutX) / CELL_DISTANCE).toInt() * CELL_DISTANCE + MARGIN_CELLS * CELL_DISTANCE
+            bg.prefHeight = ((maxY - bg.layoutY) / CELL_DISTANCE).toInt() * CELL_DISTANCE + MARGIN_CELLS * CELL_DISTANCE
         }, Duration.seconds(0.1))
+
+        // TODO: better kt call site?
+        FXGL.getWorldProperties().addListener<Boolean>("isSnapToGrid", object : PropertyChangeListener<Boolean> {
+            override fun onChange(prev: Boolean, now: Boolean) {
+                if (now) {
+                    nodeViews.children
+                            .map { it as NodeView }
+                            .forEach { snapToGrid(it) }
+                }
+            }
+        })
     }
 
     private fun onAdded(node: DialogueNode) {
@@ -357,7 +365,10 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun attachMouseHandler(nodeView: NodeView) {
-        mouseGestures.makeDraggable(nodeView)
+        mouseGestures.makeDraggable(nodeView) {
+            if (getb("isSnapToGrid"))
+                snapToGrid(nodeView)
+        }
 
         nodeView.closeButton.setOnMouseClicked {
             graph.removeNode(nodeView.node)
@@ -412,6 +423,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 }
             }
         }
+    }
+
+    private fun snapToGrid(nodeView: NodeView) {
+        nodeView.layoutX = (nodeView.layoutX / CELL_DISTANCE).roundToInt() * CELL_DISTANCE
+        nodeView.layoutY = (nodeView.layoutY / CELL_DISTANCE).roundToInt() * CELL_DISTANCE
     }
 
     private fun disconnectOutLink(outPoint: OutLinkPoint) {

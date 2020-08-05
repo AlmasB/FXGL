@@ -14,6 +14,7 @@ import javafx.scene.transform.Scale;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Adapted from Roland C. (https://www.youtube.com/watch?v=1Nx5Be9BDYg).
@@ -37,12 +38,18 @@ public class MouseGestures {
         draggableNodes.put(node, new DragContext(node, context));
     }
 
+    public void makeDraggable(Node node, Consumer<Node> onDragStopped) {
+        draggableNodes.put(node, new DragContext(node, context, onDragStopped));
+    }
+
     private class DragContext {
         private double x;
         private double y;
 
         private Node node;
         private Node context;
+
+        private Consumer<Node> onDragStopped;
 
         private EventHandler<MouseEvent> onMousePressedEventHandler = event -> {
             if (event.getButton() != MouseButton.PRIMARY) {
@@ -65,6 +72,7 @@ public class MouseGestures {
             double offsetX = event.getSceneX() - x;
             double offsetY = event.getSceneY() - y;
 
+            // TODO: not generalizable
             var scale = (Scale) context.getTransforms().get(0);
 
             node.setLayoutX(node.getLayoutX() + offsetX * 1 / scale.getX());
@@ -80,11 +88,17 @@ public class MouseGestures {
             }
 
             isDragging = false;
+            onDragStopped.accept(node);
         };
 
         DragContext(Node node, Node context) {
+            this(node, context, (n) -> {});
+        }
+
+        DragContext(Node node, Node context, Consumer<Node> onDragStopped) {
             this.node = node;
             this.context = context;
+            this.onDragStopped = onDragStopped;
 
             node.setOnMousePressed(onMousePressedEventHandler);
             node.setOnMouseDragged(onMouseDraggedEventHandler);
