@@ -16,11 +16,19 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    - name: Cache maven deps
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
     - name: Install FXGL
       run: mvn -T 4 install -pl :fxgl -am `-DskipTests=true `-Dgpg.skip=true `-Dlicense.skip=true `-Dpmd.skip=true
     - name: Build FXGL dialogue editor for Windows
       run: |
         cd fxgl-tools
+        mvn compile
         mvn javafx:jlink
     - name: Upload FXGL dialogue editor to 11.9
       id: upload-release-asset 
@@ -32,3 +40,8 @@ jobs:
         asset_path: ./target/fxgl-dialogue-editor.zip
         asset_name: fxgl-dialogue-editor-0.2-win.zip
         asset_content_type: application/zip
+
+
+steps:
+
+  # Step that does that actual cache save and restore
