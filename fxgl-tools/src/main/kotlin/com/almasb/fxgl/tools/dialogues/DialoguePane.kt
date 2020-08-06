@@ -15,6 +15,7 @@ import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.tools.dialogues.ui.FXGLContextMenu
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.texture.toImage
+import com.almasb.fxgl.tools.dialogues.ui.SelectionRectangle
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
 import javafx.collections.MapChangeListener
@@ -95,6 +96,13 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     private val mouseGestures = MouseGestures(contentRoot)
 
+    private val selectionRect = SelectionRectangle()
+
+    private var selectionStart = Point2D.ZERO
+    private var isSelectingRectangle = false
+
+    private val selectedNodeViews = arrayListOf<NodeView>()
+
     init {
         setPrefSize(getAppWidth().toDouble(), getAppHeight().toDouble())
 
@@ -111,7 +119,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         bgGrid.isMouseTransparent = true
 
         contentRoot.children.addAll(
-                bgGrid, edgeViews, views, nodeViews
+                bgGrid, edgeViews, views, nodeViews, selectionRect
         )
 
         contentRoot.transforms += scale
@@ -135,12 +143,40 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
         initContextMenu()
 
+        mouseGestures.makeDraggable(selectionRect) {
+            selectionStart = Point2D(selectionRect.layoutX, selectionRect.layoutY)
+        }
+
+        selectionRect.layoutXProperty().addListener { _, prevX, layoutX ->
+            val dx = layoutX.toDouble() - prevX.toDouble()
+
+            selectedNodeViews.forEach {
+                it.layoutX += dx
+            }
+        }
+        selectionRect.layoutYProperty().addListener { _, prevY, layoutY ->
+            val dy = layoutY.toDouble() - prevY.toDouble()
+
+            selectedNodeViews.forEach {
+                it.layoutY += dy
+            }
+        }
+
         setOnMouseMoved {
             mouseX = it.sceneX
             mouseY = it.sceneY
         }
 
         setOnMouseDragged {
+            if (it.isControlDown && isSelectingRectangle) {
+                val vector = contentRoot.sceneToLocal(it.sceneX, it.sceneY).subtract(selectionStart)
+
+                selectionRect.width = vector.x
+                selectionRect.height = vector.y
+
+                return@setOnMouseDragged
+            }
+
             if (mouseGestures.isDragging || it.button != MouseButton.PRIMARY)
                 return@setOnMouseDragged
 
@@ -149,6 +185,32 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
             mouseX = it.sceneX
             mouseY = it.sceneY
+        }
+
+        setOnMousePressed {
+            if (it.isControlDown) {
+                isSelectingRectangle = true
+                selectedNodeViews.clear()
+                selectionStart = contentRoot.sceneToLocal(it.sceneX, it.sceneY)
+                selectionRect.layoutX = selectionStart.x
+                selectionRect.layoutY = selectionStart.y
+                selectionRect.width = 0.0
+                selectionRect.height = 0.0
+                selectionRect.isVisible = true
+            }
+        }
+
+        setOnMouseReleased {
+            if (!isSelectingRectangle) {
+                return@setOnMouseReleased
+            }
+
+            isSelectingRectangle = false
+            selectedNodeViews.addAll(selectionRect.getSelectedNodesIn(nodeViews, NodeView::class.java))
+
+            if (selectedNodeViews.isEmpty()) {
+                selectionRect.isVisible = false
+            }
         }
 
         initGraphListeners()
