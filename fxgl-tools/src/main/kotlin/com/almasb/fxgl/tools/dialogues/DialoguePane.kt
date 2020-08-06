@@ -108,6 +108,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         bgGrid.background = Background(BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)
         )
+        bgGrid.isMouseTransparent = true
 
         contentRoot.children.addAll(
                 bgGrid, edgeViews, views, nodeViews
