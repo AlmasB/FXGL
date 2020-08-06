@@ -121,6 +121,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
             scale.x *= scaleFactor
             scale.y *= scaleFactor
+
+            contentRoot.translateX += it.sceneX * (1 - scaleFactor) * scale.x
+            contentRoot.translateY += it.sceneY * (1 - scaleFactor) * scale.y
         }
 
         children.addAll(contentRoot)

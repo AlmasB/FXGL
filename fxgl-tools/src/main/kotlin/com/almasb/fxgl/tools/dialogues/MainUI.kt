@@ -89,6 +89,8 @@ class MainUI : BorderPane() {
         pane.setPrefSize(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble())
 
         center = pane
+
+        openNewTab()
     }
 
     private fun makeRunButton(): Node {
@@ -120,6 +122,13 @@ class MainUI : BorderPane() {
         stack.children.addAll(bgRun, btnRun)
 
         return stack
+    }
+
+    private fun openNewTab() {
+        val tab = DialogueTab(File("default.json"), DialoguePane())
+
+        tabPane.tabs += tab
+        tabPane.selectionModel.select(tab)
     }
 
     private fun openPreferencesDialog() {
