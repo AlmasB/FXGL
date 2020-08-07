@@ -9,7 +9,6 @@ package com.almasb.fxgl.tools.dialogues;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.FXGL;
 
 import java.util.Map;
 
