@@ -8,6 +8,7 @@ package com.almasb.fxgl.tools.dialogues
 
 import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.tools.dialogues.DialogueEditorVars.IS_SNAP_TO_GRID
 import javafx.geometry.Insets
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
@@ -30,7 +31,7 @@ class PreferencesSubScene : SubScene() {
         vbox.background = Background(BackgroundFill(Color.BLACK, null, null))
 
         val cbSnapToGrid = getUIFactoryService().newCheckBox()
-        cbSnapToGrid.selectedProperty().bindBidirectional(getbp("isSnapToGrid"))
+        cbSnapToGrid.selectedProperty().bindBidirectional(getbp(IS_SNAP_TO_GRID))
 
         val btnClose = getUIFactoryService().newButton("Close")
         btnClose.setOnAction { FXGL.getSceneService().popSubScene() }

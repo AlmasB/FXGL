@@ -10,6 +10,8 @@ import java.util.function.Consumer
 import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
 import com.almasb.fxgl.dsl.*
+import com.almasb.fxgl.input.InputModifier
+import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.tools.dialogues.ui.FXGLContextMenu
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -17,6 +19,7 @@ import javafx.beans.binding.Bindings
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.*
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
@@ -51,8 +54,8 @@ class MainUI : BorderPane() {
         toolbar.alignment = Pos.CENTER_LEFT
 
         val contextMenu = FXGLContextMenu()
-        contextMenu.addItem("New") { openNewDialog() }
-        contextMenu.addItem("Open...") { openLoadDialog() }
+        contextMenu.addItem("New (CTRL+N)") { openNewDialog() }
+        contextMenu.addItem("Open... (CTRL+O)") { openLoadDialog() }
         contextMenu.addItem("Save") { currentTab?.let { onSave(it) } }
         contextMenu.addItem("Save As...") { currentTab?.let { openSaveAsDialog(it) } }
         contextMenu.addItem("Save All") { onSaveAll() }
@@ -60,25 +63,16 @@ class MainUI : BorderPane() {
 
         val pane = Pane(tabPane, toolbar)
 
-        val menuFile = Menu("")
-        menuFile.graphic = getUIFactoryService().newText("File").also {
-            it.setOnMouseClicked {
-                contextMenu.show(pane, 0.0, toolbar.prefHeight)
-            }
+        val menuFile = EditorMenu("File") {
+            contextMenu.show(pane, 0.0, toolbar.prefHeight)
         }
-        menuFile.style = "-fx-background-color: black"
 
-        val menuPreferences = Menu("")
-        menuPreferences.graphic = getUIFactoryService().newText("Preferences").also {
-            it.setOnMouseClicked {
-                openPreferencesDialog()
-            }
+        val menuPreferences = EditorMenu("Preferences") {
+            openPreferencesDialog()
         }
-        menuPreferences.style = "-fx-background-color: black"
 
-        val menuBar = MenuBar()
+        val menuBar = MenuBar(menuFile, menuPreferences)
         menuBar.style = "-fx-background-color: black"
-        menuBar.menus.addAll(menuFile, menuPreferences)
 
         toolbar.children += menuBar
         toolbar.children += makeRunButton()
@@ -91,6 +85,22 @@ class MainUI : BorderPane() {
         center = pane
 
         openNewTab()
+
+        initInput()
+    }
+
+    private fun initInput() {
+        getInput().addAction(object : UserAction("New") {
+            override fun onActionBegin() {
+                openNewDialog()
+            }
+        }, KeyCode.N, InputModifier.CTRL)
+
+        getInput().addAction(object : UserAction("Open") {
+            override fun onActionBegin() {
+                openLoadDialog()
+            }
+        }, KeyCode.O, InputModifier.CTRL)
     }
 
     private fun makeRunButton(): Node {
@@ -163,7 +173,7 @@ class MainUI : BorderPane() {
     private fun openSaveAsDialog(tab: DialogueTab) {
         val chooser = FileChooser()
         chooser.initialDirectory = File(System.getProperty("user.dir"))
-        chooser.initialFileName = tab.file.name + ".json"
+        chooser.initialFileName = tab.file.name
 
         chooser.showSaveDialog(scene.window)?.let {
             val serializedGraph = tab.pane.save()
@@ -186,6 +196,18 @@ class MainUI : BorderPane() {
             tabPane.selectionModel.select(tab)
 
             tab.pane.load(mapper.readValue(it, SerializableGraph::class.java))
+        }
+    }
+
+    private class EditorMenu(name: String, action: () -> Unit) : Menu("") {
+        init {
+            graphic = getUIFactoryService().newText(name).also {
+                it.setOnMouseClicked {
+                    action()
+                }
+            }
+
+            style = "-fx-background-color: black"
         }
     }
 

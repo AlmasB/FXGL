@@ -15,6 +15,7 @@ import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.tools.dialogues.ui.FXGLContextMenu
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.texture.toImage
+import com.almasb.fxgl.tools.dialogues.DialogueEditorVars.IS_SNAP_TO_GRID
 import com.almasb.fxgl.tools.dialogues.ui.SelectionRectangle
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
@@ -286,7 +287,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         }, Duration.seconds(0.1))
 
         // TODO: better kt call site?
-        FXGL.getWorldProperties().addListener<Boolean>("isSnapToGrid", object : PropertyChangeListener<Boolean> {
+        FXGL.getWorldProperties().addListener<Boolean>(IS_SNAP_TO_GRID, object : PropertyChangeListener<Boolean> {
             override fun onChange(prev: Boolean, now: Boolean) {
                 if (now) {
                     nodeViews.children
@@ -432,7 +433,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     private fun attachMouseHandler(nodeView: NodeView) {
         mouseGestures.makeDraggable(nodeView) {
-            if (getb("isSnapToGrid"))
+            if (getb(IS_SNAP_TO_GRID))
                 snapToGrid(nodeView)
         }
 

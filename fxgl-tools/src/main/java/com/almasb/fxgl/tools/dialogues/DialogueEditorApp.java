@@ -6,11 +6,15 @@
 
 package com.almasb.fxgl.tools.dialogues;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 
 import java.util.Map;
+
+import static com.almasb.fxgl.dsl.FXGL.*;
+import static com.almasb.fxgl.tools.dialogues.DialogueEditorVars.*;
 
 /**
  * A dialogue editor for FXGL.
@@ -23,23 +27,24 @@ public class DialogueEditorApp extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1600);
         settings.setHeight(900);
-        settings.setTitle("FXGL Dialogue Editor");
+        settings.setTitle("FXGL Dialogue Editor - github.com/AlmasB/FXGL");
         settings.setVersion("1.0");
         settings.getCSSList().add("dialogue_editor.css");
         settings.setIntroEnabled(false);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+        settings.setCloseConfirmation(settings.getApplicationMode() == ApplicationMode.RELEASE);
     }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        // TODO: have a const var name list
-        vars.put("isSnapToGrid", true);
-        vars.put("isColorMode", true);
-        vars.put("testVar", 0);
+        vars.put(IS_SNAP_TO_GRID, true);
+        vars.put(IS_COLOR_BLIND_MODE, true);
     }
 
     @Override
     protected void initGame() {
-        FXGL.getGameScene().addUINodes(new MainUI());
+        addUINode(new MainUI());
     }
 
     public static void main(String[] args) {
