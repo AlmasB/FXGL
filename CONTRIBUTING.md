@@ -68,6 +68,8 @@ In IntelliJ,
 
 Now you can run your configuration "ALL FXGL TESTS" which runs tests from all modules.
 
+**Note:** if you encounter errors, such as "Cannot create process = 206", go to Edit Configurations again and clear the "working directory" text field.
+
 ## Coding Standards
 
 The project uses the following guidelines:
