@@ -42,7 +42,7 @@ jobs:
         cd builds
         git config user.email "$env:UP_USER_EMAIL"
         git config user.name "up-server"
-        cp ../../fxgl-tools/target/fxgl-dialogue-editor.zip fxgl/
+        cp ../../fxgl-tools/target/fxgl-dialogue-editor.zip fxgl/fxgl-dialogue-editor-win.zip
         git add fxgl/
         git commit -m "upload-build.sh"
         git push --quiet https://"$env:UP_GH_TOKEN"@github.com/AlmasB/builds.git master
