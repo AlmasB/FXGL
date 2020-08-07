@@ -18,13 +18,14 @@ before_install:
 - echo "before_install NOOP"
 install:
 - echo "install NOOP"
+script: mvn test -B -P uber-jar
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=fxgl/target/site/jacoco/jacoco.xml
   -DprojectToken=$CODACY_PROJECT_TOKEN -DapiToken=$CODACY_PROJECT_TOKEN -DcodacyApiBaseUrl=https://api.codacy.com/
 - if [ "$TRAVIS_BRANCH" != "master" ]; then openssl aes-256-cbc -pass pass:$ENC_PASSWORD
   -in .travis/sign.asc.enc -out .travis/sign.asc -d; gpg -q --fast-import .travis/sign.asc;
-  mvn deploy --settings .travis.settings.xml -DskipTests=true; fi
+  mvn deploy --settings .travis.settings.xml -DskipTests=true; chmod +x .travis/upload-build.sh; .travis/upload-build.sh; fi
 notifications:
   email:
     recipients:
