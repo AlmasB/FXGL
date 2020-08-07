@@ -93,6 +93,8 @@ class FXGLContextMenu : StackPane() {
             val bg = Rectangle(120.0, 30.0, Color.TRANSPARENT)
             val text = FXGL.getUIFactoryService().newText(name)
 
+            bg.widthProperty().bind(widthProperty())
+
             bg.fillProperty().bind(
                     Bindings.`when`(hoverProperty()).then(Color.WHITE).otherwise(Color.TRANSPARENT)
             )
