@@ -24,7 +24,7 @@ after_success:
   -DprojectToken=$CODACY_PROJECT_TOKEN -DapiToken=$CODACY_PROJECT_TOKEN -DcodacyApiBaseUrl=https://api.codacy.com/
 - if [ "$TRAVIS_BRANCH" != "master" ]; then openssl aes-256-cbc -pass pass:$ENC_PASSWORD
   -in .travis/sign.asc.enc -out .travis/sign.asc -d; gpg -q --fast-import .travis/sign.asc;
-  mvn deploy --settings .travis.settings.xml -DskipTests=true; chmod +x .travis/upload-build.sh; .travis/upload-build.sh; fi
+  mvn deploy --settings .travis.settings.xml -DskipTests=true; fi
 notifications:
   email:
     recipients:
