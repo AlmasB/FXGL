@@ -429,6 +429,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         if (nodeView.node.type == START) {
             nodeView.closeButton.isVisible = false
         }
+
+        if (getb(IS_SNAP_TO_GRID))
+            snapToGrid(nodeView)
     }
 
     private fun attachMouseHandler(nodeView: NodeView) {
