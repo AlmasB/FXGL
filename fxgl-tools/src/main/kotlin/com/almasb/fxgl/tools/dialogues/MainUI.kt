@@ -205,6 +205,10 @@ class MainUI : BorderPane() {
                 it.setOnMouseClicked {
                     action()
                 }
+
+                it.fillProperty().bind(
+                        Bindings.`when`(it.hoverProperty()).then(Color.LIGHTBLUE).otherwise(Color.WHITE)
+                )
             }
 
             style = "-fx-background-color: black"
