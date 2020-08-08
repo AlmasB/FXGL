@@ -9,6 +9,7 @@ package com.almasb.fxgl.cutscene.dialogue
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
 import com.almasb.fxgl.logging.Logger
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import javafx.beans.property.SimpleStringProperty
 
@@ -28,6 +29,9 @@ private const val GRAPH_VERSION = 1
  * So we resort to manually annotating constructors.
  */
 
+/* SERIALIZABLE DATA STRUCTURES BEGIN */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class SerializableTextNode
 @JsonCreator constructor(
         @JsonProperty("type")
@@ -37,6 +41,7 @@ data class SerializableTextNode
         val text: String
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class SerializableChoiceNode
 @JsonCreator constructor(
         @JsonProperty("type")
@@ -52,6 +57,7 @@ data class SerializableChoiceNode
         val conditions: Map<Int, String>
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class SerializableEdge
 @JsonCreator constructor(
 
@@ -62,6 +68,7 @@ data class SerializableEdge
         val targetID: Int
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class SerializableChoiceEdge
 @JsonCreator constructor(
 
@@ -75,6 +82,7 @@ data class SerializableChoiceEdge
         val targetID: Int
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class SerializablePoint2D
 @JsonCreator constructor(
 
@@ -85,6 +93,7 @@ data class SerializablePoint2D
         val y: Double
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class SerializableGraph
 @JsonCreator constructor(
         @JsonProperty("uniqueID")
@@ -107,6 +116,8 @@ data class SerializableGraph
 
     val uiMetadata = hashMapOf<Int, SerializablePoint2D>()
 }
+
+/* SERIALIZABLE DATA STRUCTURES END */
 
 object DialogueGraphSerializer {
 
