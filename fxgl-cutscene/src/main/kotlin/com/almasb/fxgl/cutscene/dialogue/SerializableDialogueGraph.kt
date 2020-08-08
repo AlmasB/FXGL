@@ -7,6 +7,7 @@
 package com.almasb.fxgl.cutscene.dialogue
 
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
+import com.almasb.fxgl.logging.Logger
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import javafx.beans.property.SimpleStringProperty
@@ -15,6 +16,12 @@ import javafx.beans.property.SimpleStringProperty
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+
+/**
+ * An equivalent of serialVersionUID.
+ * Any changes to the serializable graph data structure need to increment this number by 1.
+ */
+private const val GRAPH_VERSION = 1
 
 /*
  * We can't use jackson-module-kotlin yet since no module-info.java is provided.
@@ -96,10 +103,14 @@ data class SerializableGraph
         val choiceEdges: List<SerializableChoiceEdge>
 ) {
 
+    var version: Int = GRAPH_VERSION
+
     val uiMetadata = hashMapOf<Int, SerializablePoint2D>()
 }
 
 object DialogueGraphSerializer {
+
+    private val log = Logger.get(javaClass)
 
     fun toSerializable(dialogueGraph: DialogueGraph): SerializableGraph {
         val nodesS = dialogueGraph.nodes
@@ -124,6 +135,10 @@ object DialogueGraphSerializer {
     }
 
     fun fromSerializable(sGraph: SerializableGraph): DialogueGraph {
+        if (sGraph.version != GRAPH_VERSION) {
+            log.warning("Deserializing graph with version=${sGraph.version}. Supported version: $GRAPH_VERSION")
+        }
+
         val graph = DialogueGraph(sGraph.uniqueID)
         sGraph.nodes.forEach { (id, n) ->
             val node = when (n.type) {

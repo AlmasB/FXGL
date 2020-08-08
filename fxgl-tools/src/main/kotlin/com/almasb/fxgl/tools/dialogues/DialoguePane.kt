@@ -520,6 +520,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     fun load(serializedGraph: SerializableGraph) {
+        log.info("Loaded graph with version=${serializedGraph.version}")
+
         graph = DialogueGraphSerializer.fromSerializable(serializedGraph)
 
         nodeViews.children.clear()
