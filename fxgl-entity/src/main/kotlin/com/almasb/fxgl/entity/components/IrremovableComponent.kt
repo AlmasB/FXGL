@@ -15,4 +15,6 @@ import com.almasb.fxgl.entity.component.Component
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class IrremovableComponent : Component() {
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

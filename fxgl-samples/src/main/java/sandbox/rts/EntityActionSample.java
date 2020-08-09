@@ -24,7 +24,13 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
+import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
+import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
+import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
+import static com.almasb.fxgl.dsl.FXGL.getGameScene;
+import static com.almasb.fxgl.dsl.FXGL.getInput;
+import static com.almasb.fxgl.dsl.FXGL.getUIFactoryService;
+import static com.almasb.fxgl.dsl.FXGL.texture;
 
 /**
  * Shows how to make entities perform actions.
@@ -178,6 +184,11 @@ public class EntityActionSample extends GameApplication {
             entity.setRotation(now * 0.9 + next * 0.1);
 
             prev = entity.getPosition();
+        }
+
+        @Override
+        public boolean isComponentInjectionRequired() {
+            return false;
         }
     }
 

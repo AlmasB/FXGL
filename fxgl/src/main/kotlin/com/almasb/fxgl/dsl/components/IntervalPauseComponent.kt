@@ -29,4 +29,6 @@ class IntervalPauseComponent(private val map: Map<Class<out Component>, Duration
             }, interval)
         }
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

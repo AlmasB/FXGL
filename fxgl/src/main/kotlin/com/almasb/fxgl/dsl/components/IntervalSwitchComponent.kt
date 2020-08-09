@@ -23,4 +23,6 @@ class IntervalSwitchComponent(initValue: Boolean = false,
             timer.capture()
         }
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

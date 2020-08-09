@@ -389,4 +389,9 @@ public final class PhysicsComponent extends Component {
     public void overwriteAngle(double angDegrees) {
         getBody().setTransform(getBody().getPosition(), (float) -FXGLMath.toRadians(angDegrees));
     }
+
+    @Override
+    public boolean isComponentInjectionRequired() {
+        return false;
+    }
 }

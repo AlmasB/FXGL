@@ -32,4 +32,6 @@ class TrailParticleComponent(t: Texture) : ParticleComponent(ParticleEmitters.ne
         emitter.setSpawnPointFunction { entity.boundingBoxComponent.centerLocal.subtract(t.width / 2, t.width / 2) }
         emitter.setExpireFunction { Duration.millis(150.0) }
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

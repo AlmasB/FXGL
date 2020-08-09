@@ -56,4 +56,6 @@ class FollowComponent(
     private fun canMove(): Boolean {
         return timer.elapsed(moveDelay)
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

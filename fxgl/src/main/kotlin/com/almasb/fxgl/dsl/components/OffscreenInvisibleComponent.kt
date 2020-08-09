@@ -33,4 +33,6 @@ class OffscreenInvisibleComponent
             entity.isVisible = true
         }
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

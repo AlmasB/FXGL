@@ -19,4 +19,6 @@ class TextViewComponent(x: Double, y: Double, val message: String) : ChildViewCo
     init {
         viewRoot.children += text
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

@@ -122,6 +122,11 @@ public class RobotComponent extends Component {
 
     @Override
     public void onAdded() {
+
+        state = entity.getComponent(StateComponent.class);
+        physics = entity.getComponent(PhysicsComponent.class);
+        view = entity.getComponent(ViewComponent.class);
+
         view.addChild(animatedTexture);
 
         state.changeState(STAND);
@@ -195,5 +200,10 @@ public class RobotComponent extends Component {
 
     public void die() {
         state.changeState(DEATH);
+    }
+
+    @Override
+    public boolean isComponentInjectionRequired() {
+        return false;
     }
 }

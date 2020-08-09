@@ -71,4 +71,6 @@ class KeepOnScreenComponent : Component() {
         isVertical = true
         isHorizontal = true
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

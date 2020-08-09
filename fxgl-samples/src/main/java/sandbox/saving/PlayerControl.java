@@ -7,7 +7,6 @@
 package sandbox.saving;
 
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.entity.components.TransformComponent;
 
 /**
@@ -18,6 +17,11 @@ public class PlayerControl extends Component {
     private TransformComponent position;
 
     private double speed = 0;
+
+    @Override
+    public void onAdded() {
+        position = entity.getComponent(TransformComponent.class);
+    }
 
     @Override
     public void onUpdate(double tpf) {
@@ -38,5 +42,10 @@ public class PlayerControl extends Component {
 
     public void right() {
         position.translateX(5 * speed);
+    }
+
+    @Override
+    public boolean isComponentInjectionRequired() {
+        return false;
     }
 }
