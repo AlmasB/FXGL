@@ -51,6 +51,4 @@ open class GenericBarViewComponent @JvmOverloads constructor(
 
     fun valueProperty(): DoubleProperty = bar.currentValueProperty()
     fun maxValueProperty(): DoubleProperty = bar.maxValueProperty()
-
-    override fun isComponentInjectionRequired(): Boolean = false
 }
