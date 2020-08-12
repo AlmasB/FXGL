@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.app.scene
 
-import com.almasb.fxgl.animation.AnimatedColor
-import com.almasb.fxgl.animation.AnimatedCubicBezierPoint2D
 import com.almasb.fxgl.animation.AnimatedPoint2D
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.dsl.FXGL
@@ -19,7 +17,6 @@ import javafx.geometry.Point2D
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
-import javafx.scene.shape.CubicCurve
 import javafx.util.Duration
 import java.util.function.Consumer
 
@@ -115,8 +112,6 @@ class FXGLIntroScene : IntroScene() {
                 .map { (x, y, _) ->
                     Pixel(layoutX = x + 0.0, layoutY = y + 0.0)
                 }
-
-        pixels2.sortBy { it.layoutX }
         
         val canvas = Canvas(appWidth.toDouble(), appHeight.toDouble())
         g = canvas.graphicsContext2D
@@ -129,9 +124,11 @@ class FXGLIntroScene : IntroScene() {
 
         pixels1.forEach { p ->
             animationBuilder(this)
-                    .delay(Duration.seconds(delayIndex + 0.01))
-                    .duration(Duration.seconds(1.0))
-                    .interpolator(Interpolators.CIRCULAR.EASE_OUT())
+                    .autoReverse(true)
+                    .repeat(2)
+                    .delay(Duration.seconds(delayIndex + 0.001))
+                    .duration(Duration.seconds(0.8))
+                    .interpolator(Interpolators.SMOOTH.EASE_OUT())
                     .animate(AnimatedPoint2D(Point2D(0.0, 0.0), Point2D(1.0, 1.0)))
                     .onProgress(Consumer {
                         p.scaleX = it.x
@@ -144,15 +141,15 @@ class FXGLIntroScene : IntroScene() {
 
         timer.runOnceAfter({
             playAnim2()
-        }, Duration.seconds(2.0))
+        }, Duration.seconds(3.0))
 
         timer.runOnceAfter({
             playAnim3()
-        }, Duration.seconds(5.0))
+        }, Duration.seconds(5.5))
 
         timer.runOnceAfter({
             finishIntro()
-        }, Duration.seconds(7.6))
+        }, Duration.seconds(7.9))
     }
 
     private fun playAnim2() {
@@ -164,36 +161,27 @@ class FXGLIntroScene : IntroScene() {
         pixels1.forEach { p ->
             val p2 = pixels2[p.index]
 
-            val animColor = AnimatedColor(p.fill, p2.fill)
+            val offsetX = random(-250, 250)
+            val offsetY = random(-250, 250)
+
+            val baseX = centerX - p.layoutX + p2.layoutX
+            val baseY = centerY - p.layoutY + p2.layoutY
+
+            p.translateX = baseX + offsetX
+            p.translateY = baseY + offsetY
+            p.fill = p2.fill
 
             animationBuilder(this)
-                    .delay(Duration.seconds(delayIndex + 0.11))
-                    .duration(Duration.seconds(0.85))
-                    .interpolator(Interpolators.BOUNCE.EASE_IN_OUT())
-                    .animate(AnimatedPoint2D(
-                            Point2D(p.translateX, p.translateY),
-                            Point2D(centerX - p.layoutX + p2.layoutX, centerY - p.layoutY + p2.layoutY))
-                    )
-
-//                    .animate(AnimatedCubicBezierPoint2D(CubicCurve(
-//                            p.translateX,
-//                            p.translateY,
-//                            random(200.0, 400.0),
-//                            random(-150.0, 200.0),
-//                            random(-300.0, 100.0),
-//                            random(400.0, 500.0),
-//                            centerX - p.layoutX + p2.layoutX,
-//                            centerY - p.layoutY + p2.layoutY))
-//                    )
+                    .delay(Duration.seconds(delayIndex + 0.001))
+                    .duration(Duration.seconds(0.75))
+                    .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
+                    .animate(AnimatedPoint2D(Point2D(0.0, 0.0), Point2D(1.0, 1.0)))
                     .onProgress(Consumer {
-                        p.translateX = it.x
-                        p.translateY = it.y
+                        p.scaleX = it.x
+                        p.scaleY = it.y
 
-                        p.colorProgress += 0.022
-
-                        val progress = minOf(p.colorProgress, 1.0)
-
-                        p.fill = animColor.getValue(progress, Interpolators.EXPONENTIAL.EASE_IN())
+                        p.translateX = baseX + offsetX - offsetX * it.x * it.x
+                        p.translateY = baseY + offsetY - offsetY * it.y * it.x
                     })
                     .buildAndPlay()
 
@@ -206,23 +194,13 @@ class FXGLIntroScene : IntroScene() {
 
         pixels1.forEach { p ->
             animationBuilder(this)
-                    .delay(Duration.seconds(delayIndex + 0.11))
+                    .delay(Duration.seconds(random(delayIndex, delayIndex + 0.21)))
                     .duration(Duration.seconds(1.05))
                     .interpolator(Interpolators.EXPONENTIAL.EASE_IN())
                     .animate(AnimatedPoint2D(
                             Point2D(p.translateX, p.translateY),
                             Point2D(appWidth * 2.0, appHeight * 2.0))
                     )
-//                    .animate(AnimatedCubicBezierPoint2D(CubicCurve(
-//                            p.translateX,
-//                            p.translateY,
-//                            random(200.0, 400.0),
-//                            random(-150.0, 200.0),
-//                            random(-300.0, 100.0),
-//                            random(400.0, 500.0),
-//                            appWidth * 2.0,
-//                            appHeight * 2.0))
-//                    )
                     .onProgress(Consumer {
                         p.translateX = it.x
                         p.translateY = it.y
