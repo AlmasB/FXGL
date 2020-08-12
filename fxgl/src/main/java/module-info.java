@@ -37,6 +37,7 @@ module com.almasb.fxgl.all {
     requires transitive javafx.swing;
 
     requires com.fasterxml.jackson.databind;
+    requires com.gluonhq.attach.lifecycle;
 
     opens com.almasb.fxgl.dsl to com.almasb.fxgl.core;
     opens com.almasb.fxgl.dev to com.almasb.fxgl.core;

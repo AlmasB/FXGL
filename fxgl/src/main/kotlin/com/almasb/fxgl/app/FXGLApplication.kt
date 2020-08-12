@@ -13,7 +13,6 @@ import com.almasb.fxgl.app.scene.LoadingScene
 import com.almasb.fxgl.app.scene.StartupScene
 import com.almasb.fxgl.app.services.FXGLAssetLoaderService
 import com.almasb.fxgl.core.Updatable
-import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.serialization.Bundle
@@ -38,6 +37,8 @@ import com.almasb.fxgl.texture.toImage
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.DialogService
 import com.almasb.fxgl.ui.FontType
+import com.gluonhq.attach.lifecycle.LifecycleEvent
+import com.gluonhq.attach.lifecycle.LifecycleService
 import javafx.application.Application
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.concurrent.Task
@@ -146,13 +147,39 @@ class FXGLApplication : Application() {
     }
 
     private fun initPauseResumeHandler() {
-        if (!settings.isMobile) {
-            mainWindow.iconifiedProperty().addListener { _, _, isMinimized ->
-                if (isMinimized) {
-                    engine.pauseLoop()
-                } else {
-                    engine.resumeLoop()
-                }
+        if (settings.isMobile) {
+            initPauseResumeHandlerMobile()
+        } else {
+            initPauseResumeHandlerDesktop()
+        }
+    }
+
+    private fun initPauseResumeHandlerMobile() {
+        val serviceWrapper = LifecycleService.create()
+
+        if (serviceWrapper.isEmpty) {
+            log.warning("Attach LifecycleService is not present")
+        } else {
+            val service = serviceWrapper.get()
+
+            log.debug("Init pause/resume handlers via Attach LifecycleService")
+
+            service.addListener(LifecycleEvent.PAUSE) {
+                engine.pauseLoop()
+            }
+
+            service.addListener(LifecycleEvent.RESUME) {
+                engine.resumeLoop()
+            }
+        }
+    }
+
+    private fun initPauseResumeHandlerDesktop() {
+        mainWindow.iconifiedProperty().addListener { _, _, isMinimized ->
+            if (isMinimized) {
+                engine.pauseLoop()
+            } else {
+                engine.resumeLoop()
             }
         }
     }
