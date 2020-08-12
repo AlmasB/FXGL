@@ -152,7 +152,7 @@ class FXGLIntroScene : IntroScene() {
 
         timer.runOnceAfter({
             finishIntro()
-        }, Duration.seconds(8.0))
+        }, Duration.seconds(7.6))
     }
 
     private fun playAnim2() {
@@ -164,31 +164,36 @@ class FXGLIntroScene : IntroScene() {
         pixels1.forEach { p ->
             val p2 = pixels2[p.index]
 
-            val animColor = AnimatedColor(p.fill, p2.fill)
+            //val animColor = AnimatedColor(p.fill, p2.fill)
 
             animationBuilder(this)
                     .delay(Duration.seconds(delayIndex + 0.11))
                     .duration(Duration.seconds(1.05))
-                    .interpolator(Interpolators.BOUNCE.EASE_IN_OUT())
-                    .animate(AnimatedCubicBezierPoint2D(CubicCurve(
-                            p.translateX,
-                            p.translateY,
-                            random(200.0, 400.0),
-                            random(-150.0, 200.0),
-                            random(-300.0, 100.0),
-                            random(400.0, 500.0),
-                            centerX - p.layoutX + p2.layoutX,
-                            centerY - p.layoutY + p2.layoutY))
+                    .interpolator(Interpolators.BACK.EASE_IN_OUT())
+                    .animate(AnimatedPoint2D(
+                            Point2D(p.translateX, p.translateY),
+                            Point2D(centerX - p.layoutX + p2.layoutX, centerY - p.layoutY + p2.layoutY))
                     )
+
+//                    .animate(AnimatedCubicBezierPoint2D(CubicCurve(
+//                            p.translateX,
+//                            p.translateY,
+//                            random(200.0, 400.0),
+//                            random(-150.0, 200.0),
+//                            random(-300.0, 100.0),
+//                            random(400.0, 500.0),
+//                            centerX - p.layoutX + p2.layoutX,
+//                            centerY - p.layoutY + p2.layoutY))
+//                    )
                     .onProgress(Consumer {
                         p.translateX = it.x
                         p.translateY = it.y
 
-                        p.colorProgress += 0.022
-
-                        val progress = minOf(p.colorProgress, 1.0)
-
-                        p.fill = animColor.getValue(progress, Interpolators.EXPONENTIAL.EASE_IN())
+//                        p.colorProgress += 0.022
+//
+//                        val progress = minOf(p.colorProgress, 1.0)
+//
+//                        p.fill = animColor.getValue(progress, Interpolators.EXPONENTIAL.EASE_IN())
                     })
                     .buildAndPlay()
 
@@ -202,18 +207,22 @@ class FXGLIntroScene : IntroScene() {
         pixels1.forEach { p ->
             animationBuilder(this)
                     .delay(Duration.seconds(delayIndex + 0.11))
-                    .duration(Duration.seconds(1.25))
+                    .duration(Duration.seconds(1.05))
                     .interpolator(Interpolators.EXPONENTIAL.EASE_IN())
-                    .animate(AnimatedCubicBezierPoint2D(CubicCurve(
-                            p.translateX,
-                            p.translateY,
-                            random(200.0, 400.0),
-                            random(-150.0, 200.0),
-                            random(-300.0, 100.0),
-                            random(400.0, 500.0),
-                            appWidth * 2.0,
-                            appHeight * 2.0))
+                    .animate(AnimatedPoint2D(
+                            Point2D(p.translateX, p.translateY),
+                            Point2D(appWidth * 2.0, appHeight * 2.0))
                     )
+//                    .animate(AnimatedCubicBezierPoint2D(CubicCurve(
+//                            p.translateX,
+//                            p.translateY,
+//                            random(200.0, 400.0),
+//                            random(-150.0, 200.0),
+//                            random(-300.0, 100.0),
+//                            random(400.0, 500.0),
+//                            appWidth * 2.0,
+//                            appHeight * 2.0))
+//                    )
                     .onProgress(Consumer {
                         p.translateX = it.x
                         p.translateY = it.y
