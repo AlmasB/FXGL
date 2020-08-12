@@ -131,7 +131,7 @@ class FXGLIntroScene : IntroScene() {
             animationBuilder(this)
                     .delay(Duration.seconds(delayIndex + 0.01))
                     .duration(Duration.seconds(1.0))
-                    .interpolator(Interpolators.CIRCULAR.EASE_IN_OUT())
+                    .interpolator(Interpolators.CIRCULAR.EASE_OUT())
                     .animate(AnimatedPoint2D(Point2D(0.0, 0.0), Point2D(1.0, 1.0)))
                     .onProgress(Consumer {
                         p.scaleX = it.x
@@ -164,12 +164,12 @@ class FXGLIntroScene : IntroScene() {
         pixels1.forEach { p ->
             val p2 = pixels2[p.index]
 
-            //val animColor = AnimatedColor(p.fill, p2.fill)
+            val animColor = AnimatedColor(p.fill, p2.fill)
 
             animationBuilder(this)
                     .delay(Duration.seconds(delayIndex + 0.11))
-                    .duration(Duration.seconds(1.05))
-                    .interpolator(Interpolators.BACK.EASE_IN_OUT())
+                    .duration(Duration.seconds(0.85))
+                    .interpolator(Interpolators.BOUNCE.EASE_IN_OUT())
                     .animate(AnimatedPoint2D(
                             Point2D(p.translateX, p.translateY),
                             Point2D(centerX - p.layoutX + p2.layoutX, centerY - p.layoutY + p2.layoutY))
@@ -189,11 +189,11 @@ class FXGLIntroScene : IntroScene() {
                         p.translateX = it.x
                         p.translateY = it.y
 
-//                        p.colorProgress += 0.022
-//
-//                        val progress = minOf(p.colorProgress, 1.0)
-//
-//                        p.fill = animColor.getValue(progress, Interpolators.EXPONENTIAL.EASE_IN())
+                        p.colorProgress += 0.022
+
+                        val progress = minOf(p.colorProgress, 1.0)
+
+                        p.fill = animColor.getValue(progress, Interpolators.EXPONENTIAL.EASE_IN())
                     })
                     .buildAndPlay()
 
