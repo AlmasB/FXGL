@@ -211,7 +211,9 @@ class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         titleRoot.translateY = 50.0
 
         particleSystem = ParticleSystem()
-        particleSystem!!.addParticleEmitter(emitter, appWidth / 2.0 - 30, titleRoot.translateY + border.height - 16)
+
+        if (!FXGL.getSettings().isExperimentalNative)
+            particleSystem!!.addParticleEmitter(emitter, appWidth / 2.0 - 30, titleRoot.translateY + border.height - 16)
 
         return titleRoot
     }
