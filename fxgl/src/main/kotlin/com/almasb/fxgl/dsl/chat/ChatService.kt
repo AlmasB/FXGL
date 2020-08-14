@@ -16,7 +16,6 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.net.*
 import com.almasb.fxgl.scene.SceneService
 import javafx.scene.input.KeyCode
-import java.net.Socket
 import java.util.function.Consumer
 
 /**

@@ -8,6 +8,7 @@ package com.almasb.fxgl.net
 
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
+import com.almasb.fxgl.net.Protocol.*
 import java.io.*
 import java.lang.RuntimeException
 
@@ -19,22 +20,29 @@ import java.lang.RuntimeException
 object Writers {
     private val log = Logger.get(javaClass)
 
-    private val map = hashMapOf<Class<*>, WriterFactory<*>>()
+    private val tcpWriters = hashMapOf<Class<*>, WriterFactory<*>>()
+    private val udpWriters = hashMapOf<Class<*>, WriterFactory<*>>()
 
     init {
-        addWriter(Bundle::class.java, WriterFactory { BundleMessageWriter(it) })
-        addWriter(ByteArray::class.java, WriterFactory { ByteArrayMessageWriter(it) })
-        addWriter(String::class.java, WriterFactory { StringMessageWriter(it) })
+        addWriter(TCP, Bundle::class.java, WriterFactory { BundleMessageWriter(it) })
+        addWriter(TCP, ByteArray::class.java, WriterFactory { ByteArrayMessageWriter(it) })
+        addWriter(TCP, String::class.java, WriterFactory { StringMessageWriter(it) })
     }
 
-    fun <T> addWriter(type: Class<T>, factory: WriterFactory<*>) {
-        map[type] = factory
+    fun <T> addWriter(protocol: Protocol, type: Class<T>, factory: WriterFactory<*>) {
+        when (protocol) {
+            TCP -> tcpWriters[type] = factory
+            UDP -> udpWriters[type] = factory
+        }
     }
 
-    fun <T> getWriter(type: Class<T>, out: OutputStream): MessageWriter<T> {
-        log.debug("Getting MessageWriter for $type")
+    fun <T> getWriter(protocol: Protocol, type: Class<T>, out: OutputStream): MessageWriter<T> {
+        log.debug("Getting MessageWriter for $protocol-$type")
 
-        val writerFactory = map[type] ?: throw RuntimeException("No message writer factory for type: $type")
+        val writerFactory = when (protocol) {
+            TCP -> tcpWriters[type] ?: throw RuntimeException("No message writer factory for type: $protocol-$type")
+            UDP -> udpWriters[type] ?: throw RuntimeException("No message writer factory for type: $protocol-$type")
+        }
 
         val writer = writerFactory.create(out) as MessageWriter<T>
 

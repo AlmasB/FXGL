@@ -46,7 +46,9 @@ class NetService : EngineService() {
     fun newUDPClient(ip: String, port: Int): Client<Bundle> = UDPClient(ip, port, Bundle::class.java)
 }
 
-
+enum class Protocol {
+    TCP, UDP
+}
 
 
 

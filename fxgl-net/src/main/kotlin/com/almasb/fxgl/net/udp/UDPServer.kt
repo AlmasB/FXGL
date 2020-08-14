@@ -10,6 +10,7 @@ import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.net.Server
 import java.net.DatagramPacket
 import java.net.DatagramSocket
+import java.util.*
 
 /**
  *
@@ -24,28 +25,38 @@ class UDPServer<T>(val port: Int, private val messageType: Class<T>) : Server<T>
     override fun start() {
         log.debug("Starting to listen at: $port type: $messageType")
 
-        // TODO: while (!isStopped) {}
-
         try {
             DatagramSocket(port).use {
 
                 onStartedListening()
 
-                val buffer = ByteArray(1024)
-
-                val packet = DatagramPacket(buffer, buffer.size)
-
-                it.receive(packet)
-
-
                 var connectionNum = 1
 
-                // TODO: check if address already exists (i.e. connection exists)
-                // re-route the packet to that connection
-                // "Connection" should probably be an abstraction
-                // openNewConnection(socket, connectionNum++, messageType);
-            }
+                val buffer = ByteArray(2048)
 
+                while (!isStopped) {
+
+                    Arrays.fill(buffer, 0)
+
+                    val packet = DatagramPacket(buffer, buffer.size)
+
+                    it.receive(packet)
+
+                    val remoteIP = packet.address.hostAddress
+                    val remotePort = packet.port
+                    val fullIP = remoteIP + remotePort
+
+                    var connection = connections.map { it as UDPConnection }.find { it.fullIP == fullIP }
+
+                    if (connection == null) {
+                        connection = UDPConnection<T>(fullIP, connectionNum++)
+
+                        openUDPConnection(connection)
+                    }
+
+                    connection.receive(packet.data)
+                }
+            }
 
         } catch (e: Exception) {
             // TODO: check logic here
@@ -59,6 +70,8 @@ class UDPServer<T>(val port: Int, private val messageType: Class<T>) : Server<T>
     }
 
     override fun stop() {
-        TODO()
+        isStopped = true
+
+        // TODO: send closing?
     }
 }

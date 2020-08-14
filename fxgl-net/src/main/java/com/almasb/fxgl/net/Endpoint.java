@@ -7,6 +7,8 @@
 package com.almasb.fxgl.net;
 
 import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.net.tcp.SocketConnection;
+import com.almasb.fxgl.net.udp.UDPConnection;
 
 import java.net.Socket;
 import java.util.ArrayList;
@@ -54,19 +56,19 @@ public abstract class Endpoint<T> {
         this.onDisconnected = onDisconnected;
     }
 
-    protected final void openNewConnection(Socket socket, int connectionNum, Class<T> messageType) throws Exception {
+    protected final void openTCPConnection(Socket socket, int connectionNum, Class<T> messageType) throws Exception {
         log.debug(getClass().getSimpleName() + " opening new connection (" + connectionNum + ") from " + socket.getInetAddress() + ":" + socket.getPort() + " type: " + messageType);
 
         socket.setTcpNoDelay(true);
 
-        var connection = new Connection<T>(socket, connectionNum);
+        Connection<T> connection = new SocketConnection<T>(socket, connectionNum);
 
         onConnectionOpened(connection);
 
         new ConnectionThread(getClass().getSimpleName() + "_SendThread-" + connectionNum, () -> {
 
             try {
-                var writer = Writers.INSTANCE.getWriter(messageType, socket.getOutputStream());
+                var writer = Writers.INSTANCE.getWriter(Protocol.TCP, messageType, socket.getOutputStream());
 
                 while (connection.isConnected()) {
                     connection.send(writer);
@@ -95,6 +97,25 @@ public abstract class Endpoint<T> {
         }).start();
     }
 
+    protected final void openUDPConnection(UDPConnection<T> connection) {
+        log.debug("Opening UDP connection (" + connection.getConnectionNum() + ")");
+
+        onConnectionOpened(connection);
+
+        new ConnectionThread(getClass().getSimpleName() + "_SendThread-" + connection.getConnectionNum(), () -> {
+
+            try {
+                while (connection.isConnected()) {
+                    connection.sendUDP();
+                }
+            } catch (Exception e) {
+
+                // TODO:
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
     private void onConnectionOpened(Connection<T> connection) {
         log.debug(getClass().getSimpleName() + " successfully opened connection (" + connection.getConnectionNum() + ")");
 
@@ -103,7 +124,7 @@ public abstract class Endpoint<T> {
         onConnected.accept(connection);
     }
 
-    private void onConnectionClosed(Connection<T> connection) {
+    protected final void onConnectionClosed(Connection<T> connection) {
         log.debug(getClass().getSimpleName() + " connection (" + connection.getConnectionNum() + ") was closed");
 
         connections.remove(connection);

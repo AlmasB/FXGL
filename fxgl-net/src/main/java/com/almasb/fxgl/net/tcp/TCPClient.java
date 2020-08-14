@@ -38,7 +38,7 @@ public class TCPClient<T> extends Client<T> {
         try {
             Socket socket = new Socket(ip, port);
 
-            openNewConnection(socket, 1, messageType);
+            openTCPConnection(socket, 1, messageType);
 
         } catch (Exception e) {
 
