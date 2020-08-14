@@ -135,7 +135,24 @@ class FXGLApplication : Application() {
     private fun postServicesInit() {
         // fonts take a (relatively) long time to load, so load them in parallel
         Async.startAsync {
-            initAndRegisterFontFactories()
+            log.debug("Loading fonts")
+
+            val uiFactory = FXGL.getUIFactoryService()
+
+            val fontUI = FXGL.getAssetLoader().loadFont(settings.fontUI)
+            val fontGame = FXGL.getAssetLoader().loadFont(settings.fontGame)
+            val fontMono = FXGL.getAssetLoader().loadFont(settings.fontMono)
+            val fontText = FXGL.getAssetLoader().loadFont(settings.fontText)
+
+            // but register them on the JavaFX thread
+            Async.startAsyncFX {
+                log.debug("Registering font factories with UI factory")
+
+                uiFactory.registerFontFactory(FontType.UI, fontUI)
+                uiFactory.registerFontFactory(FontType.GAME, fontGame)
+                uiFactory.registerFontFactory(FontType.MONO, fontMono)
+                uiFactory.registerFontFactory(FontType.TEXT, fontText)
+            }
         }
 
         initPauseResumeHandler()
@@ -218,17 +235,6 @@ class FXGLApplication : Application() {
         }
 
         FXGL.getLocalizationService().selectedLanguageProperty().bind(settings.language)
-    }
-
-    private fun initAndRegisterFontFactories() {
-        log.debug("Registering font factories with UI factory")
-
-        val uiFactory = FXGL.getUIFactoryService()
-
-        uiFactory.registerFontFactory(FontType.UI, FXGL.getAssetLoader().loadFont(settings.fontUI))
-        uiFactory.registerFontFactory(FontType.GAME, FXGL.getAssetLoader().loadFont(settings.fontGame))
-        uiFactory.registerFontFactory(FontType.MONO, FXGL.getAssetLoader().loadFont(settings.fontMono))
-        uiFactory.registerFontFactory(FontType.TEXT, FXGL.getAssetLoader().loadFont(settings.fontText))
     }
 
     private fun setFirstSceneAfterStartup() {
