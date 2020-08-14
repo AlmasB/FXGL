@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.minigames.circuitbreaker
 
-import java.util.*
-
 
 /**
  * A 2d maze.

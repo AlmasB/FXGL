@@ -8,7 +8,8 @@ package com.almasb.fxgl.input.virtual
 
 import com.almasb.fxgl.input.Input
 import javafx.beans.binding.Bindings
-import javafx.beans.property.*
+import javafx.beans.property.ReadOnlyObjectProperty
+import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node

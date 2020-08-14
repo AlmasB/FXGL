@@ -6,16 +6,15 @@
 
 package com.almasb.fxgl.entity.level.tiled
 
+import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.texture.getDummyImage
 import com.almasb.fxgl.texture.resize
-import com.almasb.fxgl.logging.Logger
 import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
-import java.lang.Exception
 import java.net.URL
 
 /**

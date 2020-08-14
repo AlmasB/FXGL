@@ -7,12 +7,13 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.core.EngineService;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
+
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

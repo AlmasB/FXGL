@@ -7,7 +7,6 @@
 package com.almasb.fxgl.core.reflect;
 
 import com.almasb.fxgl.core.collection.Array;
-import java.util.function.Function;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -16,6 +15,7 @@ import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * A collection of convenience methods to isolate reflection code.

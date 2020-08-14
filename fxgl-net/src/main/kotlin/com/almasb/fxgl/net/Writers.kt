@@ -8,9 +8,12 @@ package com.almasb.fxgl.net
 
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
-import com.almasb.fxgl.net.Protocol.*
-import java.io.*
-import java.lang.RuntimeException
+import com.almasb.fxgl.net.Protocol.TCP
+import com.almasb.fxgl.net.Protocol.UDP
+import java.io.DataOutputStream
+import java.io.ObjectOutputStream
+import java.io.OutputStream
+import java.io.PrintWriter
 
 /**
  *

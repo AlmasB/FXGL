@@ -12,7 +12,6 @@ import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.audio.getDummyAudio
 import com.almasb.fxgl.audio.impl.DesktopAudioService
-import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.asset.AssetLoaderService
 import com.almasb.fxgl.core.asset.AssetType
 import com.almasb.fxgl.core.collection.PropertyMap

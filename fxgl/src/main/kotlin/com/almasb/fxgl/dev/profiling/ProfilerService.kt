@@ -7,15 +7,15 @@
 package com.almasb.fxgl.dev.profiling
 
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.ui.FontType
 import com.almasb.fxgl.ui.UIFactoryService
-import com.almasb.fxgl.logging.Logger
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
-import java.util.LinkedList
+import java.util.*
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 

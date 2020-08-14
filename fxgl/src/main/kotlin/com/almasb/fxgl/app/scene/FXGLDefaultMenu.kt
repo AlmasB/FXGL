@@ -10,7 +10,6 @@ import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.MenuItem
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
-import java.util.function.Supplier
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
 import com.almasb.fxgl.dsl.FXGL.Companion.random
@@ -18,9 +17,9 @@ import com.almasb.fxgl.dsl.FXGL.Companion.texture
 import com.almasb.fxgl.dsl.getSettings
 import com.almasb.fxgl.dsl.getUIFactoryService
 import com.almasb.fxgl.dsl.localizedStringProperty
+import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
-import com.almasb.fxgl.logging.Logger
 import javafx.animation.FadeTransition
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
@@ -42,6 +41,7 @@ import javafx.scene.paint.*
 import javafx.scene.shape.Polygon
 import javafx.scene.shape.Rectangle
 import javafx.util.Duration
+import java.util.function.Supplier
 
 
 /**

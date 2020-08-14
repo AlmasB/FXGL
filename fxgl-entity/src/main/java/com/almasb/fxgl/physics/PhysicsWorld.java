@@ -14,6 +14,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityWorldListener;
 import com.almasb.fxgl.entity.components.BoundingBoxComponent;
 import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactFilter;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactImpulse;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
@@ -21,7 +22,6 @@ import com.almasb.fxgl.physics.box2d.collision.Manifold;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
-import com.almasb.fxgl.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 

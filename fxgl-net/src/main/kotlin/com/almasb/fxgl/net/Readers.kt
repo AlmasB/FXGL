@@ -8,7 +8,10 @@ package com.almasb.fxgl.net
 
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
-import java.io.*
+import java.io.DataInputStream
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.ObjectInputStream
 
 
 /**

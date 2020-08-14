@@ -9,12 +9,7 @@ package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.achievement.AchievementService
 import com.almasb.fxgl.animation.AnimationBuilder
-import com.almasb.fxgl.app.ApplicationMode
-import com.almasb.fxgl.app.Engine
-import com.almasb.fxgl.app.FXGLApplication
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.app.GameController
-import com.almasb.fxgl.app.ReadOnlyGameSettings
+import com.almasb.fxgl.app.*
 import com.almasb.fxgl.app.services.FXGLAssetLoaderService
 import com.almasb.fxgl.app.services.IOTaskExecutorService
 import com.almasb.fxgl.app.services.SystemBundleService
@@ -56,15 +51,7 @@ import com.almasb.fxgl.ui.DialogService
 import com.almasb.fxgl.ui.UIFactoryService
 import javafx.animation.Interpolator
 import javafx.beans.binding.StringExpression
-import javafx.beans.property.BooleanProperty
-import javafx.beans.property.DoubleProperty
-import javafx.beans.property.IntegerProperty
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.SimpleBooleanProperty
-import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.property.SimpleIntegerProperty
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.property.StringProperty
+import javafx.beans.property.*
 import javafx.concurrent.Task
 import javafx.event.Event
 import javafx.event.EventHandler
@@ -76,7 +63,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.text.Text
 import javafx.util.Duration
-import java.util.Optional
+import java.util.*
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 

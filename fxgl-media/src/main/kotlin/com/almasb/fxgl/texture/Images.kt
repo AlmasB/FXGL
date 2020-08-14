@@ -7,7 +7,6 @@
 package com.almasb.fxgl.texture
 
 import com.almasb.fxgl.core.concurrent.Async
-import javafx.geometry.HorizontalDirection
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.SnapshotParameters

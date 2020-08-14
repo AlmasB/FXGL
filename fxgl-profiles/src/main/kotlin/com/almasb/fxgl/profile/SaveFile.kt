@@ -9,7 +9,6 @@ package com.almasb.fxgl.profile
 import com.almasb.fxgl.core.serialization.Bundle
 import java.io.Serializable
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

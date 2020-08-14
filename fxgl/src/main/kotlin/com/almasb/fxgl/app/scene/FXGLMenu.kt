@@ -14,12 +14,12 @@ import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.TriggerView
+import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.profile.SaveFile
 import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.FXGLScrollPane
 import com.almasb.fxgl.ui.FontType
-import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import javafx.collections.FXCollections
