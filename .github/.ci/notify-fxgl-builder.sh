@@ -6,7 +6,7 @@ cd tmp
 git clone --quiet https://github.com/AlmasB/builds-fxgl
 
 # in ./tmp/builds-fxgl
-cd builds-fxgl-dialogue-editor
+cd builds-fxgl
 
 git config user.email "$UP_USER_EMAIL"
 git config user.name "up-server"
