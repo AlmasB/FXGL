@@ -15,14 +15,26 @@ jdk:
 - openjdk-ea
 
 before_install:
-- echo "before_install NOOP"
+- echo "before_install $TRAVIS_JDK_VERSION"
+
 install:
 - echo "install NOOP"
+
+script:
+- echo "script NOOP"
+
 after_success:
-- bash <(curl -s https://codecov.io/bash)
-- if [ "$TRAVIS_BRANCH" != "master" ]; then openssl aes-256-cbc -pass pass:$ENC_PASSWORD
-  -in .travis/sign.asc.enc -out .travis/sign.asc -d; gpg -q --fast-import .travis/sign.asc;
-  mvn deploy --settings .travis.settings.xml -DskipTests=true; chmod +x .travis/upload-build.sh; .travis/upload-build.sh; fi
+- echo "after_success NOOP"
+
+deploy:
+    # release dev build of FXGL dialogue editor
+  - provider: script
+    script: bash .github/.ci/notify-fxgl-dialogue-editor-builder.sh
+    # 
+    on:
+      branch: dev
+      condition: $TRAVIS_PULL_REQUEST = false && $TRAVIS_JDK_VERSION = openjdk11
+
 notifications:
   email:
     recipients:
@@ -34,6 +46,7 @@ notifications:
     - https://webhooks.gitter.im/e/afbf0239aac6566f24d4
     on_success: change
     on_failure: always
+
 env:
   global:
   - secure: fRP4CU2qkv47HOd1PBrkGgwsP6To81AYuzi342fxnNTBv313c5fU+HCLYrYI5xNTYfE2b+Iax+A0ypbBbZ2XU+NtbI4OiAYCcBSiFOxFU/gty5neWvyRKG32qtUSNqdEPmx6EzdAjpFss3fyu6AB+g93SLC6S9IBiOxnS3av7cQ=
