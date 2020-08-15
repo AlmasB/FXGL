@@ -15,7 +15,7 @@ jdk:
 - openjdk-ea
 
 before_install:
-- echo "before_install $TRAVIS_JDK_VERSION"
+- echo $TRAVIS_JDK_VERSION
 
 install:
 - echo "install NOOP"
@@ -30,7 +30,8 @@ deploy:
     # release dev build of FXGL dialogue editor
   - provider: script
     script: bash .github/.ci/notify-fxgl-dialogue-editor-builder.sh
-    # 
+    skip_cleanup: true
+    # only notify when on "dev", not PR and JDK11 build succeeds
     on:
       branch: dev
       condition: $TRAVIS_PULL_REQUEST = false && $TRAVIS_JDK_VERSION = openjdk11
