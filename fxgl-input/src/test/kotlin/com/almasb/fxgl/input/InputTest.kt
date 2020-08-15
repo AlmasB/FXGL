@@ -15,8 +15,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.hasItem
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -838,6 +837,22 @@ class InputTest {
         input.update(0.016)
 
         assertThat(calls, `is`(400))
+    }
+
+    @Test
+    fun `Calling startCapture when capturing returns current capture`() {
+        val capture1 = input.startCapture()
+        val capture2 = input.startCapture()
+
+        assertThat(capture1, `is`(capture2))
+
+        input.stopCapture()
+
+        val capture3 = input.startCapture()
+
+        input.stopCapture()
+
+        assertThat(capture1, `is`(not(capture3)))
     }
 
 //    @Test
