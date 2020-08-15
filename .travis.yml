@@ -20,13 +20,19 @@ before_install:
 install:
 - echo "install NOOP"
 
-script:
-- echo "script NOOP"
-
 after_success:
-- echo "after_success NOOP"
+- bash <(curl -s https://codecov.io/bash)
 
 deploy:
+    # release dev build of FXGL to Sonatype
+  - provider: script
+    script: bash .github/.ci/deploy-sonatype.sh
+    skip_cleanup: true
+    # only notify when on "dev", not PR and JDK11 build succeeds
+    on:
+      branch: dev
+      condition: $TRAVIS_PULL_REQUEST = false && $TRAVIS_JDK_VERSION = openjdk11
+      
     # release dev build of FXGL dialogue editor
   - provider: script
     script: bash .github/.ci/notify-fxgl-dialogue-editor-builder.sh
