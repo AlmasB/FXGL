@@ -18,7 +18,6 @@ before_install:
 - echo "before_install NOOP"
 install:
 - echo "install NOOP"
-script: mvn test -B -P uber-jar
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - if [ "$TRAVIS_BRANCH" != "master" ]; then openssl aes-256-cbc -pass pass:$ENC_PASSWORD
