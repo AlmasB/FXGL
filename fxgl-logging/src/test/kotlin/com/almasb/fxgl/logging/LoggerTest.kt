@@ -37,4 +37,16 @@ class LoggerTest {
             Logger.close()
         }
     }
+
+    @Test
+    fun `Default message formatting`() {
+        val formatter = DefaultMessageFormatter()
+        var message = formatter.makeMessage("DateTime", "ThreadName", "LoggerLevel", "SuperLongLoggerNameToBeTruncated", "LoggerMessage")
+
+        assertThat(message, `is`("DateTime [ThreadName               ] Logge SuperLongLoggerNameT - LoggerMessage"))
+
+        message = formatter.makeMessage("DateTime", "ThreadName", "LoggerLevel", "ShortName", "LoggerMessage")
+
+        assertThat(message, `is`("DateTime [ThreadName               ] Logge ShortName            - LoggerMessage"))
+    }
 }
