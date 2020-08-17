@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.input
 
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.input.virtual.VirtualButton
 import javafx.event.Event
 import javafx.event.EventHandler
@@ -837,6 +838,27 @@ class InputTest {
         input.update(0.016)
 
         assertThat(calls, `is`(400))
+
+        // check (de-)serialization
+
+        val capture2 = InputCapture()
+        val bundle = Bundle("test")
+
+        capture.write(bundle)
+        capture2.read(bundle)
+
+        input.applyCapture(capture2)
+
+        repeat(100) {
+            input.update(0.016)
+        }
+
+        assertThat(calls, `is`(600))
+
+        // input capture application should have stopped
+        input.update(0.016)
+
+        assertThat(calls, `is`(600))
     }
 
     @Test
