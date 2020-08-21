@@ -40,11 +40,6 @@ public class CustomComponentSample extends GameApplication {
             // 2. specify behavior of the entity enforced by this component
             entity.rotateBy(tpf * 45);
         }
-
-        @Override
-        public boolean isComponentInjectionRequired() {
-            return false;
-        }
     }
 
     public static void main(String[] args) {
