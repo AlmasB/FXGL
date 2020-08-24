@@ -40,7 +40,11 @@ class UDPServer<T>(val port: Int, private val messageType: Class<T>) : Server<T>
 
                     val packet = DatagramPacket(buffer, buffer.size)
 
+                    println("Server Recv begin")
+
                     it.receive(packet)
+
+                    println("Server Recv end")
 
                     val remoteIP = packet.address.hostAddress
                     val remotePort = packet.port
@@ -49,7 +53,7 @@ class UDPServer<T>(val port: Int, private val messageType: Class<T>) : Server<T>
                     var connection = connections.map { it as UDPConnection }.find { it.fullIP == fullIP }
 
                     if (connection == null) {
-                        connection = UDPConnection<T>(fullIP, connectionNum++)
+                        connection = UDPConnection<T>(it, remoteIP, remotePort, connectionNum++)
 
                         openUDPConnection(connection)
                     }

@@ -32,8 +32,8 @@ public abstract class Connection<T> {
 
     private PropertyMap localSessionData = new PropertyMap();
 
-    private List<MessageHandler<T>> messageHandlers = new ArrayList<>();
-    private List<MessageHandler<T>> messageHandlersFX = new ArrayList<>();
+    protected final List<MessageHandler<T>> messageHandlers = new ArrayList<>();
+    protected final List<MessageHandler<T>> messageHandlersFX = new ArrayList<>();
 
     protected BlockingQueue<T> messageQueue = new ArrayBlockingQueue<>(100);
 
@@ -83,6 +83,8 @@ public abstract class Connection<T> {
             e.printStackTrace();
         }
     }
+
+    // TODO: these 2 methods below only for TCP socket?
 
     void send(MessageWriter<T> writer) {
         try {

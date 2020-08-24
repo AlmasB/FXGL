@@ -20,6 +20,8 @@ class UDPClient<T>(val ip: String, val port: Int, private val messageType: Class
 
     private var isStopped = false
 
+    // TODO: when we connect, we must send an "opening" message, so server knows ...
+
     override fun connect() {
         // TODO: exception handling
 
@@ -29,7 +31,7 @@ class UDPClient<T>(val ip: String, val port: Int, private val messageType: Class
             var connection = connections.firstOrNull() as? UDPConnection
 
             if (connection == null) {
-                connection = UDPConnection<T>(ip + port, 1)
+                connection = UDPConnection<T>(it, ip, port, 1)
 
                 openUDPConnection(connection)
             }
