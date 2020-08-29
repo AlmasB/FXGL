@@ -82,6 +82,8 @@ public abstract class Connection<T> {
         }
     }
 
+    private boolean isJavaFXExceptionLogged = false;
+
     void notifyMessageReceived(T message) {
         // exceptions here should only occur if they were thrown at user level
         // during handling messages via onReceive()
@@ -93,8 +95,10 @@ public abstract class Connection<T> {
                 Platform.runLater(() -> messageHandlersFX.forEach(h -> h.onReceive(this, message)));
             } catch (IllegalStateException e) {
                 // if javafx is not initialized then ignore
-
-                // TODO: log.warning() once, then ignore
+                if (!isJavaFXExceptionLogged) {
+                    log.warning("JavaFX is not initialized to handle messages on FX thread", e);
+                    isJavaFXExceptionLogged = true;
+                }
             }
         } catch (Exception e) {
             log.warning("Exception during MessageHandler.onReceive()", e);

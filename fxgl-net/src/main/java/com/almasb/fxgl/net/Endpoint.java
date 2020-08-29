@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.net;
 
-import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.net.tcp.TCPConnection;
 import com.almasb.fxgl.net.udp.UDPConnection;
