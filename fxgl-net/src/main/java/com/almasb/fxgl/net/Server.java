@@ -46,7 +46,8 @@ public abstract class Server<T> extends Endpoint<T> {
 
     /**
      * Stops the server. After this call, the server will no longer accept incoming connections.
-     * Existing connections will remain active.
+     * Existing TCP connections will remain active.
+     * Existing UDP connections will be terminated.
      */
     public abstract void stop();
 }

@@ -65,18 +65,6 @@ public class UDPSample {
                 e.printStackTrace();
             }
 
-            System.out.println("Client sending hello");
-
-            client.getConnections().forEach(c -> c.send(new Bundle("Client says hello")));
-        }).start();
-
-        new Thread(() -> {
-            try {
-                Thread.sleep(4000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             System.out.println("Broadcasting hello");
 
             server.broadcast(new Bundle("HELLO!"));
@@ -85,3 +73,20 @@ public class UDPSample {
         server.startTask().run();
     }
 }
+
+
+
+
+
+
+//        new Thread(() -> {
+//            try {
+//                Thread.sleep(3000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//
+//            System.out.println("Client sending hello");
+//
+//            client.getConnections().forEach(c -> c.send(new Bundle("Client says hello")));
+//        }).start();

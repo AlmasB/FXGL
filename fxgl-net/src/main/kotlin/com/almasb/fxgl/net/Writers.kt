@@ -10,10 +10,7 @@ import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.net.Protocol.TCP
 import com.almasb.fxgl.net.Protocol.UDP
-import java.io.DataOutputStream
-import java.io.ObjectOutputStream
-import java.io.OutputStream
-import java.io.PrintWriter
+import java.io.*
 
 /**
  *
@@ -23,6 +20,9 @@ import java.io.PrintWriter
 object Writers {
     private val log = Logger.get(javaClass)
 
+    val newUDPWriters = hashMapOf<Class<*>, UDPWriter<*>>()
+
+
     private val tcpWriters = hashMapOf<Class<*>, WriterFactory<*>>()
     private val udpWriters = hashMapOf<Class<*>, WriterFactory<*>>()
 
@@ -30,6 +30,9 @@ object Writers {
         addWriter(TCP, Bundle::class.java, WriterFactory { BundleMessageWriter(it) })
         addWriter(TCP, ByteArray::class.java, WriterFactory { ByteArrayMessageWriter(it) })
         addWriter(TCP, String::class.java, WriterFactory { StringMessageWriter(it) })
+
+        // TODO: clean up
+        newUDPWriters[Bundle::class.java] = BundleUDPWriter()
     }
 
     fun <T> addWriter(protocol: Protocol, type: Class<T>, factory: WriterFactory<*>) {
@@ -80,5 +83,17 @@ class StringMessageWriter(out: OutputStream) : MessageWriter<String> {
 
     override fun write(message: String) {
         out.write(message)
+    }
+}
+
+class BundleUDPWriter : UDPWriter<Bundle> {
+    override fun write(data: Bundle): ByteArray {
+        return toByteArray(data)
+    }
+
+    private fun toByteArray(data: Serializable): ByteArray {
+        val baos = ByteArrayOutputStream()
+        ObjectOutputStream(baos).use { it.writeObject(data) }
+        return baos.toByteArray()
     }
 }

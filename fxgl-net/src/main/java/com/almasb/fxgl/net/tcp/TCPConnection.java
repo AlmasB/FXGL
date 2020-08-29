@@ -17,11 +17,11 @@ import java.net.Socket;
  * @author Jordan O'Hara (jordanohara96@gmail.com)
  * @author Byron Filer (byronfiler348@gmail.com)
  */
-public final class SocketConnection<T> extends Connection<T> {
+public final class TCPConnection<T> extends Connection<T> {
 
     private Socket socket;
 
-    public SocketConnection(Socket socket, int connectionNum) {
+    public TCPConnection(Socket socket, int connectionNum) {
         super(connectionNum);
         this.socket = socket;
     }

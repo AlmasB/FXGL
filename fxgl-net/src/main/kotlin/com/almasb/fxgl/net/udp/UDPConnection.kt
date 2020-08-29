@@ -13,6 +13,8 @@ import java.io.*
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
+import java.util.*
+import java.util.concurrent.ArrayBlockingQueue
 import java.util.function.Consumer
 
 
@@ -37,6 +39,8 @@ class UDPConnection<T>(
 
     private var isClosed = false
 
+    val recvQueue = ArrayBlockingQueue<ByteArray>(30)
+
     override fun isClosedLocally(): Boolean {
         return isClosed
     }
@@ -44,57 +48,25 @@ class UDPConnection<T>(
     override fun terminateImpl() {
         isClosed = true
 
-        // TODO:
+        sendUDP(MESSAGE_CLOSE)
     }
 
-    fun sendUDP() {
-        try {
-            val message = messageQueue.take()
+    fun sendUDP(data: ByteArray) {
+        val packet = DatagramPacket(data, data.size,
+                InetAddress.getByName(remoteIp), remotePort
+        )
 
-            // TODO: only serializable?
-            val bytes = toByteArray(message as Serializable)
-
-            val packet = DatagramPacket(bytes, bytes.size,
-                    InetAddress.getByName(remoteIp), remotePort
-            )
-
-            socket.send(packet)
-
-        } catch (e: Exception) {
-
-            // TODO:
-            e.printStackTrace()
-        }
+        socket.send(packet)
     }
 
     internal fun receive(data: ByteArray) {
-        try {
+        // TODO: what if this is not fully received
+        // to fix, use 1st message as length (int - 4bytes) of actual 2nd message
+        // when done add to queue
 
-            ObjectInputStream(ByteArrayInputStream(data)).use {
-                // TODO: what if this is not fully received
+        // make a copy to avoid the buffer being overwritten
+        val copy = Arrays.copyOf(data, data.size)
 
-                val message = it.readObject() as T
-
-                messageHandlers.forEach(Consumer { it.onReceive(this, message) })
-
-                try {
-                    Platform.runLater {
-                        messageHandlersFX.forEach(Consumer { it.onReceive(this, message) })
-                    }
-                } catch (e: IllegalStateException) {
-                    // if javafx is not initialized then ignore
-                }
-            }
-
-
-        } catch (e: java.lang.Exception) {
-            // TODO:
-        }
-    }
-
-    private fun toByteArray(data: Serializable): ByteArray {
-        val baos = ByteArrayOutputStream()
-        ObjectOutputStream(baos).use { it.writeObject(data) }
-        return baos.toByteArray()
+        recvQueue.put(copy)
     }
 }

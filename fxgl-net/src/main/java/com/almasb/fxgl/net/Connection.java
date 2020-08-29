@@ -12,8 +12,6 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 
-import java.io.EOFException;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -84,50 +82,22 @@ public abstract class Connection<T> {
         }
     }
 
-    // TODO: these 2 methods below only for TCP socket?
+    void notifyMessageReceived(T message) {
+        // exceptions here should only occur if they were thrown at user level
+        // during handling messages via onReceive()
 
-    void send(MessageWriter<T> writer) {
         try {
-            var message = messageQueue.take();
-
-            writer.write(message);
-        } catch (Exception e) {
-
-            // TODO:
-
-            e.printStackTrace();
-        }
-    }
-
-    @SuppressWarnings("PMD.EmptyCatchBlock")
-    void receive(MessageReader<T> reader) {
-        try {
-            var message = reader.read();
-
             messageHandlers.forEach(h -> h.onReceive(this, message));
 
             try {
                 Platform.runLater(() -> messageHandlersFX.forEach(h -> h.onReceive(this, message)));
             } catch (IllegalStateException e) {
                 // if javafx is not initialized then ignore
+
+                // TODO: log.warning() once, then ignore
             }
-
-        } catch (EOFException e) {
-            log.debug("Connection " + connectionNum + " was correctly closed from remote endpoint.");
-
-            terminate();
-        } catch (SocketException e) {
-
-            if (!isClosedLocally()) {
-                log.debug("Connection " + connectionNum + " was unexpectedly disconnected: " + e.getMessage());
-
-                terminate();
-            }
-
         } catch (Exception e) {
-            log.warning("Connection " + connectionNum + " had unspecified error during receive()", e);
-
-            terminate();
+            log.warning("Exception during MessageHandler.onReceive()", e);
         }
     }
 
@@ -144,7 +114,7 @@ public abstract class Connection<T> {
 
             log.debug("Connection " + connectionNum + " was correctly closed from local endpoint.");
         } catch (Exception e) {
-            log.warning("Error during socket.close()", e);
+            log.warning("Error during terminateImpl()", e);
         }
 
         isConnectedProperty.set(false);

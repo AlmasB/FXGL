@@ -8,9 +8,11 @@ package com.almasb.fxgl.net.udp
 
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.net.Server
+import java.io.IOException
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.util.*
+import java.util.Arrays.*
 
 /**
  *
@@ -22,11 +24,14 @@ class UDPServer<T>(val port: Int, private val messageType: Class<T>) : Server<T>
 
     private var isStopped = false
 
+    private var serverSocket: DatagramSocket? = null
+
     override fun start() {
         log.debug("Starting to listen at: $port type: $messageType")
 
         try {
             DatagramSocket(port).use {
+                serverSocket = it
 
                 onStartedListening()
 
@@ -36,15 +41,11 @@ class UDPServer<T>(val port: Int, private val messageType: Class<T>) : Server<T>
 
                 while (!isStopped) {
 
-                    Arrays.fill(buffer, 0)
+                    fill(buffer, 0)
 
                     val packet = DatagramPacket(buffer, buffer.size)
 
-                    println("Server Recv begin")
-
                     it.receive(packet)
-
-                    println("Server Recv end")
 
                     val remoteIP = packet.address.hostAddress
                     val remotePort = packet.port
@@ -52,13 +53,24 @@ class UDPServer<T>(val port: Int, private val messageType: Class<T>) : Server<T>
 
                     var connection = connections.map { it as UDPConnection }.find { it.fullIP == fullIP }
 
-                    if (connection == null) {
+                    // check if packet contains MESSAGE_OPEN
+                    val isOpeningPacket = equals(copyOfRange(packet.data, 0, MESSAGE_OPEN.size), MESSAGE_OPEN)
+
+                    if (connection == null || isOpeningPacket) {
                         connection = UDPConnection<T>(it, remoteIP, remotePort, connectionNum++)
 
-                        openUDPConnection(connection)
+                        openUDPConnection(connection, messageType)
                     }
 
-                    connection.receive(packet.data)
+                    val isClosingPacket = equals(copyOfRange(packet.data, 0, MESSAGE_CLOSE.size), MESSAGE_CLOSE)
+
+                    if (isClosingPacket) {
+                        onConnectionClosed(connection)
+                    }
+
+                    if (!isOpeningPacket && !isClosingPacket) {
+                        connection.receive(packet.data)
+                    }
                 }
             }
 
@@ -73,9 +85,24 @@ class UDPServer<T>(val port: Int, private val messageType: Class<T>) : Server<T>
         onStoppedListening()
     }
 
+    // TODO: extract into common between TCPServer
     override fun stop() {
+        if (isStopped) {
+            log.warning("Attempted to stop a server that is already stopped")
+            return
+        }
+
         isStopped = true
 
-        // TODO: send closing?
+        // for UDP we also terminate all active connections
+        connections.forEach {
+            it.terminate()
+        }
+
+        try {
+            serverSocket?.close()
+        } catch (e: Exception) {
+            log.warning("Exception when closing server socket: " + e.message, e)
+        }
     }
 }
