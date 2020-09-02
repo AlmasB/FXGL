@@ -35,7 +35,7 @@ object Writers {
         newUDPWriters[Bundle::class.java] = BundleUDPWriter()
     }
 
-    fun <T> addWriter(protocol: Protocol, type: Class<T>, factory: WriterFactory<*>) {
+    fun <T> addWriter(protocol: Protocol, type: Class<T>, factory: WriterFactory<T>) {
         when (protocol) {
             TCP -> tcpWriters[type] = factory
             UDP -> udpWriters[type] = factory
