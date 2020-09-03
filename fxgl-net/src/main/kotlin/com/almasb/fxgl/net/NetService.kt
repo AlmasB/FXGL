@@ -9,6 +9,7 @@ package com.almasb.fxgl.net
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.input.*
 import com.almasb.fxgl.net.tcp.TCPClient
 import com.almasb.fxgl.net.tcp.TCPServer
 import com.almasb.fxgl.net.udp.UDPClient
@@ -44,6 +45,57 @@ class NetService : EngineService() {
     fun newUDPServer(port: Int): Server<Bundle> = UDPServer(port, Bundle::class.java)
 
     fun newUDPClient(ip: String, port: Int): Client<Bundle> = UDPClient(ip, port, Bundle::class.java)
+
+    fun addInputReplicationSender(connection: Connection<Bundle>, input: Input) {
+        input.addTriggerListener(object : TriggerListener() {
+            override fun onActionBegin(trigger: Trigger) {
+                val bundle = Bundle("ActionBegin")
+
+                // TODO: refactor into read() write() as part of Trigger
+                if (trigger.isKey) {
+                    bundle.put("key", ((trigger) as KeyTrigger).key)
+                } else {
+                    bundle.put("btn", ((trigger) as MouseTrigger).button)
+                }
+
+                connection.send(bundle)
+            }
+
+            override fun onActionEnd(trigger: Trigger) {
+                val bundle = Bundle("ActionEnd")
+
+                if (trigger.isKey) {
+                    bundle.put("key", ((trigger) as KeyTrigger).key)
+                } else {
+                    bundle.put("btn", ((trigger) as MouseTrigger).button)
+                }
+
+                connection.send(bundle)
+            }
+        })
+    }
+
+    fun addInputReplicationReceiver(connection: Connection<Bundle>, input: Input) {
+        connection.addMessageHandlerFX { _, message ->
+            when (message.name) {
+                "ActionBegin", "ActionEnd" -> {
+                    val isKeyTrigger = message.exists("key")
+
+                    val trigger: Trigger = if (isKeyTrigger) {
+                        KeyTrigger(message.get("key"))
+                    } else {
+                        MouseTrigger(message.get("btn"))
+                    }
+
+                    if (message.name == "ActionBegin") {
+                        input.mockTriggerPress(trigger)
+                    } else {
+                        input.mockTriggerRelease(trigger)
+                    }
+                }
+            }
+        }
+    }
 }
 
 enum class Protocol {
