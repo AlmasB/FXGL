@@ -8,8 +8,6 @@ package com.almasb.fxgl.net
 
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
-import com.almasb.fxgl.net.Protocol.TCP
-import com.almasb.fxgl.net.Protocol.UDP
 import java.io.*
 
 /**
@@ -17,48 +15,82 @@ import java.io.*
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 
+interface TCPMessageWriter<T> {
+
+    @Throws(Exception::class)
+    fun write(message: T)
+}
+
+// we need a factory for tcp message writers since each output stream is valid for a single connection
+// therefore we cannot reuse the same message writer for each connection
+interface TCPWriterFactory<T> {
+
+    fun create(out: OutputStream): TCPMessageWriter<T>
+}
+
+interface UDPMessageWriter<T> {
+    fun write(data: T): ByteArray
+}
+
 object Writers {
     private val log = Logger.get(javaClass)
 
-    val newUDPWriters = hashMapOf<Class<*>, UDPWriter<*>>()
-
-
-    private val tcpWriters = hashMapOf<Class<*>, WriterFactory<*>>()
-    private val udpWriters = hashMapOf<Class<*>, WriterFactory<*>>()
+    private val tcpWriters = hashMapOf<Class<*>, TCPWriterFactory<*>>()
+    private val udpWriters = hashMapOf<Class<*>, UDPMessageWriter<*>>()
 
     init {
-        addWriter(TCP, Bundle::class.java, WriterFactory { BundleMessageWriter(it) })
-        addWriter(TCP, ByteArray::class.java, WriterFactory { ByteArrayMessageWriter(it) })
-        addWriter(TCP, String::class.java, WriterFactory { StringMessageWriter(it) })
+        // these are built-in writers
+        addTCPWriter(Bundle::class.java, object : TCPWriterFactory<Bundle> {
+            override fun create(out: OutputStream): TCPMessageWriter<Bundle> = BundleTCPMessageWriter(out)
+        })
 
-        // TODO: clean up
-        newUDPWriters[Bundle::class.java] = BundleUDPWriter()
+        addTCPWriter(ByteArray::class.java, object : TCPWriterFactory<ByteArray> {
+            override fun create(out: OutputStream): TCPMessageWriter<ByteArray> = ByteArrayTCPMessageWriter(out)
+        })
+
+        addTCPWriter(String::class.java, object : TCPWriterFactory<String> {
+            override fun create(out: OutputStream): TCPMessageWriter<String> = StringTCPMessageWriter(out)
+        })
+
+        addUDPWriter(Bundle::class.java, BundleUDPMessageWriter())
     }
 
-    fun <T> addWriter(protocol: Protocol, type: Class<T>, factory: WriterFactory<T>) {
-        when (protocol) {
-            TCP -> tcpWriters[type] = factory
-            UDP -> udpWriters[type] = factory
-        }
+    fun <T> addTCPWriter(type: Class<T>, factory: TCPWriterFactory<T>) {
+        tcpWriters[type] = factory
     }
 
-    fun <T> getWriter(protocol: Protocol, type: Class<T>, out: OutputStream): MessageWriter<T> {
-        log.debug("Getting MessageWriter for $protocol-$type")
+    fun <T> addUDPWriter(type: Class<T>, writer: UDPMessageWriter<T>) {
+        udpWriters[type] = writer
+    }
 
-        val writerFactory = when (protocol) {
-            TCP -> tcpWriters[type] ?: throw RuntimeException("No message writer factory for type: $protocol-$type")
-            UDP -> udpWriters[type] ?: throw RuntimeException("No message writer factory for type: $protocol-$type")
-        }
+    @Suppress("UNCHECKED_CAST")
+    fun <T> getTCPWriter(type: Class<T>, out: OutputStream): TCPMessageWriter<T> {
+        log.debug("Getting TCPMessageWriter for $type")
 
-        val writer = writerFactory.create(out) as MessageWriter<T>
+        val writerFactory = tcpWriters[type]
+                ?: throw RuntimeException("No TCP message writer factory for type: $type")
 
-        log.debug("Constructed MessageWriter for $type: " + writer.javaClass.simpleName)
+        val writer = writerFactory.create(out) as TCPMessageWriter<T>
+
+        log.debug("Constructed TCPMessageWriter for $type: " + writer.javaClass.simpleName)
+
+        return writer
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T> getUDPWriter(type: Class<T>): UDPMessageWriter<T> {
+        log.debug("Getting UDPMessageWriter for $type")
+
+        val writer = udpWriters[type] as? UDPMessageWriter<T>
+                ?: throw RuntimeException("No UDP message writer for type: $type")
+
+        log.debug("Constructed UDPMessageWriter for $type: " + writer.javaClass.simpleName)
 
         return writer
     }
 }
 
-class BundleMessageWriter(out: OutputStream) : MessageWriter<Bundle> {
+class BundleTCPMessageWriter(out: OutputStream) : TCPMessageWriter<Bundle> {
 
     private val out = ObjectOutputStream(out)
 
@@ -67,7 +99,7 @@ class BundleMessageWriter(out: OutputStream) : MessageWriter<Bundle> {
     }
 }
 
-class ByteArrayMessageWriter(out: OutputStream) : MessageWriter<ByteArray> {
+class ByteArrayTCPMessageWriter(out: OutputStream) : TCPMessageWriter<ByteArray> {
 
     private val out = DataOutputStream(out)
 
@@ -77,7 +109,7 @@ class ByteArrayMessageWriter(out: OutputStream) : MessageWriter<ByteArray> {
     }
 }
 
-class StringMessageWriter(out: OutputStream) : MessageWriter<String> {
+class StringTCPMessageWriter(out: OutputStream) : TCPMessageWriter<String> {
 
     private val out = PrintWriter(out, true)
 
@@ -86,7 +118,7 @@ class StringMessageWriter(out: OutputStream) : MessageWriter<String> {
     }
 }
 
-class BundleUDPWriter : UDPWriter<Bundle> {
+class BundleUDPMessageWriter : UDPMessageWriter<Bundle> {
     override fun write(data: Bundle): ByteArray {
         return toByteArray(data)
     }

@@ -72,7 +72,7 @@ public abstract class Endpoint<T> {
         new ConnectionThread(getClass().getSimpleName() + "_SendThread-" + connectionNum, () -> {
 
             try {
-                var writer = Writers.INSTANCE.getWriter(Protocol.TCP, messageType, socket.getOutputStream());
+                var writer = Writers.INSTANCE.getTCPWriter(messageType, socket.getOutputStream());
 
                 while (connection.isConnected()) {
                     var message = connection.messageQueue.take();
@@ -88,7 +88,7 @@ public abstract class Endpoint<T> {
 
         new ConnectionThread(getClass().getSimpleName() +"_RecvThread-" + connectionNum, () -> {
             try {
-                var reader = Readers.INSTANCE.getReader(messageType, socket.getInputStream());
+                var reader = Readers.INSTANCE.getTCPReader(messageType, socket.getInputStream());
 
                 while (connection.isConnected()) {
                     try {
@@ -135,8 +135,7 @@ public abstract class Endpoint<T> {
                 while (connection.isConnected()) {
                     var message = connection.messageQueue.take();
 
-                    // TODO: convert to byte[] using UDP writers
-                    var bytes = ((UDPWriter<T>) Writers.INSTANCE.getNewUDPWriters().get(messageType)).write(message);
+                    var bytes = Writers.INSTANCE.getUDPWriter(messageType).write(message);
 
                     connection.sendUDP(bytes);
                 }
@@ -150,15 +149,14 @@ public abstract class Endpoint<T> {
         new ConnectionThread(getClass().getSimpleName() + "_RecvThread-" + connection.getConnectionNum(), () -> {
 
             try {
+                var reader = Readers.INSTANCE.getUDPReader(messageType);
+
                 while (connection.isConnected()) {
                     var bytes = connection.getRecvQueue().take();
 
-                    // TODO: convert to T using UDP readers
-                    try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
-                        var message = (T) ois.readObject();
+                    var message = reader.read(bytes);
 
-                        ((Connection<T>) connection).notifyMessageReceived(message);
-                    }
+                    ((Connection<T>) connection).notifyMessageReceived(message);
                 }
             } catch (Exception e) {
 
