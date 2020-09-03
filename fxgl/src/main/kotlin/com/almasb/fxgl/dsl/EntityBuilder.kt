@@ -157,6 +157,14 @@ class EntityBuilder {
         entity.setOnActive { action.accept(entity) }
     }
 
+    fun onNotActive(action: (Entity) -> Unit) = this.also {
+        onNotActive(Consumer(action))
+    }
+
+    fun onNotActive(action: Consumer<Entity>) = this.also {
+        entity.setOnNotActive { action.accept(entity) }
+    }
+
     fun collidable() = with(CollidableComponent(true))
 
     fun with(vararg comps: Component) = this.also {
