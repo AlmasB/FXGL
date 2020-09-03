@@ -72,6 +72,11 @@ public abstract class Connection<T> {
     }
 
     public final void send(T message) {
+        if (!isConnected()) {
+            log.warning("Attempted to send but connection is not connected");
+            return;
+        }
+
         try {
             messageQueue.put(message);
         } catch (InterruptedException e) {

@@ -28,4 +28,9 @@ public final class NetworkComponent extends Component {
     void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public boolean isComponentInjectionRequired() {
+        return false;
+    }
 }

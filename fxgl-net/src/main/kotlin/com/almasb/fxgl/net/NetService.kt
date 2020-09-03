@@ -8,6 +8,7 @@ package com.almasb.fxgl.net
 
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.concurrent.IOTask
+import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
@@ -17,7 +18,6 @@ import com.almasb.fxgl.net.tcp.TCPClient
 import com.almasb.fxgl.net.tcp.TCPServer
 import com.almasb.fxgl.net.udp.UDPClient
 import com.almasb.fxgl.net.udp.UDPServer
-import javafx.geometry.Point2D
 import java.io.InputStream
 import java.net.URL
 
@@ -54,6 +54,49 @@ class NetService : EngineService() {
 
     /* REPLICATION BELOW */
 
+    private val replicatedEntitiesMap = hashMapOf<Connection<Bundle>, MutableList<Entity>>()
+
+    override fun onGameUpdate(tpf: Double) {
+        if (replicatedEntitiesMap.isEmpty())
+            return
+
+        // TODO: can (should) we move this to NetworkComponent to act on a per entity basis ...
+        replicatedEntitiesMap.forEach { conn, entities ->
+            if (entities.isNotEmpty()) {
+                updateReplicatedEntities(conn, entities)
+            }
+        }
+    }
+
+    private fun updateReplicatedEntities(connection: Connection<Bundle>, entities: MutableList<Entity>) {
+        val updateBundle = Bundle("ENTITY_UPDATES_EVENT")
+        val removeBundle = Bundle("ENTITY_REMOVALS_EVENT")
+
+        val removeIDs = arrayListOf<Int>()
+
+        entities.forEach {
+            val networkID = it.getComponent(NetworkComponent::class.java).id
+
+            if (it.isActive) {
+                updateBundle.put("$networkID", Vec2(it.position))
+            } else {
+                // TODO: if not present?
+                removeIDs += networkID
+            }
+        }
+
+        if (updateBundle.data.isNotEmpty()) {
+            connection.send(updateBundle)
+        }
+
+        if (removeIDs.isNotEmpty()) {
+            removeBundle.put("removeIDs", removeIDs)
+            connection.send(removeBundle)
+        }
+
+        entities.removeIf { !it.isActive }
+    }
+
     fun spawn(connection: Connection<Bundle>, entity: Entity, entityName: String) {
         if (!entity.hasComponent(NetworkComponent::class.java)) {
             log.warning("Attempted to network-spawn entity $entityName, but it does not have NetworkComponent")
@@ -62,10 +105,15 @@ class NetService : EngineService() {
 
         val networkComponent = entity.getComponent(NetworkComponent::class.java)
 
+        // TODO: these events should be constant-extracted somewhere
         val bundle = Bundle("ENTITY_SPAWN_EVENT_${networkComponent.id}")
         bundle.put("entityName", entityName)
         bundle.put("x", entity.x)
         bundle.put("y", entity.y)
+
+        val list = replicatedEntitiesMap.getOrDefault(connection, ArrayList())
+        list += entity
+        replicatedEntitiesMap[connection] = list
 
         connection.send(bundle)
     }
@@ -83,6 +131,28 @@ class NetService : EngineService() {
                 // TODO: show warning if not present
                 e.getComponentOptional(NetworkComponent::class.java)
                         .ifPresent { it.id = id }
+            }
+
+            if (message.name.startsWith("ENTITY_UPDATES_EVENT")) {
+                message.data.forEach { idString, vec2 ->
+                    val id = idString.toInt()
+                    val position = vec2 as Vec2
+
+                    gameWorld.getEntitiesByComponent(NetworkComponent::class.java)
+                            .filter { it.getComponent(NetworkComponent::class.java).id == id }
+                            .forEach { it.setPosition(position) }
+                }
+            }
+
+            if (message.name.startsWith("ENTITY_REMOVALS_EVENT")) {
+                val removeIDs: List<Int> = message.get("removeIDs")
+
+                removeIDs.forEach { id ->
+                    // TODO: new func getEntitiesByComponent() that also provides actual components as BiConsumer?
+                    gameWorld.getEntitiesByComponent(NetworkComponent::class.java)
+                            .filter { it.getComponent(NetworkComponent::class.java).id == id }
+                            .forEach { it.removeFromWorld() }
+                }
             }
         }
     }
@@ -137,10 +207,6 @@ class NetService : EngineService() {
             }
         }
     }
-}
-
-enum class Protocol {
-    TCP, UDP
 }
 
 
