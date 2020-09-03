@@ -698,6 +698,10 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun onKeyBuilder(key: KeyCode) = KeyInputBuilder(getInput(), key)
 
+    /**
+     * Key builder for custom input.
+     * Note: for onAction() to work, [input.update()] needs to be called.
+     */
     @JvmStatic fun onKeyBuilder(input: Input, key: KeyCode) = KeyInputBuilder(input, key)
 
     @JvmStatic fun onKeyBuilder(key: KeyCode, name: String) = KeyInputBuilder(getInput(), key, name)
