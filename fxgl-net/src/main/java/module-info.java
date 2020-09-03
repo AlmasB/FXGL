@@ -9,6 +9,7 @@
  */
 module com.almasb.fxgl.net {
     requires com.almasb.fxgl.core;
+    requires com.almasb.fxgl.entity;
     requires com.almasb.fxgl.input;
 
     exports com.almasb.fxgl.net;

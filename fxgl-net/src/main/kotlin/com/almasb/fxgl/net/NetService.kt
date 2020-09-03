@@ -9,11 +9,15 @@ package com.almasb.fxgl.net
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.serialization.Bundle
+import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.input.*
+import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.net.tcp.TCPClient
 import com.almasb.fxgl.net.tcp.TCPServer
 import com.almasb.fxgl.net.udp.UDPClient
 import com.almasb.fxgl.net.udp.UDPServer
+import javafx.geometry.Point2D
 import java.io.InputStream
 import java.net.URL
 
@@ -23,6 +27,8 @@ import java.net.URL
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class NetService : EngineService() {
+
+    private val log = Logger.get(javaClass)
 
     /**
      * Note: the caller is responsible for closing the stream.
@@ -45,6 +51,41 @@ class NetService : EngineService() {
     fun newUDPServer(port: Int): Server<Bundle> = UDPServer(port, Bundle::class.java)
 
     fun newUDPClient(ip: String, port: Int): Client<Bundle> = UDPClient(ip, port, Bundle::class.java)
+
+    /* REPLICATION BELOW */
+
+    fun spawn(connection: Connection<Bundle>, entity: Entity, entityName: String) {
+        if (!entity.hasComponent(NetworkComponent::class.java)) {
+            log.warning("Attempted to network-spawn entity $entityName, but it does not have NetworkComponent")
+            return
+        }
+
+        val networkComponent = entity.getComponent(NetworkComponent::class.java)
+
+        val bundle = Bundle("ENTITY_SPAWN_EVENT_${networkComponent.id}")
+        bundle.put("entityName", entityName)
+        bundle.put("x", entity.x)
+        bundle.put("y", entity.y)
+
+        connection.send(bundle)
+    }
+
+    fun addEntityReplicationReceiver(connection: Connection<Bundle>, gameWorld: GameWorld) {
+        connection.addMessageHandlerFX { _, message ->
+            if (message.name.startsWith("ENTITY_SPAWN_EVENT")) {
+                val id = message.name.removePrefix("ENTITY_SPAWN_EVENT_").toInt()
+                val entityName = message.get<String>("entityName")
+                val x = message.get<Double>("x")
+                val y = message.get<Double>("y")
+
+                val e = gameWorld.spawn(entityName, x, y)
+
+                // TODO: show warning if not present
+                e.getComponentOptional(NetworkComponent::class.java)
+                        .ifPresent { it.id = id }
+            }
+        }
+    }
 
     fun addInputReplicationSender(connection: Connection<Bundle>, input: Input) {
         input.addTriggerListener(object : TriggerListener() {
