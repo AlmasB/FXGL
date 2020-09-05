@@ -169,7 +169,11 @@ public abstract class Endpoint<T> {
 
         connections.add(connection);
 
-        onConnected.accept(connection);
+        try {
+            onConnected.accept(connection);
+        } catch (Exception e) {
+            log.warning("Exception occurred in onConnected callback", e);
+        }
     }
 
     protected final void onConnectionClosed(Connection<T> connection) {

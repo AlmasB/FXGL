@@ -35,15 +35,24 @@ public class TCPClient<T> extends Client<T> {
     public void connect() {
         log.debug("Connecting to " + ip + ":" + port + " type: " + messageType);
 
-        try {
-            Socket socket = new Socket(ip, port);
+        Socket socket;
 
-            openTCPConnection(socket, 1, messageType);
+        try {
+            socket = new Socket(ip, port);
+
+            log.debug("Created socket to " + ip + ":" + port);
 
         } catch (Exception e) {
+            throw new RuntimeException("Failed to create a socket to address " + ip + " : " + port + " Error: " + e, e);
+        }
 
-            // TODO:
-            e.printStackTrace();
+        try {
+            openTCPConnection(socket, 1, messageType);
+        } catch (Exception e) {
+            // in case we managed to partially open the connection
+            disconnect();
+
+            throw new RuntimeException("Failed to open TCP connection to " + ip + ":" + port + " Error: " + e, e);
         }
     }
 

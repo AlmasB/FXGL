@@ -16,11 +16,9 @@ import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.*
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertTimeoutPreemptively
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
-import org.junit.jupiter.api.fail
+import java.lang.RuntimeException
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.Duration
@@ -61,6 +59,16 @@ class NetServiceTest {
                 .count()
 
         assertThat(numLines, greaterThan(0L))
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    fun `Client connect task fails gracefully if could not connect`() {
+        val client = net.newTCPClient("bla-bla", 12345)
+
+        assertThrows<RuntimeException> {
+            client.connect()
+        }
     }
 
     @Test
