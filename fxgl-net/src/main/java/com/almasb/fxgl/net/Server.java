@@ -36,10 +36,19 @@ public abstract class Server<T> extends Endpoint<T> {
     }
 
     /**
+     * Starts listening for incoming connections on a background thread.
+     */
+    public final void startAsync() {
+        Thread t = new Thread(startTask()::run, "ServerAsyncConnThread");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /**
      * @return a task that performs an IO operation to start listening for incoming connections.
      */
     public final IOTask<Void> startTask() {
-        return IOTask.ofVoid(this::start);
+        return IOTask.ofVoid("ServerStart", this::start);
     }
 
     protected abstract void start();
