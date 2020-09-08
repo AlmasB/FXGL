@@ -4,7 +4,7 @@
 
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>11.11</version>
+    <version>dev-SNAPSHOT</version>
     
     <packaging>pom</packaging>
 
