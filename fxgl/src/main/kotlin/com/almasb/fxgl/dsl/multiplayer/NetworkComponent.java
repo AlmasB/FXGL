@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.net;
+package com.almasb.fxgl.dsl.multiplayer;
 
 import com.almasb.fxgl.entity.component.Component;
 
