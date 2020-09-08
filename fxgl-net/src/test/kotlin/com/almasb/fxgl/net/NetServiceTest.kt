@@ -77,7 +77,7 @@ class NetServiceTest {
         var count = 0
 
         assertTimeoutPreemptively(Duration.ofSeconds(2)) {
-            val server = net.newTCPServer(TEST_PORT, Bundle::class.java)
+            val server = net.newTCPServer(TEST_PORT)
 
             server.setOnConnected {
                 count++
@@ -102,7 +102,7 @@ class NetServiceTest {
                 }).start()
             }
 
-            val client = net.newTCPClient("localhost", TEST_PORT, Bundle::class.java)
+            val client = net.newTCPClient("localhost", TEST_PORT)
 
             client.setOnConnected {
                 count++
@@ -145,7 +145,7 @@ class NetServiceTest {
         var count = 0
 
         assertTimeoutPreemptively(Duration.ofSeconds(2)) {
-            val server = net.newTCPServer(TEST_PORT, ByteArray::class.java)
+            val server = net.newTCPServer(TEST_PORT, ServerConfig(ByteArray::class.java))
 
             server.setOnConnected {
                 count++
@@ -168,7 +168,7 @@ class NetServiceTest {
                 }).start()
             }
 
-            val client = net.newTCPClient("localhost", TEST_PORT, ByteArray::class.java)
+            val client = net.newTCPClient("localhost", TEST_PORT, ClientConfig(ByteArray::class.java))
 
             client.setOnConnected {
                 count++
