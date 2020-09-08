@@ -4,12 +4,14 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.net;
+package com.almasb.fxgl.tools.dialogues
 
 /**
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface MessageReader<T> {
+object DialogueEditorVars {
 
-    T read() throws Exception;
+    const val IS_SNAP_TO_GRID = "IS_SNAP_TO_GRID"
+    const val IS_COLOR_BLIND_MODE = "IS_COLOR_BLIND_MODE"
 }

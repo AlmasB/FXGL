@@ -52,7 +52,5 @@ class TypeComponent
         }
     }
 
-    override fun isComponentInjectionRequired(): Boolean {
-        return false
-    }
+    override fun isComponentInjectionRequired(): Boolean = false
 }

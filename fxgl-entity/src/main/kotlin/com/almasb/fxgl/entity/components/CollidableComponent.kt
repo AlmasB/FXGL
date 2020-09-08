@@ -29,4 +29,6 @@ class CollidableComponent(collidable: Boolean) : BooleanComponent(collidable) {
     fun removeIgnoredType(type: Serializable) {
         ignoredTypes.remove(type)
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

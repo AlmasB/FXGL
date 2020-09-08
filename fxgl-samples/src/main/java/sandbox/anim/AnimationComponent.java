@@ -91,4 +91,9 @@ public class AnimationComponent extends Component {
 
         getEntity().setScaleX(-1);
     }
+
+    @Override
+    public boolean isComponentInjectionRequired() {
+        return false;
+    }
 }

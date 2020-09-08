@@ -8,7 +8,10 @@ package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.components.BoundingBoxComponent
-import com.almasb.fxgl.physics.box2d.collision.shapes.*
+import com.almasb.fxgl.physics.box2d.collision.shapes.ChainShape
+import com.almasb.fxgl.physics.box2d.collision.shapes.CircleShape
+import com.almasb.fxgl.physics.box2d.collision.shapes.PolygonShape
+import com.almasb.fxgl.physics.box2d.collision.shapes.Shape
 import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 

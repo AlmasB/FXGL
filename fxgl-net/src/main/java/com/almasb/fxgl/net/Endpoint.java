@@ -7,8 +7,12 @@
 package com.almasb.fxgl.net;
 
 import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.net.tcp.TCPConnection;
+import com.almasb.fxgl.net.udp.UDPConnection;
 
+import java.io.EOFException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -54,22 +58,24 @@ public abstract class Endpoint<T> {
         this.onDisconnected = onDisconnected;
     }
 
-    protected final void openNewConnection(Socket socket, int connectionNum, Class<T> messageType) throws Exception {
+    protected final void openTCPConnection(Socket socket, int connectionNum, Class<T> messageType) throws Exception {
         log.debug(getClass().getSimpleName() + " opening new connection (" + connectionNum + ") from " + socket.getInetAddress() + ":" + socket.getPort() + " type: " + messageType);
 
         socket.setTcpNoDelay(true);
 
-        var connection = new Connection<T>(socket, connectionNum);
+        Connection<T> connection = new TCPConnection<T>(socket, connectionNum);
 
         onConnectionOpened(connection);
 
         new ConnectionThread(getClass().getSimpleName() + "_SendThread-" + connectionNum, () -> {
 
             try {
-                var writer = Writers.INSTANCE.getWriter(messageType, socket.getOutputStream());
+                var writer = Writers.INSTANCE.getTCPWriter(messageType, socket.getOutputStream());
 
                 while (connection.isConnected()) {
-                    connection.send(writer);
+                    var message = connection.messageQueue.take();
+
+                    writer.write(message);
                 }
             } catch (Exception e) {
 
@@ -80,10 +86,31 @@ public abstract class Endpoint<T> {
 
         new ConnectionThread(getClass().getSimpleName() +"_RecvThread-" + connectionNum, () -> {
             try {
-                var reader = Readers.INSTANCE.getReader(messageType, socket.getInputStream());
+                var reader = Readers.INSTANCE.getTCPReader(messageType, socket.getInputStream());
 
                 while (connection.isConnected()) {
-                    connection.receive(reader);
+                    try {
+                        var message = reader.read();
+
+                        connection.notifyMessageReceived(message);
+
+                    } catch (EOFException e) {
+                        log.debug("Connection " + connectionNum + " was correctly closed from remote endpoint.");
+
+                        connection.terminate();
+                    } catch (SocketException e) {
+
+                        if (!connection.isClosedLocally()) {
+                            log.debug("Connection " + connectionNum + " was unexpectedly disconnected: " + e.getMessage());
+
+                            connection.terminate();
+                        }
+
+                    } catch (Exception e) {
+                        log.warning("Connection " + connectionNum + " had unspecified error during receive()", e);
+
+                        connection.terminate();
+                    }
                 }
             } catch (Exception e) {
 
@@ -95,15 +122,61 @@ public abstract class Endpoint<T> {
         }).start();
     }
 
+    protected final void openUDPConnection(UDPConnection<T> connection, Class<T> messageType) {
+        log.debug("Opening UDP connection (" + connection.getConnectionNum() + ")");
+
+        onConnectionOpened(connection);
+
+        new ConnectionThread(getClass().getSimpleName() + "_SendThread-" + connection.getConnectionNum(), () -> {
+
+            try {
+                while (connection.isConnected()) {
+                    var message = connection.messageQueue.take();
+
+                    var bytes = Writers.INSTANCE.getUDPWriter(messageType).write(message);
+
+                    connection.sendUDP(bytes);
+                }
+            } catch (Exception e) {
+
+                // TODO:
+                e.printStackTrace();
+            }
+        }).start();
+
+        new ConnectionThread(getClass().getSimpleName() + "_RecvThread-" + connection.getConnectionNum(), () -> {
+
+            try {
+                var reader = Readers.INSTANCE.getUDPReader(messageType);
+
+                while (connection.isConnected()) {
+                    var bytes = connection.getRecvQueue().take();
+
+                    var message = reader.read(bytes);
+
+                    ((Connection<T>) connection).notifyMessageReceived(message);
+                }
+            } catch (Exception e) {
+
+                // TODO:
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
     private void onConnectionOpened(Connection<T> connection) {
         log.debug(getClass().getSimpleName() + " successfully opened connection (" + connection.getConnectionNum() + ")");
 
         connections.add(connection);
 
-        onConnected.accept(connection);
+        try {
+            onConnected.accept(connection);
+        } catch (Exception e) {
+            log.warning("Exception occurred in onConnected callback", e);
+        }
     }
 
-    private void onConnectionClosed(Connection<T> connection) {
+    protected final void onConnectionClosed(Connection<T> connection) {
         log.debug(getClass().getSimpleName() + " connection (" + connection.getConnectionNum() + ") was closed");
 
         connections.remove(connection);

@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.dev
 
-import java.util.function.Consumer
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.ui.FontType
 import javafx.application.Platform
@@ -17,6 +16,7 @@ import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
+import java.util.function.Consumer
 
 /**
  * Basic developer console.

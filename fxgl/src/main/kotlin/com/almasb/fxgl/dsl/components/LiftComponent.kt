@@ -104,4 +104,6 @@ class LiftComponent : Component() {
     fun yAxisSpeedDistance(speed: Double, distance: Double) = this.apply {
         liftDataY.enable(distance, Duration.seconds(distance / speed), speed)
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

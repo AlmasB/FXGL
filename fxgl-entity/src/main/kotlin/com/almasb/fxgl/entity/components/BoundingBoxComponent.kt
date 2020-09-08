@@ -397,9 +397,7 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
         hitBoxes.addAll(bundle.get<ArrayList<HitBox>>("hitBoxes"))
     }
 
-    override fun isComponentInjectionRequired(): Boolean {
-        return false
-    }
+    override fun isComponentInjectionRequired(): Boolean = false
 
     override fun toString(): String {
         // lowercase, so that it gets sorted after Position, Rotation, Type, View

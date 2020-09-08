@@ -11,7 +11,6 @@ import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.CollidableComponent
-import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.BoundingShape.Companion.box
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsComponent
@@ -69,6 +68,10 @@ class EntityBuilder {
         entity.anchoredPosition = position
     }
 
+    fun anchorFromCenter() = this.also {
+        entity.setLocalAnchorFromCenter()
+    }
+
     fun rotationOrigin(x: Double, y: Double) = this.also {
         entity.transformComponent.rotationOrigin = Point2D(x, y)
     }
@@ -123,7 +126,7 @@ class EntityBuilder {
         val w = node.layoutBounds.width
         val h = node.layoutBounds.height
 
-        bbox(HitBox("__VIEW__", BoundingShape.box(w, h)))
+        bbox(HitBox("__VIEW__", box(w, h)))
     }
 
     fun view(textureName: String) = this.also {
@@ -152,6 +155,14 @@ class EntityBuilder {
 
     fun onActive(action: Consumer<Entity>) = this.also {
         entity.setOnActive { action.accept(entity) }
+    }
+
+    fun onNotActive(action: (Entity) -> Unit) = this.also {
+        onNotActive(Consumer(action))
+    }
+
+    fun onNotActive(action: Consumer<Entity>) = this.also {
+        entity.setOnNotActive { action.accept(entity) }
     }
 
     fun collidable() = with(CollidableComponent(true))

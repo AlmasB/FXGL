@@ -7,13 +7,13 @@
 package com.almasb.fxgl.pathfinding;
 
 import com.almasb.fxgl.core.math.FXGLMath;
-import java.util.function.Consumer;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 

@@ -47,7 +47,7 @@ public final class TCPServer<T> extends Server<T> {
             while (!isStopped) {
                 Socket socket = serverSocket.accept();
 
-                openNewConnection(socket, connectionNum++, messageType);
+                openTCPConnection(socket, connectionNum++, messageType);
             }
 
         } catch (Exception e) {

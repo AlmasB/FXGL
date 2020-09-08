@@ -12,10 +12,10 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getGameWorld
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
+import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.ui.FXGLCheckBox
 import com.almasb.fxgl.ui.InGamePanel
-import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.*
 import javafx.beans.property.*
 import javafx.collections.FXCollections

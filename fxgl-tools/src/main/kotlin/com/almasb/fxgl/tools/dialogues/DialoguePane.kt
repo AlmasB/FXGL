@@ -7,15 +7,16 @@
 package com.almasb.fxgl.tools.dialogues
 
 import com.almasb.fxgl.animation.Interpolators
+import com.almasb.fxgl.core.collection.PropertyChangeListener
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.cutscene.dialogue.*
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
-import com.almasb.fxgl.dsl.animationBuilder
-import com.almasb.fxgl.dsl.getAppHeight
-import com.almasb.fxgl.dsl.getAppWidth
-import com.almasb.fxgl.dsl.runOnce
+import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.tools.dialogues.ui.FXGLContextMenu
 import com.almasb.fxgl.logging.Logger
+import com.almasb.fxgl.texture.toImage
+import com.almasb.fxgl.tools.dialogues.DialogueEditorVars.IS_SNAP_TO_GRID
+import com.almasb.fxgl.tools.dialogues.ui.SelectionRectangle
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
 import javafx.collections.MapChangeListener
@@ -23,10 +24,13 @@ import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.effect.Glow
 import javafx.scene.input.MouseButton
-import javafx.scene.layout.Pane
+import javafx.scene.layout.*
+import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
+import javafx.scene.shape.Rectangle
 import javafx.scene.transform.Scale
 import javafx.util.Duration
+import kotlin.math.*
 
 /**
  *
@@ -65,6 +69,10 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 START to start,
                 SUBDIALOGUE to subdialogue
         )
+
+        private const val CELL_SIZE = 39.0
+        private const val MARGIN_CELLS = 3
+        private const val CELL_DISTANCE = CELL_SIZE + 1.0
     }
 
     private val contentRoot = Group()
@@ -89,12 +97,30 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     private val mouseGestures = MouseGestures(contentRoot)
 
+    private val selectionRect = SelectionRectangle()
+
+    private var selectionStart = Point2D.ZERO
+    private var isSelectingRectangle = false
+
+    private val selectedNodeViews = arrayListOf<NodeView>()
+
     init {
         setPrefSize(getAppWidth().toDouble(), getAppHeight().toDouble())
-        style = "-fx-background-color: gray"
+
+        val cell = Rectangle(CELL_SIZE - 1, CELL_SIZE - 1, Color.GRAY)
+        cell.stroke = Color.WHITESMOKE
+        cell.strokeWidth = 0.2
+
+        val image = toImage(cell)
+
+        val bgGrid = Region()
+        bgGrid.background = Background(BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+                BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)
+        )
+        bgGrid.isMouseTransparent = true
 
         contentRoot.children.addAll(
-                edgeViews, views, nodeViews
+                bgGrid, edgeViews, views, nodeViews, selectionRect
         )
 
         contentRoot.transforms += scale
@@ -104,6 +130,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
             scale.x *= scaleFactor
             scale.y *= scaleFactor
+
+            contentRoot.translateX += it.sceneX * (1 - scaleFactor) * scale.x
+            contentRoot.translateY += it.sceneY * (1 - scaleFactor) * scale.y
         }
 
         children.addAll(contentRoot)
@@ -115,12 +144,40 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
         initContextMenu()
 
+        mouseGestures.makeDraggable(selectionRect) {
+            selectionStart = Point2D(selectionRect.layoutX, selectionRect.layoutY)
+        }
+
+        selectionRect.layoutXProperty().addListener { _, prevX, layoutX ->
+            val dx = layoutX.toDouble() - prevX.toDouble()
+
+            selectedNodeViews.forEach {
+                it.layoutX += dx
+            }
+        }
+        selectionRect.layoutYProperty().addListener { _, prevY, layoutY ->
+            val dy = layoutY.toDouble() - prevY.toDouble()
+
+            selectedNodeViews.forEach {
+                it.layoutY += dy
+            }
+        }
+
         setOnMouseMoved {
             mouseX = it.sceneX
             mouseY = it.sceneY
         }
 
         setOnMouseDragged {
+            if (it.isControlDown && isSelectingRectangle) {
+                val vector = contentRoot.sceneToLocal(it.sceneX, it.sceneY).subtract(selectionStart)
+
+                selectionRect.width = vector.x
+                selectionRect.height = vector.y
+
+                return@setOnMouseDragged
+            }
+
             if (mouseGestures.isDragging || it.button != MouseButton.PRIMARY)
                 return@setOnMouseDragged
 
@@ -131,7 +188,35 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
             mouseY = it.sceneY
         }
 
+        setOnMousePressed {
+            if (it.isControlDown) {
+                isSelectingRectangle = true
+                selectedNodeViews.clear()
+                selectionStart = contentRoot.sceneToLocal(it.sceneX, it.sceneY)
+                selectionRect.layoutX = selectionStart.x
+                selectionRect.layoutY = selectionStart.y
+                selectionRect.width = 0.0
+                selectionRect.height = 0.0
+                selectionRect.isVisible = true
+            }
+        }
+
+        setOnMouseReleased {
+            if (!isSelectingRectangle) {
+                return@setOnMouseReleased
+            }
+
+            isSelectingRectangle = false
+            selectedNodeViews.addAll(selectionRect.getSelectedNodesIn(nodeViews, NodeView::class.java))
+
+            if (selectedNodeViews.isEmpty()) {
+                selectionRect.isVisible = false
+            }
+        }
+
         initGraphListeners()
+
+        initGridListener(bgGrid)
     }
 
     private fun initContextMenu() {
@@ -176,6 +261,41 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 }
             }
         }
+    }
+
+    private fun initGridListener(bg: Region) {
+        run({
+            var minX = Double.MAX_VALUE
+            var minY = Double.MAX_VALUE
+            var maxX = -Double.MAX_VALUE
+            var maxY = -Double.MAX_VALUE
+
+            nodeViews.children
+                    .map { it as NodeView }
+                    .forEach {
+                        minX = min(it.layoutX, minX)
+                        minY = min(it.layoutY, minY)
+                        maxX = max(it.layoutX + it.prefWidth, maxX)
+                        maxY = max(it.layoutY + it.prefHeight, maxY)
+                    }
+
+            bg.layoutX = (minX / CELL_DISTANCE).toInt() * CELL_DISTANCE - MARGIN_CELLS * CELL_DISTANCE
+            bg.layoutY = (minY / CELL_DISTANCE).toInt() * CELL_DISTANCE - MARGIN_CELLS * CELL_DISTANCE
+
+            bg.prefWidth = ((maxX - bg.layoutX) / CELL_DISTANCE).toInt() * CELL_DISTANCE + MARGIN_CELLS * CELL_DISTANCE
+            bg.prefHeight = ((maxY - bg.layoutY) / CELL_DISTANCE).toInt() * CELL_DISTANCE + MARGIN_CELLS * CELL_DISTANCE
+        }, Duration.seconds(0.1))
+
+        // TODO: better kt call site?
+        FXGL.getWorldProperties().addListener<Boolean>(IS_SNAP_TO_GRID, object : PropertyChangeListener<Boolean> {
+            override fun onChange(prev: Boolean, now: Boolean) {
+                if (now) {
+                    nodeViews.children
+                            .map { it as NodeView }
+                            .forEach { snapToGrid(it) }
+                }
+            }
+        })
     }
 
     private fun onAdded(node: DialogueNode) {
@@ -309,10 +429,16 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         if (nodeView.node.type == START) {
             nodeView.closeButton.isVisible = false
         }
+
+        if (getb(IS_SNAP_TO_GRID))
+            snapToGrid(nodeView)
     }
 
     private fun attachMouseHandler(nodeView: NodeView) {
-        mouseGestures.makeDraggable(nodeView)
+        mouseGestures.makeDraggable(nodeView) {
+            if (getb(IS_SNAP_TO_GRID))
+                snapToGrid(nodeView)
+        }
 
         nodeView.closeButton.setOnMouseClicked {
             graph.removeNode(nodeView.node)
@@ -369,6 +495,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         }
     }
 
+    private fun snapToGrid(nodeView: NodeView) {
+        nodeView.layoutX = (nodeView.layoutX / CELL_DISTANCE).roundToInt() * CELL_DISTANCE
+        nodeView.layoutY = (nodeView.layoutY / CELL_DISTANCE).roundToInt() * CELL_DISTANCE
+    }
+
     private fun disconnectOutLink(outPoint: OutLinkPoint) {
         outPoint.other?.let { inPoint ->
             if (outPoint.choiceOptionID != -1) {
@@ -392,6 +523,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     fun load(serializedGraph: SerializableGraph) {
+        log.info("Loaded graph with version=${serializedGraph.version}")
+
         graph = DialogueGraphSerializer.fromSerializable(serializedGraph)
 
         nodeViews.children.clear()

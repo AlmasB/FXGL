@@ -15,8 +15,14 @@ import com.almasb.fxgl.core.concurrent.IOTask;
  */
 public abstract class Client<T> extends Endpoint<T> {
 
+    public final void connectAsync() {
+        Thread t = new Thread(connectTask()::run, "ClientAsyncConnThread");
+        t.setDaemon(true);
+        t.start();
+    }
+
     public final IOTask<Void> connectTask() {
-        return IOTask.ofVoid(this::connect);
+        return IOTask.ofVoid("ClientConnect", this::connect);
     }
 
     protected abstract void connect();

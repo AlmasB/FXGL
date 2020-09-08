@@ -73,4 +73,6 @@ class RandomMoveComponent
     private fun rotate(tpf: Double) {
         entity.rotateBy(rotationSpeed * tpf)
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

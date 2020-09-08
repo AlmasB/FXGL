@@ -37,6 +37,7 @@ module com.almasb.fxgl.all {
     requires transitive javafx.swing;
 
     requires com.fasterxml.jackson.databind;
+    requires com.gluonhq.attach.lifecycle;
 
     opens com.almasb.fxgl.dsl to com.almasb.fxgl.core;
     opens com.almasb.fxgl.dev to com.almasb.fxgl.core;
@@ -46,6 +47,7 @@ module com.almasb.fxgl.all {
 
     // tmp
     opens com.almasb.fxgl.dsl.chat to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.dsl.multiplayer to com.almasb.fxgl.core;
 
     exports com.almasb.fxgl.app;
     exports com.almasb.fxgl.app.services;
@@ -57,6 +59,7 @@ module com.almasb.fxgl.all {
     exports com.almasb.fxgl.dsl.components.view;
     exports com.almasb.fxgl.dsl.effects;
     exports com.almasb.fxgl.dsl.handlers;
+    exports com.almasb.fxgl.dsl.multiplayer;
     exports com.almasb.fxgl.dsl.views;
     exports com.almasb.fxgl.gameplay;
 }

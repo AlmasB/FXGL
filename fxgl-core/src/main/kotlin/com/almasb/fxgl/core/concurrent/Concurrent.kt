@@ -64,7 +64,7 @@ private object FXGLThreadFactory : ThreadFactory {
 
     override fun newThread(r: Runnable): Thread {
         val t = Thread(r, "FXGL Background Thread " + threadNumber.andIncrement)
-        t.isDaemon = false
+        t.isDaemon = true
         t.priority = Thread.NORM_PRIORITY
         return t
     }

@@ -7,7 +7,6 @@
 package com.almasb.fxgl.texture
 
 import com.almasb.fxgl.core.concurrent.Async
-import javafx.geometry.HorizontalDirection
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.SnapshotParameters
@@ -88,13 +87,23 @@ fun merge(images: List<Image>): Image {
     if (images.size == 1)
         return images.first()
 
-    var texture = Texture(images.first())
+    val width = images.sumBy { it.width.toInt() }
+    val height = images.map { it.height.toInt() }.max()!!
 
-    images.drop(1).forEach {
-        texture = texture.superTexture(Texture(it), HorizontalDirection.RIGHT)
+    val image = WritableImage(width, height)
+
+    var dstX = 0
+
+    images.forEach {
+        val w = it.width.toInt()
+        val h = it.height.toInt()
+
+        image.pixelWriter.setPixels(dstX, 0, w, h, it.pixelReader, 0, 0)
+
+        dstX += w
     }
 
-    return texture.image
+    return image
 }
 
 /**

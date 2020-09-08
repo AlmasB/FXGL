@@ -80,7 +80,20 @@ class TMXLevelLoader : LevelLoader {
                     Entity().also {
                         it.type = "TiledMapLayer"
                         it.setProperty("layer", layer)
-                        it.viewComponent.addChild(tilesetLoader.loadView(layer.name))
+
+                        when (map.orientation) {
+                            "orthogonal" -> {
+                                it.viewComponent.addChild(tilesetLoader.loadView(layer.name))
+                            }
+
+                            "hexagonal" -> {
+                                it.viewComponent.addChild(tilesetLoader.loadViewHex(layer.name))
+                            }
+
+                            else -> {
+                                log.warning("Unknown map orientation: ${map.orientation}")
+                            }
+                        }
                     }
                 }
     }
@@ -253,6 +266,9 @@ class TMXLevelLoader : LevelLoader {
         map.infinite = start.getInt("infinite") == 1
         map.backgroundcolor = start.getString("backgroundcolor")
         map.orientation = start.getString("orientation")
+        map.hexsidelength = start.getInt("hexsidelength")
+        map.staggeraxis = start.getString("staggeraxis")
+        map.staggerindex = start.getString("staggerindex")
         map.renderorder = start.getString("renderorder")
         map.tiledversion = start.getString("tiledversion")
 

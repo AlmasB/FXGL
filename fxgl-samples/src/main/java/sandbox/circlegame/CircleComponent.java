@@ -14,7 +14,9 @@ import com.almasb.fxgl.input.Input;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
+import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
+import static com.almasb.fxgl.dsl.FXGL.onKeyBuilder;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static sandbox.circlegame.CircleNNType.CIRCLE;
 
 /**
@@ -32,6 +34,9 @@ public class CircleComponent extends Component {
 
     @Override
     public void onAdded() {
+
+        hp = entity.getComponent(HealthIntComponent.class);
+
         onKeyBuilder(input, KeyCode.W)
                 .onAction(() -> entity.translateY(-5));
 
@@ -120,5 +125,10 @@ public class CircleComponent extends Component {
 
     public void setShielded(boolean isShielded) {
         entity.setProperty("isShielded", isShielded);
+    }
+
+    @Override
+    public boolean isComponentInjectionRequired() {
+        return false;
     }
 }

@@ -16,15 +16,41 @@ jdk:
 
 before_install:
 - echo "before_install NOOP"
+
 install:
 - echo "install NOOP"
+
 after_success:
 - bash <(curl -s https://codecov.io/bash)
-- mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=fxgl/target/site/jacoco/jacoco.xml
-  -DprojectToken=$CODACY_PROJECT_TOKEN -DapiToken=$CODACY_PROJECT_TOKEN -DcodacyApiBaseUrl=https://api.codacy.com/
-- if [ "$TRAVIS_BRANCH" != "master" ]; then openssl aes-256-cbc -pass pass:$ENC_PASSWORD
-  -in .travis/sign.asc.enc -out .travis/sign.asc -d; gpg -q --fast-import .travis/sign.asc;
-  mvn deploy --settings .travis.settings.xml -DskipTests=true; chmod +x .travis/upload-build.sh; .travis/upload-build.sh; fi
+
+deploy:
+    # release dev build of FXGL to Sonatype
+  - provider: script
+    script: bash .github/.ci/deploy-sonatype.sh
+    skip_cleanup: true
+    # only notify when on "dev", not PR and JDK11 build succeeds
+    on:
+      branch: dev
+      condition: $TRAVIS_PULL_REQUEST = false && $TRAVIS_JDK_VERSION = openjdk11
+      
+    # release dev build of FXGL dialogue editor
+  - provider: script
+    script: bash .github/.ci/notify-fxgl-dialogue-editor-builder.sh
+    skip_cleanup: true
+    # only notify when on "dev", not PR and JDK11 build succeeds
+    on:
+      branch: dev
+      condition: $TRAVIS_PULL_REQUEST = false && $TRAVIS_JDK_VERSION = openjdk11
+      
+    # release dev build of FXGL
+  - provider: script
+    script: bash .github/.ci/notify-fxgl-builder.sh
+    skip_cleanup: true
+    # only notify when on "dev", not PR and JDK11 build succeeds
+    on:
+      branch: dev
+      condition: $TRAVIS_PULL_REQUEST = false && $TRAVIS_JDK_VERSION = openjdk11
+
 notifications:
   email:
     recipients:
@@ -36,6 +62,7 @@ notifications:
     - https://webhooks.gitter.im/e/afbf0239aac6566f24d4
     on_success: change
     on_failure: always
+
 env:
   global:
   - secure: fRP4CU2qkv47HOd1PBrkGgwsP6To81AYuzi342fxnNTBv313c5fU+HCLYrYI5xNTYfE2b+Iax+A0ypbBbZ2XU+NtbI4OiAYCcBSiFOxFU/gty5neWvyRKG32qtUSNqdEPmx6EzdAjpFss3fyu6AB+g93SLC6S9IBiOxnS3av7cQ=

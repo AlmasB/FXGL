@@ -3,6 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 
 package com.almasb.fxgl.dsl
 
@@ -14,12 +15,9 @@ import javafx.geometry.Point2D
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Rectangle
-import org.hamcrest.CoreMatchers
-import org.hamcrest.CoreMatchers.*
-import org.hamcrest.MatcherAssert
-import org.hamcrest.MatcherAssert.*
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -44,8 +42,7 @@ class EntityBuilderTest {
     fun `from parses position and type`() {
         val data = SpawnData(15.0, 22.0).put("type", EBTType.TWO)
 
-        val e = builder
-                .from(data)
+        val e = entityBuilder(data)
                 .build()
 
         assertThat(e.position, `is`(Point2D(15.0, 22.0)))
@@ -56,8 +53,7 @@ class EntityBuilderTest {
     fun `from does not fail if type is not enum`() {
         val data = SpawnData(15.0, 22.0).put("type", "someValue")
 
-        val e = builder
-                .from(data)
+        val e = entityBuilder(data)
                 .build()
 
         assertTrue(e.type !is String)
@@ -232,5 +228,15 @@ class EntityBuilderTest {
         e.viewComponent.parent.fireEvent(event)
 
         assertThat(e2, `is`(e))
+    }
+
+    @Test
+    fun `AnchorFromCenter correctly set`() {
+        val e = builder
+                .viewWithBBox(Rectangle(100.0, 100.0))
+                .anchorFromCenter()
+                .build()
+
+        assertThat(e.localAnchor, `is`(Point2D(50.0, 50.0)))
     }
 }

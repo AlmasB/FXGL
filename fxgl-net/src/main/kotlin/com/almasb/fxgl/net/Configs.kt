@@ -4,12 +4,17 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.net;
+package com.almasb.fxgl.net
 
 /**
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface MessageWriter<T> {
 
-    void write(T message) throws Exception;
-}
+data class ServerConfig<T>(
+        val messageType: Class<T>
+)
+
+data class ClientConfig<T>(
+        val messageType: Class<T>
+)

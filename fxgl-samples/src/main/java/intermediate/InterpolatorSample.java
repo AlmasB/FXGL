@@ -17,7 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.Map;
@@ -45,7 +45,7 @@ public class InterpolatorSample extends GameApplication {
     protected void initGame() {
         player = entityBuilder()
                 .at(200, 250)
-                .view(getUIFactoryService().newText("HELLO WORLD", Color.BLACK, 28.0))
+                .view(new Rectangle(60, 40))
                 .buildAndAttach();
     }
 
@@ -58,7 +58,7 @@ public class InterpolatorSample extends GameApplication {
 
         for (EasingInterpolator interpolator : Interpolators.values()) {
             Button btn = new Button(interpolator.toString());
-            btn.disableProperty().bind(getGameState().booleanProperty("canPlay").not());
+            btn.disableProperty().bind(getbp("canPlay").not());
             btn.setOnAction(e -> playAnimation(interpolator));
 
             vbox.getChildren().add(btn);
@@ -83,7 +83,8 @@ public class InterpolatorSample extends GameApplication {
         vbox.getChildren().addAll(btn1, btn2, btn3, btn4, btn5, btn6);
 
         vbox.setTranslateX(650);
-        getGameScene().addUINode(vbox);
+
+        addUINode(vbox);
     }
 
     private void playAnimation(EasingInterpolator interpolator) {

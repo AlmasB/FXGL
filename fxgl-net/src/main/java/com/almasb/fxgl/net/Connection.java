@@ -12,92 +12,71 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 
-import java.io.EOFException;
-import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * The socket closing (incl. out and in streams) responsibility lies within this class.
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
- * @author Jordan O'Hara (jordanohara96@gmail.com)
- * @author Byron Filer (byronfiler348@gmail.com)
  */
-public final class Connection<T> {
+public abstract class Connection<T> {
 
-    private static final Logger log = Logger.get(Connection.class);
+    protected static final Logger log = Logger.get(Connection.class);
 
     private ReadOnlyBooleanWrapper isConnectedProperty = new ReadOnlyBooleanWrapper(true);
 
-    private Socket socket;
     private int connectionNum;
 
     private PropertyMap localSessionData = new PropertyMap();
 
-    private List<MessageHandler<T>> messageHandlers = new ArrayList<>();
-    private List<MessageHandler<T>> messageHandlersFX = new ArrayList<>();
+    protected final List<MessageHandler<T>> messageHandlers = new ArrayList<>();
+    protected final List<MessageHandler<T>> messageHandlersFX = new ArrayList<>();
 
-    private BlockingQueue<T> messageQueue = new ArrayBlockingQueue<>(100);
+    protected BlockingQueue<T> messageQueue = new ArrayBlockingQueue<>(100);
 
-    public Connection(Socket socket, int connectionNum) {
-        this.socket = socket;
+    public Connection(int connectionNum) {
         this.connectionNum = connectionNum;
     }
 
-    public PropertyMap getLocalSessionData() {
+    public final PropertyMap getLocalSessionData() {
         return localSessionData;
     }
 
-    public Socket getSocket() {
-        return socket;
-    }
-
-    public int getConnectionNum() {
+    public final int getConnectionNum() {
         return connectionNum;
     }
 
-    public ReadOnlyBooleanProperty connectedProperty() {
+    public final ReadOnlyBooleanProperty connectedProperty() {
         return isConnectedProperty.getReadOnlyProperty();
     }
 
-    public boolean isConnected() {
+    public final boolean isConnected() {
         return isConnectedProperty.getValue();
     }
 
-    public void addMessageHandler(MessageHandler<T> handler) {
+    public final void addMessageHandler(MessageHandler<T> handler) {
         messageHandlers.add(handler);
     }
 
-    public void removeMessageHandler(MessageHandler<T> handler) {
+    public final void removeMessageHandler(MessageHandler<T> handler) {
         messageHandlers.remove(handler);
     }
 
-    public void addMessageHandlerFX(MessageHandler<T> handler) {
+    public final void addMessageHandlerFX(MessageHandler<T> handler) {
         messageHandlersFX.add(handler);
     }
 
-    public void removeMessageHandlerFX(MessageHandler<T> handler) {
+    public final void removeMessageHandlerFX(MessageHandler<T> handler) {
         messageHandlersFX.remove(handler);
     }
 
-    void send(MessageWriter<T> writer) {
-        try {
-            var message = messageQueue.take();
-
-            writer.write(message);
-        } catch (Exception e) {
-
-            // TODO:
-
-            e.printStackTrace();
+    public final void send(T message) {
+        if (!isConnected()) {
+            log.warning("Attempted to send but connection is not connected");
+            return;
         }
-    }
 
-    public void send(T message) {
         try {
             messageQueue.put(message);
         } catch (InterruptedException e) {
@@ -108,39 +87,30 @@ public final class Connection<T> {
         }
     }
 
-    @SuppressWarnings("PMD.EmptyCatchBlock")
-    void receive(MessageReader<T> reader) {
-        try {
-            var message = reader.read();
+    private boolean isJavaFXExceptionLogged = false;
 
+    void notifyMessageReceived(T message) {
+        // exceptions here should only occur if they were thrown at user level
+        // during handling messages via onReceive()
+
+        try {
             messageHandlers.forEach(h -> h.onReceive(this, message));
 
             try {
                 Platform.runLater(() -> messageHandlersFX.forEach(h -> h.onReceive(this, message)));
             } catch (IllegalStateException e) {
                 // if javafx is not initialized then ignore
+                if (!isJavaFXExceptionLogged) {
+                    log.warning("JavaFX is not initialized to handle messages on FX thread", e);
+                    isJavaFXExceptionLogged = true;
+                }
             }
-
-        } catch (EOFException e) {
-            log.debug("Connection " + connectionNum + " was correctly closed from remote endpoint.");
-
-            terminate();
-        } catch (SocketException e) {
-
-            if (!socket.isClosed()) {
-                log.debug("Connection " + connectionNum + " was unexpectedly disconnected: " + e.getMessage());
-
-                terminate();
-            }
-
         } catch (Exception e) {
-            log.warning("Connection " + connectionNum + " had unspecified error during receive()", e);
-
-            terminate();
+            log.warning("Exception during MessageHandler.onReceive()", e);
         }
     }
 
-    public void terminate() {
+    public final void terminate() {
         if (!isConnected()) {
             log.warning("Attempted to close connection " + connectionNum + " but it is already closed.");
             return;
@@ -149,14 +119,17 @@ public final class Connection<T> {
         log.debug("Closing connection " + connectionNum);
 
         try {
-            // closing socket auto-closes in and out streams
-            socket.close();
+            terminateImpl();
 
             log.debug("Connection " + connectionNum + " was correctly closed from local endpoint.");
         } catch (Exception e) {
-            log.warning("Error during socket.close()", e);
+            log.warning("Error during terminateImpl()", e);
         }
 
         isConnectedProperty.set(false);
     }
+
+    protected abstract boolean isClosedLocally();
+
+    protected abstract void terminateImpl() throws Exception;
 }

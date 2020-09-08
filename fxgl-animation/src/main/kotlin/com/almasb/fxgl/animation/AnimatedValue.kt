@@ -11,10 +11,11 @@ import javafx.animation.Interpolator
 import javafx.animation.PathTransition
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
-import javafx.scene.shape.*
+import javafx.scene.shape.CubicCurve
+import javafx.scene.shape.QuadCurve
+import javafx.scene.shape.Rectangle
+import javafx.scene.shape.Shape
 import javafx.util.Duration
-import kotlin.math.abs
-import kotlin.math.min
 
 /**
  * A value that can be animated (progressed) from value1 to value 2.

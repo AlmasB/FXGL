@@ -100,17 +100,11 @@ open class Texture : ImageView, View {
         require(maxY <= image.height) { "maxY value of sub-texture cannot be greater than image height" }
 
         val pixelReader = image.pixelReader
-        val image = WritableImage(maxX - minX, maxY - minY)
-        val pixelWriter = image.pixelWriter
+        val newImage = WritableImage(maxX - minX, maxY - minY)
+        
+        newImage.pixelWriter.setPixels(0, 0, newImage.width.toInt(), newImage.height.toInt(), pixelReader, minX, minY)
 
-        for (y in minY until maxY) {
-            for (x in minX until maxX) {
-                val color = pixelReader.getColor(x, y)
-                pixelWriter.setColor(x - minX, y - minY, color)
-            }
-        }
-
-        return Texture(image)
+        return Texture(newImage)
     }
 
     /**
@@ -141,26 +135,8 @@ open class Texture : ImageView, View {
         val image = WritableImage(width, height)
         val pixelWriter = image.pixelWriter
 
-        for (y in 0 until height) {
-            for (x in 0 until width) {
-                val color: Color
-                if (x < leftImage.width) {
-                    if (y < leftImage.height) {
-                        color = leftReader.getColor(x, y)
-                    } else {
-                        color = Color.TRANSPARENT
-                    }
-                } else {
-                    if (y < rightImage.height) {
-                        color = rightReader.getColor(x - leftImage.width.toInt(), y)
-                    } else {
-                        color = Color.TRANSPARENT
-                    }
-                }
-
-                pixelWriter.setColor(x, y, color)
-            }
-        }
+        pixelWriter.setPixels(0, 0, leftImage.width.toInt(), leftImage.height.toInt(), leftReader, 0, 0)
+        pixelWriter.setPixels(leftImage.width.toInt(), 0, rightImage.width.toInt(), rightImage.height.toInt(), rightReader, 0, 0)
 
         return Texture(image)
     }
@@ -193,26 +169,8 @@ open class Texture : ImageView, View {
         val image = WritableImage(width, height)
         val pixelWriter = image.pixelWriter
 
-        for (y in 0 until height) {
-            for (x in 0 until width) {
-                val color: Color
-                if (y < topImage.height) {
-                    if (x < topImage.width) {
-                        color = topReader.getColor(x, y)
-                    } else {
-                        color = Color.TRANSPARENT
-                    }
-                } else {
-                    if (x < bottomImage.width) {
-                        color = bottomReader.getColor(x, y - topImage.height.toInt())
-                    } else {
-                        color = Color.TRANSPARENT
-                    }
-                }
-
-                pixelWriter.setColor(x, y, color)
-            }
-        }
+        pixelWriter.setPixels(0, 0, topImage.width.toInt(), topImage.height.toInt(), topReader, 0, 0)
+        pixelWriter.setPixels(0, topImage.height.toInt(), bottomImage.width.toInt(), bottomImage.height.toInt(), bottomReader, 0, 0)
 
         return Texture(image)
     }

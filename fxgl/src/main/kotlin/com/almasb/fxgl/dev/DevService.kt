@@ -13,13 +13,13 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.isReleaseMode
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
+import com.almasb.fxgl.logging.Logger
+import com.almasb.fxgl.logging.LoggerLevel
+import com.almasb.fxgl.logging.LoggerOutput
 import com.almasb.fxgl.physics.BoxShapeData
 import com.almasb.fxgl.physics.ChainShapeData
 import com.almasb.fxgl.physics.CircleShapeData
 import com.almasb.fxgl.physics.PolygonShapeData
-import com.almasb.fxgl.logging.Logger
-import com.almasb.fxgl.logging.LoggerLevel
-import com.almasb.fxgl.logging.LoggerOutput
 import com.almasb.fxgl.scene.SceneService
 import javafx.scene.Group
 import javafx.scene.shape.*

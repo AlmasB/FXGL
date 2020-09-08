@@ -8,7 +8,8 @@ package com.almasb.fxgl.core.util
 //
 import java.io.ByteArrayOutputStream
 import java.util.*
-import java.util.zip.*
+import java.util.zip.InflaterInputStream
+
 //
 //import javafx.embed.swing.SwingFXUtils
 //import javafx.scene.SnapshotParameters

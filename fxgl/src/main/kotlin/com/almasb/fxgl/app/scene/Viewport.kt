@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app.scene
 
 import com.almasb.fxgl.animation.AnimatedValue
-import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.FXGLMath.*
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.core.util.EmptyRunnable

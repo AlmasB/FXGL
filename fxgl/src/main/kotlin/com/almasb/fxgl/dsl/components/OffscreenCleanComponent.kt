@@ -23,4 +23,6 @@ class OffscreenCleanComponent
             entity.removeFromWorld()
         }
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }

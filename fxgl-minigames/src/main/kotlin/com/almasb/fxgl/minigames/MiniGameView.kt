@@ -8,8 +8,6 @@ package com.almasb.fxgl.minigames
 
 import com.almasb.fxgl.input.Input
 import javafx.scene.Parent
-import javafx.scene.input.KeyCode
-import javafx.scene.input.MouseButton
 
 /**
  *

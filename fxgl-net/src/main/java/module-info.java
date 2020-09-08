@@ -9,7 +9,6 @@
  */
 module com.almasb.fxgl.net {
     requires com.almasb.fxgl.core;
-    requires kotlin.stdlib;
 
     exports com.almasb.fxgl.net;
 }

@@ -4,7 +4,7 @@
 
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>11.10</version>
+    <version>dev-SNAPSHOT</version>
     
     <packaging>pom</packaging>
 
@@ -105,9 +105,9 @@
         <maven.templating.version>1.0.0</maven.templating.version>
 
         <!-- dependencies -->
-        <jfx.version>13.0.2</jfx.version>
+        <jfx.version>14</jfx.version>
         <kotlin.version>1.3.41</kotlin.version>
-        <attach.version>4.0.6</attach.version>
+        <attach.version>4.0.8</attach.version>
         <jackson.version>2.11.1</jackson.version>
 
         <!-- test dependencies -->

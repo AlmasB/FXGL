@@ -7,10 +7,10 @@
 package com.almasb.fxgl.animation
 
 import com.almasb.fxgl.core.Updatable
-import java.util.function.Consumer
 import com.almasb.fxgl.core.util.EmptyRunnable
 import javafx.animation.Interpolator
 import javafx.util.Duration
+import java.util.function.Consumer
 
 /**
  * Animation configuration object.

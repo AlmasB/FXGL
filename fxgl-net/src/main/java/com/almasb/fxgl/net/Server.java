@@ -36,17 +36,27 @@ public abstract class Server<T> extends Endpoint<T> {
     }
 
     /**
+     * Starts listening for incoming connections on a background thread.
+     */
+    public final void startAsync() {
+        Thread t = new Thread(startTask()::run, "ServerAsyncConnThread");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /**
      * @return a task that performs an IO operation to start listening for incoming connections.
      */
     public final IOTask<Void> startTask() {
-        return IOTask.ofVoid(this::start);
+        return IOTask.ofVoid("ServerStart", this::start);
     }
 
     protected abstract void start();
 
     /**
      * Stops the server. After this call, the server will no longer accept incoming connections.
-     * Existing connections will remain active.
+     * Existing TCP connections will remain active.
+     * Existing UDP connections will be terminated.
      */
     public abstract void stop();
 }
