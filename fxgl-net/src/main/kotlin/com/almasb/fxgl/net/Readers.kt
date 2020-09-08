@@ -118,32 +118,12 @@ class ByteArrayTCPMessageReader(stream: InputStream) : TCPMessageReader<ByteArra
 
 class StringTCPMessageReader(inputStream: InputStream) : TCPMessageReader<String> {
 
-    private val inputStream = InputStreamReader(inputStream, Charsets.UTF_8)
+    private val reader = ByteArrayTCPMessageReader(inputStream)
 
     override fun read(): String {
+        val bytes = reader.read()
 
-        val bufferSize = 1024
-        val buffer = CharArray(bufferSize)
-        val out = StringBuilder()
-        var charsRead: Int
-
-        while (inputStream.read(buffer).also { charsRead = it } >= 0) {
-            out.append(buffer, 0, charsRead)
-
-            println("SB: ${out.toString()}")
-        }
-        return out.toString()
-
-
-//        val result = ByteArrayOutputStream()
-//        val buffer = ByteArray(1024)
-//        var length: Int
-//
-//        while (inputStream.read(buffer).also { length = it } != -1) {
-//            result.write(buffer, 0, length)
-//        }
-//
-//        return result.toString(Charsets.UTF_8)
+        return String(bytes, Charsets.UTF_16)
     }
 }
 

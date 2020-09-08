@@ -39,7 +39,7 @@ class NetServiceTest {
                 "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
                 "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 
-        private val LARGE_DATA by lazy { Files.readAllBytes(Paths.get(javaClass.getResource("LongText.txt").toURI())) }
+        private val LARGE_DATA by lazy { Files.readAllBytes(Paths.get(NetServiceTest::class.java.getResource("LongText.txt").toURI())) }
     }
 
     private lateinit var net: NetService
@@ -187,6 +187,73 @@ class NetServiceTest {
                     } else if (count == 4) {
 
                         assertThat(message, `is`(LARGE_DATA))
+                        count++
+                    }
+                }
+            }
+
+            server.listeningProperty().addListener { _, _, isListening ->
+                if (isListening) {
+                    client.connectTask().run()
+                }
+            }
+
+            server.startTask()
+                    .onFailure { e -> fail { "Server Start failed $e" } }
+                    .run()
+
+            assertThat(count, `is`(5))
+        }
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    fun `TCP String message handler`() {
+        var count = 0
+
+        assertTimeoutPreemptively(Duration.ofSeconds(2)) {
+            val server = net.newTCPServer(TEST_PORT, ServerConfig(String::class.java))
+
+            server.setOnConnected {
+                count++
+
+                // run this in a separate thread so we don't block the client
+                // in production this is not necessary
+                Thread(Runnable {
+
+                    // send data
+                    it.send(LOREM_IPSUM)
+
+                    it.send("Hello world")
+
+                    it.send(String(LARGE_DATA))
+
+                    // and wait 0.5 sec before stopping
+                    Thread.sleep(500)
+
+                    server.stop()
+                }).start()
+            }
+
+            val client = net.newTCPClient("localhost", TEST_PORT, ClientConfig(String::class.java))
+
+            client.setOnConnected {
+                count++
+
+                it.addMessageHandler { _, message ->
+
+                    if (count == 2) {
+
+                        assertThat(message, `is`(LOREM_IPSUM))
+                        count++
+                    } else if (count == 3) {
+
+                        assertThat(message, `is`("Hello world"))
+                        count++
+
+                    } else if (count == 4) {
+
+                        assertThat(message, `is`(String(LARGE_DATA)))
                         count++
                     }
                 }

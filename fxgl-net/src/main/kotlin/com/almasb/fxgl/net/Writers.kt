@@ -111,10 +111,10 @@ class ByteArrayTCPMessageWriter(out: OutputStream) : TCPMessageWriter<ByteArray>
 
 class StringTCPMessageWriter(out: OutputStream) : TCPMessageWriter<String> {
 
-    private val out = PrintWriter(out, true)
+    private val writer = ByteArrayTCPMessageWriter(out)
 
     override fun write(message: String) {
-        out.write(message)
+        writer.write(message.toByteArray(Charsets.UTF_16))
     }
 }
 
