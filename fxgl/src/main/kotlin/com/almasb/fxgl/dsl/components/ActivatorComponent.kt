@@ -56,4 +56,6 @@ class ActivatorComponent
             isActivated = false
         }
     }
+
+    override fun isComponentInjectionRequired(): Boolean = false
 }
