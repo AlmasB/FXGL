@@ -63,6 +63,55 @@ class SaveLoadServiceTest {
         //`Delete profile`()
     }
 
+    @Test
+    fun `Test save write - read load`() {
+        var count = 0
+
+        val handler = object : SaveLoadHandler {
+            override fun onSave(data: DataFile) {
+                val bundle = Bundle("Test")
+                bundle.put("int", 99)
+
+                data.putBundle(bundle)
+
+                count++
+            }
+
+            override fun onLoad(data: DataFile) {
+                val bundle = data.getBundle("Test")
+                val intValue = bundle.get<Int>("int")
+
+                assertThat(intValue, `is`(99))
+
+                count++
+            }
+        }
+
+        saveLoadService.addHandler(handler)
+
+        assertFalse(saveLoadService.saveFileExists("profiles/savewrite1.sav"))
+
+        saveLoadService.saveAndWriteTask("profiles/savewrite1.sav").run()
+
+        assertTrue(saveLoadService.saveFileExists("profiles/savewrite1.sav"))
+        assertThat(count, `is`(1))
+
+        saveLoadService.readAndLoadTask("profiles/savewrite1.sav").run()
+
+        assertThat(count, `is`(2))
+
+        saveLoadService.removeHandler(handler)
+
+        // handler removed, so no callbacks beyond this point
+        saveLoadService.saveAndWriteTask("profiles/savewrite1.sav").run()
+
+        assertThat(count, `is`(2))
+
+        saveLoadService.deleteSaveFileTask("profiles/savewrite1.sav").run()
+
+        assertFalse(saveLoadService.saveFileExists("profiles/savewrite1.sav"))
+    }
+
     fun `Write game data`() {
         val bundle1 = Bundle("Hello")
         bundle1.put("id", 9)
