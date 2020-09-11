@@ -112,6 +112,20 @@ class SaveLoadServiceTest {
         assertFalse(saveLoadService.saveFileExists("profiles/savewrite1.sav"))
     }
 
+    @Test
+    fun `Last modified save file`() {
+        saveLoadService.saveAndWriteTask("profiles/s/latest.sav").run()
+
+        val result = saveLoadService.readLastModifiedSaveFileTask("profiles/s/", ".sav").run()
+
+        assertTrue(!result.isEmpty)
+        assertThat(result.get().name, `is`("profiles/s/latest.sav"))
+
+        saveLoadService.deleteSaveFileTask("profiles/s/latest.sav").run()
+
+        assertFalse(saveLoadService.saveFileExists("profiles/s/latest.sav"))
+    }
+
     fun `Write game data`() {
         val bundle1 = Bundle("Hello")
         bundle1.put("id", 9)
