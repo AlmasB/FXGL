@@ -124,6 +124,11 @@ class SaveLoadServiceTest {
         saveLoadService.deleteSaveFileTask("profiles/s/latest.sav").run()
 
         assertFalse(saveLoadService.saveFileExists("profiles/s/latest.sav"))
+
+        // Last modified save file returns optional empty if no matching files found
+        val result2 = saveLoadService.readLastModifiedSaveFileTask("profiles/", ".blabla").run()
+
+        assertTrue(result2.isEmpty)
     }
 
     fun `Write game data`() {
