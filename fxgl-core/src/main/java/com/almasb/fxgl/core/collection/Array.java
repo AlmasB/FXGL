@@ -782,64 +782,10 @@ public class Array<T> implements Iterable<T> {
         }
     }
 
-    private static final Array<?> EMPTY = new EmptyArray<>();
+    private static final Array<?> EMPTY = new Array<>(0);
 
     @SuppressWarnings("unchecked")
     public static <T> Array<T> empty() {
         return (Array<T>) EMPTY;
-    }
-
-    private static class EmptyArray<T> extends Array<T> {
-
-        EmptyArray() {
-            super(0);
-        }
-
-        private void fail() {
-            throw new UnsupportedOperationException("Unmodifiable");
-        }
-
-        @Override
-        public void add(T value) {
-            fail();
-        }
-
-        @Override
-        public T[] getItems() {
-            fail();
-            return null;
-        }
-
-        @Override
-        public void addAll(Array<? extends T> array) {
-            fail();
-        }
-
-        @Override
-        public void addAll(T... array) {
-            fail();
-        }
-
-        @Override
-        public void addAll(Array<? extends T> array, int start, int count) {
-            fail();
-        }
-
-        @Override
-        public void addAll(T[] array, int start, int count) {
-            fail();
-        }
-
-        @Override
-        public T[] ensureCapacity(int additionalCapacity) {
-            fail();
-            return null;
-        }
-
-        @Override
-        protected T[] resize(int newSize) {
-            fail();
-            return null;
-        }
     }
 }
