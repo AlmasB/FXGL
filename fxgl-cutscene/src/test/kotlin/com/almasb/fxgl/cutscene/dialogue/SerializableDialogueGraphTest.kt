@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.cutscene.dialogue
 
+import javafx.beans.property.SimpleStringProperty
 import org.hamcrest.MatcherAssert.*
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
@@ -25,6 +26,11 @@ class SerializableDialogueGraphTest {
         val text = TextNode("test text")
         val branch = BranchNode("test branch")
         val subdialogue = SubDialogueNode("test subdialogue")
+
+        choice.options[0] = SimpleStringProperty("Option 1")
+        choice.options[1] = SimpleStringProperty("Option 2")
+        choice.conditions[0] = SimpleStringProperty("")
+        choice.conditions[1] = SimpleStringProperty("hasItem 5000")
 
         val graph = DialogueGraph()
 
@@ -48,6 +54,17 @@ class SerializableDialogueGraphTest {
         graph.addEdge(subdialogue, end)
 
         val sGraph = DialogueGraphSerializer.toSerializable(graph)
+
+        assertThat(sGraph.version, greaterThan(0))
+        sGraph.nodes.forEach {
+            assertThat(it.value.type, `is`(not(DialogueNodeType.CHOICE)))
+        }
+
+        sGraph.choiceNodes.forEach {
+            assertThat(it.value.type, `is`(DialogueNodeType.CHOICE))
+        }
+
+        sGraph.version++
 
         val copy = DialogueGraphSerializer.fromSerializable(sGraph)
 
