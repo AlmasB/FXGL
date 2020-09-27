@@ -13,9 +13,13 @@ import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
+import javafx.scene.transform.Rotate
+import javafx.scene.transform.Scale
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -137,7 +141,7 @@ class AnimationBuilderTest {
     @Test
     fun `Repeat Infinite`() {
         val anim = builder.repeatInfinitely()
-                .fade(e)
+                .fade(node)
                 .from(0.0)
                 .to(1.0)
                 .build()
@@ -150,6 +154,31 @@ class AnimationBuilderTest {
             anim.onUpdate(0.9)
             assertThat(e.opacity, `is`(1.0))
         }
+    }
+
+    @Test
+    fun `On Finished`() {
+        var count = 0
+
+        val anim = builder.repeat(2)
+                .onFinished(Runnable { count++ })
+                .onCycleFinished(Runnable { count-- })
+                .fade(e)
+                .from(0.0)
+                .to(1.0)
+                .build()
+
+        anim.start()
+
+        anim.onUpdate(1.0)
+
+        // on cycle finished
+        assertThat(count, `is`(-1))
+
+        anim.onUpdate(1.0)
+
+        // on cycle finished + on finished
+        assertThat(count, `is`(-1))
     }
 
     @Test
@@ -171,6 +200,27 @@ class AnimationBuilderTest {
 
         anim.onUpdate(0.9)
         assertThat(e.opacity, `is`(0.0))
+    }
+
+    @Test
+    fun `With interpolator`() {
+        val anim = builder.interpolator(Interpolators.QUADRATIC.EASE_IN())
+                .fade(e)
+                .from(0.0)
+                .to(1.0)
+                .build()
+
+        anim.start()
+        assertThat(e.opacity, `is`(0.0))
+
+        anim.onUpdate(0.5)
+        assertThat(e.opacity, `is`(0.25))
+
+        anim.onUpdate(0.3)
+        assertThat(e.opacity, closeTo(0.64, 0.01))
+
+        anim.onUpdate(0.2)
+        assertThat(e.opacity, `is`(1.0))
     }
 
     @Test
@@ -227,6 +277,30 @@ class AnimationBuilderTest {
     }
 
     @Test
+    fun `Rotate with origin`() {
+        val anim = builder.rotate(node)
+                .origin(Point2D(1.0, 5.0))
+                .from(0.0)
+                .to(180.0)
+                .build()
+
+        anim.start()
+
+        // rotate should have been added
+        val rotate = node.transforms[0] as Rotate
+
+        assertThat(rotate.pivotX, `is`(1.0))
+        assertThat(rotate.pivotY, `is`(5.0))
+
+        assertThat(rotate.angle, `is`(0.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(rotate.angle, `is`(180.0))
+    }
+
+    @Test
     fun `Scale`() {
         val anim = builder.scale(e)
                 .from(Point2D(1.0, 1.0))
@@ -243,6 +317,32 @@ class AnimationBuilderTest {
 
         assertThat(e.scaleX, `is`(3.0))
         assertThat(e.scaleY, `is`(3.0))
+    }
+
+    @Test
+    fun `Scale with origin`() {
+        val anim = builder.scale(node)
+                .origin(Point2D(3.0, 5.0))
+                .from(Point2D(1.0, 1.0))
+                .to(Point2D(3.0, 3.0))
+                .build()
+
+        anim.start()
+
+        // scale should have been added
+        val scale = node.transforms[0] as Scale
+
+        assertThat(scale.pivotX, `is`(3.0))
+        assertThat(scale.pivotY, `is`(5.0))
+
+        assertThat(scale.x, `is`(1.0))
+        assertThat(scale.y, `is`(1.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(scale.x, `is`(3.0))
+        assertThat(scale.y, `is`(3.0))
     }
 
     @Test
