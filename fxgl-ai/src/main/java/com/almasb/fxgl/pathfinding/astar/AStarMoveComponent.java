@@ -12,6 +12,7 @@ import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.pathfinding.CellMoveComponent;
+import javafx.beans.value.ChangeListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,13 @@ public final class AStarMoveComponent extends Component {
 
     private Runnable delayedPathCalc = EmptyRunnable.INSTANCE;
 
+    private ChangeListener<Boolean> isAtDestinationListener = (o, old, isAtDestination) -> {
+        if (isAtDestination) {
+            delayedPathCalc.run();
+            delayedPathCalc = EmptyRunnable.INSTANCE;
+        }
+    };
+
     public AStarMoveComponent(AStarGrid grid) {
         this(new LazyValue<>(() -> grid));
     }
@@ -44,15 +52,14 @@ public final class AStarMoveComponent extends Component {
 
     @Override
     public void onAdded() {
-
         moveComponent = entity.getComponent(CellMoveComponent.class);
 
-        moveComponent.atDestinationProperty().addListener((o, old, isAtDestination) -> {
-            if (isAtDestination) {
-                delayedPathCalc.run();
-                delayedPathCalc = EmptyRunnable.INSTANCE;
-            }
-        });
+        moveComponent.atDestinationProperty().addListener(isAtDestinationListener);
+    }
+
+    @Override
+    public void onRemoved() {
+        moveComponent.atDestinationProperty().removeListener(isAtDestinationListener);
     }
 
     public boolean isMoving() {
