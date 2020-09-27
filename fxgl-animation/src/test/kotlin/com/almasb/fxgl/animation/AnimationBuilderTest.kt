@@ -149,10 +149,10 @@ class AnimationBuilderTest {
         anim.start()
         for (i in 0..19) {
             anim.onUpdate(0.1)
-            assertThat(e.opacity, `is`(0.1))
+            assertThat(node.opacity, `is`(0.1))
 
             anim.onUpdate(0.9)
-            assertThat(e.opacity, `is`(1.0))
+            assertThat(node.opacity, `is`(1.0))
         }
     }
 
