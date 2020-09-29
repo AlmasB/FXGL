@@ -9,16 +9,15 @@ package com.almasb.fxgl.pathfinding.astar;
 import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.Pathfinder;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public final class AStarPathfinder implements Pathfinder<AStarCell> {
 
-    private AStarGrid grid;
+    private final AStarGrid grid;
 
     public AStarPathfinder(AStarGrid grid) {
         this.grid = grid;
@@ -69,7 +68,7 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
         boolean found = false;
 
         while (!found && !closed.contains(target)) {
-            for (AStarCell neighbor : getValidNeighbors(current, grid, busyNodes)) {
+            for (AStarCell neighbor : getValidNeighbors(current, busyNodes)) {
                 if (neighbor == target) {
                     target.setParent(current);
                     found = true;
@@ -128,42 +127,14 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
 
     /**
      * @param node the A* node
-     * @param grid the A* grid
      * @param busyNodes nodes which are busy, i.e. walkable but have a temporary obstacle
      * @return neighbors of the node
      */
-    protected List<AStarCell> getValidNeighbors(AStarCell node, AStarCell[][] grid, AStarCell... busyNodes) {
-        int x = node.getX();
-        int y = node.getY();
-        int[] points = {
-                x - 1, y,
-                x + 1, y,
-                x, y - 1,
-                x, y + 1
-        };
-
-        List<AStarCell> result = new ArrayList<>();
-
-        for (int i = 0; i < points.length; i++) {
-            int x1 = points[i];
-            int y1 = points[++i];
-
-            if (x1 >= 0 && x1 < grid.length
-                    && y1 >= 0 && y1 < grid[0].length
-                    && grid[x1][y1].getState() == CellState.WALKABLE
-                    && !contains(x1, y1, busyNodes)) {
-                result.add(grid[x1][y1]);
-            }
-        }
-
-        return result;
-    }
-
-    private boolean contains(int x, int y, AStarCell... cells) {
-        for (AStarCell n : cells)
-            if (n.getX() == x && n.getY() == y)
-                return true;
-
-        return false;
+    protected Set<AStarCell> getValidNeighbors(AStarCell node, AStarCell... busyNodes) {
+        var busyNodesList = Arrays.asList(busyNodes);
+        return grid.getNeighbors(node.getX(), node.getY()).stream()
+                .filter(AStarCell::isWalkable)
+                .filter(neighbor -> !busyNodesList.contains(neighbor))
+                .collect(Collectors.toSet());
     }
 }
