@@ -7,7 +7,6 @@
 package com.almasb.fxgl.pathfinding.astar;
 
 import com.almasb.fxgl.pathfinding.CellState;
-import com.almasb.fxgl.pathfinding.Pathfinder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,9 +14,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AStarPathfinderTest {
 
@@ -35,7 +33,7 @@ public class AStarPathfinderTest {
     public void testFindPath() {
         List<AStarCell> path = pathfinder.findPath(3, 0, 5, 0);
         assertPathEquals(path, 4, 0, 5, 0);
-        
+
         // Add barriers.
         for (int i = 0; i <= 4; i++)
             grid.get(4, i).setState(CellState.NOT_WALKABLE);
@@ -72,6 +70,7 @@ public class AStarPathfinderTest {
 
 
         List<AStarCell> path = pathfinder.findPath(1, 1, 4, 5, new ArrayList<>());
+        System.out.println("Solution: " + path);
         assertPathEquals(path,
                 2, 1,
                 2, 2,
@@ -80,8 +79,9 @@ public class AStarPathfinderTest {
                 3, 4,
                 4, 4,
                 4, 5);
-        path = pathfinder.findPath(1, 1, 4, 5, Collections.singletonList(grid.get(3, 4)));
-        assertPathEquals(path,
+        List<AStarCell> pathWithBusyCell = pathfinder.findPath(1, 1, 4, 5, Collections.singletonList(grid.get(3, 4)));
+        System.out.println("Solution: " + pathWithBusyCell);
+        assertPathEquals(pathWithBusyCell,
                 2, 1,
                 2, 2,
                 2, 3,
@@ -92,7 +92,7 @@ public class AStarPathfinderTest {
                 4, 6,
                 4, 5);
     }
-    
+
     private void assertPathEquals(List<AStarCell> path, int... points) {
         assertEquals(points.length / 2, path.size());
 

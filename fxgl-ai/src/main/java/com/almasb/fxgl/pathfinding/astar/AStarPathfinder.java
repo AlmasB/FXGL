@@ -9,7 +9,10 @@ package com.almasb.fxgl.pathfinding.astar;
 import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.Pathfinder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -130,11 +133,11 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
      * @param busyNodes nodes which are busy, i.e. walkable but have a temporary obstacle
      * @return neighbors of the node
      */
-    protected Set<AStarCell> getValidNeighbors(AStarCell node, AStarCell... busyNodes) {
+    protected List<AStarCell> getValidNeighbors(AStarCell node, AStarCell... busyNodes) {
         var busyNodesList = Arrays.asList(busyNodes);
         return grid.getNeighbors(node.getX(), node.getY()).stream()
                 .filter(AStarCell::isWalkable)
                 .filter(neighbor -> !busyNodesList.contains(neighbor))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 }
