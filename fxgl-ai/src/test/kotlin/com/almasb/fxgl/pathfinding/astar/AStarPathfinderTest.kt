@@ -9,6 +9,7 @@ import com.almasb.fxgl.pathfinding.CellState
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
+import kotlin.test.assertEquals
 
 class AStarPathfinderTest {
     private lateinit var grid: AStarGrid
@@ -80,10 +81,11 @@ class AStarPathfinderTest {
 
     private fun assertPathEquals(path: List<AStarCell>, vararg points: Int) {
         val pointsList = points.toList().chunked(2) { it[0] to it[1] }
-        assert(pointsList.size == path.size) { reportNotMatchingPaths(path, pointsList) }
+        val errorMsg = reportNotMatchingPaths(path, pointsList)
+        assertEquals(pointsList.size, path.size, errorMsg)
         pointsList.zip(path).forEach { (point, cell) ->
-            assert(point.first == cell.x) { reportNotMatchingPaths(path, pointsList) }
-            assert(point.second == cell.y) { reportNotMatchingPaths(path, pointsList) }
+            assertEquals(point.first, cell.x, errorMsg)
+            assertEquals(point.second, cell.y, errorMsg)
         }
     }
 
