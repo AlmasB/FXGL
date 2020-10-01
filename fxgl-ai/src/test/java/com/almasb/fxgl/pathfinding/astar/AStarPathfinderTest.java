@@ -11,8 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -70,7 +72,6 @@ public class AStarPathfinderTest {
 
 
         List<AStarCell> path = pathfinder.findPath(1, 1, 4, 5, new ArrayList<>());
-        System.out.println("Solution: " + path);
         assertPathEquals(path,
                 2, 1,
                 2, 2,
@@ -80,7 +81,6 @@ public class AStarPathfinderTest {
                 4, 4,
                 4, 5);
         List<AStarCell> pathWithBusyCell = pathfinder.findPath(1, 1, 4, 5, Collections.singletonList(grid.get(3, 4)));
-        System.out.println("Solution: " + pathWithBusyCell);
         assertPathEquals(pathWithBusyCell,
                 2, 1,
                 2, 2,
@@ -94,14 +94,18 @@ public class AStarPathfinderTest {
     }
 
     private void assertPathEquals(List<AStarCell> path, int... points) {
-        assertEquals(points.length / 2, path.size());
+        assertEquals(points.length / 2, path.size(), reportNotMatchingPaths(path, points));
 
         int i = 0;
         for (AStarCell cell : path) {
-            assertEquals(points[i++], cell.getX());
-            assertEquals(points[i++], cell.getY());
+            assertEquals(points[i++], cell.getX(), reportNotMatchingPaths(path, points));
+            assertEquals(points[i++], cell.getY(), reportNotMatchingPaths(path, points));
         }
 
-        assertEquals(points.length, i);
+        assertEquals(points.length, i, reportNotMatchingPaths(path, points));
+    }
+
+    private Supplier<String> reportNotMatchingPaths(List<AStarCell> path, int... points){
+        return () -> "Paths do not match: \n" + path + "\n != \n" + Arrays.toString(points);
     }
 }
