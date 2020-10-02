@@ -6,10 +6,11 @@
 package com.almasb.fxgl.pathfinding.astar
 
 import com.almasb.fxgl.pathfinding.CellState
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
-import kotlin.test.assertEquals
+import java.util.function.Supplier
 
 class AStarPathfinderTest {
     private lateinit var grid: AStarGrid
@@ -89,8 +90,8 @@ class AStarPathfinderTest {
         }
     }
 
-    private fun reportNotMatchingPaths(path: List<AStarCell>, points: List<Pair<Int, Int>>): String =
-            "Paths do not match: \n$path \n!=\n${points}"
+    private fun reportNotMatchingPaths(path: List<AStarCell>, points: List<Pair<Int, Int>>): Supplier<String> =
+            Supplier { "Paths do not match: \n$path \n!=\n${points}" }
 
     companion object {
         private const val GRID_SIZE = 20
