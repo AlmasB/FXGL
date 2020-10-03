@@ -50,6 +50,7 @@ public class BasicGameApp extends GameApplication {
 For a quick dive into code, see standalone [basic examples](https://github.com/AlmasB/FXGL/tree/master/fxgl-samples/src/main/java/basics).
 Otherwise, see:
 
+* [Showcase Trailer](https://youtu.be/fuDQg7W0v4g)
 * [Wiki & written tutorials](https://github.com/AlmasB/FXGL/wiki)
 * [YouTube tutorials](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
 * [Java 11 modules](https://github.com/AlmasB/FXGL/wiki/FXGL-11-%28Java-11-modules%29)
