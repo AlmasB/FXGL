@@ -393,4 +393,90 @@ class AnimationBuilderTest {
         anim.onUpdate(0.5)
         assertThat(value, `is`(Color.WHITE))
     }
+
+    @Test
+    fun `Bulk animations Rotate`() {
+        val anim = builder.rotate(listOf(e, node))
+                .from(0.0)
+                .to(180.0)
+                .build()
+
+        anim.start()
+
+        assertThat(e.rotation, `is`(0.0))
+        assertThat(node.rotate, `is`(0.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(e.rotation, `is`(180.0))
+        assertThat(node.rotate, `is`(180.0))
+    }
+
+    @Test
+    fun `Bulk animations Translate`() {
+        val anim = builder.translate(listOf(e, node))
+                .from(Point2D(10.0, 10.0))
+                .to(Point2D(50.0, 50.0))
+                .build()
+
+        anim.start()
+
+        assertThat(e.x, `is`(10.0))
+        assertThat(e.y, `is`(10.0))
+        assertThat(node.translateX, `is`(10.0))
+        assertThat(node.translateY, `is`(10.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(e.x, `is`(50.0))
+        assertThat(e.y, `is`(50.0))
+        assertThat(node.translateX, `is`(50.0))
+        assertThat(node.translateY, `is`(50.0))
+    }
+
+    @Test
+    fun `Bulk animations Fade`() {
+        val anim = builder.fade(listOf(e, node))
+                .from(0.0)
+                .to(1.0)
+                .build()
+
+        anim.start()
+
+        assertThat(e.opacity, `is`(0.0))
+        assertThat(node.opacity, `is`(0.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(e.opacity, `is`(1.0))
+        assertThat(node.opacity, `is`(1.0))
+    }
+
+    @Test
+    fun `Bulk animations Scale`() {
+        val anim = builder.scale(listOf(e, node))
+                .from(Point2D(1.0, 1.0))
+                .to(Point2D(3.0, 3.0))
+                .build()
+
+        anim.start()
+
+        assertThat(e.scaleX, `is`(1.0))
+        assertThat(e.scaleY, `is`(1.0))
+
+        assertThat(node.scaleX, `is`(1.0))
+        assertThat(node.scaleY, `is`(1.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(e.scaleX, `is`(3.0))
+        assertThat(e.scaleY, `is`(3.0))
+
+        assertThat(node.scaleX, `is`(3.0))
+        assertThat(node.scaleY, `is`(3.0))
+    }
 }
