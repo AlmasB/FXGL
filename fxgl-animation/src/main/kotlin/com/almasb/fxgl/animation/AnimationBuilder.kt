@@ -21,6 +21,7 @@ import javafx.scene.shape.Shape
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
 import javafx.util.Duration
+import java.lang.IllegalArgumentException
 import java.util.function.Consumer
 
 /**
@@ -107,13 +108,7 @@ open class AnimationBuilder
     }
 
     fun translate(entities: Collection<Any>) = TranslationAnimationBuilder(this).apply {
-        objects += entities.map {
-            when (it) {
-                is Node -> it.toAnimatable()
-                is Entity -> it.toAnimatable()
-                else -> throw RuntimeException("${it.javaClass} must be Node or Entity")
-            }
-        }
+        objects += entities.map { toAnimatable(it) }
     }
 
     fun fade(vararg entities: Entity) = FadeAnimationBuilder(this).apply {
@@ -125,13 +120,7 @@ open class AnimationBuilder
     }
 
     fun fade(entities: Collection<Any>) = FadeAnimationBuilder(this).apply {
-        objects += entities.map {
-            when (it) {
-                is Node -> it.toAnimatable()
-                is Entity -> it.toAnimatable()
-                else -> throw RuntimeException("${it.javaClass} must be Node or Entity")
-            }
-        }
+        objects += entities.map { toAnimatable(it) }
     }
 
     fun scale(vararg entities: Entity) = ScaleAnimationBuilder(this).apply {
@@ -143,13 +132,7 @@ open class AnimationBuilder
     }
 
     fun scale(entities: Collection<Any>) = ScaleAnimationBuilder(this).apply {
-        objects += entities.map {
-            when (it) {
-                is Node -> it.toAnimatable()
-                is Entity -> it.toAnimatable()
-                else -> throw RuntimeException("${it.javaClass} must be Node or Entity")
-            }
-        }
+        objects += entities.map { toAnimatable(it) }
     }
 
     fun rotate(vararg entities: Entity) = RotationAnimationBuilder(this).apply {
@@ -161,13 +144,13 @@ open class AnimationBuilder
     }
 
     fun rotate(entities: Collection<Any>) = RotationAnimationBuilder(this).apply {
-        objects += entities.map {
-            when (it) {
-                is Node -> it.toAnimatable()
-                is Entity -> it.toAnimatable()
-                else -> throw RuntimeException("${it.javaClass} must be Node or Entity")
-            }
-        }
+        objects += entities.map { toAnimatable(it) }
+    }
+
+    private fun toAnimatable(obj: Any): Animatable = when (obj) {
+        is Node -> obj.toAnimatable()
+        is Entity -> obj.toAnimatable()
+        else -> throw IllegalArgumentException("${obj.javaClass} must be Node or Entity")
     }
 
     fun fadeIn(vararg entities: Entity) = FadeAnimationBuilder(this).apply {

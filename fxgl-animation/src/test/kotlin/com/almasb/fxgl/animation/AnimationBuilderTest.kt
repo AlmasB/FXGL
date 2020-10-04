@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.function.Consumer
 
 /**
@@ -478,5 +479,24 @@ class AnimationBuilderTest {
 
         assertThat(node.scaleX, `is`(3.0))
         assertThat(node.scaleY, `is`(3.0))
+    }
+
+    @Test
+    fun `Bulk animations throw if object is not Node or Entity`() {
+        assertThrows<IllegalArgumentException> {
+            builder.translate(listOf(""))
+        }
+
+        assertThrows<IllegalArgumentException> {
+            builder.rotate(listOf(""))
+        }
+
+        assertThrows<IllegalArgumentException> {
+            builder.scale(listOf(""))
+        }
+
+        assertThrows<IllegalArgumentException> {
+            builder.fade(listOf(""))
+        }
     }
 }
