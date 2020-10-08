@@ -499,4 +499,47 @@ class AnimationBuilderTest {
             builder.fade(listOf(""))
         }
     }
+
+    @Test
+    fun `Build and play`() {
+        val scene = object : Scene() { }
+
+        builder.translate(node)
+                .from(Point2D(10.0, 10.0))
+                .to(Point2D(-10.0, 10.0))
+                .buildAndPlay(scene)
+
+        assertThat(node.translateX, `is`(10.0))
+        assertThat(node.translateY, `is`(10.0))
+
+        scene.update(0.5)
+
+        assertThat(node.translateX, `is`(0.0))
+        assertThat(node.translateY, `is`(10.0))
+
+        scene.update(0.5)
+
+        assertThat(node.translateX, `is`(-10.0))
+        assertThat(node.translateY, `is`(10.0))
+
+        // use scene with constructor
+
+        AnimationBuilder(scene).translate(node)
+                .from(Point2D(10.0, 10.0))
+                .to(Point2D(-10.0, 10.0))
+                .buildAndPlay()
+
+        assertThat(node.translateX, `is`(10.0))
+        assertThat(node.translateY, `is`(10.0))
+
+        scene.update(0.5)
+
+        assertThat(node.translateX, `is`(0.0))
+        assertThat(node.translateY, `is`(10.0))
+
+        scene.update(0.5)
+
+        assertThat(node.translateX, `is`(-10.0))
+        assertThat(node.translateY, `is`(10.0))
+    }
 }
