@@ -65,6 +65,11 @@ public class MassUnitsRTSSample extends GameApplication {
 
             rect.setFill(Color.RED);
         });
+
+        onBtn(MouseButton.MIDDLE, "Freeze", () -> {
+            var units = getGameWorld().getEntitiesFiltered(e -> e.getPropertyOptional("type").isPresent());
+            units.forEach( unit -> unit.getComponent(AStarMoveComponent.class).stopMovement());
+        });
     }
 
     @Override
