@@ -86,6 +86,10 @@ public final class AStarMoveComponent extends Component {
         moveComponent.setPositionToCell(cellX, cellY);
     }
 
+    public void stopMovement() {
+        stopMovementAt(moveComponent.getCellX(), moveComponent.getCellY());
+    }
+
     public void moveToRightCell() {
         getGrid().getRight(moveComponent.getCellX(), moveComponent.getCellY())
                 .ifPresent(this::moveToCell);
