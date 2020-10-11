@@ -82,115 +82,64 @@ class NineSliceTextureBuilder(val texture: Texture) {
 
         check(w > 0 && h > 0) { "The entered dimension are too small to build the texture." }
 
-        var newTop = top
+        val adjustedTop = adjustTextureHorizontally(top, w)
 
-        if (top.width > w) {
-            newTop = top.subTexture(Rectangle2D(0.0, 0.0, w, top.height))
-        } else if (top.width < w) {
-            val times = w.toInt() / top.width.toInt()
-            val rem = w.toInt() % top.width.toInt()
+        val row0 = topLeft.superTexture(adjustedTop, HorizontalDirection.RIGHT).superTexture(topRight, HorizontalDirection.RIGHT)
 
-            for (i in 1 until times) {
-                newTop = newTop.superTexture(top, HorizontalDirection.RIGHT)
-            }
+        val adjustedCenterHorizontally: Texture = adjustTextureHorizontally(center, w)
 
-            if (rem > 0) {
-                newTop = newTop.superTexture(top.subTexture(Rectangle2D(0.0, 0.0, rem.toDouble(), top.height)), HorizontalDirection.RIGHT)
-            }
-        }
+        val adjustedCenterBoth= adjustTextureVertically(adjustedCenterHorizontally, h)
 
-        val row0 = topLeft.superTexture(newTop, HorizontalDirection.RIGHT).superTexture(topRight, HorizontalDirection.RIGHT)
+        val newLeft = adjustTextureVertically(left, h)
 
-        var newCenter: Texture = center
+        val newRight = adjustTextureVertically(right, h)
 
-        if (newCenter.width > w) {
-            newCenter = newCenter.subTexture(Rectangle2D(0.0, 0.0, w, newCenter.height))
-        } else if (newCenter.width < w) {
-            val times = w.toInt() / newCenter.width.toInt()
-            val rem = w.toInt() % newCenter.width.toInt()
+        val row1 = newLeft.superTexture(adjustedCenterBoth, HorizontalDirection.RIGHT).superTexture(newRight, HorizontalDirection.RIGHT)
 
-            for (i in 1 until times) {
-                newCenter = newCenter.superTexture(center, HorizontalDirection.RIGHT)
-            }
-
-            if (rem > 0) {
-                newCenter = newCenter.superTexture(center.subTexture(Rectangle2D(0.0, 0.0, rem.toDouble(), center.height)), HorizontalDirection.RIGHT)
-            }
-        }
-
-        val center2 = newCenter
-
-        if (newCenter.height > h) {
-            newCenter = newCenter.subTexture(Rectangle2D(0.0, 0.0, newCenter.width, h))
-        } else if (newCenter.height < h) {
-            val times = h.toInt() / newCenter.height.toInt()
-            val rem = h.toInt() % newCenter.height.toInt()
-
-            for (i in 1 until times) {
-                newCenter = newCenter.superTexture(center2, VerticalDirection.DOWN)
-            }
-
-            if (rem > 0) {
-                newCenter = newCenter.superTexture(center2.subTexture(Rectangle2D(0.0, 0.0, center2.width, rem.toDouble())), VerticalDirection.DOWN)
-            }
-        }
-
-
-
-        var newLeft = left
-        if (newLeft.height > h) {
-            newLeft = left.subTexture(Rectangle2D(0.0, 0.0, left.width, h))
-        } else if (newLeft.height < h) {
-            val times = h.toInt() / left.height.toInt()
-            val rem = h.toInt() % left.height.toInt()
-
-            for (i in 1 until times) {
-                newLeft = newLeft.superTexture(left, VerticalDirection.DOWN)
-            }
-
-            if (rem > 0) {
-                newLeft = newLeft.superTexture(left.subTexture(Rectangle2D(0.0, 0.0, left.width, rem.toDouble())), VerticalDirection.DOWN)
-            }
-        }
-
-        var newRight = right
-        if (newRight.height > h) {
-            newRight = right.subTexture(Rectangle2D(0.0, 0.0, right.width, h))
-        } else if (newRight.height < h) {
-            val times = h.toInt() / right.height.toInt()
-            val rem = h.toInt() % right.height.toInt()
-
-            for (i in 1 until times) {
-                newRight = newRight.superTexture(right, VerticalDirection.DOWN)
-            }
-
-            if (rem > 0) {
-                newRight = newRight.superTexture(right.subTexture(Rectangle2D(0.0, 0.0, right.width, rem.toDouble())), VerticalDirection.DOWN)
-            }
-        }
-
-        val row1 = newLeft.superTexture(newCenter, HorizontalDirection.RIGHT).superTexture(newRight, HorizontalDirection.RIGHT)
-
-
-
-        var newBot = bot
-        if (newBot.width > w) {
-            newBot = bot.subTexture(Rectangle2D(0.0, 0.0, w, bot.height))
-        } else if (newBot.width < w) {
-            val times = w.toInt() / top.width.toInt()
-            val rem = w.toInt() % top.width.toInt()
-
-            for (i in 1 until times) {
-                newBot = newBot.superTexture(bot, HorizontalDirection.RIGHT)
-            }
-
-            if (rem > 0) {
-                newBot = newBot.superTexture(bot.subTexture(Rectangle2D(0.0, 0.0, rem.toDouble(), bot.height)), HorizontalDirection.RIGHT)
-            }
-        }
+        val newBot = adjustTextureHorizontally(bot, w)
 
         val row2 = botLeft.superTexture(newBot, HorizontalDirection.RIGHT).superTexture(botRight, HorizontalDirection.RIGHT)
 
         return row0.superTexture(row1, VerticalDirection.DOWN).superTexture(row2, VerticalDirection.DOWN)
+    }
+
+    private fun adjustTextureVertically(base: Texture, h: Double): Texture {
+        var adjusted = base
+
+        if (base.height > h) {
+            adjusted = base.subTexture(Rectangle2D(0.0, 0.0, base.width, h))
+        } else if (base.height < h) {
+            val times = h.toInt() / base.height.toInt()
+            val rem = h.toInt() % base.height.toInt()
+
+            for (i in 1 until times) {
+                adjusted = base.superTexture(base, VerticalDirection.DOWN)
+            }
+
+            if (rem > 0) {
+                adjusted = base.superTexture(base.subTexture(Rectangle2D(0.0, 0.0, base.width, rem.toDouble())), VerticalDirection.DOWN)
+            }
+        }
+        return adjusted
+    }
+
+    private fun adjustTextureHorizontally(base: Texture, w: Double): Texture {
+        var adjusted = base
+
+        if (base.width > w) {
+            adjusted = base.subTexture(Rectangle2D(0.0, 0.0, w, base.height))
+        } else if (base.width < w) {
+            val times = w.toInt() / base.width.toInt()
+            val rem = w.toInt() % base.width.toInt()
+
+            for (i in 1 until times) {
+                adjusted = adjusted.superTexture(base, HorizontalDirection.RIGHT)
+            }
+
+            if (rem > 0) {
+                adjusted = adjusted.superTexture(base.subTexture(Rectangle2D(0.0, 0.0, rem.toDouble(), base.height)), HorizontalDirection.RIGHT)
+            }
+        }
+        return adjusted
     }
 }
