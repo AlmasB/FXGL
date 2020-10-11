@@ -103,14 +103,14 @@ class NineSliceTextureBuilder(val texture: Texture) {
         return row0.superTexture(row1, VerticalDirection.DOWN).superTexture(row2, VerticalDirection.DOWN)
     }
 
-    private fun adjustTextureVertically(base: Texture, h: Double): Texture {
+    private fun adjustTextureVertically(base: Texture, height: Double): Texture {
         var adjusted = base
 
-        if (base.height > h) {
-            adjusted = base.subTexture(Rectangle2D(0.0, 0.0, base.width, h))
-        } else if (base.height < h) {
-            val times = h.toInt() / base.height.toInt()
-            val rem = h.toInt() % base.height.toInt()
+        if (base.height > height) {
+            adjusted = base.subTexture(Rectangle2D(0.0, 0.0, base.width, height))
+        } else if (base.height < height) {
+            val times = height.toInt() / base.height.toInt()
+            val rem = height.toInt() % base.height.toInt()
 
             for (i in 1 until times) {
                 adjusted = base.superTexture(base, VerticalDirection.DOWN)
@@ -123,14 +123,14 @@ class NineSliceTextureBuilder(val texture: Texture) {
         return adjusted
     }
 
-    private fun adjustTextureHorizontally(base: Texture, w: Double): Texture {
+    private fun adjustTextureHorizontally(base: Texture, width: Double): Texture {
         var adjusted = base
 
-        if (base.width > w) {
-            adjusted = base.subTexture(Rectangle2D(0.0, 0.0, w, base.height))
-        } else if (base.width < w) {
-            val times = w.toInt() / base.width.toInt()
-            val rem = w.toInt() % base.width.toInt()
+        if (base.width > width) {
+            adjusted = base.subTexture(Rectangle2D(0.0, 0.0, width, base.height))
+        } else if (base.width < width) {
+            val times = width.toInt() / base.width.toInt()
+            val rem = width.toInt() % base.width.toInt()
 
             for (i in 1 until times) {
                 adjusted = adjusted.superTexture(base, HorizontalDirection.RIGHT)
