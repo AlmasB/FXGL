@@ -31,85 +31,49 @@ class NineSliceTextureBuilder(val texture: Texture) {
     lateinit var left: Texture
     lateinit var center: Texture
 
-    fun topLeft(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder {
-        return topLeft(Rectangle2D(x, y, w, h))
-    }
-
-    fun topLeft(rect: Rectangle2D): NineSliceTextureBuilder {
+    fun topLeft(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder = topLeft(Rectangle2D(x, y, w, h))
+    fun topLeft(rect: Rectangle2D): NineSliceTextureBuilder = also {
         topLeft = texture.subTexture(rect)
-        return this
     }
 
-    fun top(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder {
-        return top(Rectangle2D(x, y, w, h))
-    }
-
-    fun top(rect: Rectangle2D): NineSliceTextureBuilder {
+    fun top(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder = top(Rectangle2D(x, y, w, h))
+    fun top(rect: Rectangle2D): NineSliceTextureBuilder = also {
         top = texture.subTexture(rect)
-        return this
     }
 
-    fun topRight(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder {
-        return topRight(Rectangle2D(x, y, w, h))
-    }
-
-    fun topRight(rect: Rectangle2D): NineSliceTextureBuilder {
+    fun topRight(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder = topRight(Rectangle2D(x, y, w, h))
+    fun topRight(rect: Rectangle2D): NineSliceTextureBuilder = also {
         topRight = texture.subTexture(rect)
-        return this
     }
 
-    fun right(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder {
-        return right(Rectangle2D(x, y, w, h))
-    }
-
-    fun right(rect: Rectangle2D): NineSliceTextureBuilder {
+    fun right(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder = right(Rectangle2D(x, y, w, h))
+    fun right(rect: Rectangle2D): NineSliceTextureBuilder = also {
         right = texture.subTexture(rect)
-        return this
     }
 
-    fun botRight(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder {
-        return botRight(Rectangle2D(x, y, w, h))
-    }
-
-    fun botRight(rect: Rectangle2D): NineSliceTextureBuilder {
+    fun botRight(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder = botRight(Rectangle2D(x, y, w, h))
+    fun botRight(rect: Rectangle2D): NineSliceTextureBuilder = also {
         botRight = texture.subTexture(rect)
-        return this
     }
 
-    fun bot(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder {
-        return bot(Rectangle2D(x, y, w, h))
-    }
-
-    fun bot(rect: Rectangle2D): NineSliceTextureBuilder {
+    fun bot(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder = bot(Rectangle2D(x, y, w, h))
+    fun bot(rect: Rectangle2D): NineSliceTextureBuilder = also {
         bot = texture.subTexture(rect)
-        return this
     }
 
-    fun botLeft(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder {
-        return botLeft(Rectangle2D(x, y, w, h))
-    }
-
-    fun botLeft(rect: Rectangle2D): NineSliceTextureBuilder {
+    fun botLeft(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder = botLeft(Rectangle2D(x, y, w, h))
+    fun botLeft(rect: Rectangle2D): NineSliceTextureBuilder = also {
         botLeft = texture.subTexture(rect)
-        return this
     }
 
-    fun left(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder {
-        return left(Rectangle2D(x, y, w, h))
-    }
-
-    fun left(rect: Rectangle2D): NineSliceTextureBuilder {
+    fun left(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder = left(Rectangle2D(x, y, w, h))
+    fun left(rect: Rectangle2D): NineSliceTextureBuilder = also {
         left = texture.subTexture(rect)
-        return this
     }
 
-    fun center(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder {
-        return center(Rectangle2D(x, y, w, h))
-    }
-
-    fun center(rect: Rectangle2D): NineSliceTextureBuilder {
+    fun center(x: Double, y: Double, w: Double, h: Double): NineSliceTextureBuilder = center(Rectangle2D(x, y, w, h))
+    fun center(rect: Rectangle2D): NineSliceTextureBuilder = also {
         center = texture.subTexture(rect)
-        return this
     }
 
     fun build(width: Int, height: Int): Texture {
