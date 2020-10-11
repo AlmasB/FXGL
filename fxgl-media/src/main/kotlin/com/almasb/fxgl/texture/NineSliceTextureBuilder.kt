@@ -12,7 +12,8 @@ import javafx.geometry.VerticalDirection
 import javafx.scene.image.Image
 
 /**
- *
+ * Used to build textures from 9 partial images: 4 corners, 4 sides, 1 center.
+ * The corners remain unchanged where the sides and center widen to fill the desired dimension.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -115,7 +116,7 @@ class NineSliceTextureBuilder(val texture: Texture) {
         val w = width - left.width - right.width
         val h = height - top.height - bot.height
 
-        check(w > 0 && h > 0) { "Too small" }
+        check(w > 0 && h > 0) { "The entered dimension are too small to build the texture." }
 
         var newTop = top
 
