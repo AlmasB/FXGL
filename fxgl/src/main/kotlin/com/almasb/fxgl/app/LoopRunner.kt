@@ -8,6 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.logging.Logger
 import javafx.animation.AnimationTimer
+import kotlin.system.measureNanoTime
 
 /**
  *
@@ -24,6 +25,9 @@ internal class LoopRunner(private val runnable: (Double) -> Unit) {
 
     @get:JvmName("tpf")
     var tpf = 0.0
+        private set
+
+    var cpuNanoTime = 0L
         private set
 
     private val fpsCounter = FPSCounter()
@@ -83,7 +87,9 @@ internal class LoopRunner(private val runnable: (Double) -> Unit) {
     }
 
     private fun frame() {
-        runnable(tpf)
+        cpuNanoTime = measureNanoTime {
+            runnable(tpf)
+        }
     }
 
     /**

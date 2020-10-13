@@ -225,6 +225,8 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun tpf() = engine.tpf
 
+    @JvmStatic fun cpuNanoTime() = engine.cpuNanoTime
+
     @Deprecated("Use getWorldProperties()", replaceWith = ReplaceWith("getWorldProperties()"))
     @JvmStatic fun getGameState() = getWorldProperties()
 
