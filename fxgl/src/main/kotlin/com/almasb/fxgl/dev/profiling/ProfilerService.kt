@@ -7,150 +7,58 @@
 package com.almasb.fxgl.dev.profiling
 
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.scene.SceneService
-import com.almasb.fxgl.ui.FontType
-import com.almasb.fxgl.ui.UIFactoryService
-import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
-import javafx.scene.text.Text
-import java.util.*
-import kotlin.math.roundToInt
-import kotlin.math.roundToLong
 
 /**
- * Basic profiler.
+ * This service provides access to a range of profiling tools,
+ * including CPU time it took to compute last frame, FPS and RAM.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-
 class ProfilerService : EngineService() {
 
     companion object {
         private val runtime = Runtime.getRuntime()
 
-        private const val MB = 1024.0f * 1024.0f
-        private const val TIME_BUFFER_CAPACITY = 120
+        private const val MB = 1024.0 * 1024.0
     }
 
     private lateinit var sceneService: SceneService
-    private lateinit var uiService: UIFactoryService
 
-    // set to 1 to avoid div by 0
-    var frames = 1
-        private set
-
-    private var fps = 0
-    private var currentFPS = 0
-    private var currentTimeTook = 0L
-    private val timeBuffer = LinkedList<Long>()
-
-    val avgFPS: Int
-        get() = fps / frames
-
-    private var timeTook = 0L
-
-    /**
-     * @return time took in nanoseconds
-     */
-    val avgTimeTook: Long
-        get() = timeTook / frames
-
-    /**
-     * @return time took in milliseconds
-     */
-    val avgTimeTookRounded: String
-        get() = "%.2f".format(avgTimeTook / 1_000_000.0)
-
-    private var memoryUsage = 0L
-    private var memoryUsageMin = Long.MAX_VALUE
-    private var memoryUsageMax = 0L
-    private var memoryUsageCurrent = 0L
-
-    /**
-     * @return average memory usage in MB
-     */
-    val avgMemoryUsage: Float
-        get() = memoryUsage / frames / MB
-
-    val avgMemoryUsageRounded: Long
-        get() = avgMemoryUsage.roundToLong()
-
-    /**
-     * @return max (highest value) memory usage in MB
-     */
-    val maxMemoryUsage: Float
-        get() = memoryUsageMax / MB
-
-    val maxMemoryUsageRounded: Long
-        get() = maxMemoryUsage.roundToLong()
-
-    /**
-     * @return min (lowest value) memory usage in MB
-     */
-    val minMemoryUsage: Float
-        get() = memoryUsageMin / MB
-
-    val minMemoryUsageRounded: Long
-        get() = minMemoryUsage.roundToLong()
-
-    /**
-     * @return how much memory is used at this moment in MB
-     */
-    val currentMemoryUsage: Float
-        get() = memoryUsageCurrent / MB
-
-    val currentMemoryUsageRounded: Long
-        get() = currentMemoryUsage.roundToLong()
-
+    private var usedRAM = 0L
     private var gcRuns = 0
 
-    private var prevNanoTime = 0L
-
-    private lateinit var text: Text
+    private lateinit var cpuProfilerWindow: ProfilerWindow
+    private lateinit var fpsProfilerWindow: ProfilerWindow
+    private lateinit var ramProfilerWindow: ProfilerWindow
 
     override fun onInit() {
-        text = uiService.newText("", Color.RED, FontType.MONO, 22.0)
-        text.text = buildInfoText()
-        text.translateY = 25.0
+        fpsProfilerWindow = ProfilerWindow(300.0, 100.0, "FPS")
+        fpsProfilerWindow.numYTicks = 2
+        fpsProfilerWindow.preferredMaxValue = 60.0
 
-        val bg = Rectangle(text.layoutBounds.width, text.layoutBounds.height, Color.color(0.8, 0.8, 0.8, 0.7))
+        cpuProfilerWindow = ProfilerWindow(300.0, 100.0, "CPU (ms)")
+        cpuProfilerWindow.numYTicks = 5
+        cpuProfilerWindow.preferredMaxValue = 17.0
+        cpuProfilerWindow.relocate(300.0, 0.0)
 
-        val pane = Pane(bg, text)
-        pane.isMouseTransparent = true
-        pane.translateY = sceneService.appHeight - text.layoutBounds.height
+        ramProfilerWindow = ProfilerWindow(300.0, 100.0, "RAM (MB)")
+        ramProfilerWindow.numYTicks = 5
+        ramProfilerWindow.preferredMaxValue = 300.0
+        ramProfilerWindow.relocate(600.0, 0.0)
 
-        sceneService.overlayRoot.children += pane
+        sceneService.overlayRoot.children.addAll(
+                fpsProfilerWindow,
+                cpuProfilerWindow,
+                ramProfilerWindow
+        )
     }
 
     override fun onUpdate(tpf: Double) {
-        if (prevNanoTime == 0L) {
-            prevNanoTime = System.nanoTime()
-            return
-        }
-
-        val fps = (1.0 / tpf).roundToInt()
-        val curNanoTime = System.nanoTime()
-        val timeTook = curNanoTime - prevNanoTime
-        prevNanoTime = curNanoTime
-
-        timeBuffer.addLast(timeTook)
-        if (timeBuffer.size > TIME_BUFFER_CAPACITY) timeBuffer.removeFirst()
-
-        update(fps, timeBuffer.average().toLong())
-
-        text.text = buildInfoText()
-    }
-
-    private fun update(fps: Int, timeTook: Long) {
-        frames++
-
-        currentFPS = fps
-        currentTimeTook = timeTook
-
-        this.fps += fps
-        this.timeTook += timeTook
+        fpsProfilerWindow.update(1.0 / tpf)
+        cpuProfilerWindow.update(FXGL.cpuNanoTime() / 1_000_000.0)
 
         val used = runtime.totalMemory() - runtime.freeMemory()
 
@@ -158,46 +66,22 @@ class ProfilerService : EngineService() {
         if (used < 0)
             return
 
-        if (used < memoryUsageCurrent) {
+        if (used < usedRAM) {
             gcRuns++
         }
 
-        memoryUsageCurrent = used
-        memoryUsage += memoryUsageCurrent
+        usedRAM = used
 
-        if (memoryUsageCurrent > memoryUsageMax)
-            memoryUsageMax = memoryUsageCurrent
-
-        if (memoryUsageCurrent < memoryUsageMin)
-            memoryUsageMin = memoryUsageCurrent
-    }
-
-    // the debug data max chars is ~110, so just add a margin
-    // cache string builder to avoid object allocation
-    private val sb = StringBuilder(128)
-
-    private fun buildInfoText(): String {
-        // first clear the contents
-        sb.setLength(0)
-        sb.append("FPS: ").append(currentFPS)
-            .append("\nLast Frame (ms): ").append("%.1f".format(currentTimeTook / 1_000_000.0))
-            .append("\nNow Mem (MB): ").append(currentMemoryUsageRounded)
-            .append("\nAvg Mem (MB): ").append(avgMemoryUsageRounded)
-            .append("\nMin Mem (MB): ").append(minMemoryUsageRounded)
-            .append("\nMax Mem (MB): ").append(maxMemoryUsageRounded)
-
-        return sb.toString()
+        ramProfilerWindow.update(usedRAM / MB)
     }
 
     override fun onExit() {
         val log = Logger.get(javaClass)
 
-        log.info("Processed Frames: $frames")
-        log.info("Average FPS: $avgFPS")
-        log.info("Avg Frame Took: $avgTimeTookRounded ms")
-        log.info("Avg Memory Usage: $avgMemoryUsageRounded MB")
-        log.info("Min Memory Usage: $minMemoryUsageRounded MB")
-        log.info("Max Memory Usage: $maxMemoryUsageRounded MB")
+        fpsProfilerWindow.log()
+        cpuProfilerWindow.log()
+        ramProfilerWindow.log()
+
         log.info("Estimated GC runs: $gcRuns")
     }
 }
