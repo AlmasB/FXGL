@@ -27,7 +27,7 @@ open class ParticleComponent(val emitter: ParticleEmitter) : Component() {
      * the entity to which this component is attached. Otherwise, the entire
      * set of emitted particles will be moved based on entity's view.
      */
-    private val parent = Entity()
+    val parent = Entity()
 
     private val particles = UnorderedArray<Particle>(256)
 
