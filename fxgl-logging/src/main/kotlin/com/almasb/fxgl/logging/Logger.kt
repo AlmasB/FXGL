@@ -73,6 +73,34 @@ private constructor(private val name: String) {
             }
         }
 
+        @JvmStatic fun removeOutput(loggerOutput: LoggerOutput, level: LoggerLevel) {
+            outputs.remove(loggerOutput)
+
+            when(level) {
+                LoggerLevel.DEBUG -> {
+                    debug.remove(loggerOutput)
+                    info.remove(loggerOutput)
+                    warning.remove(loggerOutput)
+                    fatal.remove(loggerOutput)
+                }
+
+                LoggerLevel.INFO -> {
+                    info.remove(loggerOutput)
+                    warning.remove(loggerOutput)
+                    fatal.remove(loggerOutput)
+                }
+
+                LoggerLevel.WARNING -> {
+                    warning.remove(loggerOutput)
+                    fatal.remove(loggerOutput)
+                }
+
+                LoggerLevel.FATAL -> {
+                    fatal.remove(loggerOutput)
+                }
+            }
+        }
+
         private fun doLog(loggerName: String, loggerMessage: String, level: LoggerLevel) {
             val message = lazy { makeMessage(loggerName, loggerMessage, level) }
 
