@@ -8,12 +8,19 @@ package advanced;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.texture.NineSliceTextureBuilder;
 import com.almasb.fxgl.texture.Texture;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -25,10 +32,13 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class UINineSliceSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Nice Slice Sampler");
+        settings.setVersion("1.0");
         settings.setWidth(800);
         settings.setHeight(800);
     }
 
+    private final Logger log = Logger.get(UINineSliceSample.class);
     private NineSliceTextureBuilder builder;
     private Texture texture;
 
@@ -70,8 +80,8 @@ public class UINineSliceSample extends GameApplication {
         fieldH.setText("300");
         fieldH.setPrefWidth(100);
 
-        Button btn = new Button("Generate");
-        btn.setOnAction(e -> {
+        Button generateBtn = new Button("Generate");
+        generateBtn.setOnAction(e -> {
             if (texture != null) {
                 getGameScene().removeUINode(texture);
                 texture.dispose();
@@ -90,10 +100,41 @@ public class UINineSliceSample extends GameApplication {
             }
         });
 
-        getGameScene().addUINodes(new VBox(5, fieldW, fieldH, btn));
+        Button exportBtn = new Button("Export");
+        exportBtn.setOnAction(e -> {
+            if (texture != null) {
+                var fileChooser = createImageSaverDialog();
 
-        btn.fire();
+                var file = fileChooser.showSaveDialog(getGameScene().getRoot().getScene().getWindow());
+                if (file != null) {
+                    saveImageToFile(texture.getImage(), file);
+                }
+            }
+        });
+
+        getGameScene().addUINodes(new VBox(5, fieldW, fieldH, generateBtn, exportBtn));
+
+        generateBtn.fire();
     }
+
+    private FileChooser createImageSaverDialog() {
+        var fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+        fileChooser.setInitialFileName("SliceSample.png");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG","*.png"));
+        return fileChooser;
+    }
+
+    private void saveImageToFile(Image image, File file) {
+        try {
+            var x = SwingFXUtils.fromFXImage(image, null);
+            ImageIO.write(x,"png", file);
+            log.info("Saved image to '" + file.getAbsolutePath() + "'.");
+        } catch (IOException ex) {
+            log.warning("Failed to save image to '" + file.getAbsolutePath() + "'.", ex);
+        }
+    }
+
 
     public static void main(String[] args) {
         launch(args);
