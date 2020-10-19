@@ -53,7 +53,7 @@ class ControllerInputService : EngineService() {
             controller.connect()
 
         } catch (e: Exception) {
-            log.warning("Loading failed", e)
+            log.warning("Loading nativeLibs for controller failed", e)
         }
     }
 
@@ -79,6 +79,9 @@ class ControllerInputService : EngineService() {
     }
 
     override fun onExit() {
+        if (!isNativeLibLoaded)
+            return
+
         controller.disconnect()
     }
 
