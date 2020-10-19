@@ -8,5 +8,8 @@ open module samples.main {
     requires kotlin.stdlib;
     requires com.almasb.fxgl.all;
 
+    // TODO: tmp test
+    requires com.almasb.fxgl.controllerinput;
+
     requires java.desktop;
 }

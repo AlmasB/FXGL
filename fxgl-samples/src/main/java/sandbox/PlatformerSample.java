@@ -8,11 +8,13 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.controllerinput.ControllerInputService;
 import com.almasb.fxgl.dsl.components.FollowComponent;
 import com.almasb.fxgl.dsl.views.MinimapView;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.input.virtual.VirtualButton;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -44,6 +46,7 @@ public class PlatformerSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("PlatformerSample");
         settings.setVersion("0.1");
+        settings.addEngineService(ControllerInputService.class);
     }
 
     @Override
@@ -55,14 +58,14 @@ public class PlatformerSample extends GameApplication {
             protected void onActionBegin() {
                 player.getComponent(PhysicsComponent.class).setVelocityX(-200);
             }
-        }, KeyCode.A);
+        }, KeyCode.A, VirtualButton.LEFT);
 
         input.addAction(new UserAction("Right") {
             @Override
             protected void onActionBegin() {
                 player.getComponent(PhysicsComponent.class).setVelocityX(200);
             }
-        }, KeyCode.D);
+        }, KeyCode.D, VirtualButton.RIGHT);
 
         input.addAction(new UserAction("Jump") {
             @Override
@@ -75,7 +78,7 @@ public class PlatformerSample extends GameApplication {
 
                 //getDevPane().addDebugPoint(player.getCenter());
             }
-        }, KeyCode.W);
+        }, KeyCode.W, VirtualButton.A);
 
         onKeyDown(KeyCode.I, "Info", () -> System.out.println(player.getCenter()));
 
@@ -107,6 +110,9 @@ public class PlatformerSample extends GameApplication {
 
     @Override
     protected void initGame() {
+        var controllerService = getService(ControllerInputService.class);
+        controllerService.addInputHandler(getInput());
+
         entityBuilder().buildScreenBoundsAndAttach(40);
 
         createPlatforms();
