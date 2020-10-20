@@ -11,7 +11,7 @@ services:
   - xvfb
 jdk:
 - openjdk11
-- openjdk14
+- openjdk15
 - openjdk-ea
 
 before_install:
