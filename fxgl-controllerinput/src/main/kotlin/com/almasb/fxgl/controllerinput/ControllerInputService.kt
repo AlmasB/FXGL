@@ -55,17 +55,17 @@ class ControllerInputService : EngineService() {
             if (Files.notExists(sdlDLL)) {
                 log.debug("Copying SDL2.dll into cache")
 
-                val sdlDLLResourceURL = javaClass.getResource("/nativeLibs/windows64/SDL2.dll")
-
-                Files.copy(Paths.get(sdlDLLResourceURL.toURI()), sdlDLL)
+                javaClass.getResource("/nativeLibs/windows64/SDL2.dll").openStream().use {
+                    Files.copy(it, sdlDLL)
+                }
             }
 
             if (Files.notExists(fxglDLL)) {
                 log.debug("Copying fxgl_controllerinput.dll into cache")
 
-                val fxglDLLResourceURL = javaClass.getResource("/nativeLibs/windows64/fxgl_controllerinput.dll")
-
-                Files.copy(Paths.get(fxglDLLResourceURL.toURI()), fxglDLL)
+                javaClass.getResource("/nativeLibs/windows64/fxgl_controllerinput.dll").openStream().use {
+                    Files.copy(it, fxglDLL)
+                }
             }
 
             log.debug("Loading $sdlDLL")
