@@ -165,6 +165,10 @@ class EntityBuilder {
         entity.setOnNotActive { action.accept(entity) }
     }
 
+    fun neverUpdated() = this.also {
+        entity.isEverUpdated = false
+    }
+
     fun collidable() = with(CollidableComponent(true))
 
     fun with(vararg comps: Component) = this.also {

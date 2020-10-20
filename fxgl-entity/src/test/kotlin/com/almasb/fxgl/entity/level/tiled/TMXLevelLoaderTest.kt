@@ -115,6 +115,31 @@ class TMXLevelLoaderTest {
         assertThat(view.image.height, `is`(64.0))
     }
 
+    @Test
+    fun `Load tmx level with text objects`() {
+        val world = GameWorld()
+        world.addEntityFactory(MyTextObjectFactory())
+
+        val level = TMXLevelLoader().load(javaClass.getResource("map_with_text_objects.tmx"), world)
+
+        val text1 = level.entities.find { it.type == "textRed" }!!
+        val text2 = level.entities.find { it.type == "textBlue" }!!
+        val text3 = level.entities.find { it.type == "someType" }!!
+        val text4 = level.entities.find { it.type == "emptyText" }!!
+
+        assertThat(text1.getString("text"), `is`("Third piece of text"))
+        assertThat(text1.getObject<Color>("color"), `is`(Color.rgb(255, 85, 0)))
+
+        assertThat(text2.getString("text"), `is`("Hello World from Tiled to FXGL 11!"))
+        assertThat(text2.getObject<Color>("color"), `is`(Color.rgb(85, 0, 255)))
+
+        assertThat(text3.getString("text"), `is`("Another text"))
+        assertThat(text3.getObject<Color>("color"), `is`(Color.rgb(0, 0, 0)))
+
+        assertThat(text4.getString("text"), `is`(""))
+        assertThat(text4.getObject<Color>("color"), `is`(Color.rgb(0, 0, 0)))
+    }
+
     @ParameterizedTest
     @CsvSource("sewers_v1_1_2.tmx", "sewers_v1_2_3.tmx")
     fun parse(mapName: String) {
@@ -240,7 +265,6 @@ class TMXLevelLoaderTest {
 
         @Spawns("char")
         fun newCharacter(data: SpawnData): Entity {
-
             return Entity()
         }
 
@@ -267,6 +291,13 @@ class TMXLevelLoaderTest {
         @Spawns("cellSelection")
         fun newCellSelection(data: SpawnData): Entity {
             return Entity()
+        }
+    }
+
+    class MyTextObjectFactory : EntityFactory {
+        @Spawns("someType,textRed,textBlue,emptyText")
+        fun newText(data: SpawnData): Entity {
+            return Entity().also { it.type = data.get("type") }
         }
     }
 }

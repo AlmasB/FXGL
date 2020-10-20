@@ -9,71 +9,156 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import java.util.*
 
 class AStarMoveComponentTest {
-  private lateinit var e: Entity
-  private lateinit var grid: AStarGrid
-  private lateinit var aStarMoveComponent: AStarMoveComponent
-  private lateinit var cellMoveComponent: CellMoveComponent
 
-  @BeforeEach
-  fun setUp() {
-    grid = AStarGrid(GRID_SIZE, GRID_SIZE)
-    grid.cellHeight
-    cellMoveComponent = CellMoveComponent(40, 40, 40 * 1.0)
-    aStarMoveComponent = AStarMoveComponent(grid)
+    companion object {
+        private const val GRID_SIZE = 20
+        private const val STEP_SIZE = 0.016
+    }
 
-    e = Entity()
-    e.addComponent(cellMoveComponent)
-    e.addComponent(aStarMoveComponent)
-  }
+    private lateinit var e: Entity
+    private lateinit var grid: AStarGrid
+    private lateinit var aStarMoveComponent: AStarMoveComponent
+    private lateinit var cellMoveComponent: CellMoveComponent
 
-  @Test
-  fun `Component can be stopped while moving`() {
-    assertComponentIsNotInMotionAt(0, 0)
+    @BeforeEach
+    fun setUp() {
+        grid = AStarGrid(GRID_SIZE, GRID_SIZE)
+        cellMoveComponent = CellMoveComponent(40, 40, 40 * 1.0)
+        aStarMoveComponent = AStarMoveComponent(grid)
 
-    val (destX, destY) = 3 to 3
-    putComponentInMotion(destX, destY)
+        e = Entity()
+        e.addComponent(cellMoveComponent)
+        e.addComponent(aStarMoveComponent)
+    }
 
-    finishMotion()
+    @Test
+    fun `Basic movements`() {
+        assertThat(aStarMoveComponent.grid, `is`(grid))
+        assertThat(cellMoveComponent.cellX, `is`(0))
+        assertThat(cellMoveComponent.cellY, `is`(0))
 
-    assertComponentIsNotInMotionAt(destX, destY)
+        // down
+        aStarMoveComponent.moveToDownCell()
 
-    val (destX2, destY2) = 0 to 0
-    putComponentInMotion(destX2, destY2)
+        finishMotion()
 
-    aStarMoveComponent.stopMovement()
-    assertComponentIsNotInMotionAt(destX, destY)
-  }
+        assertThat(cellMoveComponent.cellX, `is`(0))
+        assertThat(cellMoveComponent.cellY, `is`(1))
 
-  //region Private Helpers
-  private fun putComponentInMotion(x: Int, y: Int) {
-    aStarMoveComponent.moveToCell(x, y)
-    aStarMoveComponent.onUpdate(STEP_SIZE)
-    assertFalse(aStarMoveComponent.isAtDestination)
-    assertTrue(aStarMoveComponent.isMoving)
-    assertFalse(aStarMoveComponent.isPathEmpty)
-  }
+        // right
+        aStarMoveComponent.moveToRightCell()
 
-  private fun finishMotion() {
-    do {
-      cellMoveComponent.onUpdate(STEP_SIZE)
-      aStarMoveComponent.onUpdate(STEP_SIZE)
-    } while (!aStarMoveComponent.isAtDestination)
-  }
+        finishMotion()
 
-  private fun assertComponentIsNotInMotionAt(x: Int, y: Int) {
-    assertThat(cellMoveComponent.cellX, `is`(x))
-    assertThat(cellMoveComponent.cellY, `is`(y))
-    assertTrue(aStarMoveComponent.isAtDestination)
-    assertFalse(aStarMoveComponent.isMoving)
-    assertTrue(aStarMoveComponent.isPathEmpty)
-  }
-  //endregion
+        assertThat(cellMoveComponent.cellX, `is`(1))
+        assertThat(cellMoveComponent.cellY, `is`(1))
 
+        // up
+        aStarMoveComponent.moveToUpCell()
 
-  companion object {
-    private const val GRID_SIZE = 20
-    private const val STEP_SIZE = 0.016
-  }
+        finishMotion()
+
+        assertThat(cellMoveComponent.cellX, `is`(1))
+        assertThat(cellMoveComponent.cellY, `is`(0))
+
+        // left
+        aStarMoveComponent.moveToLeftCell()
+
+        finishMotion()
+
+        assertThat(cellMoveComponent.cellX, `is`(0))
+        assertThat(cellMoveComponent.cellY, `is`(0))
+
+        // general move
+        aStarMoveComponent.moveToCell(grid.get(3, 5))
+
+        finishMotion()
+
+        assertThat(cellMoveComponent.cellX, `is`(3))
+        assertThat(cellMoveComponent.cellY, `is`(5))
+    }
+
+    @Test
+    fun `Random movements`() {
+        aStarMoveComponent.moveToRandomCell()
+
+        finishMotion()
+
+        assertTrue(grid.get(cellMoveComponent.cellX, cellMoveComponent.cellY).isWalkable)
+
+        aStarMoveComponent.moveToRandomCell(Random(5000))
+
+        finishMotion()
+
+        assertTrue(grid.get(cellMoveComponent.cellX, cellMoveComponent.cellY).isWalkable)
+    }
+
+    @Test
+    fun `Move during movement is allowed`() {
+        aStarMoveComponent.moveToCell(3, 0)
+
+        repeat(75) {
+            cellMoveComponent.onUpdate(STEP_SIZE)
+            aStarMoveComponent.onUpdate(STEP_SIZE)
+        }
+
+        assertThat(cellMoveComponent.cellX, `is`(1))
+        assertThat(cellMoveComponent.cellY, `is`(0))
+
+        aStarMoveComponent.moveToCell(0, 4)
+
+        finishMotion()
+
+        assertThat(cellMoveComponent.cellX, `is`(0))
+        assertThat(cellMoveComponent.cellY, `is`(4))
+    }
+
+    @Test
+    fun `Component can be stopped while moving`() {
+        assertComponentIsNotInMotionAt(0, 0)
+
+        val (destX, destY) = 3 to 3
+        putComponentInMotion(destX, destY)
+
+        finishMotion()
+
+        assertComponentIsNotInMotionAt(destX, destY)
+
+        val (destX2, destY2) = 0 to 0
+        putComponentInMotion(destX2, destY2)
+
+        aStarMoveComponent.stopMovement()
+        assertComponentIsNotInMotionAt(destX, destY)
+
+        assertDoesNotThrow {
+            e.removeComponent(AStarMoveComponent::class.java)
+        }
+    }
+
+    private fun putComponentInMotion(x: Int, y: Int) {
+        aStarMoveComponent.moveToCell(x, y)
+        aStarMoveComponent.onUpdate(STEP_SIZE)
+        assertFalse(aStarMoveComponent.isAtDestination)
+        assertTrue(aStarMoveComponent.isMoving)
+        assertFalse(aStarMoveComponent.isPathEmpty)
+    }
+
+    private fun finishMotion() {
+        do {
+            cellMoveComponent.onUpdate(STEP_SIZE)
+            aStarMoveComponent.onUpdate(STEP_SIZE)
+        } while (!aStarMoveComponent.isAtDestination)
+    }
+
+    private fun assertComponentIsNotInMotionAt(x: Int, y: Int) {
+        assertThat(cellMoveComponent.cellX, `is`(x))
+        assertThat(cellMoveComponent.cellY, `is`(y))
+        assertTrue(aStarMoveComponent.isAtDestination)
+        assertFalse(aStarMoveComponent.isMoving)
+        assertTrue(aStarMoveComponent.isPathEmpty)
+    }
 }

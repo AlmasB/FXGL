@@ -20,8 +20,7 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -541,5 +540,15 @@ class AnimationBuilderTest {
 
         assertThat(node.translateX, `is`(-10.0))
         assertThat(node.translateY, `is`(10.0))
+    }
+
+    @Test
+    fun `Build and play does not throw if no scene`() {
+        assertDoesNotThrow {
+            builder.translate(node)
+                    .from(Point2D(10.0, 10.0))
+                    .to(Point2D(-10.0, 10.0))
+                    .buildAndPlay()
+        }
     }
 }

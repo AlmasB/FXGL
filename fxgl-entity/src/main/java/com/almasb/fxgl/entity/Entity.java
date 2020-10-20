@@ -116,6 +116,7 @@ public class Entity {
     private Runnable onActive = EmptyRunnable.INSTANCE;
     private Runnable onNotActive = EmptyRunnable.INSTANCE;
 
+    private boolean isEverUpdated = true;
     private boolean updateEnabled = true;
     private boolean updating = false;
 
@@ -181,6 +182,21 @@ public class Entity {
     public final void removeFromWorld() {
         if (world != null)
             world.removeEntity(this);
+    }
+
+    /**
+     * @return false if this entity never needs an update
+     */
+    public final boolean isEverUpdated() {
+        return isEverUpdated;
+    }
+
+    /**
+     * Set this to false for performance improvements if this entity never needs an update.
+     * This setting is only honored if it was set before adding the entity to game world.
+     */
+    public final void setEverUpdated(boolean everUpdated) {
+        isEverUpdated = everUpdated;
     }
 
     /**

@@ -6,8 +6,10 @@
 
 package sandbox;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.controllerinput.ControllerInputService;
 import com.almasb.fxgl.input.KeyTrigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.input.view.KeyView;
@@ -37,6 +39,8 @@ public class VirtualControllerSample extends GameApplication {
         settings.setWidth(850);
         settings.setHeight(700);
         //settings.setMenuEnabled(false);
+        settings.addEngineService(ControllerInputService.class);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
@@ -56,11 +60,65 @@ public class VirtualControllerSample extends GameApplication {
             protected void onActionEnd() {
                 System.out.println("end f");
             }
-        }, KeyCode.F, VirtualButton.Y);
+        }, KeyCode.F, VirtualButton.X);
+
+        getInput().addAction(new UserAction("test2") {
+            @Override
+            protected void onActionBegin() {
+                System.out.println("start g");
+            }
+
+            @Override
+            protected void onAction() {
+                System.out.println("g");
+            }
+
+            @Override
+            protected void onActionEnd() {
+                System.out.println("end g");
+            }
+        }, KeyCode.G, VirtualButton.Y);
+
+        getInput().addAction(new UserAction("test3") {
+            @Override
+            protected void onActionBegin() {
+                System.out.println("start h");
+            }
+
+            @Override
+            protected void onAction() {
+                System.out.println("h");
+            }
+
+            @Override
+            protected void onActionEnd() {
+                System.out.println("end h");
+            }
+        }, KeyCode.H, VirtualButton.A);
+
+        getInput().addAction(new UserAction("test4") {
+            @Override
+            protected void onActionBegin() {
+                System.out.println("start j");
+            }
+
+            @Override
+            protected void onAction() {
+                System.out.println("j");
+            }
+
+            @Override
+            protected void onActionEnd() {
+                System.out.println("end j");
+            }
+        }, KeyCode.J, VirtualButton.B);
     }
 
     @Override
     protected void initGame() {
+        var controllerService = getService(ControllerInputService.class);
+        controllerService.addInputHandler(getInput());
+
         getGameScene().setBackgroundColor(
                 new LinearGradient(0.5, 0, 0.5, 1, true, CycleMethod.NO_CYCLE,
                         new Stop(0.1, Color.WHITE),

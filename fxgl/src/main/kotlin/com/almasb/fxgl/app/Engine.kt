@@ -30,6 +30,9 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
     val tpf: Double
         get() = loop.tpf
 
+    val cpuNanoTime: Long
+        get() = loop.cpuNanoTime
+
     private val services = arrayListOf<EngineService>()
     private val servicesCache = hashMapOf<Class<out EngineService>, EngineService>()
 
