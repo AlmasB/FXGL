@@ -11,6 +11,8 @@ import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.virtual.VirtualButton
 import com.almasb.fxgl.logging.Logger
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 
 /**
@@ -35,18 +37,44 @@ class ControllerInputService : EngineService() {
         try {
             log.debug("Loading nativeLibs")
 
+            // copy native libs to cache if needed
+            // use openjfx dir since we know it is (will be) there
+
+            val fxglCacheDir = Paths.get(System.getProperty("user.home")).resolve(".openjfx").resolve("cache").resolve("fxgl-11")
+
+            if (Files.notExists(fxglCacheDir)) {
+                log.debug("Creating FXGL native libs cache: $fxglCacheDir")
+
+                Files.createDirectories(fxglCacheDir)
+            }
+
             // TODO: use Platform to calc native lib paths
-            System.load(File(javaClass.getResource("/nativeLibs/windows64/SDL2.dll").toURI()).absolutePath)
+            val sdlDLL = fxglCacheDir.resolve("SDL2.dll")
+            val fxglDLL = fxglCacheDir.resolve("fxgl_controllerinput.dll")
 
-            val dllFile = javaClass.getResource("/nativeLibs/windows64/fxgl_controllerinput.dll")
+            if (Files.notExists(sdlDLL)) {
+                log.debug("Copying SDL2.dll into cache")
 
-            log.debug("Found dll file: $dllFile")
+                val sdlDLLResourceURL = javaClass.getResource("/nativeLibs/windows64/SDL2.dll")
 
-            val absPath = File(dllFile.toURI()).absolutePath
+                Files.copy(Paths.get(sdlDLLResourceURL.toURI()), sdlDLL)
+            }
 
-            log.debug("Absolute path: $absPath")
+            if (Files.notExists(fxglDLL)) {
+                log.debug("Copying fxgl_controllerinput.dll into cache")
 
-            System.load(absPath)
+                val fxglDLLResourceURL = javaClass.getResource("/nativeLibs/windows64/fxgl_controllerinput.dll")
+
+                Files.copy(Paths.get(fxglDLLResourceURL.toURI()), fxglDLL)
+            }
+
+            log.debug("Loading $sdlDLL")
+
+            System.load(sdlDLL.toAbsolutePath().toString())
+
+            log.debug("Loading $fxglDLL")
+
+            System.load(fxglDLL.toAbsolutePath().toString())
 
             isNativeLibLoaded = true
 
