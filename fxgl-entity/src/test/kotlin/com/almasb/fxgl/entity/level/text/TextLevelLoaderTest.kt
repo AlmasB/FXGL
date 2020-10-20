@@ -15,6 +15,8 @@ import org.hamcrest.Description
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import java.io.FileNotFoundException
+import java.nio.file.Paths
 
 /**
  *
@@ -61,8 +63,8 @@ class TextLevelLoaderTest {
 
     @Test
     fun `Throw if file not found`() {
-        assertThrows(IllegalStateException::class.java, {
-            TextLevelLoader(BLOCK_WIDTH, BLOCK_HEIGHT).load(javaClass.getResource("bla-bla"), GameWorld())
+        assertThrows(FileNotFoundException::class.java, {
+            TextLevelLoader(BLOCK_WIDTH, BLOCK_HEIGHT).load(Paths.get("bla-bla").toUri().toURL(), GameWorld())
         })
     }
 
