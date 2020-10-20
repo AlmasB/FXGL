@@ -113,11 +113,11 @@ class NineSliceTextureBuilder(val texture: Texture) {
             val rem = height.toInt() % base.height.toInt()
 
             for (i in 1 until times) {
-                adjusted = base.superTexture(base, VerticalDirection.DOWN)
+                adjusted = adjusted.superTexture(base, VerticalDirection.DOWN)
             }
 
             if (rem > 0) {
-                adjusted = base.superTexture(base.subTexture(Rectangle2D(0.0, 0.0, base.width, rem.toDouble())), VerticalDirection.DOWN)
+                adjusted = adjusted.superTexture(base.subTexture(Rectangle2D(0.0, 0.0, base.width, rem.toDouble())), VerticalDirection.DOWN)
             }
         }
         return adjusted
