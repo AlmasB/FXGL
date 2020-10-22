@@ -322,14 +322,26 @@ internal class MainWindow(
                 Bindings.`when`(stage.fullScreenProperty()).then(0).otherwise(windowBorderHeight)
         ))
 
-        if (settings.isPreserveResizeRatio) {
-            scaleRatioX.bind(Bindings.min(
-                    scaledWidth.divide(settings.width), scaledHeight.divide(settings.height)
-            ))
-            scaleRatioY.bind(scaleRatioX)
+        settings.scaledWidthProp.bind(scaledWidth)
+        settings.scaledHeightProp.bind(scaledHeight)
+
+        if (settings.isScaleAffectedOnResize) {
+            if (settings.isPreserveResizeRatio) {
+                scaleRatioX.bind(Bindings.min(
+                        scaledWidth.divide(settings.width), scaledHeight.divide(settings.height)
+                ))
+                scaleRatioY.bind(scaleRatioX)
+            } else {
+                scaleRatioX.bind(scaledWidth.divide(settings.width))
+                scaleRatioY.bind(scaledHeight.divide(settings.height))
+            }
         } else {
-            scaleRatioX.bind(scaledWidth.divide(settings.width))
-            scaleRatioY.bind(scaledHeight.divide(settings.height))
+            // TODO: what if display size < target size
+            scaleRatioX.value = 1.0
+            scaleRatioY.value = 1.0
+
+            scaledWidth.addListener { _, _, newWidth -> onStageResize() }
+            scaledHeight.addListener { _, _, newHeight -> onStageResize() }
         }
 
         log.debug("Window border size: ($windowBorderWidth, $windowBorderHeight)")
@@ -388,6 +400,23 @@ internal class MainWindow(
         fxScene.addEventHandler(EventType.ROOT) {
             handler(it.copyFor(null, null))
         }
+    }
+
+    /**
+     * Called when the user has resized the main window.
+     * Only called when settings.isScaleAffectedOnResize = false.
+     */
+    private fun onStageResize() {
+        val newW = scaledWidth.value
+        val newH = scaledHeight.value
+
+        log.debug("On Stage resize: ${newW}x$newH")
+
+        scenes.filterIsInstance<FXGLScene>()
+                .forEach {
+                    it.viewport.width = newW
+                    it.viewport.height = newH
+                }
     }
 
     fun takeScreenshot(): Image = fxScene.snapshot(null)

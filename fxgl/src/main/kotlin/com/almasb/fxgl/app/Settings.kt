@@ -637,6 +637,25 @@ class ReadOnlyGameSettings internal constructor(
      */
     val fullScreen = SimpleBooleanProperty(isFullScreenFromStart)
 
+    internal val scaledWidthProp = ReadOnlyDoubleWrapper()
+    internal val scaledHeightProp = ReadOnlyDoubleWrapper()
+
+    /**
+     * @return actual width of the scene root
+     */
+    fun actualWidthProperty() = scaledWidthProp.readOnlyProperty
+
+    /**
+     * @return actual height of the scene root
+     */
+    fun actualHeightProperty() = scaledHeightProp.readOnlyProperty
+
+    val actualWidth: Double
+        get() = scaledWidthProp.value
+
+    val actualHeight: Double
+        get() = scaledHeightProp.value
+
     val profileName = SimpleStringProperty("DEFAULT")
 
     private val gameDifficultyProp = SimpleObjectProperty(GameDifficulty.MEDIUM)
