@@ -105,8 +105,6 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     private val selectedNodeViews = arrayListOf<NodeView>()
 
     init {
-        setPrefSize(getAppWidth().toDouble(), getAppHeight().toDouble())
-
         val cell = Rectangle(CELL_SIZE - 1, CELL_SIZE - 1, Color.GRAY)
         cell.stroke = Color.WHITESMOKE
         cell.strokeWidth = 0.2

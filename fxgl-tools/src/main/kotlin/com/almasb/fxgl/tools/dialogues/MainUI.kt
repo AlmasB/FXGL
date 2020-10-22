@@ -47,7 +47,7 @@ class MainUI : BorderPane() {
 
     init {
         toolbar.prefWidthProperty().bind(
-                Bindings.`when`(Bindings.isNotEmpty(tabPane.tabs)).then(getAppWidth() / 2.0).otherwise(getAppWidth())
+                Bindings.`when`(Bindings.isNotEmpty(tabPane.tabs)).then(FXGL.getSettings().actualWidth.div(2.0)).otherwise(FXGL.getSettings().actualWidth)
         )
         toolbar.prefHeight = 30.0
         toolbar.style = "-fx-background-color: black"
@@ -77,10 +77,12 @@ class MainUI : BorderPane() {
         toolbar.children += menuBar
         toolbar.children += makeRunButton()
 
-        setPrefSize(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble())
+        prefWidthProperty().bind(FXGL.getSettings().actualWidthProperty())
+        prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
 
         pane.style = "-fx-background-color: gray"
-        pane.setPrefSize(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble())
+        pane.prefWidthProperty().bind(prefWidthProperty())
+        pane.prefHeightProperty().bind(prefHeightProperty())
 
         center = pane
 
@@ -218,6 +220,9 @@ class MainUI : BorderPane() {
     private class DialogueTab(val file: File,
                               val pane: DialoguePane) : Tab(file.nameWithoutExtension) {
         init {
+            pane.prefWidthProperty().bind(FXGL.getSettings().actualWidthProperty())
+            pane.prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
+
             content = pane
 
             textProperty().bind(
