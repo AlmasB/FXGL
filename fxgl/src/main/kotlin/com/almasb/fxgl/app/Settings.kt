@@ -131,6 +131,14 @@ class GameSettings(
         var isPreserveResizeRatio: Boolean = false,
 
         /**
+         * If true, during resize the game will auto-scale to maintain consistency across all displays.
+         * If false, during resize, only the window will change size, which allows different displays
+         * to have different views.
+         * For example, editor type apps may wish to set this to false to maximize "usable" space.
+         */
+        var isScaleAffectedOnResize: Boolean = true,
+
+        /**
          * If set to true, the intro video/animation will
          * be played before the start of the game.
          */
@@ -317,6 +325,7 @@ class GameSettings(
                 isFullScreenFromStart,
                 isManualResizeEnabled,
                 isPreserveResizeRatio,
+                isScaleAffectedOnResize,
                 isIntroEnabled,
                 isMainMenuEnabled,
                 isGameMenuEnabled,
@@ -408,6 +417,14 @@ class ReadOnlyGameSettings internal constructor(
         val isManualResizeEnabled: Boolean,
 
         val isPreserveResizeRatio: Boolean,
+
+        /**
+         * If true, during resize the game will auto-scale to maintain consistency across all displays.
+         * If false, during resize, only the window will change size, which allows different displays
+         * to have different views.
+         * For example, editor type apps may wish to set this to false to maximize "usable" space.
+         */
+        var isScaleAffectedOnResize: Boolean = true,
 
         /**
          * If set to true, the intro video/animation will
