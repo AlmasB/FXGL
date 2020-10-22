@@ -83,6 +83,13 @@ class AudioPlayer : EngineService() {
     }
 
     /**
+     * Stops all sounds from playing
+     */
+    fun stopAllSounds() {
+        activeSounds.forEach { stopSound(it) }
+    }
+
+    /**
      * Plays given music based on its properties.
      *
      * @param music music to play
@@ -137,5 +144,43 @@ class AudioPlayer : EngineService() {
     fun loopMusic(music: Music) {
         music.audio.setLooping(true)
         playMusic(music)
+    }
+
+    /**
+     * Pauses all active music if it was currently playing.
+     * Can be restarted by [.resumeMusic] and [.resumeAllMusic]
+     */
+    fun pauseAllMusic() {
+        activeMusic.forEach { pauseMusic(it) }
+    }
+
+    /**
+     * Resumes all active music
+     */
+    fun resumeAllMusic() {
+        activeMusic.forEach { resumeMusic(it) }
+    }
+
+    /**
+     * Start playing all active music if its not currently playing.
+     */
+    fun playAllMusic() {
+        activeMusic.forEach { playMusic(it) }
+    }
+
+    /**
+     * Stop all music from playing
+     */
+    fun stopAllMusic() {
+        activeMusic.forEach { stopMusic(it) }
+    }
+
+    /**
+     * Convenience method to stop all sounds and music that are currently playing
+     * Sounds can not be restarted
+     */
+    fun stopAllSoundsAndMusic() {
+        stopAllSounds()
+        stopAllMusic()
     }
 }
