@@ -155,6 +155,13 @@ class AudioPlayer : EngineService() {
     }
 
     /**
+     * Resumes all active music
+     */
+    fun resumeAllMusic() {
+        activeMusic.forEach { resumeMusic(it) }
+    }
+
+    /**
      * Start playing all active music if its not currently playing.
      */
     fun playAllMusic() {
