@@ -162,11 +162,15 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
     }
 
     fun pauseLoop() {
+        services.forEach { it.onMainLoopPausing() }
+
         loop.pause()
     }
 
     fun resumeLoop() {
         loop.resume()
+
+        services.forEach { it.onMainLoopResumed() }
     }
 
     fun write(bundle: Bundle) {

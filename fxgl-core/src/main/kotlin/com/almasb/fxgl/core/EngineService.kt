@@ -38,12 +38,12 @@ abstract class EngineService : Updatable, SerializableType {
     open fun onGameReady(vars: PropertyMap) { }
 
     /**
-     * This is called on a JavaFX thread at each engine tick in any scene.
+     * Called on a JavaFX thread at each engine tick in any scene.
      */
     override fun onUpdate(tpf: Double) { }
 
     /**
-     * This is called on a JavaFX thread at each engine tick _only_ in game scene.
+     * Called on a JavaFX thread at each engine tick _only_ in game scene.
      */
     open fun onGameUpdate(tpf: Double) { }
 
@@ -51,6 +51,16 @@ abstract class EngineService : Updatable, SerializableType {
      * Called just before the engine exits and the application shuts down.
      */
     open fun onExit() { }
+
+    /**
+     * Called just before the main loop is paused, which is only happens when the main window is minimized.
+     */
+    open fun onMainLoopPausing() { }
+
+    /**
+     * Called just after the main loop is resumed, which is only happens when the minimized main window is opened.
+     */
+    open fun onMainLoopResumed() { }
 
     override fun write(bundle: Bundle) { }
 
