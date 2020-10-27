@@ -12,4 +12,6 @@ module com.almasb.fxgl.controllerinput {
     requires com.almasb.fxgl.input;
 
     exports com.almasb.fxgl.controllerinput;
+
+    opens com.almasb.fxgl.controllerinput to com.almasb.fxgl.core;
 }

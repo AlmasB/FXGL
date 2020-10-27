@@ -7,10 +7,12 @@
 package com.almasb.fxgl.controllerinput
 
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.Inject
+import com.almasb.fxgl.core.util.Platform
+import com.almasb.fxgl.core.util.Platform.*
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.virtual.VirtualButton
 import com.almasb.fxgl.logging.Logger
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
@@ -23,6 +25,9 @@ class ControllerInputService : EngineService() {
 
     private val log = Logger.get(javaClass)
 
+    @Inject("platform")
+    private lateinit var platform: Platform
+
     private var isNativeLibLoaded = false
 
     private val states = EnumMap<VirtualButton, Boolean>(VirtualButton::class.java).also { map ->
@@ -33,9 +38,21 @@ class ControllerInputService : EngineService() {
 
     private val inputHandlers = arrayListOf<Input>()
 
+    private val resourceDirNames = hashMapOf(
+            WINDOWS to "windows64",
+            LINUX to "linux64",
+            MAC to "mac64"
+    )
+
+    private val nativeLibNames = hashMapOf(
+            WINDOWS to listOf("SDL2.dll", "fxgl_controllerinput.dll"),
+            LINUX to listOf("libSDL2.so", "libfxgl_controllerinput.so")
+            //MAC to listOf("", "")
+    )
+
     override fun onInit() {
         try {
-            log.debug("Loading nativeLibs")
+            log.debug("Loading nativeLibs for $platform")
 
             // copy native libs to cache if needed
             // use openjfx dir since we know it is (will be) there
@@ -48,35 +65,27 @@ class ControllerInputService : EngineService() {
                 Files.createDirectories(fxglCacheDir)
             }
 
-            // TODO: use Platform to calc native lib paths
-            val sdlDLL = fxglCacheDir.resolve("SDL2.dll")
-            val fxglDLL = fxglCacheDir.resolve("fxgl_controllerinput.dll")
+            nativeLibNames[platform]?.forEach { libName ->
+                val nativeLibPath = fxglCacheDir.resolve(libName)
 
-            if (Files.notExists(sdlDLL)) {
-                log.debug("Copying SDL2.dll into cache")
+                if (Files.notExists(nativeLibPath)) {
+                    log.debug("Copying $libName into cache")
 
-                javaClass.getResource("/nativeLibs/windows64/SDL2.dll").openStream().use {
-                    Files.copy(it, sdlDLL)
+                    val dirName = resourceDirNames[platform]!!
+
+                    javaClass.getResource("/nativeLibs/$dirName/$libName").openStream().use {
+                        Files.copy(it, nativeLibPath)
+                    }
                 }
+
+                log.debug("Loading $nativeLibPath")
+
+                System.load(nativeLibPath.toAbsolutePath().toString())
             }
-
-            if (Files.notExists(fxglDLL)) {
-                log.debug("Copying fxgl_controllerinput.dll into cache")
-
-                javaClass.getResource("/nativeLibs/windows64/fxgl_controllerinput.dll").openStream().use {
-                    Files.copy(it, fxglDLL)
-                }
-            }
-
-            log.debug("Loading $sdlDLL")
-
-            System.load(sdlDLL.toAbsolutePath().toString())
-
-            log.debug("Loading $fxglDLL")
-
-            System.load(fxglDLL.toAbsolutePath().toString())
 
             isNativeLibLoaded = true
+
+            log.debug("Successfully loaded nativeLibs")
 
             controller.connect()
 
