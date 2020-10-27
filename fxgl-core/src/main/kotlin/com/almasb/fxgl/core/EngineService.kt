@@ -53,12 +53,12 @@ abstract class EngineService : Updatable, SerializableType {
     open fun onExit() { }
 
     /**
-     * Called just before the main loop is paused, which is only happens when the main window is minimized.
+     * Called just before the main loop is paused.
      */
     open fun onMainLoopPausing() { }
 
     /**
-     * Called just after the main loop is resumed, which is only happens when the minimized main window is opened.
+     * Called just after the main loop is resumed.
      */
     open fun onMainLoopResumed() { }
 
