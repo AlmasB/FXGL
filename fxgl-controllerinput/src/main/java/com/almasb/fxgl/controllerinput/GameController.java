@@ -100,9 +100,7 @@ public final class GameController {
         inputHandlers.remove(input);
     }
 
-    void updateState() {
-        GameControllerImpl.updateState(id);
-
+    void update() {
         updateButtons();
         updateAxes();
     }

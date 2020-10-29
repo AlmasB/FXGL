@@ -91,7 +91,11 @@ class ControllerInputService : EngineService() {
 
             log.debug("Connecting to plugged-in controllers")
 
-            GameControllerImpl.connectControllers()
+            val numControllers = GameControllerImpl.connectControllers()
+
+            for (id in 0 until numControllers) {
+                gameControllers += GameController(id)
+            }
 
         } catch (e: Exception) {
             log.warning("Loading nativeLibs for controller support failed", e)
@@ -102,7 +106,9 @@ class ControllerInputService : EngineService() {
         if (!isNativeLibLoaded || controllers.isEmpty())
             return
 
-        controllers.forEach { it.updateState() }
+        GameControllerImpl.updateState(0);
+
+        controllers.forEach { it.update() }
     }
 
     override fun onExit() {

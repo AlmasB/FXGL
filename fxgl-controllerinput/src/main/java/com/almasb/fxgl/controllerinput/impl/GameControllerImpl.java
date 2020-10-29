@@ -23,7 +23,7 @@ public final class GameControllerImpl {
     /**
      * Updates state from hardware.
      *
-     * @param controllerId the controller number
+     * @param controllerId the controller number - TODO: remove, update is global
      */
     public static native void updateState(int controllerId);
 

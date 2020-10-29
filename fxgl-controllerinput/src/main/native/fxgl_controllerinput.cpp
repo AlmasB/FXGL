@@ -3,29 +3,39 @@
 #include "SDL.h"
 #include "fxgl_controllerinput.h"
 
-bool is_connected = false;
-SDL_GameController* controller = nullptr;
+SDL_GameController* controllers[10];
+int num_controllers = 0;
 
 /*
- * Class:     com_almasb_fxgl_controllerinput_NativeController
- * Method:    connect
- * Signature: ()V
+ * Class:     com_almasb_fxgl_controllerinput_impl_GameControllerImpl
+ * Method:    getBackendVersion
+ * Signature: ()I
  */
-JNIEXPORT void JNICALL Java_com_almasb_fxgl_controllerinput_NativeController_connect
-(JNIEnv* env, jobject instance) {
-    
-    if (is_connected)
-        return;
+JNIEXPORT jint JNICALL Java_com_almasb_fxgl_controllerinput_impl_GameControllerImpl_getBackendVersion
+(JNIEnv* env, jclass clazz) {
+
+    SDL_version linked;
+
+    SDL_GetVersion(&linked);
+
+    return (int)linked.patch;
+}
+
+/*
+ * Class:     com_almasb_fxgl_controllerinput_impl_GameControllerImpl
+ * Method:    connectControllers
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_almasb_fxgl_controllerinput_impl_GameControllerImpl_connectControllers
+(JNIEnv* env, jclass clazz) {
 
     SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
 
-    // TODO: currently grabbing the first one, eventually we want to generalize this
     for (int i = 0; i < SDL_NumJoysticks(); ++i) {
         if (SDL_IsGameController(i)) {
             controller = SDL_GameControllerOpen(i);
             if (controller) {
-                is_connected = true;
-                return;
+                controllers[num_controllers++] = controller;
             } else {
                 // TODO: add a callback with SDL_GetError() to say failed to access game controller
             }
@@ -34,34 +44,65 @@ JNIEXPORT void JNICALL Java_com_almasb_fxgl_controllerinput_NativeController_con
 }
 
 /*
- * Class:     com_almasb_fxgl_controllerinput_NativeController
- * Method:    disconnect
- * Signature: ()V
+ * Class:     com_almasb_fxgl_controllerinput_impl_GameControllerImpl
+ * Method:    updateState
+ * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_almasb_fxgl_controllerinput_NativeController_disconnect
-(JNIEnv* env, jobject instance) {
+JNIEXPORT void JNICALL Java_com_almasb_fxgl_controllerinput_impl_GameControllerImpl_updateState
+(JNIEnv* env, jclass clazz, jint controller_id) {
 
-    if (controller != nullptr)
-        SDL_GameControllerClose(controller);
-
-    SDL_Quit();
+    SDL_GameControllerUpdate();
 }
 
 /*
- * Class:     com_almasb_fxgl_controllerinput_NativeController
+ * Class:     com_almasb_fxgl_controllerinput_impl_GameControllerImpl
  * Method:    isButtonPressed
- * Signature: (I)Z
+ * Signature: (II)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_almasb_fxgl_controllerinput_NativeController_isButtonPressed
-(JNIEnv* env, jclass clazz, jint button_id) {
+JNIEXPORT jboolean JNICALL Java_com_almasb_fxgl_controllerinput_impl_GameControllerImpl_isButtonPressed
+(JNIEnv* env, jclass clazz, jint controller_id, jint button_id) {
+
+    if (controller_id >= num_controllers) {
+        return JNI_FALSE;
+    }
 
     SDL_GameControllerButton btn = static_cast<SDL_GameControllerButton>(button_id);
 
-    SDL_GameControllerUpdate();
-
-    if (controller != nullptr && SDL_GameControllerGetButton(controller, btn)) {
+    if (SDL_GameControllerGetButton(controllers[controller_id], btn)) {
         return JNI_TRUE;
     }
 
     return JNI_FALSE;
+}
+
+/*
+ * Class:     com_almasb_fxgl_controllerinput_impl_GameControllerImpl
+ * Method:    getAxis
+ * Signature: (II)D
+ */
+JNIEXPORT jdouble JNICALL Java_com_almasb_fxgl_controllerinput_impl_GameControllerImpl_getAxis
+(JNIEnv* env, jclass clazz, jint controller_id, jint axis_id) {
+
+    if (controller_id >= num_controllers) {
+        return 0.0;
+    }
+
+    SDL_GameControllerAxis axis = static_cast<SDL_GameControllerAxis>(axis_id);
+
+    return (jdouble)SDL_GameControllerGetAxis(controllers[controller_id], axis);
+}
+
+/*
+ * Class:     com_almasb_fxgl_controllerinput_impl_GameControllerImpl
+ * Method:    disconnectControllers
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_almasb_fxgl_controllerinput_impl_GameControllerImpl_disconnectControllers
+(JNIEnv* env, jclass clazz) {
+
+    for (int i = 0; i < num_controllers; i++) {
+        SDL_GameControllerClose(controllers[i]);
+    }
+
+    SDL_Quit();
 }
