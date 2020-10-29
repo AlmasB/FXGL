@@ -41,6 +41,8 @@ JNIEXPORT jint JNICALL Java_com_almasb_fxgl_controllerinput_impl_GameControllerI
             }
         }
     }
+
+    return num_controllers;
 }
 
 /*
