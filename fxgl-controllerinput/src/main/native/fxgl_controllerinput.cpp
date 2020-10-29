@@ -33,7 +33,7 @@ JNIEXPORT jint JNICALL Java_com_almasb_fxgl_controllerinput_impl_GameControllerI
 
     for (int i = 0; i < SDL_NumJoysticks(); ++i) {
         if (SDL_IsGameController(i)) {
-            controller = SDL_GameControllerOpen(i);
+            SDL_GameController* controller = SDL_GameControllerOpen(i);
             if (controller) {
                 controllers[num_controllers++] = controller;
             } else {
