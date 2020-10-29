@@ -117,7 +117,7 @@ public class VirtualControllerSample extends GameApplication {
     @Override
     protected void initGame() {
         var controllerService = getService(ControllerInputService.class);
-        controllerService.addInputHandler(getInput());
+        controllerService.getGameControllers().forEach(con -> con.addInputHandler(getInput()));
 
         getGameScene().setBackgroundColor(
                 new LinearGradient(0.5, 0, 0.5, 1, true, CycleMethod.NO_CYCLE,

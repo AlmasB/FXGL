@@ -111,7 +111,7 @@ public class PlatformerSample extends GameApplication {
     @Override
     protected void initGame() {
         var controllerService = getService(ControllerInputService.class);
-        controllerService.addInputHandler(getInput());
+        controllerService.getGameControllers().forEach(con -> con.addInputHandler(getInput()));
 
         entityBuilder().buildScreenBoundsAndAttach(40);
 
