@@ -6,18 +6,20 @@
 
 package com.almasb.fxgl.controllerinput
 
+import com.almasb.fxgl.controllerinput.impl.GameControllerImpl
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.core.util.Platform.*
-import com.almasb.fxgl.input.Input
-import com.almasb.fxgl.input.virtual.VirtualButton
 import com.almasb.fxgl.logging.Logger
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.*
 
 /**
+ * Provides access to game controllers. Currently support is limited: no hot-swaps/reloads and
+ * the controller(s) must be plugged in before the start of the engine.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -30,14 +32,6 @@ class ControllerInputService : EngineService() {
 
     private var isNativeLibLoaded = false
 
-    private val states = EnumMap<VirtualButton, Boolean>(VirtualButton::class.java).also { map ->
-        VirtualButton.values().forEach { map[it] = false }
-    }
-
-    private var controller: GameController = GameController()
-
-    private val inputHandlers = arrayListOf<Input>()
-
     private val resourceDirNames = hashMapOf(
             WINDOWS to "windows64",
             LINUX to "linux64",
@@ -47,8 +41,12 @@ class ControllerInputService : EngineService() {
     private val nativeLibNames = hashMapOf(
             WINDOWS to listOf("SDL2.dll", "fxgl_controllerinput.dll"),
             LINUX to listOf("libSDL2.so", "libfxgl_controllerinput.so")
-            //MAC to listOf("", "")
+            //TODO: MAC to listOf("", "")
     )
+
+    private val controllers = FXCollections.observableArrayList<GameController>()
+
+    val gameControllers: ObservableList<GameController> by lazy { FXCollections.unmodifiableObservableList(controllers) }
 
     override fun onInit() {
         try {
@@ -85,44 +83,32 @@ class ControllerInputService : EngineService() {
 
             isNativeLibLoaded = true
 
-            log.debug("Successfully loaded nativeLibs")
+            log.debug("Successfully loaded nativeLibs. Calling to check back-end version.")
 
-            controller.connect()
+            val version = GameControllerImpl.getBackendVersion()
+
+            log.info("Controller back-end version: $version")
+
+            log.debug("Connecting to plugged-in controllers")
+
+            GameControllerImpl.connectControllers()
 
         } catch (e: Exception) {
-            log.warning("Loading nativeLibs for controller failed", e)
+            log.warning("Loading nativeLibs for controller support failed", e)
         }
     }
 
     override fun onUpdate(tpf: Double) {
-        if (!isNativeLibLoaded || inputHandlers.isEmpty())
+        if (!isNativeLibLoaded || controllers.isEmpty())
             return
 
-        // TODO: not very efficient
-        VirtualButton.values().forEach {
-            val wasPressed = states[it]!!
-            val isPressed = controller.isPressed(it)
-
-            if (isPressed && !wasPressed) {
-                inputHandlers.forEach { input -> input.pressVirtual(it) }
-            }
-
-            if (!isPressed && wasPressed) {
-                inputHandlers.forEach { input -> input.releaseVirtual(it) }
-            }
-
-            states[it] = isPressed
-        }
+        controllers.forEach { it.updateState() }
     }
 
     override fun onExit() {
-        if (!isNativeLibLoaded)
+        if (!isNativeLibLoaded || controllers.isEmpty())
             return
 
-        controller.disconnect()
-    }
-
-    fun addInputHandler(input: Input) {
-        inputHandlers += input
+        GameControllerImpl.disconnectControllers()
     }
 }
