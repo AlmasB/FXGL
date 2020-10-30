@@ -93,12 +93,20 @@ class ControllerInputService : EngineService() {
 
             val numControllers = GameControllerImpl.connectControllers()
 
+            if (numControllers > 0) {
+                log.debug("Successfully connected to $numControllers controller(s)")
+            } else {
+                log.debug("No controllers found")
+            }
+
             for (id in 0 until numControllers) {
-                gameControllers += GameController(id)
+                controllers += GameController(id)
             }
 
         } catch (e: Exception) {
             log.warning("Loading nativeLibs for controller support failed", e)
+            log.warning("Printing stacktrace:")
+            e.printStackTrace()
         }
     }
 
