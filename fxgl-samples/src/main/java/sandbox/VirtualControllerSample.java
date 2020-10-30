@@ -21,6 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -37,7 +38,7 @@ public class VirtualControllerSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(850);
-        settings.setHeight(700);
+        settings.setHeight(850);
         //settings.setMenuEnabled(false);
         settings.addEngineService(ControllerInputService.class);
         settings.setApplicationMode(ApplicationMode.DEBUG);
@@ -116,9 +117,6 @@ public class VirtualControllerSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        var controllerService = getService(ControllerInputService.class);
-        controllerService.getGameControllers().forEach(con -> con.addInputHandler(getInput()));
-
         getGameScene().setBackgroundColor(
                 new LinearGradient(0.5, 0, 0.5, 1, true, CycleMethod.NO_CYCLE,
                         new Stop(0.1, Color.WHITE),
@@ -169,6 +167,34 @@ public class VirtualControllerSample extends GameApplication {
         );
 
         addUINode(triggerView, 350, 400);
+
+        var controllerService = getService(ControllerInputService.class);
+        controllerService.getGameControllers()
+                .stream()
+                .findAny()
+                .ifPresent(con -> {
+                    con.addInputHandler(getInput());
+
+                    var ltText = getUIFactoryService().newText("", Color.WHITE, 24.0);
+                    ltText.textProperty().bind(con.leftTriggerValueProperty().asString("LT: %.2f"));
+
+                    var rtText = getUIFactoryService().newText("", Color.WHITE, 24);
+                    rtText.textProperty().bind(con.rightTriggerValueProperty().asString("RT: %.2f"));
+
+                    var leftStickText = getUIFactoryService().newText("", Color.WHITE, 24);
+                    var rightStickText = getUIFactoryService().newText("", Color.WHITE, 24);
+
+                    con.leftStickValueProperty().addListener((o, old, leftStickValue) -> {
+
+                        leftStickText.setText("Left stick: " + String.format("Point2D(%.2f, %.2f)", leftStickValue.getX(), leftStickValue.getY()));
+                    });
+
+                    con.rightStickValueProperty().addListener((o, old, rightStickValue) -> {
+                        rightStickText.setText("Right stick: " + String.format("Point2D(%.2f, %.2f)", rightStickValue.getX(), rightStickValue.getY()));
+                    });
+
+                    addUINode(new VBox(10, ltText, rtText, leftStickText, rightStickText), 15, 600);
+                });
 
         // special keys
         addUINode(new HBox(10,
