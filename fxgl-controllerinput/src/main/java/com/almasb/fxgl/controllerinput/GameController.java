@@ -27,6 +27,7 @@ import static com.almasb.fxgl.input.virtual.VirtualButton.*;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
 public final class GameController {
 
     private static final Logger log = Logger.get(GameController.class);
