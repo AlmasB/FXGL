@@ -656,6 +656,25 @@ class ReadOnlyGameSettings internal constructor(
     val actualHeight: Double
         get() = scaledHeightProp.value
 
+    private val appWidthProp = ReadOnlyDoubleWrapper(width.toDouble()).readOnlyProperty
+    private val appHeightProp = ReadOnlyDoubleWrapper(height.toDouble()).readOnlyProperty
+
+    /**
+     * @return a convenience property that auto-sets to target (app) width if auto-scaling is enabled
+     * and uses actual javafx scene width if not
+     */
+    fun prefWidthProperty(): ReadOnlyDoubleProperty {
+        return if (isScaleAffectedOnResize) appWidthProp else actualWidthProperty()
+    }
+
+    /**
+     * @return a convenience property that auto-sets to target (app) height if auto-scaling is enabled
+     * and uses actual javafx scene height if not
+     */
+    fun prefHeightProperty(): ReadOnlyDoubleProperty {
+        return if (isScaleAffectedOnResize) appHeightProp else actualHeightProperty()
+    }
+
     val profileName = SimpleStringProperty("DEFAULT")
 
     private val gameDifficultyProp = SimpleObjectProperty(GameDifficulty.MEDIUM)
