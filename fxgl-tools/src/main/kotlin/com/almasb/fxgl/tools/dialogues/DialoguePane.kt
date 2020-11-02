@@ -18,6 +18,8 @@ import com.almasb.fxgl.texture.toImage
 import com.almasb.fxgl.tools.dialogues.DialogueEditorVars.IS_SNAP_TO_GRID
 import com.almasb.fxgl.tools.dialogues.ui.SelectionRectangle
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleIntegerProperty
+import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.MapChangeListener
 import javafx.geometry.Point2D
@@ -57,8 +59,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 BRANCH to { BranchNode("") },
                 FUNCTION to { FunctionNode("") },
                 END to { EndNode("") },
-                START to { StartNode("") },
-                SUBDIALOGUE to { SubDialogueNode("") }
+                START to { StartNode("") }
+                //SUBDIALOGUE to { SubDialogueNode("") }
         )
 
         val nodeViewConstructors = linkedMapOf<DialogueNodeType, (DialogueNode) -> NodeView>(
@@ -67,8 +69,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 BRANCH to branch,
                 FUNCTION to function,
                 END to end,
-                START to start,
-                SUBDIALOGUE to subdialogue
+                START to start
+                //SUBDIALOGUE to subdialogue
         )
 
         private const val CELL_SIZE = 39.0
@@ -104,6 +106,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     private var isSelectingRectangle = false
 
     private val selectedNodeViews = arrayListOf<NodeView>()
+
+    private val history = FXCollections.observableArrayList<EditorAction>()
+    private val historyIndex = SimpleIntegerProperty(-1)
 
     init {
         val cell = Rectangle(CELL_SIZE - 1, CELL_SIZE - 1, Color.GRAY)
@@ -233,7 +238,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 .filter { it.key != START }
                 .forEach { (type, ctor) ->
                     contextMenu.addItem(type.toString()) {
-                        graph.addNode(ctor())
+                        val node = ctor()
+
+                        performUIAction(AddNodeAction(graph, node))
                     }
                 }
 
@@ -524,6 +531,30 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 graph.removeEdge(outPoint.owner.node, inPoint.owner.node)
             }
         }
+    }
+
+    private fun performUIAction(action: EditorAction) {
+        // if we recently performed undo, then update history
+        if (historyIndex.value < history.size - 1) {
+            history.remove(historyIndex.value + 1, history.size)
+        }
+
+        history += action
+        historyIndex.value++
+
+        action.run()
+    }
+
+    fun undo() {
+        if (historyIndex.value < 0)
+            return
+
+        history[historyIndex.value].undo()
+        historyIndex.value--
+    }
+
+    fun redo() {
+        showMessage("TODO: Sorry, not implemented yet.")
     }
 
     fun save(): SerializableGraph {

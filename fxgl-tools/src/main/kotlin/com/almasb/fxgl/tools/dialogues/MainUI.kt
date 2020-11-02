@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import javafx.beans.binding.Bindings
 import javafx.geometry.Pos
+import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
@@ -53,25 +54,41 @@ class MainUI : BorderPane() {
         toolbar.style = "-fx-background-color: black"
         toolbar.alignment = Pos.CENTER_LEFT
 
-        val contextMenu = FXGLContextMenu()
-        contextMenu.addItem("New (CTRL+N)") { openNewDialog() }
-        contextMenu.addItem("Open... (CTRL+O)") { openLoadDialog() }
-        contextMenu.addItem("Save") { currentTab?.let { onSave(it) } }
-        contextMenu.addItem("Save As...") { currentTab?.let { openSaveAsDialog(it) } }
-        contextMenu.addItem("Save All") { onSaveAll() }
-        contextMenu.addItem("Exit") { getGameController().exit() }
+        val contextMenuFile = FXGLContextMenu()
+        contextMenuFile.addItem("New (CTRL+N)") { openNewDialog() }
+        contextMenuFile.addItem("Open... (CTRL+O)") { openLoadDialog() }
+        contextMenuFile.addItem("Save") { currentTab?.let { onSave(it) } }
+        contextMenuFile.addItem("Save As...") { currentTab?.let { openSaveAsDialog(it) } }
+        contextMenuFile.addItem("Save All") { onSaveAll() }
+        contextMenuFile.addItem("Exit") { getGameController().exit() }
+
+        val contextMenuEdit = FXGLContextMenu()
+        contextMenuEdit.addItem("Undo (CTRL+Z)") { undo() }
+        contextMenuEdit.addItem("Redo") { redo() }
+
+        val contextMenuHelp = FXGLContextMenu()
+        contextMenuHelp.addItem("Updates (TODO)") { }
+        contextMenuHelp.addItem("About") { openAboutDialog() }
 
         val pane = Pane(tabPane, toolbar)
 
         val menuFile = EditorMenu("File") {
-            contextMenu.show(pane, 0.0, toolbar.prefHeight)
+            contextMenuFile.show(pane, 0.0, toolbar.prefHeight)
+        }
+
+        val menuEdit = EditorMenu("Edit") {
+            contextMenuEdit.show(pane, 70.0, toolbar.prefHeight)
         }
 
         val menuPreferences = EditorMenu("Preferences") {
             openPreferencesDialog()
         }
 
-        val menuBar = MenuBar(menuFile, menuPreferences)
+        val menuHelp = EditorMenu("Help") {
+            contextMenuHelp.show(pane, 170.0, toolbar.prefHeight)
+        }
+
+        val menuBar = MenuBar(menuFile, menuEdit, menuPreferences, menuHelp)
         menuBar.style = "-fx-background-color: black"
 
         toolbar.children += menuBar
@@ -103,6 +120,12 @@ class MainUI : BorderPane() {
                 openLoadDialog()
             }
         }, KeyCode.O, InputModifier.CTRL)
+
+        getInput().addAction(object : UserAction("Undo") {
+            override fun onActionBegin() {
+                undo()
+            }
+        }, KeyCode.Z, InputModifier.CTRL)
     }
 
     private fun makeRunButton(): Node {
@@ -122,6 +145,8 @@ class MainUI : BorderPane() {
                 0.0, 13.0
         )
         btnRun.fill = Color.LIGHTGREEN
+
+        stack.cursor = Cursor.HAND
 
         stack.setOnMouseClicked {
             stack.requestFocus()
@@ -199,6 +224,21 @@ class MainUI : BorderPane() {
 
             tab.pane.load(mapper.readValue(it, SerializableGraph::class.java))
         }
+    }
+
+    private fun undo() {
+        currentTab?.pane?.undo()
+    }
+
+    private fun redo() {
+        currentTab?.pane?.redo()
+    }
+
+    private fun openAboutDialog() {
+        showMessage(
+                "${getSettings().title}: v.${getSettings().version}\n\n"
+                        + "by Almas"
+        )
     }
 
     private class EditorMenu(name: String, action: () -> Unit) : Menu("") {
