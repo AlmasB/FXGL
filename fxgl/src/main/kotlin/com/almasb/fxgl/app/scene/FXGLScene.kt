@@ -94,6 +94,10 @@ abstract class FXGLScene
         effect = null
     }
 
+    fun setCursor(cursor: Cursor) {
+        root.cursor = cursor
+    }
+
     /**
      * @param image cursor image
      * @param hotspot hotspot location
