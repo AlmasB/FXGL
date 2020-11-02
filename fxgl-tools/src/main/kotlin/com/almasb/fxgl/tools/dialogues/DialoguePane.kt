@@ -21,6 +21,7 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
 import javafx.collections.MapChangeListener
 import javafx.geometry.Point2D
+import javafx.scene.Cursor
 import javafx.scene.Group
 import javafx.scene.effect.Glow
 import javafx.scene.input.MouseButton
@@ -97,7 +98,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     private val mouseGestures = MouseGestures(contentRoot)
 
-    private val selectionRect = SelectionRectangle()
+    private val selectionRect = SelectionRectangle().also { it.cursor = Cursor.MOVE }
 
     private var selectionStart = Point2D.ZERO
     private var isSelectingRectangle = false
@@ -167,7 +168,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         }
 
         setOnMouseDragged {
-            if (it.isControlDown && isSelectingRectangle) {
+            if (isSelectingRectangle && it.button == MouseButton.PRIMARY) {
                 val vector = contentRoot.sceneToLocal(it.sceneX, it.sceneY).subtract(selectionStart)
 
                 selectionRect.width = vector.x
@@ -176,7 +177,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 return@setOnMouseDragged
             }
 
-            if (mouseGestures.isDragging || it.button != MouseButton.PRIMARY)
+            if (mouseGestures.isDragging || it.button != MouseButton.SECONDARY)
                 return@setOnMouseDragged
 
             contentRoot.translateX += (it.sceneX - mouseX) * dragScale
@@ -187,7 +188,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         }
 
         setOnMousePressed {
-            if (it.isControlDown) {
+            if (it.button == MouseButton.PRIMARY && it.target === this) {
                 isSelectingRectangle = true
                 selectedNodeViews.clear()
                 selectionStart = contentRoot.sceneToLocal(it.sceneX, it.sceneY)
@@ -197,9 +198,17 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 selectionRect.height = 0.0
                 selectionRect.isVisible = true
             }
+
+            if (it.button == MouseButton.SECONDARY) {
+                getGameScene().setCursor(Cursor.CLOSED_HAND)
+            }
         }
 
         setOnMouseReleased {
+            if (it.button == MouseButton.SECONDARY) {
+                getGameScene().setCursor(Cursor.DEFAULT)
+            }
+
             if (!isSelectingRectangle) {
                 return@setOnMouseReleased
             }
@@ -228,11 +237,13 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                     }
                 }
 
-        setOnContextMenuRequested {
-            if (it.target !== this)
-                return@setOnContextMenuRequested
+        setOnMouseClicked {
+            if (it.isControlDown) {
+                if (it.target !== this)
+                    return@setOnMouseClicked
 
-            contextMenu.show(contentRoot, it.sceneX, it.sceneY)
+                contextMenu.show(contentRoot, it.sceneX, it.sceneY)
+            }
         }
     }
 
@@ -438,6 +449,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 snapToGrid(nodeView)
         }
 
+        nodeView.cursor = Cursor.MOVE
+        nodeView.closeButton.cursor = Cursor.HAND
+
         nodeView.closeButton.setOnMouseClicked {
             graph.removeNode(nodeView.node)
         }
@@ -460,6 +474,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun attachMouseHandler(outPoint: OutLinkPoint) {
+        outPoint.cursor = Cursor.HAND
+
         outPoint.setOnMouseClicked {
             if (it.button == MouseButton.PRIMARY) {
                 selectedOutLink = outPoint
@@ -472,6 +488,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun attachMouseHandler(inPoint: InLinkPoint) {
+        inPoint.cursor = Cursor.HAND
+
         inPoint.setOnMouseClicked {
             if (it.button == MouseButton.PRIMARY) {
                 selectedOutLink?.let { outPoint ->
