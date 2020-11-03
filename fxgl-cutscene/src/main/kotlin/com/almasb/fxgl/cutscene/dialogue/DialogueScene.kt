@@ -23,6 +23,7 @@ import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
 import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
+import javafx.scene.Group
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
@@ -55,14 +56,15 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     internal lateinit var assetLoader: AssetLoaderService
 
     init {
-        val appWidth = sceneService.appWidth
-        val appHeight = sceneService.appHeight
-
-        val topLine = Rectangle(appWidth.toDouble(), 150.0)
+        val topLine = Rectangle(0.0, 150.0)
+        topLine.widthProperty().bind(sceneService.prefWidthProperty())
         topLine.translateY = -150.0
 
-        val botLine = Rectangle(appWidth.toDouble(), 200.0)
-        botLine.translateY = appHeight.toDouble()
+        val botLine = Rectangle(0.0, 200.0)
+        botLine.widthProperty().bind(sceneService.prefWidthProperty())
+        botLine.translateYProperty().bind(sceneService.prefHeightProperty())
+
+        val botLineGroup = Group(botLine)
 
         animation1 = AnimationBuilder()
                 .duration(Duration.seconds(0.5))
@@ -73,31 +75,31 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
         animation2 = AnimationBuilder()
                 .duration(Duration.seconds(0.5))
-                .translate(botLine)
-                .from(Point2D(0.0, appHeight.toDouble()))
-                .to(Point2D(0.0, appHeight.toDouble() - 200.0))
+                .translate(botLineGroup)
+                .from(Point2D(0.0, 0.0))
+                .to(Point2D(0.0, -200.0))
                 .build()
-
+        
         topText.fill = Color.WHITE
         topText.font = Font.font(18.0)
-        topText.wrappingWidth = appWidth.toDouble() - 155.0
+        topText.wrappingWidthProperty().bind(sceneService.prefWidthProperty().subtract(155))
         topText.translateX = 50.0
         topText.translateY = 40.0
 
         boxPlayerLines.translateX = 50.0
-        boxPlayerLines.translateY = appHeight.toDouble() - 160.0
+        boxPlayerLines.translateYProperty().bind(sceneService.prefHeightProperty().subtract(160))
         boxPlayerLines.opacity = 0.0
 
         val keyView = KeyView(KeyCode.ENTER, Color.GREENYELLOW, 18.0)
-        keyView.translateX = appWidth.toDouble() - 80.0
-        keyView.translateY = appHeight - 40.0
+        keyView.translateXProperty().bind(sceneService.prefWidthProperty().subtract(80))
+        keyView.translateYProperty().bind(sceneService.prefHeightProperty().subtract(40))
 
         keyView.opacityProperty().bind(boxPlayerLines.opacityProperty())
         topText.opacityProperty().bind(boxPlayerLines.opacityProperty())
 
         initUserActions()
 
-        contentRoot.children.addAll(topLine, botLine, topText, boxPlayerLines, keyView)
+        contentRoot.children.addAll(topLine, botLineGroup, topText, boxPlayerLines, keyView)
     }
 
     private fun initUserActions() {
