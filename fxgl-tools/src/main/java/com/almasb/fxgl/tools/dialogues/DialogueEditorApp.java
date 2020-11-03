@@ -31,6 +31,8 @@ public class DialogueEditorApp extends GameApplication {
         settings.setVersion("1.0-beta");
         settings.getCSSList().add("dialogue_editor.css");
         settings.setIntroEnabled(false);
+        settings.setMainMenuEnabled(false);
+        settings.setGameMenuEnabled(false);
         settings.setManualResizeEnabled(true);
         settings.setScaleAffectedOnResize(false);
         //settings.setProfilingEnabled(true);
