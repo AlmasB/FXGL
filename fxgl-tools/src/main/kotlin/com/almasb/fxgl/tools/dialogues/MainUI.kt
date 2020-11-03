@@ -94,13 +94,9 @@ class MainUI : BorderPane() {
         toolbar.children += menuBar
         toolbar.children += makeRunButton()
 
-        prefWidthProperty().bind(FXGL.getSettings().actualWidthProperty())
-        prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
-
         pane.style = "-fx-background-color: gray"
-        pane.prefWidthProperty().bind(prefWidthProperty())
-        pane.prefHeightProperty().bind(prefHeightProperty())
-
+        tabPane.prefWidthProperty().bind(FXGL.getSettings().actualWidthProperty())
+        tabPane.prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
         center = pane
 
         openNewTab()
