@@ -146,10 +146,11 @@ class TriggerTest {
         assertThat(btn.toString(), `is`("ALT+LMB"))
     }
 
-    @Test
-    fun `toString throws if not a button`() {
-        assertThrows(RuntimeException::class.java) {
-            MouseTrigger(MouseButton.NONE).toString()
+    @ParameterizedTest
+    @EnumSource(MouseButton::class)
+    fun `toString does not throw if not a button`(btn: MouseButton) {
+        assertDoesNotThrow {
+            MouseTrigger(btn).toString()
         }
     }
 
@@ -158,13 +159,9 @@ class TriggerTest {
         assertThat(MouseTrigger.buttonFromString("LMB"), `is`(MouseButton.PRIMARY))
         assertThat(MouseTrigger.buttonFromString("MMB"), `is`(MouseButton.MIDDLE))
         assertThat(MouseTrigger.buttonFromString("RMB"), `is`(MouseButton.SECONDARY))
-    }
-
-    @Test
-    fun `Mouse button from string throws if not LMB MMB or RMB`() {
-        assertThrows(RuntimeException::class.java) {
-            MouseTrigger.buttonFromString("")
-        }
+        assertThat(MouseTrigger.buttonFromString("BMB"), `is`(MouseButton.BACK))
+        assertThat(MouseTrigger.buttonFromString("FMB"), `is`(MouseButton.FORWARD))
+        assertThat(MouseTrigger.buttonFromString("bla-bla"), `is`(MouseButton.NONE))
     }
 }
 

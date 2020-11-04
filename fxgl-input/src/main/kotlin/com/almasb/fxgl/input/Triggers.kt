@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.input
 
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.scene.input.*
@@ -112,18 +113,30 @@ data class MouseTrigger
                           override val modifier: InputModifier = InputModifier.NONE) : Trigger {
 
     companion object {
+        private val log = Logger.get<MouseTrigger>()
+
         fun buttonFromString(value: String) = when(value) {
             "LMB" -> MouseButton.PRIMARY
             "MMB" -> MouseButton.MIDDLE
             "RMB" -> MouseButton.SECONDARY
-            else -> throw RuntimeException("Must be one of [LMB, MMB, RMB]")
+            "BMB" -> MouseButton.BACK
+            "FMB" -> MouseButton.FORWARD
+            else -> {
+                log.warning("Unknown button String form: $value")
+                MouseButton.NONE
+            }
         }
 
         fun buttonToString(button: MouseButton) = when(button) {
             MouseButton.PRIMARY -> "LMB"
             MouseButton.MIDDLE -> "MMB"
             MouseButton.SECONDARY -> "RMB"
-            else -> throw RuntimeException("Not a mouse button")
+            MouseButton.BACK -> "BMB"
+            MouseButton.FORWARD -> "FMB"
+            else -> {
+                log.warning("Unknown button: $button")
+                "NMB"
+            }
         }
     }
 
