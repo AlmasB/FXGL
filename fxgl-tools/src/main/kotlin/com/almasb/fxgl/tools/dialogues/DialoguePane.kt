@@ -110,6 +110,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     private val history = FXCollections.observableArrayList<EditorAction>()
     private val historyIndex = SimpleIntegerProperty(-1)
 
+    private val contextMenu = FXGLContextMenu()
+
     init {
         val cell = Rectangle(CELL_SIZE - 1, CELL_SIZE - 1, Color.GRAY)
         cell.stroke = Color.WHITESMOKE
@@ -140,11 +142,6 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         }
 
         children.addAll(contentRoot)
-
-        // start and end
-
-        createNode(StartNodeView(), 50.0, getAppHeight() / 2.0)
-        createNode(EndNodeView(), getAppWidth() - 370.0, getAppHeight() / 2.0)
 
         initContextMenu()
 
@@ -229,11 +226,28 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         initGraphListeners()
 
         initGridListener(bgGrid)
+
+        initDefaultNodes()
+    }
+
+    private fun initDefaultNodes() {
+        val start = StartNode("Sample start text")
+        val mid = TextNode("Sample text")
+        val end = EndNode("Sample end text")
+
+        graph.addNode(start)
+        graph.addNode(mid)
+        graph.addNode(end)
+
+        graph.addEdge(start, mid)
+        graph.addEdge(mid, end)
+
+        getNodeView(start).relocate(50.0, getAppHeight() / 2.0)
+        getNodeView(mid).relocate((getAppWidth() - 370.0 + 50) / 2.0, getAppHeight() / 2.0)
+        getNodeView(end).relocate(getAppWidth() - 370.0, getAppHeight() / 2.0)
     }
 
     private fun initContextMenu() {
-        val contextMenu = FXGLContextMenu()
-
         nodeConstructors
                 .filter { it.key != START }
                 .forEach { (type, ctor) ->
@@ -428,12 +442,6 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 ?: throw IllegalArgumentException("No edge view found for edge $edge")
     }
 
-    private fun createNode(nodeView: NodeView, x: Double, y: Double) {
-        graph.addNode(nodeView.node)
-
-        addNodeView(nodeView, x, y)
-    }
-
     private fun addNodeView(nodeView: NodeView, x: Double, y: Double) {
         nodeView.relocate(x, y)
 
@@ -543,6 +551,10 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         historyIndex.value++
 
         action.run()
+    }
+
+    fun openAddNodeDialog() {
+        contextMenu.show(contentRoot, 0.0, 30.0)
     }
 
     fun undo() {

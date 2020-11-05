@@ -38,7 +38,7 @@ import java.nio.file.Files
  */
 class MainUI : BorderPane() {
 
-    private val toolbar = HBox(15.0)
+    private val toolbar = HBox(35.0)
     private val tabPane = TabPane()
 
     private val preferences by lazy { PreferencesSubScene() }
@@ -57,17 +57,23 @@ class MainUI : BorderPane() {
         val contextMenuFile = FXGLContextMenu()
         contextMenuFile.addItem("New (CTRL+N)") { openNewDialog() }
         contextMenuFile.addItem("Open... (CTRL+O)") { openLoadDialog() }
-        contextMenuFile.addItem("Save") { currentTab?.let { onSave(it) } }
+        contextMenuFile.addItem("Save (CTRL+S)") { currentTab?.let { onSave(it) } }
         contextMenuFile.addItem("Save As...") { currentTab?.let { openSaveAsDialog(it) } }
         contextMenuFile.addItem("Save All") { onSaveAll() }
         contextMenuFile.addItem("Exit") { getGameController().exit() }
 
         val contextMenuEdit = FXGLContextMenu()
-        contextMenuEdit.addItem("Undo (CTRL+Z)") { undo() }
-        contextMenuEdit.addItem("Redo") { redo() }
+        //contextMenuEdit.addItem("Undo (CTRL+Z)") { undo() }
+        //contextMenuEdit.addItem("Redo") { redo() }
+        //contextMenuEdit.addItem("Copy (CTRL+C)") {  }
+        //contextMenuEdit.addItem("Paste (CTRL+V)") {  }
+        contextMenuEdit.addItem("Preferences") { openPreferencesDialog() }
+
+        val contextMenuAdd = FXGLContextMenu()
+        contextMenuAdd.addItem("Node (CTRL+Left Click)") { currentTab?.pane?.openAddNodeDialog() }
 
         val contextMenuHelp = FXGLContextMenu()
-        contextMenuHelp.addItem("Updates (TODO)") { }
+        //contextMenuHelp.addItem("Updates (TODO)") { }
         contextMenuHelp.addItem("About") { openAboutDialog() }
 
         val pane = Pane(tabPane, toolbar)
@@ -80,15 +86,15 @@ class MainUI : BorderPane() {
             contextMenuEdit.show(pane, 70.0, toolbar.prefHeight)
         }
 
-        val menuPreferences = EditorMenu("Preferences") {
-            openPreferencesDialog()
+        val menuAdd = EditorMenu("Add") {
+            contextMenuAdd.show(pane, 100.0, toolbar.prefHeight)
         }
 
         val menuHelp = EditorMenu("Help") {
             contextMenuHelp.show(pane, 170.0, toolbar.prefHeight)
         }
 
-        val menuBar = MenuBar(menuFile, menuEdit, menuPreferences, menuHelp)
+        val menuBar = MenuBar(menuFile, menuEdit, menuAdd, menuHelp)
         menuBar.style = "-fx-background-color: black"
 
         toolbar.children += menuBar
@@ -116,6 +122,12 @@ class MainUI : BorderPane() {
                 openLoadDialog()
             }
         }, KeyCode.O, InputModifier.CTRL)
+
+        getInput().addAction(object : UserAction("Save") {
+            override fun onActionBegin() {
+                currentTab?.let { onSave(it) }
+            }
+        }, KeyCode.S, InputModifier.CTRL)
 
         getInput().addAction(object : UserAction("Undo") {
             override fun onActionBegin() {
@@ -158,7 +170,7 @@ class MainUI : BorderPane() {
     }
 
     private fun openNewTab() {
-        val tab = DialogueTab(File("default.json"), DialoguePane())
+        val tab = DialogueTab(File("Untitled.json"), DialoguePane())
 
         tabPane.tabs += tab
         tabPane.selectionModel.select(tab)
@@ -233,7 +245,7 @@ class MainUI : BorderPane() {
     private fun openAboutDialog() {
         showMessage(
                 "${getSettings().title}: v.${getSettings().version}\n\n"
-                        + "by Almas"
+                        + "Report issues / chat: https://gitter.im/AlmasB/FXGL\n"
         )
     }
 
