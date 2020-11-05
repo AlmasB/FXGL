@@ -213,8 +213,14 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
     private fun nextLine(nextNode: DialogueNode? = null) {
         // do not allow to move to next line while the text animation is going
-        if (message.isNotEmpty())
+        if (message.isNotEmpty()) {
+            // just show the text fully
+            while (message.isNotEmpty()) {
+                topText.text += message.poll()
+            }
             return
+        }
+
 
         if (currentLine == 0 && currentNode.type == START) {
             currentNode.text.parseVariables().forEach { message.addLast(it) }
