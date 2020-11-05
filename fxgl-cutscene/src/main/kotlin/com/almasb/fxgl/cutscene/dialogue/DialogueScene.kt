@@ -115,8 +115,9 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
         val digitTriggerListener = object : TriggerListener() {
             override fun onActionBegin(trigger: Trigger) {
-                // only allow 1,2,3 select
-                if (currentNode.type != CHOICE) {
+
+                // ignore any presses if type is not CHOICE or the text animation is still going
+                if (currentNode.type != CHOICE || message.isNotEmpty()) {
                     return
                 }
 
@@ -202,6 +203,10 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
     private var currentLine = 0
     private lateinit var currentNode: DialogueNode
+
+    /**
+     * This is the text that is shown to the player one char at a time.
+     */
     private val message = ArrayDeque<Char>()
 
     private var stringID = 1
