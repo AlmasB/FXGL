@@ -293,6 +293,16 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         text.properties["localID"] = localID
 
         text.setOnMouseClicked {
+            // do not allow to move to next line while the text animation is going
+            if (message.isNotEmpty()) {
+                // just show the text fully
+                while (message.isNotEmpty()) {
+                    topText.text += message.poll()
+                }
+
+                return@setOnMouseClicked
+            }
+
             selectLine(localID)
         }
 
