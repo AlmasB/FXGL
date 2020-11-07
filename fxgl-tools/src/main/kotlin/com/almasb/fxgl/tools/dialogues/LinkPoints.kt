@@ -177,6 +177,5 @@ class EdgeView(val edge: DialogueEdge, val source: OutLinkPoint, val target: InL
         strokeWidth = EDGE_STROKE_WIDTH
         stroke = NodeView.colors[inPoint.owner.node.type] ?: Color.color(0.9, 0.9, 0.9, 0.9)
         fill = null
-        effect = Glow(0.7)
     }
 }
