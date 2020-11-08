@@ -7,6 +7,10 @@
 package com.almasb.fxgl.cutscene.dialogue
 
 import com.almasb.fxgl.core.collection.PropertyMap
+import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.*
+import org.hamcrest.MatcherAssert
+import org.hamcrest.MatcherAssert.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -23,8 +27,35 @@ class DialogueScriptRunnerTest {
     @BeforeEach
     fun setUp() {
         val map = PropertyMap()
+        map.setValue("someInt", 5)
+        map.setValue("someDouble", 3.0)
+        map.setValue("someString", "hello")
+        map.setValue("isAlive", true)
+        map.setValue("isSleeping", false)
 
-        runner = DialogueScriptRunner(map) { funcName, args -> }
+        runner = DialogueScriptRunner(map) { funcName, args ->
+
+            var result: Any = ""
+
+            if (funcName == "hasItem") {
+                result = args[0] == "400"
+            }
+
+            result
+        }
+    }
+
+    @Test
+    fun `Replace variables in text`() {
+        val result = runner.replaceVariablesInText("Test \$someInt \$isSleeping \$isAlive \$someString \$someDouble")
+
+        assertThat(result, `is`("Test 5 false true hello 3.0"))
+    }
+
+    @Test
+    fun `Call a boolean function`() {
+        assertTrue(runner.callBooleanFunction("hasItem 400"))
+        assertFalse(runner.callBooleanFunction("hasItem 300"))
     }
 
     @Test
@@ -33,11 +64,17 @@ class DialogueScriptRunnerTest {
     }
 
     @Test
-    fun `Call a boolean function with equality check operators`() {
-        assertTrue(runner.callBooleanFunction("5 == 5"))
-        assertFalse(runner.callBooleanFunction("5 == 7"))
+    fun `Call a boolean function with single boolean variables`() {
+        assertTrue(runner.callBooleanFunction("isAlive"))
+        assertFalse(runner.callBooleanFunction("isSleeping"))
+    }
 
-        assertTrue(runner.callBooleanFunction("5 >= 5"))
+    @Test
+    fun `Call a boolean function with equality check operators`() {
+        assertTrue(runner.callBooleanFunction("5.0 == 5.0"))
+        assertFalse(runner.callBooleanFunction("5.0 == 7"))
+
+        assertTrue(runner.callBooleanFunction("5 >= 5.0"))
         assertFalse(runner.callBooleanFunction("5 >= 7"))
 
         assertTrue(runner.callBooleanFunction("5 <= 5"))
@@ -48,5 +85,24 @@ class DialogueScriptRunnerTest {
 
         assertTrue(runner.callBooleanFunction("5 < 7"))
         assertFalse(runner.callBooleanFunction("5 < 3"))
+
+        assertTrue(runner.callBooleanFunction("\$someInt == 5"))
+        assertTrue(runner.callBooleanFunction("\$someDouble == 3.0"))
+        assertTrue(runner.callBooleanFunction("\$someDouble < 3.5"))
+    }
+
+    @Test
+    fun `Call a function with assignment statement`() {
+        runner.callFunction("isPoisoned = false")
+        assertFalse(runner.callBooleanFunction("isPoisoned"))
+
+        runner.callFunction("isPoisoned = true")
+        assertTrue(runner.callBooleanFunction("isPoisoned"))
+
+        runner.callFunction("name = Test Name")
+        assertTrue(runner.callBooleanFunction("\$name == Test Name"))
+
+        runner.callFunction("someInt = 66")
+        assertTrue(runner.callBooleanFunction("\$someInt == 66"))
     }
 }

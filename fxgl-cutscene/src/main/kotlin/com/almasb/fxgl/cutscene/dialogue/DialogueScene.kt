@@ -225,7 +225,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         }
 
         if (currentLine == 0 && currentNode.type == START) {
-            currentNode.text.parseVariables().forEach { message.addLast(it) }
+            dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
             currentLine++
             return
         }
@@ -248,13 +248,13 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
                     choiceLocalID = if (result) 0 else 1
                 } else {
-                    log.warning("Branch node has no function call: ${branchNode.text}. Assuming true branch.")
-                    choiceLocalID = 0
+                    log.warning("Branch node has no function call: ${branchNode.text}. Assuming <false> branch.")
+                    choiceLocalID = 1
                 }
 
                 nextLine(nextNodeFromChoice(choiceLocalID))
             } else {
-                currentNode.text.parseVariables().forEach { message.addLast(it) }
+                dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
 
                 if (currentNode.type == CHOICE) {
                     val choiceNode = currentNode as ChoiceNode
@@ -266,7 +266,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
                         if (condition.value.trim().isEmpty() || dialogueScriptRunner.callBooleanFunction(condition.value)) {
                             val option = choiceNode.options[id]!!
 
-                            populatePlayerLine(id, option.value.parseVariables())
+                            populatePlayerLine(id, dialogueScriptRunner.replaceVariablesInText(option.value))
                         }
                     }
                 }
@@ -340,39 +340,6 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         onFinished.run()
     }
 
-
-
-
-
-
-
-
-
-
-
-    internal fun String.parseVariables(): String {
-        val vars = this.split(" +".toRegex())
-                .filter { it.startsWith("\$") && it.length > 1 }
-                .map {
-                    if (!it.last().isLetterOrDigit())
-                        it.substring(1, it.length - 1)
-                    else
-                        it.substring(1)
-                }
-                .toSet()
-
-        var result = this
-
-        vars.forEach {
-            if (gameVars.exists(it)) {
-                val value = gameVars.getValue<Any>(it)
-                result = result.replace("\$$it", value.toString())
-            }
-        }
-
-        return result
-    }
-
     private fun String.parseAndCallFunctions() {
         val funcCalls = this.split("\n".toRegex())
 
@@ -382,10 +349,5 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             }
         }
     }
-
-
-
-
-
 }
 

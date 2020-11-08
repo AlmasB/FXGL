@@ -24,12 +24,47 @@ internal class DialogueScriptRunner(
     private val localVars = hashMapOf<String, Any>()
 
     /**
+     * Given a [line], this function replaces all variables with their values.
+     */
+    fun replaceVariablesInText(line: String): String {
+        val varNames = line.split(" +".toRegex())
+                .filter { it.startsWith("\$") && it.length > 1 }
+                .map {
+                    if (!it.last().isLetterOrDigit())
+                        it.substring(1, it.length - 1)
+                    else
+                        it.substring(1)
+                }
+                .toSet()
+
+        return replaceVariables(line, varNames)
+    }
+
+    private fun replaceVariables(line: String, varNames: Set<String>): String {
+        var result = line
+
+        varNames.forEach {
+            if (it in localVars) {
+                val value = localVars[it]
+                result = result.replace("\$$it", value.toString())
+
+            } else if (gameVars.exists(it)) {
+                val value = gameVars.getValue<Any>(it)
+                result = result.replace("\$$it", value.toString())
+            }
+        }
+
+        return result
+    }
+
+    /**
      * Called from a branch node.
      */
     fun callBooleanFunction(line: String): Boolean {
-        // TODO: parse variables before calling the check function
-
-        val result = if (line.isEqualityCheckFunction()) callEqualityCheckFunction(line) else callFunction(line)
+        val result = if (line.isEqualityCheckFunction())
+            callEqualityCheckFunction(replaceVariablesInText(line))
+        else
+            callFunction(line)
 
         if (result !is Boolean) {
             log.warning("A boolean function call did not return a boolean: ${line}. Assuming result <false>.")
@@ -88,19 +123,22 @@ internal class DialogueScriptRunner(
         }
 
         // if all of above checks did not succeed, then call a default function handler
-
-        //return functionHandler.handle(funcName, tokens.drop(1).map { it.trim().parseVariables() }.toTypedArray())
-
-        return functionHandler.handle(funcName, tokens.drop(1).map { it.trim() }.toTypedArray())
+        return functionHandler.handle(funcName, tokens.drop(1).map { replaceVariablesInText(it.trim()) }.toTypedArray())
     }
 
-    fun callAssignmentFunction(line: String) {
+    private fun callAssignmentFunction(line: String) {
         log.debug("callAssignmentFunction( $line )")
 
         val varName = line.substringBefore('=').trim()
-        val varValue = line.substringAfter('=').trim()
+        val varValue = line.substringAfter('=').trim().toTypedValue()
 
-        localVars[varName] = varValue.toTypedValue()
+        if (varName in localVars) {
+            localVars[varName] = varValue
+        } else if (gameVars.exists(varName)) {
+            gameVars.setValue(varName, varValue)
+        } else {
+            localVars[varName] = varValue
+        }
     }
 }
 
@@ -128,6 +166,7 @@ private fun String.toTypedValue(): Any {
     return s.toIntOrNull() ?: s.toDoubleOrNull() ?: s
 }
 
+// TODO: String and Boolean
 private operator fun Any.compareTo(other: Any): Int {
     if (this is Int && other is Int) {
         return this.compareTo(other)
