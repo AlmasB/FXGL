@@ -19,7 +19,7 @@ enum class DialogueNodeType {
     START, END, TEXT, SUBDIALOGUE, CHOICE, FUNCTION, BRANCH
 }
 
-interface FunctionCallHandler {
+fun interface FunctionCallHandler {
 
     fun handle(functionName: String, args: Array<String>): Any
 }

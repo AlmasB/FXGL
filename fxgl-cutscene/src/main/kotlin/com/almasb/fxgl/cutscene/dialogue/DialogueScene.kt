@@ -55,7 +55,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     internal lateinit var gameVars: PropertyMap
     internal lateinit var assetLoader: AssetLoaderService
 
-    private val localVars = hashMapOf<String, Any>()
+    private lateinit var dialogueScriptRunner: DialogueScriptRunner
 
     init {
         val topLine = Rectangle(0.0, 150.0)
@@ -162,8 +162,6 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     }
 
     private fun endCutscene() {
-        localVars.clear()
-
         boxPlayerLines.opacity = 0.0
         animation2.onFinished = Runnable {
             sceneService.popSubScene()
@@ -177,6 +175,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         graph = dialogueGraph.copy()
         this.functionHandler = functionHandler
         this.onFinished = onFinished
+        dialogueScriptRunner = DialogueScriptRunner(gameVars, functionHandler)
 
         // while graph has subdialogue nodes, expand
         while (graph.nodes.any { it.value.type == SUBDIALOGUE }) {
@@ -225,7 +224,6 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             return
         }
 
-
         if (currentLine == 0 && currentNode.type == START) {
             currentNode.text.parseVariables().forEach { message.addLast(it) }
             currentLine++
@@ -246,7 +244,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
                 val choiceLocalID: Int
 
                 if (branchNode.text.trim().isNotEmpty()) {
-                    val result = callBooleanFunction(branchNode.text)
+                    val result = dialogueScriptRunner.callBooleanFunction(branchNode.text)
 
                     choiceLocalID = if (result) 0 else 1
                 } else {
@@ -265,7 +263,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
                     choiceNode.conditions.forEach { id, condition ->
 
-                        if (condition.value.trim().isEmpty() || callBooleanFunction(condition.value)) {
+                        if (condition.value.trim().isEmpty() || dialogueScriptRunner.callBooleanFunction(condition.value)) {
                             val option = choiceNode.options[id]!!
 
                             populatePlayerLine(id, option.value.parseVariables())
@@ -342,7 +340,17 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         onFinished.run()
     }
 
-    private fun String.parseVariables(): String {
+
+
+
+
+
+
+
+
+
+
+    internal fun String.parseVariables(): String {
         val vars = this.split(" +".toRegex())
                 .filter { it.startsWith("\$") && it.length > 1 }
                 .map {
@@ -370,72 +378,14 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
         funcCalls.forEach { line ->
             if (line.trim().isNotEmpty()) {
-                callFunction(line)
+                dialogueScriptRunner.callFunction(line)
             }
         }
     }
 
-    private fun callBooleanFunction(line: String): Boolean {
-        val result = callFunction(line)
 
-        if (result !is Boolean) {
-            log.warning("A boolean function call did not return a boolean: ${line}. Assuming result <true>.")
-            return true
-        }
 
-        return result
-    }
 
-    private fun callFunction(line: String): Any {
-        if (line.isAssignmentFunction()) {
-            callAssignmentFunction(line)
-            return NullObject
-        }
 
-        val tokens = line.trim().split(" +".toRegex())
-
-        require(tokens.isNotEmpty()) { "Empty function call: $line" }
-
-        val funcName = tokens[0].trim()
-
-        if (tokens.size == 1) {
-            // check if this is a boolean variable -- the only valid variable to use here
-            if (funcName in localVars) {
-                return localVars[funcName]!!
-            }
-
-            if (gameVars.exists(funcName)) {
-                return gameVars.getValue(funcName)
-            }
-        }
-
-        // if all of above checks did not succeed, then call a default function handler
-
-        return functionHandler.handle(funcName, tokens.drop(1).map { it.trim().parseVariables() }.toTypedArray())
-    }
-
-    private fun callAssignmentFunction(line: String) {
-        log.debug("callAssignmentFunction( $line )")
-
-        val varName = line.substringBefore('=').trim()
-        val varValue = line.substringAfter('=').trim()
-
-        localVars[varName] = toValue(varValue)
-    }
-
-    private fun toValue(s: String): Any {
-        if (s == "true")
-            return true
-
-        if (s == "false")
-            return false
-
-        return s.toIntOrNull() ?: s.toDoubleOrNull() ?: s
-    }
-
-    private fun String.isAssignmentFunction(): Boolean {
-        return this.contains('=')
-    }
 }
 
-private object NullObject
