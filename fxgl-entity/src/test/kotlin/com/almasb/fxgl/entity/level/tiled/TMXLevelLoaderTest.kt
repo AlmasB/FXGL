@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -98,6 +99,27 @@ class TMXLevelLoaderTest {
 
         // 1 bg + 7 entities
         assertThat(level.entities.size, `is`(1 + 7))
+    }
+
+    @Test
+    fun `Load tmx level with separate tile images`() {
+        val world = GameWorld()
+
+        val level = TMXLevelLoader().load(javaClass.getResource("tile_images/map_with_separate_tile_images.tmx"), world)
+
+        val layerEntity = level.entities[0]
+
+        val view = layerEntity.viewComponent.children[0] as ImageView
+
+        assertThat(view.image.width, `is`(64 * 22.0))
+        assertThat(view.image.height, `is`(64 * 22.0))
+
+        assertThat(view.image.pixelReader.getColor(64*0 + 32, 32), `is`(not(Color.TRANSPARENT)))
+        assertThat(view.image.pixelReader.getColor(64*1 + 32, 32), `is`(not(Color.TRANSPARENT)))
+        assertThat(view.image.pixelReader.getColor(64*2 + 32, 32), `is`(not(Color.TRANSPARENT)))
+        assertThat(view.image.pixelReader.getColor(64*3 + 32, 32), `is`(not(Color.TRANSPARENT)))
+
+        assertThat(view.image.pixelReader.getColor(64*4 + 32, 32), `is`(Color.TRANSPARENT))
     }
 
     @Test
