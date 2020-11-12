@@ -48,7 +48,7 @@ class TMXLevelLoaderTest {
     }
 
     @ParameterizedTest
-    @CsvSource("map_with_gid_objects.tmx", "map_with_indented_csv_data.tmx")
+    @CsvSource("map_with_gid_objects.tmx", "map_with_indented_csv_data.tmx", "map_with_gzip_data.tmx")
     fun `Load tmx level with gid objects`(mapName: String) {
         val world = GameWorld()
         world.addEntityFactory(MyEntityFactory())
