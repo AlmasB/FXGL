@@ -46,6 +46,9 @@ public abstract class GameApplication {
 
     private static final Logger log = Logger.get(GameApplication.class);
 
+    /**
+     * The caller of GameApplication.launch() must be a method in the same class that extends GameApplication.
+     */
     public static void launch(String[] args) {
         try {
             var instance = newInstance();
