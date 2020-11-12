@@ -13,7 +13,7 @@ import javafx.scene.image.Image
 
 /**
  * Used to build textures from 9 partial images: 4 corners, 4 sides, 1 center.
- * The corners remain unchanged where the sides and center widen to fill the desired dimension.
+ * The corners remain unchanged whereas the sides and center widen to fill the desired dimension.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

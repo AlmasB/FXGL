@@ -84,7 +84,7 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
 
     /**
      * Stop the animation.
-     * The frame will be set to 0th.
+     * The frame will be set to 0th (i.e. the first frame).
      */
     fun stop() {
         currentFrame = 0
