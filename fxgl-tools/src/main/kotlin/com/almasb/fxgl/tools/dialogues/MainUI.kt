@@ -215,7 +215,11 @@ class MainUI : BorderPane() {
 
             val s = mapper.writeValueAsString(serializedGraph)
 
-            Files.writeString(it.toPath(), s)
+            val path = it.toPath()
+
+            Files.writeString(path, s)
+
+            tab.updateFile(path.toFile())
         }
     }
 
@@ -265,13 +269,21 @@ class MainUI : BorderPane() {
         }
     }
 
-    private class DialogueTab(val file: File,
+    private class DialogueTab(var file: File,
                               val pane: DialoguePane) : Tab(file.nameWithoutExtension) {
         init {
             pane.prefWidthProperty().bind(FXGL.getSettings().actualWidthProperty())
             pane.prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
 
             content = pane
+
+            textProperty().bind(
+                    Bindings.`when`(pane.isDirtyProperty).then(file.nameWithoutExtension + "*").otherwise(file.nameWithoutExtension)
+            )
+        }
+
+        fun updateFile(newFile: File) {
+            file = newFile
 
             textProperty().bind(
                     Bindings.`when`(pane.isDirtyProperty).then(file.nameWithoutExtension + "*").otherwise(file.nameWithoutExtension)
