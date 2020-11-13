@@ -211,15 +211,21 @@ class MainUI : BorderPane() {
         chooser.initialFileName = tab.file.name
 
         chooser.showSaveDialog(scene.window)?.let {
+
+            val file: File =
+                    if (it.name.endsWith(".json")) {
+                        it
+                    } else {
+                        File(it.parentFile, it.nameWithoutExtension + ".json")
+                    }
+
             val serializedGraph = tab.pane.save()
 
             val s = mapper.writeValueAsString(serializedGraph)
 
-            val path = it.toPath()
+            Files.writeString(file.toPath(), s)
 
-            Files.writeString(path, s)
-
-            tab.updateFile(path.toFile())
+            tab.updateFile(file)
         }
     }
 
