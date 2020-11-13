@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.tools.dialogues
 
-import java.util.function.Consumer
-import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
 import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.input.InputModifier
@@ -19,7 +17,10 @@ import javafx.beans.binding.Bindings
 import javafx.geometry.Pos
 import javafx.scene.Cursor
 import javafx.scene.Node
-import javafx.scene.control.*
+import javafx.scene.control.Menu
+import javafx.scene.control.MenuBar
+import javafx.scene.control.Tab
+import javafx.scene.control.TabPane
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
@@ -181,7 +182,7 @@ class MainUI : BorderPane() {
     }
 
     private fun openNewDialog() {
-        getDisplay().showInputBox("New dialogue name", InputPredicates.ALPHANUM, Consumer { name ->
+        getDisplay().showInputBox("New dialogue name", { isValidName(it) }, { name ->
             val tab = DialogueTab(File("$name.json"), DialoguePane())
 
             tabPane.tabs += tab
@@ -257,6 +258,10 @@ class MainUI : BorderPane() {
                 "${getSettings().title}: v.${getSettings().version}\n\n"
                         + "Report issues / chat: https://gitter.im/AlmasB/FXGL\n"
         )
+    }
+
+    private fun isValidName(name: String): Boolean {
+        return name.all { it.isLetterOrDigit() || it == '_' }
     }
 
     private class EditorMenu(name: String, action: () -> Unit) : Menu("") {
