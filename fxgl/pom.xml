@@ -326,10 +326,23 @@
                 <artifactId>maven-jar-plugin</artifactId>
             </plugin>
 
-            <!-- Attach kotlin sources -->
+            <!-- Attach kotlin sources _and_ also src/main/java-templates -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/main/java-templates</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Filter source code files in src/main/java-templates, e.g. to add {project.version} -->
