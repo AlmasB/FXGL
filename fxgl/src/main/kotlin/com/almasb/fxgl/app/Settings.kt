@@ -244,6 +244,8 @@ class GameSettings(
          */
         var randomSeed: Long = -1L,
 
+        var defaultLanguage: Language = ENGLISH,
+
         /* EXPERIMENTAL */
 
         var isExperimentalTiledLargeMap: Boolean = false,
@@ -355,6 +357,7 @@ class GameSettings(
                 pixelsPerMeter,
                 secondsIn24h,
                 randomSeed,
+                defaultLanguage,
                 isExperimentalTiledLargeMap,
                 isExperimentalNative,
                 configClass,
@@ -523,6 +526,8 @@ class ReadOnlyGameSettings internal constructor(
 
         val randomSeed: Long,
 
+        private val defaultLanguage: Language,
+
         /* EXPERIMENTAL */
 
         val isExperimentalTiledLargeMap: Boolean,
@@ -629,7 +634,7 @@ class ReadOnlyGameSettings internal constructor(
     These are saved by the Settings, so engine services do not need to save their copy of these.
      */
 
-    val language = SimpleObjectProperty(ENGLISH)
+    val language = SimpleObjectProperty(defaultLanguage)
 
     /**
      * Allows toggling fullscreen on/off from code.
