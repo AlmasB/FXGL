@@ -12,6 +12,7 @@ import javafx.animation.Interpolator
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.paint.Color
+import javafx.scene.shape.QuadCurve
 import javafx.scene.shape.Rectangle
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
@@ -240,6 +241,26 @@ class AnimationBuilderTest {
 
         assertThat(e.x, `is`(50.0))
         assertThat(e.y, `is`(50.0))
+    }
+
+    @Test
+    fun `Translate along a path`() {
+        val curve = QuadCurve(10.0, 10.0, 100.0, 50.0, 55.0, 33.0)
+
+        val anim = builder.translate(e)
+                .alongPath(curve)
+                .build()
+
+        anim.start()
+
+        assertThat(e.x, `is`(10.0))
+        assertThat(e.y, `is`(10.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(e.x, `is`(55.0))
+        assertThat(e.y, `is`(33.0))
     }
 
     @Test
