@@ -327,6 +327,27 @@ class AnimationBuilderTest {
     }
 
     @Test
+    fun `Rotate entity with origin`() {
+        val anim = builder.rotate(e)
+                .origin(Point2D(1.0, 5.0))
+                .from(0.0)
+                .to(180.0)
+                .build()
+
+        anim.start()
+
+        assertThat(e.transformComponent.rotationOrigin.x, `is`(1.0))
+        assertThat(e.transformComponent.rotationOrigin.y, `is`(5.0))
+
+        assertThat(e.rotation, `is`(0.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(e.rotation, `is`(180.0))
+    }
+
+    @Test
     fun `Scale`() {
         val anim = builder.scale(e)
                 .from(Point2D(1.0, 1.0))
@@ -369,6 +390,29 @@ class AnimationBuilderTest {
 
         assertThat(scale.x, `is`(3.0))
         assertThat(scale.y, `is`(3.0))
+    }
+
+    @Test
+    fun `Scale entity with origin`() {
+        val anim = builder.scale(e)
+                .origin(Point2D(3.0, 5.0))
+                .from(Point2D(1.0, 1.0))
+                .to(Point2D(3.0, 3.0))
+                .build()
+
+        anim.start()
+
+        assertThat(e.transformComponent.scaleOrigin.x, `is`(3.0))
+        assertThat(e.transformComponent.scaleOrigin.y, `is`(5.0))
+
+        assertThat(e.scaleX, `is`(1.0))
+        assertThat(e.scaleY, `is`(1.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(e.scaleX, `is`(3.0))
+        assertThat(e.scaleY, `is`(3.0))
     }
 
     @Test
