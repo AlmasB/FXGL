@@ -8,12 +8,12 @@ package com.almasb.fxgl.animation
 
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.scene.Scene
+import com.almasb.fxgl.test.RunWithFX
 import javafx.animation.Interpolator
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.paint.Color
-import javafx.scene.shape.QuadCurve
-import javafx.scene.shape.Rectangle
+import javafx.scene.shape.*
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
 import javafx.util.Duration
@@ -25,11 +25,17 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import java.util.function.Consumer
+import java.util.stream.Stream
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@ExtendWith(RunWithFX::class)
 class AnimationBuilderTest {
 
     private lateinit var scene: Scene
@@ -243,18 +249,17 @@ class AnimationBuilderTest {
         assertThat(e.y, `is`(50.0))
     }
 
-    @Test
-    fun `Translate along a path`() {
-        val curve = QuadCurve(10.0, 10.0, 100.0, 50.0, 55.0, 33.0)
-
+    @ParameterizedTest
+    @MethodSource("pathProvider")
+    fun `Translate along a path`(path: Shape) {
         val anim = builder.translate(e)
-                .alongPath(curve)
+                .alongPath(path)
                 .build()
 
         anim.start()
 
-        assertThat(e.x, `is`(10.0))
-        assertThat(e.y, `is`(10.0))
+        assertThat(e.x, closeTo(10.0, 0.05))
+        assertThat(e.y, closeTo(10.0, 0.05))
 
         anim.onUpdate(0.5)
         anim.onUpdate(0.5)
@@ -570,6 +575,24 @@ class AnimationBuilderTest {
                     .from(Point2D(10.0, 10.0))
                     .to(Point2D(-10.0, 10.0))
                     .buildAndPlay()
+        }
+    }
+
+    companion object {
+        @Suppress("UNUSED")
+        @JvmStatic fun pathProvider(): Stream<Arguments> {
+            return Stream.of(
+                    Arguments.arguments(QuadCurve(10.0, 10.0, 100.0, 50.0, 55.0, 33.0)),
+                    Arguments.arguments(CubicCurve(10.0, 10.0, 50.0, 300.0, 100.0, 250.0, 55.0, 33.0)),
+                    Arguments.arguments(Path().also {
+                        it.elements += listOf(
+                                MoveTo(10.0, 10.0),
+                                LineTo(10.0, 50.0),
+                                LineTo(45.0, 33.0),
+                                LineTo(55.0, 33.0)
+                        )
+                    })
+            )
         }
     }
 }
