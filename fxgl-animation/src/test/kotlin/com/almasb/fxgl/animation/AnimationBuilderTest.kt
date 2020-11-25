@@ -324,6 +324,21 @@ class AnimationBuilderTest {
         anim.onUpdate(0.5)
 
         assertThat(rotate.angle, `is`(180.0))
+
+        val anim2 = builder.rotate(node)
+                .origin(Point2D(5.0, 5.0))
+                .from(0.0)
+                .to(180.0)
+                .build()
+
+        anim2.start()
+
+        val rotate2 = node.transforms[0] as Rotate
+
+        assertThat(rotate2.pivotX, `is`(5.0))
+        assertThat(rotate2.pivotY, `is`(5.0))
+
+        assertThat(rotate, `is`(rotate2))
     }
 
     @Test
@@ -390,6 +405,21 @@ class AnimationBuilderTest {
 
         assertThat(scale.x, `is`(3.0))
         assertThat(scale.y, `is`(3.0))
+
+        val anim2 = builder.scale(node)
+                .origin(Point2D(5.0, 5.0))
+                .from(Point2D(1.0, 1.0))
+                .to(Point2D(3.0, 3.0))
+                .build()
+
+        anim2.start()
+
+        val scale2 = node.transforms[0] as Scale
+
+        assertThat(scale2.pivotX, `is`(5.0))
+        assertThat(scale2.pivotY, `is`(5.0))
+
+        assertThat(scale, `is`(scale2))
     }
 
     @Test
@@ -620,6 +650,83 @@ class AnimationBuilderTest {
                     .to(Point2D(-10.0, 10.0))
                     .buildAndPlay()
         }
+    }
+
+    @Test
+    fun `Fade in Entity`() {
+        val anim = builder.fadeIn(e)
+                .build()
+
+        anim.start()
+
+        assertThat(e.opacity, `is`(0.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(e.opacity, `is`(1.0))
+    }
+
+    @Test
+    fun `Fade in Node`() {
+        val anim = builder.fadeIn(node)
+                .build()
+
+        anim.start()
+
+        assertThat(node.opacity, `is`(0.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(node.opacity, `is`(1.0))
+    }
+
+    @Test
+    fun `Fade out Entity`() {
+        val anim = builder.fadeOut(e)
+                .build()
+
+        anim.start()
+
+        assertThat(e.opacity, `is`(1.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(e.opacity, `is`(0.0))
+    }
+
+    @Test
+    fun `Fade out Node`() {
+        val anim = builder.fadeOut(node)
+                .build()
+
+        anim.start()
+
+        assertThat(node.opacity, `is`(1.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(node.opacity, `is`(0.0))
+    }
+
+    @Test
+    fun `Bobble down`() {
+        val anim = builder.bobbleDown(node)
+                .build()
+
+        anim.start()
+
+        assertThat(node.translateX, `is`(0.0))
+        assertThat(node.translateY, `is`(0.0))
+
+        anim.onUpdate(0.05)
+        anim.onUpdate(0.05)
+
+        assertThat(node.translateX, `is`(0.0))
+        assertThat(node.translateY, `is`(not(0.0)))
     }
 
     companion object {
