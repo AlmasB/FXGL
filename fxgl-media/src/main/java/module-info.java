@@ -11,6 +11,8 @@ module com.almasb.fxgl.media {
     requires com.almasb.fxgl.core;
     requires javafx.media;
 
+    requires com.gluonhq.attach.audio;
+
     exports com.almasb.fxgl.audio;
     exports com.almasb.fxgl.texture;
 

@@ -20,13 +20,13 @@ abstract class DefaultAudioService : AudioService {
 
     private val cache = HashMap<String, Audio>()
 
-    override fun loadAudio(type: AudioType, resourceURL: URL): Audio {
+    override fun loadAudio(type: AudioType, resourceURL: URL, isDesktop: Boolean): Audio {
         val url = resourceURL.toExternalForm()
 
         var audio: Audio? = cache[url]
 
         if (audio == null) {
-            audio = loadAudioImpl(type, resourceURL)
+            audio = loadAudioImpl(type, resourceURL, isDesktop)
 
             cache[url] = audio
         }
@@ -39,5 +39,5 @@ abstract class DefaultAudioService : AudioService {
         audio.dispose()
     }
 
-    protected abstract fun loadAudioImpl(type: AudioType, resourceURL: URL): Audio
+    protected abstract fun loadAudioImpl(type: AudioType, resourceURL: URL, isDesktop: Boolean): Audio
 }
