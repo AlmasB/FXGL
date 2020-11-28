@@ -293,9 +293,9 @@ class NetServiceTest {
                     // send data
                     it.send(bundle)
 
-//                    bundle.put("data2", LARGE_DATA)
-//
-//                    it.send(bundle)
+                    bundle.put("data2", LARGE_DATA)
+
+                    it.send(bundle)
 
                     // and wait 0.5 sec before stopping the server
                     Thread.sleep(500)
@@ -317,11 +317,11 @@ class NetServiceTest {
 
                         count++
                     } else if (count == 3) {
-//                        val data = message.get<ByteArray>("data2")
-//
-//                        assertThat(data, `is`(LARGE_DATA))
-//
-//                        count++
+                        val data = message.get<ByteArray>("data2")
+
+                        assertThat(data, `is`(LARGE_DATA))
+
+                        count++
                     }
                 }
             }
@@ -337,7 +337,7 @@ class NetServiceTest {
                     .onFailure { e -> fail { "Server Start failed $e" } }
                     .run()
 
-            assertThat(count, `is`(3))
+            assertThat(count, `is`(4))
         }
     }
 }

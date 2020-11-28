@@ -58,7 +58,7 @@ class UDPServer<T>(val port: Int, private val config: UDPServerConfig<T>) : Serv
                     val isOpeningPacket = equals(copyOfRange(packet.data, 0, MESSAGE_OPEN.size), MESSAGE_OPEN)
 
                     if (connection == null || isOpeningPacket) {
-                        connection = UDPConnection<T>(it, remoteIP, remotePort, connectionNum++)
+                        connection = UDPConnection<T>(it, remoteIP, remotePort, config.bufferSize, connectionNum++)
 
                         openUDPConnection(connection, config.messageType)
                     }

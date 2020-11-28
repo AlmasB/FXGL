@@ -40,7 +40,7 @@ class UDPClient<T>(val ip: String, val port: Int, private val config: UDPClientC
             var connection = connections.firstOrNull() as? UDPConnection
 
             if (connection == null) {
-                connection = UDPConnection<T>(it, ip, port, 1)
+                connection = UDPConnection<T>(it, ip, port, config.bufferSize, 1)
 
                 openUDPConnection(connection, config.messageType)
 
