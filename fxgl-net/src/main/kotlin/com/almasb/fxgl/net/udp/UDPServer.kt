@@ -8,6 +8,7 @@ package com.almasb.fxgl.net.udp
 
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.net.Server
+import com.almasb.fxgl.net.UDPServerConfig
 import java.io.IOException
 import java.net.DatagramPacket
 import java.net.DatagramSocket
@@ -18,7 +19,7 @@ import java.util.Arrays.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class UDPServer<T>(val port: Int, private val messageType: Class<T>) : Server<T>() {
+class UDPServer<T>(val port: Int, private val config: UDPServerConfig<T>) : Server<T>() {
 
     private val log = Logger.get(javaClass)
 
@@ -27,7 +28,7 @@ class UDPServer<T>(val port: Int, private val messageType: Class<T>) : Server<T>
     private var serverSocket: DatagramSocket? = null
 
     override fun start() {
-        log.debug("Starting to listen at: $port type: $messageType")
+        log.debug("Starting to listen at: $port type: ${config.messageType}")
 
         try {
             DatagramSocket(port).use {
@@ -37,7 +38,7 @@ class UDPServer<T>(val port: Int, private val messageType: Class<T>) : Server<T>
 
                 var connectionNum = 1
 
-                val buffer = ByteArray(2048)
+                val buffer = ByteArray(config.bufferSize)
 
                 while (!isStopped) {
 
@@ -59,7 +60,7 @@ class UDPServer<T>(val port: Int, private val messageType: Class<T>) : Server<T>
                     if (connection == null || isOpeningPacket) {
                         connection = UDPConnection<T>(it, remoteIP, remotePort, connectionNum++)
 
-                        openUDPConnection(connection, messageType)
+                        openUDPConnection(connection, config.messageType)
                     }
 
                     val isClosingPacket = equals(copyOfRange(packet.data, 0, MESSAGE_CLOSE.size), MESSAGE_CLOSE)

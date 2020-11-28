@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.net
 
 import com.almasb.fxgl.core.serialization.Bundle
@@ -270,6 +270,74 @@ class NetServiceTest {
                     .run()
 
             assertThat(count, `is`(5))
+        }
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    fun `UDP Bundle message test`() {
+        var count = 0
+
+        assertTimeoutPreemptively(Duration.ofSeconds(2)) {
+            val server = net.newUDPServer(TEST_PORT)
+
+            server.setOnConnected {
+                count++
+
+                // run this in a separate thread so we don't block the client
+                // in production this is not necessary
+                Thread(Runnable {
+                    val bundle = Bundle("")
+                    bundle.put("data", "Hello World Test")
+
+                    // send data
+                    it.send(bundle)
+
+//                    bundle.put("data2", LARGE_DATA)
+//
+//                    it.send(bundle)
+
+                    // and wait 0.5 sec before stopping the server
+                    Thread.sleep(500)
+
+                    server.stop()
+                }).start()
+            }
+
+            val client = net.newUDPClient("localhost", TEST_PORT)
+
+            client.setOnConnected {
+                count++
+
+                it.addMessageHandler { connection, message ->
+                    if (count == 2) {
+                        val data = message.get<String>("data")
+
+                        assertThat(data, `is`("Hello World Test"))
+
+                        count++
+                    } else if (count == 3) {
+//                        val data = message.get<ByteArray>("data2")
+//
+//                        assertThat(data, `is`(LARGE_DATA))
+//
+//                        count++
+                    }
+                }
+            }
+
+            server.listeningProperty().addListener { _, _, isListening ->
+                if (isListening) {
+                    // TODO: investigate why client.connectTask().run(), which is synchronous, blocks server...
+                    client.connectAsync()
+                }
+            }
+
+            server.startTask()
+                    .onFailure { e -> fail { "Server Start failed $e" } }
+                    .run()
+
+            assertThat(count, `is`(3))
         }
     }
 }

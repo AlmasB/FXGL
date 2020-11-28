@@ -18,3 +18,15 @@ data class ServerConfig<T>(
 data class ClientConfig<T>(
         val messageType: Class<T>
 )
+
+data class UDPServerConfig<T>
+@JvmOverloads constructor(
+        val messageType: Class<T>,
+        val bufferSize: Int = 2048
+)
+
+data class UDPClientConfig<T>
+@JvmOverloads constructor(
+        val messageType: Class<T>,
+        val bufferSize: Int = 2048
+)

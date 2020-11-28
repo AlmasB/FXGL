@@ -42,8 +42,11 @@ class NetService : EngineService() {
     fun newTCPClient(ip: String, port: Int): Client<Bundle> = TCPClient(ip, port, Bundle::class.java)
     fun <T> newTCPClient(ip: String, port: Int,  config: ClientConfig<T>): Client<T> = TCPClient(ip, port, config.messageType)
 
-    fun newUDPServer(port: Int): Server<Bundle> = UDPServer(port, Bundle::class.java)
-    fun newUDPClient(ip: String, port: Int): Client<Bundle> = UDPClient(ip, port, Bundle::class.java)
+    fun newUDPServer(port: Int): Server<Bundle> = UDPServer(port, UDPServerConfig(Bundle::class.java))
+    fun <T> newUDPServer(port: Int, config: UDPServerConfig<T>): Server<T> = UDPServer(port, config)
+
+    fun newUDPClient(ip: String, port: Int): Client<Bundle> = UDPClient(ip, port, UDPClientConfig(Bundle::class.java))
+    fun <T> newUDPClient(ip: String, port: Int, config: UDPClientConfig<T>): Client<T> = UDPClient(ip, port, config)
 }
 
 
