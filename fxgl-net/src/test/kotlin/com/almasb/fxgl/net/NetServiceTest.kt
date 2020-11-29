@@ -278,7 +278,7 @@ class NetServiceTest {
     fun `UDP Bundle message test`() {
         var count = 0
 
-        assertTimeoutPreemptively(Duration.ofSeconds(2)) {
+        assertTimeoutPreemptively(Duration.ofSeconds(3)) {
             val server = net.newUDPServer(TEST_PORT)
 
             server.setOnConnected {
@@ -297,8 +297,8 @@ class NetServiceTest {
 
                     it.send(bundle)
 
-                    // and wait 0.5 sec before stopping the server
-                    Thread.sleep(500)
+                    // and wait 1.5 sec before stopping the server
+                    Thread.sleep(1500)
 
                     server.stop()
                 }).start()
