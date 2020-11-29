@@ -274,7 +274,7 @@ class NetServiceTest {
     }
 
     @Test
-    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    //@EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     fun `UDP Bundle message test`() {
         var count = 0
 
@@ -297,8 +297,11 @@ class NetServiceTest {
 
                     it.send(bundle)
 
-                    // and wait 1.5 sec before stopping the server
-                    Thread.sleep(1500)
+                    // and wait until data is fully received before stopping the server
+
+                    while (count < 4) {
+                        Thread.sleep(10)
+                    }
 
                     server.stop()
                 }).start()
