@@ -274,11 +274,11 @@ class NetServiceTest {
     }
 
     @Test
-    //@EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     fun `UDP Bundle message test`() {
         var count = 0
 
-        assertTimeoutPreemptively(Duration.ofSeconds(3)) {
+        assertTimeoutPreemptively(Duration.ofSeconds(6)) {
             val server = net.newUDPServer(TEST_PORT)
 
             server.setOnConnected {
