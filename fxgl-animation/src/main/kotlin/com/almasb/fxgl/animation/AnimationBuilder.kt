@@ -396,8 +396,8 @@ open class AnimationBuilder
 private fun Node.toAnimatable(): Animatable {
     val n = this
     return object : Animatable {
-        var scale: Scale? = null
-        var rotate: Rotate? = null
+        private var scale: Scale? = null
+        private var rotate: Rotate? = null
 
         override fun xProperty(): DoubleProperty {
             return n.translateXProperty()
