@@ -279,7 +279,7 @@ class NetServiceTest {
         var count = 0
 
         assertTimeoutPreemptively(Duration.ofSeconds(6)) {
-            val server = net.newUDPServer(TEST_PORT)
+            val server = net.newUDPServer(TEST_PORT, UDPServerConfig(Bundle::class.java, 65535 / 2))
 
             server.setOnConnected {
                 count++
@@ -287,15 +287,21 @@ class NetServiceTest {
                 // run this in a separate thread so we don't block the client
                 // in production this is not necessary
                 Thread(Runnable {
+                    while (count < 2) {
+                        Thread.sleep(10)
+                    }
+
                     val bundle = Bundle("")
                     bundle.put("data", "Hello World Test")
 
                     // send data
                     it.send(bundle)
 
-                    bundle.put("data2", LARGE_DATA)
+                    val bundle2 = Bundle("")
 
-                    it.send(bundle)
+                    bundle2.put("data2", LARGE_DATA)
+
+                    it.send(bundle2)
 
                     // and wait until data is fully received before stopping the server
 
@@ -307,11 +313,9 @@ class NetServiceTest {
                 }).start()
             }
 
-            val client = net.newUDPClient("localhost", TEST_PORT)
+            val client = net.newUDPClient("localhost", TEST_PORT, UDPClientConfig(Bundle::class.java, 65535 / 2))
 
             client.setOnConnected {
-                count++
-
                 it.addMessageHandler { connection, message ->
                     if (count == 2) {
                         val data = message.get<String>("data")
@@ -327,6 +331,8 @@ class NetServiceTest {
                         count++
                     }
                 }
+
+                count++
             }
 
             server.listeningProperty().addListener { _, _, isListening ->

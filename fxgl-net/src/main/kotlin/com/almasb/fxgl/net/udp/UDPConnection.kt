@@ -56,7 +56,10 @@ class UDPConnection<T>(
     override fun terminateImpl() {
         isClosed = true
 
-        sendUDP(MESSAGE_CLOSE)
+        // send MESSAGE_CLOSE directly as it is a special message
+        val packet = DatagramPacket(MESSAGE_CLOSE, MESSAGE_CLOSE.size)
+
+        socket.send(packet)
     }
 
     fun sendUDP(data: ByteArray) {
