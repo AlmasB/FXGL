@@ -251,6 +251,11 @@ class GameSettings(
         var isExperimentalTiledLargeMap: Boolean = false,
         var isExperimentalNative: Boolean = false,
 
+        /**
+         * Set this to true if this is a 3D game.
+         */
+        var isExperimental3D: Boolean = false,
+
         /* CONFIGS */
 
         var configClass: Class<*>? = null,
@@ -360,6 +365,7 @@ class GameSettings(
                 defaultLanguage,
                 isExperimentalTiledLargeMap,
                 isExperimentalNative,
+                isExperimental3D,
                 configClass,
                 unmodifiableList(engineServices),
                 sceneFactory,
@@ -532,6 +538,7 @@ class ReadOnlyGameSettings internal constructor(
 
         val isExperimentalTiledLargeMap: Boolean,
         val isExperimentalNative: Boolean,
+        val isExperimental3D: Boolean,
 
         /* CONFIGS */
 
