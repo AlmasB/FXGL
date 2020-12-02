@@ -645,7 +645,8 @@ class AnimationBuilderTest {
     @Test
     fun `Build and play does not throw if no scene`() {
         assertDoesNotThrow {
-            builder.translate(node)
+            AnimationBuilder()
+                    .translate(node)
                     .from(Point2D(10.0, 10.0))
                     .to(Point2D(-10.0, 10.0))
                     .buildAndPlay()
