@@ -336,7 +336,6 @@ internal class MainWindow(
                 scaleRatioY.bind(scaledHeight.divide(settings.height))
             }
         } else {
-            // TODO: what if display size < target size
             scaleRatioX.value = 1.0
             scaleRatioY.value = 1.0
 
