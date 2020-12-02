@@ -102,7 +102,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
             return loadDialogueGraph(fileName) as T
         }
 
-        TODO()
+        throw RuntimeException("Not implemented")
     }
 
     /**
