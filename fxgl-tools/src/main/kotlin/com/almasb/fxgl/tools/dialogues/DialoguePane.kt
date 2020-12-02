@@ -316,14 +316,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
             bg.prefHeight = ((maxY - bg.layoutY) / CELL_DISTANCE).toInt() * CELL_DISTANCE + MARGIN_CELLS * CELL_DISTANCE
         }, Duration.seconds(0.1))
 
-        // TODO: better kt call site?
-        FXGL.getWorldProperties().addListener<Boolean>(IS_SNAP_TO_GRID, object : PropertyChangeListener<Boolean> {
-            override fun onChange(prev: Boolean, now: Boolean) {
-                if (now) {
-                    nodeViews.children
-                            .map { it as NodeView }
-                            .forEach { snapToGrid(it) }
-                }
+        FXGL.getWorldProperties().addListener<Boolean>(IS_SNAP_TO_GRID, PropertyChangeListener { _, isSnap ->
+            if (isSnap) {
+                nodeViews.children
+                        .map { it as NodeView }
+                        .forEach { snapToGrid(it) }
             }
         })
     }

@@ -12,7 +12,7 @@ package com.almasb.fxgl.core.collection
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @FunctionalInterface
-interface PropertyChangeListener<in T> {
+fun interface PropertyChangeListener<in T> {
 
     fun onChange(prev: T, now: T)
 }
