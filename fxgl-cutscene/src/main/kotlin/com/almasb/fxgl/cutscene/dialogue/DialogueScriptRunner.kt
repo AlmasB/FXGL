@@ -166,8 +166,15 @@ private fun String.toTypedValue(): Any {
     return s.toIntOrNull() ?: s.toDoubleOrNull() ?: s
 }
 
-// TODO: String and Boolean
 private operator fun Any.compareTo(other: Any): Int {
+    if (this is String && other is String) {
+        return this.compareTo(other)
+    }
+
+    if (this is Boolean && other is Boolean) {
+        return this.compareTo(other)
+    }
+
     if (this is Int && other is Int) {
         return this.compareTo(other)
     }
@@ -184,7 +191,7 @@ private operator fun Any.compareTo(other: Any): Int {
         return this.compareTo(other)
     }
 
-    throw RuntimeException("Not int or double: $this,$other")
+    throw RuntimeException("Cannot compare: $this and $other")
 }
 
 private object NullObject
