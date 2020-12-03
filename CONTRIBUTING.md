@@ -5,9 +5,9 @@ Please see the list below on how you can contribute to the project.
 Once you've decided what you would like to do, let me know about it first.
 This is just to make sure that the issue you want hasn't already been implemented,
 fixed or being worked on in newer versions.
-Any new API or changes to existing API should be discussed to avoid inconsistency.
+Any new API or changes to existing API should be discussed to avoid inconsistencies.
 
-* Proof read public documentation for errors, ambiguities and typos.
+* Proof read the public documentation for errors, ambiguities and typos.
 * Crash test features for bugs or write a unit test for one.
 * Create an issue or suggest a feature backed up by a use case.
 * Provide or suggest an implementation of an issue from [GitHub Issues](https://github.com/AlmasB/FXGL/issues).
@@ -17,33 +17,21 @@ Any new API or changes to existing API should be discussed to avoid inconsistenc
 * Share details about your project based on FXGL (this will go to the showcase section).
 * Write a tutorial on how to use FXGL.
 
-## Building
-
-You need to have JDK 11 to build FXGL.
-You can build FXGL from sources using [Maven](https://maven.apache.org/):
-```maven
-mvn clean package
-```
-
-This will create FXGL-x.y.z.jar, sources.jar, javadoc.jar and uber-jar in the "fxgl/target/" directory.
-
 ## Workflow
 
-There are 2 branches: `master` and `dev`.
+There are 2 branches: `dev` and `master`.
 The `master` branch is for releases only.
 All the work goes to your `dev` branch, then pull a request back to `dev`.
 
 ## Development
 
-Due to use of Kotlin, the only feasible IDE is [IntelliJ IDEA](https://www.jetbrains.com/idea/).
-To start developing FXGL you can setup IDEA (2018.3.4+) as follows:
+Due to use of Kotlin, [IntelliJ IDEA](https://www.jetbrains.com/idea/) is recommended.
+To start developing FXGL you can set up IDEA (2020.2+) as follows:
 
 1. Fork FXGL into your GitHub repo, then clone your repo to your machine.
-2. `cd` to that directory -> `git checkout dev` to switch to development branch.
-3. Open IDEA -> File -> New -> Project from Existing Sources -> Select the cloned FXGL directory.
-4. Import project from external model -> Maven -> Next.
-5. Tick "Search for projects recursively" and "Import Maven projects automatically" -> Next.
-6. Select the provided Maven project to import -> Next -> Use JDK11 -> Next -> Finish.
+2. Open IDEA -> File -> New -> Project from Existing Sources -> Select the cloned FXGL directory.
+3. Import project from external model -> Maven -> Next.
+4. Select the provided Maven project to import. Use default settings and JDK 11 (or higher).
 
 You should now see something like this:
 
