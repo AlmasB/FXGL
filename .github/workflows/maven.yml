@@ -27,6 +27,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
+    - name: Get xvfb
+      run: sudo apt-get install xvfb
+
     - name: Build and test with Maven using xvfb
       uses: GabrielBB/xvfb-action@v1
       with:
