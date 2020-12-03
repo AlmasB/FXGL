@@ -32,3 +32,6 @@ jobs:
       with:
         run: |
           mvn test -B -Dgpg.skip=true -Dmaven.javadoc.skip=true
+
+    - name: Upload to CodeCov
+      run: bash <(curl -s https://codecov.io/bash)
