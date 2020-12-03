@@ -32,13 +32,14 @@ import java.util.function.Consumer
 open class AnimationBuilder
 @JvmOverloads constructor(protected val scene: Scene? = null) {
 
-    protected var duration: Duration = Duration.seconds(1.0)
-    protected var delay: Duration = Duration.ZERO
-    protected var interpolator: Interpolator = Interpolator.LINEAR
-    protected var times: Int = 1
+    private var duration: Duration = Duration.seconds(1.0)
+    private var delay: Duration = Duration.ZERO
+    private var interpolator: Interpolator = Interpolator.LINEAR
+    private var times: Int = 1
+    private var onCycleFinished: Runnable = EmptyRunnable
+    private var isAutoReverse: Boolean = false
+
     protected var onFinished: Runnable = EmptyRunnable
-    protected var onCycleFinished: Runnable = EmptyRunnable
-    protected var isAutoReverse: Boolean = false
 
     constructor(copy: AnimationBuilder) : this(copy.scene) {
         duration = copy.duration
@@ -74,11 +75,6 @@ open class AnimationBuilder
         return repeat(Integer.MAX_VALUE)
     }
 
-    fun onFinished(onFinished: Runnable): AnimationBuilder {
-        this.onFinished = onFinished
-        return this
-    }
-
     fun onCycleFinished(onCycleFinished: Runnable): AnimationBuilder {
         this.onCycleFinished = onCycleFinished
         return this
@@ -86,6 +82,11 @@ open class AnimationBuilder
 
     fun autoReverse(autoReverse: Boolean): AnimationBuilder {
         this.isAutoReverse = autoReverse
+        return this
+    }
+
+    fun onFinished(onFinished: Runnable): AnimationBuilder {
+        this.onFinished = onFinished
         return this
     }
 
