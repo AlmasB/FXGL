@@ -21,10 +21,7 @@ install:
 - echo "install NOOP"
 
 script:
-- if [ $TRAVIS_JDK_VERSION = openjdk11 ]; then mvn test -B -Dmaven.javadoc.skip=true; else mvn test -B -Dmaven.javadoc.skip=true -Djacoco.skip=true; fi
-
-after_success:
-- if [ $TRAVIS_JDK_VERSION = openjdk11 ]; then bash <(curl -s https://codecov.io/bash); fi
+- mvn test -B -Dmaven.javadoc.skip=true -Djacoco.skip=true
 
 deploy:
     # release dev build of FXGL to Sonatype
