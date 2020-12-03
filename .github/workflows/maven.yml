@@ -26,8 +26,10 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
-          
-    - name: Build and test with Maven
-      run: |
-        mvn test -B -Dgpg.skip=true -Dmaven.javadoc.skip=true
-        bash <(curl -s https://codecov.io/bash)
+
+    - name: Build and test with Maven using xvfb
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: |
+          mvn test -B -Dgpg.skip=true -Dmaven.javadoc.skip=true
+          bash <(curl -s https://codecov.io/bash)
