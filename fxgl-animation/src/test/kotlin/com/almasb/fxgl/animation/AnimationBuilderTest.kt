@@ -286,7 +286,7 @@ class AnimationBuilderTest {
     }
 
     @Test
-    fun `Rotate`() {
+    fun `Rotate entity`() {
         val anim = builder.rotate(e)
                 .from(0.0)
                 .to(180.0)
@@ -303,7 +303,24 @@ class AnimationBuilderTest {
     }
 
     @Test
-    fun `Rotate with origin`() {
+    fun `Rotate node`() {
+        val anim = builder.rotate(node)
+                .from(0.0)
+                .to(180.0)
+                .build()
+
+        anim.start()
+
+        assertThat(node.rotate, `is`(0.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(node.rotate, `is`(180.0))
+    }
+
+    @Test
+    fun `Rotate node with origin`() {
         val anim = builder.rotate(node)
                 .origin(Point2D(1.0, 5.0))
                 .from(0.0)
@@ -363,7 +380,7 @@ class AnimationBuilderTest {
     }
 
     @Test
-    fun `Scale`() {
+    fun `Scale entity`() {
         val anim = builder.scale(e)
                 .from(Point2D(1.0, 1.0))
                 .to(Point2D(3.0, 3.0))
@@ -379,6 +396,25 @@ class AnimationBuilderTest {
 
         assertThat(e.scaleX, `is`(3.0))
         assertThat(e.scaleY, `is`(3.0))
+    }
+
+    @Test
+    fun `Scale node`() {
+        val anim = builder.scale(node)
+                .from(Point2D(1.0, 1.0))
+                .to(Point2D(3.0, 3.0))
+                .build()
+
+        anim.start()
+
+        assertThat(node.scaleX, `is`(1.0))
+        assertThat(node.scaleY, `is`(1.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(node.scaleX, `is`(3.0))
+        assertThat(node.scaleY, `is`(3.0))
     }
 
     @Test
