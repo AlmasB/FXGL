@@ -50,6 +50,7 @@ import com.almasb.fxgl.ui.DialogFactoryService
 import com.almasb.fxgl.ui.DialogService
 import com.almasb.fxgl.ui.UIFactoryService
 import javafx.animation.Interpolator
+import javafx.application.Application
 import javafx.beans.binding.StringExpression
 import javafx.beans.property.*
 import javafx.concurrent.Task
@@ -161,6 +162,8 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getAppHeight() = engine.settings.height
 
     @JvmStatic fun getAppCenter() = Point2D(getAppWidth() / 2.0, getAppHeight() / 2.0)
+
+    @JvmStatic fun getFXApp(): Application = fxApp
 
     //@JvmStatic fun getPrimaryStage() = engine.getService(WindowService::class.java).mainWindow.stage
 
