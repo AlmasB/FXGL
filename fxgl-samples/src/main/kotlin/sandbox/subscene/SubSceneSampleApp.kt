@@ -19,13 +19,13 @@ import javafx.util.Duration
 class SubSceneSampleApp : GameApplication() {
 
 
-	override fun initSettings(settings: GameSettings?) {
-		settings?.width = 700
-		settings?.height = 400
-		settings?.title = "SubScene Navigation Demo"
-		settings?.isMainMenuEnabled = false
-		settings?.isGameMenuEnabled = false
-		settings?.isIntroEnabled = false
+	override fun initSettings(settings: GameSettings) {
+		settings.width = 700
+		settings.height = 400
+		settings.title = "SubScene Navigation Demo"
+		settings.isMainMenuEnabled = false
+		settings.isGameMenuEnabled = false
+		settings.isIntroEnabled = false
 	}
 
 	override fun initGame() {
@@ -38,7 +38,6 @@ class SubSceneSampleApp : GameApplication() {
 	}
 
 	override fun initUI() {
-		// TODO - is this the correct way to set up a SubScene on startup
 		FXGL.run(Runnable {
 			FXGL.getSceneService().pushSubScene(MainSubScene())
 		}, Duration.seconds(0.0))

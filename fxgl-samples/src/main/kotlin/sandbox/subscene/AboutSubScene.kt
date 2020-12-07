@@ -8,8 +8,6 @@ package sandbox.subscene
 
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.scene.SubScene
-import demo.subscene.LEFT
-import demo.subscene.VERTICAL_GAP
 import javafx.event.EventHandler
 import javafx.scene.paint.Color
 

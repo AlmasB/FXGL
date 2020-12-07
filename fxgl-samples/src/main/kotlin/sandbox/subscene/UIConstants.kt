@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package demo.subscene
+package sandbox.subscene
 
 import com.almasb.fxgl.dsl.FXGL
 
