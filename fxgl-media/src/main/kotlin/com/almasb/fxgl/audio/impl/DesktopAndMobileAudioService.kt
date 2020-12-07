@@ -23,7 +23,7 @@ class DesktopAndMobileAudioService : DefaultAudioService() {
 
     companion object {
         private val log = Logger.get<DesktopAndMobileAudioService>()
-        private val attachService = AudioService.create()
+        private val attachService by lazy { AudioService.create() }
     }
 
     override fun loadAudioImpl(type: AudioType, resourceURL: URL, isDesktop: Boolean): Audio {
