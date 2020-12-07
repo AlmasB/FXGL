@@ -173,7 +173,7 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getFXApp(): Application = fxApp
 
-    //@JvmStatic fun getPrimaryStage() = engine.getService(WindowService::class.java).mainWindow.stage
+    @JvmStatic fun getPrimaryStage() = engine.getService(FXGLApplication.GameApplicationService::class.java).window.stage
 
     @JvmStatic fun <T : EngineService> getService(serviceClass: Class<T>): T = engine.getService(serviceClass)
 
