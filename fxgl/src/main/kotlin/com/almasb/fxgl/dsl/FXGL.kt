@@ -124,6 +124,14 @@ class FXGL private constructor() { companion object {
             getWindowService().loadGame(dataFile)
         }
 
+        override fun pauseEngine() {
+            engine.pauseLoop()
+        }
+
+        override fun resumeEngine() {
+            engine.resumeLoop()
+        }
+
         override fun exit() {
             fxApp.exitFXGL()
         }
