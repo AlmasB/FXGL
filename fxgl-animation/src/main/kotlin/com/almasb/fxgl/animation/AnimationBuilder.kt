@@ -426,6 +426,7 @@ private fun Node.toAnimatable(): Animatable {
 
         override fun setScaleOrigin(pivotPoint: Point2D) {
             // if a node already has a previous transform, reuse it
+            // this means the node was animated previously
             n.properties["anim_scale"]?.let { transform ->
                 scale = transform as Scale
                 scale!!.pivotX = pivotPoint.x
@@ -442,6 +443,7 @@ private fun Node.toAnimatable(): Animatable {
 
         override fun setRotationOrigin(pivotPoint: Point2D) {
             // if a node already has a previous transform, reuse it
+            // this means the node was animated previously
             n.properties["anim_rotate"]?.let { transform ->
                 rotate = transform as Rotate
                 rotate!!.pivotX = pivotPoint.x
