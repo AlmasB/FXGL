@@ -33,19 +33,10 @@ class Viewport
 /**
  * Constructs a viewport with given width and height.
  *
- * @param width viewport width
- * @param height viewport height
+ * @param initialWidth viewport width
+ * @param initialHeight viewport height
  */
-(
-        /**
-         * @return viewport width
-         */
-        val width: Double,
-
-        /**
-         * @return viewport height
-         */
-        val height: Double) {
+(initialWidth: Double, initialHeight: Double) {
 
     /*
     Moving origin X and Y moves the viewport.
@@ -104,8 +95,22 @@ class Viewport
     private val maxX = SimpleIntegerProperty(Integer.MAX_VALUE)
     private val maxY = SimpleIntegerProperty(Integer.MAX_VALUE)
 
-    private val zoomedWidth = SimpleDoubleProperty(width).divide(zoom)
-    private val zoomedHeight = SimpleDoubleProperty(height).divide(zoom)
+    private val widthProperty = SimpleDoubleProperty(initialWidth)
+    private val heightProperty = SimpleDoubleProperty(initialHeight)
+
+    var width: Double
+        get() = widthProperty.value
+        set(value) { widthProperty.value = value }
+
+    var height: Double
+        get() = heightProperty.value
+        set(value) { heightProperty.value = value }
+
+    fun widthProperty() = widthProperty
+    fun heightProperty() = heightProperty
+
+    private val zoomedWidth = widthProperty.divide(zoom)
+    private val zoomedHeight = heightProperty.divide(zoom)
 
     var isLazy = false
 

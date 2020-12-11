@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.net
 
 import com.almasb.fxgl.core.serialization.Bundle
@@ -270,6 +270,83 @@ class NetServiceTest {
                     .run()
 
             assertThat(count, `is`(5))
+        }
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    fun `UDP Bundle message test`() {
+        var count = 0
+
+        assertTimeoutPreemptively(Duration.ofSeconds(6)) {
+            val server = net.newUDPServer(TEST_PORT, UDPServerConfig(Bundle::class.java, 65535 / 2))
+
+            server.setOnConnected {
+                count++
+
+                // run this in a separate thread so we don't block the client
+                // in production this is not necessary
+                Thread(Runnable {
+                    while (count < 2) {
+                        Thread.sleep(10)
+                    }
+
+                    val bundle = Bundle("")
+                    bundle.put("data", "Hello World Test")
+
+                    // send data
+                    it.send(bundle)
+
+                    val bundle2 = Bundle("")
+
+                    bundle2.put("data2", LARGE_DATA)
+
+                    it.send(bundle2)
+
+                    // and wait until data is fully received before stopping the server
+
+                    while (count < 4) {
+                        Thread.sleep(10)
+                    }
+
+                    server.stop()
+                }).start()
+            }
+
+            val client = net.newUDPClient("localhost", TEST_PORT, UDPClientConfig(Bundle::class.java, 65535 / 2))
+
+            client.setOnConnected {
+                it.addMessageHandler { connection, message ->
+                    if (count == 2) {
+                        val data = message.get<String>("data")
+
+                        assertThat(data, `is`("Hello World Test"))
+
+                        count++
+                    } else if (count == 3) {
+                        val data = message.get<ByteArray>("data2")
+
+                        assertThat(data, `is`(LARGE_DATA))
+
+                        count++
+                    }
+                }
+
+                count++
+            }
+
+            server.listeningProperty().addListener { _, _, isListening ->
+                if (isListening) {
+                    // TODO: investigate why client.connectTask().run(), which is synchronous, blocks server...
+                    client.connectAsync()
+                }
+            }
+
+            server.startTask()
+                    .onFailure { e -> fail { "Server Start failed $e" } }
+                    .run()
+
+            assertThat(count, `is`(4))
         }
     }
 }

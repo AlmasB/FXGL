@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.tools.dialogues
 
-import java.util.function.Consumer
-import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
 import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.input.InputModifier
@@ -17,8 +15,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import javafx.beans.binding.Bindings
 import javafx.geometry.Pos
+import javafx.scene.Cursor
 import javafx.scene.Node
-import javafx.scene.control.*
+import javafx.scene.control.Menu
+import javafx.scene.control.MenuBar
+import javafx.scene.control.Tab
+import javafx.scene.control.TabPane
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
@@ -37,7 +39,7 @@ import java.nio.file.Files
  */
 class MainUI : BorderPane() {
 
-    private val toolbar = HBox(15.0)
+    private val toolbar = HBox(35.0)
     private val tabPane = TabPane()
 
     private val preferences by lazy { PreferencesSubScene() }
@@ -47,41 +49,61 @@ class MainUI : BorderPane() {
 
     init {
         toolbar.prefWidthProperty().bind(
-                Bindings.`when`(Bindings.isNotEmpty(tabPane.tabs)).then(getAppWidth() / 2.0).otherwise(getAppWidth())
+                Bindings.`when`(Bindings.isNotEmpty(tabPane.tabs)).then(FXGL.getSettings().actualWidth.div(2.0)).otherwise(FXGL.getSettings().actualWidth)
         )
         toolbar.prefHeight = 30.0
         toolbar.style = "-fx-background-color: black"
         toolbar.alignment = Pos.CENTER_LEFT
 
-        val contextMenu = FXGLContextMenu()
-        contextMenu.addItem("New (CTRL+N)") { openNewDialog() }
-        contextMenu.addItem("Open... (CTRL+O)") { openLoadDialog() }
-        contextMenu.addItem("Save") { currentTab?.let { onSave(it) } }
-        contextMenu.addItem("Save As...") { currentTab?.let { openSaveAsDialog(it) } }
-        contextMenu.addItem("Save All") { onSaveAll() }
-        contextMenu.addItem("Exit") { getGameController().exit() }
+        val contextMenuFile = FXGLContextMenu()
+        contextMenuFile.addItem("New (CTRL+N)") { openNewDialog() }
+        contextMenuFile.addItem("Open... (CTRL+O)") { openLoadDialog() }
+        contextMenuFile.addItem("Save (CTRL+S)") { currentTab?.let { onSave(it) } }
+        contextMenuFile.addItem("Save As...") { currentTab?.let { openSaveAsDialog(it) } }
+        contextMenuFile.addItem("Save All") { onSaveAll() }
+        contextMenuFile.addItem("Exit") { getGameController().exit() }
+
+        val contextMenuEdit = FXGLContextMenu()
+        //contextMenuEdit.addItem("Undo (CTRL+Z)") { undo() }
+        //contextMenuEdit.addItem("Redo") { redo() }
+        //contextMenuEdit.addItem("Copy (CTRL+C)") {  }
+        //contextMenuEdit.addItem("Paste (CTRL+V)") {  }
+        contextMenuEdit.addItem("Preferences") { openPreferencesDialog() }
+
+        val contextMenuAdd = FXGLContextMenu()
+        contextMenuAdd.addItem("Node (CTRL+Left Click)") { currentTab?.pane?.openAddNodeDialog() }
+
+        val contextMenuHelp = FXGLContextMenu()
+        //contextMenuHelp.addItem("Updates (TODO)") { }
+        contextMenuHelp.addItem("About") { openAboutDialog() }
 
         val pane = Pane(tabPane, toolbar)
 
         val menuFile = EditorMenu("File") {
-            contextMenu.show(pane, 0.0, toolbar.prefHeight)
+            contextMenuFile.show(pane, 0.0, toolbar.prefHeight)
         }
 
-        val menuPreferences = EditorMenu("Preferences") {
-            openPreferencesDialog()
+        val menuEdit = EditorMenu("Edit") {
+            contextMenuEdit.show(pane, 70.0, toolbar.prefHeight)
         }
 
-        val menuBar = MenuBar(menuFile, menuPreferences)
+        val menuAdd = EditorMenu("Add") {
+            contextMenuAdd.show(pane, 100.0, toolbar.prefHeight)
+        }
+
+        val menuHelp = EditorMenu("Help") {
+            contextMenuHelp.show(pane, 170.0, toolbar.prefHeight)
+        }
+
+        val menuBar = MenuBar(menuFile, menuEdit, menuAdd, menuHelp)
         menuBar.style = "-fx-background-color: black"
 
         toolbar.children += menuBar
         toolbar.children += makeRunButton()
 
-        setPrefSize(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble())
-
         pane.style = "-fx-background-color: gray"
-        pane.setPrefSize(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble())
-
+        tabPane.prefWidthProperty().bind(FXGL.getSettings().actualWidthProperty())
+        tabPane.prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
         center = pane
 
         openNewTab()
@@ -101,6 +123,18 @@ class MainUI : BorderPane() {
                 openLoadDialog()
             }
         }, KeyCode.O, InputModifier.CTRL)
+
+        getInput().addAction(object : UserAction("Save") {
+            override fun onActionBegin() {
+                currentTab?.let { onSave(it) }
+            }
+        }, KeyCode.S, InputModifier.CTRL)
+
+        getInput().addAction(object : UserAction("Undo") {
+            override fun onActionBegin() {
+                undo()
+            }
+        }, KeyCode.Z, InputModifier.CTRL)
     }
 
     private fun makeRunButton(): Node {
@@ -121,6 +155,8 @@ class MainUI : BorderPane() {
         )
         btnRun.fill = Color.LIGHTGREEN
 
+        stack.cursor = Cursor.HAND
+
         stack.setOnMouseClicked {
             stack.requestFocus()
 
@@ -135,7 +171,7 @@ class MainUI : BorderPane() {
     }
 
     private fun openNewTab() {
-        val tab = DialogueTab(File("default.json"), DialoguePane())
+        val tab = DialogueTab(File("Untitled.json"), DialoguePane())
 
         tabPane.tabs += tab
         tabPane.selectionModel.select(tab)
@@ -146,7 +182,7 @@ class MainUI : BorderPane() {
     }
 
     private fun openNewDialog() {
-        getDisplay().showInputBox("New dialogue name", InputPredicates.ALPHANUM, Consumer { name ->
+        getDisplay().showInputBox("New dialogue name", { isValidName(it) }, { name ->
             val tab = DialogueTab(File("$name.json"), DialoguePane())
 
             tabPane.tabs += tab
@@ -176,11 +212,21 @@ class MainUI : BorderPane() {
         chooser.initialFileName = tab.file.name
 
         chooser.showSaveDialog(scene.window)?.let {
+
+            val file: File =
+                    if (it.name.endsWith(".json")) {
+                        it
+                    } else {
+                        File(it.parentFile, it.nameWithoutExtension + ".json")
+                    }
+
             val serializedGraph = tab.pane.save()
 
             val s = mapper.writeValueAsString(serializedGraph)
 
-            Files.writeString(it.toPath(), s)
+            Files.writeString(file.toPath(), s)
+
+            tab.updateFile(file)
         }
     }
 
@@ -199,6 +245,25 @@ class MainUI : BorderPane() {
         }
     }
 
+    private fun undo() {
+        currentTab?.pane?.undo()
+    }
+
+    private fun redo() {
+        currentTab?.pane?.redo()
+    }
+
+    private fun openAboutDialog() {
+        showMessage(
+                "${getSettings().title}: v.${getSettings().version}\n\n"
+                        + "Report issues / chat: https://gitter.im/AlmasB/FXGL\n"
+        )
+    }
+
+    private fun isValidName(name: String): Boolean {
+        return name.all { it.isLetterOrDigit() || it == '_' }
+    }
+
     private class EditorMenu(name: String, action: () -> Unit) : Menu("") {
         init {
             graphic = getUIFactoryService().newText(name).also {
@@ -215,10 +280,21 @@ class MainUI : BorderPane() {
         }
     }
 
-    private class DialogueTab(val file: File,
+    private class DialogueTab(var file: File,
                               val pane: DialoguePane) : Tab(file.nameWithoutExtension) {
         init {
+            pane.prefWidthProperty().bind(FXGL.getSettings().actualWidthProperty())
+            pane.prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
+
             content = pane
+
+            textProperty().bind(
+                    Bindings.`when`(pane.isDirtyProperty).then(file.nameWithoutExtension + "*").otherwise(file.nameWithoutExtension)
+            )
+        }
+
+        fun updateFile(newFile: File) {
+            file = newFile
 
             textProperty().bind(
                     Bindings.`when`(pane.isDirtyProperty).then(file.nameWithoutExtension + "*").otherwise(file.nameWithoutExtension)

@@ -131,6 +131,14 @@ class GameSettings(
         var isPreserveResizeRatio: Boolean = false,
 
         /**
+         * If true, during resize the game will auto-scale to maintain consistency across all displays.
+         * If false, during resize, only the window will change size, which allows different displays
+         * to have different views.
+         * For example, editor type apps may wish to set this to false to maximize "usable" space.
+         */
+        var isScaleAffectedOnResize: Boolean = true,
+
+        /**
          * If set to true, the intro video/animation will
          * be played before the start of the game.
          */
@@ -236,10 +244,17 @@ class GameSettings(
          */
         var randomSeed: Long = -1L,
 
+        var defaultLanguage: Language = ENGLISH,
+
         /* EXPERIMENTAL */
 
         var isExperimentalTiledLargeMap: Boolean = false,
         var isExperimentalNative: Boolean = false,
+
+        /**
+         * Set this to true if this is a 3D game.
+         */
+        var isExperimental3D: Boolean = false,
 
         /* CONFIGS */
 
@@ -317,6 +332,7 @@ class GameSettings(
                 isFullScreenFromStart,
                 isManualResizeEnabled,
                 isPreserveResizeRatio,
+                isScaleAffectedOnResize,
                 isIntroEnabled,
                 isMainMenuEnabled,
                 isGameMenuEnabled,
@@ -346,8 +362,10 @@ class GameSettings(
                 pixelsPerMeter,
                 secondsIn24h,
                 randomSeed,
+                defaultLanguage,
                 isExperimentalTiledLargeMap,
                 isExperimentalNative,
+                isExperimental3D,
                 configClass,
                 unmodifiableList(engineServices),
                 sceneFactory,
@@ -408,6 +426,14 @@ class ReadOnlyGameSettings internal constructor(
         val isManualResizeEnabled: Boolean,
 
         val isPreserveResizeRatio: Boolean,
+
+        /**
+         * If true, during resize the game will auto-scale to maintain consistency across all displays.
+         * If false, during resize, only the window will change size, which allows different displays
+         * to have different views.
+         * For example, editor type apps may wish to set this to false to maximize "usable" space.
+         */
+        var isScaleAffectedOnResize: Boolean = true,
 
         /**
          * If set to true, the intro video/animation will
@@ -506,10 +532,13 @@ class ReadOnlyGameSettings internal constructor(
 
         val randomSeed: Long,
 
+        private val defaultLanguage: Language,
+
         /* EXPERIMENTAL */
 
         val isExperimentalTiledLargeMap: Boolean,
         val isExperimentalNative: Boolean,
+        val isExperimental3D: Boolean,
 
         /* CONFIGS */
 
@@ -537,7 +566,7 @@ class ReadOnlyGameSettings internal constructor(
     /**
      * where to look for latest stable project POM
      */
-    val urlPOM = "https://raw.githubusercontent.com/AlmasB/FXGL/master/pom.xml"
+    val urlPOM = "https://raw.githubusercontent.com/AlmasB/FXGL/master/README.md"
 
     /**
      * project GitHub repo
@@ -612,13 +641,51 @@ class ReadOnlyGameSettings internal constructor(
     These are saved by the Settings, so engine services do not need to save their copy of these.
      */
 
-    val language = SimpleObjectProperty(ENGLISH)
+    val language = SimpleObjectProperty(defaultLanguage)
 
     /**
      * Allows toggling fullscreen on/off from code.
      * [isFullScreenAllowed] must be true, otherwise it's no-op.
      */
     val fullScreen = SimpleBooleanProperty(isFullScreenFromStart)
+
+    internal val scaledWidthProp = ReadOnlyDoubleWrapper()
+    internal val scaledHeightProp = ReadOnlyDoubleWrapper()
+
+    /**
+     * @return actual width of the scene root
+     */
+    fun actualWidthProperty() = scaledWidthProp.readOnlyProperty
+
+    /**
+     * @return actual height of the scene root
+     */
+    fun actualHeightProperty() = scaledHeightProp.readOnlyProperty
+
+    val actualWidth: Double
+        get() = scaledWidthProp.value
+
+    val actualHeight: Double
+        get() = scaledHeightProp.value
+
+    private val appWidthProp = ReadOnlyDoubleWrapper(width.toDouble()).readOnlyProperty
+    private val appHeightProp = ReadOnlyDoubleWrapper(height.toDouble()).readOnlyProperty
+
+    /**
+     * @return a convenience property that auto-sets to target (app) width if auto-scaling is enabled
+     * and uses actual javafx scene width if not
+     */
+    fun prefWidthProperty(): ReadOnlyDoubleProperty {
+        return if (isScaleAffectedOnResize) appWidthProp else actualWidthProperty()
+    }
+
+    /**
+     * @return a convenience property that auto-sets to target (app) height if auto-scaling is enabled
+     * and uses actual javafx scene height if not
+     */
+    fun prefHeightProperty(): ReadOnlyDoubleProperty {
+        return if (isScaleAffectedOnResize) appHeightProp else actualHeightProperty()
+    }
 
     val profileName = SimpleStringProperty("DEFAULT")
 

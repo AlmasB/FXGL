@@ -23,7 +23,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -789,31 +792,53 @@ class InputTest {
         assertNull(resultEnd)
     }
 
-    @Test
-    fun `Input capture`() {
+    @ParameterizedTest
+    @MethodSource("triggerValueProvider")
+    fun `Input capture`(trigger: Trigger) {
         var calls = 0
 
         val capture = input.startCapture()
 
-        input.addAction(object : UserAction("Test") {
-            override fun onActionBegin() {
-                calls++
-            }
+        if (trigger.isKey) {
+            input.addAction(object : UserAction("Test") {
+                override fun onActionBegin() {
+                    calls++
+                }
 
-            override fun onAction() {
-                calls--
-            }
+                override fun onAction() {
+                    calls--
+                }
 
-            override fun onActionEnd() {
-                calls++
-            }
-        }, KeyCode.A)
+                override fun onActionEnd() {
+                    calls++
+                }
+            }, (trigger as KeyTrigger).key)
+        } else {
+            input.addAction(object : UserAction("Test") {
+                override fun onActionBegin() {
+                    calls++
+                }
+
+                override fun onAction() {
+                    calls--
+                }
+
+                override fun onActionEnd() {
+                    calls++
+                }
+            }, (trigger as MouseTrigger).button)
+        }
 
         repeat(100) {
             input.update(0.016)
 
-            input.mockKeyPress(KeyCode.A)
-            input.mockKeyRelease(KeyCode.A)
+            if (trigger.isKey) {
+                input.mockKeyPress((trigger as KeyTrigger).key)
+                input.mockKeyRelease((trigger as KeyTrigger).key)
+            } else {
+                input.mockButtonPress((trigger as MouseTrigger).button)
+                input.mockButtonRelease((trigger as MouseTrigger).button)
+            }
         }
 
         assertThat(calls, `is`(200))
@@ -1018,5 +1043,13 @@ class InputTest {
         }
     }
 
-
+    companion object {
+        @Suppress("UNUSED")
+        @JvmStatic fun triggerValueProvider(): Stream<Arguments> {
+            return Stream.of(
+                    Arguments.arguments(KeyTrigger(KeyCode.A)),
+                    Arguments.arguments(MouseTrigger(MouseButton.SECONDARY))
+            )
+        }
+    }
 }

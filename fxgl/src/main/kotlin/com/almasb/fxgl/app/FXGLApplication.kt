@@ -40,6 +40,7 @@ import com.almasb.fxgl.ui.FontType
 import com.gluonhq.attach.lifecycle.LifecycleEvent
 import com.gluonhq.attach.lifecycle.LifecycleService
 import javafx.application.Application
+import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.concurrent.Task
 import javafx.embed.swing.SwingFXUtils
@@ -346,6 +347,10 @@ class FXGLApplication : Application() {
 
         override val appHeight
             get() = settings.height
+
+        override fun prefWidthProperty(): ReadOnlyDoubleProperty = settings.prefWidthProperty()
+
+        override fun prefHeightProperty(): ReadOnlyDoubleProperty = settings.prefHeightProperty()
 
         override val input: Input
             get() = mainWindow.input

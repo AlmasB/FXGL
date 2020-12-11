@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -47,7 +48,7 @@ class TMXLevelLoaderTest {
     }
 
     @ParameterizedTest
-    @CsvSource("map_with_gid_objects.tmx", "map_with_indented_csv_data.tmx")
+    @CsvSource("map_with_gid_objects.tmx", "map_with_indented_csv_data.tmx", "map_with_gzip_data.tmx")
     fun `Load tmx level with gid objects`(mapName: String) {
         val world = GameWorld()
         world.addEntityFactory(MyEntityFactory())
@@ -101,6 +102,27 @@ class TMXLevelLoaderTest {
     }
 
     @Test
+    fun `Load tmx level with separate tile images`() {
+        val world = GameWorld()
+
+        val level = TMXLevelLoader().load(javaClass.getResource("tile_images/map_with_separate_tile_images.tmx"), world)
+
+        val layerEntity = level.entities[0]
+
+        val view = layerEntity.viewComponent.children[0] as ImageView
+
+        assertThat(view.image.width, `is`(64 * 22.0))
+        assertThat(view.image.height, `is`(64 * 22.0))
+
+        assertThat(view.image.pixelReader.getColor(64*0 + 32, 32), `is`(not(Color.TRANSPARENT)))
+        assertThat(view.image.pixelReader.getColor(64*1 + 32, 32), `is`(not(Color.TRANSPARENT)))
+        assertThat(view.image.pixelReader.getColor(64*2 + 32, 32), `is`(not(Color.TRANSPARENT)))
+        assertThat(view.image.pixelReader.getColor(64*3 + 32, 32), `is`(not(Color.TRANSPARENT)))
+
+        assertThat(view.image.pixelReader.getColor(64*4 + 32, 32), `is`(Color.TRANSPARENT))
+    }
+
+    @Test
     fun `Load tmx level with different tileset sizes`() {
         val world = GameWorld()
         world.addEntityFactory(MyEntityFactory())
@@ -113,6 +135,31 @@ class TMXLevelLoaderTest {
 
         assertThat(view.image.width, `is`(128.0))
         assertThat(view.image.height, `is`(64.0))
+    }
+
+    @Test
+    fun `Load tmx level with text objects`() {
+        val world = GameWorld()
+        world.addEntityFactory(MyTextObjectFactory())
+
+        val level = TMXLevelLoader().load(javaClass.getResource("map_with_text_objects.tmx"), world)
+
+        val text1 = level.entities.find { it.type == "textRed" }!!
+        val text2 = level.entities.find { it.type == "textBlue" }!!
+        val text3 = level.entities.find { it.type == "someType" }!!
+        val text4 = level.entities.find { it.type == "emptyText" }!!
+
+        assertThat(text1.getString("text"), `is`("Third piece of text"))
+        assertThat(text1.getObject<Color>("color"), `is`(Color.rgb(255, 85, 0)))
+
+        assertThat(text2.getString("text"), `is`("Hello World from Tiled to FXGL 11!"))
+        assertThat(text2.getObject<Color>("color"), `is`(Color.rgb(85, 0, 255)))
+
+        assertThat(text3.getString("text"), `is`("Another text"))
+        assertThat(text3.getObject<Color>("color"), `is`(Color.rgb(0, 0, 0)))
+
+        assertThat(text4.getString("text"), `is`(""))
+        assertThat(text4.getObject<Color>("color"), `is`(Color.rgb(0, 0, 0)))
     }
 
     @ParameterizedTest
@@ -240,7 +287,6 @@ class TMXLevelLoaderTest {
 
         @Spawns("char")
         fun newCharacter(data: SpawnData): Entity {
-
             return Entity()
         }
 
@@ -267,6 +313,13 @@ class TMXLevelLoaderTest {
         @Spawns("cellSelection")
         fun newCellSelection(data: SpawnData): Entity {
             return Entity()
+        }
+    }
+
+    class MyTextObjectFactory : EntityFactory {
+        @Spawns("someType,textRed,textBlue,emptyText")
+        fun newText(data: SpawnData): Entity {
+            return Entity().also { it.type = data.get("type") }
         }
     }
 }

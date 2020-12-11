@@ -11,7 +11,8 @@ import com.almasb.fxgl.audio.AudioType
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.audio.getDummyAudio
-import com.almasb.fxgl.audio.impl.DesktopAudioService
+import com.almasb.fxgl.audio.impl.DesktopAndMobileAudioService
+import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.asset.AssetLoaderService
 import com.almasb.fxgl.core.asset.AssetType
 import com.almasb.fxgl.core.collection.PropertyMap
@@ -88,7 +89,10 @@ class FXGLAssetLoaderService : AssetLoaderService() {
 
     private val log = Logger.get(javaClass)
 
-    private val audioService = DesktopAudioService()
+    @Inject("isDesktop")
+    private var isDesktop = true
+
+    private val audioService = DesktopAndMobileAudioService()
 
     private val cachedAssets = hashMapOf<String, Any>()
 
@@ -98,7 +102,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
             return loadDialogueGraph(fileName) as T
         }
 
-        TODO()
+        throw RuntimeException("Not implemented")
     }
 
     /**
@@ -209,7 +213,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         }
 
         try {
-            val sound = Sound(audioService.loadAudio(AudioType.SOUND, getURL(SOUNDS_DIR + name)))
+            val sound = Sound(audioService.loadAudio(AudioType.SOUND, getURL(SOUNDS_DIR + name), isDesktop))
             cachedAssets.put(SOUNDS_DIR + name, sound)
             return sound
         } catch (e: Exception) {
@@ -236,7 +240,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         }
 
         try {
-            val music = Music(audioService.loadAudio(AudioType.MUSIC, getURL(MUSIC_DIR + name)))
+            val music = Music(audioService.loadAudio(AudioType.MUSIC, getURL(MUSIC_DIR + name), isDesktop))
             cachedAssets.put(MUSIC_DIR + name, music)
             return music
         } catch (e: Exception) {

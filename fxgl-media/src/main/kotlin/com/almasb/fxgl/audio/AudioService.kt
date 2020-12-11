@@ -14,7 +14,7 @@ import java.net.URL
  */
 interface AudioService {
 
-    fun loadAudio(type: AudioType, resourceURL: URL): Audio
+    fun loadAudio(type: AudioType, resourceURL: URL, isDesktop: Boolean): Audio
 
     fun unloadAudio(audio: Audio)
 }

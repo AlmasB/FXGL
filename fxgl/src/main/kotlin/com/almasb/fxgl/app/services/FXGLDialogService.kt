@@ -11,6 +11,7 @@ import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.*
 import javafx.beans.property.DoubleProperty
+import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.effect.DropShadow
@@ -47,15 +48,12 @@ class FXGLDialogService : DialogService() {
         window.canMinimize = false
         window.canClose = false
 
-        val width = sceneService.appWidth.toDouble()
-        val height = sceneService.appHeight.toDouble()
-
-        window.layoutXProperty().bind(window.widthProperty().divide(2).negate().add(width / 2))
-        window.layoutYProperty().bind(window.heightProperty().divide(2).negate().add(height / 2))
+        window.layoutXProperty().bind(window.widthProperty().divide(2).negate().add(sceneService.prefWidthProperty().divide(2)))
+        window.layoutYProperty().bind(window.heightProperty().divide(2).negate().add(sceneService.prefHeightProperty().divide(2)))
 
         window.effect = DropShadow(25.0, Color.BLACK)
 
-        dialogScene = DialogSubScene(window, width, height)
+        dialogScene = DialogSubScene(window, sceneService.prefWidthProperty(), sceneService.prefHeightProperty())
 
         // keep traversal input within this node
         initTraversalPolicy()
@@ -211,9 +209,10 @@ class FXGLDialogService : DialogService() {
 
     private class DialogData(val title: String, val contentPane: Pane)
 
-    private class DialogSubScene(window: MDIWindow, width: Double, height: Double) : SubScene() {
+    private class DialogSubScene(window: MDIWindow, widthProperty: ReadOnlyDoubleProperty, heightProperty: ReadOnlyDoubleProperty) : SubScene() {
         init {
-            contentRoot.setPrefSize(width, height)
+            contentRoot.prefWidthProperty().bind(widthProperty)
+            contentRoot.prefHeightProperty().bind(heightProperty)
             contentRoot.background = Background(BackgroundFill(Color.rgb(127, 127, 123, 0.5), null, null))
 
             contentRoot.children.addAll(window)

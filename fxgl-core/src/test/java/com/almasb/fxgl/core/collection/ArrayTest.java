@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Objects;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -444,6 +445,44 @@ public class ArrayTest {
         array.add("World");
 
         assertThat(array.random(), Matchers.isOneOf("Hello", "World"));
+    }
+
+    @Test
+    public void hash() {
+        Array<String> array1 = new Array<>(String.class);
+
+        array1.add("Hello");
+        array1.add("World");
+
+        Array<String> array2 = new Array<>(String.class);
+
+        array2.add("Hello");
+        array2.add("World");
+
+        assertThat(array1.hashCode(), is(array2.hashCode()));
+    }
+
+    @Test
+    public void equality() {
+        Array<String> array1 = new Array<>(String.class);
+
+        array1.add("Hello");
+        array1.add("World");
+
+        Array<String> array2 = new Array<>(String.class);
+
+        array2.add("Hello");
+        array2.add("World");
+
+        assertThat(array1, is(array2));
+
+        array2.removeIndex(0);
+        array2.removeIndex(0);
+
+        array2.add("World");
+        array2.add("Hello");
+
+        assertThat(array1, is(not(array2)));
     }
 
     @Test

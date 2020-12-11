@@ -7,13 +7,13 @@
 JavaFX Game Development Framework
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.almasb/fxgl.svg)]()
-[![Build Status](https://travis-ci.org/AlmasB/FXGL.svg?branch=master)](https://travis-ci.org/AlmasB/FXGL)
-[![codecov](https://codecov.io/gh/AlmasB/FXGL/branch/master/graph/badge.svg)](https://codecov.io/gh/AlmasB/FXGL)
+[![Build Status](https://github.com/AlmasB/FXGL/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/AlmasB/FXGL/actions)
+[![codecov](https://codecov.io/gh/AlmasB/FXGL/branch/dev/graph/badge.svg)](https://codecov.io/gh/AlmasB/FXGL)
 
 ### Why FXGL?
 
 * No installation or setup required
-* "Out of the box": Java 8-14, Win/Mac/Linux/Android 5.0+/iOS 11.0+/Web
+* "Out of the box": Java 8-15, Win/Mac/Linux/Android 5.0+/iOS 11.0+/Web
 * Simple and clean API, higher level than other engines
 * Superset of JavaFX: no need to learn new UI API
 * Real-world game development techniques: Entity-Component, interpolated animations, particles, and [many more](https://github.com/AlmasB/FXGL/wiki/Core-Features)
@@ -50,6 +50,7 @@ public class BasicGameApp extends GameApplication {
 For a quick dive into code, see standalone [basic examples](https://github.com/AlmasB/FXGL/tree/master/fxgl-samples/src/main/java/basics).
 Otherwise, see:
 
+* [Showcase Trailer](https://youtu.be/fuDQg7W0v4g)
 * [Wiki & written tutorials](https://github.com/AlmasB/FXGL/wiki)
 * [YouTube tutorials](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
 * [Java 11 modules](https://github.com/AlmasB/FXGL/wiki/FXGL-11-%28Java-11-modules%29)

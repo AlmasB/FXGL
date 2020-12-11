@@ -21,6 +21,12 @@
             <artifactId>fxgl</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-controllerinput</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

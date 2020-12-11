@@ -64,6 +64,8 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         prefWidth = INITIAL_WIDTH
         prefHeight = INITIAL_HEIGHT
 
+        isPickOnBounds = false
+
         textArea.font = Font.font(14.0)
         textArea.textProperty().bindBidirectional(node.textProperty)
 

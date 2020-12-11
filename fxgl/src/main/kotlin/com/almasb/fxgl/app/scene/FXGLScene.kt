@@ -94,6 +94,10 @@ abstract class FXGLScene
         effect = null
     }
 
+    fun setCursor(cursor: Cursor) {
+        root.cursor = cursor
+    }
+
     /**
      * @param image cursor image
      * @param hotspot hotspot location
@@ -130,8 +134,8 @@ abstract class FXGLScene
         super.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
 
         // in addition, we bind content root x and y since viewport can change
-        contentRoot.translateXProperty().bind(scaledWidth.divide(2).subtract(scaleRatioX.multiply(viewport.width).divide(2)))
-        contentRoot.translateYProperty().bind(scaledHeight.divide(2).subtract(scaleRatioY.multiply(viewport.height).divide(2)))
+        contentRoot.translateXProperty().bind(scaledWidth.divide(2).subtract(scaleRatioX.multiply(viewport.widthProperty()).divide(2)))
+        contentRoot.translateYProperty().bind(scaledHeight.divide(2).subtract(scaleRatioY.multiply(viewport.heightProperty()).divide(2)))
     }
 
     fun setBackgroundColor(color: Paint) {

@@ -62,6 +62,7 @@ internal constructor(width: Int, height: Int,
     /**
      * @return unmodifiable list of UI nodes
      */
+    @get:JvmName("getUINodes")
     val uiNodes: ObservableList<Node>
         get() = uiRoot.childrenUnmodifiable
 

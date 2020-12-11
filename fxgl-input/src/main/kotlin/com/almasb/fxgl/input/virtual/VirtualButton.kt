@@ -34,5 +34,9 @@ enum class VirtualButton {
     /**
      * Equivalent to PS circle.
      */
-    B
+    B,
+
+    LB,
+
+    RB
 }

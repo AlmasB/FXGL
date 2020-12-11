@@ -37,7 +37,7 @@ class ViewComponent : Component() {
     private val viewRootNoTransform = Group()
     private val devRoot = Group()
 
-    private val updateableViews = arrayListOf<View>()
+    private val updatableViews = arrayListOf<View>()
 
     /**
      * This node is managed by FXGL and is part of active scene graph, do NOT modify children.
@@ -109,7 +109,7 @@ class ViewComponent : Component() {
     }
 
     override fun onUpdate(tpf: Double) {
-        updateableViews.forEach { it.onUpdate(tpf) }
+        updatableViews.forEach { it.onUpdate(tpf) }
     }
 
     override fun onRemoved() {
@@ -150,7 +150,7 @@ class ViewComponent : Component() {
         }
 
         if (node is View)
-            updateableViews += node
+            updatableViews += node
     }
 
     /**
@@ -161,7 +161,7 @@ class ViewComponent : Component() {
         removeFromGroup(viewRootNoTransform, node)
 
         if (node is View)
-            updateableViews -= node
+            updatableViews -= node
     }
 
     /**
@@ -204,7 +204,7 @@ class ViewComponent : Component() {
     fun clearChildren() {
         viewRoot.children.forEach {
             if (it is View) {
-                updateableViews -= it
+                updatableViews -= it
 
                 it.dispose()
             }
@@ -212,7 +212,7 @@ class ViewComponent : Component() {
 
         viewRootNoTransform.children.forEach {
             if (it is View) {
-                updateableViews -= it
+                updatableViews -= it
 
                 it.dispose()
             }

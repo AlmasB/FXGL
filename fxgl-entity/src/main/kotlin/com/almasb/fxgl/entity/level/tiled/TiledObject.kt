@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.entity.level.tiled
 
+import javafx.scene.paint.Color
+
 /**
  * Specification: https://github.com/bjorn/tiled/wiki/JSON-Map-Format
  *
@@ -23,6 +25,13 @@ class TiledObject(var id: Int = 0,
                   var gid: Int = 0,
                   var isFlippedHorizontal: Boolean = false,
                   var isFlippedVertical: Boolean = false,
+                  var textData: TextData? = null,
                   var properties: Map<String, Any> = hashMapOf(),
                   var propertytypes: Map<String, String> = hashMapOf()) {
 }
+
+class TextData(
+        var text: String = "",
+        var isWrap: Boolean = false,
+        var color: Color = Color.BLACK
+)

@@ -19,6 +19,8 @@ import javafx.scene.shape.Circle
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.Polygon
 
+private const val EDGE_STROKE_WIDTH = 3.5
+
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -172,9 +174,8 @@ class EdgeView(val edge: DialogueEdge, val source: OutLinkPoint, val target: InL
                 )
         )
 
-        strokeWidth = 2.5
+        strokeWidth = EDGE_STROKE_WIDTH
         stroke = NodeView.colors[inPoint.owner.node.type] ?: Color.color(0.9, 0.9, 0.9, 0.9)
         fill = null
-        effect = Glow(0.7)
     }
 }

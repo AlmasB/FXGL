@@ -72,7 +72,9 @@ class GameWorld {
     fun addEntity(entity: Entity) {
         require(!entity.isActive) { "Entity is already attached to world" }
 
-        waitingList.add(entity)
+        if (entity.isEverUpdated)
+            waitingList.add(entity)
+
         entities.add(entity)
 
         add(entity)
@@ -110,9 +112,13 @@ class GameWorld {
         entity.markForRemoval()
         notifyEntityRemoved(entity)
 
-        // we cannot clean entities here because this may have been called through a control
+        // we cannot clean entities here because this may have been called through a component
         // while entity is being updated
         // so, we clean the entity on next frame
+
+        // however, we can clean entities that are never updated
+        if (!entity.isEverUpdated)
+            entity.clean()
     }
 
     fun removeEntities(vararg entitiesToRemove: Entity) {

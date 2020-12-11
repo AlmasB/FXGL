@@ -120,6 +120,12 @@ class TMXLevelLoader : LevelLoader {
                         put("id", tiledObject.id)
                         put("gid", tiledObject.gid)
 
+                        // parse text data if present
+                        tiledObject.textData?.let {
+                            put("text", it.text)
+                            put("color", it.color)
+                        }
+
                         tiledObject.properties.forEach {
                             put(it.key, it.value)
                         }
@@ -220,6 +226,10 @@ class TMXLevelLoader : LevelLoader {
                         } else {
                             parseMapProperty(map, start)
                         }
+                    }
+
+                    "text" -> {
+                        parseTextProperty(currentObject, eventReader.elementText, start)
                     }
 
                     "polygon" -> {
@@ -430,6 +440,14 @@ class TMXLevelLoader : LevelLoader {
         }
     }
 
+    private fun parseTextProperty(obj: TiledObject, data: String, start: StartElement) {
+        val textData = TextData()
+        textData.text = data
+        textData.color = start.getColor("color")
+
+        obj.textData = textData
+    }
+
     private fun parseMapProperty(map: TiledMap, start: StartElement) {
         val propName = start.getString("name")
         val propType = start.getString("type")
@@ -481,7 +499,9 @@ class TMXLevelLoader : LevelLoader {
 // these retrieve the value if exists or return a default
 
 private fun StartElement.getColor(attrName: String): Color {
-    return Color.web(this.getString(attrName))
+    val colorString = this.getString(attrName)
+
+    return if (colorString.isNotEmpty()) Color.web(colorString) else Color.BLACK
 }
 
 private fun StartElement.getBoolean(attrName: String): Boolean {

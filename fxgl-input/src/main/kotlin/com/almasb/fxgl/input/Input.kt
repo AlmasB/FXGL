@@ -436,11 +436,11 @@ class Input {
         virtualButtons[virtualButton] = key
     }
 
-    internal fun pressVirtual(virtualButton: VirtualButton) {
+    fun pressVirtual(virtualButton: VirtualButton) {
         virtualButtons[virtualButton]?.let { mockKeyPress(it) }
     }
 
-    internal fun releaseVirtual(virtualButton: VirtualButton) {
+    fun releaseVirtual(virtualButton: VirtualButton) {
         virtualButtons[virtualButton]?.let { mockKeyRelease(it) }
     }
 

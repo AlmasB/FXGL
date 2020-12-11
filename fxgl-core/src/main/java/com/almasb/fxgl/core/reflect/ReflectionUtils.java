@@ -196,9 +196,8 @@ public final class ReflectionUtils {
      */
     public static void inject(Field field, Object instance, Object injectionInstance) {
         try {
-            if (!field.isAccessible()) {
-                field.setAccessible(true);
-            }
+            field.trySetAccessible();
+
             field.set(instance, injectionInstance);
         } catch (Exception e) {
             throw new ReflectionException("Cannot inject " + injectionInstance + " into " + field.getName() + " Error: " + e);

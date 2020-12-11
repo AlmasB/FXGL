@@ -8,8 +8,11 @@ package com.almasb.fxgl.logging
 
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.collection.IsIterableContainingInOrder
+import org.hamcrest.collection.IsIterableContainingInOrder.*
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -36,6 +39,54 @@ class LoggerTest {
         assertDoesNotThrow {
             Logger.close()
         }
+    }
+
+    @Test
+    fun `Logger levels`() {
+        val log = Logger.get("test")
+
+        val output1 = object : LoggerOutput {
+            val testMessages = arrayListOf<String>()
+
+            override fun append(message: String) {
+                testMessages += message
+            }
+
+            override fun close() {
+            }
+        }
+
+        val output2 = object : LoggerOutput {
+            val testMessages = arrayListOf<String>()
+
+            override fun append(message: String) {
+                testMessages += message
+            }
+
+            override fun close() {
+            }
+        }
+
+        Logger.addOutput(output1, LoggerLevel.INFO)
+        Logger.addOutput(output2, LoggerLevel.FATAL)
+
+        log.warning("hello")
+
+        assertThat(output1.testMessages.size, `is`(1))
+        assertThat(output2.testMessages.size, `is`(0))
+
+        log.info("world")
+
+        assertThat(output1.testMessages.size, `is`(2))
+        assertThat(output2.testMessages.size, `is`(0))
+
+        log.fatal("bye!")
+
+        assertThat(output1.testMessages.size, `is`(3))
+        assertThat(output2.testMessages.size, `is`(1))
+
+        Logger.removeOutput(output1, LoggerLevel.INFO)
+        Logger.removeOutput(output2, LoggerLevel.FATAL)
     }
 
     @Test

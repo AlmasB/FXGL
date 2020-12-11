@@ -13,6 +13,8 @@ import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.test.InjectInTest
 import com.almasb.fxgl.time.Timer
+import javafx.beans.property.ReadOnlyDoubleProperty
+import javafx.beans.property.ReadOnlyDoubleWrapper
 import javafx.scene.Group
 import javafx.scene.paint.Color
 import org.hamcrest.CoreMatchers.`is`
@@ -46,6 +48,15 @@ class NotificationServiceTest {
                 get() = 800
             override val appHeight: Int
                 get() = 600
+
+            override fun prefWidthProperty(): ReadOnlyDoubleProperty {
+                return ReadOnlyDoubleWrapper(800.0).readOnlyProperty
+            }
+
+            override fun prefHeightProperty(): ReadOnlyDoubleProperty {
+                return ReadOnlyDoubleWrapper(600.0).readOnlyProperty
+            }
+
             override val input: Input
                 get() = Input()
             override val timer: Timer

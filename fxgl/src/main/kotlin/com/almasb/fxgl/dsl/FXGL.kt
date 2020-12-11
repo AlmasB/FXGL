@@ -50,6 +50,7 @@ import com.almasb.fxgl.ui.DialogFactoryService
 import com.almasb.fxgl.ui.DialogService
 import com.almasb.fxgl.ui.UIFactoryService
 import javafx.animation.Interpolator
+import javafx.application.Application
 import javafx.beans.binding.StringExpression
 import javafx.beans.property.*
 import javafx.concurrent.Task
@@ -123,6 +124,14 @@ class FXGL private constructor() { companion object {
             getWindowService().loadGame(dataFile)
         }
 
+        override fun pauseEngine() {
+            engine.pauseLoop()
+        }
+
+        override fun resumeEngine() {
+            engine.resumeLoop()
+        }
+
         override fun exit() {
             fxApp.exitFXGL()
         }
@@ -162,7 +171,9 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getAppCenter() = Point2D(getAppWidth() / 2.0, getAppHeight() / 2.0)
 
-    //@JvmStatic fun getPrimaryStage() = engine.getService(WindowService::class.java).mainWindow.stage
+    @JvmStatic fun getFXApp(): Application = fxApp
+
+    @JvmStatic fun getPrimaryStage() = engine.getService(FXGLApplication.GameApplicationService::class.java).window.stage
 
     @JvmStatic fun <T : EngineService> getService(serviceClass: Class<T>): T = engine.getService(serviceClass)
 
@@ -224,6 +235,8 @@ class FXGL private constructor() { companion object {
      * @return time per frame (in this frame)
      */
     @JvmStatic fun tpf() = engine.tpf
+
+    @JvmStatic fun cpuNanoTime() = engine.cpuNanoTime
 
     @Deprecated("Use getWorldProperties()", replaceWith = ReplaceWith("getWorldProperties()"))
     @JvmStatic fun getGameState() = getWorldProperties()

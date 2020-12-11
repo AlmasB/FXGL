@@ -151,6 +151,15 @@ class ReflectionUtilsTest {
     }
 
     @Test
+    fun `Find fields by type recursive with primitive typeclass`() {
+        val obj = 3
+
+        val fields = ReflectionUtils.findFieldsByTypeRecursive(obj, String::class.java)
+
+        assertThat(fields.size(), `is`(0))
+    }
+
+    @Test
     fun `Inject a field`() {
         val obj = TestClass1()
 

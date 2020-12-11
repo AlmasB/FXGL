@@ -92,4 +92,16 @@ class LocalizationServiceTest {
         local.selectedLanguage = Language.GERMAN
         assertThat(binding.value, `is`("This is data in German"))
     }
+
+    @Test
+    fun `Lazy localization`() {
+        local.addLanguageDataLazy(Language.ENGLISH) {
+            mapOf(
+                "data.key" to "This is data"
+            )
+        }
+
+        val result = local.getLocalizedString("data.key", Language.ENGLISH)
+        assertThat(result, `is`("This is data"))
+    }
 }

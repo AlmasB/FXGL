@@ -6,8 +6,10 @@
 
 package sandbox;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.controllerinput.ControllerInputService;
 import com.almasb.fxgl.input.KeyTrigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.input.view.KeyView;
@@ -19,6 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -35,8 +38,10 @@ public class VirtualControllerSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(850);
-        settings.setHeight(700);
+        settings.setHeight(850);
         //settings.setMenuEnabled(false);
+        settings.addEngineService(ControllerInputService.class);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
@@ -56,7 +61,58 @@ public class VirtualControllerSample extends GameApplication {
             protected void onActionEnd() {
                 System.out.println("end f");
             }
-        }, KeyCode.F, VirtualButton.Y);
+        }, KeyCode.F, VirtualButton.X);
+
+        getInput().addAction(new UserAction("test2") {
+            @Override
+            protected void onActionBegin() {
+                System.out.println("start g");
+            }
+
+            @Override
+            protected void onAction() {
+                System.out.println("g");
+            }
+
+            @Override
+            protected void onActionEnd() {
+                System.out.println("end g");
+            }
+        }, KeyCode.G, VirtualButton.Y);
+
+        getInput().addAction(new UserAction("test3") {
+            @Override
+            protected void onActionBegin() {
+                System.out.println("start h");
+            }
+
+            @Override
+            protected void onAction() {
+                System.out.println("h");
+            }
+
+            @Override
+            protected void onActionEnd() {
+                System.out.println("end h");
+            }
+        }, KeyCode.H, VirtualButton.A);
+
+        getInput().addAction(new UserAction("test4") {
+            @Override
+            protected void onActionBegin() {
+                System.out.println("start j");
+            }
+
+            @Override
+            protected void onAction() {
+                System.out.println("j");
+            }
+
+            @Override
+            protected void onActionEnd() {
+                System.out.println("end j");
+            }
+        }, KeyCode.J, VirtualButton.B);
     }
 
     @Override
@@ -111,6 +167,34 @@ public class VirtualControllerSample extends GameApplication {
         );
 
         addUINode(triggerView, 350, 400);
+
+        var controllerService = getService(ControllerInputService.class);
+        controllerService.getGameControllers()
+                .stream()
+                .findAny()
+                .ifPresent(con -> {
+                    con.addInputHandler(getInput());
+
+                    var ltText = getUIFactoryService().newText("", Color.WHITE, 24.0);
+                    ltText.textProperty().bind(con.leftTriggerValueProperty().asString("LT: %.2f"));
+
+                    var rtText = getUIFactoryService().newText("", Color.WHITE, 24);
+                    rtText.textProperty().bind(con.rightTriggerValueProperty().asString("RT: %.2f"));
+
+                    var leftStickText = getUIFactoryService().newText("", Color.WHITE, 24);
+                    var rightStickText = getUIFactoryService().newText("", Color.WHITE, 24);
+
+                    con.leftStickValueProperty().addListener((o, old, leftStickValue) -> {
+
+                        leftStickText.setText("Left stick: " + String.format("Point2D(%.2f, %.2f)", leftStickValue.getX(), leftStickValue.getY()));
+                    });
+
+                    con.rightStickValueProperty().addListener((o, old, rightStickValue) -> {
+                        rightStickText.setText("Right stick: " + String.format("Point2D(%.2f, %.2f)", rightStickValue.getX(), rightStickValue.getY()));
+                    });
+
+                    addUINode(new VBox(10, ltText, rtText, leftStickText, rightStickText), 15, 600);
+                });
 
         // special keys
         addUINode(new HBox(10,

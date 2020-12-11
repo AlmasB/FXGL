@@ -21,6 +21,7 @@ import javafx.scene.shape.Shape
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
 import javafx.util.Duration
+import java.lang.IllegalArgumentException
 import java.util.function.Consumer
 
 /**
@@ -31,13 +32,14 @@ import java.util.function.Consumer
 open class AnimationBuilder
 @JvmOverloads constructor(protected val scene: Scene? = null) {
 
-    protected var duration: Duration = Duration.seconds(1.0)
-    protected var delay: Duration = Duration.ZERO
-    protected var interpolator: Interpolator = Interpolator.LINEAR
-    protected var times: Int = 1
+    private var duration: Duration = Duration.seconds(1.0)
+    private var delay: Duration = Duration.ZERO
+    private var interpolator: Interpolator = Interpolator.LINEAR
+    private var times: Int = 1
+    private var onCycleFinished: Runnable = EmptyRunnable
+    private var isAutoReverse: Boolean = false
+
     protected var onFinished: Runnable = EmptyRunnable
-    protected var onCycleFinished: Runnable = EmptyRunnable
-    protected var isAutoReverse: Boolean = false
 
     constructor(copy: AnimationBuilder) : this(copy.scene) {
         duration = copy.duration
@@ -73,11 +75,6 @@ open class AnimationBuilder
         return repeat(Integer.MAX_VALUE)
     }
 
-    fun onFinished(onFinished: Runnable): AnimationBuilder {
-        this.onFinished = onFinished
-        return this
-    }
-
     fun onCycleFinished(onCycleFinished: Runnable): AnimationBuilder {
         this.onCycleFinished = onCycleFinished
         return this
@@ -85,6 +82,11 @@ open class AnimationBuilder
 
     fun autoReverse(autoReverse: Boolean): AnimationBuilder {
         this.isAutoReverse = autoReverse
+        return this
+    }
+
+    fun onFinished(onFinished: Runnable): AnimationBuilder {
+        this.onFinished = onFinished
         return this
     }
 
@@ -107,13 +109,7 @@ open class AnimationBuilder
     }
 
     fun translate(entities: Collection<Any>) = TranslationAnimationBuilder(this).apply {
-        objects += entities.map {
-            when (it) {
-                is Node -> it.toAnimatable()
-                is Entity -> it.toAnimatable()
-                else -> throw RuntimeException("${it.javaClass} must be Node or Entity")
-            }
-        }
+        objects += entities.map { toAnimatable(it) }
     }
 
     fun fade(vararg entities: Entity) = FadeAnimationBuilder(this).apply {
@@ -125,13 +121,7 @@ open class AnimationBuilder
     }
 
     fun fade(entities: Collection<Any>) = FadeAnimationBuilder(this).apply {
-        objects += entities.map {
-            when (it) {
-                is Node -> it.toAnimatable()
-                is Entity -> it.toAnimatable()
-                else -> throw RuntimeException("${it.javaClass} must be Node or Entity")
-            }
-        }
+        objects += entities.map { toAnimatable(it) }
     }
 
     fun scale(vararg entities: Entity) = ScaleAnimationBuilder(this).apply {
@@ -143,13 +133,7 @@ open class AnimationBuilder
     }
 
     fun scale(entities: Collection<Any>) = ScaleAnimationBuilder(this).apply {
-        objects += entities.map {
-            when (it) {
-                is Node -> it.toAnimatable()
-                is Entity -> it.toAnimatable()
-                else -> throw RuntimeException("${it.javaClass} must be Node or Entity")
-            }
-        }
+        objects += entities.map { toAnimatable(it) }
     }
 
     fun rotate(vararg entities: Entity) = RotationAnimationBuilder(this).apply {
@@ -161,13 +145,13 @@ open class AnimationBuilder
     }
 
     fun rotate(entities: Collection<Any>) = RotationAnimationBuilder(this).apply {
-        objects += entities.map {
-            when (it) {
-                is Node -> it.toAnimatable()
-                is Entity -> it.toAnimatable()
-                else -> throw RuntimeException("${it.javaClass} must be Node or Entity")
-            }
-        }
+        objects += entities.map { toAnimatable(it) }
+    }
+
+    private fun toAnimatable(obj: Any): Animatable = when (obj) {
+        is Node -> obj.toAnimatable()
+        is Entity -> obj.toAnimatable()
+        else -> throw IllegalArgumentException("${obj.javaClass} must be Node or Entity")
     }
 
     fun fadeIn(vararg entities: Entity) = FadeAnimationBuilder(this).apply {
@@ -413,8 +397,8 @@ open class AnimationBuilder
 private fun Node.toAnimatable(): Animatable {
     val n = this
     return object : Animatable {
-        var scale: Scale? = null
-        var rotate: Rotate? = null
+        private var scale: Scale? = null
+        private var rotate: Rotate? = null
 
         override fun xProperty(): DoubleProperty {
             return n.translateXProperty()
@@ -442,6 +426,7 @@ private fun Node.toAnimatable(): Animatable {
 
         override fun setScaleOrigin(pivotPoint: Point2D) {
             // if a node already has a previous transform, reuse it
+            // this means the node was animated previously
             n.properties["anim_scale"]?.let { transform ->
                 scale = transform as Scale
                 scale!!.pivotX = pivotPoint.x
@@ -458,6 +443,7 @@ private fun Node.toAnimatable(): Animatable {
 
         override fun setRotationOrigin(pivotPoint: Point2D) {
             // if a node already has a previous transform, reuse it
+            // this means the node was animated previously
             n.properties["anim_rotate"]?.let { transform ->
                 rotate = transform as Rotate
                 rotate!!.pivotX = pivotPoint.x

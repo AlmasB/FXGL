@@ -23,6 +23,7 @@ import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
 import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
+import javafx.scene.Group
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
@@ -54,15 +55,18 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     internal lateinit var gameVars: PropertyMap
     internal lateinit var assetLoader: AssetLoaderService
 
-    init {
-        val appWidth = sceneService.appWidth
-        val appHeight = sceneService.appHeight
+    private lateinit var dialogueScriptRunner: DialogueScriptRunner
 
-        val topLine = Rectangle(appWidth.toDouble(), 150.0)
+    init {
+        val topLine = Rectangle(0.0, 150.0)
+        topLine.widthProperty().bind(sceneService.prefWidthProperty())
         topLine.translateY = -150.0
 
-        val botLine = Rectangle(appWidth.toDouble(), 200.0)
-        botLine.translateY = appHeight.toDouble()
+        val botLine = Rectangle(0.0, 200.0)
+        botLine.widthProperty().bind(sceneService.prefWidthProperty())
+        botLine.translateYProperty().bind(sceneService.prefHeightProperty())
+
+        val botLineGroup = Group(botLine)
 
         animation1 = AnimationBuilder()
                 .duration(Duration.seconds(0.5))
@@ -73,31 +77,31 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
         animation2 = AnimationBuilder()
                 .duration(Duration.seconds(0.5))
-                .translate(botLine)
-                .from(Point2D(0.0, appHeight.toDouble()))
-                .to(Point2D(0.0, appHeight.toDouble() - 200.0))
+                .translate(botLineGroup)
+                .from(Point2D(0.0, 0.0))
+                .to(Point2D(0.0, -200.0))
                 .build()
-
+        
         topText.fill = Color.WHITE
         topText.font = Font.font(18.0)
-        topText.wrappingWidth = appWidth.toDouble() - 155.0
+        topText.wrappingWidthProperty().bind(sceneService.prefWidthProperty().subtract(155))
         topText.translateX = 50.0
         topText.translateY = 40.0
 
         boxPlayerLines.translateX = 50.0
-        boxPlayerLines.translateY = appHeight.toDouble() - 160.0
+        boxPlayerLines.translateYProperty().bind(sceneService.prefHeightProperty().subtract(160))
         boxPlayerLines.opacity = 0.0
 
         val keyView = KeyView(KeyCode.ENTER, Color.GREENYELLOW, 18.0)
-        keyView.translateX = appWidth.toDouble() - 80.0
-        keyView.translateY = appHeight - 40.0
+        keyView.translateXProperty().bind(sceneService.prefWidthProperty().subtract(80))
+        keyView.translateYProperty().bind(sceneService.prefHeightProperty().subtract(40))
 
         keyView.opacityProperty().bind(boxPlayerLines.opacityProperty())
         topText.opacityProperty().bind(boxPlayerLines.opacityProperty())
 
         initUserActions()
 
-        contentRoot.children.addAll(topLine, botLine, topText, boxPlayerLines, keyView)
+        contentRoot.children.addAll(topLine, botLineGroup, topText, boxPlayerLines, keyView)
     }
 
     private fun initUserActions() {
@@ -113,8 +117,9 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
         val digitTriggerListener = object : TriggerListener() {
             override fun onActionBegin(trigger: Trigger) {
-                // only allow 1,2,3 select
-                if (currentNode.type != CHOICE) {
+
+                // ignore any presses if type is not CHOICE or the text animation is still going
+                if (currentNode.type != CHOICE || message.isNotEmpty()) {
                     return
                 }
 
@@ -170,6 +175,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         graph = dialogueGraph.copy()
         this.functionHandler = functionHandler
         this.onFinished = onFinished
+        dialogueScriptRunner = DialogueScriptRunner(gameVars, functionHandler)
 
         // while graph has subdialogue nodes, expand
         while (graph.nodes.any { it.value.type == SUBDIALOGUE }) {
@@ -200,17 +206,26 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
     private var currentLine = 0
     private lateinit var currentNode: DialogueNode
+
+    /**
+     * This is the text that is shown to the player one char at a time.
+     */
     private val message = ArrayDeque<Char>()
 
     private var stringID = 1
 
     private fun nextLine(nextNode: DialogueNode? = null) {
         // do not allow to move to next line while the text animation is going
-        if (message.isNotEmpty())
+        if (message.isNotEmpty()) {
+            // just show the text fully
+            while (message.isNotEmpty()) {
+                topText.text += message.poll()
+            }
             return
+        }
 
         if (currentLine == 0 && currentNode.type == START) {
-            currentNode.text.parseVariables().forEach { message.addLast(it) }
+            dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
             currentLine++
             return
         }
@@ -229,17 +244,17 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
                 val choiceLocalID: Int
 
                 if (branchNode.text.trim().isNotEmpty()) {
-                    val result = callBooleanFunction(branchNode.text)
+                    val result = dialogueScriptRunner.callBooleanFunction(branchNode.text)
 
                     choiceLocalID = if (result) 0 else 1
                 } else {
-                    log.warning("Branch node has no function call: ${branchNode.text}. Assuming true branch.")
-                    choiceLocalID = 0
+                    log.warning("Branch node has no function call: ${branchNode.text}. Assuming <false> branch.")
+                    choiceLocalID = 1
                 }
 
                 nextLine(nextNodeFromChoice(choiceLocalID))
             } else {
-                currentNode.text.parseVariables().forEach { message.addLast(it) }
+                dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
 
                 if (currentNode.type == CHOICE) {
                     val choiceNode = currentNode as ChoiceNode
@@ -248,10 +263,10 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
                     choiceNode.conditions.forEach { id, condition ->
 
-                        if (condition.value.trim().isEmpty() || callBooleanFunction(condition.value)) {
+                        if (condition.value.trim().isEmpty() || dialogueScriptRunner.callBooleanFunction(condition.value)) {
                             val option = choiceNode.options[id]!!
 
-                            populatePlayerLine(id, option.value.parseVariables())
+                            populatePlayerLine(id, dialogueScriptRunner.replaceVariablesInText(option.value))
                         }
                     }
                 }
@@ -280,6 +295,16 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         text.properties["localID"] = localID
 
         text.setOnMouseClicked {
+            // do not allow to move to next line while the text animation is going
+            if (message.isNotEmpty()) {
+                // just show the text fully
+                while (message.isNotEmpty()) {
+                    topText.text += message.poll()
+                }
+
+                return@setOnMouseClicked
+            }
+
             selectLine(localID)
         }
 
@@ -315,57 +340,14 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         onFinished.run()
     }
 
-    private fun String.parseVariables(): String {
-        val vars = this.split(" +".toRegex())
-                .filter { it.startsWith("\$") && it.length > 1 }
-                .map {
-                    if (!it.last().isLetterOrDigit())
-                        it.substring(1, it.length - 1)
-                    else
-                        it.substring(1)
-                }
-                .toSet()
-
-        var result = this
-
-        vars.forEach {
-            if (gameVars.exists(it)) {
-                val value = gameVars.getValue<Any>(it)
-                result = result.replace("\$$it", value.toString())
-            }
-        }
-
-        return result
-    }
-
     private fun String.parseAndCallFunctions() {
         val funcCalls = this.split("\n".toRegex())
 
         funcCalls.forEach { line ->
             if (line.trim().isNotEmpty()) {
-                callFunction(line)
+                dialogueScriptRunner.callFunction(line)
             }
         }
     }
-
-    private fun callBooleanFunction(line: String): Boolean {
-        val result = callFunction(line)
-
-        if (result !is Boolean) {
-            log.warning("A boolean function call did not return a boolean: ${line}. Assuming result <true>.")
-            return true
-        }
-
-        return result
-    }
-
-    private fun callFunction(line: String): Any {
-        val tokens = line.trim().split(" +".toRegex())
-
-        require(tokens.isNotEmpty()) { "Empty function call: $line" }
-
-        val funcName = tokens[0].trim()
-
-        return functionHandler.handle(funcName, tokens.drop(1).map { it.trim().parseVariables() }.toTypedArray())
-    }
 }
+

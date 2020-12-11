@@ -18,9 +18,12 @@ import com.almasb.fxgl.texture.toImage
 import com.almasb.fxgl.tools.dialogues.DialogueEditorVars.IS_SNAP_TO_GRID
 import com.almasb.fxgl.tools.dialogues.ui.SelectionRectangle
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleIntegerProperty
+import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.MapChangeListener
 import javafx.geometry.Point2D
+import javafx.scene.Cursor
 import javafx.scene.Group
 import javafx.scene.effect.Glow
 import javafx.scene.input.MouseButton
@@ -56,8 +59,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 BRANCH to { BranchNode("") },
                 FUNCTION to { FunctionNode("") },
                 END to { EndNode("") },
-                START to { StartNode("") },
-                SUBDIALOGUE to { SubDialogueNode("") }
+                START to { StartNode("") }
+                //SUBDIALOGUE to { SubDialogueNode("") }
         )
 
         val nodeViewConstructors = linkedMapOf<DialogueNodeType, (DialogueNode) -> NodeView>(
@@ -66,8 +69,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 BRANCH to branch,
                 FUNCTION to function,
                 END to end,
-                START to start,
-                SUBDIALOGUE to subdialogue
+                START to start
+                //SUBDIALOGUE to subdialogue
         )
 
         private const val CELL_SIZE = 39.0
@@ -97,16 +100,19 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     private val mouseGestures = MouseGestures(contentRoot)
 
-    private val selectionRect = SelectionRectangle()
+    private val selectionRect = SelectionRectangle().also { it.cursor = Cursor.MOVE }
 
     private var selectionStart = Point2D.ZERO
     private var isSelectingRectangle = false
 
     private val selectedNodeViews = arrayListOf<NodeView>()
 
-    init {
-        setPrefSize(getAppWidth().toDouble(), getAppHeight().toDouble())
+    private val history = FXCollections.observableArrayList<EditorAction>()
+    private val historyIndex = SimpleIntegerProperty(-1)
 
+    private val contextMenu = FXGLContextMenu()
+
+    init {
         val cell = Rectangle(CELL_SIZE - 1, CELL_SIZE - 1, Color.GRAY)
         cell.stroke = Color.WHITESMOKE
         cell.strokeWidth = 0.2
@@ -137,11 +143,6 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
         children.addAll(contentRoot)
 
-        // start and end
-
-        createNode(StartNodeView(), 50.0, getAppHeight() / 2.0)
-        createNode(EndNodeView(), getAppWidth() - 370.0, getAppHeight() / 2.0)
-
         initContextMenu()
 
         mouseGestures.makeDraggable(selectionRect) {
@@ -169,7 +170,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         }
 
         setOnMouseDragged {
-            if (it.isControlDown && isSelectingRectangle) {
+            if (isSelectingRectangle && it.button == MouseButton.PRIMARY) {
                 val vector = contentRoot.sceneToLocal(it.sceneX, it.sceneY).subtract(selectionStart)
 
                 selectionRect.width = vector.x
@@ -178,7 +179,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 return@setOnMouseDragged
             }
 
-            if (mouseGestures.isDragging || it.button != MouseButton.PRIMARY)
+            if (mouseGestures.isDragging || it.button != MouseButton.SECONDARY)
                 return@setOnMouseDragged
 
             contentRoot.translateX += (it.sceneX - mouseX) * dragScale
@@ -189,7 +190,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         }
 
         setOnMousePressed {
-            if (it.isControlDown) {
+            if (it.button == MouseButton.PRIMARY && it.target === this) {
                 isSelectingRectangle = true
                 selectedNodeViews.clear()
                 selectionStart = contentRoot.sceneToLocal(it.sceneX, it.sceneY)
@@ -199,9 +200,17 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 selectionRect.height = 0.0
                 selectionRect.isVisible = true
             }
+
+            if (it.button == MouseButton.SECONDARY) {
+                getGameScene().setCursor(Cursor.CLOSED_HAND)
+            }
         }
 
         setOnMouseReleased {
+            if (it.button == MouseButton.SECONDARY) {
+                getGameScene().setCursor(Cursor.DEFAULT)
+            }
+
             if (!isSelectingRectangle) {
                 return@setOnMouseReleased
             }
@@ -217,24 +226,45 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         initGraphListeners()
 
         initGridListener(bgGrid)
+
+        initDefaultNodes()
+    }
+
+    private fun initDefaultNodes() {
+        val start = StartNode("Sample start text")
+        val mid = TextNode("Sample text")
+        val end = EndNode("Sample end text")
+
+        graph.addNode(start)
+        graph.addNode(mid)
+        graph.addNode(end)
+
+        graph.addEdge(start, mid)
+        graph.addEdge(mid, end)
+
+        getNodeView(start).relocate(50.0, getAppHeight() / 2.0)
+        getNodeView(mid).relocate((getAppWidth() - 370.0 + 50) / 2.0, getAppHeight() / 2.0)
+        getNodeView(end).relocate(getAppWidth() - 370.0, getAppHeight() / 2.0)
     }
 
     private fun initContextMenu() {
-        val contextMenu = FXGLContextMenu()
-
         nodeConstructors
                 .filter { it.key != START }
                 .forEach { (type, ctor) ->
                     contextMenu.addItem(type.toString()) {
-                        graph.addNode(ctor())
+                        val node = ctor()
+
+                        performUIAction(AddNodeAction(graph, node))
                     }
                 }
 
-        setOnContextMenuRequested {
-            if (it.target !== this)
-                return@setOnContextMenuRequested
+        setOnMouseClicked {
+            if (it.isControlDown) {
+                if (it.target !== this)
+                    return@setOnMouseClicked
 
-            contextMenu.show(contentRoot, it.sceneX, it.sceneY)
+                contextMenu.show(contentRoot, it.sceneX, it.sceneY)
+            }
         }
     }
 
@@ -286,14 +316,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
             bg.prefHeight = ((maxY - bg.layoutY) / CELL_DISTANCE).toInt() * CELL_DISTANCE + MARGIN_CELLS * CELL_DISTANCE
         }, Duration.seconds(0.1))
 
-        // TODO: better kt call site?
-        FXGL.getWorldProperties().addListener<Boolean>(IS_SNAP_TO_GRID, object : PropertyChangeListener<Boolean> {
-            override fun onChange(prev: Boolean, now: Boolean) {
-                if (now) {
-                    nodeViews.children
-                            .map { it as NodeView }
-                            .forEach { snapToGrid(it) }
-                }
+        FXGL.getWorldProperties().addListener<Boolean>(IS_SNAP_TO_GRID, PropertyChangeListener { _, isSnap ->
+            if (isSnap) {
+                nodeViews.children
+                        .map { it as NodeView }
+                        .forEach { snapToGrid(it) }
             }
         })
     }
@@ -412,12 +439,6 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 ?: throw IllegalArgumentException("No edge view found for edge $edge")
     }
 
-    private fun createNode(nodeView: NodeView, x: Double, y: Double) {
-        graph.addNode(nodeView.node)
-
-        addNodeView(nodeView, x, y)
-    }
-
     private fun addNodeView(nodeView: NodeView, x: Double, y: Double) {
         nodeView.relocate(x, y)
 
@@ -439,6 +460,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
             if (getb(IS_SNAP_TO_GRID))
                 snapToGrid(nodeView)
         }
+
+        nodeView.cursor = Cursor.MOVE
+        nodeView.closeButton.cursor = Cursor.HAND
 
         nodeView.closeButton.setOnMouseClicked {
             graph.removeNode(nodeView.node)
@@ -462,6 +486,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun attachMouseHandler(outPoint: OutLinkPoint) {
+        outPoint.cursor = Cursor.HAND
+
         outPoint.setOnMouseClicked {
             if (it.button == MouseButton.PRIMARY) {
                 selectedOutLink = outPoint
@@ -474,6 +500,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun attachMouseHandler(inPoint: InLinkPoint) {
+        inPoint.cursor = Cursor.HAND
+
         inPoint.setOnMouseClicked {
             if (it.button == MouseButton.PRIMARY) {
                 selectedOutLink?.let { outPoint ->
@@ -508,6 +536,34 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 graph.removeEdge(outPoint.owner.node, inPoint.owner.node)
             }
         }
+    }
+
+    private fun performUIAction(action: EditorAction) {
+        // if we recently performed undo, then update history
+        if (historyIndex.value < history.size - 1) {
+            history.remove(historyIndex.value + 1, history.size)
+        }
+
+        history += action
+        historyIndex.value++
+
+        action.run()
+    }
+
+    fun openAddNodeDialog() {
+        contextMenu.show(contentRoot, 0.0, 30.0)
+    }
+
+    fun undo() {
+        if (historyIndex.value < 0)
+            return
+
+        history[historyIndex.value].undo()
+        historyIndex.value--
+    }
+
+    fun redo() {
+        showMessage("TODO: Sorry, not implemented yet.")
     }
 
     fun save(): SerializableGraph {

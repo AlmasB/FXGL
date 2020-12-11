@@ -106,24 +106,25 @@ class SaveLoadService : EngineService() {
         return fs.deleteFileTask(saveFileName)
     }
 
-//    /**
-//     * Loads last modified save file from saves directory.
-//     */
-//    fun loadLastModifiedSaveFileTask(profileName: String, saveFileExt: String): IOTask<SaveFile> {
-//        log.debug("Loading last modified save file")
-//
-//        return readSaveFilesTask(profileName, saveFileExt).then { files ->
-//            IOTask.of("findLastSave") {
-//                if (files.isEmpty()) {
-//                    throw FileNotFoundException("No save files found")
-//                }
-//
-//                Collections.sort(files, SaveFile.RECENT_FIRST)
-//                files[0]
-//            }
-//        }
-//    }
-//
+    /**
+     * @return a task that reads (IO operation) from latest modified file with extension [saveFileExt] in [dirName]
+     */
+    fun readLastModifiedSaveFileTask(dirName: String, saveFileExt: String): IOTask<Optional<SaveFile>> {
+        log.debug("Reading last modified save file from $dirName with ext: $saveFileExt")
+
+        return readSaveFilesTask(dirName, saveFileExt).then { files ->
+            IOTask.of("findLastSave") {
+                if (files.isEmpty()) {
+                    log.warning("No save files found")
+                    return@of Optional.empty<SaveFile>()
+                }
+
+                Collections.sort(files, SaveFile.RECENT_FIRST)
+                Optional.of(files[0])
+            }
+        }
+    }
+
     /**
      * Reads save files with save file extension from given directory [dirName].
      */

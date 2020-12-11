@@ -49,6 +49,10 @@ interface GameController {
      */
     fun loadGame(dataFile: DataFile)
 
+    fun pauseEngine()
+
+    fun resumeEngine()
+
     fun exit()
 }
 

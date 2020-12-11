@@ -20,8 +20,7 @@ import javafx.scene.paint.Color
 import javafx.util.Duration
 
 /**
- * Represents a 2D image which can be set as view for an entity.
- * The size ratio and visible area of the image can be modified as necessary.
+ * Represents a 2D image.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @apiNote This is essentially a wrapper around [javafx.scene.image.ImageView]
@@ -63,27 +62,21 @@ open class Texture : ImageView, View {
     fun toAnimatedTexture(defaultChannel: AnimationChannel) = AnimatedTexture(defaultChannel)
 
     /**
-     * Call this to create a new texture if you are
-     * planning to use the same image as graphics
-     * for multiple entities.
-     * This is required because same Node can only have 1 parent.
+     * Creates a new texture with the same image data.
+     * This is useful in cases where you want to display the same image in multiple places, since
+     * in JavaFX same Node can only have 1 parent.
      *
-     *
-     * Do NOT invoke on instances of StaticAnimatedTexture or
-     * AnimatedTexture, use [.toAnimatedTexture]
-     * or [.toAnimatedTexture] instead.
+     * Do NOT invoke on instances of AnimatedTexture.
+     * Use [toAnimatedTexture] instead.
      *
      * @return new Texture with same image
      */
     fun copy() = Texture(image)
 
     /**
-     * Given a rectangular area, produces a sub-texture of
-     * this texture.
+     * Given a rectangular area, produces a sub-texture of this texture.
      *
-     *
-     * Rectangle cannot cover area outside of the original texture
-     * image.
+     * Rectangle cannot cover area outside of the original texture image.
      *
      * @param area area of the original texture that represents sub-texture
      * @return sub-texture

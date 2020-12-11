@@ -8,6 +8,7 @@ package com.almasb.fxgl.net.udp
 
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.net.Client
+import com.almasb.fxgl.net.UDPClientConfig
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
@@ -21,7 +22,7 @@ internal val MESSAGE_CLOSE = byteArrayOf(-2, -1, 0, 70, 0, 88, 0, 71, 0, 76, 0, 
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class UDPClient<T>(val ip: String, val port: Int, private val messageType: Class<T>) : Client<T>() {
+class UDPClient<T>(val ip: String, val port: Int, private val config: UDPClientConfig<T>) : Client<T>() {
 
     private val log = Logger.get(javaClass)
 
@@ -39,9 +40,9 @@ class UDPClient<T>(val ip: String, val port: Int, private val messageType: Class
             var connection = connections.firstOrNull() as? UDPConnection
 
             if (connection == null) {
-                connection = UDPConnection<T>(it, ip, port, 1)
+                connection = UDPConnection<T>(it, ip, port, config.bufferSize, 1)
 
-                openUDPConnection(connection, messageType)
+                openUDPConnection(connection, config.messageType)
 
                 // send opening message to server, so server has our ip and port
                 val packet = DatagramPacket(MESSAGE_OPEN, MESSAGE_OPEN.size)
@@ -49,7 +50,7 @@ class UDPClient<T>(val ip: String, val port: Int, private val messageType: Class
                 it.send(packet)
             }
 
-            val buffer = ByteArray(2048)
+            val buffer = ByteArray(config.bufferSize)
 
             while (!isStopped) {
                 Arrays.fill(buffer, 0)

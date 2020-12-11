@@ -11,8 +11,7 @@ import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 
 /**
- * Represents a simple single colored 2D image which can be set as view for an entity.
- * The size ratio and viewport can be modified as necessary.
+ * Represents a simple single colored 2D image.
  *
  * @author Krisztián Nagy (Valdar) (okt.valdar@gmail.com)
  */

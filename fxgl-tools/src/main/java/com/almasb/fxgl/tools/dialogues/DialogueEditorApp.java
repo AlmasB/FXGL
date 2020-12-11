@@ -9,6 +9,7 @@ package com.almasb.fxgl.tools.dialogues;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import javafx.scene.Cursor;
 
 import java.util.Map;
 
@@ -27,9 +28,14 @@ public class DialogueEditorApp extends GameApplication {
         settings.setWidth(1600);
         settings.setHeight(900);
         settings.setTitle("FXGL Dialogue Editor - github.com/AlmasB/FXGL");
-        settings.setVersion("1.0");
+        settings.setVersion("1.0.1-beta");
         settings.getCSSList().add("dialogue_editor.css");
         settings.setIntroEnabled(false);
+        settings.setMainMenuEnabled(false);
+        settings.setGameMenuEnabled(false);
+        settings.setManualResizeEnabled(true);
+        settings.setScaleAffectedOnResize(false);
+        //settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
 
         settings.setCloseConfirmation(settings.getApplicationMode() == ApplicationMode.RELEASE);
@@ -43,6 +49,8 @@ public class DialogueEditorApp extends GameApplication {
 
     @Override
     protected void initGame() {
+        getGameScene().setCursor(Cursor.DEFAULT);
+
         addUINode(new MainUI());
     }
 

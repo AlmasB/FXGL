@@ -9,6 +9,8 @@ package com.almasb.fxgl.scene
 import com.almasb.fxgl.core.Updatable
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
+import javafx.beans.property.ReadOnlyDoubleProperty
+import javafx.beans.property.ReadOnlyDoubleWrapper
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.scene.Group
 import javafx.scene.Node
@@ -68,6 +70,12 @@ class SceneTest {
                 get() = 600
             override val appHeight: Int
                 get() = 600
+            override fun prefWidthProperty(): ReadOnlyDoubleProperty {
+                return ReadOnlyDoubleWrapper(600.0).readOnlyProperty
+            }
+            override fun prefHeightProperty(): ReadOnlyDoubleProperty {
+                return ReadOnlyDoubleWrapper(600.0).readOnlyProperty
+            }
             override val input: Input
                 get() = Input()
             override val timer: Timer

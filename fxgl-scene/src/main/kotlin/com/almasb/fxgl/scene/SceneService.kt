@@ -9,6 +9,7 @@ package com.almasb.fxgl.scene
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
+import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.scene.Group
 
 /**
@@ -23,9 +24,19 @@ abstract class SceneService : EngineService() {
      */
     abstract val overlayRoot: Group
 
+    /**
+     * @return target app width, [prefWidthProperty] is preferred
+     */
     abstract val appWidth: Int
 
+    /**
+     * @return target app height, [prefHeightProperty] is preferred
+     */
     abstract val appHeight: Int
+
+    abstract fun prefWidthProperty(): ReadOnlyDoubleProperty
+
+    abstract fun prefHeightProperty(): ReadOnlyDoubleProperty
 
     /**
      * Always-on input.

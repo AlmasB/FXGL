@@ -8,9 +8,12 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.logging.Logger
 import javafx.animation.AnimationTimer
+import kotlin.system.measureNanoTime
 
 /**
- *
+ * The main loop runner.
+ * Uses the number of JavaFX pulse calls per second (using a 2-sec buffer) to compute FPS.
+ * Based on FPS, time per frame (tpf) is computed for the next 2 seconds.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -18,23 +21,27 @@ internal class LoopRunner(private val runnable: (Double) -> Unit) {
 
     private val log = Logger.get<LoopRunner>()
 
+    // use 60 as default until fps buffer is full
     @get:JvmName("getFPS")
-    var fps = 0
+    var fps = 60
         private set
 
+    // use 1.0 / 60 as default until fps buffer is full
     @get:JvmName("tpf")
-    var tpf = 0.0
+    var tpf = 1.0 / 60
         private set
 
-    private val fpsCounter = FPSCounter()
+    var cpuNanoTime = 0L
+        private set
+
+    private var lastFPSUpdateNanos = 0L
+    private var fpsBuffer2sec = 0
 
     private val impl by lazy {
         object : AnimationTimer() {
 
             override fun handle(now: Long) {
-                tpf = tpfCompute(now)
-
-                frame()
+                frame(now)
             }
         }
     }
@@ -62,7 +69,6 @@ internal class LoopRunner(private val runnable: (Double) -> Unit) {
         log.debug("Pausing loop")
 
         impl.stop()
-        fpsCounter.reset()
     }
 
     fun stop() {
@@ -71,63 +77,25 @@ internal class LoopRunner(private val runnable: (Double) -> Unit) {
         impl.stop()
     }
 
-    private fun tpfCompute(now: Long): Double {
-        fps = (fpsCounter.update(now))
-
-        // assume that fps is at least 5 to avoid subtle bugs
-        // disregard minor fluctuations > 55 for smoother experience
-        if (fps < 5 || fps > 55)
-            fps = (60)
-
-        return 1.0 / fps
-    }
-
-    private fun frame() {
-        runnable(tpf)
-    }
-
-    /**
-     * Convenience class that buffers FPS values and calculates
-     * average FPS.
-     *
-     * Adapted from http://wecode4fun.blogspot.co.uk/2015/07/particles.html (Roland C.)
-     *
-     * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
-     */
-    private class FPSCounter {
-
-        companion object {
-            private const val MAX_SAMPLES = 100
+    private fun frame(now: Long) {
+        if (lastFPSUpdateNanos == 0L) {
+            lastFPSUpdateNanos = now
         }
 
-        private val frameTimes = LongArray(MAX_SAMPLES)
-        private var index = 0
-        private var arrayFilled = false
-        private var frameRate = 0
-
-        fun update(now: Long): Int {
-            val oldFrameTime = frameTimes[index]
-            frameTimes[index] = now
-            index = (index + 1) % frameTimes.size
-
-            if (index == 0) {
-                arrayFilled = true
-            }
-
-            if (arrayFilled) {
-                val elapsedNanos = now - oldFrameTime
-                val elapsedNanosPerFrame = elapsedNanos / frameTimes.size
-                frameRate = (1_000_000_000.0 / elapsedNanosPerFrame).toInt()
-            }
-
-            return frameRate
+        cpuNanoTime = measureNanoTime {
+            runnable(tpf)
         }
 
-        fun reset() {
-            frameTimes.fill(0)
-            index = 0
-            arrayFilled = false
-            frameRate = 0
+        fpsBuffer2sec++
+
+        // if 2 seconds have passed
+        if (now - lastFPSUpdateNanos >= 2_000_000_000) {
+            lastFPSUpdateNanos = now
+            fps = fpsBuffer2sec / 2
+            fpsBuffer2sec = 0
+
+            // update tpf for the next 2 seconds
+            tpf = 1.0 / fps
         }
     }
 }
