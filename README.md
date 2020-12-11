@@ -69,7 +69,7 @@ Already have `pom.xml`? Then add: (use `0.5.4` for Java 8-10). **Note:** make su
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>11.11</version>
+    <version>11.12</version>
 </dependency>
 ```
 
@@ -85,7 +85,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:11.11'
+    compile 'com.github.almasb:fxgl:11.12'
 }
 ```
 
