@@ -88,6 +88,11 @@ class ViewComponent : Component() {
         devRoot.translateXProperty().bind(viewRoot.translateXProperty())
         devRoot.translateYProperty().bind(viewRoot.translateYProperty())
 
+        // experimental 3D
+        viewRoot.translateZProperty().bind(entity.transformComponent.zProperty())
+        viewRootNoTransform.translateZProperty().bind(viewRoot.translateZProperty())
+        devRoot.translateZProperty().bind(viewRoot.translateZProperty())
+
         val scale = Scale()
         scale.xProperty().bind(entity.transformComponent.scaleXProperty())
         scale.yProperty().bind(entity.transformComponent.scaleYProperty())

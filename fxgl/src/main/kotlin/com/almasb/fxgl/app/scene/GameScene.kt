@@ -16,10 +16,10 @@ import com.almasb.fxgl.ui.UI
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.value.ChangeListener
 import javafx.collections.ObservableList
-import javafx.scene.Group
-import javafx.scene.Node
+import javafx.scene.*
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
+import javafx.scene.transform.Translate
 
 /**
  * Represents the scene that shows entities on the screen during "play" mode.
@@ -32,9 +32,11 @@ import javafx.scene.transform.Scale
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class GameScene
+@JvmOverloads
 internal constructor(width: Int, height: Int,
                      val gameWorld: GameWorld,
-                     val physicsWorld: PhysicsWorld) : FXGLScene(width, height), EntityWorldListener {
+                     val physicsWorld: PhysicsWorld,
+                     private val is3D: Boolean = false) : FXGLScene(width, height), EntityWorldListener {
 
     companion object {
         private val log = Logger.get(GameScene::class.java)
@@ -73,7 +75,10 @@ internal constructor(width: Int, height: Int,
     var isSingleStep = false
 
     init {
-        contentRoot.children.addAll(gameRoot, uiRoot)
+        contentRoot.children.addAll(
+                if (is3D) make3DSubScene(width.toDouble(), height.toDouble()) else gameRoot,
+                uiRoot
+        )
 
         initViewport(width.toDouble(), height.toDouble())
 
@@ -83,6 +88,17 @@ internal constructor(width: Int, height: Int,
 
         gameWorld.addWorldListener(physicsWorld)
         gameWorld.addWorldListener(this)
+    }
+
+    private fun make3DSubScene(w: Double, h: Double): SubScene {
+        val scene3D = SubScene(gameRoot, w, h, true, SceneAntialiasing.BALANCED)
+
+        val camera = PerspectiveCamera(true)
+        camera.transforms.addAll(Translate(0.0, 0.0, -15.0))
+
+        scene3D.camera = camera
+
+        return scene3D
     }
 
     private fun initViewport(w: Double, h: Double) {
@@ -116,7 +132,7 @@ internal constructor(width: Int, height: Int,
         physicsWorld.onUpdate(tpf)
         viewport.onUpdate(tpf)
 
-        if (isZSortingNeeded) {
+        if (!is3D && isZSortingNeeded) {
             sortZ()
             isZSortingNeeded = false
         }

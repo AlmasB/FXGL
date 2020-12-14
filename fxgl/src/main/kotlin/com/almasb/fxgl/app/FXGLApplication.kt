@@ -413,7 +413,8 @@ class FXGLApplication : Application() {
             loadScene = sceneFactory.newLoadingScene()
             gameScene = GameScene(settings.width, settings.height,
                     GameWorld(),
-                    PhysicsWorld(settings.height, settings.pixelsPerMeter)
+                    PhysicsWorld(settings.height, settings.pixelsPerMeter),
+                    settings.isExperimental3D
             )
 
             gameScene.isSingleStep = settings.isSingleStep

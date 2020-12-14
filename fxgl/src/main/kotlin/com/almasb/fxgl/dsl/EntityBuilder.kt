@@ -55,6 +55,13 @@ class EntityBuilder {
         entity.setPosition(x, y)
     }
 
+    fun at(x: Double, y: Double, z: Double) = this.also {
+        entity.setPosition(x, y)
+
+        // TODO: TransformComponent needs a separate z-index
+        entity.z = z.toInt()
+    }
+
     fun at(p: Vec2) = this.also {
         entity.setPosition(p)
     }
