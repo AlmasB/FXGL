@@ -162,6 +162,28 @@ class Input {
     }
 
     /**
+     * Add JavaFX event filter.
+     *
+     * @param eventType type of events to listen
+     * @param eventHandler filter for events
+     */
+    fun <T : Event> addEventFilter(eventType: EventType<T>,
+                                    eventHandler: EventHandler<in T>) {
+        eventHandlers.addEventFilter(eventType, eventHandler)
+    }
+
+    /**
+     * Remove JavaFX event filter.
+     *
+     * @param eventType type of events to listen
+     * @param eventHandler filter for events
+     */
+    fun <T : Event> removeEventFilter(eventType: EventType<T>,
+                                       eventHandler: EventHandler<in T>) {
+        eventHandlers.removeEventFilter(eventType, eventHandler)
+    }
+
+    /**
      * Fire JavaFX event.
      *
      * @param event the JavaFX event

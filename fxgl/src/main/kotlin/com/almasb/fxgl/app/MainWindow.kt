@@ -396,6 +396,10 @@ internal class MainWindow(
     }
 
     private fun addGlobalHandler(handler: (Event) -> Unit) {
+        fxScene.addEventFilter(EventType.ROOT) {
+            handler(it.copyFor(null, null))
+        }
+
         fxScene.addEventHandler(EventType.ROOT) {
             handler(it.copyFor(null, null))
         }

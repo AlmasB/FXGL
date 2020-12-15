@@ -287,7 +287,7 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
         internal var actionContext: UserAction? = null
 
         init {
-            input.addEventHandler(KeyEvent.KEY_PRESSED, EventHandler { e ->
+            input.addEventFilter(KeyEvent.KEY_PRESSED, EventHandler { e ->
                 if (Input.isIllegal(e.getCode()))
                     return@EventHandler
 
@@ -297,7 +297,7 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
                     FXGL.getSceneService().popSubScene()
             })
 
-            input.addEventHandler(MouseEvent.MOUSE_PRESSED, EventHandler { e ->
+            input.addEventFilter(MouseEvent.MOUSE_PRESSED, EventHandler { e ->
                 val rebound = getInput().rebind(actionContext!!, e.getButton(), InputModifier.from(e))
 
                 if (rebound)
