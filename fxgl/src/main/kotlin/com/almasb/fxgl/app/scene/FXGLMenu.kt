@@ -286,6 +286,8 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
 
         internal var actionContext: UserAction? = null
 
+        var isActive = false
+
         init {
             input.addEventFilter(KeyEvent.KEY_PRESSED, EventHandler { e ->
                 if (Input.isIllegal(e.getCode()))
@@ -293,15 +295,19 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
 
                 val rebound = getInput().rebind(actionContext!!, e.getCode(), InputModifier.from(e))
 
-                if (rebound)
+                if (rebound) {
                     FXGL.getSceneService().popSubScene()
+                    isActive = false
+                }
             })
 
             input.addEventFilter(MouseEvent.MOUSE_PRESSED, EventHandler { e ->
                 val rebound = getInput().rebind(actionContext!!, e.getButton(), InputModifier.from(e))
 
-                if (rebound)
+                if (rebound) {
                     FXGL.getSceneService().popSubScene()
+                    isActive = false
+                }
             })
 
             val rect = Rectangle(250.0, 100.0)
@@ -328,6 +334,10 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
         triggerView.triggerProperty().bind(getInput().triggerProperty(action))
 
         triggerView.setOnMouseClicked {
+            if (pressAnyKeyState.isActive)
+                return@setOnMouseClicked
+
+            pressAnyKeyState.isActive = true
             pressAnyKeyState.actionContext = action
             FXGL.getSceneService().pushSubScene(pressAnyKeyState)
         }
