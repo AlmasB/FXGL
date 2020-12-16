@@ -31,7 +31,8 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
 
     private val propX: DoubleProperty = SimpleDoubleProperty(x)
     private val propY: DoubleProperty = SimpleDoubleProperty(y)
-    private val propZ: IntegerProperty = SimpleIntegerProperty(0)
+    private val propZ: DoubleProperty = SimpleDoubleProperty(0.0)
+
     private val propAngle: DoubleProperty = SimpleDoubleProperty(angle)
     private val propScaleX: DoubleProperty = SimpleDoubleProperty(scaleX)
     private val propScaleY: DoubleProperty = SimpleDoubleProperty(scaleY)
@@ -53,7 +54,7 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         get() = propY.value
         set(value) { propY.value = value }
 
-    var z: Int
+    var z: Double
         get() = propZ.value
         set(value) { propZ.value = value }
 

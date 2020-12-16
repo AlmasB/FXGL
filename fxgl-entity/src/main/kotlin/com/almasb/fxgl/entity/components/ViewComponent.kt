@@ -9,10 +9,7 @@ package com.almasb.fxgl.entity.components
 import com.almasb.fxgl.core.View
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
-import javafx.beans.property.BooleanProperty
-import javafx.beans.property.ReadOnlyIntegerProperty
-import javafx.beans.property.ReadOnlyIntegerWrapper
-import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.*
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -44,7 +41,8 @@ class ViewComponent : Component() {
      */
     val parent: Parent = Group()
 
-    val z: ReadOnlyIntegerProperty = ReadOnlyIntegerWrapper(0)
+    @get:JvmName("zIndexProperty")
+    val zIndexProperty = SimpleIntegerProperty(0)
 
     @get:JvmName("opacityProperty")
     val opacityProperty = SimpleDoubleProperty(1.0)
@@ -52,6 +50,10 @@ class ViewComponent : Component() {
     var opacity: Double
         get() = opacityProperty.value
         set(value) { opacityProperty.value = value }
+
+    var zIndex: Int
+        get() = zIndexProperty.value
+        set(value) { zIndexProperty.value = value }
 
     @get:JvmName("visibleProperty")
     val visibleProperty: BooleanProperty
@@ -82,15 +84,15 @@ class ViewComponent : Component() {
         viewRoot.translateXProperty().bind(entity.xProperty().subtract(entity.transformComponent.positionOriginXProperty()))
         viewRoot.translateYProperty().bind(entity.yProperty().subtract(entity.transformComponent.positionOriginYProperty()))
 
+        // TODO: positionOriginZ
+        viewRoot.translateZProperty().bind(entity.transformComponent.zProperty())
+
         viewRootNoTransform.translateXProperty().bind(viewRoot.translateXProperty())
         viewRootNoTransform.translateYProperty().bind(viewRoot.translateYProperty())
+        viewRootNoTransform.translateZProperty().bind(viewRoot.translateZProperty())
 
         devRoot.translateXProperty().bind(viewRoot.translateXProperty())
         devRoot.translateYProperty().bind(viewRoot.translateYProperty())
-
-        // experimental 3D
-        viewRoot.translateZProperty().bind(entity.transformComponent.zProperty())
-        viewRootNoTransform.translateZProperty().bind(viewRoot.translateZProperty())
         devRoot.translateZProperty().bind(viewRoot.translateZProperty())
 
         val scale = Scale()
@@ -109,8 +111,6 @@ class ViewComponent : Component() {
 
         viewRoot.transforms.addAll(rotate, scale)
         devRoot.transforms.addAll(rotate, scale)
-
-        (z as ReadOnlyIntegerWrapper).bind(entity.transformComponent.zProperty())
     }
 
     override fun onUpdate(tpf: Double) {

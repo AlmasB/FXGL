@@ -145,7 +145,7 @@ class EntityBuilder {
     }
 
     fun zIndex(z: Int) = this.also {
-        entity.transformComponent.z = z
+        entity.zIndex = z
     }
 
     fun onClick(action: (Entity) -> Unit) = this.also {

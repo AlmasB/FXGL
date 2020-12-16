@@ -816,14 +816,6 @@ public class Entity {
         return transform.getScaleY();
     }
 
-    public final void setZIndex(int z) {
-        transform.setZ(z);
-    }
-
-    public final int getZIndex() {
-        return transform.getZ();
-    }
-
     // TRANSFORM END
 
     // BBOX BEGIN
@@ -911,6 +903,14 @@ public class Entity {
 
     public final boolean isVisible() {
         return view.isVisible();
+    }
+
+    public final void setZIndex(int z) {
+        view.setZIndex(z);
+    }
+
+    public final int getZIndex() {
+        return view.getZIndex();
     }
 
     // VIEW END

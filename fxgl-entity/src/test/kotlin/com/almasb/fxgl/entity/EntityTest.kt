@@ -869,7 +869,7 @@ class EntityTest {
     fun `Z index`() {
         entity.zIndex = 100
         assertThat(entity.zIndex, `is`(100))
-        assertThat(entity.transformComponent.z, `is`(100))
+        assertThat(entity.viewComponent.zIndex, `is`(100))
     }
 
     @Test

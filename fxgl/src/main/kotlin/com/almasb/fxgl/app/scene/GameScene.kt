@@ -268,8 +268,8 @@ internal constructor(width: Int, height: Int,
     }
 
     private fun initView(viewComponent: ViewComponent) {
-        val view = GameView(viewComponent.parent, viewComponent.z.value)
-        view.zProperty.bind(viewComponent.z)
+        val view = GameView(viewComponent.parent, viewComponent.zIndexProperty.value)
+        view.zProperty.bind(viewComponent.zIndexProperty)
 
         addGameView(view)
     }
