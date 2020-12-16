@@ -9,7 +9,7 @@ package sandbox.test3d;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -48,8 +48,8 @@ public class Basic3DSample extends GameApplication {
                 .repeatInfinitely()
                 .autoReverse(true)
                 .translate(player)
-                .from(new Point2D(-3, 0))
-                .to(new Point2D(3, 0))
+                .from(new Point3D(-3, 1, -5))
+                .to(new Point3D(3, 0, 0))
                 .buildAndPlay();
     }
 

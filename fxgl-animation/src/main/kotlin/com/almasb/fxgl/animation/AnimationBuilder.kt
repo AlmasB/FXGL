@@ -14,6 +14,7 @@ import javafx.animation.Interpolator
 import javafx.beans.property.DoubleProperty
 import javafx.beans.value.WritableValue
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 import javafx.scene.Node
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
@@ -212,18 +213,26 @@ open class AnimationBuilder
     class TranslationAnimationBuilder(animationBuilder: AnimationBuilder) : AM(animationBuilder) {
 
         private var path: Shape? = null
-        private var fromPoint = Point2D.ZERO
-        private var toPoint = Point2D.ZERO
+        private var fromPoint = Point3D.ZERO
+        private var toPoint = Point3D.ZERO
 
         fun alongPath(path: Shape) = this.also {
             this.path = path
         }
 
         fun from(start: Point2D) = this.also {
-            fromPoint = start
+            fromPoint = Point3D(start.x, start.y, 0.0)
         }
 
         fun to(end: Point2D) = this.also {
+            toPoint = Point3D(end.x, end.y, 0.0)
+        }
+
+        fun from(start: Point3D) = this.also {
+            fromPoint = start
+        }
+
+        fun to(end: Point3D) = this.also {
             toPoint = end
         }
 
@@ -231,22 +240,23 @@ open class AnimationBuilder
 
             path?.let { curve ->
                 return when (curve) {
-                    is QuadCurve -> makeAnim(AnimatedQuadBezierPoint2D(curve))
-                    is CubicCurve -> makeAnim(AnimatedCubicBezierPoint2D(curve))
+                    is QuadCurve -> makeAnim(AnimatedQuadBezierPoint3D(curve))
+                    is CubicCurve -> makeAnim(AnimatedCubicBezierPoint3D(curve))
                     else -> makeAnim(AnimatedPath(curve))
                 }
             }
 
-            return makeAnim(AnimatedPoint2D(fromPoint, toPoint))
+            return makeAnim(AnimatedPoint3D(fromPoint, toPoint))
         }
 
-        private fun makeAnim(animValue: AnimatedValue<Point2D>): Animation<Point2D> {
+        private fun makeAnim(animValue: AnimatedValue<Point3D>): Animation<Point3D> {
             return makeConfig().build(
                     animValue,
                     Consumer { value ->
                         objects.forEach {
                             it.xProperty().value = value.x
                             it.yProperty().value = value.y
+                            it.zProperty().value = value.z
                         }
                     }
             )
@@ -408,6 +418,10 @@ private fun Node.toAnimatable(): Animatable {
             return n.translateYProperty()
         }
 
+        override fun zProperty(): DoubleProperty {
+            return n.translateZProperty()
+        }
+
         override fun scaleXProperty(): DoubleProperty {
             return scale?.xProperty() ?: n.scaleXProperty()
         }
@@ -470,6 +484,10 @@ private fun Entity.toAnimatable(): Animatable {
 
         override fun yProperty(): DoubleProperty {
             return e.yProperty()
+        }
+
+        override fun zProperty(): DoubleProperty {
+            return e.zProperty()
         }
 
         override fun scaleXProperty(): DoubleProperty {

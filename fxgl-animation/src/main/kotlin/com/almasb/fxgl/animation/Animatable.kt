@@ -18,6 +18,7 @@ interface Animatable {
 
     fun xProperty(): DoubleProperty
     fun yProperty(): DoubleProperty
+    fun zProperty(): DoubleProperty
 
     fun scaleXProperty(): DoubleProperty
     fun scaleYProperty(): DoubleProperty

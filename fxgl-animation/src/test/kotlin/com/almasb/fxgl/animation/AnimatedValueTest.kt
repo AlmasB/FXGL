@@ -8,6 +8,7 @@ package com.almasb.fxgl.animation
 
 import com.almasb.fxgl.test.RunWithFX
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.CubicCurve
@@ -75,8 +76,8 @@ class AnimatedValueTest {
 
         val anim = AnimatedPath(rect)
 
-        assertThat(anim.getValue(0.0), `is`(Point2D(0.0, 0.13125)))
-        assertThat(anim.getValue(1.0), `is`(Point2D(0.0, 0.0)))
-        assertThat(anim.getValue(0.5), `is`(Point2D(160.0, 50.0)))
+        assertThat(anim.getValue(0.0), `is`(Point3D(0.0, 0.13125, 0.0)))
+        assertThat(anim.getValue(1.0), `is`(Point3D(0.0, 0.0, 0.0)))
+        assertThat(anim.getValue(0.5), `is`(Point3D(160.0, 50.0, 0.0)))
     }
 }
