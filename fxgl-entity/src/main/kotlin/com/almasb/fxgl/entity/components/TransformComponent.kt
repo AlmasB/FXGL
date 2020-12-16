@@ -12,10 +12,9 @@ import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
 import com.almasb.fxgl.entity.component.SerializableComponent
 import javafx.beans.property.DoubleProperty
-import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 
 /**
  *
@@ -74,6 +73,10 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         get() = Point2D(x, y)
         set(value) { setPosition(value.x, value.y) }
 
+    var position3D: Point3D
+        get() = Point3D(x, y, z)
+        set(value) { setPosition3D(value.x, value.y, value.z) }
+
     var scaleOrigin: Point2D
         get() = Point2D(propScaleOriginX.value, propScaleOriginY.value)
         set(value) {
@@ -111,6 +114,12 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         this.y = y
     }
 
+    fun setPosition3D(x: Double, y: Double, z: Double) {
+        this.x = x
+        this.y = y
+        this.z = z
+    }
+
     /**
      * Translate X by given value.
      *
@@ -130,6 +139,15 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     }
 
     /**
+     * Translate Z by given value.
+     *
+     * @param z dz
+     */
+    fun translateZ(z: Double) {
+        this.z += z
+    }
+
+    /**
      * Translate x and y by given values.
      *
      * @param x dx value
@@ -141,12 +159,30 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     }
 
     /**
+     * Translate x, y and z by given values.
+     */
+    fun translate3D(x: Double, y: Double, z: Double) {
+        translateX(x)
+        translateY(y)
+        translateZ(z)
+    }
+
+    /**
      * Translate x and y by given vector.
      *
      * @param vector translate vector
      */
     fun translate(vector: Point2D) {
         translate(vector.x, vector.y)
+    }
+
+    /**
+     * Translate x, y and z by given vector.
+     *
+     * @param vector translate vector
+     */
+    fun translate3D(vector: Point3D) {
+        translate3D(vector.x, vector.y, vector.z)
     }
 
     /**
@@ -163,6 +199,10 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
      */
     fun distance(other: TransformComponent): Double {
         return position.distance(other.position)
+    }
+
+    fun distance3D(other: TransformComponent): Double {
+        return position3D.distance(other.position3D)
     }
 
     /**

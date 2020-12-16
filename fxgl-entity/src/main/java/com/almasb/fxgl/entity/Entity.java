@@ -18,6 +18,7 @@ import com.almasb.fxgl.entity.components.TypeComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 import javafx.geometry.Rectangle2D;
 
 import java.io.Serializable;
@@ -595,6 +596,10 @@ public class Entity {
         return transform.getPosition();
     }
 
+    public final Point3D getPosition3D() {
+        return transform.getPosition3D();
+    }
+
     /**
      * Set top left position of this entity in world coordinates.
      */
@@ -609,11 +614,19 @@ public class Entity {
         transform.setPosition(position.x, position.y);
     }
 
+    public final void setPosition3D(Point3D position) {
+        transform.setPosition3D(position);
+    }
+
     /**
      * Set top left position of this entity in world coordinates.
      */
     public final void setPosition(double x, double y) {
         transform.setPosition(x, y);
+    }
+
+    public final void setPosition3D(double x, double y, double z) {
+        transform.setPosition3D(x, y, z);
     }
 
     /**
@@ -630,6 +643,10 @@ public class Entity {
         return transform.getY();
     }
 
+    public final double getZ() {
+        return transform.getZ();
+    }
+
     /**
      * Set position top left x of this entity.
      */
@@ -644,12 +661,20 @@ public class Entity {
         transform.setY(y);
     }
 
+    public final void setZ(double z) {
+        transform.setZ(z);
+    }
+
     public final DoubleProperty xProperty() {
         return transform.xProperty();
     }
 
     public final DoubleProperty yProperty() {
         return transform.yProperty();
+    }
+
+    public final DoubleProperty zProperty() {
+        return transform.zProperty();
     }
 
     public final Point2D getLocalAnchor() {
@@ -716,6 +741,13 @@ public class Entity {
     }
 
     /**
+     * Translate x, y and z by given vector.
+     */
+    public final void translate3D(Point3D vector) {
+        transform.translate3D(vector);
+    }
+
+    /**
      * Translate x by given value.
      */
     public final void translateX(double dx) {
@@ -727,6 +759,13 @@ public class Entity {
      */
     public final void translateY(double dy) {
         transform.translateY(dy);
+    }
+
+    /**
+     * Translate z by given value.
+     */
+    public final void translateZ(double dz) {
+        transform.translateZ(dz);
     }
 
     /**

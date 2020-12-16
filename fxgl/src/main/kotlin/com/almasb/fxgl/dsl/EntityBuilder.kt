@@ -16,6 +16,7 @@ import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsComponent
 import javafx.event.EventHandler
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import java.util.function.Consumer
@@ -56,10 +57,7 @@ class EntityBuilder {
     }
 
     fun at(x: Double, y: Double, z: Double) = this.also {
-        entity.setPosition(x, y)
-
-        // TODO: TransformComponent needs a separate z-index
-        //entity.zz = z.toInt()
+        entity.setPosition3D(x, y, z)
     }
 
     fun at(p: Vec2) = this.also {
@@ -68,6 +66,10 @@ class EntityBuilder {
 
     fun at(p: Point2D) = this.also {
         entity.setPosition(p)
+    }
+
+    fun at(p: Point3D) = this.also {
+        entity.setPosition3D(p)
     }
 
     fun atAnchored(localAnchor: Point2D, position: Point2D) = this.also {
