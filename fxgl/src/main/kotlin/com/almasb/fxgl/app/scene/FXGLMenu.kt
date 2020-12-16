@@ -310,7 +310,8 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
             rect.arcWidth = 15.0
             rect.arcHeight = 15.0
 
-            val text = getUIFactoryService().newText(localize("menu.pressAnyKey"), 24.0)
+            val text = getUIFactoryService().newText("", 24.0)
+            text.textProperty().bind(localizedStringProperty("menu.pressAnyKey"))
 
             val pane = StackPane(rect, text)
             pane.translateX = (getAppWidth() / 2 - 125).toDouble()
