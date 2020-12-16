@@ -816,11 +816,11 @@ public class Entity {
         return transform.getScaleY();
     }
 
-    public final void setZ(int z) {
+    public final void setZIndex(int z) {
         transform.setZ(z);
     }
 
-    public final int getZ() {
+    public final int getZIndex() {
         return transform.getZ();
     }
 

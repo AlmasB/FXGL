@@ -59,7 +59,7 @@ class EntityBuilder {
         entity.setPosition(x, y)
 
         // TODO: TransformComponent needs a separate z-index
-        entity.z = z.toInt()
+        //entity.zz = z.toInt()
     }
 
     fun at(p: Vec2) = this.also {

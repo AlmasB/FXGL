@@ -183,7 +183,7 @@ class EntityBuilderTest {
                 .zIndex(333)
                 .build()
 
-        assertThat(e.z, `is`(333))
+        assertThat(e.zIndex, `is`(333))
     }
 
     @Test

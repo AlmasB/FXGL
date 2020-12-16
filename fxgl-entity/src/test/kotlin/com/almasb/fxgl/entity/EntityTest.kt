@@ -867,8 +867,8 @@ class EntityTest {
 
     @Test
     fun `Z index`() {
-        entity.z = 100
-        assertThat(entity.z, `is`(100))
+        entity.zIndex = 100
+        assertThat(entity.zIndex, `is`(100))
         assertThat(entity.transformComponent.z, `is`(100))
     }
 
