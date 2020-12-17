@@ -7,6 +7,7 @@
 
 package com.almasb.fxgl.entity.components
 
+import com.almasb.fxgl.core.math.FXGLMath.*
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
@@ -15,6 +16,8 @@ import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Point2D
 import javafx.geometry.Point3D
+import java.lang.Math.asin
+import java.lang.Math.toDegrees
 
 /**
  *
@@ -45,6 +48,10 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     private val propRotationOriginX = SimpleDoubleProperty(0.0)
     private val propRotationOriginY = SimpleDoubleProperty(0.0)
 
+    private val propRotationX = SimpleDoubleProperty(0.0)
+    private val propRotationY = SimpleDoubleProperty(0.0)
+    private val propRotationZ = SimpleDoubleProperty(0.0)
+
     var x: Double
         get() = propX.value
         set(value) { propX.value = value }
@@ -57,6 +64,9 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         get() = propZ.value
         set(value) { propZ.value = value }
 
+    /**
+     * Rotation angle in 2D (along the Z axis).
+     */
     var angle: Double
         get() = propAngle.value
         set(value) { propAngle.value = value }
@@ -76,6 +86,18 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     var position3D: Point3D
         get() = Point3D(x, y, z)
         set(value) { setPosition3D(value.x, value.y, value.z) }
+
+    var rotationX: Double
+        get() = propRotationX.value
+        set(value) { propRotationX.value = value }
+
+    var rotationY: Double
+        get() = propRotationY.value
+        set(value) { propRotationY.value = value }
+
+    var rotationZ: Double
+        get() = propRotationZ.value
+        set(value) { propRotationZ.value = value }
 
     var scaleOrigin: Point2D
         get() = Point2D(propScaleOriginX.value, propScaleOriginY.value)
@@ -108,6 +130,10 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
 
     fun rotationOriginXProperty() = propRotationOriginX
     fun rotationOriginYProperty() = propRotationOriginY
+
+    fun rotationXProperty() = propRotationX
+    fun rotationYProperty() = propRotationY
+    fun rotationZProperty() = propRotationZ
 
     fun setPosition(x: Double, y: Double) {
         this.x = x
@@ -245,6 +271,87 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         set(value) {
             setPosition(value.x - localAnchor.x, value.y - localAnchor.y)
         }
+
+    // 3D transformations
+
+    /**
+     * Unit vector that always points to where this transform is "looking at".
+     */
+    var direction3D: Point3D = Point3D(0.0, 0.0, 1.0)
+        private set
+
+    var up3D = Point3D(0.0, 1.0, 0.0)
+        private set
+
+    fun lookUpBy(angle: Double) {
+        propRotationX.value += angle
+
+        updateDirection()
+    }
+
+    fun lookDownBy(angle: Double) {
+        propRotationX.value -= angle
+
+        updateDirection()
+    }
+
+    fun lookLeftBy(angle: Double) {
+        propRotationY.value -= angle
+
+        updateDirection()
+    }
+
+    fun lookRightBy(angle: Double) {
+        propRotationY.value += angle
+
+        updateDirection()
+    }
+
+    fun lookAt(point: Point3D) {
+        // TODO:
+    }
+
+    fun moveForward(distance: Double) {
+        val vector = direction3D.multiply(distance)
+
+        translate3D(vector)
+    }
+
+    fun moveBack(distance: Double) {
+        val vector = direction3D.multiply(-distance)
+
+        translate3D(vector)
+    }
+
+    // TODO: double check with up3D
+    fun moveLeft(distance: Double) {
+        val left = up3D.crossProduct(direction3D)
+                .normalize()
+                .multiply(distance)
+
+        translateX(-left.x)
+        translateZ(-left.z)
+    }
+
+    fun moveRight(distance: Double) {
+        val right = direction3D.crossProduct(up3D)
+                .normalize()
+                .multiply(distance)
+
+        translateX(-right.x)
+        translateZ(-right.z)
+    }
+
+    private fun updateDirection() {
+        // 1. handle rotation Y since it is added first
+        // we adjust it since 0 deg is not Point3D(0.0, 0.0, 1.0) (which is what we need) but Point3D(1.0, 0.0, 0.0)
+        val adjustedRotationY = 90 - rotationY
+
+        direction3D = Point3D(cosDeg(adjustedRotationY), 0.0, sinDeg(adjustedRotationY)).normalize()
+
+        // 2. handle rotation X
+        direction3D = Point3D(direction3D.x, -sinDeg(rotationX), direction3D.z * cosDeg(rotationX)).normalize()
+    }
 
     override fun toString(): String {
         return "Transform($x, $y, $angle, $scaleX, $scaleY)"

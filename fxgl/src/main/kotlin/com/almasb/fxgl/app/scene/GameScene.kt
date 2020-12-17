@@ -19,7 +19,6 @@ import javafx.collections.ObservableList
 import javafx.scene.*
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
-import javafx.scene.transform.Translate
 
 /**
  * Represents the scene that shows entities on the screen during "play" mode.
@@ -74,6 +73,8 @@ internal constructor(width: Int, height: Int,
      */
     var isSingleStep = false
 
+    val camera3D = Camera3D()
+
     init {
         contentRoot.children.addAll(
                 if (is3D) make3DSubScene(width.toDouble(), height.toDouble()) else gameRoot,
@@ -92,11 +93,7 @@ internal constructor(width: Int, height: Int,
 
     private fun make3DSubScene(w: Double, h: Double): SubScene {
         val scene3D = SubScene(gameRoot, w, h, true, SceneAntialiasing.BALANCED)
-
-        val camera = PerspectiveCamera(true)
-        camera.transforms.addAll(Translate(0.0, 0.0, -15.0))
-
-        scene3D.camera = camera
+        scene3D.camera = camera3D.perspectiveCamera
 
         return scene3D
     }
