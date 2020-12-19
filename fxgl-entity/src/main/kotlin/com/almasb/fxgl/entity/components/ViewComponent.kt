@@ -102,15 +102,21 @@ class ViewComponent : Component() {
         scale.pivotXProperty().bind(entity.transformComponent.scaleOriginXProperty())
         scale.pivotYProperty().bind(entity.transformComponent.scaleOriginYProperty())
 
-        val rotate = Rotate()
-        rotate.axis = Rotate.Z_AXIS
-        rotate.angleProperty().bind(entity.transformComponent.angleProperty())
+        val rz = Rotate()
+        rz.axis = Rotate.Z_AXIS
+        rz.angleProperty().bind(entity.transformComponent.angleProperty())
 
-        rotate.pivotXProperty().bind(entity.transformComponent.rotationOriginXProperty())
-        rotate.pivotYProperty().bind(entity.transformComponent.rotationOriginYProperty())
+        rz.pivotXProperty().bind(entity.transformComponent.rotationOriginXProperty())
+        rz.pivotYProperty().bind(entity.transformComponent.rotationOriginYProperty())
 
-        viewRoot.transforms.addAll(rotate, scale)
-        devRoot.transforms.addAll(rotate, scale)
+        val ry = Rotate(0.0, Rotate.Y_AXIS)
+        ry.angleProperty().bind(entity.transformComponent.rotationYProperty())
+
+        val rx = Rotate(0.0, Rotate.X_AXIS)
+        rx.angleProperty().bind(entity.transformComponent.rotationXProperty())
+
+        viewRoot.transforms.addAll(rz, ry, rx, scale)
+        devRoot.transforms.addAll(rz, ry, rx, scale)
     }
 
     override fun onUpdate(tpf: Double) {

@@ -64,7 +64,7 @@ class ViewComponentTest {
         ComponentHelper.setEntity(view, e)
         view.onAdded()
 
-        assertThat(rect.parent.transforms.size, `is`(2))
+        assertThat(rect.parent.transforms.size, `is`(4))
         assertThat(rect2.parent.transforms.size, `is`(0))
     }
 
