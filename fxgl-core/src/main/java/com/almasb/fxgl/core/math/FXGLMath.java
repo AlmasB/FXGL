@@ -7,7 +7,6 @@
 package com.almasb.fxgl.core.math;
 
 import javafx.geometry.Point2D;
-import javafx.geometry.Point3D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 
@@ -347,24 +346,5 @@ public final class FXGLMath {
 
     public static double distance(Rectangle2D rect1, Rectangle2D rect2) {
         return Distances.INSTANCE.distance(rect1, rect2);
-    }
-
-    // 3D transformations
-
-    public static Point3D rotateVectorAroundAxis(Point3D vector, double angle, Point3D axis) {
-        double sinHalfAngle = sin(toRadians(angle / 2));
-        double cosHalfAngle = cos(toRadians(angle / 2));
-
-        double rx = axis.getX() * sinHalfAngle;
-        double ry = axis.getY() * sinHalfAngle;
-        double rz = axis.getZ() * sinHalfAngle;
-        double rw = cosHalfAngle;
-
-        Quaternion rotation = new Quaternion(rx, ry, rz, rw);
-        Quaternion conjugate = rotation.conjugate();
-
-        Quaternion w = rotation.multiply(vector).multiply(conjugate);
-
-        return new Point3D(w.getX(), w.getY(), w.getZ());
     }
 }
