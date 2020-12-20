@@ -12,6 +12,7 @@ import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.scene.Scene
 import javafx.animation.Interpolator
 import javafx.beans.property.DoubleProperty
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.WritableValue
 import javafx.geometry.Point2D
 import javafx.geometry.Point3D
@@ -329,17 +330,27 @@ open class AnimationBuilder
 
     class RotationAnimationBuilder(animationBuilder: AnimationBuilder) : AM(animationBuilder) {
 
-        private var startAngle = 0.0
-        private var endAngle = 0.0
+        private var startRotation = Point3D.ZERO
+        private var endRotation = Point3D.ZERO
         private var rotationOrigin: Point2D? = null
 
         fun from(startAngle: Double): RotationAnimationBuilder {
-            this.startAngle = startAngle
+            startRotation = Point3D(0.0, 0.0, startAngle)
             return this
         }
 
         fun to(endAngle: Double): RotationAnimationBuilder {
-            this.endAngle = endAngle
+            endRotation = Point3D(0.0, 0.0, endAngle)
+            return this
+        }
+
+        fun from(start: Point3D): RotationAnimationBuilder {
+            startRotation = start
+            return this
+        }
+
+        fun to(end: Point3D): RotationAnimationBuilder {
+            endRotation = end
             return this
         }
 
@@ -355,10 +366,12 @@ open class AnimationBuilder
                 }
             }
 
-            return makeConfig().build(AnimatedValue(startAngle, endAngle),
+            return makeConfig().build(AnimatedValue(startRotation, endRotation),
                     Consumer { value ->
                         objects.forEach {
-                            it.rotationProperty().value = value
+                            it.rotationXProperty().value = value.x
+                            it.rotationYProperty().value = value.y
+                            it.rotationZProperty().value = value.z
                         }
                     }
             )
@@ -430,7 +443,19 @@ private fun Node.toAnimatable(): Animatable {
             return scale?.yProperty() ?: n.scaleYProperty()
         }
 
-        override fun rotationProperty(): DoubleProperty {
+        override fun rotationXProperty(): DoubleProperty {
+            // TODO: implement
+
+            return SimpleDoubleProperty()
+        }
+
+        override fun rotationYProperty(): DoubleProperty {
+            // TODO: implement
+
+            return SimpleDoubleProperty()
+        }
+
+        override fun rotationZProperty(): DoubleProperty {
             return rotate?.angleProperty() ?: n.rotateProperty()
         }
 
@@ -498,8 +523,16 @@ private fun Entity.toAnimatable(): Animatable {
             return e.transformComponent.scaleYProperty()
         }
 
-        override fun rotationProperty(): DoubleProperty {
-            return e.transformComponent.angleProperty()
+        override fun rotationXProperty(): DoubleProperty {
+            return e.transformComponent.rotationXProperty()
+        }
+
+        override fun rotationYProperty(): DoubleProperty {
+            return e.transformComponent.rotationYProperty()
+        }
+
+        override fun rotationZProperty(): DoubleProperty {
+            return e.transformComponent.rotationZProperty()
         }
 
         override fun opacityProperty(): DoubleProperty {

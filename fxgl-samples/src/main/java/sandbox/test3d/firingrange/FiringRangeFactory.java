@@ -84,6 +84,24 @@ public class FiringRangeFactory implements EntityFactory {
         return e;
     }
 
+    @Spawns("coin")
+    public Entity newCoin(SpawnData data) {
+        var support = new Box(1, 0.2, 1);
+        support.setMaterial(new PhongMaterial(Color.DARKRED));
+        support.setTranslateY(1.5);
+
+        var mat = new PhongMaterial(Color.GOLD.darker());
+
+        var box = new Box(1, 1, 1);
+        box.setMaterial(mat);
+
+        return entityBuilder(data)
+                .view(support)
+                .view(box)
+                .with("colorProperty", mat.diffuseColorProperty())
+                .build();
+    }
+
     @Spawns("light")
     public Entity newLight(SpawnData data) {
         var light = new PointLight();

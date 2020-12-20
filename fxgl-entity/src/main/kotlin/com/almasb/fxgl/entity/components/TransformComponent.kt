@@ -35,7 +35,6 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     private val propY: DoubleProperty = SimpleDoubleProperty(y)
     private val propZ: DoubleProperty = SimpleDoubleProperty(0.0)
 
-    private val propAngle: DoubleProperty = SimpleDoubleProperty(angle)
     private val propScaleX: DoubleProperty = SimpleDoubleProperty(scaleX)
     private val propScaleY: DoubleProperty = SimpleDoubleProperty(scaleY)
 
@@ -50,7 +49,7 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
 
     private val propRotationX = SimpleDoubleProperty(0.0)
     private val propRotationY = SimpleDoubleProperty(0.0)
-    private val propRotationZ = SimpleDoubleProperty(0.0)
+    private val propRotationZ = SimpleDoubleProperty(angle)
 
     var x: Double
         get() = propX.value
@@ -68,8 +67,8 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
      * Rotation angle in 2D (along the Z axis).
      */
     var angle: Double
-        get() = propAngle.value
-        set(value) { propAngle.value = value }
+        get() = propRotationZ.value
+        set(value) { propRotationZ.value = value }
 
     var scaleX: Double
         get() = propScaleX.value
@@ -120,7 +119,10 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     fun scaleXProperty() = propScaleX
     fun scaleYProperty() = propScaleY
 
-    fun angleProperty() = propAngle
+    /**
+     * @return angle for 2D rotations (along Z axis)
+     */
+    fun angleProperty() = propRotationZ
 
     fun positionOriginXProperty() = propPositionOriginX
     fun positionOriginYProperty() = propPositionOriginY
@@ -239,7 +241,7 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
      * @param byAngle rotation angle in degrees
      */
     fun rotateBy(byAngle: Double) {
-        propAngle.value += byAngle
+        propRotationZ.value += byAngle
     }
 
     /**
@@ -253,7 +255,7 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
      * @param vector the rotation vector / velocity vector
      */
     fun rotateToVector(vector: Point2D) {
-        propAngle.value = Math.toDegrees(Math.atan2(vector.y, vector.x))
+        propRotationZ.value = Math.toDegrees(Math.atan2(vector.y, vector.x))
     }
 
     /**

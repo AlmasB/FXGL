@@ -6,14 +6,20 @@
 
 package sandbox.test3d.firingrange;
 
+import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.components.TransformComponent;
+import javafx.beans.property.ObjectProperty;
+import javafx.geometry.Point3D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -35,6 +41,8 @@ public class FiringRangeApp extends GameApplication {
     private double lastY;
 
     private double cameraMoveSpeed = 0.5;
+
+    private Entity c1, c2, c3;
 
     @Override
     protected void initInput() {
@@ -59,6 +67,34 @@ public class FiringRangeApp extends GameApplication {
 
             var b = spawn("bullet", new SpawnData(0, 0).put("dir", transform.getDirection3D()));
             b.setPosition3D(transform.getPosition3D());
+        });
+
+        onKeyDown(KeyCode.DIGIT1, () -> {
+            ObjectProperty<Color> color = c1.getObject("colorProperty");
+
+            animationBuilder()
+                    .animate(color)
+                    .from(color.getValue())
+                    .to(FXGLMath.randomColor())
+                    .buildAndPlay();
+        });
+        onKeyDown(KeyCode.DIGIT2, () -> {
+            ObjectProperty<Color> color = c2.getObject("colorProperty");
+
+            animationBuilder()
+                    .animate(color)
+                    .from(color.getValue())
+                    .to(FXGLMath.randomColor())
+                    .buildAndPlay();
+        });
+        onKeyDown(KeyCode.DIGIT3, () -> {
+            ObjectProperty<Color> color = c3.getObject("colorProperty");
+
+            animationBuilder()
+                    .animate(color)
+                    .from(color.getValue())
+                    .to(FXGLMath.randomColor())
+                    .buildAndPlay();
         });
     }
 
@@ -121,6 +157,37 @@ public class FiringRangeApp extends GameApplication {
             var e = spawn("target", new SpawnData(-10 + i * 6, -15).put("delay", i * 0.25));
             e.setZ(15);
         }
+
+        c1 = spawn("coin", -5, -7, 4);
+        c2 = spawn("coin", 0, -7, 4);
+        c3 = spawn("coin", +5, -7, 4);
+
+        animationBuilder()
+                .duration(Duration.seconds(2))
+                .interpolator(Interpolators.BOUNCE.EASE_OUT())
+                .repeatInfinitely()
+                .rotate(c1)
+                .from(new Point3D(0, 0, 0))
+                .to(new Point3D(360, 0, 0))
+                .buildAndPlay();
+
+        animationBuilder()
+                .duration(Duration.seconds(2))
+                .interpolator(Interpolators.SMOOTH.EASE_IN())
+                .repeatInfinitely()
+                .rotate(c2)
+                .from(new Point3D(0, 0, 0))
+                .to(new Point3D(0, 360, 0))
+                .buildAndPlay();
+
+        animationBuilder()
+                .duration(Duration.seconds(2))
+                .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
+                .repeatInfinitely()
+                .rotate(c3)
+                .from(new Point3D(0, 0, 0))
+                .to(new Point3D(0, 0, 360))
+                .buildAndPlay();
     }
 
     public static void main(String[] args) {
