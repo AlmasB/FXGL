@@ -290,16 +290,26 @@ open class AnimationBuilder
 
     class ScaleAnimationBuilder(animationBuilder: AnimationBuilder) : AM(animationBuilder) {
 
-        private var startScale = Point2D(1.0, 1.0)
-        private var endScale = Point2D(1.0, 1.0)
+        private var startScale = Point3D(1.0, 1.0, 1.0)
+        private var endScale = Point3D(1.0, 1.0, 1.0)
         private var scaleOrigin: Point2D? = null
 
         fun from(start: Point2D): ScaleAnimationBuilder {
-            startScale = start
+            startScale = Point3D(start.x, start.y, 1.0)
             return this
         }
 
         fun to(end: Point2D): ScaleAnimationBuilder {
+            endScale = Point3D(end.x, end.y, 1.0)
+            return this
+        }
+
+        fun from(start: Point3D): ScaleAnimationBuilder {
+            startScale = start
+            return this
+        }
+
+        fun to(end: Point3D): ScaleAnimationBuilder {
             endScale = end
             return this
         }
@@ -317,11 +327,12 @@ open class AnimationBuilder
             }
 
             return makeConfig().build(
-                    AnimatedPoint2D(startScale, endScale),
+                    AnimatedPoint3D(startScale, endScale),
                     Consumer { value ->
                         objects.forEach {
                             it.scaleXProperty().value = value.x
                             it.scaleYProperty().value = value.y
+                            it.scaleZProperty().value = value.z
                         }
                     }
             )
@@ -443,6 +454,10 @@ private fun Node.toAnimatable(): Animatable {
             return scale?.yProperty() ?: n.scaleYProperty()
         }
 
+        override fun scaleZProperty(): DoubleProperty {
+            return scale?.zProperty() ?: n.scaleZProperty()
+        }
+
         override fun rotationXProperty(): DoubleProperty {
             // TODO: implement
 
@@ -521,6 +536,10 @@ private fun Entity.toAnimatable(): Animatable {
 
         override fun scaleYProperty(): DoubleProperty {
             return e.transformComponent.scaleYProperty()
+        }
+
+        override fun scaleZProperty(): DoubleProperty {
+            return e.transformComponent.scaleZProperty()
         }
 
         override fun rotationXProperty(): DoubleProperty {
