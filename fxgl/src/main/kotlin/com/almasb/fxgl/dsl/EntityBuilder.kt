@@ -36,7 +36,7 @@ class EntityBuilder {
 
     @Deprecated("Use FXGL.entityBuilder(data)")
     fun from(data: SpawnData) = this.also {
-        at(data.x, data.y)
+        at(data.x, data.y, data.z)
 
         if (data.hasKey("type")) {
             val value = data.get<Any>("type")
