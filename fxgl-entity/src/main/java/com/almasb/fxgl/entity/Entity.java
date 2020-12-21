@@ -839,6 +839,15 @@ public class Entity {
         transform.rotateToVector(vector);
     }
 
+    /**
+     * Sets scale X, Y and Z to given scale value.
+     */
+    public final void setScaleUniform(double scale) {
+        setScaleX(scale);
+        setScaleY(scale);
+        setScaleZ(scale);
+    }
+
     public final void setScaleX(double scaleX) {
         transform.setScaleX(scaleX);
     }
@@ -847,12 +856,20 @@ public class Entity {
         transform.setScaleY(scaleY);
     }
 
+    public final void setScaleZ(double scaleZ) {
+        transform.setScaleZ(scaleZ);
+    }
+
     public final double getScaleX() {
         return transform.getScaleX();
     }
 
     public final double getScaleY() {
         return transform.getScaleY();
+    }
+
+    public final double getScaleZ() {
+        return transform.getScaleZ();
     }
 
     // TRANSFORM END
