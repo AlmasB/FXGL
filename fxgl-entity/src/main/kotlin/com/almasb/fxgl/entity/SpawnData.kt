@@ -7,15 +7,21 @@
 package com.almasb.fxgl.entity
 
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 
 /**
  * Specifies data used to spawn a particular type of entity.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-open class SpawnData(val x: Double, val y: Double) {
+open class SpawnData
+@JvmOverloads constructor(
+        val x: Double = 0.0,
+        val y: Double = 0.0,
+        val z: Double = 0.0) {
 
     constructor(position: Point2D) : this(position.x, position.y)
+    constructor(position: Point3D) : this(position.x, position.y, position.z)
 
     val data = hashMapOf<String, Any>()
 
