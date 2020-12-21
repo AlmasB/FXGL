@@ -98,6 +98,7 @@ class ViewComponent : Component() {
         val scale = Scale()
         scale.xProperty().bind(entity.transformComponent.scaleXProperty())
         scale.yProperty().bind(entity.transformComponent.scaleYProperty())
+        scale.zProperty().bind(entity.transformComponent.scaleZProperty())
 
         scale.pivotXProperty().bind(entity.transformComponent.scaleOriginXProperty())
         scale.pivotYProperty().bind(entity.transformComponent.scaleOriginYProperty())
