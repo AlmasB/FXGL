@@ -4,10 +4,10 @@
  * See LICENSE for details.
  */
 
-
 package com.almasb.fxgl.entity.components
 
-import com.almasb.fxgl.core.math.FXGLMath.*
+import com.almasb.fxgl.core.math.FXGLMath.cosDeg
+import com.almasb.fxgl.core.math.FXGLMath.sinDeg
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
@@ -16,8 +16,8 @@ import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Point2D
 import javafx.geometry.Point3D
+import java.lang.Math.abs
 import java.lang.Math.asin
-import java.lang.Math.toDegrees
 
 /**
  *
@@ -281,6 +281,7 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         }
 
     // 3D transformations
+    // Note: these are super simplified XZ-only alternatives of "proper" 3D transformations
 
     /**
      * Unit vector that always points to where this transform is "looking at".
@@ -316,7 +317,24 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     }
 
     fun lookAt(point: Point3D) {
-        // TODO:
+        val directionToLook = point.subtract(x, y, z)
+
+        // ignore the Y axis and use XZ as 2D plane
+        rotationY = 90 - Math.toDegrees(Math.atan2(directionToLook.z, directionToLook.x))
+
+        // theta = asin ( opposite side / hypotenuse )
+        val theta = Math.toDegrees(asin(abs(directionToLook.y) / directionToLook.magnitude()))
+
+        if (directionToLook.y > 0) {
+            // looking down, range -90..0
+            rotationX = -theta
+
+        } else {
+            // looking up, range 0..90
+            rotationX = theta
+        }
+
+        updateDirection()
     }
 
     fun moveForward(distance: Double) {
@@ -350,6 +368,7 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         translateZ(-right.z)
     }
 
+    // TODO: do this before querying direction3D?
     private fun updateDirection() {
         // 1. handle rotation Y since it is added first
         // we adjust it since 0 deg is not Point3D(0.0, 0.0, 1.0) (which is what we need) but Point3D(1.0, 0.0, 0.0)
