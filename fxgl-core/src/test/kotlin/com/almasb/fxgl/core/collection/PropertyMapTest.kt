@@ -169,26 +169,34 @@ class PropertyMapTest {
 
         map.setValue("v", v)
 
-        map.addListener("v", PropertyChangeListener<Vec2> { prev, now ->
+        val l = PropertyChangeListener<Vec2> { prev, now ->
 
             if (count == 0) {
-                assertThat(now, `is`(not(v)))
-                assertThat(now.x, `is`(0f))
-                assertThat(now.y, `is`(0f))
-            } else {
                 assertThat(now, `is`(v))
                 assertThat(v.x, `is`(2f))
                 assertThat(v.y, `is`(3f))
+            } else {
+                assertThat(now, `is`(not(v)))
+                assertThat(now.x, `is`(0f))
+                assertThat(now.y, `is`(0f))
             }
 
             count++
-        })
+        }
 
-        map.setValue("v", Vec2())
+        map.addListener("v", l)
 
         v.set(2f, 3f)
 
         map.setValue("v", v)
+
+        map.setValue("v", Vec2())
+
+        assertThat(count, `is`(2))
+
+        // remove listener, so setValue shouldn't fire
+        map.removeListener("v", l)
+        map.setValue("v", Vec2())
 
         assertThat(count, `is`(2))
     }
