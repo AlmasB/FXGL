@@ -337,6 +337,22 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         updateDirection()
     }
 
+    /**
+     * Move forward on the XZ plane.
+     * No Y movement.
+     */
+    fun moveForwardXZ(distance: Double) {
+        val vector = direction3D.multiply(distance)
+
+        translate3D(vector.x, 0.0, vector.z)
+    }
+
+    fun moveBackXZ(distance: Double) {
+        val vector = direction3D.multiply(distance)
+
+        translate3D(-vector.x, 0.0, -vector.z)
+    }
+
     fun moveForward(distance: Double) {
         val vector = direction3D.multiply(distance)
 
