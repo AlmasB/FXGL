@@ -41,13 +41,9 @@ public class DevMenuSample extends GameApplication {
 
             System.out.println(getop("pos").hashCode());
 
-            // this works because it's a "new" object
-            //set("pos", new Vec2(550, 550));
-
             Vec2 v = geto("pos");
             v.set(FXGLMath.randomPoint(new Rectangle2D(0, 0, getAppWidth(), getAppHeight())));
 
-            // this doesn't at the moment since it's the "same" object. Need to fix, so listeners are fired.
             set("pos", v);
             System.out.println(geto("pos").toString());
         });
