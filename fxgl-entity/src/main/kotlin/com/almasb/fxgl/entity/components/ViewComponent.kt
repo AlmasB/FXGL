@@ -84,7 +84,6 @@ class ViewComponent : Component() {
         viewRoot.translateXProperty().bind(entity.xProperty().subtract(entity.transformComponent.positionOriginXProperty()))
         viewRoot.translateYProperty().bind(entity.yProperty().subtract(entity.transformComponent.positionOriginYProperty()))
 
-        // TODO: positionOriginZ
         viewRoot.translateZProperty().bind(entity.transformComponent.zProperty())
 
         viewRootNoTransform.translateXProperty().bind(viewRoot.translateXProperty())

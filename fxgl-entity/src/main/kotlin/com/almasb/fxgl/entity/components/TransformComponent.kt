@@ -289,7 +289,7 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     var direction3D: Point3D = Point3D(0.0, 0.0, 1.0)
         private set
 
-    var up3D = Point3D(0.0, 1.0, 0.0)
+    var up3D = Point3D(0.0, -1.0, 0.0)
         private set
 
     fun lookUpBy(angle: Double) {
@@ -347,44 +347,60 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         translate3D(vector.x, 0.0, vector.z)
     }
 
+    /**
+     * Move back on the XZ plane.
+     * No Y movement.
+     */
     fun moveBackXZ(distance: Double) {
         val vector = direction3D.multiply(distance)
 
         translate3D(-vector.x, 0.0, -vector.z)
     }
 
+    /**
+     * Move forward along [direction3D] (the way this transform is facing).
+     */
     fun moveForward(distance: Double) {
         val vector = direction3D.multiply(distance)
 
         translate3D(vector)
     }
 
+    /**
+     * Move back along [direction3D] (the opposite of the way this transform is facing).
+     */
     fun moveBack(distance: Double) {
         val vector = direction3D.multiply(-distance)
 
         translate3D(vector)
     }
 
-    // TODO: double check with up3D
+    /**
+     * Move left on the XZ plane.
+     * No Y movement.
+     */
     fun moveLeft(distance: Double) {
         val left = up3D.crossProduct(direction3D)
                 .normalize()
                 .multiply(distance)
 
-        translateX(-left.x)
-        translateZ(-left.z)
+        translateX(left.x)
+        translateZ(left.z)
     }
 
+    /**
+     * Move right on the XZ plane.
+     * No Y movement.
+     */
     fun moveRight(distance: Double) {
         val right = direction3D.crossProduct(up3D)
                 .normalize()
                 .multiply(distance)
 
-        translateX(-right.x)
-        translateZ(-right.z)
+        translateX(right.x)
+        translateZ(right.z)
     }
-
-    // TODO: do this before querying direction3D?
+    
     private fun updateDirection() {
         // 1. handle rotation Y since it is added first
         // we adjust it since 0 deg is not Point3D(0.0, 0.0, 1.0) (which is what we need) but Point3D(1.0, 0.0, 0.0)
