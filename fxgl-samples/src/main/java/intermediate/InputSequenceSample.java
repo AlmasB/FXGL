@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox.input;
+package intermediate;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -24,13 +24,12 @@ public class InputSequenceSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        // 1. get input service
         Input input = FXGL.getInput();
 
         var sequence = new InputSequence(KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R);
 
-        // 2. add key/mouse bound actions
-        // when app is running press F to see output to console
+        // the action fires only when the sequence above (Q, W, E, R) is complete
+        // useful for input combos
         input.addAction(new UserAction("Print Line") {
             @Override
             protected void onActionBegin() {

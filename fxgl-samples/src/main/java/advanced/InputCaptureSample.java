@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package advanced;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -15,18 +15,20 @@ import static com.almasb.fxgl.dsl.FXGL.getInput;
 import static com.almasb.fxgl.dsl.FXGL.onKeyDown;
 
 /**
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * Shows how to capture input and then re-apply.
  */
 public class InputCaptureSample extends GameApplication {
     @Override
-    protected void initSettings(GameSettings settings) {
-
-    }
+    protected void initSettings(GameSettings settings) { }
 
     private InputCapture capture;
 
     @Override
     protected void initInput() {
+        // press F to start capturing
+        // then press Q, W or E
+        // press G to stop capturing
+        // press I to apply what you captured with Q, W and E
         onKeyDown(KeyCode.F, () -> {
             capture = getInput().startCapture();
         });

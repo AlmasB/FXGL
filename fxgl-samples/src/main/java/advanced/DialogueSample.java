@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package advanced;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -13,7 +13,7 @@ import javafx.util.Duration;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * Shows how to use in-game dialogues.
  */
 public class DialogueSample extends GameApplication {
     @Override
@@ -21,7 +21,9 @@ public class DialogueSample extends GameApplication {
 
     @Override
     protected void initGame() {
+        // we schedule this to fire in 0.5 seconds since we can't change our scene while loading in background
         runOnce(() -> {
+            // the file simple.json is loaded from /assets/dialogues/
             var dialogueGraph = getAssetLoader().loadDialogueGraph("simple.json");
 
             getCutsceneService().startDialogueScene(dialogueGraph);
