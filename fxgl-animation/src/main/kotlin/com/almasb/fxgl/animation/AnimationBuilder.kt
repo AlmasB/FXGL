@@ -459,14 +459,12 @@ private fun Node.toAnimatable(): Animatable {
         }
 
         override fun rotationXProperty(): DoubleProperty {
-            // TODO: implement
-
+            Logger.get("AnimBuilder").warning("rotationX is not implemented")
             return SimpleDoubleProperty()
         }
 
         override fun rotationYProperty(): DoubleProperty {
-            // TODO: implement
-
+            Logger.get("AnimBuilder").warning("rotationY is not implemented")
             return SimpleDoubleProperty()
         }
 
