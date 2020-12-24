@@ -36,8 +36,6 @@ JNIEXPORT jint JNICALL Java_com_almasb_fxgl_controllerinput_impl_GameControllerI
             SDL_GameController* controller = SDL_GameControllerOpen(i);
             if (controller) {
                 controllers[num_controllers++] = controller;
-            } else {
-                // TODO: add a callback with SDL_GetError() to say failed to access game controller
             }
         }
     }
