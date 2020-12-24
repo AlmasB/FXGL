@@ -12,6 +12,7 @@ import javafx.scene.transform.Rotate
 import javafx.scene.transform.Translate
 
 /**
+ * A wrapper around JavaFX [PerspectiveCamera] that provides convenience functions.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -38,9 +39,6 @@ class Camera3D {
         transform.translateZ(-15.0)
 
         perspectiveCamera.transforms.addAll(translate, rotateY, rotateX)
-
-        // TODO: set default FOV?
-        // TODO: set default near far clips
 
         perspectiveCamera.fieldOfView = 60.0
         perspectiveCamera.farClip = 1000.0
