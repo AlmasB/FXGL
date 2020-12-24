@@ -400,7 +400,7 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         translateX(right.x)
         translateZ(right.z)
     }
-    
+
     private fun updateDirection() {
         // 1. handle rotation Y since it is added first
         // we adjust it since 0 deg is not Point3D(0.0, 0.0, 1.0) (which is what we need) but Point3D(1.0, 0.0, 0.0)

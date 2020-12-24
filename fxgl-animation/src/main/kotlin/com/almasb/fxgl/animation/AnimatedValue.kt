@@ -100,7 +100,6 @@ class AnimatedCubicBezierPoint2D
     }
 }
 
-// TODO: possibly merge with above
 class AnimatedQuadBezierPoint3D
 (val path: QuadCurve) : AnimatedValue<Point3D>(Point3D.ZERO, Point3D.ZERO) {
 
