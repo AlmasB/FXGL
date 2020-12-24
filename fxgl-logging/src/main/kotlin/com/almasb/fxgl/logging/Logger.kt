@@ -11,7 +11,8 @@ import java.io.StringWriter
 import java.time.LocalTime
 
 /**
- *
+ * A flexible logger that can be obtained by calling [Logger.get].
+ * The above call is safe to be made even before calling [Logger.configure].
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -33,9 +34,14 @@ private constructor(private val name: String) {
 
         @JvmStatic fun isConfigured(): Boolean = isConfigured
 
+        /**
+         * Configures all loggers obtained by [get] using the given [config].
+         * Can only be configured once.
+         * Subsequent calls will generate a warning log and are no-op.
+         */
         @JvmStatic fun configure(config: LoggerConfig) {
             if (isConfigured) {
-                doLog("Logger", "Logger already configured", LoggerLevel.WARNING)
+                doLog("Logger", "Logger already configured", LoggerLevel.WARN)
                 return
             }
 
@@ -45,6 +51,12 @@ private constructor(private val name: String) {
             doLog("Logger", "Configured Logger", LoggerLevel.DEBUG)
         }
 
+        /**
+         * Add [loggerOutput] for a given [level].
+         * Inclusivity level order is: DEBUG, INFO, WARN, FATAL.
+         * For example, an output added for WARN will also log FATAL messages, whereas
+         * an output added for DEBUG will include all other levels.
+         */
         @JvmStatic fun addOutput(loggerOutput: LoggerOutput, level: LoggerLevel) {
             outputs.add(loggerOutput)
 
@@ -62,7 +74,7 @@ private constructor(private val name: String) {
                     fatal.add(loggerOutput)
                 }
 
-                LoggerLevel.WARNING -> {
+                LoggerLevel.WARN -> {
                     warning.add(loggerOutput)
                     fatal.add(loggerOutput)
                 }
@@ -90,7 +102,7 @@ private constructor(private val name: String) {
                     fatal.remove(loggerOutput)
                 }
 
-                LoggerLevel.WARNING -> {
+                LoggerLevel.WARN -> {
                     warning.remove(loggerOutput)
                     fatal.remove(loggerOutput)
                 }
@@ -113,7 +125,7 @@ private constructor(private val name: String) {
                     info.forEach { it.append(message.value) }
                 }
 
-                LoggerLevel.WARNING -> {
+                LoggerLevel.WARN -> {
                     warning.forEach { it.append(message.value) }
                 }
 
@@ -140,7 +152,7 @@ private constructor(private val name: String) {
 
         @JvmStatic fun close() {
             if (isClosed) {
-                doLog("Logger", "Logger already closed", LoggerLevel.WARNING)
+                doLog("Logger", "Logger already closed", LoggerLevel.WARN)
                 return
             }
 
@@ -195,7 +207,7 @@ private constructor(private val name: String) {
      * @param message the message
      */
     fun warning(message: String) {
-        doLog(name, message, LoggerLevel.WARNING)
+        doLog(name, message, LoggerLevel.WARN)
     }
 
     /**
@@ -244,6 +256,9 @@ private constructor(private val name: String) {
     }
 }
 
+/**
+ * Collates the stack trace of this error to String.
+ */
 fun Throwable.stackTraceToString(): String {
     val sw = StringWriter()
     val pw = PrintWriter(sw)

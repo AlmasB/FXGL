@@ -14,12 +14,27 @@ import java.time.format.DateTimeFormatter
 import java.util.stream.Collectors
 
 /**
+ * Stores all incoming messages in memory, then saves the messages to a file on [close].
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class FileOutput
-@JvmOverloads constructor(private val baseFileName: String,
-                          private val logDirectory: String = "logs/",
-                          private val maxLogFiles: Int = 10) : LoggerOutput {
+@JvmOverloads constructor(
+
+        /**
+         * Base log file name without extension.
+         */
+        private val baseFileName: String,
+
+        /**
+         * The directory in which the log is to be saved.
+         */
+        private val logDirectory: String = "logs/",
+
+        /**
+         * Maximum number of log files to keep in the given directory.
+         */
+        private val maxLogFiles: Int = 10) : LoggerOutput {
 
     private val data = arrayListOf<String>()
 
