@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
 import com.almasb.fxgl.entity.component.SerializableComponent
+import com.almasb.fxgl.physics.Box3DShapeData
 import com.almasb.fxgl.physics.CollisionResult
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.SAT
@@ -18,6 +19,7 @@ import javafx.beans.property.ReadOnlyDoubleWrapper
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
+import javafx.geometry.BoundingBox
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 
@@ -293,7 +295,7 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
                 val angle2 = other.getEntity().rotation
 
                 if (angle1 == 0.0 && angle2 == 0.0) {
-                    collision = checkCollision(box1, box2)
+                    collision = checkCollision(box1, box2, transform, other.transform)
                 } else {
                     collision = checkCollision(box1, box2, angle1, angle2, transform, other.transform)
                 }
@@ -318,7 +320,27 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
      * @param box2 hit box 2
      * @return true iff box1 is colliding with box2
      */
-    private fun checkCollision(box1: HitBox, box2: HitBox): Boolean {
+    private fun checkCollision(box1: HitBox, box2: HitBox,
+                               t1: TransformComponent, t2: TransformComponent): Boolean {
+
+        if (box1.shape is Box3DShapeData && box2.shape is Box3DShapeData) {
+            // perform 3D collision check
+            val shape1 = box1.shape as Box3DShapeData
+            val shape2 = box2.shape as Box3DShapeData
+
+            val bbox1 = BoundingBox(
+                    t1.x - shape1.width / 2.0, t1.y - shape1.height / 2.0, t1.z - shape1.depth / 2.0,
+                    shape1.width, shape1.height, shape1.depth
+            )
+
+            val bbox2 = BoundingBox(
+                    t2.x - shape2.width / 2.0, t2.y - shape2.height / 2.0, t2.z - shape2.depth / 2.0,
+                    shape2.width, shape2.height, shape2.depth
+            )
+
+            return bbox1.intersects(bbox2)
+        }
+
         return box2.maxXWorld >= box1.minXWorld &&
                 box2.maxYWorld >= box1.minYWorld &&
                 box2.minXWorld <= box1.maxXWorld &&
