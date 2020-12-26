@@ -17,6 +17,8 @@ import javafx.scene.shape.QuadCurve
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.Shape
 import javafx.util.Duration
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * A value that can be animated (progressed) from value1 to value 2.
@@ -181,5 +183,26 @@ class AnimatedPath
         val key = (t * 100).toInt()
 
         return points[key]!!
+    }
+}
+
+class AnimatedStringIncreasing(value: String) : AnimatedValue<String>("", value) {
+
+    override fun animate(val1: String, val2: String, progress: Double, interpolator: Interpolator): String {
+        var index = (val2.length * interpolator.interpolate(0.0, 1.0, progress)).toInt()
+
+        index = max(index, 0)
+        index = min(index, val2.length)
+
+        return val2.substring(0, index)
+    }
+}
+
+class AnimatedStringDecreasing(value: String) : AnimatedValue<String>("", value) {
+
+    private val anim = AnimatedStringIncreasing(value)
+
+    override fun animate(val1: String, val2: String, progress: Double, interpolator: Interpolator): String {
+        return anim.animate(val1, val2, 1 - progress, interpolator)
     }
 }
