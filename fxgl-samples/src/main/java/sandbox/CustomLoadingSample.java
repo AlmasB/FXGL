@@ -6,6 +6,7 @@
 
 package sandbox;
 
+import com.almasb.fxgl.animation.AnimatedStringIncreasing;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -13,7 +14,6 @@ import com.almasb.fxgl.app.scene.LoadingScene;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.ui.ProgressBar;
-import dev.AnimatedString;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.effect.DropShadow;
@@ -136,7 +136,7 @@ public class CustomLoadingSample extends GameApplication {
                     .repeatInfinitely()
                     .duration(Duration.seconds(3))
                     .interpolator(Interpolators.BOUNCE.EASE_OUT())
-                    .animate(new AnimatedString("", "Loading..."))
+                    .animate(new AnimatedStringIncreasing("Loading..."))
                     .onProgress(s -> text.setText(s))
                     .buildAndPlay();
 
