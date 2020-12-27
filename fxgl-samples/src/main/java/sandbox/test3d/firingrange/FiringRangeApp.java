@@ -9,17 +9,18 @@ package sandbox.test3d.firingrange;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
+import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.entity.components.TransformComponent;
-import javafx.beans.property.ObjectProperty;
-import javafx.geometry.Point3D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Box;
 import javafx.util.Duration;
+
+import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -32,7 +33,6 @@ public class FiringRangeApp extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.setExperimental3D(true);
-        settings.setIntroEnabled(false);
     }
 
     private TransformComponent transform;
@@ -40,17 +40,15 @@ public class FiringRangeApp extends GameApplication {
     private double lastX;
     private double lastY;
 
-    private double cameraMoveSpeed = 0.5;
-
-    private Entity c1, c2, c3;
+    private double cameraMoveSpeed = 0.3;
 
     @Override
     protected void initInput() {
         onKey(KeyCode.W, () -> {
-            transform.moveForward(cameraMoveSpeed);
+            transform.moveForwardXZ(cameraMoveSpeed);
         });
         onKey(KeyCode.S, () -> {
-            transform.moveBack(cameraMoveSpeed);
+            transform.moveBackXZ(cameraMoveSpeed);
         });
         onKey(KeyCode.A, () -> {
             transform.moveLeft(cameraMoveSpeed);
@@ -64,50 +62,27 @@ public class FiringRangeApp extends GameApplication {
         });
 
         onBtnDown(MouseButton.PRIMARY, () -> {
-
-            var b = spawn("bullet", new SpawnData(0, 0).put("dir", transform.getDirection3D()));
-            b.setPosition3D(transform.getPosition3D());
+            spawn("bullet", new SpawnData(transform.getPosition3D()).put("dir", transform.getDirection3D()));
         });
+    }
 
-        onKeyDown(KeyCode.DIGIT1, () -> {
-            ObjectProperty<Color> color = c1.getObject("colorProperty");
-
-            animationBuilder()
-                    .animate(color)
-                    .from(color.getValue())
-                    .to(FXGLMath.randomColor())
-                    .buildAndPlay();
-        });
-        onKeyDown(KeyCode.DIGIT2, () -> {
-            ObjectProperty<Color> color = c2.getObject("colorProperty");
-
-            animationBuilder()
-                    .animate(color)
-                    .from(color.getValue())
-                    .to(FXGLMath.randomColor())
-                    .buildAndPlay();
-        });
-        onKeyDown(KeyCode.DIGIT3, () -> {
-            ObjectProperty<Color> color = c3.getObject("colorProperty");
-
-            animationBuilder()
-                    .animate(color)
-                    .from(color.getValue())
-                    .to(FXGLMath.randomColor())
-                    .buildAndPlay();
-        });
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("score", 0);
     }
 
     @Override
     protected void initGame() {
         getGameScene().setBackgroundColor(Color.DARKCYAN.brighter().brighter());
 
-        // 3D specific stuff, some of it may be merged with engine
         transform = getGameScene().getCamera3D().getTransform();
+        transform.setY(-15);
 
         getGameScene().setMouseGrabbed(true);
         getGameScene().setCursorInvisible();
 
+        // TODO: add max rotation clamp, e.g. start of game
+        // merge common stuff with engine
         getInput().addEventHandler(MouseEvent.MOUSE_MOVED, e -> {
             var mouseX = getInput().getMouseXWorld();
             var mouseY = getInput().getMouseYWorld();
@@ -144,8 +119,6 @@ public class FiringRangeApp extends GameApplication {
             lastY = mouseY;
         });
 
-        transform.translateY(-10);
-
         // normal stuff
 
         getGameWorld().addEntityFactory(new FiringRangeFactory());
@@ -153,41 +126,42 @@ public class FiringRangeApp extends GameApplication {
         spawn("levelBox");
         spawn("light", 0, -10);
 
-        for (int i = 0; i < 5; i++) {
-            var e = spawn("target", new SpawnData(-10 + i * 6, -15).put("delay", i * 0.25));
-            e.setZ(15);
-        }
+        run(() -> {
+            spawn("target", -25, -15, 25);
+        }, Duration.seconds(0.5));
+    }
 
-        c1 = spawn("coin", -5, -7, 4);
-        c2 = spawn("coin", 0, -7, 4);
-        c3 = spawn("coin", +5, -7, 4);
+    @Override
+    protected void initPhysics() {
+        onCollisionBegin(FiringRangeEntityType.BULLET, FiringRangeEntityType.TARGET, (bullet, target) -> {
+            inc("score", +1);
 
-        animationBuilder()
-                .duration(Duration.seconds(2))
-                .interpolator(Interpolators.BOUNCE.EASE_OUT())
-                .repeatInfinitely()
-                .rotate(c1)
-                .from(new Point3D(0, 0, 0))
-                .to(new Point3D(360, 0, 0))
-                .buildAndPlay();
+            bullet.removeFromWorld();
 
-        animationBuilder()
-                .duration(Duration.seconds(2))
-                .interpolator(Interpolators.SMOOTH.EASE_IN())
-                .repeatInfinitely()
-                .rotate(c2)
-                .from(new Point3D(0, 0, 0))
-                .to(new Point3D(0, 360, 0))
-                .buildAndPlay();
+            Box box = (Box) target.getViewComponent().getChildren().get(0);
+            PhongMaterial mat = (PhongMaterial) box.getMaterial();
 
-        animationBuilder()
-                .duration(Duration.seconds(2))
-                .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
-                .repeatInfinitely()
-                .rotate(c3)
-                .from(new Point3D(0, 0, 0))
-                .to(new Point3D(0, 0, 360))
-                .buildAndPlay();
+            mat.setDiffuseColor(Color.RED);
+
+            target.getComponent(CollidableComponent.class).setValue(false);
+            target.setUpdateEnabled(false);
+
+            target.translateZ(3);
+
+            animationBuilder()
+                    .onFinished(() -> target.removeFromWorld())
+                    .interpolator(Interpolators.EXPONENTIAL.EASE_IN())
+                    .translate(target)
+                    .from(target.getPosition3D())
+                    .to(target.getPosition3D().subtract(0, 10, 0))
+                    .buildAndPlay();
+        });
+    }
+
+    @Override
+    protected void initUI() {
+        var text = addVarText("score", getAppWidth() - 100, 50);
+        text.setFill(Color.BLACK);
     }
 
     public static void main(String[] args) {
