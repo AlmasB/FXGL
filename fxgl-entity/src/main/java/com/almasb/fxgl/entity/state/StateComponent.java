@@ -58,9 +58,20 @@ public final class StateComponent extends Component {
     }
 
     /**
-     * Changes current state to given state.
+     * Changes current state to given state only if current state != new state.
      */
     public void changeState(EntityState state) {
+        if (getCurrentState() == state)
+            return;
+
+        fsm.changeState(state);
+        currentState.setValue(state);
+    }
+
+    /**
+     * Changes current state to given state regardless of current state.
+     */
+    public void changeStateAllowReentry(EntityState state) {
         fsm.changeState(state);
         currentState.setValue(state);
     }

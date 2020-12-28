@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.entity.state
 
 import org.hamcrest.CoreMatchers.`is`
@@ -35,6 +35,42 @@ class StateComponentTest {
     @Test
     fun `EntityState does not allow concurrency`() {
         assertFalse(EntityState.IDLE.isAllowConcurrency)
+    }
+
+    @Test
+    fun `Change state does not set new state if current state equals new`() {
+        var count = 0
+
+        val state = object : EntityState() {
+            override fun onEnteredFrom(prevState: EntityState?) {
+                count++
+            }
+        }
+
+        stateComponent.changeState(state)
+        assertThat(count, `is`(1))
+
+        // does not change state since we are in [state]
+        stateComponent.changeState(state)
+        assertThat(count, `is`(1))
+    }
+
+    @Test
+    fun `Change state allowReentry allows reentry into current state`() {
+        var count = 0
+
+        val state = object : EntityState() {
+            override fun onEnteredFrom(prevState: EntityState?) {
+                count++
+            }
+        }
+
+        stateComponent.changeStateAllowReentry(state)
+        assertThat(count, `is`(1))
+
+        // changes state since we allow reentry
+        stateComponent.changeStateAllowReentry(state)
+        assertThat(count, `is`(2))
     }
 
     @Test
