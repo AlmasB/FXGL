@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.core.math.Vec2
@@ -16,6 +16,7 @@ import com.almasb.fxgl.entity.components.*
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 import javafx.geometry.Rectangle2D
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
@@ -387,6 +388,21 @@ class EntityTest {
     }
 
     @Test
+    fun `Set position 3D`() {
+        entity.setPosition3D(Point3D(2.0, 4.0, 5.0))
+
+        assertThat(entity.position3D, `is`(Point3D(2.0, 4.0, 5.0)))
+
+        entity.setPosition3D(1.0, 2.0, 3.0)
+
+        assertThat(entity.z, `is`(3.0))
+
+        entity.z = -2.0
+
+        assertThat(entity.z, `is`(-2.0))
+    }
+
+    @Test
     fun `Set position x y using anchor`() {
         entity.setAnchoredPosition(15.0, 10.0, Point2D(0.0, 0.0))
 
@@ -726,6 +742,7 @@ class EntityTest {
     fun `X Y angle type properties`() {
         assertTrue(entity.xProperty() === entity.transformComponent.xProperty())
         assertTrue(entity.yProperty() === entity.transformComponent.yProperty())
+        assertTrue(entity.zProperty() === entity.transformComponent.zProperty())
         assertTrue(entity.angleProperty() === entity.transformComponent.angleProperty())
         assertTrue(entity.widthProperty() === entity.boundingBoxComponent.widthProperty())
         assertTrue(entity.heightProperty() === entity.boundingBoxComponent.heightProperty())
@@ -751,6 +768,15 @@ class EntityTest {
 
         entity.translateY(120.0)
         assertThat(entity.position, `is`(Point2D(200.0, 200.0)))
+
+        entity.translate3D(Point3D(0.0, -120.0, 5.0))
+        assertThat(entity.position3D, `is`(Point3D(200.0, 80.0, 5.0)))
+
+        entity.translate3D(-120.0, 1.0, 5.0)
+        assertThat(entity.position3D, `is`(Point3D(80.0, 81.0, 10.0)))
+
+        entity.translateZ(-4.0)
+        assertThat(entity.position3D, `is`(Point3D(80.0, 81.0, 6.0)))
     }
 
     @Test
@@ -863,6 +889,15 @@ class EntityTest {
         entity.scaleY = 1.5
         assertThat(entity.scaleY, `is`(1.5))
         assertThat(entity.transformComponent.scaleY, `is`(1.5))
+
+        entity.scaleZ = 1.3
+        assertThat(entity.scaleZ, `is`(1.3))
+        assertThat(entity.transformComponent.scaleZ, `is`(1.3))
+
+        entity.setScaleUniform(0.5)
+        assertThat(entity.scaleX, `is`(0.5))
+        assertThat(entity.scaleY, `is`(0.5))
+        assertThat(entity.scaleZ, `is`(0.5))
     }
 
     @Test

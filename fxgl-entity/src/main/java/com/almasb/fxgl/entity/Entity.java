@@ -748,6 +748,13 @@ public class Entity {
     }
 
     /**
+     * Translate x, y and z by given dx, dy and dz respectively.
+     */
+    public final void translate3D(double dx, double dy, double dz) {
+        transform.translate3D(dx, dy, dz);
+    }
+
+    /**
      * Translate x by given value.
      */
     public final void translateX(double dx) {
