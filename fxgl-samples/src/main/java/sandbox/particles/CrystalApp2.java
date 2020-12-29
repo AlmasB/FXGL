@@ -12,13 +12,11 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.dsl.components.DraggableComponent;
 import com.almasb.fxgl.texture.ImagesKt;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Rectangle;
@@ -34,10 +32,6 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class CrystalApp2 extends GameApplication {
-
-    private enum Type {
-        PLAYER, CRYSTAL
-    }
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -55,11 +49,11 @@ public class CrystalApp2 extends GameApplication {
         onKeyDown(KeyCode.F, () -> {
             delayIndex = 0.0;
 
+            var point = FXGLMath.randomPoint(new Rectangle2D(0, 0, getAppWidth() - 200, getAppHeight() - 200));
+
             pixels.stream()
                     .sorted(Comparator.comparingDouble(p -> p.getLayoutY()))
                     .forEach(p -> {
-                        //p.setBlendMode(BlendMode.ADD);
-
                         animationBuilder()
                                 .duration(Duration.seconds(0.2))
                                 .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
@@ -70,25 +64,27 @@ public class CrystalApp2 extends GameApplication {
                                                 animationBuilder()
                                                         .delay(Duration.seconds(random(delayIndex, delayIndex + 0.1)))
                                                         .duration(Duration.seconds(1.5))
-                                                        .interpolator(Interpolators.EXPONENTIAL.EASE_IN())
+                                                        .interpolator(Interpolators.ELASTIC.EASE_OUT())
                                                         .translate(p)
-                                                        .alongPath(new CubicCurve(p.getTranslateX(), p.getTranslateY(),
-                                                                random(200, 300), random(-200, 20),
-                                                                random(600, 700), random(500, 700),
-                                                                650, 150))
+                                                        .from(new Point2D(p.getTranslateX(), p.getTranslateY()))
+                                                        .to(point)
+//                                                        .alongPath(new CubicCurve(p.getTranslateX(), p.getTranslateY(),
+//                                                                random(200, 600), random(-200, 220),
+//                                                                random(500, 700), random(300, 700),
+//                                                                650, 150))
                                                         .buildAndPlay();
 
                                                 delayIndex += 0.0001;
                                             })
                                             .duration(Duration.seconds(0.75))
-                                            .interpolator(Interpolators.BOUNCE.EASE_OUT())
+                                            .interpolator(Interpolators.RANDOM.EASE_OUT())
                                             .animate(new AnimatedValue<>(0.0, 1.0))
                                             .onProgress(progress -> {
                                                 var x = p.getTranslateX();
                                                 var y = p.getTranslateY();
 
                                                 var noiseValue = FXGLMath.noise2D(x * 0.002 * progress, y * 0.002 * t);
-                                                var angle = FXGLMath.toDegrees((noiseValue + 1) * Math.PI * 1.5);
+                                                var angle = FXGLMath.toDegrees((noiseValue + 1) * Math.PI * random(1.0, 6.0));
 
                                                 angle %= 360.0;
 
@@ -112,11 +108,6 @@ public class CrystalApp2 extends GameApplication {
                                 .to(new Point2D(3, 3))
                                 .buildAndPlay();
                     });
-
-//            pixels.parallelStream()
-//                    .forEach(p -> {
-//
-//                    });
         });
     }
 
@@ -124,7 +115,7 @@ public class CrystalApp2 extends GameApplication {
     protected void initGame() {
         getGameScene().setBackgroundColor(Color.BLACK);
 
-        var texture = texture("robot_stand.png").subTexture(new Rectangle2D(50, 30, 200, 220));
+        var texture = texture("anim/Attack (1).png", 430 / 2.0, 519 / 2.0);
 
         pixels = ImagesKt.toPixels(texture.getImage())
                 .stream()
@@ -161,45 +152,6 @@ public class CrystalApp2 extends GameApplication {
         if (t < 1) {
             up = true;
         }
-
-        // perlin noise
-//        pixels.forEach(p -> {
-//            var x = p.getTranslateX();
-//            var y = p.getTranslateY();
-//
-//            var noiseValue = FXGLMath.noise2D(x * 0.002 * t, y * 0.002 * t);
-//            var angle = FXGLMath.toDegrees((noiseValue + 1) * Math.PI * 1.5);
-//
-//            angle %= 360.0;
-//
-//            var v = Vec2.fromAngle(angle).normalizeLocal().mulLocal(FXGLMath.random(1.0, 25));
-//
-//            Vec2 velocity = (Vec2) p.getProperties().get("vel");
-//
-//            var vx = velocity.x * 0.8f + v.x * 0.2f;
-//            var vy = velocity.y * 0.8f + v.y * 0.2f;
-//
-//            velocity.x = vx;
-//            velocity.y = vy;
-//
-//            p.setTranslateX(x + velocity.x);
-//            p.setTranslateY(y + velocity.y);
-//        });
-    }
-
-    private void spawnCrystal() {
-
-        var e = entityBuilder().at(FXGLMath.randomPoint(new Rectangle2D(0, 0, getAppWidth() - 55, getAppHeight() - 55)))
-                .type(Type.CRYSTAL)
-                .view(texture("YellowCrystal.png").toAnimatedTexture(8, Duration.seconds(0.66)).loop())
-                .with(new DraggableComponent())
-                .build();
-
-        e.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, ev -> {
-            despawnWithScale(e, Duration.seconds(1), Interpolators.ELASTIC.EASE_IN());
-        });
-
-        spawnWithScale(e, Duration.seconds(1), Interpolators.ELASTIC.EASE_OUT());
     }
 
     public static void main(String[] args) {
