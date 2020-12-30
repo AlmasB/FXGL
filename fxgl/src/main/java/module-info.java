@@ -40,6 +40,7 @@ module com.almasb.fxgl.all {
     requires com.gluonhq.attach.lifecycle;
 
     opens com.almasb.fxgl.dsl to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.dsl.components to com.almasb.fxgl.core;
     opens com.almasb.fxgl.dev to com.almasb.fxgl.core;
     opens com.almasb.fxgl.dev.profiling to com.almasb.fxgl.core;
     opens com.almasb.fxgl.app to com.almasb.fxgl.core;
