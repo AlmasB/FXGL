@@ -13,6 +13,8 @@ import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.scene.Group
 
 /**
+ * Provides access to pushing / popping subscene stack, global input, timer, overlay root and application
+ * preferred width / height to lower-level modules.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -58,7 +60,14 @@ abstract class SceneService : EngineService() {
      */
     abstract val timer: Timer
 
+    /**
+     * Push a given [subScene] on top of current scene or subscene.
+     */
     abstract fun pushSubScene(subScene: SubScene)
 
+    /**
+     * Pop current subscene.
+     * Only use this to pop your own (previously pushed) subscene.
+     */
     abstract fun popSubScene()
 }
