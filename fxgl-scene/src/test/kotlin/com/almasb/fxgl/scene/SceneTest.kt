@@ -17,13 +17,11 @@ import javafx.scene.Node
 import javafx.scene.layout.Region
 import javafx.scene.shape.Rectangle
 import javafx.scene.transform.Scale
-import javafx.scene.transform.Transform
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
+import org.hamcrest.Matchers.contains
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
