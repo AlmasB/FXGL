@@ -66,10 +66,6 @@ class SceneTest {
         val sceneService = object : SceneService() {
             override val overlayRoot: Group
                 get() = Group()
-            override val appWidth: Int
-                get() = 600
-            override val appHeight: Int
-                get() = 600
             override fun prefWidthProperty(): ReadOnlyDoubleProperty {
                 return ReadOnlyDoubleWrapper(600.0).readOnlyProperty
             }

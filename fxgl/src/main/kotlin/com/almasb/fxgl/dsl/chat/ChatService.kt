@@ -48,7 +48,8 @@ class ChatService : EngineService() {
     //private val connectionsToUserNames = hashMapOf<Socket, String>()
 
     override fun onInit() {
-        chatSubScene = ChatSubScene(sceneService.appWidth, sceneService.appHeight)
+        // TODO: should use prefWidthProperty()
+        chatSubScene = ChatSubScene(sceneService.prefWidth.toInt(), sceneService.prefHeight.toInt())
         chatSubScene.inputHandler = Consumer {
 
             if (endpoint is Server) {

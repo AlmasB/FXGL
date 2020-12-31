@@ -25,17 +25,27 @@ abstract class SceneService : EngineService() {
     abstract val overlayRoot: Group
 
     /**
-     * @return target app width, [prefWidthProperty] is preferred
+     * @return preferred width (depends on auto-scaling) of the active scene at the time of call
      */
-    abstract val appWidth: Int
+    val prefWidth: Double
+        get() = prefWidthProperty().value
 
     /**
-     * @return target app height, [prefHeightProperty] is preferred
+     * @return preferred height (depends on auto-scaling) of the active scene at the time of call
      */
-    abstract val appHeight: Int
+    val prefHeight: Double
+        get() = prefHeightProperty().value
 
+    /**
+     * @return a convenience property that auto-sets to target (app) width if auto-scaling is enabled
+     * and uses actual javafx scene width if not
+     */
     abstract fun prefWidthProperty(): ReadOnlyDoubleProperty
 
+    /**
+     * @return a convenience property that auto-sets to target (app) height if auto-scaling is enabled
+     * and uses actual javafx scene height if not
+     */
     abstract fun prefHeightProperty(): ReadOnlyDoubleProperty
 
     /**

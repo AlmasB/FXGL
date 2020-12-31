@@ -44,10 +44,6 @@ class NotificationServiceTest {
         val sceneService = object : SceneService() {
             override val overlayRoot: Group
                 get() = theRoot
-            override val appWidth: Int
-                get() = 800
-            override val appHeight: Int
-                get() = 600
 
             override fun prefWidthProperty(): ReadOnlyDoubleProperty {
                 return ReadOnlyDoubleWrapper(800.0).readOnlyProperty

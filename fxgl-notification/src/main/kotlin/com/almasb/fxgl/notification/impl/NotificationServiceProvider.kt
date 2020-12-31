@@ -44,8 +44,8 @@ class NotificationServiceProvider : NotificationService() {
 
     private val notificationView by lazy {
         ReflectionUtils.newInstance(notificationViewClass).also {
-            it.appWidth = sceneService.appWidth
-            it.appHeight = sceneService.appHeight
+            it.appWidth = sceneService.prefWidth.toInt()
+            it.appHeight = sceneService.prefHeight.toInt()
         }
     }
 

@@ -342,12 +342,6 @@ class FXGLApplication : Application() {
          */
         override val overlayRoot = Group()
 
-        override val appWidth
-            get() = settings.width
-
-        override val appHeight
-            get() = settings.height
-
         override fun prefWidthProperty(): ReadOnlyDoubleProperty = settings.prefWidthProperty()
 
         override fun prefHeightProperty(): ReadOnlyDoubleProperty = settings.prefHeightProperty()
@@ -508,8 +502,8 @@ class FXGLApplication : Application() {
                         ImageView(PauseMenuBGGen.generate().toImage()).also {
                             it.scaleX = 4.0
                             it.scaleY = 4.0
-                            it.translateX = appWidth / 2.0
-                            it.translateY = appHeight / 2.0
+                            it.translateX = prefWidth / 2.0
+                            it.translateY = prefHeight / 2.0
                         }
                     }
 
