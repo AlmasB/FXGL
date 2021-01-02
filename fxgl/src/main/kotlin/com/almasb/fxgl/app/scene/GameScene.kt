@@ -150,6 +150,10 @@ internal constructor(width: Int, height: Int,
             isZSortingNeeded = false
         }
 
+        if (is3D) {
+            camera3D.update(tpf)
+        }
+
         if (isMouseGrabbed) {
             if (input.mouseXWorld < 10) {
                 mouseWarper.warp()

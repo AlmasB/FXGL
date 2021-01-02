@@ -27,6 +27,10 @@ class Camera3D {
 
     val perspectiveCamera = PerspectiveCamera(true)
 
+    var moveSpeed = 15.0
+
+    private var tpfMoveSpeed = moveSpeed * 0.017
+
     init {
         translate.xProperty().bind(transform.xProperty())
         translate.yProperty().bind(transform.yProperty())
@@ -42,5 +46,33 @@ class Camera3D {
 
         perspectiveCamera.fieldOfView = 60.0
         perspectiveCamera.farClip = 1000.0
+    }
+
+    fun update(tpf: Double) {
+        tpfMoveSpeed = tpf * moveSpeed
+    }
+
+    fun moveForward() {
+        transform.moveForward(tpfMoveSpeed)
+    }
+
+    fun moveBack() {
+        transform.moveBack(tpfMoveSpeed)
+    }
+
+    fun moveForwardXZ() {
+        transform.moveForwardXZ(tpfMoveSpeed)
+    }
+
+    fun moveBackXZ() {
+        transform.moveBackXZ(tpfMoveSpeed)
+    }
+
+    fun moveLeft() {
+        transform.moveLeft(tpfMoveSpeed)
+    }
+
+    fun moveRight() {
+        transform.moveRight(tpfMoveSpeed)
     }
 }
