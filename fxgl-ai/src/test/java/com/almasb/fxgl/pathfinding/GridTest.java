@@ -19,10 +19,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("java:S5786")
 public class GridTest {
@@ -51,6 +48,17 @@ public class GridTest {
         grid = new Grid<>(MockCell.class, 5, 5, CELL_WIDTH, CELL_HEIGHT, new MockCellGenerator());
         assertEquals(CELL_WIDTH, grid.getCellWidth());
         assertEquals(CELL_HEIGHT, grid.getCellHeight());
+    }
+
+    @Test
+    public void testConstructorWithNegativeCellSize() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Grid<>(MockCell.class, 5, 5, -1, CELL_HEIGHT, new MockCellGenerator());
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Grid<>(MockCell.class, 5, 5, CELL_WIDTH, -1, new MockCellGenerator());
+        });
     }
 
     @Test
