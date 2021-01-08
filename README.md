@@ -123,6 +123,7 @@ If you'd like your project featured here, just add a note in the [Chat](https://
 If you want to build FXGL from sources or want to contribute,
 please see the [Contribution Guide](CONTRIBUTING.md) (including non-code).
 FXGL is fully modular, so new contributors do not need to understand the entire codebase, only the module to which the contribution is made.
+Contributions will be reviewed in accordance with the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 You can support the FXGL development / show interest by simply starring the repo or becoming a [sponsor](https://github.com/sponsors/AlmasB).
 
