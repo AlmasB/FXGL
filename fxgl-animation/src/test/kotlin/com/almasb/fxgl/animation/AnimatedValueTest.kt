@@ -61,7 +61,7 @@ class AnimatedValueTest {
         assertThat(anim.getValue(0.5), `is`(Point2D(38.75, 26.0)))
     }
 	
-	@Test
+    @Test
     fun `Bezier quad3D`() {
         val anim = AnimatedQuadBezierPoint3D(QuadCurve(0.0, 0.0, 15.0, 3.0, 100.0, 100.0))
 
