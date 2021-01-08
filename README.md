@@ -21,12 +21,12 @@ JavaFX Game Development Framework
 
 ### Good for:
 
-* Any 2D genre (side-scroller / platformer / arcade / RPG)
+* Any 2D game (side-scroller / platformer / arcade / RPG)
+* Any business applications with complex UI controls / animations
 * Experimental 3D
-* Complex UI controls
 * Hobby / academic / commercial projects
 * Teaching / learning / improving game development skills
-* Fast prototyping of game ideas
+* Fast prototyping of app ideas
 
 ### Minimal Example
 
