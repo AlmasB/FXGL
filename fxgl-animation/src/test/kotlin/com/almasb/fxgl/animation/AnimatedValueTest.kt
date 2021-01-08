@@ -60,6 +60,24 @@ class AnimatedValueTest {
         assertThat(anim.getValue(1.0), `is`(Point2D(100.0, 100.0)))
         assertThat(anim.getValue(0.5), `is`(Point2D(38.75, 26.0)))
     }
+	
+	@Test
+    fun `Bezier quad3D`() {
+        val anim = AnimatedQuadBezierPoint3D(QuadCurve(0.0, 0.0, 15.0, 3.0, 100.0, 100.0))
+
+        assertThat(anim.getValue(0.0), `is`(Point3D(0.0, 0.0, 0.0)))
+        assertThat(anim.getValue(1.0), `is`(Point3D(100.0, 100.0, 0.0)))
+        assertThat(anim.getValue(0.5), `is`(Point3D(32.5, 26.5, 0.0)))
+    }
+
+    @Test
+    fun `Bezier cubic3D`() {
+        val anim = AnimatedCubicBezierPoint3D(CubicCurve(0.0, 0.0, 15.0, 3.0, 55.0, 33.0, 100.0, 100.0))
+
+        assertThat(anim.getValue(0.0), `is`(Point3D(0.0, 0.0, 0.0)))
+        assertThat(anim.getValue(1.0), `is`(Point3D(100.0, 100.0, 0.0)))
+        assertThat(anim.getValue(0.5), `is`(Point3D(38.75, 26.0, 0.0)))
+    }
 
     @Test
     fun `Color`() {

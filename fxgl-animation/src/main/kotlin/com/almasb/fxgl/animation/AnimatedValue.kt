@@ -102,32 +102,25 @@ class AnimatedCubicBezierPoint2D
     }
 }
 
-class AnimatedQuadBezierPoint3D
+internal class AnimatedQuadBezierPoint3D
 (val path: QuadCurve) : AnimatedValue<Point3D>(Point3D.ZERO, Point3D.ZERO) {
+	
+	private val Animated2D = AnimatedQuadBezierPoint2D(path)
 
     override fun animate(val1: Point3D, val2: Point3D, progress: Double, interpolator: Interpolator): Point3D {
-        val p = FXGLMath.bezier(
-                Point2D(path.startX, path.startY),
-                Point2D(path.controlX, path.controlY),
-                Point2D(path.endX, path.endY),
-                interpolator.interpolate(0.0, 1.0, progress)
-        )
+        val p = Animated2D.animate(Point2D(val1.x, val1.y), Point2D(val2.x, val2.y), progress, interpolator)
 
         return Point3D(p.x, p.y, 0.0)
     }
 }
 
-class AnimatedCubicBezierPoint3D
+internal class AnimatedCubicBezierPoint3D
 (val path: CubicCurve) : AnimatedValue<Point3D>(Point3D.ZERO, Point3D.ZERO) {
+	
+	private val Animated2D = AnimatedCubicBezierPoint2D(path)
 
     override fun animate(val1: Point3D, val2: Point3D, progress: Double, interpolator: Interpolator): Point3D {
-        val p = FXGLMath.bezier(
-                Point2D(path.startX, path.startY),
-                Point2D(path.controlX1, path.controlY1),
-                Point2D(path.controlX2, path.controlY2),
-                Point2D(path.endX, path.endY),
-                interpolator.interpolate(0.0, 1.0, progress)
-        )
+        val p = Animated2D.animate(Point2D(val1.x, val1.y), Point2D(val2.x, val2.y), progress, interpolator)
 
         return Point3D(p.x, p.y, 0.0)
     }
