@@ -83,7 +83,7 @@ class ViewComponent : Component() {
     override fun onAdded() {
         viewRoot.translateXProperty().bind(entity.xProperty().subtract(entity.transformComponent.positionOriginXProperty()))
         viewRoot.translateYProperty().bind(entity.yProperty().subtract(entity.transformComponent.positionOriginYProperty()))
-	viewRoot.translateZProperty().bind(entity.zProperty().subtract(entity.transformComponent.positionOriginZProperty()))
+        viewRoot.translateZProperty().bind(entity.zProperty().subtract(entity.transformComponent.positionOriginZProperty()))
 
         viewRootNoTransform.translateXProperty().bind(viewRoot.translateXProperty())
         viewRootNoTransform.translateYProperty().bind(viewRoot.translateYProperty())
