@@ -41,6 +41,7 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
 
     private val propPositionOriginX = SimpleDoubleProperty(0.0)
     private val propPositionOriginY = SimpleDoubleProperty(0.0)
+    private val propPositionOriginZ = SimpleDoubleProperty(0.0)
 
     private val propScaleOriginX = SimpleDoubleProperty(0.0)
     private val propScaleOriginY = SimpleDoubleProperty(0.0)
@@ -132,6 +133,7 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
 
     fun positionOriginXProperty() = propPositionOriginX
     fun positionOriginYProperty() = propPositionOriginY
+    fun positionOriginZProperty() = propPositionOriginZ
 
     fun scaleOriginXProperty() = propScaleOriginX
     fun scaleOriginYProperty() = propScaleOriginY
