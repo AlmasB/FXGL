@@ -60,6 +60,10 @@ class TopDownMoveComponent(var speed: Double) : Component() {
         }
     }
 
+    /**
+     * Tell the component which entity types to collide against, i.e.
+     * during move the entity will be blocked by given entity types.
+     */
     fun collidables(vararg entityTypes: Enum<*>): TopDownMoveComponent {
         collidableEntities = entity.world.getGroup(*entityTypes)
         return this
