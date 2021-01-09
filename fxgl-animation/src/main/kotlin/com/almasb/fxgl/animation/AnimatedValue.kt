@@ -108,7 +108,7 @@ internal class AnimatedQuadBezierPoint3D
     private val animated2D = AnimatedQuadBezierPoint2D(path)
 
     override fun animate(val1: Point3D, val2: Point3D, progress: Double, interpolator: Interpolator): Point3D {
-        val p = Animated2D.animate(Point2D(val1.x, val1.y), Point2D(val2.x, val2.y), progress, interpolator)
+        val p = animated2D.animate(Point2D(val1.x, val1.y), Point2D(val2.x, val2.y), progress, interpolator)
 
         return Point3D(p.x, p.y, 0.0)
     }
@@ -120,7 +120,7 @@ internal class AnimatedCubicBezierPoint3D
     private val animated2D = AnimatedCubicBezierPoint2D(path)
 
     override fun animate(val1: Point3D, val2: Point3D, progress: Double, interpolator: Interpolator): Point3D {
-        val p = Animated2D.animate(Point2D(val1.x, val1.y), Point2D(val2.x, val2.y), progress, interpolator)
+        val p = animated2D.animate(Point2D(val1.x, val1.y), Point2D(val2.x, val2.y), progress, interpolator)
 
         return Point3D(p.x, p.y, 0.0)
     }
