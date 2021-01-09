@@ -12,9 +12,11 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
+ * Helper class that allows injecting values into fields in test environments.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class InjectInTest {
+public final class InjectInTest {
 
     private InjectInTest() {}
 
@@ -38,13 +40,13 @@ public class InjectInTest {
     }
 
     /**
-     * Convenience method to mass inject multiple values
+     * Convenience method to mass inject multiple values.
+     *
      * @param lookup the lookup created by the module where class of instance lives
      * @param instance object to inject to
-     * @param fieldsMap Map of field names of instances and values to inject
+     * @param fieldsMap map of field names of instances and values to inject
      */
     public static void inject(MethodHandles.Lookup lookup, Object instance, Map<String, Object> fieldsMap) {
-        fieldsMap
-                .forEach((key, value) -> inject(lookup, instance, key, value));
+        fieldsMap.forEach((key, value) -> inject(lookup, instance, key, value));
     }
 }
