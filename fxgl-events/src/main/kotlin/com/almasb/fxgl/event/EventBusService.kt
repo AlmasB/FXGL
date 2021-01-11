@@ -9,6 +9,7 @@ package com.almasb.fxgl.event
 import com.almasb.fxgl.core.EngineService
 
 /**
+ * Event bus service allows injection of the event bus instance into other services.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

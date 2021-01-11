@@ -25,7 +25,7 @@ class EventBus {
     private val eventHandlers = Group()
 
     /**
-     * Register event handler for event type.
+     * Register [eventHandler] for [eventType].
      */
     fun <T : Event> addEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>): Subscriber {
         eventHandlers.addEventHandler(eventType, eventHandler)
@@ -35,14 +35,14 @@ class EventBus {
     }
 
     /**
-     * Remove event handler for event type.
+     * Remove [eventHandler] for [eventType].
      */
     fun <T : Event> removeEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>) {
         eventHandlers.removeEventHandler(eventType, eventHandler)
     }
 
     /**
-     * Fire given event.
+     * Fire given [event].
      * All listening parties will be notified.
      * Events will be handled on the same thread that fired the event,
      * i.e. synchronous.
