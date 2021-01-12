@@ -133,6 +133,7 @@ You can support the FXGL development / show interest by simply starring the repo
 * @SergeMerzliakov
 * @mbains
 * @sabit86
+* @hendrikebbers
 
 ### Contact
 
