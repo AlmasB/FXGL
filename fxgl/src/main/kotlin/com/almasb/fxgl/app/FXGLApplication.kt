@@ -110,7 +110,7 @@ class FXGLApplication : Application() {
         FXGL.inject(engine, app, this)
 
         // get window up ASAP
-        mainWindow = MainWindow(stage, StartupScene(settings.width, settings.height), settings)
+        mainWindow = MainWindow(stage, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
         mainWindow.show()
 
         // start initialization of services on a background thread

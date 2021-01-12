@@ -23,8 +23,9 @@ import javafx.scene.shape.Rectangle
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class StartupScene(appWidth: Int, appHeight: Int) : FXGLScene(appWidth, appHeight) {
+abstract class StartupScene(appWidth: Int, appHeight: Int) : FXGLScene(appWidth, appHeight)
 
+class FXGLStartupScene(appWidth: Int, appHeight: Int) : StartupScene(appWidth, appHeight) {
     init {
         val bg = Rectangle(appWidth.toDouble(), appHeight.toDouble())
 
