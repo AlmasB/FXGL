@@ -4,22 +4,25 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package advanced;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.ui.FXGLButton;
 import javafx.application.Application;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
+import static com.almasb.fxgl.dsl.FXGL.*;
+
 /**
+ * Shows how to use FXGL within JavaFX.
+ * Though using JavaFX within FXGL (i.e. extends GameApplication) is the recommended way.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class CustomApp extends Application {
+public class JavaFXAppWithFXGLSample extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -27,22 +30,16 @@ public class CustomApp extends Application {
     }
 
     public static void main(String[] args) {
-        System.setProperty("os.target", "ios");
-        System.setProperty("os.name", "iOS");
-        System.setProperty("glass.platform", "ios");
-        System.setProperty("targetos.name", "iOS");
-
         launch(args);
     }
 
     public static class GameApp extends GameApplication {
         @Override
-        protected void initSettings(GameSettings settings) {
-        }
+        protected void initSettings(GameSettings settings) { }
 
         @Override
         protected void initGame() {
-            FXGL.entityBuilder()
+            entityBuilder()
                     .at(200, 200)
                     .view(new Circle(15, Color.BLUE))
                     .buildAndAttach();
@@ -50,13 +47,13 @@ public class CustomApp extends Application {
 
         @Override
         protected void initUI() {
-            Button btn = new FXGLButton("HELLO");
+            Button btn = getUIFactoryService().newButton("Hello!");
             
             btn.setOnAction(e -> {
-                FXGL.getGameWorld().getEntities().get(0).translate(5, 5);
+                getGameWorld().getEntities().get(0).translate(5, 5);
             });
 
-            FXGL.addUINode(btn, 100, 100);
+            addUINode(btn, 100, 100);
         }
     }
 }

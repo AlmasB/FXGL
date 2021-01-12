@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package intermediate;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -19,25 +19,31 @@ import javafx.scene.shape.Rectangle;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
+ * Shows how to use ActivatorComponent.
+ * It is typically used for in-game buttons, triggers, levers, etc.,
+ * i.e. anything that can be pressed / unpressed.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class ActivatorSample extends GameApplication {
+
+    private Entity button;
+    private Entity door;
+
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(500);
         settings.setHeightFromRatio(16/9.0);
     }
 
-    private Entity door;
-    private Entity button;
-
     @Override
     protected void initInput() {
-        onKeyDown(KeyCode.F, "", () -> {
+        onKeyDown(KeyCode.F, () -> {
             getGameWorld()
                     .getEntities()
                     .get(0)
-                    .call("press");
+                    .getComponent(ActivatorComponent.class)
+                    .press();
         });
     }
 

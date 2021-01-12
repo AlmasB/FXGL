@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox.levels;
+package intermediate.levels.text;
 
 import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
 import com.almasb.fxgl.dsl.components.KeepOnScreenComponent;
@@ -22,7 +22,7 @@ import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class MyEntityFactory implements EntityFactory {
+public class TextLevelEntityFactory implements EntityFactory {
 
     @Spawns("r,rect,type1")
     public Entity newRectangle(SpawnData data) {
@@ -41,12 +41,12 @@ public class MyEntityFactory implements EntityFactory {
     @Spawns("c,circle,type2,type3")
     public Entity newCircle(SpawnData data) {
         return entityBuilder(data)
-                .view(new Circle(15))
+                .view(new Circle(15, 15, 15))
                 .build();
     }
 
     @Spawns("Wall,Player,Coin")
-    public Entity newObjectgid(SpawnData data) {
+    public Entity newObject(SpawnData data) {
         return entityBuilder(data)
                 .with(new KeepOnScreenComponent().onlyHorizontally())
                 .with(new ExpireCleanComponent(Duration.seconds(3)))

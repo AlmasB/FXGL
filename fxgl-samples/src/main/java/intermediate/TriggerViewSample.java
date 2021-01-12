@@ -4,15 +4,13 @@
  * See LICENSE for details.
  */
 
-package sandbox.view;
+package intermediate;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.KeyTrigger;
 import com.almasb.fxgl.input.view.TriggerView;
-import com.almasb.fxgl.ui.FXGLTextFlow;
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -21,32 +19,36 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextFlow;
 
-import static com.almasb.fxgl.dsl.FXGL.addUINode;
-import static com.almasb.fxgl.dsl.FXGL.getUIFactoryService;
+import static com.almasb.fxgl.dsl.FXGL.*;
 
-public class ColorableTextSample extends GameApplication {
+/**
+ * Shows how to use TriggerView for mouse buttons and key codes.
+ */
+public class TriggerViewSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1700);
+        settings.setWidth(1600);
         settings.setHeight(900);
     }
 
     @Override
     protected void initUI() {
-        HBox box = new HBox(5);
+        getGameScene().setBackgroundColor(Color.DARKGREY);
+
+        HBox box1 = new HBox(5);
 
         char c = 'A';
 
         while (c != 'N') {
-            addKey(box.getChildren(), KeyCode.getKeyCode("" + c), Color.RED, 34);
+            box1.getChildren().add(makeView(KeyCode.getKeyCode("" + c), Color.RED, 34));
             c++;
         }
 
         HBox box2 = new HBox(5);
 
         while (c != 'Z' + 1) {
-            addKey(box2.getChildren(), KeyCode.getKeyCode("" + c), Color.BLUE, 26);
+            box2.getChildren().add(makeView(KeyCode.getKeyCode("" + c), Color.BLUE, 26));
             c++;
         }
 
@@ -58,14 +60,14 @@ public class ColorableTextSample extends GameApplication {
                 .append(" to use ")
                 .append("Enhanced Vision", Color.DARKGREEN);
 
-        FXGLTextFlow t2 = getUIFactoryService().newTextFlow();
-        t2.append(new TriggerView(new KeyTrigger(KeyCode.A, InputModifier.CTRL))).append("   ");
-        t2.append(new TriggerView(new KeyTrigger(KeyCode.B, InputModifier.SHIFT))).append("   ");
-        t2.append(new TriggerView(new KeyTrigger(KeyCode.C, InputModifier.ALT))).append("   ");
-        t2.append(new TriggerView(new KeyTrigger(KeyCode.SPACE, InputModifier.ALT))).append("   ");
+        TextFlow t2 = getUIFactoryService().newTextFlow()
+                .append(new TriggerView(new KeyTrigger(KeyCode.A, InputModifier.CTRL))).append("   ")
+                .append(new TriggerView(new KeyTrigger(KeyCode.B, InputModifier.SHIFT))).append("   ")
+                .append(new TriggerView(new KeyTrigger(KeyCode.C, InputModifier.ALT))).append("   ")
+                .append(new TriggerView(new KeyTrigger(KeyCode.SPACE, InputModifier.ALT))).append("   ");
 
-        FXGLTextFlow t3 = getUIFactoryService().newTextFlow();
-        t3.append("Hold: ")
+        TextFlow t3 = getUIFactoryService().newTextFlow()
+                .append("Hold: ")
                 .append(MouseButton.PRIMARY, Color.DARKSALMON)
                 .append(" and ")
                 .append(MouseButton.SECONDARY, Color.LIGHTPINK)
@@ -76,11 +78,11 @@ public class ColorableTextSample extends GameApplication {
                 .append("The New Temple", Color.DARKCYAN, 34);
 
         addUINode(new VBox(20,
-                box,
+                box1,
                 box2,
-                getKeyTestBox(KeyCode.TAB, Color.PINK),
-                getKeyTestBox(KeyCode.MINUS, Color.PURPLE),
-                getKeyTestBox(KeyCode.PLUS, Color.GRAY)
+                makeDifferentSizeViews(KeyCode.TAB, Color.PINK),
+                makeDifferentSizeViews(KeyCode.MINUS, Color.PURPLE),
+                makeDifferentSizeViews(KeyCode.PLUS, Color.GRAY)
                 ));
 
         addUINode(new VBox(20,
@@ -92,18 +94,20 @@ public class ColorableTextSample extends GameApplication {
                 850, 0);
     }
 
-    private HBox getKeyTestBox(KeyCode code, Color color) {
+    private HBox makeDifferentSizeViews(KeyCode code, Color color) {
         HBox box = new HBox(5);
-        addKey(box.getChildren(), code, color, 108);
-        addKey(box.getChildren(), code, color, 50);
-        addKey(box.getChildren(), code, color, 34);
-        addKey(box.getChildren(), code, color, 26);
-        addKey(box.getChildren(), code, color, 12);
+
+        int[] sizes = new int[] { 108, 50, 34, 26, 12 };
+
+        for (int size : sizes) {
+            box.getChildren().add(makeView(code, color, size));
+        }
+
         return box;
     }
 
-    private void addKey(ObservableList<Node> list, KeyCode code, Color color, int size) {
-        list.add(new TriggerView(new KeyTrigger(code), color, size));
+    private Node makeView(KeyCode code, Color color, int size) {
+        return new TriggerView(new KeyTrigger(code), color, size);
     }
 
     public static void main(String[] args) {
