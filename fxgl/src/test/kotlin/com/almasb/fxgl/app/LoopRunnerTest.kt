@@ -59,7 +59,7 @@ class LoopRunnerTest {
         assertThat(loop.tpf, closeTo(0.016, 0.01))
         assertThat(loop.fps.toDouble(), closeTo(60.0, 1.0))
 
-        assertThat(t, closeTo(1.0, 0.1))
+        assertThat(t, closeTo(1.0, 0.2))
 
         loop.resume()
 
