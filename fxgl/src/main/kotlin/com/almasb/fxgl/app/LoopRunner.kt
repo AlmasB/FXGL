@@ -8,6 +8,9 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.logging.Logger
 import javafx.animation.AnimationTimer
+import javafx.application.Platform
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.system.measureNanoTime
 
 /**
@@ -17,7 +20,16 @@ import kotlin.system.measureNanoTime
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class LoopRunner(private val runnable: (Double) -> Unit) {
+internal class LoopRunner(
+
+        /**
+         * The number of ticks in one second.
+         * Any negative value or 0 means that the runner will match number of ticks
+         * to the display refresh rate.
+         */
+        private val ticksPerSecond: Int = -1,
+
+        private val runnable: (Double) -> Unit) {
 
     private val log = Logger.get<LoopRunner>()
 
@@ -38,23 +50,25 @@ internal class LoopRunner(private val runnable: (Double) -> Unit) {
     private var fpsBuffer2sec = 0
 
     private val impl by lazy {
-        object : AnimationTimer() {
-
-            override fun handle(now: Long) {
-                frame(now)
+        if (ticksPerSecond <= 0) {
+            log.debug("Initializing JavaFX AnimationTimerLoop")
+            object : AnimationTimerLoop() {
+                override fun onTick(now: Long) {
+                    frame(now)
+                }
+            }
+        } else {
+            log.debug("Initializing ScheduledExecutorLoop with fps: $ticksPerSecond")
+            object : ScheduledExecutorLoop(ticksPerSecond) {
+                override fun onTick(now: Long) {
+                    frame(now)
+                }
             }
         }
     }
 
-    var isStarted = false
-        private set
-
     fun start() {
         log.debug("Starting loop")
-
-        require(!isStarted) { "Attempted to start an active loop. Use resume() instead if needed" }
-
-        isStarted = true
 
         impl.start()
     }
@@ -62,13 +76,13 @@ internal class LoopRunner(private val runnable: (Double) -> Unit) {
     fun resume() {
         log.debug("Resuming loop")
 
-        impl.start()
+        impl.resume()
     }
 
     fun pause() {
         log.debug("Pausing loop")
 
-        impl.stop()
+        impl.pause()
     }
 
     fun stop() {
@@ -97,5 +111,71 @@ internal class LoopRunner(private val runnable: (Double) -> Unit) {
             // update tpf for the next 2 seconds
             tpf = 1.0 / fps
         }
+    }
+}
+
+private interface Loop {
+    fun start()
+    fun pause()
+    fun resume()
+    fun stop()
+
+    fun onTick(now: Long)
+}
+
+private abstract class AnimationTimerLoop : Loop {
+
+    private val timer = object : AnimationTimer() {
+        override fun handle(now: Long) {
+            onTick(now)
+        }
+    }
+
+    override fun start() {
+        timer.start()
+    }
+
+    override fun pause() {
+        timer.stop()
+    }
+
+    override fun resume() {
+        timer.start()
+    }
+
+    override fun stop() {
+        timer.stop()
+    }
+}
+
+private abstract class ScheduledExecutorLoop(private val ticksPerSecond: Int) : Loop {
+    private var isPaused = false
+
+    private val executor = Executors.newSingleThreadScheduledExecutor()
+
+    override fun start() {
+        // nanoseconds per tick
+        val period = (1_000_000_000.0 / ticksPerSecond).toLong()
+
+        executor.scheduleAtFixedRate({
+            if (!isPaused) {
+                Platform.runLater {
+                    onTick(System.nanoTime())
+                }
+            }
+
+        }, 0, period, TimeUnit.NANOSECONDS)
+    }
+
+    override fun pause() {
+        isPaused = true
+    }
+
+    override fun resume() {
+        isPaused = false
+    }
+
+    override fun stop() {
+        executor.shutdownNow()
     }
 }
