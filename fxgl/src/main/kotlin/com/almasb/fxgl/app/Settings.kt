@@ -244,6 +244,13 @@ class GameSettings(
          */
         var randomSeed: Long = -1L,
 
+        /**
+         * Number of ticks per second computed by the engine.
+         * This value can be the same as or less than the display refresh rate.
+         * Default value is -1, which means "match display refresh rate".
+         */
+        var ticksPerSecond: Int = -1,
+
         var defaultLanguage: Language = ENGLISH,
 
         /* EXPERIMENTAL */
@@ -362,6 +369,7 @@ class GameSettings(
                 pixelsPerMeter,
                 secondsIn24h,
                 randomSeed,
+                ticksPerSecond,
                 defaultLanguage,
                 isExperimentalTiledLargeMap,
                 isExperimentalNative,
@@ -531,6 +539,8 @@ class ReadOnlyGameSettings internal constructor(
         val secondsIn24h: Int,
 
         val randomSeed: Long,
+
+        val ticksPerSecond: Int,
 
         private val defaultLanguage: Language,
 
