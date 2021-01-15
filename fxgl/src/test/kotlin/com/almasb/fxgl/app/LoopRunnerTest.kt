@@ -43,8 +43,8 @@ class LoopRunnerTest {
 
             loop.pause()
 
-            assertThat(loop.tpf, closeTo(0.016, 0.01))
-            assertThat(loop.fps.toDouble(), closeTo(60.0, 1.0))
+            assertThat(loop.tpf, closeTo(0.016, 0.09))
+            assertThat(loop.fps.toDouble(), closeTo(60.0, 5.0))
 
             assertThat(t, closeTo(1.0, 0.2))
 
@@ -54,18 +54,18 @@ class LoopRunnerTest {
 
             loop.stop()
 
-            assertThat(loop.tpf, closeTo(0.016, 0.01))
-            assertThat(loop.fps.toDouble(), closeTo(60.0, 1.0))
+            assertThat(loop.tpf, closeTo(0.016, 0.09))
+            assertThat(loop.fps.toDouble(), closeTo(60.0, 5.0))
 
-            assertThat(t, closeTo(2.0, 0.2))
+            assertThat(t, closeTo(2.0, 0.4))
 
             // shouldn't change anything since loop is stopped
             Thread.sleep(300)
 
-            assertThat(loop.tpf, closeTo(0.016, 0.01))
-            assertThat(loop.fps.toDouble(), closeTo(60.0, 1.0))
+            assertThat(loop.tpf, closeTo(0.016, 0.09))
+            assertThat(loop.fps.toDouble(), closeTo(60.0, 5.0))
 
-            assertThat(t, closeTo(2.0, 0.2))
+            assertThat(t, closeTo(2.0, 0.4))
         }
     }
 
