@@ -11,6 +11,8 @@ import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.test.InjectInTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
@@ -159,8 +161,8 @@ class SaveLoadServiceTest {
         val saveFiles = saveLoadService.readSaveFilesTask("profiles", "sav").run()
 
         assertThat(saveFiles.size, `is`(2))
-        assertThat(saveFiles[0].name, `is`("profiles/TestSave.sav"))
-        assertThat(saveFiles[1].name, `is`("profiles/TestSave2.sav"))
+
+        assertThat(saveFiles.map { it.name }, containsInAnyOrder("profiles/TestSave.sav", "profiles/TestSave2.sav"))
     }
 
     fun `Delete game data`() {
