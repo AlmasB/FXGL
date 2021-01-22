@@ -50,14 +50,11 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
     protected fun fireContinue() {
         log.debug("fireContinue()")
 
-        // TODO:
-        //    override fun loadGameFromLastSave() {
-//        saveLoadService
-//                .loadLastModifiedSaveFileTask(getSettings().profileName.value, getSettings().saveFileExt)
-//                .then { saveLoadService.readSaveFileTask(it) }
-//                .onSuccess { startLoadedGame(it.data) }
-//                .runAsyncFXWithDialog(ProgressDialog(local.getLocalizedString("menu.loading") + "..."))
-//    }
+        val task = saveLoadService
+                .readLastModifiedSaveFileTask("./", getSettings().saveFileExt)
+                .onSuccess { it.ifPresent { fireLoad(it) } }
+
+        FXGL.getTaskService().runAsyncFXWithDialog(task, localize("menu.loading") + "...")
     }
 
     /**
@@ -70,6 +67,7 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
 
         getDisplay().showConfirmationBox(text) { yes ->
             if (yes) {
+                // we don't need to run this with "runAsyncFXWithDialog" since loadGame triggers LoadingScene
                 controller.loadGame(saveFile.data)
             }
         }
@@ -116,9 +114,9 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
     protected fun fireDelete(saveFile: SaveFile) {
         log.debug("fireDelete()")
 
-        // TODO:
-//        saveLoadService.deleteSaveFileTask(saveFile)
-//                .run()
+        val task = saveLoadService.deleteSaveFileTask(saveFile.name)
+
+        FXGL.getTaskService().runAsyncFXWithDialog(task, "Deleting ${saveFile.name}")
     }
 
     /**
