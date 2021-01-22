@@ -90,7 +90,7 @@ class LoopRunnerTest {
         ).forEach {
             it.start()
 
-            Thread.sleep(100)
+            Thread.sleep(1000)
 
             it.stop()
         }
