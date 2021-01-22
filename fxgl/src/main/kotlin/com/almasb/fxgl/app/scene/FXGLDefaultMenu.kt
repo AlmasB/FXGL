@@ -30,7 +30,6 @@ import com.almasb.fxgl.ui.FXGLScrollPane
 import com.almasb.fxgl.ui.FontType
 import javafx.animation.FadeTransition
 import javafx.beans.binding.Bindings
-import javafx.beans.binding.StringBinding
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
@@ -105,7 +104,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         menuContentRoot.translateY = menuY
 
         // particle smoke
-        val t = FXGL.texture("particles/smoke.png", 128.0, 128.0).brighter().brighter()
+        val t = texture("particles/smoke.png", 128.0, 128.0).brighter().brighter()
 
         val emitter = ParticleEmitters.newFireEmitter()
         emitter.blendMode = BlendMode.SRC_OVER
@@ -113,10 +112,10 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         emitter.setSize(150.0, 220.0)
         emitter.numParticles = 10
         emitter.emissionRate = 0.01
-        emitter.setVelocityFunction { i -> Point2D(random() * 2.5, -random() * random(80, 120)) }
-        emitter.setExpireFunction { i -> Duration.seconds(random(4, 7).toDouble()) }
-        emitter.setScaleFunction { i -> Point2D(0.15, 0.10) }
-        emitter.setSpawnPointFunction { i -> Point2D(random(0.0, appWidth - 200.0), 120.0) }
+        emitter.setVelocityFunction { Point2D(random() * 2.5, -random() * random(80, 120)) }
+        emitter.setExpireFunction { Duration.seconds(random(4, 7).toDouble()) }
+        emitter.setScaleFunction { Point2D(0.15, 0.10) }
+        emitter.setSpawnPointFunction { Point2D(random(0.0, appWidth - 200.0), 120.0) }
 
         particleSystem!!.addParticleEmitter(emitter, 0.0, FXGL.getAppHeight().toDouble())
 
@@ -249,13 +248,6 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         return view
     }
 
-    private fun createProfileView(profileName: String): Node {
-        val view = FXGL.getUIFactoryService().newText(profileName)
-        view.translateY = (FXGL.getAppHeight() - 2).toDouble()
-        view.translateX = FXGL.getAppWidth() - view.layoutBounds.width
-        return view
-    }
-
     private fun createMenuBodyMainMenu(): MenuBox {
         log.debug("createMenuBodyMainMenu()")
 
@@ -264,7 +256,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         val enabledItems = FXGL.getSettings().enabledMenuItems
 
         val itemNewGame = MenuButton("menu.newGame")
-        itemNewGame.setOnAction(EventHandler{ fireNewGame() })
+        itemNewGame.setOnAction { fireNewGame() }
         box.add(itemNewGame)
 
         val itemOptions = MenuButton("menu.options")
@@ -278,7 +270,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         }
 
         val itemExit = MenuButton("menu.exit")
-        itemExit.setOnAction(EventHandler{ fireExit() })
+        itemExit.setOnAction { fireExit() }
         box.add(itemExit)
 
         return box
@@ -292,15 +284,15 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         val enabledItems = FXGL.getSettings().enabledMenuItems
 
         val itemResume = MenuButton("menu.resume")
-        itemResume.setOnAction(EventHandler{ fireResume() })
+        itemResume.setOnAction { fireResume() }
         box.add(itemResume)
 
         if (enabledItems.contains(MenuItem.SAVE_LOAD)) {
             val itemSave = MenuButton("menu.save")
-            itemSave.setOnAction(EventHandler{ fireSave() })
+            itemSave.setOnAction { fireSave() }
 
             val itemLoad = MenuButton("menu.load")
-            itemLoad.setMenuContent(Supplier { createContentLoad() }, isCached = false)
+            itemLoad.setMenuContent({ createContentLoad() }, isCached = false)
 
             box.add(itemSave)
             box.add(itemLoad)
@@ -318,11 +310,11 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         if (getSettings().isMainMenuEnabled) {
             val itemExit = MenuButton("menu.mainMenu")
-            itemExit.setOnAction(EventHandler{ fireExitToMainMenu() })
+            itemExit.setOnAction { fireExitToMainMenu() }
             box.add(itemExit)
         } else {
             val itemExit = MenuButton("menu.exit")
-            itemExit.setOnAction(EventHandler{ fireExit() })
+            itemExit.setOnAction { fireExit() }
             box.add(itemExit)
         }
 
@@ -333,25 +325,25 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         log.debug("createOptionsMenu()")
 
         val itemGameplay = MenuButton("menu.gameplay")
-        itemGameplay.setMenuContent(Supplier { this.createContentGameplay() })
+        itemGameplay.setMenuContent({ createContentGameplay() })
 
         val itemControls = MenuButton("menu.controls")
-        itemControls.setMenuContent(Supplier { this.createContentControls() })
+        itemControls.setMenuContent({ createContentControls() })
 
         val itemVideo = MenuButton("menu.video")
-        itemVideo.setMenuContent(Supplier { this.createContentVideo() })
+        itemVideo.setMenuContent({ createContentVideo() })
         val itemAudio = MenuButton("menu.audio")
-        itemAudio.setMenuContent(Supplier { this.createContentAudio() })
+        itemAudio.setMenuContent({ createContentAudio() })
 
         val btnRestore = MenuButton("menu.restore")
-        btnRestore.setOnAction(EventHandler{ e ->
+        btnRestore.setOnAction {
             FXGL.getDialogService().showConfirmationBox(FXGL.localize("menu.settingsRestore")) { yes ->
-                if (yes!!) {
+                if (yes) {
                     switchMenuContentTo(EMPTY)
-                    //listener.restoreDefaultSettings()
+                    restoreDefaultSettings()
                 }
             }
-        })
+        }
 
         return MenuBox(itemGameplay, itemControls, itemVideo, itemAudio, btnRestore)
     }
@@ -360,13 +352,13 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         log.debug("createExtraMenu()")
 
         val itemAchievements = MenuButton("menu.trophies")
-        itemAchievements.setMenuContent(Supplier { this.createContentAchievements() })
+        itemAchievements.setMenuContent({ createContentAchievements() })
 
         val itemCredits = MenuButton("menu.credits")
-        itemCredits.setMenuContent(Supplier { this.createContentCredits() })
+        itemCredits.setMenuContent({ createContentCredits() })
 
         val itemFeedback = MenuButton("menu.feedback")
-        itemFeedback.setMenuContent(Supplier { this.createContentFeedback() })
+        itemFeedback.setMenuContent({ createContentFeedback() })
 
         return MenuBox(itemAchievements, itemCredits, itemFeedback)
     }
@@ -376,7 +368,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         val ft = FadeTransition(Duration.seconds(0.33), oldMenu)
         ft.toValue = 0.0
-        ft.setOnFinished { e ->
+        ft.setOnFinished {
             menu.opacity = 0.0
             menuRoot.children[0] = menu
             oldMenu.opacity = 1.0
@@ -409,7 +401,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         }
     }
 
-    private inner class MenuButton internal constructor(stringKey: String) : Pane() {
+    private inner class MenuButton(stringKey: String) : Pane() {
         private var parent: MenuBox? = null
         private var cachedContent: MenuContent? = null
 
@@ -483,50 +475,6 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             btn.addEventHandler(ActionEvent.ACTION) { event -> switchMenuTo(menu) }
         }
     }
-
-    private fun createActionButton(name: String, action: Runnable): Button {
-        val btn = MenuButton(name)
-        btn.addEventHandler(ActionEvent.ACTION) { event -> action.run() }
-
-        return btn.btn
-    }
-
-    private fun createActionButton(name: StringBinding, action: Runnable): Button {
-        val btn = MenuButton(name.value)
-        btn.addEventHandler(ActionEvent.ACTION) { event -> action.run() }
-
-        return btn.btn
-    }
-
-// TODO:
-//    /**
-//     * Switches current active menu body to given.
-//     *
-//     * @param menuBox parent node containing menu body
-//     */
-//    protected open fun switchMenuTo(menuBox: Node) {
-//        // no default implementation
-//    }
-//
-//    /**
-//     * Switches current active content to given.
-//     *
-//     * @param content menu content
-//     */
-//    protected open fun switchMenuContentTo(content: Node) {
-//        // no default implementation
-//    }
-//
-//    protected abstract fun createActionButton(name: String, action: Runnable): Button
-//    protected abstract fun createActionButton(name: StringBinding, action: Runnable): Button
-//
-//    protected fun createContentButton(name: String, contentSupplier: Supplier<MenuContent>): Button {
-//        return createActionButton(name, Runnable { switchMenuContentTo(contentSupplier.get()) })
-//    }
-//
-//    protected fun createContentButton(name: StringBinding, contentSupplier: Supplier<MenuContent>): Button {
-//        return createActionButton(name, Runnable { switchMenuContentTo(contentSupplier.get()) })
-//    }
 
     /**
      * @return full version string
@@ -641,9 +589,9 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         return MenuContent(hbox)
     }
 
-    private inner class PressAnyKeyState internal constructor() : SubScene() {
+    private inner class PressAnyKeyState() : SubScene() {
 
-        internal var actionContext: UserAction? = null
+        var actionContext: UserAction? = null
 
         var isActive = false
 
@@ -652,7 +600,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
                 if (Input.isIllegal(e.getCode()))
                     return@EventHandler
 
-                val rebound = getInput().rebind(actionContext!!, e.getCode(), InputModifier.from(e))
+                val rebound = getInput().rebind(actionContext!!, e.code, InputModifier.from(e))
 
                 if (rebound) {
                     FXGL.getSceneService().popSubScene()
@@ -661,7 +609,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             })
 
             input.addEventFilter(MouseEvent.MOUSE_PRESSED, EventHandler { e ->
-                val rebound = getInput().rebind(actionContext!!, e.getButton(), InputModifier.from(e))
+                val rebound = getInput().rebind(actionContext!!, e.button, InputModifier.from(e))
 
                 if (rebound) {
                     FXGL.getSceneService().popSubScene()
@@ -903,27 +851,6 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
                 onClose!!.run()
         }
     }
-
-    /**
-     * Adds a UI node.
-     *
-     * @param node the node to add
-     */
-    protected fun addUINode(node: Node) {
-        menuContentRoot.children.add(node)
-    }
-
-//    override fun onDelete(saveFile: SaveFile) {
-//        getDisplay().showConfirmationBox(Local.localize("menu.deleteSave")+"[${saveFile.name}]?", { yes ->
-//
-//            if (yes) {
-//                saveLoadManager
-//                        .deleteSaveFileTask(saveFile)
-//                        .runAsyncFXWithDialog(ProgressDialog(Local.localize("menu.deleting")+": ${saveFile.name}"))
-//            }
-//        })
-//    }
-
 
     /**
      * Show profile dialog so that user selects existing or creates new profile.

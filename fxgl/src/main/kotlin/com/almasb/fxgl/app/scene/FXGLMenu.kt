@@ -114,9 +114,13 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
     protected fun fireDelete(saveFile: SaveFile) {
         log.debug("fireDelete()")
 
-        val task = saveLoadService.deleteSaveFileTask(saveFile.name)
+        getDisplay().showConfirmationBox(localize("menu.deleteSave") + "[${saveFile.name}]?") { yes ->
+            if (yes) {
+                val task = saveLoadService.deleteSaveFileTask(saveFile.name)
 
-        FXGL.getTaskService().runAsyncFXWithDialog(task, "Deleting ${saveFile.name}")
+                FXGL.getTaskService().runAsyncFXWithDialog(task, localize("menu.deleting") + ": ${saveFile.name}")
+            }
+        }
     }
 
     /**
@@ -158,5 +162,9 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
             if (yes)
                 controller.gotoMainMenu()
         }
+    }
+
+    protected fun restoreDefaultSettings() {
+        log.debug("restoreDefaultSettings()")
     }
 }
