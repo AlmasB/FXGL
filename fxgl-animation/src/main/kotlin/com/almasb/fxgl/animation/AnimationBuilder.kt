@@ -341,26 +341,31 @@ open class AnimationBuilder
 
     class RotationAnimationBuilder(animationBuilder: AnimationBuilder) : AM(animationBuilder) {
 
+        private var is3DAnimation = false
         private var startRotation = Point3D.ZERO
         private var endRotation = Point3D.ZERO
         private var rotationOrigin: Point2D? = null
 
         fun from(startAngle: Double): RotationAnimationBuilder {
+            is3DAnimation = false
             startRotation = Point3D(0.0, 0.0, startAngle)
             return this
         }
 
         fun to(endAngle: Double): RotationAnimationBuilder {
+            is3DAnimation = false
             endRotation = Point3D(0.0, 0.0, endAngle)
             return this
         }
 
         fun from(start: Point3D): RotationAnimationBuilder {
+            is3DAnimation = true
             startRotation = start
             return this
         }
 
         fun to(end: Point3D): RotationAnimationBuilder {
+            is3DAnimation = true
             endRotation = end
             return this
         }
@@ -380,8 +385,10 @@ open class AnimationBuilder
             return makeConfig().build(AnimatedValue(startRotation, endRotation),
                     Consumer { value ->
                         objects.forEach {
-                            it.rotationXProperty().value = value.x
-                            it.rotationYProperty().value = value.y
+                            if (is3DAnimation) {
+                                it.rotationXProperty().value = value.x
+                                it.rotationYProperty().value = value.y
+                            }
                             it.rotationZProperty().value = value.z
                         }
                     }
@@ -432,7 +439,9 @@ private fun Node.toAnimatable(): Animatable {
     val n = this
     return object : Animatable {
         private var scale: Scale? = null
-        private var rotate: Rotate? = null
+        private var rotateX: Rotate? = null
+        private var rotateY: Rotate? = null
+        private var rotateZ: Rotate? = null
 
         override fun xProperty(): DoubleProperty {
             return n.translateXProperty()
@@ -459,17 +468,19 @@ private fun Node.toAnimatable(): Animatable {
         }
 
         override fun rotationXProperty(): DoubleProperty {
-            Logger.get("AnimBuilder").warning("rotationX is not implemented")
-            return SimpleDoubleProperty()
+            initRotations()
+
+            return rotateX!!.angleProperty()
         }
 
         override fun rotationYProperty(): DoubleProperty {
-            Logger.get("AnimBuilder").warning("rotationY is not implemented")
-            return SimpleDoubleProperty()
+            initRotations()
+
+            return rotateY!!.angleProperty()
         }
 
         override fun rotationZProperty(): DoubleProperty {
-            return rotate?.angleProperty() ?: n.rotateProperty()
+            return rotateZ?.angleProperty() ?: n.rotateProperty()
         }
 
         override fun opacityProperty(): DoubleProperty {
@@ -496,19 +507,37 @@ private fun Node.toAnimatable(): Animatable {
         override fun setRotationOrigin(pivotPoint: Point2D) {
             // if a node already has a previous transform, reuse it
             // this means the node was animated previously
-            n.properties["anim_rotate"]?.let { transform ->
-                rotate = transform as Rotate
-                rotate!!.pivotX = pivotPoint.x
-                rotate!!.pivotY = pivotPoint.y
+            n.properties["anim_rotate_z"]?.let { transform ->
+                rotateZ = transform as Rotate
+                rotateZ!!.pivotX = pivotPoint.x
+                rotateZ!!.pivotY = pivotPoint.y
                 return
             }
 
-            rotate = Rotate(0.0, pivotPoint.x, pivotPoint.y)
+            rotateZ = Rotate(0.0, pivotPoint.x, pivotPoint.y)
                     .also {
                         it.axis = Rotate.Z_AXIS
                         n.transforms.add(it)
-                        n.properties["anim_rotate"] = it
+                        n.properties["anim_rotate_z"] = it
                     }
+        }
+
+        private fun initRotations() {
+            if (n.properties.containsKey("anim_rotate_x")) {
+                rotateX = n.properties["anim_rotate_x"]!! as Rotate
+                rotateY = n.properties["anim_rotate_y"]!! as Rotate
+                rotateZ = n.properties["anim_rotate_z"]!! as Rotate
+            } else {
+                rotateX = Rotate(0.0, Rotate.X_AXIS)
+                rotateY = Rotate(0.0, Rotate.Y_AXIS)
+                rotateZ = Rotate(0.0, Rotate.Z_AXIS)
+
+                n.properties["anim_rotate_x"] = rotateX
+                n.properties["anim_rotate_y"] = rotateY
+                n.properties["anim_rotate_z"] = rotateZ
+
+                n.transforms.addAll(rotateZ, rotateY, rotateX)
+            }
         }
     }
 }
