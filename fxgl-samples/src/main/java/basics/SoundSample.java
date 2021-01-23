@@ -24,7 +24,7 @@ public class SoundSample extends GameApplication {
     @Override
     protected void initInput() {
         FXGL.onKeyDown(KeyCode.F, "Play audio", () -> {
-            FXGL.play(FXGL.getSettings().getSoundMenuSelect());
+            FXGL.play("drop.wav");
         });
     }
 
