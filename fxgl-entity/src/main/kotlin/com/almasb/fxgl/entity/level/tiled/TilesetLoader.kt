@@ -143,13 +143,12 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
         return ImageView(buffer)
     }
 
-    // TODO: no support for stagger axis == "Y"
+    // NOT FULLY IMPLEMENTED, see https://github.com/AlmasB/FXGL/issues/702
     fun loadViewHex(layerName: String): Node {
         log.debug("Loading view for layer $layerName")
 
         val layer = map.getLayerByName(layerName)
 
-        // TODO: fix the "100"
         val bufferBottom = WritableImage(
                 layer.width * map.tilewidth + 100,
                 layer.height * map.tileheight + 100
@@ -210,7 +209,6 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
 
             log.debug("Writing to buffer: dst=${x * map.tilewidth},${y * map.tileheight}, w=$w,h=$h, src=$srcx,$srcy")
 
-            // TODO: why + 6?
             val offsetX = -(map.hexsidelength + 6) * x
 
             val offsetY = if (map.staggerindex == "even" && isColumnEven

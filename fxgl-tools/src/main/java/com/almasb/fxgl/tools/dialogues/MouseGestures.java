@@ -72,7 +72,7 @@ public class MouseGestures {
             double offsetX = event.getSceneX() - x;
             double offsetY = event.getSceneY() - y;
 
-            // TODO: not generalizable
+            // not generalizable
             var scale = (Scale) context.getTransforms().get(0);
 
             node.setLayoutX(node.getLayoutX() + offsetX * 1 / scale.getX());
