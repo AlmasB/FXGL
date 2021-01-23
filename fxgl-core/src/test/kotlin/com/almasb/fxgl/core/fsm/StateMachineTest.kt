@@ -3,14 +3,13 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.core.fsm
 
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -46,15 +45,20 @@ class StateMachineTest {
 
     @Test
     fun `Change parent state to new state`() {
+        assertFalse(machine.isInHierarchy(state1))
+
         machine.changeState(state1)
 
         assertThat(machine.parentState, `is`(machine.currentState))
         assertThat(machine.currentState, `is`(state1))
+        assertTrue(machine.isInHierarchy(state1))
 
         machine.changeState(state2)
 
         assertThat(machine.parentState, `is`(machine.currentState))
         assertThat(machine.currentState, `is`(state2))
+        assertFalse(machine.isInHierarchy(state1))
+        assertTrue(machine.isInHierarchy(state2))
     }
 
     @Test
@@ -69,10 +73,17 @@ class StateMachineTest {
         assertThat(machine.parentState, `is`(initialState))
         assertThat(machine.currentState, `is`(subState2))
 
+        // check that state1 is also in hierarchy
+        assertTrue(machine.isInHierarchy(subState1))
+        assertTrue(machine.isInHierarchy(subState2))
+
         machine.popSubState()
 
         assertThat(machine.parentState, `is`(initialState))
         assertThat(machine.currentState, `is`(subState1))
+
+        assertTrue(machine.isInHierarchy(subState1))
+        assertFalse(machine.isInHierarchy(subState2))
     }
 
     @Test
