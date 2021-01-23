@@ -10,7 +10,6 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.components.*;
-import com.almasb.fxgl.dsl.multiplayer.NetworkComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
@@ -76,7 +75,6 @@ public class BenchmarkManyStaticEntitiesSample extends GameApplication {
                     .viewWithBBox(texture("brick.png"))
                     .with(new CellMoveComponent(10, 10, 100))
                     .with(new AStarMoveComponent(new AStarGrid(100, 100)))
-                    .with(new NetworkComponent())
                     .with(new OffscreenPauseComponent())
                     .with(new KeepOnScreenComponent())
                     .with(new HealthIntComponent(100))
