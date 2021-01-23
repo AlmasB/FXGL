@@ -75,6 +75,13 @@ class SceneTest {
             override val timer: Timer
                 get() = Timer()
 
+            override val currentScene: Scene
+                get() = object : Scene() {}
+
+            override fun isInHierarchy(scene: Scene): Boolean {
+                return false
+            }
+
             override fun pushSubScene(subScene: SubScene) {
             }
 

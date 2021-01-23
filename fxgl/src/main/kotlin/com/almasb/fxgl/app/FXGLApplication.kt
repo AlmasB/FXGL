@@ -354,6 +354,9 @@ class FXGLApplication : Application() {
          */
         override val timer = Timer()
 
+        override val currentScene: Scene
+            get() = mainWindow.currentScene
+
         internal lateinit var gameScene: GameScene
         private lateinit var loadScene: LoadingScene
 
@@ -363,6 +366,10 @@ class FXGLApplication : Application() {
 
         internal val window: MainWindow
             get() = mainWindow
+
+        override fun isInHierarchy(scene: Scene): Boolean {
+            return mainWindow.isInHierarchy(scene)
+        }
 
         override fun onInit() {
             settings.cssList.forEach {

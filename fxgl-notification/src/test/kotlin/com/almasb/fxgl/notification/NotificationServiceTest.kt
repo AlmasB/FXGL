@@ -9,6 +9,7 @@ package com.almasb.fxgl.notification
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.XboxNotificationView
+import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.test.InjectInTest
@@ -57,6 +58,13 @@ class NotificationServiceTest {
                 get() = Input()
             override val timer: Timer
                 get() = theTimer
+
+            override val currentScene: Scene
+                get() = object : Scene() {}
+
+            override fun isInHierarchy(scene: Scene): Boolean {
+                return false
+            }
 
             override fun pushSubScene(subScene: SubScene) {
             }

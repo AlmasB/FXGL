@@ -61,6 +61,16 @@ abstract class SceneService : EngineService() {
     abstract val timer: Timer
 
     /**
+     * @return top-most scene (or subscene) in the scene service hierarchy
+     */
+    abstract val currentScene: Scene
+
+    /**
+     * @return true if [scene] is in this scene service hierarchy
+     */
+    abstract fun isInHierarchy(scene: Scene): Boolean
+
+    /**
      * Push a given [subScene] on top of current scene or subscene.
      */
     abstract fun pushSubScene(subScene: SubScene)

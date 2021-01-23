@@ -214,6 +214,8 @@ internal class MainWindow(
         }
     }
 
+    fun isInHierarchy(scene: Scene): Boolean = stateMachine.isInHierarchy(scene)
+
     fun update(tpf: Double) {
         input.update(tpf)
         stateMachine.runOnActiveStates { it.update(tpf) }
