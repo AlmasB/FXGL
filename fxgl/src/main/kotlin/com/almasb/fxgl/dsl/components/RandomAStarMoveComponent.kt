@@ -50,10 +50,6 @@ class RandomAStarMoveComponent
 
 ) : Component() {
 
-    // TODO: randomize delay based on min-max
-    // TODO: add boolean to allow moving even if didn't reach destination
-    // TODO: add atDestinationListener to AStar
-
     private lateinit var astar: AStarMoveComponent
 
     private val moveTimer = FXGL.newLocalTimer()
