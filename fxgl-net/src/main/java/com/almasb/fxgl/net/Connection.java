@@ -80,10 +80,7 @@ public abstract class Connection<T> {
         try {
             messageQueue.put(message);
         } catch (InterruptedException e) {
-
-            // TODO:
-
-            e.printStackTrace();
+            log.warning("send() was interrupted while waiting for messageQueue to clear some space", e);
         }
     }
 
