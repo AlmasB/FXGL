@@ -53,7 +53,6 @@ class RandomAStarMoveComponent
 
     // TODO: randomize delay based on min-max
     // TODO: add boolean to allow moving even if didn't reach destination
-    // TODO: add currentCell function to AStar
     // TODO: add atDestinationListener to AStar
 
     private lateinit var cellMove: CellMoveComponent
