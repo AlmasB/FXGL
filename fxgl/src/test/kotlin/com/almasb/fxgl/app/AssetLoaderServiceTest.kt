@@ -3,10 +3,12 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.app.services.FXGLAssetLoaderService
+import com.almasb.fxgl.audio.AudioPlayer
+import com.almasb.fxgl.test.InjectInTest
 import com.almasb.fxgl.test.RunWithFX
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
@@ -16,6 +18,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.lang.invoke.MethodHandles
 
 /**
  *
@@ -50,6 +53,8 @@ class AssetLoaderServiceTest {
     @BeforeEach
     fun setUp() {
         assetLoader = FXGLAssetLoaderService()
+
+        InjectInTest.inject(MethodHandles.lookup(), assetLoader, "audioService", AudioPlayer())
     }
 
     @Test
