@@ -10,7 +10,6 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.random
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.Required
-import com.almasb.fxgl.pathfinding.CellMoveComponent
 import com.almasb.fxgl.pathfinding.astar.AStarCell
 import com.almasb.fxgl.pathfinding.astar.AStarMoveComponent
 import javafx.util.Duration
@@ -55,7 +54,6 @@ class RandomAStarMoveComponent
     // TODO: add boolean to allow moving even if didn't reach destination
     // TODO: add atDestinationListener to AStar
 
-    private lateinit var cellMove: CellMoveComponent
     private lateinit var astar: AStarMoveComponent
 
     private val moveTimer = FXGL.newLocalTimer()
@@ -89,14 +87,12 @@ class RandomAStarMoveComponent
         }
 
         if (moveTimer.elapsed(delay)) {
-            val cellX = cellMove.cellX
-            val cellY = cellMove.cellY
+            moveToRandomCell()
+        }
+    }
 
-            if (!astar.grid.isWithin(cellX, cellY))
-                return
-
-            val currentCell = astar.grid.get(cellX, cellY)
-
+    private fun moveToRandomCell() {
+        astar.currentCell.ifPresent { currentCell ->
             astar.grid
                     .getRandomCell {
                         it.isWalkable && cellFilter.test(it)
