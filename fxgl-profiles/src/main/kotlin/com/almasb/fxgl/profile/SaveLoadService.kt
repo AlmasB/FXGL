@@ -13,11 +13,13 @@ import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.logging.Logger
 import java.util.*
 
+/**
+ * Responsible for save/load operations to/from data files.
+ * Also responsible for write/read IO operations of save files.
+ */
 class SaveLoadService : EngineService() {
 
     private val log = Logger.get(javaClass)
-
-    private val PROFILES_DIR = "profiles/"
 
     private lateinit var fs: FileSystemService
 
@@ -67,6 +69,9 @@ class SaveLoadService : EngineService() {
         }.then { writeTask(saveFileName, it) }
     }
 
+    /**
+     * Writes [dataFile] to file system under name [saveFileName].
+     */
     fun writeTask(saveFileName: String, dataFile: DataFile): IOTask<Void> {
         val saveFile = SaveFile(saveFileName, data = dataFile)
 
@@ -98,7 +103,7 @@ class SaveLoadService : EngineService() {
     }
 
     /**
-     * @param saveFileName save file to delete
+     * Deletes a save file with a given [saveFileName].
      */
     fun deleteSaveFileTask(saveFileName: String): IOTask<Void> {
         log.debug("Deleting save file: $saveFileName")
@@ -126,7 +131,7 @@ class SaveLoadService : EngineService() {
     }
 
     /**
-     * Reads save files with save file extension from given directory [dirName].
+     * Reads (IO operation) save files with extension [saveFileExt] from given directory [dirName].
      */
     fun readSaveFilesTask(dirName: String, saveFileExt: String): IOTask<List<SaveFile>> {
         log.debug("Reading save files from $dirName")
@@ -146,42 +151,4 @@ class SaveLoadService : EngineService() {
                     }
                 }
     }
-
-
-
-
-
-
-    //    private fun createProfilesDirTask(): IOTask<*> {
-//        log.debug("Creating profiles dir")
-//
-//        return fs.createDirectoryTask(PROFILES_DIR)
-//                .then { fs.writeDataTask(Collections.singletonList("This directory contains user profiles."), PROFILES_DIR + "Readme.txt") }
-//                .onFailure {
-//                    log.warning("Failed to create profiles dir: $it")
-//                    Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), it)
-//                }
-//    }
-//    fun createProfileTask(profileName: String): IOTask<Void> {
-//        log.debug("Creating profile: $profileName")
-//        return fs.createDirectoryTask("./$PROFILES_DIR$profileName")
-//    }
-//
-//    /**
-//     * A task that reads all profile names.
-//     */
-//    fun readProfileNamesTask(): IOTask<List<String>> {
-//        log.debug("Reading profile names")
-//        return fs.loadDirectoryNamesTask("./$PROFILES_DIR", recursive = false)
-//    }
-//
-//    /**
-//     * Delete profile.
-//     *
-//     * @param profileName name of profile to delete
-//     */
-//    fun deleteProfileTask(profileName: String): IOTask<Void> {
-//        log.debug("Deleting profile: $profileName")
-//        return fs.deleteDirectoryTask("./$PROFILES_DIR$profileName")
-//    }
 }

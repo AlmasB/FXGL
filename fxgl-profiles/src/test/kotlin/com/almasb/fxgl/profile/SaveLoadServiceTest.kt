@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.profile
 
 import com.almasb.fxgl.core.serialization.Bundle
@@ -11,7 +11,6 @@ import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.test.InjectInTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.*
@@ -62,7 +61,6 @@ class SaveLoadServiceTest {
         `Read game data`()
         `Read file names`()
         `Delete game data`()
-        //`Delete profile`()
     }
 
     @Test
@@ -172,12 +170,4 @@ class SaveLoadServiceTest {
 
         assertFalse(saveLoadService.saveFileExists("profiles/TestSave.sav"))
     }
-//
-//    fun `Delete profile`() {
-//        assertTrue(Files.exists(Paths.get("profiles/TestProfileName")))
-//
-//        saveLoadService.deleteProfileTask("TestProfileName").run()
-//
-//        assertFalse(Files.exists(Paths.get("profiles/TestProfileName")))
-//    }
 }
