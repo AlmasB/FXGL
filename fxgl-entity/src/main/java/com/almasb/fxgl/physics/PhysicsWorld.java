@@ -96,7 +96,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     }
 
     private Array<Entity> delayedBodiesAdd = new UnorderedArray<>();
-    private Array<Entity> delayedParticlesAdd = new UnorderedArray<>();
     private Array<Body> delayedBodiesRemove = new UnorderedArray<>();
 
     private Map<Entity, ChangeListener<Number> > scaleListeners = new HashMap<>();
