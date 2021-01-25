@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package intermediate;
 
 import com.almasb.fxgl.animation.AnimatedStringIncreasing;
 import com.almasb.fxgl.animation.Interpolators;
@@ -35,8 +35,8 @@ public class CustomLoadingSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1200);
-        settings.setHeightFromRatio(16/9.0);
+        settings.setWidth(1280);
+        settings.setHeight(720);
         settings.setSceneFactory(new SceneFactory() {
             @Override
             public LoadingScene newLoadingScene() {
@@ -47,7 +47,8 @@ public class CustomLoadingSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        onKeyDown(KeyCode.L, () -> {
+        // Press F to trigger loading scene
+        onKeyDown(KeyCode.F, () -> {
             getGameController().gotoLoading(() -> {
                 try {
                     Thread.sleep(5000);
@@ -76,10 +77,11 @@ public class CustomLoadingSample extends GameApplication {
         }
     }
 
+    // the custom loading scene with various different animations
+    // you can pick one of these if you want or implement your own
     public class MyLoadingScene extends LoadingScene {
 
         public MyLoadingScene() {
-
             getContentRoot().getChildren().addAll(new Rectangle(getAppWidth(), getAppHeight()));
 
             // circles
