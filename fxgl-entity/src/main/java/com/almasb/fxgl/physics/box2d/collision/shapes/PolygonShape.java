@@ -61,8 +61,6 @@ public final class PolygonShape extends Shape {
         for (int i = 0; i < m_normals.length; i++) {
             m_normals[i] = new Vec2();
         }
-
-        m_centroid.setZero();
     }
 
     @Override
