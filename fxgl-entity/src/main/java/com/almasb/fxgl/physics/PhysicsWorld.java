@@ -90,7 +90,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     }
 
     private void initParticles() {
-        jboxWorld.setParticleGravityScale(0.4f);
+        jboxWorld.setParticleGravityScale(1f);
         jboxWorld.setParticleDensity(1.2f);
         jboxWorld.setParticleRadius(toMetersF(1));    // 0.5 for super realistic effect, but slow
     }
@@ -108,9 +108,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
         if (entity.hasComponent(PhysicsComponent.class)) {
             onPhysicsEntityAdded(entity);
         }
-//        else if (entity.hasComponent(PhysicsParticleComponent.class)) {
-//            onPhysicsParticleEntityAdded(entity);
-//        }
     }
 
     private void onPhysicsEntityAdded(Entity entity) {
@@ -137,15 +134,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
         entity.getTransformComponent().scaleXProperty().addListener(scaleChangeListener);
         entity.getTransformComponent().scaleYProperty().addListener(scaleChangeListener);
-    }
-
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
-    private void onPhysicsParticleEntityAdded(Entity entity) {
-        if (!jboxWorld.isLocked()) {
-            createPhysicsParticles(entity);
-        } else {
-            delayedParticlesAdd.add(entity);
-        }
     }
 
     @Override
@@ -187,11 +175,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
             createBody(e);
 
         delayedBodiesAdd.clear();
-
-        for (Entity e : delayedParticlesAdd)
-            createPhysicsParticles(e);
-
-        delayedParticlesAdd.clear();
 
         for (Body body : delayedBodiesRemove)
             jboxWorld.destroyBody(body);
@@ -640,45 +623,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
         }
 
         return box.toBox2DShape(e.getBoundingBoxComponent(), this);
-    }
-
-    @SuppressWarnings("PMD.UnusedFormalParameter")
-    private void createPhysicsParticles(Entity e) {
-//        double x = e.getX();
-//        double y = e.getY();
-//        double width = e.getWidth();
-//        double height = e.getHeight();
-//
-//        ParticleGroupDef def = e.getComponent(PhysicsParticleComponent.class).getDefinition();
-//        def.setPosition(toMetersF(x + width / 2), toMetersF(appHeight - (y + height / 2)));
-//
-//        Shape shape = null;
-//
-//        BoundingBoxComponent bbox = e.getBoundingBoxComponent();
-//
-//        if (!bbox.hitBoxesProperty().isEmpty()) {
-//            if (bbox.hitBoxesProperty().get(0).getShape().type == ShapeType.POLYGON) {
-//                PolygonShape rectShape = new PolygonShape();
-//                rectShape.setAsBox(toMetersF(width / 2), toMetersF(height / 2));
-//                shape = rectShape;
-//            } else if (bbox.hitBoxesProperty().get(0).getShape().type == ShapeType.CIRCLE) {
-//                CircleShape circleShape = new CircleShape();
-//                circleShape.setRadius(toMetersF(width / 2));
-//                shape = circleShape;
-//            } else {
-//                log.warning("Unknown hit box shape: " + bbox.hitBoxesProperty().get(0).getShape().type);
-//                throw new UnsupportedOperationException();
-//            }
-//        }
-//
-//        if (shape == null) {
-//            PolygonShape rectShape = new PolygonShape();
-//            rectShape.setAsBox(toMetersF(width / 2), toMetersF(height / 2));
-//            shape = rectShape;
-//        }
-//        def.setShape(shape);
-//
-//        e.getComponent(PhysicsParticleComponent.class).setGroup(jboxWorld.createParticleGroup(def));
     }
 
     void destroyFixture(Body body, HitBox box) {
