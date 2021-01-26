@@ -75,7 +75,7 @@ public class EdgeShape extends Shape {
     }
 
     @Override
-    public boolean testPoint(Transform xf, Vec2 p) {
+    public boolean containsPoint(Transform xf, Vec2 point) {
         return false;
     }
 

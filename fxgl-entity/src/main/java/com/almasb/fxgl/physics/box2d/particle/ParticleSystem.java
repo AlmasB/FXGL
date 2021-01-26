@@ -305,7 +305,7 @@ public class ParticleSystem {
                     Vec2 p = tempVec;
                     p.x = x;
                     p.y = y;
-                    if (shape.testPoint(identity, p)) {
+                    if (shape.containsPoint(identity, p)) {
                         Transform.mulToOut(transform, p, p);
                         particleDef.position.x = p.x;
                         particleDef.position.y = p.y;
@@ -1979,7 +1979,7 @@ public class ParticleSystem {
         @Override
         public boolean reportParticle(int index) {
             assert index >= 0 && index < system.m_count;
-            if (shape.testPoint(xf, system.m_positionBuffer.data[index])) {
+            if (shape.containsPoint(xf, system.m_positionBuffer.data[index])) {
                 system.destroyParticle(index, callDestructionListener);
                 destroyed++;
             }

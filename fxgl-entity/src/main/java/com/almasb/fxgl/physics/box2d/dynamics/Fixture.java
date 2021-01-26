@@ -232,7 +232,7 @@ public final class Fixture {
      * @param p a point in world coordinates
      */
     public boolean containsPoint(Vec2 p) {
-        return shape.testPoint(body.m_xf, p);
+        return shape.containsPoint(body.m_xf, p);
     }
 
     /**

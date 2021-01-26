@@ -41,7 +41,7 @@ public final class CircleShape extends Shape {
     }
 
     @Override
-    public boolean testPoint(final Transform transform, final Vec2 p) {
+    public boolean containsPoint(final Transform transform, final Vec2 point) {
         // Rot.mulToOutUnsafe(transform.q, m_p, center);
         // center.addLocal(transform.p);
         //
@@ -49,8 +49,8 @@ public final class CircleShape extends Shape {
         // return Vec2.dot(d, d) <= radius * radius;
         final Rotation q = transform.q;
         final Vec2 tp = transform.p;
-        float centerx = -(q.c * center.x - q.s * center.y + tp.x - p.x);
-        float centery = -(q.s * center.x + q.c * center.y + tp.y - p.y);
+        float centerx = -(q.c * center.x - q.s * center.y + tp.x - point.x);
+        float centery = -(q.s * center.x + q.c * center.y + tp.y - point.y);
 
         return centerx * centerx + centery * centery <= getRadius() * getRadius();
     }
