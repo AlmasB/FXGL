@@ -303,6 +303,13 @@ public final class FXGLMath {
         return value > 0 ? value : -value;
     }
 
+    /**
+     * @return min of two floats using a direct (a < b ? a : b) check, without NaN check
+     */
+    public static float min(float a, float b) {
+        return a < b ? a : b;
+    }
+
     public static Point2D bezier(Point2D p1, Point2D p2, Point2D p3, double t) {
         double x = (1 - t) * (1 - t) * p1.getX() + 2 * (1 - t) * t * p2.getX() + t * t * p3.getX();
         double y = (1 - t) * (1 - t) * p1.getY() + 2 * (1 - t) * t * p2.getY() + t * t * p3.getY();
