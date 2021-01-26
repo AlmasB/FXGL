@@ -320,8 +320,6 @@ public final class PolygonShape extends Shape {
         }
         s.mulLocal(1.0f / vertexCount);
 
-        final float k_inv3 = 1.0f / 3.0f;
-
         final Vec2 e1 = pool3;
         final Vec2 e2 = pool4;
 
@@ -336,16 +334,18 @@ public final class PolygonShape extends Shape {
             area += triangleArea;
 
             // Area weighted centroid
-            center.x += triangleArea * k_inv3 * (e1.x + e2.x);
-            center.y += triangleArea * k_inv3 * (e1.y + e2.y);
+            center.x += triangleArea * INV_3 * (e1.x + e2.x);
+            center.y += triangleArea * INV_3 * (e1.y + e2.y);
 
-            final float ex1 = e1.x, ey1 = e1.y;
-            final float ex2 = e2.x, ey2 = e2.y;
+            final float ex1 = e1.x;
+            final float ey1 = e1.y;
+            final float ex2 = e2.x;
+            final float ey2 = e2.y;
 
             float intx2 = ex1 * ex1 + ex2 * ex1 + ex2 * ex2;
             float inty2 = ey1 * ey1 + ey2 * ey1 + ey2 * ey2;
 
-            I += (0.25f * k_inv3 * D) * (intx2 + inty2);
+            I += (0.25f * INV_3 * D) * (intx2 + inty2);
         }
 
         // Total mass
