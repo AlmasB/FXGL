@@ -3,15 +3,15 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.test.RunWithFX
+import javafx.application.Platform
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.closeTo
-import org.junit.jupiter.api.Assertions.assertFalse
+import org.hamcrest.Matchers.greaterThan
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.junit.jupiter.api.extension.ExtendWith
@@ -23,94 +23,79 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(RunWithFX::class)
 class LoopRunnerTest {
 
-    private lateinit var loop: LoopRunner
-
-    @BeforeEach
-    fun setUp() {
-        loop = LoopRunner {  }
-    }
-
-    @Test
-    fun `Start loop`() {
-        assertFalse(loop.isStarted)
-
-        loop.start()
-
-        assertTrue(loop.isStarted)
-
-        loop.stop()
-
-        assertTrue(loop.isStarted)
-    }
-
     @Test
     @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     fun `Update loop`() {
         var t = 0.0
 
-        loop = LoopRunner { t += it }
+        listOf(
+                // run with a given ticks per second (via scheduled service tick)
+                LoopRunner(60) { t += it },
 
-        loop.start()
+                // run with display refresh rate (via JavaFX pulse tick)
+                LoopRunner { t += it }
+        ).forEach { loop ->
+            t = 0.0
 
-        Thread.sleep(1000)
+            loop.start()
 
-        loop.pause()
+            Thread.sleep(1000)
 
-        assertThat(loop.tpf, closeTo(0.016, 0.01))
-        assertThat(loop.fps.toDouble(), closeTo(60.0, 1.0))
+            loop.pause()
 
-        assertThat(t, closeTo(1.0, 0.1))
+            assertThat(loop.tpf, closeTo(0.016, 0.09))
+            assertThat(loop.fps.toDouble(), closeTo(60.0, 5.0))
 
-        loop.resume()
+            assertThat(t, closeTo(1.0, 0.2))
 
-        Thread.sleep(1000)
+            loop.resume()
 
-        loop.stop()
+            Thread.sleep(1000)
 
-        assertThat(loop.tpf, closeTo(0.016, 0.01))
-        assertThat(loop.fps.toDouble(), closeTo(60.0, 1.0))
+            loop.stop()
 
-        assertThat(t, closeTo(2.0, 0.1))
+            assertThat(loop.tpf, closeTo(0.016, 0.09))
+            assertThat(loop.fps.toDouble(), closeTo(60.0, 5.0))
 
-        // shouldn't change anything since loop is stopped
-        Thread.sleep(300)
+            assertThat(t, closeTo(2.0, 0.4))
 
-        assertThat(loop.tpf, closeTo(0.016, 0.01))
-        assertThat(loop.fps.toDouble(), closeTo(60.0, 1.0))
+            // shouldn't change anything since loop is stopped
+            Thread.sleep(300)
 
-        assertThat(t, closeTo(2.0, 0.1))
+            assertThat(loop.tpf, closeTo(0.016, 0.09))
+            assertThat(loop.fps.toDouble(), closeTo(60.0, 5.0))
+
+            assertThat(t, closeTo(2.0, 0.4))
+        }
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    fun `LoopRunner runs ticks on JavaFX thread`() {
+        var count1 = 0.0
+        var count2 = 0.0
+
+        listOf(
+                // run with a given ticks per second (via scheduled service tick)
+                LoopRunner(60) {
+                    assertTrue(Platform.isFxApplicationThread())
+                    count1 += it
+                },
+
+                // run with display refresh rate (via JavaFX pulse tick)
+                LoopRunner {
+                    assertTrue(Platform.isFxApplicationThread())
+                    count2 += it
+                }
+        ).forEach {
+            it.start()
+
+            Thread.sleep(1000)
+
+            it.stop()
+        }
+
+        assertThat(count1, greaterThan(0.0))
+        assertThat(count2, greaterThan(0.0))
     }
 }
-
-//class FPSCounterTest {
-//
-//    private lateinit var counter: FPSCounter
-//
-//    @BeforeEach
-//    fun `setUp`() {
-//        counter = FPSCounter()
-//    }
-//
-//    @Test
-//    fun `Counters returns 60 fps if JavaFX timing is right`() {
-//        var count = 1L
-//
-//        for (i in 1..100) {
-//            count += 16_666_666
-//            counter.update(count)
-//        }
-//
-//        count += 16_666_666
-//
-//        var fps = counter.update(count)
-//
-//        assertThat(fps, `is`(60))
-//
-//        counter.reset()
-//
-//        count += 16_666_666
-//        fps = counter.update(count)
-//
-//        assertThat(fps, `is`(not(60)))
-//    }
-//}

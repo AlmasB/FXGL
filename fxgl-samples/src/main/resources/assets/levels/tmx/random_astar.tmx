@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="40" tileheight="40" infinite="0" nextlayerid="3" nextobjectid="11">
+ <layer id="1" name="Tile Layer 1" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApIBwAGQAAB
+  </data>
+ </layer>
+ <objectgroup id="2" name="Object Layer 1">
+  <object id="1" type="wall" x="120" y="120" width="480" height="40"/>
+  <object id="2" type="wall" x="480" y="240" width="280" height="240"/>
+  <object id="3" type="wall" x="80" y="520" width="480" height="40"/>
+  <object id="4" type="wall" x="160" y="320" width="120" height="40"/>
+  <object id="5" type="wall" x="520" y="640" width="120" height="40"/>
+  <object id="6" type="wall" x="640" y="520" width="120" height="160"/>
+  <object id="7" type="wall" x="320" y="400" width="80" height="40"/>
+  <object id="8" type="wall" x="640" y="40" width="120" height="40"/>
+  <object id="9" type="wall" x="280" y="40" width="120" height="40"/>
+  <object id="10" type="wall" x="320" y="200" width="120" height="80"/>
+ </objectgroup>
+</map>

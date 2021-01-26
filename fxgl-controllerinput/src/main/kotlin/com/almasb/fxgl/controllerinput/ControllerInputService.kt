@@ -41,7 +41,6 @@ class ControllerInputService : EngineService() {
     private val nativeLibNames = hashMapOf(
             WINDOWS to listOf("SDL2.dll", "fxgl_controllerinput.dll"),
             LINUX to listOf("libSDL2.so", "libfxgl_controllerinput.so")
-            //TODO: MAC to listOf("", "")
     )
 
     private val controllers = FXCollections.observableArrayList<GameController>()

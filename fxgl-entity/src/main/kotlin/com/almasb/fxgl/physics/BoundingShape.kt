@@ -14,6 +14,7 @@ import com.almasb.fxgl.physics.box2d.collision.shapes.PolygonShape
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape
 import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
+import java.lang.RuntimeException
 
 /**
  * Defines bounding shapes to be used for hit boxes in local coord system.
@@ -123,6 +124,10 @@ sealed class BoundingShape(val size: Dimension2D) {
 
             return PolygonShapeData(Dimension2D(maxX, maxY), points as Array<Point2D>)
         }
+
+        @JvmStatic fun box3D(width: Double, height: Double, depth: Double): BoundingShape {
+            return Box3DShapeData(width, height, depth)
+        }
     }
 }
 
@@ -210,5 +215,12 @@ class ChainShapeData(size: Dimension2D, val points: Array<Point2D>) : BoundingSh
         shape.createLoop(vertices, vertices.size)
 
         return shape
+    }
+}
+
+class Box3DShapeData(val width: Double, val height: Double, val depth: Double) : BoundingShape(Dimension2D(width, height)) {
+
+    override fun toBox2DShape(box: HitBox, bboxComp: BoundingBoxComponent, conv: PhysicsUnitConverter): Shape {
+        throw RuntimeException("2D shape is not supported for Box3D")
     }
 }

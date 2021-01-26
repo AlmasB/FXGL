@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.ui.FXGLCheckBox;
-import sandbox.levels.MyEntityFactory;
+import intermediate.levels.text.TextLevelEntityFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +48,7 @@ public class TiledMapSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        getGameWorld().addEntityFactory(new MyEntityFactory());
+        getGameWorld().addEntityFactory(new TextLevelEntityFactory());
 
         var level = setLevelFromMap("tmx/map_with_gid_objects.tmx");
 

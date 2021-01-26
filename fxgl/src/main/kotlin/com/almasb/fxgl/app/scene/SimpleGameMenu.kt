@@ -11,12 +11,9 @@ import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getSettings
-import javafx.beans.binding.StringBinding
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
-import javafx.scene.Node
 import javafx.scene.Parent
-import javafx.scene.control.Button
 import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
@@ -59,31 +56,6 @@ class SimpleGameMenu : FXGLMenu(MenuType.GAME_MENU) {
 
     override fun onUpdate(tpf: Double) {
         animation.onUpdate(tpf)
-    }
-
-    // just placeholders ...
-    override fun createActionButton(name: String, action: Runnable): Button {
-        return Button()
-    }
-
-    override fun createActionButton(name: StringBinding, action: Runnable): Button {
-        return Button()
-    }
-
-    override fun createBackground(width: Double, height: Double): Node {
-        return Rectangle(width, height, null)
-    }
-
-    override fun createTitleView(title: String): Node {
-        return Rectangle()
-    }
-
-    override fun createVersionView(version: String): Node {
-        return Rectangle()
-    }
-
-    override fun createProfileView(profileName: String): Node {
-        return Rectangle()
     }
 
     private fun createContentPane(): StackPane {

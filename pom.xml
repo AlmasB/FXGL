@@ -29,7 +29,6 @@
         <module>fxgl-test</module>
         <module>fxgl-localization</module>
         <module>fxgl-logging</module>
-        <module>fxgl-notification</module>
         <module>fxgl-achievement</module>
         <module>fxgl-ai</module>
         <module>fxgl-profiles</module>

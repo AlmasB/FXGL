@@ -9,8 +9,8 @@ package com.almasb.fxgl.animation
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.test.RunWithFX
-import javafx.animation.Interpolator
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 import javafx.scene.Node
 import javafx.scene.paint.Color
 import javafx.scene.shape.*
@@ -19,9 +19,9 @@ import javafx.scene.transform.Scale
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.Assertions.*
+import org.hamcrest.Matchers.closeTo
+import org.hamcrest.Matchers.not
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -249,6 +249,27 @@ class AnimationBuilderTest {
         assertThat(e.y, `is`(50.0))
     }
 
+    @Test
+    fun `Translate 3D`() {
+        val anim = builder.translate(e)
+                .from(Point3D(10.0, 10.0, 5.0))
+                .to(Point3D(50.0, 50.0, 3.0))
+                .build()
+
+        anim.start()
+
+        assertThat(e.x, `is`(10.0))
+        assertThat(e.y, `is`(10.0))
+        assertThat(e.z, `is`(5.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(e.x, `is`(50.0))
+        assertThat(e.y, `is`(50.0))
+        assertThat(e.z, `is`(3.0))
+    }
+
     @ParameterizedTest
     @MethodSource("pathProvider")
     fun `Translate along a path`(path: Shape) {
@@ -380,6 +401,82 @@ class AnimationBuilderTest {
     }
 
     @Test
+    fun `Rotate entity 3D`() {
+        val anim = builder.rotate(e)
+                .from(Point3D(0.0, 2.0, 4.0))
+                .to(Point3D(4.0, 5.0, -2.0))
+                .build()
+
+        anim.start()
+
+        assertThat(e.transformComponent.rotationX, `is`(0.0))
+        assertThat(e.transformComponent.rotationY, `is`(2.0))
+        assertThat(e.transformComponent.rotationZ, `is`(4.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(e.transformComponent.rotationX, `is`(4.0))
+        assertThat(e.transformComponent.rotationY, `is`(5.0))
+        assertThat(e.transformComponent.rotationZ, `is`(-2.0))
+    }
+
+    @Test
+    fun `Rotate node 3D`() {
+        val anim = builder.rotate(node)
+                .from(Point3D(0.0, 2.0, 4.0))
+                .to(Point3D(4.0, 5.0, -2.0))
+                .build()
+
+        anim.start()
+
+        // rotate should have been added
+        val rZ = node.transforms[0] as Rotate
+        val rY = node.transforms[1] as Rotate
+        val rX = node.transforms[2] as Rotate
+
+        assertThat(rX.angle, `is`(0.0))
+        assertThat(rY.angle, `is`(2.0))
+        assertThat(rZ.angle, `is`(4.0))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(rX.angle, `is`(4.0))
+        assertThat(rY.angle, `is`(5.0))
+        assertThat(rZ.angle, `is`(-2.0))
+
+        // use 2nd builder, the transforms should remain
+
+        val anim2 = AnimationBuilder(object : Scene() {})
+                .rotate(node)
+                .from(Point3D(10.0, 12.0, 14.0))
+                .to(Point3D(14.0, 15.0, -12.0))
+                .build()
+
+        anim2.start()
+
+        val rZ2 = node.transforms[0] as Rotate
+        val rY2 = node.transforms[1] as Rotate
+        val rX2 = node.transforms[2] as Rotate
+
+        assertThat(rZ2, `is`(rZ))
+        assertThat(rY2, `is`(rY))
+        assertThat(rX2, `is`(rX))
+
+        assertThat(rX.angle, `is`(10.0))
+        assertThat(rY.angle, `is`(12.0))
+        assertThat(rZ.angle, `is`(14.0))
+
+        anim2.onUpdate(0.5)
+        anim2.onUpdate(0.5)
+
+        assertThat(rX.angle, `is`(14.0))
+        assertThat(rY.angle, `is`(15.0))
+        assertThat(rZ.angle, `is`(-12.0))
+    }
+
+    @Test
     fun `Scale entity`() {
         val anim = builder.scale(e)
                 .from(Point2D(1.0, 1.0))
@@ -396,6 +493,27 @@ class AnimationBuilderTest {
 
         assertThat(e.scaleX, `is`(3.0))
         assertThat(e.scaleY, `is`(3.0))
+    }
+
+    @Test
+    fun `Scale entity 3D`() {
+        val anim = builder.scale(e)
+                .from(Point3D(1.0, 1.0, 0.5))
+                .to(Point3D(3.0, 3.0, 2.0))
+                .build()
+
+        anim.start()
+
+        assertThat(e.scaleX, `is`(1.0))
+        assertThat(e.scaleY, `is`(1.0))
+        assertThat(e.scaleZ, `is`(0.5))
+
+        anim.onUpdate(0.5)
+        anim.onUpdate(0.5)
+
+        assertThat(e.scaleX, `is`(3.0))
+        assertThat(e.scaleY, `is`(3.0))
+        assertThat(e.scaleZ, `is`(2.0))
     }
 
     @Test

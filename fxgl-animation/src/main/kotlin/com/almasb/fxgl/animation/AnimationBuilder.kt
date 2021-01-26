@@ -12,8 +12,10 @@ import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.scene.Scene
 import javafx.animation.Interpolator
 import javafx.beans.property.DoubleProperty
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.WritableValue
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 import javafx.scene.Node
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
@@ -212,18 +214,26 @@ open class AnimationBuilder
     class TranslationAnimationBuilder(animationBuilder: AnimationBuilder) : AM(animationBuilder) {
 
         private var path: Shape? = null
-        private var fromPoint = Point2D.ZERO
-        private var toPoint = Point2D.ZERO
+        private var fromPoint = Point3D.ZERO
+        private var toPoint = Point3D.ZERO
 
         fun alongPath(path: Shape) = this.also {
             this.path = path
         }
 
         fun from(start: Point2D) = this.also {
-            fromPoint = start
+            fromPoint = Point3D(start.x, start.y, 0.0)
         }
 
         fun to(end: Point2D) = this.also {
+            toPoint = Point3D(end.x, end.y, 0.0)
+        }
+
+        fun from(start: Point3D) = this.also {
+            fromPoint = start
+        }
+
+        fun to(end: Point3D) = this.also {
             toPoint = end
         }
 
@@ -231,22 +241,23 @@ open class AnimationBuilder
 
             path?.let { curve ->
                 return when (curve) {
-                    is QuadCurve -> makeAnim(AnimatedQuadBezierPoint2D(curve))
-                    is CubicCurve -> makeAnim(AnimatedCubicBezierPoint2D(curve))
+                    is QuadCurve -> makeAnim(AnimatedQuadBezierPoint3D(curve))
+                    is CubicCurve -> makeAnim(AnimatedCubicBezierPoint3D(curve))
                     else -> makeAnim(AnimatedPath(curve))
                 }
             }
 
-            return makeAnim(AnimatedPoint2D(fromPoint, toPoint))
+            return makeAnim(AnimatedPoint3D(fromPoint, toPoint))
         }
 
-        private fun makeAnim(animValue: AnimatedValue<Point2D>): Animation<Point2D> {
+        private fun makeAnim(animValue: AnimatedValue<Point3D>): Animation<Point3D> {
             return makeConfig().build(
                     animValue,
                     Consumer { value ->
                         objects.forEach {
                             it.xProperty().value = value.x
                             it.yProperty().value = value.y
+                            it.zProperty().value = value.z
                         }
                     }
             )
@@ -279,16 +290,26 @@ open class AnimationBuilder
 
     class ScaleAnimationBuilder(animationBuilder: AnimationBuilder) : AM(animationBuilder) {
 
-        private var startScale = Point2D(1.0, 1.0)
-        private var endScale = Point2D(1.0, 1.0)
+        private var startScale = Point3D(1.0, 1.0, 1.0)
+        private var endScale = Point3D(1.0, 1.0, 1.0)
         private var scaleOrigin: Point2D? = null
 
         fun from(start: Point2D): ScaleAnimationBuilder {
-            startScale = start
+            startScale = Point3D(start.x, start.y, 1.0)
             return this
         }
 
         fun to(end: Point2D): ScaleAnimationBuilder {
+            endScale = Point3D(end.x, end.y, 1.0)
+            return this
+        }
+
+        fun from(start: Point3D): ScaleAnimationBuilder {
+            startScale = start
+            return this
+        }
+
+        fun to(end: Point3D): ScaleAnimationBuilder {
             endScale = end
             return this
         }
@@ -306,11 +327,12 @@ open class AnimationBuilder
             }
 
             return makeConfig().build(
-                    AnimatedPoint2D(startScale, endScale),
+                    AnimatedPoint3D(startScale, endScale),
                     Consumer { value ->
                         objects.forEach {
                             it.scaleXProperty().value = value.x
                             it.scaleYProperty().value = value.y
+                            it.scaleZProperty().value = value.z
                         }
                     }
             )
@@ -319,17 +341,32 @@ open class AnimationBuilder
 
     class RotationAnimationBuilder(animationBuilder: AnimationBuilder) : AM(animationBuilder) {
 
-        private var startAngle = 0.0
-        private var endAngle = 0.0
+        private var is3DAnimation = false
+        private var startRotation = Point3D.ZERO
+        private var endRotation = Point3D.ZERO
         private var rotationOrigin: Point2D? = null
 
         fun from(startAngle: Double): RotationAnimationBuilder {
-            this.startAngle = startAngle
+            is3DAnimation = false
+            startRotation = Point3D(0.0, 0.0, startAngle)
             return this
         }
 
         fun to(endAngle: Double): RotationAnimationBuilder {
-            this.endAngle = endAngle
+            is3DAnimation = false
+            endRotation = Point3D(0.0, 0.0, endAngle)
+            return this
+        }
+
+        fun from(start: Point3D): RotationAnimationBuilder {
+            is3DAnimation = true
+            startRotation = start
+            return this
+        }
+
+        fun to(end: Point3D): RotationAnimationBuilder {
+            is3DAnimation = true
+            endRotation = end
             return this
         }
 
@@ -345,10 +382,14 @@ open class AnimationBuilder
                 }
             }
 
-            return makeConfig().build(AnimatedValue(startAngle, endAngle),
+            return makeConfig().build(AnimatedValue(startRotation, endRotation),
                     Consumer { value ->
                         objects.forEach {
-                            it.rotationProperty().value = value
+                            if (is3DAnimation) {
+                                it.rotationXProperty().value = value.x
+                                it.rotationYProperty().value = value.y
+                            }
+                            it.rotationZProperty().value = value.z
                         }
                     }
             )
@@ -398,7 +439,9 @@ private fun Node.toAnimatable(): Animatable {
     val n = this
     return object : Animatable {
         private var scale: Scale? = null
-        private var rotate: Rotate? = null
+        private var rotateX: Rotate? = null
+        private var rotateY: Rotate? = null
+        private var rotateZ: Rotate? = null
 
         override fun xProperty(): DoubleProperty {
             return n.translateXProperty()
@@ -406,6 +449,10 @@ private fun Node.toAnimatable(): Animatable {
 
         override fun yProperty(): DoubleProperty {
             return n.translateYProperty()
+        }
+
+        override fun zProperty(): DoubleProperty {
+            return n.translateZProperty()
         }
 
         override fun scaleXProperty(): DoubleProperty {
@@ -416,8 +463,24 @@ private fun Node.toAnimatable(): Animatable {
             return scale?.yProperty() ?: n.scaleYProperty()
         }
 
-        override fun rotationProperty(): DoubleProperty {
-            return rotate?.angleProperty() ?: n.rotateProperty()
+        override fun scaleZProperty(): DoubleProperty {
+            return scale?.zProperty() ?: n.scaleZProperty()
+        }
+
+        override fun rotationXProperty(): DoubleProperty {
+            initRotations()
+
+            return rotateX!!.angleProperty()
+        }
+
+        override fun rotationYProperty(): DoubleProperty {
+            initRotations()
+
+            return rotateY!!.angleProperty()
+        }
+
+        override fun rotationZProperty(): DoubleProperty {
+            return rotateZ?.angleProperty() ?: n.rotateProperty()
         }
 
         override fun opacityProperty(): DoubleProperty {
@@ -444,19 +507,37 @@ private fun Node.toAnimatable(): Animatable {
         override fun setRotationOrigin(pivotPoint: Point2D) {
             // if a node already has a previous transform, reuse it
             // this means the node was animated previously
-            n.properties["anim_rotate"]?.let { transform ->
-                rotate = transform as Rotate
-                rotate!!.pivotX = pivotPoint.x
-                rotate!!.pivotY = pivotPoint.y
+            n.properties["anim_rotate_z"]?.let { transform ->
+                rotateZ = transform as Rotate
+                rotateZ!!.pivotX = pivotPoint.x
+                rotateZ!!.pivotY = pivotPoint.y
                 return
             }
 
-            rotate = Rotate(0.0, pivotPoint.x, pivotPoint.y)
+            rotateZ = Rotate(0.0, pivotPoint.x, pivotPoint.y)
                     .also {
                         it.axis = Rotate.Z_AXIS
                         n.transforms.add(it)
-                        n.properties["anim_rotate"] = it
+                        n.properties["anim_rotate_z"] = it
                     }
+        }
+
+        private fun initRotations() {
+            if (n.properties.containsKey("anim_rotate_x")) {
+                rotateX = n.properties["anim_rotate_x"]!! as Rotate
+                rotateY = n.properties["anim_rotate_y"]!! as Rotate
+                rotateZ = n.properties["anim_rotate_z"]!! as Rotate
+            } else {
+                rotateX = Rotate(0.0, Rotate.X_AXIS)
+                rotateY = Rotate(0.0, Rotate.Y_AXIS)
+                rotateZ = Rotate(0.0, Rotate.Z_AXIS)
+
+                n.properties["anim_rotate_x"] = rotateX
+                n.properties["anim_rotate_y"] = rotateY
+                n.properties["anim_rotate_z"] = rotateZ
+
+                n.transforms.addAll(rotateZ, rotateY, rotateX)
+            }
         }
     }
 }
@@ -472,6 +553,10 @@ private fun Entity.toAnimatable(): Animatable {
             return e.yProperty()
         }
 
+        override fun zProperty(): DoubleProperty {
+            return e.zProperty()
+        }
+
         override fun scaleXProperty(): DoubleProperty {
             return e.transformComponent.scaleXProperty()
         }
@@ -480,8 +565,20 @@ private fun Entity.toAnimatable(): Animatable {
             return e.transformComponent.scaleYProperty()
         }
 
-        override fun rotationProperty(): DoubleProperty {
-            return e.transformComponent.angleProperty()
+        override fun scaleZProperty(): DoubleProperty {
+            return e.transformComponent.scaleZProperty()
+        }
+
+        override fun rotationXProperty(): DoubleProperty {
+            return e.transformComponent.rotationXProperty()
+        }
+
+        override fun rotationYProperty(): DoubleProperty {
+            return e.transformComponent.rotationYProperty()
+        }
+
+        override fun rotationZProperty(): DoubleProperty {
+            return e.transformComponent.rotationZProperty()
         }
 
         override fun opacityProperty(): DoubleProperty {

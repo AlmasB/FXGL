@@ -7,6 +7,9 @@
 package com.almasb.fxgl.logging
 
 /**
+ * Logger output that sends all messages to System.out via println().
+ * Closing this output is a no-op.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class ConsoleOutput : LoggerOutput {

@@ -11,6 +11,9 @@ import javafx.event.EventHandler
 import javafx.event.EventType
 
 /**
+ * A subscriber handle for a specific event handler.
+ * This handle can be used to unsubscribe (remove) the event handler.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class Subscriber

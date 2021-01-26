@@ -93,7 +93,17 @@ class PropertyMap {
                 is Int -> intProperty(propertyName).value = value
                 is Double -> doubleProperty(propertyName).value = value
                 is String -> stringProperty(propertyName).value = value
-                else -> objectProperty<Any>(propertyName).value = value
+                else -> {
+                    val prop = objectProperty<Any>(propertyName) as UpdatableObjectProperty<Any>
+
+                    val oldValue = prop.value
+                    prop.value = value
+
+                    if (oldValue === value) {
+                        // object listener is not fired if the _same_ object is passed in, so we fire it manually
+                        prop.forceUpdateListeners(oldValue, value)
+                    }
+                }
             }
         } else {
             val property = when (value) {

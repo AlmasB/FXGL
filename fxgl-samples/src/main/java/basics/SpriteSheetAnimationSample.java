@@ -25,26 +25,25 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  */
 public class SpriteSheetAnimationSample extends GameApplication {
     @Override
-    protected void initSettings(GameSettings settings) {
-
-    }
+    protected void initSettings(GameSettings settings) { }
 
     @Override
     protected void initGame() {
-        getGameWorld().addEntityFactory(new FishFactory());
+        getGameWorld().addEntityFactory(new ZombieFactory());
 
-        spawn("fish");
+        spawn("zombie");
     }
 
-    public static class FishFactory implements EntityFactory {
+    public static class ZombieFactory implements EntityFactory {
 
-        @Spawns("fish")
-        public Entity newFish(SpawnData data) {
+        @Spawns("zombie")
+        public Entity newZombie(SpawnData data) {
             var channel = new AnimationChannel(List.of(
-                    image("fish/blue1.png"),
-                    image("fish/blue2.png"),
-                    image("fish/blue3.png")
-            ), Duration.seconds(1.0));
+                    image("anim/Attack (1).png"),
+                    image("anim/Attack (2).png"),
+                    image("anim/Attack (3).png"),
+                    image("anim/Attack (4).png")
+            ), Duration.seconds(0.5));
 
             return entityBuilder()
                     .view(new AnimatedTexture(channel).loop())

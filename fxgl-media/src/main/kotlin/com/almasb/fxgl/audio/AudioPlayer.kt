@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.audio
 
+import com.almasb.fxgl.audio.impl.DesktopAndMobileAudioService
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
@@ -13,6 +14,7 @@ import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
 import javafx.beans.property.DoubleProperty
+import java.net.URL
 
 /**
  * General audio player service that supports playback of sound and music objects.
@@ -32,6 +34,8 @@ class AudioPlayer : EngineService() {
 
     @Inject("globalSoundVolumeProperty")
     private lateinit var soundVolume: DoubleProperty
+
+    private val loader = DesktopAndMobileAudioService()
 
     override fun onMainLoopStarting() {
         musicVolume.addListener { _, _, newVolume ->
@@ -182,5 +186,9 @@ class AudioPlayer : EngineService() {
     fun stopAllSoundsAndMusic() {
         stopAllSounds()
         stopAllMusic()
+    }
+
+    fun loadAudio(audioType: AudioType, url: URL, isDesktop: Boolean): Audio {
+        return loader.loadAudio(audioType, url, isDesktop)
     }
 }

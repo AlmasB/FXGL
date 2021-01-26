@@ -3,13 +3,12 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.profile
 
 import com.almasb.fxgl.core.serialization.Bundle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.collection.IsIterableContainingInOrder
 import org.hamcrest.collection.IsIterableContainingInOrder.contains
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*

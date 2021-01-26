@@ -110,7 +110,7 @@ class FXGLApplication : Application() {
         FXGL.inject(engine, app, this)
 
         // get window up ASAP
-        mainWindow = MainWindow(stage, StartupScene(settings.width, settings.height), settings)
+        mainWindow = MainWindow(stage, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
         mainWindow.show()
 
         // start initialization of services on a background thread
@@ -342,12 +342,6 @@ class FXGLApplication : Application() {
          */
         override val overlayRoot = Group()
 
-        override val appWidth
-            get() = settings.width
-
-        override val appHeight
-            get() = settings.height
-
         override fun prefWidthProperty(): ReadOnlyDoubleProperty = settings.prefWidthProperty()
 
         override fun prefHeightProperty(): ReadOnlyDoubleProperty = settings.prefHeightProperty()
@@ -360,6 +354,9 @@ class FXGLApplication : Application() {
          */
         override val timer = Timer()
 
+        override val currentScene: Scene
+            get() = mainWindow.currentScene
+
         internal lateinit var gameScene: GameScene
         private lateinit var loadScene: LoadingScene
 
@@ -369,6 +366,10 @@ class FXGLApplication : Application() {
 
         internal val window: MainWindow
             get() = mainWindow
+
+        override fun isInHierarchy(scene: Scene): Boolean {
+            return mainWindow.isInHierarchy(scene)
+        }
 
         override fun onInit() {
             settings.cssList.forEach {
@@ -413,7 +414,8 @@ class FXGLApplication : Application() {
             loadScene = sceneFactory.newLoadingScene()
             gameScene = GameScene(settings.width, settings.height,
                     GameWorld(),
-                    PhysicsWorld(settings.height, settings.pixelsPerMeter)
+                    PhysicsWorld(settings.height, settings.pixelsPerMeter),
+                    settings.isExperimental3D
             )
 
             gameScene.isSingleStep = settings.isSingleStep
@@ -507,8 +509,8 @@ class FXGLApplication : Application() {
                         ImageView(PauseMenuBGGen.generate().toImage()).also {
                             it.scaleX = 4.0
                             it.scaleY = 4.0
-                            it.translateX = appWidth / 2.0
-                            it.translateY = appHeight / 2.0
+                            it.translateX = prefWidth / 2.0
+                            it.translateY = prefHeight / 2.0
                         }
                     }
 

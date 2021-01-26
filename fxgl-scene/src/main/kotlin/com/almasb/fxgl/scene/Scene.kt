@@ -29,17 +29,27 @@ abstract class SubScene : Scene() {
 abstract class Scene : State<Scene> {
 
     /**
-     * Top-level root node.
+     * Top-level root node. *Only* used by FXGL itself.
+     * Do NOT access this, use [contentRoot] instead.
      */
     val root = Pane()
 
     /**
      * Root node for content. All children of this class
-     * should use content root.
+     * should use content root and must not access [root].
      */
     val contentRoot = Pane()
 
+    /**
+     * Input specific to this scene.
+     * It only receives events if this scene is active.
+     */
     val input = Input()
+
+    /**
+     * Timer specific to this scene.
+     * It only runs if this scene is active.
+     */
     val timer = Timer()
 
     override val isSubState: Boolean = false
@@ -56,22 +66,38 @@ abstract class Scene : State<Scene> {
         root.children.addAll(contentRoot)
     }
 
+    /**
+     * Add [node] to this scene.
+     */
     fun addChild(node: Node) {
         contentRoot.children += node
     }
 
+    /**
+     * Remove [node] from this scene.
+     */
     fun removeChild(node: Node) {
         contentRoot.children -= node
     }
 
+    /**
+     * Add an update listener, which is notified when this scene updates.
+     */
     fun addListener(l: Updatable) {
         listenersToAdd.add(l)
     }
 
+    /**
+     * Remove a previously added listener.
+     */
     fun removeListener(l: Updatable) {
         listenersToRemove.add(l)
     }
 
+    /**
+     * Update this scene, which updates (in this order):
+     * input, timer, onUpdate() callback, listeners.
+     */
     fun update(tpf: Double) {
         input.update(tpf)
         timer.update(tpf)
@@ -102,6 +128,7 @@ abstract class Scene : State<Scene> {
     }
 
     protected open fun onUpdate(tpf: Double) { }
+
     override fun onCreate() { }
     override fun onDestroy() { }
     override fun onEnteredFrom(prevState: Scene) { }

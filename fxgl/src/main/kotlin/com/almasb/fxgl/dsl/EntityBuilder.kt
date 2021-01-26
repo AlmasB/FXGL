@@ -16,6 +16,7 @@ import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsComponent
 import javafx.event.EventHandler
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import java.util.function.Consumer
@@ -35,7 +36,7 @@ class EntityBuilder {
 
     @Deprecated("Use FXGL.entityBuilder(data)")
     fun from(data: SpawnData) = this.also {
-        at(data.x, data.y)
+        at(data.x, data.y, data.z)
 
         if (data.hasKey("type")) {
             val value = data.get<Any>("type")
@@ -55,12 +56,20 @@ class EntityBuilder {
         entity.setPosition(x, y)
     }
 
+    fun at(x: Double, y: Double, z: Double) = this.also {
+        entity.setPosition3D(x, y, z)
+    }
+
     fun at(p: Vec2) = this.also {
         entity.setPosition(p)
     }
 
     fun at(p: Point2D) = this.also {
         entity.setPosition(p)
+    }
+
+    fun at(p: Point3D) = this.also {
+        entity.setPosition3D(p)
     }
 
     fun atAnchored(localAnchor: Point2D, position: Point2D) = this.also {
@@ -138,7 +147,7 @@ class EntityBuilder {
     }
 
     fun zIndex(z: Int) = this.also {
-        entity.transformComponent.z = z
+        entity.zIndex = z
     }
 
     fun onClick(action: (Entity) -> Unit) = this.also {

@@ -144,8 +144,8 @@ class MiniGameSubScene<S : MiniGameResult, T : MiniGame<S>>(
         val view: MiniGameView<T>, val callback: (S) -> Unit) : SubScene() {
 
     init {
-        view.translateX = sceneService.appWidth / 2 - view.layoutBounds.width / 2
-        view.translateY = sceneService.appHeight / 2 - view.layoutBounds.height / 2
+        view.translateX = sceneService.prefWidth / 2 - view.layoutBounds.width / 2
+        view.translateY = sceneService.prefHeight / 2 - view.layoutBounds.height / 2
 
         contentRoot.children += view
 

@@ -14,6 +14,11 @@ import javafx.scene.control.Spinner;
  */
 public class FXGLSpinner<T> extends Spinner<T> {
 
+    public FXGLSpinner() {
+        super();
+        getStyleClass().setAll("fxgl-spinner");
+    }
+
     public FXGLSpinner(ObservableList<T> items) {
         super(items);
         getStyleClass().setAll("fxgl-spinner");

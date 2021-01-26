@@ -13,7 +13,7 @@ JavaFX Game Development Framework
 ### Why FXGL?
 
 * No installation or setup required
-* "Out of the box": Java 8-15, Win/Mac/Linux/Android 5.0+/iOS 11.0+/Web
+* "Out of the box": Java 8-15, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
 * Simple and clean API, higher level than other engines
 * Superset of JavaFX: no need to learn new UI API
 * Real-world game development techniques: Entity-Component, interpolated animations, particles, and [many more](https://github.com/AlmasB/FXGL/wiki/Core-Features)
@@ -21,11 +21,12 @@ JavaFX Game Development Framework
 
 ### Good for:
 
-* Any 2D genre (side-scroller / platformer / arcade / RPG)
-* Complex UI controls
+* Any 2D game (side-scroller / platformer / arcade / RPG)
+* Any business applications with complex UI controls / animations
+* Experimental 3D
 * Hobby / academic / commercial projects
 * Teaching / learning / improving game development skills
-* Fast prototyping of game ideas
+* Fast prototyping of app ideas
 
 ### Minimal Example
 
@@ -69,7 +70,7 @@ Already have `pom.xml`? Then add: (use `0.5.4` for Java 8-10). **Note:** make su
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>11.11</version>
+    <version>11.13</version>
 </dependency>
 ```
 
@@ -85,7 +86,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:11.11'
+    compile 'com.github.almasb:fxgl:11.13'
 }
 ```
 
@@ -122,15 +123,23 @@ If you'd like your project featured here, just add a note in the [Chat](https://
 If you want to build FXGL from sources or want to contribute,
 please see the [Contribution Guide](CONTRIBUTING.md) (including non-code).
 FXGL is fully modular, so new contributors do not need to understand the entire codebase, only the module to which the contribution is made.
+Contributions will be reviewed in accordance with the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 You can support the FXGL development / show interest by simply starring the repo or becoming a [sponsor](https://github.com/sponsors/AlmasB).
 
 ### Sponsors
 
+Users:
+
 * @Marsl10
 * @SergeMerzliakov
 * @mbains
 * @sabit86
+* @hendrikebbers
+
+Companies:
+
+* @karakun
 
 ### Contact
 

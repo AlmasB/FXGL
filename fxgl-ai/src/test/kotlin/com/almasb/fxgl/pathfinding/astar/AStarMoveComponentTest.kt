@@ -49,6 +49,12 @@ class AStarMoveComponentTest {
         assertThat(cellMoveComponent.cellX, `is`(0))
         assertThat(cellMoveComponent.cellY, `is`(1))
 
+        var currentCell = aStarMoveComponent.currentCell
+
+        assertTrue(currentCell.isPresent)
+        assertThat(currentCell.get().x, `is`(0))
+        assertThat(currentCell.get().y, `is`(1))
+
         // right
         aStarMoveComponent.moveToRightCell()
 
@@ -80,6 +86,12 @@ class AStarMoveComponentTest {
 
         assertThat(cellMoveComponent.cellX, `is`(3))
         assertThat(cellMoveComponent.cellY, `is`(5))
+
+        currentCell = aStarMoveComponent.currentCell
+
+        assertTrue(currentCell.isPresent)
+        assertThat(currentCell.get().x, `is`(3))
+        assertThat(currentCell.get().y, `is`(5))
     }
 
     @Test

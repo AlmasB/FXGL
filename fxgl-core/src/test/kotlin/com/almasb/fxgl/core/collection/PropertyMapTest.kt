@@ -6,12 +6,11 @@
 @file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.core.collection
 
+import com.almasb.fxgl.core.math.Vec2
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.StringProperty
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.contains
-import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -163,6 +162,46 @@ class PropertyMapTest {
     }
 
     @Test
+    fun `ObjectProperty changes are notified via listeners`() {
+        var count = 0
+
+        val v = Vec2(5.0, 2.0)
+
+        map.setValue("v", v)
+
+        val l = PropertyChangeListener<Vec2> { prev, now ->
+
+            if (count == 0) {
+                assertThat(now, `is`(v))
+                assertThat(v.x, `is`(2f))
+                assertThat(v.y, `is`(3f))
+            } else {
+                assertThat(now, `is`(not(v)))
+                assertThat(now.x, `is`(0f))
+                assertThat(now.y, `is`(0f))
+            }
+
+            count++
+        }
+
+        map.addListener("v", l)
+
+        v.set(2f, 3f)
+
+        map.setValue("v", v)
+
+        map.setValue("v", Vec2())
+
+        assertThat(count, `is`(2))
+
+        // remove listener, so setValue shouldn't fire
+        map.removeListener("v", l)
+        map.setValue("v", Vec2())
+
+        assertThat(count, `is`(2))
+    }
+
+    @Test
     fun `Copy returns a shallow copy`() {
         map.setValue("testInt", 3)
         map.setValue("testDouble", 5.0)
@@ -204,15 +243,17 @@ class PropertyMapTest {
                 "testInt" to "3",
                 "testDouble" to "5.0",
                 "testBoolean" to "false",
+                "testBoolean2" to "true",
                 "testString" to "Hello world"
         )
 
         map = PropertyMap.fromStringMap(javaMap)
 
-        assertThat(map.keys().size, `is`(4))
+        assertThat(map.keys().size, `is`(5))
         assertThat(map.getInt("testInt"), `is`(3))
         assertThat(map.getDouble("testDouble"), `is`(5.0))
         assertThat(map.getBoolean("testBoolean"), `is`(false))
+        assertThat(map.getBoolean("testBoolean2"), `is`(true))
         assertThat(map.getString("testString"), `is`("Hello world"))
     }
 
@@ -330,55 +371,7 @@ class PropertyMapTest {
 //        assertThat(gameState.getString("testString"), `is`("StringDataNew"))
 //        assertThat(gameState.getObject<Dummy>("testObject").data, `is`("ObjectDataNew"))
 //    }
-//
-//    @Test
-//    fun `Throw if property name not found`() {
-//        assertThrows(IllegalArgumentException::class.java, {
-//            gameState.getBoolean("notFound")
-//        })
-//    }
-//
-//    @Test
-//    fun `Test increment`() {
-//        gameState.setValue("testInt", 1)
-//        gameState.setValue("testDouble", 1.0)
-//
-//        gameState.increment("testInt", +9)
-//        assertThat(gameState.getInt("testInt"), `is`(10))
-//
-//        gameState.increment("testInt", -10)
-//        assertThat(gameState.getInt("testInt"), `is`(0))
-//
-//        gameState.increment("testDouble", +1.0)
-//        assertThat(gameState.getDouble("testDouble"), `is`(2.0))
-//
-//        gameState.increment("testDouble", -3.0)
-//        assertThat(gameState.getDouble("testDouble"), `is`(-1.0))
-//    }
-//
-//    @Test
-//    fun `Test listeners`() {
-//        gameState.setValue("testInt", 10)
-//
-//        var count = 0
-//
-//        val listener = object : PropertyChangeListener<Int> {
-//            override fun onChange(prev: Int, now: Int) {
-//                assertThat(prev, `is`(10))
-//                count += now
-//            }
-//        }
-//
-//        gameState.addListener("testInt", listener)
-//
-//        gameState.setValue("testInt", 25)
-//        assertThat(count, `is`(25))
-//
-//        gameState.removeListener("testInt", listener)
-//
-//        gameState.setValue("testInt", 1000)
-//        assertThat(count, `is`(25))
-//    }
+
 //
 //    @Test
 //    fun `Game difficulty`() {

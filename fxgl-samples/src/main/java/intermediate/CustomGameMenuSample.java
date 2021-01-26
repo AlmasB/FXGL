@@ -17,10 +17,7 @@ import com.almasb.fxgl.core.util.EmptyRunnable;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.ui.FontType;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringBinding;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -133,36 +130,6 @@ public class CustomGameMenuSample extends GameApplication {
         @Override
         protected void onUpdate(double tpf) {
             animation.onUpdate(tpf);
-        }
-        
-        @Override
-        protected Button createActionButton( String name,  Runnable action) {
-            return new Button();
-        }
-
-        @Override
-        protected Button createActionButton( StringBinding name,  Runnable action) {
-            return new Button();
-        }
-
-        @Override
-        protected Node createBackground(double width, double height) {
-            return new Rectangle();
-        }
-
-        @Override
-        protected Node createTitleView( String title) {
-            return new Rectangle();
-        }
-
-        @Override
-        protected Node createVersionView( String version) {
-            return new Rectangle();
-        }
-
-        @Override
-        protected Node createProfileView( String profileName) {
-            return new Rectangle();
         }
     }
 

@@ -56,6 +56,15 @@ class StateMachine<S : State<S>>(initialState: S) {
         activeStates += parentState
     }
 
+    /**
+     * Checks if [state] is either the parent state or in substates of this machine.
+     *
+     * @return true when [state] is in this state machine's hierarchy
+     */
+    fun isInHierarchy(state: S): Boolean {
+        return state === parentState || state in subStates
+    }
+
     fun runOnActiveStates(action: (S) -> Unit) {
         activeStates.forEach { action(it) }
     }

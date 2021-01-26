@@ -13,6 +13,8 @@ import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.scene.Group
 
 /**
+ * Provides access to pushing / popping subscene stack, global input, timer, overlay root and application
+ * preferred width / height to lower-level modules.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -25,17 +27,27 @@ abstract class SceneService : EngineService() {
     abstract val overlayRoot: Group
 
     /**
-     * @return target app width, [prefWidthProperty] is preferred
+     * @return preferred width (depends on auto-scaling) of the active scene at the time of call
      */
-    abstract val appWidth: Int
+    val prefWidth: Double
+        get() = prefWidthProperty().value
 
     /**
-     * @return target app height, [prefHeightProperty] is preferred
+     * @return preferred height (depends on auto-scaling) of the active scene at the time of call
      */
-    abstract val appHeight: Int
+    val prefHeight: Double
+        get() = prefHeightProperty().value
 
+    /**
+     * @return a convenience property that auto-sets to target (app) width if auto-scaling is enabled
+     * and uses actual javafx scene width if not
+     */
     abstract fun prefWidthProperty(): ReadOnlyDoubleProperty
 
+    /**
+     * @return a convenience property that auto-sets to target (app) height if auto-scaling is enabled
+     * and uses actual javafx scene height if not
+     */
     abstract fun prefHeightProperty(): ReadOnlyDoubleProperty
 
     /**
@@ -48,7 +60,24 @@ abstract class SceneService : EngineService() {
      */
     abstract val timer: Timer
 
+    /**
+     * @return top-most scene (or subscene) in the scene service hierarchy
+     */
+    abstract val currentScene: Scene
+
+    /**
+     * @return true if [scene] is in this scene service hierarchy
+     */
+    abstract fun isInHierarchy(scene: Scene): Boolean
+
+    /**
+     * Push a given [subScene] on top of current scene or subscene.
+     */
     abstract fun pushSubScene(subScene: SubScene)
 
+    /**
+     * Pop current subscene.
+     * Only use this to pop your own (previously pushed) subscene.
+     */
     abstract fun popSubScene()
 }

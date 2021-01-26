@@ -13,6 +13,8 @@ package com.almasb.fxgl.app.scene
  */
 open class SceneFactory {
 
+    open fun newStartup(width: Int, height: Int): StartupScene = FXGLStartupScene(width, height)
+
     /**
      * Called to construct intro scene.
      *

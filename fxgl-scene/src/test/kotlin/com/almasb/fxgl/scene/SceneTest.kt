@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.core.Updatable
@@ -17,13 +17,11 @@ import javafx.scene.Node
 import javafx.scene.layout.Region
 import javafx.scene.shape.Rectangle
 import javafx.scene.transform.Scale
-import javafx.scene.transform.Transform
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
+import org.hamcrest.Matchers.contains
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
@@ -66,10 +64,6 @@ class SceneTest {
         val sceneService = object : SceneService() {
             override val overlayRoot: Group
                 get() = Group()
-            override val appWidth: Int
-                get() = 600
-            override val appHeight: Int
-                get() = 600
             override fun prefWidthProperty(): ReadOnlyDoubleProperty {
                 return ReadOnlyDoubleWrapper(600.0).readOnlyProperty
             }
@@ -80,6 +74,13 @@ class SceneTest {
                 get() = Input()
             override val timer: Timer
                 get() = Timer()
+
+            override val currentScene: Scene
+                get() = object : Scene() {}
+
+            override fun isInHierarchy(scene: Scene): Boolean {
+                return false
+            }
 
             override fun pushSubScene(subScene: SubScene) {
             }

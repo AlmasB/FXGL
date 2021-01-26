@@ -187,7 +187,7 @@ public class Grid<T extends Cell> {
         return getOptional(x, y + 1);
     }
 
-    private Optional<T> getOptional(int x, int y) {
+    public final Optional<T> getOptional(int x, int y) {
         if (isWithin(x, y))
             return Optional.of(get(x, y));
 

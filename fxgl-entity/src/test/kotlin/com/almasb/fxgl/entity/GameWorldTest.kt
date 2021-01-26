@@ -17,6 +17,7 @@ import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 import javafx.geometry.Rectangle2D
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.`is`
@@ -538,6 +539,11 @@ class GameWorldTest {
                 Executable {
                     val e2 = gameWorld.spawn("enemy", Point2D(100.0, 100.0))
                     assertThat(e2.position, `is`(Point2D(100.0, 100.0)))
+                },
+
+                Executable {
+                    val e2 = gameWorld.spawn("enemy", SpawnData(50.0, 30.0, 15.0))
+                    assertThat(e2.position3D, `is`(Point3D(50.0, 30.0, 15.0)))
                 }
         )
     }
@@ -834,7 +840,7 @@ class GameWorldTest {
         @Spawns("enemy")
         fun makeEnemy(data: SpawnData): Entity {
             val e = Entity()
-            e.setPosition(data.x, data.y)
+            e.setPosition3D(data.x, data.y, data.z)
             return e
         }
     }

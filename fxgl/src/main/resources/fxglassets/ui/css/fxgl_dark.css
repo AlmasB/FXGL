@@ -38,19 +38,18 @@
   */
 .fxgl_button {
     -fx-padding: 5 22 5 22;
-    -fx-border-width: 0;
 
-    -fx-background-color: black;
+    -fx-background-color: rgba(255, 215, 255, 0.1);
     -fx-text-fill: #a9a9a9;
 }
 
 .fxgl_button:hover {
-    -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, rgba(179, 122, 54, 0.6) 0%, rgba(0, 92, 31, 0.8) 100%);
+    -fx-background-color: blue;
     -fx-text-fill: white;
 }
 
 .fxgl_button:pressed, .fxgl_button:default:hover:pressed {
-    -fx-background-color: rgba(255, 215, 25, 0.8);
+    -fx-background-color: darkblue;
     -fx-text-fill: white;
 }
 

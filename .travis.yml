@@ -11,8 +11,6 @@ services:
   - xvfb
 jdk:
 - openjdk11
-- openjdk15
-- openjdk-ea
 
 before_install:
 - echo "before_install NOOP"

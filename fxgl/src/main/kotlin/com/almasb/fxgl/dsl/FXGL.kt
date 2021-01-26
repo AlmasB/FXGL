@@ -58,6 +58,7 @@ import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
@@ -441,7 +442,11 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun spawn(entityName: String, x: Double, y: Double): Entity = getGameWorld().spawn(entityName, x, y)
 
+    @JvmStatic fun spawn(entityName: String, x: Double, y: Double, z: Double): Entity = spawn(entityName, SpawnData(x, y, z))
+
     @JvmStatic fun spawn(entityName: String, position: Point2D): Entity = getGameWorld().spawn(entityName, position)
+
+    @JvmStatic fun spawn(entityName: String, position: Point3D): Entity = spawn(entityName, position.x, position.y, position.z)
 
     @JvmStatic fun spawn(entityName: String, data: SpawnData): Entity = getGameWorld().spawn(entityName, data)
 

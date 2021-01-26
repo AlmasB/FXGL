@@ -43,7 +43,7 @@ class DevPane(private val sceneService: SceneService, val settings: ReadOnlyGame
 
     private val log = Logger.get(javaClass)
 
-    private val panel = InGamePanel(350.0, sceneService.appHeight.toDouble())
+    private val panel = InGamePanel(350.0, sceneService.prefHeight)
 
     private val debugMessagesBox = VBox(5.0)
 
@@ -65,7 +65,7 @@ class DevPane(private val sceneService: SceneService, val settings: ReadOnlyGame
         accordion.prefWidth = 340.0
 
         val scroll = ScrollPane(accordion)
-        scroll.setPrefSize(350.0, sceneService.appHeight.toDouble())
+        scroll.setPrefSize(350.0, sceneService.prefHeight)
 
         panel.children += scroll
 

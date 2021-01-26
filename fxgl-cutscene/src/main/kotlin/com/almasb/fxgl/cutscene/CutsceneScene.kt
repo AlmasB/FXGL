@@ -35,14 +35,11 @@ class CutsceneScene(private val sceneService: SceneService) : SubScene() {
     private lateinit var cutscene: Cutscene
 
     init {
-        val appWidth = sceneService.appWidth
-        val appHeight = sceneService.appHeight
-
-        val topLine = Rectangle(appWidth.toDouble(), 150.0)
+        val topLine = Rectangle(sceneService.prefWidth, 150.0)
         topLine.translateY = -150.0
 
-        val botLine = Rectangle(appWidth.toDouble(), 200.0)
-        botLine.translateY = appHeight.toDouble()
+        val botLine = Rectangle(sceneService.prefWidth, 200.0)
+        botLine.translateY = sceneService.prefHeight
 
         animation = AnimationBuilder()
                 .duration(Duration.seconds(0.5))
@@ -54,20 +51,20 @@ class CutsceneScene(private val sceneService: SceneService) : SubScene() {
         animation2 = AnimationBuilder()
                 .duration(Duration.seconds(0.5))
                 .translate(botLine)
-                .from(Point2D(0.0, appHeight.toDouble()))
-                .to(Point2D(0.0, appHeight.toDouble() - 200.0))
+                .from(Point2D(0.0, sceneService.prefHeight))
+                .to(Point2D(0.0, sceneService.prefHeight - 200.0))
                 .build()
 
         textRPG.fill = Color.WHITE
         textRPG.font = Font.font(18.0)
-        textRPG.wrappingWidth = appWidth.toDouble() - 155.0
+        textRPG.wrappingWidth = sceneService.prefWidth - 155.0
         textRPG.translateX = 50.0
-        textRPG.translateY = appHeight.toDouble() - 160.0
+        textRPG.translateY = sceneService.prefHeight - 160.0
         textRPG.opacity = 0.0
 
         val keyView = KeyView(KeyCode.ENTER, Color.GREENYELLOW, 18.0)
-        keyView.translateX = appWidth.toDouble() - 80.0
-        keyView.translateY = appHeight - 40.0
+        keyView.translateX = sceneService.prefWidth - 80.0
+        keyView.translateY = sceneService.prefHeight - 40.0
         keyView.opacityProperty().bind(textRPG.opacityProperty())
 
         contentRoot.children.addAll(topLine, botLine, textRPG, keyView)

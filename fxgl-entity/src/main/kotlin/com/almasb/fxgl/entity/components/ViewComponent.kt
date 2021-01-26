@@ -9,10 +9,7 @@ package com.almasb.fxgl.entity.components
 import com.almasb.fxgl.core.View
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CoreComponent
-import javafx.beans.property.BooleanProperty
-import javafx.beans.property.ReadOnlyIntegerProperty
-import javafx.beans.property.ReadOnlyIntegerWrapper
-import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.*
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -44,7 +41,8 @@ class ViewComponent : Component() {
      */
     val parent: Parent = Group()
 
-    val z: ReadOnlyIntegerProperty = ReadOnlyIntegerWrapper(0)
+    @get:JvmName("zIndexProperty")
+    val zIndexProperty = SimpleIntegerProperty(0)
 
     @get:JvmName("opacityProperty")
     val opacityProperty = SimpleDoubleProperty(1.0)
@@ -52,6 +50,10 @@ class ViewComponent : Component() {
     var opacity: Double
         get() = opacityProperty.value
         set(value) { opacityProperty.value = value }
+
+    var zIndex: Int
+        get() = zIndexProperty.value
+        set(value) { zIndexProperty.value = value }
 
     @get:JvmName("visibleProperty")
     val visibleProperty: BooleanProperty
@@ -81,31 +83,39 @@ class ViewComponent : Component() {
     override fun onAdded() {
         viewRoot.translateXProperty().bind(entity.xProperty().subtract(entity.transformComponent.positionOriginXProperty()))
         viewRoot.translateYProperty().bind(entity.yProperty().subtract(entity.transformComponent.positionOriginYProperty()))
+        viewRoot.translateZProperty().bind(entity.zProperty().subtract(entity.transformComponent.positionOriginZProperty()))
 
         viewRootNoTransform.translateXProperty().bind(viewRoot.translateXProperty())
         viewRootNoTransform.translateYProperty().bind(viewRoot.translateYProperty())
+        viewRootNoTransform.translateZProperty().bind(viewRoot.translateZProperty())
 
         devRoot.translateXProperty().bind(viewRoot.translateXProperty())
         devRoot.translateYProperty().bind(viewRoot.translateYProperty())
+        devRoot.translateZProperty().bind(viewRoot.translateZProperty())
 
         val scale = Scale()
         scale.xProperty().bind(entity.transformComponent.scaleXProperty())
         scale.yProperty().bind(entity.transformComponent.scaleYProperty())
+        scale.zProperty().bind(entity.transformComponent.scaleZProperty())
 
         scale.pivotXProperty().bind(entity.transformComponent.scaleOriginXProperty())
         scale.pivotYProperty().bind(entity.transformComponent.scaleOriginYProperty())
 
-        val rotate = Rotate()
-        rotate.axis = Rotate.Z_AXIS
-        rotate.angleProperty().bind(entity.transformComponent.angleProperty())
+        val rz = Rotate()
+        rz.axis = Rotate.Z_AXIS
+        rz.angleProperty().bind(entity.transformComponent.angleProperty())
 
-        rotate.pivotXProperty().bind(entity.transformComponent.rotationOriginXProperty())
-        rotate.pivotYProperty().bind(entity.transformComponent.rotationOriginYProperty())
+        rz.pivotXProperty().bind(entity.transformComponent.rotationOriginXProperty())
+        rz.pivotYProperty().bind(entity.transformComponent.rotationOriginYProperty())
 
-        viewRoot.transforms.addAll(rotate, scale)
-        devRoot.transforms.addAll(rotate, scale)
+        val ry = Rotate(0.0, Rotate.Y_AXIS)
+        ry.angleProperty().bind(entity.transformComponent.rotationYProperty())
 
-        (z as ReadOnlyIntegerWrapper).bind(entity.transformComponent.zProperty())
+        val rx = Rotate(0.0, Rotate.X_AXIS)
+        rx.angleProperty().bind(entity.transformComponent.rotationXProperty())
+
+        viewRoot.transforms.addAll(rz, ry, rx, scale)
+        devRoot.transforms.addAll(rz, ry, rx, scale)
     }
 
     override fun onUpdate(tpf: Double) {

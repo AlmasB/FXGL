@@ -1,0 +1,157 @@
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
+package com.almasb.fxgl.inventory
+
+import javafx.scene.shape.Rectangle
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+
+/**
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
+ */
+class InventoryTest {
+
+    private lateinit var inventory: Inventory<String>
+
+    @BeforeEach
+    fun setUp() {
+        inventory = Inventory(25)
+    }
+
+    @Test
+    fun `Inventory capacity`() {
+        assertThat(inventory.capacity, `is`(25))
+        assertFalse(inventory.isFull)
+
+        repeat(24) { index ->
+            inventory.add("$index")
+        }
+
+        assertFalse(inventory.isFull)
+
+        inventory.add("100")
+
+        assertTrue(inventory.isFull)
+
+        inventory.remove("100")
+
+        assertFalse(inventory.isFull)
+    }
+
+    @Test
+    fun `Add new and remove items`() {
+        inventory.add("Hello")
+
+        assertThat(inventory.size, `is`(1))
+        assertThat(inventory.getData("Hello").get().quantity, `is`(1))
+
+        // we are adding the same thing (as defined by equals()), so size remains the same
+        // but quantity should change
+        inventory.add("Hello")
+
+        assertThat(inventory.size, `is`(1))
+        assertThat(inventory.getData("Hello").get().quantity, `is`(2))
+
+        inventory.add("Hello", quantity = 30)
+
+        assertThat(inventory.size, `is`(1))
+        assertThat(inventory.getData("Hello").get().quantity, `is`(32))
+
+        inventory.incrementQuantity("Hello", -31)
+
+        assertThat(inventory.size, `is`(1))
+        assertThat(inventory.getData("Hello").get().quantity, `is`(1))
+
+        inventory.remove("Hello")
+
+        assertThat(inventory.size, `is`(0))
+    }
+
+    @Test
+    fun `ItemData is generated for each new item`() {
+        assertTrue(inventory.allData.isEmpty())
+
+        inventory.add("Hello")
+
+        assertThat(inventory.allData.size, `is`(1))
+
+        val itemData = inventory.allData["Hello"]!!
+        assertThat(itemData.userItem, `is`("Hello"))
+        assertThat(itemData.quantity, `is`(1))
+
+        val view = Rectangle()
+
+        inventory.add("Hi", "name", "description", view, 3)
+
+        assertThat(inventory.allData.size, `is`(2))
+
+        val itemData2 = inventory.allData["Hi"]!!
+        assertThat(itemData2.userItem, `is`("Hi"))
+        assertThat(itemData2.name, `is`("name"))
+        assertThat(itemData2.description, `is`("description"))
+        assertThat(itemData2.view, `is`(view))
+        assertThat(itemData2.quantity, `is`(3))
+
+        assertThat(itemData2.nameProperty().value, `is`("name"))
+        assertThat(itemData2.descriptionProperty().value, `is`("description"))
+        assertThat(itemData2.viewProperty().value, `is`(view))
+        assertThat(itemData2.quantityProperty().value, `is`(3))
+    }
+
+    @Test
+    fun `Auto-remove items if quantity is 0`() {
+        assertFalse(inventory.isRemoveItemsIfQty0)
+
+        inventory.add("Hello", quantity = 2)
+
+        inventory.incrementQuantity("Hello", -2)
+
+        assertThat(inventory.itemsProperty().size, `is`(1))
+
+        inventory.isRemoveItemsIfQty0 = true
+
+        assertTrue(inventory.isRemoveItemsIfQty0)
+
+        inventory.incrementQuantity("Hello", 2)
+
+        // should remove item "Hello" since the flag is on
+        inventory.incrementQuantity("Hello", -2)
+
+        assertThat(inventory.itemsProperty().size, `is`(0))
+    }
+
+    @Test
+    fun `getData returns empty optional if no item`() {
+        assertFalse(inventory.getData("bla-bla").isPresent)
+    }
+
+    @Test
+    fun `Cannot add items beyond capacity`() {
+        inventory = Inventory(2)
+
+        assertTrue(inventory.add("Hi1"))
+        assertTrue(inventory.add("Hi2"))
+        assertFalse(inventory.add("Hi3"))
+    }
+
+    @Test
+    fun `Cannot increment quantity if item not present`() {
+        assertFalse(inventory.incrementQuantity("bla-bla", 3))
+    }
+
+    @Test
+    fun `Cannot increment by negative quantity if item does not have enough quantity`() {
+        inventory.add("Hello", quantity = 3)
+
+        assertFalse(inventory.incrementQuantity("Hello", -5))
+    }
+}

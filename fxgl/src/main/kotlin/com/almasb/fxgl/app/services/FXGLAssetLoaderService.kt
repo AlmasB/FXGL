@@ -7,11 +7,7 @@
 package com.almasb.fxgl.app.services
 
 import com.almasb.fxgl.app.FXGLApplication
-import com.almasb.fxgl.audio.AudioType
-import com.almasb.fxgl.audio.Music
-import com.almasb.fxgl.audio.Sound
-import com.almasb.fxgl.audio.getDummyAudio
-import com.almasb.fxgl.audio.impl.DesktopAndMobileAudioService
+import com.almasb.fxgl.audio.*
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.asset.AssetLoaderService
 import com.almasb.fxgl.core.asset.AssetType
@@ -92,7 +88,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
     @Inject("isDesktop")
     private var isDesktop = true
 
-    private val audioService = DesktopAndMobileAudioService()
+    private lateinit var audioService: AudioPlayer
 
     private val cachedAssets = hashMapOf<String, Any>()
 

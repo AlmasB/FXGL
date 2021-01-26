@@ -12,6 +12,7 @@ import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.components.CollidableComponent
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Rectangle
@@ -91,6 +92,17 @@ class EntityBuilderTest {
 
         assertThat(e.x, `is`(100.0))
         assertThat(e.y, `is`(150.0))
+    }
+
+    @Test
+    fun `at Point3D positions the entity correctly`() {
+        val e = builder
+                .at(Point3D(10.0, 15.0, 11.0))
+                .build()
+
+        assertThat(e.x, `is`(10.0))
+        assertThat(e.y, `is`(15.0))
+        assertThat(e.z, `is`(11.0))
     }
 
     @Test
@@ -183,7 +195,7 @@ class EntityBuilderTest {
                 .zIndex(333)
                 .build()
 
-        assertThat(e.z, `is`(333))
+        assertThat(e.zIndex, `is`(333))
     }
 
     @Test

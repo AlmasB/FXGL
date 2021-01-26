@@ -140,7 +140,6 @@ class DialogueGraph(
      * Adds a choice dialog edge between [source] and [target].
      */
     fun addChoiceEdge(source: DialogueNode, optionID: Int, target: DialogueNode) {
-        // TODO: source has to be ChoiceNode, otherwise it does not make sense
         edges += DialogueChoiceEdge(source, optionID, target)
     }
 
@@ -189,8 +188,6 @@ class DialogueGraph(
     }
 
     fun appendGraph(source: DialogueNode, target: DialogueNode, graph: DialogueGraph) {
-        // TODO: a lot of assumptions here
-
         val start = graph.startNode
         val endNodes = graph.nodes.values.filter { it.type == END }
 

@@ -32,14 +32,33 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-input</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-localization</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-input</artifactId>
+            <artifactId>fxgl-scene</artifactId>
             <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-time</artifactId>
+            <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-test</artifactId>
+            <version>${fxgl.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

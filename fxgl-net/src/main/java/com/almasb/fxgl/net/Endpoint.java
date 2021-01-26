@@ -28,7 +28,6 @@ public abstract class Endpoint<T> {
 
     private static final Logger log = Logger.get(Endpoint.class);
 
-    // TODO: observable?
     private List<Connection<T>> connections = new ArrayList<>();
 
     private Consumer<Connection<T>> onConnected = c -> {};
@@ -67,7 +66,10 @@ public abstract class Endpoint<T> {
 
         onConnectionOpened(connection);
 
-        new ConnectionThread(getClass().getSimpleName() + "_SendThread-" + connectionNum, () -> {
+        var sendThreadName = getClass().getSimpleName() + "_SendThread-" + connectionNum;
+        var recvThreadName = getClass().getSimpleName() + "_RecvThread-" + connectionNum;
+
+        new ConnectionThread(sendThreadName, () -> {
 
             try {
                 var writer = Writers.INSTANCE.getTCPWriter(messageType, socket.getOutputStream());
@@ -78,13 +80,11 @@ public abstract class Endpoint<T> {
                     writer.write(message);
                 }
             } catch (Exception e) {
-
-                // TODO:
-                e.printStackTrace();
+                log.warning(sendThreadName + " crashed", e);
             }
         }).start();
 
-        new ConnectionThread(getClass().getSimpleName() +"_RecvThread-" + connectionNum, () -> {
+        new ConnectionThread(recvThreadName, () -> {
             try {
                 var reader = Readers.INSTANCE.getTCPReader(messageType, socket.getInputStream());
 
@@ -113,9 +113,7 @@ public abstract class Endpoint<T> {
                     }
                 }
             } catch (Exception e) {
-
-                // TODO:
-                e.printStackTrace();
+                log.warning(recvThreadName + " crashed", e);
             }
 
             onConnectionClosed(connection);
@@ -127,7 +125,10 @@ public abstract class Endpoint<T> {
 
         onConnectionOpened(connection);
 
-        new ConnectionThread(getClass().getSimpleName() + "_SendThread-" + connection.getConnectionNum(), () -> {
+        var sendThreadName = getClass().getSimpleName() + "_SendThread-" + connection.getConnectionNum();
+        var recvThreadName = getClass().getSimpleName() + "_RecvThread-" + connection.getConnectionNum();
+
+        new ConnectionThread(sendThreadName, () -> {
 
             try {
                 while (connection.isConnected()) {
@@ -138,13 +139,11 @@ public abstract class Endpoint<T> {
                     connection.sendUDP(bytes);
                 }
             } catch (Exception e) {
-
-                // TODO:
-                e.printStackTrace();
+                log.warning(sendThreadName + " crashed", e);
             }
         }).start();
 
-        new ConnectionThread(getClass().getSimpleName() + "_RecvThread-" + connection.getConnectionNum(), () -> {
+        new ConnectionThread(recvThreadName, () -> {
 
             try {
                 var reader = Readers.INSTANCE.getUDPReader(messageType);
@@ -157,9 +156,7 @@ public abstract class Endpoint<T> {
                     ((Connection<T>) connection).notifyMessageReceived(message);
                 }
             } catch (Exception e) {
-
-                // TODO:
-                e.printStackTrace();
+                log.warning(recvThreadName + " crashed", e);
             }
         }).start();
     }

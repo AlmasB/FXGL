@@ -9,6 +9,8 @@ package com.almasb.fxgl.logging
 import java.time.format.DateTimeFormatter
 
 /**
+ * Config data structure that allows setting custom date-time and message formatters.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class LoggerConfig {

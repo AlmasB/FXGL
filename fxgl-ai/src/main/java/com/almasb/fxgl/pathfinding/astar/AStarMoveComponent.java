@@ -16,6 +16,7 @@ import javafx.beans.value.ChangeListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -79,6 +80,20 @@ public final class AStarMoveComponent extends Component {
 
     public AStarGrid getGrid() {
         return pathfinder.get().getGrid();
+    }
+
+    /**
+     * Note: entity's anchored position is used to compute this.
+     * Note: return type is Optional since it is possible to have
+     * the entity placed at a non-grid position.
+     *
+     * @return cell where this entity is located
+     */
+    public Optional<AStarCell> getCurrentCell() {
+        var cellX = moveComponent.getCellX();
+        var cellY = moveComponent.getCellY();
+
+        return getGrid().getOptional(cellX, cellY);
     }
 
     public void stopMovementAt(int cellX, int cellY) {

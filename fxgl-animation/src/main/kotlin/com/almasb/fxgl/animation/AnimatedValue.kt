@@ -10,12 +10,15 @@ import com.almasb.fxgl.core.math.FXGLMath
 import javafx.animation.Interpolator
 import javafx.animation.PathTransition
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 import javafx.scene.paint.Color
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.Shape
 import javafx.util.Duration
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * A value that can be animated (progressed) from value1 to value 2.
@@ -56,6 +59,22 @@ class AnimatedPoint2D(from: Point2D, to: Point2D)
     }
 }
 
+class AnimatedPoint3D(from: Point3D, to: Point3D)
+    : AnimatedValue<Point3D>(from, to) {
+
+    override fun animate(val1: Point3D, val2: Point3D, progress: Double, interpolator: Interpolator): Point3D {
+        return interpolate(val1, val2, progress, interpolator)
+    }
+
+    private fun interpolate(fromValue: Point3D, toValue: Point3D, progress: Double, interpolator: Interpolator): Point3D {
+        val x = interpolator.interpolate(fromValue.x, toValue.x, progress)
+        val y = interpolator.interpolate(fromValue.y, toValue.y, progress)
+        val z = interpolator.interpolate(fromValue.z, toValue.z, progress)
+
+        return Point3D(x, y, z)
+    }
+}
+
 class AnimatedQuadBezierPoint2D
 (val path: QuadCurve) : AnimatedValue<Point2D>(Point2D.ZERO, Point2D.ZERO) {
 
@@ -83,6 +102,30 @@ class AnimatedCubicBezierPoint2D
     }
 }
 
+internal class AnimatedQuadBezierPoint3D
+(val path: QuadCurve) : AnimatedValue<Point3D>(Point3D.ZERO, Point3D.ZERO) {
+
+    private val animated2D = AnimatedQuadBezierPoint2D(path)
+
+    override fun animate(val1: Point3D, val2: Point3D, progress: Double, interpolator: Interpolator): Point3D {
+        val p = animated2D.animate(Point2D(val1.x, val1.y), Point2D(val2.x, val2.y), progress, interpolator)
+
+        return Point3D(p.x, p.y, 0.0)
+    }
+}
+
+internal class AnimatedCubicBezierPoint3D
+(val path: CubicCurve) : AnimatedValue<Point3D>(Point3D.ZERO, Point3D.ZERO) {
+
+    private val animated2D = AnimatedCubicBezierPoint2D(path)
+
+    override fun animate(val1: Point3D, val2: Point3D, progress: Double, interpolator: Interpolator): Point3D {
+        val p = animated2D.animate(Point2D(val1.x, val1.y), Point2D(val2.x, val2.y), progress, interpolator)
+
+        return Point3D(p.x, p.y, 0.0)
+    }
+}
+
 class AnimatedColor(from: Color, to: Color)
     : AnimatedValue<Color>(from, to) {
 
@@ -97,12 +140,12 @@ class AnimatedColor(from: Color, to: Color)
 }
 
 class AnimatedPath
-(val path: Shape) : AnimatedValue<Point2D>(Point2D.ZERO, Point2D.ZERO) {
+(val path: Shape) : AnimatedValue<Point3D>(Point3D.ZERO, Point3D.ZERO) {
 
     /**
      * Maps reference time values [0..1] to points on path at that time.
      */
-    private val points = hashMapOf<Int, Point2D>()
+    private val points = hashMapOf<Int, Point3D>()
 
     init {
         val dummy = Rectangle()
@@ -113,7 +156,7 @@ class AnimatedPath
         var percent = 0
 
         while (t < 1.0) {
-            points[percent++] = Point2D(dummy.translateX, dummy.translateY)
+            points[percent++] = Point3D(dummy.translateX, dummy.translateY, 0.0)
 
             t += 0.01
 
@@ -124,14 +167,35 @@ class AnimatedPath
 
         // hack to ensure that points[0] is not (0, 0)
         points[0] = points[1]!!
-        points[100] = Point2D(dummy.translateX, dummy.translateY)
+        points[100] = Point3D(dummy.translateX, dummy.translateY, 0.0)
     }
 
-    override fun animate(val1: Point2D, val2: Point2D, progress: Double, interpolator: Interpolator): Point2D {
+    override fun animate(val1: Point3D, val2: Point3D, progress: Double, interpolator: Interpolator): Point3D {
         val t = interpolator.interpolate(0.0, 1.0, progress)
 
         val key = (t * 100).toInt()
 
         return points[key]!!
+    }
+}
+
+class AnimatedStringIncreasing(value: String) : AnimatedValue<String>("", value) {
+
+    override fun animate(val1: String, val2: String, progress: Double, interpolator: Interpolator): String {
+        var index = (val2.length * interpolator.interpolate(0.0, 1.0, progress)).toInt()
+
+        index = max(index, 0)
+        index = min(index, val2.length)
+
+        return val2.substring(0, index)
+    }
+}
+
+class AnimatedStringDecreasing(value: String) : AnimatedValue<String>("", value) {
+
+    private val anim = AnimatedStringIncreasing(value)
+
+    override fun animate(val1: String, val2: String, progress: Double, interpolator: Interpolator): String {
+        return anim.animate(val1, val2, 1 - progress, interpolator)
     }
 }

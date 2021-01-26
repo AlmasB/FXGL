@@ -16,10 +16,7 @@ import com.almasb.fxgl.entity.EntityWorldListener
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.logging.LoggerLevel
 import com.almasb.fxgl.logging.LoggerOutput
-import com.almasb.fxgl.physics.BoxShapeData
-import com.almasb.fxgl.physics.ChainShapeData
-import com.almasb.fxgl.physics.CircleShapeData
-import com.almasb.fxgl.physics.PolygonShapeData
+import com.almasb.fxgl.physics.*
 import com.almasb.fxgl.scene.SceneService
 import javafx.scene.Group
 import javafx.scene.shape.*
@@ -160,6 +157,11 @@ class DevService : EngineService() {
 
                 is ChainShapeData -> {
                     Polyline(*data.points.flatMap { listOf(it.x, it.y) }.toDoubleArray())
+                }
+
+                is Box3DShapeData -> {
+                    // not implemented
+                    Rectangle()
                 }
             }
 
