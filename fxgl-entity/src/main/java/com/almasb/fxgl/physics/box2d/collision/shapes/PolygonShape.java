@@ -83,11 +83,10 @@ public final class PolygonShape extends Shape {
 
     @Override
     public boolean testPoint(final Transform xf, final Vec2 p) {
-        float tempx, tempy;
         final Rotation xfq = xf.q;
 
-        tempx = p.x - xf.p.x;
-        tempy = p.y - xf.p.y;
+        float tempx = p.x - xf.p.x;
+        float tempy = p.y - xf.p.y;
         final float pLocalx = xfq.c * tempx + xfq.s * tempy;
         final float pLocaly = -xfq.s * tempx + xfq.c * tempy;
 
