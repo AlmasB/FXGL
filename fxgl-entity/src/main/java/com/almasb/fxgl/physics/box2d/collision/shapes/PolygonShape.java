@@ -491,6 +491,36 @@ public final class PolygonShape extends Shape {
         computeCentroid(m_vertices, vertexCount);
     }
 
+    private void computeCentroid(Vec2[] vs, int count) {
+        assert count >= 3;
+
+        m_centroid.setZero();
+
+        float area = 0.0f;
+
+        for (int i = 0; i < count; ++i) {
+            // Triangle vectors
+            Vec2 p2 = vs[i];
+            Vec2 p3 = i + 1 < count ? vs[i + 1] : vs[0];
+
+            // calculate area of the triangle formed by vectors p2 and p3
+            float triangleArea = 0.5f * Vec2.cross(p2, p3);
+
+            area += triangleArea;
+
+            // Area weighted centroid
+            float t = triangleArea * INV_3;
+            float localX = (p2.x + p3.x) * t;
+            float localY = (p2.y + p3.y) * t;
+
+            m_centroid.addLocal(localX, localY);
+        }
+
+        assert area > JBoxSettings.EPSILON;
+
+        m_centroid.mulLocal(1.0f / area);
+    }
+
     /**
      * Build vertices to represent an axis-aligned box.
      *
@@ -554,36 +584,6 @@ public final class PolygonShape extends Shape {
     public Vec2 getVertex(final int index) {
         assert 0 <= index && index < vertexCount;
         return m_vertices[index];
-    }
-
-    private void computeCentroid(Vec2[] vs, int count) {
-        assert count >= 3;
-
-        m_centroid.setZero();
-
-        float area = 0.0f;
-
-        for (int i = 0; i < count; ++i) {
-            // Triangle vectors
-            Vec2 p2 = vs[i];
-            Vec2 p3 = i + 1 < count ? vs[i + 1] : vs[0];
-
-            // calculate area of the triangle formed by vectors p2 and p3
-            float triangleArea = 0.5f * Vec2.cross(p2, p3);
-
-            area += triangleArea;
-
-            // Area weighted centroid
-            float t = triangleArea * INV_3;
-            float localX = (p2.x + p3.x) * t;
-            float localY = (p2.y + p3.y) * t;
-
-            m_centroid.addLocal(localX, localY);
-        }
-
-        assert area > JBoxSettings.EPSILON;
-
-        m_centroid.mulLocal(1.0f / area);
     }
 
     /** Get the vertices in local coordinates. */
