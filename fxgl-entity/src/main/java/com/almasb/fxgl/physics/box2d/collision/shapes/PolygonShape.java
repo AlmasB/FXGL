@@ -595,15 +595,4 @@ public final class PolygonShape extends Shape {
     public Vec2[] getNormals() {
         return m_normals;
     }
-
-    /** Get the centroid and apply the supplied transform. */
-    public Vec2 centroid(final Transform xf) {
-        return Transform.mul(xf, m_centroid);
-    }
-
-    /** Get the centroid and apply the supplied transform. */
-    public Vec2 centroidToOut(final Transform xf, final Vec2 out) {
-        Transform.mulToOutUnsafe(xf, m_centroid, out);
-        return out;
-    }
 }
