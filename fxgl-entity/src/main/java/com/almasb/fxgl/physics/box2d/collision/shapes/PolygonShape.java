@@ -22,6 +22,8 @@ import com.almasb.fxgl.physics.box2d.common.Transform;
  */
 public final class PolygonShape extends Shape {
 
+    private static final float INV_3 = 1.0f / 3.0f;
+
     /**
      * Local position of the shape centroid in parent body frame.
      */
@@ -61,6 +63,13 @@ public final class PolygonShape extends Shape {
         for (int i = 0; i < m_normals.length; i++) {
             m_normals[i] = new Vec2();
         }
+    }
+
+    /**
+     * @return a new Vec2 containing centroid x, y
+     */
+    public Vec2 getCentroid() {
+        return m_centroid.copy();
     }
 
     @Override
@@ -479,7 +488,7 @@ public final class PolygonShape extends Shape {
         }
 
         // Compute the polygon centroid.
-        computeCentroidToOut(m_vertices, vertexCount, m_centroid);
+        computeCentroid(m_vertices, vertexCount);
     }
 
     /**
@@ -547,44 +556,34 @@ public final class PolygonShape extends Shape {
         return m_vertices[index];
     }
 
-    public void computeCentroidToOut(final Vec2[] vs, final int count, final Vec2 out) {
+    private void computeCentroid(Vec2[] vs, int count) {
         assert count >= 3;
 
-        out.set(0.0f, 0.0f);
+        m_centroid.setZero();
+
         float area = 0.0f;
 
-        // pRef is the reference point for forming triangles.
-        // It's location doesn't change the result (except for rounding error).
-        final Vec2 pRef = pool1;
-        pRef.setZero();
-
-        final Vec2 e1 = pool2;
-        final Vec2 e2 = pool3;
-
-        final float inv3 = 1.0f / 3.0f;
-
         for (int i = 0; i < count; ++i) {
-            // Triangle vertices.
-            final Vec2 p1 = pRef;
-            final Vec2 p2 = vs[i];
-            final Vec2 p3 = i + 1 < count ? vs[i + 1] : vs[0];
+            // Triangle vectors
+            Vec2 p2 = vs[i];
+            Vec2 p3 = i + 1 < count ? vs[i + 1] : vs[0];
 
-            e1.set(p2).subLocal(p1);
-            e2.set(p3).subLocal(p1);
+            // calculate area of the triangle formed by vectors p2 and p3
+            float triangleArea = 0.5f * Vec2.cross(p2, p3);
 
-            final float D = Vec2.cross(e1, e2);
-
-            final float triangleArea = 0.5f * D;
             area += triangleArea;
 
             // Area weighted centroid
-            e1.set(p1).addLocal(p2).addLocal(p3).mulLocal(triangleArea * inv3);
-            out.addLocal(e1);
+            float t = triangleArea * INV_3;
+            float localX = (p2.x + p3.x) * t;
+            float localY = (p2.y + p3.y) * t;
+
+            m_centroid.addLocal(localX, localY);
         }
 
-        // Centroid
         assert area > JBoxSettings.EPSILON;
-        out.mulLocal(1.0f / area);
+
+        m_centroid.mulLocal(1.0f / area);
     }
 
     /** Get the vertices in local coordinates. */
