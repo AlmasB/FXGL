@@ -7,6 +7,8 @@
 package com.almasb.fxgl.physics.box2d.collision.shapes
 
 import com.almasb.fxgl.core.math.Vec2
+import com.almasb.fxgl.physics.box2d.collision.AABB
+import com.almasb.fxgl.physics.box2d.common.Transform
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
@@ -128,5 +130,54 @@ class PolygonShapeTest {
         assertThat(massData.mass, `is`(74.5f))
         assertThat(massData.I, `is`(1060.7396f))
         assertThat(massData.center, `is`(Vec2(-0.19980425,0.12040007)))
+    }
+
+    @Test
+    fun `Compute AABB`() {
+        var aabb = AABB()
+
+        p0.computeAABB(aabb, Transform(), 0)
+
+        assertThat(aabb.lowerBound, `is`(Vec2(-0.51,-0.51)))
+        assertThat(aabb.upperBound, `is`(Vec2(0.51,0.51)))
+
+        // p1
+
+        aabb = AABB()
+
+        p1.computeAABB(aabb, Transform(), 0)
+
+        assertThat(aabb.lowerBound, `is`(Vec2(-1.01,-0.01)))
+        assertThat(aabb.upperBound, `is`(Vec2(3.01,1.01)))
+
+        // p2
+
+        aabb = AABB()
+
+        p2.computeAABB(aabb, Transform(), 0)
+
+        assertThat(aabb.lowerBound, `is`(Vec2(-3.01,0.14)))
+        assertThat(aabb.upperBound, `is`(Vec2(3.01,3.51)))
+
+        // p3
+
+        aabb = AABB()
+
+        p3.computeAABB(aabb, Transform(), 0)
+
+        assertThat(aabb.lowerBound, `is`(Vec2(-5.01,-4.01)))
+        assertThat(aabb.upperBound, `is`(Vec2(8.01,5.1600003)))
+
+        // different transform
+
+        aabb = AABB()
+
+        val t = Transform()
+        t.set(Vec2(3f, -1.2f), 33f)
+
+        p3.computeAABB(aabb, t, 0)
+
+        assertThat(aabb.lowerBound, `is`(Vec2(-2.139601,-6.25609)))
+        assertThat(aabb.upperBound, `is`(Vec2(6.903285,6.8624716)))
     }
 }

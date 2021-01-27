@@ -15,6 +15,9 @@ import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 
+import static com.almasb.fxgl.core.math.FXGLMath.max;
+import static com.almasb.fxgl.core.math.FXGLMath.min;
+
 /**
  * A convex polygon shape.
  * Polygons have a maximum number of vertices equal to JBoxSettings.maxPolygonVertices.
@@ -114,29 +117,29 @@ public final class PolygonShape extends Shape {
     }
 
     @Override
-    @SuppressWarnings("PMD.UselessParentheses")
-    public void computeAABB(final AABB aabb, final Transform xf, int childIndex) {
+    public void computeAABB(AABB aabb, Transform xf, int childIndex) {
         final Vec2 lower = aabb.lowerBound;
         final Vec2 upper = aabb.upperBound;
-        final Vec2 v1 = m_vertices[0];
-        final float xfqc = xf.q.c;
-        final float xfqs = xf.q.s;
-        final float xfpx = xf.p.x;
-        final float xfpy = xf.p.y;
-        lower.x = (xfqc * v1.x - xfqs * v1.y) + xfpx;
-        lower.y = (xfqs * v1.x + xfqc * v1.y) + xfpy;
+
+        Vec2 v1 = m_vertices[0];
+
+        lower.x = xf.mulX(v1);
+        lower.y = xf.mulY(v1);
+
         upper.x = lower.x;
         upper.y = lower.y;
 
         for (int i = 1; i < vertexCount; ++i) {
             Vec2 v2 = m_vertices[i];
-            // Vec2 v = Mul(xf, m_vertices[i]);
-            float vx = (xfqc * v2.x - xfqs * v2.y) + xfpx;
-            float vy = (xfqs * v2.x + xfqc * v2.y) + xfpy;
-            lower.x = lower.x < vx ? lower.x : vx;
-            lower.y = lower.y < vy ? lower.y : vy;
-            upper.x = upper.x > vx ? upper.x : vx;
-            upper.y = upper.y > vy ? upper.y : vy;
+
+            float vx = xf.mulX(v2);
+            float vy = xf.mulY(v2);
+
+            lower.x = min(lower.x, vx);
+            lower.y = min(lower.y, vy);
+
+            upper.x = max(upper.x, vx);
+            upper.y = max(upper.y, vy);
         }
 
         lower.x -= getRadius();
