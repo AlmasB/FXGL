@@ -399,7 +399,7 @@ public final class PolygonShape extends Shape {
             Vec2 v = verts[i];
             boolean unique = true;
             for (int j = 0; j < tempCount; ++j) {
-                if (JBoxUtils.distanceSquared(v, ps[j]) < 0.5f * JBoxSettings.linearSlop) {
+                if (v.distanceSquared(ps[j]) < 0.5f * JBoxSettings.linearSlop) {
                     unique = false;
                     break;
                 }

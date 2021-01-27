@@ -176,7 +176,7 @@ public final class ChainShape extends Shape {
             Vec2 v1 = vertices[i - 1];
             Vec2 v2 = vertices[i];
             // If the code crashes here, it means your vertices are too close together.
-            if (JBoxUtils.distanceSquared(v1, v2) < JBoxSettings.linearSlop * JBoxSettings.linearSlop) {
+            if (v1.distanceSquared(v2) < JBoxSettings.linearSlop * JBoxSettings.linearSlop) {
                 throw new RuntimeException("Vertices of chain shape are too close together");
             }
         }
@@ -205,7 +205,7 @@ public final class ChainShape extends Shape {
             Vec2 v1 = vertices[i - 1];
             Vec2 v2 = vertices[i];
             // If the code crashes here, it means your vertices are too close together.
-            if (JBoxUtils.distanceSquared(v1, v2) < JBoxSettings.linearSlop * JBoxSettings.linearSlop) {
+            if (v1.distanceSquared(v2) < JBoxSettings.linearSlop * JBoxSettings.linearSlop) {
                 throw new RuntimeException("Vertices of chain shape are too close together");
             }
         }

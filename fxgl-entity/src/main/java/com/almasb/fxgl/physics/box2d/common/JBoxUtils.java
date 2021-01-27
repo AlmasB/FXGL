@@ -52,13 +52,7 @@ public final class JBoxUtils {
         return (float) StrictMath.sqrt(x);
     }
 
-    public static float distanceSquared(Vec2 v1, Vec2 v2) {
-        float dx = v1.x - v2.x;
-        float dy = v1.y - v2.y;
-        return dx * dx + dy * dy;
-    }
-
     public static float distance(Vec2 v1, Vec2 v2) {
-        return sqrt(distanceSquared(v1, v2));
+        return sqrt(v1.distanceSquared(v2));
     }
 }
