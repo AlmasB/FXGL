@@ -22,17 +22,22 @@ public final class CircleShape extends Shape {
 
     public final Vec2 center = new Vec2();
 
-    public CircleShape() {
-        super(ShapeType.CIRCLE, 0);
+    public CircleShape(float radius) {
+        this(0, 0, radius);
+    }
+
+    public CircleShape(Vec2 center, float radius) {
+        this(center.x, center.y, radius);
+    }
+
+    public CircleShape(float centerX, float centerY, float radius) {
+        super(ShapeType.CIRCLE, radius);
+        center.set(centerX, centerY);
     }
 
     @Override
     public Shape clone() {
-        CircleShape shape = new CircleShape();
-        shape.center.x = center.x;
-        shape.center.y = center.y;
-        shape.setRadius(this.getRadius());
-        return shape;
+        return new CircleShape(center, getRadius());
     }
 
     @Override
