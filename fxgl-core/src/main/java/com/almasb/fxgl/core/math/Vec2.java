@@ -309,6 +309,15 @@ public final class Vec2 implements Serializable, Poolable {
     /**
      * @return distance squared between this and other point
      */
+    public float distanceSquared(Vec2 v) {
+        float dx = x - v.x;
+        float dy = y - v.y;
+        return dx * dx + dy * dy;
+    }
+
+    /**
+     * @return distance squared between this and other point
+     */
     public double distanceSquared(double otherX, double otherY) {
         double dx = otherX - x;
         double dy = otherY - y;
