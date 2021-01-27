@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.physics.box2d.common;
 
+import static com.almasb.fxgl.core.math.FXGLMath.PI_F;
+
 /**
  * Global tuning constants based on MKS units and various integer maximums (vertices per shape,
  * pairs, etc.).
@@ -16,11 +18,6 @@ public class JBoxSettings {
      * A "close to zero" float epsilon value for use.
      **/
     public static final float EPSILON = 1.1920928955078125E-7f;
-
-    /**
-     * Pi.
-     */
-    public static final float PI = (float) Math.PI;
 
     /**
      * smaller the precision, the larger the table. If a small table is used (eg, precision is .006 or
@@ -82,7 +79,7 @@ public class JBoxSettings {
      * A small angle used as a collision and constraint tolerance. Usually it is chosen to be
      * numerically significant, but visually insignificant.
      */
-    public static float angularSlop = 2.0f / 180.0f * PI;
+    public static float angularSlop = 2.0f / 180.0f * PI_F;
 
     /**
      * The radius of the polygon/edge shape skin. This should not be modified. Making this smaller
@@ -119,7 +116,7 @@ public class JBoxSettings {
      * The maximum angular position correction used when solving constraints. This helps to prevent
      * overshoot.
      */
-    public static float maxAngularCorrection = 8.0f / 180.0f * PI;
+    public static float maxAngularCorrection = 8.0f / 180.0f * PI_F;
 
     /**
      * The maximum linear velocity of a body. This limit is very large and is used to prevent
@@ -132,7 +129,7 @@ public class JBoxSettings {
      * The maximum angular velocity of a body. This limit is very large and is used to prevent
      * numerical problems. You shouldn't need to adjust this.
      */
-    public static float maxRotation = 0.5f * PI;
+    public static float maxRotation = 0.5f * PI_F;
     public static float maxRotationSquared = maxRotation * maxRotation;
 
     /**
@@ -157,7 +154,7 @@ public class JBoxSettings {
     /**
      * A body cannot sleep if its angular velocity is above this tolerance.
      */
-    public static float angularSleepTolerance = 2.0f / 180.0f * PI;
+    public static float angularSleepTolerance = 2.0f / 180.0f * PI_F;
 
     // Particle
 

@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.physics.box2d.collision.shapes;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
@@ -139,7 +140,7 @@ public final class CircleShape extends Shape {
 
     @Override
     public void computeMass(final MassData massData, final float density) {
-        massData.mass = density * JBoxSettings.PI * getRadius() * getRadius();
+        massData.mass = density * FXGLMath.PI_F * getRadius() * getRadius();
         massData.center.x = center.x;
         massData.center.y = center.y;
 
