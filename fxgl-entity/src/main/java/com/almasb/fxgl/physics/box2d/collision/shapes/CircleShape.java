@@ -127,11 +127,9 @@ public final class CircleShape extends Shape {
     }
 
     @Override
-    public void computeAABB(final AABB aabb, final Transform transform, int childIndex) {
-        final Rotation tq = transform.q;
-        final Vec2 tp = transform.p;
-        final float px = tq.c * center.x - tq.s * center.y + tp.x;
-        final float py = tq.s * center.x + tq.c * center.y + tp.y;
+    public void computeAABB(AABB aabb, Transform transform, int childIndex) {
+        float px = transform.mulX(center);
+        float py = transform.mulY(center);
 
         aabb.lowerBound.x = px - getRadius();
         aabb.lowerBound.y = py - getRadius();
