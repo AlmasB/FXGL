@@ -5,12 +5,12 @@
  */
 package com.almasb.fxgl.physics.box2d.dynamics.contacts;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.collision.ContactID;
 import com.almasb.fxgl.physics.box2d.collision.Manifold;
 import com.almasb.fxgl.physics.box2d.collision.ManifoldPoint;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
 import com.almasb.fxgl.physics.box2d.dynamics.Fixture;
@@ -292,7 +292,7 @@ public abstract class Contact {
      * For example, anything slides on ice.
      */
     private static float mixFriction(float friction1, float friction2) {
-        return JBoxUtils.sqrt(friction1 * friction2);
+        return FXGLMath.sqrtF(friction1 * friction2);
     }
 
     /**

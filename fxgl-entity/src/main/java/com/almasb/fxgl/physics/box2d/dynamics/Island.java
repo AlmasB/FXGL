@@ -302,7 +302,7 @@ class Island {
 
             if (translationx * translationx + translationy * translationy > JBoxSettings.maxTranslationSquared) {
                 float ratio = JBoxSettings.maxTranslation
-                        / JBoxUtils.sqrt(translationx * translationx + translationy * translationy);
+                        / FXGLMath.sqrtF(translationx * translationx + translationy * translationy);
                 v.x *= ratio;
                 v.y *= ratio;
             }
@@ -452,7 +452,7 @@ class Island {
             if (translationx * translationx + translationy * translationy > JBoxSettings.maxTranslationSquared) {
                 float ratio =
                         JBoxSettings.maxTranslation
-                                / JBoxUtils.sqrt(translationx * translationx + translationy * translationy);
+                                / FXGLMath.sqrtF(translationx * translationx + translationy * translationy);
                 v.mulLocal(ratio);
             }
 

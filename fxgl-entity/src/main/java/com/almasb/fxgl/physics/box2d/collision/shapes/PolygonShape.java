@@ -6,12 +6,12 @@
 
 package com.almasb.fxgl.physics.box2d.collision.shapes;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.collision.RayCastOutput;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 
@@ -190,7 +190,7 @@ public final class PolygonShape extends Shape {
                     minDistance2 = distance2;
                 }
             }
-            distance = JBoxUtils.sqrt(minDistance2);
+            distance = FXGLMath.sqrtF(minDistance2);
             normalOut.x = xfqc * minDistanceX - xfqs * minDistanceY;
             normalOut.y = xfqs * minDistanceX + xfqc * minDistanceY;
             normalOut.getLengthAndNormalize();

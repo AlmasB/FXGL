@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.physics.box2d.particle;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.callbacks.ParticleDestructionListener;
 import com.almasb.fxgl.physics.box2d.callbacks.ParticleQueryCallback;
@@ -560,7 +561,7 @@ public class ParticleSystem {
                                 newCapacity);
                 m_contactCapacity = newCapacity;
             }
-            float invD = d2 != 0 ? JBoxUtils.sqrt(1 / d2) : Float.MAX_VALUE;
+            float invD = d2 != 0 ? FXGLMath.sqrtF(1 / d2) : Float.MAX_VALUE;
             ParticleContact contact = m_contactBuffer[m_contactCount];
             contact.indexA = a;
             contact.indexB = b;
@@ -706,7 +707,7 @@ public class ParticleSystem {
             v.y += gravityy;
             float v2 = v.x * v.x + v.y * v.y;
             if (v2 > criticalVelocytySquared) {
-                float a = v2 == 0 ? Float.MAX_VALUE : JBoxUtils.sqrt(criticalVelocytySquared / v2);
+                float a = v2 == 0 ? Float.MAX_VALUE : FXGLMath.sqrtF(criticalVelocytySquared / v2);
                 v.x *= a;
                 v.y *= a;
             }
@@ -943,7 +944,7 @@ public class ParticleSystem {
                 float rs = Vec2.cross(oa, pa) + Vec2.cross(ob, pb) + Vec2.cross(oc, pc);
                 float rc = Vec2.dot(oa, pa) + Vec2.dot(ob, pb) + Vec2.dot(oc, pc);
                 float r2 = rs * rs + rc * rc;
-                float invR = r2 == 0 ? Float.MAX_VALUE : JBoxUtils.sqrt(1f / r2);
+                float invR = r2 == 0 ? Float.MAX_VALUE : FXGLMath.sqrtF(1f / r2);
                 rs *= invR;
                 rc *= invR;
                 final float strength = elasticStrength * triad.strength;
@@ -978,7 +979,7 @@ public class ParticleSystem {
                 final float dx = pb.x - pa.x;
                 final float dy = pb.y - pa.y;
                 float r0 = pair.distance;
-                float r1 = JBoxUtils.sqrt(dx * dx + dy * dy);
+                float r1 = FXGLMath.sqrtF(dx * dx + dy * dy);
                 if (r1 == 0) r1 = Float.MAX_VALUE;
                 float strength = springStrength * pair.strength;
                 final float fx = strength * (r0 - r1) / r1 * dx;
@@ -1696,7 +1697,7 @@ public class ParticleSystem {
             float p2 = px * px + py * py;
             float determinant = pv * pv - v2 * (p2 - m_squaredDiameter);
             if (determinant >= 0) {
-                float sqrtDeterminant = JBoxUtils.sqrt(determinant);
+                float sqrtDeterminant = FXGLMath.sqrtF(determinant);
                 // find a solution between 0 and fraction
                 float t = (-pv - sqrtDeterminant) / v2;
                 if (t > fraction) {

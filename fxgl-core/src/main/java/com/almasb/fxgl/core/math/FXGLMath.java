@@ -285,6 +285,10 @@ public final class FXGLMath {
         return Math.sqrt(x);
     }
 
+    public static float sqrtF(float x) {
+        return (float) StrictMath.sqrt(x);
+    }
+
     /**
      * Map value of a given range to a target range.
      *

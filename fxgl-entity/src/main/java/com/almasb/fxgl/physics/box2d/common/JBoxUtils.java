@@ -28,6 +28,7 @@
 
 package com.almasb.fxgl.physics.box2d.common;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 
 /**
@@ -48,11 +49,7 @@ public final class JBoxUtils {
         return Math.max(low, Math.min(a, high));
     }
 
-    public static float sqrt(float x) {
-        return (float) StrictMath.sqrt(x);
-    }
-
     public static float distance(Vec2 v1, Vec2 v2) {
-        return sqrt(v1.distanceSquared(v2));
+        return FXGLMath.sqrtF(v1.distanceSquared(v2));
     }
 }

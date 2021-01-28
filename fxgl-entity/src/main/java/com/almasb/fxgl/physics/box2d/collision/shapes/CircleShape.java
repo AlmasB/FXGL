@@ -12,7 +12,6 @@ import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.collision.RayCastOutput;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 
@@ -68,7 +67,7 @@ public final class CircleShape extends Shape {
         float centery = xfq.s * center.x + xfq.c * center.y + xf.p.y;
         float dx = p.x - centerx;
         float dy = p.y - centery;
-        float d1 = JBoxUtils.sqrt(dx * dx + dy * dy);
+        float d1 = FXGLMath.sqrtF(dx * dx + dy * dy);
         normalOut.x = dx * 1 / d1;
         normalOut.y = dy * 1 / d1;
         return d1 - getRadius();
@@ -112,7 +111,7 @@ public final class CircleShape extends Shape {
         }
 
         // Find the point of intersection of the line with the circle.
-        float a = -(c + JBoxUtils.sqrt(sigma));
+        float a = -(c + FXGLMath.sqrtF(sigma));
 
         // Is the intersection point on the segment?
         if (0.0f <= a && a <= input.maxFraction * rr) {
