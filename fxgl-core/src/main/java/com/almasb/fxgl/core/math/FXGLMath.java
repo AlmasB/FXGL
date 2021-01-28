@@ -299,6 +299,14 @@ public final class FXGLMath {
         return targetRangeStart + (targetRangeStop - targetRangeStart) * ((value - currentRangeStart) / (currentRangeStop - currentRangeStart));
     }
 
+    public static int floor(float x) {
+        int y = (int) x;
+        if (x < y) {
+            return y - 1;
+        }
+        return y;
+    }
+
     public static float abs(float value) {
         return value > 0 ? value : -value;
     }

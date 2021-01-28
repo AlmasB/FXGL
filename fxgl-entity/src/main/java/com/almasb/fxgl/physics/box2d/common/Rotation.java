@@ -141,6 +141,6 @@ public final class Rotation implements Serializable {
             x += FXGLMath.PI2_F;
         }
 
-        return sinLUT[JBoxUtils.floor(x / JBoxSettings.SINCOS_LUT_PRECISION + .5f) % JBoxSettings.SINCOS_LUT_LENGTH];
+        return sinLUT[FXGLMath.floor(x / JBoxSettings.SINCOS_LUT_PRECISION + .5f) % JBoxSettings.SINCOS_LUT_LENGTH];
     }
 }

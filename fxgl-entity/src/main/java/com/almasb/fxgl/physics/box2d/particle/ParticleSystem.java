@@ -299,9 +299,9 @@ public class ParticleSystem {
             }
             final float upperBoundY = aabb.upperBound.y;
             final float upperBoundX = aabb.upperBound.x;
-            for (float y = JBoxUtils.floor(aabb.lowerBound.y / stride) * stride; y < upperBoundY; y +=
+            for (float y = FXGLMath.floor(aabb.lowerBound.y / stride) * stride; y < upperBoundY; y +=
                     stride) {
-                for (float x = JBoxUtils.floor(aabb.lowerBound.x / stride) * stride; x < upperBoundX; x +=
+                for (float x = FXGLMath.floor(aabb.lowerBound.x / stride) * stride; x < upperBoundX; x +=
                         stride) {
                     Vec2 p = tempVec;
                     p.x = x;

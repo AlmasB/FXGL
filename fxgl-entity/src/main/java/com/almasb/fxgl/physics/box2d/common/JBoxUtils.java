@@ -36,14 +36,6 @@ import com.almasb.fxgl.core.math.Vec2;
  */
 public final class JBoxUtils {
 
-    public static int floor(float x) {
-        int y = (int) x;
-        if (x < y) {
-            return y - 1;
-        }
-        return y;
-    }
-
     /** Returns the closest value to 'a' that is in between 'low' and 'high' */
     public static float clamp(float a, float low, float high) {
         return Math.max(low, Math.min(a, high));
