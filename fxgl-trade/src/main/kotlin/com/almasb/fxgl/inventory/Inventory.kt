@@ -99,8 +99,6 @@ class Inventory<T>(var capacity: Int) {
         return Optional.of(itemsData[item]!!)
     }
 
-    // TODO: allow setting max item quantity
-
     /**
      * @return true if operation was successful
      */
