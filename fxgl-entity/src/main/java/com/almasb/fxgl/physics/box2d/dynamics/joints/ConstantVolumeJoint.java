@@ -174,7 +174,7 @@ public class ConstantVolumeJoint extends Joint {
             m_impulse *= step.step.dtRatio;
             // float lambda = -2.0f * crossMassSum / dotMassSum;
 
-            // lambda = JBoxUtils.clamp(lambda, -JBoxSettings.maxLinearCorrection,
+            // lambda = FXGLMath.clamp(lambda, -JBoxSettings.maxLinearCorrection,
             // JBoxSettings.maxLinearCorrection);
             // m_impulse = lambda;
             for (int i = 0; i < bodies.length; ++i) {
@@ -210,7 +210,7 @@ public class ConstantVolumeJoint extends Joint {
         }
         float lambda = -2.0f * crossMassSum / dotMassSum;
 
-        // lambda = JBoxUtils.clamp(lambda, -JBoxSettings.maxLinearCorrection,
+        // lambda = FXGLMath.clamp(lambda, -JBoxSettings.maxLinearCorrection,
         // JBoxSettings.maxLinearCorrection);
         m_impulse += lambda;
 

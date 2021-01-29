@@ -299,6 +299,13 @@ public final class FXGLMath {
         return targetRangeStart + (targetRangeStop - targetRangeStart) * ((value - currentRangeStart) / (currentRangeStop - currentRangeStart));
     }
 
+    /**
+     * @return the closest value to 'a' that is between 'low' and 'high'
+     */
+    public static float clamp(float a, float low, float high) {
+        return Math.max(low, Math.min(a, high));
+    }
+
     public static int floor(float x) {
         int y = (int) x;
         if (x < y) {

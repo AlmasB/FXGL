@@ -218,7 +218,7 @@ public class RevoluteJoint extends Joint {
             float impulse = -m_motorMass * Cdot;
             float oldImpulse = m_motorImpulse;
             float maxImpulse = data.step.dt * m_maxMotorTorque;
-            m_motorImpulse = JBoxUtils.clamp(m_motorImpulse + impulse, -maxImpulse, maxImpulse);
+            m_motorImpulse = FXGLMath.clamp(m_motorImpulse + impulse, -maxImpulse, maxImpulse);
             impulse = m_motorImpulse - oldImpulse;
 
             wA -= iA * impulse;
@@ -350,7 +350,7 @@ public class RevoluteJoint extends Joint {
             if (m_limitState == LimitState.EQUAL) {
                 // Prevent large angular corrections
                 float C =
-                        JBoxUtils.clamp(angle - m_lowerAngle, -JBoxSettings.maxAngularCorrection,
+                        FXGLMath.clamp(angle - m_lowerAngle, -JBoxSettings.maxAngularCorrection,
                                 JBoxSettings.maxAngularCorrection);
                 limitImpulse = -m_motorMass * C;
                 angularError = FXGLMath.abs(C);
@@ -359,14 +359,14 @@ public class RevoluteJoint extends Joint {
                 angularError = -C;
 
                 // Prevent large angular corrections and allow some slop.
-                C = JBoxUtils.clamp(C + JBoxSettings.angularSlop, -JBoxSettings.maxAngularCorrection, 0.0f);
+                C = FXGLMath.clamp(C + JBoxSettings.angularSlop, -JBoxSettings.maxAngularCorrection, 0.0f);
                 limitImpulse = -m_motorMass * C;
             } else if (m_limitState == LimitState.AT_UPPER) {
                 float C = angle - m_upperAngle;
                 angularError = C;
 
                 // Prevent large angular corrections and allow some slop.
-                C = JBoxUtils.clamp(C - JBoxSettings.angularSlop, 0.0f, JBoxSettings.maxAngularCorrection);
+                C = FXGLMath.clamp(C - JBoxSettings.angularSlop, 0.0f, JBoxSettings.maxAngularCorrection);
                 limitImpulse = -m_motorMass * C;
             }
 

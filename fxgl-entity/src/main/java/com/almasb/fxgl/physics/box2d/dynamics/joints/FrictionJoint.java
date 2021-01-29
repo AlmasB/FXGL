@@ -8,8 +8,8 @@
  */
 package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Mat22;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.dynamics.SolverData;
@@ -215,7 +215,7 @@ public class FrictionJoint extends Joint {
 
             float oldImpulse = m_angularImpulse;
             float maxImpulse = h * m_maxTorque;
-            m_angularImpulse = JBoxUtils.clamp(m_angularImpulse + impulse, -maxImpulse, maxImpulse);
+            m_angularImpulse = FXGLMath.clamp(m_angularImpulse + impulse, -maxImpulse, maxImpulse);
             impulse = m_angularImpulse - oldImpulse;
 
             wA -= iA * impulse;

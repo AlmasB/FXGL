@@ -525,7 +525,7 @@ public class PrismaticJoint extends Joint {
             float impulse = m_motorMass * (m_motorSpeed - Cdot);
             float oldImpulse = m_motorImpulse;
             float maxImpulse = data.step.dt * m_maxMotorForce;
-            m_motorImpulse = JBoxUtils.clamp(m_motorImpulse + impulse, -maxImpulse, maxImpulse);
+            m_motorImpulse = FXGLMath.clamp(m_motorImpulse + impulse, -maxImpulse, maxImpulse);
             impulse = m_motorImpulse - oldImpulse;
 
             final Vec2 P = pool.popVec2();
@@ -691,21 +691,21 @@ public class PrismaticJoint extends Joint {
             if (FXGLMath.abs(m_upperTranslation - m_lowerTranslation) < 2.0f * JBoxSettings.linearSlop) {
                 // Prevent large angular corrections
                 C2 =
-                        JBoxUtils.clamp(translation, -JBoxSettings.maxLinearCorrection,
+                        FXGLMath.clamp(translation, -JBoxSettings.maxLinearCorrection,
                                 JBoxSettings.maxLinearCorrection);
                 linearError = Math.max(linearError, FXGLMath.abs(translation));
                 active = true;
             } else if (translation <= m_lowerTranslation) {
                 // Prevent large linear corrections and allow some slop.
                 C2 =
-                        JBoxUtils.clamp(translation - m_lowerTranslation + JBoxSettings.linearSlop,
+                        FXGLMath.clamp(translation - m_lowerTranslation + JBoxSettings.linearSlop,
                                 -JBoxSettings.maxLinearCorrection, 0.0f);
                 linearError = Math.max(linearError, m_lowerTranslation - translation);
                 active = true;
             } else if (translation >= m_upperTranslation) {
                 // Prevent large linear corrections and allow some slop.
                 C2 =
-                        JBoxUtils.clamp(translation - m_upperTranslation - JBoxSettings.linearSlop, 0.0f,
+                        FXGLMath.clamp(translation - m_upperTranslation - JBoxSettings.linearSlop, 0.0f,
                                 JBoxSettings.maxLinearCorrection);
                 linearError = Math.max(linearError, translation - m_upperTranslation);
                 active = true;

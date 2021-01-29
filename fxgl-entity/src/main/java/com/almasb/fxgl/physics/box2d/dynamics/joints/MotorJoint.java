@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Mat22;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.dynamics.SolverData;
@@ -288,7 +288,7 @@ public class MotorJoint extends Joint {
 
             float oldImpulse = angularImpulse;
             float maxImpulse = h * maxTorque;
-            angularImpulse = JBoxUtils.clamp(angularImpulse + impulse, -maxImpulse, maxImpulse);
+            angularImpulse = FXGLMath.clamp(angularImpulse + impulse, -maxImpulse, maxImpulse);
             impulse = angularImpulse - oldImpulse;
 
             wA -= iA * impulse;
