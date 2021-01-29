@@ -290,6 +290,10 @@ public final class Vec2 implements Serializable, Poolable {
         return distance(other.x, other.y);
     }
 
+    public float distanceF(Vec2 other) {
+        return FXGLMath.sqrtF(distanceSquared(other));
+    }
+
     /**
      * @return distance between this and other Point2D taken as points
      */

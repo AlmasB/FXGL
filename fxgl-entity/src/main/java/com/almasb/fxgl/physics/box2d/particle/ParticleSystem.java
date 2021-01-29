@@ -17,7 +17,6 @@ import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.collision.RayCastOutput;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
@@ -365,7 +364,7 @@ public class ParticleSystem {
                     pair.indexB = b;
                     pair.flags = contact.flags;
                     pair.strength = groupDef.getStrength();
-                    pair.distance = JBoxUtils.distance(m_positionBuffer.data[a], m_positionBuffer.data[b]);
+                    pair.distance = m_positionBuffer.data[a].distanceF(m_positionBuffer.data[b]);
                     m_pairCount++;
                 }
             }
@@ -426,7 +425,7 @@ public class ParticleSystem {
                     pair.indexB = b;
                     pair.flags = contact.flags;
                     pair.strength = Math.min(groupA.m_strength, groupB.m_strength);
-                    pair.distance = JBoxUtils.distance(m_positionBuffer.data[a], m_positionBuffer.data[b]);
+                    pair.distance = m_positionBuffer.data[a].distanceF(m_positionBuffer.data[b]);
                     m_pairCount++;
                 }
             }

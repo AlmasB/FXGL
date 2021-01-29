@@ -8,7 +8,6 @@ package com.almasb.fxgl.physics.box2d.collision;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.collision.shapes.*;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 
@@ -256,7 +255,7 @@ public class Distance {
                     return 0.0f;
 
                 case 2:
-                    return JBoxUtils.distance(m_v1.w, m_v2.w);
+                    return m_v1.w.distanceF(m_v2.w);
 
                 case 3:
                     case3.set(m_v2.w).subLocal(m_v1.w);
@@ -700,7 +699,7 @@ public class Distance {
 
         // Prepare output.
         simplex.getWitnessPoints(output.pointA, output.pointB);
-        output.distance = JBoxUtils.distance(output.pointA, output.pointB);
+        output.distance = output.pointA.distanceF(output.pointB);
         output.iterations = iter;
 
         // Cache the simplex.

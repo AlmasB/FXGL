@@ -28,9 +28,6 @@
 
 package com.almasb.fxgl.physics.box2d.common;
 
-import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.core.math.Vec2;
-
 /**
  * A few math methods that don't fit very well anywhere else.
  */
@@ -39,9 +36,5 @@ public final class JBoxUtils {
     /** Returns the closest value to 'a' that is in between 'low' and 'high' */
     public static float clamp(float a, float low, float high) {
         return Math.max(low, Math.min(a, high));
-    }
-
-    public static float distance(Vec2 v1, Vec2 v2) {
-        return FXGLMath.sqrtF(v1.distanceSquared(v2));
     }
 }
