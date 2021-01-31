@@ -15,6 +15,10 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+
+import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -28,6 +32,9 @@ public class PhysicsBenchmarkSample extends GameApplication {
     private static final int NUM_OBJECTS = 140;
 
     private int frames;
+    private int numCollisions = 0;
+
+    private Text text;
 
     private enum Type {
         BALL
@@ -39,7 +46,12 @@ public class PhysicsBenchmarkSample extends GameApplication {
         settings.setHeight(720);
         settings.setProfilingEnabled(true);
     }
-    
+
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("collisions", 0);
+    }
+
     @Override
     protected void initGame() {
         frames = 0;
@@ -49,17 +61,25 @@ public class PhysicsBenchmarkSample extends GameApplication {
         for (int i = 0; i < NUM_OBJECTS; i++) {
             spawn("ball", FXGLMath.randomPoint(new Rectangle2D(0, 0, getAppWidth() - 64, getAppHeight() - 64)));
         }
+
+        text = new Text("");
+        text.setFont(Font.font(32));
+
+        addUINode(text, 100, getAppHeight() - 40);
     }
 
     @Override
     protected void initPhysics() {
-        onCollisionBegin(Type.BALL, Type.BALL, (b1, b2) -> {
-
+        onCollision(Type.BALL, Type.BALL, (b1, b2) -> {
+            numCollisions++;
         });
     }
 
     @Override
     protected void onUpdate(double tpf) {
+        text.setText("Collisions: " + numCollisions);
+        numCollisions = 0;
+
         frames++;
 
         // at 60fps this should finish in 100 sec
