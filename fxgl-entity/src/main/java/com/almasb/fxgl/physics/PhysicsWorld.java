@@ -218,26 +218,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
         CollisionHandler handler = getHandler(e1, e2);
         if (handler != null) {
+            HitBox a = contact.getFixtureA().getHitBox();
+            HitBox b = contact.getFixtureB().getHitBox();
 
-            CollisionPair pair = getPair(e1, e2);
-
-            // no collision registered, so add the pair
-            if (pair == null) {
-                pair = Pools.obtain(CollisionPair.class);
-                pair.init(e1, e2, handler);
-
-                // add pair to list of collisions so we still use it
-                collisions.add(pair);
-
-                HitBox boxA = contact.getFixtureA().getHitBox();
-                HitBox boxB = contact.getFixtureB().getHitBox();
-
-                handler.onHitBoxTrigger(pair.getA(), pair.getB(),
-                        e1 == pair.getA() ? boxA : boxB,
-                        e2 == pair.getB() ? boxB : boxA);
-
-                pair.collisionBegin();
-            }
+            collisionBeginFor(handler, e1, e2, a, b);
         }
     }
 
@@ -263,17 +247,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
         CollisionHandler handler = getHandler(e1, e2);
         if (handler != null) {
-
-            int pairIndex = getPairIndex(e1, e2);
-
-            // collision registered, so remove it and put pair back to pool
-            if (pairIndex != -1) {
-                CollisionPair pair = collisions.get(pairIndex);
-
-                collisions.removeIndex(pairIndex);
-                pair.collisionEnd();
-                Pools.free(pair);
-            }
+            collisionEndFor(e1, e2);
         }
     }
 
@@ -460,7 +434,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
             // add pair to list of collisions so we still use it
             collisions.add(pair);
 
-            handler.onHitBoxTrigger(pair.getA(), pair.getB(), a, b);
+            handler.onHitBoxTrigger(
+                    pair.getA(), pair.getB(),
+                    e1 == pair.getA() ? a : b,
+                    e2 == pair.getB() ? b : a
+            );
             pair.collisionBegin();
         }
     }
