@@ -23,8 +23,6 @@ import kotlin.math.min
 /**
  * A value that can be animated (progressed) from value1 to value 2.
  * An interpolator can be used to control the rate of animation (progression).
- * Built-in supported types: Point2D, Double, Int, Long, Float.
- * Any other types must implement animate().
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

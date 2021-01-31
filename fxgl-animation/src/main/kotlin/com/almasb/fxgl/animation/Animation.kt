@@ -7,71 +7,8 @@
 package com.almasb.fxgl.animation
 
 import com.almasb.fxgl.core.Updatable
-import com.almasb.fxgl.core.util.EmptyRunnable
 import javafx.animation.Interpolator
 import javafx.util.Duration
-import java.util.function.Consumer
-
-/**
- * Animation configuration object.
- */
-class AnimationConfig
-@JvmOverloads constructor(
-        var duration: Duration = Duration.seconds(1.0),
-        var delay: Duration = Duration.ZERO,
-        var interpolator: Interpolator = Interpolator.LINEAR,
-        var times: Int = 1,
-        var onFinished: Runnable = EmptyRunnable,
-        var onCycleFinished: Runnable = EmptyRunnable,
-        var isAutoReverse: Boolean = false) {
-
-    fun duration(duration: Duration): AnimationConfig {
-        this.duration = duration
-        return this
-    }
-
-    fun delay(delay: Duration): AnimationConfig {
-        this.delay = delay
-        return this
-    }
-
-    fun interpolator(interpolator: Interpolator): AnimationConfig {
-        this.interpolator = interpolator
-        return this
-    }
-
-    fun repeat(times: Int): AnimationConfig {
-        this.times = times
-        return this
-    }
-
-    fun repeatInfinitely(): AnimationConfig {
-        return repeat(Integer.MAX_VALUE)
-    }
-
-    fun onFinished(onFinished: Runnable): AnimationConfig {
-        this.onFinished = onFinished
-        return this
-    }
-
-    fun onCycleFinished(onCycleFinished: Runnable): AnimationConfig {
-        this.onCycleFinished = onCycleFinished
-        return this
-    }
-
-    fun autoReverse(autoReverse: Boolean): AnimationConfig {
-        this.isAutoReverse = autoReverse
-        return this
-    }
-
-    fun <T> build(animatedValue: AnimatedValue<T>, onProgress: Consumer<T>): Animation<T> {
-        return object : Animation<T>(this, animatedValue) {
-            override fun onProgress(value: T) {
-                onProgress.accept(value)
-            }
-        }
-    }
-}
 
 /**
  * An animation needs to be updated by calling onUpdate().
@@ -79,7 +16,7 @@ class AnimationConfig
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 abstract class Animation<T>(
-        val config: AnimationConfig,
+        val config: AnimationBuilder,
         val animatedValue: AnimatedValue<T>): Updatable {
 
     var isAutoReverse: Boolean = config.isAutoReverse

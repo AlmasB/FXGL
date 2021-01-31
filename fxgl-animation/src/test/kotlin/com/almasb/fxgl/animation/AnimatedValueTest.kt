@@ -3,14 +3,13 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.animation
 
 import com.almasb.fxgl.test.RunWithFX
 import javafx.geometry.Point2D
 import javafx.geometry.Point3D
 import javafx.scene.paint.Color
-import javafx.scene.shape.Circle
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
 import javafx.scene.shape.Rectangle
@@ -116,6 +115,4 @@ class AnimatedValueTest {
         assertThat(anim.getValue(1.0), `is`(""))
         assertThat(anim.getValue(0.5), `is`("Str"))
     }
-
-
 }
