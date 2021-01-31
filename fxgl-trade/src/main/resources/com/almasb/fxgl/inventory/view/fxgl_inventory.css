@@ -1,0 +1,56 @@
+.fxgl-pickup-items {
+    -fx-text-fill: black;
+}
+
+.fxgl-inventory-list-view {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-accent: white;
+}
+
+.list-cell {
+    -fx-background: transparent;
+    -fx-font-size: 16px;
+}
+
+.list-cell:selected {
+    -fx-background: green;
+    -fx-text-fill: yellow;
+}
+
+.fxgl-inventory-list-view .scroll-bar {
+    -fx-background-color: rgb(96,96,96);
+    -fx-background-radius: 1.5em;
+}
+
+.fxgl-inventory-list-view .scroll-bar .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0em;
+    -fx-border-radius: 2em;
+}
+
+.fxgl-inventory-list-view .scroll-bar .track-background {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2em;
+}
+
+.fxgl-inventory-list-view .scroll-bar .thumb {
+    -fx-background-color: orange;
+    -fx-background-insets: 2, 0, 0;
+    -fx-background-radius: 2em;
+}
+
+.fxgl-inventory-list-view .scroll-bar:vertical:focused,
+.fxgl-inventory-list-view .scroll-bar:horizontal:focused {
+    -fx-background-color: transparent,rgb(96,96,96),rgb(96,96,96);
+}
+
+
+.fxgl-inventory-list-view .scroll-bar .increment-arrow,
+.fxgl-inventory-list-view .scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding:0;
+}
+
