@@ -56,6 +56,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     private int appHeight;
 
     public PhysicsWorld(int appHeight, double ppm) {
+        this(appHeight, ppm, CollisionDetectionStrategy.BRUTE_FORCE);
+    }
+
+    public PhysicsWorld(int appHeight, double ppm, CollisionDetectionStrategy strategy) {
         this.appHeight = appHeight;
 
         PIXELS_PER_METER = ppm;

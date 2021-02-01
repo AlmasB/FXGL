@@ -33,6 +33,7 @@ import com.almasb.fxgl.net.NetService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
+import com.almasb.fxgl.physics.CollisionDetectionStrategy
 import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.ui.FXGLDialogFactoryServiceProvider
 import com.almasb.fxgl.ui.FXGLUIFactoryServiceProvider
@@ -232,6 +233,8 @@ class GameSettings(
 
         var pixelsPerMeter: Double = 50.0,
 
+        var collisionDetectionStrategy: CollisionDetectionStrategy = CollisionDetectionStrategy.BRUTE_FORCE,
+
         /**
          * Set how many real seconds are in 24 game hours, default = 60.
          */
@@ -367,6 +370,7 @@ class GameSettings(
                 soundMenuPress,
                 soundMenuSelect,
                 pixelsPerMeter,
+                collisionDetectionStrategy,
                 secondsIn24h,
                 randomSeed,
                 ticksPerSecond,
@@ -532,6 +536,8 @@ class ReadOnlyGameSettings internal constructor(
         val soundMenuSelect: String,
 
         val pixelsPerMeter: Double,
+
+        val collisionDetectionStrategy: CollisionDetectionStrategy,
 
         /**
          * Set how many real seconds are in 24 game hours, default = 60.
