@@ -94,6 +94,22 @@ public final class FXGLMath {
         return Sin.table[(int) ((degrees + 90) * degToIndex) & SIN_MASK];
     }
 
+    /**
+     * @param degrees angle in degrees
+     * @return the sine in radians from a lookup table
+     */
+    public static float sinDegF(double degrees) {
+        return (float) sinDeg(degrees);
+    }
+
+    /**
+     * @param degrees angle in degrees
+     * @return the cosine in radians from a lookup table
+     */
+    public static float cosDegF(double degrees) {
+        return (float) cosDeg(degrees);
+    }
+
     private static final double radiansToDegrees = 180 / PI;
 
     private static final double degreesToRadians = PI / 180;

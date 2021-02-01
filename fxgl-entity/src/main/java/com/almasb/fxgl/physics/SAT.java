@@ -6,11 +6,10 @@
 
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.core.collection.Array;
-import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.entity.components.TransformComponent;
+
+import static com.almasb.fxgl.core.math.FXGLMath.*;
 
 /**
  * Separating Axis Theorem based check for collision.
@@ -22,11 +21,20 @@ public final class SAT {
     private SAT() {}
 
     // there can be only 2 axes per angle, hence 2 * 2 = 4
-    private static final Array<Vec2> axes = new UnorderedArray<>(4);
+    private static final Vec2[] axes = new Vec2[4];
 
     // each hit box has 4 corners
-    private static final Array<Vec2> corners1 = new UnorderedArray<>(4);
-    private static final Array<Vec2> corners2 = new UnorderedArray<>(4);
+    private static final Vec2[] corners1 = new Vec2[4];
+    private static final Vec2[] corners2 = new Vec2[4];
+
+    static {
+        // 4 because all above arrays have exactly 4 elements
+        for (int i = 0; i < 4; i++) {
+            axes[i] = new Vec2();
+            corners1[i] = new Vec2();
+            corners2[i] = new Vec2();
+        }
+    }
 
     /**
      * Note: NOT thread-safe but GC-friendly.
@@ -41,8 +49,7 @@ public final class SAT {
      */
     public static boolean isColliding(HitBox box1, HitBox box2, double angle1, double angle2,
                                       TransformComponent t1, TransformComponent t2) {
-        populateAxes(angle1);
-        populateAxes(angle2);
+        populateAxes(angle1, angle2);
 
         corners(box1, angle1, t1, corners1);
         corners(box2, angle2, t2, corners2);
@@ -62,60 +69,50 @@ public final class SAT {
             }
         }
 
-        cleanArrays();
-
         return result;
     }
 
-    private static void cleanArrays() {
-        for (Vec2 v : axes)
-            freeVec(v);
+    private static void populateAxes(double angle1, double angle2) {
+        // first object
+        axes[0].set(cosDegF(angle1), sinDegF(angle1)).normalizeLocal();
+        axes[1].set(cosDegF(angle1 + 90), sinDegF(angle1 + 90)).normalizeLocal();
 
-        for (Vec2 v : corners1)
-            freeVec(v);
-
-        for (Vec2 v : corners2)
-            freeVec(v);
-
-        axes.clear();
-        corners1.clear();
-        corners2.clear();
+        // second object
+        axes[2].set(cosDegF(angle2), sinDegF(angle2)).normalizeLocal();
+        axes[3].set(cosDegF(angle2 + 90), sinDegF(angle2 + 90)).normalizeLocal();
     }
 
-    private static void populateAxes(double angle) {
-        axes.add(newVec(cos(angle), sin(angle)).normalizeLocal());
-        axes.add(newVec(cos(angle + 90), sin(angle + 90)).normalizeLocal());
-    }
+    private static void corners(HitBox box, double angle, TransformComponent t, Vec2[] array) {
+        var origin = t.getRotationOrigin();
 
-    private static void corners(HitBox box, double angle, TransformComponent t, Array<Vec2> array) {
-        Vec2 origin = new Vec2(t.getRotationOrigin()).addLocal(t.getX(), t.getY());
+        // origin in world coord
+        double originX = origin.getX() + t.getX();
+        double originY = origin.getY() + t.getY();
 
-        // this needs to be scaled accordingly, so               centerX * scale + (1-scale) * pivot.x
-        //origin.x = (float) (t.getScaleOrigin().getX() - (t.getScaleOrigin().getX() - origin.x) * t.getScaleX() + origin.x);
-        //origin.y = (float) (t.getScaleOrigin().getY() - (t.getScaleOrigin().getY() - origin.y) * t.getScaleY() + origin.y);
+        // top left
+        array[0].set((float) box.getMinXWorld(), (float) box.getMinYWorld());
 
-        //origin
+        // top right
+        array[1].set((float) box.getMaxXWorld(), (float) box.getMinYWorld());
 
-        Vec2 topLeft = newVec(box.getMinXWorld(), box.getMinYWorld());
-        Vec2 topRight = newVec(box.getMaxXWorld(), box.getMinYWorld());
-        Vec2 botRight = newVec(box.getMaxXWorld(), box.getMaxYWorld());
-        Vec2 botLeft = newVec(box.getMinXWorld(), box.getMaxYWorld());
+        // bot right
+        array[2].set((float) box.getMaxXWorld(), (float) box.getMaxYWorld());
 
-        array.addAll(topLeft, topRight, botRight, botLeft);
+        // bot left
+        array[3].set((float) box.getMinXWorld(), (float) box.getMaxYWorld());
 
-        double cos = cos(angle);
-        double sin = sin(angle);
+        // min, max are already scaled inside HitBox, so we just need to rotate them
+        float cos = cosDegF(angle);
+        float sin = sinDegF(angle);
 
         for (Vec2 v : array) {
-            v.subLocal(origin);
-            v.set((float)(v.x * cos - v.y * sin), (float)(v.x * sin + v.y * cos));
-            v.addLocal(origin);
+            v.subLocal(originX, originY);
+            v.set(v.x * cos - v.y * sin, v.x * sin + v.y * cos);
+            v.addLocal(originX, originY);
         }
-
-        freeVec(origin);
     }
 
-    private static float getMin(Array<Vec2> arrayCorners, Vec2 axis) {
+    private static float getMin(Vec2[] arrayCorners, Vec2 axis) {
         float min = Float.MAX_VALUE;
 
         for (Vec2 corner : arrayCorners) {
@@ -127,7 +124,7 @@ public final class SAT {
         return min;
     }
 
-    private static float getMax(Array<Vec2> arrayCorners, Vec2 axis) {
+    private static float getMax(Vec2[] arrayCorners, Vec2 axis) {
         float max = Integer.MIN_VALUE;
 
         for (Vec2 corner : arrayCorners) {
@@ -137,22 +134,5 @@ public final class SAT {
         }
 
         return max;
-    }
-
-    private static Vec2 newVec(double x, double y) {
-        return Pools.obtain(Vec2.class)
-                .set((float)x, (float)y);
-    }
-
-    private static void freeVec(Vec2 vec) {
-        Pools.free(vec);
-    }
-
-    private static double cos(double angle) {
-        return Math.cos(Math.toRadians(angle));
-    }
-
-    private static double sin(double angle) {
-        return Math.sin(Math.toRadians(angle));
     }
 }
