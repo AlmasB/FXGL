@@ -252,20 +252,23 @@ public final class HitBox implements Serializable {
                 transform.scaleOriginYProperty(), transform.scaleYProperty(), transform.yProperty()
         );
 
+        var isX1GreaterX2 = x1.greaterThan(x2);
+        var isY1GreaterY2 = y1.greaterThan(y2);
+
         minXWorld.bind(
-                Bindings.when(x1.greaterThan(x2)).then(x2).otherwise(x1)
+                Bindings.when(isX1GreaterX2).then(x2).otherwise(x1)
         );
 
         maxXWorld.bind(
-                Bindings.when(x1.greaterThan(x2)).then(x1).otherwise(x2)
+                Bindings.when(isX1GreaterX2).then(x1).otherwise(x2)
         );
 
         minYWorld.bind(
-                Bindings.when(y1.greaterThan(y2)).then(y2).otherwise(y1)
+                Bindings.when(isY1GreaterY2).then(y2).otherwise(y1)
         );
 
         maxYWorld.bind(
-                Bindings.when(y1.greaterThan(y2)).then(y1).otherwise(y2)
+                Bindings.when(isY1GreaterY2).then(y1).otherwise(y2)
         );
     }
 
