@@ -5,6 +5,7 @@
  */
 package com.almasb.fxgl.inventory.view
 
+import com.almasb.fxgl.inventory.Inventory
 import com.almasb.fxgl.inventory.ItemData
 import javafx.collections.ObservableList
 import javafx.scene.control.ListCell
@@ -13,22 +14,19 @@ import javafx.util.Callback
 
 /**
  *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * @author Adam Bocco (adambocco@gmail.com)
  */
 class InventoryListView(items: ObservableList<ItemData<*>>) : ListView<ItemData<*>>(items) {
 
     init {
-        styleClass.setAll("fxgl-inventory-list-view")
-
-        stylesheets.add(javaClass.getResource("fxgl_inventory.css").toExternalForm())
-
         cellFactory = Callback { InventoryListCell() }
     }
 }
 
-class InventoryListCell : ListCell<ItemData<*>>() {
+class InventoryListCell() : ListCell<ItemData<*>>() {
 
     override fun updateItem(item: ItemData<*>?, empty: Boolean) {
+
         super.updateItem(item, empty)
 
         if (empty || item == null) {
@@ -37,10 +35,9 @@ class InventoryListCell : ListCell<ItemData<*>>() {
         } else {
 
             val limit = 30
-
             val name = if (item.name.length > limit) item.name.substring(0, limit) + "..." else item.name
 
-            text = "$name - ${item.quantity}"
+            text = "$name - ${item.quantity} \n${item.description}"
         }
     }
 }
