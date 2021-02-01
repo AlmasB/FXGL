@@ -351,11 +351,17 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
             }
         }
 
-        for (int i = 0; i < collidables.size(); i++) {
-            Entity e1 = collidables.get(i);
+        checkCollisionsInGroup(collidables);
 
-            for (int j = i + 1; j < collidables.size(); j++) {
-                Entity e2 = collidables.get(j);
+        collidables.clear();
+    }
+
+    private void checkCollisionsInGroup(Array<Entity> group) {
+        for (int i = 0; i < group.size(); i++) {
+            Entity e1 = group.get(i);
+
+            for (int j = i + 1; j < group.size(); j++) {
+                Entity e2 = group.get(j);
 
                 CollisionHandler handler = getHandler(e1, e2);
 
@@ -382,8 +388,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
                 }
             }
         }
-
-        collidables.clear();
     }
 
     private boolean isIgnored(Entity e1, Entity e2) {
