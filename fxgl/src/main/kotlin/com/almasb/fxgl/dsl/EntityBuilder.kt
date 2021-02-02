@@ -11,6 +11,7 @@ import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.CollidableComponent
+import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.BoundingShape.Companion.box
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsComponent
@@ -121,6 +122,12 @@ class EntityBuilder {
 
         entity.transformComponent.scaleOrigin = center
         entity.transformComponent.rotationOrigin = center
+    }
+
+    fun bbox(shape: BoundingShape) = this.also {
+        val hitBox = HitBox(shape)
+
+        bbox(hitBox)
     }
 
     fun view(node: Node) = this.also {
