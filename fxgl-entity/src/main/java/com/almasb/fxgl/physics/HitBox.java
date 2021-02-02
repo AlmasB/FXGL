@@ -5,6 +5,7 @@
  */
 package com.almasb.fxgl.physics;
 
+import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.components.BoundingBoxComponent;
 import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
@@ -16,6 +17,9 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 
 import java.io.Serializable;
+
+import static com.almasb.fxgl.core.math.FXGLMath.cosDegF;
+import static com.almasb.fxgl.core.math.FXGLMath.sinDegF;
 
 /**
  * A bounding collision box.
@@ -38,6 +42,16 @@ public final class HitBox implements Serializable {
      * Bounding box (computed from shape) of this hit box.
      */
     private Bounds bounds;
+
+    /**
+     * Axes: 1 formed from the transform angle and its +90 deg perpendicular.
+     */
+    Vec2[] axes = new Vec2[2];
+
+    /**
+     * Corner points top-left, top-right, bot-right, bot-left.
+     */
+    Vec2[] corners = new Vec2[4];
 
     /**
      * Creates a hit box with the given shape.
@@ -85,6 +99,13 @@ public final class HitBox implements Serializable {
         this.shape = shape;
         this.bounds = new BoundingBox(localOrigin.getX(), localOrigin.getY(),
                 shape.getSize().getWidth(), shape.getSize().getHeight());
+
+        axes[0] = new Vec2();
+        axes[1] = new Vec2();
+
+        for (int i = 0; i < 4; i++) {
+            corners[i] = new Vec2();
+        }
     }
 //
 //    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
@@ -321,6 +342,72 @@ public final class HitBox implements Serializable {
 
     public Shape toBox2DShape(BoundingBoxComponent bbox, PhysicsUnitConverter converter) {
         return shape.toBox2DShape(this, bbox, converter);
+    }
+
+    // new physics below
+
+    float fastMinX;
+    float fastMinY;
+    float fastMaxX;
+    float fastMaxY;
+
+    SAT.MinMax axis1MinMax = new SAT.MinMax();
+    SAT.MinMax axis2MinMax = new SAT.MinMax();
+
+    public void applyTransform(TransformComponent transform) {
+        // scale, translate
+
+        double x1 = transform.getScaleOrigin().getX() - (transform.getScaleOrigin().getX() - getMinX()) * transform.getScaleX() + transform.getX();
+        double x2 = transform.getScaleOrigin().getX() - (transform.getScaleOrigin().getX() - getMaxX()) * transform.getScaleX() + transform.getX();
+
+        double y1 = transform.getScaleOrigin().getY() - (transform.getScaleOrigin().getY() - getMinY()) * transform.getScaleY() + transform.getY();
+        double y2 = transform.getScaleOrigin().getY() - (transform.getScaleOrigin().getY() - getMaxY()) * transform.getScaleY() + transform.getY();
+
+        fastMinX = (float) Math.min(x1, x2);
+        fastMinY = (float) Math.min(y1, y2);
+
+        fastMaxX = (float) Math.max(x1, x2);
+        fastMaxY = (float) Math.max(y1, y2);
+
+        double angle = transform.getAngle();
+
+        float cos = cosDegF(angle);
+        float sin = sinDegF(angle);
+
+        axes[0].set(cos, sin).normalizeLocal();
+        axes[1].set(cosDegF(angle + 90), sinDegF(angle + 90)).normalizeLocal();
+
+        // top left
+        corners[0].set(fastMinX, fastMinY);
+
+        // top right
+        corners[1].set(fastMaxX, fastMinY);
+
+        // bot right
+        corners[2].set(fastMaxX, fastMaxY);
+
+        // bot left
+        corners[3].set(fastMinX, fastMaxY);
+
+        // if the angle is 0 then rotation and its origin do not matter
+        if (angle != 0.0) {
+            // rotate
+            var origin = transform.getRotationOrigin();
+
+            // origin in world coord
+            double originX = origin.getX() + transform.getX();
+            double originY = origin.getY() + transform.getY();
+
+            // min, max are already scaled, so we just need to rotate them
+            for (Vec2 v : corners) {
+                v.subLocal(originX, originY);
+                v.set(v.x * cos - v.y * sin, v.x * sin + v.y * cos);
+                v.addLocal(originX, originY);
+            }
+        }
+
+        SAT.computeMinMax(corners, axes[0], axis1MinMax);
+        SAT.computeMinMax(corners, axes[1], axis2MinMax);
     }
 
     @Override

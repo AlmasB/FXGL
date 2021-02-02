@@ -27,13 +27,16 @@ class SATTest {
         val t1 = TransformComponent(0.0, 0.0, 0.0, 1.0, 1.0)
         val t2 = TransformComponent(21.0, 0.0, 0.0, 1.0, 1.0)
 
-        box1.bindXY(t1)
-        box2.bindXY(t2)
+        box1.applyTransform(t1)
+        box2.applyTransform(t2)
 
         assertFalse(SAT.isColliding(box1, box2, 0.0, 0.0, t1, t2))
 
         t2.scaleOrigin = Point2D(10.0, 20.0)
         t2.scaleX = 1.2
+
+        box1.applyTransform(t1)
+        box2.applyTransform(t2)
 
         assertTrue(SAT.isColliding(box1, box2, 0.0, 0.0, t1, t2))
     }
@@ -46,11 +49,36 @@ class SATTest {
         val t1 = TransformComponent(0.0, 0.0, 0.0, 1.0, 1.0)
         val t2 = TransformComponent(21.0, 0.0, 0.0, 1.0, 1.0)
 
-        box1.bindXY(t1)
-        box2.bindXY(t2)
+        box1.applyTransform(t1)
+        box2.applyTransform(t2)
+
+        // 1 is to the left of 2, no collision
+        assertFalse(SAT.isColliding(box1, box2, 0.0, 00.0, t1, t2))
 
         t2.rotationOrigin = Point2D(0.0, 0.0)
+        t2.angle = 90.0
 
-        assertTrue(SAT.isColliding(box1, box2, 0.0, 90.0, t1, t2))
+        box1.applyTransform(t1)
+        box2.applyTransform(t2)
+
+        // 2 is rotated and overlaps 1, collision
+        assertTrue(SAT.isColliding(box1, box2, 0.0, 00.0, t1, t2))
+
+        t1.y = 21.0
+
+        box1.applyTransform(t1)
+        box2.applyTransform(t2)
+
+        // 1 is below 2, no collision
+        assertFalse(SAT.isColliding(box1, box2, 0.0, 00.0, t1, t2))
+
+        t1.rotationOrigin = Point2D(0.0, 0.0)
+        t1.angle = -35.0
+
+        box1.applyTransform(t1)
+        box2.applyTransform(t2)
+
+        // 1 is rotated back and overlaps 2, collision
+        assertTrue(SAT.isColliding(box1, box2, 0.0, 00.0, t1, t2))
     }
 }

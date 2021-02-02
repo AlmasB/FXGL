@@ -348,6 +348,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     private void checkCollisions() {
         for (Entity e : entities) {
             if (isCollidable(e)) {
+                e.getBoundingBoxComponent().applyTransformToHitBoxes$fxgl_entity();
                 collidables.add(e);
             }
         }
