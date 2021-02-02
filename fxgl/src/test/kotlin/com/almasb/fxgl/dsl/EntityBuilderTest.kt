@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.components.CollidableComponent
+import com.almasb.fxgl.physics.BoundingShape
 import javafx.geometry.Point2D
 import javafx.geometry.Point3D
 import javafx.scene.input.MouseButton
@@ -18,6 +19,7 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -250,5 +252,21 @@ class EntityBuilderTest {
                 .build()
 
         assertThat(e.localAnchor, `is`(Point2D(50.0, 50.0)))
+    }
+
+    @Test
+    fun `bbox with BoundingShape correctly created`() {
+        val shape = BoundingShape.box(40.0, 40.0)
+
+        val e = builder
+            .bbox(shape)
+            .build()
+
+        val boxes = e.boundingBoxComponent.hitBoxesProperty()
+        assertEquals(1, boxes.size)
+
+        val box = boxes[0]
+        assertEquals(40.0, box.width)
+        assertEquals(40.0, box.height)
     }
 }
