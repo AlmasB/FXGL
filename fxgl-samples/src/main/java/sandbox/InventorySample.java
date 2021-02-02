@@ -126,12 +126,15 @@ public class InventorySample extends GameApplication {
             dropOne.setTranslateY(320.0);
 
             dropOne.setOnAction(actionEvent -> {
-                var selectedItem = view.getListView().getSelectionModel().getSelectedItem();
+                var selectedItem = (Entity) view.getListView().getSelectionModel().getSelectedItem();
+
                 if (selectedItem != null) {
-                    var itemData = inventorySubScene.playerInventory.getData((Entity) selectedItem.getUserItem());
-                    if (selectedItem.getQuantity() > 1) {
-                        selectedItem.setQuantity(selectedItem.getQuantity() - 1);
-                    } else itemData.ifPresent(entityItemData -> playerInventory.remove(entityItemData.getUserItem()));
+                    var itemData = inventorySubScene.playerInventory.getData((Entity) selectedItem).get();
+                    if (itemData.getQuantity() > 1) {
+                        itemData.setQuantity(itemData.getQuantity() - 1);
+                    } else {
+                        playerInventory.remove(selectedItem);
+                    }
                 }
                 view.getListView().refresh();
             });
@@ -143,11 +146,13 @@ public class InventorySample extends GameApplication {
             dropAll.setTranslateY(370.0);
 
             dropAll.setOnAction(actionEvent -> {
-                var selectedItem = view.getListView().getSelectionModel().getSelectedItem();
+
+                var selectedItem = (Entity) view.getListView().getSelectionModel().getSelectedItem();
+
                 if (selectedItem != null) {
-                    var itemData = inventorySubScene.playerInventory.getData((Entity) selectedItem.getUserItem());
-                    selectedItem.setQuantity(0);
-                    itemData.ifPresent(entityItemData -> playerInventory.remove(entityItemData.getUserItem()));
+                    var itemData = inventorySubScene.playerInventory.getData((Entity) selectedItem).get();
+                    itemData.setQuantity(0);
+                    playerInventory.remove(selectedItem);
                 }
                 view.getListView().refresh();
             });

@@ -6,7 +6,6 @@
 package com.almasb.fxgl.inventory.view
 
 import com.almasb.fxgl.inventory.Inventory
-import com.almasb.fxgl.inventory.ItemData
 import javafx.collections.ObservableList
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
@@ -16,28 +15,27 @@ import javafx.util.Callback
  *
  * @author Adam Bocco (adambocco@gmail.com)
  */
-class InventoryListView(items: ObservableList<ItemData<*>>) : ListView<ItemData<*>>(items) {
+class InventoryListView<T> (items: ObservableList<T>, inventory: Inventory<T>) : ListView<T>(items) {
 
     init {
-        cellFactory = Callback { InventoryListCell() }
+        cellFactory = Callback { InventoryListCell(inventory) }
     }
 }
 
-class InventoryListCell() : ListCell<ItemData<*>>() {
+class InventoryListCell<T>(private val inventory: Inventory<T>) : ListCell<T>() {
 
-    override fun updateItem(item: ItemData<*>?, empty: Boolean) {
-
+    override fun updateItem(item: T?, empty: Boolean) {
         super.updateItem(item, empty)
-
         if (empty || item == null) {
             text = null
             graphic = null
+
         } else {
-
+            val itemData = inventory.getData(item).get()
             val limit = 30
-            val name = if (item.name.length > limit) item.name.substring(0, limit) + "..." else item.name
+            val name = if (itemData.name.length > limit) itemData.name.substring(0, limit) + "..." else itemData.name
 
-            text = "$name - ${item.quantity} \n${item.description}"
+            text = "$name - ${itemData.quantity} \n${itemData.description}"
         }
     }
 }

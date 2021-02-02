@@ -25,7 +25,7 @@ class Inventory<T>(var capacity: Int) {
 
     private val log = Logger.get(javaClass)
 
-    private val items = FXCollections.observableArrayList<ItemData<T>>()
+    private val items = FXCollections.observableArrayList<T>()
     private val itemsProperty = FXCollections.unmodifiableObservableList(items)
 
     private val itemsData = hashMapOf<T, ItemData<T>>()
@@ -47,7 +47,7 @@ class Inventory<T>(var capacity: Int) {
     /**
      * @return read-only list of items
      */
-    fun itemsProperty(): ObservableList<ItemData<T>> = itemsProperty
+    fun itemsProperty(): ObservableList<T> = itemsProperty
 
     /**
      * Add [item] to inventory.
@@ -63,7 +63,7 @@ class Inventory<T>(var capacity: Int) {
             quantity: Int = 1
     ): Boolean {
 
-        if (itemsData[item] in items) {
+        if (item in items) {
             getData(item).get().quantity += quantity
             return true
         }
@@ -78,7 +78,7 @@ class Inventory<T>(var capacity: Int) {
             it.quantity = quantity
         }
 
-        items += itemsData[item]
+        items += item
 
         return true
     }
@@ -88,12 +88,12 @@ class Inventory<T>(var capacity: Int) {
      * If you only want to reduce quantity, use [incrementQuantity] with negative amount instead.
      */
     fun remove(item: T) {
-        items -= itemsData[item]
+        items -= item
         itemsData -= item
     }
 
     fun getData(item: T): Optional<ItemData<T>> {
-        if (itemsData[item] !in items)
+        if (item !in items)
             return Optional.empty()
 
         return Optional.of(itemsData[item]!!)
@@ -103,7 +103,7 @@ class Inventory<T>(var capacity: Int) {
      * @return true if operation was successful
      */
     fun incrementQuantity(item: T, amount: Int): Boolean {
-        if (itemsData[item] !in items) {
+        if (item !in items) {
             log.warning("Attempted to increment qty of item that is not in inventory. Ignoring")
             return false
         }
