@@ -27,6 +27,11 @@ public final class SAT {
     private static final Vec2[] corners1 = new Vec2[4];
     private static final Vec2[] corners2 = new Vec2[4];
 
+    private static final MinMax box2axis1 = new MinMax();
+    private static final MinMax box2axis2 = new MinMax();
+    private static final MinMax box1axis3 = new MinMax();
+    private static final MinMax box1axis4 = new MinMax();
+
     static {
         // 4 because all above arrays have exactly 4 elements
         for (int i = 0; i < 4; i++) {
@@ -35,7 +40,7 @@ public final class SAT {
             corners2[i] = new Vec2();
         }
     }
-
+    
     /**
      * Note: NOT thread-safe but GC-friendly.
      *
@@ -134,5 +139,45 @@ public final class SAT {
         }
 
         return max;
+    }
+
+    /**
+     * Calculate a projection of corners to an axis and populate the minMax object.
+     *
+     * @param corners a 4-value array defining corner points
+     * @param axis the axis on which to project corners
+     * @param minMax the storage object
+     */
+    static void computeMinMax(Vec2[] corners, Vec2 axis, MinMax minMax) {
+        float value = Vec2.dot(corners[0], axis);
+
+        float min = value;
+        float max = value;
+
+        for (int i = 1; i < 4; i++) {
+            value = Vec2.dot(corners[i], axis);
+
+            min = Math.min(min, value);
+            max = Math.max(max, value);
+        }
+
+        minMax.min = min;
+        minMax.max = max;
+    }
+
+    /**
+     * Data structure for min-max values on an axis.
+     */
+    public static class MinMax {
+        private float min = 0;
+        private float max = 0;
+
+        /**
+         * @param other another min-max (assumed on the same axis)
+         * @return true if this min-max is separated from other
+         */
+        private boolean isSeparated(MinMax other) {
+            return max < other.min || other.max < min;
+        }
     }
 }
