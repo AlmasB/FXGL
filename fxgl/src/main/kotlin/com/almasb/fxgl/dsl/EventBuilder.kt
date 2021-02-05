@@ -33,11 +33,6 @@ class EventBuilder {
     /**
      * When to fire the event.
      */
-    fun `when`(condition: () -> Boolean) = `when`(Supplier { condition() })
-
-    /**
-     * When to fire the event.
-     */
     fun `when`(condition: Supplier<Boolean>) = this.also {
         this.condition = condition
     }
@@ -52,8 +47,6 @@ class EventBuilder {
     }
 
     fun thenFire(event: Event) = thenFire(Supplier { event })
-
-    fun thenFire(eventSupplier: () -> Event) = thenFire(Supplier { eventSupplier() })
 
     fun thenFire(eventSupplier: Supplier<Event>) = this.also {
         this.eventSupplier = eventSupplier
