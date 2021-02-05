@@ -197,6 +197,12 @@ class EntityBuilder {
 
     fun build() = entity
 
+    /**
+     * A convenience function to build the entity and also add to the game world.
+     * This function should be used when creating and adding entities to the world manually.
+     * Do not use this function (use [build] instead) when spawning entities
+     * with [com.almasb.fxgl.entity.GameWorld.spawn] or [FXGL.spawn].
+     */
     fun buildAndAttach() = entity.also { FXGL.getGameWorld().addEntity(it) }
 
     /**
