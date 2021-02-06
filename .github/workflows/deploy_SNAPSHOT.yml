@@ -40,7 +40,7 @@ jobs:
         #gpg --export-secret-keys --pinentry-mode loopback --passphrase="$GPG_PASSPHRASE" > ~/.gnupg/secring.gpg
         #rm -rf /tmp/secret
         openssl version
-        openssl aes-256-cbc -pass pass:$ENC_PASSWORD -in .github/.ci/sign.asc.enc -out .github/.ci/sign.asc -d -md md5
+        openssl aes-256-cbc -pass pass:"$ENC_PASSWORD" -in .github/.ci/sign.asc.enc -out .github/.ci/sign.asc -d -md md5
         gpg -q --fast-import .github/.ci/sign.asc
         gpg --list-secret-keys --keyid-format LONG
       env:
