@@ -16,8 +16,9 @@ jobs:
       with:
         java-version: 11
         server-id: ossrh
-        server-username: SONATYPE_USERNAME
-        server-password: SONATYPE_PASSWORD
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
+        gpg-passphrase: GPG_PASSPHRASE
 
     - name: Cache maven deps
       uses: actions/cache@v2
@@ -33,17 +34,26 @@ jobs:
     #    run: |
     #      mvn test -B -Dmaven.javadoc.skip=true -Djacoco.skip=true
 
+    - name: Import GPG keys
+      run: |
+        gpg --import --batch <(echo "$GPG_PRIVATE_KEY") &> /dev/null
+        gpg --export-secret-keys --pinentry-mode loopback --passphrase="$GPG_PASSPHRASE" > ~/.gnupg/secring.gpg
+        rm -rf /tmp/secret
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
     - name: Deploy SNAPSHOT build
       run: |
         echo "Deploying to sonatype"
-        openssl version
-        openssl aes-256-cbc -pass pass:$ENC_PASSWORD -in .github/.ci/sign.asc.enc -out .github/.ci/sign.asc -d -md md5
-        gpg -q --fast-import .github/.ci/sign.asc
+        #openssl version
+        #openssl aes-256-cbc -pass pass:$ENC_PASSWORD -in .github/.ci/sign.asc.enc -out .github/.ci/sign.asc -d -md md5
+        #gpg -q --fast-import .github/.ci/sign.asc
         mvn deploy -Dgpg.executable=gpg -Dgpg.keyname=$GPG_KEYNAME -Dgpg.passphrase=$GPG_PASSPHRASE -DskipTests=true -Dlicense.skip=true -Dpmd.skip=true
         echo "Deployed to sonatype"
       env:
         ENC_PASSWORD: ${{ secrets.ENC_PASSWORD }}
-        SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-        SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         GPG_KEYNAME: ${{ secrets.GPG_KEYNAME }}
