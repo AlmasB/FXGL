@@ -314,6 +314,14 @@
                         <goals>
                             <goal>sign</goal>
                         </goals>
+
+                        <!-- This is needed for maven deploy using GH Actions -->
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

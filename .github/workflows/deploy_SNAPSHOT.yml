@@ -22,19 +22,19 @@ jobs:
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-    #- name: Cache maven deps
-    #  uses: actions/cache@v2
-    #  with:
-    #    path: ~/.m2/repository
-    #    key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-    #    restore-keys: |
-    #      ${{ runner.os }}-maven-
+    - name: Cache maven deps
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
 
-    #- name: Build and test with Maven using xvfb
-    #  uses: GabrielBB/xvfb-action@v1
-    #  with:
-    #    run: |
-    #      mvn test -B -Dmaven.javadoc.skip=true -Djacoco.skip=true
+    - name: Build and test with Maven using xvfb
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: |
+          mvn test -B -Dmaven.javadoc.skip=true -Djacoco.skip=true
 
     - name: Deploy SNAPSHOT build
       run: mvn deploy -DskipTests=true -Dlicense.skip=true -Dpmd.skip=true
