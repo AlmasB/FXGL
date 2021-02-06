@@ -1,0 +1,46 @@
+name: Deploy dev-SNAPSHOT
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    - name: Cache maven deps
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    #- name: Build and test with Maven using xvfb
+    #  uses: GabrielBB/xvfb-action@v1
+    #  with:
+    #    run: |
+    #      mvn test -B -Dmaven.javadoc.skip=true -Djacoco.skip=true
+
+    - name: Deploy SNAPSHOT build
+      run: |
+        echo "Deploying to sonatype"
+        openssl aes-256-cbc -pass pass:$ENC_PASSWORD -in .github/.ci/sign.asc.enc -out .github/.ci/sign.asc -d
+        gpg -q --fast-import .github/.ci/sign.asc
+        mvn deploy --settings .github/.ci/.travis.settings.xml -DskipTests=true -Dlicense.skip=true -Dpmd.skip=true
+        echo "Deployed to sonatype"
+      env:
+        ENC_PASSWORD: ${{ secrets.ENC_PASSWORD }}
+        SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+        SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        GPG_KEYNAME: ${{ secrets.GPG_KEYNAME }}
