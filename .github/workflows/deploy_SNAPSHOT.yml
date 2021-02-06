@@ -36,23 +36,23 @@ jobs:
 
     - name: Import GPG keys
       run: |
-        gpg --import --batch <(echo "$GPG_PRIVATE_KEY") &> /dev/null
+        #gpg --import --batch <(echo "$GPG_PRIVATE_KEY") &> /dev/null
         #gpg --export-secret-keys --pinentry-mode loopback --passphrase="$GPG_PASSPHRASE" > ~/.gnupg/secring.gpg
-        rm -rf /tmp/secret
+        #rm -rf /tmp/secret
+        openssl version
+        openssl aes-256-cbc -pass pass:$ENC_PASSWORD -in .github/.ci/sign.asc.enc -out .github/.ci/sign.asc -d -md md5
+        gpg -q --fast-import .github/.ci/sign.asc
+        gpg --list-secret-keys --keyid-format LONG
       env:
-        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        ENC_PASSWORD: ${{ secrets.ENC_PASSWORD }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
     - name: Deploy SNAPSHOT build
       run: |
         echo "Deploying to sonatype"
-        #openssl version
-        #openssl aes-256-cbc -pass pass:$ENC_PASSWORD -in .github/.ci/sign.asc.enc -out .github/.ci/sign.asc -d -md md5
-        #gpg -q --fast-import .github/.ci/sign.asc
         mvn deploy -Dgpg.executable=gpg -Dgpg.keyname=$GPG_KEYNAME -Dgpg.passphrase=$GPG_PASSPHRASE -DskipTests=true -Dlicense.skip=true -Dpmd.skip=true
         echo "Deployed to sonatype"
       env:
-        ENC_PASSWORD: ${{ secrets.ENC_PASSWORD }}
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
