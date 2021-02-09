@@ -34,7 +34,7 @@ class MainWindowTest {
 
     companion object {
 
-        private lateinit var window: MainWindow
+        private lateinit var window: PrimaryStageWindow
         private lateinit var stage: Stage
         private lateinit var scene: FXGLScene
 
@@ -52,7 +52,7 @@ class MainWindowTest {
                 stage = Stage()
                 scene = object : FXGLScene(WIDTH, HEIGHT) {}
 
-                window = MainWindow(stage, scene, settings.toReadOnly())
+                window = PrimaryStageWindow(stage, scene, settings.toReadOnly())
             }.await()
         }
     }

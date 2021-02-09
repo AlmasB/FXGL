@@ -82,6 +82,21 @@ public abstract class GameApplication {
         }
     }
 
+    public static FXGLPane embeddedLaunch(GameApplication app) {
+        try {
+            var settings = app.takeUserSettings();
+
+            app.initLogger(settings);
+
+            return FXGLApplication.embeddedLaunchFX(app, settings);
+
+        } catch (Exception e) {
+            printErrorAndExit(e);
+        }
+
+        return null;
+    }
+
     private static void launch(GameApplication app, String[] args) {
         var settings = app.takeUserSettings();
 

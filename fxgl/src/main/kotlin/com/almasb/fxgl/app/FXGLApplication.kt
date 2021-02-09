@@ -90,6 +90,57 @@ class FXGLApplication : Application() {
 
             FXGLApplication().start(stage)
         }
+
+        @JvmStatic fun embeddedLaunchFX(app: GameApplication, settings: ReadOnlyGameSettings): FXGLPane {
+            this.app = app
+            this.settings = settings
+
+            return FXGLApplication().embeddedStart()
+        }
+    }
+
+    /**
+     * This is the main entry point when run inside an existing JavaFX application.
+     */
+    private fun embeddedStart(): FXGLPane {
+
+        // any exception on the JavaFX thread will be caught and reported
+        Thread.setDefaultUncaughtExceptionHandler { _, e ->
+            handleFatalError(e)
+        }
+
+        log.debug("Initializing FXGL")
+
+        engine = Engine(settings)
+
+        // after this call, all FXGL.* calls (apart from those accessing services) are valid
+        FXGL.inject(engine, app, this)
+
+        val pane = FXGLPane()
+
+        mainWindow = EmbeddedPaneWindow(pane, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
+        mainWindow.show()
+
+        // start initialization of services on a background thread
+        // then start the loop on the JavaFX thread
+        val task = IOTask.ofVoid {
+            val time = measureNanoTime {
+                engine.initServices()
+                postServicesInit()
+            }
+
+            log.infof("FXGL initialization took: %.3f sec", time / 1000000000.0)
+        }
+                .onSuccess {
+                    engine.startLoop()
+                    setFirstSceneAfterStartup()
+                }
+                .onFailure { handleFatalError(it) }
+                .toJavaFXTask()
+
+        Async.execute(task)
+
+        return pane
     }
 
     /**
@@ -110,7 +161,7 @@ class FXGLApplication : Application() {
         FXGL.inject(engine, app, this)
 
         // get window up ASAP
-        mainWindow = MainWindow(stage, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
+        mainWindow = PrimaryStageWindow(stage, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
         mainWindow.show()
 
         // start initialization of services on a background thread

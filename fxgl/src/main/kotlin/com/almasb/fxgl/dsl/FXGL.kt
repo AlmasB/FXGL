@@ -64,6 +64,7 @@ import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.text.Text
+import javafx.stage.Stage
 import javafx.util.Duration
 import java.util.*
 import java.util.function.BiConsumer
@@ -174,7 +175,14 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getFXApp(): Application = fxApp
 
-    @JvmStatic fun getPrimaryStage() = engine.getService(FXGLApplication.GameApplicationService::class.java).window.stage
+    @JvmStatic fun getPrimaryStage(): Stage {
+        val window = engine.getService(FXGLApplication.GameApplicationService::class.java).window
+
+        if (window is PrimaryStageWindow)
+            return window.stage
+
+        throw IllegalStateException("Running in embedded mode. No primary stage available")
+    }
 
     @JvmStatic fun <T : EngineService> getService(serviceClass: Class<T>): T = engine.getService(serviceClass)
 
