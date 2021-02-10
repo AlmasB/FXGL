@@ -62,6 +62,9 @@ internal sealed class MainWindow(
 
     protected val scenes = arrayListOf<Scene>()
 
+    protected val scaleRatioX: DoubleProperty = SimpleDoubleProperty()
+    protected val scaleRatioY: DoubleProperty = SimpleDoubleProperty()
+
     protected val stateMachine = StateMachine(scene)
 
     /**
@@ -187,6 +190,35 @@ internal sealed class MainWindow(
      */
     protected abstract fun registerScene(scene: Scene)
 
+    protected fun addKeyHandler(fxScene: javafx.scene.Scene, handler: (KeyEvent) -> Unit) {
+        fxScene.addEventHandler(KeyEvent.ANY, handler)
+    }
+
+    protected fun addMouseHandler(fxScene: javafx.scene.Scene, handler: (MouseEventData) -> Unit) {
+        fxScene.addEventHandler(MouseEvent.ANY) {
+            val data = MouseEventData(
+                    it,
+                    Point2D(currentFXGLScene.contentRoot.translateX, currentFXGLScene.contentRoot.translateY),
+                    Point2D(currentFXGLScene.viewport.x, currentFXGLScene.viewport.y),
+                    currentFXGLScene.viewport.getZoom(),
+                    scaleRatioX.value,
+                    scaleRatioY.value
+            )
+
+            handler(data)
+        }
+    }
+
+    protected fun addGlobalHandler(fxScene: javafx.scene.Scene, filter: (Event) -> Unit, handler: (Event) -> Unit) {
+        fxScene.addEventFilter(EventType.ROOT) {
+            filter(it)
+        }
+
+        fxScene.addEventHandler(EventType.ROOT) {
+            handler(it)
+        }
+    }
+
     abstract fun takeScreenshot(): Image
 
     fun showFatalError(error: Throwable, action: Runnable) {
@@ -210,8 +242,6 @@ internal class PrimaryStageWindow(
 
     private val scaledWidth: DoubleProperty = SimpleDoubleProperty()
     private val scaledHeight: DoubleProperty = SimpleDoubleProperty()
-    private val scaleRatioX: DoubleProperty = SimpleDoubleProperty()
-    private val scaleRatioY: DoubleProperty = SimpleDoubleProperty()
 
     init {
         fxScene = createFXScene(scene.root)
@@ -220,21 +250,27 @@ internal class PrimaryStageWindow(
 
         initStage()
 
-        addKeyHandler { e ->
+        addKeyHandler(fxScene) { e ->
             input.onKeyEvent(e)
             stateMachine.runOnActiveStates { it.input.onKeyEvent(e) }
         }
 
-        addMouseHandler { e ->
+        addMouseHandler(fxScene) { e ->
             input.onMouseEvent(e)
             stateMachine.runOnActiveStates { it.input.onMouseEvent(e) }
         }
 
         // reroute any events to current state input
-        addGlobalHandler { e ->
-            input.fireEvent(e)
-            stateMachine.runOnActiveStates { it.input.fireEvent(e) }
-        }
+        addGlobalHandler(fxScene,
+                { e ->
+                    input.fireEventViaFilters(e)
+                    stateMachine.runOnActiveStates { it.input.fireEventViaFilters(e) }
+                },
+                { e ->
+                    input.fireEventViaHandlers(e)
+                    stateMachine.runOnActiveStates { it.input.fireEventViaHandlers(e) }
+                }
+        )
     }
 
     /**
@@ -432,35 +468,6 @@ internal class PrimaryStageWindow(
 
         scenes.add(scene)
     }
-
-    private fun addKeyHandler(handler: (KeyEvent) -> Unit) {
-        fxScene.addEventHandler(KeyEvent.ANY, handler)
-    }
-
-    private fun addMouseHandler(handler: (MouseEventData) -> Unit) {
-        fxScene.addEventHandler(MouseEvent.ANY) {
-            val data = MouseEventData(
-                    it,
-                    Point2D(currentFXGLScene.contentRoot.translateX, currentFXGLScene.contentRoot.translateY),
-                    Point2D(currentFXGLScene.viewport.x, currentFXGLScene.viewport.y),
-                    currentFXGLScene.viewport.getZoom(),
-                    scaleRatioX.value,
-                    scaleRatioY.value
-            )
-
-            handler(data)
-        }
-    }
-
-    private fun addGlobalHandler(handler: (Event) -> Unit) {
-        fxScene.addEventFilter(EventType.ROOT) {
-            handler(it.copyFor(null, null))
-        }
-
-        fxScene.addEventHandler(EventType.ROOT) {
-            handler(it.copyFor(null, null))
-        }
-    }
 }
 
 internal class EmbeddedPaneWindow(
@@ -472,6 +479,9 @@ internal class EmbeddedPaneWindow(
 ) : MainWindow(scene, settings) {
 
     init {
+        scaleRatioX.value = 1.0
+        scaleRatioY.value = 1.0
+
         // this clips the max area (ensures max size)
         // setRoot(Rect) ensures min size
         fxglPane.clip = Rectangle(settings.width.toDouble(), settings.height.toDouble())
@@ -493,10 +503,16 @@ internal class EmbeddedPaneWindow(
                 }
 
                 // reroute any events to current state input
-                addGlobalHandler(newScene) { e ->
-                    input.fireEvent(e)
-                    stateMachine.runOnActiveStates { it.input.fireEvent(e) }
-                }
+                addGlobalHandler(newScene,
+                        { e ->
+                            input.fireEventViaFilters(e)
+                            stateMachine.runOnActiveStates { it.input.fireEventViaFilters(e) }
+                        },
+                        { e ->
+                            input.fireEventViaHandlers(e)
+                            stateMachine.runOnActiveStates { it.input.fireEventViaHandlers(e) }
+                        }
+                )
             }
         }
     }
@@ -540,35 +556,6 @@ internal class EmbeddedPaneWindow(
     }
 
     override fun close() {
-    }
-
-    private fun addKeyHandler(fxScene: javafx.scene.Scene, handler: (KeyEvent) -> Unit) {
-        fxScene.addEventHandler(KeyEvent.ANY, handler)
-    }
-
-    private fun addMouseHandler(fxScene: javafx.scene.Scene, handler: (MouseEventData) -> Unit) {
-        fxScene.addEventHandler(MouseEvent.ANY) {
-            val data = MouseEventData(
-                    it,
-                    Point2D(currentFXGLScene.contentRoot.translateX, currentFXGLScene.contentRoot.translateY),
-                    Point2D(currentFXGLScene.viewport.x, currentFXGLScene.viewport.y),
-                    currentFXGLScene.viewport.getZoom(),
-                    1.0,
-                    1.0
-            )
-
-            handler(data)
-        }
-    }
-
-    private fun addGlobalHandler(fxScene: javafx.scene.Scene, handler: (Event) -> Unit) {
-        fxScene.addEventFilter(EventType.ROOT) {
-            handler(it.copyFor(null, null))
-        }
-
-        fxScene.addEventHandler(EventType.ROOT) {
-            handler(it.copyFor(null, null))
-        }
     }
 }
 

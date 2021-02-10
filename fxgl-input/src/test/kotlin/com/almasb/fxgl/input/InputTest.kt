@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.input
 
 import com.almasb.fxgl.core.serialization.Bundle
@@ -512,21 +512,60 @@ class InputTest {
 
         val handler = EventHandler<Event> { count++ }
 
-        input.addEventHandler(EventType.ROOT, handler)
-
         assertAll(
+                // filter
                 Executable {
-                    input.fireEvent(Event(EventType.ROOT))
+                    input.addEventFilter(EventType.ROOT, handler)
+
+                    input.fireEventViaFilters(Event(EventType.ROOT))
 
                     assertThat(count, `is`(1))
                 },
 
                 Executable {
-                    input.removeEventHandler(EventType.ROOT, handler)
+                    input.removeEventFilter(EventType.ROOT, handler)
 
-                    input.fireEvent(Event(EventType.ROOT))
+                    input.fireEventViaFilters(Event(EventType.ROOT))
 
                     assertThat(count, `is`(1))
+                },
+
+                // handler
+                Executable {
+                    input.addEventHandler(EventType.ROOT, handler)
+
+                    input.fireEventViaHandlers(Event(EventType.ROOT))
+
+                    assertThat(count, `is`(2))
+                },
+
+                Executable {
+                    input.removeEventHandler(EventType.ROOT, handler)
+
+                    input.fireEventViaHandlers(Event(EventType.ROOT))
+
+                    assertThat(count, `is`(2))
+                },
+
+                // hybrid
+                Executable {
+                    input.addEventFilter(EventType.ROOT, handler)
+
+                    input.fireEventViaHandlers(Event(EventType.ROOT))
+
+                    // no effect, firing handlers but only filter is registered
+                    assertThat(count, `is`(2))
+
+                    input.removeEventFilter(EventType.ROOT, handler)
+                },
+
+                Executable {
+                    input.addEventHandler(EventType.ROOT, handler)
+
+                    input.fireEventViaFilters(Event(EventType.ROOT))
+
+                    // no effect, firing filters but only handler is registered
+                    assertThat(count, `is`(2))
                 }
         )
     }
