@@ -14,6 +14,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.physics.CollisionDetectionStrategy;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -29,7 +30,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  */
 public class PhysicsBenchmarkSample extends GameApplication {
 
-    private static final int NUM_OBJECTS = 140;
+    private static final int NUM_OBJECTS = 300;
 
     private int frames;
     private int numCollisions = 0;
@@ -37,7 +38,7 @@ public class PhysicsBenchmarkSample extends GameApplication {
     private Text text;
 
     private enum Type {
-        BALL
+        BALL, NOTHING
     }
 
     @Override
@@ -45,6 +46,8 @@ public class PhysicsBenchmarkSample extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.setProfilingEnabled(true);
+        settings.setCollisionDetectionStrategy(CollisionDetectionStrategy.BRUTE_FORCE);
+        settings.setRandomSeed(225);
     }
 
     @Override
@@ -94,9 +97,11 @@ public class PhysicsBenchmarkSample extends GameApplication {
         public Entity newEntity(SpawnData data) {
             return entityBuilder(data)
                     .type(Type.BALL)
+                    //.type(FXGLMath.randomBoolean() ? Type.BALL : Type.NOTHING)
                     .viewWithBBox("brick.png")
                     .collidable()
-                    .with(new RandomMoveComponent(new Rectangle2D(0, 0, getAppWidth() - 64, getAppHeight() - 64), random(10, 200)))
+                    //.rotate(random(5, 105))
+                    .with(new RandomMoveComponent(new Rectangle2D(0, 0, getAppWidth() - 64, getAppHeight() - 64), random(10, 200)).withoutRotation())
                     .build();
         }
     }
