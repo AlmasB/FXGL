@@ -19,6 +19,7 @@ import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.input.*
 import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.LinkedHashMap
@@ -189,7 +190,7 @@ class Input {
     private fun <T : Event> addHandler(eventType: EventType<T>,
                                        eventHandler: EventHandler<in T>,
                                        map: MutableMap<EventType<*>, MutableList<EventHandler<*>>>) {
-        val handlers = map.getOrDefault(eventType, ArrayList<EventHandler<*>>())
+        val handlers = map.getOrDefault(eventType, CopyOnWriteArrayList<EventHandler<*>>())
         handlers += eventHandler
 
         map[eventType] = handlers
@@ -227,7 +228,15 @@ class Input {
         var eventType = event.eventType
 
         do {
-            map[eventType]?.forEach { (it as EventHandler<Event>).handle(event) }
+            map[eventType]?.forEach {
+
+                // if event is consumed, there is no point in going further
+                if (event.isConsumed) {
+                    return
+                }
+
+                (it as EventHandler<Event>).handle(event)
+            }
 
             eventType = eventType.superType
 

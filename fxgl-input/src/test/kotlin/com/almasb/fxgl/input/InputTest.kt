@@ -571,6 +571,77 @@ class InputTest {
     }
 
     @Test
+    fun `Concurrent access to filters and handlers`() {
+        var count = 0
+
+        var handler1: EventHandler<MouseEvent>? = null
+        var handler2: EventHandler<MouseEvent>? = null
+
+        handler1 = EventHandler<MouseEvent> {
+            count++
+
+            input.removeEventHandler(MouseEvent.ANY, handler1!!)
+            input.addEventHandler(MouseEvent.ANY, handler2!!)
+
+            assertThat(count, `is`(1))
+        }
+
+        handler2 = EventHandler<MouseEvent> {
+            count++
+
+            input.removeEventHandler(MouseEvent.ANY, handler2!!)
+
+            assertThat(count, `is`(2))
+        }
+
+        input.addEventHandler(MouseEvent.ANY, handler1)
+
+        val event = MouseEvent(MouseEvent.MOUSE_CLICKED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        // removes handler1, adds handler2
+        input.fireEventViaHandlers(event)
+
+        // removes handler2
+        input.fireEventViaHandlers(event)
+
+        assertThat(count, `is`(2))
+    }
+
+    @Test
+    fun `Consumed events do not travel any further`() {
+        var count = 0
+
+        var handler1: EventHandler<MouseEvent>? = null
+        var handler2: EventHandler<MouseEvent>? = null
+
+        handler1 = EventHandler<MouseEvent> {
+            count++
+
+            it.consume()
+
+            assertThat(count, `is`(1))
+        }
+
+        handler2 = EventHandler<MouseEvent> {
+            count++
+        }
+
+        input.addEventHandler(MouseEvent.ANY, handler1)
+        input.addEventHandler(MouseEvent.ANY, handler2)
+
+        val event = MouseEvent(MouseEvent.MOUSE_CLICKED, 10.0, 15.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
+                false, false, false,
+                false, false, false, false, false, false, false, null)
+
+        input.fireEventViaHandlers(event)
+
+        // event should have been consumed by handler1, so count == 1
+        assertThat(count, `is`(1))
+    }
+
+    @Test
     fun `On key event`() {
         var count = 0
 
