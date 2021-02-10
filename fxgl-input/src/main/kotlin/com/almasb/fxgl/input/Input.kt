@@ -221,6 +221,9 @@ class Input {
 
     private fun fire(event: Event,
                      map: MutableMap<EventType<*>, MutableList<EventHandler<*>>>) {
+        if (map.isEmpty())
+            return
+
         var eventType = event.eventType
 
         do {
