@@ -51,7 +51,7 @@ class EventBuilder {
         this.limit = times
     }
 
-    fun thenCall(action: Runnable) = thenFire {
+    fun thenRun(action: Runnable) = thenFire {
         action.run()
         FunctionCallEvent
     }
