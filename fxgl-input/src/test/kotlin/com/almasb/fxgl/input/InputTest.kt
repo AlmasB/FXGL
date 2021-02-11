@@ -1102,9 +1102,11 @@ class InputTest {
     fun `Virtual controller view`() {
         val psView = input.createPSVirtualControllerView()
         val xboxView = input.createXboxVirtualControllerView()
+        val dpadView = input.createVirtualDpadView()
 
         assertTrue(psView.children.isNotEmpty())
         assertTrue(xboxView.children.isNotEmpty())
+        assertTrue(dpadView.children.isNotEmpty())
     }
 
     @Test
@@ -1131,6 +1133,15 @@ class InputTest {
 
         viewForButtonA.fireEvent(mouseReleasedEvent(MouseButton.PRIMARY, false, false, false))
         assertThat(i, `is`(2))
+    }
+
+    @Test
+    fun `Virtual joystick`() {
+        val joystick = input.createVirtualJoystick()
+
+        assertThat(joystick.center, `is`(Point2D(100.0, 100.0)))
+        assertThat(joystick.vector, `is`(Point2D.ZERO))
+        assertThat(joystick.vectorProperty().value, `is`(Point2D.ZERO))
     }
 
     @ParameterizedTest
