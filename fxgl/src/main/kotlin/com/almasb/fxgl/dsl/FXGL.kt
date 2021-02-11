@@ -34,6 +34,7 @@ import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.localization.LocalizationService
+import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.net.NetService
 import com.almasb.fxgl.notification.NotificationService
@@ -67,6 +68,7 @@ import javafx.scene.text.Text
 import javafx.stage.Stage
 import javafx.util.Duration
 import java.util.*
+import java.util.concurrent.Callable
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 
@@ -181,7 +183,9 @@ class FXGL private constructor() { companion object {
         if (window is PrimaryStageWindow)
             return window.stage
 
-        throw IllegalStateException("Running in embedded mode. No primary stage available")
+        Logger.get("FXGL").warning("Started via embeddedLaunch(). getPrimaryStage() returning dummy stage.")
+
+        return getExecutor().startAsyncFX(Callable { Stage() }).await()
     }
 
     @JvmStatic fun <T : EngineService> getService(serviceClass: Class<T>): T = engine.getService(serviceClass)
