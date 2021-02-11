@@ -199,7 +199,13 @@ class Input {
     private fun <T : Event> removeHandler(eventType: EventType<T>,
                                           eventHandler: EventHandler<in T>,
                                           map: MutableMap<EventType<*>, MutableList<EventHandler<*>>>) {
-        map[eventType]?.remove(eventHandler)
+        map[eventType]?.let {
+            it.remove(eventHandler)
+
+            // if the list of handlers is empty for [eventType], then remove the mapping
+            if (it.isEmpty())
+                map.remove(eventType)
+        }
     }
 
     /**
