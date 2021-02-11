@@ -661,12 +661,22 @@ class FXGLApplication : Application() {
         }
 
         fun gotoMainMenu() {
+            if (!settings.isMainMenuEnabled) {
+                log.warning("Ignoring gotoMainMenu() because main menu is not enabled")
+                return
+            }
+
             // since mainMenu is a subscene we need an actual scene before it
             mainWindow.setScene(dummyScene)
             mainWindow.pushState(mainMenu!!)
         }
 
         fun gotoGameMenu() {
+            if (!settings.isGameMenuEnabled) {
+                log.warning("Ignoring gotoGameMenu() because game menu is not enabled")
+                return
+            }
+
             // current scene should be gameScene
             mainWindow.pushState(gameMenu!!)
         }
