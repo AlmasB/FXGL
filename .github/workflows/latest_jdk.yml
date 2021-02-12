@@ -16,7 +16,7 @@ jobs:
         java: [ 16-ea ]
     runs-on: ${{ matrix.os }}
     env:
-      MAVEN_OPTS:--illegal-access=permit
+      MAVEN_OPTS: --illegal-access=permit
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2
