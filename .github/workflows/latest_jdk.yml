@@ -36,4 +36,5 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: |
+            export MAVEN_OPTS=--illegal-access=permit
             mvn test -B -Dgpg.skip=true -Dmaven.javadoc.skip=true
