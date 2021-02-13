@@ -1,12 +1,16 @@
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
 @file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
-
 package com.almasb.fxgl.texture
 
 import com.almasb.fxgl.test.RunWithFX
 import javafx.geometry.Rectangle2D
 import javafx.scene.image.Image
 import org.hamcrest.CoreMatchers
-import org.hamcrest.MatcherAssert
+import org.hamcrest.MatcherAssert.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -39,14 +43,14 @@ class NineSliceTextureBuilderTest {
 
     @Test
     fun `Check loaded textures width and height`() {
-        MatcherAssert.assertThat(smallTexture.width, CoreMatchers.`is`(smallSize))
-        MatcherAssert.assertThat(smallTexture.height, CoreMatchers.`is`(smallSize))
+        assertThat(smallTexture.width, CoreMatchers.`is`(smallSize))
+        assertThat(smallTexture.height, CoreMatchers.`is`(smallSize))
 
-        MatcherAssert.assertThat(baseTexture.width, CoreMatchers.`is`(baseSize))
-        MatcherAssert.assertThat(baseTexture.height, CoreMatchers.`is`(baseSize))
+        assertThat(baseTexture.width, CoreMatchers.`is`(baseSize))
+        assertThat(baseTexture.height, CoreMatchers.`is`(baseSize))
 
-        MatcherAssert.assertThat(bigTexture.width, CoreMatchers.`is`(bigSize))
-        MatcherAssert.assertThat(bigTexture.height, CoreMatchers.`is`(bigSize))
+        assertThat(bigTexture.width, CoreMatchers.`is`(bigSize))
+        assertThat(bigTexture.height, CoreMatchers.`is`(bigSize))
     }
 
     @Test
@@ -68,10 +72,10 @@ class NineSliceTextureBuilderTest {
     private fun buildAndCompareTexture(targetTexture: Texture) {
         val generatedTexture = builder.build(targetTexture.width.toInt(), targetTexture.height.toInt())
 
-        MatcherAssert.assertThat(generatedTexture.width, CoreMatchers.`is`(targetTexture.width))
-        MatcherAssert.assertThat(generatedTexture.height, CoreMatchers.`is`(targetTexture.height))
+        assertThat(generatedTexture.width, CoreMatchers.`is`(targetTexture.width))
+        assertThat(generatedTexture.height, CoreMatchers.`is`(targetTexture.height))
 
-        MatcherAssert.assertThat("Colors of shrunken texture does not match with expected!", matchPixels(generatedTexture, targetTexture))
+        assertThat("Colors of shrunken texture do not match with expected!", matchPixels(generatedTexture, targetTexture))
     }
 
     private fun matchPixels(tex1: Texture, tex2: Texture): Boolean {
@@ -100,6 +104,6 @@ class NineSliceTextureBuilderTest {
                 .right(Rectangle2D(473.0, 52.0, 52.0, 420.0))
                 .botLeft(Rectangle2D(0.0, 473.0, 53.0, 52.0))
                 .botRight(Rectangle2D(473.0, 473.0, 52.0, 52.0))
-                .bot(Rectangle2D(53.0, 473.0, (473 - 53).toDouble(), 52.0))
+                .bot(Rectangle2D(53.0, 473.0, 420.0, 52.0))
     }
 }

@@ -11,7 +11,7 @@ import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 
 /**
- * Represents a simple single colored 2D image.
+ * Represents a single colored 2D image view.
  *
  * @author Krisztián Nagy (Valdar) (okt.valdar@gmail.com)
  */
@@ -25,13 +25,12 @@ class ColoredTexture(width: Int, height: Int, color: Color) : Texture() {
         val image = WritableImage(width, height)
         val writer = image.pixelWriter
 
-        for(i in 0 until width){
-            for(j in 0 until height){
-                writer.setColor(i, j, color)
+        for (x in 0 until width){
+            for (y in 0 until height){
+                writer.setColor(x, y, color)
             }
         }
 
         return image
     }
-
 }

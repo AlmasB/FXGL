@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.texture
 
 import javafx.scene.image.Image
@@ -13,7 +13,6 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
-import org.hamcrest.Matchers.hasItems
 import org.junit.jupiter.api.Test
 
 /**
