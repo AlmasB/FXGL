@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.core.math
 
 import com.almasb.fxgl.core.math.FXGLMath.*
@@ -13,13 +13,10 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
-import org.hamcrest.collection.IsIn
 import org.hamcrest.collection.IsIn.isOneOf
 import org.hamcrest.number.IsCloseTo.closeTo
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.util.*
 
 /**
  *
@@ -53,14 +50,14 @@ class FXGLMathTest {
     @Test
     fun `Sin deg returns correct values`() {
         for (deg in -360..360) {
-            assertThat(sinDeg(deg.toDouble()), closeTo(Math.sin(Math.toRadians(deg.toDouble())), 0.001))
+            assertThat(sinDegF(deg.toDouble()) * 1.0, closeTo(Math.sin(Math.toRadians(deg.toDouble())), 0.001))
         }
     }
 
     @Test
     fun `Cos deg returns correct values`() {
         for (deg in -360..360) {
-            assertThat(cosDeg(deg.toDouble()), closeTo(Math.cos(Math.toRadians(deg.toDouble())), 0.001))
+            assertThat(cosDegF(deg.toDouble()) * 1.0, closeTo(Math.cos(Math.toRadians(deg.toDouble())), 0.001))
         }
     }
 
@@ -80,13 +77,6 @@ class FXGLMathTest {
             assertThat(toDegrees(radians), closeTo(Math.toDegrees(radians), 0.001))
         }
     }
-
-//    @Test
-//    fun `Normalize angle deg`() {
-//        assertThat(normalizeAngleDeg(0.0), `is`(0.0))
-//        assertThat(normalizeAngleDeg(90.0), `is`(90.0))
-//        assertThat(normalizeAngleDeg(100.0), `is`(80.0))
-//    }
 
     @Test
     fun `atan2`() {
@@ -240,5 +230,36 @@ class FXGLMathTest {
                 assertThat(v3, Matchers.allOf(Matchers.greaterThanOrEqualTo(-0.0), Matchers.lessThan(1.0)))
             }
         }
+    }
+
+    @Test
+    fun `Sqrt`() {
+        assertThat(sqrt(35.4), closeTo(Math.sqrt(35.4), 0.01))
+        assertThat(sqrtF(35.4f) * 1.0, closeTo(Math.sqrt(35.4), 0.01))
+    }
+
+    @Test
+    fun `Clamp`() {
+        assertThat(clamp(1.5f, 0f, 2f) ,`is`(1.5f))
+        assertThat(clamp(-1.5f, 0f, 2f) ,`is`(0f))
+        assertThat(clamp(3.5f, 0f, 2f) ,`is`(2f))
+    }
+
+    @Test
+    fun `Floor`() {
+        assertThat(floor(35.4f), `is`(35))
+        assertThat(floor(-35.4f), `is`(-36))
+    }
+
+    @Test
+    fun `Min and max`() {
+        assertThat(min(2f, 4f), `is`(2f))
+        assertThat(max(2f, 4f), `is`(4f))
+    }
+
+    @Test
+    fun `Distance between two rectangles`() {
+        val dist = distance(Rectangle2D(0.0, 0.0, 20.0, 20.0), Rectangle2D(30.0, 0.0, 20.0, 20.0))
+        assertThat(dist, `is`(10.0))
     }
 }
