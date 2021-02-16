@@ -69,6 +69,7 @@ public abstract class GameApplication {
         }
     }
 
+    @Deprecated
     public static void customLaunch(GameApplication app, Stage stage) {
         try {
             var settings = app.takeUserSettings();
