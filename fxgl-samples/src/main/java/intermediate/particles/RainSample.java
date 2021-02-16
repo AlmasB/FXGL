@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox.particles;
+package intermediate.particles;
 
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
@@ -42,7 +42,7 @@ public class RainSample extends GameApplication {
 
         // example - set color
         ParticleEmitter emitter2 = ParticleEmitters.newRainEmitter(getAppWidth() / 2);
-        emitter2.setSourceImage(texture("rain.png").toColor(Color.BLUE));
+        emitter2.setSourceImage(texture("rain.png").toColor(Color.YELLOW));
 
         emitter2.setInterpolator(Interpolators.EXPONENTIAL.EASE_OUT());
 

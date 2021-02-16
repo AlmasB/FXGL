@@ -4,12 +4,11 @@
  * See LICENSE for details.
  */
 
-package sandbox.net;
+package advanced.net;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.serialization.Bundle;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.net.Server;
 import javafx.scene.control.CheckBox;
 import javafx.util.Duration;
@@ -17,6 +16,10 @@ import javafx.util.Duration;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
+ * Shows how to use TCP server/client.
+ * Run this sample twice: first select server, second select not server (client).
+ * Then check the check box on the server, the client check box will also be checked.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class NetworkingSample extends GameApplication {
