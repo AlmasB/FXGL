@@ -47,15 +47,32 @@ open class ScrollingView
     private val canvas = Canvas(viewWidth, viewHeight)
     private val g = canvas.graphicsContext2D
 
+    // image source coordinates, never negative values
+    private var sx = 0.0
+    private var sy = 0.0
+
+    // semantic scroll coordinates, can be negative
     var scrollX = 0.0
         set(value) {
             field = value
+
+            sx = value % image.width
+
+            if (sx < 0)
+                sx += image.width
+
             redraw()
         }
 
     var scrollY = 0.0
         set(value) {
             field = value
+
+            sy = value % image.height
+
+            if (sy < 0)
+                sy += image.height
+
             redraw()
         }
 
@@ -79,13 +96,13 @@ open class ScrollingView
         var w = canvas.width
         val h = canvas.height
 
-        val overflowX = scrollX + w > image.width
+        val overflowX = sx + w > image.width
 
         if (overflowX) {
-            w = image.width - scrollX
+            w = image.width - sx
         }
 
-        g.drawImage(image, scrollX, scrollY, w, h,
+        g.drawImage(image, sx, sy, w, h,
                 0.0, 0.0, w, h)
 
         if (overflowX) {
@@ -98,13 +115,13 @@ open class ScrollingView
         val w = canvas.width
         var h = canvas.height
 
-        val overflowY = scrollY + h > image.height
+        val overflowY = sy + h > image.height
 
         if (overflowY) {
-            h = image.height - scrollY
+            h = image.height - sy
         }
 
-        g.drawImage(image, scrollX, scrollY, w, h,
+        g.drawImage(image, sx, sy, w, h,
                 0.0, 0.0, w, h)
 
         if (overflowY) {

@@ -13,6 +13,7 @@ import javafx.geometry.VerticalDirection.DOWN
 import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -20,35 +21,36 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(RunWithFX::class)
 class ScrollingViewTest {
 
-    private lateinit var viewHor: ScrollingView
-    private lateinit var viewVer: ScrollingView
-
     @Test
     fun `Scrolling horizontally`() {
         val left = ColoredTexture(200, 200, Color.WHITE)
         val right = ColoredTexture(200, 200, Color.BLACK)
 
-        viewHor = ScrollingView(left.superTexture(right, RIGHT).image, orientation = Orientation.HORIZONTAL)
+        val viewHor = ScrollingView(left.superTexture(right, RIGHT).image, orientation = Orientation.HORIZONTAL)
 
-        viewHor.scrollX = 200.0
+        doubleArrayOf(-200.0, 200.0).forEach {
+            viewHor.scrollX = it
 
-        val canvas = viewHor.childrenUnmodifiable[0] as Canvas
+            assertThat(viewHor.scrollX, `is`(it))
 
-        val image = toImage(canvas)
+            val canvas = viewHor.childrenUnmodifiable[0] as Canvas
 
-        for (y in 0..199) {
-            for (x in 0..199) {
-                val color = image.pixelReader.getColor(x, y)
+            val image = toImage(canvas)
 
-                assertThat(color.rgbSum(), closeTo(0.0, 0.4))
+            for (y in 0..199) {
+                for (x in 0..199) {
+                    val color = image.pixelReader.getColor(x, y)
+
+                    assertThat(color.rgbSum(), closeTo(0.0, 0.4))
+                }
             }
-        }
 
-        for (y in 0..199) {
-            for (x in 200..399) {
-                val color = image.pixelReader.getColor(x, y)
+            for (y in 0..199) {
+                for (x in 200..399) {
+                    val color = image.pixelReader.getColor(x, y)
 
-                assertThat(color.rgbSum(), closeTo(3.0, 0.4))
+                    assertThat(color.rgbSum(), closeTo(3.0, 0.4))
+                }
             }
         }
     }
@@ -58,27 +60,31 @@ class ScrollingViewTest {
         val up = ColoredTexture(200, 200, Color.WHITE)
         val down = ColoredTexture(200, 200, Color.BLACK)
 
-        viewVer = ScrollingView(up.superTexture(down, DOWN).image, orientation = Orientation.VERTICAL)
+        val viewVer = ScrollingView(up.superTexture(down, DOWN).image, orientation = Orientation.VERTICAL)
 
-        viewVer.scrollY = 200.0
+        doubleArrayOf(-200.0, 200.0).forEach {
+            viewVer.scrollY = it
 
-        val canvas = viewVer.childrenUnmodifiable[0] as Canvas
+            assertThat(viewVer.scrollY, `is`(it))
 
-        val image = toImage(canvas)
+            val canvas = viewVer.childrenUnmodifiable[0] as Canvas
 
-        for (y in 0..199) {
-            for (x in 0..199) {
-                val color = image.pixelReader.getColor(x, y)
+            val image = toImage(canvas)
 
-                assertThat(color.rgbSum(), closeTo(0.0, 0.4))
+            for (y in 0..199) {
+                for (x in 0..199) {
+                    val color = image.pixelReader.getColor(x, y)
+
+                    assertThat(color.rgbSum(), closeTo(0.0, 0.4))
+                }
             }
-        }
 
-        for (y in 200..399) {
-            for (x in 0..199) {
-                val color = image.pixelReader.getColor(x, y)
+            for (y in 200..399) {
+                for (x in 0..199) {
+                    val color = image.pixelReader.getColor(x, y)
 
-                assertThat(color.rgbSum(), closeTo(3.0, 0.4))
+                    assertThat(color.rgbSum(), closeTo(3.0, 0.4))
+                }
             }
         }
     }
