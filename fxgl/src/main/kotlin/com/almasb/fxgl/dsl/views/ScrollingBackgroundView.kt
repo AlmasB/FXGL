@@ -6,123 +6,56 @@
 
 package com.almasb.fxgl.dsl.views
 
-import com.almasb.fxgl.core.View
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.texture.ScrollingView
 import com.almasb.fxgl.texture.Texture
 import javafx.geometry.Orientation
-import javafx.scene.Node
-import javafx.scene.Parent
-import javafx.scene.canvas.Canvas
-import javafx.scene.canvas.GraphicsContext
+import javafx.scene.image.Image
 
 /**
+ * Scrolling view that binds to viewport.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class ScrollingBackgroundView
-@JvmOverloads constructor(texture: Texture,
-                          val orientation: Orientation = Orientation.HORIZONTAL,
-                          val speed: Double = 1.0) : Parent(), View {
+@JvmOverloads constructor(
+        image: Image,
+        viewWidth: Double,
+        viewHeight: Double,
+        orientation: Orientation = Orientation.HORIZONTAL,
 
-    private val canvas: Canvas
-    private val g: GraphicsContext
+        private val speed: Double = 1.0
+) : ScrollingView(image, viewWidth, viewHeight, orientation) {
 
-    private val image = texture.image
-
-    private var sx = 0.0
-    private var sy = 0.0
+    @Deprecated("")
+    @JvmOverloads constructor(texture: Texture,
+                orientation: Orientation = Orientation.HORIZONTAL,
+                speed: Double = 1.0)
+            : this(
+            texture.image,
+            FXGL.getGameScene().viewport.width,
+            FXGL.getGameScene().viewport.height,
+            orientation,
+            speed
+    )
 
     init {
         val viewport = FXGL.getGameScene().viewport
 
-        canvas = Canvas(viewport.width, viewport.height)
-        g = canvas.graphicsContext2D
-
         if (orientation == Orientation.HORIZONTAL) {
             translateXProperty().addListener { _, _, x ->
 
-                sx = (x.toDouble() * speed) % image.width
-
-                if (sx < 0) {
-                    sx += image.width
-                }
-
-                redraw()
+                scrollX = x.toDouble() * speed
             }
 
             translateXProperty().bind(viewport.xProperty())
         } else {
             translateYProperty().addListener { _, _, y ->
 
-                sy = (y.toDouble() * speed) % image.height
-
-                if (sy < 0) {
-                    sy += image.height
-                }
-
-                redraw()
+                scrollY = y.toDouble() * speed
             }
 
             translateYProperty().bind(viewport.yProperty())
         }
-
-        children += canvas
-
-        redraw()
     }
-
-    private fun redraw() {
-        g.clearRect(0.0, 0.0, canvas.width, canvas.height)
-
-        if (orientation == Orientation.HORIZONTAL) {
-            redrawX()
-        } else {
-            redrawY()
-        }
-    }
-
-    private fun redrawX() {
-        var w = canvas.width
-        val h = canvas.height
-
-        val overflowX = sx + w > image.width
-
-        if (overflowX) {
-            w = image.width - sx
-        }
-
-        g.drawImage(image, sx, sy, w, h,
-                0.0, 0.0, w, h)
-
-        if (overflowX) {
-            g.drawImage(image, 0.0, 0.0, canvas.width - w, h,
-                    w, 0.0, canvas.width - w, h)
-        }
-    }
-
-    private fun redrawY() {
-        val w = canvas.width
-        var h = canvas.height
-
-        val overflowY = sy + h > image.height
-
-        if (overflowY) {
-            h = image.height - sy
-        }
-
-        g.drawImage(image, sx, sy, w, h,
-                0.0, 0.0, w, h)
-
-        if (overflowY) {
-            g.drawImage(image, 0.0, 0.0, w, canvas.height - h,
-                    0.0, h, w, canvas.height - h)
-        }
-    }
-
-    override fun onUpdate(tpf: Double) { }
-
-    override fun getNode(): Node {
-        return this
-    }
-
-    override fun dispose() { }
 }
