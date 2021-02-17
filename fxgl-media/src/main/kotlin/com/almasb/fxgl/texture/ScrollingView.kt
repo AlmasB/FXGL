@@ -40,7 +40,7 @@ open class ScrollingView
         /**
          * The direction of scroll.
          */
-        private val orientation: Orientation = Orientation.HORIZONTAL,
+        val orientation: Orientation = Orientation.HORIZONTAL,
 
 ) : Parent(), View {
 
