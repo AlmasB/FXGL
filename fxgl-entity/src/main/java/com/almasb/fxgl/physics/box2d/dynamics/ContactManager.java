@@ -65,7 +65,7 @@ class ContactManager implements PairCallback {
         }
     }
 
-    void setcontactFilter(ContactFilter contactFilter) {
+    void setContactFilter(ContactFilter contactFilter) {
         this.contactFilter = contactFilter;
     }
 

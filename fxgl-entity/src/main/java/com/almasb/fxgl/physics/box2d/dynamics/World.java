@@ -1352,7 +1352,7 @@ public final class World {
      * @param filter contact filter
      */
     public void setContactFilter(ContactFilter filter) {
-        contactManager.setcontactFilter(filter);
+        contactManager.setContactFilter(filter);
     }
 
     /**
