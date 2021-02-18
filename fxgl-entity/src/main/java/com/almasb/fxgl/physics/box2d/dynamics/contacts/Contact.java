@@ -34,8 +34,6 @@ public abstract class Contact {
     public static final int ENABLED_FLAG = 0x0004;
     // This contact needs filtering because a fixture filter was changed.
     public static final int FILTER_FLAG = 0x0008;
-    // This bullet contact had a TOI event
-    public static final int BULLET_HIT_FLAG = 0x0010;
 
     public static final int TOI_FLAG = 0x0020;
 
