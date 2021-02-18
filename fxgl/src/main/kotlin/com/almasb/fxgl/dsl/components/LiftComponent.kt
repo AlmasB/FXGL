@@ -37,14 +37,18 @@ class LiftComponent
     }
 
     override fun onUpdate(tpf: Double) {
-        val vector = Vec2()
+        var dx = 0.0
+        var dy = 0.0
+
         if (liftDataX.isOn) {
-            vector.x = liftDataX.update(tpf).toFloat()
+            dx = liftDataX.update(tpf)
         }
+
         if (liftDataY.isOn) {
-            vector.y = liftDataY.update(tpf).toFloat()
+            dy = liftDataY.update(tpf)
         }
-        entity.translate(vector)
+
+        entity.translate(dx, dy)
     }
 
     fun xAxisDistanceDuration(distance: Double, duration: Duration) = this.apply {
