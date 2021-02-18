@@ -17,45 +17,11 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class LiftComponent : Component() {
+class LiftComponent
+@JvmOverloads constructor(timer: LocalTimer = FXGL.newLocalTimer()) : Component() {
 
-    private class LiftData {
-
-        var isOn = false
-
-        // moving in the direction of the axis
-        var isGoingPositive = true
-
-        var distance = 0.0
-        var duration: Duration = Duration.ZERO
-        var speed = 0.0
-
-        internal lateinit var timer: LocalTimer
-
-        fun initTimer() {
-            timer = FXGL.newLocalTimer()
-            timer.capture()
-        }
-
-        fun enable(distance: Double, duration: Duration, speed: Double) {
-            this.distance = distance
-            this.duration = duration
-            this.speed = speed
-
-            isOn = true
-        }
-
-        fun update(tpf: Double): Double {
-            if (timer.elapsed(duration)) {
-                isGoingPositive = !isGoingPositive
-                timer.capture()
-            }
-            return if (isGoingPositive) speed * tpf else -speed * tpf
-        }
-    }
-
-    private val liftDataX = LiftData()
-    private val liftDataY = LiftData()
+    private val liftDataX = LiftData(timer)
+    private val liftDataY = LiftData(timer)
 
     var isGoingRight: Boolean
         get() = liftDataX.isGoingPositive
@@ -106,4 +72,36 @@ class LiftComponent : Component() {
     }
 
     override fun isComponentInjectionRequired(): Boolean = false
+}
+
+private class LiftData(val timer: LocalTimer) {
+
+    var isOn = false
+
+    // moving in the direction of the axis
+    var isGoingPositive = true
+
+    var distance = 0.0
+    var duration: Duration = Duration.ZERO
+    var speed = 0.0
+
+    fun initTimer() {
+        timer.capture()
+    }
+
+    fun enable(distance: Double, duration: Duration, speed: Double) {
+        this.distance = distance
+        this.duration = duration
+        this.speed = speed
+
+        isOn = true
+    }
+
+    fun update(tpf: Double): Double {
+        if (timer.elapsed(duration)) {
+            isGoingPositive = !isGoingPositive
+            timer.capture()
+        }
+        return if (isGoingPositive) speed * tpf else -speed * tpf
+    }
 }
