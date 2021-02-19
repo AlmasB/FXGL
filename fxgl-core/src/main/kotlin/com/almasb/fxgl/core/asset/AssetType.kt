@@ -11,5 +11,14 @@ package com.almasb.fxgl.core.asset
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 enum class AssetType {
-    DIALOGUE, TEXTURE, MUSIC, SOUND
+    IMAGE,
+    RESIZABLE_IMAGE,
+    MUSIC,
+    SOUND,
+    TEXT,
+    DIALOGUE,
+    RESOURCE_BUNDLE,
+    PROPERTY_MAP,
+    CSS,
+    FONT
 }

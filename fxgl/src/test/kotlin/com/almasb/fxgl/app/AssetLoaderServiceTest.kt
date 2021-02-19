@@ -55,6 +55,8 @@ class AssetLoaderServiceTest {
         assetLoader = FXGLAssetLoaderService()
 
         InjectInTest.inject(MethodHandles.lookup(), assetLoader, "audioService", AudioPlayer())
+
+        assetLoader.onInit()
     }
 
     @Test
