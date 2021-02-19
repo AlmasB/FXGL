@@ -6,6 +6,7 @@
 
 package sandbox;
 
+import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
@@ -41,7 +42,13 @@ public class TimeGameApp extends GameApplication {
             var buffer = player.getComponent(TimeBufferComponent.class).buffer;
             Point2D pos = buffer.getFirst();
 
-            player.setPosition(pos);
+            //player.setPosition(pos);
+            animationBuilder()
+                    .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
+                    .translate(player)
+                    .from(player.getPosition())
+                    .to(pos)
+                    .buildAndPlay();
 
             var e = spawnRect(pos);
             e.addComponent(new TimerBufferApplierComponent(new ArrayDeque<>(buffer)));
