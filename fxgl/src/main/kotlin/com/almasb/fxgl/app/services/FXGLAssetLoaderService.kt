@@ -88,6 +88,9 @@ class FXGLAssetLoaderService : AssetLoaderService() {
     @Inject("isDesktop")
     private var isDesktop = true
 
+    @Inject("basePackageForAssets")
+    private var basePackageForAssets = ""
+
     private lateinit var audioService: AudioPlayer
 
     private val cachedAssets = hashMapOf<String, Any>()
@@ -474,18 +477,24 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      */
     private fun getURL(name: String): URL {
         log.debug("Loading from file system: $name")
-        
+
         val app = try {
             FXGLApplication.app
         } catch (e: UninitializedPropertyAccessException) {
             null
         }
 
+        var assetPath = name
+
+        if (basePackageForAssets.isNotEmpty()) {
+            assetPath = "/${basePackageForAssets.replace('.', '/')}$name"
+        }
+
         // try /assets/ from user module using their class
-        return app?.javaClass?.getResource(name)
+        return app?.javaClass?.getResource(assetPath)
                 // try /fxglassets/ from fxgl.all module using this javaclass
                 ?: javaClass.getResource("/fxgl${name.substring(1)}")
-                ?: throw IllegalArgumentException("Asset \"$name\" was not found!")
+                ?: throw IllegalArgumentException("Asset \"$assetPath\" was not found!")
     }
 
     /**

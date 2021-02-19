@@ -17,7 +17,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class CustomPathAssetsSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
-
+        settings.setBasePackageForAssets("com.almasb.testpackage");
     }
 
     @Override
