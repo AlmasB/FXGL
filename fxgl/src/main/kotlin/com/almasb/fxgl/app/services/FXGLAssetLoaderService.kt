@@ -432,12 +432,14 @@ class FXGLAssetLoaderService : AssetLoaderService() {
 
         val cacheKey = loadParams.cacheKey
 
-        val asset = getAssetFromCache(cacheKey)
+        val asset = cachedAssets[cacheKey]
         if (asset != null) {
+            // load from cache
             return data.cast(asset)
         }
 
         return try {
+            // load from file system
             val loaded = data.load(loadParams)
             cachedAssets[cacheKey] = loaded as Any
             loaded
@@ -471,14 +473,10 @@ class FXGLAssetLoaderService : AssetLoaderService() {
     }
 
     /**
-     * Returns a valid URL to resource or throws [IllegalArgumentException].
-     *
-     * @param name resource name
-     * @return URL to resource
+     * @param name resource name relative to base package (starts with /assets/)
+     * @return a valid URL to resource or [NULL_URL] if URL not found
      */
     private fun getURL(name: String): URL {
-        log.debug("Loading from file system: $name")
-
         val app = try {
             FXGLApplication.app
         } catch (e: UninitializedPropertyAccessException) {
@@ -502,22 +500,6 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         }
 
         return url
-    }
-
-    /**
-     * Load an asset from cache.
-     *
-     * @param name asset name
-     * @return asset object or null if not found
-     */
-    private fun getAssetFromCache(name: String): Any? {
-        val asset = cachedAssets[name]
-        if (asset != null) {
-            log.debug("Loading from cache: $name")
-            return asset
-        }
-
-        return null
     }
 
     /**
