@@ -10,6 +10,7 @@ import com.almasb.fxgl.app.services.FXGLAssetLoaderService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.test.InjectInTest
 import com.almasb.fxgl.test.RunWithFX
+import com.almasb.fxgl.texture.getDummyImage
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
@@ -60,13 +61,6 @@ class AssetLoaderServiceTest {
     }
 
     @Test
-    fun `Exception is thrown if asset not found`() {
-        assertThrows(IllegalArgumentException::class.java, {
-            assetLoader.getStream("nothing.jpg")
-        })
-    }
-
-    @Test
     fun loadImage() {
         var image = assetLoader.loadImage("brick.png")
 
@@ -79,6 +73,23 @@ class AssetLoaderServiceTest {
     }
 
     @Test
+    fun `Load image from URL`() {
+        val image = assetLoader.loadImage(javaClass.getResource("test_icon.png"))
+
+        assertThat(image.width, `is`(256.0))
+        assertThat(image.height, `is`(256.0))
+    }
+
+    @Test
+    fun `URL based loads are cached`() {
+        val image1 = assetLoader.loadImage(javaClass.getResource("test_icon.png"))
+        val image2 = assetLoader.loadImage(javaClass.getResource("test_icon.png"))
+
+        assertThat(image1, `is`(not(getDummyImage())))
+        assertTrue(image1 === image2)
+    }
+
+    @Test
     fun loadTexture() {
         var texture = assetLoader.loadTexture("brick.png")
 
@@ -88,6 +99,14 @@ class AssetLoaderServiceTest {
         texture = assetLoader.loadTexture("bla-bla")
 
         assertThat(texture, `is`(notNullValue()))
+    }
+
+    @Test
+    fun `Load texture from URL`() {
+        val texture = assetLoader.loadTexture(javaClass.getResource("test_icon.png"))
+
+        assertThat(texture.image.width, `is`(256.0))
+        assertThat(texture.image.height, `is`(256.0))
     }
 
     @Test
@@ -119,6 +138,13 @@ class AssetLoaderServiceTest {
     }
 
     @Test
+    fun `Load sound from URL`() {
+        val sound = assetLoader.loadSound(javaClass.getResource("/fxglassets/sounds/intro.wav"))
+
+        assertThat(sound, `is`(notNullValue()))
+    }
+
+    @Test
     fun loadMusic() {
         // Note: the loading might fail on linux if missing libavformat for jfxmedia, but dummy music object should be loaded
         var music = assetLoader.loadMusic("intro.mp3")
@@ -128,6 +154,13 @@ class AssetLoaderServiceTest {
         music.dispose()
 
         music = assetLoader.loadMusic("bla-bla")
+
+        assertThat(music, `is`(notNullValue()))
+    }
+
+    @Test
+    fun `Load music from URL`() {
+        val music = assetLoader.loadMusic(javaClass.getResource("/fxglassets/music/intro.mp3"))
 
         assertThat(music, `is`(notNullValue()))
     }
@@ -150,6 +183,24 @@ class AssetLoaderServiceTest {
     }
 
     @Test
+    fun `Load Text from URL`() {
+        val actualLines = assetLoader.loadText(javaClass.getResource("/fxglassets/text/test1.txt"))
+
+        val expectedLines = TEXT_DATA[0].split("\n".toRegex()).dropLastWhile { it.isEmpty() }
+
+        assertThat(actualLines, `is`(expectedLines))
+
+        val lines = assetLoader.loadText("bla-bla")
+
+        assertThat(lines.size, `is`(0))
+    }
+
+    @Test
+    fun `Relative and absolute URL load calls cache the same object`() {
+        assertTrue(assetLoader.loadText("test1.txt") === assetLoader.loadText(javaClass.getResource("/fxglassets/text/test1.txt")))
+    }
+
+    @Test
     fun loadResourceBundle() {
         val resourceBundle = assetLoader.loadResourceBundle("test.properties")
         val resourceBundle2 = assetLoader.loadResourceBundle("test.properties")
@@ -162,6 +213,34 @@ class AssetLoaderServiceTest {
         val bundle = assetLoader.loadResourceBundle("bla-bla")
         assertThat(bundle, `is`(notNullValue()))
         assertThat(bundle.keySet().size, `is`(0))
+    }
+
+    @Test
+    fun `Load ResourceBundle from URL`() {
+        val resourceBundle = assetLoader.loadResourceBundle(javaClass.getResource("/fxglassets/properties/test.properties"))
+
+        assertThat(resourceBundle, `is`(notNullValue()))
+        assertThat(resourceBundle.getString("testKey"), `is`("testValue"))
+    }
+
+    @Test
+    fun `Load PropertyMap`() {
+        var map = assetLoader.loadPropertyMap("properties/test.properties")
+
+        assertThat(map, `is`(notNullValue()))
+        assertThat(map.getString("testKey"), `is`("testValue"))
+
+        map = assetLoader.loadPropertyMap("bla-bla")
+        assertThat(map, `is`(notNullValue()))
+        assertThat(map.keys().size, `is`(0))
+    }
+
+    @Test
+    fun `Load PropertyMap from URL`() {
+        val map = assetLoader.loadPropertyMap(javaClass.getResource("/fxglassets/properties/test.properties"))
+
+        assertThat(map, `is`(notNullValue()))
+        assertThat(map.getString("testKey"), `is`("testValue"))
     }
 
     @Test
@@ -211,6 +290,13 @@ class AssetLoaderServiceTest {
     }
 
     @Test
+    fun `Load CSS from URL`() {
+        val css = assetLoader.loadCSS(javaClass.getResource("/fxglassets/ui/css/test.css"))
+
+        assertThat(css, `is`(notNullValue()))
+    }
+
+    @Test
     fun loadFont() {
         var fontFactory = assetLoader.loadFont("test.ttf")
 
@@ -231,6 +317,20 @@ class AssetLoaderServiceTest {
 
         assertThat(fontFactory, `is`(notNullValue()))
         assertThat(fontFactory.newFont(18.0), `is`(notNullValue()))
+    }
+
+    @Test
+    fun `Load Font from URL`() {
+        val fontFactory = assetLoader.loadFont(javaClass.getResource("/fxglassets/ui/fonts/test.ttf"))
+
+        assertThat(fontFactory, `is`(notNullValue()))
+
+        val font = fontFactory.newFont(18.0)
+
+        assertThat(font, `is`(notNullValue()))
+        assertThat(font.family, `is`("Elektra"))
+        assertThat(font.name, `is`("Elektra"))
+        assertThat(font.size, `is`(18.0))
     }
 
     @Test

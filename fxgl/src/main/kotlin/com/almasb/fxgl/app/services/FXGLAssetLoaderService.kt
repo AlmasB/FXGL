@@ -128,6 +128,13 @@ class FXGLAssetLoaderService : AssetLoaderService() {
     }
 
     /**
+     * Loads an image with [loadImage] and wraps it with a [Texture].
+     */
+    fun loadTexture(url: URL): Texture {
+        return Texture(loadImage(url))
+    }
+
+    /**
      * Loads a resized image with [loadImage] and wraps it with a [Texture].
      */
     fun loadTexture(name: String, width: Double, height: Double): Texture {
@@ -235,14 +242,10 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      * @return cursor image
      * @throws IllegalArgumentException if asset not found or loading error
      */
+    @Deprecated("Place cursor under textures/ and use loadImage() instead")
     fun loadCursorImage(name: String): Image {
         val url = getURL(CURSORS_DIR + name)
 
-        return load(IMAGE, url)
-    }
-
-    // TODO: doc
-    fun loadCursorImage(url: URL): Image {
         return load(IMAGE, url)
     }
 
