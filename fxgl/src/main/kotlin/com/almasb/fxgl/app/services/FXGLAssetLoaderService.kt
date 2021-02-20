@@ -427,16 +427,6 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      * Note: specific load methods (e.g. [loadImage]) are preferred over this call.
      */
     override fun <T> load(assetType: AssetType, fileName: String): T {
-        if (fileName.startsWith('/')) {
-            val url = userAppClass?.getResource(fileName)
-
-            if (url != null) {
-                return load(assetType, url)
-            } else {
-                log.warning("Resource not found: $fileName")
-            }
-        }
-
         return load(assetType, getURL(assetData[assetType]!!.directory + fileName))
     }
 
