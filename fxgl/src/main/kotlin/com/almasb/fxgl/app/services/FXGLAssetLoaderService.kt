@@ -39,17 +39,14 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-
+// Directories that are used for specific assets
 private const val ASSETS_DIR = "/assets/"
 private const val TEXTURES_DIR = ASSETS_DIR + "textures/"
 private const val SOUNDS_DIR = ASSETS_DIR + "sounds/"
 private const val MUSIC_DIR = ASSETS_DIR + "music/"
 private const val TEXT_DIR = ASSETS_DIR + "text/"
 private const val JSON_DIR = ASSETS_DIR + "json/"
-private const val TMX_DIR = ASSETS_DIR + "tmx/"
-private const val SCRIPTS_DIR = ASSETS_DIR + "scripts/"
 private const val PROPERTIES_DIR = ASSETS_DIR + "properties/"
-private const val AI_DIR = ASSETS_DIR + "ai/"
 private const val LEVELS_DIR = ASSETS_DIR + "levels/"
 private const val DIALOGUES_DIR = ASSETS_DIR + "dialogues/"
 
@@ -70,17 +67,14 @@ private const val CURSORS_DIR = UI_DIR + "cursors/"
  * Sound - /assets/sounds/
  * Music - /assets/music/
  * Text (List of String) - /assets/text/
- * Scripts - /assets/scripts/
- * Behavior Tree - /assets/ai/
  * FXML - /assets/ui/
  * CSS - /assets/ui/css/
  * Font - /assets/ui/fonts/
  * Cursors - /assets/ui/cursors/
  * Resource bundles - /assets/properties/
  *
- * If you need to access the "raw" JavaFX objects (e.g. Image), you can use
- * {@link AssetLoader#getStream(String)} to obtain an InputStream and then
- * parse into whatever resource you need.
+ * If you need to access the "raw" JavaFX objects (e.g. Image), you can use [getStream]
+ * to obtain an InputStream and then parse into whatever resource you need.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -113,11 +107,22 @@ class FXGLAssetLoaderService : AssetLoaderService() {
 
     private lateinit var audioService: AudioPlayer
 
+    private var userAppClass: Class<*>? = null
+
     private val cachedAssets = hashMapOf<String, Any>()
 
     override fun onInit() {
         assetData[SOUND] = SoundAssetLoader(audioService, isDesktop)
         assetData[MUSIC] = MusicAssetLoader(audioService, isDesktop)
+
+        // TODO: inject instead of below
+        userAppClass = try {
+            FXGLApplication.app.javaClass
+        } catch (e: UninitializedPropertyAccessException) {
+            null
+        }
+
+        log.debug("User app class for loading assets: $userAppClass")
     }
 
     /**
@@ -233,7 +238,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         return load(MUSIC, url)
     }
 
-    // TODO: doc
+    // TODO: remove in future version
     /**
      * Loads cursor image with given name from /assets/ui/cursors/.
      * Either returns a valid image or throws exception in case of errors.
@@ -249,21 +254,25 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         return load(IMAGE, url)
     }
 
-    // TODO: doc
     /**
-     * Loads resource bundle with given name from "/assets/properties/".
+     * Loads resource bundle with given [name] from "/assets/properties/".
      *
      * Note: for improved mobile support use [loadPropertyMap] instead.
      *
      * @param name must be under "/assets/properties/", e.g. system.properties, game.properties
      * @return resource bundle
-     * @throws IllegalArgumentException if asset not found or loading error
      */
     fun loadResourceBundle(name: String): ResourceBundle {
         return load(RESOURCE_BUNDLE, name)
     }
 
-    // TODO: doc
+    /**
+     * Loads resource bundle from given [url].
+     *
+     * Note: for improved mobile support use [loadPropertyMap] instead.
+     *
+     * @return resource bundle
+     */
     fun loadResourceBundle(url: URL): ResourceBundle {
         return load(RESOURCE_BUNDLE, url)
     }
@@ -282,22 +291,23 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         return DialogueGraphSerializer.fromSerializable(graph)
     }
 
-    // TODO: doc
     /**
-     * Loads text file with given name from /assets/text/
-     * into List where each element represents a line
-     * in the file. Either returns a valid list with lines read from the file
-     * or throws an exception in case of errors.
+     * Loads text file with given [name] from /assets/text/
+     * into List<String> where each element represents a line in the file.
      *
      * @param name text file name without the /assets/text/, e.g. "level_0.txt"
-     * @return list of lines from file
-     * @throws IllegalArgumentException if asset not found or loading error
+     * @return list of lines from file or empty list if errors
      */
     fun loadText(name: String): List<String> {
         return load(TEXT, name)
     }
 
-    // TODO: doc
+    /**
+     * Loads text file from given [url]
+     * into List<String> where each element represents a line in the file.
+     *
+     * @return list of lines from file or empty list if errors
+     */
     fun loadText(url: URL): List<String> {
         return load(TEXT, url)
     }
@@ -319,12 +329,10 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         return load(PROPERTY_MAP, url)
     }
 
-    // TODO: doc
     /**
-     * Loads a native JavaFX font with given name from /assets/ui/fonts/
+     * Loads a native JavaFX font with given [name] from /assets/ui/fonts/
      * wrapped in a FontFactory, which later can be used to produce fonts
      * with different sizes without accessing the font file.
-     * Either returns a valid font factory or throws exception in case of errors.
      *
      * Supported font formats are:
      *
@@ -332,33 +340,45 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      *  * OTF
      *
      * @param name font file name without the /assets/ui/fonts/, e.g. "quest_font.ttf"
-     * @return font factory
-     * @throws IllegalArgumentException if asset not found or loading error
+     * @return font factory or default font factory if errors
      */
     fun loadFont(name: String): FontFactory {
         return load(FONT, name)
     }
 
-    // TODO: doc
+    /**
+     * Loads a native JavaFX font from given [url]
+     * wrapped in a FontFactory, which later can be used to produce fonts
+     * with different sizes without accessing the font file.
+     *
+     * Supported font formats are:
+     *
+     *  * TTF
+     *  * OTF
+     *
+     * @return font factory or default font factory if errors
+     */
     fun loadFont(url: URL): FontFactory {
         return load(FONT, url)
     }
 
-    // TODO: doc
     /**
-     * Loads a CSS file from /assets/ui/css/.
+     * Loads a CSS file with given [name] from /assets/ui/css/.
      * Can be applied by calling object.getStyleSheets().add(css.getExternalForm()).
-     * Either returns ready CSS or throws exception in case of errors.
      *
      * @param name CSS file name without the /assets/ui/css/, e.g. "ui_button.css"
-     * @return css
-     * @throws IllegalArgumentException if asset not found or loading error
+     * @return css or empty css if errors
      */
     fun loadCSS(name: String): CSS {
         return load(CSS, name)
     }
 
-    // TODO: doc
+    /**
+     * Loads a CSS file from [url].
+     * Can be applied by calling object.getStyleSheets().add(css.getExternalForm()).
+     *
+     * @return css or empty css if errors
+     */
     fun loadCSS(url: URL): CSS {
         return load(CSS, url)
     }
@@ -451,12 +471,12 @@ class FXGLAssetLoaderService : AssetLoaderService() {
 
     // TODO: check with new API
     /**
-     * Opens a stream to resource with given name.
+     * Opens a stream to resource with given [name].
      * The caller is responsible for closing the stream.
      * Either returns a valid stream or throws an exception.
      *
      * This is useful for loading resources that do not fall under any asset category.
-     * Resource is anything located within the source root / resource root, whether "src/" or "resources/".
+     * Resource is anything located within the source root or resource root, e.g. "src/" or "resources/".
      * The resource name must always begin with "/", e.g. "/assets/textures/player.png".
      *
      * @param name resource name
@@ -477,12 +497,6 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      * @return a valid URL to resource or [NULL_URL] if URL not found
      */
     private fun getURL(name: String): URL {
-        val app = try {
-            FXGLApplication.app
-        } catch (e: UninitializedPropertyAccessException) {
-            null
-        }
-
         var assetPath = name
 
         if (basePackageForAssets.isNotEmpty()) {
@@ -490,7 +504,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         }
 
         // try /assets/ from user module using their class
-        val url = app?.javaClass?.getResource(assetPath)
+        val url = userAppClass?.getResource(assetPath)
                 // try /fxglassets/ from fxgl.all module using this javaclass
                 ?: javaClass.getResource("/fxgl${name.substring(1)}")
 
