@@ -146,6 +146,13 @@ class FXGLAssetLoaderService : AssetLoaderService() {
     }
 
     /**
+     * Loads a resized image with [loadImage] and wraps it with a [Texture].
+     */
+    fun loadTexture(url: URL, width: Double, height: Double): Texture {
+        return Texture(load(RESIZABLE_IMAGE, ResizableImageParams(url, width, height)))
+    }
+
+    /**
      * Loads an [Image] with given [name] from /assets/textures/.
      * The image for given [name] will be cached after the first call.
      *
@@ -274,14 +281,23 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         return load(RESOURCE_BUNDLE, url)
     }
 
-    // TODO: doc
+    /**
+     * Load [DialogueGraph] with given [name] from "/assets/dialogues".
+     *
+     * @param name must be under "/assets/dialogues", e.g. npc_dialogue.json
+     * @return dialogue graph or empty graph if errors
+     */
     fun loadDialogueGraph(name: String): DialogueGraph {
         val graph = load<SerializableGraph>(DIALOGUE, name)
 
         return DialogueGraphSerializer.fromSerializable(graph)
     }
 
-    // TODO: doc
+    /**
+     * Load [DialogueGraph] from given [url].
+     *
+     * @return dialogue graph or empty graph if errors
+     */
     fun loadDialogueGraph(url: URL): DialogueGraph {
         val graph = load<SerializableGraph>(DIALOGUE, url)
 
@@ -466,7 +482,6 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         }
     }
 
-    // TODO: check with new API
     /**
      * Opens a stream to resource with given [name].
      * The caller is responsible for closing the stream.
@@ -494,9 +509,10 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      * @return a valid URL to resource or [NULL_URL] if URL not found
      */
     private fun getURL(name: String): URL {
-        // try /assets/ from user module using their class
+        // 1. try /assets/ from user module using their app class
+        // 2. try /fxglassets/ from fxgl.all module using this javaclass
+
         val url = userAppClass?.getResource(name)
-                // try /fxglassets/ from fxgl.all module using this javaclass
                 ?: javaClass.getResource("/fxgl${name.substring(1)}")
 
         if (url == null) {
@@ -545,6 +561,7 @@ private sealed class AssetLoader<T>(
      */
     open fun load(params: LoadParams): T = load(params.url)
 
+    @Throws(java.lang.Exception::class)
     protected abstract fun load(url: URL): T
 
     /**
@@ -557,7 +574,15 @@ private class ImageAssetLoader : AssetLoader<Image>(
         Image::class.java,
         TEXTURES_DIR
 ) {
-    override fun load(url: URL): Image = url.openStream().use { Image(it) }
+    override fun load(url: URL): Image {
+        val image = url.openStream().use { Image(it) }
+
+        if (image.isError) {
+            throw image.exception
+        }
+
+        return image
+    }
 
     override fun getDummy(): Image = getDummyImage()
 }
@@ -570,7 +595,13 @@ private class ResizableImageAssetLoader : AssetLoader<Image>(
     override fun load(params: LoadParams): Image {
         val loadParams = params as ResizableImageParams
 
-        return params.url.openStream().use { Image(it, loadParams.width, loadParams.height, false, true) }
+        val image = params.url.openStream().use { Image(it, loadParams.width, loadParams.height, false, true) }
+
+        if (image.isError) {
+            throw image.exception
+        }
+
+        return image
     }
 
     override fun load(url: URL): Image {

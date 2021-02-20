@@ -8,6 +8,11 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.app.services.FXGLAssetLoaderService
 import com.almasb.fxgl.audio.AudioPlayer
+import com.almasb.fxgl.core.asset.AssetType
+import com.almasb.fxgl.logging.ConsoleOutput
+import com.almasb.fxgl.logging.Logger
+import com.almasb.fxgl.logging.LoggerConfig
+import com.almasb.fxgl.logging.LoggerLevel
 import com.almasb.fxgl.test.InjectInTest
 import com.almasb.fxgl.test.RunWithFX
 import com.almasb.fxgl.texture.getDummyImage
@@ -19,6 +24,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.lang.ClassCastException
 import java.lang.invoke.MethodHandles
 
 /**
@@ -201,6 +207,26 @@ class AssetLoaderServiceTest {
     }
 
     @Test
+    fun `Load DialogueGraph`() {
+        val graph = assetLoader.loadDialogueGraph("simple.json")
+
+        assertThat(graph.nodes.size, `is`(3))
+        assertThat(graph.edges.size, `is`(2))
+
+        assertThat(graph.startNode.text, `is`("Simple start."))
+    }
+
+    @Test
+    fun `Load DialogueGraph from URL`() {
+        val graph = assetLoader.loadDialogueGraph(javaClass.getResource("/fxglassets/dialogues/simple.json"))
+
+        assertThat(graph.nodes.size, `is`(3))
+        assertThat(graph.edges.size, `is`(2))
+
+        assertThat(graph.startNode.text, `is`("Simple start."))
+    }
+
+    @Test
     fun loadResourceBundle() {
         val resourceBundle = assetLoader.loadResourceBundle("test.properties")
         val resourceBundle2 = assetLoader.loadResourceBundle("test.properties")
@@ -370,5 +396,31 @@ class AssetLoaderServiceTest {
         texture3.dispose()
 
         assetLoader.clearCache()
+    }
+
+    @Test
+    fun `load throws ClassCastException if T does not match asset type`() {
+        assertThrows(ClassCastException::class.java) {
+            // try to load Image as String
+            val s: String = assetLoader.load(AssetType.IMAGE, "brick.png")
+        }
+    }
+
+    @Test
+    fun `Loading a valid resource in wrong format does not crash`() {
+        // try loading txt as font object
+        val font = assetLoader.loadFont(javaClass.getResource("/fxglassets/text/test1.txt"))
+
+        assertThat(font, `is`(notNullValue()))
+
+        // try loading txt as Image
+        val image1 = assetLoader.loadImage(javaClass.getResource("/fxglassets/text/test_level.txt"))
+
+        assertThat(image1, `is`(notNullValue()))
+
+        // try loading txt as Texture
+        val texture = assetLoader.loadTexture(javaClass.getResource("/fxglassets/text/test_level.txt"), 64.0, 64.0)
+
+        assertThat(texture, `is`(notNullValue()))
     }
 }
