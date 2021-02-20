@@ -102,9 +102,6 @@ class FXGLAssetLoaderService : AssetLoaderService() {
     @Inject("isDesktop")
     private var isDesktop = true
 
-    @Inject("basePackageForAssets")
-    private var basePackageForAssets = ""
-
     private lateinit var audioService: AudioPlayer
 
     private var userAppClass: Class<*>? = null
@@ -497,19 +494,13 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      * @return a valid URL to resource or [NULL_URL] if URL not found
      */
     private fun getURL(name: String): URL {
-        var assetPath = name
-
-        if (basePackageForAssets.isNotEmpty()) {
-            assetPath = "/${basePackageForAssets.replace('.', '/')}$name"
-        }
-
         // try /assets/ from user module using their class
-        val url = userAppClass?.getResource(assetPath)
+        val url = userAppClass?.getResource(name)
                 // try /fxglassets/ from fxgl.all module using this javaclass
                 ?: javaClass.getResource("/fxgl${name.substring(1)}")
 
         if (url == null) {
-            log.warning("Asset \"$assetPath\" was not found!")
+            log.warning("Asset \"$name\" was not found!")
             return NULL_URL
         }
 

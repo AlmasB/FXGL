@@ -231,16 +231,6 @@ class GameSettings(
         var soundMenuPress: String = "menu/press.wav",
         var soundMenuSelect: String = "menu/select.wav",
 
-        /**
-         * Allows specifying a custom (package) path to the assets directory.
-         * For example, setting this value to "com.almasb.xyz" will tell FXGL
-         * to look for the assets directory in src/main/resources/com/almasb/xyz/.
-         * The actual structure for assets, e.g. assets/textures, assets/sounds, etc. does not change.
-         * Default value is "" (empty String), so the assets directory is expected in
-         * src/main/resources/.
-         */
-        var basePackageForAssets: String = "",
-
         var pixelsPerMeter: Double = 50.0,
 
         var collisionDetectionStrategy: CollisionDetectionStrategy = CollisionDetectionStrategy.BRUTE_FORCE,
@@ -379,7 +369,6 @@ class GameSettings(
                 soundMenuBack,
                 soundMenuPress,
                 soundMenuSelect,
-                basePackageForAssets,
                 pixelsPerMeter,
                 collisionDetectionStrategy,
                 secondsIn24h,
@@ -545,8 +534,6 @@ class ReadOnlyGameSettings internal constructor(
         val soundMenuBack: String,
         val soundMenuPress: String,
         val soundMenuSelect: String,
-
-        val basePackageForAssets: String,
 
         val pixelsPerMeter: Double,
 
