@@ -190,6 +190,8 @@ class TMXLevelLoaderTest {
         assertThat(tileset.tileheight, `is`(24))
         assertThat(tileset.tilecount, `is`(72))
         assertThat(tileset.columns, `is`(8))
+        assertThat(tileset.spacing, `is`(0))
+        assertThat(tileset.margin, `is`(0))
         assertThat(tileset.transparentcolor, `is`("ff00ff"))
 
         val layer1 = map.layers[0]
@@ -266,6 +268,34 @@ class TMXLevelLoaderTest {
         assertThat(obj3.y, `is`(504))
         assertThat(obj3.width, `is`(120))
         assertThat(obj3.height, `is`(120))
+    }
+
+    @Test
+    fun `Load tmx level with spacing and margin`() {
+        val mapName = "pac_v1_2_3.tmx"
+        val map = javaClass.getResourceAsStream(mapName).use {
+            TMXLevelLoader().parse(it)
+        }
+
+        assertThat(map.tiledversion, `is`(mapName.substringAfter("_v").substringBefore(".").replace("_", ".")))
+        assertThat(map.orientation, `is`("orthogonal"))
+        assertThat(map.renderorder, `is`("right-down"))
+        assertFalse(map.infinite)
+
+        val tileset = map.tilesets[0]
+
+        assertThat(tileset.firstgid, `is`(1))
+        assertThat(tileset.name, `is`("pac_tileset"))
+        assertThat(tileset.image, `is`("pac_tileset.png"))
+        assertThat(tileset.imagewidth, `is`(358))
+        assertThat(tileset.imageheight, `is`(295))
+        assertThat(tileset.tilewidth, `is`(20))
+        assertThat(tileset.tileheight, `is`(20))
+        assertThat(tileset.tilecount, `is`(238))
+        assertThat(tileset.columns, `is`(17))
+        assertThat(tileset.spacing, `is`(1))
+        assertThat(tileset.margin, `is`(1))
+        assertThat(tileset.transparentcolor, `is`(""))
     }
 
     class MyEntityFactory : EntityFactory {
