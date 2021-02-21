@@ -472,7 +472,8 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         }
 
         return try {
-            // load from file system
+            log.debug("Loading from file system: ${loadParams.url}")
+
             val loaded = data.load(loadParams)
             cachedAssets[cacheKey] = loaded as Any
             loaded
