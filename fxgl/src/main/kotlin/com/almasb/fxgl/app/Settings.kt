@@ -274,14 +274,15 @@ class GameSettings(
 
         var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
                 // this is the order in which services will be initialized
-                // by design, the order of services should not matter
+                // by design, the order of services should not matter,
+                // however some services can depend on others, so no-dep ones should come first
+                FXGLAssetLoaderService::class.java,
                 FXGLApplication.GameApplicationService::class.java,
                 FXGLDialogService::class.java,
                 IOTaskExecutorService::class.java,
                 EventBusService::class.java,
                 FileSystemService::class.java,
                 LocalizationService::class.java,
-                FXGLAssetLoaderService::class.java,
                 SystemBundleService::class.java,
                 SaveLoadService::class.java,
                 FXGLUIFactoryServiceProvider::class.java,
