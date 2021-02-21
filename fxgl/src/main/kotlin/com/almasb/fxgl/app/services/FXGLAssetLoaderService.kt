@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.app.services
 
-import com.almasb.fxgl.app.FXGLApplication
 import com.almasb.fxgl.audio.*
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.asset.AssetLoaderService
@@ -37,7 +36,6 @@ import java.io.InputStream
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*
-import kotlin.IllegalArgumentException
 
 // Directories that are used for specific assets
 private const val ASSETS_DIR = "/assets/"
