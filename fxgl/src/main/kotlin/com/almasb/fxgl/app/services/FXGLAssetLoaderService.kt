@@ -326,19 +326,21 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         return load(TEXT, url)
     }
 
-    // TODO: doc
-    // TODO: unlike other types, this is loaded from /assets/ directly...
-    // this shouldn't be needed since we have load(URL) ?
-    // so use PROPERTIES_DIR?
     /**
-     * Loads property map with given name from "/assets/".
+     * Loads property map with given [name] from "/assets/".
      * Example: loadPropertyMap("languages/english.pmap").
+     *
+     * @return property map or empty one if errors
      */
     fun loadPropertyMap(name: String): PropertyMap {
         return load(PROPERTY_MAP, name)
     }
 
-    // TODO: doc
+    /**
+     * Load a property map from given [URL].
+     *
+     * @return property map or empty one if errors
+     */
     fun loadPropertyMap(url: URL): PropertyMap {
         return load(PROPERTY_MAP, url)
     }
