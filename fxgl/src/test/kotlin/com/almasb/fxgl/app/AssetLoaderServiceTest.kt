@@ -376,6 +376,34 @@ class AssetLoaderServiceTest {
     }
 
     @Test
+    fun `Load JSON`() {
+        var obj = assetLoader.loadJSON("json/test.json", TestJSONData::class.java)
+
+        assertTrue(obj.isPresent)
+        assertThat(obj.get().name, `is`("TestName"))
+        assertThat(obj.get().value, `is`(892))
+
+        // invalid URL
+        obj = assetLoader.loadJSON("bla-bla", TestJSONData::class.java)
+
+        assertFalse(obj.isPresent)
+
+        // try to load as diff incompatible object
+        val obj2 = assetLoader.loadJSON("json/test.json", String::class.java)
+
+        assertFalse(obj2.isPresent)
+    }
+
+    @Test
+    fun `Load JSON from URL`() {
+        val obj = assetLoader.loadJSON(javaClass.getResource("/fxglassets/json/test.json"), TestJSONData::class.java)
+
+        assertTrue(obj.isPresent)
+        assertThat(obj.get().name, `is`("TestName"))
+        assertThat(obj.get().value, `is`(892))
+    }
+
+    @Test
     fun getStream() {
         val stream = assetLoader.getStream("/assets/scripts/test.js")
 
@@ -439,4 +467,10 @@ class AssetLoaderServiceTest {
 
         assertThat(texture, `is`(notNullValue()))
     }
+
+    class TestJSONData
+    @JvmOverloads constructor(
+            var name: String = "",
+            var value: Int = 0
+    )
 }

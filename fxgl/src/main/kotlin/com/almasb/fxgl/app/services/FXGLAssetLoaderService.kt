@@ -45,7 +45,6 @@ private const val TEXTURES_DIR = ASSETS_DIR + "textures/"
 private const val SOUNDS_DIR = ASSETS_DIR + "sounds/"
 private const val MUSIC_DIR = ASSETS_DIR + "music/"
 private const val TEXT_DIR = ASSETS_DIR + "text/"
-private const val JSON_DIR = ASSETS_DIR + "json/"
 private const val PROPERTIES_DIR = ASSETS_DIR + "properties/"
 private const val LEVELS_DIR = ASSETS_DIR + "levels/"
 private const val DIALOGUES_DIR = ASSETS_DIR + "dialogues/"
@@ -324,6 +323,43 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      */
     fun loadText(url: URL): List<String> {
         return load(TEXT, url)
+    }
+
+    /**
+     * Loads .json file with [name] from "/assets/" as [type].
+     * The object is not cached.
+     *
+     * @return parsed object with [type] or Optional.empty() if errors
+     */
+    fun <T> loadJSON(name: String, type: Class<T>): Optional<T> {
+        return loadJSON(getURL(ASSETS_DIR + name), type)
+    }
+
+    /**
+     * Loads .json file from [url] as [type].
+     * The object is not cached.
+     *
+     * @return parsed object with [type] or Optional.empty() if errors
+     */
+    fun <T> loadJSON(url: URL, type: Class<T>): Optional<T> {
+        if (url === NULL_URL) {
+            log.warning("Failed to load JSON: URL is not valid")
+            return Optional.empty()
+        }
+
+        // impl of json loading is direct (doesn't use our unified loading)
+        // to avoid potential cast issues
+        log.debug("Loading JSON from: $url")
+
+        try {
+            url.openStream().use {
+                val obj = ObjectMapper().readValue(it, type)
+                return Optional.ofNullable(obj)
+            }
+        } catch (e: Exception) {
+            log.warning("Loading failed: $url", e)
+            return Optional.empty()
+        }
     }
 
     /**
