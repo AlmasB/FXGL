@@ -19,6 +19,7 @@ enum class AssetType {
     DIALOGUE,
     RESOURCE_BUNDLE,
     PROPERTY_MAP,
+    UI,
     CSS,
     FONT
 }

@@ -19,8 +19,7 @@ import com.almasb.fxgl.texture.getDummyImage
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -297,11 +296,28 @@ class AssetLoaderServiceTest {
         assertThat(ui.root, `is`(notNullValue()))
         assertThat(count, `is`(1))
 
+        // UI objects are not cached
+
+        assertFalse(assetLoader.loadUI("test_ui.fxml", controller) === ui)
+
+        assertThat(count, `is`(2))
+
         ui = assetLoader.loadUI("bla-bla", controller)
 
         assertThat(ui, `is`(notNullValue()))
         assertThat(ui.root, `is`(notNullValue()))
-        assertThat(count, `is`(1))
+        assertThat(count, `is`(2))
+    }
+
+    @Test
+    fun `Load UI from URL`() {
+        val ui = assetLoader.loadUI(javaClass.getResource("/fxglassets/ui/test_ui.fxml"), object : UIController {
+            override fun init() {
+            }
+        })
+
+        assertThat(ui, `is`(notNullValue()))
+        assertThat(ui.root, `is`(notNullValue()))
     }
 
     @Test

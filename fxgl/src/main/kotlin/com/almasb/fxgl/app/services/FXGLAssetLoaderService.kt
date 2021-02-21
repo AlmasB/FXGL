@@ -94,6 +94,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
             assetData[DIALOGUE] = DialogueGraphAssetLoader()
             assetData[RESOURCE_BUNDLE] = ResourceBundleAssetLoader()
             assetData[PROPERTY_MAP] = PropertyMapAssetLoader()
+            assetData[UI] = UIAssetLoader()
             assetData[CSS] = CSSAssetLoader()
             assetData[FONT] = FontAssetLoader()
         }
@@ -406,30 +407,29 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         return levelLoader.load(getURL(LEVELS_DIR + name), FXGL.getGameWorld())
     }
 
-    // TODO: check with new API
     /**
-     * Loads an FXML (.fxml) file from /assets/ui/.
-     * Either returns a valid parsed UI or throws an exception in case of errors.
+     * Loads an FXML (.fxml) file with given [name] from /assets/ui/.
+     * UI objects are not cached.
      *
      * @param name FXML file name
      * @param controller the controller object
-     * @return a UI object parsed from .fxml
-     * @throws IllegalArgumentException if asset not found or loading/parsing error
+     * @return a UI object parsed from .fxml or empty UI if errors
      */
     fun loadUI(name: String, controller: UIController): UI {
-        try {
-            getStream(UI_DIR + name).use {
-                val loader = FXMLLoader()
-                loader.setController(controller)
-                val root = loader.load<Parent>(it)
-                controller.init()
-                return UI(root, controller)
-            }
-        } catch (e: Exception) {
-            log.warning("Failed to load FXML $name", e)
-            log.warning("Failed to load UI, so controller.init() will not be called")
-            return UI(Pane(), controller)
-        }
+        val url = getURL(UI_DIR + name)
+
+        return load(UI, UIParams(url, controller))
+    }
+
+    /**
+     * Loads an FXML (.fxml) file from given [url].
+     * UI objects are not cached.
+     *
+     * @param controller the controller object
+     * @return a UI object parsed from .fxml or empty UI if errors
+     */
+    fun loadUI(url: URL, controller: UIController): UI {
+        return load(UI, UIParams(url, controller))
     }
 
     /**
@@ -475,7 +475,11 @@ class FXGLAssetLoaderService : AssetLoaderService() {
             log.debug("Loading from file system: ${loadParams.url}")
 
             val loaded = data.load(loadParams)
-            cachedAssets[cacheKey] = loaded as Any
+
+            if (loadParams.isCacheEnabled) {
+                cachedAssets[cacheKey] = loaded as Any
+            }
+
             loaded
         } catch (e: Exception) {
             log.warning("Failed to load ${loadParams.url}", e)
@@ -535,13 +539,18 @@ class FXGLAssetLoaderService : AssetLoaderService() {
 
 private open class LoadParams(
         val url: URL,
-        val cacheKey: String = url.toExternalForm()
+        val cacheKey: String = url.toExternalForm(),
+        val isCacheEnabled: Boolean = true
 )
 
 private class ResizableImageParams(
         url: URL,
         val width: Double,
         val height: Double) : LoadParams(url, url.toExternalForm() + "@" + width + "x" + height)
+
+private class UIParams(
+        url: URL,
+        val controller: UIController) : LoadParams(url, isCacheEnabled = false)
 
 private sealed class AssetLoader<T>(
 
@@ -690,6 +699,34 @@ private class PropertyMapAssetLoader : AssetLoader<PropertyMap>(
     }
 
     override fun getDummy(): PropertyMap = PropertyMap()
+}
+
+private class UIAssetLoader : AssetLoader<UI>(
+        com.almasb.fxgl.ui.UI::class.java,
+        UI_DIR
+) {
+    override fun load(params: LoadParams): UI {
+        val controller = (params as UIParams).controller
+
+        params.url.openStream().use {
+            val loader = FXMLLoader()
+            loader.setController(controller)
+            val root = loader.load<Parent>(it)
+            controller.init()
+            return UI(root, controller)
+        }
+    }
+
+    override fun load(url: URL): UI {
+        throw UnsupportedOperationException("")
+    }
+
+    override fun getDummy(): UI {
+        return UI(Pane(), object : UIController {
+            override fun init() {
+            }
+        })
+    }
 }
 
 private class CSSAssetLoader : AssetLoader<CSS>(
