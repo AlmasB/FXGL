@@ -34,10 +34,10 @@ import javafx.scene.image.Image
 import javafx.scene.layout.Pane
 import javafx.scene.text.Font
 import java.io.InputStream
-import java.lang.IllegalArgumentException
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*
+import kotlin.IllegalArgumentException
 
 // Directories that are used for specific assets
 private const val ASSETS_DIR = "/assets/"
@@ -435,14 +435,19 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         return load(CSS, url)
     }
 
-    // TODO: check with new API
     /**
      * @param name level file name in /assets/levels/
      * @param levelLoader level loader to use to load this level
-     * @param entityFactory entity factory to use when spawning entities in this level
+     * @return level or throws [IllegalArgumentException] if asset is not found
      */
     fun loadLevel(name: String, levelLoader: LevelLoader): Level {
-        return levelLoader.load(getURL(LEVELS_DIR + name), FXGL.getGameWorld())
+        val url = getURL(LEVELS_DIR + name)
+
+        if (url === NULL_URL) {
+            throw IllegalArgumentException("Loading level failed. Asset not found: $name")
+        }
+
+        return levelLoader.load(url, FXGL.getGameWorld())
     }
 
     /**
