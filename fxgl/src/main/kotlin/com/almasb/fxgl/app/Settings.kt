@@ -331,7 +331,7 @@ class GameSettings(
         width = (height * ratio).roundToInt()
     }
 
-    fun toReadOnly(): ReadOnlyGameSettings {
+    fun toReadOnly(userAppClass: Class<*> = GameApplication::class.java): ReadOnlyGameSettings {
         return ReadOnlyGameSettings(
                 runtimeInfo,
                 title,
@@ -374,6 +374,7 @@ class GameSettings(
                 secondsIn24h,
                 randomSeed,
                 ticksPerSecond,
+                userAppClass,
                 defaultLanguage,
                 isExperimentalTiledLargeMap,
                 isExperimentalNative,
@@ -547,6 +548,8 @@ class ReadOnlyGameSettings internal constructor(
         val randomSeed: Long,
 
         val ticksPerSecond: Int,
+
+        val userAppClass: Class<*>,
 
         private val defaultLanguage: Language,
 

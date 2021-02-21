@@ -102,22 +102,16 @@ class FXGLAssetLoaderService : AssetLoaderService() {
     @Inject("isDesktop")
     private var isDesktop = true
 
-    private lateinit var audioService: AudioPlayer
+    @Inject("userAppClass")
+    private lateinit var userAppClass: Class<*>
 
-    private var userAppClass: Class<*>? = null
+    private lateinit var audioService: AudioPlayer
 
     private val cachedAssets = hashMapOf<String, Any>()
 
     override fun onInit() {
         assetData[SOUND] = SoundAssetLoader(audioService, isDesktop)
         assetData[MUSIC] = MusicAssetLoader(audioService, isDesktop)
-
-        // TODO: inject instead of below
-        userAppClass = try {
-            FXGLApplication.app.javaClass
-        } catch (e: UninitializedPropertyAccessException) {
-            null
-        }
 
         log.debug("User app class for loading assets: $userAppClass")
     }
@@ -560,7 +554,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         // 1. try /assets/ from user module using their app class
         // 2. try /fxglassets/ from fxgl.all module using this javaclass
 
-        val url = userAppClass?.getResource(name)
+        val url = userAppClass.getResource(name)
                 ?: javaClass.getResource("/fxgl${name.substring(1)}")
 
         if (url == null) {

@@ -142,7 +142,7 @@ public abstract class GameApplication {
         var runtimeInfo = new RuntimeInfo(platform, BuildProperties.VERSION, BuildProperties.BUILD);
         localSettings.setRuntimeInfo(runtimeInfo);
         localSettings.setExperimentalNative(localSettings.isExperimentalNative() || platform.isMobile());
-        return localSettings.toReadOnly();
+        return localSettings.toReadOnly(getClass());
     }
 
     private void initLogger(ReadOnlyGameSettings settings) {

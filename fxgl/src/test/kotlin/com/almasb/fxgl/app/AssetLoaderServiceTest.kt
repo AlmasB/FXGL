@@ -61,6 +61,7 @@ class AssetLoaderServiceTest {
         assetLoader = FXGLAssetLoaderService()
 
         InjectInTest.inject(MethodHandles.lookup(), assetLoader, "audioService", AudioPlayer())
+        InjectInTest.inject(MethodHandles.lookup(), assetLoader, "userAppClass", AssetLoaderServiceTest::class.java)
 
         assetLoader.onInit()
     }
@@ -202,7 +203,11 @@ class AssetLoaderServiceTest {
 
     @Test
     fun `Relative and absolute URL load calls cache the same object`() {
-        assertTrue(assetLoader.loadText("test1.txt") === assetLoader.loadText(javaClass.getResource("/fxglassets/text/test1.txt")))
+        // these are loaded from two different places (assets/text and fxglassets/text), so shouldn't be same object
+        assertTrue(assetLoader.loadText("test1.txt") !== assetLoader.loadText(javaClass.getResource("/fxglassets/text/test1.txt")))
+
+        // these are loaded from the same place, so should be same object
+        assertTrue(assetLoader.loadImage("brick2.png") === assetLoader.loadImage(javaClass.getResource("/fxglassets/textures/brick2.png")))
     }
 
     @Test
