@@ -6,7 +6,6 @@
 package com.almasb.fxgl.inventory.view
 
 import com.almasb.fxgl.inventory.Inventory
-import javafx.collections.ObservableList
 import javafx.scene.Parent
 import javafx.scene.layout.VBox
 

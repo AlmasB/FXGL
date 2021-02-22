@@ -33,9 +33,9 @@ class InventoryListCell<T>(private val inventory: Inventory<T>) : ListCell<T>() 
         } else {
             val itemData = inventory.getData(item).get()
             val limit = 30
-            val name = if (itemData.name.length > limit) itemData.name.substring(0, limit) + "..." else itemData.name
+            val name = if (itemData[0].name.length > limit) itemData[0].name.substring(0, limit) + "..." else itemData[0].name
 
-            text = "$name - ${itemData.quantity} \n${itemData.description}"
+            text = "$name - ${itemData[0].quantity} \n${itemData[0].description}"
         }
     }
 }
