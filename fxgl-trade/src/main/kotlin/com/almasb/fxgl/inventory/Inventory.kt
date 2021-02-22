@@ -65,10 +65,12 @@ class Inventory<T>(var capacity: Int) {
     fun setStackMax(newStackMax: Int): Boolean {
         if (newStackMax >= stackMax) {
             stackMax = newStackMax
+            return true
         }
         for (item in allData.values) {
             for (stack in item) {
-                if (stack.quantity > newStackMax) return false
+                if (stack.quantity > newStackMax)
+                    return false
             }
         }
         stackMax = newStackMax
@@ -195,7 +197,6 @@ class Inventory<T>(var capacity: Int) {
         if (amount < 0 && itemQuantity + amount < 0)
             return false
 
-
         quantityCount = amount
 
         /**
@@ -215,7 +216,6 @@ class Inventory<T>(var capacity: Int) {
                     quantityCount += stack.quantity
 
                     stack.quantity = 0
-
                 }
 
                 if (isRemoveItemsIfQty0 && stack.quantity == 0) {
@@ -244,7 +244,6 @@ class Inventory<T>(var capacity: Int) {
                     quantityCount -= stackMax - stack.quantity
 
                     stack.quantity = stackMax
-
                 }
             }
             // Create new item stacks until amount has been added
