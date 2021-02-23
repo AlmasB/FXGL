@@ -128,7 +128,7 @@ public class InventorySample extends GameApplication {
                 var selectedItem = (Entity) view.getListView().getSelectionModel().getSelectedItem();
 
                 if (selectedItem != null) {
-                    var item = inventorySubScene.playerInventory.getData((Entity) selectedItem).get().get(0).getUserItem();
+                    var item = inventorySubScene.playerInventory.getData((Entity) selectedItem).get(0).getUserItem();
                     playerInventory.incrementQuantity(item, -1);
                 }
                 view.getListView().refresh();
@@ -145,8 +145,8 @@ public class InventorySample extends GameApplication {
                 var selectedItem = (Entity) view.getListView().getSelectionModel().getSelectedItem();
 
                 if (selectedItem != null) {
-                    var itemData = inventorySubScene.playerInventory.getData((Entity) selectedItem).get().get(0).getUserItem();
-                    playerInventory.removeItem(selectedItem);
+                    var itemData = inventorySubScene.playerInventory.getData((Entity) selectedItem).get(0).getUserItem();
+                    playerInventory.remove(selectedItem);
                 }
                 view.getListView().refresh();
             });

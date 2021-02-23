@@ -14,8 +14,6 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.Group
 import javafx.scene.Node
-import java.util.*
-
 
 /**
  * Represents an inventory (bag) of user-defined items.
@@ -34,7 +32,9 @@ class Inventory<T>(var capacity: Int) {
     private var stackMax = Int.MAX_VALUE
 
     /**
-     * Number of items in inventory.
+     * @return number of stacks in inventory.
+     * Each item may be composed of 0 or more stacks (an item in inventory with empty stack list takes up no space).
+     * For number of different item types in inventory, use allData.size.
      */
     val size: Int
         get() {
@@ -45,10 +45,12 @@ class Inventory<T>(var capacity: Int) {
             return totalSize
         }
 
-
     val allData: Map<T, ObservableList<ItemData<T>>>
         get() = itemsData.toMap()
 
+    /**
+     * @return true if sum of total stacks for each item type is equal to [capacity]
+     */
     val isFull: Boolean
         get() = size == capacity
 
@@ -60,7 +62,7 @@ class Inventory<T>(var capacity: Int) {
 
     /**
      * @return true if operation was successful
-     * Cannot set stackMax less than item with highest quantity in inventory
+     * Cannot set stackMax less than stack with highest quantity in inventory
      */
     fun setStackMax(newStackMax: Int): Boolean {
         if (newStackMax >= stackMax) {
@@ -84,10 +86,10 @@ class Inventory<T>(var capacity: Int) {
     fun itemsProperty(): ObservableList<T> = itemsProperty
 
     /**
-     * @returns false if inventory is full, if adding quantity creates stacks greater than capacity, or reducing quantity past 0
-     * Add [item] to inventory.
-     * If [item] (as checked by equals()) is already present, then its quantity is increased by [quantity]
-     * Inventory size may change if adding quantity greater than stackMax
+     * @returns false if inventory is full, if adding quantity creates stacks greater than capacity, or reducing quantity past 0.
+     * Add [item] to inventory, dynamically creating stacks if stackMax is specified.
+     * If [item] (as checked by equals()) is already present, then its quantity is increased by [quantity].
+     * Inventory size may change if adding quantity greater than stackMax.
      */
     @JvmOverloads fun add(
             item: T,
@@ -127,7 +129,7 @@ class Inventory<T>(var capacity: Int) {
             }
             // If not enough room in inventory, remove initially added item
             else {
-                removeItem(item)
+                remove(item)
                 return false
             }
 
@@ -138,7 +140,7 @@ class Inventory<T>(var capacity: Int) {
      * Removes [item] from inventory, reducing the inventory size by 1.
      * If you only want to reduce quantity, use [incrementQuantity] with negative amount instead.
      */
-    fun removeItem(item: T) {
+    fun remove(item: T) {
         items -= item
         itemsData -= item
     }
@@ -148,11 +150,11 @@ class Inventory<T>(var capacity: Int) {
             itemsData[itemData.userItem]?.remove(itemData)
     }
 
-    fun getData(item: T): Optional<ObservableList<ItemData<T>>> {
+    fun getData(item: T): ObservableList<ItemData<T>> {
         if (item !in items)
-            return Optional.empty()
+            return FXCollections.observableArrayList()
 
-        return Optional.of(itemsData[item]!!)
+        return itemsData[item]!!
     }
 
     /**
@@ -161,7 +163,7 @@ class Inventory<T>(var capacity: Int) {
     fun getItemQuantity(item:T): Int {
         if (item !in items) return 0
         var totalItemSize = 0
-        for (stack in getData(item).get()) {
+        for (stack in getData(item)) {
             totalItemSize += stack.quantity
         }
         return totalItemSize
@@ -176,7 +178,7 @@ class Inventory<T>(var capacity: Int) {
             return false
         }
 
-        val stacks = getData(item).get()
+        val stacks = getData(item)
 
         // Details used for creating new stacks
         val itemTemplate = stacks[0]
@@ -222,7 +224,7 @@ class Inventory<T>(var capacity: Int) {
                     removeStack(stack)
 
                     if (getItemQuantity(item) == 0)
-                        removeItem(item)
+                        remove(item)
                 }
             }
         }

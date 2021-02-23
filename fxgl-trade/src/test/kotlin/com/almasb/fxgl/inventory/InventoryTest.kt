@@ -6,6 +6,7 @@
 @file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.inventory
 
+import javafx.collections.FXCollections
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -42,7 +43,7 @@ class InventoryTest {
 
         assertTrue(inventory.isFull)
 
-        inventory.removeItem("100")
+        inventory.remove("100")
 
         assertFalse(inventory.isFull)
     }
@@ -71,7 +72,7 @@ class InventoryTest {
         assertThat(inventory.size, `is`(1))
         assertThat(inventory.getItemQuantity("Hello"), `is`(1))
 
-        inventory.removeItem("Hello")
+        inventory.remove("Hello")
 
         assertThat(inventory.size, `is`(0))
     }
@@ -131,8 +132,8 @@ class InventoryTest {
     }
 
     @Test
-    fun `getData returns empty optional if no item`() {
-        assertFalse(inventory.getData("bla-bla").isPresent)
+    fun `getData returns empty list if no item`() {
+        assertThat(inventory.getData("bla-bla"), `is`(FXCollections.observableArrayList()))
     }
 
     @Test
