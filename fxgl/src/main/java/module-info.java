@@ -49,6 +49,7 @@ module com.almasb.fxgl.all {
     exports com.almasb.fxgl.app.services;
     exports com.almasb.fxgl.app.scene;
     exports com.almasb.fxgl.dev;
+    exports com.almasb.fxgl.dev.editor;
     exports com.almasb.fxgl.dsl;
     exports com.almasb.fxgl.dsl.components;
     exports com.almasb.fxgl.dsl.components.view;
