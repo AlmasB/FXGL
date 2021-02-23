@@ -87,7 +87,6 @@ public class InventorySample extends GameApplication {
 
     @Override
     protected void initGame() {
-
         // Add initial items in player inventory
         inventorySubScene.playerInventory.add(woodEntity, "Wood", "Wood description", inventorySubScene.view, 15);
         inventorySubScene.playerInventory.add(stoneEntity, "Stone", "Stone description", inventorySubScene.view, 10);
@@ -95,7 +94,6 @@ public class InventorySample extends GameApplication {
     }
 
     public void pickupItem(Entity item, String name, String description, int quantity) {
-
         if (getip(name.toLowerCase()).get() > 0) {
             inventorySubScene.playerInventory.add(item, name, description, inventorySubScene.view, quantity);
             inc(name.toLowerCase(), -1);
@@ -114,6 +112,7 @@ public class InventorySample extends GameApplication {
 
 
         public InventorySubScene() {
+            playerInventory.setRemoveItemsIfQty0(true);
 
             getContentRoot().getChildren().addAll(view);
             getContentRoot().setTranslateX(300);
@@ -129,12 +128,8 @@ public class InventorySample extends GameApplication {
                 var selectedItem = (Entity) view.getListView().getSelectionModel().getSelectedItem();
 
                 if (selectedItem != null) {
-                    var itemData = inventorySubScene.playerInventory.getData((Entity) selectedItem).get();
-                    if (itemData.getQuantity() > 1) {
-                        itemData.setQuantity(itemData.getQuantity() - 1);
-                    } else {
-                        playerInventory.remove(selectedItem);
-                    }
+                    var item = inventorySubScene.playerInventory.getData((Entity) selectedItem).get(0).getUserItem();
+                    playerInventory.incrementQuantity(item, -1);
                 }
                 view.getListView().refresh();
             });
@@ -150,8 +145,7 @@ public class InventorySample extends GameApplication {
                 var selectedItem = (Entity) view.getListView().getSelectionModel().getSelectedItem();
 
                 if (selectedItem != null) {
-                    var itemData = inventorySubScene.playerInventory.getData((Entity) selectedItem).get();
-                    itemData.setQuantity(0);
+                    var itemData = inventorySubScene.playerInventory.getData((Entity) selectedItem).get(0).getUserItem();
                     playerInventory.remove(selectedItem);
                 }
                 view.getListView().refresh();
