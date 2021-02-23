@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.entity
 
 import org.hamcrest.CoreMatchers.`is`
@@ -95,6 +95,8 @@ class EntityGroupTest {
         world.addEntities(e1, e3)
 
         var count = 0
+
+        group = world.getGroup(EntityType.T1, EntityType.T2)
 
         group.forEach {
             assertThat(it, `is`(e1))
