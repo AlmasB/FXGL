@@ -19,6 +19,7 @@ import javafx.scene.Node
  * Represents an inventory (bag) of user-defined items.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * @author Adam Bocco (adam.bocco@gmail.com)
  */
 class Inventory<T>(var capacity: Int) {
 
