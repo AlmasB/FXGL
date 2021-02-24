@@ -586,7 +586,7 @@ class ReadOnlyGameSettings internal constructor(
     /**
      * where to look for latest stable project POM
      */
-    val urlPOM = "https://raw.githubusercontent.com/AlmasB/FXGL/master/README.md"
+    val urlPOM = "https://raw.githubusercontent.com/AlmasB/FXGL/release/README.md"
 
     /**
      * project GitHub repo
