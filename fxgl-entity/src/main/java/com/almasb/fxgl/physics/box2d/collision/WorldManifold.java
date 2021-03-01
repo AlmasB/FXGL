@@ -7,7 +7,6 @@ package com.almasb.fxgl.physics.box2d.collision;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 
@@ -61,7 +60,7 @@ public final class WorldManifold {
                 pointB.x = (xfB.q.c * mp0p.x - xfB.q.s * mp0p.y) + xfB.p.x;
                 pointB.y = (xfB.q.s * mp0p.x + xfB.q.c * mp0p.y) + xfB.p.y;
 
-                if (JBoxUtils.distanceSquared(pointA, pointB) > JBoxSettings.EPSILON * JBoxSettings.EPSILON) {
+                if (pointA.distanceSquared(pointB) > JBoxSettings.EPSILON * JBoxSettings.EPSILON) {
                     normal.x = pointB.x - pointA.x;
                     normal.y = pointB.y - pointA.y;
                     normal.getLengthAndNormalize();

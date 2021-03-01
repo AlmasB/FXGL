@@ -83,6 +83,8 @@ internal class LoopRunner(
         log.debug("Pausing loop")
 
         impl.pause()
+
+        lastFPSUpdateNanos = 0L
     }
 
     fun stop() {
@@ -94,6 +96,7 @@ internal class LoopRunner(
     private fun frame(now: Long) {
         if (lastFPSUpdateNanos == 0L) {
             lastFPSUpdateNanos = now
+            fpsBuffer2sec = 0
         }
 
         cpuNanoTime = measureNanoTime {

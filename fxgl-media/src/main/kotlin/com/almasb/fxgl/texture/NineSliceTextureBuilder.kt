@@ -6,9 +6,9 @@
 
 package com.almasb.fxgl.texture
 
-import javafx.geometry.HorizontalDirection
+import javafx.geometry.HorizontalDirection.*
 import javafx.geometry.Rectangle2D
-import javafx.geometry.VerticalDirection
+import javafx.geometry.VerticalDirection.*
 import javafx.scene.image.Image
 
 /**
@@ -82,28 +82,22 @@ class NineSliceTextureBuilder(val texture: Texture) {
 
         check(w > 0 && h > 0) { "The entered dimension are too small to build the texture." }
 
-        val adjustedTop = adjustTextureHorizontally(top, w)
+        val newTop = adjustHorizontally(top, w)
+        val row0 = topLeft.superTexture(newTop, RIGHT).superTexture(topRight, RIGHT)
 
-        val row0 = topLeft.superTexture(adjustedTop, HorizontalDirection.RIGHT).superTexture(topRight, HorizontalDirection.RIGHT)
+        val adjustedCenterHorizontally = adjustHorizontally(center, w)
+        val adjustedCenterBoth = adjustVertically(adjustedCenterHorizontally, h)
+        val newLeft = adjustVertically(left, h)
+        val newRight = adjustVertically(right, h)
+        val row1 = newLeft.superTexture(adjustedCenterBoth, RIGHT).superTexture(newRight, RIGHT)
 
-        val adjustedCenterHorizontally: Texture = adjustTextureHorizontally(center, w)
+        val newBot = adjustHorizontally(bot, w)
+        val row2 = botLeft.superTexture(newBot, RIGHT).superTexture(botRight, RIGHT)
 
-        val adjustedCenterBoth= adjustTextureVertically(adjustedCenterHorizontally, h)
-
-        val newLeft = adjustTextureVertically(left, h)
-
-        val newRight = adjustTextureVertically(right, h)
-
-        val row1 = newLeft.superTexture(adjustedCenterBoth, HorizontalDirection.RIGHT).superTexture(newRight, HorizontalDirection.RIGHT)
-
-        val newBot = adjustTextureHorizontally(bot, w)
-
-        val row2 = botLeft.superTexture(newBot, HorizontalDirection.RIGHT).superTexture(botRight, HorizontalDirection.RIGHT)
-
-        return row0.superTexture(row1, VerticalDirection.DOWN).superTexture(row2, VerticalDirection.DOWN)
+        return row0.superTexture(row1, DOWN).superTexture(row2, DOWN)
     }
 
-    private fun adjustTextureVertically(base: Texture, height: Double): Texture {
+    private fun adjustVertically(base: Texture, height: Double): Texture {
         var adjusted = base
 
         if (base.height > height) {
@@ -113,17 +107,17 @@ class NineSliceTextureBuilder(val texture: Texture) {
             val rem = height.toInt() % base.height.toInt()
 
             for (i in 1 until times) {
-                adjusted = adjusted.superTexture(base, VerticalDirection.DOWN)
+                adjusted = adjusted.superTexture(base, DOWN)
             }
 
             if (rem > 0) {
-                adjusted = adjusted.superTexture(base.subTexture(Rectangle2D(0.0, 0.0, base.width, rem.toDouble())), VerticalDirection.DOWN)
+                adjusted = adjusted.superTexture(base.subTexture(Rectangle2D(0.0, 0.0, base.width, rem.toDouble())), DOWN)
             }
         }
         return adjusted
     }
 
-    private fun adjustTextureHorizontally(base: Texture, width: Double): Texture {
+    private fun adjustHorizontally(base: Texture, width: Double): Texture {
         var adjusted = base
 
         if (base.width > width) {
@@ -133,11 +127,11 @@ class NineSliceTextureBuilder(val texture: Texture) {
             val rem = width.toInt() % base.width.toInt()
 
             for (i in 1 until times) {
-                adjusted = adjusted.superTexture(base, HorizontalDirection.RIGHT)
+                adjusted = adjusted.superTexture(base, RIGHT)
             }
 
             if (rem > 0) {
-                adjusted = adjusted.superTexture(base.subTexture(Rectangle2D(0.0, 0.0, rem.toDouble(), base.height)), HorizontalDirection.RIGHT)
+                adjusted = adjusted.superTexture(base.subTexture(Rectangle2D(0.0, 0.0, rem.toDouble(), base.height)), RIGHT)
             }
         }
         return adjusted

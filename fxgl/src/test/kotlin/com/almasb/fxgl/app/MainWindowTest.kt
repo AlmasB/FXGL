@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.app.scene.FXGLScene
@@ -12,6 +12,9 @@ import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.test.RunWithFX
+import javafx.event.Event
+import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.scene.Parent
 import javafx.scene.image.Image
 import javafx.stage.Stage
@@ -34,7 +37,7 @@ class MainWindowTest {
 
     companion object {
 
-        private lateinit var window: MainWindow
+        private lateinit var window: PrimaryStageWindow
         private lateinit var stage: Stage
         private lateinit var scene: FXGLScene
 
@@ -52,7 +55,7 @@ class MainWindowTest {
                 stage = Stage()
                 scene = object : FXGLScene(WIDTH, HEIGHT) {}
 
-                window = MainWindow(stage, scene, settings.toReadOnly())
+                window = PrimaryStageWindow(stage, scene, settings.toReadOnly())
             }.await()
         }
     }
@@ -67,6 +70,7 @@ class MainWindowTest {
             `Add icon`()
             `Add CSS`()
             `Show Window`()
+            `Fire JavaFX event`()
             `Set scene`()
             `Take screenshot`()
             `Push and pop subscene`()
@@ -106,6 +110,57 @@ class MainWindowTest {
         assertTrue(stage.height >= HEIGHT, "Window is not at least $HEIGHT high")
 
         assertThat(stage.scene.root, `is`<Parent>(scene.root))
+    }
+
+    /**
+     * Integration test for MainWindow-JavaFX scene-FXGLScene-Input event interactions.
+     */
+    fun `Fire JavaFX event`() {
+        var count = 0
+
+        // test a single handler
+        val handler = EventHandler<Event> { count++ }
+
+        scene.input.addEventHandler(EventType.ROOT, handler)
+
+        window.stage.scene.root.fireEvent(Event(EventType.ROOT))
+
+        assertThat(count, `is`(1))
+
+        // remove the handler
+        scene.input.removeEventHandler(EventType.ROOT, handler)
+
+        window.stage.scene.root.fireEvent(Event(EventType.ROOT))
+
+        assertThat(count, `is`(1))
+
+        // test filters
+        val filter = EventHandler<Event> { count -= 3 }
+
+        scene.input.addEventFilter(EventType.ROOT, filter)
+        scene.input.addEventHandler(EventType.ROOT, handler)
+
+        window.stage.scene.root.fireEvent(Event(EventType.ROOT))
+
+        // count -= 3 and then count++
+        assertThat(count, `is`(-1))
+
+        // now add a consuming filter
+        scene.input.removeEventFilter(EventType.ROOT, filter)
+
+        val filterConsume = EventHandler<Event> {
+            count -= 5
+            it.consume()
+
+            println(it.isConsumed)
+        }
+
+        scene.input.addEventFilter(EventType.ROOT, filterConsume)
+
+        window.stage.scene.root.fireEvent(Event(EventType.ROOT))
+
+        // count -= 5 and then consume, event never reaches handler
+        assertThat(count, `is`(-6))
     }
 
     fun `Set scene`() {

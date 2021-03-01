@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.core.math
 
 import javafx.geometry.Point2D
@@ -138,6 +138,7 @@ class Vec2Test {
     fun `Distance`() {
         val v = Vec2(3f, -4f)
         assertThat(v.distance(Vec2(5f, 4f)), closeTo(8.246, 0.01))
+        assertThat(v.distanceF(Vec2(5f, 4f)) * 1.0, closeTo(8.246, 0.01))
     }
 
     @Test
@@ -145,6 +146,7 @@ class Vec2Test {
         val v1 = Vec2(4f, 3f)
 
         assertThat(v1.distanceSquared(0.0, 0.0), `is`(25.0))
+        assertThat(v1.distanceSquared(Vec2()), `is`(25.0f))
     }
 
     @Test

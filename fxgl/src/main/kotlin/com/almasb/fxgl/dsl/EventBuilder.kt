@@ -10,8 +10,13 @@ import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.time.TimerAction
 import javafx.event.Event
+import javafx.event.EventType
 import javafx.util.Duration
 import java.util.function.Supplier
+
+private val FUNCTION_CALL = EventType<FunctionCallEvent>(EventType.ROOT, "FUNCTION_CALL")
+
+private object FunctionCallEvent : Event(FUNCTION_CALL)
 
 class EventBuilder {
 
@@ -33,11 +38,6 @@ class EventBuilder {
     /**
      * When to fire the event.
      */
-    fun `when`(condition: () -> Boolean) = `when`(Supplier { condition() })
-
-    /**
-     * When to fire the event.
-     */
     fun `when`(condition: Supplier<Boolean>) = this.also {
         this.condition = condition
     }
@@ -51,9 +51,12 @@ class EventBuilder {
         this.limit = times
     }
 
-    fun thenFire(event: Event) = thenFire(Supplier { event })
+    fun thenRun(action: Runnable) = thenFire {
+        action.run()
+        FunctionCallEvent
+    }
 
-    fun thenFire(eventSupplier: () -> Event) = thenFire(Supplier { eventSupplier() })
+    fun thenFire(event: Event) = thenFire(Supplier { event })
 
     fun thenFire(eventSupplier: Supplier<Event>) = this.also {
         this.eventSupplier = eventSupplier
@@ -83,3 +86,4 @@ class EventBuilder {
         return timerAction!!
     }
 }
+

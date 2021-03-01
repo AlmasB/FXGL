@@ -20,7 +20,7 @@ import javafx.scene.paint.Color
 import javafx.util.Duration
 
 /**
- * Represents a 2D image.
+ * Represents a 2D image view.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @apiNote This is essentially a wrapper around [javafx.scene.image.ImageView]
@@ -43,8 +43,7 @@ open class Texture : ImageView, View {
         get() = image.height
 
     /**
-     * Converts the texture to animated texture using
-     * the whole texture as a single animation channel.
+     * Converts the texture to animated texture using the whole texture as a single animation channel.
      * Must be in 1 row.
      *
      * @param frames   number of frames in sprite sheet
@@ -168,6 +167,10 @@ open class Texture : ImageView, View {
         return Texture(image)
     }
 
+    /**
+     * Convert the image of this texture into pixels.
+     * The pixels are not cached and will be recreated on each call to this function.
+     */
     fun pixels() = toPixels(image)
 
     /**
@@ -259,6 +262,9 @@ open class Texture : ImageView, View {
      */
     fun transparentColor(color: Color) = replaceColor(color, Color.TRANSPARENT)
 
+    /**
+     * Blend this texture on top of [node] using [blendMode].
+     */
     fun blend(node: Node, blendMode: BlendMode) = blend(toImage(node), blendMode)
 
     /**
@@ -294,9 +300,7 @@ open class Texture : ImageView, View {
     }
 
     /**
-     * Set texture data by copying it from other texture.
-     *
-     * @param other the texture to copy from
+     * Set texture data by copying it from [other].
      */
     fun set(other: Texture) {
         fitWidth = other.fitWidth
@@ -305,6 +309,7 @@ open class Texture : ImageView, View {
     }
 
     override fun onUpdate(tpf: Double) {
+        // no-op
     }
 
     override fun getNode(): Node {

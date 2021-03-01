@@ -16,19 +16,20 @@ import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
 import javafx.beans.binding.Bindings
-import javafx.beans.property.DoubleProperty
-import javafx.beans.property.ReadOnlyBooleanProperty
-import javafx.beans.property.ReadOnlyObjectWrapper
-import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.*
 import javafx.event.Event
 import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.scene.ImageCursor
 import javafx.scene.Parent
 import javafx.scene.image.Image
+import javafx.scene.image.WritableImage
 import javafx.scene.input.KeyCombination
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.Pane
+import javafx.scene.layout.Region
+import javafx.scene.shape.Rectangle
 import javafx.stage.Screen
 import javafx.stage.Stage
 
@@ -37,23 +38,15 @@ import javafx.stage.Stage
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class MainWindow(
-
-        /**
-         * Primary stage.
-         */
-        val stage: Stage,
-
+internal sealed class MainWindow(
         /**
          * The starting scene which is used when the window is created.
          */
         scene: FXGLScene,
 
-        private val settings: ReadOnlyGameSettings) {
+        protected val settings: ReadOnlyGameSettings) {
 
-    private val log = Logger.get(javaClass)
-
-    private val fxScene: javafx.scene.Scene
+    protected val log = Logger.get(javaClass)
 
     val currentFXGLSceneProperty = ReadOnlyObjectWrapper<FXGLScene>(scene)
     val currentSceneProperty = ReadOnlyObjectWrapper<Scene>(scene)
@@ -67,19 +60,188 @@ internal class MainWindow(
     var onClose: (() -> Unit)? = null
     var defaultCursor: ImageCursor? = null
 
-    private val scenes = arrayListOf<Scene>()
+    protected val scenes = arrayListOf<Scene>()
 
-    private val scaledWidth: DoubleProperty = SimpleDoubleProperty()
-    private val scaledHeight: DoubleProperty = SimpleDoubleProperty()
-    private val scaleRatioX: DoubleProperty = SimpleDoubleProperty()
-    private val scaleRatioY: DoubleProperty = SimpleDoubleProperty()
+    protected val scaleRatioX: DoubleProperty = SimpleDoubleProperty()
+    protected val scaleRatioY: DoubleProperty = SimpleDoubleProperty()
 
-    private val stateMachine = StateMachine(scene)
+    protected val stateMachine = StateMachine(scene)
 
     /**
      * Input that is active in any scene.
      */
     internal val input = Input()
+
+    protected fun setInitialScene(scene: FXGLScene) {
+        registerScene(scene)
+
+        currentFXGLSceneProperty.value = scene
+        scene.activeProperty().set(true)
+        currentSceneProperty.value = scene
+
+        log.debug("Set initial scene to $scene")
+    }
+
+    abstract fun iconifiedProperty(): ReadOnlyBooleanProperty
+
+    /**
+     * Add desktop taskbar / window icon.
+     * Multiple images of different sizes can be added: 16x16, 32x32
+     * and most suitable will be chosen.
+     * Can only be called before [show].
+     */
+    abstract fun addIcons(vararg images: Image)
+
+    abstract fun addCSS(vararg cssList: CSS)
+
+    fun isInHierarchy(scene: Scene): Boolean = stateMachine.isInHierarchy(scene)
+
+    fun update(tpf: Double) {
+        input.update(tpf)
+        stateMachine.runOnActiveStates { it.update(tpf) }
+    }
+
+    /**
+     * Set current FXGL scene.
+     * The scene will be immediately displayed.
+     *
+     * @param scene the scene
+     */
+    fun setScene(scene: FXGLScene) {
+        popAllSubScenes()
+
+        if (scene !in scenes) {
+            registerScene(scene)
+        }
+
+        val prevScene = stateMachine.parentState
+
+        stateMachine.changeState(scene)
+
+        if (stateMachine.parentState === prevScene) {
+            log.warning("Cannot set to $scene. Probably because subscenes are present.")
+            return
+        }
+
+        prevScene.input.clearAll()
+
+        currentFXGLSceneProperty.value.activeProperty().set(false)
+
+        currentFXGLSceneProperty.value = scene
+        setRoot(scene.root)
+        scene.activeProperty().set(true)
+
+        currentSceneProperty.value = scene
+
+        log.debug("$prevScene -> $scene")
+    }
+
+    protected abstract fun setRoot(root: Pane)
+
+    fun pushState(newScene: SubScene) {
+        log.debug("Push state: $newScene")
+
+        val prevScene = stateMachine.currentState
+
+        stateMachine.changeState(newScene)
+
+        prevScene.input.clearAll()
+
+        // push view to content root, which is correctly offset, scaled etc.
+        currentFXGLScene.contentRoot.children.add(newScene.root)
+
+        currentSceneProperty.value = stateMachine.currentState
+
+        log.debug("$prevScene -> ${stateMachine.currentState}")
+    }
+
+    fun popState() {
+        val prevScene = stateMachine.currentState
+
+        if (!stateMachine.popSubState()) {
+            log.warning("Cannot pop substate. Probably because substates are empty!")
+            return
+        }
+
+        log.debug("Pop state: $prevScene")
+
+        prevScene.input.clearAll()
+
+        // pop view
+        currentFXGLScene.contentRoot.children.remove(prevScene.root)
+
+        currentSceneProperty.value = stateMachine.currentState
+
+        log.debug("${stateMachine.currentState} <- $prevScene")
+    }
+
+    fun popAllSubScenes() {
+        while (currentScene !== currentFXGLScene) {
+            popState()
+        }
+    }
+
+    abstract fun show()
+
+    /**
+     * Register an FXGL scene to be managed by display settings.
+     *
+     * @param scene the scene
+     */
+    protected abstract fun registerScene(scene: Scene)
+
+    protected fun addKeyHandler(fxScene: javafx.scene.Scene, handler: (KeyEvent) -> Unit) {
+        fxScene.addEventHandler(KeyEvent.ANY, handler)
+    }
+
+    protected fun addMouseHandler(fxScene: javafx.scene.Scene, handler: (MouseEventData) -> Unit) {
+        fxScene.addEventHandler(MouseEvent.ANY) {
+            val data = MouseEventData(
+                    it,
+                    Point2D(currentFXGLScene.contentRoot.translateX, currentFXGLScene.contentRoot.translateY),
+                    Point2D(currentFXGLScene.viewport.x, currentFXGLScene.viewport.y),
+                    currentFXGLScene.viewport.getZoom(),
+                    scaleRatioX.value,
+                    scaleRatioY.value
+            )
+
+            handler(data)
+        }
+    }
+
+    protected fun addGlobalHandler(fxScene: javafx.scene.Scene, filter: (Event) -> Unit, handler: (Event) -> Unit) {
+        fxScene.addEventFilter(EventType.ROOT) {
+            filter(it)
+        }
+
+        fxScene.addEventHandler(EventType.ROOT) {
+            handler(it)
+        }
+    }
+
+    abstract fun takeScreenshot(): Image
+
+    fun showFatalError(error: Throwable, action: Runnable) {
+        pushState(ErrorSubScene(error, action))
+    }
+
+    abstract fun close()
+}
+
+internal class PrimaryStageWindow(
+        /**
+         * Primary stage.
+         */
+        val stage: Stage,
+        scene: FXGLScene,
+        settings: ReadOnlyGameSettings
+
+) : MainWindow(scene, settings) {
+
+    private val fxScene: javafx.scene.Scene
+
+    private val scaledWidth: DoubleProperty = SimpleDoubleProperty()
+    private val scaledHeight: DoubleProperty = SimpleDoubleProperty()
 
     init {
         fxScene = createFXScene(scene.root)
@@ -88,21 +250,27 @@ internal class MainWindow(
 
         initStage()
 
-        addKeyHandler { e ->
+        addKeyHandler(fxScene) { e ->
             input.onKeyEvent(e)
             stateMachine.runOnActiveStates { it.input.onKeyEvent(e) }
         }
 
-        addMouseHandler { e ->
+        addMouseHandler(fxScene) { e ->
             input.onMouseEvent(e)
             stateMachine.runOnActiveStates { it.input.onMouseEvent(e) }
         }
 
         // reroute any events to current state input
-        addGlobalHandler { e ->
-            input.fireEvent(e)
-            stateMachine.runOnActiveStates { it.input.fireEvent(e) }
-        }
+        addGlobalHandler(fxScene,
+                { e ->
+                    input.fireEventViaFilters(e)
+                    stateMachine.runOnActiveStates { it.input.fireEventViaFilters(e) }
+                },
+                { e ->
+                    input.fireEventViaHandlers(e)
+                    stateMachine.runOnActiveStates { it.input.fireEventViaHandlers(e) }
+                }
+        )
     }
 
     /**
@@ -151,34 +319,6 @@ internal class MainWindow(
         return scene
     }
 
-    private fun setInitialScene(scene: FXGLScene) {
-        registerScene(scene)
-
-        currentFXGLSceneProperty.value = scene
-        scene.activeProperty().set(true)
-        currentSceneProperty.value = scene
-
-        log.debug("Set initial scene to $scene")
-    }
-
-    fun iconifiedProperty(): ReadOnlyBooleanProperty = stage.iconifiedProperty()
-
-    /**
-     * Add desktop taskbar / window icon.
-     * Multiple images of different sizes can be added: 16x16, 32x32
-     * and most suitable will be chosen.
-     * Can only be called before [show].
-     */
-    fun addIcons(vararg images: Image) {
-        if (!settings.isExperimentalNative) {
-            stage.icons += images
-        }
-    }
-
-    fun addCSS(vararg cssList: CSS) {
-        fxScene.stylesheets += cssList.map { it.externalForm }
-    }
-
     /**
      * Configure main stage based on user settings.
      */
@@ -214,95 +354,10 @@ internal class MainWindow(
         }
     }
 
-    fun isInHierarchy(scene: Scene): Boolean = stateMachine.isInHierarchy(scene)
-
-    fun update(tpf: Double) {
-        input.update(tpf)
-        stateMachine.runOnActiveStates { it.update(tpf) }
-    }
-
-    /**
-     * Set current FXGL scene.
-     * The scene will be immediately displayed.
-     *
-     * @param scene the scene
-     */
-    fun setScene(scene: FXGLScene) {
-        popAllSubScenes()
-
-        if (scene !in scenes) {
-            registerScene(scene)
-        }
-
-        val prevScene = stateMachine.parentState
-
-        stateMachine.changeState(scene)
-
-        if (stateMachine.parentState === prevScene) {
-            log.warning("Cannot set to $scene. Probably because subscenes are present.")
-            return
-        }
-
-        prevScene.input.clearAll()
-
-        currentFXGLSceneProperty.value.activeProperty().set(false)
-
-        currentFXGLSceneProperty.value = scene
-        fxScene.root = scene.root
-        scene.activeProperty().set(true)
-
-        currentSceneProperty.value = scene
-
-        log.debug("$prevScene -> $scene")
-    }
-
-    fun pushState(newScene: SubScene) {
-        log.debug("Push state: $newScene")
-
-        val prevScene = stateMachine.currentState
-
-        stateMachine.changeState(newScene)
-
-        prevScene.input.clearAll()
-
-        // push view to content root, which is correctly offset, scaled etc.
-        currentFXGLScene.contentRoot.children.add(newScene.root)
-
-        currentSceneProperty.value = stateMachine.currentState
-
-        log.debug("$prevScene -> ${stateMachine.currentState}")
-    }
-
-    fun popState() {
-        val prevScene = stateMachine.currentState
-
-        if (!stateMachine.popSubState()) {
-            log.warning("Cannot pop substate. Probably because substates are empty!")
-            return
-        }
-
-        log.debug("Pop state: $prevScene")
-
-        prevScene.input.clearAll()
-
-        // pop view
-        currentFXGLScene.contentRoot.children.remove(prevScene.root)
-
-        currentSceneProperty.value = stateMachine.currentState
-
-        log.debug("${stateMachine.currentState} <- $prevScene")
-    }
-
-    fun popAllSubScenes() {
-        while (currentScene !== currentFXGLScene) {
-            popState()
-        }
-    }
-
     private var windowBorderWidth = 0.0
     private var windowBorderHeight = 0.0
 
-    fun show() {
+    override fun show() {
         log.debug("Opening main window")
 
         stage.show()
@@ -358,54 +413,29 @@ internal class MainWindow(
         }
     }
 
-    /**
-     * Register an FXGL scene to be managed by display settings.
-     *
-     * @param scene the scene
-     */
-    private fun registerScene(scene: Scene) {
-        scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
+    override fun close() {
+        log.debug("Closing main window")
 
-        if (!settings.isExperimentalNative
-                && settings.isDesktop
-                && scene is FXGLScene
-                && scene.root.cursor == null) {
-            defaultCursor?.let {
-                scene.setCursor(it.image, Point2D(it.hotspotX, it.hotspotY))
-            }
-        }
-
-        scenes.add(scene)
+        stage.close()
     }
 
-    private fun addKeyHandler(handler: (KeyEvent) -> Unit) {
-        fxScene.addEventHandler(KeyEvent.ANY, handler)
-    }
-
-    private fun addMouseHandler(handler: (MouseEventData) -> Unit) {
-        fxScene.addEventHandler(MouseEvent.ANY) {
-            val data = MouseEventData(
-                    it,
-                    Point2D(currentFXGLScene.contentRoot.translateX, currentFXGLScene.contentRoot.translateY),
-                    Point2D(currentFXGLScene.viewport.x, currentFXGLScene.viewport.y),
-                    currentFXGLScene.viewport.getZoom(),
-                    scaleRatioX.value,
-                    scaleRatioY.value
-            )
-
-            handler(data)
+    override fun addIcons(vararg images: Image) {
+        if (!settings.isExperimentalNative) {
+            stage.icons += images
         }
     }
 
-    private fun addGlobalHandler(handler: (Event) -> Unit) {
-        fxScene.addEventFilter(EventType.ROOT) {
-            handler(it.copyFor(null, null))
-        }
-
-        fxScene.addEventHandler(EventType.ROOT) {
-            handler(it.copyFor(null, null))
-        }
+    override fun addCSS(vararg cssList: CSS) {
+        fxScene.stylesheets += cssList.map { it.externalForm }
     }
+
+    override fun setRoot(root: Pane) {
+        fxScene.root = root
+    }
+
+    override fun iconifiedProperty(): ReadOnlyBooleanProperty = stage.iconifiedProperty()
+
+    override fun takeScreenshot(): Image = fxScene.snapshot(null)
 
     /**
      * Called when the user has resized the main window.
@@ -424,15 +454,113 @@ internal class MainWindow(
                 }
     }
 
-    fun takeScreenshot(): Image = fxScene.snapshot(null)
+    override fun registerScene(scene: Scene) {
+        scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
 
-    fun showFatalError(error: Throwable, action: Runnable) {
-        pushState(ErrorSubScene(error, action))
+        if (!settings.isExperimentalNative
+                && settings.isDesktop
+                && scene is FXGLScene
+                && scene.root.cursor == null) {
+            defaultCursor?.let {
+                scene.setCursor(it.image, Point2D(it.hotspotX, it.hotspotY))
+            }
+        }
+
+        scenes.add(scene)
+    }
+}
+
+internal class EmbeddedPaneWindow(
+
+        val fxglPane: FXGLPane,
+        scene: FXGLScene,
+        settings: ReadOnlyGameSettings
+
+) : MainWindow(scene, settings) {
+
+    init {
+        scaleRatioX.value = 1.0
+        scaleRatioY.value = 1.0
+
+        // this clips the max area (ensures max size)
+        // setRoot(Rect) ensures min size
+        fxglPane.clip = Rectangle(settings.width.toDouble(), settings.height.toDouble())
+
+        setInitialScene(scene)
+
+        fxglPane.sceneProperty().addListener { _, _, newScene ->
+            // TODO: remove handlers from prev scene
+
+            if (newScene != null) {
+                addKeyHandler(newScene) { e ->
+                    input.onKeyEvent(e)
+                    stateMachine.runOnActiveStates { it.input.onKeyEvent(e) }
+                }
+
+                addMouseHandler(newScene) { e ->
+                    input.onMouseEvent(e)
+                    stateMachine.runOnActiveStates { it.input.onMouseEvent(e) }
+                }
+
+                // reroute any events to current state input
+                addGlobalHandler(newScene,
+                        { e ->
+                            input.fireEventViaFilters(e)
+                            stateMachine.runOnActiveStates { it.input.fireEventViaFilters(e) }
+                        },
+                        { e ->
+                            input.fireEventViaHandlers(e)
+                            stateMachine.runOnActiveStates { it.input.fireEventViaHandlers(e) }
+                        }
+                )
+            }
+        }
     }
 
-    fun close() {
-        log.debug("Closing main window")
-
-        stage.close()
+    override fun iconifiedProperty(): ReadOnlyBooleanProperty {
+        return ReadOnlyBooleanWrapper().readOnlyProperty
     }
+
+    override fun addIcons(vararg images: Image) {
+    }
+
+    override fun addCSS(vararg cssList: CSS) {
+        fxglPane.stylesheets += cssList.map { it.externalForm }
+    }
+
+    override fun setRoot(root: Pane) {
+        fxglPane.allChildren.setAll(
+                Rectangle(settings.width.toDouble(), settings.height.toDouble()),
+                root
+        )
+    }
+
+    override fun show() {
+    }
+
+    override fun registerScene(scene: Scene) {
+        if (!settings.isExperimentalNative
+                && settings.isDesktop
+                && scene is FXGLScene
+                && scene.root.cursor == null) {
+            defaultCursor?.let {
+                scene.setCursor(it.image, Point2D(it.hotspotX, it.hotspotY))
+            }
+        }
+
+        scenes.add(scene)
+    }
+
+    override fun takeScreenshot(): Image {
+        return WritableImage(1, 1)
+    }
+
+    override fun close() {
+    }
+}
+
+class FXGLPane : Region() {
+
+    val allChildren
+        get() = children
 }

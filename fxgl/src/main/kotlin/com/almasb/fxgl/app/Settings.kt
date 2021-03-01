@@ -33,6 +33,7 @@ import com.almasb.fxgl.net.NetService
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.notification.view.XboxNotificationView
+import com.almasb.fxgl.physics.CollisionDetectionStrategy
 import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.ui.FXGLDialogFactoryServiceProvider
 import com.almasb.fxgl.ui.FXGLUIFactoryServiceProvider
@@ -232,6 +233,8 @@ class GameSettings(
 
         var pixelsPerMeter: Double = 50.0,
 
+        var collisionDetectionStrategy: CollisionDetectionStrategy = CollisionDetectionStrategy.BRUTE_FORCE,
+
         /**
          * Set how many real seconds are in 24 game hours, default = 60.
          */
@@ -271,14 +274,15 @@ class GameSettings(
 
         var engineServices: MutableList<Class<out EngineService>> = arrayListOf(
                 // this is the order in which services will be initialized
-                // by design, the order of services should not matter
+                // by design, the order of services should not matter,
+                // however some services can depend on others, so no-dep ones should come first
+                FXGLAssetLoaderService::class.java,
                 FXGLApplication.GameApplicationService::class.java,
                 FXGLDialogService::class.java,
                 IOTaskExecutorService::class.java,
                 EventBusService::class.java,
                 FileSystemService::class.java,
                 LocalizationService::class.java,
-                FXGLAssetLoaderService::class.java,
                 SystemBundleService::class.java,
                 SaveLoadService::class.java,
                 FXGLUIFactoryServiceProvider::class.java,
@@ -328,7 +332,7 @@ class GameSettings(
         width = (height * ratio).roundToInt()
     }
 
-    fun toReadOnly(): ReadOnlyGameSettings {
+    fun toReadOnly(userAppClass: Class<*> = GameApplication::class.java): ReadOnlyGameSettings {
         return ReadOnlyGameSettings(
                 runtimeInfo,
                 title,
@@ -367,9 +371,11 @@ class GameSettings(
                 soundMenuPress,
                 soundMenuSelect,
                 pixelsPerMeter,
+                collisionDetectionStrategy,
                 secondsIn24h,
                 randomSeed,
                 ticksPerSecond,
+                userAppClass,
                 defaultLanguage,
                 isExperimentalTiledLargeMap,
                 isExperimentalNative,
@@ -533,6 +539,8 @@ class ReadOnlyGameSettings internal constructor(
 
         val pixelsPerMeter: Double,
 
+        val collisionDetectionStrategy: CollisionDetectionStrategy,
+
         /**
          * Set how many real seconds are in 24 game hours, default = 60.
          */
@@ -541,6 +549,8 @@ class ReadOnlyGameSettings internal constructor(
         val randomSeed: Long,
 
         val ticksPerSecond: Int,
+
+        val userAppClass: Class<*>,
 
         private val defaultLanguage: Language,
 
@@ -576,7 +586,7 @@ class ReadOnlyGameSettings internal constructor(
     /**
      * where to look for latest stable project POM
      */
-    val urlPOM = "https://raw.githubusercontent.com/AlmasB/FXGL/master/README.md"
+    val urlPOM = "https://raw.githubusercontent.com/AlmasB/FXGL/release/README.md"
 
     /**
      * project GitHub repo

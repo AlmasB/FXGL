@@ -6,12 +6,10 @@
 
 package com.almasb.fxgl.audio
 
-import com.almasb.fxgl.audio.impl.DesktopAndMobileAudioService
+import com.almasb.fxgl.audio.impl.DesktopAndMobileAudioLoader
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
-import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.collection.UnorderedArray
-import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
 import javafx.beans.property.DoubleProperty
 import java.net.URL
@@ -35,7 +33,7 @@ class AudioPlayer : EngineService() {
     @Inject("globalSoundVolumeProperty")
     private lateinit var soundVolume: DoubleProperty
 
-    private val loader = DesktopAndMobileAudioService()
+    private val loader = DesktopAndMobileAudioLoader()
 
     override fun onMainLoopStarting() {
         musicVolume.addListener { _, _, newVolume ->
@@ -45,18 +43,6 @@ class AudioPlayer : EngineService() {
         soundVolume.addListener { _, _, newVolume ->
             activeSounds.forEach { it.audio.setVolume(newVolume.toDouble()) }
         }
-    }
-
-    override fun onGameReady(vars: PropertyMap) {
-    }
-
-    override fun onExit() {
-    }
-
-    override fun write(bundle: Bundle) {
-    }
-
-    override fun read(bundle: Bundle) {
     }
 
     override fun onUpdate(tpf: Double) {
@@ -110,9 +96,9 @@ class AudioPlayer : EngineService() {
     }
 
     /**
-     * Pauses given music if it was previously started with [.playSound].
-     * It can then be restarted by [.resumeMusic].
-
+     * Pauses given music if it was previously started with [playMusic].
+     * It can then be restarted by [resumeMusic].
+     *
      * @param music music to pause
      */
     fun pauseMusic(music: Music) {
@@ -122,7 +108,7 @@ class AudioPlayer : EngineService() {
     }
 
     /**
-     * Resumes previously paused [.pauseMusic] music.
+     * Resumes previously paused with [pauseMusic] music.
      *
      * @param music music to resume
      */
@@ -134,9 +120,9 @@ class AudioPlayer : EngineService() {
 
     /**
      * Stops currently playing music. It cannot be restarted
-     * using [.resumeMusic]. The music object needs
-     * to be started again by [.playMusic].
-
+     * using [resumeMusic]. The music object needs
+     * to be started again by [playMusic].
+     *
      * @param music music to stop
      */
     fun stopMusic(music: Music) {
@@ -152,14 +138,14 @@ class AudioPlayer : EngineService() {
 
     /**
      * Pauses all active music if it was currently playing.
-     * Can be restarted by [.resumeMusic] and [.resumeAllMusic]
+     * Can be restarted by [resumeMusic] and [resumeAllMusic].
      */
     fun pauseAllMusic() {
         activeMusic.forEach { pauseMusic(it) }
     }
 
     /**
-     * Resumes all active music
+     * Resumes all active music.
      */
     fun resumeAllMusic() {
         activeMusic.forEach { resumeMusic(it) }
@@ -173,7 +159,7 @@ class AudioPlayer : EngineService() {
     }
 
     /**
-     * Stop all music from playing
+     * Stop all music from playing.
      */
     fun stopAllMusic() {
         activeMusic.forEach { stopMusic(it) }
@@ -181,7 +167,7 @@ class AudioPlayer : EngineService() {
 
     /**
      * Convenience method to stop all sounds and music that are currently playing
-     * Sounds can not be restarted
+     * Sounds can not be restarted.
      */
     fun stopAllSoundsAndMusic() {
         stopAllSounds()

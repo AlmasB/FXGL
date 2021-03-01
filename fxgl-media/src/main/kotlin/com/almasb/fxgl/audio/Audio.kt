@@ -13,10 +13,11 @@ enum class AudioType {
 }
 
 /**
+ * An abstraction around a native audio format.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class Audio(val type: AudioType, val resourceName: String) {
+abstract class Audio(val type: AudioType) {
 
     abstract fun setLooping(looping: Boolean)
 
@@ -34,11 +35,11 @@ abstract class Audio(val type: AudioType, val resourceName: String) {
      * Do NOT call directly.
      * This is called automatically by the service managing this audio.
      */
-    abstract fun dispose()
+    internal abstract fun dispose()
 }
 
 private val audio: Audio by lazy {
-    object : Audio(AudioType.SOUND, "") {
+    object : Audio(AudioType.SOUND) {
         override fun setLooping(looping: Boolean) {}
         override fun setVolume(volume: Double) {}
         override fun setOnFinished(action: Runnable) {}
@@ -71,7 +72,7 @@ class Music(internal val audio: Audio) : Disposable {
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class Sound(internal val audio: Audio): Disposable {
+class Sound(internal val audio: Audio) : Disposable {
 
     internal var isDisposed = false
 

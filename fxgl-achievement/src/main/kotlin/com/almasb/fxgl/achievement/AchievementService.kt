@@ -18,6 +18,7 @@ import java.util.*
 
 /**
  * Responsible for registering and updating achievements.
+ * Achievements can only be registered via Settings, before the engine starts.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -54,7 +55,6 @@ class AchievementService : EngineService() {
 
     /**
      * Registers achievement in the system.
-     * Note: this method can only be called from initAchievements() to function properly.
      *
      * @param a the achievement
      */
@@ -169,21 +169,15 @@ class AchievementService : EngineService() {
         vars.addListener(a.varName, listener)
     }
 
-    override fun onExit() {
-    }
-
-    override fun onUpdate(tpf: Double) {
-    }
-
     override fun write(bundle: Bundle) {
-        achievements.forEach { a -> bundle.put(a.name, a.isAchieved) }
+        achievements.forEach { bundle.put(it.name, it.isAchieved) }
     }
 
     override fun read(bundle: Bundle) {
-        achievements.forEach { a ->
-            val achieved = bundle.get<Boolean>(a.name)
-            if (achieved)
-                a.setAchieved()
+        achievements.forEach {
+            val isAchieved = bundle.get<Boolean>(it.name)
+            if (isAchieved)
+                it.setAchieved()
         }
     }
 }

@@ -9,6 +9,7 @@ JavaFX Game Development Framework
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.almasb/fxgl.svg)]()
 [![Build Status](https://github.com/AlmasB/FXGL/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/AlmasB/FXGL/actions)
 [![codecov](https://codecov.io/gh/AlmasB/FXGL/branch/dev/graph/badge.svg)](https://codecov.io/gh/AlmasB/FXGL)
+[![sponsor](https://img.shields.io/badge/sponsor-%241-brightgreen)](https://github.com/sponsors/AlmasB)
 
 ### Why FXGL?
 
@@ -22,7 +23,7 @@ JavaFX Game Development Framework
 ### Good for:
 
 * Any 2D game (side-scroller / platformer / arcade / RPG)
-* Any business applications with complex UI controls / animations
+* Any business application with complex UI controls / animations
 * Experimental 3D
 * Hobby / academic / commercial projects
 * Teaching / learning / improving game development skills
@@ -48,37 +49,37 @@ public class BasicGameApp extends GameApplication {
 
 ## Getting Started
 
-For a quick dive into code, see standalone [basic examples](https://github.com/AlmasB/FXGL/tree/master/fxgl-samples/src/main/java/basics).
+For a quick dive into code, see standalone [basic examples](https://github.com/AlmasB/FXGL/tree/dev/fxgl-samples/src/main/java/basics).
 Otherwise, see:
 
 * [Showcase Trailer](https://youtu.be/fuDQg7W0v4g)
 * [Wiki & written tutorials](https://github.com/AlmasB/FXGL/wiki)
 * [YouTube tutorials](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
-* [Java 11 modules](https://github.com/AlmasB/FXGL/wiki/FXGL-11-%28Java-11-modules%29)
 * [Sample code demos](fxgl-samples)
-* Full [FXGL games](https://github.com/AlmasB/FXGLGames) (with source)
-* Pre-built [FXGL demos](https://github.com/AlmasB/FXGLGames/tree/master/binaries) (.jar)
+* [FXGL games](https://github.com/AlmasB/FXGLGames) (with source)
 * [Published demos](https://fxgl.itch.io/) on itch.io
 
 ### Maven
 
 * [Maven](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin (Java 11+)
 
-Already have `pom.xml`? Then add: (use `0.5.4` for Java 8-10). **Note:** make sure to set `<release>11</release>` for `maven-compiler-plugin`.
+Make sure to set `<release>11</release>` for `maven-compiler-plugin`.
 
 ```
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>11.13</version>
+    <version>11.14</version>
 </dependency>
 ```
+
+Note: use `0.5.4` for Java 8-10.
 
 ### Gradle
 
 * [Gradle](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin (Java 11+)
 
-Already have `build.gradle`? Then add: (use `0.5.4` for Java 8-10). **Note:** in case you have errors, please see templates for Gradle above.
+Please refer to the template if there are any errors.
 
 ```
 repositories {
@@ -86,7 +87,19 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:11.13'
+    compile 'com.github.almasb:fxgl:11.14'
+}
+```
+
+Note: use `0.5.4` for Java 8-10.
+
+### Modularity
+
+If you wish to develop a modular application, here's a complete example of your `module-info.java`:
+
+```
+open module app.name {
+    requires com.almasb.fxgl.all;
 }
 ```
 
@@ -100,10 +113,12 @@ Download the latest uber jar from [Releases](https://github.com/AlmasB/FXGL/rele
 * University of Nottingham, UK
 * kidOYO, USA
 * Walton High School, USA
+* Conant High School, USA
 * Zealand Institute of Business and Technology, Denmark
 * Federal Institute of Education, Science and Technology of Rio Grande do Sul, Brazil
+* FHNW School of Engineering / Computer Science, Switzerland
 
-If your institution wants to use / is using FXGL, drop me an email to be added to the list.
+If your institution wants to use or is using FXGL, add a note in the [Chat](https://gitter.im/AlmasB/FXGL) to be added to the list.
 
 Community tutorials:
 
@@ -125,7 +140,7 @@ please see the [Contribution Guide](CONTRIBUTING.md) (including non-code).
 FXGL is fully modular, so new contributors do not need to understand the entire codebase, only the module to which the contribution is made.
 Contributions will be reviewed in accordance with the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-You can support the FXGL development / show interest by simply starring the repo or becoming a [sponsor](https://github.com/sponsors/AlmasB).
+You can support the FXGL development or show interest by simply starring the repo or becoming a [sponsor](https://github.com/sponsors/AlmasB).
 
 ### Sponsors
 

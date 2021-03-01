@@ -19,6 +19,9 @@ import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.input.*
 import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.collections.LinkedHashMap
 
 class Input {
@@ -137,7 +140,30 @@ class Input {
     private var currentCapture: InputCapture? = null
     private val captureAppliers = arrayListOf<InputCapture.CaptureApplier>()
 
-    private val eventHandlers = Group()
+    private val eventFilters = HashMap<EventType<out Event>, MutableList<EventHandler<out Event>>>()
+    private val eventHandlers = HashMap<EventType<out Event>, MutableList<EventHandler<out Event>>>()
+
+    /**
+     * Add JavaFX event filter.
+     *
+     * @param eventType type of events to listen
+     * @param eventHandler filter for events
+     */
+    fun <T : Event> addEventFilter(eventType: EventType<T>,
+                                   eventHandler: EventHandler<in T>) {
+        addHandler(eventType, eventHandler, eventFilters)
+    }
+
+    /**
+     * Remove JavaFX event filter.
+     *
+     * @param eventType type of events to listen
+     * @param eventHandler filter for events
+     */
+    fun <T : Event> removeEventFilter(eventType: EventType<T>,
+                                      eventHandler: EventHandler<in T>) {
+        removeHandler(eventType, eventHandler, eventFilters)
+    }
 
     /**
      * Add JavaFX event handler.
@@ -147,7 +173,7 @@ class Input {
      */
     fun <T : Event> addEventHandler(eventType: EventType<T>,
                                     eventHandler: EventHandler<in T>) {
-        eventHandlers.addEventHandler(eventType, eventHandler)
+        addHandler(eventType, eventHandler, eventHandlers)
     }
 
     /**
@@ -158,38 +184,79 @@ class Input {
      */
     fun <T : Event> removeEventHandler(eventType: EventType<T>,
                                        eventHandler: EventHandler<in T>) {
-        eventHandlers.removeEventHandler(eventType, eventHandler)
+        removeHandler(eventType, eventHandler, eventHandlers)
+    }
+
+    private fun <T : Event> addHandler(eventType: EventType<T>,
+                                       eventHandler: EventHandler<in T>,
+                                       map: MutableMap<EventType<*>, MutableList<EventHandler<*>>>) {
+        val handlers = map.getOrDefault(eventType, CopyOnWriteArrayList<EventHandler<*>>())
+        handlers += eventHandler
+
+        map[eventType] = handlers
+    }
+
+    private fun <T : Event> removeHandler(eventType: EventType<T>,
+                                          eventHandler: EventHandler<in T>,
+                                          map: MutableMap<EventType<*>, MutableList<EventHandler<*>>>) {
+        map[eventType]?.let {
+            it.remove(eventHandler)
+
+            // if the list of handlers is empty for [eventType], then remove the mapping
+            if (it.isEmpty())
+                map.remove(eventType)
+        }
     }
 
     /**
-     * Add JavaFX event filter.
-     *
-     * @param eventType type of events to listen
-     * @param eventHandler filter for events
-     */
-    fun <T : Event> addEventFilter(eventType: EventType<T>,
-                                    eventHandler: EventHandler<in T>) {
-        eventHandlers.addEventFilter(eventType, eventHandler)
-    }
-
-    /**
-     * Remove JavaFX event filter.
-     *
-     * @param eventType type of events to listen
-     * @param eventHandler filter for events
-     */
-    fun <T : Event> removeEventFilter(eventType: EventType<T>,
-                                       eventHandler: EventHandler<in T>) {
-        eventHandlers.removeEventFilter(eventType, eventHandler)
-    }
-
-    /**
-     * Fire JavaFX event.
+     * Fire JavaFX event via filters.
      *
      * @param event the JavaFX event
      */
+    fun fireEventViaFilters(event: Event) {
+        fire(event, eventFilters)
+    }
+
+    /**
+     * Fire JavaFX event via handlers.
+     *
+     * @param event the JavaFX event
+     */
+    fun fireEventViaHandlers(event: Event) {
+        fire(event, eventHandlers)
+    }
+
+    private fun fire(event: Event,
+                     map: MutableMap<EventType<*>, MutableList<EventHandler<*>>>) {
+        if (map.isEmpty())
+            return
+
+        var eventType = event.eventType
+
+        do {
+            map[eventType]?.forEach {
+
+                // if event is consumed, there is no point in going further
+                if (event.isConsumed) {
+                    return
+                }
+
+                (it as EventHandler<Event>).handle(event)
+            }
+
+            eventType = eventType.superType
+
+        } while (eventType != null)
+    }
+
+    /**
+     * Fire JavaFX event via handlers.
+     *
+     * @param event the JavaFX event
+     */
+    @Deprecated("Use [fireEventViaHandlers]", ReplaceWith("fireEventViaHandlers(event)"))
     fun fireEvent(event: Event) {
-        eventHandlers.fireEvent(event)
+        fireEventViaHandlers(event)
     }
 
     fun update(tpf: Double) {

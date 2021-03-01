@@ -5,12 +5,16 @@
  */
 package com.almasb.fxgl.physics.box2d.dynamics.contacts;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.collision.Manifold;
 import com.almasb.fxgl.physics.box2d.collision.ManifoldPoint;
 import com.almasb.fxgl.physics.box2d.collision.WorldManifold;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
-import com.almasb.fxgl.physics.box2d.common.*;
+import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
+import com.almasb.fxgl.physics.box2d.common.Mat22;
+import com.almasb.fxgl.physics.box2d.common.Rotation;
+import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
 import com.almasb.fxgl.physics.box2d.dynamics.Fixture;
 import com.almasb.fxgl.physics.box2d.dynamics.TimeStep;
@@ -342,7 +346,7 @@ public final class ContactSolver {
 
                 // Clamp the accumulated force
                 final float maxFriction = friction * vcp.normalImpulse;
-                final float newImpulse = JBoxUtils.clamp(vcp.tangentImpulse + lambda, -maxFriction, maxFriction);
+                final float newImpulse = FXGLMath.clamp(vcp.tangentImpulse + lambda, -maxFriction, maxFriction);
                 lambda = newImpulse - vcp.tangentImpulse;
                 vcp.tangentImpulse = newImpulse;
 
@@ -775,7 +779,7 @@ public final class ContactSolver {
 
                 // Prevent large corrections and allow slop.
                 final float C =
-                        JBoxUtils.clamp(JBoxSettings.baumgarte * (separation + JBoxSettings.linearSlop),
+                        FXGLMath.clamp(JBoxSettings.baumgarte * (separation + JBoxSettings.linearSlop),
                                 -JBoxSettings.maxLinearCorrection, 0.0f);
 
                 // Compute the effective mass.
@@ -872,7 +876,7 @@ public final class ContactSolver {
 
                 // Prevent large corrections and allow slop.
                 float C =
-                        JBoxUtils.clamp(JBoxSettings.toiBaugarte * (separation + JBoxSettings.linearSlop),
+                        FXGLMath.clamp(JBoxSettings.toiBaugarte * (separation + JBoxSettings.linearSlop),
                                 -JBoxSettings.maxLinearCorrection, 0.0f);
 
                 // Compute the effective mass.

@@ -34,6 +34,7 @@ import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.localization.LocalizationService
+import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.net.NetService
 import com.almasb.fxgl.notification.NotificationService
@@ -64,8 +65,10 @@ import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.text.Text
+import javafx.stage.Stage
 import javafx.util.Duration
 import java.util.*
+import java.util.concurrent.Callable
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 
@@ -174,7 +177,16 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getFXApp(): Application = fxApp
 
-    @JvmStatic fun getPrimaryStage() = engine.getService(FXGLApplication.GameApplicationService::class.java).window.stage
+    @JvmStatic fun getPrimaryStage(): Stage {
+        val window = engine.getService(FXGLApplication.GameApplicationService::class.java).window
+
+        if (window is PrimaryStageWindow)
+            return window.stage
+
+        Logger.get("FXGL").warning("Started via embeddedLaunch(). getPrimaryStage() returning dummy stage.")
+
+        return getExecutor().startAsyncFX(Callable { Stage() }).await()
+    }
 
     @JvmStatic fun <T : EngineService> getService(serviceClass: Class<T>): T = engine.getService(serviceClass)
 

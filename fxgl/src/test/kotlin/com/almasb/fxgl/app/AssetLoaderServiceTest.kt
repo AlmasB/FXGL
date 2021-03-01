@@ -8,16 +8,22 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.app.services.FXGLAssetLoaderService
 import com.almasb.fxgl.audio.AudioPlayer
+import com.almasb.fxgl.core.asset.AssetType
+import com.almasb.fxgl.logging.ConsoleOutput
+import com.almasb.fxgl.logging.Logger
+import com.almasb.fxgl.logging.LoggerConfig
+import com.almasb.fxgl.logging.LoggerLevel
 import com.almasb.fxgl.test.InjectInTest
 import com.almasb.fxgl.test.RunWithFX
+import com.almasb.fxgl.texture.getDummyImage
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.lang.ClassCastException
 import java.lang.invoke.MethodHandles
 
 /**
@@ -55,13 +61,9 @@ class AssetLoaderServiceTest {
         assetLoader = FXGLAssetLoaderService()
 
         InjectInTest.inject(MethodHandles.lookup(), assetLoader, "audioService", AudioPlayer())
-    }
+        InjectInTest.inject(MethodHandles.lookup(), assetLoader, "userAppClass", AssetLoaderServiceTest::class.java)
 
-    @Test
-    fun `Exception is thrown if asset not found`() {
-        assertThrows(IllegalArgumentException::class.java, {
-            assetLoader.getStream("nothing.jpg")
-        })
+        assetLoader.onInit()
     }
 
     @Test
@@ -77,6 +79,23 @@ class AssetLoaderServiceTest {
     }
 
     @Test
+    fun `Load image from URL`() {
+        val image = assetLoader.loadImage(javaClass.getResource("test_icon.png"))
+
+        assertThat(image.width, `is`(256.0))
+        assertThat(image.height, `is`(256.0))
+    }
+
+    @Test
+    fun `URL based loads are cached`() {
+        val image1 = assetLoader.loadImage(javaClass.getResource("test_icon.png"))
+        val image2 = assetLoader.loadImage(javaClass.getResource("test_icon.png"))
+
+        assertThat(image1, `is`(not(getDummyImage())))
+        assertTrue(image1 === image2)
+    }
+
+    @Test
     fun loadTexture() {
         var texture = assetLoader.loadTexture("brick.png")
 
@@ -86,6 +105,14 @@ class AssetLoaderServiceTest {
         texture = assetLoader.loadTexture("bla-bla")
 
         assertThat(texture, `is`(notNullValue()))
+    }
+
+    @Test
+    fun `Load texture from URL`() {
+        val texture = assetLoader.loadTexture(javaClass.getResource("test_icon.png"))
+
+        assertThat(texture.image.width, `is`(256.0))
+        assertThat(texture.image.height, `is`(256.0))
     }
 
     @Test
@@ -117,6 +144,13 @@ class AssetLoaderServiceTest {
     }
 
     @Test
+    fun `Load sound from URL`() {
+        val sound = assetLoader.loadSound(javaClass.getResource("/fxglassets/sounds/intro.wav"))
+
+        assertThat(sound, `is`(notNullValue()))
+    }
+
+    @Test
     fun loadMusic() {
         // Note: the loading might fail on linux if missing libavformat for jfxmedia, but dummy music object should be loaded
         var music = assetLoader.loadMusic("intro.mp3")
@@ -126,6 +160,13 @@ class AssetLoaderServiceTest {
         music.dispose()
 
         music = assetLoader.loadMusic("bla-bla")
+
+        assertThat(music, `is`(notNullValue()))
+    }
+
+    @Test
+    fun `Load music from URL`() {
+        val music = assetLoader.loadMusic(javaClass.getResource("/fxglassets/music/intro.mp3"))
 
         assertThat(music, `is`(notNullValue()))
     }
@@ -148,6 +189,48 @@ class AssetLoaderServiceTest {
     }
 
     @Test
+    fun `Load Text from URL`() {
+        val actualLines = assetLoader.loadText(javaClass.getResource("/fxglassets/text/test1.txt"))
+
+        val expectedLines = TEXT_DATA[0].split("\n".toRegex()).dropLastWhile { it.isEmpty() }
+
+        assertThat(actualLines, `is`(expectedLines))
+
+        val lines = assetLoader.loadText("bla-bla")
+
+        assertThat(lines.size, `is`(0))
+    }
+
+    @Test
+    fun `Relative and absolute URL load calls cache the same object`() {
+        // these are loaded from two different places (assets/text and fxglassets/text), so shouldn't be same object
+        assertTrue(assetLoader.loadText("test1.txt") !== assetLoader.loadText(javaClass.getResource("/fxglassets/text/test1.txt")))
+
+        // these are loaded from the same place, so should be same object
+        assertTrue(assetLoader.loadImage("brick2.png") === assetLoader.loadImage(javaClass.getResource("/fxglassets/textures/brick2.png")))
+    }
+
+    @Test
+    fun `Load DialogueGraph`() {
+        val graph = assetLoader.loadDialogueGraph("simple.json")
+
+        assertThat(graph.nodes.size, `is`(3))
+        assertThat(graph.edges.size, `is`(2))
+
+        assertThat(graph.startNode.text, `is`("Simple start."))
+    }
+
+    @Test
+    fun `Load DialogueGraph from URL`() {
+        val graph = assetLoader.loadDialogueGraph(javaClass.getResource("/fxglassets/dialogues/simple.json"))
+
+        assertThat(graph.nodes.size, `is`(3))
+        assertThat(graph.edges.size, `is`(2))
+
+        assertThat(graph.startNode.text, `is`("Simple start."))
+    }
+
+    @Test
     fun loadResourceBundle() {
         val resourceBundle = assetLoader.loadResourceBundle("test.properties")
         val resourceBundle2 = assetLoader.loadResourceBundle("test.properties")
@@ -160,6 +243,34 @@ class AssetLoaderServiceTest {
         val bundle = assetLoader.loadResourceBundle("bla-bla")
         assertThat(bundle, `is`(notNullValue()))
         assertThat(bundle.keySet().size, `is`(0))
+    }
+
+    @Test
+    fun `Load ResourceBundle from URL`() {
+        val resourceBundle = assetLoader.loadResourceBundle(javaClass.getResource("/fxglassets/properties/test.properties"))
+
+        assertThat(resourceBundle, `is`(notNullValue()))
+        assertThat(resourceBundle.getString("testKey"), `is`("testValue"))
+    }
+
+    @Test
+    fun `Load PropertyMap`() {
+        var map = assetLoader.loadPropertyMap("properties/test.properties")
+
+        assertThat(map, `is`(notNullValue()))
+        assertThat(map.getString("testKey"), `is`("testValue"))
+
+        map = assetLoader.loadPropertyMap("bla-bla")
+        assertThat(map, `is`(notNullValue()))
+        assertThat(map.keys().size, `is`(0))
+    }
+
+    @Test
+    fun `Load PropertyMap from URL`() {
+        val map = assetLoader.loadPropertyMap(javaClass.getResource("/fxglassets/properties/test.properties"))
+
+        assertThat(map, `is`(notNullValue()))
+        assertThat(map.getString("testKey"), `is`("testValue"))
     }
 
     @Test
@@ -190,11 +301,28 @@ class AssetLoaderServiceTest {
         assertThat(ui.root, `is`(notNullValue()))
         assertThat(count, `is`(1))
 
+        // UI objects are not cached
+
+        assertFalse(assetLoader.loadUI("test_ui.fxml", controller) === ui)
+
+        assertThat(count, `is`(2))
+
         ui = assetLoader.loadUI("bla-bla", controller)
 
         assertThat(ui, `is`(notNullValue()))
         assertThat(ui.root, `is`(notNullValue()))
-        assertThat(count, `is`(1))
+        assertThat(count, `is`(2))
+    }
+
+    @Test
+    fun `Load UI from URL`() {
+        val ui = assetLoader.loadUI(javaClass.getResource("/fxglassets/ui/test_ui.fxml"), object : UIController {
+            override fun init() {
+            }
+        })
+
+        assertThat(ui, `is`(notNullValue()))
+        assertThat(ui.root, `is`(notNullValue()))
     }
 
     @Test
@@ -204,6 +332,13 @@ class AssetLoaderServiceTest {
         assertThat(css, `is`(notNullValue()))
 
         css = assetLoader.loadCSS("bla-bla")
+
+        assertThat(css, `is`(notNullValue()))
+    }
+
+    @Test
+    fun `Load CSS from URL`() {
+        val css = assetLoader.loadCSS(javaClass.getResource("/fxglassets/ui/css/test.css"))
 
         assertThat(css, `is`(notNullValue()))
     }
@@ -229,6 +364,48 @@ class AssetLoaderServiceTest {
 
         assertThat(fontFactory, `is`(notNullValue()))
         assertThat(fontFactory.newFont(18.0), `is`(notNullValue()))
+    }
+
+    @Test
+    fun `Load Font from URL`() {
+        val fontFactory = assetLoader.loadFont(javaClass.getResource("/fxglassets/ui/fonts/test.ttf"))
+
+        assertThat(fontFactory, `is`(notNullValue()))
+
+        val font = fontFactory.newFont(18.0)
+
+        assertThat(font, `is`(notNullValue()))
+        assertThat(font.family, `is`("Elektra"))
+        assertThat(font.name, `is`("Elektra"))
+        assertThat(font.size, `is`(18.0))
+    }
+
+    @Test
+    fun `Load JSON`() {
+        var obj = assetLoader.loadJSON("json/test.json", TestJSONData::class.java)
+
+        assertTrue(obj.isPresent)
+        assertThat(obj.get().name, `is`("TestName"))
+        assertThat(obj.get().value, `is`(892))
+
+        // invalid URL
+        obj = assetLoader.loadJSON("bla-bla", TestJSONData::class.java)
+
+        assertFalse(obj.isPresent)
+
+        // try to load as diff incompatible object
+        val obj2 = assetLoader.loadJSON("json/test.json", String::class.java)
+
+        assertFalse(obj2.isPresent)
+    }
+
+    @Test
+    fun `Load JSON from URL`() {
+        val obj = assetLoader.loadJSON(javaClass.getResource("/fxglassets/json/test.json"), TestJSONData::class.java)
+
+        assertTrue(obj.isPresent)
+        assertThat(obj.get().name, `is`("TestName"))
+        assertThat(obj.get().value, `is`(892))
     }
 
     @Test
@@ -269,4 +446,36 @@ class AssetLoaderServiceTest {
 
         assetLoader.clearCache()
     }
+
+    @Test
+    fun `load throws ClassCastException if T does not match asset type`() {
+        assertThrows(ClassCastException::class.java) {
+            // try to load Image as String
+            val s: String = assetLoader.load(AssetType.IMAGE, "brick.png")
+        }
+    }
+
+    @Test
+    fun `Loading a valid resource in wrong format does not crash`() {
+        // try loading txt as font object
+        val font = assetLoader.loadFont(javaClass.getResource("/fxglassets/text/test1.txt"))
+
+        assertThat(font, `is`(notNullValue()))
+
+        // try loading txt as Image
+        val image1 = assetLoader.loadImage(javaClass.getResource("/fxglassets/text/test_level.txt"))
+
+        assertThat(image1, `is`(notNullValue()))
+
+        // try loading txt as Texture
+        val texture = assetLoader.loadTexture(javaClass.getResource("/fxglassets/text/test_level.txt"), 64.0, 64.0)
+
+        assertThat(texture, `is`(notNullValue()))
+    }
+
+    class TestJSONData
+    @JvmOverloads constructor(
+            var name: String = "",
+            var value: Int = 0
+    )
 }

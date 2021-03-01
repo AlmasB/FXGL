@@ -27,12 +27,12 @@ class Achievement(
         val description: String,
 
         /**
-         * The name of the variable to track (from GameState).
+         * The name of the variable to track (from GameWorld properties).
          */
         val varName: String,
 
         /**
-         * If the variable value is greater than this value the achievement will be unlocked.
+         * If the variable value is greater than this value (or equal to it), the achievement will be unlocked.
          * Can be of type int, double or boolean.
          */
         val varValue: Any) {

@@ -32,7 +32,7 @@ class UpdaterServiceTest {
         val lookup = MethodHandles.lookup()
         val injectMap = mapOf(
                 "appMode" to ApplicationMode.RELEASE,
-                "urlPOM" to "https://raw.githubusercontent.com/AlmasB/FXGL/master/README.md",
+                "urlPOM" to "https://raw.githubusercontent.com/AlmasB/FXGL/release/README.md",
                 "netService" to NetService())
 
         InjectInTest.inject(lookup, updater, injectMap)

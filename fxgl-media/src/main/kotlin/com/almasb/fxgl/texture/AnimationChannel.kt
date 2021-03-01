@@ -48,6 +48,7 @@ class AnimationChannel(val image: Image,
              * We compute x,y frame data based on given info
              */
 
+            // equivalent to:
             // val col = it.sequence[currentFrame] % framesPerRow
             // val row = it.sequence[currentFrame] / framesPerRow
             // col * frameWidth, row * frameHeight
@@ -64,6 +65,7 @@ class AnimationChannel(val image: Image,
              * We compute x,y frame data based on given info
              */
 
+            // equivalent to:
             // val col = it.sequence[currentFrame] % framesPerRow
             // val row = it.sequence[currentFrame] / framesPerRow
             // col * frameWidth, row * frameHeight
@@ -87,11 +89,7 @@ class AnimationChannel(val image: Image,
     internal val sequence: List<Int> = frameData.map { it.first }
 
     // seconds
-    internal val frameDuration: Double
-
-    init {
-        frameDuration = channelDuration.toSeconds() / sequence.size
-    }
+    internal val frameDuration: Double = channelDuration.toSeconds() / sequence.size
 
     fun isLastFrame(frame: Int) = frame == sequence.size - 1
 

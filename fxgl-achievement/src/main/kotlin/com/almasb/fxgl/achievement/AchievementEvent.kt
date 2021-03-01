@@ -10,12 +10,16 @@ import javafx.event.Event
 import javafx.event.EventType
 
 /**
- * Occurs on achievement unlocked.
+ * Fired when an achievement is unlocked (achieved).
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 open class AchievementEvent(
         eventType: EventType<out AchievementEvent>,
+
+        /**
+         * The achievement with which the event is associated.
+         */
         val achievement: Achievement
 ) : Event(eventType) {
 
@@ -29,4 +33,28 @@ open class AchievementEvent(
 
     override fun toString() =
             "AchievementEvent[type=$eventType, name=${achievement.name}, description=${achievement.description}]"
+}
+
+/**
+ * Fired when a numeric value based achievement has made some progress.
+ */
+class AchievementProgressEvent(
+        achievement: Achievement,
+
+        /**
+         * Current value.
+         */
+        val value: Double,
+
+        /**
+         * The value to achieve.
+         */
+        val max: Double
+) : AchievementEvent(PROGRESS, achievement) {
+
+    companion object {
+        val PROGRESS = EventType<AchievementProgressEvent>(AchievementEvent.ANY, "PROGRESS")
+    }
+
+    override fun toString() = "AchievementProgressEvent[value=$value,max=$max]"
 }

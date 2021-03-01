@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.physics.box2d.particle;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.callbacks.ParticleDestructionListener;
 import com.almasb.fxgl.physics.box2d.callbacks.ParticleQueryCallback;
@@ -16,7 +17,6 @@ import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.collision.RayCastOutput;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
@@ -298,14 +298,14 @@ public class ParticleSystem {
             }
             final float upperBoundY = aabb.upperBound.y;
             final float upperBoundX = aabb.upperBound.x;
-            for (float y = JBoxUtils.floor(aabb.lowerBound.y / stride) * stride; y < upperBoundY; y +=
+            for (float y = FXGLMath.floor(aabb.lowerBound.y / stride) * stride; y < upperBoundY; y +=
                     stride) {
-                for (float x = JBoxUtils.floor(aabb.lowerBound.x / stride) * stride; x < upperBoundX; x +=
+                for (float x = FXGLMath.floor(aabb.lowerBound.x / stride) * stride; x < upperBoundX; x +=
                         stride) {
                     Vec2 p = tempVec;
                     p.x = x;
                     p.y = y;
-                    if (shape.testPoint(identity, p)) {
+                    if (shape.containsPoint(identity, p)) {
                         Transform.mulToOut(transform, p, p);
                         particleDef.position.x = p.x;
                         particleDef.position.y = p.y;
@@ -364,7 +364,7 @@ public class ParticleSystem {
                     pair.indexB = b;
                     pair.flags = contact.flags;
                     pair.strength = groupDef.getStrength();
-                    pair.distance = JBoxUtils.distance(m_positionBuffer.data[a], m_positionBuffer.data[b]);
+                    pair.distance = m_positionBuffer.data[a].distanceF(m_positionBuffer.data[b]);
                     m_pairCount++;
                 }
             }
@@ -425,7 +425,7 @@ public class ParticleSystem {
                     pair.indexB = b;
                     pair.flags = contact.flags;
                     pair.strength = Math.min(groupA.m_strength, groupB.m_strength);
-                    pair.distance = JBoxUtils.distance(m_positionBuffer.data[a], m_positionBuffer.data[b]);
+                    pair.distance = m_positionBuffer.data[a].distanceF(m_positionBuffer.data[b]);
                     m_pairCount++;
                 }
             }
@@ -560,7 +560,7 @@ public class ParticleSystem {
                                 newCapacity);
                 m_contactCapacity = newCapacity;
             }
-            float invD = d2 != 0 ? JBoxUtils.sqrt(1 / d2) : Float.MAX_VALUE;
+            float invD = d2 != 0 ? FXGLMath.sqrtF(1 / d2) : Float.MAX_VALUE;
             ParticleContact contact = m_contactBuffer[m_contactCount];
             contact.indexA = a;
             contact.indexB = b;
@@ -706,7 +706,7 @@ public class ParticleSystem {
             v.y += gravityy;
             float v2 = v.x * v.x + v.y * v.y;
             if (v2 > criticalVelocytySquared) {
-                float a = v2 == 0 ? Float.MAX_VALUE : JBoxUtils.sqrt(criticalVelocytySquared / v2);
+                float a = v2 == 0 ? Float.MAX_VALUE : FXGLMath.sqrtF(criticalVelocytySquared / v2);
                 v.x *= a;
                 v.y *= a;
             }
@@ -943,7 +943,7 @@ public class ParticleSystem {
                 float rs = Vec2.cross(oa, pa) + Vec2.cross(ob, pb) + Vec2.cross(oc, pc);
                 float rc = Vec2.dot(oa, pa) + Vec2.dot(ob, pb) + Vec2.dot(oc, pc);
                 float r2 = rs * rs + rc * rc;
-                float invR = r2 == 0 ? Float.MAX_VALUE : JBoxUtils.sqrt(1f / r2);
+                float invR = r2 == 0 ? Float.MAX_VALUE : FXGLMath.sqrtF(1f / r2);
                 rs *= invR;
                 rc *= invR;
                 final float strength = elasticStrength * triad.strength;
@@ -978,7 +978,7 @@ public class ParticleSystem {
                 final float dx = pb.x - pa.x;
                 final float dy = pb.y - pa.y;
                 float r0 = pair.distance;
-                float r1 = JBoxUtils.sqrt(dx * dx + dy * dy);
+                float r1 = FXGLMath.sqrtF(dx * dx + dy * dy);
                 if (r1 == 0) r1 = Float.MAX_VALUE;
                 float strength = springStrength * pair.strength;
                 final float fx = strength * (r0 - r1) / r1 * dx;
@@ -1696,7 +1696,7 @@ public class ParticleSystem {
             float p2 = px * px + py * py;
             float determinant = pv * pv - v2 * (p2 - m_squaredDiameter);
             if (determinant >= 0) {
-                float sqrtDeterminant = JBoxUtils.sqrt(determinant);
+                float sqrtDeterminant = FXGLMath.sqrtF(determinant);
                 // find a solution between 0 and fraction
                 float t = (-pv - sqrtDeterminant) / v2;
                 if (t > fraction) {
@@ -1979,7 +1979,7 @@ public class ParticleSystem {
         @Override
         public boolean reportParticle(int index) {
             assert index >= 0 && index < system.m_count;
-            if (shape.testPoint(xf, system.m_positionBuffer.data[index])) {
+            if (shape.containsPoint(xf, system.m_positionBuffer.data[index])) {
                 system.destroyParticle(index, callDestructionListener);
                 destroyed++;
             }

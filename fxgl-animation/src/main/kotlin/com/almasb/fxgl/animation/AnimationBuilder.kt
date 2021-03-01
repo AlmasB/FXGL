@@ -12,7 +12,6 @@ import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.scene.Scene
 import javafx.animation.Interpolator
 import javafx.beans.property.DoubleProperty
-import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.WritableValue
 import javafx.geometry.Point2D
 import javafx.geometry.Point3D
@@ -34,14 +33,14 @@ import java.util.function.Consumer
 open class AnimationBuilder
 @JvmOverloads constructor(protected val scene: Scene? = null) {
 
-    private var duration: Duration = Duration.seconds(1.0)
-    private var delay: Duration = Duration.ZERO
-    private var interpolator: Interpolator = Interpolator.LINEAR
-    private var times: Int = 1
-    private var onCycleFinished: Runnable = EmptyRunnable
-    private var isAutoReverse: Boolean = false
+    var duration: Duration = Duration.seconds(1.0)
+    var delay: Duration = Duration.ZERO
+    var interpolator: Interpolator = Interpolator.LINEAR
+    var times: Int = 1
+    var onCycleFinished: Runnable = EmptyRunnable
+    var isAutoReverse: Boolean = false
 
-    protected var onFinished: Runnable = EmptyRunnable
+    var onFinished: Runnable = EmptyRunnable
 
     constructor(copy: AnimationBuilder) : this(copy.scene) {
         duration = copy.duration
@@ -92,8 +91,12 @@ open class AnimationBuilder
         return this
     }
 
-    protected fun makeConfig(): AnimationConfig {
-        return AnimationConfig(duration, delay, interpolator, times, onFinished, onCycleFinished, isAutoReverse)
+    internal fun <T> buildAnimation(animatedValue: AnimatedValue<T>, onProgress: Consumer<T>): Animation<T> {
+        return object : Animation<T>(this, animatedValue) {
+            override fun onProgress(value: T) {
+                onProgress.accept(value)
+            }
+        }
     }
 
     /* BEGIN BUILT-IN ANIMATIONS */
@@ -251,7 +254,7 @@ open class AnimationBuilder
         }
 
         private fun makeAnim(animValue: AnimatedValue<Point3D>): Animation<Point3D> {
-            return makeConfig().build(
+            return buildAnimation(
                     animValue,
                     Consumer { value ->
                         objects.forEach {
@@ -278,7 +281,7 @@ open class AnimationBuilder
         }
 
         override fun build(): Animation<*> {
-            return makeConfig().build(AnimatedValue(from, to),
+            return buildAnimation(AnimatedValue(from, to),
                     Consumer { value ->
                         objects.forEach {
                             it.opacityProperty().value = value
@@ -326,7 +329,7 @@ open class AnimationBuilder
                 }
             }
 
-            return makeConfig().build(
+            return buildAnimation(
                     AnimatedPoint3D(startScale, endScale),
                     Consumer { value ->
                         objects.forEach {
@@ -382,7 +385,7 @@ open class AnimationBuilder
                 }
             }
 
-            return makeConfig().build(AnimatedValue(startRotation, endRotation),
+            return buildAnimation(AnimatedValue(startRotation, endRotation),
                     Consumer { value ->
                         objects.forEach {
                             if (is3DAnimation) {
@@ -406,7 +409,7 @@ open class AnimationBuilder
         }
 
         override fun build(): Animation<T> {
-            return makeConfig().build(animValue, progressConsumer)
+            return buildAnimation(animValue, progressConsumer)
         }
     }
 
@@ -430,7 +433,7 @@ open class AnimationBuilder
         }
 
         override fun build(): Animation<T> {
-            return makeConfig().build(AnimatedValue(startValue, endValue), progressConsumer)
+            return buildAnimation(AnimatedValue(startValue, endValue), progressConsumer)
         }
     }
 }

@@ -5,12 +5,12 @@
  */
 package com.almasb.fxgl.physics.box2d.dynamics.contacts;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.collision.ContactID;
 import com.almasb.fxgl.physics.box2d.collision.Manifold;
 import com.almasb.fxgl.physics.box2d.collision.ManifoldPoint;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
 import com.almasb.fxgl.physics.box2d.dynamics.Fixture;
@@ -34,8 +34,6 @@ public abstract class Contact {
     public static final int ENABLED_FLAG = 0x0004;
     // This contact needs filtering because a fixture filter was changed.
     public static final int FILTER_FLAG = 0x0008;
-    // This bullet contact had a TOI event
-    public static final int BULLET_HIT_FLAG = 0x0010;
 
     public static final int TOI_FLAG = 0x0020;
 
@@ -292,7 +290,7 @@ public abstract class Contact {
      * For example, anything slides on ice.
      */
     private static float mixFriction(float friction1, float friction2) {
-        return JBoxUtils.sqrt(friction1 * friction2);
+        return FXGLMath.sqrtF(friction1 * friction2);
     }
 
     /**

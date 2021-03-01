@@ -69,6 +69,7 @@ public abstract class GameApplication {
         }
     }
 
+    @Deprecated
     public static void customLaunch(GameApplication app, Stage stage) {
         try {
             var settings = app.takeUserSettings();
@@ -80,6 +81,21 @@ public abstract class GameApplication {
         } catch (Exception e) {
             printErrorAndExit(e);
         }
+    }
+
+    public static FXGLPane embeddedLaunch(GameApplication app) {
+        try {
+            var settings = app.takeUserSettings();
+
+            app.initLogger(settings);
+
+            return FXGLApplication.embeddedLaunchFX(app, settings);
+
+        } catch (Exception e) {
+            printErrorAndExit(e);
+        }
+
+        return null;
     }
 
     private static void launch(GameApplication app, String[] args) {
@@ -126,7 +142,7 @@ public abstract class GameApplication {
         var runtimeInfo = new RuntimeInfo(platform, BuildProperties.VERSION, BuildProperties.BUILD);
         localSettings.setRuntimeInfo(runtimeInfo);
         localSettings.setExperimentalNative(localSettings.isExperimentalNative() || platform.isMobile());
-        return localSettings.toReadOnly();
+        return localSettings.toReadOnly(getClass());
     }
 
     private void initLogger(ReadOnlyGameSettings settings) {

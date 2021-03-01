@@ -37,7 +37,6 @@
         <module>fxgl-trade</module>
         <module>fxgl-minigames</module>
         <module>fxgl-samples</module>
-        <module>fxgl-nativesamples</module>
         <module>fxgl-tools</module>
         <module>fxgl-zdeploy</module>
     </modules>
@@ -106,7 +105,7 @@
 
         <!-- dependencies -->
         <jfx.version>15</jfx.version>
-        <kotlin.version>1.4.10</kotlin.version>
+        <kotlin.version>1.4.30</kotlin.version>
         <attach.version>4.0.9</attach.version>
         <jackson.version>2.11.1</jackson.version>
 
@@ -314,6 +313,14 @@
                         <goals>
                             <goal>sign</goal>
                         </goals>
+
+                        <!-- This is needed for maven deploy using GH Actions -->
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

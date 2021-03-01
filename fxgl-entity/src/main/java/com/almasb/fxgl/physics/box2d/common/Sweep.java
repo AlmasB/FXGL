@@ -34,7 +34,7 @@ public final class Sweep implements Serializable {
     public float alpha0;
 
     public void normalize() {
-        float d = FXGLMath.PI2_F * JBoxUtils.floor(a0 / FXGLMath.PI2_F);
+        float d = FXGLMath.PI2_F * FXGLMath.floor(a0 / FXGLMath.PI2_F);
         a0 -= d;
         a -= d;
     }

@@ -51,11 +51,15 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
     private Array<CollisionHandler> collisionHandlers = new UnorderedArray<>(16);
 
-    private Array<CollisionPair> collisions = new UnorderedArray<>(128);
+    private CollisionPairMap collisionsMap = new CollisionPairMap(128);
 
     private int appHeight;
 
     public PhysicsWorld(int appHeight, double ppm) {
+        this(appHeight, ppm, CollisionDetectionStrategy.BRUTE_FORCE);
+    }
+
+    public PhysicsWorld(int appHeight, double ppm, CollisionDetectionStrategy strategy) {
         this.appHeight = appHeight;
 
         PIXELS_PER_METER = ppm;
@@ -69,6 +73,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
         log.debugf("Physics world initialized: appHeight=%d, physics.ppm=%.1f",
                 appHeight, ppm);
+        log.debug("Using strategy: " + strategy);
     }
 
     private void initCollisionPool() {
@@ -189,7 +194,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
         log.debug("Clearing physics world");
 
         entities.clear();
-        collisions.clear();
+        collisionsMap.clear();
     }
 
     public void clearCollisionHandlers() {
@@ -218,26 +223,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
         CollisionHandler handler = getHandler(e1, e2);
         if (handler != null) {
+            HitBox a = contact.getFixtureA().getHitBox();
+            HitBox b = contact.getFixtureB().getHitBox();
 
-            CollisionPair pair = getPair(e1, e2);
-
-            // no collision registered, so add the pair
-            if (pair == null) {
-                pair = Pools.obtain(CollisionPair.class);
-                pair.init(e1, e2, handler);
-
-                // add pair to list of collisions so we still use it
-                collisions.add(pair);
-
-                HitBox boxA = contact.getFixtureA().getHitBox();
-                HitBox boxB = contact.getFixtureB().getHitBox();
-
-                handler.onHitBoxTrigger(pair.getA(), pair.getB(),
-                        e1 == pair.getA() ? boxA : boxB,
-                        e2 == pair.getB() ? boxB : boxA);
-
-                pair.collisionBegin();
-            }
+            collisionBeginFor(handler, e1, e2, a, b);
         }
     }
 
@@ -263,17 +252,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
         CollisionHandler handler = getHandler(e1, e2);
         if (handler != null) {
-
-            int pairIndex = getPairIndex(e1, e2);
-
-            // collision registered, so remove it and put pair back to pool
-            if (pairIndex != -1) {
-                CollisionPair pair = collisions.get(pairIndex);
-
-                collisions.removeIndex(pairIndex);
-                pair.collisionEnd();
-                Pools.free(pair);
-            }
+            collisionEndFor(e1, e2);
         }
     }
 
@@ -341,23 +320,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
         return null;
     }
 
-    private CollisionPair getPair(Entity e1, Entity e2) {
-        int index = getPairIndex(e1, e2);
-
-        return index == -1 ? null : collisions.get(index);
-    }
-
-    private int getPairIndex(Entity e1, Entity e2) {
-        for (int i = 0; i < collisions.size(); i++) {
-            CollisionPair pair = collisions.get(i);
-            if (pair.equal(e1, e2)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
     private void notifySensorCollisionBegin(Entity eWithSensor, Entity eTriggered, HitBox box) {
         var handler = eWithSensor.getComponent(PhysicsComponent.class).getSensorHandlers().get(box);
         handler.onCollisionBegin(eTriggered);
@@ -386,15 +348,22 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     private void checkCollisions() {
         for (Entity e : entities) {
             if (isCollidable(e)) {
+                e.getBoundingBoxComponent().applyTransformToHitBoxes$fxgl_entity();
                 collidables.add(e);
             }
         }
 
-        for (int i = 0; i < collidables.size(); i++) {
-            Entity e1 = collidables.get(i);
+        checkCollisionsInGroup(collidables);
 
-            for (int j = i + 1; j < collidables.size(); j++) {
-                Entity e2 = collidables.get(j);
+        collidables.clear();
+    }
+
+    private void checkCollisionsInGroup(Array<Entity> group) {
+        for (int i = 0; i < group.size(); i++) {
+            Entity e1 = group.get(i);
+
+            for (int j = i + 1; j < group.size(); j++) {
+                Entity e2 = group.get(j);
 
                 CollisionHandler handler = getHandler(e1, e2);
 
@@ -421,8 +390,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
                 }
             }
         }
-
-        collidables.clear();
     }
 
     private boolean isIgnored(Entity e1, Entity e2) {
@@ -449,7 +416,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     }
 
     private void collisionBeginFor(CollisionHandler handler, Entity e1, Entity e2, HitBox a, HitBox b) {
-        CollisionPair pair = getPair(e1, e2);
+        CollisionPair pair = collisionsMap.get(e1, e2);
 
         // null means e1 and e2 were not colliding before
         // if not null, then ignore because e1 and e2 are still colliding
@@ -458,33 +425,33 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
             pair.init(e1, e2, handler);
 
             // add pair to list of collisions so we still use it
-            collisions.add(pair);
+            collisionsMap.put(pair);
 
-            handler.onHitBoxTrigger(pair.getA(), pair.getB(), a, b);
+            handler.onHitBoxTrigger(
+                    pair.getA(), pair.getB(),
+                    e1 == pair.getA() ? a : b,
+                    e2 == pair.getB() ? b : a
+            );
             pair.collisionBegin();
         }
     }
 
     private void collisionEndFor(Entity e1, Entity e2) {
-        int pairIndex = getPairIndex(e1, e2);
+        CollisionPair pair = collisionsMap.get(e1, e2);
 
-        // if not -1, then collision registered, so end the collision
+        // if not null, then collision registered, so end the collision
         // and remove it and put pair back to pool
-        // if -1 then collision was not present before either
-        if (pairIndex != -1) {
-            CollisionPair pair = collisions.get(pairIndex);
+        // if null then collision was not present before either
+        if (pair != null) {
+            collisionsMap.remove(pair);
 
-            collisions.removeIndex(pairIndex);
             pair.collisionEnd();
             Pools.free(pair);
         }
     }
 
-    /**
-     * Fires all collision handlers' collision() callback based on currently registered collisions.
-     */
     private void notifyCollisions() {
-        for (Iterator<CollisionPair> it = collisions.iterator(); it.hasNext(); ) {
+        for (Iterator<CollisionPair> it = collisionsMap.getValues().iterator(); it.hasNext(); ) {
             CollisionPair pair = it.next();
 
             // if a pair no longer qualifies for collision then just remove it

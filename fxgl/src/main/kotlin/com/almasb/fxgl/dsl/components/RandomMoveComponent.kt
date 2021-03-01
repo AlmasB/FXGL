@@ -27,6 +27,8 @@ class RandomMoveComponent
 
     private val angleAdjustRate = random(0.0, 0.5)
 
+    var isRotating = true
+
     val velocity = Vec2()
     var directionAngle = toDegrees(random(-1, 1) * PI2)
 
@@ -35,7 +37,9 @@ class RandomMoveComponent
     override fun onUpdate(tpf: Double) {
         adjustAngle(tpf)
         move(tpf)
-        rotate(tpf)
+
+        if (isRotating)
+            rotate(tpf)
 
         tx += tpf
 
@@ -73,6 +77,8 @@ class RandomMoveComponent
     private fun rotate(tpf: Double) {
         entity.rotateBy(rotationSpeed * tpf)
     }
+
+    fun withoutRotation() = this.also { isRotating = false }
 
     override fun isComponentInjectionRequired(): Boolean = false
 }

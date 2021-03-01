@@ -20,6 +20,12 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * A collection of functions to be used with [Image].
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
+ */
+
 private val image: Image by lazy {
     val group = Group()
     val size = 32.0
@@ -80,6 +86,9 @@ fun fromPixels(width: Int, height: Int, pixels: List<Pixel>): Image {
     return image
 }
 
+/**
+ * Merges given [images] horizontally into a single [Image].
+ */
 fun merge(images: List<Image>): Image {
     if (images.isEmpty())
         return getDummyImage()
@@ -88,7 +97,7 @@ fun merge(images: List<Image>): Image {
         return images.first()
 
     val width = images.sumBy { it.width.toInt() }
-    val height = images.map { it.height.toInt() }.max()!!
+    val height = images.map { it.height.toInt() }.maxOrNull() ?: 0
 
     val image = WritableImage(width, height)
 
@@ -107,23 +116,23 @@ fun merge(images: List<Image>): Image {
 }
 
 /**
- * Resize image, with preserveRatio set to false by default.
- * If preserveRatio is true, vertical scaling will be dependent on horizontal scaling and original image proportion will be reserved.
+ * Resize [image] without preserving ratio.
  */
-fun resize(image : Image, targetWidth: Int, targetHeight: Int): Image {
+fun resize(image: Image, targetWidth: Int, targetHeight: Int): Image {
     return resize(image, targetWidth, targetHeight, false)
 }
 
 /**
- * Resize image.
- * If preserveRatio is true, vertical scaling will be dependent on horizontal scaling and original image proportion will be reserved.
+ * Resize [image].
+ * If [isPreserveRatio] is true, vertical scaling will be dependent on horizontal scaling and original image proportion will be preserved.
  */
-fun resize(image : Image, targetWidth: Int, targetHeight: Int, preserveRatio: Boolean): Image {
+fun resize(image: Image, targetWidth: Int, targetHeight: Int, isPreserveRatio: Boolean): Image {
     val width = image.width.toInt()
     val height = image.height.toInt()
     val scaleHorizontal = width.toDouble() / targetWidth
     var scaleVertical = height.toDouble() / targetHeight
-    if (preserveRatio)
+
+    if (isPreserveRatio)
         scaleVertical = scaleHorizontal
 
     val output = WritableImage(targetWidth, targetHeight)
@@ -131,12 +140,12 @@ fun resize(image : Image, targetWidth: Int, targetHeight: Int, preserveRatio: Bo
     val reader = image.pixelReader
     val writer = output.pixelWriter
 
-    for (y in 0 until targetHeight)
-        for (x in 0 until targetWidth)
-        {
+    for (y in 0 until targetHeight) {
+        for (x in 0 until targetWidth) {
             val argb = reader.getArgb((x * scaleHorizontal).toInt(), (y * scaleVertical).toInt())
             writer.setArgb(x, y, argb)
         }
+    }
 
     return output
 }
@@ -175,6 +184,12 @@ fun BlendMode.operation(): (Pixel, Pixel) -> Pixel {
     }
 }
 
+/*
+ * In blending functions below, bot is the existing color (dst)
+ * and top is the new color (src).
+ * In terms of textures it's top (src) drawn over bot (dst).
+ */
+
 internal val SRC_OVER_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
@@ -205,24 +220,18 @@ internal val SRC_ATOP_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     }
 }
 
-/*
- * In blending functions below, bot is the existing color (dst)
- * and top is the new color (src).
- * In terms of textures it's top (src) drawn over bot (dst).
- */
-
-internal val ADD_BLEND: (Pixel, Pixel) -> Pixel = { p1, p2 ->
-    if (p2.color == Color.TRANSPARENT) {
-        p1.copy(Color.TRANSPARENT)
+internal val ADD_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
+    if (top.color == Color.TRANSPARENT) {
+        bot.copy(Color.TRANSPARENT)
     } else {
         val color = Color.color(
-                minOf(1.0, p1.color.red + p2.color.red),
-                minOf(1.0, p1.color.green + p2.color.green),
-                minOf(1.0, p1.color.blue + p2.color.blue),
-                minOf(1.0, p1.color.opacity + p2.color.opacity)
+                minOf(1.0, bot.color.red + top.color.red),
+                minOf(1.0, bot.color.green + top.color.green),
+                minOf(1.0, bot.color.blue + top.color.blue),
+                minOf(1.0, bot.color.opacity + top.color.opacity)
         )
 
-        p1.copy(color)
+        bot.copy(color)
     }
 }
 
@@ -357,37 +366,7 @@ internal val COLOR_BURN_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
  * Like OVERLAY but top and bot are swapped.
  */
 internal val HARD_LIGHT_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
-    if (top.color == Color.TRANSPARENT) {
-        bot.copy(Color.TRANSPARENT)
-    } else {
-
-        val r = if (top.R < 0.5) {
-            2 * top.R * bot.R
-        } else {
-            1 - 2 * (1 - top.R) * (1 - bot.R)
-        }
-
-        val g = if (top.G < 0.5) {
-            2 * top.G * bot.G
-        } else {
-            1 - 2 * (1 - top.G) * (1 - bot.G)
-        }
-
-        val b = if (top.B < 0.5) {
-            2 * top.B * bot.B
-        } else {
-            1 - 2 * (1 - top.B) * (1 - bot.B)
-        }
-
-        val color = Color.color(
-                r,
-                g,
-                b,
-                top.A + bot.A * (1 - top.A)
-        )
-
-        bot.copy(color)
-    }
+    OVERLAY_BLEND(top, bot)
 }
 
 /**
@@ -492,6 +471,9 @@ internal val BLUE_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     }
 }
 
+/**
+ * Map pixels of this image using [f] to produce a new image.
+ */
 fun Image.map(f: (Pixel) -> Pixel): Image {
 
     val w = this.width.toInt()

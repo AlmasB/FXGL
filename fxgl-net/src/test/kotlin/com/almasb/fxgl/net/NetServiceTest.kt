@@ -52,7 +52,7 @@ class NetServiceTest {
     @Test
     @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     fun `Open stream to URL`() {
-        val numLines = net.openStreamTask("https://raw.githubusercontent.com/AlmasB/FXGL/master/README.md")
+        val numLines = net.openStreamTask("https://raw.githubusercontent.com/AlmasB/FXGL/release/README.md")
                 .run()
                 .bufferedReader()
                 .lines()

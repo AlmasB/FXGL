@@ -267,6 +267,10 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
                 .min() ?: 0.0
     }
 
+    internal fun applyTransformToHitBoxes() {
+        hitBoxes.forEach { it.applyTransform(transform) }
+    }
+
     private val dummy = CollisionResult()
 
     /**

@@ -1,4 +1,4 @@
-name: Test FXGL on Mac/Win/Linux using latest stable jdk
+name: Cross-platform CI java ea
 
 on:
   push:
@@ -13,8 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, macOS-latest, windows-latest ]
-        java: [ 15 ]
+        java: [ 16-ea ]
     runs-on: ${{ matrix.os }}
+    env:
+      MAVEN_OPTS: --illegal-access=permit
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2

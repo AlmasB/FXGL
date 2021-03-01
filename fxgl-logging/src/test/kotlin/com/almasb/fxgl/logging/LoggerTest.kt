@@ -8,14 +8,34 @@ package com.almasb.fxgl.logging
 
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import java.nio.file.Files
+import java.nio.file.Paths
 
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class LoggerTest {
+
+    companion object {
+        @BeforeAll
+        @JvmStatic fun before() {
+            cleanUp()
+        }
+
+        @AfterAll
+        @JvmStatic fun cleanUp() {
+            Paths.get("testDir").toFile().deleteRecursively()
+
+            assertTrue(!Files.exists(Paths.get("testDir")), "test dir is present before")
+        }
+    }
 
     @Test
     fun `Configuring logger more than once does not throw`() {
@@ -93,5 +113,44 @@ class LoggerTest {
         message = formatter.makeMessage("DateTime", "ThreadName", "LoggerLevel", "ShortName", "LoggerMessage")
 
         assertThat(message, `is`("DateTime [ThreadName               ] Logge ShortName            - LoggerMessage"))
+    }
+
+    @Test
+    fun `Test ConsoleOutput`() {
+        val output = ConsoleOutput()
+
+        output.append("Hello Test World")
+
+        // does nothing
+        output.close()
+    }
+
+    @Test
+    fun `Test FileOutput`() {
+        val logDir = Paths.get("testDir")
+
+        assertFalse(Files.exists(logDir))
+
+        val output = FileOutput("test", "testDir/", 5)
+
+        assertTrue(Files.exists(logDir))
+
+        output.append("Hello Test World")
+        output.append("Hello Test World 2")
+
+        // writes to FS
+        output.close()
+
+        val logFile = Files.walk(logDir)
+                .filter { it.toAbsolutePath().toString().endsWith("log") }
+                .findAny()
+
+        assertTrue(logFile.isPresent)
+
+        val lines = Files.readAllLines(logFile.get())
+
+        assertThat(lines.size, `is`(2))
+        assertThat(lines[0], `is`("Hello Test World"))
+        assertThat(lines[1], `is`("Hello Test World 2"))
     }
 }

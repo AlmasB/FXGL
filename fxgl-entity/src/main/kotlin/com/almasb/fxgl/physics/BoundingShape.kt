@@ -137,12 +137,8 @@ class CircleShapeData(val radius: Double) : BoundingShape(Dimension2D(radius * 2
         // take world center bounds and subtract from entity center (all in pixels) to get local center
         // because box2d operates on vector offsets from the body center, also in local coordinates
         val boundsCenterLocal = box.centerWorld.subtract(bboxComp.centerWorld)
-
-        val shape = CircleShape()
-        shape.radius = conv.toMetersF(box.width / 2.0)
-        shape.center.set(conv.toVector(boundsCenterLocal))
-
-        return shape
+        
+        return CircleShape(conv.toVector(boundsCenterLocal), conv.toMetersF(box.width / 2.0))
     }
 }
 

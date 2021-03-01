@@ -3,14 +3,13 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.animation
 
 import com.almasb.fxgl.test.RunWithFX
 import javafx.geometry.Point2D
 import javafx.geometry.Point3D
 import javafx.scene.paint.Color
-import javafx.scene.shape.Circle
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
 import javafx.scene.shape.Rectangle
@@ -97,5 +96,23 @@ class AnimatedValueTest {
         assertThat(anim.getValue(0.0), `is`(Point3D(0.0, 0.13125, 0.0)))
         assertThat(anim.getValue(1.0), `is`(Point3D(0.0, 0.0, 0.0)))
         assertThat(anim.getValue(0.5), `is`(Point3D(160.0, 50.0, 0.0)))
+    }
+
+    @Test
+    fun `StringIncreasing`() {
+        val anim = AnimatedStringIncreasing("String")
+
+        assertThat(anim.getValue(0.0), `is`(""))
+        assertThat(anim.getValue(1.0), `is`("String"))
+        assertThat(anim.getValue(0.5), `is`("Str"))
+    }
+
+    @Test
+    fun `StringDecreasing`() {
+        val anim = AnimatedStringDecreasing("String")
+
+        assertThat(anim.getValue(0.0), `is`("String"))
+        assertThat(anim.getValue(1.0), `is`(""))
+        assertThat(anim.getValue(0.5), `is`("Str"))
     }
 }

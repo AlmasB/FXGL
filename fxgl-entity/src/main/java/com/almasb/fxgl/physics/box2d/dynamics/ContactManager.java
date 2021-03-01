@@ -13,7 +13,6 @@ import com.almasb.fxgl.physics.box2d.collision.broadphase.BroadPhase;
 import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactEdge;
-import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactRegister;
 import com.almasb.fxgl.physics.box2d.pooling.IDynamicStack;
 import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 
@@ -66,7 +65,7 @@ class ContactManager implements PairCallback {
         }
     }
 
-    void setcontactFilter(ContactFilter contactFilter) {
+    void setContactFilter(ContactFilter contactFilter) {
         this.contactFilter = contactFilter;
     }
 
@@ -348,5 +347,10 @@ class ContactManager implements PairCallback {
 
         IDynamicStack<Contact> creator = contactStacks[type1.ordinal()][type2.ordinal()].creator;
         creator.push(contact);
+    }
+
+    private static class ContactRegister {
+        IDynamicStack<Contact> creator;
+        boolean primary;
     }
 }

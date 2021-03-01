@@ -6,10 +6,7 @@
 
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.core.collection.Array;
-import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.entity.components.TransformComponent;
 
 /**
@@ -21,12 +18,10 @@ public final class SAT {
 
     private SAT() {}
 
-    // there can be only 2 axes per angle, hence 2 * 2 = 4
-    private static final Array<Vec2> axes = new UnorderedArray<>(4);
-
-    // each hit box has 4 corners
-    private static final Array<Vec2> corners1 = new UnorderedArray<>(4);
-    private static final Array<Vec2> corners2 = new UnorderedArray<>(4);
+    private static final MinMax box2axis1 = new MinMax();
+    private static final MinMax box2axis2 = new MinMax();
+    private static final MinMax box1axis3 = new MinMax();
+    private static final MinMax box1axis4 = new MinMax();
 
     /**
      * Note: NOT thread-safe but GC-friendly.
@@ -41,118 +36,72 @@ public final class SAT {
      */
     public static boolean isColliding(HitBox box1, HitBox box2, double angle1, double angle2,
                                       TransformComponent t1, TransformComponent t2) {
-        populateAxes(angle1);
-        populateAxes(angle2);
 
-        corners(box1, angle1, t1, corners1);
-        corners(box2, angle2, t2, corners2);
+        Vec2 axis1 = box1.axes[0];
+        Vec2 axis2 = box1.axes[1];
+        Vec2 axis3 = box2.axes[0];
+        Vec2 axis4 = box2.axes[1];
 
-        boolean result = true;
+        computeMinMax(box2.corners, axis1, box2axis1);
 
-        for (Vec2 axis : axes) {
-            float e1Min = getMin(corners1, axis);
-            float e1Max = getMax(corners1, axis);
+        if (box1.axis1MinMax.isSeparated(box2axis1))
+            return false;
 
-            float e2Min = getMin(corners2, axis);
-            float e2Max = getMax(corners2, axis);
+        computeMinMax(box2.corners, axis2, box2axis2);
 
-            if (e1Max < e2Min || e2Max < e1Min) {
-                result = false;
-                break;
-            }
+        if (box1.axis2MinMax.isSeparated(box2axis2))
+            return false;
+
+        computeMinMax(box1.corners, axis3, box1axis3);
+
+        if (box2.axis1MinMax.isSeparated(box1axis3))
+            return false;
+
+        computeMinMax(box1.corners, axis4, box1axis4);
+
+        if (box2.axis2MinMax.isSeparated(box1axis4))
+            return false;
+
+        return true;
+    }
+
+    /**
+     * Calculate a projection of corners to an axis and populate the minMax object.
+     *
+     * @param corners a 4-value array defining corner points
+     * @param axis the axis on which to project corners
+     * @param minMax the storage object
+     */
+    static void computeMinMax(Vec2[] corners, Vec2 axis, MinMax minMax) {
+        float value = Vec2.dot(corners[0], axis);
+
+        float min = value;
+        float max = value;
+
+        for (int i = 1; i < 4; i++) {
+            value = Vec2.dot(corners[i], axis);
+
+            min = Math.min(min, value);
+            max = Math.max(max, value);
         }
 
-        cleanArrays();
-
-        return result;
+        minMax.min = min;
+        minMax.max = max;
     }
 
-    private static void cleanArrays() {
-        for (Vec2 v : axes)
-            freeVec(v);
+    /**
+     * Data structure for min-max values on an axis.
+     */
+    public static class MinMax {
+        private float min = 0;
+        private float max = 0;
 
-        for (Vec2 v : corners1)
-            freeVec(v);
-
-        for (Vec2 v : corners2)
-            freeVec(v);
-
-        axes.clear();
-        corners1.clear();
-        corners2.clear();
-    }
-
-    private static void populateAxes(double angle) {
-        axes.add(newVec(cos(angle), sin(angle)).normalizeLocal());
-        axes.add(newVec(cos(angle + 90), sin(angle + 90)).normalizeLocal());
-    }
-
-    private static void corners(HitBox box, double angle, TransformComponent t, Array<Vec2> array) {
-        Vec2 origin = new Vec2(t.getRotationOrigin()).addLocal(t.getX(), t.getY());
-
-        // this needs to be scaled accordingly, so               centerX * scale + (1-scale) * pivot.x
-        //origin.x = (float) (t.getScaleOrigin().getX() - (t.getScaleOrigin().getX() - origin.x) * t.getScaleX() + origin.x);
-        //origin.y = (float) (t.getScaleOrigin().getY() - (t.getScaleOrigin().getY() - origin.y) * t.getScaleY() + origin.y);
-
-        //origin
-
-        Vec2 topLeft = newVec(box.getMinXWorld(), box.getMinYWorld());
-        Vec2 topRight = newVec(box.getMaxXWorld(), box.getMinYWorld());
-        Vec2 botRight = newVec(box.getMaxXWorld(), box.getMaxYWorld());
-        Vec2 botLeft = newVec(box.getMinXWorld(), box.getMaxYWorld());
-
-        array.addAll(topLeft, topRight, botRight, botLeft);
-
-        double cos = cos(angle);
-        double sin = sin(angle);
-
-        for (Vec2 v : array) {
-            v.subLocal(origin);
-            v.set((float)(v.x * cos - v.y * sin), (float)(v.x * sin + v.y * cos));
-            v.addLocal(origin);
+        /**
+         * @param other another min-max (assumed on the same axis)
+         * @return true if this min-max is separated from other
+         */
+        private boolean isSeparated(MinMax other) {
+            return max < other.min || other.max < min;
         }
-
-        freeVec(origin);
-    }
-
-    private static float getMin(Array<Vec2> arrayCorners, Vec2 axis) {
-        float min = Float.MAX_VALUE;
-
-        for (Vec2 corner : arrayCorners) {
-            float value = Vec2.dot(corner, axis);
-            if (value < min)
-                min = value;
-        }
-
-        return min;
-    }
-
-    private static float getMax(Array<Vec2> arrayCorners, Vec2 axis) {
-        float max = Integer.MIN_VALUE;
-
-        for (Vec2 corner : arrayCorners) {
-            float value = Vec2.dot(corner, axis);
-            if (value > max)
-                max = value;
-        }
-
-        return max;
-    }
-
-    private static Vec2 newVec(double x, double y) {
-        return Pools.obtain(Vec2.class)
-                .set((float)x, (float)y);
-    }
-
-    private static void freeVec(Vec2 vec) {
-        Pools.free(vec);
-    }
-
-    private static double cos(double angle) {
-        return Math.cos(Math.toRadians(angle));
-    }
-
-    private static double sin(double angle) {
-        return Math.sin(Math.toRadians(angle));
     }
 }

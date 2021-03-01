@@ -6,12 +6,12 @@
 
 package com.almasb.fxgl.physics.box2d.collision.shapes;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.collision.RayCastOutput;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 
@@ -22,17 +22,22 @@ public final class CircleShape extends Shape {
 
     public final Vec2 center = new Vec2();
 
-    public CircleShape() {
-        super(ShapeType.CIRCLE, 0);
+    public CircleShape(float radius) {
+        this(0, 0, radius);
+    }
+
+    public CircleShape(Vec2 center, float radius) {
+        this(center.x, center.y, radius);
+    }
+
+    public CircleShape(float centerX, float centerY, float radius) {
+        super(ShapeType.CIRCLE, radius);
+        center.set(centerX, centerY);
     }
 
     @Override
     public Shape clone() {
-        CircleShape shape = new CircleShape();
-        shape.center.x = center.x;
-        shape.center.y = center.y;
-        shape.setRadius(this.getRadius());
-        return shape;
+        return new CircleShape(center, getRadius());
     }
 
     @Override
@@ -41,7 +46,7 @@ public final class CircleShape extends Shape {
     }
 
     @Override
-    public boolean testPoint(final Transform transform, final Vec2 p) {
+    public boolean containsPoint(final Transform transform, final Vec2 point) {
         // Rot.mulToOutUnsafe(transform.q, m_p, center);
         // center.addLocal(transform.p);
         //
@@ -49,8 +54,8 @@ public final class CircleShape extends Shape {
         // return Vec2.dot(d, d) <= radius * radius;
         final Rotation q = transform.q;
         final Vec2 tp = transform.p;
-        float centerx = -(q.c * center.x - q.s * center.y + tp.x - p.x);
-        float centery = -(q.s * center.x + q.c * center.y + tp.y - p.y);
+        float centerx = -(q.c * center.x - q.s * center.y + tp.x - point.x);
+        float centery = -(q.s * center.x + q.c * center.y + tp.y - point.y);
 
         return centerx * centerx + centery * centery <= getRadius() * getRadius();
     }
@@ -62,7 +67,7 @@ public final class CircleShape extends Shape {
         float centery = xfq.s * center.x + xfq.c * center.y + xf.p.y;
         float dx = p.x - centerx;
         float dy = p.y - centery;
-        float d1 = JBoxUtils.sqrt(dx * dx + dy * dy);
+        float d1 = FXGLMath.sqrtF(dx * dx + dy * dy);
         normalOut.x = dx * 1 / d1;
         normalOut.y = dy * 1 / d1;
         return d1 - getRadius();
@@ -106,7 +111,7 @@ public final class CircleShape extends Shape {
         }
 
         // Find the point of intersection of the line with the circle.
-        float a = -(c + JBoxUtils.sqrt(sigma));
+        float a = -(c + FXGLMath.sqrtF(sigma));
 
         // Is the intersection point on the segment?
         if (0.0f <= a && a <= input.maxFraction * rr) {
@@ -122,11 +127,9 @@ public final class CircleShape extends Shape {
     }
 
     @Override
-    public void computeAABB(final AABB aabb, final Transform transform, int childIndex) {
-        final Rotation tq = transform.q;
-        final Vec2 tp = transform.p;
-        final float px = tq.c * center.x - tq.s * center.y + tp.x;
-        final float py = tq.s * center.x + tq.c * center.y + tp.y;
+    public void computeAABB(AABB aabb, Transform transform, int childIndex) {
+        float px = transform.mulX(center);
+        float py = transform.mulY(center);
 
         aabb.lowerBound.x = px - getRadius();
         aabb.lowerBound.y = py - getRadius();
@@ -136,7 +139,7 @@ public final class CircleShape extends Shape {
 
     @Override
     public void computeMass(final MassData massData, final float density) {
-        massData.mass = density * JBoxSettings.PI * getRadius() * getRadius();
+        massData.mass = density * FXGLMath.PI_F * getRadius() * getRadius();
         massData.center.x = center.x;
         massData.center.y = center.y;
 

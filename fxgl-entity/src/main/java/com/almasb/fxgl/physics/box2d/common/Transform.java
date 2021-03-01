@@ -43,6 +43,22 @@ public final class Transform implements Serializable {
         q.setIdentity();
     }
 
+    /**
+     * @param v the vector to transform
+     * @return x of the vector rotated and translated by this transform
+     */
+    public float mulX(Vec2 v) {
+        return q.c * v.x - q.s * v.y + p.x;
+    }
+
+    /**
+     * @param v the vector to transform
+     * @return y of the vector rotated and translated by this transform
+     */
+    public float mulY(Vec2 v) {
+        return q.s * v.x + q.c * v.y + p.y;
+    }
+
     public static Vec2 mul(Transform T, Vec2 v) {
         return new Vec2(T.q.c * v.x - T.q.s * v.y + T.p.x, T.q.s * v.x + T.q.c * v.y + T.p.y);
     }

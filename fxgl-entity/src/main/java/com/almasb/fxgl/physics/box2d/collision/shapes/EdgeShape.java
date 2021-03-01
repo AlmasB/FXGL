@@ -6,12 +6,12 @@
 
 package com.almasb.fxgl.physics.box2d.collision.shapes;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.collision.RayCastOutput;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 
@@ -75,7 +75,7 @@ public class EdgeShape extends Shape {
     }
 
     @Override
-    public boolean testPoint(Transform xf, Vec2 p) {
+    public boolean containsPoint(Transform xf, Vec2 point) {
         return false;
     }
 
@@ -107,7 +107,7 @@ public class EdgeShape extends Shape {
             }
         }
 
-        float d1 = JBoxUtils.sqrt(dx * dx + dy * dy);
+        float d1 = FXGLMath.sqrtF(dx * dx + dy * dy);
         if (d1 > 0) {
             normalOut.x = 1 / d1 * dx;
             normalOut.y = 1 / d1 * dy;

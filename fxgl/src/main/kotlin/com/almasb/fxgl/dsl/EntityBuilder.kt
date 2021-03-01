@@ -11,6 +11,7 @@ import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.CollidableComponent
+import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.BoundingShape.Companion.box
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsComponent
@@ -123,6 +124,12 @@ class EntityBuilder {
         entity.transformComponent.rotationOrigin = center
     }
 
+    fun bbox(shape: BoundingShape) = this.also {
+        val hitBox = HitBox(shape)
+
+        bbox(hitBox)
+    }
+
     fun view(node: Node) = this.also {
         entity.viewComponent.addChild(node)
     }
@@ -190,6 +197,12 @@ class EntityBuilder {
 
     fun build() = entity
 
+    /**
+     * A convenience function to build the entity and also add to the game world.
+     * This function should be used when creating and adding entities to the world manually.
+     * Do not use this function (use [build] instead) when spawning entities
+     * with [com.almasb.fxgl.entity.GameWorld.spawn] or [FXGL.spawn].
+     */
     fun buildAndAttach() = entity.also { FXGL.getGameWorld().addEntity(it) }
 
     /**

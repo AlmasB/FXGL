@@ -6,11 +6,11 @@
 
 package com.almasb.fxgl.app.services
 
-import com.almasb.fxgl.app.FXGLApplication
 import com.almasb.fxgl.audio.*
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.asset.AssetLoaderService
 import com.almasb.fxgl.core.asset.AssetType
+import com.almasb.fxgl.core.asset.AssetType.*
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraph
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraphSerializer
@@ -37,6 +37,21 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*
 
+// Directories that are used for specific assets
+private const val ASSETS_DIR = "/assets/"
+private const val TEXTURES_DIR = ASSETS_DIR + "textures/"
+private const val SOUNDS_DIR = ASSETS_DIR + "sounds/"
+private const val MUSIC_DIR = ASSETS_DIR + "music/"
+private const val TEXT_DIR = ASSETS_DIR + "text/"
+private const val PROPERTIES_DIR = ASSETS_DIR + "properties/"
+private const val LEVELS_DIR = ASSETS_DIR + "levels/"
+private const val DIALOGUES_DIR = ASSETS_DIR + "dialogues/"
+
+private const val UI_DIR = ASSETS_DIR + "ui/"
+private const val CSS_DIR = UI_DIR + "css/"
+private const val FONTS_DIR = UI_DIR + "fonts/"
+private const val CURSORS_DIR = UI_DIR + "cursors/"
+
 /**
  * Handles all resource (asset) loading operations.
  * 
@@ -49,114 +64,89 @@ import java.util.*
  * Sound - /assets/sounds/
  * Music - /assets/music/
  * Text (List of String) - /assets/text/
- * Scripts - /assets/scripts/
- * Behavior Tree - /assets/ai/
  * FXML - /assets/ui/
  * CSS - /assets/ui/css/
  * Font - /assets/ui/fonts/
  * Cursors - /assets/ui/cursors/
  * Resource bundles - /assets/properties/
  *
- * If you need to access the "raw" JavaFX objects (e.g. Image), you can use
- * {@link AssetLoader#getStream(String)} to obtain an InputStream and then
- * parse into whatever resource you need.
+ * If you need to access the "raw" JavaFX objects (e.g. Image), you can use [getStream]
+ * to obtain an InputStream and then parse into whatever resource you need.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class FXGLAssetLoaderService : AssetLoaderService() {
 
-    private val ASSETS_DIR = "/assets/"
-    private val TEXTURES_DIR = ASSETS_DIR + "textures/"
-    private val SOUNDS_DIR = ASSETS_DIR + "sounds/"
-    private val MUSIC_DIR = ASSETS_DIR + "music/"
-    private val TEXT_DIR = ASSETS_DIR + "text/"
-    private val JSON_DIR = ASSETS_DIR + "json/"
-    private val TMX_DIR = ASSETS_DIR + "tmx/"
-    private val SCRIPTS_DIR = ASSETS_DIR + "scripts/"
-    private val PROPERTIES_DIR = ASSETS_DIR + "properties/"
-    private val AI_DIR = ASSETS_DIR + "ai/"
-    private val LEVELS_DIR = ASSETS_DIR + "levels/"
-    private val DIALOGUES_DIR = ASSETS_DIR + "dialogues/"
+    companion object {
+        private val NULL_URL = URL("https://github.com/AlmasB/FXGL")
 
-    private val UI_DIR = ASSETS_DIR + "ui/"
-    private val CSS_DIR = UI_DIR + "css/"
-    private val FONTS_DIR = UI_DIR + "fonts/"
-    private val CURSORS_DIR = UI_DIR + "cursors/"
+        private val log = Logger.get(FXGLAssetLoaderService::class.java)
 
-    private val log = Logger.get(javaClass)
+        private val assetData = EnumMap<AssetType, AssetLoader<*>>(AssetType::class.java)
+
+        init {
+            assetData[IMAGE] = ImageAssetLoader()
+            assetData[RESIZABLE_IMAGE] = ResizableImageAssetLoader()
+            assetData[TEXT] = TextAssetLoader()
+            assetData[DIALOGUE] = DialogueGraphAssetLoader()
+            assetData[RESOURCE_BUNDLE] = ResourceBundleAssetLoader()
+            assetData[PROPERTY_MAP] = PropertyMapAssetLoader()
+            assetData[UI] = UIAssetLoader()
+            assetData[CSS] = CSSAssetLoader()
+            assetData[FONT] = FontAssetLoader()
+        }
+    }
 
     @Inject("isDesktop")
     private var isDesktop = true
+
+    @Inject("userAppClass")
+    private lateinit var userAppClass: Class<*>
 
     private lateinit var audioService: AudioPlayer
 
     private val cachedAssets = hashMapOf<String, Any>()
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T> load(assetType: AssetType, fileName: String): T {
-        if (assetType == AssetType.DIALOGUE) {
-            return loadDialogueGraph(fileName) as T
-        }
+    override fun onInit() {
+        assetData[SOUND] = SoundAssetLoader(audioService, isDesktop)
+        assetData[MUSIC] = MusicAssetLoader(audioService, isDesktop)
 
-        throw RuntimeException("Not implemented")
+        log.debug("User app class for loading assets: $userAppClass")
     }
 
     /**
-     * Loads texture as [Image] with given name from /assets/textures/.
-     * Either returns a valid image or throws an exception in case of errors.
-     *
-     * Supported image formats are:
-     *
-     *  * [BMP](http://msdn.microsoft.com/en-us/library/dd183376(v=vs.85).aspx)
-     *  * [GIF](http://www.w3.org/Graphics/GIF/spec-gif89a.txt)
-     *  * [JPEG](http://www.ijg.org)
-     *  * [PNG](http://www.libpng.org/pub/png/spec/)
-     *
-     * @param name texture name without the /assets/textures/, e.g. "player.png"
-     * @return image
-     * @throws IllegalArgumentException if asset not found or loading error
-     */
-    fun loadImage(name: String): Image {
-        val asset = getAssetFromCache(TEXTURES_DIR + name)
-        if (asset != null) {
-            return Image::class.java.cast(asset)
-        }
-
-        try {
-            getStream(TEXTURES_DIR + name).use {
-                val image = Image(it)
-                cachedAssets.put(TEXTURES_DIR + name, image)
-                return image
-            }
-        } catch (e: Exception) {
-            log.warning("Failed to load texture $name", e)
-            return getDummyImage()
-        }
-    }
-
-    /**
-     * Loads texture with given name from /assets/textures/.
-     * Either returns a valid texture or throws an exception in case of errors.
-     *
-     * Supported image formats are:
-     *
-     *  * [BMP](http://msdn.microsoft.com/en-us/library/dd183376(v=vs.85).aspx)
-     *  * [GIF](http://www.w3.org/Graphics/GIF/spec-gif89a.txt)
-     *  * [JPEG](http://www.ijg.org)
-     *  * [PNG](http://www.libpng.org/pub/png/spec/)
-     *
-     * @param name texture name without the /assets/textures/, e.g. "player.png"
-     * @return texture
-     * @throws IllegalArgumentException if asset not found or loading error
+     * Loads an image with [loadImage] and wraps it with a [Texture].
      */
     fun loadTexture(name: String): Texture {
         return Texture(loadImage(name))
     }
 
     /**
-     * Loads texture with given name from /assets/textures/.
-     * Then resizes it to given width and height without preserving aspect ratio.
-     * Either returns a valid texture or throws an exception in case of errors.
+     * Loads an image with [loadImage] and wraps it with a [Texture].
+     */
+    fun loadTexture(url: URL): Texture {
+        return Texture(loadImage(url))
+    }
+
+    /**
+     * Loads a resized image with [loadImage] and wraps it with a [Texture].
+     */
+    fun loadTexture(name: String, width: Double, height: Double): Texture {
+        val url = getURL(TEXTURES_DIR + name)
+
+        return Texture(load(RESIZABLE_IMAGE, ResizableImageParams(url, width, height)))
+    }
+
+    /**
+     * Loads a resized image with [loadImage] and wraps it with a [Texture].
+     */
+    fun loadTexture(url: URL, width: Double, height: Double): Texture {
+        return Texture(load(RESIZABLE_IMAGE, ResizableImageParams(url, width, height)))
+    }
+
+    /**
+     * Loads an [Image] with given [name] from /assets/textures/.
+     * The image for given [name] will be cached after the first call.
      *
      * Supported image formats are:
      *
@@ -165,196 +155,86 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      *  * [JPEG](http://www.ijg.org)
      *  * [PNG](http://www.libpng.org/pub/png/spec/)
      *
-     * @param name texture name without the /assets/textures/, e.g. "player.png"
-     * @param width requested width
-     * @param height requested height
-     * @return texture
-     * @throws IllegalArgumentException if asset not found or loading error
+     * @param name image name without the /assets/textures/, e.g. "player.png"
+     * @return a valid image or a dummy image if loading fails
      */
-    fun loadTexture(name: String, width: Double, height: Double): Texture {
-        val cacheKey = TEXTURES_DIR + name + "@" + width + "x" + height
-
-        val asset = getAssetFromCache(cacheKey)
-        if (asset != null) {
-            return Texture(Image::class.java.cast(asset))
-        }
-
-        try {
-            getStream(TEXTURES_DIR + name).use {
-                val texture = Texture(Image(it, width, height, false, true))
-                cachedAssets.put(cacheKey, texture.image)
-                return texture
-            }
-        } catch (e: Exception) {
-            log.warning("Failed to load texture $name", e)
-            return Texture(getDummyImage())
-        }
+    fun loadImage(name: String): Image {
+        return load(IMAGE, name)
     }
 
     /**
-     * Loads sound with given name from /assets/sounds/.
-     * Either returns a valid sound or throws an exception in case of errors.
+     * Loads an [Image] from given [url].
+     * The image for given [url] will be cached after the first call.
+     * Supported image formats are:
+     *
+     *  * [BMP](http://msdn.microsoft.com/en-us/library/dd183376(v=vs.85).aspx)
+     *  * [GIF](http://www.w3.org/Graphics/GIF/spec-gif89a.txt)
+     *  * [JPEG](http://www.ijg.org)
+     *  * [PNG](http://www.libpng.org/pub/png/spec/)
+     *
+     * @return a valid image or a dummy image if loading fails
+     */
+    fun loadImage(url: URL): Image {
+        return load(IMAGE, url)
+    }
+
+    /**
+     * Loads a [Sound] with given [name] from /assets/sounds/.
+     * The sound for given [name] will be cached after the first call.
      *
      * Supported sound format:
      *  * WAV
      *
      * @param name sound name without the /assets/sounds/, e.g. "explosion.wav"
-     * @return sound
-     * @throws IllegalArgumentException if asset not found or loading error
+     * @return a valid sound object or a dummy object if loading fails
      */
     fun loadSound(name: String): Sound {
-        val asset = getAssetFromCache(SOUNDS_DIR + name)
-        if (asset != null) {
-            return Sound::class.java.cast(asset)
-        }
-
-        try {
-            val sound = Sound(audioService.loadAudio(AudioType.SOUND, getURL(SOUNDS_DIR + name), isDesktop))
-            cachedAssets.put(SOUNDS_DIR + name, sound)
-            return sound
-        } catch (e: Exception) {
-            log.warning("Failed to load sound $name", e)
-            return Sound(getDummyAudio())
-        }
+        return load(SOUND, name)
     }
 
     /**
-     * Loads sound with given name from /assets/music/.
-     * Either returns a valid sound or throws an exception in case of errors.
+     * Loads a [Sound] from given [url].
+     * The sound for given [url] will be cached after the first call.
      *
-     * Supported music format:
+     * Supported sound format:
+     *  * WAV
+     *
+     * @param name sound name without the /assets/sounds/, e.g. "explosion.wav"
+     * @return a valid sound object or a dummy object if loading fails
+     */
+    fun loadSound(url: URL): Sound {
+        return load(SOUND, url)
+    }
+
+    /**
+     * Loads a [Music] with given [name] from /assets/music/.
+     * The music for given [name] will be cached after the first call.
+     *
+     * Supported sound format:
      *  * MP3
      *
-     * @param name music name without the /assets/music/, e.g. "background_music.mp3"
-     * @return music
-     * @throws IllegalArgumentException if asset not found or loading error
+     * @param name music name without the /assets/music/, e.g. "bgm.mp3"
+     * @return a valid music object or a dummy object if loading fails
      */
     fun loadMusic(name: String): Music {
-        val asset = getAssetFromCache(MUSIC_DIR + name)
-        if (asset != null) {
-            return Music::class.java.cast(asset)
-        }
-
-        try {
-            val music = Music(audioService.loadAudio(AudioType.MUSIC, getURL(MUSIC_DIR + name), isDesktop))
-            cachedAssets.put(MUSIC_DIR + name, music)
-            return music
-        } catch (e: Exception) {
-            log.warning("Failed to load music $name", e)
-            return Music(getDummyAudio())
-        }
+        return load(MUSIC, name)
     }
 
     /**
-     * Loads text file with given name from /assets/text/
-     * into List where each element represents a line
-     * in the file. Either returns a valid list with lines read from the file
-     * or throws an exception in case of errors.
+     * Loads a [Music] from given [url].
+     * The music for given [url] will be cached after the first call.
      *
-     * @param name text file name without the /assets/text/, e.g. "level_0.txt"
-     * @return list of lines from file
-     * @throws IllegalArgumentException if asset not found or loading error
-     */
-    @Suppress("UNCHECKED_CAST")
-    fun loadText(name: String): List<String> {
-        val asset = getAssetFromCache(TEXT_DIR + name)
-        if (asset != null) {
-            return asset as List<String>
-        }
-
-        val text = readAllLines(TEXT_DIR + name)
-        cachedAssets.put(TEXT_DIR + name, text)
-        return text
-    }
-
-    /**
-     * @param name level file name in /assets/levels/
-     * @param levelLoader level loader to use to load this level
-     * @param entityFactory entity factory to use when spawning entities in this level
-     */
-    fun loadLevel(name: String, levelLoader: LevelLoader): Level {
-        return levelLoader.load(getURL(LEVELS_DIR + name), FXGL.getGameWorld())
-    }
-
-    fun loadDialogueGraph(name: String): DialogueGraph {
-        val asset = getAssetFromCache(DIALOGUES_DIR + name)
-        if (asset != null) {
-            return DialogueGraphSerializer.fromSerializable(asset as SerializableGraph)
-        }
-
-        try {
-            getStream(DIALOGUES_DIR + name).use {
-                val graph = ObjectMapper().readValue(it, SerializableGraph::class.java)
-
-                cachedAssets[DIALOGUES_DIR + name] = graph
-                return DialogueGraphSerializer.fromSerializable(graph)
-            }
-        } catch (e: Exception) {
-            log.warning("Failed to load dialogue graph $name", e)
-            val dummyGraph = DialogueGraph()
-
-            // add a start node, so the dialogue can play and not crash at runtime
-            dummyGraph.addNode(StartNode("Failed to load dialogue graph $name : $e"))
-
-            return dummyGraph
-        }
-    }
-
-    /**
-     * Loads resource bundle with given name from "/assets/properties/".
+     * Supported sound format:
+     *  * MP3
      *
-     * Note: for improved mobile support use [loadPropertyMap] instead.
-     *
-     * @param name must be under "/assets/properties/", e.g. system.properties, game.properties
-     * @return resource bundle
-     * @throws IllegalArgumentException if asset not found or loading error
+     * @param name music name without the /assets/music/, e.g. "bgm.mp3"
+     * @return a valid music object or a dummy object if loading fails
      */
-    fun loadResourceBundle(name: String): ResourceBundle {
-        val asset = getAssetFromCache(PROPERTIES_DIR + name)
-        if (asset != null) {
-            return asset as ResourceBundle
-        }
-
-        try {
-            getStream(PROPERTIES_DIR + name).use {
-                val bundle = PropertyResourceBundle(it.reader(StandardCharsets.UTF_8))
-                cachedAssets.put(PROPERTIES_DIR + name, bundle)
-                return bundle
-            }
-        } catch (e: Exception) {
-            log.warning("Failed to load resource bundle $name", e)
-            return object : ListResourceBundle() {
-                override fun getContents(): Array<Array<Any>> {
-                    return emptyArray()
-                }
-            }
-        }
+    fun loadMusic(url: URL): Music {
+        return load(MUSIC, url)
     }
 
-    /**
-     * Loads property map with given name from "/assets/".
-     * Example: loadPropertyMap("languages/english.pmap").
-     */
-    fun loadPropertyMap(name: String): PropertyMap {
-        val asset = getAssetFromCache(ASSETS_DIR + name)
-        if (asset != null) {
-            return asset as PropertyMap
-        }
-
-        val map = readAllLines(ASSETS_DIR + name)
-                .filter { it.contains('=') }
-                .map {
-                    val tokens = it.split("=")
-                    tokens[0].trim() to tokens[1].trim()
-                }
-                .toMap()
-
-        val pMap = PropertyMap.fromStringMap(map)
-
-        cachedAssets[ASSETS_DIR + name] = pMap
-        return pMap
-    }
-
+    // TODO: remove in future version
     /**
      * Loads cursor image with given name from /assets/ui/cursors/.
      * Either returns a valid image or throws exception in case of errors.
@@ -363,63 +243,140 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      * @return cursor image
      * @throws IllegalArgumentException if asset not found or loading error
      */
+    @Deprecated("Place cursor under textures/ and use loadImage() instead")
     fun loadCursorImage(name: String): Image {
-        try {
-            getStream(CURSORS_DIR + name).use { return Image(it) }
-        } catch (e: Exception) {
-            log.warning("Failed to load cursor image $name", e)
-            return getDummyImage()
-        }
+        val url = getURL(CURSORS_DIR + name)
+
+        return load(IMAGE, url)
     }
 
     /**
-     * Loads an FXML (.fxml) file from /assets/ui/.
-     * Either returns a valid parsed UI or throws an exception in case of errors.
+     * Loads resource bundle with given [name] from "/assets/properties/".
      *
-     * @param name FXML file name
-     * @param controller the controller object
-     * @return a UI object parsed from .fxml
-     * @throws IllegalArgumentException if asset not found or loading/parsing error
+     * Note: for improved mobile support use [loadPropertyMap] instead.
+     *
+     * @param name must be under "/assets/properties/", e.g. system.properties, game.properties
+     * @return resource bundle
      */
-    fun loadUI(name: String, controller: UIController): UI {
+    fun loadResourceBundle(name: String): ResourceBundle {
+        return load(RESOURCE_BUNDLE, name)
+    }
+
+    /**
+     * Loads resource bundle from given [url].
+     *
+     * Note: for improved mobile support use [loadPropertyMap] instead.
+     *
+     * @return resource bundle
+     */
+    fun loadResourceBundle(url: URL): ResourceBundle {
+        return load(RESOURCE_BUNDLE, url)
+    }
+
+    /**
+     * Load [DialogueGraph] with given [name] from "/assets/dialogues".
+     *
+     * @param name must be under "/assets/dialogues", e.g. npc_dialogue.json
+     * @return dialogue graph or empty graph if errors
+     */
+    fun loadDialogueGraph(name: String): DialogueGraph {
+        val graph = load<SerializableGraph>(DIALOGUE, name)
+
+        return DialogueGraphSerializer.fromSerializable(graph)
+    }
+
+    /**
+     * Load [DialogueGraph] from given [url].
+     *
+     * @return dialogue graph or empty graph if errors
+     */
+    fun loadDialogueGraph(url: URL): DialogueGraph {
+        val graph = load<SerializableGraph>(DIALOGUE, url)
+
+        return DialogueGraphSerializer.fromSerializable(graph)
+    }
+
+    /**
+     * Loads text file with given [name] from /assets/text/
+     * into List<String> where each element represents a line in the file.
+     *
+     * @param name text file name without the /assets/text/, e.g. "level_0.txt"
+     * @return list of lines from file or empty list if errors
+     */
+    fun loadText(name: String): List<String> {
+        return load(TEXT, name)
+    }
+
+    /**
+     * Loads text file from given [url]
+     * into List<String> where each element represents a line in the file.
+     *
+     * @return list of lines from file or empty list if errors
+     */
+    fun loadText(url: URL): List<String> {
+        return load(TEXT, url)
+    }
+
+    /**
+     * Loads .json file with [name] from "/assets/" as [type].
+     * The object is not cached.
+     *
+     * @return parsed object with [type] or Optional.empty() if errors
+     */
+    fun <T> loadJSON(name: String, type: Class<T>): Optional<T> {
+        return loadJSON(getURL(ASSETS_DIR + name), type)
+    }
+
+    /**
+     * Loads .json file from [url] as [type].
+     * The object is not cached.
+     *
+     * @return parsed object with [type] or Optional.empty() if errors
+     */
+    fun <T> loadJSON(url: URL, type: Class<T>): Optional<T> {
+        if (url === NULL_URL) {
+            log.warning("Failed to load JSON: URL is not valid")
+            return Optional.empty()
+        }
+
+        // impl of json loading is direct (doesn't use our unified loading)
+        // to avoid potential cast issues
+        log.debug("Loading JSON from: $url")
+
         try {
-            getStream(UI_DIR + name).use {
-                val loader = FXMLLoader()
-                loader.setController(controller)
-                val root = loader.load<Parent>(it)
-                controller.init()
-                return UI(root, controller)
+            url.openStream().use {
+                val obj = ObjectMapper().readValue(it, type)
+                return Optional.ofNullable(obj)
             }
         } catch (e: Exception) {
-            log.warning("Failed to load FXML $name", e)
-            log.warning("Failed to load UI, so controller.init() will not be called")
-            return UI(Pane(), controller)
+            log.warning("Loading failed: $url", e)
+            return Optional.empty()
         }
     }
 
     /**
-     * Loads a CSS file from /assets/ui/css/.
-     * Can be applied by calling object.getStyleSheets().add(css.getExternalForm()).
-     * Either returns ready CSS or throws exception in case of errors.
-     * 
-     * @param name CSS file name without the /assets/ui/css/, e.g. "ui_button.css"
-     * @return css
-     * @throws IllegalArgumentException if asset not found or loading error
+     * Loads property map with given [name] from "/assets/".
+     * Example: loadPropertyMap("languages/english.pmap").
+     *
+     * @return property map or empty one if errors
      */
-    fun loadCSS(name: String): CSS {
-        try {
-            return CSS(getURL(CSS_DIR + name).toExternalForm())
-        } catch (e: Exception) {
-            log.warning("Failed to load css $name", e)
-            return CSS("")
-        }
+    fun loadPropertyMap(name: String): PropertyMap {
+        return load(PROPERTY_MAP, name)
     }
 
     /**
-     * Loads a native JavaFX font with given name from /assets/ui/fonts/
+     * Load a property map from given [URL].
+     *
+     * @return property map or empty one if errors
+     */
+    fun loadPropertyMap(url: URL): PropertyMap {
+        return load(PROPERTY_MAP, url)
+    }
+
+    /**
+     * Loads a native JavaFX font with given [name] from /assets/ui/fonts/
      * wrapped in a FontFactory, which later can be used to produce fonts
      * with different sizes without accessing the font file.
-     * Either returns a valid font factory or throws exception in case of errors.
      *
      * Supported font formats are:
      *
@@ -427,97 +384,183 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      *  * OTF
      *
      * @param name font file name without the /assets/ui/fonts/, e.g. "quest_font.ttf"
-     * @return font factory
-     * @throws IllegalArgumentException if asset not found or loading error
+     * @return font factory or default font factory if errors
      */
     fun loadFont(name: String): FontFactory {
-        val asset = getAssetFromCache(FONTS_DIR + name)
-        if (asset != null) {
-            return FontFactory::class.java.cast(asset)
+        return load(FONT, name)
+    }
+
+    /**
+     * Loads a native JavaFX font from given [url]
+     * wrapped in a FontFactory, which later can be used to produce fonts
+     * with different sizes without accessing the font file.
+     *
+     * Supported font formats are:
+     *
+     *  * TTF
+     *  * OTF
+     *
+     * @return font factory or default font factory if errors
+     */
+    fun loadFont(url: URL): FontFactory {
+        return load(FONT, url)
+    }
+
+    /**
+     * Loads a CSS file with given [name] from /assets/ui/css/.
+     * Can be applied by calling object.getStyleSheets().add(css.getExternalForm()).
+     *
+     * @param name CSS file name without the /assets/ui/css/, e.g. "ui_button.css"
+     * @return css or empty css if errors
+     */
+    fun loadCSS(name: String): CSS {
+        return load(CSS, name)
+    }
+
+    /**
+     * Loads a CSS file from [url].
+     * Can be applied by calling object.getStyleSheets().add(css.getExternalForm()).
+     *
+     * @return css or empty css if errors
+     */
+    fun loadCSS(url: URL): CSS {
+        return load(CSS, url)
+    }
+
+    /**
+     * @param name level file name in /assets/levels/
+     * @param levelLoader level loader to use to load this level
+     * @return level or throws [IllegalArgumentException] if asset is not found
+     */
+    fun loadLevel(name: String, levelLoader: LevelLoader): Level {
+        val url = getURL(LEVELS_DIR + name)
+
+        if (url === NULL_URL) {
+            throw IllegalArgumentException("Loading level failed. Asset not found: $name")
         }
 
-        try {
-            getStream(FONTS_DIR + name).use {
-                val font = Font.loadFont(it, 12.0) ?: throw IllegalArgumentException("Font.loadFont($name) returned null")
+        return levelLoader.load(url, FXGL.getGameWorld())
+    }
 
-                val fontFactory = FontFactory(font)
-                cachedAssets[FONTS_DIR + name] = fontFactory
-                return fontFactory
+    /**
+     * Loads an FXML (.fxml) file with given [name] from /assets/ui/.
+     * UI objects are not cached.
+     *
+     * @param name FXML file name
+     * @param controller the controller object
+     * @return a UI object parsed from .fxml or empty UI if errors
+     */
+    fun loadUI(name: String, controller: UIController): UI {
+        val url = getURL(UI_DIR + name)
+
+        return load(UI, UIParams(url, controller))
+    }
+
+    /**
+     * Loads an FXML (.fxml) file from given [url].
+     * UI objects are not cached.
+     *
+     * @param controller the controller object
+     * @return a UI object parsed from .fxml or empty UI if errors
+     */
+    fun loadUI(url: URL, controller: UIController): UI {
+        return load(UI, UIParams(url, controller))
+    }
+
+    /**
+     * Load an asset as [assetType] from given [fileName] (relative to its category directory).
+     * For example, to load "player.png" from "/assets/textures", the call is
+     * load(AssetType.IMAGE, "player.png") with the return type being [Image].
+     *
+     * Note: specific load methods (e.g. [loadImage]) are preferred over this call.
+     */
+    override fun <T> load(assetType: AssetType, fileName: String): T {
+        return load(assetType, getURL(assetData[assetType]!!.directory + fileName))
+    }
+
+    /**
+     * Load an asset as [assetType] from given [url].
+     * For example,
+     * load(AssetType.IMAGE, getClass().getResource("...")) with the return type being [Image].
+     *
+     * Note: specific load methods (e.g. [loadImage]) are preferred over this call.
+     */
+    fun <T> load(assetType: AssetType, url: URL): T {
+        return load(assetType, LoadParams(url))
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> load(assetType: AssetType, loadParams: LoadParams): T {
+        val data = assetData[assetType] as AssetLoader<T>
+
+        if (loadParams.url === NULL_URL) {
+            log.warning("Failed to load $assetType")
+            return data.getDummy()
+        }
+
+        val cacheKey = loadParams.cacheKey
+
+        val asset = cachedAssets[cacheKey]
+        if (asset != null) {
+            // load from cache
+            return data.cast(asset)
+        }
+
+        return try {
+            log.debug("Loading from file system: ${loadParams.url}")
+
+            val loaded = data.load(loadParams)
+
+            if (loadParams.isCacheEnabled) {
+                cachedAssets[cacheKey] = loaded as Any
             }
+
+            loaded
         } catch (e: Exception) {
-            log.warning("Failed to load font $name", e)
-            return FontFactory(Font.font(12.0))
+            log.warning("Failed to load ${loadParams.url}", e)
+            data.getDummy()
         }
     }
 
     /**
-     * Opens a stream to resource with given name.
+     * Opens a stream to resource with given [name].
      * The caller is responsible for closing the stream.
      * Either returns a valid stream or throws an exception.
      *
      * This is useful for loading resources that do not fall under any asset category.
-     * Resource is anything located within the source root / resource root, whether "src/" or "resources/".
+     * Resource is anything located within the source root or resource root, e.g. "src/" or "resources/".
      * The resource name must always begin with "/", e.g. "/assets/textures/player.png".
      *
      * @param name resource name
      * @return resource stream
      */
     fun getStream(name: String): InputStream {
-        return getURL(name).openStream()
+        val url = getURL(name)
+
+        if (url === NULL_URL) {
+            throw IllegalArgumentException("Asset \"$name\" was not found!")
+        }
+
+        return url.openStream()
     }
 
     /**
-     * Returns a valid URL to resource or throws [IllegalArgumentException].
-     *
-     * @param name resource name
-     * @return URL to resource
+     * @param name resource name relative to base package (starts with /assets/)
+     * @return a valid URL to resource or [NULL_URL] if URL not found
      */
     private fun getURL(name: String): URL {
-        log.debug("Loading from file system: $name")
-        
-        val app = try {
-            FXGLApplication.app
-        } catch (e: UninitializedPropertyAccessException) {
-            null
-        }
+        // 1. try /assets/ from user module using their app class
+        // 2. try /fxglassets/ from fxgl.all module using this javaclass
 
-        // try /assets/ from user module using their class
-        return app?.javaClass?.getResource(name)
-                // try /fxglassets/ from fxgl.all module using this javaclass
+        val url = userAppClass.getResource(name)
                 ?: javaClass.getResource("/fxgl${name.substring(1)}")
-                ?: throw IllegalArgumentException("Asset \"$name\" was not found!")
-    }
 
-    /**
-     * Load an asset from cache.
-     *
-     * @param name asset name
-     * @return asset object or null if not found
-     */
-    private fun getAssetFromCache(name: String): Any? {
-        val asset = cachedAssets[name]
-        if (asset != null) {
-            log.debug("Loading from cache: $name")
-            return asset
+        if (url == null) {
+            log.warning("Asset \"$name\" was not found!")
+            return NULL_URL
         }
 
-        return null
-    }
-
-    /**
-     * Read all lines from a file. Bytes from the file are decoded into characters
-     * using the [UTF-8][java.nio.charset.StandardCharsets.UTF_8] [charset][java.nio.charset.Charset].
-     *
-     * @param name resource name
-     * @return the lines from the file as a `List`
-     */
-    private fun readAllLines(name: String): List<String> {
-        try {
-            return getStream(name).bufferedReader().readLines()
-        } catch (e: Exception) {
-            log.warning("Failed to load plain text file $name", e)
-            return emptyList()
-        }
+        return url
     }
 
     /**
@@ -527,4 +570,225 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         log.debug("Clearing assets cache")
         cachedAssets.clear()
     }
+}
+
+private open class LoadParams(
+        val url: URL,
+        val cacheKey: String = url.toExternalForm(),
+        val isCacheEnabled: Boolean = true
+)
+
+private class ResizableImageParams(
+        url: URL,
+        val width: Double,
+        val height: Double) : LoadParams(url, url.toExternalForm() + "@" + width + "x" + height)
+
+private class UIParams(
+        url: URL,
+        val controller: UIController) : LoadParams(url, isCacheEnabled = false)
+
+private sealed class AssetLoader<T>(
+
+        /**
+         * Concrete type, e.g. [Image], [Sound].
+         */
+        val typeClass: Class<T>,
+
+        /**
+         * Starts with /assets/...
+         */
+        val directory: String,
+) {
+    open fun cast(obj: Any): T = typeClass.cast(obj)
+
+    /**
+     * The actual IO / parsing operation.
+     */
+    open fun load(params: LoadParams): T = load(params.url)
+
+    @Throws(java.lang.Exception::class)
+    protected abstract fun load(url: URL): T
+
+    /**
+     * @return a dummy for given [typeClass].
+     */
+    abstract fun getDummy(): T
+}
+
+private class ImageAssetLoader : AssetLoader<Image>(
+        Image::class.java,
+        TEXTURES_DIR
+) {
+    override fun load(url: URL): Image {
+        val image = url.openStream().use { Image(it) }
+
+        if (image.isError) {
+            throw image.exception
+        }
+
+        return image
+    }
+
+    override fun getDummy(): Image = getDummyImage()
+}
+
+private class ResizableImageAssetLoader : AssetLoader<Image>(
+        Image::class.java,
+        TEXTURES_DIR
+) {
+
+    override fun load(params: LoadParams): Image {
+        val loadParams = params as ResizableImageParams
+
+        val image = params.url.openStream().use { Image(it, loadParams.width, loadParams.height, false, true) }
+
+        if (image.isError) {
+            throw image.exception
+        }
+
+        return image
+    }
+
+    override fun load(url: URL): Image {
+        throw UnsupportedOperationException("")
+    }
+
+    override fun getDummy(): Image = getDummyImage()
+}
+
+private class SoundAssetLoader(val audioService: AudioPlayer, val isDesktop: Boolean) : AssetLoader<Sound>(
+        Sound::class.java,
+        SOUNDS_DIR
+) {
+    override fun load(url: URL): Sound = Sound(audioService.loadAudio(AudioType.SOUND, url, isDesktop))
+
+    override fun getDummy(): Sound = Sound(getDummyAudio())
+}
+
+private class MusicAssetLoader(val audioService: AudioPlayer, val isDesktop: Boolean) : AssetLoader<Music>(
+        Music::class.java,
+        MUSIC_DIR
+) {
+    override fun load(url: URL): Music = Music(audioService.loadAudio(AudioType.MUSIC, url, isDesktop))
+
+    override fun getDummy(): Music = Music(getDummyAudio())
+}
+
+private class TextAssetLoader : AssetLoader<List<*>>(
+        List::class.java,
+        TEXT_DIR
+) {
+    override fun load(url: URL): List<String> = url.openStream().bufferedReader().readLines()
+
+    override fun getDummy(): List<String> = emptyList()
+}
+
+private class DialogueGraphAssetLoader : AssetLoader<SerializableGraph>(
+        SerializableGraph::class.java,
+        DIALOGUES_DIR
+) {
+    override fun load(url: URL): SerializableGraph =
+            url.openStream().use { ObjectMapper().readValue(it, SerializableGraph::class.java) }
+
+    override fun getDummy(): SerializableGraph {
+        val dummyGraph = DialogueGraph()
+
+        // TODO: shouldn't this be handled in dialogue play scene
+        // add a start node, so the dialogue can play and not crash at runtime
+        dummyGraph.addNode(StartNode("Failed to load dialogue graph"))
+
+        return DialogueGraphSerializer.toSerializable(dummyGraph)
+    }
+}
+
+private class ResourceBundleAssetLoader : AssetLoader<ResourceBundle>(
+        ResourceBundle::class.java,
+        PROPERTIES_DIR
+) {
+    override fun load(url: URL): ResourceBundle =
+            url.openStream().use { PropertyResourceBundle(it.reader(StandardCharsets.UTF_8)) }
+
+    override fun getDummy(): ResourceBundle = object : ListResourceBundle() {
+        override fun getContents(): Array<Array<Any>> {
+            return emptyArray()
+        }
+    }
+}
+
+private class PropertyMapAssetLoader : AssetLoader<PropertyMap>(
+        PropertyMap::class.java,
+        ASSETS_DIR
+) {
+    override fun load(url: URL): PropertyMap {
+        val lines = url.openStream().bufferedReader().readLines()
+
+        val map = lines
+                .filter { it.contains('=') }
+                .map {
+                    val tokens = it.split("=")
+                    tokens[0].trim() to tokens[1].trim()
+                }
+                .toMap()
+
+        return PropertyMap.fromStringMap(map)
+    }
+
+    override fun getDummy(): PropertyMap = PropertyMap()
+}
+
+private class UIAssetLoader : AssetLoader<UI>(
+        com.almasb.fxgl.ui.UI::class.java,
+        UI_DIR
+) {
+    override fun load(params: LoadParams): UI {
+        val controller = (params as UIParams).controller
+
+        params.url.openStream().use {
+            val loader = FXMLLoader()
+            loader.setController(controller)
+            val root = loader.load<Parent>(it)
+            controller.init()
+            return UI(root, controller)
+        }
+    }
+
+    override fun load(url: URL): UI {
+        throw UnsupportedOperationException("")
+    }
+
+    override fun getDummy(): UI {
+        return UI(Pane(), object : UIController {
+            override fun init() {
+            }
+        })
+    }
+}
+
+private class CSSAssetLoader : AssetLoader<CSS>(
+        com.almasb.fxgl.scene.CSS::class.java,
+        CSS_DIR
+) {
+    override fun load(url: URL): CSS = CSS(url.toExternalForm())
+
+    override fun getDummy(): CSS = CSS("")
+}
+
+private class FontAssetLoader : AssetLoader<FontFactory>(
+        FontFactory::class.java,
+        FONTS_DIR
+) {
+    override fun load(url: URL): FontFactory {
+        return url.openStream().use {
+            var font = Font.loadFont(it, 12.0)
+
+            if (font == null) {
+                Logger.get<FontAssetLoader>().warning("Font.loadFont($url) returned null")
+                font = Font.font(12.0)
+            }
+
+            FontFactory(font)
+        }
+    }
+
+    override fun getDummy(): FontFactory = FontFactory(Font.font(12.0))
 }

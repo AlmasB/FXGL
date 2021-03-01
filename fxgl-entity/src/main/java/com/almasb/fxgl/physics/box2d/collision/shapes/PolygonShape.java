@@ -6,14 +6,17 @@
 
 package com.almasb.fxgl.physics.box2d.collision.shapes;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.collision.RayCastOutput;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
+
+import static com.almasb.fxgl.core.math.FXGLMath.max;
+import static com.almasb.fxgl.core.math.FXGLMath.min;
 
 /**
  * A convex polygon shape.
@@ -21,6 +24,8 @@ import com.almasb.fxgl.physics.box2d.common.Transform;
  * In most cases you should not need many vertices for a convex polygon.
  */
 public final class PolygonShape extends Shape {
+
+    private static final float INV_3 = 1.0f / 3.0f;
 
     /**
      * Local position of the shape centroid in parent body frame.
@@ -63,6 +68,13 @@ public final class PolygonShape extends Shape {
         }
     }
 
+    /**
+     * @return a new Vec2 containing centroid x, y
+     */
+    public Vec2 getCentroid() {
+        return m_centroid.copy();
+    }
+
     @Override
     public Shape clone() {
         PolygonShape shape = new PolygonShape();
@@ -82,11 +94,11 @@ public final class PolygonShape extends Shape {
     }
 
     @Override
-    public boolean testPoint(final Transform xf, final Vec2 p) {
+    public boolean containsPoint(final Transform xf, final Vec2 point) {
         final Rotation xfq = xf.q;
 
-        float tempx = p.x - xf.p.x;
-        float tempy = p.y - xf.p.y;
+        float tempx = point.x - xf.p.x;
+        float tempy = point.y - xf.p.y;
         final float pLocalx = xfq.c * tempx + xfq.s * tempy;
         final float pLocaly = -xfq.s * tempx + xfq.c * tempy;
 
@@ -105,29 +117,29 @@ public final class PolygonShape extends Shape {
     }
 
     @Override
-    @SuppressWarnings("PMD.UselessParentheses")
-    public void computeAABB(final AABB aabb, final Transform xf, int childIndex) {
+    public void computeAABB(AABB aabb, Transform xf, int childIndex) {
         final Vec2 lower = aabb.lowerBound;
         final Vec2 upper = aabb.upperBound;
-        final Vec2 v1 = m_vertices[0];
-        final float xfqc = xf.q.c;
-        final float xfqs = xf.q.s;
-        final float xfpx = xf.p.x;
-        final float xfpy = xf.p.y;
-        lower.x = (xfqc * v1.x - xfqs * v1.y) + xfpx;
-        lower.y = (xfqs * v1.x + xfqc * v1.y) + xfpy;
+
+        Vec2 v1 = m_vertices[0];
+
+        lower.x = xf.mulX(v1);
+        lower.y = xf.mulY(v1);
+
         upper.x = lower.x;
         upper.y = lower.y;
 
         for (int i = 1; i < vertexCount; ++i) {
             Vec2 v2 = m_vertices[i];
-            // Vec2 v = Mul(xf, m_vertices[i]);
-            float vx = (xfqc * v2.x - xfqs * v2.y) + xfpx;
-            float vy = (xfqs * v2.x + xfqc * v2.y) + xfpy;
-            lower.x = lower.x < vx ? lower.x : vx;
-            lower.y = lower.y < vy ? lower.y : vy;
-            upper.x = upper.x > vx ? upper.x : vx;
-            upper.y = upper.y > vy ? upper.y : vy;
+
+            float vx = xf.mulX(v2);
+            float vy = xf.mulY(v2);
+
+            lower.x = min(lower.x, vx);
+            lower.y = min(lower.y, vy);
+
+            upper.x = max(upper.x, vx);
+            upper.y = max(upper.y, vy);
         }
 
         lower.x -= getRadius();
@@ -178,7 +190,7 @@ public final class PolygonShape extends Shape {
                     minDistance2 = distance2;
                 }
             }
-            distance = JBoxUtils.sqrt(minDistance2);
+            distance = FXGLMath.sqrtF(minDistance2);
             normalOut.x = xfqc * minDistanceX - xfqs * minDistanceY;
             normalOut.y = xfqs * minDistanceX + xfqc * minDistanceY;
             normalOut.getLengthAndNormalize();
@@ -311,8 +323,6 @@ public final class PolygonShape extends Shape {
         }
         s.mulLocal(1.0f / vertexCount);
 
-        final float k_inv3 = 1.0f / 3.0f;
-
         final Vec2 e1 = pool3;
         final Vec2 e2 = pool4;
 
@@ -327,16 +337,18 @@ public final class PolygonShape extends Shape {
             area += triangleArea;
 
             // Area weighted centroid
-            center.x += triangleArea * k_inv3 * (e1.x + e2.x);
-            center.y += triangleArea * k_inv3 * (e1.y + e2.y);
+            center.x += triangleArea * INV_3 * (e1.x + e2.x);
+            center.y += triangleArea * INV_3 * (e1.y + e2.y);
 
-            final float ex1 = e1.x, ey1 = e1.y;
-            final float ex2 = e2.x, ey2 = e2.y;
+            final float ex1 = e1.x;
+            final float ey1 = e1.y;
+            final float ex2 = e2.x;
+            final float ey2 = e2.y;
 
             float intx2 = ex1 * ex1 + ex2 * ex1 + ex2 * ex2;
             float inty2 = ey1 * ey1 + ey2 * ey1 + ey2 * ey2;
 
-            I += (0.25f * k_inv3 * D) * (intx2 + inty2);
+            I += (0.25f * INV_3 * D) * (intx2 + inty2);
         }
 
         // Total mass
@@ -387,7 +399,7 @@ public final class PolygonShape extends Shape {
             Vec2 v = verts[i];
             boolean unique = true;
             for (int j = 0; j < tempCount; ++j) {
-                if (JBoxUtils.distanceSquared(v, ps[j]) < 0.5f * JBoxSettings.linearSlop) {
+                if (v.distanceSquared(ps[j]) < 0.5f * JBoxSettings.linearSlop) {
                     unique = false;
                     break;
                 }
@@ -479,7 +491,37 @@ public final class PolygonShape extends Shape {
         }
 
         // Compute the polygon centroid.
-        computeCentroidToOut(m_vertices, vertexCount, m_centroid);
+        computeCentroid(m_vertices, vertexCount);
+    }
+
+    private void computeCentroid(Vec2[] vs, int count) {
+        assert count >= 3;
+
+        m_centroid.setZero();
+
+        float area = 0.0f;
+
+        for (int i = 0; i < count; ++i) {
+            // Triangle vectors
+            Vec2 p2 = vs[i];
+            Vec2 p3 = i + 1 < count ? vs[i + 1] : vs[0];
+
+            // calculate area of the triangle formed by vectors p2 and p3
+            float triangleArea = 0.5f * Vec2.cross(p2, p3);
+
+            area += triangleArea;
+
+            // Area weighted centroid
+            float t = triangleArea * INV_3;
+            float localX = (p2.x + p3.x) * t;
+            float localY = (p2.y + p3.y) * t;
+
+            m_centroid.addLocal(localX, localY);
+        }
+
+        assert area > JBoxSettings.EPSILON;
+
+        m_centroid.mulLocal(1.0f / area);
     }
 
     /**
@@ -547,74 +589,6 @@ public final class PolygonShape extends Shape {
         return m_vertices[index];
     }
 
-    public void computeCentroidToOut(final Vec2[] vs, final int count, final Vec2 out) {
-        assert count >= 3;
-
-        out.set(0.0f, 0.0f);
-        float area = 0.0f;
-
-        // pRef is the reference point for forming triangles.
-        // It's location doesn't change the result (except for rounding error).
-        final Vec2 pRef = pool1;
-        pRef.setZero();
-
-        final Vec2 e1 = pool2;
-        final Vec2 e2 = pool3;
-
-        final float inv3 = 1.0f / 3.0f;
-
-        for (int i = 0; i < count; ++i) {
-            // Triangle vertices.
-            final Vec2 p1 = pRef;
-            final Vec2 p2 = vs[i];
-            final Vec2 p3 = i + 1 < count ? vs[i + 1] : vs[0];
-
-            e1.set(p2).subLocal(p1);
-            e2.set(p3).subLocal(p1);
-
-            final float D = Vec2.cross(e1, e2);
-
-            final float triangleArea = 0.5f * D;
-            area += triangleArea;
-
-            // Area weighted centroid
-            e1.set(p1).addLocal(p2).addLocal(p3).mulLocal(triangleArea * inv3);
-            out.addLocal(e1);
-        }
-
-        // Centroid
-        assert area > JBoxSettings.EPSILON;
-        out.mulLocal(1.0f / area);
-    }
-
-    /**
-     * Validate convexity. This is a very time consuming operation.
-     *
-     * @return
-     */
-    public boolean validate() {
-        for (int i = 0; i < vertexCount; ++i) {
-            int i1 = i;
-            int i2 = i < vertexCount - 1 ? i1 + 1 : 0;
-            Vec2 p = m_vertices[i1];
-            Vec2 e = pool1.set(m_vertices[i2]).subLocal(p);
-
-            for (int j = 0; j < vertexCount; ++j) {
-                if (j == i1 || j == i2) {
-                    continue;
-                }
-
-                Vec2 v = pool2.set(m_vertices[j]).subLocal(p);
-                float c = Vec2.cross(e, v);
-                if (c < 0.0f) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
     /** Get the vertices in local coordinates. */
     public Vec2[] getVertices() {
         return m_vertices;
@@ -623,16 +597,5 @@ public final class PolygonShape extends Shape {
     /** Get the edge normal vectors. There is one for each vertex. */
     public Vec2[] getNormals() {
         return m_normals;
-    }
-
-    /** Get the centroid and apply the supplied transform. */
-    public Vec2 centroid(final Transform xf) {
-        return Transform.mul(xf, m_centroid);
-    }
-
-    /** Get the centroid and apply the supplied transform. */
-    public Vec2 centroidToOut(final Transform xf, final Vec2 out) {
-        Transform.mulToOutUnsafe(xf, m_centroid, out);
-        return out;
     }
 }

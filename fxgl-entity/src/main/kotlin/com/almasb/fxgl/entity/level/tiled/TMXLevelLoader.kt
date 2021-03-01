@@ -292,6 +292,7 @@ class TMXLevelLoader : LevelLoader {
         tileset.name = start.getString("name")
         tileset.tilewidth = start.getInt("tilewidth")
         tileset.tileheight = start.getInt("tileheight")
+        tileset.margin = start.getInt("margin")
         tileset.spacing = start.getInt("spacing")
         tileset.tilecount = start.getInt("tilecount")
         tileset.columns = start.getInt("columns")

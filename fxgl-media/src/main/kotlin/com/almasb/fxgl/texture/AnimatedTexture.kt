@@ -11,8 +11,7 @@ import javafx.geometry.Rectangle2D
 
 /**
  * Represents an animated texture.
- * Animation channels, like WALK, RUN, IDLE, ATTACK, etc. can
- * be set dynamically to alter the animation.
+ * Animation channels, like WALK, RUN, IDLE, ATTACK, etc. can be set dynamically to alter the animation.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -21,7 +20,7 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
     private var currentFrame = 0
     private var counter = 0.0
 
-    private var looping = false
+    private var isLooping = false
     private var needUpdate = false
 
     var animationChannel: AnimationChannel = defaultChannel
@@ -35,17 +34,17 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
     }
 
     /**
-     * Plays given animation channel from start to end once.
+     * Plays given animation [channel] from start to end once.
      * The animation will stop at the last frame.
      */
     fun playAnimationChannel(channel: AnimationChannel) {
         animationChannel = channel
-        looping = false
+        isLooping = false
         reset()
     }
 
     /**
-     * Loops given channel.
+     * Loops given [channel].
      *
      * Note: if the given channel is already playing or looping, then noop.
      */
@@ -57,11 +56,13 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
     }
 
     /**
-     * Loops given channel.
+     * Loops given [channel].
+     *
+     * Note: any channel that is already playing or looping will be overridden.
      */
     fun loopAnimationChannel(channel: AnimationChannel) {
         animationChannel = channel
-        looping = true
+        isLooping = true
         reset()
     }
 
@@ -113,7 +114,7 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
 
                 channelDone = true
 
-                if (!looping) {
+                if (!isLooping) {
                     // stop at last frame, do not update image
                     needUpdate = false
                     onCycleFinished()

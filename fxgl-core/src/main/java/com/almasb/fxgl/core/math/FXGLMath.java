@@ -94,6 +94,22 @@ public final class FXGLMath {
         return Sin.table[(int) ((degrees + 90) * degToIndex) & SIN_MASK];
     }
 
+    /**
+     * @param degrees angle in degrees
+     * @return the sine in radians from a lookup table
+     */
+    public static float sinDegF(double degrees) {
+        return (float) sinDeg(degrees);
+    }
+
+    /**
+     * @param degrees angle in degrees
+     * @return the cosine in radians from a lookup table
+     */
+    public static float cosDegF(double degrees) {
+        return (float) cosDeg(degrees);
+    }
+
     private static final double radiansToDegrees = 180 / PI;
 
     private static final double degreesToRadians = PI / 180;
@@ -285,6 +301,10 @@ public final class FXGLMath {
         return Math.sqrt(x);
     }
 
+    public static float sqrtF(float x) {
+        return (float) StrictMath.sqrt(x);
+    }
+
     /**
      * Map value of a given range to a target range.
      *
@@ -295,12 +315,41 @@ public final class FXGLMath {
         return targetRangeStart + (targetRangeStop - targetRangeStart) * ((value - currentRangeStart) / (currentRangeStop - currentRangeStart));
     }
 
+    /**
+     * @return the closest value to 'a' that is between 'low' and 'high'
+     */
+    public static float clamp(float a, float low, float high) {
+        return Math.max(low, Math.min(a, high));
+    }
+
+    public static int floor(float x) {
+        int y = (int) x;
+        if (x < y) {
+            return y - 1;
+        }
+        return y;
+    }
+
     public static float abs(float value) {
         return value > 0 ? value : -value;
     }
 
     public static double abs(double value) {
         return value > 0 ? value : -value;
+    }
+
+    /**
+     * @return min of two floats using a direct (a < b ? a : b) check, without NaN check
+     */
+    public static float min(float a, float b) {
+        return a < b ? a : b;
+    }
+
+    /**
+     * @return max of two floats using a direct (a > b ? a : b) check, without NaN check
+     */
+    public static float max(float a, float b) {
+        return a > b ? a : b;
     }
 
     public static Point2D bezier(Point2D p1, Point2D p2, Point2D p3, double t) {

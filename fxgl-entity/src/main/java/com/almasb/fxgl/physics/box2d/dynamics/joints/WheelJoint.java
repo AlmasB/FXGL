@@ -8,7 +8,6 @@ package com.almasb.fxgl.physics.box2d.dynamics.joints;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
 import com.almasb.fxgl.physics.box2d.dynamics.SolverData;
@@ -387,7 +386,7 @@ public class WheelJoint extends Joint {
 
             float oldImpulse = m_motorImpulse;
             float maxImpulse = data.step.dt * m_maxMotorTorque;
-            m_motorImpulse = JBoxUtils.clamp(m_motorImpulse + impulse, -maxImpulse, maxImpulse);
+            m_motorImpulse = FXGLMath.clamp(m_motorImpulse + impulse, -maxImpulse, maxImpulse);
             impulse = m_motorImpulse - oldImpulse;
 
             wA -= iA * impulse;

@@ -5,9 +5,9 @@
  */
 package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
 import com.almasb.fxgl.physics.box2d.dynamics.SolverData;
 import com.almasb.fxgl.physics.box2d.dynamics.World;
@@ -119,7 +119,7 @@ public class ConstantVolumeJoint extends Joint {
             final int next = (i == bodies.length - 1) ? 0 : i + 1;
             float dx = positions[bodies[next].m_islandIndex].c.x - positions[bodies[i].m_islandIndex].c.x;
             float dy = positions[bodies[next].m_islandIndex].c.y - positions[bodies[i].m_islandIndex].c.y;
-            float dist = JBoxUtils.sqrt(dx * dx + dy * dy);
+            float dist = FXGLMath.sqrtF(dx * dx + dy * dy);
             if (dist < JBoxSettings.EPSILON) {
                 dist = 1.0f;
             }
@@ -141,7 +141,7 @@ public class ConstantVolumeJoint extends Joint {
             // sumdeltax += dx;
             float normSqrd = delta.lengthSquared();
             if (normSqrd > JBoxSettings.maxLinearCorrection * JBoxSettings.maxLinearCorrection) {
-                delta.mulLocal(JBoxSettings.maxLinearCorrection / JBoxUtils.sqrt(normSqrd));
+                delta.mulLocal(JBoxSettings.maxLinearCorrection / FXGLMath.sqrtF(normSqrd));
             }
             if (normSqrd > JBoxSettings.linearSlop * JBoxSettings.linearSlop) {
                 done = false;
@@ -174,7 +174,7 @@ public class ConstantVolumeJoint extends Joint {
             m_impulse *= step.step.dtRatio;
             // float lambda = -2.0f * crossMassSum / dotMassSum;
 
-            // lambda = JBoxUtils.clamp(lambda, -JBoxSettings.maxLinearCorrection,
+            // lambda = FXGLMath.clamp(lambda, -JBoxSettings.maxLinearCorrection,
             // JBoxSettings.maxLinearCorrection);
             // m_impulse = lambda;
             for (int i = 0; i < bodies.length; ++i) {
@@ -210,7 +210,7 @@ public class ConstantVolumeJoint extends Joint {
         }
         float lambda = -2.0f * crossMassSum / dotMassSum;
 
-        // lambda = JBoxUtils.clamp(lambda, -JBoxSettings.maxLinearCorrection,
+        // lambda = FXGLMath.clamp(lambda, -JBoxSettings.maxLinearCorrection,
         // JBoxSettings.maxLinearCorrection);
         m_impulse += lambda;
 

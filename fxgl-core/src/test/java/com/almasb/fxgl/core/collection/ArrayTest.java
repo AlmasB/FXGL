@@ -340,6 +340,8 @@ public class ArrayTest {
 
         assertThat(array.indexOfByEquality("World"), is(1));
         assertThat(array.lastIndexOfByEquality("World"), is(3));
+
+        assertThat(array.indexOfByEquality("H"), is(-1));
     }
 
     @Test
