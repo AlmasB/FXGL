@@ -116,6 +116,7 @@ Download the latest uber jar from [Releases](https://github.com/AlmasB/FXGL/rele
 * Conant High School, USA
 * Zealand Institute of Business and Technology, Denmark
 * Federal Institute of Education, Science and Technology of Rio Grande do Sul, Brazil
+* FHNW School of Engineering / Computer Science, Switzerland
 
 If your institution wants to use or is using FXGL, add a note in the [Chat](https://gitter.im/AlmasB/FXGL) to be added to the list.
 
