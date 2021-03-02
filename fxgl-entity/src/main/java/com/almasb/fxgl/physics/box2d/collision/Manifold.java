@@ -64,23 +64,6 @@ public class Manifold {
     }
 
     /**
-     * Creates this manifold as a copy of the other
-     *
-     * @param other
-     */
-    public Manifold(Manifold other) {
-        points = new ManifoldPoint[JBoxSettings.maxManifoldPoints];
-        localNormal = other.localNormal.clone();
-        localPoint = other.localPoint.clone();
-        pointCount = other.pointCount;
-        type = other.type;
-        // djm: this is correct now
-        for (int i = 0; i < JBoxSettings.maxManifoldPoints; i++) {
-            points[i] = new ManifoldPoint(other.points[i]);
-        }
-    }
-
-    /**
      * copies this manifold from the given one
      *
      * @param cp manifold to copy from
