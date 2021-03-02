@@ -772,7 +772,7 @@ public final class Collision {
     /**
      * Used for computing contact manifolds.
      */
-    public static class ClipVertex {
+    private static class ClipVertex {
         public final Vec2 v;
         public final ContactID id;
 
