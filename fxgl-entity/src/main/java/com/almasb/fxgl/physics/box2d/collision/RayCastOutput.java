@@ -14,15 +14,10 @@ import com.almasb.fxgl.core.math.Vec2;
  * come from b2RayCastInput.
  */
 public class RayCastOutput {
-    public final Vec2 normal;
-    public float fraction;
+    public final Vec2 normal = new Vec2();
+    public float fraction = 0;
 
-    public RayCastOutput() {
-        normal = new Vec2();
-        fraction = 0;
-    }
-
-    public void set(final RayCastOutput rco) {
+    public void set(RayCastOutput rco) {
         normal.set(rco.normal);
         fraction = rco.fraction;
     }
