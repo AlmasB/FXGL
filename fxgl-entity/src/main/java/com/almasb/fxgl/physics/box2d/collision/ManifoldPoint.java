@@ -30,8 +30,6 @@ package com.almasb.fxgl.physics.box2d.collision;
 
 import com.almasb.fxgl.core.math.Vec2;
 
-// updated to rev 100
-
 /**
  * A manifold point is a contact point belonging to a contact
  * manifold. It holds details related to the geometry and dynamics
@@ -46,33 +44,13 @@ import com.almasb.fxgl.core.math.Vec2;
  */
 public class ManifoldPoint {
     /** usage depends on manifold type */
-    public final Vec2 localPoint;
+    public final Vec2 localPoint = new Vec2();
     /** the non-penetration impulse */
-    public float normalImpulse;
+    public float normalImpulse = 0f;
     /** the friction impulse */
-    public float tangentImpulse;
+    public float tangentImpulse = 0f;
     /** uniquely identifies a contact point between two shapes */
-    public final ContactID id;
-
-    /**
-     * Blank manifold point with everything zeroed out.
-     */
-    public ManifoldPoint() {
-        localPoint = new Vec2();
-        normalImpulse = tangentImpulse = 0f;
-        id = new ContactID();
-    }
-
-    /**
-     * Creates a manifold point as a copy of the given point
-     * @param cp point to copy from
-     */
-    public ManifoldPoint(final ManifoldPoint cp) {
-        localPoint = cp.localPoint.clone();
-        normalImpulse = cp.normalImpulse;
-        tangentImpulse = cp.tangentImpulse;
-        id = new ContactID(cp.id);
-    }
+    public final ContactID id = new ContactID();
 
     /**
      * Sets this manifold point form the given one
