@@ -77,4 +77,9 @@ class EventBusTest {
 
         assertNotNull(service.eventBus)
     }
+
+    @Test
+    fun `EventBus logging enabled by default`() {
+        assertThat(eventBus.isLoggingEnabled, `is`(true))
+    }
 }
