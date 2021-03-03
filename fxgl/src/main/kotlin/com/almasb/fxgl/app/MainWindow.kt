@@ -20,6 +20,7 @@ import javafx.beans.property.*
 import javafx.event.Event
 import javafx.event.EventType
 import javafx.geometry.Point2D
+import javafx.geometry.Rectangle2D
 import javafx.scene.ImageCursor
 import javafx.scene.Parent
 import javafx.scene.image.Image
@@ -29,6 +30,7 @@ import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
+import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.stage.Screen
 import javafx.stage.Stage
@@ -64,6 +66,8 @@ internal sealed class MainWindow(
 
     protected val scaleRatioX: DoubleProperty = SimpleDoubleProperty()
     protected val scaleRatioY: DoubleProperty = SimpleDoubleProperty()
+    protected val scaledWidth: DoubleProperty = SimpleDoubleProperty()
+    protected val scaledHeight: DoubleProperty = SimpleDoubleProperty()
 
     protected val stateMachine = StateMachine(scene)
 
@@ -188,7 +192,20 @@ internal sealed class MainWindow(
      *
      * @param scene the scene
      */
-    protected abstract fun registerScene(scene: Scene)
+    private fun registerScene(scene: Scene) {
+        scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
+
+        if (!settings.isExperimentalNative
+                && settings.isDesktop
+                && scene is FXGLScene
+                && scene.root.cursor == null) {
+            defaultCursor?.let {
+                scene.setCursor(it.image, Point2D(it.hotspotX, it.hotspotY))
+            }
+        }
+
+        scenes.add(scene)
+    }
 
     protected fun addKeyHandler(fxScene: javafx.scene.Scene, handler: (KeyEvent) -> Unit) {
         fxScene.addEventHandler(KeyEvent.ANY, handler)
@@ -239,9 +256,6 @@ internal class PrimaryStageWindow(
 ) : MainWindow(scene, settings) {
 
     private val fxScene: javafx.scene.Scene
-
-    private val scaledWidth: DoubleProperty = SimpleDoubleProperty()
-    private val scaledHeight: DoubleProperty = SimpleDoubleProperty()
 
     init {
         fxScene = createFXScene(scene.root)
@@ -453,21 +467,6 @@ internal class PrimaryStageWindow(
                     it.viewport.height = newH
                 }
     }
-
-    override fun registerScene(scene: Scene) {
-        scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
-
-        if (!settings.isExperimentalNative
-                && settings.isDesktop
-                && scene is FXGLScene
-                && scene.root.cursor == null) {
-            defaultCursor?.let {
-                scene.setCursor(it.image, Point2D(it.hotspotX, it.hotspotY))
-            }
-        }
-
-        scenes.add(scene)
-    }
 }
 
 internal class EmbeddedPaneWindow(
@@ -478,13 +477,21 @@ internal class EmbeddedPaneWindow(
 
 ) : MainWindow(scene, settings) {
 
+    private val backgroundRect = Rectangle()
+    private val clipRect = Rectangle()
+
     init {
-        scaleRatioX.value = 1.0
-        scaleRatioY.value = 1.0
+        computeScaledDimensions()
 
         // this clips the max area (ensures max size)
-        // setRoot(Rect) ensures min size
-        fxglPane.clip = Rectangle(settings.width.toDouble(), settings.height.toDouble())
+        clipRect.widthProperty().bind(fxglPane.renderWidthProperty())
+        clipRect.heightProperty().bind(fxglPane.renderHeightProperty())
+        fxglPane.clip = clipRect
+
+        // this rect ensures min size
+        backgroundRect.widthProperty().bind(fxglPane.renderWidthProperty())
+        backgroundRect.heightProperty().bind(fxglPane.renderHeightProperty())
+        fxglPane.allChildren += backgroundRect
 
         setInitialScene(scene)
 
@@ -517,6 +524,43 @@ internal class EmbeddedPaneWindow(
         }
     }
 
+    private fun computeScaledDimensions() {
+        var newW = settings.width.toDouble()
+        var newH = settings.height.toDouble()
+
+        val bounds = Rectangle2D(0.0, 0.0, newW, newH)
+
+        if (newW > bounds.width || newH > bounds.height) {
+            log.debug("Target size > screen size")
+
+            // margin so the window size is slightly smaller than bounds
+            // to account for platform-specific window borders
+            val extraMargin = 25.0
+            val ratio = newW / newH
+
+            for (newWidth in bounds.width.toInt() downTo 1) {
+                if (newWidth / ratio <= bounds.height) {
+                    newW = newWidth.toDouble() - extraMargin
+                    newH = newWidth / ratio
+                    break
+                }
+            }
+        }
+
+        // round to a whole number
+        newW = newW.toInt().toDouble()
+        newH = newH.toInt().toDouble()
+
+        scaledWidth.set(newW)
+        scaledHeight.set(newH)
+        scaleRatioX.set(scaledWidth.value / settings.width)
+        scaleRatioY.set(scaledHeight.value / settings.height)
+
+        log.debug("Target settings size: ${settings.width.toDouble()} x ${settings.height.toDouble()}")
+        log.debug("Scaled scene size:    $newW x $newH")
+        log.debug("Scaled ratio: (${scaleRatioX.value}, ${scaleRatioY.value})")
+    }
+
     override fun iconifiedProperty(): ReadOnlyBooleanProperty {
         return ReadOnlyBooleanWrapper().readOnlyProperty
     }
@@ -530,25 +574,64 @@ internal class EmbeddedPaneWindow(
 
     override fun setRoot(root: Pane) {
         fxglPane.allChildren.setAll(
-                Rectangle(settings.width.toDouble(), settings.height.toDouble()),
+                backgroundRect,
                 root
         )
     }
 
     override fun show() {
-    }
+        log.debug("Opening embedded window")
 
-    override fun registerScene(scene: Scene) {
-        if (!settings.isExperimentalNative
-                && settings.isDesktop
-                && scene is FXGLScene
-                && scene.root.cursor == null) {
-            defaultCursor?.let {
-                scene.setCursor(it.image, Point2D(it.hotspotX, it.hotspotY))
+        // platform offsets
+        var windowBorderWidth = 0
+        var windowBorderHeight = 0
+
+        scaledWidth.bind(fxglPane.renderWidthProperty())
+        scaledHeight.bind(fxglPane.renderHeightProperty())
+
+        settings.scaledWidthProp.bind(scaledWidth)
+        settings.scaledHeightProp.bind(scaledHeight)
+
+        if (settings.isScaleAffectedOnResize) {
+            if (settings.isPreserveResizeRatio) {
+                scaleRatioX.bind(Bindings.min(
+                        scaledWidth.divide(settings.width), scaledHeight.divide(settings.height)
+                ))
+                scaleRatioY.bind(scaleRatioX)
+            } else {
+                scaleRatioX.bind(scaledWidth.divide(settings.width))
+                scaleRatioY.bind(scaledHeight.divide(settings.height))
             }
+        } else {
+            scaleRatioX.value = 1.0
+            scaleRatioY.value = 1.0
+
+            scaledWidth.addListener { _, _, newWidth -> onStageResize() }
+            scaledHeight.addListener { _, _, newHeight -> onStageResize() }
         }
 
-        scenes.add(scene)
+        log.debug("Window border size: ($windowBorderWidth, $windowBorderHeight)")
+        log.debug("Scaled size: ${scaledWidth.value} x ${scaledHeight.value}")
+        log.debug("Scaled ratio: (${scaleRatioX.value}, ${scaleRatioY.value})")
+        //log.debug("Scene size: ${stage.scene.width} x ${stage.scene.height}")
+        //log.debug("Stage size: ${stage.width} x ${stage.height}")
+    }
+
+    /**
+     * Called when the user has resized the main window.
+     * Only called when settings.isScaleAffectedOnResize = false.
+     */
+    private fun onStageResize() {
+        val newW = scaledWidth.value
+        val newH = scaledHeight.value
+
+        log.debug("On Stage resize: ${newW}x$newH")
+
+        scenes.filterIsInstance<FXGLScene>()
+                .forEach {
+                    it.viewport.width = newW
+                    it.viewport.height = newH
+                }
     }
 
     override fun takeScreenshot(): Image {
@@ -559,8 +642,22 @@ internal class EmbeddedPaneWindow(
     }
 }
 
-class FXGLPane : Region() {
+class FXGLPane(w: Double, h: Double) : Region() {
 
     val allChildren
         get() = children
+
+    private val renderWidthProp = SimpleDoubleProperty(w)
+    private val renderHeightProp = SimpleDoubleProperty(h)
+
+    var renderWidth: Double
+        get() = renderWidthProp.value
+        set(value) { renderWidthProp.value = value }
+
+    var renderHeight: Double
+        get() = renderHeightProp.value
+        set(value) { renderHeightProp.value = value }
+
+    fun renderWidthProperty(): DoubleProperty = renderWidthProp
+    fun renderHeightProperty(): DoubleProperty = renderHeightProp
 }

@@ -54,6 +54,14 @@ public class EmbeddedSample extends Application {
         root.setRight(new Text("RIGHT"));
 
         var fxglRoot = GameApplication.embeddedLaunch(new MyGame());
+        fxglRoot.widthProperty().addListener((observable, oldValue, newValue) -> {
+
+            if (newValue.doubleValue() < 700) {
+                fxglRoot.setRenderWidth(newValue.doubleValue());
+            }
+
+            System.out.println(newValue);
+        });
 
         root.setCenter(fxglRoot);
 

@@ -116,7 +116,7 @@ class FXGLApplication : Application() {
         // after this call, all FXGL.* calls (apart from those accessing services) are valid
         FXGL.inject(engine, app, this)
 
-        val pane = FXGLPane()
+        val pane = FXGLPane(settings.width.toDouble(), settings.height.toDouble())
 
         mainWindow = EmbeddedPaneWindow(pane, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
         mainWindow.show()
