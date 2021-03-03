@@ -7,7 +7,7 @@ package com.almasb.fxgl.physics.box2d.collision.broadphase;
 
 import com.almasb.fxgl.physics.box2d.collision.AABB;
 
-public class DynamicTreeNode {
+class DynamicTreeNode {
     /**
      * Enlarged AABB
      */
