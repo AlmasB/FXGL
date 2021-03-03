@@ -24,6 +24,8 @@ class EventBus {
 
     private val eventHandlers = Group()
 
+    var isLoggingEnabled = true
+
     /**
      * Register [eventHandler] for [eventType].
      */
@@ -48,7 +50,9 @@ class EventBus {
      * i.e. synchronous.
      */
     fun fireEvent(event: Event) {
-        log.debug("Firing event: $event")
+        if (isLoggingEnabled) {
+            log.debug("Firing event: $event")
+        }
 
         eventHandlers.fireEvent(event)
     }
