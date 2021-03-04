@@ -7,8 +7,8 @@
 package com.almasb.fxgl.procedural
 
 import com.almasb.fxgl.core.math.FXGLMath
-import com.almasb.fxgl.pathfinding.Cell
-import com.almasb.fxgl.pathfinding.CellGenerator
+import com.almasb.fxgl.core.collection.grid.Cell
+import com.almasb.fxgl.core.collection.grid.CellGenerator
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

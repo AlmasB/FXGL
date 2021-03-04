@@ -6,6 +6,7 @@
 @file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.pathfinding
 
+import com.almasb.fxgl.core.collection.grid.Cell
 import com.almasb.fxgl.entity.Entity
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`

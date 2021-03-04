@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.pathfinding.astar;
 
-import com.almasb.fxgl.pathfinding.Cell;
+import com.almasb.fxgl.core.collection.grid.Cell;
 import com.almasb.fxgl.pathfinding.CellState;
 
 /**

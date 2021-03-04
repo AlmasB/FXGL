@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.pathfinding;
 
+import com.almasb.fxgl.core.collection.grid.Cell;
+
 import java.util.List;
 
 /**

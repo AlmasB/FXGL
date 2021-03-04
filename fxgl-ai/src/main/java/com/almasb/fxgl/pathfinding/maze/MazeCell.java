@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.pathfinding.maze;
 
-import com.almasb.fxgl.pathfinding.Cell;
+import com.almasb.fxgl.core.collection.grid.Cell;
 
 /**
  * Represents a single cell in a maze.

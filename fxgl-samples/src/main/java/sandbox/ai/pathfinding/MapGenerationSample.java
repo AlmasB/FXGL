@@ -12,7 +12,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.GameView;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.pathfinding.Grid;
+import com.almasb.fxgl.core.collection.grid.Grid;
 import com.almasb.fxgl.procedural.BiomeMapGenerator;
 import com.almasb.fxgl.procedural.HeightMapGenerator;
 import com.almasb.fxgl.texture.ColoredTexture;

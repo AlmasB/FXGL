@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.pathfinding;
 
+import com.almasb.fxgl.core.collection.grid.Cell;
 import com.almasb.fxgl.entity.component.Component;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;

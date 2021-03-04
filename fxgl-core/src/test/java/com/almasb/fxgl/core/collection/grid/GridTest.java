@@ -4,8 +4,11 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.pathfinding;
+package com.almasb.fxgl.core.collection.grid;
 
+import com.almasb.fxgl.core.collection.grid.Cell;
+import com.almasb.fxgl.core.collection.grid.CellGenerator;
+import com.almasb.fxgl.core.collection.grid.Grid;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

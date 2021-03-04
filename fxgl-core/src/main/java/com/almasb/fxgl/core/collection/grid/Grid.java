@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.pathfinding;
+package com.almasb.fxgl.core.collection.grid;
 
 import com.almasb.fxgl.core.math.FXGLMath;
 

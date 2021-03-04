@@ -4,11 +4,11 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.pathfinding
+package com.almasb.fxgl.core.collection.grid
 
+import com.almasb.fxgl.core.collection.grid.Cell
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 

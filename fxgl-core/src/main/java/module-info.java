@@ -16,6 +16,7 @@ module com.almasb.fxgl.core {
     exports com.almasb.fxgl.core;
     exports com.almasb.fxgl.core.asset;
     exports com.almasb.fxgl.core.collection;
+    exports com.almasb.fxgl.core.collection.grid;
     exports com.almasb.fxgl.core.concurrent;
     exports com.almasb.fxgl.core.fsm;
     exports com.almasb.fxgl.core.math;
