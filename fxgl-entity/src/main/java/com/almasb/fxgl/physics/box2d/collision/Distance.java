@@ -453,19 +453,15 @@ public class Distance {
      * @author daniel
      */
     public static class DistanceProxy {
-        public final Vec2[] m_vertices;
-        public int m_count;
-        public float m_radius;
-        public final Vec2[] m_buffer;
+        public final Vec2[] m_vertices = new Vec2[JBoxSettings.maxPolygonVertices];
+        public int m_count = 0;
+        public float m_radius = 0f;
+        public final Vec2[] m_buffer = new Vec2[2];
 
         public DistanceProxy() {
-            m_vertices = new Vec2[JBoxSettings.maxPolygonVertices];
             for (int i = 0; i < m_vertices.length; i++) {
                 m_vertices[i] = new Vec2();
             }
-            m_buffer = new Vec2[2];
-            m_count = 0;
-            m_radius = 0f;
         }
 
         /**
