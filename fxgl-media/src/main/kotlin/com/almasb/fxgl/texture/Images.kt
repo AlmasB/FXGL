@@ -150,6 +150,46 @@ fun resize(image: Image, targetWidth: Int, targetHeight: Int, isPreserveRatio: B
     return output
 }
 
+fun flipHorizontally(image: Image): Image {
+    // indices start at 0, hence -1
+    val maxX = image.width.toInt() - 1
+
+    return image.map {
+        val srcX = maxX - it.x
+        val srcY = it.y
+        val color = image.pixelReader.getColor(srcX, srcY)
+
+        it.copy(color)
+    }
+}
+
+fun flipVertically(image: Image): Image {
+    // indices start at 0, hence -1
+    val maxY = image.height.toInt() - 1
+
+    return image.map {
+        val srcX = it.x
+        val srcY = maxY - it.y
+        val color = image.pixelReader.getColor(srcX, srcY)
+
+        it.copy(color)
+    }
+}
+
+fun flipDiagonally(image: Image): Image {
+    // indices start at 0, hence -1
+    val maxX = image.width.toInt() - 1
+    val maxY = image.height.toInt() - 1
+
+    return image.map {
+        val srcX = maxX - it.x
+        val srcY = maxY - it.y
+        val color = image.pixelReader.getColor(srcX, srcY)
+
+        it.copy(color)
+    }
+}
+
 data class Pixel(val x: Int, val y: Int, val color: Color, val parent: Image) {
 
     val A = color.opacity
