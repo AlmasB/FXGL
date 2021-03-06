@@ -7,6 +7,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
+import com.almasb.fxgl.core.collection.UnorderedPairMap;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.core.pool.Pools;
@@ -51,7 +52,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
     private Array<CollisionHandler> collisionHandlers = new UnorderedArray<>(16);
 
-    private CollisionPairMap collisionsMap = new CollisionPairMap(128);
+    // stores active collisions
+    private UnorderedPairMap<Entity, CollisionPair> collisionsMap = new UnorderedPairMap(128);
 
     private int appHeight;
 
@@ -425,7 +427,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
             pair.init(e1, e2, handler);
 
             // add pair to list of collisions so we still use it
-            collisionsMap.put(pair);
+            collisionsMap.put(pair.getA(), pair.getB(), pair);
 
             handler.onHitBoxTrigger(
                     pair.getA(), pair.getB(),
@@ -443,7 +445,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
         // and remove it and put pair back to pool
         // if null then collision was not present before either
         if (pair != null) {
-            collisionsMap.remove(pair);
+            collisionsMap.remove(pair.getA(), pair.getB());
 
             pair.collisionEnd();
             Pools.free(pair);
