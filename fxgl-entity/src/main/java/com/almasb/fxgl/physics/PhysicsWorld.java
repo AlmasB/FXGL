@@ -50,10 +50,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
     private Array<Entity> entities = new UnorderedArray<>(128);
 
-    private Array<CollisionHandler> collisionHandlers = new UnorderedArray<>(16);
+    private UnorderedPairMap<Object, CollisionHandler> collisionHandlers = new UnorderedPairMap<>(16);
 
     // stores active collisions
-    private UnorderedPairMap<Entity, CollisionPair> collisionsMap = new UnorderedPairMap(128);
+    private UnorderedPairMap<Entity, CollisionPair> collisionsMap = new UnorderedPairMap<>(128);
 
     private int appHeight;
 
@@ -313,13 +313,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
         if (!e1.isActive() || !e2.isActive())
             return null;
 
-        for (CollisionHandler handler : collisionHandlers) {
-            if (handler.equal(e1.getType(), e2.getType())) {
-                return handler;
-            }
-        }
-
-        return null;
+        return collisionHandlers.get(e1.getType(), e2.getType());
     }
 
     private void notifySensorCollisionBegin(Entity eWithSensor, Entity eTriggered, HitBox box) {
@@ -496,7 +490,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
      * @param handler collision handler
      */
     public void addCollisionHandler(CollisionHandler handler) {
-        collisionHandlers.add(handler);
+        collisionHandlers.put(handler.getA(), handler.getB(), handler);
     }
 
     /**
@@ -505,7 +499,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
      * @param handler collision handler to remove
      */
     public void removeCollisionHandler(CollisionHandler handler) {
-        collisionHandlers.removeValueByIdentity(handler);
+        collisionHandlers.remove(handler.getA(), handler.getB());
     }
 
     /**
