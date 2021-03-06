@@ -27,7 +27,8 @@ public class CutsceneSample extends GameApplication {
     @Override
     protected void initInput() {
         onKeyDown(KeyCode.F, "test", () -> {
-            var lines = getAssetLoader().loadText("cutscene0.txt");
+            // TODO: loadCutscene shortcut?
+            var lines = getAssetLoader().loadText("example_cutscene1.txt");
 
             var cutscene = new Cutscene(lines);
 

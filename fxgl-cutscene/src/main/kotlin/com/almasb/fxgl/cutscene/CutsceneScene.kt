@@ -10,6 +10,7 @@ import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.KeyView
+import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
 import javafx.geometry.Point2D
@@ -26,6 +27,10 @@ import java.util.*
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class CutsceneScene(private val sceneService: SceneService) : SubScene() {
+
+    private val log = Logger.get<CutsceneScene>()
+
+    private val speakers = arrayListOf<Speaker>()
 
     private val animation: Animation<*>
     private val animation2: Animation<*>
@@ -76,13 +81,6 @@ class CutsceneScene(private val sceneService: SceneService) : SubScene() {
         }, KeyCode.ENTER)
     }
 
-    private fun centerTextBind(text: Text, x: Double, y: Double) {
-        text.layoutBoundsProperty().addListener { _, _, bounds ->
-            text.translateX = x - bounds.width / 2
-            text.translateY = y - bounds.height / 2
-        }
-    }
-
     override fun onCreate() {
         animation2.onFinished = Runnable {
             onOpen()
@@ -120,7 +118,6 @@ class CutsceneScene(private val sceneService: SceneService) : SubScene() {
     }
 
     private var currentLine = 0
-    private lateinit var dialogLine: CutsceneDialogLine
     private val message = ArrayDeque<Char>()
 
     private fun nextLine() {
@@ -128,14 +125,68 @@ class CutsceneScene(private val sceneService: SceneService) : SubScene() {
         if (message.isNotEmpty())
             return
 
-        if (currentLine < cutscene.lines.size) {
-            dialogLine = cutscene.lines[currentLine]
-            dialogLine.data.forEach { message.addLast(it) }
-
-            textRPG.text = dialogLine.owner + ": "
-            currentLine++
-        } else {
+        if (currentLine == cutscene.lines.size) {
             endCutscene()
+            return
+        }
+
+        val line = cutscene.lines[currentLine].trim()
+
+        currentLine++
+
+        try {
+            parseLine(line)
+        } catch (e: Exception) {
+            log.warning("Cannot parse, skipping: $line", e)
+            nextLine()
+        }
+    }
+
+    private fun parseLine(line: String) {
+        if (line.startsWith("//") || line.startsWith("#") || line.isEmpty()) {
+            // skip line if comment
+            nextLine()
+            return
+        }
+
+        for (i in line.indices) {
+            val c = line[i]
+
+            if (c == '.') {
+                // parse init
+                val id = line.substring(0, i)
+                val speaker = speakers.find { it.id == id }
+                        ?: Speaker(id).also { speakers += it }
+
+                val subLine = line.substring(i+1)
+                val indexEquals = subLine.indexOf('=')
+
+                val varName = subLine.substring(0, indexEquals).trim()
+                val varValue = subLine.substring(indexEquals+1).trim()
+
+                when (varName) {
+                    "name" -> { speaker.name = varValue }
+                    "image" -> { speaker.imageName = varValue }
+                }
+
+                nextLine()
+                return
+            }
+
+            if (c == ':') {
+                // parse line of text
+                val id = line.substring(0, i)
+                val text = line.substring(i+1)
+
+                text.forEach { message.addLast(it) }
+
+                val speaker = speakers.find { it.id == id }
+                        ?: Speaker(id).also { speakers += it }
+
+                textRPG.text = "${speaker.name}: "
+
+                return
+            }
         }
     }
 
@@ -148,3 +199,16 @@ class CutsceneScene(private val sceneService: SceneService) : SubScene() {
         message.clear()
     }
 }
+
+private class Speaker(
+        val id: String,
+        var name: String = "",
+        var imageName: String = ""
+)
+
+/**
+ * A cutscene is constructed using a list of lines either read from a .txt file
+ * or produced dynamically. The format is defined in
+ * https://github.com/AlmasB/FXGL/wiki/Narrative-and-Dialogue-System-(FXGL-11)#cutscenes
+ */
+class Cutscene(val lines: List<String>)

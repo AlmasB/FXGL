@@ -1,0 +1,25 @@
+// comments begin like in code
+# also a comment
+
+// first person talking
+1.name = Player Name
+
+// second person talking
+2.name = 2nd person talking
+
+// will be searched for in assets/textures/
+1.image = fileName.png
+
+// no image name means "do not use portrait"
+2.image =
+
+// speaker "1" is talking, name and image are parsed from above
+1: Hello, how are you today?
+2: I'm good, thanks, this is an example cutscene line.
+1: Got it!
+
+// you can also change name and image mid-cutscene
+
+2.name = NewName
+
+2: Hi, my name is different now!
