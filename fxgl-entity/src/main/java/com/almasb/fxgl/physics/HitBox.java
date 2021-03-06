@@ -351,6 +351,22 @@ public final class HitBox implements Serializable {
     float fastMaxX;
     float fastMaxY;
 
+    public float getFastMinX() {
+        return fastMinX;
+    }
+
+    public float getFastMinY() {
+        return fastMinY;
+    }
+
+    public float getFastMaxX() {
+        return fastMaxX;
+    }
+
+    public float getFastMaxY() {
+        return fastMaxY;
+    }
+
     SAT.MinMax axis1MinMax = new SAT.MinMax();
     SAT.MinMax axis2MinMax = new SAT.MinMax();
 

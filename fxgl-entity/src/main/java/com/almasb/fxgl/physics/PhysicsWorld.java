@@ -383,7 +383,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
                     continue;
 
                 // check if colliding
-                var collision = e1.getBoundingBoxComponent().checkCollision(e2.getBoundingBoxComponent(), collisionResult);
+                var collision = e1.getBoundingBoxComponent().checkCollisionPAT(e2.getBoundingBoxComponent(), collisionResult);
 
                 if (collision) {
                     collisionBeginFor(handler, e1, e2, collisionResult.getBoxA(), collisionResult.getBoxB());

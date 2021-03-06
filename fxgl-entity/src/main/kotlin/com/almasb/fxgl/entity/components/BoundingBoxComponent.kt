@@ -287,6 +287,16 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
      * @return [CollisionResult.NO_COLLISION] if no collision, else [CollisionResult.COLLISION]
      */
     fun checkCollision(other: BoundingBoxComponent, result: CollisionResult): Boolean {
+        applyTransformToHitBoxes()
+        other.applyTransformToHitBoxes()
+
+        return checkCollisionPAT(other, result)
+    }
+
+    /**
+     * Check collision with pre-applied transforms (called with [applyTransformToHitBoxes]).
+     */
+    fun checkCollisionPAT(other: BoundingBoxComponent, result: CollisionResult): Boolean {
         for (i in hitBoxes.indices) {
             val box1 = hitBoxes[i]
 
@@ -299,7 +309,7 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
                 val angle2 = other.getEntity().rotation
 
                 if (angle1 == 0.0 && angle2 == 0.0) {
-                    collision = checkCollision(box1, box2, transform, other.transform)
+                    collision = checkCollisionPAT(box1, box2, transform, other.transform)
                 } else {
                     collision = checkCollision(box1, box2, angle1, angle2, transform, other.transform)
                 }
@@ -317,16 +327,15 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
     /**
      * Internal GC-friendly (and has fewer checks than JavaFX's BoundingBox)
      * check for collision between two hit boxes.
-     * Assuming hit boxes are bound to x, y of entities so the coords
-     * are correctly translated into the world coord space.
+     * Assuming hit boxes are
+     * are correctly translated into the world coord space (hence PAT - pre-applied transforms).
      *
      * @param box1 hit box 1
      * @param box2 hit box 2
      * @return true iff box1 is colliding with box2
      */
-    private fun checkCollision(box1: HitBox, box2: HitBox,
+    private fun checkCollisionPAT(box1: HitBox, box2: HitBox,
                                t1: TransformComponent, t2: TransformComponent): Boolean {
-
         if (box1.shape is Box3DShapeData && box2.shape is Box3DShapeData) {
             // perform 3D collision check
             val shape1 = box1.shape as Box3DShapeData
@@ -345,10 +354,10 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
             return bbox1.intersects(bbox2)
         }
 
-        return box2.maxXWorld >= box1.minXWorld &&
-                box2.maxYWorld >= box1.minYWorld &&
-                box2.minXWorld <= box1.maxXWorld &&
-                box2.minYWorld <= box1.maxYWorld
+        return box2.fastMaxX >= box1.fastMinX &&
+                box2.fastMaxY >= box1.fastMinY &&
+                box2.fastMinX <= box1.fastMaxX &&
+                box2.fastMinY <= box1.fastMaxY
     }
 
     private fun checkCollision(box1: HitBox, box2: HitBox, angle1: Double, angle2: Double,
