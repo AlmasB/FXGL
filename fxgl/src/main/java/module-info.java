@@ -15,7 +15,6 @@ module com.almasb.fxgl.all {
     requires transitive com.almasb.fxgl.cutscene;
     requires transitive com.almasb.fxgl.effects;
     requires transitive com.almasb.fxgl.entity;
-    requires transitive com.almasb.fxgl.events;
     requires transitive com.almasb.fxgl.input;
     requires transitive com.almasb.fxgl.io;
     requires transitive com.almasb.fxgl.localization;
