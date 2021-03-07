@@ -10,7 +10,6 @@ import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.scene.LoadingScene
-import com.almasb.fxgl.app.scene.StartupScene
 import com.almasb.fxgl.app.services.FXGLAssetLoaderService
 import com.almasb.fxgl.core.Updatable
 import com.almasb.fxgl.core.concurrent.Async
@@ -82,13 +81,6 @@ class FXGLApplication : Application() {
             this.settings = settings
 
             Application.launch(FXGLApplication::class.java, *args)
-        }
-
-        @JvmStatic fun customLaunchFX(app: GameApplication, settings: ReadOnlyGameSettings, stage: Stage) {
-            this.app = app
-            this.settings = settings
-
-            FXGLApplication().start(stage)
         }
 
         @JvmStatic fun embeddedLaunchFX(app: GameApplication, settings: ReadOnlyGameSettings): FXGLPane {
