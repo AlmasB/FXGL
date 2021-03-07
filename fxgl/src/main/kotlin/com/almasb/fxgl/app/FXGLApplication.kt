@@ -10,7 +10,6 @@ import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.scene.LoadingScene
-import com.almasb.fxgl.app.scene.StartupScene
 import com.almasb.fxgl.app.services.FXGLAssetLoaderService
 import com.almasb.fxgl.core.Updatable
 import com.almasb.fxgl.core.concurrent.Async
@@ -71,7 +70,7 @@ class FXGLApplication : Application() {
     companion object {
         private val log = Logger.get(FXGLApplication::class.java)
 
-        lateinit var app: GameApplication
+        private lateinit var app: GameApplication
         private lateinit var settings: ReadOnlyGameSettings
 
         private lateinit var engine: Engine
@@ -82,13 +81,6 @@ class FXGLApplication : Application() {
             this.settings = settings
 
             Application.launch(FXGLApplication::class.java, *args)
-        }
-
-        @JvmStatic fun customLaunchFX(app: GameApplication, settings: ReadOnlyGameSettings, stage: Stage) {
-            this.app = app
-            this.settings = settings
-
-            FXGLApplication().start(stage)
         }
 
         @JvmStatic fun embeddedLaunchFX(app: GameApplication, settings: ReadOnlyGameSettings): FXGLPane {
@@ -103,42 +95,11 @@ class FXGLApplication : Application() {
      * This is the main entry point when run inside an existing JavaFX application.
      */
     private fun embeddedStart(): FXGLPane {
-
-        // any exception on the JavaFX thread will be caught and reported
-        Thread.setDefaultUncaughtExceptionHandler { _, e ->
-            handleFatalError(e)
-        }
-
-        log.debug("Initializing FXGL")
-
-        engine = Engine(settings)
-
-        // after this call, all FXGL.* calls (apart from those accessing services) are valid
-        FXGL.inject(engine, app, this)
-
         val pane = FXGLPane(settings.width.toDouble(), settings.height.toDouble())
 
-        mainWindow = EmbeddedPaneWindow(pane, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
-        mainWindow.show()
-
-        // start initialization of services on a background thread
-        // then start the loop on the JavaFX thread
-        val task = IOTask.ofVoid {
-            val time = measureNanoTime {
-                engine.initServices()
-                postServicesInit()
-            }
-
-            log.infof("FXGL initialization took: %.3f sec", time / 1000000000.0)
+        startImpl {
+            EmbeddedPaneWindow(pane, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
         }
-                .onSuccess {
-                    engine.startLoop()
-                    setFirstSceneAfterStartup()
-                }
-                .onFailure { handleFatalError(it) }
-                .toJavaFXTask()
-
-        Async.execute(task)
 
         return pane
     }
@@ -147,7 +108,12 @@ class FXGLApplication : Application() {
      * This is the main entry point as run by the JavaFX platform.
      */
     override fun start(stage: Stage) {
+        startImpl {
+            PrimaryStageWindow(stage, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
+        }
+    }
 
+    private fun startImpl(windowSupplier: () -> MainWindow) {
         // any exception on the JavaFX thread will be caught and reported
         Thread.setDefaultUncaughtExceptionHandler { _, e ->
             handleFatalError(e)
@@ -161,19 +127,19 @@ class FXGLApplication : Application() {
         FXGL.inject(engine, app, this)
 
         // get window up ASAP
-        mainWindow = PrimaryStageWindow(stage, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
+        mainWindow = windowSupplier()
         mainWindow.show()
 
         // start initialization of services on a background thread
         // then start the loop on the JavaFX thread
         val task = IOTask.ofVoid {
-                    val time = measureNanoTime {
-                        engine.initServices()
-                        postServicesInit()
-                    }
+            val time = measureNanoTime {
+                engine.initServices()
+                postServicesInit()
+            }
 
-                    log.infof("FXGL initialization took: %.3f sec", time / 1000000000.0)
-                }
+            log.infof("FXGL initialization took: %.3f sec", time / 1000000000.0)
+        }
                 .onSuccess {
                     engine.startLoop()
                     setFirstSceneAfterStartup()

@@ -10,7 +10,6 @@ import com.almasb.fxgl.core.util.Platform;
 import com.almasb.fxgl.dev.profiling.ProfilerService;
 import com.almasb.fxgl.generated.BuildProperties;
 import com.almasb.fxgl.logging.*;
-import javafx.stage.Stage;
 
 import java.util.Map;
 
@@ -64,20 +63,6 @@ public abstract class GameApplication {
             var instance = ReflectionUtils.newInstance(appClass);
 
             launch(instance, args);
-        } catch (Exception e) {
-            printErrorAndExit(e);
-        }
-    }
-
-    @Deprecated
-    public static void customLaunch(GameApplication app, Stage stage) {
-        try {
-            var settings = app.takeUserSettings();
-
-            app.initLogger(settings);
-
-            FXGLApplication.customLaunchFX(app, settings, stage);
-
         } catch (Exception e) {
             printErrorAndExit(e);
         }

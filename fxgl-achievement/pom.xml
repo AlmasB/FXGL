@@ -26,12 +26,6 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-events</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-test</artifactId>
             <version>${fxgl.version}</version>
             <scope>test</scope>
