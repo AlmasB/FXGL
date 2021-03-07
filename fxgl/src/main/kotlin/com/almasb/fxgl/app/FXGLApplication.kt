@@ -95,42 +95,11 @@ class FXGLApplication : Application() {
      * This is the main entry point when run inside an existing JavaFX application.
      */
     private fun embeddedStart(): FXGLPane {
-
-        // any exception on the JavaFX thread will be caught and reported
-        Thread.setDefaultUncaughtExceptionHandler { _, e ->
-            handleFatalError(e)
-        }
-
-        log.debug("Initializing FXGL")
-
-        engine = Engine(settings)
-
-        // after this call, all FXGL.* calls (apart from those accessing services) are valid
-        FXGL.inject(engine, app, this)
-
         val pane = FXGLPane(settings.width.toDouble(), settings.height.toDouble())
 
-        mainWindow = EmbeddedPaneWindow(pane, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
-        mainWindow.show()
-
-        // start initialization of services on a background thread
-        // then start the loop on the JavaFX thread
-        val task = IOTask.ofVoid {
-            val time = measureNanoTime {
-                engine.initServices()
-                postServicesInit()
-            }
-
-            log.infof("FXGL initialization took: %.3f sec", time / 1000000000.0)
+        startImpl {
+            EmbeddedPaneWindow(pane, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
         }
-                .onSuccess {
-                    engine.startLoop()
-                    setFirstSceneAfterStartup()
-                }
-                .onFailure { handleFatalError(it) }
-                .toJavaFXTask()
-
-        Async.execute(task)
 
         return pane
     }
@@ -139,7 +108,12 @@ class FXGLApplication : Application() {
      * This is the main entry point as run by the JavaFX platform.
      */
     override fun start(stage: Stage) {
+        startImpl {
+            PrimaryStageWindow(stage, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
+        }
+    }
 
+    private fun startImpl(windowSupplier: () -> MainWindow) {
         // any exception on the JavaFX thread will be caught and reported
         Thread.setDefaultUncaughtExceptionHandler { _, e ->
             handleFatalError(e)
@@ -153,19 +127,19 @@ class FXGLApplication : Application() {
         FXGL.inject(engine, app, this)
 
         // get window up ASAP
-        mainWindow = PrimaryStageWindow(stage, settings.sceneFactory.newStartup(settings.width, settings.height), settings)
+        mainWindow = windowSupplier()
         mainWindow.show()
 
         // start initialization of services on a background thread
         // then start the loop on the JavaFX thread
         val task = IOTask.ofVoid {
-                    val time = measureNanoTime {
-                        engine.initServices()
-                        postServicesInit()
-                    }
+            val time = measureNanoTime {
+                engine.initServices()
+                postServicesInit()
+            }
 
-                    log.infof("FXGL initialization took: %.3f sec", time / 1000000000.0)
-                }
+            log.infof("FXGL initialization took: %.3f sec", time / 1000000000.0)
+        }
                 .onSuccess {
                     engine.startLoop()
                     setFirstSceneAfterStartup()
