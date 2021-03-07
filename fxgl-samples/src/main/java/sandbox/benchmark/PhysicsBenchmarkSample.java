@@ -38,7 +38,7 @@ public class PhysicsBenchmarkSample extends GameApplication {
     private Text text;
 
     private enum Type {
-        BALL, NOTHING
+        BALL, NOTHING, TYPE_A, TYPE_B, TYPE_C, TYPE_D, TYPE_E, TYPE_F
     }
 
     @Override
@@ -76,6 +76,15 @@ public class PhysicsBenchmarkSample extends GameApplication {
         onCollision(Type.BALL, Type.BALL, (b1, b2) -> {
             numCollisions++;
         });
+
+        // some extra handlers
+        for (int i = 0; i < Type.values().length; i++) {
+            for (int j = i + 1; j < Type.values().length; j++) {
+                onCollision(Type.values()[i], Type.values()[j], (b1, b2) -> {
+                    numCollisions++;
+                });
+            }
+        }
     }
 
     @Override
@@ -101,7 +110,7 @@ public class PhysicsBenchmarkSample extends GameApplication {
                     .viewWithBBox("brick.png")
                     .collidable()
                     //.rotate(random(5, 105))
-                    .with(new RandomMoveComponent(new Rectangle2D(0, 0, getAppWidth() - 64, getAppHeight() - 64), random(10, 200)).withoutRotation())
+                    //.with(new RandomMoveComponent(new Rectangle2D(0, 0, getAppWidth() - 64, getAppHeight() - 64), random(10, 200)).withoutRotation())
                     .build();
         }
     }
