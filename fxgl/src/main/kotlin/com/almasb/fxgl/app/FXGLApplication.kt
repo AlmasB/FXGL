@@ -70,7 +70,7 @@ class FXGLApplication : Application() {
     companion object {
         private val log = Logger.get(FXGLApplication::class.java)
 
-        lateinit var app: GameApplication
+        private lateinit var app: GameApplication
         private lateinit var settings: ReadOnlyGameSettings
 
         private lateinit var engine: Engine
