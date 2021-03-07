@@ -7,7 +7,11 @@
 package com.almasb.fxgl.entity.level.tiled
 
 import com.almasb.fxgl.logging.Logger
-import com.almasb.fxgl.texture.*
+import com.almasb.fxgl.texture.Texture
+import com.almasb.fxgl.texture.getDummyImage
+import com.almasb.fxgl.texture.resize
+import com.almasb.fxgl.texture.flipHorizontally
+import com.almasb.fxgl.texture.flipVertically
 import javafx.geometry.Rectangle2D
 import javafx.scene.Node
 import javafx.scene.image.Image

@@ -16,20 +16,14 @@ import com.almasb.fxgl.entity.level.LevelLoadingException
 import com.almasb.fxgl.logging.Logger
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
-import java.io.ByteArrayOutputStream
-import java.io.DataInputStream
 import java.io.InputStream
 import java.net.URL
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import java.util.*
 import java.util.zip.GZIPInputStream
 import java.util.zip.InflaterInputStream
 import javax.xml.namespace.QName
 import javax.xml.stream.XMLInputFactory
 import javax.xml.stream.events.StartElement
-
-
 
 /**
  * TMX Format version 1.1 reference: http://docs.mapeditor.org/en/latest/reference/tmx-map-format/
