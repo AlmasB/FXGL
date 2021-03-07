@@ -202,7 +202,7 @@ class TMXLevelLoaderTest {
 
         val layer1data = Files.readAllLines(Paths.get(javaClass.getResource("sewers_data.txt").toURI()))[0]
                 .split(", ")
-                .map { it.toInt() }
+                .map { it.toLong() }
 
         assertThat(layer1.data, `is`(layer1data))
 
@@ -215,7 +215,7 @@ class TMXLevelLoaderTest {
 
         val layer2data = Files.readAllLines(Paths.get(javaClass.getResource("sewers_data.txt").toURI()))[1]
                 .split(", ")
-                .map { it.toInt() }
+                .map { it.toLong() }
 
         assertThat(layer2.data, `is`(layer2data))
 

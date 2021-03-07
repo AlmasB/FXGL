@@ -17,6 +17,7 @@ import com.almasb.fxgl.logging.Logger
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
 import java.io.ByteArrayOutputStream
+import java.io.DataInputStream
 import java.io.InputStream
 import java.net.URL
 import java.nio.ByteBuffer
@@ -27,6 +28,8 @@ import java.util.zip.InflaterInputStream
 import javax.xml.namespace.QName
 import javax.xml.stream.XMLInputFactory
 import javax.xml.stream.events.StartElement
+
+
 
 /**
  * TMX Format version 1.1 reference: http://docs.mapeditor.org/en/latest/reference/tmx-map-format/
@@ -334,40 +337,39 @@ class TMXLevelLoader : LevelLoader {
     private fun parseData(layer: Layer, data: String, start: StartElement) {
         when (start.getString("encoding")) {
             "csv" -> {
-                layer.data = data.replace("\n", "").split(",").map { it.trim().toInt() }
+                layer.data = data.replace("\n", "").split(",").map { it.trim().toLong() }
             }
 
             "base64" -> {
-                var bytes = Base64.getDecoder().decode(data.trim())
+                val bytes = Base64.getDecoder().decode(data.trim())
+
+                var inputStream: InputStream = InputStream.nullInputStream()
+
+                val longArray = arrayListOf<Long>()
 
                 when (start.getString("compression")) {
                     "zlib" -> {
-                        val baos = ByteArrayOutputStream()
-
-                        InflaterInputStream(bytes.inputStream()).use {
-                            it.copyTo(baos)
-                        }
-
-                        bytes = baos.toByteArray()
+                        inputStream = InflaterInputStream(bytes.inputStream())
                     }
 
                     "gzip" -> {
-                        val baos = ByteArrayOutputStream()
-
-                        GZIPInputStream(bytes.inputStream()).use {
-                            it.copyTo(baos)
-                        }
-
-                        bytes = baos.toByteArray()
+                        inputStream = GZIPInputStream(bytes.inputStream())
                     }
                 }
 
-                val ints = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer()
+                // Read 4 bytes representing unsigned integer from '.tmx' data and convert to long
+                // Preserves 3 most significant bit from UInt which encodes flipped tile state
+                while (inputStream.available() > 0) {
+                    val rawInt = inputStream.readNBytes(4)
 
-                val intArray = IntArray(ints.limit())
-                ints.get(intArray)
+                    val value: Long = (rawInt[0].toLong() and 0xFF shl 0) or
+                            (rawInt[1].toLong() and 0xFF shl 8) or
+                            (rawInt[2].toLong() and 0xFF shl 16) or
+                            (rawInt[3].toLong() and 0xFF shl 24)
 
-                layer.data = intArray.toList()
+                    longArray.add(value)
+                }
+                layer.data = longArray
             }
         }
     }

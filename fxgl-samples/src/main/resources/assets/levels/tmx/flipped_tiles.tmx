@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="5">
+ <tileset firstgid="1" name="tileset_black" tilewidth="16" tileheight="16" tilecount="256" columns="16">
+  <image source="tileset_black.png" width="256" height="256"/>
+ </tileset>
+ <layer id="1" name="Tile Layer 1" width="8" height="8">
+  <data encoding="base64" compression="zlib">
+   eJxzZ2BgcGdgaABiByA+wEAiiITgBiB2iCRDvwcENwCxgwcZ+n0huAGIHXzJ0A8AYmIK1Q==
+  </data>
+ </layer>
+ <objectgroup id="2" name="Object Layer 1">
+  <object id="1" type="f" gid="3221225575" x="80" y="16" width="16" height="16"/>
+  <object id="2" type="x" gid="2147483769" x="80" y="48" width="16" height="16"/>
+  <object id="3" type="g" gid="1073741928" x="80" y="80" width="16" height="16"/>
+  <object id="4" type="l" gid="109" x="80" y="112" width="16" height="16"/>
+ </objectgroup>
+</map>

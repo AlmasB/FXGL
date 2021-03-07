@@ -7,9 +7,8 @@
 package com.almasb.fxgl.entity.level.tiled
 
 import com.almasb.fxgl.logging.Logger
-import com.almasb.fxgl.texture.Texture
-import com.almasb.fxgl.texture.getDummyImage
-import com.almasb.fxgl.texture.resize
+import com.almasb.fxgl.texture.*
+import javafx.geometry.Rectangle2D
 import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
@@ -89,7 +88,15 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
 
         for (i in 0 until layer.data.size) {
 
-            var gid = layer.data.get(i)
+            val tempGid = layer.data.get(i)
+
+            // Orientation is encoded in 3 most significant bits of '.tmx' UInt which is embedded in lower half of Long
+            val isHorizontallyFlipped = tempGid and 0x80000000L != 0L
+            val isVerticallyFlipped = tempGid and 0x40000000L != 0L
+            val isDiagonallyFlipped = tempGid and 0x20000000L != 0L
+
+            // Can strip 3 orientation bits and convert to Int
+            var gid = (tempGid and 0x1FFFFFFFL).toInt()
 
             // empty tile
             if (gid == 0)
@@ -107,9 +114,9 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
             val w = tileset.tilewidth
             val h = tileset.tileheight
 
-            val sourceImage: Image
-            val srcx: Int
-            val srcy: Int
+            var sourceImage: Image
+            var srcx: Int
+            var srcy: Int
 
             if (tileset.isSpriteSheet) {
                 sourceImage = loadImage(tileset.image, tileset.transparentcolor, tileset.imagewidth, tileset.imageheight)
@@ -133,6 +140,20 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
             }
 
             log.debug("Writing to buffer: dst=${x * map.tilewidth},${y * map.tileheight}, w=$w,h=$h, src=$srcx,$srcy")
+
+            if (isHorizontallyFlipped) {
+                sourceImage = flipHorizontally(Texture(sourceImage).subTexture(Rectangle2D(srcx.toDouble(), srcy.toDouble(), w.toDouble(), h.toDouble())).image)
+                srcx = 0
+                srcy = 0
+            }
+            if (isVerticallyFlipped) {
+                sourceImage = flipVertically(Texture(sourceImage).subTexture(Rectangle2D(srcx.toDouble(), srcy.toDouble(), w.toDouble(), h.toDouble())).image)
+                srcx = 0
+                srcy = 0
+            }
+            if (isDiagonallyFlipped) {
+                // Not currently supported
+            }
 
             buffer.pixelWriter.setPixels(x * map.tilewidth, y * map.tileheight,
                     w, h, sourceImage.pixelReader,
@@ -162,7 +183,7 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
 
         for (i in 0 until layer.data.size) {
 
-            var gid = layer.data.get(i)
+            var gid = layer.data.get(i).toInt()
 
             // empty tile
             if (gid == 0)
