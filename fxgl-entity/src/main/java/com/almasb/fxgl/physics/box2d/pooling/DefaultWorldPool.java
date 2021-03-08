@@ -15,7 +15,7 @@ import com.almasb.fxgl.physics.box2d.collision.TimeOfImpact;
 import com.almasb.fxgl.physics.box2d.common.Mat22;
 import com.almasb.fxgl.physics.box2d.common.Mat33;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
-import com.almasb.fxgl.physics.box2d.common.Vec3;
+import com.almasb.fxgl.core.math.Vec3;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.*;
 
 import java.util.HashMap;
