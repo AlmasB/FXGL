@@ -337,31 +337,36 @@ class TMXLevelLoader : LevelLoader {
             "base64" -> {
                 val bytes = Base64.getDecoder().decode(data.trim())
 
-                var inputStream: InputStream = InputStream.nullInputStream()
-
-                val longArray = arrayListOf<Long>()
-
-                when (start.getString("compression")) {
+                val inputStream = when (start.getString("compression")) {
                     "zlib" -> {
-                        inputStream = InflaterInputStream(bytes.inputStream())
+                        InflaterInputStream(bytes.inputStream())
                     }
 
                     "gzip" -> {
-                        inputStream = GZIPInputStream(bytes.inputStream())
+                        GZIPInputStream(bytes.inputStream())
+                    }
+
+                    else -> {
+                        log.warning("Unsupported base64 compression: '" + start.getString("compression") + "'. " + layer.name + " may fail to render.")
+                        InputStream.nullInputStream()
                     }
                 }
 
+                val longArray = arrayListOf<Long>()
+
                 // Read 4 bytes representing unsigned integer from '.tmx' data and convert to long
                 // Preserves 3 most significant bit from UInt which encodes flipped tile state
-                while (inputStream.available() > 0) {
-                    val rawInt = inputStream.readNBytes(4)
+                inputStream.use {
+                    while (it.available() > 0) {
+                        val rawInt = it.readNBytes(4)
 
-                    val value: Long = (rawInt[0].toLong() and 0xFF shl 0) or
-                            (rawInt[1].toLong() and 0xFF shl 8) or
-                            (rawInt[2].toLong() and 0xFF shl 16) or
-                            (rawInt[3].toLong() and 0xFF shl 24)
+                        val value: Long = (rawInt[0].toLong() and 0xFF shl 0) or
+                                (rawInt[1].toLong() and 0xFF shl 8) or
+                                (rawInt[2].toLong() and 0xFF shl 16) or
+                                (rawInt[3].toLong() and 0xFF shl 24)
 
-                    longArray.add(value)
+                        longArray.add(value)
+                    }
                 }
                 layer.data = longArray
             }

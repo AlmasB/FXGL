@@ -94,13 +94,20 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
 
             val tempGid = layer.data.get(i)
 
-            // Orientation is encoded in 3 most significant bits of '.tmx' UInt which is embedded in lower half of Long
-            val isHorizontallyFlipped = tempGid and 0x80000000L != 0L
-            val isVerticallyFlipped = tempGid and 0x40000000L != 0L
-            val isDiagonallyFlipped = tempGid and 0x20000000L != 0L
+            // from https://doc.mapeditor.org/en/stable/reference/tmx-map-format/#tile-flipping
+            // Bit 32 (31th) is used for storing whether the tile is horizontally flipped,
+            // Bit 31 (30th) is used for vertically flipped,
+            // Bit 30 (29th) is used for diagonally flipped
+            val FLIPPED_HORIZONTALLY_FLAG = 1L shl 31
+            val FLIPPED_VERTICALLY_FLAG   = 1L shl 30
+            val FLIPPED_DIAGONALLY_FLAG   = 1L shl 29
 
-            // Can strip 3 orientation bits and convert to Int
-            var gid = (tempGid and 0x1FFFFFFFL).toInt()
+            val isFlippedHorizontal = tempGid and FLIPPED_HORIZONTALLY_FLAG != 0L
+            val isFlippedVertical = tempGid and FLIPPED_VERTICALLY_FLAG != 0L
+            val isFlippedDiagonal = tempGid and FLIPPED_DIAGONALLY_FLAG != 0L
+
+            // get rid of the metadata, leaving us with gid
+            var gid = (tempGid and (FLIPPED_HORIZONTALLY_FLAG or FLIPPED_VERTICALLY_FLAG or FLIPPED_DIAGONALLY_FLAG).inv()).toInt()
 
             // empty tile
             if (gid == 0)
@@ -131,6 +138,14 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
 
                 srcx = tilex * w + tileset.margin + tilex * tileset.spacing
                 srcy = tiley * h + tileset.margin + tiley * tileset.spacing
+
+                // If a tile of the sprite sheet needs to be flipped, crop the sub-texture
+                if (isFlippedHorizontal or isFlippedVertical or isFlippedDiagonal) {
+                    sourceImage = Texture(sourceImage).subTexture(Rectangle2D(srcx.toDouble(), srcy.toDouble(), w.toDouble(), h.toDouble())).image
+                    srcx = 0
+                    srcy = 0
+                }
+
             } else {
 
                 // tileset is a collection of images
@@ -145,18 +160,16 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
 
             log.debug("Writing to buffer: dst=${x * map.tilewidth},${y * map.tileheight}, w=$w,h=$h, src=$srcx,$srcy")
 
-            if (isHorizontallyFlipped) {
-                sourceImage = flipHorizontally(Texture(sourceImage).subTexture(Rectangle2D(srcx.toDouble(), srcy.toDouble(), w.toDouble(), h.toDouble())).image)
-                srcx = 0
-                srcy = 0
+            if (isFlippedHorizontal) {
+                sourceImage = flipHorizontally(sourceImage)
             }
-            if (isVerticallyFlipped) {
-                sourceImage = flipVertically(Texture(sourceImage).subTexture(Rectangle2D(srcx.toDouble(), srcy.toDouble(), w.toDouble(), h.toDouble())).image)
-                srcx = 0
-                srcy = 0
+
+            if (isFlippedVertical) {
+                sourceImage = flipVertically(sourceImage)
             }
-            if (isDiagonallyFlipped) {
-                // Not currently supported
+
+            if (isFlippedDiagonal) {
+                log.warning("Diagonally flipped tiles are not currently supported")
             }
 
             buffer.pixelWriter.setPixels(x * map.tilewidth, y * map.tileheight,

@@ -1,3 +1,9 @@
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
+
 package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
@@ -6,8 +12,6 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-
-
 import java.util.List;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
