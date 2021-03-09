@@ -24,7 +24,6 @@ module com.almasb.fxgl.all {
     requires transitive com.almasb.fxgl.net;
     requires transitive com.almasb.fxgl.profiles;
     requires transitive com.almasb.fxgl.scene;
-    requires transitive com.almasb.fxgl.time;
     requires transitive com.almasb.fxgl.trade;
     requires transitive com.almasb.fxgl.ui;
 

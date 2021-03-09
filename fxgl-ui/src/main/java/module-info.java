@@ -13,7 +13,6 @@ module com.almasb.fxgl.ui {
     requires com.almasb.fxgl.input;
     requires com.almasb.fxgl.localization;
     requires com.almasb.fxgl.scene;
-    requires com.almasb.fxgl.time;
 
     requires javafx.controls;
 

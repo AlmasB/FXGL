@@ -26,4 +26,5 @@ module com.almasb.fxgl.core {
     exports com.almasb.fxgl.core.util;
 
     exports com.almasb.fxgl.event;
+    exports com.almasb.fxgl.time;
 }
