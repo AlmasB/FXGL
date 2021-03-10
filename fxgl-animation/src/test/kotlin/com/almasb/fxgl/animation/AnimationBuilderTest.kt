@@ -6,8 +6,9 @@
 @file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.animation
 
+import com.almasb.fxgl.core.Updatable
+import com.almasb.fxgl.core.UpdatableRunner
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.test.RunWithFX
 import javafx.geometry.Point2D
 import javafx.geometry.Point3D
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 import java.util.stream.Stream
 
@@ -38,14 +40,14 @@ import java.util.stream.Stream
 @ExtendWith(RunWithFX::class)
 class AnimationBuilderTest {
 
-    private lateinit var scene: Scene
+    private lateinit var scene: UpdatableRunner
     private lateinit var builder: AnimationBuilder
     private lateinit var e: Entity
     private lateinit var node: Node
 
     @BeforeEach
     fun setUp() {
-        scene = object : Scene() {}
+        scene = makeRunner()
         builder = AnimationBuilder(scene)
 
         e = Entity()
@@ -448,7 +450,7 @@ class AnimationBuilderTest {
 
         // use 2nd builder, the transforms should remain
 
-        val anim2 = AnimationBuilder(object : Scene() {})
+        val anim2 = AnimationBuilder(makeRunner())
                 .rotate(node)
                 .from(Point3D(10.0, 12.0, 14.0))
                 .to(Point3D(14.0, 15.0, -12.0))
@@ -755,7 +757,7 @@ class AnimationBuilderTest {
 
     @Test
     fun `Build and play`() {
-        val scene = object : Scene() { }
+        val scene = makeRunner()
 
         builder.translate(node)
                 .from(Point2D(10.0, 10.0))
@@ -882,6 +884,24 @@ class AnimationBuilderTest {
 
         assertThat(node.translateX, `is`(0.0))
         assertThat(node.translateY, `is`(not(0.0)))
+    }
+
+    private fun makeRunner(): MockRunner = MockRunner()
+
+    private class MockRunner : UpdatableRunner {
+        private val listeners = CopyOnWriteArrayList<Updatable>()
+
+        override fun addListener(updatable: Updatable) {
+            listeners += updatable
+        }
+
+        override fun removeListener(updatable: Updatable) {
+            listeners -= updatable
+        }
+
+        fun update(tpf: Double) {
+            listeners.forEach { it.onUpdate(tpf) }
+        }
     }
 
     companion object {

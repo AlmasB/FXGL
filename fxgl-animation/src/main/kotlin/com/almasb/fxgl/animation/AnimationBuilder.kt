@@ -6,10 +6,10 @@
 
 package com.almasb.fxgl.animation
 
+import com.almasb.fxgl.core.UpdatableRunner
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.logging.Logger
-import com.almasb.fxgl.scene.Scene
 import javafx.animation.Interpolator
 import javafx.beans.property.DoubleProperty
 import javafx.beans.value.WritableValue
@@ -31,7 +31,7 @@ import java.util.function.Consumer
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 open class AnimationBuilder
-@JvmOverloads constructor(protected val scene: Scene? = null) {
+@JvmOverloads constructor(protected val scene: UpdatableRunner? = null) {
 
     var duration: Duration = Duration.seconds(1.0)
     var delay: Duration = Duration.ZERO
@@ -200,7 +200,7 @@ open class AnimationBuilder
             }
         }
 
-        fun buildAndPlay(scene: Scene) {
+        fun buildAndPlay(scene: UpdatableRunner) {
             build().also { animation ->
 
                 animation.onFinished = Runnable {

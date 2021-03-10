@@ -10,7 +10,6 @@
 module com.almasb.fxgl.animation {
     requires com.almasb.fxgl.core;
     requires com.almasb.fxgl.entity;
-    requires com.almasb.fxgl.scene;
 
     exports com.almasb.fxgl.animation;
 }
