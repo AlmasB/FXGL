@@ -8,8 +8,9 @@ package com.almasb.fxgl.animation
 
 import com.almasb.fxgl.core.Updatable
 import com.almasb.fxgl.core.UpdatableRunner
-import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.test.RunWithFX
+import javafx.beans.property.DoubleProperty
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Point2D
 import javafx.geometry.Point3D
 import javafx.scene.Node
@@ -42,7 +43,7 @@ class AnimationBuilderTest {
 
     private lateinit var scene: UpdatableRunner
     private lateinit var builder: AnimationBuilder
-    private lateinit var e: Entity
+    private lateinit var e: MockEntity
     private lateinit var node: Node
 
     @BeforeEach
@@ -50,7 +51,7 @@ class AnimationBuilderTest {
         scene = makeRunner()
         builder = AnimationBuilder(scene)
 
-        e = Entity()
+        e = MockEntity()
         node = Rectangle()
     }
 
@@ -391,8 +392,8 @@ class AnimationBuilderTest {
 
         anim.start()
 
-        assertThat(e.transformComponent.rotationOrigin.x, `is`(1.0))
-        assertThat(e.transformComponent.rotationOrigin.y, `is`(5.0))
+        assertThat(e.rotationOriginValue.x, `is`(1.0))
+        assertThat(e.rotationOriginValue.y, `is`(5.0))
 
         assertThat(e.rotation, `is`(0.0))
 
@@ -411,16 +412,16 @@ class AnimationBuilderTest {
 
         anim.start()
 
-        assertThat(e.transformComponent.rotationX, `is`(0.0))
-        assertThat(e.transformComponent.rotationY, `is`(2.0))
-        assertThat(e.transformComponent.rotationZ, `is`(4.0))
+        assertThat(e.rotationX, `is`(0.0))
+        assertThat(e.rotationY, `is`(2.0))
+        assertThat(e.rotationZ, `is`(4.0))
 
         anim.onUpdate(0.5)
         anim.onUpdate(0.5)
 
-        assertThat(e.transformComponent.rotationX, `is`(4.0))
-        assertThat(e.transformComponent.rotationY, `is`(5.0))
-        assertThat(e.transformComponent.rotationZ, `is`(-2.0))
+        assertThat(e.rotationX, `is`(4.0))
+        assertThat(e.rotationY, `is`(5.0))
+        assertThat(e.rotationZ, `is`(-2.0))
     }
 
     @Test
@@ -588,8 +589,8 @@ class AnimationBuilderTest {
 
         anim.start()
 
-        assertThat(e.transformComponent.scaleOrigin.x, `is`(3.0))
-        assertThat(e.transformComponent.scaleOrigin.y, `is`(5.0))
+        assertThat(e.scaleOriginValue.x, `is`(3.0))
+        assertThat(e.scaleOriginValue.y, `is`(5.0))
 
         assertThat(e.scaleX, `is`(1.0))
         assertThat(e.scaleY, `is`(1.0))
@@ -901,6 +902,63 @@ class AnimationBuilderTest {
 
         fun update(tpf: Double) {
             listeners.forEach { it.onUpdate(tpf) }
+        }
+    }
+
+    private class MockEntity : Animatable {
+        private val propX = SimpleDoubleProperty()
+        private val propY = SimpleDoubleProperty()
+        private val propZ = SimpleDoubleProperty()
+
+        private val propRotX = SimpleDoubleProperty()
+        private val propRotY = SimpleDoubleProperty()
+        private val propRotZ = SimpleDoubleProperty()
+
+        private val propScaleX = SimpleDoubleProperty()
+        private val propScaleY = SimpleDoubleProperty()
+        private val propScaleZ = SimpleDoubleProperty()
+
+        private val propOpacity = SimpleDoubleProperty()
+
+        var scaleOriginValue: Point2D = Point2D.ZERO
+        var rotationOriginValue: Point2D = Point2D.ZERO
+
+        val x get() = propX.value
+        val y get() = propY.value
+        val z get() = propZ.value
+
+        val rotation get() = propRotZ.value
+
+        val rotationX get() = propRotX.value
+        val rotationY get() = propRotY.value
+        val rotationZ get() = propRotZ.value
+
+        val scaleX get() = propScaleX.value
+        val scaleY get() = propScaleY.value
+        val scaleZ get() = propScaleZ.value
+
+        val opacity get() = propOpacity.value
+
+        override fun xProperty(): DoubleProperty = propX
+        override fun yProperty(): DoubleProperty = propY
+        override fun zProperty(): DoubleProperty = propZ
+
+        override fun scaleXProperty(): DoubleProperty = propScaleX
+        override fun scaleYProperty(): DoubleProperty = propScaleY
+        override fun scaleZProperty(): DoubleProperty = propScaleZ
+
+        override fun rotationXProperty(): DoubleProperty = propRotX
+        override fun rotationYProperty(): DoubleProperty = propRotY
+        override fun rotationZProperty(): DoubleProperty = propRotZ
+
+        override fun opacityProperty(): DoubleProperty = propOpacity
+
+        override fun setScaleOrigin(pivotPoint: Point2D) {
+            scaleOriginValue = pivotPoint
+        }
+
+        override fun setRotationOrigin(pivotPoint: Point2D) {
+            rotationOriginValue = pivotPoint
         }
     }
 

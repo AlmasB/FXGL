@@ -9,7 +9,6 @@
  */
 module com.almasb.fxgl.minigames {
     requires com.almasb.fxgl.core;
-    requires com.almasb.fxgl.animation;
     requires com.almasb.fxgl.input;
     requires com.almasb.fxgl.scene;
     requires javafx.controls;

@@ -9,7 +9,6 @@
  */
 module com.almasb.fxgl.effects {
     requires com.almasb.fxgl.core;
-    requires com.almasb.fxgl.animation;
     requires com.almasb.fxgl.entity;
     requires com.almasb.fxgl.media;
 

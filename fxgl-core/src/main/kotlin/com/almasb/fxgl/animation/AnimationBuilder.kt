@@ -8,7 +8,6 @@ package com.almasb.fxgl.animation
 
 import com.almasb.fxgl.core.UpdatableRunner
 import com.almasb.fxgl.core.util.EmptyRunnable
-import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.logging.Logger
 import javafx.animation.Interpolator
 import javafx.beans.property.DoubleProperty
@@ -105,8 +104,8 @@ open class AnimationBuilder
 
     fun <T> animate(property: WritableValue<T>) = PropertyAnimationBuilder(this, property)
 
-    fun translate(vararg entities: Entity) = TranslationAnimationBuilder(this).apply {
-        objects += entities.map { it.toAnimatable() }
+    fun translate(vararg entities: Animatable) = TranslationAnimationBuilder(this).apply {
+        objects += entities
     }
 
     fun translate(vararg entities: Node) = TranslationAnimationBuilder(this).apply {
@@ -117,8 +116,8 @@ open class AnimationBuilder
         objects += entities.map { toAnimatable(it) }
     }
 
-    fun fade(vararg entities: Entity) = FadeAnimationBuilder(this).apply {
-        objects += entities.map { it.toAnimatable() }
+    fun fade(vararg entities: Animatable) = FadeAnimationBuilder(this).apply {
+        objects += entities
     }
 
     fun fade(vararg entities: Node) = FadeAnimationBuilder(this).apply {
@@ -129,8 +128,8 @@ open class AnimationBuilder
         objects += entities.map { toAnimatable(it) }
     }
 
-    fun scale(vararg entities: Entity) = ScaleAnimationBuilder(this).apply {
-        objects += entities.map { it.toAnimatable() }
+    fun scale(vararg entities: Animatable) = ScaleAnimationBuilder(this).apply {
+        objects += entities
     }
 
     fun scale(vararg entities: Node) = ScaleAnimationBuilder(this).apply {
@@ -141,8 +140,8 @@ open class AnimationBuilder
         objects += entities.map { toAnimatable(it) }
     }
 
-    fun rotate(vararg entities: Entity) = RotationAnimationBuilder(this).apply {
-        objects += entities.map { it.toAnimatable() }
+    fun rotate(vararg entities: Animatable) = RotationAnimationBuilder(this).apply {
+        objects += entities
     }
 
     fun rotate(vararg entities: Node) = RotationAnimationBuilder(this).apply {
@@ -155,20 +154,20 @@ open class AnimationBuilder
 
     private fun toAnimatable(obj: Any): Animatable = when (obj) {
         is Node -> obj.toAnimatable()
-        is Entity -> obj.toAnimatable()
-        else -> throw IllegalArgumentException("${obj.javaClass} must be Node or Entity")
+        is Animatable -> obj
+        else -> throw IllegalArgumentException("${obj.javaClass} must be Node or Animatable")
     }
 
-    fun fadeIn(vararg entities: Entity) = FadeAnimationBuilder(this).apply {
-        objects += entities.map { it.toAnimatable() }
+    fun fadeIn(vararg entities: Animatable) = FadeAnimationBuilder(this).apply {
+        objects += entities
     }.from(0.0).to(1.0)
 
     fun fadeIn(vararg entities: Node) = FadeAnimationBuilder(this).apply {
         objects += entities.map { it.toAnimatable() }
     }.from(0.0).to(1.0)
 
-    fun fadeOut(vararg entities: Entity) = FadeAnimationBuilder(this).apply {
-        objects += entities.map { it.toAnimatable() }
+    fun fadeOut(vararg entities: Animatable) = FadeAnimationBuilder(this).apply {
+        objects += entities
     }.from(1.0).to(0.0)
 
     fun fadeOut(vararg entities: Node) = FadeAnimationBuilder(this).apply {
@@ -544,56 +543,56 @@ private fun Node.toAnimatable(): Animatable {
         }
     }
 }
-
-private fun Entity.toAnimatable(): Animatable {
-    val e = this
-    return object : Animatable {
-        override fun xProperty(): DoubleProperty {
-            return e.xProperty()
-        }
-
-        override fun yProperty(): DoubleProperty {
-            return e.yProperty()
-        }
-
-        override fun zProperty(): DoubleProperty {
-            return e.zProperty()
-        }
-
-        override fun scaleXProperty(): DoubleProperty {
-            return e.transformComponent.scaleXProperty()
-        }
-
-        override fun scaleYProperty(): DoubleProperty {
-            return e.transformComponent.scaleYProperty()
-        }
-
-        override fun scaleZProperty(): DoubleProperty {
-            return e.transformComponent.scaleZProperty()
-        }
-
-        override fun rotationXProperty(): DoubleProperty {
-            return e.transformComponent.rotationXProperty()
-        }
-
-        override fun rotationYProperty(): DoubleProperty {
-            return e.transformComponent.rotationYProperty()
-        }
-
-        override fun rotationZProperty(): DoubleProperty {
-            return e.transformComponent.rotationZProperty()
-        }
-
-        override fun opacityProperty(): DoubleProperty {
-            return e.viewComponent.opacityProperty
-        }
-
-        override fun setScaleOrigin(pivotPoint: Point2D) {
-            e.transformComponent.scaleOrigin = pivotPoint
-        }
-
-        override fun setRotationOrigin(pivotPoint: Point2D) {
-            e.transformComponent.rotationOrigin = pivotPoint
-        }
-    }
-}
+//
+//private fun Animatable.toAnimatable(): Animatable {
+//    val e = this
+//    return object : Animatable {
+//        override fun xProperty(): DoubleProperty {
+//            return e.xProperty()
+//        }
+//
+//        override fun yProperty(): DoubleProperty {
+//            return e.yProperty()
+//        }
+//
+//        override fun zProperty(): DoubleProperty {
+//            return e.zProperty()
+//        }
+//
+//        override fun scaleXProperty(): DoubleProperty {
+//            return e.transformComponent.scaleXProperty()
+//        }
+//
+//        override fun scaleYProperty(): DoubleProperty {
+//            return e.transformComponent.scaleYProperty()
+//        }
+//
+//        override fun scaleZProperty(): DoubleProperty {
+//            return e.transformComponent.scaleZProperty()
+//        }
+//
+//        override fun rotationXProperty(): DoubleProperty {
+//            return e.transformComponent.rotationXProperty()
+//        }
+//
+//        override fun rotationYProperty(): DoubleProperty {
+//            return e.transformComponent.rotationYProperty()
+//        }
+//
+//        override fun rotationZProperty(): DoubleProperty {
+//            return e.transformComponent.rotationZProperty()
+//        }
+//
+//        override fun opacityProperty(): DoubleProperty {
+//            return e.viewComponent.opacityProperty
+//        }
+//
+//        override fun setScaleOrigin(pivotPoint: Point2D) {
+//            e.transformComponent.scaleOrigin = pivotPoint
+//        }
+//
+//        override fun setRotationOrigin(pivotPoint: Point2D) {
+//            e.transformComponent.rotationOrigin = pivotPoint
+//        }
+//    }
+//}

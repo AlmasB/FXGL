@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.entity;
 
+import com.almasb.fxgl.animation.Animatable;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
@@ -44,7 +45,7 @@ import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class Entity {
+public class Entity implements Animatable {
 
     private static class ComponentMap {
         private Map<Class<? extends Component>, Component> components = new HashMap<>();
@@ -665,14 +666,17 @@ public class Entity {
         transform.setZ(z);
     }
 
+    @Override
     public final DoubleProperty xProperty() {
         return transform.xProperty();
     }
 
+    @Override
     public final DoubleProperty yProperty() {
         return transform.yProperty();
     }
 
+    @Override
     public final DoubleProperty zProperty() {
         return transform.zProperty();
     }
@@ -977,6 +981,55 @@ public class Entity {
     }
 
     // VIEW END
+
+    // Animatable overrides BEGIN
+
+    @Override
+    public DoubleProperty scaleXProperty() {
+        return transform.scaleXProperty();
+    }
+
+    @Override
+    public DoubleProperty scaleYProperty() {
+        return transform.scaleYProperty();
+    }
+
+    @Override
+    public DoubleProperty scaleZProperty() {
+        return transform.scaleZProperty();
+    }
+
+    @Override
+    public DoubleProperty rotationXProperty() {
+        return transform.rotationXProperty();
+    }
+
+    @Override
+    public DoubleProperty rotationYProperty() {
+        return transform.rotationYProperty();
+    }
+
+    @Override
+    public DoubleProperty rotationZProperty() {
+        return transform.rotationZProperty();
+    }
+
+    @Override
+    public DoubleProperty opacityProperty() {
+        return view.opacityProperty();
+    }
+
+    @Override
+    public void setScaleOrigin(Point2D pivotPoint) {
+        transform.setScaleOrigin(pivotPoint);
+    }
+
+    @Override
+    public void setRotationOrigin(Point2D pivotPoint) {
+        transform.setRotationOrigin(pivotPoint);
+    }
+
+    // Animatable overrides END
 
     @Override
     public String toString() {
