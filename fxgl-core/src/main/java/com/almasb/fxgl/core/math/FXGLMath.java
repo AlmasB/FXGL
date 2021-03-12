@@ -95,6 +95,22 @@ public final class FXGLMath {
     }
 
     /**
+     * @param radians angle in radians
+     * @return the sine in radians from a lookup table
+     */
+    public static float sinF(double radians) {
+        return (float) sin(radians);
+    }
+
+    /**
+     * @param radians angle in radians
+     * @return the cosine in radians from a lookup table
+     */
+    public static float cosF(double radians) {
+        return (float) cos(radians);
+    }
+
+    /**
      * @param degrees angle in degrees
      * @return the sine in radians from a lookup table
      */
