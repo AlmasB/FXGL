@@ -70,7 +70,7 @@ class GameWorld {
      * @param entity the entity to add to world
      */
     fun addEntity(entity: Entity) {
-        if(entity.isActive) {
+        if (entity.isActive) {
             log.warning("Entity is already attached to world")
             return
         }
