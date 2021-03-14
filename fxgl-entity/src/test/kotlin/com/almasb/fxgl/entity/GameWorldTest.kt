@@ -57,9 +57,12 @@ class GameWorldTest {
         val newWorld = GameWorld()
         newWorld.addEntity(e)
 
-        assertThrows(IllegalArgumentException::class.java, {
+        assertDoesNotThrow {
             gameWorld.removeEntity(e)
-        })
+        }
+
+        assertTrue(gameWorld.entities.isEmpty())
+        assertTrue(newWorld.entities.size === 1)
     }
 
     @Test
@@ -73,14 +76,16 @@ class GameWorldTest {
     }
 
     @Test
-    fun `Throw if entity already attached`() {
+    fun `Ignore if entity already attached`() {
         val e = Entity()
 
         gameWorld.addEntity(e)
 
-        assertThrows(IllegalArgumentException::class.java, {
+        assertDoesNotThrow {
             gameWorld.addEntity(e)
-        })
+        }
+
+        assertTrue(gameWorld.entities.size === 1)
     }
 
     @Test
