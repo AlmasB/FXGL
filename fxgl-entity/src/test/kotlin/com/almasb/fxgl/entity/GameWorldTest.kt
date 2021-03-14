@@ -51,7 +51,7 @@ class GameWorldTest {
     }
 
     @Test
-    fun `Throw when removing entity not attached to this world`() {
+    fun `Ignore when removing entity not attached to this world`() {
         val e = Entity()
 
         val newWorld = GameWorld()
