@@ -70,7 +70,10 @@ class GameWorld {
      * @param entity the entity to add to world
      */
     fun addEntity(entity: Entity) {
-        require(!entity.isActive) { "Entity is already attached to world" }
+        if (entity.isActive) {
+            log.warning("Entity is already attached to world")
+            return
+        }
 
         if (entity.isEverUpdated)
             waitingList.add(entity)
@@ -105,7 +108,10 @@ class GameWorld {
         if (!canRemove(entity))
             return
 
-        require(entity.world === this) { "Attempted to remove entity not attached to this world" }
+        if (entity.world !== this) {
+            log.warning("Attempted to remove entity not attached to this world")
+            return
+        }
 
         entities.remove(entity)
 
