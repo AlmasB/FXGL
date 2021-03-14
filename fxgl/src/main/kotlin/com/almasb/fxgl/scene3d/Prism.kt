@@ -65,7 +65,7 @@ open class Prism
         val botR = bottomRadius.toFloat()
 
         // NOTE: still create mesh for degenerated prism
-        val nPonits: Int = div * 2 + 2
+        val nPoints: Int = div * 2 + 2
         val tcCount: Int = (div + 1) * 4 + 1 // 2 cap tex
 
         val faceCount: Int = div * 4
@@ -74,7 +74,7 @@ open class Prism
 
         val dA: Float = 1f / div
 
-        val points = FloatArray(nPonits * 3)
+        val points = FloatArray(nPoints * 3)
         val tPoints = FloatArray(tcCount * 2)
         val faces = IntArray(faceCount * 6)
         val smoothing = IntArray(faceCount)
