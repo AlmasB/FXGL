@@ -142,7 +142,13 @@ public class ShapesSample extends GameApplication {
             var e = makeEntity(x * 2 - 8, -4, 6);
 
             if (shape instanceof Shape3D) {
-                ((Shape3D) shape).setMaterial(new PhongMaterial(Color.BLUE));
+                Shape3D s = ((Shape3D) shape);
+                //s.setMaterial(new PhongMaterial(Color.BLUE));
+
+                var mat = new PhongMaterial();
+                mat.setDiffuseMap(image("brick.png"));
+
+                s.setMaterial(mat);
             }
 
             e.getViewComponent().addChild(shape);
