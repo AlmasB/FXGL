@@ -24,12 +24,6 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 public class TimeOfImpact {
     private static final int MAX_ITERATIONS = 1000;
 
-    public static int toiCalls = 0;
-    public static int toiIters = 0;
-    public static int toiMaxIters = 0;
-    public static int toiRootIters = 0;
-    public static int toiMaxRootIters = 0;
-
     /**
      * Input parameters for TOI
      *
@@ -82,15 +76,10 @@ public class TimeOfImpact {
      * between [0,tMax]. This uses a swept separating axis and may miss some intermediate,
      * non-tunneling collision. If you change the time interval, you should call this function again.
      * Note: use Distance to compute the contact point and normal at the time of impact.
-     *
-     * @param output
-     * @param input
      */
     public final void timeOfImpact(TOIOutput output, TOIInput input) {
         // CCD via the local separating axis method. This seeks progression
         // by computing the largest time at which separation is maintained.
-
-        ++toiCalls;
 
         output.state = TOIOutputState.UNKNOWN;
         output.t = input.tMax;
@@ -240,15 +229,12 @@ public class TimeOfImpact {
                     }
 
                     ++rootIterCount;
-                    ++toiRootIters;
 
                     // djm: whats with this? put in settings?
                     if (rootIterCount == 50) {
                         break;
                     }
                 }
-
-                toiMaxRootIters = Math.max(toiMaxRootIters, rootIterCount);
 
                 ++pushBackIter;
 
@@ -258,7 +244,6 @@ public class TimeOfImpact {
             }
 
             ++iter;
-            ++toiIters;
 
             if (done) {
                 // System.out.println("done");
@@ -273,9 +258,6 @@ public class TimeOfImpact {
                 break;
             }
         }
-
-        // System.out.printf("final sweeps: %f, %f, %f; %f, %f, %f", input.s)
-        toiMaxIters = Math.max(toiMaxIters, iter);
     }
 }
 
