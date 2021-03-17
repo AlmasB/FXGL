@@ -17,7 +17,7 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 
 /**
  * Class used for computing the time of impact. This class should not be constructed usually, just
- * retrieve from the {@link SingletonPool#getTOI()}.
+ * retrieve from the pool.
  *
  * @author daniel
  */
