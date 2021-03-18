@@ -214,7 +214,9 @@ private constructor(private val name: String) {
      * Log a warning level message.
      */
     fun warning(message: String, error: Throwable) {
-        warning("$message Error: $error")
+        val trace = error.stackTraceToString()
+
+        warning("$message\n$trace")
     }
 
     /**
