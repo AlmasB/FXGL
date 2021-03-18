@@ -438,19 +438,10 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
-     * @return a copy of this vector
-     */
-    @SuppressWarnings("CloneDoesntCallSuperClone")
-    @Override
-    public Vec2 clone() {
-        return new Vec2(x, y);
-    }
-
-    /**
      * @return a copy of this vector (new instance)
      */
     public Vec2 copy() {
-        return clone();
+        return new Vec2(x, y);
     }
 
     /**

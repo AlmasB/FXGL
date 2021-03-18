@@ -50,8 +50,8 @@ public final class AABB {
      * @param upperVertex the top right vertex of the bounding box
      */
     public AABB(Vec2 lowerVertex, Vec2 upperVertex) {
-        this.lowerBound = lowerVertex.clone(); // clone to be safe
-        this.upperBound = upperVertex.clone();
+        this.lowerBound = lowerVertex.copy();
+        this.upperBound = upperVertex.copy();
     }
 
     /**

@@ -470,7 +470,7 @@ class SeparationFunction {
 
                 return Vec2.dot(pointA.subLocal(pointB), normal);
             }
-            
+
             default:
                 assert false;
                 return 0f;
