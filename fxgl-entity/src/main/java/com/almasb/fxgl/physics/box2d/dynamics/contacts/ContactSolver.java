@@ -737,18 +737,19 @@ public final class ContactSolver {
 
             float mA = pc.invMassA;
             float iA = pc.invIA;
-            Vec2 localCenterA = pc.localCenterA;
-            final float localCenterAx = localCenterA.x;
-            final float localCenterAy = localCenterA.y;
+            final float localCenterAx = pc.localCenterA.x;
+            final float localCenterAy = pc.localCenterA.y;
+
             float mB = pc.invMassB;
             float iB = pc.invIB;
-            Vec2 localCenterB = pc.localCenterB;
-            final float localCenterBx = localCenterB.x;
-            final float localCenterBy = localCenterB.y;
+            final float localCenterBx = pc.localCenterB.x;
+            final float localCenterBy = pc.localCenterB.y;
+
             int pointCount = pc.pointCount;
 
             Vec2 cA = m_positions[indexA].c;
             float aA = m_positions[indexA].a;
+
             Vec2 cB = m_positions[indexB].c;
             float aB = m_positions[indexB].a;
 
