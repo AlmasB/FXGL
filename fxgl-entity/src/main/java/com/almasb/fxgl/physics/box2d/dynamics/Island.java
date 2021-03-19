@@ -143,7 +143,7 @@ class Island {
 
     private ContactListener listener;
 
-    public Body[] m_bodies;
+    private Body[] m_bodies;
     private Contact[] m_contacts;
     private Joint[] m_joints;
 
@@ -502,6 +502,10 @@ class Island {
     void add(Joint joint) {
         assert m_jointCount < m_jointCapacity;
         m_joints[m_jointCount++] = joint;
+    }
+
+    Body getBody(int index) {
+        return m_bodies[index];
     }
 
     private final ContactImpulse impulse = new ContactImpulse();
