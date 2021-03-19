@@ -763,11 +763,10 @@ public final class ContactSolver {
                 xfB.p.x = cB.x - xfBq.c * localCenterBx + xfBq.s * localCenterBy;
                 xfB.p.y = cB.y - xfBq.s * localCenterBx - xfBq.c * localCenterBy;
 
-                final PositionSolverManifold psm = psolver;
-                psm.initialize(pc, xfA, xfB, j);
-                final Vec2 normal = psm.normal;
-                final Vec2 point = psm.point;
-                final float separation = psm.separation;
+                psolver.initialize(pc, xfA, xfB, j);
+                final Vec2 normal = psolver.normal;
+                final Vec2 point = psolver.point;
+                final float separation = psolver.separation;
 
                 float rAx = point.x - cA.x;
                 float rAy = point.y - cA.y;
