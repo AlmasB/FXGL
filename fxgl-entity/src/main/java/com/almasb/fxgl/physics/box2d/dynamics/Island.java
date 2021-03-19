@@ -156,7 +156,7 @@ class Island {
 
     public int m_bodyCapacity;
     public int m_contactCapacity;
-    public int m_jointCapacity;
+    private int m_jointCapacity;
 
     void init(int bodyCapacity, int contactCapacity, int jointCapacity, ContactListener listener) {
         m_bodyCapacity = bodyCapacity;
