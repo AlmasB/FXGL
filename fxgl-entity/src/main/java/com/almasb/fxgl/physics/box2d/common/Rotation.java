@@ -60,14 +60,6 @@ public final class Rotation implements Serializable {
     }
 
     @Override
-    public Rotation clone() {
-        Rotation copy = new Rotation();
-        copy.s = s;
-        copy.c = c;
-        return copy;
-    }
-
-    @Override
     public String toString() {
         return "Rot(s:" + s + ", c:" + c + ")";
     }
