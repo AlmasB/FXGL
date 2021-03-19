@@ -515,9 +515,13 @@ class Input {
     private val virtualButtons = hashMapOf<VirtualButton, KeyCode>()
 
     fun addAction(action: UserAction, key: KeyCode, virtualButton: VirtualButton) {
+        addAction(action, key, InputModifier.NONE, virtualButton)
+    }
+
+    fun addAction(action: UserAction, key: KeyCode, modifier: InputModifier, virtualButton: VirtualButton) {
         require(!isIllegal(key)) { "Cannot bind to illegal key: $key" }
 
-        addBinding(action, KeyTrigger(key, InputModifier.NONE))
+        addBinding(action, KeyTrigger(key, modifier))
         addVirtualButton(virtualButton, key)
     }
 
