@@ -18,13 +18,9 @@ import java.io.Serializable;
 public final class Mat33 implements Serializable {
     private static final long serialVersionUID = 2L;
 
-    public final Vec3 ex, ey, ez;
-
-    public Mat33() {
-        ex = new Vec3();
-        ey = new Vec3();
-        ez = new Vec3();
-    }
+    public final Vec3 ex = new Vec3();
+    public final Vec3 ey = new Vec3();
+    public final Vec3 ez = new Vec3();
 
     public static void mul22ToOutUnsafe(Mat33 A, Vec2 v, Vec2 out) {
         assert v != out;
