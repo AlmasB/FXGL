@@ -1,1 +1,1 @@
-The code from jbox2d is used under the BSD 2-clause "Simplified" License.
+The code from jbox2d is used under the BSD 2-clause "Simplified" License (see [LICENSE](jbox2d-LICENSE))..
