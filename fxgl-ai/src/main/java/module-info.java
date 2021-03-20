@@ -11,6 +11,7 @@ module com.almasb.fxgl.ai {
     requires com.almasb.fxgl.core;
     requires com.almasb.fxgl.entity;
 
+    exports com.almasb.fxgl.ai.senseai;
     exports com.almasb.fxgl.pathfinding;
     exports com.almasb.fxgl.pathfinding.astar;
     exports com.almasb.fxgl.pathfinding.maze;
