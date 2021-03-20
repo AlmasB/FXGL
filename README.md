@@ -124,6 +124,7 @@ Community tutorials:
 
 - [Space Ranger](https://www.journaldev.com/40219/space-rangers-game-java-fxgl) at journaldev
 - [Geometry Wars](https://webtechie.be/post/2020-05-07-getting-started-with-fxgl/) at webtechie
+- [Mazela-Man](https://github.com/dykstrom/mazela-man) by dykstrom
 
 Community projects (identified using `fxgl` topic): 
 
