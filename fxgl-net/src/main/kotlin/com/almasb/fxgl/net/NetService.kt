@@ -14,8 +14,14 @@ import com.almasb.fxgl.net.tcp.TCPClient
 import com.almasb.fxgl.net.tcp.TCPServer
 import com.almasb.fxgl.net.udp.UDPClient
 import com.almasb.fxgl.net.udp.UDPServer
+import javafx.beans.property.ReadOnlyDoubleProperty
+import javafx.beans.property.ReadOnlyDoubleWrapper
 import java.io.InputStream
+import java.io.OutputStream
 import java.net.URL
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * All operations that can be performed via networking.
@@ -47,17 +53,80 @@ class NetService : EngineService() {
 
     fun newUDPClient(ip: String, port: Int): Client<Bundle> = UDPClient(ip, port, UDPClientConfig(Bundle::class.java))
     fun <T> newUDPClient(ip: String, port: Int, config: UDPClientConfig<T>): Client<T> = UDPClient(ip, port, config)
+
+    // TODO: add missing overloads, incl. DownloadCallback
+
+    /**
+     * @param url web url of a file, e.g. https://raw.githubusercontent.com/AlmasB/FXGL/dev/README.md
+     * @param fileName the file will be saved with this name, e.g. README.md
+     * @return task that downloads a file from given url into running directory
+     */
+    fun downloadTask(url: String, fileName: String): IOTask<Path> {
+        return DownloadTask(url, fileName)
+    }
+
+    // we accept both url and file name as Strings to delay any parsing errors to onExecute()
+    private class DownloadTask(
+
+            /**
+             * Download file URL.
+             */
+            private val urlString: String,
+
+            /**
+             * To save as.
+             */
+            private val fileName: String,
+
+            private val callback: DownloadCallback = DownloadCallback()
+
+    ) : IOTask<Path>("DownloadTask($urlString, $fileName)") {
+
+        override fun onExecute(): Path {
+            val url = URL(urlString)
+            val file = Paths.get(fileName)
+
+            val connection = url.openConnection()
+
+            val downloadSize = connection.contentLengthLong
+
+            val inStream: InputStream = connection.getInputStream()
+            val outStream: OutputStream = Files.newOutputStream(file)
+
+            outStream.use {
+                // this should also close the "connection" above
+                inStream.use {
+
+                    // adapted from JDK InputStream.transferTo
+                    var transferred: Long = 0
+                    val buffer = ByteArray(8192)
+                    var read: Int
+                    while (inStream.read(buffer, 0, 8192).also { read = it } >= 0) {
+                        if (isCancelled)
+                            throwCancelException()
+
+                        outStream.write(buffer, 0, read)
+                        transferred += read.toLong()
+
+                        callback.progressProp.value = transferred.toDouble() / downloadSize
+                    }
+                }
+            }
+
+            return file
+        }
+    }
+}
+
+class DownloadCallback {
+
+    internal val progressProp = ReadOnlyDoubleWrapper()
+
+    fun progressProperty(): ReadOnlyDoubleProperty = progressProp.readOnlyProperty
 }
 
 
-
-
 /*
-    /**
-     * @param url web url of a file
-     * @return task that downloads a file from given url into running directory
-     */
-    IOTask<Path> downloadTask(String url);
     /**
      * @param url link to open
      * @return task that opens default browser with given url
