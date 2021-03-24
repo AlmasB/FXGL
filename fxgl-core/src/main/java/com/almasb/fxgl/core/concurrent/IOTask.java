@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.core.concurrent;
 
+import com.almasb.fxgl.core.util.EmptyRunnable;
 import com.almasb.fxgl.logging.Logger;
 import javafx.concurrent.Task;
 
@@ -29,8 +30,11 @@ public abstract class IOTask<T> {
 
     private Consumer<T> successAction = (result) -> {};
     private Consumer<Throwable> failAction = (e) -> { log.warning(getName() + " failed", e); };
+    private Runnable cancelAction = EmptyRunnable.INSTANCE;
 
     private boolean hasFailAction = false;
+
+    private boolean isCancelled = false;
 
     public IOTask() {
         this(DEFAULT_NAME);
@@ -46,6 +50,25 @@ public abstract class IOTask<T> {
 
     public final boolean hasFailAction() {
         return hasFailAction;
+    }
+
+    /**
+     * @return whether this task was cancelled by calling "cancel()"
+     */
+    public boolean isCancelled() {
+        return isCancelled;
+    }
+
+    /**
+     * Cancel the execution of this task.
+     * No-op if the task already completed.
+     * It is up to each individual task to decide what to do when cancelled.
+     * Tasks are free to ignore cancellation and result in onSuccess or onFailure as normal.
+     * The tasks that honor cancellation must call throwCancelException(), which will be caught
+     * and cancelAction invoked.
+     */
+    public void cancel() {
+        isCancelled = true;
     }
 
     /**
@@ -69,7 +92,19 @@ public abstract class IOTask<T> {
         return this;
     }
 
+    /**
+     * Set action to call on cancel.
+     */
+    public final IOTask<T> onCancel(Runnable cancelAction) {
+        this.cancelAction = cancelAction;
+        return this;
+    }
+
     protected abstract T onExecute() throws Exception;
+
+    protected void throwCancelException() {
+        throw new IOTaskCancelledException();
+    }
 
     /**
      * Executes this task synchronously on this thread.
@@ -77,6 +112,9 @@ public abstract class IOTask<T> {
      */
     public final T run() {
         try {
+            if (isCancelled)
+                throwCancelException();
+
             T value = onExecute();
             succeed(value);
             return value;
@@ -104,6 +142,9 @@ public abstract class IOTask<T> {
         return new Task<T>() {
             @Override
             protected T call() throws Exception {
+                if (isCancelled)
+                    throwCancelException();
+
                 return onExecute();
             }
 
@@ -124,6 +165,11 @@ public abstract class IOTask<T> {
     }
 
     private void fail(Throwable error) {
+        if (error instanceof IOTaskCancelledException) {
+            cancelAction.run();
+            return;
+        }
+
         failAction.accept(error);
     }
 
@@ -151,5 +197,12 @@ public abstract class IOTask<T> {
                 return action.call();
             }
         };
+    }
+
+    private static class IOTaskCancelledException extends RuntimeException {
+
+        IOTaskCancelledException() {
+            super("IOTask was cancelled with cancel()");
+        }
     }
 }
