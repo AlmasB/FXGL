@@ -308,7 +308,7 @@ enum class Interpolators : EasingInterpolator {
             if (ratio == 0.0 || ratio == 1.0)
                 return ratio
 
-            return 1.0
+            return FXGLMath.noise1D(ratio * 2)
         }
     }
 }
