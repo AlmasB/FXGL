@@ -7,7 +7,9 @@
 package com.almasb.fxgl.dev.editor
 
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.dsl.getAssetLoader
 import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.ui.FXGLButton
 import com.almasb.fxgl.ui.FXGLScrollPane
 import javafx.beans.binding.*
 import javafx.collections.ObservableList
@@ -20,14 +22,20 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
+import javafx.stage.FileChooser
+import java.io.File
 
 /**
+ * TODO: how are going to modify each component data, e.g. ViewComponent add new view?
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class EntityInspector : FXGLScrollPane() {
 
     private val innerBox = VBox(5.0)
+
+    // TODO: experimental
+    private val addViewButton = FXGLButton("Add view")
 
     var entity: Entity? = null
         set(value) {
@@ -41,12 +49,31 @@ class EntityInspector : FXGLScrollPane() {
         innerBox.background = Background(BackgroundFill(Color.BLACK, null, null))
         innerBox.padding = Insets(5.0)
 
+        addViewButton.setOnAction {
+            entity?.let {
+
+                val viewComp = it.viewComponent
+
+                val chooser = FileChooser()
+                chooser.initialDirectory = File(System.getProperty("user.dir"))
+                chooser.title = "Select image"
+                chooser.extensionFilters.addAll(FileChooser.ExtensionFilter("Images", "*.png", "*.jpg"))
+                val file = chooser.showOpenDialog(null)
+
+                file?.let {
+                    viewComp.addChild(getAssetLoader().loadTexture(it.toURI().toURL()))
+                }
+            }
+        }
+
         maxWidth = 460.0
 
         content = innerBox
     }
 
     private fun updateView() {
+        innerBox.children.clear()
+
         if (entity == null)
             return
 
@@ -115,5 +142,7 @@ class EntityInspector : FXGLScrollPane() {
 
                     innerBox.children += pane
                 }
+
+        innerBox.children += addViewButton
     }
 }

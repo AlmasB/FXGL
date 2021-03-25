@@ -12,6 +12,7 @@ import com.almasb.fxgl.dev.editor.EntityInspector
 import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.dsl.FXGL.Companion.entityBuilder
 import com.almasb.fxgl.dsl.FXGL.Companion.getAppHeight
+import com.almasb.fxgl.dsl.components.DraggableComponent
 import com.almasb.fxgl.dsl.components.ProjectileComponent
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
@@ -19,10 +20,7 @@ import com.almasb.fxgl.ui.FXGLButton
 import javafx.geometry.Insets
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
-import javafx.scene.control.Button
-import javafx.scene.control.Menu
-import javafx.scene.control.MenuBar
-import javafx.scene.control.SplitPane
+import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
@@ -44,6 +42,10 @@ class EditorMainUI : BorderPane() {
     private val splitPane = SplitPane()
 
     private val entityInspector = EntityInspector()
+
+    private val entitiesListView = ListView<Entity>()
+
+    private lateinit var fxglPane: FXGLPane
 
     init {
         background = Background(BackgroundFill(BG_COLOR, null, null))
@@ -81,6 +83,12 @@ class EditorMainUI : BorderPane() {
                         getGameController().startNewGame()
                         getGameController().pauseEngine()
                     }
+                },
+
+                Button("Add Entity").also {
+                    it.setOnAction {
+                        getGameWorld().addEntity(Entity().also { it.addComponent(DraggableComponent()) })
+                    }
                 }
         )
 
@@ -96,8 +104,7 @@ class EditorMainUI : BorderPane() {
 
         explorerView.padding = Insets(5.0)
         explorerView.children.addAll(
-                Rectangle(300.0, 450.0, Color.LIGHTGRAY),
-                Rectangle(300.0, 390.0, Color.LIGHTGRAY)
+                entitiesListView
         )
 
         val inspectorView = VBox(10.0)
@@ -117,23 +124,54 @@ class EditorMainUI : BorderPane() {
         splitPane.items.addAll(centerBox)
         splitPane.background = Background(BackgroundFill(BG_COLOR, null, null))
 
-
         splitPane.items += entityInspector
 
         top = toolBar
         bottom = statusBar
-//        left = explorerView
+        left = explorerView
 //        right = inspectorView
-        center = splitPane
+        center = HBox(centerBox, entityInspector)
     }
 
-    fun addPane(pane:FXGLPane) {
+    private fun addEntityListener() {
+        getGameWorld().addWorldListener(object : EntityWorldListener {
+            override fun onEntityAdded(entity: Entity) {
+                entitiesListView.items.add(entity)
+            }
+
+            override fun onEntityRemoved(entity: Entity) {
+                entitiesListView.items.remove(entity)
+            }
+        })
+
+        entitiesListView.selectionModel.selectedItemProperty().addListener { _, oldEntity, newEntity ->
+            if (newEntity != null) {
+                entityInspector.entity = newEntity
+            }
+        }
+    }
+
+    fun addPane(pane: FXGLPane) {
+        fxglPane = pane
         centerBox.children.add(0, pane)
     }
 
     fun notifyDone() {
         getAssetLoader().loadCSS("fxgl_dark.css").also {
             stylesheets.add(it.externalForm)
+        }
+
+        addEntityListener()
+    }
+
+    fun onUpdate(tpf: Double) {
+
+        // the game world does not run (because the engine isn't running), so
+        // we run our own DraggableComponent update to be able to move entities...
+        getGameWorld().entities.forEach {
+            it.getComponentOptional(DraggableComponent::class.java).ifPresent {
+                it.onUpdate(tpf)
+            }
         }
     }
 }

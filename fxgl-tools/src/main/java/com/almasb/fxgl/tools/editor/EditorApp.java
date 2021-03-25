@@ -7,8 +7,10 @@
 package com.almasb.fxgl.tools.editor;
 
 import com.almasb.fxgl.app.GameApplication;
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import static com.almasb.fxgl.dsl.FXGL.getGameController;
@@ -29,10 +31,20 @@ public class EditorApp extends Application {
         // TODO: allow notifying when FXGL is ready? so we can build UI for example
         root.addPane(fxglPane);
 
-        stage.setScene(new Scene(root));
+        var scene = new Scene(root);
+        stage.setScene(scene);
         stage.setWidth(1600);
         stage.setHeight(950);
         stage.show();
+
+        // this is the JavaFX app timer since we are running outside of the engine.
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                root.onUpdate(0.016);
+            }
+        };
+        timer.start();
     }
 
     @Override
