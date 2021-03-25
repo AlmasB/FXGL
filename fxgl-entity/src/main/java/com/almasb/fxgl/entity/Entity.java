@@ -121,6 +121,7 @@ public class Entity implements Animatable {
     private boolean isEverUpdated = true;
     private boolean isUpdateEnabled = true;
     private boolean isUpdating = false;
+    private boolean isReusable = false;
 
     private TypeComponent type = new TypeComponent();
     private TransformComponent transform = new TransformComponent();
@@ -161,6 +162,11 @@ public class Entity implements Animatable {
      * https://github.com/AlmasB/FXGL/issues/528
      */
     void clean() {
+        if (isReusable) {
+            world = null;
+            return;
+        }
+
         removeAllComponents();
 
         properties.clear();
@@ -175,6 +181,7 @@ public class Entity implements Animatable {
         isUpdateEnabled = true;
         isUpdating = false;
 
+        // TODO: we probably don't need to set active false again, since we do that in markForRemoval?
         active.set(false);
     }
 
@@ -206,6 +213,24 @@ public class Entity implements Animatable {
      */
     public final void setUpdateEnabled(boolean b) {
         isUpdateEnabled = b;
+    }
+
+    /**
+     * @return can this entity be removed from world and re-added
+     */
+    public boolean isReusable() {
+        return isReusable;
+    }
+
+    /**
+     * Set the entity to be reusable or not.
+     * A reusable entity is not cleaned when removed from world.
+     * Instead, the entity is put into a pool using its spawnName.
+     * Next time an entity with spawnName needs to be spawned, the pooled entity will be added to world.
+     * By default, entities are not reusable.
+     */
+    public void setReusable(boolean isReusable) {
+        this.isReusable = isReusable;
     }
 
     /**
