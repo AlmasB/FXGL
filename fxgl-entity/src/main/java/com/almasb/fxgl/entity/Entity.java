@@ -119,8 +119,8 @@ public class Entity implements Animatable {
     private Runnable onNotActive = EmptyRunnable.INSTANCE;
 
     private boolean isEverUpdated = true;
-    private boolean updateEnabled = true;
-    private boolean updating = false;
+    private boolean isUpdateEnabled = true;
+    private boolean isUpdating = false;
 
     private TypeComponent type = new TypeComponent();
     private TransformComponent transform = new TransformComponent();
@@ -172,8 +172,8 @@ public class Entity implements Animatable {
         onActive = EmptyRunnable.INSTANCE;
         onNotActive = EmptyRunnable.INSTANCE;
 
-        updateEnabled = true;
-        updating = false;
+        isUpdateEnabled = true;
+        isUpdating = false;
 
         active.set(false);
     }
@@ -205,7 +205,7 @@ public class Entity implements Animatable {
      * If set to false, the components attached to this entity will not update.
      */
     public final void setUpdateEnabled(boolean b) {
-        updateEnabled = b;
+        isUpdateEnabled = b;
     }
 
     /**
@@ -214,14 +214,14 @@ public class Entity implements Animatable {
      * @param tpf time per frame
      */
     void update(double tpf) {
-        if (!updateEnabled)
+        if (!isUpdateEnabled)
             return;
 
-        updating = true;
+        isUpdating = true;
 
         components.update(tpf);
 
-        updating = false;
+        isUpdating = false;
     }
 
     /**
@@ -493,7 +493,7 @@ public class Entity implements Animatable {
     }
 
     private void checkNotUpdating() {
-        if (updating)
+        if (isUpdating)
             throw new IllegalStateException("Cannot add / remove components during updating");
     }
 
