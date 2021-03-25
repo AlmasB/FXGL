@@ -6,14 +6,20 @@
 
 package com.almasb.fxgl.dev.editor
 
+import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getAssetLoader
 import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.ui.FXGLButton
 import com.almasb.fxgl.ui.FXGLScrollPane
 import javafx.beans.binding.*
+import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.geometry.Insets
+import javafx.scene.control.ButtonType
+import javafx.scene.control.ComboBox
+import javafx.scene.control.Dialog
 import javafx.scene.control.ListView
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
@@ -35,7 +41,12 @@ class EntityInspector : FXGLScrollPane() {
     private val innerBox = VBox(5.0)
 
     // TODO: experimental
-    private val addViewButton = FXGLButton("Add view")
+    private val componentTypes = arrayListOf<Class<out Component>>(
+            DevSpinComponent::class.java
+    )
+
+    private val addViewButton = FXGLButton("Add View")
+    private val addComponentButton = FXGLButton("Add Component")
 
     var entity: Entity? = null
         set(value) {
@@ -62,6 +73,27 @@ class EntityInspector : FXGLScrollPane() {
 
                 file?.let {
                     viewComp.addChild(getAssetLoader().loadTexture(it.toURI().toURL()))
+                }
+            }
+        }
+
+        addComponentButton.setOnAction {
+            entity?.let { selectedEntity ->
+                val box = ComboBox(FXCollections.observableList(componentTypes))
+                box.selectionModel.selectFirst()
+
+                val dialog = Dialog<ButtonType>()
+                dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL)
+                dialog.dialogPane.content = box
+                dialog.showAndWait().ifPresent {
+
+                    if (it == ButtonType.OK) {
+                        box.selectionModel.selectedItem?.let { item ->
+                            val comp = ReflectionUtils.newInstance(item)
+
+                            selectedEntity.addComponent(comp)
+                        }
+                    }
                 }
             }
         }
@@ -144,5 +176,12 @@ class EntityInspector : FXGLScrollPane() {
                 }
 
         innerBox.children += addViewButton
+        innerBox.children += addComponentButton
+    }
+}
+
+internal class DevSpinComponent : Component() {
+    override fun onUpdate(tpf: Double) {
+        entity.rotateBy(90 * tpf)
     }
 }
