@@ -11,7 +11,7 @@ package com.almasb.fxgl.core.math
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal object PerlinNoiseGenerator {
+class PerlinNoiseGenerator(inputSeed: Long) {
 
     // from CRYtek
     private val NOISE_TABLE_SIZE = 256
@@ -23,14 +23,17 @@ internal object PerlinNoiseGenerator {
     private val gx = FloatArray(NOISE_TABLE_SIZE)
     private val gy = FloatArray(NOISE_TABLE_SIZE)
 
+    private val seed = inputSeed;
+
     init {
-        setSeedAndReinitialize()
+        setSeedAndReinitialize(seed)
     }
 
-    private fun setSeedAndReinitialize() {
+    private fun setSeedAndReinitialize(seed: Long) {
         var i: Int
         var j: Int
         var nSwap: Int
+        val random = FXGLMath.getRandom(seed)
 
         // Initialize the permutation table
         i = 0
@@ -57,8 +60,8 @@ internal object PerlinNoiseGenerator {
 
             val v = Vec2()
             // random is in the 0..1 range, so we bring to -0.5..0.5
-            v.x = FXGLMath.randomFloat() - 0.5f
-            v.y = FXGLMath.randomFloat() - 0.5f
+            v.x = random.nextFloat() - 0.5f
+            v.y = random.nextFloat() - 0.5f
             v.normalizeLocal()
 
             gx[i] = v.x
@@ -70,8 +73,10 @@ internal object PerlinNoiseGenerator {
     //! A typical usage would be to pass system time multiplied by a frequency value, like:
     //! float fRes=pNoise->Noise1D(fCurrentTime*fFreq);
     //! the lower the frequency, the smoother the output
+
     /**
-     * Generates a value in [-0.5..0.5), t > 0.
+     * @param t current time * frequency (lower frequency -> smoother output)
+     * @return perlin noise in 1D quality in [0..1)
      */
     fun noise1D(t: Double): Double {
         // Compute what gradients to use
@@ -90,6 +95,6 @@ internal object PerlinNoiseGenerator {
 
         // Modulate with the weight function
         val wx = (3 - 2 * tx0) * tx0 * tx0
-        return v0 - wx * (v0 - v1)
+        return v0 - wx * (v0 - v1) + 0.5
     }
 }

@@ -299,6 +299,8 @@ class Viewport
 
     private var t = 0.0
 
+    private val noiseGenerator = getNoise1DGenerator(0L)
+
     fun flash(onFinished: Runnable) {
         if (isFlashing || isFading)
             return
@@ -387,8 +389,8 @@ class Viewport
             // this should be easier to implement if we keep origin (x, y) data
             // without any transforms, so at any time we know where the origin is
             if (isFloating) {
-                x += (noise1D(t) - 0.5) * 50
-                y += (noise1D(t + 1500) - 0.5) * 50
+                x += (noiseGenerator.noise1D(t) - 0.5) * 50
+                y += (noiseGenerator.noise1D(t + 1500) - 0.5) * 50
             }
 
             return

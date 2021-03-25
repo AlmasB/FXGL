@@ -383,11 +383,11 @@ public final class FXGLMath {
     }
 
     /**
-     * @param t current time * frequency (lower frequency -> smoother output)
-     * @return perlin noise in 1D quality in [0..1)
+     * @param seed used to create unique noise generator with replicable output
+     * @return seeded perlin noise generator used to call noise1D(t)
      */
-    public static double noise1D(double t) {
-        return PerlinNoiseGenerator.INSTANCE.noise1D(t) + 0.5;
+    public static PerlinNoiseGenerator getNoise1DGenerator(long seed) {
+        return new PerlinNoiseGenerator(seed);
     }
 
     /**

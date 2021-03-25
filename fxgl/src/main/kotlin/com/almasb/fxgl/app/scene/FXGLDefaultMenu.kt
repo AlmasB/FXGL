@@ -10,7 +10,7 @@ import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.MenuItem
-import com.almasb.fxgl.core.math.FXGLMath.noise1D
+import com.almasb.fxgl.core.math.FXGLMath.getNoise1DGenerator
 import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
@@ -78,6 +78,8 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     private val pressAnyKeyState = PressAnyKeyState()
 
     private val menu: Node
+
+    private val noiseGenerator1D = getNoise1DGenerator(0L)
 
     init {
         if (appWidth < 800 || appHeight < 600)
@@ -173,7 +175,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         particleSystem!!.onUpdate(tpf)
 
-        val color = Color.color(1.0, 1.0, 1.0, noise1D(t))
+        val color = Color.color(1.0, 1.0, 1.0, noiseGenerator1D.noise1D(t))
         titleColor!!.set(color)
     }
 

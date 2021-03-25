@@ -34,6 +34,8 @@ class RandomMoveComponent
 
     private val rotationSpeed = random(-100, 100)
 
+    private val noiseGenerator = getNoise1DGenerator(0L)
+
     override fun onUpdate(tpf: Double) {
         adjustAngle(tpf)
         move(tpf)
@@ -48,7 +50,7 @@ class RandomMoveComponent
 
     private fun adjustAngle(tpf: Double) {
         if (randomBoolean(angleAdjustRate)) {
-            directionAngle += toDegrees(noise1D(tx) - 0.5)
+            directionAngle += toDegrees(noiseGenerator.noise1D(tx) - 0.5)
         }
     }
 
