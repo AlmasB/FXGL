@@ -298,8 +298,6 @@ enum class Interpolators : EasingInterpolator {
     },
 
     PERLIN {
-        private val generator = FXGLMath.getNoise1DGenerator(0L)
-
         override fun easeIn(ratio: Double) = perlin(ratio)
 
         override fun easeOut(ratio: Double) = perlin(ratio)
@@ -310,7 +308,7 @@ enum class Interpolators : EasingInterpolator {
             if (ratio == 0.0 || ratio == 1.0)
                 return ratio
 
-            return generator.noise1D(ratio * 2)
+            return 1.0
         }
     }
 }

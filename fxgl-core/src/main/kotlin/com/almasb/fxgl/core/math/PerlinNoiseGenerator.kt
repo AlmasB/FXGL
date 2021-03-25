@@ -11,7 +11,7 @@ package com.almasb.fxgl.core.math
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class PerlinNoiseGenerator(inputSeed: Long) {
+class PerlinNoiseGenerator(seed: Long) {
 
     // from CRYtek
     private val NOISE_TABLE_SIZE = 256
@@ -22,8 +22,6 @@ class PerlinNoiseGenerator(inputSeed: Long) {
     
     private val gx = FloatArray(NOISE_TABLE_SIZE)
     private val gy = FloatArray(NOISE_TABLE_SIZE)
-
-    private val seed = inputSeed;
 
     init {
         setSeedAndReinitialize(seed)
@@ -73,10 +71,8 @@ class PerlinNoiseGenerator(inputSeed: Long) {
     //! A typical usage would be to pass system time multiplied by a frequency value, like:
     //! float fRes=pNoise->Noise1D(fCurrentTime*fFreq);
     //! the lower the frequency, the smoother the output
-
     /**
-     * @param t current time * frequency (lower frequency -> smoother output)
-     * @return perlin noise in 1D quality in [0..1)
+     * Generates a value in [0..1], t > 0.
      */
     fun noise1D(t: Double): Double {
         // Compute what gradients to use

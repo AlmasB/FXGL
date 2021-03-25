@@ -225,8 +225,7 @@ class FXGLMathTest {
                 assertThat(v1, Matchers.allOf(Matchers.greaterThan(-1.0), Matchers.lessThan(1.0)))
                 assertThat(v2, Matchers.allOf(Matchers.greaterThan(-1.0), Matchers.lessThan(1.0)))
 
-                val generator = getNoise1DGenerator(0L)
-                val v3 = generator.noise1D(x+y.toDouble())
+                val v3 = noise1D(x+y.toDouble())
 
                 assertThat(v3, Matchers.allOf(Matchers.greaterThanOrEqualTo(-0.0), Matchers.lessThan(1.0)))
             }
@@ -240,7 +239,7 @@ class FXGLMathTest {
             val gen2 = getNoise1DGenerator(1L)
 
             val v1 = gen1.noise1D(x.toDouble())
-            val v2 = gen1.noise1D(x.toDouble())
+            val v2 = gen2.noise1D(x.toDouble())
 
             assertThat(v1, `is`(v2))
         }
