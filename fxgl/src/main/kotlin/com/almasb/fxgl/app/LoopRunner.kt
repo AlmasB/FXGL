@@ -111,6 +111,10 @@ internal class LoopRunner(
             fps = fpsBuffer2sec / 2
             fpsBuffer2sec = 0
 
+            // tweak potentially erroneous reads
+            if (fps < 5)
+                fps = 60
+
             // update tpf for the next 2 seconds
             tpf = 1.0 / fps
         }
