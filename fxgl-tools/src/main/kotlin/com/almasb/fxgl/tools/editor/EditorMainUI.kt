@@ -16,6 +16,7 @@ import com.almasb.fxgl.dsl.components.DraggableComponent
 import com.almasb.fxgl.dsl.components.ProjectileComponent
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
+import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.ui.FXGLButton
 import javafx.geometry.Insets
 import javafx.geometry.Point2D
@@ -26,12 +27,20 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import javafx.util.Duration
+import javafx.scene.control.ListCell
+import javafx.scene.control.cell.TextFieldListCell
+import javafx.util.StringConverter
+
 
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class EditorMainUI : BorderPane() {
+
+    private companion object {
+        private var uniqueID = 0
+    }
 
     private val BG_COLOR = Color.rgb(32, 37, 54)
     private val TOOLBAR_COLOR = BG_COLOR.darker()
@@ -45,6 +54,7 @@ class EditorMainUI : BorderPane() {
     private val entityInspector = EntityInspector()
 
     private val entitiesListView = ListView<Entity>()
+    private var listViewEditIndex = 0
 
     private lateinit var fxglPane: FXGLPane
 
@@ -66,16 +76,6 @@ class EditorMainUI : BorderPane() {
         toolBar.children.addAll(
                 Text("Menu 1").also {
                     it.fill = Color.WHITE
-
-                    it.setOnMouseClicked {
-                        var e = entityBuilder()
-                                .at(0.0, (getAppHeight() / 2 - 32).toDouble())
-                                .view(Rectangle(64.0, 64.0, Color.BLUE))
-                                .with(ProjectileComponent(Point2D(1.0, 0.0), 150.0))
-                                .buildAndAttach()
-
-                        entityInspector.entity = e
-                    }
                 },
 
                 Text("Menu 2").also { it.fill = Color.WHITE },
@@ -101,6 +101,7 @@ class EditorMainUI : BorderPane() {
                     it.setOnAction {
                         getGameWorld().addEntity(Entity().also {
                             it.isReusable = true
+                            it.addComponent(IDComponent("Entity", uniqueID++))
                             it.addComponent(DraggableComponent())
                         })
                     }
@@ -141,12 +142,45 @@ class EditorMainUI : BorderPane() {
 
         splitPane.items += entityInspector
 
+        entitiesListView.selectionModel.selectedItemProperty().addListener { _, _, newEntity ->
+            entityInspector.entity = newEntity
+        }
+
+        val converter = object : StringConverter<Entity>() {
+            override fun toString(`object`: Entity): String {
+                val e = `object`
+
+                return e.getComponentOptional(IDComponent::class.java)
+                        .map { it.fullID }
+                        .orElse(e.toString())
+            }
+
+            override fun fromString(string: String): Entity {
+                val name = string
+                val e = entitiesListView.items[listViewEditIndex]
+
+                e.getComponent(IDComponent::class.java).name = name
+
+                return e
+            }
+        }
+
+        entitiesListView.setOnEditStart {
+            listViewEditIndex = it.index
+        }
+
+        entitiesListView.isEditable = true
+        entitiesListView.cellFactory = TextFieldListCell.forListView(converter)
+
+
+
         top = toolBar
         bottom = statusBar
         left = explorerView
 //        right = inspectorView
         center = HBox(centerBox, entityInspector)
     }
+
 
     private fun play() {
 
@@ -182,6 +216,9 @@ class EditorMainUI : BorderPane() {
         getGameController().startNewGame()
         getGameController().pauseEngine()
 
+        // startNewGame clears all listeners, so re-add
+        addEntityListener()
+
         // add editor entities
 
         editorEntities.forEach {
@@ -199,12 +236,6 @@ class EditorMainUI : BorderPane() {
                 entitiesListView.items.remove(entity)
             }
         })
-
-        entitiesListView.selectionModel.selectedItemProperty().addListener { _, oldEntity, newEntity ->
-            if (newEntity != null) {
-                entityInspector.entity = newEntity
-            }
-        }
     }
 
     fun addPane(pane: FXGLPane) {
@@ -218,8 +249,6 @@ class EditorMainUI : BorderPane() {
         getAssetLoader().loadCSS("fxgl_dark.css").also {
             stylesheets.add(it.externalForm)
         }
-
-        addEntityListener()
     }
 
     fun onUpdate(tpf: Double) {
@@ -233,3 +262,27 @@ class EditorMainUI : BorderPane() {
         }
     }
 }
+
+
+// scratch pad
+
+
+//internal class EntityCell : ListCell<Entity?>() {
+//
+//    override fun updateItem(item: Entity?, empty: Boolean) {
+//        super.updateItem(item, empty)
+//
+//        println("update item")
+//
+//        if (empty || item == null) {
+//            text = null
+//            graphic = null
+//        } else {
+//            text = item.getComponentOptional(IDComponent::class.java)
+//                    .map { it.fullID }
+//                    .orElse(item.toString())
+//
+//            //graphic = rect
+//        }
+//    }
+//}
