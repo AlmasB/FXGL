@@ -233,6 +233,32 @@ class FXGLMathTest {
     }
 
     @Test
+    fun `Noises are deterministic`() {
+        for (x in 0..10) {
+            val gen1 = getNoise1DGenerator(1L)
+            val gen2 = getNoise1DGenerator(1L)
+
+            val v1 = gen1.noise1D(x.toDouble())
+            val v2 = gen2.noise1D(x.toDouble())
+
+            assertThat(v1, `is`(v2))
+        }
+
+        for (y in 0..10) {
+            for (x in 0..10) {
+
+                val v2D1 = noise2D(x.toDouble(), y.toDouble())
+                val v2D2 = noise2D(x.toDouble(), y.toDouble())
+                val v3D1 = noise3D(x.toDouble(), y.toDouble(), x*y.toDouble())
+                val v3D2 = noise3D(x.toDouble(), y.toDouble(), x*y.toDouble())
+
+                assertThat(v2D1, `is`(v2D2))
+                assertThat(v3D1, `is`(v3D2))
+            }
+        }
+    }
+
+    @Test
     fun `Sqrt`() {
         assertThat(sqrt(35.4), closeTo(Math.sqrt(35.4), 0.01))
         assertThat(sqrtF(35.4f) * 1.0, closeTo(Math.sqrt(35.4), 0.01))
