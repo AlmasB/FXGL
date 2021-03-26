@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.animation.Animatable;
+import com.almasb.fxgl.core.Copyable;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
@@ -45,7 +46,7 @@ import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class Entity implements Animatable {
+public class Entity implements Animatable, Copyable<Entity> {
 
     private static class ComponentMap {
         private Map<Class<? extends Component>, Component> components = new HashMap<>();
@@ -1055,6 +1056,12 @@ public class Entity implements Animatable {
     }
 
     // Animatable overrides END
+
+
+    @Override
+    public Entity copy() {
+        return EntityHelper.INSTANCE.copy(this);
+    }
 
     @Override
     public String toString() {

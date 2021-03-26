@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.entity.components
 
+import com.almasb.fxgl.entity.component.CopyableComponent
 import java.io.Serializable
 import java.util.*
 
@@ -14,7 +15,7 @@ import java.util.*
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class CollidableComponent(collidable: Boolean) : BooleanComponent(collidable) {
+class CollidableComponent(collidable: Boolean) : BooleanComponent(collidable), CopyableComponent<CollidableComponent> {
 
     private val ignoredTypes = ArrayList<Serializable>()
 
@@ -28,6 +29,10 @@ class CollidableComponent(collidable: Boolean) : BooleanComponent(collidable) {
 
     fun removeIgnoredType(type: Serializable) {
         ignoredTypes.remove(type)
+    }
+
+    override fun copy(): CollidableComponent {
+        return CollidableComponent(value).also { it.ignoredTypes.addAll(ignoredTypes) }
     }
 
     override fun isComponentInjectionRequired(): Boolean = false

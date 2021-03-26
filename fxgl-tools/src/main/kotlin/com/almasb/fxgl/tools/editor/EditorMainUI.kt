@@ -25,6 +25,7 @@ import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
+import javafx.util.Duration
 
 /**
  *
@@ -46,6 +47,10 @@ class EditorMainUI : BorderPane() {
     private val entitiesListView = ListView<Entity>()
 
     private lateinit var fxglPane: FXGLPane
+
+    private val editorEntities = arrayListOf<Entity>()
+
+    private var isStartingFromStop = false
 
     init {
         background = Background(BackgroundFill(BG_COLOR, null, null))
@@ -75,19 +80,29 @@ class EditorMainUI : BorderPane() {
 
                 Text("Menu 2").also { it.fill = Color.WHITE },
                 Text("Menu 3").also { it.fill = Color.WHITE },
-                Button("Play").also { it.setOnAction { getGameController().resumeEngine() } },
-                Button("Pause").also { it.setOnAction { getGameController().pauseEngine() } },
+                Button("Play").also {
+                    it.setOnAction {
+                        play()
+                    }
+
+                },
+                Button("Pause").also {
+                    it.setOnAction {
+                        pause()
+                    }
+                },
                 Button("Stop").also {
                     it.setOnAction {
-                        getGameController().resumeEngine()
-                        getGameController().startNewGame()
-                        getGameController().pauseEngine()
+                        stop()
                     }
                 },
 
                 Button("Add Entity").also {
                     it.setOnAction {
-                        getGameWorld().addEntity(Entity().also { it.addComponent(DraggableComponent()) })
+                        getGameWorld().addEntity(Entity().also {
+                            it.isReusable = true
+                            it.addComponent(DraggableComponent())
+                        })
                     }
                 }
         )
@@ -133,6 +148,47 @@ class EditorMainUI : BorderPane() {
         center = HBox(centerBox, entityInspector)
     }
 
+    private fun play() {
+
+        if (isStartingFromStop) {
+            // remove editor entities
+            editorEntities.clear()
+            editorEntities.addAll(getGameWorld().entities)
+
+            getGameWorld().entitiesCopy.forEach { it.removeFromWorld() }
+
+            // add live entities
+
+            editorEntities.forEach {
+                getGameWorld().addEntity(it.copy())
+            }
+        }
+
+        getGameController().resumeEngine()
+    }
+
+    private fun pause() {
+        isStartingFromStop = false
+
+        getGameController().pauseEngine()
+    }
+
+    private fun stop() {
+        isStartingFromStop = true
+
+        // remove live entities
+
+        getGameController().resumeEngine()
+        getGameController().startNewGame()
+        getGameController().pauseEngine()
+
+        // add editor entities
+
+        editorEntities.forEach {
+            getGameWorld().addEntity(it)
+        }
+    }
+
     private fun addEntityListener() {
         getGameWorld().addWorldListener(object : EntityWorldListener {
             override fun onEntityAdded(entity: Entity) {
@@ -157,6 +213,8 @@ class EditorMainUI : BorderPane() {
     }
 
     fun notifyDone() {
+        stop()
+
         getAssetLoader().loadCSS("fxgl_dark.css").also {
             stylesheets.add(it.externalForm)
         }

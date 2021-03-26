@@ -918,6 +918,20 @@ class EntityTest {
         assertThat(entity.distanceBBox(e2), `is`(5.0))
     }
 
+    @Test
+    fun `Copy entity`() {
+        //entity.addComponent(ValueUpdateControl())
+
+        val copy = entity.copy()
+
+        entity.components.forEachIndexed { index, component ->
+            val copyC = copy.components[index]
+
+            assertTrue(copyC.javaClass == component.javaClass, "Copied entity component ${copyC.javaClass} type doesn't match original ${component.javaClass}")
+            assertFalse(copyC === component, "Copied component $copyC is the same object as the original")
+        }
+    }
+
     /* MOCK CLASSES */
 
     private class ComponentWithMethod : Component() {
