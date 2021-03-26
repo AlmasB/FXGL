@@ -23,10 +23,7 @@ class IDComponent
  * @param name string representation of entity name
  * @param id numeric id that uniquely identifies the entity with given name
  */
-(name: String, id: Int) : Component(), SerializableComponent {
-
-    var name: String = name
-        private set
+(var name: String, id: Int) : Component(), SerializableComponent {
 
     var id: Int = id
         private set
