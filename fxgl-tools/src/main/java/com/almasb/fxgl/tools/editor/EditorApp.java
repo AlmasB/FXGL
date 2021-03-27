@@ -35,6 +35,7 @@ public class EditorApp extends Application {
         stage.setScene(scene);
         stage.setWidth(1600);
         stage.setHeight(950);
+        stage.setTitle("FXGL Editor");
         stage.show();
 
         // this is the JavaFX app timer since we are running outside of the engine.
