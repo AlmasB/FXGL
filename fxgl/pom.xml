@@ -192,12 +192,6 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-net</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-entity</artifactId>
             <version>${fxgl.version}</version>
         </dependency>

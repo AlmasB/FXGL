@@ -25,7 +25,6 @@
         <module>fxgl-test</module>
         <module>fxgl-localization</module>
         <module>fxgl-profiles</module>
-        <module>fxgl-net</module>
         <module>fxgl-controllerinput</module>
         <module>fxgl-gameplay</module>
         <module>fxgl-samples</module>
