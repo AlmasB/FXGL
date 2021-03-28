@@ -23,6 +23,7 @@ module com.almasb.fxgl.entity {
     exports com.almasb.fxgl.entity.level.text;
     exports com.almasb.fxgl.entity.level.tiled;
     exports com.almasb.fxgl.entity.state;
+    exports com.almasb.fxgl.particle;
     exports com.almasb.fxgl.physics;
     exports com.almasb.fxgl.physics.box2d.dynamics;
 }
