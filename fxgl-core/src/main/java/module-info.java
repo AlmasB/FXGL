@@ -11,7 +11,6 @@ module com.almasb.fxgl.core {
     requires transitive kotlin.stdlib;
     requires transitive javafx.graphics;
     requires transitive javafx.base;
-    requires transitive com.almasb.fxgl.logging;
 
     exports com.almasb.fxgl.core;
     exports com.almasb.fxgl.core.asset;
@@ -27,5 +26,6 @@ module com.almasb.fxgl.core {
 
     exports com.almasb.fxgl.animation;
     exports com.almasb.fxgl.event;
+    exports com.almasb.fxgl.logging;
     exports com.almasb.fxgl.time;
 }
