@@ -12,9 +12,7 @@ module com.almasb.fxgl.entity {
     requires com.almasb.fxgl.media;
     requires java.xml;
 
-    opens com.almasb.fxgl.entity.component to com.almasb.fxgl.core;
-    opens com.almasb.fxgl.entity.components to com.almasb.fxgl.core;
-
+    exports com.almasb.fxgl.ai.senseai;
     exports com.almasb.fxgl.entity;
     exports com.almasb.fxgl.entity.action;
     exports com.almasb.fxgl.entity.component;
@@ -24,6 +22,14 @@ module com.almasb.fxgl.entity {
     exports com.almasb.fxgl.entity.level.tiled;
     exports com.almasb.fxgl.entity.state;
     exports com.almasb.fxgl.particle;
+    exports com.almasb.fxgl.pathfinding;
+    exports com.almasb.fxgl.pathfinding.astar;
+    exports com.almasb.fxgl.pathfinding.maze;
     exports com.almasb.fxgl.physics;
     exports com.almasb.fxgl.physics.box2d.dynamics;
+    exports com.almasb.fxgl.procedural;
+
+    opens com.almasb.fxgl.entity.component to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.entity.components to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.pathfinding.astar to com.almasb.fxgl.core;
 }

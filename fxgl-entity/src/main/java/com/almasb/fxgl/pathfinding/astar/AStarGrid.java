@@ -6,10 +6,10 @@
 
 package com.almasb.fxgl.pathfinding.astar;
 
+import com.almasb.fxgl.core.collection.grid.Grid;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.pathfinding.CellState;
-import com.almasb.fxgl.core.collection.grid.Grid;
 import javafx.geometry.Rectangle2D;
 
 import java.util.List;
