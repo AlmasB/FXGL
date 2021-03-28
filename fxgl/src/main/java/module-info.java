@@ -9,7 +9,6 @@
  */
 module com.almasb.fxgl.all {
     requires transitive com.almasb.fxgl.core;
-    requires transitive com.almasb.fxgl.achievement;
     requires transitive com.almasb.fxgl.ai;
     requires transitive com.almasb.fxgl.cutscene;
     requires transitive com.almasb.fxgl.effects;
@@ -19,7 +18,7 @@ module com.almasb.fxgl.all {
     requires transitive com.almasb.fxgl.localization;
     requires transitive com.almasb.fxgl.logging;
     requires transitive com.almasb.fxgl.media;
-    requires transitive com.almasb.fxgl.minigames;
+    requires transitive com.almasb.fxgl.gameplay;
     requires transitive com.almasb.fxgl.net;
     requires transitive com.almasb.fxgl.profiles;
     requires transitive com.almasb.fxgl.scene;

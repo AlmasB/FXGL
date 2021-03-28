@@ -7,11 +7,13 @@
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-module com.almasb.fxgl.minigames {
+module com.almasb.fxgl.gameplay {
     requires com.almasb.fxgl.core;
     requires com.almasb.fxgl.input;
     requires com.almasb.fxgl.scene;
     requires javafx.controls;
+
+    exports com.almasb.fxgl.achievement;
 
     exports com.almasb.fxgl.minigames;
     exports com.almasb.fxgl.minigames.circuitbreaker;
@@ -21,5 +23,6 @@ module com.almasb.fxgl.minigames {
     exports com.almasb.fxgl.minigames.triggermash;
     exports com.almasb.fxgl.minigames.triggersequence;
 
+    opens com.almasb.fxgl.achievement to com.almasb.fxgl.core;
     opens com.almasb.fxgl.minigames to com.almasb.fxgl.core;
 }

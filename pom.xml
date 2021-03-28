@@ -26,13 +26,12 @@
         <module>fxgl-test</module>
         <module>fxgl-localization</module>
         <module>fxgl-logging</module>
-        <module>fxgl-achievement</module>
         <module>fxgl-ai</module>
         <module>fxgl-profiles</module>
         <module>fxgl-net</module>
         <module>fxgl-controllerinput</module>
         <module>fxgl-trade</module>
-        <module>fxgl-minigames</module>
+        <module>fxgl-gameplay</module>
         <module>fxgl-samples</module>
         <module>fxgl-tools</module>
         <module>fxgl-zdeploy</module>
