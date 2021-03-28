@@ -314,11 +314,11 @@ class Input {
             handleReleased(mouseEvent)
         }
 
-        mouseXUI = mouseEvent.sceneX - contentRootTranslation.x
-        mouseYUI = mouseEvent.sceneY - contentRootTranslation.y
+        mouseXUI = (mouseEvent.sceneX - contentRootTranslation.x) / scaleRatioX / viewportZoom
+        mouseYUI = (mouseEvent.sceneY - contentRootTranslation.y) / scaleRatioY / viewportZoom
 
-        mouseXWorld = mouseXUI / scaleRatioX / viewportZoom + viewportOrigin.x
-        mouseYWorld = mouseYUI / scaleRatioY / viewportZoom + viewportOrigin.y
+        mouseXWorld = mouseXUI + viewportOrigin.x
+        mouseYWorld = mouseYUI + viewportOrigin.y
     }
 
     private fun handlePressed(event: InputEvent) {
