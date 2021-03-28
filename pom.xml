@@ -29,7 +29,6 @@
         <module>fxgl-profiles</module>
         <module>fxgl-net</module>
         <module>fxgl-controllerinput</module>
-        <module>fxgl-trade</module>
         <module>fxgl-gameplay</module>
         <module>fxgl-samples</module>
         <module>fxgl-tools</module>
