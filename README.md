@@ -134,6 +134,18 @@ Community projects (identified using `fxgl` topic):
 
 If you'd like your project featured here, just add a note in the [Chat](https://gitter.im/AlmasB/FXGL).
 
+### Development Team
+
+Description of roles is given in the [Contribution Guide](CONTRIBUTING.md).
+
+Maintainers (Collaborators):
+
+* [Almas Baimagambetov](https://github.com/AlmasB)
+
+Coordinators:
+
+* [Adam Bocco](https://github.com/adambocco)
+
 ### Contribution & Support
 
 If you want to build FXGL from sources or want to contribute,
