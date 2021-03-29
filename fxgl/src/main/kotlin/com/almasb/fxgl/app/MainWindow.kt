@@ -504,9 +504,19 @@ internal class EmbeddedPaneWindow(
                     stateMachine.runOnActiveStates { it.input.onKeyEvent(e) }
                 }
 
-                addMouseHandler(newScene) { e ->
-                    input.onMouseEvent(e)
-                    stateMachine.runOnActiveStates { it.input.onMouseEvent(e) }
+                // also take fxglPane scene location into account
+                newScene.addEventHandler(MouseEvent.ANY) {
+                    val data = MouseEventData(
+                            it,
+                            fxglPane.localToScene(0.0, 0.0).add(currentFXGLScene.contentRoot.translateX, currentFXGLScene.contentRoot.translateY),
+                            Point2D(currentFXGLScene.viewport.x, currentFXGLScene.viewport.y),
+                            currentFXGLScene.viewport.getZoom(),
+                            scaleRatioX.value,
+                            scaleRatioY.value
+                    )
+
+                    input.onMouseEvent(data)
+                    stateMachine.runOnActiveStates { it.input.onMouseEvent(data) }
                 }
 
                 // reroute any events to current state input
