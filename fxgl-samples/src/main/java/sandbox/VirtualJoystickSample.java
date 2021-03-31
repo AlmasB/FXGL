@@ -45,16 +45,19 @@ public class VirtualJoystickSample extends GameApplication {
                 .with(new AutoRotationComponent().withSmoothing())
                 .buildAndAttach();
 
+        joystick.setMaxForce(6.0);
+
         addUINode(joystick, 50, 400);
-        //FXGL.addUINode(debug, 50, 60);
+        addUINode(debug, 50, 60);
     }
 
     @Override
     protected void onUpdate(double tpf) {
-        debug.setText("Vector: " + joystick.getVector());
+        debug.setText("Vector: " + joystick.getVector() + "\n"
+                + "VectorForce: " + joystick.getVectorWithForce());
 
         if (!joystick.getVector().equals(Point2D.ZERO)) {
-            entity.translate(joystick.getVector().multiply(3));
+            entity.translate(joystick.getVectorWithForce());
         }
     }
 
