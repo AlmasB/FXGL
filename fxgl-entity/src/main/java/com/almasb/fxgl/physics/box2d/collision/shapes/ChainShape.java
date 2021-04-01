@@ -27,10 +27,12 @@ import com.almasb.fxgl.physics.box2d.common.Transform;
 public final class ChainShape extends Shape {
 
     public Vec2[] m_vertices = null;
-    public int m_count = 0;
+    private int m_count = 0;
 
-    private final Vec2 m_prevVertex = new Vec2(), m_nextVertex = new Vec2();
-    private boolean m_hasPrevVertex = false, m_hasNextVertex = false;
+    private final Vec2 m_prevVertex = new Vec2();
+    private final Vec2 m_nextVertex = new Vec2();
+    private boolean m_hasPrevVertex = false;
+    private boolean m_hasNextVertex = false;
 
     private final EdgeShape pool0 = new EdgeShape();
 
@@ -195,7 +197,7 @@ public final class ChainShape extends Shape {
      * @param vertices an array of vertices, these are copied
      * @param count the vertex count
      */
-    public void createChain(final Vec2 vertices[], int count) {
+    public void createChain(final Vec2[] vertices, int count) {
         assert m_vertices == null && m_count == 0;
         assert count >= 2;
         m_count = count;
@@ -236,5 +238,9 @@ public final class ChainShape extends Shape {
     public void setNextVertex(final Vec2 nextVertex) {
         m_nextVertex.set(nextVertex);
         m_hasNextVertex = true;
+    }
+
+    public int getCount() {
+        return m_count;
     }
 }

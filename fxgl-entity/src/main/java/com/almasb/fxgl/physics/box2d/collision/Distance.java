@@ -487,10 +487,10 @@ public class Distance {
                     break;
                 case CHAIN:
                     final ChainShape chain = (ChainShape) shape;
-                    assert 0 <= index && index < chain.m_count;
+                    assert 0 <= index && index < chain.getCount();
 
                     m_buffer[0] = chain.m_vertices[index];
-                    if (index + 1 < chain.m_count) {
+                    if (index + 1 < chain.getCount()) {
                         m_buffer[1] = chain.m_vertices[index + 1];
                     } else {
                         m_buffer[1] = chain.m_vertices[0];
