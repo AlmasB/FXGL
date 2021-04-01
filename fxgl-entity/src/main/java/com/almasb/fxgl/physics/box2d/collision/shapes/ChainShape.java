@@ -11,7 +11,6 @@ import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.collision.RayCastOutput;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 
 import static com.almasb.fxgl.core.math.FXGLMath.max;
