@@ -530,17 +530,8 @@ public final class PolygonShape extends Shape {
      * @param hx the half-width.
      * @param hy the half-height.
      */
-    public void setAsBox(final float hx, final float hy) {
-        vertexCount = 4;
-        m_vertices[0].set(-hx, -hy);
-        m_vertices[1].set(hx, -hy);
-        m_vertices[2].set(hx, hy);
-        m_vertices[3].set(-hx, hy);
-        m_normals[0].set(0.0f, -1.0f);
-        m_normals[1].set(1.0f, 0.0f);
-        m_normals[2].set(0.0f, 1.0f);
-        m_normals[3].set(-1.0f, 0.0f);
-        m_centroid.setZero();
+    public void setAsBox(float hx, float hy) {
+        setAsBox(hx, hy, 0, 0);
     }
 
     /**
@@ -551,17 +542,8 @@ public final class PolygonShape extends Shape {
      * @param center the center of the box in local coordinates.
      * @param angle the rotation of the box in local coordinates.
      */
-    public void setAsBox(final float hx, final float hy, final Vec2 center, final float angle) {
-        vertexCount = 4;
-        m_vertices[0].set(-hx, -hy);
-        m_vertices[1].set(hx, -hy);
-        m_vertices[2].set(hx, hy);
-        m_vertices[3].set(-hx, hy);
-        m_normals[0].set(0.0f, -1.0f);
-        m_normals[1].set(1.0f, 0.0f);
-        m_normals[2].set(0.0f, 1.0f);
-        m_normals[3].set(-1.0f, 0.0f);
-        m_centroid.set(center);
+    public void setAsBox(float hx, float hy, Vec2 center, float angle) {
+        setAsBox(hx, hy, center.x, center.y);
 
         final Transform xf = poolt1;
         xf.p.set(center);
@@ -572,6 +554,19 @@ public final class PolygonShape extends Shape {
             Transform.mulToOut(xf, m_vertices[i], m_vertices[i]);
             Rotation.mulToOut(xf.q, m_normals[i], m_normals[i]);
         }
+    }
+
+    private void setAsBox(float hx, float hy, float centerX, float centerY) {
+        vertexCount = 4;
+        m_vertices[0].set(-hx, -hy);
+        m_vertices[1].set(hx, -hy);
+        m_vertices[2].set(hx, hy);
+        m_vertices[3].set(-hx, hy);
+        m_normals[0].set(0.0f, -1.0f);
+        m_normals[1].set(1.0f, 0.0f);
+        m_normals[2].set(0.0f, 1.0f);
+        m_normals[3].set(-1.0f, 0.0f);
+        m_centroid.set(centerX, centerY);
     }
 
     public int getVertexCount() {
@@ -587,6 +582,10 @@ public final class PolygonShape extends Shape {
     public Vec2 getVertex(final int index) {
         assert 0 <= index && index < vertexCount;
         return m_vertices[index];
+    }
+
+    public Vec2 getNormal(int index) {
+        return m_normals[index];
     }
 
     /** Get the vertices in local coordinates. */

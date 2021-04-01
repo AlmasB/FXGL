@@ -15,6 +15,7 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.*
 
 /**
  *
@@ -72,6 +73,37 @@ class PolygonShapeTest {
         polygon.setAsBox(1f, 1f)
 
         assertThat(polygon.centroid, `is`(Vec2()))
+
+        assertThat(polygon.vertexCount, `is`(4))
+
+        assertThat(polygon.getVertex(0), `is`(Vec2(-1f,-1f)))
+        assertThat(polygon.getVertex(1), `is`(Vec2(1f,-1f)))
+        assertThat(polygon.getVertex(2), `is`(Vec2(1f,1f)))
+        assertThat(polygon.getVertex(3), `is`(Vec2(-1f,1f)))
+
+        assertThat(polygon.getNormal(0), `is`(Vec2(0f,-1f)))
+        assertThat(polygon.getNormal(1), `is`(Vec2(1f,0f)))
+        assertThat(polygon.getNormal(2), `is`(Vec2(0f,1f)))
+        assertThat(polygon.getNormal(3), `is`(Vec2(-1f,0f)))
+    }
+
+    @Test
+    fun `Set as oriented box`() {
+        polygon.setAsBox(1f, 1f, Vec2(0.5f, -3f), 33f)
+
+        assertThat(polygon.centroid, `is`(Vec2(0.5f, -3f)))
+
+        assertThat(polygon.vertexCount, `is`(4))
+
+        assertThat(polygon.getVertex(0), `is`(Vec2(1.5132065,-3.9866161)))
+        assertThat(polygon.getVertex(1), `is`(Vec2(1.4866163,-1.9867935)))
+        assertThat(polygon.getVertex(2), `is`(Vec2(-0.5132065,-2.0133839)))
+        assertThat(polygon.getVertex(3), `is`(Vec2(-0.48661625,-4.0132065)))
+
+        assertThat(polygon.getNormal(0), `is`(Vec2(0.99991137,0.013295084)))
+        assertThat(polygon.getNormal(1), `is`(Vec2(-0.013295084,0.99991137)))
+        assertThat(polygon.getNormal(2), `is`(Vec2(-0.99991137,-0.013295084)))
+        assertThat(polygon.getNormal(3), `is`(Vec2(0.013295084,-0.99991137)))
     }
 
     @Test
