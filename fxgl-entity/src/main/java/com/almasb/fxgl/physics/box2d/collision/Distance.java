@@ -489,11 +489,11 @@ public class Distance {
                     final ChainShape chain = (ChainShape) shape;
                     assert 0 <= index && index < chain.getCount();
 
-                    m_buffer[0] = chain.m_vertices[index];
+                    m_buffer[0] = chain.getVertex(index);
                     if (index + 1 < chain.getCount()) {
-                        m_buffer[1] = chain.m_vertices[index + 1];
+                        m_buffer[1] = chain.getVertex(index + 1);
                     } else {
-                        m_buffer[1] = chain.m_vertices[0];
+                        m_buffer[1] = chain.getVertex(0);
                     }
 
                     m_vertices[0].set(m_buffer[0]);

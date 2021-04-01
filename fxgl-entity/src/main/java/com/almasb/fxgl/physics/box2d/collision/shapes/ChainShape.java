@@ -28,7 +28,7 @@ import static com.almasb.fxgl.core.math.FXGLMath.min;
  */
 public final class ChainShape extends Shape {
 
-    public Vec2[] m_vertices = null;
+    private Vec2[] m_vertices = null;
     private int m_count = 0;
 
     private final Vec2 m_prevVertex = new Vec2();
@@ -242,5 +242,9 @@ public final class ChainShape extends Shape {
 
     public int getCount() {
         return m_count;
+    }
+
+    public Vec2 getVertex(int index) {
+        return m_vertices[index];
     }
 }
