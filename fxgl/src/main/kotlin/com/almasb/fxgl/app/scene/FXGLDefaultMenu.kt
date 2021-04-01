@@ -30,7 +30,6 @@ import com.almasb.fxgl.ui.FXGLScrollPane
 import com.almasb.fxgl.ui.FontType
 import javafx.animation.FadeTransition
 import javafx.beans.binding.Bindings
-import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
 import javafx.event.ActionEvent
@@ -48,7 +47,7 @@ import javafx.scene.shape.Polygon
 import javafx.scene.shape.Rectangle
 import javafx.util.Duration
 import java.time.format.DateTimeFormatter
-import java.util.ArrayList
+import java.util.*
 import java.util.function.Consumer
 import java.util.function.Supplier
 
@@ -65,9 +64,9 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         private val log = Logger.get("FXGL.DefaultMenu")
     }
 
-    private var particleSystem: ParticleSystem? = null
+    private val particleSystem = ParticleSystem()
 
-    private var titleColor: ObjectProperty<Color>? = null
+    private val titleColor = SimpleObjectProperty(Color.WHITE)
     private var t = 0.0
 
     private val menuRoot = Pane()
@@ -82,18 +81,13 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     init {
         if (appWidth < 800 || appHeight < 600)
             log.warning("FXGLDefaultMenu is not designed for resolutions < 800x600")
-
-        contentRoot.children.addAll(
-                createBackground(getAppWidth().toDouble(), getAppHeight().toDouble()),
-                createTitleView(getSettings().title),
-                createVersionView(makeVersionString()),
-                menuRoot, menuContentRoot)
         
         menu = if (type === MenuType.MAIN_MENU)
             createMenuBodyMainMenu()
         else
             createMenuBodyGameMenu()
 
+        // TODO: doesn't use prefSize, hence layout not responsive
         val menuX = 50.0
         val menuY = appHeight / 2.0 - menu.layoutHeight / 2
 
@@ -103,12 +97,26 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         menuContentRoot.translateX = appWidth - 500.0
         menuContentRoot.translateY = menuY
 
+        initParticles()
+
+        menuRoot.children.addAll(menu)
+        menuContentRoot.children.add(EMPTY)
+
+        contentRoot.children.addAll(
+                createBackground(getAppWidth().toDouble(), getAppHeight().toDouble()),
+                createTitleView(getSettings().title),
+                createVersionView(makeVersionString()),
+                particleSystem.pane,
+                menuRoot, menuContentRoot)
+    }
+
+    private fun initParticles() {
         // particle smoke
         val t = texture("particles/smoke.png", 128.0, 128.0).brighter().brighter()
 
         val emitter = ParticleEmitters.newFireEmitter()
         emitter.blendMode = BlendMode.SRC_OVER
-        emitter.setSourceImage(t.getImage())
+        emitter.setSourceImage(t.image)
         emitter.setSize(150.0, 220.0)
         emitter.numParticles = 10
         emitter.emissionRate = 0.01
@@ -117,12 +125,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         emitter.setScaleFunction { Point2D(0.15, 0.10) }
         emitter.setSpawnPointFunction { Point2D(random(0.0, appWidth - 200.0), 120.0) }
 
-        particleSystem!!.addParticleEmitter(emitter, 0.0, FXGL.getAppHeight().toDouble())
-
-        contentRoot.children.add(3, particleSystem!!.pane)
-
-        menuRoot.children.addAll(menu)
-        menuContentRoot.children.add(EMPTY)
+        particleSystem.addParticleEmitter(emitter, 0.0, FXGL.getAppHeight().toDouble())
     }
 
     private val animations = arrayListOf<Animation<*>>()
@@ -171,10 +174,10 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         t += tpf * frequency
 
-        particleSystem!!.onUpdate(tpf)
+        particleSystem.onUpdate(tpf)
 
         val color = Color.color(1.0, 1.0, 1.0, noise1D(t))
-        titleColor!!.set(color)
+        titleColor.set(color)
     }
 
     private fun createBackground(width: Double, height: Double): Node {
@@ -184,18 +187,18 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     }
 
     private fun createTitleView(title: String): Node {
-        titleColor = SimpleObjectProperty(Color.WHITE)
-
-        val text = FXGL.getUIFactoryService().newText(title.substring(0, 1), 50.0)
+        val text = getUIFactoryService().newText(title.substring(0, 1), 50.0)
         text.fill = null
         text.strokeProperty().bind(titleColor)
         text.strokeWidth = 1.5
 
-        val text2 = FXGL.getUIFactoryService().newText(title.substring(1, title.length), 50.0)
+        val text2 = getUIFactoryService().newText(title.substring(1, title.length), 50.0)
         text2.fill = null
-        text2.stroke = titleColor!!.value
+        text2.stroke = titleColor.value
         text2.strokeWidth = 1.5
 
+        // TODO: the lazy font size may not have been computed by this point
+        // so we need to list for changes in layout bounds of text1 and text2
         val textWidth = text.layoutBounds.width + text2.layoutBounds.width
 
         val border = Rectangle(textWidth + 30, 65.0, null)
@@ -205,39 +208,32 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         border.arcHeight = 25.0
 
         val emitter = ParticleEmitters.newExplosionEmitter(50)
-
-        val t = texture("particles/trace_horizontal.png", 64.0, 64.0)
-
         emitter.blendMode = BlendMode.ADD
-        emitter.setSourceImage(t.getImage())
+        emitter.setSourceImage(image("particles/trace_horizontal.png", 64.0, 64.0))
         emitter.maxEmissions = Integer.MAX_VALUE
         emitter.setSize(18.0, 22.0)
         emitter.numParticles = 2
         emitter.emissionRate = 0.2
         emitter.setVelocityFunction { i ->
-            if (i!! % 2 == 0)
-                Point2D(random(-10, 0).toDouble(), random(0, 0).toDouble())
+            if (i % 2 == 0)
+                Point2D(random(-10.0, 0.0), 0.0)
             else
-                Point2D(random(0, 10).toDouble(), random(0, 0).toDouble())
+                Point2D(random(0.0, 10.0), 0.0)
         }
-        emitter.setExpireFunction { Duration.seconds(random(4, 6).toDouble()) }
+        emitter.setExpireFunction { Duration.seconds(random(4.0, 6.0)) }
         emitter.setScaleFunction { Point2D(-0.03, -0.03) }
-        emitter.setSpawnPointFunction { Point2D(random(0, 0).toDouble(), random(0, 0).toDouble()) }
-        emitter.setAccelerationFunction { Point2D(random(-1, 1).toDouble(), random(0, 0).toDouble()) }
+        emitter.setSpawnPointFunction { Point2D.ZERO }
+        emitter.setAccelerationFunction { Point2D(random(-1.0, 1.0), random(0.0, 0.0)) }
 
         val box = HBox(text, text2)
         box.alignment = Pos.CENTER
 
-        val titleRoot = StackPane()
-        titleRoot.children.addAll(border, box)
-
+        val titleRoot = StackPane(border, box)
         titleRoot.translateX = appWidth / 2.0 - (textWidth + 30) / 2
         titleRoot.translateY = 50.0
 
-        particleSystem = ParticleSystem()
-
         if (!FXGL.getSettings().isExperimentalNative)
-            particleSystem!!.addParticleEmitter(emitter, appWidth / 2.0 - 30, titleRoot.translateY + border.height - 16)
+            particleSystem.addParticleEmitter(emitter, appWidth / 2.0 - 30, titleRoot.translateY + border.height - 16)
 
         return titleRoot
     }
@@ -253,7 +249,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         val box = MenuBox()
 
-        val enabledItems = FXGL.getSettings().enabledMenuItems
+        val enabledItems = getSettings().enabledMenuItems
 
         val itemNewGame = MenuButton("menu.newGame")
         itemNewGame.setOnAction { fireNewGame() }
@@ -281,7 +277,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         val box = MenuBox()
 
-        val enabledItems = FXGL.getSettings().enabledMenuItems
+        val enabledItems = getSettings().enabledMenuItems
 
         val itemResume = MenuButton("menu.resume")
         itemResume.setOnAction { fireResume() }
@@ -337,7 +333,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         val btnRestore = MenuButton("menu.restore")
         btnRestore.setOnAction {
-            FXGL.getDialogService().showConfirmationBox(FXGL.localize("menu.settingsRestore")) { yes ->
+            FXGL.getDialogService().showConfirmationBox(localize("menu.settingsRestore")) { yes ->
                 if (yes) {
                     switchMenuContentTo(EMPTY)
                     restoreDefaultSettings()
@@ -357,10 +353,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         val itemCredits = MenuButton("menu.credits")
         itemCredits.setMenuContent({ createContentCredits() })
 
-        val itemFeedback = MenuButton("menu.feedback")
-        itemFeedback.setMenuContent({ createContentFeedback() })
-
-        return MenuBox(itemAchievements, itemCredits, itemFeedback)
+        return MenuBox(itemAchievements, itemCredits)
     }
 
     private fun switchMenuTo(menu: Node) {
@@ -406,12 +399,11 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         private var cachedContent: MenuContent? = null
 
         private val p = Polygon(0.0, 0.0, 220.0, 0.0, 250.0, 35.0, 0.0, 35.0)
-        val btn: Button
+        val btn: Button = getUIFactoryService().newButton(localizedStringProperty(stringKey))
 
         private var isAnimating = false
 
         init {
-            btn = getUIFactoryService().newButton(localizedStringProperty(stringKey))
             btn.alignment = Pos.CENTER_LEFT
             btn.style = "-fx-background-color: transparent"
 
@@ -427,7 +419,10 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             )
 
             p.stroke = Color.color(0.1, 0.1, 0.1, 0.15)
-            p.effect = GaussianBlur()
+
+            if (!getSettings().isExperimentalNative) {
+                p.effect = GaussianBlur()
+            }
 
             p.visibleProperty().bind(btn.hoverProperty())
 
@@ -440,7 +435,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
                         isAnimating = true
 
                         animationBuilder()
-                                .onFinished(Runnable { isAnimating = false })
+                                .onFinished { isAnimating = false }
                                 .bobbleDown(this)
                                 .buildAndPlay(this@FXGLDefaultMenu)
                     }
@@ -458,7 +453,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         fun setMenuContent(contentSupplier: Supplier<MenuContent>, isCached: Boolean = true) {
 
-            btn.addEventHandler(ActionEvent.ACTION) { event ->
+            btn.addEventHandler(ActionEvent.ACTION) {
                 if (cachedContent == null || !isCached)
                     cachedContent = contentSupplier.get()
 
@@ -470,9 +465,9 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             val back = MenuButton("menu.back")
             menu.children.add(0, back)
 
-            back.addEventHandler(ActionEvent.ACTION) { event -> switchMenuTo(this@MenuButton.parent!!) }
+            back.addEventHandler(ActionEvent.ACTION) { switchMenuTo(this@MenuButton.parent!!) }
 
-            btn.addEventHandler(ActionEvent.ACTION) { event -> switchMenuTo(menu) }
+            btn.addEventHandler(ActionEvent.ACTION) { switchMenuTo(menu) }
         }
     }
 
@@ -497,7 +492,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         val FONT_SIZE = 16.0
 
-        list.setCellFactory { param ->
+        list.setCellFactory {
             object : ListCell<SaveFile>() {
                 override fun updateItem(item: SaveFile?, empty: Boolean) {
                     super.updateItem(item, empty)
@@ -529,7 +524,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         val btnLoad = getUIFactoryService().newButton(localizedStringProperty("menu.load"))
         btnLoad.disableProperty().bind(list.selectionModel.selectedItemProperty().isNull)
 
-        btnLoad.setOnAction { e ->
+        btnLoad.setOnAction {
             val saveFile = list.selectionModel.selectedItem
 
             fireLoad(saveFile)
@@ -538,7 +533,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         val btnDelete = getUIFactoryService().newButton(localizedStringProperty("menu.delete"))
         btnDelete.disableProperty().bind(list.selectionModel.selectedItemProperty().isNull)
 
-        btnDelete.setOnAction { e ->
+        btnDelete.setOnAction {
             val saveFile = list.selectionModel.selectedItem
 
             fireDelete(saveFile)
@@ -597,7 +592,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         init {
             input.addEventFilter(KeyEvent.KEY_PRESSED, EventHandler { e ->
-                if (Input.isIllegal(e.getCode()))
+                if (Input.isIllegal(e.code))
                     return@EventHandler
 
                 val rebound = getInput().rebind(actionContext!!, e.code, InputModifier.from(e))
@@ -627,8 +622,8 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             text.textProperty().bind(localizedStringProperty("menu.pressAnyKey"))
 
             val pane = StackPane(rect, text)
-            pane.translateX = (getAppWidth() / 2 - 125).toDouble()
-            pane.translateY = (getAppHeight() / 2 - 50).toDouble()
+            pane.translateX = getAppWidth() / 2.0 - 125
+            pane.translateY = getAppHeight() / 2.0 - 50
 
             contentRoot.children.add(pane)
         }
@@ -752,15 +747,6 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     }
 
     /**
-     * @return menu content containing feedback options
-     */
-    protected fun createContentFeedback(): MenuContent {
-        log.debug("createContentFeedback()")
-
-        return MenuContent(VBox())
-    }
-
-    /**
      * @return menu content containing a list of achievements
      */
     protected fun createContentAchievements(): MenuContent {
@@ -773,6 +759,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             checkBox.isDisable = true
             checkBox.selectedProperty().bind(a.achievedProperty())
 
+            // TODO: re-implement tooltips using same window for better cross-platform support
             val text = getUIFactoryService().newText(a.name)
             val tooltip = Tooltip(a.description)
             tooltip.showDelay = Duration.seconds(0.1)
