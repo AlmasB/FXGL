@@ -853,7 +853,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull)
 
         btnNew.setOnAction {
-            getDisplay().showInputBox(localize("profile.new"), InputPredicates.ALPHANUM, Consumer { name ->
+            getDialogService().showInputBox(localize("profile.new"), InputPredicates.ALPHANUM, Consumer { name ->
 
 //                val task = saveLoadService.createProfileTask(name)
 //                        .onSuccess { showProfileDialog() }

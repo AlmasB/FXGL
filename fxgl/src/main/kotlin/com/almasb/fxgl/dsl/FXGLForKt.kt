@@ -58,13 +58,15 @@ fun getEventBus() = FXGL.getEventBus()
 
 fun getAudioPlayer() = FXGL.getAudioPlayer()
 
-fun getDisplay() = FXGL.getDisplay()
+fun getDialogService() = FXGL.getDialogService()
 
 fun getExecutor() = FXGL.getExecutor()
 
+fun getFileSystemService() = FXGL.getFileSystemService()
+
 fun getGameWorld() = FXGL.getGameWorld()
 
-fun getGameState() = FXGL.getGameState()
+fun getWorldProperties() = FXGL.getWorldProperties()
 
 fun getGameScene() = FXGL.getGameScene()
 
@@ -92,29 +94,29 @@ fun getSaveLoadService() = FXGL.getSaveLoadService()
 
 fun set(varName: String, value: Any) = FXGL.set(varName, value)
 
-fun geti(varName: String): Int = FXGL.getGameState().getInt(varName)
+fun geti(varName: String): Int = FXGL.getWorldProperties().getInt(varName)
 
-fun getd(varName: String): Double = FXGL.getGameState().getDouble(varName)
+fun getd(varName: String): Double = FXGL.getWorldProperties().getDouble(varName)
 
-fun getb(varName: String): Boolean = FXGL.getGameState().getBoolean(varName)
+fun getb(varName: String): Boolean = FXGL.getWorldProperties().getBoolean(varName)
 
-fun gets(varName: String): String = FXGL.getGameState().getString(varName)
+fun gets(varName: String): String = FXGL.getWorldProperties().getString(varName)
 
-fun <T> geto(varName: String): T = FXGL.getGameState().getObject(varName)
+fun <T> geto(varName: String): T = FXGL.getWorldProperties().getObject(varName)
 
-fun getip(varName: String): IntegerProperty = FXGL.getGameState().intProperty(varName)
+fun getip(varName: String): IntegerProperty = FXGL.getWorldProperties().intProperty(varName)
 
-fun getdp(varName: String): DoubleProperty = FXGL.getGameState().doubleProperty(varName)
+fun getdp(varName: String): DoubleProperty = FXGL.getWorldProperties().doubleProperty(varName)
 
-fun getbp(varName: String): BooleanProperty = FXGL.getGameState().booleanProperty(varName)
+fun getbp(varName: String): BooleanProperty = FXGL.getWorldProperties().booleanProperty(varName)
 
-fun getsp(varName: String): StringProperty = FXGL.getGameState().stringProperty(varName)
+fun getsp(varName: String): StringProperty = FXGL.getWorldProperties().stringProperty(varName)
 
-fun <T> getop(varName: String): ObjectProperty<T> = FXGL.getGameState().objectProperty(varName)
+fun <T> getop(varName: String): ObjectProperty<T> = FXGL.getWorldProperties().objectProperty(varName)
 
-fun inc(varName: String, value: Int) = FXGL.getGameState().increment(varName, value)
+fun inc(varName: String, value: Int) = FXGL.getWorldProperties().increment(varName, value)
 
-fun inc(varName: String, value: Double) = FXGL.getGameState().increment(varName, value)
+fun inc(varName: String, value: Double) = FXGL.getWorldProperties().increment(varName, value)
 
 fun image(assetName: String): Image = FXGL.getAssetLoader().loadImage(assetName)
 
@@ -192,11 +194,11 @@ fun <T : Event> onEvent(eventType: EventType<T>, eventHandler: (T) -> Unit): Sub
 
 /* DIALOGS */
 
-fun showMessage(message: String) = FXGL.getDisplay().showMessageBox(message)
+fun showMessage(message: String) = FXGL.getDialogService().showMessageBox(message)
 
-fun showMessage(message: String, callback: () -> Unit) = FXGL.getDisplay().showMessageBox(message, callback)
+fun showMessage(message: String, callback: () -> Unit) = FXGL.getDialogService().showMessageBox(message, callback)
 
-fun showConfirm(message: String, callback: (Boolean) -> Unit) = FXGL.getDisplay().showConfirmationBox(message, callback)
+fun showConfirm(message: String, callback: (Boolean) -> Unit) = FXGL.getDialogService().showConfirmationBox(message, callback)
 
 fun addUINode(node: Node) = FXGL.addUINode(node)
 
