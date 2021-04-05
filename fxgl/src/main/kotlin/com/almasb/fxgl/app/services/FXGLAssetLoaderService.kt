@@ -21,6 +21,8 @@ import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.scene.CSS
+import com.almasb.fxgl.scene3d.Model3D
+import com.almasb.fxgl.scene3d.obj.ObjModelLoader
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.texture.getDummyImage
 import com.almasb.fxgl.ui.FontFactory
@@ -46,6 +48,7 @@ private const val TEXT_DIR = ASSETS_DIR + "text/"
 private const val PROPERTIES_DIR = ASSETS_DIR + "properties/"
 private const val LEVELS_DIR = ASSETS_DIR + "levels/"
 private const val DIALOGUES_DIR = ASSETS_DIR + "dialogues/"
+private const val MODELS_DIR = ASSETS_DIR + "models/"
 
 private const val UI_DIR = ASSETS_DIR + "ui/"
 private const val CSS_DIR = UI_DIR + "css/"
@@ -94,6 +97,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
             assetData[UI] = UIAssetLoader()
             assetData[CSS] = CSSAssetLoader()
             assetData[FONT] = FontAssetLoader()
+            assetData[MODEL3D] = Model3DAssetLoader()
         }
     }
 
@@ -467,6 +471,21 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         return load(UI, UIParams(url, controller))
     }
 
+    // TODO: return copy from cache
+    /**
+     * Loads a 3D model from file with given [name] from /assets/models/.
+     */
+    fun loadModel3D(name: String): Model3D {
+        return load(MODEL3D, name)
+    }
+
+    /**
+     * Loads a 3D model from given [url].
+     */
+    fun loadModel3D(url: URL): Model3D {
+        return load(MODEL3D, url)
+    }
+
     /**
      * Load an asset as [assetType] from given [fileName] (relative to its category directory).
      * For example, to load "player.png" from "/assets/textures", the call is
@@ -791,4 +810,21 @@ private class FontAssetLoader : AssetLoader<FontFactory>(
     }
 
     override fun getDummy(): FontFactory = FontFactory(Font.font(12.0))
+}
+
+private class Model3DAssetLoader : AssetLoader<Model3D>(
+        Model3D::class.java,
+        MODELS_DIR
+) {
+    override fun load(url: URL): Model3D {
+        val isObj = url.toExternalForm().endsWith("obj")
+
+        if (isObj) {
+            return ObjModelLoader().load(url)
+        }
+
+        throw UnsupportedOperationException("Cannot load from URL: $url")
+    }
+
+    override fun getDummy(): Model3D = Model3D()
 }

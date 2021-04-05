@@ -21,5 +21,6 @@ enum class AssetType {
     PROPERTY_MAP,
     UI,
     CSS,
-    FONT
+    FONT,
+    MODEL3D
 }
