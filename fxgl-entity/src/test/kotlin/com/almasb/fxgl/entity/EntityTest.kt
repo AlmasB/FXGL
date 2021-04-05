@@ -149,22 +149,17 @@ class EntityTest {
     }
 
     @Test
-    fun `Throws when removing core component`() {
-        assertThrows(IllegalArgumentException::class.java, {
+    fun `Removing core component is ignored`() {
+        assertThat(entity.components.size, `is`(4))
+
+        assertDoesNotThrow {
             entity.removeComponent(TypeComponent::class.java)
-        })
-
-        assertThrows(IllegalArgumentException::class.java, {
             entity.removeComponent(TransformComponent::class.java)
-        })
-
-        assertThrows(IllegalArgumentException::class.java, {
             entity.removeComponent(BoundingBoxComponent::class.java)
-        })
-
-        assertThrows(IllegalArgumentException::class.java, {
             entity.removeComponent(ViewComponent::class.java)
-        })
+        }
+
+        assertThat(entity.components.size, `is`(4))
     }
 
     @Test

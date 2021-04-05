@@ -18,6 +18,7 @@ import com.almasb.fxgl.entity.components.BoundingBoxComponent;
 import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.TypeComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
+import com.almasb.fxgl.logging.Logger;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -106,6 +107,8 @@ public class Entity implements Animatable, Copyable<Entity> {
             return (T) method.invoke(component, args);
         }
     }
+
+    private static final Logger log = Logger.get(Entity.class);
 
     private PropertyMap properties = new PropertyMap();
     private ComponentMap components = new ComponentMap();
@@ -412,9 +415,12 @@ public class Entity implements Animatable, Copyable<Entity> {
         if (!hasComponent(type))
             return false;
 
-        checkNotUpdating();
+        if (isCoreComponent(type)) {
+            log.warning("Removing a core component: " + type + " is not allowed. Ignoring");
+            return false;
+        }
 
-        checkNotCore(type);
+        checkNotUpdating();
 
         checkNotRequiredByAny(type);
 
@@ -521,13 +527,6 @@ public class Entity implements Animatable, Copyable<Entity> {
     private void checkNotUpdating() {
         if (isUpdating)
             throw new IllegalStateException("Cannot add / remove components during updating");
-    }
-
-    private void checkNotCore(Class<? extends Component> type) {
-        if (isCoreComponent(type)) {
-            // this is not allowed by design, hence throw
-            throw new IllegalArgumentException("Removing a core component: " + type + " is not allowed");
-        }
     }
 
     private boolean isCoreComponent(Class<? extends Component> type) {
