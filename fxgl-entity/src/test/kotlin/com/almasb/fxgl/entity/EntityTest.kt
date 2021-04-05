@@ -785,6 +785,13 @@ class EntityTest {
         entity.rotation = 15.0
         assertThat(entity.rotation, `is`(15.0))
         assertThat(entity.transformComponent.angle, `is`(15.0))
+        assertThat(entity.rotationZProperty().value, `is`(15.0))
+
+        entity.rotationXProperty().value = 35.0
+        entity.rotationYProperty().value = -35.0
+
+        assertThat(entity.rotationXProperty().value, `is`(35.0))
+        assertThat(entity.rotationYProperty().value, `is`(-35.0))
     }
 
     @Test
@@ -868,6 +875,7 @@ class EntityTest {
 
         assertThat(entity.opacity, `is`(0.5))
         assertThat(entity.viewComponent.opacity, `is`(0.5))
+        assertThat(entity.opacityProperty().value, `is`(0.5))
 
         entity.isVisible = false
         
@@ -880,14 +888,17 @@ class EntityTest {
         entity.scaleX = 2.0
         assertThat(entity.scaleX, `is`(2.0))
         assertThat(entity.transformComponent.scaleX, `is`(2.0))
+        assertThat(entity.scaleXProperty().value, `is`(2.0))
 
         entity.scaleY = 1.5
         assertThat(entity.scaleY, `is`(1.5))
         assertThat(entity.transformComponent.scaleY, `is`(1.5))
+        assertThat(entity.scaleYProperty().value, `is`(1.5))
 
         entity.scaleZ = 1.3
         assertThat(entity.scaleZ, `is`(1.3))
         assertThat(entity.transformComponent.scaleZ, `is`(1.3))
+        assertThat(entity.scaleZProperty().value, `is`(1.3))
 
         entity.setScaleUniform(0.5)
         assertThat(entity.scaleX, `is`(0.5))
