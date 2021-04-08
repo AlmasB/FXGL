@@ -177,7 +177,7 @@ class ObjModelLoader : Model3DLoader {
                     for ((condition, action) in objParsers) {
                         if (condition.invoke(line) ) {
                             // drop identifier
-                            val tokens = line.split(" +".toRegex()).drop(1)
+                            val tokens = line.trim().split(" +".toRegex()).drop(1)
 
                             action.invoke(tokens, data)
                             break
@@ -211,6 +211,8 @@ class ObjModelLoader : Model3DLoader {
         }
     }
 
+    // TODO: smoothing groups
+    // TODO: mtl textures
     override fun load(url: URL): Model3D {
         try {
             val data = loadObjData(url)
@@ -245,8 +247,6 @@ class ObjModelLoader : Model3DLoader {
                             mesh.normals.addAll(*FloatArray(3) { _ -> 0.0f })
                         } else {
                             mesh.normals.addAll(*data.vertexNormals.toFloatArray())
-
-                            println("normals")
                         }
 
                         mesh.faces.addAll(*it.faces.toIntArray())
@@ -256,8 +256,6 @@ class ObjModelLoader : Model3DLoader {
                         view.cullFace = CullFace.NONE
 
                         //subGroupRoot.children.addAll(view)
-
-                        println("adding view: ${mesh.faces}")
 
                         groupRoot.addMeshView(view)
                     }

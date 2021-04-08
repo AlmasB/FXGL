@@ -18,6 +18,7 @@ import java.util.stream.IntStream
 /**
  * TODO: clean up API and add doc
  * TODO: scale(Point3D), which modifies the mesh, not scaleXYZ
+ * TODO: allow setting which way is up, e.g. Z-up
  *
  * A container for one or more [javafx.scene.shape.MeshView].
  *
@@ -37,9 +38,11 @@ open class Model3D : Group() {
     val meshViews = arrayListOf<MeshView>()
 
     val vertices: List<CustomShape3D.MeshVertex> by lazy {
-        meshViews.map { it.mesh }.flatMap {
+        val list = meshViews.map { it.mesh }.flatMap {
             toVertices(it as TriangleMesh)
         }
+
+        list + models.flatMap { it.vertices }
     }
 
     private fun toVertices(mesh: TriangleMesh): List<CustomShape3D.MeshVertex> {
