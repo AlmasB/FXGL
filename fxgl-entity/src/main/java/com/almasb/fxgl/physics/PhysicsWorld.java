@@ -55,6 +55,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     // stores active collisions
     private UnorderedPairMap<Entity, CollisionPair> collisionsMap = new UnorderedPairMap<>(128);
 
+    private CollisionDetectionStrategy strategy;
+
     private int appHeight;
 
     public PhysicsWorld(int appHeight, double ppm) {
@@ -63,6 +65,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
     public PhysicsWorld(int appHeight, double ppm, CollisionDetectionStrategy strategy) {
         this.appHeight = appHeight;
+        this.strategy = strategy;
 
         PIXELS_PER_METER = ppm;
         METERS_PER_PIXELS = 1 / PIXELS_PER_METER;
@@ -335,6 +338,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     private Array<Entity> collidables = new UnorderedArray<>(128);
     private CollisionResult collisionResult = new CollisionResult();
 
+    private CollisionGrid collisionGrid = new CollisionGrid(64, 64);
+
     /**
      * Perform collision detection for all entities that have
      * setCollidable(true) and if at least one entity does not have PhysicsComponent.
@@ -342,16 +347,32 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
      * setCollidable(true).
      */
     private void checkCollisions() {
-        for (Entity e : entities) {
-            if (isCollidable(e)) {
-                e.getBoundingBoxComponent().applyTransformToHitBoxes$fxgl_entity();
-                collidables.add(e);
+        if (strategy == CollisionDetectionStrategy.GRID_INDEXING) {
+            for (Entity e : entities) {
+                if (isCollidable(e)) {
+                    e.getBoundingBoxComponent().applyTransformToHitBoxes$fxgl_entity();
+                    collisionGrid.insert(e);
+                }
             }
+
+            collisionGrid.getCells().forEach((p, cell) -> {
+                checkCollisionsInGroup(cell.getEntities());
+            });
+
+            collisionGrid.getCells().clear();
+
+        } else {
+            for (Entity e : entities) {
+                if (isCollidable(e)) {
+                    e.getBoundingBoxComponent().applyTransformToHitBoxes$fxgl_entity();
+                    collidables.add(e);
+                }
+            }
+
+            checkCollisionsInGroup(collidables);
+
+            collidables.clear();
         }
-
-        checkCollisionsInGroup(collidables);
-
-        collidables.clear();
     }
 
     private void checkCollisionsInGroup(Array<Entity> group) {

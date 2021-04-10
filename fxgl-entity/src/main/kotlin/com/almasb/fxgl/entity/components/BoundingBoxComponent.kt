@@ -40,6 +40,7 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
      * Contains all hit boxes (collision bounding boxes) for this entity.
      */
     private val hitBoxes = FXCollections.observableArrayList<HitBox>()
+    private val hitBoxesReadOnly by lazy { FXCollections.unmodifiableObservableList(hitBoxes) }
 
     private val width = ReadOnlyDoubleWrapper()
     private val height = ReadOnlyDoubleWrapper()
@@ -183,7 +184,7 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
      * @return unmodifiable list of hit boxes
      */
     fun hitBoxesProperty(): ObservableList<HitBox> {
-        return FXCollections.unmodifiableObservableList(hitBoxes)
+        return hitBoxesReadOnly
     }
 
     /**
