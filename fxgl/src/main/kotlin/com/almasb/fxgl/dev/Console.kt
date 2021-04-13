@@ -181,7 +181,7 @@ class Console : Pane() {
         val varName = params[0]
         val varValue = params[1]
 
-        val gameState = FXGL.getGameState()
+        val gameState = FXGL.getWorldProperties()
 
         if (gameState.exists(varName)) {
 //            val varType = gameState.properties.get(varName)

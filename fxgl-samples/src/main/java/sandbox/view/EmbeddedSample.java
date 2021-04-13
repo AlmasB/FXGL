@@ -21,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -54,10 +55,26 @@ public class EmbeddedSample extends Application {
         root.setRight(new Text("RIGHT"));
 
         var fxglRoot = GameApplication.embeddedLaunch(new MyGame());
+        fxglRoot.setTranslateX(40);
+//        fxglRoot.widthProperty().addListener((observable, oldValue, newValue) -> {
+//
+//            if (newValue.doubleValue() < 700) {
+//                fxglRoot.setRenderWidth(newValue.doubleValue());
+//            }
+//
+//            System.out.println(newValue);
+//        });
 
         root.setCenter(fxglRoot);
 
-        stage.setScene(new Scene(root));
+        var scene = new Scene(root);
+
+        scene.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            fxglRoot.setRenderWidth(600);
+            fxglRoot.setRenderHeight(500);
+        });
+
+        stage.setScene(scene);
         stage.show();
     }
 
@@ -71,6 +88,8 @@ public class EmbeddedSample extends Application {
     }
 
     public class MyGame extends GameApplication {
+
+        private Text textPos;
 
         @Override
         protected void initSettings(GameSettings settings) {
@@ -95,7 +114,20 @@ public class EmbeddedSample extends Application {
 
             spawn("player");
 
-            run(this::spawnCrystal, Duration.seconds(3));
+            //run(this::spawnCrystal, Duration.seconds(3));
+        }
+
+        @Override
+        protected void initUI() {
+            textPos = new Text();
+            textPos.setFill(Color.WHITE);
+
+            addUINode(textPos, 20, 80);
+        }
+
+        @Override
+        protected void onUpdate(double tpf) {
+            textPos.setText(getInput().getMousePositionWorld() + "");
         }
 
         private void spawnCrystal() {

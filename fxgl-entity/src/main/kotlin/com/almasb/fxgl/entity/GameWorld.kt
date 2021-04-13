@@ -60,6 +60,8 @@ class GameWorld {
     val entitiesCopy: List<Entity>
         get(): List<Entity> = ArrayList(entities)
 
+    private val pool = EntityPool()
+
     init {
         log.debug("Game world initialized")
     }
@@ -70,7 +72,10 @@ class GameWorld {
      * @param entity the entity to add to world
      */
     fun addEntity(entity: Entity) {
-        require(!entity.isActive) { "Entity is already attached to world" }
+        if (entity.isActive) {
+            log.warning("Entity is already attached to world")
+            return
+        }
 
         if (entity.isEverUpdated)
             waitingList.add(entity)
@@ -105,12 +110,22 @@ class GameWorld {
         if (!canRemove(entity))
             return
 
-        require(entity.world === this) { "Attempted to remove entity not attached to this world" }
+        if (entity.world !== this) {
+            log.warning("Attempted to remove entity not attached to this world")
+            return
+        }
 
         entities.remove(entity)
 
         entity.markForRemoval()
         notifyEntityRemoved(entity)
+
+        if (entity.isReusable) {
+            // if spawnName is not present, then the user must be maintaining this entity manually
+            entity.getPropertyOptional<String>("spawnName").ifPresent { spawnName ->
+                pool.put(spawnName, entity)
+            }
+        }
 
         // we cannot clean entities here because this may have been called through a component
         // while entity is being updated
@@ -397,13 +412,20 @@ class GameWorld {
         val spawner = entitySpawners.get(entityName)
                 ?: throw IllegalArgumentException("No EntityFactory has a method annotated @Spawns($entityName)")
 
+        val pooledEntity = pool.take(entityName)
+        if (pooledEntity != null) {
+            pooledEntity.setPosition3D(data.x, data.y, data.z)
+
+            // TODO: also parse data?
+
+            return pooledEntity
+        }
+
         if (!data.hasKey("type")) {
             data.put("type", entityName)
         }
 
-//        if (entityPreloader.isPreloadingEnabled(entityName)) {
-//            return entityPreloader.obtain(entityName, data)
-//        }
+        data.put("spawnName", entityName)
 
         return tryCatchRoot { spawner.apply(data) }
     }

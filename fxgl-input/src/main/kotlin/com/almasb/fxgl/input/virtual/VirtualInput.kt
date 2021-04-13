@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.input.virtual
 
+import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.input.Input
 import javafx.beans.binding.Bindings
 import javafx.beans.property.ReadOnlyObjectProperty
@@ -21,6 +22,7 @@ import javafx.scene.shape.*
 import javafx.scene.text.Font
 import javafx.scene.text.Text
 import java.util.concurrent.Callable
+import kotlin.math.min
 
 private const val ARROW_CIRCLE_SIZE = 25.0*2;
 
@@ -131,7 +133,20 @@ abstract class VirtualJoystick(private val input: Input) : Parent() {
      */
     abstract val center: Point2D
 
+    /**
+     * Max distance from [center] to the joystick edge.
+     */
+    protected abstract val maxDistance: Double
+
+    /**
+     * Affects the magnitude of the [vectorWithForce].
+     * The force will be close to [maxForce] at the edge of the joystick and
+     * close to 0.0 at [center].
+     */
+    var maxForce = 1.0
+
     private val vectorProp = ReadOnlyObjectWrapper(Point2D.ZERO)
+    private val vectorWithForceProp = ReadOnlyObjectWrapper(Point2D.ZERO)
 
     init {
         val vectorObservable = Bindings.createObjectBinding(Callable {
@@ -139,21 +154,46 @@ abstract class VirtualJoystick(private val input: Input) : Parent() {
             input.mousePositionUI.subtract(center.add(translateX, translateY)).normalize()
         }, input.mouseXUIProperty(), input.mouseYUIProperty())
 
+        val vectorWithForceObservable = Bindings.createObjectBinding(Callable {
+
+            val v = input.mousePositionUI.subtract(center.add(translateX, translateY))
+
+            val dist = min(v.magnitude(), maxDistance)
+
+            val distAdjusted = FXGLMath.map(dist, 0.0, maxDistance, 0.0, maxForce)
+
+            v.normalize().multiply(distAdjusted)
+
+        }, input.mouseXUIProperty(), input.mouseYUIProperty())
+
         vectorProp.bind(
                 Bindings.`when`(pressedProperty())
                         .then(vectorObservable)
                         .otherwise(Point2D.ZERO)
         )
+
+        vectorWithForceProp.bind(
+                Bindings.`when`(pressedProperty())
+                        .then(vectorWithForceObservable)
+                        .otherwise(Point2D.ZERO)
+        )
     }
 
     /**
-     * Vector from the center point to user pointer.
+     * Normalized vector from the center point to user pointer.
      * Returns (0,0) if the user pointer is outside the joystick.
      */
     val vector: Point2D
         get() = vectorProp.value
 
+    /**
+     * @return vector from the center point to user pointer with [maxForce] being applied based on distance
+     */
+    val vectorWithForce: Point2D
+        get() = vectorWithForceProp.value
+
     fun vectorProperty(): ReadOnlyObjectProperty<Point2D> = vectorProp.readOnlyProperty
+    fun vectorWithForceProperty(): ReadOnlyObjectProperty<Point2D> = vectorWithForceProp.readOnlyProperty
 }
 
 /**
@@ -163,6 +203,9 @@ class FXGLVirtualJoystick(input: Input) : VirtualJoystick(input) {
 
     override val center: Point2D
         get() = Point2D(100.0, 100.0)
+
+    override val maxDistance: Double
+        get() = 100.0
 
     init {
         val outerCircle = Circle(100.0, 100.0, 100.0, Color.color(0.5, 0.5, 0.5, 0.3))

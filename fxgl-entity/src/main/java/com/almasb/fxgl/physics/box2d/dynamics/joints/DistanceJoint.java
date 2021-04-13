@@ -75,8 +75,8 @@ public class DistanceJoint extends Joint {
 
     protected DistanceJoint(IWorldPool argWorld, final DistanceJointDef def) {
         super(argWorld, def);
-        m_localAnchorA = def.localAnchorA.clone();
-        m_localAnchorB = def.localAnchorB.clone();
+        m_localAnchorA = def.localAnchorA.copy();
+        m_localAnchorB = def.localAnchorB.copy();
         m_length = def.length;
         m_impulse = 0.0f;
         m_frequencyHz = def.frequencyHz;

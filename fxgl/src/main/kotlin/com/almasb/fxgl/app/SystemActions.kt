@@ -32,7 +32,7 @@ object SystemActions {
      * Binds system actions to keys and registers with the [input] service.
      */
     fun bind(input: Input) {
-        input.addAction(screenshot(), KeyCode.P)
+        input.addAction(screenshot(), KeyCode.DIGIT8, InputModifier.CTRL)
 
         if (FXGL.getSettings().applicationMode != ApplicationMode.RELEASE) {
             if (FXGL.getSettings().isDeveloperMenuEnabled) {

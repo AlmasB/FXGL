@@ -93,8 +93,8 @@ public class PongApp extends GameApplication {
         textScore2.setTranslateX(getAppWidth() - 30);
         textScore2.setTranslateY(50);
 
-        textScore1.textProperty().bind(getGameState().intProperty("score1").asString());
-        textScore2.textProperty().bind(getGameState().intProperty("score2").asString());
+        textScore1.textProperty().bind(getWorldProperties().intProperty("score1").asString());
+        textScore2.textProperty().bind(getWorldProperties().intProperty("score2").asString());
 
         getGameScene().addUINodes(textScore1, textScore2);
     }
@@ -117,12 +117,12 @@ public class PongApp extends GameApplication {
         }
 
         if (ball.getX() <= 0) {
-            getGameState().increment("score2", +1);
+            getWorldProperties().increment("score2", +1);
             resetBall();
         }
 
         if (ball.getRightX() >= getAppWidth()) {
-            getGameState().increment("score1", +1);
+            getWorldProperties().increment("score1", +1);
             resetBall();
         }
 

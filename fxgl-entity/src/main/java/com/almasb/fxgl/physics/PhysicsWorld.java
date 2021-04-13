@@ -7,6 +7,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
+import com.almasb.fxgl.core.collection.UnorderedPairMap;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.core.pool.Pools;
@@ -49,9 +50,12 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
     private Array<Entity> entities = new UnorderedArray<>(128);
 
-    private Array<CollisionHandler> collisionHandlers = new UnorderedArray<>(16);
+    private UnorderedPairMap<Object, CollisionHandler> collisionHandlers = new UnorderedPairMap<>(16);
 
-    private CollisionPairMap collisionsMap = new CollisionPairMap(128);
+    // stores active collisions
+    private UnorderedPairMap<Entity, CollisionPair> collisionsMap = new UnorderedPairMap<>(128);
+
+    private CollisionDetectionStrategy strategy;
 
     private int appHeight;
 
@@ -61,6 +65,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
     public PhysicsWorld(int appHeight, double ppm, CollisionDetectionStrategy strategy) {
         this.appHeight = appHeight;
+        this.strategy = strategy;
 
         PIXELS_PER_METER = ppm;
         METERS_PER_PIXELS = 1 / PIXELS_PER_METER;
@@ -311,13 +316,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
         if (!e1.isActive() || !e2.isActive())
             return null;
 
-        for (CollisionHandler handler : collisionHandlers) {
-            if (handler.equal(e1.getType(), e2.getType())) {
-                return handler;
-            }
-        }
-
-        return null;
+        return collisionHandlers.get(e1.getType(), e2.getType());
     }
 
     private void notifySensorCollisionBegin(Entity eWithSensor, Entity eTriggered, HitBox box) {
@@ -339,6 +338,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     private Array<Entity> collidables = new UnorderedArray<>(128);
     private CollisionResult collisionResult = new CollisionResult();
 
+    private CollisionGrid collisionGrid = new CollisionGrid(64, 64);
+
     /**
      * Perform collision detection for all entities that have
      * setCollidable(true) and if at least one entity does not have PhysicsComponent.
@@ -346,16 +347,32 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
      * setCollidable(true).
      */
     private void checkCollisions() {
-        for (Entity e : entities) {
-            if (isCollidable(e)) {
-                e.getBoundingBoxComponent().applyTransformToHitBoxes$fxgl_entity();
-                collidables.add(e);
+        if (strategy == CollisionDetectionStrategy.GRID_INDEXING) {
+            for (Entity e : entities) {
+                if (isCollidable(e)) {
+                    e.getBoundingBoxComponent().applyTransformToHitBoxes$fxgl_entity();
+                    collisionGrid.insert(e);
+                }
             }
+
+            collisionGrid.getCells().forEach((p, cell) -> {
+                checkCollisionsInGroup(cell.getEntities());
+            });
+
+            collisionGrid.getCells().clear();
+
+        } else {
+            for (Entity e : entities) {
+                if (isCollidable(e)) {
+                    e.getBoundingBoxComponent().applyTransformToHitBoxes$fxgl_entity();
+                    collidables.add(e);
+                }
+            }
+
+            checkCollisionsInGroup(collidables);
+
+            collidables.clear();
         }
-
-        checkCollisionsInGroup(collidables);
-
-        collidables.clear();
     }
 
     private void checkCollisionsInGroup(Array<Entity> group) {
@@ -381,7 +398,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
                     continue;
 
                 // check if colliding
-                var collision = e1.getBoundingBoxComponent().checkCollision(e2.getBoundingBoxComponent(), collisionResult);
+                var collision = e1.getBoundingBoxComponent().checkCollisionPAT(e2.getBoundingBoxComponent(), collisionResult);
 
                 if (collision) {
                     collisionBeginFor(handler, e1, e2, collisionResult.getBoxA(), collisionResult.getBoxB());
@@ -425,7 +442,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
             pair.init(e1, e2, handler);
 
             // add pair to list of collisions so we still use it
-            collisionsMap.put(pair);
+            collisionsMap.put(pair.getA(), pair.getB(), pair);
 
             handler.onHitBoxTrigger(
                     pair.getA(), pair.getB(),
@@ -443,7 +460,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
         // and remove it and put pair back to pool
         // if null then collision was not present before either
         if (pair != null) {
-            collisionsMap.remove(pair);
+            collisionsMap.remove(pair.getA(), pair.getB());
 
             pair.collisionEnd();
             Pools.free(pair);
@@ -494,7 +511,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
      * @param handler collision handler
      */
     public void addCollisionHandler(CollisionHandler handler) {
-        collisionHandlers.add(handler);
+        collisionHandlers.put(handler.getA(), handler.getB(), handler);
     }
 
     /**
@@ -503,7 +520,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
      * @param handler collision handler to remove
      */
     public void removeCollisionHandler(CollisionHandler handler) {
-        collisionHandlers.removeValueByIdentity(handler);
+        collisionHandlers.remove(handler.getA(), handler.getB());
     }
 
     /**

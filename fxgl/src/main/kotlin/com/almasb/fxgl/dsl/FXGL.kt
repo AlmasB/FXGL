@@ -31,7 +31,9 @@ import com.almasb.fxgl.entity.level.tiled.TMXLevelLoader
 import com.almasb.fxgl.event.EventBusService
 import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.input.Input
+import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.UserAction
+import com.almasb.fxgl.input.virtual.VirtualButton
 import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.logging.Logger
@@ -199,9 +201,6 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getDevService() = engine.getService(DevService::class.java)
 
-    @Deprecated("Use getUIFactoryService()")
-    @JvmStatic fun getUIFactory() = engine.getService(UIFactoryService::class.java)
-
     @JvmStatic fun getUIFactoryService() = engine.getService(UIFactoryService::class.java)
 
     @JvmStatic fun getDialogFactoryService() = engine.getService(DialogFactoryService::class.java)
@@ -212,15 +211,9 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getAudioPlayer() = engine.getService(AudioPlayer::class.java)
 
-    @Deprecated("Use getDialogService()", replaceWith = ReplaceWith("getDialogService()"))
-    @JvmStatic fun getDisplay(): DialogService = getDialogService()
-
     @JvmStatic fun getDialogService() = engine.getService(DialogService::class.java)
 
     @JvmStatic fun getExecutor(): Executor = Async
-
-    @Deprecated("Use getFileSystemService()")
-    @JvmStatic fun getFS() = engine.getService(FileSystemService::class.java)
 
     @JvmStatic fun getFileSystemService() = engine.getService(FileSystemService::class.java)
 
@@ -250,9 +243,6 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun tpf() = engine.tpf
 
     @JvmStatic fun cpuNanoTime() = engine.cpuNanoTime
-
-    @Deprecated("Use getWorldProperties()", replaceWith = ReplaceWith("getWorldProperties()"))
-    @JvmStatic fun getGameState() = getWorldProperties()
 
     @JvmStatic fun getGameWorld() = getGameScene().gameWorld
     @JvmStatic fun getWorldProperties() = getGameScene().gameWorld.properties
@@ -726,15 +716,31 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun eventBuilder() = EventBuilder()
 
-    @JvmStatic fun onKeyBuilder(key: KeyCode) = KeyInputBuilder(getInput(), key)
+    @JvmStatic fun onKeyBuilder(
+            key: KeyCode,
+            name: String) = KeyInputBuilder(getInput(), key, InputModifier.NONE, name)
+
+    @JvmStatic @JvmOverloads fun onKeyBuilder(
+            key: KeyCode,
+            modifier: InputModifier = InputModifier.NONE) = KeyInputBuilder(getInput(), key, modifier)
+
+    @JvmStatic fun onKeyBuilder(
+            key: KeyCode,
+            virtualButton: VirtualButton) = KeyInputBuilder(getInput(), key, virtualBtn = virtualButton)
+
+    @JvmStatic fun onKeyBuilder(
+            key: KeyCode,
+            modifier: InputModifier,
+            virtualButton: VirtualButton) = KeyInputBuilder(getInput(), key, modifier, virtualButton)
 
     /**
      * Key builder for custom input.
      * Note: for onAction() to work, [input.update()] needs to be called.
      */
-    @JvmStatic fun onKeyBuilder(input: Input, key: KeyCode) = KeyInputBuilder(input, key)
-
-    @JvmStatic fun onKeyBuilder(key: KeyCode, name: String) = KeyInputBuilder(getInput(), key, name)
+    @JvmStatic @JvmOverloads fun onKeyBuilder(
+            input: Input,
+            key: KeyCode,
+            modifier: InputModifier = InputModifier.NONE) = KeyInputBuilder(input, key, modifier)
 }
 }
 

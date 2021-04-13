@@ -182,7 +182,7 @@ class MainUI : BorderPane() {
     }
 
     private fun openNewDialog() {
-        getDisplay().showInputBox("New dialogue name", { isValidName(it) }, { name ->
+        getDialogService().showInputBox("New dialogue name", { isValidName(it) }, { name ->
             val tab = DialogueTab(File("$name.json"), DialoguePane())
 
             tabPane.tabs += tab

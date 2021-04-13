@@ -6,6 +6,7 @@
 package com.almasb.fxgl.physics.box2d.common;
 
 import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.core.math.Vec3;
 
 import java.io.Serializable;
 
@@ -17,13 +18,9 @@ import java.io.Serializable;
 public final class Mat33 implements Serializable {
     private static final long serialVersionUID = 2L;
 
-    public final Vec3 ex, ey, ez;
-
-    public Mat33() {
-        ex = new Vec3();
-        ey = new Vec3();
-        ez = new Vec3();
-    }
+    public final Vec3 ex = new Vec3();
+    public final Vec3 ey = new Vec3();
+    public final Vec3 ez = new Vec3();
 
     public static void mul22ToOutUnsafe(Mat33 A, Vec2 v, Vec2 out) {
         assert v != out;
@@ -60,16 +57,16 @@ public final class Mat33 implements Serializable {
      */
     public void solve33ToOut(Vec3 b, Vec3 out) {
         assert b != out;
-        Vec3.crossToOutUnsafe(ey, ez, out);
+        crossToOutUnsafe(ey, ez, out);
         float det = Vec3.dot(ex, out);
         if (det != 0.0f) {
             det = 1.0f / det;
         }
-        Vec3.crossToOutUnsafe(ey, ez, out);
+        crossToOutUnsafe(ey, ez, out);
         final float x = det * Vec3.dot(b, out);
-        Vec3.crossToOutUnsafe(b, ez, out);
+        crossToOutUnsafe(b, ez, out);
         final float y = det * Vec3.dot(ex, out);
-        Vec3.crossToOutUnsafe(ey, b, out);
+        crossToOutUnsafe(ey, b, out);
         float z = det * Vec3.dot(ex, out);
         out.x = x;
         out.y = y;
@@ -148,5 +145,13 @@ public final class Mat33 implements Serializable {
             return false;
 
         return true;
+    }
+
+    private static void crossToOutUnsafe(Vec3 a, Vec3 b, Vec3 out) {
+        assert out != b;
+        assert out != a;
+        out.x = a.y * b.z - a.z * b.y;
+        out.y = a.z * b.x - a.x * b.z;
+        out.z = a.x * b.y - a.y * b.x;
     }
 }

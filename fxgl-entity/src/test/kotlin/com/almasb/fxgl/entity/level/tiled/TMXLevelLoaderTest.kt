@@ -162,6 +162,32 @@ class TMXLevelLoaderTest {
         assertThat(text4.getObject<Color>("color"), `is`(Color.rgb(0, 0, 0)))
     }
 
+    @Test
+    fun `Load tmx level with flipped tiles`() {
+        val world = GameWorld()
+        world.addEntityFactory(MyTextObjectFactory())
+
+        val level = TMXLevelLoader().load(javaClass.getResource("map_with_flipped_tiles.tmx"), world)
+
+        val layerEntity = level.entities[0]
+
+        val view = layerEntity.viewComponent.children[0] as ImageView
+
+        // Horizontally-flipped
+        assertThat(view.image.pixelReader.getColor(0,0), `is`((Color.TRANSPARENT)))
+        assertThat(view.image.pixelReader.getColor(0,15), `is`((Color.BLACK)))
+
+        assertThat(view.image.pixelReader.getColor(16,0), `is`((Color.BLACK)))
+        assertThat(view.image.pixelReader.getColor(16,15), `is`((Color.TRANSPARENT)))
+
+        // Vertically-flipped
+        assertThat(view.image.pixelReader.getColor(0,16), `is`((Color.TRANSPARENT)))
+        assertThat(view.image.pixelReader.getColor(15,16), `is`((Color.BLACK)))
+
+        assertThat(view.image.pixelReader.getColor(16,16), `is`((Color.BLACK)))
+        assertThat(view.image.pixelReader.getColor(31,16), `is`((Color.TRANSPARENT)))
+    }
+
     @ParameterizedTest
     @CsvSource("sewers_v1_1_2.tmx", "sewers_v1_2_3.tmx")
     fun parse(mapName: String) {
@@ -202,7 +228,7 @@ class TMXLevelLoaderTest {
 
         val layer1data = Files.readAllLines(Paths.get(javaClass.getResource("sewers_data.txt").toURI()))[0]
                 .split(", ")
-                .map { it.toInt() }
+                .map { it.toLong() }
 
         assertThat(layer1.data, `is`(layer1data))
 
@@ -215,7 +241,7 @@ class TMXLevelLoaderTest {
 
         val layer2data = Files.readAllLines(Paths.get(javaClass.getResource("sewers_data.txt").toURI()))[1]
                 .split(", ")
-                .map { it.toInt() }
+                .map { it.toLong() }
 
         assertThat(layer2.data, `is`(layer2data))
 

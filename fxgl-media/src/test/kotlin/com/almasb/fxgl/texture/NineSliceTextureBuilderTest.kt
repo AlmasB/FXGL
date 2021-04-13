@@ -78,21 +78,6 @@ class NineSliceTextureBuilderTest {
         assertThat("Colors of shrunken texture do not match with expected!", matchPixels(generatedTexture, targetTexture))
     }
 
-    private fun matchPixels(tex1: Texture, tex2: Texture): Boolean {
-        val pixels1 = tex1.pixels()
-        val pixels2 = tex2.pixels()
-        (pixels1.indices).forEach { x ->
-            val pixel1 = pixels1[x]
-            val pixel2 = pixels2[x]
-            if (pixel1.x != pixel2.x || pixel1.y != pixel2.y // Pixel Coordinates
-                    || pixel1.A != pixel2.A || pixel1.B != pixel2.B || pixel1.G != pixel2.G || pixel1.R != pixel2.R // Pixel RGB A
-                    || pixel1.color != pixel2.color) { // Pixel Colors
-                return false
-            }
-        }
-        return true
-    }
-
     private fun createBuilder(texture: Texture): NineSliceTextureBuilder {
 
         return NineSliceTextureBuilder(texture)
@@ -106,4 +91,19 @@ class NineSliceTextureBuilderTest {
                 .botRight(Rectangle2D(473.0, 473.0, 52.0, 52.0))
                 .bot(Rectangle2D(53.0, 473.0, 420.0, 52.0))
     }
+}
+
+internal fun matchPixels(tex1: Texture, tex2: Texture): Boolean {
+    val pixels1 = tex1.pixels()
+    val pixels2 = tex2.pixels()
+    (pixels1.indices).forEach { x ->
+        val pixel1 = pixels1[x]
+        val pixel2 = pixels2[x]
+        if (pixel1.x != pixel2.x || pixel1.y != pixel2.y // Pixel Coordinates
+                || pixel1.A != pixel2.A || pixel1.B != pixel2.B || pixel1.G != pixel2.G || pixel1.R != pixel2.R // Pixel RGB A
+                || pixel1.color != pixel2.color) { // Pixel Colors
+            return false
+        }
+    }
+    return true
 }

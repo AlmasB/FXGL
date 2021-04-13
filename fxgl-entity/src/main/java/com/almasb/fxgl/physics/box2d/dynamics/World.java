@@ -451,7 +451,7 @@ public final class World {
             // Post solve cleanup.
             for (int i = 0; i < island.m_bodyCount; ++i) {
                 // Allow static bodies to participate in other islands.
-                Body b = island.m_bodies[i];
+                Body b = island.getBody(i);
                 if (b.getType() == BodyType.STATIC) {
                     b.m_flags &= ~Body.e_islandFlag;
                 }
@@ -739,7 +739,7 @@ public final class World {
 
             // Reset island flags and synchronize broad-phase proxies.
             for (int i = 0; i < island.m_bodyCount; ++i) {
-                Body body = island.m_bodies[i];
+                Body body = island.getBody(i);
                 body.m_flags &= ~Body.e_islandFlag;
 
                 if (body.getType() != BodyType.DYNAMIC) {

@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.core.serialization.Bundle
@@ -40,46 +40,42 @@ class TransformComponentTest {
         assertThat(c.toString(), `is`("Transform(100.0, 100.0, 30.0, 2.0, 2.0)"))
     }
 
-    //
-//    @Test
-//    fun `Creation`() {
-//        val rot1 = RotationComponent(35.0)
-//
-//        assertThat(rot1.value, `is`(35.0))
-//    }
-//
-//    @Test
-//    fun `Copy`() {
-//        val rot1 = RotationComponent(35.0)
-//        val rot2 = rot1.copy()
-//
-//        assertThat(rot2.value, `is`(35.0))
-//        assertTrue(rot1 !== rot2)
-//    }
-//
-//    @Test
-//    fun `Rotation`() {
-//        val rot1 = RotationComponent(35.0)
-//
-//        rot1.rotateBy(30.0)
-//        assertThat(rot1.value, `is`(65.0))
-//
-//        rot1.rotateBy(-65.0)
-//        assertThat(rot1.value, `is`(0.0))
-//
-//        rot1.rotateToVector(Point2D(-1.0, 0.0))
-//        assertThat(rot1.value, `is`(180.0))
-//
-//        rot1.rotateToVector(Point2D(1.0, 0.0))
-//        assertThat(rot1.value, `is`(0.0))
-//
-//        rot1.rotateToVector(Point2D(0.0, -1.0))
-//        assertThat(rot1.value, `is`(-90.0))
-//
-//        rot1.rotateToVector(Point2D(0.0, 1.0))
-//        assertThat(rot1.value, `is`(90.0))
-//    }
-//
+    @Test
+    fun `Rotations`() {
+        val c = TransformComponent()
+
+        assertThat(c.rotationX, `is`(0.0))
+        assertThat(c.rotationY, `is`(0.0))
+        assertThat(c.rotationZ, `is`(0.0))
+
+        // rotate along X by -25.0
+        c.lookDownBy(25.0)
+
+        assertThat(c.rotationX, `is`(-25.0))
+        assertThat(c.rotationY, `is`(0.0))
+        assertThat(c.rotationZ, `is`(0.0))
+
+        // rotate along Y by -35.0
+        c.lookLeftBy(35.0)
+
+        assertThat(c.rotationX, `is`(-25.0))
+        assertThat(c.rotationY, `is`(-35.0))
+        assertThat(c.rotationZ, `is`(0.0))
+
+        // rotate along X by 10.0
+        c.lookUpBy(10.0)
+
+        assertThat(c.rotationX, `is`(-15.0))
+        assertThat(c.rotationY, `is`(-35.0))
+        assertThat(c.rotationZ, `is`(0.0))
+
+        // rotate along Y by 50.0
+        c.lookRightBy(50.0)
+
+        assertThat(c.rotationX, `is`(-15.0))
+        assertThat(c.rotationY, `is`(15.0))
+        assertThat(c.rotationZ, `is`(0.0))
+    }
 
     private fun areEqual(t1: TransformComponent, t2: TransformComponent): Boolean {
         return t1.x == t2.x && t1.y == t2.y

@@ -20,17 +20,6 @@ public final class Mat22 implements Serializable {
     public final Vec2 ey = new Vec2();
 
     /**
-     * Return a clone of this matrix.
-     */
-    @Override
-    public Mat22 clone() {
-        Mat22 mat = new Mat22();
-        mat.ex.set(ex);
-        mat.ey.set(ey);
-        return mat;
-    }
-
-    /**
      * Set as the zero matrix.
      */
     public void setZero() {

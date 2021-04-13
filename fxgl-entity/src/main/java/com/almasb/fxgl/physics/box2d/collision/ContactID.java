@@ -49,13 +49,6 @@ public class ContactID implements Comparable<ContactID> {
         return getKey() == cid.getKey();
     }
 
-    public ContactID() {
-    }
-
-    public ContactID(final ContactID c) {
-        set(c);
-    }
-
     public void set(final ContactID c) {
         indexA = c.indexA;
         indexB = c.indexB;

@@ -7,6 +7,7 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.core.Updatable
+import com.almasb.fxgl.core.UpdatableRunner
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.fsm.State
 import com.almasb.fxgl.input.Input
@@ -26,7 +27,7 @@ abstract class SubScene : Scene() {
     override final val isSubState: Boolean = true
 }
 
-abstract class Scene : State<Scene> {
+abstract class Scene : State<Scene>, UpdatableRunner {
 
     /**
      * Top-level root node. *Only* used by FXGL itself.
@@ -83,14 +84,14 @@ abstract class Scene : State<Scene> {
     /**
      * Add an update listener, which is notified when this scene updates.
      */
-    fun addListener(l: Updatable) {
+    override fun addListener(l: Updatable) {
         listenersToAdd.add(l)
     }
 
     /**
      * Remove a previously added listener.
      */
-    fun removeListener(l: Updatable) {
+    override fun removeListener(l: Updatable) {
         listenersToRemove.add(l)
     }
 

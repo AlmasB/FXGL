@@ -314,11 +314,11 @@ class Input {
             handleReleased(mouseEvent)
         }
 
-        mouseXUI = mouseEvent.sceneX - contentRootTranslation.x
-        mouseYUI = mouseEvent.sceneY - contentRootTranslation.y
+        mouseXUI = (mouseEvent.sceneX - contentRootTranslation.x) / scaleRatioX / viewportZoom
+        mouseYUI = (mouseEvent.sceneY - contentRootTranslation.y) / scaleRatioY / viewportZoom
 
-        mouseXWorld = mouseXUI / scaleRatioX / viewportZoom + viewportOrigin.x
-        mouseYWorld = mouseYUI / scaleRatioY / viewportZoom + viewportOrigin.y
+        mouseXWorld = mouseXUI + viewportOrigin.x
+        mouseYWorld = mouseYUI + viewportOrigin.y
     }
 
     private fun handlePressed(event: InputEvent) {
@@ -515,9 +515,13 @@ class Input {
     private val virtualButtons = hashMapOf<VirtualButton, KeyCode>()
 
     fun addAction(action: UserAction, key: KeyCode, virtualButton: VirtualButton) {
+        addAction(action, key, InputModifier.NONE, virtualButton)
+    }
+
+    fun addAction(action: UserAction, key: KeyCode, modifier: InputModifier, virtualButton: VirtualButton) {
         require(!isIllegal(key)) { "Cannot bind to illegal key: $key" }
 
-        addBinding(action, KeyTrigger(key, InputModifier.NONE))
+        addBinding(action, KeyTrigger(key, modifier))
         addVirtualButton(virtualButton, key)
     }
 

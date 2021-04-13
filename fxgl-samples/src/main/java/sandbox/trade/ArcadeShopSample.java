@@ -55,9 +55,9 @@ public class ArcadeShopSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        getGameState().intProperty("bonus.atk.value").bind(getGameState().intProperty("bonus.atk.level").multiply(10));
-        getGameState().intProperty("bonus.def.value").bind(getGameState().intProperty("bonus.def.level").multiply(25));
-        getGameState().intProperty("bonus.hp.value").bind(getGameState().intProperty("bonus.hp.level").multiply(5));
+        getWorldProperties().intProperty("bonus.atk.value").bind(getWorldProperties().intProperty("bonus.atk.level").multiply(10));
+        getWorldProperties().intProperty("bonus.def.value").bind(getWorldProperties().intProperty("bonus.def.level").multiply(25));
+        getWorldProperties().intProperty("bonus.hp.value").bind(getWorldProperties().intProperty("bonus.hp.level").multiply(5));
 
         shopState = new ArcadeShopState();
         shopState.addItem(new ArcadeShopItem("ATK", "Increases ATK", 100, 10, 0, new Circle(10, 10, 10, Color.GOLD)));
@@ -66,9 +66,9 @@ public class ArcadeShopSample extends GameApplication {
     @Override
     protected void initUI() {
         Text text = getUIFactoryService().newText("", Color.BLACK, 16);
-        text.textProperty().bind(getGameState().intProperty("bonus.atk.value").asString("ATK: %d ")
-                .concat(getGameState().intProperty("bonus.def.value").asString("DEF: %d "))
-                .concat(getGameState().intProperty("bonus.hp.value").asString("HP: %d")));
+        text.textProperty().bind(getWorldProperties().intProperty("bonus.atk.value").asString("ATK: %d ")
+                .concat(getWorldProperties().intProperty("bonus.def.value").asString("DEF: %d "))
+                .concat(getWorldProperties().intProperty("bonus.hp.value").asString("HP: %d")));
 
         text.setTranslateY(50);
 

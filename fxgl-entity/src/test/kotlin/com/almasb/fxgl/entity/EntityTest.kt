@@ -149,22 +149,17 @@ class EntityTest {
     }
 
     @Test
-    fun `Throws when removing core component`() {
-        assertThrows(IllegalArgumentException::class.java, {
+    fun `Removing core component is ignored`() {
+        assertThat(entity.components.size, `is`(4))
+
+        assertDoesNotThrow {
             entity.removeComponent(TypeComponent::class.java)
-        })
-
-        assertThrows(IllegalArgumentException::class.java, {
             entity.removeComponent(TransformComponent::class.java)
-        })
-
-        assertThrows(IllegalArgumentException::class.java, {
             entity.removeComponent(BoundingBoxComponent::class.java)
-        })
-
-        assertThrows(IllegalArgumentException::class.java, {
             entity.removeComponent(ViewComponent::class.java)
-        })
+        }
+
+        assertThat(entity.components.size, `is`(4))
     }
 
     @Test
@@ -790,6 +785,13 @@ class EntityTest {
         entity.rotation = 15.0
         assertThat(entity.rotation, `is`(15.0))
         assertThat(entity.transformComponent.angle, `is`(15.0))
+        assertThat(entity.rotationZProperty().value, `is`(15.0))
+
+        entity.rotationXProperty().value = 35.0
+        entity.rotationYProperty().value = -35.0
+
+        assertThat(entity.rotationXProperty().value, `is`(35.0))
+        assertThat(entity.rotationYProperty().value, `is`(-35.0))
     }
 
     @Test
@@ -873,6 +875,7 @@ class EntityTest {
 
         assertThat(entity.opacity, `is`(0.5))
         assertThat(entity.viewComponent.opacity, `is`(0.5))
+        assertThat(entity.opacityProperty().value, `is`(0.5))
 
         entity.isVisible = false
         
@@ -885,14 +888,17 @@ class EntityTest {
         entity.scaleX = 2.0
         assertThat(entity.scaleX, `is`(2.0))
         assertThat(entity.transformComponent.scaleX, `is`(2.0))
+        assertThat(entity.scaleXProperty().value, `is`(2.0))
 
         entity.scaleY = 1.5
         assertThat(entity.scaleY, `is`(1.5))
         assertThat(entity.transformComponent.scaleY, `is`(1.5))
+        assertThat(entity.scaleYProperty().value, `is`(1.5))
 
         entity.scaleZ = 1.3
         assertThat(entity.scaleZ, `is`(1.3))
         assertThat(entity.transformComponent.scaleZ, `is`(1.3))
+        assertThat(entity.scaleZProperty().value, `is`(1.3))
 
         entity.setScaleUniform(0.5)
         assertThat(entity.scaleX, `is`(0.5))
@@ -916,6 +922,20 @@ class EntityTest {
 
         assertThat(entity.distance(e2), `is`(15.0))
         assertThat(entity.distanceBBox(e2), `is`(5.0))
+    }
+
+    @Test
+    fun `Copy entity`() {
+        //entity.addComponent(ValueUpdateControl())
+
+        val copy = entity.copy()
+
+        entity.components.forEachIndexed { index, component ->
+            val copyC = copy.components[index]
+
+            assertTrue(copyC.javaClass == component.javaClass, "Copied entity component ${copyC.javaClass} type doesn't match original ${component.javaClass}")
+            assertFalse(copyC === component, "Copied component $copyC is the same object as the original")
+        }
     }
 
     /* MOCK CLASSES */

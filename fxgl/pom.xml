@@ -192,43 +192,13 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-net</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-effects</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-animation</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-entity</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-ai</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-media</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-events</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 
@@ -246,13 +216,7 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-minigames</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-achievement</artifactId>
+            <artifactId>fxgl-gameplay</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 
@@ -265,18 +229,6 @@
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-localization</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-time</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-trade</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 

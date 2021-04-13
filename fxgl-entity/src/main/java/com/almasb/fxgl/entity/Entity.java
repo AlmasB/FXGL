@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.entity;
 
+import com.almasb.fxgl.animation.Animatable;
+import com.almasb.fxgl.core.Copyable;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
@@ -16,6 +18,7 @@ import com.almasb.fxgl.entity.components.BoundingBoxComponent;
 import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.TypeComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
+import com.almasb.fxgl.logging.Logger;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -44,7 +47,7 @@ import static com.almasb.fxgl.core.reflect.ReflectionUtils.*;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class Entity {
+public class Entity implements Animatable, Copyable<Entity> {
 
     private static class ComponentMap {
         private Map<Class<? extends Component>, Component> components = new HashMap<>();
@@ -105,6 +108,8 @@ public class Entity {
         }
     }
 
+    private static final Logger log = Logger.get(Entity.class);
+
     private PropertyMap properties = new PropertyMap();
     private ComponentMap components = new ComponentMap();
 
@@ -118,8 +123,9 @@ public class Entity {
     private Runnable onNotActive = EmptyRunnable.INSTANCE;
 
     private boolean isEverUpdated = true;
-    private boolean updateEnabled = true;
-    private boolean updating = false;
+    private boolean isUpdateEnabled = true;
+    private boolean isUpdating = false;
+    private boolean isReusable = false;
 
     private TypeComponent type = new TypeComponent();
     private TransformComponent transform = new TransformComponent();
@@ -160,6 +166,11 @@ public class Entity {
      * https://github.com/AlmasB/FXGL/issues/528
      */
     void clean() {
+        if (isReusable) {
+            world = null;
+            return;
+        }
+
         removeAllComponents();
 
         properties.clear();
@@ -171,9 +182,10 @@ public class Entity {
         onActive = EmptyRunnable.INSTANCE;
         onNotActive = EmptyRunnable.INSTANCE;
 
-        updateEnabled = true;
-        updating = false;
+        isUpdateEnabled = true;
+        isUpdating = false;
 
+        // TODO: we probably don't need to set active false again, since we do that in markForRemoval?
         active.set(false);
     }
 
@@ -204,7 +216,25 @@ public class Entity {
      * If set to false, the components attached to this entity will not update.
      */
     public final void setUpdateEnabled(boolean b) {
-        updateEnabled = b;
+        isUpdateEnabled = b;
+    }
+
+    /**
+     * @return can this entity be removed from world and re-added
+     */
+    public boolean isReusable() {
+        return isReusable;
+    }
+
+    /**
+     * Set the entity to be reusable or not.
+     * A reusable entity is not cleaned when removed from world.
+     * Instead, the entity is put into a pool using its spawnName.
+     * Next time an entity with spawnName needs to be spawned, the pooled entity will be added to world.
+     * By default, entities are not reusable.
+     */
+    public void setReusable(boolean isReusable) {
+        this.isReusable = isReusable;
     }
 
     /**
@@ -213,14 +243,14 @@ public class Entity {
      * @param tpf time per frame
      */
     void update(double tpf) {
-        if (!updateEnabled)
+        if (!isUpdateEnabled)
             return;
 
-        updating = true;
+        isUpdating = true;
 
         components.update(tpf);
 
-        updating = false;
+        isUpdating = false;
     }
 
     /**
@@ -385,9 +415,12 @@ public class Entity {
         if (!hasComponent(type))
             return false;
 
-        checkNotUpdating();
+        if (isCoreComponent(type)) {
+            log.warning("Removing a core component: " + type + " is not allowed. Ignoring");
+            return false;
+        }
 
-        checkNotCore(type);
+        checkNotUpdating();
 
         checkNotRequiredByAny(type);
 
@@ -492,15 +525,8 @@ public class Entity {
     }
 
     private void checkNotUpdating() {
-        if (updating)
+        if (isUpdating)
             throw new IllegalStateException("Cannot add / remove components during updating");
-    }
-
-    private void checkNotCore(Class<? extends Component> type) {
-        if (isCoreComponent(type)) {
-            // this is not allowed by design, hence throw
-            throw new IllegalArgumentException("Removing a core component: " + type + " is not allowed");
-        }
     }
 
     private boolean isCoreComponent(Class<? extends Component> type) {
@@ -665,14 +691,17 @@ public class Entity {
         transform.setZ(z);
     }
 
+    @Override
     public final DoubleProperty xProperty() {
         return transform.xProperty();
     }
 
+    @Override
     public final DoubleProperty yProperty() {
         return transform.yProperty();
     }
 
+    @Override
     public final DoubleProperty zProperty() {
         return transform.zProperty();
     }
@@ -977,6 +1006,61 @@ public class Entity {
     }
 
     // VIEW END
+
+    // Animatable overrides BEGIN
+
+    @Override
+    public DoubleProperty scaleXProperty() {
+        return transform.scaleXProperty();
+    }
+
+    @Override
+    public DoubleProperty scaleYProperty() {
+        return transform.scaleYProperty();
+    }
+
+    @Override
+    public DoubleProperty scaleZProperty() {
+        return transform.scaleZProperty();
+    }
+
+    @Override
+    public DoubleProperty rotationXProperty() {
+        return transform.rotationXProperty();
+    }
+
+    @Override
+    public DoubleProperty rotationYProperty() {
+        return transform.rotationYProperty();
+    }
+
+    @Override
+    public DoubleProperty rotationZProperty() {
+        return transform.rotationZProperty();
+    }
+
+    @Override
+    public DoubleProperty opacityProperty() {
+        return view.opacityProperty();
+    }
+
+    @Override
+    public void setScaleOrigin(Point2D pivotPoint) {
+        transform.setScaleOrigin(pivotPoint);
+    }
+
+    @Override
+    public void setRotationOrigin(Point2D pivotPoint) {
+        transform.setRotationOrigin(pivotPoint);
+    }
+
+    // Animatable overrides END
+
+
+    @Override
+    public Entity copy() {
+        return EntityHelper.INSTANCE.copy(this);
+    }
 
     @Override
     public String toString() {

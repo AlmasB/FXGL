@@ -453,19 +453,15 @@ public class Distance {
      * @author daniel
      */
     public static class DistanceProxy {
-        public final Vec2[] m_vertices;
-        public int m_count;
-        public float m_radius;
-        public final Vec2[] m_buffer;
+        public final Vec2[] m_vertices = new Vec2[JBoxSettings.maxPolygonVertices];
+        public int m_count = 0;
+        public float m_radius = 0f;
+        public final Vec2[] m_buffer = new Vec2[2];
 
         public DistanceProxy() {
-            m_vertices = new Vec2[JBoxSettings.maxPolygonVertices];
             for (int i = 0; i < m_vertices.length; i++) {
                 m_vertices[i] = new Vec2();
             }
-            m_buffer = new Vec2[2];
-            m_count = 0;
-            m_radius = 0f;
         }
 
         /**
@@ -491,13 +487,13 @@ public class Distance {
                     break;
                 case CHAIN:
                     final ChainShape chain = (ChainShape) shape;
-                    assert 0 <= index && index < chain.m_count;
+                    assert 0 <= index && index < chain.getCount();
 
-                    m_buffer[0] = chain.m_vertices[index];
-                    if (index + 1 < chain.m_count) {
-                        m_buffer[1] = chain.m_vertices[index + 1];
+                    m_buffer[0] = chain.getVertex(index);
+                    if (index + 1 < chain.getCount()) {
+                        m_buffer[1] = chain.getVertex(index + 1);
                     } else {
-                        m_buffer[1] = chain.m_vertices[0];
+                        m_buffer[1] = chain.getVertex(0);
                     }
 
                     m_vertices[0].set(m_buffer[0]);

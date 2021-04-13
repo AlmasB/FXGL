@@ -15,27 +15,18 @@
     <modules>
         <module>fxgl-core</module>
         <module>fxgl-cutscene</module>
-        <module>fxgl-time</module>
-        <module>fxgl-events</module>
         <module>fxgl-io</module>
         <module>fxgl-entity</module>
-        <module>fxgl-animation</module>
         <module>fxgl-ui</module>
         <module>fxgl-scene</module>
         <module>fxgl</module>
         <module>fxgl-media</module>
         <module>fxgl-input</module>
-        <module>fxgl-effects</module>
         <module>fxgl-test</module>
         <module>fxgl-localization</module>
-        <module>fxgl-logging</module>
-        <module>fxgl-achievement</module>
-        <module>fxgl-ai</module>
         <module>fxgl-profiles</module>
-        <module>fxgl-net</module>
         <module>fxgl-controllerinput</module>
-        <module>fxgl-trade</module>
-        <module>fxgl-minigames</module>
+        <module>fxgl-gameplay</module>
         <module>fxgl-samples</module>
         <module>fxgl-tools</module>
         <module>fxgl-zdeploy</module>
@@ -107,7 +98,7 @@
         <jfx.version>15</jfx.version>
         <kotlin.version>1.4.30</kotlin.version>
         <attach.version>4.0.9</attach.version>
-        <jackson.version>2.11.1</jackson.version>
+        <jackson.version>2.12.1</jackson.version>
 
         <!-- test dependencies -->
         <junit.jupiter.version>5.7.0</junit.jupiter.version>

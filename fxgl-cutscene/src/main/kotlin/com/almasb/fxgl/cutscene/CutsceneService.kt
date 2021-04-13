@@ -31,6 +31,7 @@ class CutsceneService : EngineService() {
     val dialogueScene by lazy { DialogueScene(sceneService) }
 
     fun startCutscene(cutscene: Cutscene) {
+        scene.assetLoader = assetLoader
         scene.start(cutscene)
     }
 

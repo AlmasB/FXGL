@@ -33,7 +33,7 @@ class EdgeCallback : RayCastCallback {
 
         if (fraction < bestFraction) {
             this.fixture = fixture
-            this.point = point.clone()
+            this.point = point.copy();
             bestFraction = fraction
         }
 

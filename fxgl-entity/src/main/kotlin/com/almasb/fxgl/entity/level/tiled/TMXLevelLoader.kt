@@ -16,11 +16,8 @@ import com.almasb.fxgl.entity.level.LevelLoadingException
 import com.almasb.fxgl.logging.Logger
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
-import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.net.URL
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import java.util.*
 import java.util.zip.GZIPInputStream
 import java.util.zip.InflaterInputStream
@@ -334,40 +331,44 @@ class TMXLevelLoader : LevelLoader {
     private fun parseData(layer: Layer, data: String, start: StartElement) {
         when (start.getString("encoding")) {
             "csv" -> {
-                layer.data = data.replace("\n", "").split(",").map { it.trim().toInt() }
+                layer.data = data.replace("\n", "").split(",").map { it.trim().toLong() }
             }
 
             "base64" -> {
-                var bytes = Base64.getDecoder().decode(data.trim())
+                val bytes = Base64.getDecoder().decode(data.trim())
 
-                when (start.getString("compression")) {
+                val inputStream = when (start.getString("compression")) {
                     "zlib" -> {
-                        val baos = ByteArrayOutputStream()
-
-                        InflaterInputStream(bytes.inputStream()).use {
-                            it.copyTo(baos)
-                        }
-
-                        bytes = baos.toByteArray()
+                        InflaterInputStream(bytes.inputStream())
                     }
 
                     "gzip" -> {
-                        val baos = ByteArrayOutputStream()
+                        GZIPInputStream(bytes.inputStream())
+                    }
 
-                        GZIPInputStream(bytes.inputStream()).use {
-                            it.copyTo(baos)
-                        }
-
-                        bytes = baos.toByteArray()
+                    else -> {
+                        log.warning("Unsupported base64 compression: '" + start.getString("compression") + "'. " + layer.name + " may fail to render.")
+                        InputStream.nullInputStream()
                     }
                 }
 
-                val ints = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer()
+                val longArray = arrayListOf<Long>()
 
-                val intArray = IntArray(ints.limit())
-                ints.get(intArray)
+                // Read 4 bytes representing unsigned integer from '.tmx' data and convert to long
+                // Preserves 3 most significant bit from UInt which encodes flipped tile state
+                inputStream.use {
+                    while (it.available() > 0) {
+                        val rawInt = it.readNBytes(4)
 
-                layer.data = intArray.toList()
+                        val value: Long = (rawInt[0].toLong() and 0xFF shl 0) or
+                                (rawInt[1].toLong() and 0xFF shl 8) or
+                                (rawInt[2].toLong() and 0xFF shl 16) or
+                                (rawInt[3].toLong() and 0xFF shl 24)
+
+                        longArray.add(value)
+                    }
+                }
+                layer.data = longArray
             }
         }
     }

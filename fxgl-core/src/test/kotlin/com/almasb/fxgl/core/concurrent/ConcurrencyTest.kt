@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Duration.ofSeconds
+import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
 
 /**
@@ -243,6 +244,91 @@ class ConcurrencyTest {
             task1.run()
             task2.run()
         }
+    }
+
+    @Test
+    fun `IOTask to JavaFX can be cancelled before run then onCancel is called during run`() {
+
+        assertTimeoutPreemptively(ofSeconds(1)) {
+            var cancelText = ""
+
+            val latch = CountDownLatch(1)
+
+            val task = SomeIOTask().onCancel {
+                cancelText = "cancelled"
+
+                latch.countDown()
+            }
+
+            task.cancel()
+
+            val fxTask = task.toJavaFXTask()
+            fxTask.run()
+
+            latch.await()
+
+            assertThat(cancelText, `is`("cancelled"))
+        }
+    }
+
+    @Test
+    fun `IOTask can be cancelled before run then onCancel is called during run`() {
+        var cancelText = ""
+
+        val task = SomeIOTask().onCancel { cancelText = "cancelled" }
+
+        assertFalse(task.isCancelled)
+
+        task.cancel()
+
+        assertTrue(task.isCancelled)
+
+        val result = task.run()
+
+        assertNull(result)
+        assertThat(cancelText, `is`("cancelled"))
+    }
+
+    @Test
+    fun `IOTask can be cancelled during run`() {
+        var count = 0
+        var cancelText = ""
+
+        val task = object : IOTask<String>() {
+            override fun onExecute(): String {
+                count++
+                cancel()
+                count++
+
+                if (isCancelled)
+                    throwCancelException()
+
+                return "RESULT"
+            }
+        }.onCancel { cancelText = "cancelled" }
+
+        val result = task.run()
+
+        assertNull(result)
+        assertThat(cancelText, `is`("cancelled"))
+        assertThat(count, `is`(2))
+    }
+
+    @Test
+    fun `Cancelling IOTask after run is noop`() {
+        var cancelText = ""
+
+        val task = SomeIOTask().onCancel { cancelText = "cancelled" }
+
+        val result = task.run()
+
+        assertThat(result, `is`("RESULT"))
+        assertThat(cancelText, `is`(""))
+
+        task.cancel()
+
+        assertThat(result, `is`("RESULT"))
+        assertThat(cancelText, `is`(""))
     }
 
     class SomeIOTask : IOTask<String>() {

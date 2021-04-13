@@ -8,26 +8,26 @@ package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.input.Input
+import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.UserAction
+import com.almasb.fxgl.input.virtual.VirtualButton
 import javafx.scene.input.KeyCode
 
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class KeyInputBuilder(input: Input, key: KeyCode, name: String) {
+class KeyInputBuilder {
 
     companion object {
         private var counter = 0
     }
 
-    constructor(input: Input, key: KeyCode) : this(input, key, "AUTO-${counter++}")
-
     private var onActionBegin: Runnable = EmptyRunnable
     private var onAction: Runnable = EmptyRunnable
     private var onActionEnd: Runnable = EmptyRunnable
 
-    init {
+    constructor(input: Input, key: KeyCode, modifier: InputModifier = InputModifier.NONE, virtualBtn: VirtualButton, name: String = "AUTO-${counter++}") {
         input.addAction(object : UserAction(name) {
             override fun onActionBegin() {
                 onActionBegin.run()
@@ -40,7 +40,23 @@ class KeyInputBuilder(input: Input, key: KeyCode, name: String) {
             override fun onActionEnd() {
                 onActionEnd.run()
             }
-        }, key)
+        }, key, modifier, virtualBtn)
+    }
+
+    constructor(input: Input, key: KeyCode, modifier: InputModifier = InputModifier.NONE, name: String = "AUTO-${counter++}") {
+        input.addAction(object : UserAction(name) {
+            override fun onActionBegin() {
+                onActionBegin.run()
+            }
+
+            override fun onAction() {
+                onAction.run()
+            }
+
+            override fun onActionEnd() {
+                onActionEnd.run()
+            }
+        }, key, modifier)
     }
 
     fun onActionBegin(onActionBegin: Runnable) = this.also { it.onActionBegin = onActionBegin }

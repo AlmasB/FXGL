@@ -737,18 +737,19 @@ public final class ContactSolver {
 
             float mA = pc.invMassA;
             float iA = pc.invIA;
-            Vec2 localCenterA = pc.localCenterA;
-            final float localCenterAx = localCenterA.x;
-            final float localCenterAy = localCenterA.y;
+            final float localCenterAx = pc.localCenterA.x;
+            final float localCenterAy = pc.localCenterA.y;
+
             float mB = pc.invMassB;
             float iB = pc.invIB;
-            Vec2 localCenterB = pc.localCenterB;
-            final float localCenterBx = localCenterB.x;
-            final float localCenterBy = localCenterB.y;
+            final float localCenterBx = pc.localCenterB.x;
+            final float localCenterBy = pc.localCenterB.y;
+
             int pointCount = pc.pointCount;
 
             Vec2 cA = m_positions[indexA].c;
             float aA = m_positions[indexA].a;
+
             Vec2 cB = m_positions[indexB].c;
             float aB = m_positions[indexB].a;
 
@@ -763,11 +764,10 @@ public final class ContactSolver {
                 xfB.p.x = cB.x - xfBq.c * localCenterBx + xfBq.s * localCenterBy;
                 xfB.p.y = cB.y - xfBq.s * localCenterBx - xfBq.c * localCenterBy;
 
-                final PositionSolverManifold psm = psolver;
-                psm.initialize(pc, xfA, xfB, j);
-                final Vec2 normal = psm.normal;
-                final Vec2 point = psm.point;
-                final float separation = psm.separation;
+                psolver.initialize(pc, xfA, xfB, j);
+                final Vec2 normal = psolver.normal;
+                final Vec2 point = psolver.point;
+                final float separation = psolver.separation;
 
                 float rAx = point.x - cA.x;
                 float rAy = point.y - cA.y;

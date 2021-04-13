@@ -17,10 +17,12 @@ Any new API or changes to existing API should be discussed to avoid inconsistenc
 * Share details about your project based on FXGL (this will go to the showcase section).
 * Write a tutorial on how to use FXGL.
 
+If you want to be involved with the project on a long-term basis, please scroll down to [community roles](#Community-Roles).
+
 ## Workflow
 
-There are 2 branches: `dev` and `master`.
-The `master` branch is for releases only.
+There are 2 branches: `dev` and `release`.
+The `release` branch is for releases only.
 All the work goes to your `dev` branch, then pull a request back to `dev`.
 
 ## Development
@@ -70,3 +72,38 @@ The project uses the following guidelines:
 * Short license header in each new file and `@author`.
 
 If in doubt, skim through the existing source code to get a feel for it.
+
+## Community Roles
+
+Community developers may apply to any of these roles by opening an issue or discussing in the [community chat](https://gitter.im/AlmasB/FXGL). Each role is allocated based on discussions with the individual. The individual is expected to be **committed** to the role guidance. However, the role descriptions are merely a guidance and not binding in any way. The role may be revoked at the request of the individual or due to violation of the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+#### Maintainer (Collaborator):
+
+* Lead the project development and set out project goals
+* Represent the project at conferences and other events
+* Engage with the community to obtain feedback
+* Review Pull Requests
+* Guide new and existing Contributors to develop Pull Requests
+* Provide technical support in the community chat
+
+#### Coordinator:
+
+* Lead one or more areas of the project development
+* Engage with the Maintainers to discuss the development
+* Review Pull Requests
+* Guide new and existing Contributors to develop Pull Requests
+* Provide technical support in the community chat
+
+#### Tester:
+
+* Provide feedback on latest project versions
+* Crash test new and existing features after major updates
+* Provide technical support in the community chat
+
+#### Contributor:
+
+Any developer whose Pull Request has been merged is considered a Contributor.
+
+#### Sponsor:
+
+Any developer who is sponsoring (or has sponsored in the past) the project is considered a Sponsor.

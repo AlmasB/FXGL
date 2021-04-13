@@ -8,7 +8,7 @@ package com.almasb.fxgl.app.scene
 
 import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.dsl.getDisplay
+import com.almasb.fxgl.dsl.getDialogService
 import com.almasb.fxgl.dsl.getSettings
 import com.almasb.fxgl.dsl.localize
 import com.almasb.fxgl.logging.Logger
@@ -65,7 +65,7 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
 
         val text = localize("menu.loadSave") + " [${saveFile.name}]?\n" + localize("menu.unsavedProgress")
 
-        getDisplay().showConfirmationBox(text) { yes ->
+        getDialogService().showConfirmationBox(text) { yes ->
             if (yes) {
                 // we don't need to run this with "runAsyncFXWithDialog" since loadGame triggers LoadingScene
                 controller.loadGame(saveFile.data)
@@ -80,7 +80,7 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
     protected fun fireSave() {
         log.debug("fireSave()")
 
-        getDisplay().showInputBoxWithCancel(localize("menu.enterSaveName"), InputPredicates.ALPHANUM, Consumer { saveFileName ->
+        getDialogService().showInputBoxWithCancel(localize("menu.enterSaveName"), InputPredicates.ALPHANUM, Consumer { saveFileName ->
 
             if (saveFileName.isEmpty())
                 return@Consumer
@@ -88,7 +88,7 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
             val saveFile = SaveFile(saveFileName + "." + getSettings().saveFileExt)
 
             if (saveLoadService.saveFileExists(saveFile.name)) {
-                getDisplay().showConfirmationBox(localize("menu.overwrite") +" [$saveFileName]?") { yes ->
+                getDialogService().showConfirmationBox(localize("menu.overwrite") +" [$saveFileName]?") { yes ->
 
                     if (yes)
                         doSave(saveFile)
@@ -114,7 +114,7 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
     protected fun fireDelete(saveFile: SaveFile) {
         log.debug("fireDelete()")
 
-        getDisplay().showConfirmationBox(localize("menu.deleteSave") + "[${saveFile.name}]?") { yes ->
+        getDialogService().showConfirmationBox(localize("menu.deleteSave") + "[${saveFile.name}]?") { yes ->
             if (yes) {
                 val task = saveLoadService.deleteSaveFileTask(saveFile.name)
 
@@ -142,7 +142,7 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
 
         val text = localize("dialog.exitGame")
 
-        getDisplay().showConfirmationBox(text) { yes ->
+        getDialogService().showConfirmationBox(text) { yes ->
             if (yes)
                 controller.exit()
         }
@@ -158,7 +158,7 @@ abstract class FXGLMenu(protected val type: MenuType) : SubScene() {
         val text = localize("menu.exitMainMenu") + "\n" +
                 localize("menu.unsavedProgress")
 
-        getDisplay().showConfirmationBox(text) { yes ->
+        getDialogService().showConfirmationBox(text) { yes ->
             if (yes)
                 controller.gotoMainMenu()
         }

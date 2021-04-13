@@ -37,46 +37,25 @@ public class Manifold {
     }
 
     /** The points of contact. */
-    public final ManifoldPoint[] points;
+    public final ManifoldPoint[] points = new ManifoldPoint[JBoxSettings.maxManifoldPoints];
 
     /** not use for Type::e_points */
-    public final Vec2 localNormal;
+    public final Vec2 localNormal = new Vec2();
 
     /** usage depends on manifold type */
-    public final Vec2 localPoint;
+    public final Vec2 localPoint = new Vec2();
 
     public ManifoldType type;
 
     /** The number of manifold points. */
-    public int pointCount;
+    public int pointCount = 0;
 
     /**
      * creates a manifold with 0 points, with it's points array full of instantiated ManifoldPoints.
      */
     public Manifold() {
-        points = new ManifoldPoint[JBoxSettings.maxManifoldPoints];
         for (int i = 0; i < JBoxSettings.maxManifoldPoints; i++) {
             points[i] = new ManifoldPoint();
-        }
-        localNormal = new Vec2();
-        localPoint = new Vec2();
-        pointCount = 0;
-    }
-
-    /**
-     * Creates this manifold as a copy of the other
-     *
-     * @param other
-     */
-    public Manifold(Manifold other) {
-        points = new ManifoldPoint[JBoxSettings.maxManifoldPoints];
-        localNormal = other.localNormal.clone();
-        localPoint = other.localPoint.clone();
-        pointCount = other.pointCount;
-        type = other.type;
-        // djm: this is correct now
-        for (int i = 0; i < JBoxSettings.maxManifoldPoints; i++) {
-            points[i] = new ManifoldPoint(other.points[i]);
         }
     }
 

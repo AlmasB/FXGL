@@ -69,7 +69,7 @@ Make sure to set `<release>11</release>` for `maven-compiler-plugin`.
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>11.14</version>
+    <version>11.15</version>
 </dependency>
 ```
 
@@ -87,7 +87,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:11.14'
+    compile 'com.github.almasb:fxgl:11.15'
 }
 ```
 
@@ -124,6 +124,7 @@ Community tutorials:
 
 - [Space Ranger](https://www.journaldev.com/40219/space-rangers-game-java-fxgl) at journaldev
 - [Geometry Wars](https://webtechie.be/post/2020-05-07-getting-started-with-fxgl/) at webtechie
+- [Mazela-Man](https://dykstrom.github.io/mazela-man-web/home/) by dykstrom
 
 Community projects (identified using `fxgl` topic): 
 
@@ -132,6 +133,18 @@ Community projects (identified using `fxgl` topic):
 - [FXGL Sliding Puzzle](https://github.com/beryx/fxgl-sliding-puzzle)
 
 If you'd like your project featured here, just add a note in the [Chat](https://gitter.im/AlmasB/FXGL).
+
+### Development Team
+
+Description of roles is given in the [Contribution Guide](CONTRIBUTING.md).
+
+Maintainers (Collaborators):
+
+* [Almas Baimagambetov](https://github.com/AlmasB)
+
+Coordinators:
+
+* [Adam Bocco](https://github.com/adambocco)
 
 ### Contribution & Support
 
@@ -151,6 +164,7 @@ Users:
 * @mbains
 * @sabit86
 * @hendrikebbers
+* @ImperaEtConquer
 
 Companies:
 

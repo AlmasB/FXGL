@@ -11,8 +11,10 @@ import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.collision.RayCastOutput;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
-import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
+
+import static com.almasb.fxgl.core.math.FXGLMath.max;
+import static com.almasb.fxgl.core.math.FXGLMath.min;
 
 /**
  * A chain shape is a free form sequence of line segments.
@@ -26,11 +28,13 @@ import com.almasb.fxgl.physics.box2d.common.Transform;
  */
 public final class ChainShape extends Shape {
 
-    public Vec2[] m_vertices = null;
-    public int m_count = 0;
+    private Vec2[] m_vertices = null;
+    private int m_count = 0;
 
-    private final Vec2 m_prevVertex = new Vec2(), m_nextVertex = new Vec2();
-    private boolean m_hasPrevVertex = false, m_hasNextVertex = false;
+    private final Vec2 m_prevVertex = new Vec2();
+    private final Vec2 m_nextVertex = new Vec2();
+    private boolean m_hasPrevVertex = false;
+    private boolean m_hasNextVertex = false;
 
     private final EdgeShape pool0 = new EdgeShape();
 
@@ -68,29 +72,21 @@ public final class ChainShape extends Shape {
 
     @Override
     public boolean raycast(RayCastOutput output, RayCastInput input, Transform xf, int childIndex) {
-        assert childIndex < m_count;
-
-        final EdgeShape edgeShape = pool0;
-
         int i1 = childIndex;
         int i2 = childIndex + 1;
         if (i2 == m_count) {
             i2 = 0;
         }
-        Vec2 v = m_vertices[i1];
-        edgeShape.m_vertex1.x = v.x;
-        edgeShape.m_vertex1.y = v.y;
-        Vec2 v1 = m_vertices[i2];
-        edgeShape.m_vertex2.x = v1.x;
-        edgeShape.m_vertex2.y = v1.y;
+
+        EdgeShape edgeShape = pool0;
+        edgeShape.m_vertex1.set(m_vertices[i1]);
+        edgeShape.m_vertex2.set(m_vertices[i2]);
 
         return edgeShape.raycast(output, input, xf, 0);
     }
 
     @Override
-    @SuppressWarnings("PMD.UselessParentheses")
-    public void computeAABB(AABB aabb, Transform xf, int childIndex) {
-        assert childIndex < m_count;
+    public void computeAABB(AABB aabb, Transform transform, int childIndex) {
         final Vec2 lower = aabb.lowerBound;
         final Vec2 upper = aabb.upperBound;
 
@@ -100,19 +96,19 @@ public final class ChainShape extends Shape {
             i2 = 0;
         }
 
-        final Vec2 vi1 = m_vertices[i1];
-        final Vec2 vi2 = m_vertices[i2];
-        final Rotation xfq = xf.q;
-        final Vec2 xfp = xf.p;
-        float v1x = (xfq.c * vi1.x - xfq.s * vi1.y) + xfp.x;
-        float v1y = (xfq.s * vi1.x + xfq.c * vi1.y) + xfp.y;
-        float v2x = (xfq.c * vi2.x - xfq.s * vi2.y) + xfp.x;
-        float v2y = (xfq.s * vi2.x + xfq.c * vi2.y) + xfp.y;
+        Vec2 vi1 = m_vertices[i1];
+        Vec2 vi2 = m_vertices[i2];
 
-        lower.x = v1x < v2x ? v1x : v2x;
-        lower.y = v1y < v2y ? v1y : v2y;
-        upper.x = v1x > v2x ? v1x : v2x;
-        upper.y = v1y > v2y ? v1y : v2y;
+        float v1x = transform.mulX(vi1);
+        float v1y = transform.mulY(vi1);
+
+        float v2x = transform.mulX(vi2);
+        float v2y = transform.mulY(vi2);
+
+        lower.x = min(v1x, v2x);
+        lower.y = min(v1y, v2y);
+        upper.x = max(v1x, v2x);
+        upper.y = max(v1y, v2y);
     }
 
     @Override
@@ -130,32 +126,22 @@ public final class ChainShape extends Shape {
 
         edge.setRadius(getRadius());
 
-        final Vec2 v0 = m_vertices[index + 0];
-        final Vec2 v1 = m_vertices[index + 1];
-        edge.m_vertex1.x = v0.x;
-        edge.m_vertex1.y = v0.y;
-        edge.m_vertex2.x = v1.x;
-        edge.m_vertex2.y = v1.y;
+        edge.m_vertex1.set(m_vertices[index + 0]);
+        edge.m_vertex2.set(m_vertices[index + 1]);
 
         if (index > 0) {
-            Vec2 v = m_vertices[index - 1];
-            edge.m_vertex0.x = v.x;
-            edge.m_vertex0.y = v.y;
+            edge.m_vertex0.set(m_vertices[index - 1]);
             edge.m_hasVertex0 = true;
         } else {
-            edge.m_vertex0.x = m_prevVertex.x;
-            edge.m_vertex0.y = m_prevVertex.y;
+            edge.m_vertex0.set(m_prevVertex);
             edge.m_hasVertex0 = m_hasPrevVertex;
         }
 
         if (index < m_count - 2) {
-            Vec2 v = m_vertices[index + 2];
-            edge.m_vertex3.x = v.x;
-            edge.m_vertex3.y = v.y;
+            edge.m_vertex3.set(m_vertices[index + 2]);
             edge.m_hasVertex3 = true;
         } else {
-            edge.m_vertex3.x = m_nextVertex.x;
-            edge.m_vertex3.y = m_nextVertex.y;
+            edge.m_vertex3.set(m_nextVertex);
             edge.m_hasVertex3 = m_hasNextVertex;
         }
     }
@@ -195,7 +181,7 @@ public final class ChainShape extends Shape {
      * @param vertices an array of vertices, these are copied
      * @param count the vertex count
      */
-    public void createChain(final Vec2 vertices[], int count) {
+    public void createChain(final Vec2[] vertices, int count) {
         assert m_vertices == null && m_count == 0;
         assert count >= 2;
         m_count = count;
@@ -236,5 +222,13 @@ public final class ChainShape extends Shape {
     public void setNextVertex(final Vec2 nextVertex) {
         m_nextVertex.set(nextVertex);
         m_hasNextVertex = true;
+    }
+
+    public int getCount() {
+        return m_count;
+    }
+
+    public Vec2 getVertex(int index) {
+        return m_vertices[index];
     }
 }

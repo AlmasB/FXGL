@@ -27,22 +27,18 @@ public class CutsceneSample extends GameApplication {
     @Override
     protected void initInput() {
         onKeyDown(KeyCode.F, "test", () -> {
-            var lines = getAssetLoader().loadText("cutscene0.txt");
+            // TODO: loadCutscene shortcut?
+            var lines = getAssetLoader().loadText("example_cutscene1.txt");
 
             var cutscene = new Cutscene(lines);
 
             getCutsceneService().startCutscene(cutscene);
-
-//            var scene = new CutsceneScene();
-//            scene.start(cutscene);
-//
-//            getGameController().pushSubScene(scene);
         });
     }
 
     @Override
     protected void initGame() {
-        getGameScene().setBackgroundColor(Color.BLUE);
+        getGameScene().setBackgroundColor(Color.LIGHTGRAY);
     }
 
     public static void main(String[] args) {

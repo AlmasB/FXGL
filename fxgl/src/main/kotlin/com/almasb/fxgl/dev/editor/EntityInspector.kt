@@ -6,12 +6,21 @@
 
 package com.almasb.fxgl.dev.editor
 
+import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.dsl.FXGL
+import com.almasb.fxgl.dsl.getAssetLoader
 import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.component.Component
+import com.almasb.fxgl.entity.component.CopyableComponent
+import com.almasb.fxgl.ui.FXGLButton
 import com.almasb.fxgl.ui.FXGLScrollPane
 import javafx.beans.binding.*
+import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.geometry.Insets
+import javafx.scene.control.ButtonType
+import javafx.scene.control.ComboBox
+import javafx.scene.control.Dialog
 import javafx.scene.control.ListView
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
@@ -20,14 +29,31 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
+import javafx.stage.FileChooser
+import java.io.File
+import java.lang.Exception
+import java.net.URL
+import java.net.URLClassLoader
+import java.nio.file.Paths
+
 
 /**
+ * TODO: how are going to modify each component data, e.g. ViewComponent add new view?
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class EntityInspector : FXGLScrollPane() {
 
     private val innerBox = VBox(5.0)
+
+    // TODO: experimental
+    private val componentTypes = arrayListOf<Class<out Component>>(
+            DevSpinComponent::class.java
+    )
+
+    private val addViewButton = FXGLButton("Add View")
+    private val addComponentButton = FXGLButton("Add Component")
+    private val addCustomComponentButton = FXGLButton("Add Custom Component")
 
     var entity: Entity? = null
         set(value) {
@@ -41,14 +67,100 @@ class EntityInspector : FXGLScrollPane() {
         innerBox.background = Background(BackgroundFill(Color.BLACK, null, null))
         innerBox.padding = Insets(5.0)
 
+        addViewButton.setOnAction {
+            entity?.let {
+
+                val viewComp = it.viewComponent
+
+                val chooser = FileChooser()
+                chooser.initialDirectory = File(System.getProperty("user.dir"))
+                chooser.title = "Select image"
+                chooser.extensionFilters.addAll(FileChooser.ExtensionFilter("Images", "*.png", "*.jpg"))
+                val file = chooser.showOpenDialog(null)
+
+                file?.let {
+                    viewComp.addChild(getAssetLoader().loadTexture(it.toURI().toURL()))
+                }
+            }
+        }
+
+        addComponentButton.setOnAction {
+            entity?.let { selectedEntity ->
+                val box = ComboBox(FXCollections.observableList(componentTypes))
+                box.selectionModel.selectFirst()
+
+                val dialog = Dialog<ButtonType>()
+                dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL)
+                dialog.dialogPane.content = box
+                dialog.showAndWait().ifPresent {
+
+                    if (it == ButtonType.OK) {
+                        box.selectionModel.selectedItem?.let { item ->
+                            val comp = ReflectionUtils.newInstance(item)
+
+                            selectedEntity.addComponent(comp)
+                        }
+                    }
+                }
+            }
+        }
+
+        addCustomComponentButton.setOnAction {
+
+//            val chooser = FileChooser()
+//            chooser.initialDirectory = File(System.getProperty("user.dir"))
+//            chooser.title = "Select java Component"
+//            chooser.extensionFilters.addAll(FileChooser.ExtensionFilter("Java Source", "*.java"))
+//            val file = chooser.showOpenDialog(null)
+
+
+            try {
+                val file = Paths.get("fxgl-samples/target/classes/")
+
+                file?.let {
+                    val url: URL = it.toFile().toURI().toURL()
+
+                    val urls: Array<URL> = arrayOf<URL>(url)
+
+                    // Create a new class loader with the directory
+                    val cl: ClassLoader = URLClassLoader(urls)
+
+                    //println(cl)
+
+                    // Load in the class; MyClass.class should be located in
+                    // the directory file:/c:/myclasses/com/mycompany
+                    val cls = cl.loadClass("sandbox.CustomComponent")
+
+                    //println(cls)
+
+                    val instance = cls.getDeclaredConstructor().newInstance() as Component
+
+                    println(instance)
+
+                    entity?.let {
+                        it.addComponent(instance)
+                    }
+                }
+
+            } catch (e : Exception) {
+                e.printStackTrace()
+            }
+        }
+
         maxWidth = 460.0
 
         content = innerBox
     }
 
     private fun updateView() {
+        innerBox.children.clear()
+
         if (entity == null)
             return
+
+        innerBox.children += addViewButton
+        innerBox.children += addComponentButton
+        innerBox.children += addCustomComponentButton
 
         // TODO: this is just a placeholder and needs to be updated
         entity!!.components.sortedBy { it.javaClass.simpleName }
@@ -115,5 +227,17 @@ class EntityInspector : FXGLScrollPane() {
 
                     innerBox.children += pane
                 }
+
+
+    }
+}
+
+internal class DevSpinComponent : Component(), CopyableComponent<DevSpinComponent> {
+    override fun onUpdate(tpf: Double) {
+        entity.rotateBy(90 * tpf)
+    }
+
+    override fun copy(): DevSpinComponent {
+        return DevSpinComponent()
     }
 }
