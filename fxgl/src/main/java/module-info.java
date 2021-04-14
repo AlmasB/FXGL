@@ -9,7 +9,6 @@
  */
 module com.almasb.fxgl.all {
     requires transitive com.almasb.fxgl.core;
-    requires transitive com.almasb.fxgl.cutscene;
     requires transitive com.almasb.fxgl.entity;
     requires transitive com.almasb.fxgl.input;
     requires transitive com.almasb.fxgl.io;

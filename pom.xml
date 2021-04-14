@@ -14,7 +14,6 @@
 
     <modules>
         <module>fxgl-core</module>
-        <module>fxgl-cutscene</module>
         <module>fxgl-io</module>
         <module>fxgl-entity</module>
         <module>fxgl-ui</module>
