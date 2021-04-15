@@ -22,7 +22,6 @@
         <module>fxgl-media</module>
         <module>fxgl-input</module>
         <module>fxgl-test</module>
-        <module>fxgl-profiles</module>
         <module>fxgl-controllerinput</module>
         <module>fxgl-gameplay</module>
         <module>fxgl-samples</module>
