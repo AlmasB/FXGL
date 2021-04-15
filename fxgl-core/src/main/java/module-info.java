@@ -28,5 +28,6 @@ module com.almasb.fxgl.core {
     exports com.almasb.fxgl.event;
     exports com.almasb.fxgl.localization;
     exports com.almasb.fxgl.logging;
+    exports com.almasb.fxgl.texture;
     exports com.almasb.fxgl.time;
 }
