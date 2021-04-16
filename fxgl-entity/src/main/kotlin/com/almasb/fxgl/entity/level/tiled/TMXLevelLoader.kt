@@ -41,7 +41,7 @@ class TMXLevelLoader : LevelLoader {
         try {
             val map = url.openStream().use { parse(it) }
 
-            log.debug("Parsed raw map: $map")
+            log.debug("Parsed TiledMap: $url")
 
             val tilesetLoader = TilesetLoader(map, url)
 
