@@ -98,6 +98,23 @@ class FXGLMathTest {
     }
 
     @Test
+    fun `Rotate point around pivot`() {
+        rotate(Point2D(3.0, 0.0), Point2D(0.0, 0.0), 90.0).assertCloseTo(Point2D(0.0, 3.0))
+
+        rotate(Point2D(3.0, 0.0), Point2D(0.0, 0.0), 180.0).assertCloseTo(Point2D(-3.0, 0.0))
+        rotate(Point2D(3.0, 0.0), Point2D(0.0, 0.0), 270.0).assertCloseTo(Point2D(0.0, -3.0))
+        rotate(Point2D(3.0, 0.0), Point2D(0.0, 0.0), 360.0).assertCloseTo(Point2D(3.0, 0.0))
+        rotate(Point2D(3.0, 0.0), Point2D(0.0, 0.0), -90.0).assertCloseTo(Point2D(0.0, -3.0))
+        rotate(Point2D(3.0, 0.0), Point2D(0.0, 0.0), -180.0).assertCloseTo(Point2D(-3.0, 0.0))
+
+        rotate(Point2D(5.0, 0.0), Point2D(2.0, 0.0), 90.0).assertCloseTo(Point2D(2.0, 3.0))
+        rotate(Point2D(5.0, 0.0), Point2D(2.0, 0.0), 180.0).assertCloseTo(Point2D(-1.0, 0.0))
+        rotate(Point2D(5.0, 0.0), Point2D(2.0, 0.0), 270.0).assertCloseTo(Point2D(2.0, -3.0))
+
+        rotate(Point2D(5.0, -2.0), Point2D(2.0, 0.0), 180.0).assertCloseTo(Point2D(-1.0, 2.0))
+    }
+
+    @Test
     fun `Random values`() {
         val originalRandom = getRandom()
 
@@ -287,5 +304,10 @@ class FXGLMathTest {
     fun `Distance between two rectangles`() {
         val dist = distance(Rectangle2D(0.0, 0.0, 20.0, 20.0), Rectangle2D(30.0, 0.0, 20.0, 20.0))
         assertThat(dist, `is`(10.0))
+    }
+
+    private fun Point2D.assertCloseTo(other: Point2D) {
+        assertThat(this.x, closeTo(other.x, 0.01))
+        assertThat(this.y, closeTo(other.y, 0.01))
     }
 }
