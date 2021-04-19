@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import kotlin.Unit;
@@ -59,15 +60,16 @@ public class TiledBenchmarkSample extends GameApplication {
         Text mapChoicesLabel = getUIFactoryService().newText("Map Choices: ", Color.BLACK, 14);
 
         ChoiceBox<String> mapChoices = getUIFactoryService().newChoiceBox(mapURLs);
-
+        mapChoices.setPrefWidth(400);
         mapChoices.setOnAction(actionEvent -> currentMapSelection = mapChoices.getValue());
+        mapChoices.getSelectionModel().selectFirst();
 
         Text iterationsLabel = getUIFactoryService().newText("Iterations: ", Color.BLACK, 14);
         TextField iterationsInput = new TextField();
         iterationsInput.setText("1");
 
 
-        Button startTestButton = getUIFactoryService().newButton("Start");
+        Button startTestButton = new Button("Start");
 
         startTestButton.setOnAction(actionEvent -> {
             int iterations;
@@ -93,13 +95,15 @@ public class TiledBenchmarkSample extends GameApplication {
         Text statusLabel = getUIFactoryService().newText("Status: ", Color.BLACK, 14);
         status = getUIFactoryService().newText("Choose a test map", Color.BLACK, 14);
 
-        addUINode(mapChoicesLabel,10, 20);
-        addUINode(mapChoices, 10, 25);
-        addUINode(iterationsLabel, 10, 100);
-        addUINode(iterationsInput, 10, 105);
-        addUINode(startTestButton, 250, 20);
-        addUINode(statusLabel, 10, 180);
-        addUINode(status, 10, 200);
+        addUINode(new VBox(5,
+                mapChoicesLabel,
+                mapChoices,
+                iterationsLabel,
+                iterationsInput,
+                startTestButton,
+                statusLabel,
+                status
+        ), 10, 20);
     }
 
     @Override
@@ -134,7 +138,7 @@ public class TiledBenchmarkSample extends GameApplication {
     }
 
     public static class TiledBenchmarkFactory implements EntityFactory {
-        @Spawns("nav,portal")
+        @Spawns("nav,portal,")
         public Entity spawnTiledObject(SpawnData data) {
             return entityBuilder(data).build();
         }
