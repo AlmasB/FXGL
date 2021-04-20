@@ -12,7 +12,6 @@ import com.almasb.fxgl.app.scene.Camera3D;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.components.TransformComponent;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -55,9 +54,6 @@ public class Camera3DSample extends GameApplication {
         });
     }
 
-    private double lastX;
-    private double lastY;
-
     @Override
     protected void initGame() {
         camera3D = getGameScene().getCamera3D();
@@ -66,46 +62,8 @@ public class Camera3DSample extends GameApplication {
 
         getGameScene().setBackgroundColor(Color.DARKCYAN);
 
-        getGameScene().setMouseGrabbed(true);
+        getGameScene().setFPSCamera(true);
         getGameScene().setCursorInvisible();
-
-        // TODO: add max rotation clamp, e.g. start of game
-        // merge common stuff with engine
-        getInput().addEventHandler(MouseEvent.MOUSE_MOVED, e -> {
-            var mouseX = getInput().getMouseXWorld();
-            var mouseY = getInput().getMouseYWorld();
-
-            if (e.getScreenX() == 960.0 && e.getScreenY() == 540.0) {
-                // ignore warp mouse events
-                lastX = mouseX;
-                lastY = mouseY;
-                return;
-            }
-
-            var offsetX = mouseX - lastX;
-            var offsetY = mouseY - lastY;
-
-            var mouseSensitivity = 0.2;
-
-            if (Math.abs(offsetX) > 0.5) {
-                if (mouseX > lastX) {
-                    transform.lookRightBy(mouseSensitivity * (mouseX - lastX));
-                } else if (mouseX < lastX) {
-                    transform.lookLeftBy(mouseSensitivity * (lastX -  mouseX));
-                }
-            }
-
-            if (Math.abs(offsetY) > 0.5) {
-                if (mouseY > lastY) {
-                    transform.lookDownBy(mouseSensitivity * (mouseY - lastY));
-                } else if (mouseY < lastY) {
-                    transform.lookUpBy(mouseSensitivity * (lastY - mouseY));
-                }
-            }
-
-            lastX = mouseX;
-            lastY = mouseY;
-        });
 
         // populate boxes
 
