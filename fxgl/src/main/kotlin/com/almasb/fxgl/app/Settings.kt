@@ -254,6 +254,11 @@ class GameSettings(
          */
         var ticksPerSecond: Int = -1,
 
+        /**
+         * How fast the 3D mouse movements are (example, rotating the camera).
+         */
+        var mouseSensitivity: Double = 0.2,
+
         var defaultLanguage: Language = ENGLISH,
 
         /* EXPERIMENTAL */
@@ -376,6 +381,7 @@ class GameSettings(
                 randomSeed,
                 ticksPerSecond,
                 userAppClass,
+                mouseSensitivity,
                 defaultLanguage,
                 isExperimentalTiledLargeMap,
                 isExperimentalNative,
@@ -551,6 +557,11 @@ class ReadOnlyGameSettings internal constructor(
         val ticksPerSecond: Int,
 
         val userAppClass: Class<*>,
+
+        /**
+         * How fast the 3D mouse movements are (example, rotating the camera).
+         */
+        mouseSensitivity: Double,
 
         private val defaultLanguage: Language,
 
@@ -738,6 +749,12 @@ class ReadOnlyGameSettings internal constructor(
     var globalSoundVolume: Double
         get() = globalSoundVolumeProperty.value
         set(value) { globalSoundVolumeProperty.value = value }
+
+    private val mouseSensitivityProp = SimpleDoubleProperty(mouseSensitivity)
+
+    var mouseSensitivity: Double
+        get() = mouseSensitivityProp.value
+        set(value) { mouseSensitivityProp.value = value }
 
     // WRAPPERS
 
