@@ -1,3 +1,9 @@
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
+
 package sandbox.test3d;
 
 import com.almasb.fxgl.animation.Interpolators;
