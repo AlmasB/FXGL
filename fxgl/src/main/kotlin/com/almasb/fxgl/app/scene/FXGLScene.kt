@@ -6,7 +6,9 @@
 
 package com.almasb.fxgl.app.scene
 
+import com.almasb.fxgl.app.FXGLApplication
 import com.almasb.fxgl.app.GameController
+import com.almasb.fxgl.app.MainWindow
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.scene.Scene
@@ -35,6 +37,11 @@ abstract class FXGLScene
 ) : Scene() {
 
     protected val controller: GameController by lazy { FXGL.getGameController() }
+
+    /**
+     * The main window with which this scene is registered.
+     */
+    protected val window: MainWindow by lazy { FXGL.getService(FXGLApplication.GameApplicationService::class.java).window }
 
     val viewport = Viewport(appWidth.toDouble(), appHeight.toDouble())
 
