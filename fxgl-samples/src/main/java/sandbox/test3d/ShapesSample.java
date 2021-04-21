@@ -170,32 +170,8 @@ public class ShapesSample extends GameApplication {
             x++;
         }
 
-
-
-
-        // TODO: add origin to gamescene
-
-        var origin = makeEntity(0, 0, 0);
-        var sp = new Sphere(0.1);
-        sp.setMaterial(new PhongMaterial(Color.YELLOW));
-
-
-        var axisX = new Box(1, 0.1, 0.1);
-        axisX.setTranslateX(0.5);
-        axisX.setMaterial(new PhongMaterial(Color.RED));
-
-        var axisY = new Box(0.1, 1, 0.1);
-        axisY.setTranslateY(0.5);
-        axisY.setMaterial(new PhongMaterial(Color.GREEN));
-
-        var axisZ = new Box(0.1, 0.1, 1);
-        axisZ.setTranslateZ(0.5);
-        axisZ.setMaterial(new PhongMaterial(Color.BLUE));
-
-        origin.getViewComponent().addChild(sp);
-        origin.getViewComponent().addChild(axisX);
-        origin.getViewComponent().addChild(axisY);
-        origin.getViewComponent().addChild(axisZ);
+        entityBuilder()
+                .buildOrigin3DAndAttach();
 
         // light
 
