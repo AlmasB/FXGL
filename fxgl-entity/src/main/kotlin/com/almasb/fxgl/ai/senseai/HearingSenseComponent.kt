@@ -12,8 +12,6 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Point2D
 import kotlin.math.max
 
-// TODO: fluent API params
-
 /**
  * Adds the ability to "hear" "noises" of interest in the game environment.
  *

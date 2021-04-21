@@ -86,8 +86,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             createMenuBodyMainMenu()
         else
             createMenuBodyGameMenu()
-
-        // TODO: doesn't use prefSize, hence layout not responsive
+        
         val menuX = 50.0
         val menuY = appHeight / 2.0 - menu.layoutHeight / 2
 
@@ -197,8 +196,6 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         text2.stroke = titleColor.value
         text2.strokeWidth = 1.5
 
-        // TODO: the lazy font size may not have been computed by this point
-        // so we need to list for changes in layout bounds of text1 and text2
         val textWidth = text.layoutBounds.width + text2.layoutBounds.width
 
         val border = Rectangle(textWidth + 30, 65.0, null)
@@ -759,7 +756,6 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             checkBox.isDisable = true
             checkBox.selectedProperty().bind(a.achievedProperty())
 
-            // TODO: re-implement tooltips using same window for better cross-platform support
             val text = getUIFactoryService().newText(a.name)
             val tooltip = Tooltip(a.description)
             tooltip.showDelay = Duration.seconds(0.1)
