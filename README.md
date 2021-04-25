@@ -65,7 +65,7 @@ Otherwise, see:
 
 Make sure to set `<release>11</release>` for `maven-compiler-plugin`.
 
-```
+```xml
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
@@ -81,7 +81,7 @@ Note: use `0.5.4` for Java 8-10.
 
 Please refer to the template if there are any errors.
 
-```
+```gradle
 repositories {
     jcenter()
 }
@@ -97,7 +97,7 @@ Note: use `0.5.4` for Java 8-10.
 
 If you wish to develop a modular application, here's a complete example of your `module-info.java`:
 
-```
+```java
 open module app.name {
     requires com.almasb.fxgl.all;
 }
