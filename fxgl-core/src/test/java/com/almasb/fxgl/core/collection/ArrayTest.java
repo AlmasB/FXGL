@@ -378,6 +378,10 @@ public class ArrayTest {
 
         StringBuilder s1 = new StringBuilder();
 
+        array.add(s1);
+
+        assertThat(array, contains(s1));
+
         array.removeValueByIdentity(s1);
 
         assertThat(array.size(), is(0));
