@@ -8,7 +8,7 @@ package com.almasb.fxgl.achievement
 
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.serialization.Bundle
-import com.almasb.fxgl.event.EventBusService
+import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.test.InjectInTest.inject
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -41,7 +41,7 @@ class AchievementServiceTest {
         val lookup = MethodHandles.lookup()
         val injectMap = mapOf(
                 "achievementsFromSettings" to listOf(a2),
-                "eventBusService" to  EventBusService())
+                "eventBus" to  EventBus())
 
         inject(lookup, achievementManager, injectMap)
     }

@@ -7,6 +7,7 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
 import javafx.beans.property.ReadOnlyDoubleProperty
@@ -49,6 +50,11 @@ abstract class SceneService : EngineService() {
      * and uses actual javafx scene height if not
      */
     abstract fun prefHeightProperty(): ReadOnlyDoubleProperty
+
+    /**
+     * Global event bus.
+     */
+    abstract val eventBus: EventBus
 
     /**
      * Always-on input.

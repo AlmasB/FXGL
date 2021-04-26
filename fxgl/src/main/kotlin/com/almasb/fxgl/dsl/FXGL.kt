@@ -28,7 +28,6 @@ import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.tiled.TMXLevelLoader
-import com.almasb.fxgl.event.EventBusService
 import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
@@ -207,7 +206,7 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun getAssetLoader() = engine.getService(FXGLAssetLoaderService::class.java)
 
-    @JvmStatic fun getEventBus() = engine.getService(EventBusService::class.java).eventBus
+    @JvmStatic fun getEventBus() = engine.getService(FXGLApplication.GameApplicationService::class.java).eventBus
 
     @JvmStatic fun getAudioPlayer() = engine.getService(AudioPlayer::class.java)
 

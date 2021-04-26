@@ -7,6 +7,7 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.core.Updatable
+import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
 import javafx.beans.property.ReadOnlyDoubleProperty
@@ -70,6 +71,9 @@ class SceneTest {
             override fun prefHeightProperty(): ReadOnlyDoubleProperty {
                 return ReadOnlyDoubleWrapper(600.0).readOnlyProperty
             }
+
+            override val eventBus: EventBus
+                get() = EventBus()
             override val input: Input
                 get() = Input()
             override val timer: Timer

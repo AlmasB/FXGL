@@ -72,13 +72,6 @@ class EventBusTest {
     }
 
     @Test
-    fun `Service provides an event bus`() {
-        val service = EventBusService()
-
-        assertNotNull(service.eventBus)
-    }
-
-    @Test
     fun `EventBus logging enabled by default`() {
         assertThat(eventBus.isLoggingEnabled, `is`(true))
     }

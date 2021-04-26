@@ -20,6 +20,7 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.animationBuilder
 import com.almasb.fxgl.dsl.getGameController
 import com.almasb.fxgl.entity.GameWorld
+import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputSequence
 import com.almasb.fxgl.input.UserAction
@@ -362,6 +363,8 @@ class FXGLApplication : Application() {
         override fun prefWidthProperty(): ReadOnlyDoubleProperty = settings.prefWidthProperty()
 
         override fun prefHeightProperty(): ReadOnlyDoubleProperty = settings.prefHeightProperty()
+
+        override val eventBus = EventBus()
 
         override val input: Input
             get() = mainWindow.input
