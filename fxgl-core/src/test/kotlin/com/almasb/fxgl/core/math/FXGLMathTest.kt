@@ -31,6 +31,7 @@ class FXGLMathTest {
             val rad = Math.toRadians(deg.toDouble())
 
             assertThat(sin(rad), closeTo(Math.sin(rad), 0.001))
+            assertThat(sinF(rad).toDouble(), closeTo(Math.sin(rad), 0.001))
         }
 
         assertThat(sin(-3 * PI), closeTo(Math.sin(-3 * PI), 0.001))
@@ -42,6 +43,7 @@ class FXGLMathTest {
             val rad = Math.toRadians(deg.toDouble())
 
             assertThat(cos(rad), closeTo(Math.cos(rad), 0.001))
+            assertThat(cosF(rad).toDouble(), closeTo(Math.cos(rad), 0.001))
         }
 
         assertThat(cos(-3 * PI), closeTo(Math.cos(-3 * PI), 0.001))
