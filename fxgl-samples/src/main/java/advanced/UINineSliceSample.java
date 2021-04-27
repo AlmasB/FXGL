@@ -11,7 +11,6 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.texture.NineSliceTextureBuilder;
 import com.almasb.fxgl.texture.Texture;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -127,7 +126,7 @@ public class UINineSliceSample extends GameApplication {
 
     private void saveImageToFile(Image image, File file) {
         try {
-            var x = SwingFXUtils.fromFXImage(image, null);
+            var x = ImageIO.read(ImageIO.createImageInputStream(image));
             ImageIO.write(x,"png", file);
             log.info("Saved image to '" + file.getAbsolutePath() + "'.");
         } catch (IOException ex) {

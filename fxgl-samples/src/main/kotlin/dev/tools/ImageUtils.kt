@@ -6,7 +6,6 @@
 
 package dev.tools
 
-import javafx.embed.swing.SwingFXUtils
 import javafx.scene.image.Image
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -21,7 +20,7 @@ class ImageUtils {
     companion object {
 
         @JvmStatic fun save(fxImage: Image): Boolean {
-            val img = SwingFXUtils.fromFXImage(fxImage, null)
+            val img = ImageIO.read(ImageIO.createImageInputStream(fxImage))
 
             var fileName = "file.png"
 

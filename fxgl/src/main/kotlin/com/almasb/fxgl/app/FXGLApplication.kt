@@ -43,7 +43,6 @@ import javafx.application.Application
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.concurrent.Task
-import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.ImageCursor
@@ -60,6 +59,12 @@ import java.nio.file.Paths
 import java.time.LocalDateTime
 import javax.imageio.ImageIO
 import kotlin.system.measureNanoTime
+import java.io.ByteArrayInputStream
+
+import java.awt.image.BufferedImage
+
+
+
 
 /**
  *
@@ -670,7 +675,7 @@ class FXGLApplication : Application() {
          */
         fun saveScreenshot(): Boolean {
             val fxImage = mainWindow.takeScreenshot()
-            val img = SwingFXUtils.fromFXImage(fxImage, null)
+            val img = ImageIO.read(ImageIO.createImageInputStream(fxImage))
 
             var fileName = "./" + settings.title + settings.version + LocalDateTime.now()
             fileName = fileName.replace(":", "_")

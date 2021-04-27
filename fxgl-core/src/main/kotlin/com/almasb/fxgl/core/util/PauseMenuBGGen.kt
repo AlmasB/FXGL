@@ -11,7 +11,6 @@ import java.util.*
 import java.util.zip.InflaterInputStream
 
 //
-//import javafx.embed.swing.SwingFXUtils
 //import javafx.scene.SnapshotParameters
 //import javafx.scene.effect.DropShadow
 //import javafx.scene.paint.Color
@@ -82,7 +81,7 @@ object PauseMenuBGGen {
 //    // draw into image to speed up rendering
 //    val image = outer.snapshot(params, null)
 //
-//    val img = SwingFXUtils.fromFXImage(image, null)
+//    val img = ImageIO.read(ImageIO.createImageInputStream(fxImage))
 //
 //    try {
 //        Files.newOutputStream(Paths.get("pause_menu_bg.png")).use {

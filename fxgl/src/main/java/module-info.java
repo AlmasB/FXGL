@@ -21,10 +21,10 @@ module com.almasb.fxgl.all {
     requires transitive javafx.graphics;
     requires transitive javafx.controls;
     requires transitive javafx.fxml;
-    requires transitive javafx.swing;
 
     requires com.fasterxml.jackson.databind;
     requires com.gluonhq.attach.lifecycle;
+    requires java.desktop;
 
     opens com.almasb.fxgl.dsl to com.almasb.fxgl.core;
     opens com.almasb.fxgl.dsl.components to com.almasb.fxgl.core;
