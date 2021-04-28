@@ -11,15 +11,15 @@ import com.almasb.fxgl.core.math.Vec2;
  * Output for Distance.
  * @author Daniel
  */
-public class DistanceOutput {
+class DistanceOutput {
     /** Closest point on shapeA */
-    public final Vec2 pointA = new Vec2();
+    final Vec2 pointA = new Vec2();
 
     /** Closest point on shapeB */
-    public final Vec2 pointB = new Vec2();
+    final Vec2 pointB = new Vec2();
 
-    public float distance;
+    float distance;
 
     /** number of gjk iterations used */
-    public int iterations;
+    int iterations;
 }
