@@ -52,18 +52,17 @@ public class Distance {
      *
      * @author daniel
      */
-    public static class SimplexCache {
+    static class SimplexCache {
         /** length or area */
-        public float metric;
-        public int count;
+        public float metric = 0f;
+        public int count = 0;
+
         /** vertices on shape A */
-        public final int indexA[] = new int[3];
+        public final int[] indexA = new int[3];
         /** vertices on shape B */
-        public final int indexB[] = new int[3];
+        public final int[] indexB = new int[3];
 
         public SimplexCache() {
-            metric = 0;
-            count = 0;
             indexA[0] = Integer.MAX_VALUE;
             indexA[1] = Integer.MAX_VALUE;
             indexA[2] = Integer.MAX_VALUE;
