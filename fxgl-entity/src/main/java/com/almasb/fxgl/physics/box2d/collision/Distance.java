@@ -20,11 +20,7 @@ import com.almasb.fxgl.physics.box2d.common.Transform;
  * @author Daniel Murphy
  */
 public class Distance {
-    public static final int MAX_ITERS = 20;
-
-    public static int GJK_CALLS = 0;
-    public static int GJK_ITERS = 0;
-    public static int GJK_MAX_ITERS = 20;
+    private static final int MAX_ITERS = 20;
 
     /**
      * GJK using Voronoi regions (Christer Ericson) and Barycentric coordinates.
@@ -573,7 +569,6 @@ public class Distance {
     @SuppressWarnings("PMD.EmptyIfStmt")
     public final void distance(final DistanceOutput output, final SimplexCache cache,
                                final DistanceInput input) {
-        GJK_CALLS++;
 
         final DistanceProxy proxyA = input.proxyA;
         final DistanceProxy proxyB = input.proxyB;
@@ -670,7 +665,6 @@ public class Distance {
 
             // Iteration count is equated to the number of support point calls.
             ++iter;
-            ++GJK_ITERS;
 
             // Check for duplicate support points. This is the main termination criteria.
             boolean duplicate = false;
@@ -689,8 +683,6 @@ public class Distance {
             // New vertex is ok and needed.
             ++simplex.m_count;
         }
-
-        GJK_MAX_ITERS = Math.max(GJK_MAX_ITERS, iter);
 
         // Prepare output.
         simplex.getWitnessPoints(output.pointA, output.pointB);
