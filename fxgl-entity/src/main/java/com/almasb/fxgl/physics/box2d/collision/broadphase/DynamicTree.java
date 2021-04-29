@@ -53,7 +53,7 @@ public class DynamicTree implements BroadPhaseStrategy {
         nodeAABB.lowerBound.y = aabb.lowerBound.y - JBoxSettings.aabbExtension;
         nodeAABB.upperBound.x = aabb.upperBound.x + JBoxSettings.aabbExtension;
         nodeAABB.upperBound.y = aabb.upperBound.y + JBoxSettings.aabbExtension;
-        node.userData = userData;
+        node.setUserData(userData);
 
         insertLeaf(proxyId);
 
@@ -110,7 +110,7 @@ public class DynamicTree implements BroadPhaseStrategy {
 
     @Override
     public final Object getUserData(int proxyId) {
-        return m_nodes[proxyId].userData;
+        return m_nodes[proxyId].getUserData();
     }
 
     @Override
@@ -286,7 +286,7 @@ public class DynamicTree implements BroadPhaseStrategy {
         treeNode.child1 = null;
         treeNode.child2 = null;
         treeNode.height = 0;
-        treeNode.userData = null;
+        treeNode.setUserData(null);
         ++m_nodeCount;
         return treeNode;
     }
@@ -371,7 +371,7 @@ public class DynamicTree implements BroadPhaseStrategy {
         DynamicTreeNode oldParent = m_nodes[sibling.id].parent;
         final DynamicTreeNode newParent = allocateNode();
         newParent.parent = oldParent;
-        newParent.userData = null;
+        newParent.setUserData(null);
         newParent.aabb.combine(leafAABB, sibling.aabb);
         newParent.height = sibling.height + 1;
 
