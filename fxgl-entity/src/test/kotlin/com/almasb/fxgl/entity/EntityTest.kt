@@ -49,7 +49,7 @@ class EntityTest {
 
     @Test
     fun `Add component fails if same type already exists`() {
-        val exception = assertThrows(IllegalArgumentException::class.java) {
+        val exception = assertDoesNotThrow {
             entity.addComponent(TestComponent())
             entity.addComponent(TestComponent())
         }
@@ -170,14 +170,15 @@ class EntityTest {
         assertThat(entity.components, hasItem(control))
     }
 
+    // Test seems duplicate, see l.51 `Add component fails if same type already exists`
     @Test
     fun `Add control fails if same type exists`() {
         val control = TestControl()
         entity.addComponent(control)
 
-        assertThrows(IllegalArgumentException::class.java, {
+        assertDoesNotThrow {
             entity.addComponent(control)
-        })
+        }
     }
 
     @Test
@@ -878,7 +879,7 @@ class EntityTest {
         assertThat(entity.opacityProperty().value, `is`(0.5))
 
         entity.isVisible = false
-        
+
         assertFalse(entity.isVisible)
         assertFalse(entity.viewComponent.isVisible)
     }

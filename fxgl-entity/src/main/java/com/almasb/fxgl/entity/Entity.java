@@ -389,9 +389,11 @@ public class Entity implements Animatable, Copyable<Entity> {
     public final void addComponent(Component component) {
         checkNotUpdating();
 
-        checkRequirementsMet(component.getClass());
+        if (checkRequirementsMet(component.getClass())) {
 
-        addComponentNoChecks(component);
+            addComponentNoChecks(component);
+
+        }
     }
 
     private void addComponentNoChecks(Component component) {
@@ -533,20 +535,18 @@ public class Entity implements Animatable, Copyable<Entity> {
         return type.getAnnotation(CoreComponent.class) != null;
     }
 
-    private void checkRequirementsMet(Class<? extends Component> type) {
-        checkNotDuplicate(type);
-
+    private boolean checkRequirementsMet(Class<? extends Component> type) {
+        // check if not duplicate;
+        if (hasComponent(type)) {
+            log.warning("Entity already has component: " + type.getCanonicalName());
+            return false;
+        }
         for (Required r : type.getAnnotationsByType(Required.class)) {
             if (!hasComponent(r.value())) {
                 throw new IllegalStateException("Required component: [" + r.value().getSimpleName() + "] for: " + type.getSimpleName() + " is missing");
             }
         }
-    }
-
-    private void checkNotDuplicate(Class<? extends Component> type) {
-        if (hasComponent(type)) {
-            throw new IllegalArgumentException("Entity already has component: " + type.getCanonicalName());
-        }
+        return true;
     }
 
     private void checkNotRequiredByAny(Class<? extends Component> type) {
