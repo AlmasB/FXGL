@@ -41,7 +41,7 @@ class SeparationFunction {
     private final Transform xfa = new Transform();
     private final Transform xfb = new Transform();
 
-    float initialize(final SimplexCache cache,
+    void initialize(final SimplexCache cache,
                      final DistanceProxy proxyA,
                      final Sweep sweepA,
                      final DistanceProxy proxyB,
@@ -61,18 +61,14 @@ class SeparationFunction {
 
         if (count == 1) {
             m_type = Type.POINTS;
-      /*
-       * Vec2 localPointA = m_proxyA.GetVertex(cache.indexA[0]); Vec2 localPointB =
-       * m_proxyB.GetVertex(cache.indexB[0]); Vec2 pointA = Mul(transformA, localPointA); Vec2
-       * pointB = Mul(transformB, localPointB); m_axis = pointB - pointA; m_axis.Normalize();
-       */
+
             localPointA.set(m_proxyA.getVertex(cache.indexA[0]));
             localPointB.set(m_proxyB.getVertex(cache.indexB[0]));
             Transform.mulToOutUnsafe(xfa, localPointA, pointA);
             Transform.mulToOutUnsafe(xfb, localPointB, pointB);
             m_axis.set(pointB).subLocal(pointA);
-            float s = m_axis.getLengthAndNormalize();
-            return s;
+            m_axis.getLengthAndNormalize();
+
         } else if (cache.indexA[0] == cache.indexA[1]) {
             // Two points on B and one on A.
             m_type = Type.FACE_B;
@@ -96,9 +92,8 @@ class SeparationFunction {
             float s = Vec2.dot(temp, normal);
             if (s < 0.0f) {
                 m_axis.negateLocal();
-                s = -s;
             }
-            return s;
+
         } else {
             // Two points on A and one or two points on B.
             m_type = Type.FACE_A;
@@ -122,9 +117,7 @@ class SeparationFunction {
             float s = Vec2.dot(temp, normal);
             if (s < 0.0f) {
                 m_axis.negateLocal();
-                s = -s;
             }
-            return s;
         }
     }
 
