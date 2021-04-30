@@ -535,8 +535,6 @@ public class DynamicTree implements BroadPhaseStrategy {
             DynamicTreeNode iE = B.child2;
             DynamicTreeNode D = iD;
             DynamicTreeNode E = iE;
-            assert 0 <= iD.id && iD.id < m_nodeCapacity;
-            assert 0 <= iE.id && iE.id < m_nodeCapacity;
 
             // Swap A and B
             B.child1 = iA;
