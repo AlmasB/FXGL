@@ -469,8 +469,6 @@ public class DynamicTree implements BroadPhaseStrategy {
 
         DynamicTreeNode iB = A.child1;
         DynamicTreeNode iC = A.child2;
-        assert 0 <= iB.id && iB.id < m_nodeCapacity;
-        assert 0 <= iC.id && iC.id < m_nodeCapacity;
 
         DynamicTreeNode B = iB;
         DynamicTreeNode C = iC;
@@ -479,14 +477,8 @@ public class DynamicTree implements BroadPhaseStrategy {
 
         // Rotate C up
         if (balance > 1) {
-            DynamicTreeNode iF = C.child1;
-            DynamicTreeNode iG = C.child2;
-            DynamicTreeNode F = iF;
-            DynamicTreeNode G = iG;
-            assert F != null;
-            assert G != null;
-            assert 0 <= iF.id && iF.id < m_nodeCapacity;
-            assert 0 <= iG.id && iG.id < m_nodeCapacity;
+            DynamicTreeNode F = C.child1;
+            DynamicTreeNode G = C.child2;
 
             // Swap A and C
             C.child1 = iA;
@@ -507,8 +499,8 @@ public class DynamicTree implements BroadPhaseStrategy {
 
             // Rotate
             if (F.height > G.height) {
-                C.child2 = iF;
-                A.child2 = iG;
+                C.child2 = F;
+                A.child2 = G;
                 G.parent = iA;
                 A.aabb.combine(B.aabb, G.aabb);
                 C.aabb.combine(A.aabb, F.aabb);
@@ -516,8 +508,8 @@ public class DynamicTree implements BroadPhaseStrategy {
                 A.height = 1 + Math.max(B.height, G.height);
                 C.height = 1 + Math.max(A.height, F.height);
             } else {
-                C.child2 = iG;
-                A.child2 = iF;
+                C.child2 = G;
+                A.child2 = F;
                 F.parent = iA;
                 A.aabb.combine(B.aabb, F.aabb);
                 C.aabb.combine(A.aabb, G.aabb);
@@ -531,10 +523,8 @@ public class DynamicTree implements BroadPhaseStrategy {
 
         // Rotate B up
         if (balance < -1) {
-            DynamicTreeNode iD = B.child1;
-            DynamicTreeNode iE = B.child2;
-            DynamicTreeNode D = iD;
-            DynamicTreeNode E = iE;
+            DynamicTreeNode D = B.child1;
+            DynamicTreeNode E = B.child2;
 
             // Swap A and B
             B.child1 = iA;
@@ -555,8 +545,8 @@ public class DynamicTree implements BroadPhaseStrategy {
 
             // Rotate
             if (D.height > E.height) {
-                B.child2 = iD;
-                A.child1 = iE;
+                B.child2 = D;
+                A.child1 = E;
                 E.parent = iA;
                 A.aabb.combine(C.aabb, E.aabb);
                 B.aabb.combine(A.aabb, D.aabb);
@@ -564,8 +554,8 @@ public class DynamicTree implements BroadPhaseStrategy {
                 A.height = 1 + Math.max(C.height, E.height);
                 B.height = 1 + Math.max(A.height, D.height);
             } else {
-                B.child2 = iE;
-                A.child1 = iD;
+                B.child2 = E;
+                A.child1 = D;
                 D.parent = iA;
                 A.aabb.combine(C.aabb, D.aabb);
                 B.aabb.combine(A.aabb, E.aabb);
