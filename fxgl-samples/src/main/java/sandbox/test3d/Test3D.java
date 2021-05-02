@@ -69,9 +69,7 @@ public class Test3D {
 
         //root.getChildren().addAll(light, light2, light3);
 
-        mazeFull();
     }
-
 
     private void mazeFull() {
         var scale = 20;
@@ -208,71 +206,34 @@ public class Test3D {
     }
 
     private void loader() {
-        var model = getAssetLoader().loadModel3D("gifts/gifts.obj");
-        var mat = new PhongMaterial();
-        mat.setDiffuseColor(Color.WHITE);
+
+//        var mat = new PhongMaterial();
+//        mat.setDiffuseColor(Color.WHITE);
         //mat.setDiffuseMap(image("brick.png"));
         //model.setMaterial(mat);
 
-        model.setRotationAxis(Rotate.X_AXIS);
-        model.setRotate(90);
+        var scaleY = 10;
 
-        model.getVertices().forEach(v -> {
-            var p = new Point2D(v.getX() - 0, v.getZ() - 0).normalize();
+        for (int y = -2; y < 4; y++) {
+            for (int x = 0; x < 20; x++) {
+                var model = getAssetLoader().loadModel3D("gifts/gifts.obj");
+                model.setRotationAxis(Rotate.X_AXIS);
+                model.setRotate(90);
 
-            var angle = p.angle(1, 0);
-
-            //p = p.multiply(angle / 180.0 * (v.getY() < 0 ? 5 : 2));
-
-
-            //if (angle > 70 && v.getY() < 15 && v.getX() != 0.0) {
-
-                final double t = delayIndex * (2 * PI / 64.0);
-
-//                var p = new Point2D(cos(t), sin(t)).normalize().multiply(1.5);
-
-                //if (angle > 90) {
+                var e = entityBuilder()
+                        .at(0, y * scaleY, 0)
+                        .view(model)
+                        .buildAndAttach();
 
                 animationBuilder()
-                        .interpolator(Interpolators.EXPONENTIAL.EASE_IN_OUT())
-                        .delay(Duration.seconds(delayIndex * 0.005 ))
-                        .repeatInfinitely()
-                        .autoReverse(true)
-                        .animate(v.xProperty())
-                        .from(v.getX())
-                        .to(v.getX() + p.getX())
+                        .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
+                        .duration(Duration.seconds(x * 0.55))
+                        .translate(e)
+                        .from(new Point3D(0, y * scaleY, 0))
+                        .to(new Point3D(3 + x * 10, y * scaleY, 0))
                         .buildAndPlay();
-
-                animationBuilder()
-                        .interpolator(Interpolators.EXPONENTIAL.EASE_IN_OUT())
-                        .delay(Duration.seconds(delayIndex * 0.005 ))
-                        .repeatInfinitely()
-                        .autoReverse(true)
-                        .animate(v.zProperty())
-                        .from(v.getZ())
-                        .to(v.getZ() + p.getY())
-                        .buildAndPlay();
-                //}
-
-//                animationBuilder()
-//                        .interpolator(Interpolators.QUADRATIC.EASE_OUT())
-//                        .delay(Duration.seconds(delayIndex * 0.005))
-//                        .repeatInfinitely()
-//                        .autoReverse(true)
-//                        .animate(v.yProperty())
-//                        .from(v.getY() + 0.5)
-//                        .to(v.getY() + 0.5 * 2 + FXGLMath.sinDeg(delayIndex / 512.0 * 360.0) * 0.25)
-//                        .buildAndPlay();
-
-                delayIndex++;
-            //}
-        });
-
-        entityBuilder()
-                //.view(new Sphere(0.2))
-                .view(model)
-                //.scale(15, 15)
-                .buildAndAttach();
+            }
+        }
     }
 
     private void combined() {
