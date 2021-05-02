@@ -51,7 +51,12 @@ internal class SubGroup {
     var ambientColor: Color? = null
 }
 
-internal class MtlData {
+internal class MtlData(
+        /**
+         * URL of the .mtl file.
+         */
+        val url: URL) {
+
     val materials = hashMapOf<String, Material>()
     val ambientColors = hashMapOf<Material, Color>()
 

@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.scene3d.obj
 
+import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.scene3d.Model3D
 import com.almasb.fxgl.scene3d.Model3DLoader
 import javafx.scene.paint.Color
@@ -14,7 +15,6 @@ import javafx.scene.shape.CullFace
 import javafx.scene.shape.MeshView
 import javafx.scene.shape.TriangleMesh
 import javafx.scene.shape.VertexFormat
-import java.lang.Exception
 import java.net.URL
 
 /**
@@ -42,6 +42,7 @@ class ObjModelLoader : Model3DLoader {
             mtlParsers[ { it.startsWith("Kd") }  ] = Companion::parseColorDiffuse
             mtlParsers[ { it.startsWith("Ks") }  ] = Companion::parseColorSpecular
             mtlParsers[ { it.startsWith("Ns") }  ] = Companion::parseSpecularPower
+            mtlParsers[ { it.startsWith("map_Kd") }  ] = Companion::parseDiffuseMap
         }
 
         private fun parseGroup(tokens: List<String>, data: ObjData) {
@@ -167,6 +168,12 @@ class ObjModelLoader : Model3DLoader {
             data.currentMaterial.specularPower = tokens[0].toDouble()
         }
 
+        private fun parseDiffuseMap(tokens: List<String>, data: MtlData) {
+            val ext = data.url.toExternalForm().substringBeforeLast("/") + "/"
+
+            data.currentMaterial.diffuseMap = FXGL.getAssetLoader().loadImage(URL(ext + tokens[0]))
+        }
+
         // TODO: refactor loadXXXData below
         private fun loadObjData(url: URL): ObjData {
             val data = ObjData(url)
@@ -190,15 +197,17 @@ class ObjModelLoader : Model3DLoader {
         }
 
         private fun loadMtlData(url: URL): MtlData {
-            val data = MtlData()
+            val data = MtlData(url)
 
             url.openStream().bufferedReader().useLines {
                 it.forEach { line ->
 
+                    val lineTrimmed = line.trim()
+
                     for ((condition, action) in mtlParsers) {
-                        if (condition.invoke(line) ) {
+                        if (condition.invoke(lineTrimmed) ) {
                             // drop identifier
-                            val tokens = line.split(" +".toRegex()).drop(1)
+                            val tokens = lineTrimmed.split(" +".toRegex()).drop(1)
 
                             action.invoke(tokens, data)
                             break
@@ -212,15 +221,12 @@ class ObjModelLoader : Model3DLoader {
     }
 
     // TODO: smoothing groups
-    // TODO: mtl textures
     override fun load(url: URL): Model3D {
         try {
             val data = loadObjData(url)
             val modelRoot = Model3D()
 
             data.groups.forEach {
-                println("Group: ${it.name}")
-
                 val groupRoot = Model3D()
                 groupRoot.properties["name"] = it.name
 
