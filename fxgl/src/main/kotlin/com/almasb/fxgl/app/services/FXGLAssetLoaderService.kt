@@ -471,7 +471,6 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         return load(UI, UIParams(url, controller))
     }
 
-    // TODO: return copy from cache
     /**
      * Loads a 3D model from file with given [name] from /assets/models/.
      */
@@ -816,6 +815,13 @@ private class Model3DAssetLoader : AssetLoader<Model3D>(
         Model3D::class.java,
         MODELS_DIR
 ) {
+
+    override fun cast(obj: Any): Model3D {
+        val cachedModel = obj as Model3D
+
+        return cachedModel.copy()
+    }
+
     override fun load(url: URL): Model3D {
         val isObj = url.toExternalForm().endsWith("obj")
 
