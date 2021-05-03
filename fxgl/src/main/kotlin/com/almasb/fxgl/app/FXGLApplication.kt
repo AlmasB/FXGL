@@ -11,6 +11,7 @@ import com.almasb.fxgl.app.scene.FXGLScene
 import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.scene.LoadingScene
 import com.almasb.fxgl.app.services.FXGLAssetLoaderService
+import com.almasb.fxgl.app.util.PngEncoderFX
 import com.almasb.fxgl.core.Updatable
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
@@ -46,6 +47,7 @@ import javafx.concurrent.Task
 import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.ImageCursor
+import javafx.scene.SnapshotParameters
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode.*
 import javafx.scene.input.KeyEvent
@@ -54,16 +56,11 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.stage.Stage
 import javafx.util.Duration
+import java.io.IOException
 import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
 import java.time.LocalDateTime
-import javax.imageio.ImageIO
 import kotlin.system.measureNanoTime
-import java.io.ByteArrayInputStream
-
-import java.awt.image.BufferedImage
-
-
 
 
 /**
@@ -675,7 +672,6 @@ class FXGLApplication : Application() {
          */
         fun saveScreenshot(): Boolean {
             val fxImage = mainWindow.takeScreenshot()
-            val img = ImageIO.read(ImageIO.createImageInputStream(fxImage))
 
             var fileName = "./" + settings.title + settings.version + LocalDateTime.now()
             fileName = fileName.replace(":", "_")
@@ -683,9 +679,16 @@ class FXGLApplication : Application() {
             try {
                 val name = if (fileName.endsWith(".png")) fileName else "$fileName.png"
 
-                Files.newOutputStream(Paths.get(name)).use {
-                    return ImageIO.write(img, "png", it)
+                val params = SnapshotParameters()
+                params.fill = Color.TRANSPARENT
+                val encoder = PngEncoderFX(fxImage, true)
+                val bytes: ByteArray = encoder.pngEncode()
+                try {
+                    Files.write(Path.of(name), bytes)
+                } catch (e: IOException) {
+                    System.err.println("Error writing file: " + e.message)
                 }
+                return true
             } catch (e: Exception) {
                 log.warning("saveScreenshot($fileName.png) failed: $e")
                 return false
