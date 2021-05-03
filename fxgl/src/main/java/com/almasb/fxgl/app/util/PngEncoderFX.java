@@ -56,12 +56,6 @@ import java.util.zip.DeflaterOutputStream;
 
 public class PngEncoderFX extends Object {
 
-    /** Constant specifying that alpha channel should be encoded. */
-    public static final boolean ENCODE_ALPHA = true;
-
-    /** Constant specifying that alpha channel should not be encoded. */
-    public static final boolean NO_ALPHA = false;
-
     /** Constants for filter (NONE) */
     public static final int FILTER_NONE = 0;
 
@@ -96,7 +90,8 @@ public class PngEncoderFX extends Object {
     protected Image image;
 
     /** The width. */
-    protected int width, height;
+    protected int width;
+    protected int height;
 
     /** The byte position. */
     protected int bytePos, maxPos;
@@ -120,45 +115,15 @@ public class PngEncoderFX extends Object {
     protected int compressionLevel;
 
     /**
-     * Class constructor
-     */
-    public PngEncoderFX() {
-        this(null, false, FILTER_NONE, 0);
-    }
-
-    /**
-     * Class constructor specifying Image to encode, with no alpha channel encoding.
-     *
-     * @param image A Java Image object which uses the DirectColorModel
-     * @see java.awt.Image
-     */
-    public PngEncoderFX(Image image) {
-        this(image, false, FILTER_NONE, 0);
-    }
-
-    /**
      * Class constructor specifying Image to encode, and whether to encode alpha.
      *
      * @param image A Java Image object which uses the DirectColorModel
      * @param encodeAlpha Encode the alpha channel? false=no; true=yes
-     * @see java.awt.Image
+     * @see Image
      */
     public PngEncoderFX(Image image, boolean encodeAlpha) {
         this(image, encodeAlpha, FILTER_NONE, 0);
     }
-
-    /**
-     * Class constructor specifying Image to encode, whether to encode alpha, and filter to use.
-     *
-     * @param image A Java Image object which uses the DirectColorModel
-     * @param encodeAlpha Encode the alpha channel? false=no; true=yes
-     * @param whichFilter 0=none, 1=sub, 2=up
-     * @see java.awt.Image
-     */
-    public PngEncoderFX(Image image, boolean encodeAlpha, int whichFilter) {
-        this(image, encodeAlpha, whichFilter, 0);
-    }
-
 
     /**
      * Class constructor specifying Image source to encode, whether to encode alpha, filter to use,
@@ -168,7 +133,7 @@ public class PngEncoderFX extends Object {
      * @param encodeAlpha Encode the alpha channel? false=no; true=yes
      * @param whichFilter 0=none, 1=sub, 2=up
      * @param compLevel 0..9
-     * @see java.awt.Image
+     * @see Image
      */
     public PngEncoderFX(Image image, boolean encodeAlpha, int whichFilter, int compLevel) {
         this.image = image;
@@ -183,8 +148,7 @@ public class PngEncoderFX extends Object {
      * Set the image to be encoded
      *
      * @param image A Java Image object which uses the DirectColorModel
-     * @see java.awt.Image
-     * @see java.awt.image.DirectColorModel
+     * @see Image
      */
     public void setImage(Image image) {
         this.image = image;
@@ -219,9 +183,7 @@ public class PngEncoderFX extends Object {
         maxPos = 0;
 
         bytePos = writeBytes(pngIdBytes, 0);
-        //hdrPos = bytePos;
         writeHeader();
-        //dataPos = bytePos;
         if (writeImageData()) {
             writeEnd();
             pngBytes = resizeByteArray(pngBytes, maxPos);
@@ -243,24 +205,6 @@ public class PngEncoderFX extends Object {
     }
 
     /**
-     * Set the alpha encoding on or off.
-     *
-     * @param encodeAlpha  false=no, true=yes
-     */
-    public void setEncodeAlpha(boolean encodeAlpha) {
-        this.encodeAlpha = encodeAlpha;
-    }
-
-    /**
-     * Retrieve alpha encoding status.
-     *
-     * @return boolean false=no, true=yes
-     */
-    public boolean getEncodeAlpha() {
-        return encodeAlpha;
-    }
-
-    /**
      * Set the filter to use
      *
      * @param whichFilter from constant list
@@ -279,26 +223,6 @@ public class PngEncoderFX extends Object {
      */
     public int getFilter() {
         return filter;
-    }
-
-    /**
-     * Set the compression level to use
-     *
-     * @param level 0 through 9
-     */
-    public void setCompressionLevel(int level) {
-        if (level >= 0 && level <= 9) {
-            this.compressionLevel = level;
-        }
-    }
-
-    /**
-     * Retrieve compression level
-     *
-     * @return int in range 0-9
-     */
-    public int getCompressionLevel() {
-        return compressionLevel;
     }
 
     /**
@@ -356,18 +280,6 @@ public class PngEncoderFX extends Object {
         }
         System.arraycopy(data, 0, pngBytes, offset, nBytes);
         return offset + nBytes;
-    }
-
-    /**
-     * Write a two-byte integer into the pngBytes array at a given position.
-     *
-     * @param n The integer to be written into pngBytes.
-     * @param offset The starting point to write to.
-     * @return The next place to be written to in the pngBytes array.
-     */
-    protected int writeInt2(int n, int offset) {
-        byte[] temp = {(byte) ((n >> 8) & 0xff), (byte) (n & 0xff)};
-        return writeBytes(temp, offset);
     }
 
     /**
@@ -588,5 +500,4 @@ public class PngEncoderFX extends Object {
         crcValue = crc.getValue();
         bytePos = writeInt4((int) crcValue, bytePos);
     }
-
 }
