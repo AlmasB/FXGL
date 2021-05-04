@@ -33,6 +33,7 @@ import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.texture.toBufferedImage
 import com.almasb.fxgl.texture.toImage
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.DialogService
@@ -43,7 +44,6 @@ import javafx.application.Application
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.concurrent.Task
-import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.ImageCursor
@@ -670,7 +670,7 @@ class FXGLApplication : Application() {
          */
         fun saveScreenshot(): Boolean {
             val fxImage = mainWindow.takeScreenshot()
-            val img = SwingFXUtils.fromFXImage(fxImage, null)
+            val img = toBufferedImage(fxImage)
 
             var fileName = "./" + settings.title + settings.version + LocalDateTime.now()
             fileName = fileName.replace(":", "_")

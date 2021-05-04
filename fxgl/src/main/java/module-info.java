@@ -21,8 +21,8 @@ module com.almasb.fxgl.all {
     requires transitive javafx.graphics;
     requires transitive javafx.controls;
     requires transitive javafx.fxml;
-    requires transitive javafx.swing;
 
+    requires java.desktop;
     requires com.fasterxml.jackson.databind;
     requires com.gluonhq.attach.lifecycle;
 

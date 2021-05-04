@@ -11,8 +11,7 @@ import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.SnapshotParameters
 import javafx.scene.effect.BlendMode
-import javafx.scene.image.Image
-import javafx.scene.image.WritableImage
+import javafx.scene.image.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import java.util.concurrent.Callable
@@ -571,4 +570,18 @@ fun ByteArray.toImage(): Image {
             this.map { if (it == 0.toByte()) Color.BLACK else Color.WHITE }
             .map { Pixel(0, 0, it, parent) }
     )
+}
+
+fun toBufferedImage(fxImage: Image): java.awt.image.BufferedImage {
+    val w = fxImage.width.toInt()
+    val h = fxImage.height.toInt()
+
+    // empty AWT image
+    val awtImage = java.awt.image.BufferedImage(w, h, java.awt.image.BufferedImage.TYPE_INT_ARGB_PRE)
+    val buffer = awtImage.raster.dataBuffer as java.awt.image.DataBufferInt
+
+    // copy fx image data to AWT image buffer
+    fxImage.pixelReader.getPixels(0, 0, w, h, WritablePixelFormat.getIntArgbPreInstance(), buffer.data, 0, w)
+
+    return awtImage
 }

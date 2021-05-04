@@ -12,6 +12,8 @@ module com.almasb.fxgl.core {
     requires transitive javafx.graphics;
     requires transitive javafx.base;
 
+    requires java.desktop;
+
     exports com.almasb.fxgl.core;
     exports com.almasb.fxgl.core.asset;
     exports com.almasb.fxgl.core.collection;
