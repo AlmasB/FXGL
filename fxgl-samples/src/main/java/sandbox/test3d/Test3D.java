@@ -10,10 +10,8 @@ import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.pathfinding.maze.Maze;
+import com.almasb.fxgl.scene3d.*;
 import com.almasb.fxgl.scene3d.Cylinder;
-import com.almasb.fxgl.scene3d.Model3D;
-import com.almasb.fxgl.scene3d.Prism;
-import com.almasb.fxgl.scene3d.Pyramid;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
@@ -69,6 +67,104 @@ public class Test3D {
 
         //root.getChildren().addAll(light, light2, light3);
 
+        sun();
+    }
+
+    private void sun() {
+        var sphere = new Sphere(0.25);
+
+        var e = entityBuilder()
+                .view(sphere)
+                .buildAndAttach();
+
+        for (int outer = 0; outer < 180; outer += 5) {
+            var group = new Group();
+
+            for (int i = 0; i < 360; i += 5) {
+                var x = cosDeg(i);
+                var y = sinDeg(i);
+
+                var mat = new PhongMaterial();
+                mat.setDiffuseMap(image("brick.png"));
+
+                var box = new Cuboid(0.5 + i / 360.0 + outer / 180.0, 0.1, 0.1);
+                box.setMaterial(mat);
+                box.setTranslateX(x);
+                box.setTranslateY(y);
+
+                var rotate = new Rotate();
+                rotate.setAxis(Rotate.Z_AXIS);
+                rotate.setAngle(i);
+
+                box.getTransforms().add(rotate);
+
+                group.getChildren().add(box);
+
+                animationBuilder()
+                        .interpolator(Interpolators.CIRCULAR.EASE_OUT())
+                        .delay(Duration.seconds(delayIndex * 0.01))
+                        .autoReverse(true)
+                        .repeatInfinitely()
+                        .scale(box)
+                        .from(new Point3D(1, 1, 1))
+                        .to(new Point3D(1.2, 0.8, 1.5))
+                        .buildAndPlay();
+//
+//                animationBuilder()
+//                        .interpolator(Interpolators.SMOOTH.EASE_OUT())
+//                        .delay(Duration.seconds(delayIndex * 0.01))
+//                        .autoReverse(true)
+//                        .repeatInfinitely()
+//                        .animate(box.heightProperty())
+//                        .from(0.1)
+//                        .to(1.0)
+//                        .buildAndPlay();
+
+//                box.getVertices().forEach(v -> {
+//                    var vector = new Point3D(v.getX(), v.getY(), v.getZ())
+//                            .multiply(4.5);
+//
+//                    animationBuilder()
+//                            .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
+//                            .delay(Duration.seconds(delayIndex * 0.1))
+//                            .autoReverse(true)
+//                            .repeatInfinitely()
+//                            .animate(v.xProperty())
+//                            .from(v.getX())
+//                            .to(v.getX() + vector.getX())
+//                            .buildAndPlay();
+//
+//                    animationBuilder()
+//                            .interpolator(Interpolators.SMOOTH.EASE_OUT())
+//                            .delay(Duration.seconds(delayIndex * 0.1))
+//                            .autoReverse(true)
+//                            .repeatInfinitely()
+//                            .animate(v.yProperty())
+//                            .from(v.getY())
+//                            .to(v.getY() + vector.getY())
+//                            .buildAndPlay();
+//                });
+
+                delayIndex++;
+            }
+
+            var rotate = new Rotate();
+            rotate.setAxis(Rotate.Y_AXIS);
+            rotate.setAngle(outer);
+
+            group.getTransforms().add(rotate);
+
+            e.getViewComponent().addChild(group);
+        }
+
+
+        animationBuilder()
+                .duration(Duration.seconds(9))
+                .repeatInfinitely()
+                .rotate(e)
+                .from(new Point3D(0, 0, 0))
+                .to(new Point3D(0, 0, 360))
+                .buildAndPlay();
     }
 
     private void mazeFull() {

@@ -68,7 +68,7 @@ public class Test3DSample extends GameApplication {
         camera3D = getGameScene().getCamera3D();
         transform = getGameScene().getCamera3D().getTransform();
 
-        transform.translateZ(-50);
+        transform.translateZ(-10);
 
         getGameScene().setBackgroundColor(Color.LIGHTBLUE);
 
