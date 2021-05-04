@@ -13,36 +13,32 @@ import com.almasb.fxgl.physics.box2d.dynamics.Body;
  */
 public class JointDef {
 
-    public JointDef(JointType type) {
-        this.type = type;
-        userData = null;
-        bodyA = null;
-        bodyB = null;
-        collideConnected = false;
-    }
-
     /**
      * The joint type is set automatically for concrete joint types.
      */
-    public JointType type;
+    public final JointType type;
 
     /**
      * Use this to attach application specific data to your joints.
      */
-    public Object userData;
+    public Object userData = null;
 
     /**
      * The first attached body.
      */
-    public Body bodyA;
+    public Body bodyA = null;
 
     /**
      * The second attached body.
      */
-    public Body bodyB;
+    public Body bodyB = null;
 
     /**
      * Set this flag to true if the attached bodies should collide.
      */
-    public boolean collideConnected;
+    public boolean collideConnected = false;
+
+    public JointDef(JointType type) {
+        this.type = type;
+    }
 }
