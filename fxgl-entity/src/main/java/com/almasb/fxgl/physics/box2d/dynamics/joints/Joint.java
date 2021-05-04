@@ -107,69 +107,55 @@ public abstract class Joint {
     }
 
     /**
-     * get the type of the concrete joint.
-     *
-     * @return
+     * @return type of the concrete joint
      */
     public JointType getType() {
         return m_type;
     }
 
     /**
-     * get the first body attached to this joint.
+     * @return the first body attached to this joint
      */
     public final Body getBodyA() {
         return m_bodyA;
     }
 
     /**
-     * get the second body attached to this joint.
-     *
-     * @return
+     * @return the second body attached to this joint
      */
     public final Body getBodyB() {
         return m_bodyB;
     }
 
     /**
-     * get the anchor point on bodyA in world coordinates.
-     *
-     * @return
+     * Get the anchor point on bodyA in world coordinates
      */
     public abstract void getAnchorA(Vec2 out);
 
     /**
-     * get the anchor point on bodyB in world coordinates.
-     *
-     * @return
+     * Get the anchor point on bodyB in world coordinates
      */
     public abstract void getAnchorB(Vec2 out);
 
     /**
-     * get the reaction force on body2 at the joint anchor in Newtons.
-     *
-     * @param inv_dt
-     * @return
+     * Get the reaction force on body2 at the joint anchor in Newtons.
      */
     public abstract void getReactionForce(float inv_dt, Vec2 out);
 
     /**
-     * get the reaction torque on body2 in N*m.
-     *
-     * @param inv_dt
-     * @return
+     * @return the reaction torque on body2 in N*m
      */
     public abstract float getReactionTorque(float inv_dt);
 
     /**
-     * get the next joint the world joint list.
+     * @return the next joint the world joint list.
      */
     public Joint getNext() {
         return m_next;
     }
 
     /**
-     * get the user data pointer.
+     * @return the user data pointer.
      */
     public Object getUserData() {
         return m_userData;
@@ -192,8 +178,6 @@ public abstract class Joint {
 
     /**
      * Short-cut function to determine if either body is inactive.
-     *
-     * @return
      */
     public boolean isActive() {
         return m_bodyA.isActive() && m_bodyB.isActive();
