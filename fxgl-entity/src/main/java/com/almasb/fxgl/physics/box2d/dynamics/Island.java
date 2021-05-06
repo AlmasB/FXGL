@@ -154,8 +154,8 @@ class Island {
     public int m_jointCount;
     public int m_contactCount;
 
-    public int m_bodyCapacity;
-    public int m_contactCapacity;
+    private int m_bodyCapacity;
+    private int m_contactCapacity;
     private int m_jointCapacity;
 
     void init(int bodyCapacity, int contactCapacity, int jointCapacity, ContactListener listener) {
@@ -506,6 +506,14 @@ class Island {
 
     Body getBody(int index) {
         return m_bodies[index];
+    }
+
+    int getBodyCapacity() {
+        return m_bodyCapacity;
+    }
+
+    int getContactCapacity() {
+        return m_contactCapacity;
     }
 
     private final ContactImpulse impulse = new ContactImpulse();
