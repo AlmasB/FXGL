@@ -508,8 +508,8 @@ class Island {
         return m_bodies[index];
     }
 
-    int getBodyCapacity() {
-        return m_bodyCapacity;
+    boolean isBodyCountEqualToCapacity() {
+        return m_bodyCount == m_bodyCapacity;
     }
 
     boolean isContactCountEqualToCapacity() {

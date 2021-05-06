@@ -657,7 +657,7 @@ public final class World {
                 Body body = tempBodies[i];
                 if (body.getType() == BodyType.DYNAMIC) {
                     for (ContactEdge ce = body.m_contactList; ce != null; ce = ce.next) {
-                        if (island.m_bodyCount == island.getBodyCapacity()) {
+                        if (island.isBodyCountEqualToCapacity()) {
                             break;
                         }
 
