@@ -512,8 +512,8 @@ class Island {
         return m_bodyCapacity;
     }
 
-    int getContactCapacity() {
-        return m_contactCapacity;
+    boolean isContactCountEqualToCapacity() {
+        return m_contactCount == m_contactCapacity;
     }
 
     private final ContactImpulse impulse = new ContactImpulse();

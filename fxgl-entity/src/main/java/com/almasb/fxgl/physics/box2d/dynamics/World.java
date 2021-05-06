@@ -661,7 +661,7 @@ public final class World {
                             break;
                         }
 
-                        if (island.m_contactCount == island.getContactCapacity()) {
+                        if (island.isContactCountEqualToCapacity()) {
                             break;
                         }
 
