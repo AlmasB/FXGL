@@ -150,9 +150,9 @@ class Island {
     private Position[] m_positions;
     private Velocity[] m_velocities;
 
-    public int m_bodyCount;
-    public int m_jointCount;
-    public int m_contactCount;
+    private int m_bodyCount;
+    private int m_jointCount;
+    private int m_contactCount;
 
     private int m_bodyCapacity;
     private int m_contactCapacity;
@@ -506,6 +506,10 @@ class Island {
 
     Body getBody(int index) {
         return m_bodies[index];
+    }
+
+    int getBodyCount() {
+        return m_bodyCount;
     }
 
     boolean isBodyCountEqualToCapacity() {
