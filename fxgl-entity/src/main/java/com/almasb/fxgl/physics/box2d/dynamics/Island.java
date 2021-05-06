@@ -143,7 +143,7 @@ class Island {
 
     private ContactListener listener;
 
-    private Body[] m_bodies;
+    private Body[] bodies;
     private Contact[] m_contacts;
     private Joint[] m_joints;
 
@@ -168,8 +168,8 @@ class Island {
 
         this.listener = listener;
 
-        if (m_bodies == null || m_bodyCapacity > m_bodies.length) {
-            m_bodies = new Body[m_bodyCapacity];
+        if (bodies == null || m_bodyCapacity > bodies.length) {
+            bodies = new Body[m_bodyCapacity];
         }
         if (m_joints == null || m_jointCapacity > m_joints.length) {
             m_joints = new Joint[m_jointCapacity];
@@ -214,7 +214,7 @@ class Island {
 
         // Integrate velocities and apply damping. Initialize the body state.
         for (int i = 0; i < bodyCount; ++i) {
-            final Body b = m_bodies[i];
+            final Body b = bodies[i];
             final Sweep bm_sweep = b.m_sweep;
             final Vec2 c = bm_sweep.c;
             float a = bm_sweep.a;
@@ -341,7 +341,7 @@ class Island {
 
         // Copy state buffers back to the bodies
         for (int i = 0; i < bodyCount; ++i) {
-            Body body = m_bodies[i];
+            Body body = bodies[i];
             body.m_sweep.c.x = m_positions[i].c.x;
             body.m_sweep.c.y = m_positions[i].c.y;
             body.m_sweep.a = m_positions[i].a;
@@ -360,7 +360,7 @@ class Island {
             final float angTolSqr = JBoxSettings.angularSleepTolerance * JBoxSettings.angularSleepTolerance;
 
             for (int i = 0; i < bodyCount; ++i) {
-                Body b = m_bodies[i];
+                Body b = bodies[i];
                 if (b.getType() == BodyType.STATIC) {
                     continue;
                 }
@@ -378,7 +378,7 @@ class Island {
 
             if (minSleepTime >= JBoxSettings.timeToSleep && positionSolved) {
                 for (int i = 0; i < bodyCount; ++i) {
-                    Body b = m_bodies[i];
+                    Body b = bodies[i];
                     b.setAwake(false);
                 }
             }
@@ -394,12 +394,12 @@ class Island {
 
         // Initialize the body state.
         for (int i = 0; i < bodyCount; ++i) {
-            m_positions[i].c.x = m_bodies[i].m_sweep.c.x;
-            m_positions[i].c.y = m_bodies[i].m_sweep.c.y;
-            m_positions[i].a = m_bodies[i].m_sweep.a;
-            m_velocities[i].v.x = m_bodies[i].m_linearVelocity.x;
-            m_velocities[i].v.y = m_bodies[i].m_linearVelocity.y;
-            m_velocities[i].w = m_bodies[i].getAngularVelocity();
+            m_positions[i].c.x = bodies[i].m_sweep.c.x;
+            m_positions[i].c.y = bodies[i].m_sweep.c.y;
+            m_positions[i].a = bodies[i].m_sweep.a;
+            m_velocities[i].v.x = bodies[i].m_linearVelocity.x;
+            m_velocities[i].v.y = bodies[i].m_linearVelocity.y;
+            m_velocities[i].w = bodies[i].getAngularVelocity();
         }
 
         toiSolverDef.contacts = m_contacts;
@@ -418,11 +418,11 @@ class Island {
         }
 
         // Leap of faith to new safe state.
-        m_bodies[toiIndexA].m_sweep.c0.x = m_positions[toiIndexA].c.x;
-        m_bodies[toiIndexA].m_sweep.c0.y = m_positions[toiIndexA].c.y;
-        m_bodies[toiIndexA].m_sweep.a0 = m_positions[toiIndexA].a;
-        m_bodies[toiIndexB].m_sweep.c0.set(m_positions[toiIndexB].c);
-        m_bodies[toiIndexB].m_sweep.a0 = m_positions[toiIndexB].a;
+        bodies[toiIndexA].m_sweep.c0.x = m_positions[toiIndexA].c.x;
+        bodies[toiIndexA].m_sweep.c0.y = m_positions[toiIndexA].c.y;
+        bodies[toiIndexA].m_sweep.a0 = m_positions[toiIndexA].a;
+        bodies[toiIndexB].m_sweep.c0.set(m_positions[toiIndexB].c);
+        bodies[toiIndexB].m_sweep.a0 = m_positions[toiIndexB].a;
 
         // No warm starting is needed for TOI events because warm
         // starting impulses were applied in the discrete solver.
@@ -474,7 +474,7 @@ class Island {
             m_velocities[i].w = w;
 
             // Sync bodies
-            Body body = m_bodies[i];
+            Body body = bodies[i];
             body.m_sweep.c.x = c.x;
             body.m_sweep.c.y = c.y;
             body.m_sweep.a = a;
@@ -490,7 +490,7 @@ class Island {
     void add(Body body) {
         assert bodyCount < m_bodyCapacity;
         body.m_islandIndex = bodyCount;
-        m_bodies[bodyCount] = body;
+        bodies[bodyCount] = body;
         ++bodyCount;
     }
 
@@ -535,7 +535,7 @@ class Island {
 
     void resetFlagsAndSynchronizeBroadphaseProxies() {
         for (int i = 0; i < bodyCount; ++i) {
-            Body body = m_bodies[i];
+            Body body = bodies[i];
             body.m_flags &= ~Body.e_islandFlag;
 
             if (body.getType() != BodyType.DYNAMIC) {
@@ -554,7 +554,7 @@ class Island {
     void postSolveCleanup() {
         for (int i = 0; i < bodyCount; ++i) {
             // Allow static bodies to participate in other islands.
-            Body b = m_bodies[i];
+            Body b = bodies[i];
             if (b.getType() == BodyType.STATIC) {
                 b.m_flags &= ~Body.e_islandFlag;
             }
