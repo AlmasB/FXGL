@@ -508,10 +508,6 @@ class Island {
         return m_bodies[index];
     }
 
-    int getBodyCount() {
-        return bodyCount;
-    }
-
     boolean isBodyCountEqualToCapacity() {
         return bodyCount == m_bodyCapacity;
     }
@@ -542,7 +538,7 @@ class Island {
     }
 
     void resetFlagsAndSynchronizeBroadphaseProxies() {
-        for (int i = 0; i < getBodyCount(); ++i) {
+        for (int i = 0; i < bodyCount; ++i) {
             Body body = getBody(i);
             body.m_flags &= ~Body.e_islandFlag;
 
@@ -560,7 +556,7 @@ class Island {
     }
 
     void postSolveCleanup() {
-        for (int i = 0; i < getBodyCount(); ++i) {
+        for (int i = 0; i < bodyCount; ++i) {
             // Allow static bodies to participate in other islands.
             Body b = getBody(i);
             if (b.getType() == BodyType.STATIC) {
