@@ -737,22 +737,7 @@ public final class World {
             subStep.warmStarting = false;
             island.solveTOI(subStep, bA.m_islandIndex, bB.m_islandIndex);
 
-            // Reset island flags and synchronize broad-phase proxies.
-            for (int i = 0; i < island.getBodyCount(); ++i) {
-                Body body = island.getBody(i);
-                body.m_flags &= ~Body.e_islandFlag;
-
-                if (body.getType() != BodyType.DYNAMIC) {
-                    continue;
-                }
-
-                body.synchronizeFixtures();
-
-                // Invalidate all contact TOIs on this displaced body.
-                for (ContactEdge ce = body.m_contactList; ce != null; ce = ce.next) {
-                    ce.contact.m_flags &= ~(Contact.TOI_FLAG | Contact.ISLAND_FLAG);
-                }
-            }
+            island.resetFlagsAndSynchronizeBroadphaseProxies();
 
             // Commit fixture proxy movements to the broad-phase so that new contacts are created.
             // Also, some contacts can be destroyed.

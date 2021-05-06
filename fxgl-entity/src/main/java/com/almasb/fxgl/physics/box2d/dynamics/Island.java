@@ -540,4 +540,22 @@ class Island {
             listener.postSolve(c, impulse);
         }
     }
+
+    void resetFlagsAndSynchronizeBroadphaseProxies() {
+        for (int i = 0; i < getBodyCount(); ++i) {
+            Body body = getBody(i);
+            body.m_flags &= ~Body.e_islandFlag;
+
+            if (body.getType() != BodyType.DYNAMIC) {
+                continue;
+            }
+
+            body.synchronizeFixtures();
+
+            // Invalidate all contact TOIs on this displaced body.
+            for (ContactEdge ce = body.m_contactList; ce != null; ce = ce.next) {
+                ce.contact.m_flags &= ~(Contact.TOI_FLAG | Contact.ISLAND_FLAG);
+            }
+        }
+    }
 }
