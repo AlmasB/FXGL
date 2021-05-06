@@ -448,14 +448,7 @@ public final class World {
             }
             island.solve(step, gravity, allowSleep);
 
-            // Post solve cleanup.
-            for (int i = 0; i < island.getBodyCount(); ++i) {
-                // Allow static bodies to participate in other islands.
-                Body b = island.getBody(i);
-                if (b.getType() == BodyType.STATIC) {
-                    b.m_flags &= ~Body.e_islandFlag;
-                }
-            }
+            island.postSolveCleanup();
         }
 
         // Synchronize fixtures, check for out of range bodies.

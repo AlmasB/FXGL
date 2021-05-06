@@ -558,4 +558,14 @@ class Island {
             }
         }
     }
+
+    void postSolveCleanup() {
+        for (int i = 0; i < getBodyCount(); ++i) {
+            // Allow static bodies to participate in other islands.
+            Body b = getBody(i);
+            if (b.getType() == BodyType.STATIC) {
+                b.m_flags &= ~Body.e_islandFlag;
+            }
+        }
+    }
 }
