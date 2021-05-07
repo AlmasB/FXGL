@@ -296,12 +296,14 @@ class Island {
             float w = velocities[i].w;
 
             // Check for large velocities
-            float translationx = v.x * h;
-            float translationy = v.y * h;
+            float tX = v.x * h;
+            float tY = v.y * h;
 
-            if (translationx * translationx + translationy * translationy > maxTranslationSquared) {
-                float ratio = maxTranslation
-                        / FXGLMath.sqrtF(translationx * translationx + translationy * translationy);
+            float translationSquared = tX * tX + tY * tY;
+
+            if (translationSquared > maxTranslationSquared) {
+                float ratio = maxTranslation / FXGLMath.sqrtF(translationSquared);
+
                 v.x *= ratio;
                 v.y *= ratio;
             }
