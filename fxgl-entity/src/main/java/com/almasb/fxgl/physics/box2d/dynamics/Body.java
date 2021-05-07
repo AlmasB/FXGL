@@ -66,7 +66,7 @@ public final class Body {
     private final Vec2 m_linearVelocity = new Vec2();
     private float m_angularVelocity;
 
-    public final Vec2 m_force = new Vec2();
+    private final Vec2 m_force = new Vec2();
     private float m_torque = 0;
 
     public float m_mass, m_invMass;
@@ -868,6 +868,14 @@ public final class Body {
                 broadPhase.touchProxy(f.getProxyId(i));
             }
         }
+    }
+
+    void setForceToZero() {
+        m_force.setZero();
+    }
+
+    Vec2 getForce() {
+        return m_force;
     }
 
     void destroy() {
