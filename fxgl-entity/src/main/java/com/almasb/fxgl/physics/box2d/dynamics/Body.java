@@ -69,7 +69,8 @@ public final class Body {
     private final Vec2 m_force = new Vec2();
     private float m_torque = 0;
 
-    public float m_mass, m_invMass;
+    private float m_mass;
+    public float m_invMass;
 
     // Rotational inertia about the center of mass.
     private float m_I = 0;
