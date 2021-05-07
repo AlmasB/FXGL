@@ -154,12 +154,12 @@ class Island {
     private int jointCount;
     private int contactCount;
 
-    private int m_bodyCapacity;
+    private int bodyCapacity;
     private int m_contactCapacity;
     private int m_jointCapacity;
 
     void init(int bodyCapacity, int contactCapacity, int jointCapacity, ContactListener listener) {
-        m_bodyCapacity = bodyCapacity;
+        this.bodyCapacity = bodyCapacity;
         m_contactCapacity = contactCapacity;
         m_jointCapacity = jointCapacity;
         bodyCount = 0;
@@ -168,8 +168,8 @@ class Island {
 
         this.listener = listener;
 
-        if (bodies == null || m_bodyCapacity > bodies.length) {
-            bodies = new Body[m_bodyCapacity];
+        if (bodies == null || bodyCapacity > bodies.length) {
+            bodies = new Body[bodyCapacity];
         }
         if (m_joints == null || m_jointCapacity > m_joints.length) {
             m_joints = new Joint[m_jointCapacity];
@@ -179,9 +179,9 @@ class Island {
         }
 
         // dynamic array
-        if (m_velocities == null || m_bodyCapacity > m_velocities.length) {
+        if (m_velocities == null || bodyCapacity > m_velocities.length) {
             final Velocity[] old = m_velocities == null ? new Velocity[0] : m_velocities;
-            m_velocities = new Velocity[m_bodyCapacity];
+            m_velocities = new Velocity[bodyCapacity];
             System.arraycopy(old, 0, m_velocities, 0, old.length);
             for (int i = old.length; i < m_velocities.length; i++) {
                 m_velocities[i] = new Velocity();
@@ -189,9 +189,9 @@ class Island {
         }
 
         // dynamic array
-        if (m_positions == null || m_bodyCapacity > m_positions.length) {
+        if (m_positions == null || bodyCapacity > m_positions.length) {
             final Position[] old = m_positions == null ? new Position[0] : m_positions;
-            m_positions = new Position[m_bodyCapacity];
+            m_positions = new Position[bodyCapacity];
             System.arraycopy(old, 0, m_positions, 0, old.length);
             for (int i = old.length; i < m_positions.length; i++) {
                 m_positions[i] = new Position();
@@ -488,7 +488,7 @@ class Island {
     }
 
     void add(Body body) {
-        assert bodyCount < m_bodyCapacity;
+        assert bodyCount < bodyCapacity;
         body.m_islandIndex = bodyCount;
         bodies[bodyCount] = body;
         ++bodyCount;
@@ -505,7 +505,7 @@ class Island {
     }
 
     boolean isBodyCountEqualToCapacity() {
-        return bodyCount == m_bodyCapacity;
+        return bodyCount == bodyCapacity;
     }
 
     boolean isContactCountEqualToCapacity() {
