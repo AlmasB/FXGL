@@ -145,7 +145,7 @@ class Island {
 
     private Body[] bodies;
     private Contact[] contacts;
-    private Joint[] m_joints;
+    private Joint[] joints;
 
     private Position[] m_positions;
     private Velocity[] m_velocities;
@@ -169,8 +169,8 @@ class Island {
         if (bodies == null || bodyCapacity > bodies.length) {
             bodies = new Body[bodyCapacity];
         }
-        if (m_joints == null || jointCapacity > m_joints.length) {
-            m_joints = new Joint[jointCapacity];
+        if (joints == null || jointCapacity > joints.length) {
+            joints = new Joint[jointCapacity];
         }
         if (contacts == null || contactCapacity > contacts.length) {
             contacts = new Contact[contactCapacity];
@@ -271,13 +271,13 @@ class Island {
         }
 
         for (int i = 0; i < jointCount; ++i) {
-            m_joints[i].initVelocityConstraints(solverData);
+            joints[i].initVelocityConstraints(solverData);
         }
 
         // Solve velocity constraints
         for (int i = 0; i < step.velocityIterations; ++i) {
             for (int j = 0; j < jointCount; ++j) {
-                m_joints[j].solveVelocityConstraints(solverData);
+                joints[j].solveVelocityConstraints(solverData);
             }
 
             contactSolver.solveVelocityConstraints();
@@ -326,7 +326,7 @@ class Island {
 
             boolean jointsOkay = true;
             for (int j = 0; j < jointCount; ++j) {
-                boolean jointOkay = m_joints[j].solvePositionConstraints(solverData);
+                boolean jointOkay = joints[j].solvePositionConstraints(solverData);
                 jointsOkay = jointsOkay && jointOkay;
             }
 
@@ -496,7 +496,7 @@ class Island {
     }
 
     void add(Joint joint) {
-        m_joints[jointCount++] = joint;
+        joints[jointCount++] = joint;
     }
 
     boolean isBodyCountEqualToCapacity() {
