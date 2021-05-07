@@ -299,9 +299,7 @@ class Island {
 
             if (translationSquared > maxTranslationSquared) {
                 float ratio = maxTranslation / FXGLMath.sqrtF(translationSquared);
-
-                v.x *= ratio;
-                v.y *= ratio;
+                v.mulLocal(ratio);
             }
 
             float w = velocities[i].w;
