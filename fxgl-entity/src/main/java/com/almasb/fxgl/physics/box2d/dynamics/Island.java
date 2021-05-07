@@ -155,12 +155,12 @@ class Island {
     private int contactCount;
 
     private int bodyCapacity;
-    private int m_contactCapacity;
+    private int contactCapacity;
     private int m_jointCapacity;
 
     void init(int bodyCapacity, int contactCapacity, int jointCapacity, ContactListener listener) {
         this.bodyCapacity = bodyCapacity;
-        m_contactCapacity = contactCapacity;
+        this.contactCapacity = contactCapacity;
         m_jointCapacity = jointCapacity;
         bodyCount = 0;
         contactCount = 0;
@@ -174,8 +174,8 @@ class Island {
         if (m_joints == null || m_jointCapacity > m_joints.length) {
             m_joints = new Joint[m_jointCapacity];
         }
-        if (m_contacts == null || m_contactCapacity > m_contacts.length) {
-            m_contacts = new Contact[m_contactCapacity];
+        if (m_contacts == null || contactCapacity > m_contacts.length) {
+            m_contacts = new Contact[contactCapacity];
         }
 
         // dynamic array
@@ -506,7 +506,7 @@ class Island {
     }
 
     boolean isContactCountEqualToCapacity() {
-        return contactCount == m_contactCapacity;
+        return contactCount == contactCapacity;
     }
 
     private final ContactImpulse impulse = new ContactImpulse();
