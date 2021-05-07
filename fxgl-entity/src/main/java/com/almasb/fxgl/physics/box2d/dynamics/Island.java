@@ -291,7 +291,6 @@ class Island {
         // Integrate positions
         for (int i = 0; i < bodyCount; ++i) {
             final Vec2 c = positions[i].c;
-            float a = positions[i].a;
             final Vec2 v = velocities[i].v;
             float w = velocities[i].w;
 
@@ -313,13 +312,12 @@ class Island {
                 float ratio = maxRotation / FXGLMath.abs(rotation);
                 w *= ratio;
             }
-
+            
             // Integrate
             c.x += h * v.x;
             c.y += h * v.y;
-            a += h * w;
 
-            positions[i].a = a;
+            positions[i].a = positions[i].a + h * w;
             velocities[i].w = w;
         }
 
