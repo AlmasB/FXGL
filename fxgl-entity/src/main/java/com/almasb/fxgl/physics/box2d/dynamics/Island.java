@@ -144,7 +144,7 @@ class Island {
     private ContactListener listener;
 
     private Body[] bodies;
-    private Contact[] m_contacts;
+    private Contact[] contacts;
     private Joint[] m_joints;
 
     private Position[] m_positions;
@@ -172,8 +172,8 @@ class Island {
         if (m_joints == null || jointCapacity > m_joints.length) {
             m_joints = new Joint[jointCapacity];
         }
-        if (m_contacts == null || contactCapacity > m_contacts.length) {
-            m_contacts = new Contact[contactCapacity];
+        if (contacts == null || contactCapacity > contacts.length) {
+            contacts = new Contact[contactCapacity];
         }
 
         // dynamic array
@@ -258,7 +258,7 @@ class Island {
 
         // Initialize velocity constraints.
         solverDef.step = step;
-        solverDef.contacts = m_contacts;
+        solverDef.contacts = contacts;
         solverDef.count = contactCount;
         solverDef.positions = m_positions;
         solverDef.velocities = m_velocities;
@@ -400,7 +400,7 @@ class Island {
             m_velocities[i].w = bodies[i].getAngularVelocity();
         }
 
-        toiSolverDef.contacts = m_contacts;
+        toiSolverDef.contacts = contacts;
         toiSolverDef.count = contactCount;
         toiSolverDef.step = subStep;
         toiSolverDef.positions = m_positions;
@@ -492,7 +492,7 @@ class Island {
     }
 
     void add(Contact contact) {
-        m_contacts[contactCount++] = contact;
+        contacts[contactCount++] = contact;
     }
 
     void add(Joint joint) {
@@ -515,7 +515,7 @@ class Island {
         }
 
         for (int i = 0; i < contactCount; ++i) {
-            Contact c = m_contacts[i];
+            Contact c = contacts[i];
 
             ContactVelocityConstraint vc = constraints[i];
             impulse.count = vc.pointCount;
