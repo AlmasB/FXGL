@@ -217,7 +217,7 @@ class Island {
             final Sweep bm_sweep = b.m_sweep;
             final Vec2 c = bm_sweep.c;
             float a = bm_sweep.a;
-            final Vec2 v = b.m_linearVelocity;
+            final Vec2 v = b.getLinearVelocity();
             float w = b.getAngularVelocity();
 
             // Store positions for continuous collision.
@@ -342,8 +342,8 @@ class Island {
             body.m_sweep.c.x = positions[i].c.x;
             body.m_sweep.c.y = positions[i].c.y;
             body.m_sweep.a = positions[i].a;
-            body.m_linearVelocity.x = velocities[i].v.x;
-            body.m_linearVelocity.y = velocities[i].v.y;
+
+            body.setLinearVelocityDirectly(velocities[i].v.x, velocities[i].v.y);
             body.setAngularVelocityDirectly(velocities[i].w);
             body.synchronizeTransform();
         }
@@ -364,7 +364,7 @@ class Island {
 
                 if (!b.isSleepingAllowed()
                         || b.getAngularVelocity() * b.getAngularVelocity() > angTolSqr
-                        || Vec2.dot(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
+                        || Vec2.dot(b.getLinearVelocity(), b.getLinearVelocity()) > linTolSqr) {
                     b.setSleepTime(0);
                     minSleepTime = 0.0f;
                 } else {
@@ -394,8 +394,8 @@ class Island {
             positions[i].c.x = bodies[i].m_sweep.c.x;
             positions[i].c.y = bodies[i].m_sweep.c.y;
             positions[i].a = bodies[i].m_sweep.a;
-            velocities[i].v.x = bodies[i].m_linearVelocity.x;
-            velocities[i].v.y = bodies[i].m_linearVelocity.y;
+            velocities[i].v.x = bodies[i].getLinearVelocity().x;
+            velocities[i].v.y = bodies[i].getLinearVelocity().y;
             velocities[i].w = bodies[i].getAngularVelocity();
         }
 
@@ -477,8 +477,8 @@ class Island {
             body.m_sweep.c.x = c.x;
             body.m_sweep.c.y = c.y;
             body.m_sweep.a = a;
-            body.m_linearVelocity.x = v.x;
-            body.m_linearVelocity.y = v.y;
+
+            body.setLinearVelocityDirectly(v.x, v.y);
             body.setAngularVelocityDirectly(w);
             body.synchronizeTransform();
         }

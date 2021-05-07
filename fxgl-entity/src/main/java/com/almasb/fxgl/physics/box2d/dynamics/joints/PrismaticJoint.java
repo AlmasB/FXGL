@@ -207,8 +207,8 @@ public class PrismaticJoint extends Joint {
         d.set(p2).subLocal(p1);
         Rotation.mulToOutUnsafe(bA.m_xf.q, m_localXAxisA, axis);
 
-        Vec2 vA = bA.m_linearVelocity;
-        Vec2 vB = bB.m_linearVelocity;
+        Vec2 vA = bA.getLinearVelocity();
+        Vec2 vB = bB.getLinearVelocity();
         float wA = bA.getAngularVelocity();
         float wB = bB.getAngularVelocity();
 
