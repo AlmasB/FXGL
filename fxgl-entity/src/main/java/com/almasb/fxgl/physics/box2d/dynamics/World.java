@@ -373,7 +373,7 @@ public final class World {
             while (stackCount > 0) {
                 // Grab the next body off the stack and add it to the island.
                 Body b = stack[--stackCount];
-                assert b.isActive();
+
                 island.add(b);
 
                 // Make sure the body is awake.
