@@ -488,19 +488,16 @@ class Island {
     }
 
     void add(Body body) {
-        assert bodyCount < bodyCapacity;
         body.m_islandIndex = bodyCount;
         bodies[bodyCount] = body;
         ++bodyCount;
     }
 
     void add(Contact contact) {
-        assert contactCount < m_contactCapacity;
         m_contacts[contactCount++] = contact;
     }
 
     void add(Joint joint) {
-        assert jointCount < m_jointCapacity;
         m_joints[jointCount++] = joint;
     }
 
