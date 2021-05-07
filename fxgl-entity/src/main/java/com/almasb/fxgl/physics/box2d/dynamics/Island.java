@@ -16,6 +16,8 @@ import com.almasb.fxgl.physics.box2d.dynamics.contacts.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactSolver.ContactSolverDef;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.Joint;
 
+import static com.almasb.fxgl.physics.box2d.common.JBoxSettings.*;
+
 /*
  Position Correction Notes
  =========================
@@ -297,16 +299,16 @@ class Island {
             float translationx = v.x * h;
             float translationy = v.y * h;
 
-            if (translationx * translationx + translationy * translationy > JBoxSettings.maxTranslationSquared) {
-                float ratio = JBoxSettings.maxTranslation
+            if (translationx * translationx + translationy * translationy > maxTranslationSquared) {
+                float ratio = maxTranslation
                         / FXGLMath.sqrtF(translationx * translationx + translationy * translationy);
                 v.x *= ratio;
                 v.y *= ratio;
             }
 
             float rotation = h * w;
-            if (rotation * rotation > JBoxSettings.maxRotationSquared) {
-                float ratio = JBoxSettings.maxRotation / FXGLMath.abs(rotation);
+            if (rotation * rotation > maxRotationSquared) {
+                float ratio = maxRotation / FXGLMath.abs(rotation);
                 w *= ratio;
             }
 
@@ -354,8 +356,8 @@ class Island {
         if (allowSleep) {
             float minSleepTime = Float.MAX_VALUE;
 
-            final float linTolSqr = JBoxSettings.linearSleepTolerance * JBoxSettings.linearSleepTolerance;
-            final float angTolSqr = JBoxSettings.angularSleepTolerance * JBoxSettings.angularSleepTolerance;
+            final float linTolSqr = linearSleepTolerance * linearSleepTolerance;
+            final float angTolSqr = angularSleepTolerance * angularSleepTolerance;
 
             for (int i = 0; i < bodyCount; ++i) {
                 Body b = bodies[i];
@@ -374,7 +376,7 @@ class Island {
                 }
             }
 
-            if (minSleepTime >= JBoxSettings.timeToSleep && positionSolved) {
+            if (minSleepTime >= timeToSleep && positionSolved) {
                 for (int i = 0; i < bodyCount; ++i) {
                     Body b = bodies[i];
                     b.setAwake(false);
@@ -446,16 +448,16 @@ class Island {
             // Check for large velocities
             float translationx = v.x * h;
             float translationy = v.y * h;
-            if (translationx * translationx + translationy * translationy > JBoxSettings.maxTranslationSquared) {
+            if (translationx * translationx + translationy * translationy > maxTranslationSquared) {
                 float ratio =
-                        JBoxSettings.maxTranslation
+                        maxTranslation
                                 / FXGLMath.sqrtF(translationx * translationx + translationy * translationy);
                 v.mulLocal(ratio);
             }
 
             float rotation = h * w;
-            if (rotation * rotation > JBoxSettings.maxRotationSquared) {
-                float ratio = JBoxSettings.maxRotation / FXGLMath.abs(rotation);
+            if (rotation * rotation > maxRotationSquared) {
+                float ratio = maxRotation / FXGLMath.abs(rotation);
                 w *= ratio;
             }
 
