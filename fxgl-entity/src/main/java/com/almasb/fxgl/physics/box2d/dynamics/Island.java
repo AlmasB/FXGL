@@ -156,12 +156,10 @@ class Island {
 
     private int bodyCapacity;
     private int contactCapacity;
-    private int m_jointCapacity;
 
     void init(int bodyCapacity, int contactCapacity, int jointCapacity, ContactListener listener) {
         this.bodyCapacity = bodyCapacity;
         this.contactCapacity = contactCapacity;
-        m_jointCapacity = jointCapacity;
         bodyCount = 0;
         contactCount = 0;
         jointCount = 0;
@@ -171,8 +169,8 @@ class Island {
         if (bodies == null || bodyCapacity > bodies.length) {
             bodies = new Body[bodyCapacity];
         }
-        if (m_joints == null || m_jointCapacity > m_joints.length) {
-            m_joints = new Joint[m_jointCapacity];
+        if (m_joints == null || jointCapacity > m_joints.length) {
+            m_joints = new Joint[jointCapacity];
         }
         if (m_contacts == null || contactCapacity > m_contacts.length) {
             m_contacts = new Contact[contactCapacity];
