@@ -10,7 +10,6 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactImpulse;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
-import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.Sweep;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactSolver.ContactSolverDef;
