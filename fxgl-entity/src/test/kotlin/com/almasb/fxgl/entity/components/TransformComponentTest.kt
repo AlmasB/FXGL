@@ -78,6 +78,12 @@ class TransformComponentTest {
         assertThat(c.rotationX, `is`(-15.0))
         assertThat(c.rotationY, `is`(15.0))
         assertThat(c.rotationZ, `is`(0.0))
+
+        c.rotationZ = 33.0
+
+        assertThat(c.rotationX, `is`(-15.0))
+        assertThat(c.rotationY, `is`(15.0))
+        assertThat(c.rotationZ, `is`(33.0))
     }
 
     @Test
