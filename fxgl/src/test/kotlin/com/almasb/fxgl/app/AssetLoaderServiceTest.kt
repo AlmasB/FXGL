@@ -409,6 +409,20 @@ class AssetLoaderServiceTest {
     }
 
     @Test
+    fun `Load obj Model3D`() {
+        val model = assetLoader.loadModel3D("cube.obj")
+
+        assertThat(model, `is`(notNullValue()))
+    }
+
+    @Test
+    fun `Load obj Model3D from URL`() {
+        val model = assetLoader.loadModel3D(javaClass.getResource("/fxglassets/models/cube.obj"))
+
+        assertThat(model, `is`(notNullValue()))
+    }
+
+    @Test
     fun getStream() {
         val stream = assetLoader.getStream("/assets/scripts/test.js")
 
