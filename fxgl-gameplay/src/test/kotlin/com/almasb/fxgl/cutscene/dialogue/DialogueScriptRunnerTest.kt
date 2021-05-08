@@ -47,9 +47,13 @@ class DialogueScriptRunnerTest {
 
     @Test
     fun `Replace variables in text`() {
-        val result = runner.replaceVariablesInText("Test \$someInt \$isSleeping \$isAlive \$someString \$someDouble")
+        var result = runner.replaceVariablesInText("Test \$someInt \$isSleeping \$isAlive \$someString \$someDouble")
 
         assertThat(result, `is`("Test 5 false true hello 3.0"))
+
+        result = runner.replaceVariablesInText("Test \$someInt.")
+
+        assertThat(result, `is`("Test 5."))
     }
 
     @Test
