@@ -3,7 +3,7 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.core.math.Vec2
@@ -686,5 +686,56 @@ class PhysicsWorldTest {
 
         assertFalse(result.entity.isPresent)
         assertFalse(result.point.isPresent)
+    }
+
+    @Test
+    fun `Collision detection integration test`() {
+        CollisionDetectionStrategy.values().forEach { strategy ->
+
+            var numCollisions = 0
+            val random = java.util.Random(225L)
+
+            val gWorld = GameWorld()
+            val pWorld = PhysicsWorld(720, 50.0, strategy)
+
+            pWorld.addCollisionHandler(object : CollisionHandler(EntityType.TYPE1, EntityType.TYPE1) {
+                override fun onCollision(a: Entity, b: Entity) {
+                    numCollisions++
+                }
+            })
+
+            repeat(300) {
+                val e = Entity()
+                e.type = EntityType.TYPE1
+                e.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(64.0, 64.0)))
+                e.addComponent(CollidableComponent(true))
+                e.setRotationOrigin(Point2D(32.0, 32.0))
+
+                val x = random.nextDouble() * (1280 - 64.0)
+                val y = random.nextDouble() * (720 - 64.0)
+
+                e.position = Point2D(x, y)
+
+                gWorld.addEntity(e)
+                pWorld.onEntityAdded(e)
+            }
+
+            gWorld.onUpdate(0.016)
+            pWorld.onUpdate(0.016)
+
+            assertThat(numCollisions, `is`(843))
+
+            // check with rotations now
+            numCollisions = 0
+
+            gWorld.entities.forEach { e ->
+                e.rotation = random.nextDouble() * 180.0
+            }
+
+            gWorld.onUpdate(0.016)
+            pWorld.onUpdate(0.016)
+
+            assertThat(numCollisions, `is`(970))
+        }
     }
 }
