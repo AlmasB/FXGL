@@ -146,6 +146,10 @@ Coordinators:
 
 * [Adam Bocco](https://github.com/adambocco)
 
+Testers:
+
+* [Carl Dea](https://github.com/carldea)
+
 ### Contribution & Support
 
 If you want to build FXGL from sources or want to contribute,
