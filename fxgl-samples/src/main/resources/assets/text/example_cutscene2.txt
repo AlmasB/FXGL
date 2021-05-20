@@ -1,0 +1,18 @@
+main.name = First Name
+
+main: Hello, how are you?
+
+main.name = Second Name
+
+main: I have changed my name!
+
+main.image = ball.png
+
+main: I have changed my image!
+
+main.image =
+
+second.name = Second Person
+
+second: dummy text
+second: another line of dummy text
