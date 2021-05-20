@@ -48,7 +48,7 @@ class EntityTest {
     }
 
     @Test
-    fun `Add component fails if same type already exists`() {
+    fun `Add component is ignored if same type already exists`() {
         val exception = assertDoesNotThrow {
             entity.addComponent(TestComponent())
             entity.addComponent(TestComponent())
@@ -168,17 +168,6 @@ class EntityTest {
         entity.addComponent(control)
 
         assertThat(entity.components, hasItem(control))
-    }
-
-    // Test seems duplicate, see l.51 `Add component fails if same type already exists`
-    @Test
-    fun `Add control fails if same type exists`() {
-        val control = TestControl()
-        entity.addComponent(control)
-
-        assertDoesNotThrow {
-            entity.addComponent(control)
-        }
     }
 
     @Test
