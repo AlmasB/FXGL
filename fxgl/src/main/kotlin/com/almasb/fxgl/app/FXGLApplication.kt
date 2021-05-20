@@ -518,7 +518,7 @@ class FXGLApplication : Application() {
 
             if (!settings.isExperimentalNative) {
                 mainWindow.addIcons(assetLoaderService.loadImage(settings.appIcon))
-                mainWindow.defaultCursor = ImageCursor(assetLoaderService.loadCursorImage("fxgl_default.png"), 7.0, 6.0)
+                mainWindow.defaultCursor = ImageCursor(assetLoaderService.loadImage("fxgl_default_cursor.png"), 7.0, 6.0)
             }
 
             SystemActions.bind(mainWindow.input)
