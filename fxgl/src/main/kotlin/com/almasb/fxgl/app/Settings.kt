@@ -72,6 +72,15 @@ data class RuntimeInfo(
 )
 
 /**
+ * Stores cursor information.
+ */
+data class CursorInfo(
+        val imageName: String,
+        val hotspotX: Double,
+        val hotspotY: Double
+)
+
+/**
  * Data structure for variables that are initialised before the application (game) starts.
  *
  * Modifying any data after the start of the game has no effect.
@@ -260,6 +269,8 @@ class GameSettings(
 
         var defaultLanguage: Language = ENGLISH,
 
+        var defaultCursor: CursorInfo = CursorInfo("fxgl_default_cursor.png", 7.0, 6.0),
+
         /* EXPERIMENTAL */
 
         var isExperimentalTiledLargeMap: Boolean = false,
@@ -381,6 +392,7 @@ class GameSettings(
                 userAppClass,
                 mouseSensitivity,
                 defaultLanguage,
+                defaultCursor,
                 isExperimentalTiledLargeMap,
                 isExperimentalNative,
                 isExperimental3D,
@@ -562,6 +574,8 @@ class ReadOnlyGameSettings internal constructor(
         mouseSensitivity: Double,
 
         private val defaultLanguage: Language,
+
+        val defaultCursor: CursorInfo,
 
         /* EXPERIMENTAL */
 
