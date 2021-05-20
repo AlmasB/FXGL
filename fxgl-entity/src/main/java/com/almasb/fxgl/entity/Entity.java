@@ -390,9 +390,7 @@ public class Entity implements Animatable, Copyable<Entity> {
         checkNotUpdating();
 
         if (checkRequirementsMet(component.getClass())) {
-
             addComponentNoChecks(component);
-
         }
     }
 
