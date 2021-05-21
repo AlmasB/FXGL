@@ -39,14 +39,11 @@ class EntityGroupTest {
 
         world.addEntity(e)
 
-        var count = 0
-
         group.forEach {
             assertThat(it, `is`(e))
-            count++
         }
 
-        assertThat(count, `is`(1))
+        assertThat(group.size, `is`(1))
     }
 
     @Test
@@ -57,13 +54,7 @@ class EntityGroupTest {
         world.addEntity(e)
         world.removeEntity(e)
 
-        var count = 0
-
-        group.forEach {
-            count++
-        }
-
-        assertThat(count, `is`(0))
+        assertThat(group.size, `is`(0))
     }
 
     @Test
@@ -75,13 +66,7 @@ class EntityGroupTest {
 
         world.addEntity(e)
 
-        var count = 0
-
-        group.forEach {
-            count++
-        }
-
-        assertThat(count, `is`(0))
+        assertThat(group.size, `is`(0))
     }
 
     @Test
@@ -111,23 +96,22 @@ class EntityGroupTest {
 
         world.addEntities(e1, e3)
 
-        var count = 0
-
         group = world.getGroup(EntityType.T1, EntityType.T2)
 
         group.forEach {
             assertThat(it, `is`(e1))
-            count++
         }
 
-        assertThat(count, `is`(1))
+        assertThat(group.size, `is`(1))
 
         world.removeEntities(e1, e3)
+
+        var count = 0
 
         // test Java API too
         group.forEach(Consumer { count++ })
 
-        assertThat(count, `is`(1))
+        assertThat(count, `is`(0))
     }
 
     @Test
@@ -140,20 +124,10 @@ class EntityGroupTest {
 
         world.addEntities(e1, e2)
 
-        var count = 0
-
-        group.forEach {
-            count++
-        }
-
-        assertThat(count, `is`(2))
+        assertThat(group.size, `is`(2))
 
         world.removeEntities(e1)
 
-        group.forEach {
-            count++
-        }
-
-        assertThat(count, `is`(3))
+        assertThat(group.size, `is`(1))
     }
 }
