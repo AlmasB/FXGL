@@ -38,6 +38,9 @@ class EntityGroup(
             return entities.filter { it.isActive }
         }
 
+    val size: Int
+        get() = entitiesCopy.size
+
     init {
         world.addWorldListener(this)
     }

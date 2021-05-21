@@ -85,6 +85,23 @@ class EntityGroupTest {
     }
 
     @Test
+    fun `Size`() {
+        val e1 = Entity()
+        e1.type = EntityType.T1
+
+        val e2 = Entity()
+        e2.type = EntityType.T2
+
+        world.addEntities(e1, e2)
+
+        assertThat(group.size, `is`(2))
+
+        world.removeEntities(e1)
+
+        assertThat(group.size, `is`(1))
+    }
+
+    @Test
     fun `Group only contains given entity types`() {
         val e1 = Entity()
         e1.type = EntityType.T1
