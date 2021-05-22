@@ -229,7 +229,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         titleRoot.translateX = appWidth / 2.0 - (textWidth + 30) / 2
         titleRoot.translateY = 50.0
 
-        if (!FXGL.getSettings().isExperimentalNative)
+        if (!FXGL.getSettings().isNative)
             particleSystem.addParticleEmitter(emitter, appWidth / 2.0 - 30, titleRoot.translateY + border.height - 16)
 
         return titleRoot
@@ -417,7 +417,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
             p.stroke = Color.color(0.1, 0.1, 0.1, 0.15)
 
-            if (!getSettings().isExperimentalNative) {
+            if (!getSettings().isNative) {
                 p.effect = GaussianBlur()
             }
 

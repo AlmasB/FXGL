@@ -30,7 +30,6 @@ import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
-import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.stage.Screen
 import javafx.stage.Stage
@@ -201,7 +200,7 @@ sealed class MainWindow(
     private fun registerScene(scene: Scene) {
         scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
 
-        if (!settings.isExperimentalNative
+        if (!settings.isNative
                 && settings.isDesktop
                 && scene is FXGLScene
                 && scene.root.cursor == null) {
@@ -455,7 +454,7 @@ internal class PrimaryStageWindow(
     }
 
     override fun addIcons(vararg images: Image) {
-        if (!settings.isExperimentalNative) {
+        if (!settings.isNative) {
             stage.icons += images
         }
     }

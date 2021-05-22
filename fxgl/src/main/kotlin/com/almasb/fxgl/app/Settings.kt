@@ -271,10 +271,11 @@ class GameSettings(
 
         var defaultCursor: CursorInfo = CursorInfo("fxgl_default_cursor.png", 7.0, 6.0),
 
+        var isNative: Boolean = false,
+
         /* EXPERIMENTAL */
 
         var isExperimentalTiledLargeMap: Boolean = false,
-        var isExperimentalNative: Boolean = false,
 
         /**
          * Set this to true if this is a 3D game.
@@ -393,8 +394,8 @@ class GameSettings(
                 mouseSensitivity,
                 defaultLanguage,
                 defaultCursor,
+                isNative,
                 isExperimentalTiledLargeMap,
-                isExperimentalNative,
                 isExperimental3D,
                 configClass,
                 unmodifiableList(engineServices),
@@ -577,10 +578,15 @@ class ReadOnlyGameSettings internal constructor(
 
         val defaultCursor: CursorInfo,
 
+        /**
+         * Are running on mobile, or natively (AOT-compiled) on desktop.
+         */
+        val isNative: Boolean,
+
         /* EXPERIMENTAL */
 
         val isExperimentalTiledLargeMap: Boolean,
-        val isExperimentalNative: Boolean,
+
         val isExperimental3D: Boolean,
 
         /* CONFIGS */

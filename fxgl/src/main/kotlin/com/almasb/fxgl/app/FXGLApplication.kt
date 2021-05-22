@@ -516,7 +516,7 @@ class FXGLApplication : Application() {
             app.initInput()
             app.onPreInit()
 
-            if (!settings.isExperimentalNative) {
+            if (!settings.isNative) {
                 mainWindow.addIcons(assetLoaderService.loadImage(settings.appIcon))
 
                 val cursorInfo = settings.defaultCursor
