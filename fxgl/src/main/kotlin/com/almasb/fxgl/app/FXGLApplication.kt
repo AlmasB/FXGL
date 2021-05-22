@@ -435,7 +435,7 @@ class FXGLApplication : Application() {
             gameScene = GameScene(settings.width, settings.height,
                     GameWorld(),
                     PhysicsWorld(settings.height, settings.pixelsPerMeter, settings.collisionDetectionStrategy),
-                    settings.isExperimental3D
+                    settings.is3D
             )
 
             gameScene.isSingleStep = settings.isSingleStep

@@ -6,6 +6,7 @@
 
 package sandbox.test3d;
 
+import com.almasb.fxgl.animation.AnimatedValue;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
@@ -67,7 +68,151 @@ public class Test3D {
 
         //root.getChildren().addAll(light, light2, light3);
 
-        sun();
+        jumpingTorus();
+    }
+
+    private void jumpingTorus() {
+        var torus = new Torus(0.6, 0.6 * 2 / 3, 64);
+
+        var mat = new PhongMaterial();
+        mat.setDiffuseMap(image("3d/donut.jpg"));
+
+        var mat2 = new PhongMaterial();
+        mat2.setDiffuseMap(image("3d/blackhole.jpg"));
+
+        torus.setMaterial(mat2);
+
+
+        var cuboid = new Cuboid(4, 0.1, 4);
+        cuboid.setTranslateY(1.15);
+        cuboid.setMaterial(mat);
+
+        var vertices = new ArrayList<>(torus.getVertices());
+        vertices.addAll(cuboid.getVertices());
+
+        vertices.forEach(v -> {
+
+            animationBuilder()
+                    .delay(Duration.seconds(delayIndex * 0.003))
+                    .interpolator(Interpolators.BACK.EASE_IN_OUT())
+                    .duration(Duration.seconds(1.0))
+                    .repeatInfinitely()
+                    .autoReverse(true)
+                    .animate(v.yProperty())
+                    .from(v.getY())
+                    .to(v.getY() * 1.43 + 0.5)
+                    .buildAndPlay();
+
+            animationBuilder()
+                    .delay(Duration.seconds(delayIndex * 0.003))
+                    .interpolator(Interpolators.CIRCULAR.EASE_IN_OUT())
+                    .duration(Duration.seconds(1.0))
+                    .repeatInfinitely()
+                    .autoReverse(true)
+                    .animate(v.xProperty())
+                    .from(v.getX())
+                    .to(v.getX() * 1.73 - 0.25)
+                    .buildAndPlay();
+
+            animationBuilder()
+                    .delay(Duration.seconds(delayIndex * 0.003))
+                    .interpolator(Interpolators.CIRCULAR.EASE_IN_OUT())
+                    .duration(Duration.seconds(1.0))
+                    .repeatInfinitely()
+                    .autoReverse(true)
+                    .animate(v.zProperty())
+                    .from(v.getZ())
+                    .to(v.getZ() * 1.73 + 0.25)
+                    .buildAndPlay();
+
+            delayIndex++;
+        });
+
+        var e = entityBuilder()
+                .view(torus)
+                .buildAndAttach();
+
+        e.getTransformComponent().setRotationX(-90);
+        e.setScaleUniform(4.5);
+
+        animationBuilder()
+                .repeatInfinitely()
+                .autoReverse(true)
+                .duration(Duration.seconds(2))
+                .interpolator(Interpolators.BOUNCE.EASE_OUT())
+                .translate(e)
+                .from(new Point3D(0, -2, 0))
+                .to(new Point3D(0, 0, 0))
+                .buildAndPlay();
+    }
+
+    private void cubeToCylinder() {
+        delayIndex = 0;
+
+        var mat = new PhongMaterial();
+        mat.setDiffuseMap(image("brick.png"));
+
+        var prism = new Prism(2, 2, 3.5, 360);
+        //prism.setMaterial(mat);
+
+        var size = 2.4;
+
+        var points = List.of(
+                new Point2D(size, size),
+                new Point2D(size, -size),
+                new Point2D(-size, size),
+                new Point2D(-size, -size)
+        );
+
+        prism.getVertices()
+                .stream()
+                //.filter(v -> v.getX() != 0.0 && v.getZ() != 0.0)
+                //.sorted(Comparator.comparingDouble(v -> v.getX()))
+                //.sorted(Comparator.comparingDouble(v -> abs(v.getX()) - abs(v.getZ())))
+                .forEach(v -> {
+
+                    points.stream()
+                            .min(Comparator.comparingDouble(p -> new Point2D(v.getX(), v.getZ()).distance(p)))
+                            .ifPresent(p -> {
+                                var oldX = v.getX();
+                                var oldZ = v.getZ();
+
+                                v.setX(p.getX());
+                                v.setZ(p.getY());
+
+                                //if (oldX != 0.0 && oldZ != 0.0) {
+
+                                    animationBuilder()
+                                            .interpolator(Interpolators.BACK.EASE_OUT())
+                                            .delay(Duration.seconds(delayIndex * 0.02))
+                                            .duration(Duration.seconds(2))
+                                            .animate(v.xProperty())
+                                            .from(v.getX())
+                                            .to(oldX)
+                                            .buildAndPlay();
+
+                                    animationBuilder()
+                                            .interpolator(Interpolators.BACK.EASE_OUT())
+                                            .delay(Duration.seconds(delayIndex++ * 0.02))
+                                            .duration(Duration.seconds(2))
+                                            .animate(v.zProperty())
+                                            .from(v.getZ())
+                                            .to(oldZ)
+                                            .buildAndPlay();
+                                //}
+                            });
+        });
+
+//        prism.getVertices()
+//                .stream()
+//                .filter(v -> v.getX() == 0.0 && v.getZ() == 0)
+//                .forEach(v -> {
+//                    v.setY(v.getY() * 1.12);
+//                });
+
+        entityBuilder()
+                .view(prism)
+                .buildAndAttach();
     }
 
     private void sun() {

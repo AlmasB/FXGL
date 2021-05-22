@@ -31,7 +31,7 @@ public class FiringRangeApp extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1280);
         settings.setHeight(720);
-        settings.setExperimental3D(true);
+        settings.set3D(true);
     }
 
     private TransformComponent transform;
