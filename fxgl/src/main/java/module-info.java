@@ -45,5 +45,6 @@ module com.almasb.fxgl.all {
     exports com.almasb.fxgl.dsl.handlers;
     exports com.almasb.fxgl.dsl.views;
     exports com.almasb.fxgl.gameplay;
+    exports com.almasb.fxgl.multiplayer;
     exports com.almasb.fxgl.scene3d;
 }
