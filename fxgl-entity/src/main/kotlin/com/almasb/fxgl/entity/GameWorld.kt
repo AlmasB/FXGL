@@ -477,6 +477,14 @@ class GameWorld {
     }
 
     /**
+     * @param type component type
+     * @return entities that have given component mapped to component instance
+     */
+    fun <T : Component> getEntitiesByComponentMapped(type: Class<T>): Map<Entity, T> {
+        return entities.filter { it.hasComponent(type) }.associateWith { it.getComponent(type) }
+    }
+
+    /**
      * Returns a list of entities which are filtered by
      * given predicate.
      *

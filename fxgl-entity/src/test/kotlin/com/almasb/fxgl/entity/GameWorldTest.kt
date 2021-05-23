@@ -3,16 +3,13 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.entity
 
 import java.util.Optional
 import java.util.function.Predicate
 import com.almasb.fxgl.entity.component.Component
-import com.almasb.fxgl.entity.components.IDComponent
-import com.almasb.fxgl.entity.components.IrremovableComponent
-import com.almasb.fxgl.entity.components.TimeComponent
-import com.almasb.fxgl.entity.components.TypeComponent
+import com.almasb.fxgl.entity.components.*
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
@@ -601,6 +598,34 @@ class GameWorldTest {
                 Executable { assertThat(gameWorld.getEntitiesByType(TestType.T2, TestType.T3), containsInAnyOrder(e2, e3)) },
                 Executable { assertThat(gameWorld.getEntitiesByType(), contains(e1, e2, e3)) }
         )
+    }
+
+    @Test
+    fun `By components`() {
+        val c1 = TestValueComponent()
+        val c2 = TestValueComponent()
+
+        val e1 = Entity()
+        e1.addComponent(c1)
+
+        val e2 = Entity()
+        e2.addComponent(c2)
+
+        val e3 = Entity()
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        assertThat(gameWorld.getEntitiesByComponent(TestValueComponent::class.java), contains(e1, e2))
+        assertThat(gameWorld.getEntitiesByComponent(ViewComponent::class.java), contains(e1, e2, e3))
+
+        assertTrue(gameWorld.getEntitiesByComponent(CollidableComponent::class.java).isEmpty())
+
+        e2.removeComponent(TestValueComponent::class.java)
+
+        val map = gameWorld.getEntitiesByComponentMapped(TestValueComponent::class.java)
+
+        assertThat(map.size, `is`(1))
+        assertThat(map[e1], `is`(c1))
     }
 
     @Test
