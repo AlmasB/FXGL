@@ -65,11 +65,11 @@ Otherwise, see:
 
 Make sure to set `<release>11</release>` for `maven-compiler-plugin`.
 
-```
+```xml
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>11.15</version>
+    <version>11.16</version>
 </dependency>
 ```
 
@@ -81,13 +81,13 @@ Note: use `0.5.4` for Java 8-10.
 
 Please refer to the template if there are any errors.
 
-```
+```gradle
 repositories {
     jcenter()
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:11.15'
+    compile 'com.github.almasb:fxgl:11.16'
 }
 ```
 
@@ -97,7 +97,7 @@ Note: use `0.5.4` for Java 8-10.
 
 If you wish to develop a modular application, here's a complete example of your `module-info.java`:
 
-```
+```java
 open module app.name {
     requires com.almasb.fxgl.all;
 }
@@ -146,6 +146,10 @@ Coordinators:
 
 * [Adam Bocco](https://github.com/adambocco)
 
+Testers:
+
+* [Carl Dea](https://github.com/carldea)
+
 ### Contribution & Support
 
 If you want to build FXGL from sources or want to contribute,
@@ -172,6 +176,6 @@ Companies:
 
 ### Contact
 
-* Ask questions on [StackOverflow](https://stackoverflow.com/search?q=fxgl) with tags `javafx` and `fxgl`
+* Ask questions via [GitHub Discussions](https://github.com/AlmasB/FXGL/discussions) or on [StackOverflow](https://stackoverflow.com/search?q=fxgl) with tags `javafx` and `fxgl`
 * Tweet with [#fxgl](https://twitter.com/search?src=typd&q=%23fxgl)
 * [Chat](https://gitter.im/AlmasB/FXGL) with the friendly FXGL community

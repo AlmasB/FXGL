@@ -16,8 +16,8 @@ internal class SystemBundleService : EngineService() {
 
     private val log = Logger.get(javaClass)
 
-    @Inject("isExperimentalNative")
-    private var isExperimentalNative = false
+    @Inject("isNative")
+    private var isNative = false
 
     @Inject("isFileSystemWriteAllowed")
     private var isFileSystemWriteAllowed = true
@@ -29,7 +29,7 @@ internal class SystemBundleService : EngineService() {
     override fun onInit() {
         val isFirstRun = !fs.exists("system/")
 
-        if (!isExperimentalNative && isFileSystemWriteAllowed) {
+        if (!isNative && isFileSystemWriteAllowed) {
             if (isFirstRun) {
                 createRequiredDirs()
                 loadDefaultSystemData()
@@ -45,7 +45,7 @@ internal class SystemBundleService : EngineService() {
         if (!isFileSystemWriteAllowed)
             return
 
-        if (!isExperimentalNative) {
+        if (!isNative) {
             saveSystemData()
         }
     }

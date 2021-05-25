@@ -16,16 +16,14 @@ import javafx.util.Duration
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 abstract class Animation<T>(
-        val config: AnimationBuilder,
+        config: AnimationBuilder,
         val animatedValue: AnimatedValue<T>): Updatable {
 
     var isAutoReverse: Boolean = config.isAutoReverse
     var onFinished: Runnable = config.onFinished
     var onCycleFinished: Runnable = config.onCycleFinished
 
-    var interpolator: Interpolator
-        get() = config.interpolator
-        set(value) { config.interpolator = value }
+    var interpolator: Interpolator = config.interpolator
 
     private var time = 0.0
 

@@ -20,6 +20,7 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.animationBuilder
 import com.almasb.fxgl.dsl.getGameController
 import com.almasb.fxgl.entity.GameWorld
+import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputSequence
 import com.almasb.fxgl.input.UserAction
@@ -32,6 +33,7 @@ import com.almasb.fxgl.profile.SaveLoadService
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.texture.toBufferedImage
 import com.almasb.fxgl.texture.toImage
 import com.almasb.fxgl.time.Timer
 import com.almasb.fxgl.ui.DialogService
@@ -42,7 +44,6 @@ import javafx.application.Application
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.concurrent.Task
-import javafx.embed.swing.SwingFXUtils
 import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.ImageCursor
@@ -363,6 +364,8 @@ class FXGLApplication : Application() {
 
         override fun prefHeightProperty(): ReadOnlyDoubleProperty = settings.prefHeightProperty()
 
+        override val eventBus = EventBus()
+
         override val input: Input
             get() = mainWindow.input
 
@@ -432,7 +435,7 @@ class FXGLApplication : Application() {
             gameScene = GameScene(settings.width, settings.height,
                     GameWorld(),
                     PhysicsWorld(settings.height, settings.pixelsPerMeter, settings.collisionDetectionStrategy),
-                    settings.isExperimental3D
+                    settings.is3D
             )
 
             gameScene.isSingleStep = settings.isSingleStep
@@ -513,9 +516,16 @@ class FXGLApplication : Application() {
             app.initInput()
             app.onPreInit()
 
-            if (!settings.isExperimentalNative) {
+            if (!settings.isNative) {
                 mainWindow.addIcons(assetLoaderService.loadImage(settings.appIcon))
-                mainWindow.defaultCursor = ImageCursor(assetLoaderService.loadCursorImage("fxgl_default.png"), 7.0, 6.0)
+
+                val cursorInfo = settings.defaultCursor
+
+                mainWindow.defaultCursor = ImageCursor(
+                        assetLoaderService.loadImage(cursorInfo.imageName),
+                        cursorInfo.hotspotX,
+                        cursorInfo.hotspotY
+                )
             }
 
             SystemActions.bind(mainWindow.input)
@@ -667,7 +677,7 @@ class FXGLApplication : Application() {
          */
         fun saveScreenshot(): Boolean {
             val fxImage = mainWindow.takeScreenshot()
-            val img = SwingFXUtils.fromFXImage(fxImage, null)
+            val img = toBufferedImage(fxImage)
 
             var fileName = "./" + settings.title + settings.version + LocalDateTime.now()
             fileName = fileName.replace(":", "_")

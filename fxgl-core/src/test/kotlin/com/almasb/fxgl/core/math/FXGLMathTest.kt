@@ -31,6 +31,7 @@ class FXGLMathTest {
             val rad = Math.toRadians(deg.toDouble())
 
             assertThat(sin(rad), closeTo(Math.sin(rad), 0.001))
+            assertThat(sinF(rad).toDouble(), closeTo(Math.sin(rad), 0.001))
         }
 
         assertThat(sin(-3 * PI), closeTo(Math.sin(-3 * PI), 0.001))
@@ -42,6 +43,7 @@ class FXGLMathTest {
             val rad = Math.toRadians(deg.toDouble())
 
             assertThat(cos(rad), closeTo(Math.cos(rad), 0.001))
+            assertThat(cosF(rad).toDouble(), closeTo(Math.cos(rad), 0.001))
         }
 
         assertThat(cos(-3 * PI), closeTo(Math.cos(-3 * PI), 0.001))
@@ -95,6 +97,23 @@ class FXGLMathTest {
         assertThat(atan2Deg(1.0, 1.0), closeTo(45.0, 1.0))
         assertThat(atan2Deg(-1.0, 1.0), closeTo(-45.0, 1.0))
         assertThat(atan2Deg(-1.0, -1.0), closeTo(-135.0, 1.0))
+    }
+
+    @Test
+    fun `Rotate point around pivot`() {
+        rotate(Point2D(3.0, 0.0), Point2D(0.0, 0.0), 90.0).assertCloseTo(Point2D(0.0, 3.0))
+
+        rotate(Point2D(3.0, 0.0), Point2D(0.0, 0.0), 180.0).assertCloseTo(Point2D(-3.0, 0.0))
+        rotate(Point2D(3.0, 0.0), Point2D(0.0, 0.0), 270.0).assertCloseTo(Point2D(0.0, -3.0))
+        rotate(Point2D(3.0, 0.0), Point2D(0.0, 0.0), 360.0).assertCloseTo(Point2D(3.0, 0.0))
+        rotate(Point2D(3.0, 0.0), Point2D(0.0, 0.0), -90.0).assertCloseTo(Point2D(0.0, -3.0))
+        rotate(Point2D(3.0, 0.0), Point2D(0.0, 0.0), -180.0).assertCloseTo(Point2D(-3.0, 0.0))
+
+        rotate(Point2D(5.0, 0.0), Point2D(2.0, 0.0), 90.0).assertCloseTo(Point2D(2.0, 3.0))
+        rotate(Point2D(5.0, 0.0), Point2D(2.0, 0.0), 180.0).assertCloseTo(Point2D(-1.0, 0.0))
+        rotate(Point2D(5.0, 0.0), Point2D(2.0, 0.0), 270.0).assertCloseTo(Point2D(2.0, -3.0))
+
+        rotate(Point2D(5.0, -2.0), Point2D(2.0, 0.0), 180.0).assertCloseTo(Point2D(-1.0, 2.0))
     }
 
     @Test
@@ -287,5 +306,10 @@ class FXGLMathTest {
     fun `Distance between two rectangles`() {
         val dist = distance(Rectangle2D(0.0, 0.0, 20.0, 20.0), Rectangle2D(30.0, 0.0, 20.0, 20.0))
         assertThat(dist, `is`(10.0))
+    }
+
+    private fun Point2D.assertCloseTo(other: Point2D) {
+        assertThat(this.x, closeTo(other.x, 0.01))
+        assertThat(this.y, closeTo(other.y, 0.01))
     }
 }

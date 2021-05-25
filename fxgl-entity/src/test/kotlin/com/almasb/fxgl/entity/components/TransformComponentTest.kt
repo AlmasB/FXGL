@@ -8,8 +8,11 @@ package com.almasb.fxgl.entity.components
 
 import com.almasb.fxgl.core.serialization.Bundle
 import javafx.geometry.Point2D
+import javafx.geometry.Point3D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.number.IsCloseTo
+import org.hamcrest.number.IsCloseTo.*
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -75,6 +78,32 @@ class TransformComponentTest {
         assertThat(c.rotationX, `is`(-15.0))
         assertThat(c.rotationY, `is`(15.0))
         assertThat(c.rotationZ, `is`(0.0))
+
+        c.rotationZ = 33.0
+
+        assertThat(c.rotationX, `is`(-15.0))
+        assertThat(c.rotationY, `is`(15.0))
+        assertThat(c.rotationZ, `is`(33.0))
+    }
+
+    @Test
+    fun `Look At`() {
+        val c = TransformComponent()
+        c.setPosition3D(10.0, 5.0, -3.0)
+
+        c.lookAt(Point3D.ZERO)
+
+        assertThat(c.direction3D, `is`(Point3D(-0.8850428765552463, -0.3990885011160071, 0.23964030323756916)))
+        assertThat(c.rotationZ, `is`(0.0))
+        assertThat(c.rotationX, closeTo(25.6, 0.1))
+        assertThat(c.rotationY, closeTo(-73.3, 0.1))
+
+        c.lookAt(Point3D(15.0, 3.5, 4.5))
+
+        assertThat(c.direction3D, `is`(Point3D(0.5524917091340396, -0.16329323477878344, 0.8173666440549362)))
+        assertThat(c.rotationZ, `is`(0.0))
+        assertThat(c.rotationX, closeTo(9.45, 0.1))
+        assertThat(c.rotationY, closeTo(33.69, 0.1))
     }
 
     private fun areEqual(t1: TransformComponent, t2: TransformComponent): Boolean {

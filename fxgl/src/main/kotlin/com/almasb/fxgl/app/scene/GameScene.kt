@@ -6,9 +6,12 @@
 
 package com.almasb.fxgl.app.scene
 
+import com.almasb.fxgl.app.MainWindow
 import com.almasb.fxgl.core.concurrent.Async
+import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.dsl.FXGL.Companion.getAppHeight
 import com.almasb.fxgl.dsl.FXGL.Companion.getAppWidth
+import com.almasb.fxgl.dsl.FXGL.Companion.getSettings
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
 import com.almasb.fxgl.entity.GameWorld
@@ -19,15 +22,14 @@ import com.almasb.fxgl.ui.UI
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.value.ChangeListener
 import javafx.collections.ObservableList
-import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.SceneAntialiasing
 import javafx.scene.SubScene
+import javafx.scene.input.MouseEvent
 import javafx.scene.robot.Robot
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
-import javafx.stage.Screen
 import java.util.concurrent.Callable
 
 /**
@@ -86,16 +88,83 @@ internal constructor(width: Int, height: Int,
     val camera3D by lazy { Camera3D() }
 
     private val mouseWarper by lazy {
-        Async.startAsyncFX(Callable { MouseWarper() }).await()
+        Async.startAsyncFX(Callable { MouseWarper(window) }).await()
     }
 
     var isMouseGrabbed = false
+
+    /**
+     * If set to true, mouse movements will rotate the 3D camera as if it's an FPS camera.
+     * Changing this value will also set [isMouseGrabbed] to the same value.
+     */
+    var isFPSCamera = false
+        set(value) {
+            field = value
+            isMouseGrabbed = value
+
+            if (value) {
+                Async.startAsyncFX {
+                    mouseWarper.warpToCenter()
+                }
+            }
+        }
+
+    private var lastMouseX = 0.0
+    private var lastMouseY = 0.0
 
     init {
         contentRoot.children.addAll(
                 if (is3D) make3DSubScene(width.toDouble(), height.toDouble()) else gameRoot,
                 uiRoot
         )
+
+        if (is3D) {
+            input.addEventHandler(MouseEvent.MOUSE_MOVED) {
+                if (isMouseGrabbed) {
+                    // ignore warp mouse events
+                    if (it.screenX.toInt() == mouseWarper.warpScreenX.toInt() && it.screenY.toInt() == mouseWarper.warpScreenY.toInt()) {
+                        lastMouseX = it.screenX - window.x
+                        lastMouseY = it.screenY - window.y
+
+                        return@addEventHandler
+                    }
+                }
+
+                if (!isFPSCamera)
+                    return@addEventHandler
+
+                val mouseX = it.screenX - window.x
+                val mouseY = it.screenY - window.y
+
+                val offsetX = mouseX - lastMouseX
+                val offsetY = mouseY - lastMouseY
+
+                // TODO: extract 100 and 0.5?
+                if (FXGLMath.abs(offsetX) < 100 && FXGLMath.abs(offsetY) < 100) {
+                    val mouseSensitivity = getSettings().mouseSensitivity
+
+                    // only rotate if > 0.5 pixels
+                    if (FXGLMath.abs(offsetX) > 0.5) {
+                        if (mouseX > lastMouseX) {
+                            camera3D.transform.lookRightBy(mouseSensitivity * (mouseX - lastMouseX))
+                        } else if (mouseX < lastMouseX) {
+                            camera3D.transform.lookLeftBy(mouseSensitivity * (lastMouseX - mouseX))
+                        }
+                    }
+
+                    if (FXGLMath.abs(offsetY) > 0.5) {
+                        if (mouseY > lastMouseY) {
+                            camera3D.transform.lookDownBy(mouseSensitivity * (mouseY - lastMouseY))
+                        } else if (mouseY < lastMouseY) {
+                            camera3D.transform.lookUpBy(mouseSensitivity * (lastMouseY - mouseY))
+                        }
+                    }
+                }
+
+                lastMouseX = mouseX
+                lastMouseY = mouseY
+            }
+        }
 
         initViewport(width.toDouble(), height.toDouble())
 
@@ -154,15 +223,16 @@ internal constructor(width: Int, height: Int,
             camera3D.update(tpf)
         }
 
-        if (isMouseGrabbed) {
-            if (input.mouseXWorld < 10) {
-                mouseWarper.warp()
-            } else if (input.mouseXWorld + 10 > getAppWidth()) {
-                mouseWarper.warp()
-            } else if (input.mouseYWorld < 10) {
-                mouseWarper.warp()
-            } else if (input.mouseYWorld + 10 > getAppHeight()) {
-                mouseWarper.warp()
+        // TODO: extract 10?
+        if (isMouseGrabbed && window.isFocused) {
+            if (input.mouseXUI < 10) {
+                mouseWarper.warpToCenter()
+            } else if (input.mouseXUI + 10 > getAppWidth()) {
+                mouseWarper.warpToCenter()
+            } else if (input.mouseYUI < 10) {
+                mouseWarper.warpToCenter()
+            } else if (input.mouseYUI + 10 > getAppHeight()) {
+                mouseWarper.warpToCenter()
             }
         }
     }
@@ -318,20 +388,20 @@ internal constructor(width: Int, height: Int,
     /**
      * Must be constructed and used only on JavaFX App Thread.
      */
-    private inner class MouseWarper {
-        private val primaryScreen = Screen.getPrimary()
-
-        private val screenCenter = Point2D(primaryScreen.bounds.width / 2.0, primaryScreen.bounds.height / 2.0)
-
+    private inner class MouseWarper(val window: MainWindow) {
         private val robot = Robot()
 
-        /**
-         * Warps the mouse cursor to primary screen center.
-         */
-        fun warp() {
-            log.debug("Warping mouse to: $screenCenter")
+        var warpScreenX = 0.0
+        var warpScreenY = 0.0
 
-            robot.mouseMove(screenCenter)
+        /**
+         * Warps the mouse cursor to window center.
+         */
+        fun warpToCenter() {
+            warpScreenX = window.x + window.width / 2.0
+            warpScreenY = window.y + window.height / 2.0
+
+            robot.mouseMove(warpScreenX, warpScreenY)
         }
     }
 }

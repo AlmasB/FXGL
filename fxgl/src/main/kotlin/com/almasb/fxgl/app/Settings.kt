@@ -18,7 +18,6 @@ import com.almasb.fxgl.core.serialization.SerializableType
 import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.cutscene.CutsceneService
 import com.almasb.fxgl.dev.DevService
-import com.almasb.fxgl.event.EventBusService
 import com.almasb.fxgl.gameplay.GameDifficulty
 import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.localization.Language
@@ -70,6 +69,15 @@ data class RuntimeInfo(
         val platform: Platform,
         val version: String,
         val build: String
+)
+
+/**
+ * Stores cursor information.
+ */
+data class CursorInfo(
+        val imageName: String,
+        val hotspotX: Double,
+        val hotspotY: Double
 )
 
 /**
@@ -254,17 +262,25 @@ class GameSettings(
          */
         var ticksPerSecond: Int = -1,
 
+        /**
+         * How fast the 3D mouse movements are (example, rotating the camera).
+         */
+        var mouseSensitivity: Double = 0.2,
+
         var defaultLanguage: Language = ENGLISH,
 
-        /* EXPERIMENTAL */
+        var defaultCursor: CursorInfo = CursorInfo("fxgl_default_cursor.png", 7.0, 6.0),
 
-        var isExperimentalTiledLargeMap: Boolean = false,
-        var isExperimentalNative: Boolean = false,
+        var isNative: Boolean = false,
 
         /**
          * Set this to true if this is a 3D game.
          */
-        var isExperimental3D: Boolean = false,
+        var is3D: Boolean = false,
+
+        /* EXPERIMENTAL */
+
+        var isExperimentalTiledLargeMap: Boolean = false,
 
         /* CONFIGS */
 
@@ -280,7 +296,6 @@ class GameSettings(
                 FXGLApplication.GameApplicationService::class.java,
                 FXGLDialogService::class.java,
                 IOTaskExecutorService::class.java,
-                EventBusService::class.java,
                 FileSystemService::class.java,
                 LocalizationService::class.java,
                 SystemBundleService::class.java,
@@ -376,10 +391,12 @@ class GameSettings(
                 randomSeed,
                 ticksPerSecond,
                 userAppClass,
+                mouseSensitivity,
                 defaultLanguage,
+                defaultCursor,
+                isNative,
+                is3D,
                 isExperimentalTiledLargeMap,
-                isExperimentalNative,
-                isExperimental3D,
                 configClass,
                 unmodifiableList(engineServices),
                 sceneFactory,
@@ -552,13 +569,25 @@ class ReadOnlyGameSettings internal constructor(
 
         val userAppClass: Class<*>,
 
+        /**
+         * How fast the 3D mouse movements are (example, rotating the camera).
+         */
+        mouseSensitivity: Double,
+
         private val defaultLanguage: Language,
+
+        val defaultCursor: CursorInfo,
+
+        /**
+         * Are running on mobile, or natively (AOT-compiled) on desktop.
+         */
+        val isNative: Boolean,
+
+        val is3D: Boolean,
 
         /* EXPERIMENTAL */
 
         val isExperimentalTiledLargeMap: Boolean,
-        val isExperimentalNative: Boolean,
-        val isExperimental3D: Boolean,
 
         /* CONFIGS */
 
@@ -738,6 +767,12 @@ class ReadOnlyGameSettings internal constructor(
     var globalSoundVolume: Double
         get() = globalSoundVolumeProperty.value
         set(value) { globalSoundVolumeProperty.value = value }
+
+    private val mouseSensitivityProp = SimpleDoubleProperty(mouseSensitivity)
+
+    var mouseSensitivity: Double
+        get() = mouseSensitivityProp.value
+        set(value) { mouseSensitivityProp.value = value }
 
     // WRAPPERS
 

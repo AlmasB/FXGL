@@ -126,13 +126,13 @@ public abstract class GameApplication {
 
         var runtimeInfo = new RuntimeInfo(platform, BuildProperties.VERSION, BuildProperties.BUILD);
         localSettings.setRuntimeInfo(runtimeInfo);
-        localSettings.setExperimentalNative(localSettings.isExperimentalNative() || platform.isMobile());
+        localSettings.setNative(localSettings.isNative() || platform.isMobile());
         return localSettings.toReadOnly(getClass());
     }
 
     private void initLogger(ReadOnlyGameSettings settings) {
         // we write all logs to file but adjust console log level based on app mode
-        if (settings.isFileSystemWriteAllowed() && settings.isDesktop() && !settings.isExperimentalNative()) {
+        if (settings.isFileSystemWriteAllowed() && settings.isDesktop() && !settings.isNative()) {
             Logger.addOutput(new FileOutput("FXGL"), LoggerLevel.DEBUG);
         }
         Logger.addOutput(new ConsoleOutput(), settings.getApplicationMode().getLoggerLevel());

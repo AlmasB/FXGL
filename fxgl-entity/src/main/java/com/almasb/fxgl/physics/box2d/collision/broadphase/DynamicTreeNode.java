@@ -7,30 +7,31 @@ package com.almasb.fxgl.physics.box2d.collision.broadphase;
 
 import com.almasb.fxgl.physics.box2d.collision.AABB;
 
-class DynamicTreeNode {
+final class DynamicTreeNode {
     /**
      * Enlarged AABB
      */
-    public final AABB aabb = new AABB();
+    final AABB aabb = new AABB();
 
-    public Object userData;
+    private Object userData;
 
-    protected DynamicTreeNode parent;
+    DynamicTreeNode parent;
 
-    protected DynamicTreeNode child1;
-    protected DynamicTreeNode child2;
-    protected final int id;
-    protected int height;
+    DynamicTreeNode child1;
+    DynamicTreeNode child2;
+    int height;
+    
+    final int id;
 
     DynamicTreeNode(int id) {
         this.id = id;
     }
 
-    public Object getUserData() {
+    Object getUserData() {
         return userData;
     }
 
-    public void setUserData(Object argData) {
+    void setUserData(Object argData) {
         userData = argData;
     }
 }

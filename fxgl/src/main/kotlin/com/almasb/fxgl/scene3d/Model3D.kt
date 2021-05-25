@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.scene3d
 
+import com.almasb.fxgl.core.Copyable
 import javafx.scene.Group
 import javafx.scene.paint.Color
 import javafx.scene.paint.Material
@@ -24,7 +25,7 @@ import java.util.stream.IntStream
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-open class Model3D : Group() {
+open class Model3D : Group(), Copyable<Model3D> {
 
     var material: Material = PhongMaterial(Color.WHITE)
         set(value) {
@@ -77,5 +78,20 @@ open class Model3D : Group() {
     fun removeModel(model: Model3D) {
         models -= model
         children -= model
+    }
+
+    override fun copy(): Model3D {
+        val copy = Model3D()
+
+        // TODO: handle materials?
+        models.forEach {
+            copy.addModel(it.copy())
+        }
+
+        meshViews.forEach { original ->
+            copy.addMeshView(MeshView(original.mesh).also { it.material = original.material })
+        }
+
+        return copy
     }
 }

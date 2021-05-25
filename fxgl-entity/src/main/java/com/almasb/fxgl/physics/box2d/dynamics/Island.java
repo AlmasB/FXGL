@@ -10,11 +10,12 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactImpulse;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
-import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.Sweep;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.ContactSolver.ContactSolverDef;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.Joint;
+
+import static com.almasb.fxgl.physics.box2d.common.JBoxSettings.*;
 
 /*
  Position Correction Notes
@@ -143,66 +144,64 @@ class Island {
 
     private ContactListener listener;
 
-    private Body[] m_bodies;
-    private Contact[] m_contacts;
-    private Joint[] m_joints;
+    private Body[] bodies;
+    private Contact[] contacts;
+    private Joint[] joints;
 
-    private Position[] m_positions;
-    private Velocity[] m_velocities;
+    private Position[] positions;
+    private Velocity[] velocities;
 
-    public int m_bodyCount;
-    public int m_jointCount;
-    public int m_contactCount;
+    private int bodyCount;
+    private int jointCount;
+    private int contactCount;
 
-    public int m_bodyCapacity;
-    public int m_contactCapacity;
-    private int m_jointCapacity;
+    private int bodyCapacity;
+    private int contactCapacity;
 
     void init(int bodyCapacity, int contactCapacity, int jointCapacity, ContactListener listener) {
-        m_bodyCapacity = bodyCapacity;
-        m_contactCapacity = contactCapacity;
-        m_jointCapacity = jointCapacity;
-        m_bodyCount = 0;
-        m_contactCount = 0;
-        m_jointCount = 0;
+        this.bodyCapacity = bodyCapacity;
+        this.contactCapacity = contactCapacity;
+        bodyCount = 0;
+        contactCount = 0;
+        jointCount = 0;
 
         this.listener = listener;
 
-        if (m_bodies == null || m_bodyCapacity > m_bodies.length) {
-            m_bodies = new Body[m_bodyCapacity];
+        if (bodies == null || bodyCapacity > bodies.length) {
+            bodies = new Body[bodyCapacity];
         }
-        if (m_joints == null || m_jointCapacity > m_joints.length) {
-            m_joints = new Joint[m_jointCapacity];
+        if (joints == null || jointCapacity > joints.length) {
+            joints = new Joint[jointCapacity];
         }
-        if (m_contacts == null || m_contactCapacity > m_contacts.length) {
-            m_contacts = new Contact[m_contactCapacity];
+        if (contacts == null || contactCapacity > contacts.length) {
+            contacts = new Contact[contactCapacity];
         }
 
         // dynamic array
-        if (m_velocities == null || m_bodyCapacity > m_velocities.length) {
-            final Velocity[] old = m_velocities == null ? new Velocity[0] : m_velocities;
-            m_velocities = new Velocity[m_bodyCapacity];
-            System.arraycopy(old, 0, m_velocities, 0, old.length);
-            for (int i = old.length; i < m_velocities.length; i++) {
-                m_velocities[i] = new Velocity();
+        if (velocities == null || bodyCapacity > velocities.length) {
+            final Velocity[] old = velocities == null ? new Velocity[0] : velocities;
+            velocities = new Velocity[bodyCapacity];
+            System.arraycopy(old, 0, velocities, 0, old.length);
+            for (int i = old.length; i < velocities.length; i++) {
+                velocities[i] = new Velocity();
             }
         }
 
         // dynamic array
-        if (m_positions == null || m_bodyCapacity > m_positions.length) {
-            final Position[] old = m_positions == null ? new Position[0] : m_positions;
-            m_positions = new Position[m_bodyCapacity];
-            System.arraycopy(old, 0, m_positions, 0, old.length);
-            for (int i = old.length; i < m_positions.length; i++) {
-                m_positions[i] = new Position();
+        if (positions == null || bodyCapacity > positions.length) {
+            final Position[] old = positions == null ? new Position[0] : positions;
+            positions = new Position[bodyCapacity];
+            System.arraycopy(old, 0, positions, 0, old.length);
+            for (int i = old.length; i < positions.length; i++) {
+                positions[i] = new Position();
             }
         }
     }
 
     void clear() {
-        m_bodyCount = 0;
-        m_contactCount = 0;
-        m_jointCount = 0;
+        bodyCount = 0;
+        contactCount = 0;
+        jointCount = 0;
     }
 
     private final ContactSolver contactSolver = new ContactSolver();
@@ -213,12 +212,12 @@ class Island {
         float h = step.dt;
 
         // Integrate velocities and apply damping. Initialize the body state.
-        for (int i = 0; i < m_bodyCount; ++i) {
-            final Body b = m_bodies[i];
+        for (int i = 0; i < bodyCount; ++i) {
+            final Body b = bodies[i];
             final Sweep bm_sweep = b.m_sweep;
             final Vec2 c = bm_sweep.c;
             float a = bm_sweep.a;
-            final Vec2 v = b.m_linearVelocity;
+            final Vec2 v = b.getLinearVelocity();
             float w = b.getAngularVelocity();
 
             // Store positions for continuous collision.
@@ -228,8 +227,8 @@ class Island {
             if (b.getType() == BodyType.DYNAMIC) {
                 // Integrate velocities.
                 // v += h * (b.m_gravityScale * gravity + b.m_invMass * b.m_force);
-                v.x += h * (b.getGravityScale() * gravity.x + b.m_invMass * b.m_force.x);
-                v.y += h * (b.getGravityScale() * gravity.y + b.m_invMass * b.m_force.y);
+                v.x += h * (b.getGravityScale() * gravity.x + b.m_invMass * b.getForce().x);
+                v.y += h * (b.getGravityScale() * gravity.y + b.m_invMass * b.getForce().y);
                 w += h * b.m_invI * b.getTorque();
 
                 // Apply damping.
@@ -245,25 +244,25 @@ class Island {
                 w *= 1.0f / (1.0f + h * b.getAngularDamping());
             }
 
-            m_positions[i].c.x = c.x;
-            m_positions[i].c.y = c.y;
-            m_positions[i].a = a;
-            m_velocities[i].v.x = v.x;
-            m_velocities[i].v.y = v.y;
-            m_velocities[i].w = w;
+            positions[i].c.x = c.x;
+            positions[i].c.y = c.y;
+            positions[i].a = a;
+            velocities[i].v.x = v.x;
+            velocities[i].v.y = v.y;
+            velocities[i].w = w;
         }
 
         // Solver data
         solverData.step = step;
-        solverData.positions = m_positions;
-        solverData.velocities = m_velocities;
+        solverData.positions = positions;
+        solverData.velocities = velocities;
 
         // Initialize velocity constraints.
         solverDef.step = step;
-        solverDef.contacts = m_contacts;
-        solverDef.count = m_contactCount;
-        solverDef.positions = m_positions;
-        solverDef.velocities = m_velocities;
+        solverDef.contacts = contacts;
+        solverDef.count = contactCount;
+        solverDef.positions = positions;
+        solverDef.velocities = velocities;
 
         contactSolver.init(solverDef);
         contactSolver.initializeVelocityConstraints();
@@ -272,14 +271,14 @@ class Island {
             contactSolver.warmStart();
         }
 
-        for (int i = 0; i < m_jointCount; ++i) {
-            m_joints[i].initVelocityConstraints(solverData);
+        for (int i = 0; i < jointCount; ++i) {
+            joints[i].initVelocityConstraints(solverData);
         }
 
         // Solve velocity constraints
         for (int i = 0; i < step.velocityIterations; ++i) {
-            for (int j = 0; j < m_jointCount; ++j) {
-                m_joints[j].solveVelocityConstraints(solverData);
+            for (int j = 0; j < jointCount; ++j) {
+                joints[j].solveVelocityConstraints(solverData);
             }
 
             contactSolver.solveVelocityConstraints();
@@ -289,36 +288,34 @@ class Island {
         contactSolver.storeImpulses();
 
         // Integrate positions
-        for (int i = 0; i < m_bodyCount; ++i) {
-            final Vec2 c = m_positions[i].c;
-            float a = m_positions[i].a;
-            final Vec2 v = m_velocities[i].v;
-            float w = m_velocities[i].w;
+        for (int i = 0; i < bodyCount; ++i) {
+            Vec2 v = velocities[i].v;
 
             // Check for large velocities
-            float translationx = v.x * h;
-            float translationy = v.y * h;
+            float tX = v.x * h;
+            float tY = v.y * h;
 
-            if (translationx * translationx + translationy * translationy > JBoxSettings.maxTranslationSquared) {
-                float ratio = JBoxSettings.maxTranslation
-                        / FXGLMath.sqrtF(translationx * translationx + translationy * translationy);
-                v.x *= ratio;
-                v.y *= ratio;
+            float translationSquared = tX * tX + tY * tY;
+
+            if (translationSquared > maxTranslationSquared) {
+                float ratio = maxTranslation / FXGLMath.sqrtF(translationSquared);
+                v.mulLocal(ratio);
             }
 
+            float w = velocities[i].w;
             float rotation = h * w;
-            if (rotation * rotation > JBoxSettings.maxRotationSquared) {
-                float ratio = JBoxSettings.maxRotation / FXGLMath.abs(rotation);
+            if (rotation * rotation > maxRotationSquared) {
+                float ratio = maxRotation / FXGLMath.abs(rotation);
                 w *= ratio;
             }
 
+            Vec2 c = positions[i].c;
             // Integrate
             c.x += h * v.x;
             c.y += h * v.y;
-            a += h * w;
 
-            m_positions[i].a = a;
-            m_velocities[i].w = w;
+            positions[i].a = positions[i].a + h * w;
+            velocities[i].w = w;
         }
 
         // Solve position constraints
@@ -327,8 +324,8 @@ class Island {
             boolean contactsOkay = contactSolver.solvePositionConstraints();
 
             boolean jointsOkay = true;
-            for (int j = 0; j < m_jointCount; ++j) {
-                boolean jointOkay = m_joints[j].solvePositionConstraints(solverData);
+            for (int j = 0; j < jointCount; ++j) {
+                boolean jointOkay = joints[j].solvePositionConstraints(solverData);
                 jointsOkay = jointsOkay && jointOkay;
             }
 
@@ -340,14 +337,14 @@ class Island {
         }
 
         // Copy state buffers back to the bodies
-        for (int i = 0; i < m_bodyCount; ++i) {
-            Body body = m_bodies[i];
-            body.m_sweep.c.x = m_positions[i].c.x;
-            body.m_sweep.c.y = m_positions[i].c.y;
-            body.m_sweep.a = m_positions[i].a;
-            body.m_linearVelocity.x = m_velocities[i].v.x;
-            body.m_linearVelocity.y = m_velocities[i].v.y;
-            body.setAngularVelocityDirectly(m_velocities[i].w);
+        for (int i = 0; i < bodyCount; ++i) {
+            Body body = bodies[i];
+            body.m_sweep.c.x = positions[i].c.x;
+            body.m_sweep.c.y = positions[i].c.y;
+            body.m_sweep.a = positions[i].a;
+
+            body.setLinearVelocityDirectly(velocities[i].v.x, velocities[i].v.y);
+            body.setAngularVelocityDirectly(velocities[i].w);
             body.synchronizeTransform();
         }
 
@@ -356,18 +353,18 @@ class Island {
         if (allowSleep) {
             float minSleepTime = Float.MAX_VALUE;
 
-            final float linTolSqr = JBoxSettings.linearSleepTolerance * JBoxSettings.linearSleepTolerance;
-            final float angTolSqr = JBoxSettings.angularSleepTolerance * JBoxSettings.angularSleepTolerance;
+            final float linTolSqr = linearSleepTolerance * linearSleepTolerance;
+            final float angTolSqr = angularSleepTolerance * angularSleepTolerance;
 
-            for (int i = 0; i < m_bodyCount; ++i) {
-                Body b = m_bodies[i];
+            for (int i = 0; i < bodyCount; ++i) {
+                Body b = bodies[i];
                 if (b.getType() == BodyType.STATIC) {
                     continue;
                 }
 
                 if (!b.isSleepingAllowed()
                         || b.getAngularVelocity() * b.getAngularVelocity() > angTolSqr
-                        || Vec2.dot(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
+                        || Vec2.dot(b.getLinearVelocity(), b.getLinearVelocity()) > linTolSqr) {
                     b.setSleepTime(0);
                     minSleepTime = 0.0f;
                 } else {
@@ -376,9 +373,9 @@ class Island {
                 }
             }
 
-            if (minSleepTime >= JBoxSettings.timeToSleep && positionSolved) {
-                for (int i = 0; i < m_bodyCount; ++i) {
-                    Body b = m_bodies[i];
+            if (minSleepTime >= timeToSleep && positionSolved) {
+                for (int i = 0; i < bodyCount; ++i) {
+                    Body b = bodies[i];
                     b.setAwake(false);
                 }
             }
@@ -389,24 +386,24 @@ class Island {
     private final ContactSolverDef toiSolverDef = new ContactSolverDef();
 
     void solveTOI(TimeStep subStep, int toiIndexA, int toiIndexB) {
-        assert toiIndexA < m_bodyCount;
-        assert toiIndexB < m_bodyCount;
+        assert toiIndexA < bodyCount;
+        assert toiIndexB < bodyCount;
 
         // Initialize the body state.
-        for (int i = 0; i < m_bodyCount; ++i) {
-            m_positions[i].c.x = m_bodies[i].m_sweep.c.x;
-            m_positions[i].c.y = m_bodies[i].m_sweep.c.y;
-            m_positions[i].a = m_bodies[i].m_sweep.a;
-            m_velocities[i].v.x = m_bodies[i].m_linearVelocity.x;
-            m_velocities[i].v.y = m_bodies[i].m_linearVelocity.y;
-            m_velocities[i].w = m_bodies[i].getAngularVelocity();
+        for (int i = 0; i < bodyCount; ++i) {
+            positions[i].c.x = bodies[i].m_sweep.c.x;
+            positions[i].c.y = bodies[i].m_sweep.c.y;
+            positions[i].a = bodies[i].m_sweep.a;
+            velocities[i].v.x = bodies[i].getLinearVelocity().x;
+            velocities[i].v.y = bodies[i].getLinearVelocity().y;
+            velocities[i].w = bodies[i].getAngularVelocity();
         }
 
-        toiSolverDef.contacts = m_contacts;
-        toiSolverDef.count = m_contactCount;
+        toiSolverDef.contacts = contacts;
+        toiSolverDef.count = contactCount;
         toiSolverDef.step = subStep;
-        toiSolverDef.positions = m_positions;
-        toiSolverDef.velocities = m_velocities;
+        toiSolverDef.positions = positions;
+        toiSolverDef.velocities = velocities;
         toiContactSolver.init(toiSolverDef);
 
         // Solve position constraints.
@@ -418,11 +415,11 @@ class Island {
         }
 
         // Leap of faith to new safe state.
-        m_bodies[toiIndexA].m_sweep.c0.x = m_positions[toiIndexA].c.x;
-        m_bodies[toiIndexA].m_sweep.c0.y = m_positions[toiIndexA].c.y;
-        m_bodies[toiIndexA].m_sweep.a0 = m_positions[toiIndexA].a;
-        m_bodies[toiIndexB].m_sweep.c0.set(m_positions[toiIndexB].c);
-        m_bodies[toiIndexB].m_sweep.a0 = m_positions[toiIndexB].a;
+        bodies[toiIndexA].m_sweep.c0.x = positions[toiIndexA].c.x;
+        bodies[toiIndexA].m_sweep.c0.y = positions[toiIndexA].c.y;
+        bodies[toiIndexA].m_sweep.a0 = positions[toiIndexA].a;
+        bodies[toiIndexB].m_sweep.c0.set(positions[toiIndexB].c);
+        bodies[toiIndexB].m_sweep.a0 = positions[toiIndexB].a;
 
         // No warm starting is needed for TOI events because warm
         // starting impulses were applied in the discrete solver.
@@ -439,47 +436,49 @@ class Island {
         float h = subStep.dt;
 
         // Integrate positions
-        for (int i = 0; i < m_bodyCount; ++i) {
-            Vec2 c = m_positions[i].c;
-            float a = m_positions[i].a;
-            Vec2 v = m_velocities[i].v;
-            float w = m_velocities[i].w;
+        for (int i = 0; i < bodyCount; ++i) {
+            Vec2 v = velocities[i].v;
 
             // Check for large velocities
-            float translationx = v.x * h;
-            float translationy = v.y * h;
-            if (translationx * translationx + translationy * translationy > JBoxSettings.maxTranslationSquared) {
-                float ratio =
-                        JBoxSettings.maxTranslation
-                                / FXGLMath.sqrtF(translationx * translationx + translationy * translationy);
+            float tX = v.x * h;
+            float tY = v.y * h;
+
+            float translationSquared = tX * tX + tY * tY;
+
+            if (translationSquared > maxTranslationSquared) {
+                float ratio = maxTranslation / FXGLMath.sqrtF(translationSquared);
                 v.mulLocal(ratio);
             }
 
+            float w = velocities[i].w;
             float rotation = h * w;
-            if (rotation * rotation > JBoxSettings.maxRotationSquared) {
-                float ratio = JBoxSettings.maxRotation / FXGLMath.abs(rotation);
+            if (rotation * rotation > maxRotationSquared) {
+                float ratio = maxRotation / FXGLMath.abs(rotation);
                 w *= ratio;
             }
 
+            Vec2 c = positions[i].c;
             // Integrate
             c.x += v.x * h;
             c.y += v.y * h;
+
+            float a = positions[i].a;
             a += h * w;
 
-            m_positions[i].c.x = c.x;
-            m_positions[i].c.y = c.y;
-            m_positions[i].a = a;
-            m_velocities[i].v.x = v.x;
-            m_velocities[i].v.y = v.y;
-            m_velocities[i].w = w;
+            positions[i].c.x = c.x;
+            positions[i].c.y = c.y;
+            positions[i].a = a;
+            velocities[i].v.x = v.x;
+            velocities[i].v.y = v.y;
+            velocities[i].w = w;
 
             // Sync bodies
-            Body body = m_bodies[i];
+            Body body = bodies[i];
             body.m_sweep.c.x = c.x;
             body.m_sweep.c.y = c.y;
             body.m_sweep.a = a;
-            body.m_linearVelocity.x = v.x;
-            body.m_linearVelocity.y = v.y;
+
+            body.setLinearVelocityDirectly(v.x, v.y);
             body.setAngularVelocityDirectly(w);
             body.synchronizeTransform();
         }
@@ -488,24 +487,25 @@ class Island {
     }
 
     void add(Body body) {
-        assert m_bodyCount < m_bodyCapacity;
-        body.m_islandIndex = m_bodyCount;
-        m_bodies[m_bodyCount] = body;
-        ++m_bodyCount;
+        body.m_islandIndex = bodyCount;
+        bodies[bodyCount] = body;
+        ++bodyCount;
     }
 
     void add(Contact contact) {
-        assert m_contactCount < m_contactCapacity;
-        m_contacts[m_contactCount++] = contact;
+        contacts[contactCount++] = contact;
     }
 
     void add(Joint joint) {
-        assert m_jointCount < m_jointCapacity;
-        m_joints[m_jointCount++] = joint;
+        joints[jointCount++] = joint;
     }
 
-    Body getBody(int index) {
-        return m_bodies[index];
+    boolean isBodyCountEqualToCapacity() {
+        return bodyCount == bodyCapacity;
+    }
+
+    boolean isContactCountEqualToCapacity() {
+        return contactCount == contactCapacity;
     }
 
     private final ContactImpulse impulse = new ContactImpulse();
@@ -515,8 +515,8 @@ class Island {
             return;
         }
 
-        for (int i = 0; i < m_contactCount; ++i) {
-            Contact c = m_contacts[i];
+        for (int i = 0; i < contactCount; ++i) {
+            Contact c = contacts[i];
 
             ContactVelocityConstraint vc = constraints[i];
             impulse.count = vc.pointCount;
@@ -526,6 +526,34 @@ class Island {
             }
 
             listener.postSolve(c, impulse);
+        }
+    }
+
+    void resetFlagsAndSynchronizeBroadphaseProxies() {
+        for (int i = 0; i < bodyCount; ++i) {
+            Body body = bodies[i];
+            body.m_flags &= ~Body.e_islandFlag;
+
+            if (body.getType() != BodyType.DYNAMIC) {
+                continue;
+            }
+
+            body.synchronizeFixtures();
+
+            // Invalidate all contact TOIs on this displaced body.
+            for (ContactEdge ce = body.m_contactList; ce != null; ce = ce.next) {
+                ce.contact.m_flags &= ~(Contact.TOI_FLAG | Contact.ISLAND_FLAG);
+            }
+        }
+    }
+
+    void postSolveCleanup() {
+        for (int i = 0; i < bodyCount; ++i) {
+            // Allow static bodies to participate in other islands.
+            Body b = bodies[i];
+            if (b.getType() == BodyType.STATIC) {
+                b.m_flags &= ~Body.e_islandFlag;
+            }
         }
     }
 }

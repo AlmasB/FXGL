@@ -9,7 +9,6 @@
  */
 module com.almasb.fxgl.entity {
     requires com.almasb.fxgl.core;
-    requires com.almasb.fxgl.media;
     requires java.xml;
 
     exports com.almasb.fxgl.ai.senseai;

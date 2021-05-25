@@ -9,14 +9,11 @@
  */
 module com.almasb.fxgl.all {
     requires transitive com.almasb.fxgl.core;
-    requires transitive com.almasb.fxgl.cutscene;
     requires transitive com.almasb.fxgl.entity;
     requires transitive com.almasb.fxgl.input;
     requires transitive com.almasb.fxgl.io;
-    requires transitive com.almasb.fxgl.localization;
     requires transitive com.almasb.fxgl.media;
     requires transitive com.almasb.fxgl.gameplay;
-    requires transitive com.almasb.fxgl.profiles;
     requires transitive com.almasb.fxgl.scene;
     requires transitive com.almasb.fxgl.ui;
 
@@ -24,8 +21,8 @@ module com.almasb.fxgl.all {
     requires transitive javafx.graphics;
     requires transitive javafx.controls;
     requires transitive javafx.fxml;
-    requires transitive javafx.swing;
 
+    requires java.desktop;
     requires com.fasterxml.jackson.databind;
     requires com.gluonhq.attach.lifecycle;
 
@@ -48,5 +45,6 @@ module com.almasb.fxgl.all {
     exports com.almasb.fxgl.dsl.handlers;
     exports com.almasb.fxgl.dsl.views;
     exports com.almasb.fxgl.gameplay;
+    exports com.almasb.fxgl.multiplayer;
     exports com.almasb.fxgl.scene3d;
 }

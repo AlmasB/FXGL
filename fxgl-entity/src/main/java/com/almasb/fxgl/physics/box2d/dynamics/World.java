@@ -373,7 +373,7 @@ public final class World {
             while (stackCount > 0) {
                 // Grab the next body off the stack and add it to the island.
                 Body b = stack[--stackCount];
-                assert b.isActive();
+
                 island.add(b);
 
                 // Make sure the body is awake.
@@ -448,14 +448,7 @@ public final class World {
             }
             island.solve(step, gravity, allowSleep);
 
-            // Post solve cleanup.
-            for (int i = 0; i < island.m_bodyCount; ++i) {
-                // Allow static bodies to participate in other islands.
-                Body b = island.getBody(i);
-                if (b.getType() == BodyType.STATIC) {
-                    b.m_flags &= ~Body.e_islandFlag;
-                }
-            }
+            island.postSolveCleanup();
         }
 
         // Synchronize fixtures, check for out of range bodies.
@@ -657,11 +650,11 @@ public final class World {
                 Body body = tempBodies[i];
                 if (body.getType() == BodyType.DYNAMIC) {
                     for (ContactEdge ce = body.m_contactList; ce != null; ce = ce.next) {
-                        if (island.m_bodyCount == island.m_bodyCapacity) {
+                        if (island.isBodyCountEqualToCapacity()) {
                             break;
                         }
 
-                        if (island.m_contactCount == island.m_contactCapacity) {
+                        if (island.isContactCountEqualToCapacity()) {
                             break;
                         }
 
@@ -737,22 +730,7 @@ public final class World {
             subStep.warmStarting = false;
             island.solveTOI(subStep, bA.m_islandIndex, bB.m_islandIndex);
 
-            // Reset island flags and synchronize broad-phase proxies.
-            for (int i = 0; i < island.m_bodyCount; ++i) {
-                Body body = island.getBody(i);
-                body.m_flags &= ~Body.e_islandFlag;
-
-                if (body.getType() != BodyType.DYNAMIC) {
-                    continue;
-                }
-
-                body.synchronizeFixtures();
-
-                // Invalidate all contact TOIs on this displaced body.
-                for (ContactEdge ce = body.m_contactList; ce != null; ce = ce.next) {
-                    ce.contact.m_flags &= ~(Contact.TOI_FLAG | Contact.ISLAND_FLAG);
-                }
-            }
+            island.resetFlagsAndSynchronizeBroadphaseProxies();
 
             // Commit fixture proxy movements to the broad-phase so that new contacts are created.
             // Also, some contacts can be destroyed.
@@ -858,7 +836,7 @@ public final class World {
      */
     public void clearForces() {
         for (Body body : bodies) {
-            body.m_force.setZero();
+            body.setForceToZero();
             body.setTorque(0.0f);
         }
     }

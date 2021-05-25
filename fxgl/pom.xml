@@ -22,13 +22,6 @@
 
                 <dependency>
                     <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-swing</artifactId>
-                    <version>${jfx.version}</version>
-                    <classifier>linux</classifier>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.openjfx</groupId>
                     <artifactId>javafx-fxml</artifactId>
                     <version>${jfx.version}</version>
                     <classifier>linux</classifier>
@@ -66,13 +59,6 @@
 
                 <dependency>
                     <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-swing</artifactId>
-                    <version>${jfx.version}</version>
-                    <classifier>win</classifier>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.openjfx</groupId>
                     <artifactId>javafx-fxml</artifactId>
                     <version>${jfx.version}</version>
                     <classifier>win</classifier>
@@ -107,13 +93,6 @@
                 </dependency>
 
                 <!-- Mac specific dependencies -->
-
-                <dependency>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-swing</artifactId>
-                    <version>${jfx.version}</version>
-                    <classifier>mac</classifier>
-                </dependency>
 
                 <dependency>
                     <groupId>org.openjfx</groupId>
@@ -156,12 +135,6 @@
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
-            <artifactId>javafx-swing</artifactId>
-            <version>${jfx.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${jfx.version}</version>
         </dependency>
@@ -175,12 +148,6 @@
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-io</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-profiles</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 
@@ -217,18 +184,6 @@
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-gameplay</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-cutscene</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-localization</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 

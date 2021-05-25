@@ -9,7 +9,6 @@ package tutorial;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.input.UserAction;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -39,33 +38,10 @@ public class PongApp extends GameApplication {
 
     @Override
     protected void initInput() {
-        getInput().addAction(new UserAction("Up 1") {
-            @Override
-            protected void onAction() {
-                paddle1.translateY(-PADDLE_SPEED);
-            }
-        }, KeyCode.W);
-
-        getInput().addAction(new UserAction("Down 1") {
-            @Override
-            protected void onAction() {
-                paddle1.translateY(PADDLE_SPEED);
-            }
-        }, KeyCode.S);
-
-        getInput().addAction(new UserAction("Up 2") {
-            @Override
-            protected void onAction() {
-                paddle2.translateY(-PADDLE_SPEED);
-            }
-        }, KeyCode.UP);
-
-        getInput().addAction(new UserAction("Down 2") {
-            @Override
-            protected void onAction() {
-                paddle2.translateY(PADDLE_SPEED);
-            }
-        }, KeyCode.DOWN);
+        onKey(KeyCode.W, () -> paddle1.translateY(-PADDLE_SPEED));
+        onKey(KeyCode.S, () -> paddle1.translateY(PADDLE_SPEED));
+        onKey(KeyCode.UP, () -> paddle2.translateY(-PADDLE_SPEED));
+        onKey(KeyCode.DOWN, () -> paddle2.translateY(PADDLE_SPEED));
     }
 
     @Override
@@ -87,16 +63,11 @@ public class PongApp extends GameApplication {
         Text textScore1 = getUIFactoryService().newText("", Color.BLACK, 22);
         Text textScore2 = getUIFactoryService().newText("", Color.BLACK, 22);
 
-        textScore1.setTranslateX(10);
-        textScore1.setTranslateY(50);
+        textScore1.textProperty().bind(getip("score1").asString());
+        textScore2.textProperty().bind(getip("score2").asString());
 
-        textScore2.setTranslateX(getAppWidth() - 30);
-        textScore2.setTranslateY(50);
-
-        textScore1.textProperty().bind(getWorldProperties().intProperty("score1").asString());
-        textScore2.textProperty().bind(getWorldProperties().intProperty("score2").asString());
-
-        getGameScene().addUINodes(textScore1, textScore2);
+        addUINode(textScore1, 10, 50);
+        addUINode(textScore2, getAppWidth() - 30, 50);
     }
 
     @Override
@@ -117,12 +88,12 @@ public class PongApp extends GameApplication {
         }
 
         if (ball.getX() <= 0) {
-            getWorldProperties().increment("score2", +1);
+            inc("score2", +1);
             resetBall();
         }
 
         if (ball.getRightX() >= getAppWidth()) {
-            getWorldProperties().increment("score1", +1);
+            inc("score1", +1);
             resetBall();
         }
 

@@ -11,20 +11,14 @@ import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 
-// updated to rev 100
-
 /**
- * This is non-static for faster pooling. To get an instance, use the {@link SingletonPool}, don't
+ * This is non-static for faster pooling. To get an instance, use {@link com.almasb.fxgl.physics.box2d.pooling.IWorldPool}, don't
  * construct a distance object.
  *
  * @author Daniel Murphy
  */
 public class Distance {
-    public static final int MAX_ITERS = 20;
-
-    public static int GJK_CALLS = 0;
-    public static int GJK_ITERS = 0;
-    public static int GJK_MAX_ITERS = 20;
+    private static final int MAX_ITERS = 20;
 
     /**
      * GJK using Voronoi regions (Christer Ericson) and Barycentric coordinates.
@@ -52,18 +46,17 @@ public class Distance {
      *
      * @author daniel
      */
-    public static class SimplexCache {
+    static class SimplexCache {
         /** length or area */
-        public float metric;
-        public int count;
+        public float metric = 0f;
+        public int count = 0;
+
         /** vertices on shape A */
-        public final int indexA[] = new int[3];
+        public final int[] indexA = new int[3];
         /** vertices on shape B */
-        public final int indexB[] = new int[3];
+        public final int[] indexB = new int[3];
 
         public SimplexCache() {
-            metric = 0;
-            count = 0;
             indexA[0] = Integer.MAX_VALUE;
             indexA[1] = Integer.MAX_VALUE;
             indexA[2] = Integer.MAX_VALUE;
@@ -175,9 +168,7 @@ public class Distance {
         private final Vec2 case22 = new Vec2();
 
         /**
-         * this returns pooled objects. don't keep or modify them
-         *
-         * @return
+         * This returns pooled objects. don't keep or modify them
          */
         public void getClosestPoint(final Vec2 out) {
             switch (m_count) {
@@ -534,19 +525,16 @@ public class Distance {
         }
 
         /**
-         * Get the vertex count.
-         *
-         * @return
+         * @return the vertex count
          */
         public final int getVertexCount() {
             return m_count;
         }
 
         /**
-         * Get a vertex by index. Used by Distance.
+         * Used by Distance.
          *
-         * @param index
-         * @return
+         * @return a vertex by index
          */
         public final Vec2 getVertex(int index) {
             assert 0 <= index && index < m_count;
@@ -566,15 +554,10 @@ public class Distance {
      * Compute the closest points between two shapes. Supports any combination of: CircleShape and
      * PolygonShape. The simplex cache is input/output. On the first call set SimplexCache.count to
      * zero.
-     *
-     * @param output
-     * @param cache
-     * @param input
      */
     @SuppressWarnings("PMD.EmptyIfStmt")
     public final void distance(final DistanceOutput output, final SimplexCache cache,
                                final DistanceInput input) {
-        GJK_CALLS++;
 
         final DistanceProxy proxyA = input.proxyA;
         final DistanceProxy proxyB = input.proxyB;
@@ -671,7 +654,6 @@ public class Distance {
 
             // Iteration count is equated to the number of support point calls.
             ++iter;
-            ++GJK_ITERS;
 
             // Check for duplicate support points. This is the main termination criteria.
             boolean duplicate = false;
@@ -690,8 +672,6 @@ public class Distance {
             // New vertex is ok and needed.
             ++simplex.m_count;
         }
-
-        GJK_MAX_ITERS = Math.max(GJK_MAX_ITERS, iter);
 
         // Prepare output.
         simplex.getWitnessPoints(output.pointA, output.pointB);

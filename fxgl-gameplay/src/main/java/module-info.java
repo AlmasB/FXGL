@@ -12,8 +12,11 @@ module com.almasb.fxgl.gameplay {
     requires com.almasb.fxgl.input;
     requires com.almasb.fxgl.scene;
     requires javafx.controls;
+    requires com.fasterxml.jackson.annotation;
 
     exports com.almasb.fxgl.achievement;
+    exports com.almasb.fxgl.cutscene;
+    exports com.almasb.fxgl.cutscene.dialogue;
     exports com.almasb.fxgl.inventory;
     exports com.almasb.fxgl.inventory.view;
     exports com.almasb.fxgl.minigames;
@@ -28,4 +31,6 @@ module com.almasb.fxgl.gameplay {
 
     opens com.almasb.fxgl.achievement to com.almasb.fxgl.core;
     opens com.almasb.fxgl.minigames to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.cutscene to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.cutscene.dialogue;
 }

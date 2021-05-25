@@ -13,6 +13,8 @@ module com.almasb.fxgl.io {
 
     exports com.almasb.fxgl.io;
     exports com.almasb.fxgl.net;
+    exports com.almasb.fxgl.profile;
 
     opens com.almasb.fxgl.io to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.profile to com.almasb.fxgl.core;
 }

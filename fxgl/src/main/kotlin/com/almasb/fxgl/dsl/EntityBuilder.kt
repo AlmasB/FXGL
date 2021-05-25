@@ -20,6 +20,10 @@ import javafx.geometry.Point2D
 import javafx.geometry.Point3D
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
+import javafx.scene.paint.Color
+import javafx.scene.paint.PhongMaterial
+import javafx.scene.shape.Box
+import javafx.scene.shape.Sphere
 import java.util.function.Consumer
 
 /**
@@ -224,4 +228,29 @@ class EntityBuilder {
     }
 
     fun buildScreenBoundsAndAttach(thickness: Double) = entity.also { FXGL.getGameWorld().addEntity(buildScreenBounds(thickness)) }
+
+    fun buildOrigin3D(): Entity {
+        val sp = Sphere(0.1)
+        sp.material = PhongMaterial(Color.YELLOW)
+
+        val axisX = Box(1.0, 0.1, 0.1)
+        axisX.translateX = 0.5
+        axisX.material = PhongMaterial(Color.RED)
+
+        val axisY = Box(0.1, 1.0, 0.1)
+        axisY.translateY = 0.5
+        axisY.material = PhongMaterial(Color.LIGHTGREEN)
+
+        val axisZ = Box(0.1, 0.1, 1.0)
+        axisZ.translateZ = 0.5
+        axisZ.material = PhongMaterial(Color.BLUE)
+
+        return view(sp)
+                .view(axisX)
+                .view(axisY)
+                .view(axisZ)
+                .build()
+    }
+
+    fun buildOrigin3DAndAttach() = buildOrigin3D().also { FXGL.getGameWorld().addEntity(it) }
 }

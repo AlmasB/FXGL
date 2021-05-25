@@ -178,6 +178,28 @@ public final class FXGLMath {
         return toDegrees(atan2(y, x));
     }
 
+    /**
+     * @param point the point or vector to rotate
+     * @param pivot the point around which to rotate
+     * @param angle amount in degrees to rotate
+     * @return the rotated point
+     */
+    public static Point2D rotate(Point2D point, Point2D pivot, double angle) {
+        // translate point so that rotation origin (pivot) is at (0, 0)
+        double px = point.getX() - pivot.getX();
+        double py = point.getY() - pivot.getY();
+
+        double c = cosDeg(angle);
+        double s = sinDeg(angle);
+
+        // rotate around (0, 0)
+        double pxNew = px * c - py * s;
+        double pyNew = px * s + py * c;
+
+        // translate point back to pivot
+        return new Point2D(pxNew + pivot.getX(), pyNew + pivot.getY());
+    }
+
     /* RANDOM BEGIN */
 
     private static Random random = new Random();

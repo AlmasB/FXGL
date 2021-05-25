@@ -14,10 +14,10 @@ import com.almasb.fxgl.physics.box2d.common.Transform;
  * in the computation.
  *
  */
-public class DistanceInput {
-    public DistanceProxy proxyA = new DistanceProxy();
-    public DistanceProxy proxyB = new DistanceProxy();
-    public Transform transformA = new Transform();
-    public Transform transformB = new Transform();
-    public boolean useRadii;
+class DistanceInput {
+    DistanceProxy proxyA = new DistanceProxy();
+    DistanceProxy proxyB = new DistanceProxy();
+    Transform transformA = new Transform();
+    Transform transformB = new Transform();
+    boolean useRadii;
 }

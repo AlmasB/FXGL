@@ -6,7 +6,7 @@
 
 package dev.tools
 
-import javafx.embed.swing.SwingFXUtils
+import com.almasb.fxgl.texture.toBufferedImage
 import javafx.scene.image.Image
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -21,7 +21,7 @@ class ImageUtils {
     companion object {
 
         @JvmStatic fun save(fxImage: Image): Boolean {
-            val img = SwingFXUtils.fromFXImage(fxImage, null)
+            val img = toBufferedImage(fxImage)
 
             var fileName = "file.png"
 

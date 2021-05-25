@@ -158,8 +158,6 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
                 srcy = 0
             }
 
-            log.debug("Writing to buffer: dst=${x * map.tilewidth},${y * map.tileheight}, w=$w,h=$h, src=$srcx,$srcy")
-
             if (isFlippedHorizontal) {
                 sourceImage = flipHorizontally(sourceImage)
             }

@@ -30,7 +30,6 @@ import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
-import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.stage.Screen
 import javafx.stage.Stage
@@ -40,7 +39,7 @@ import javafx.stage.Stage
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal sealed class MainWindow(
+sealed class MainWindow(
         /**
          * The starting scene which is used when the window is created.
          */
@@ -61,6 +60,12 @@ internal sealed class MainWindow(
 
     var onClose: (() -> Unit)? = null
     var defaultCursor: ImageCursor? = null
+
+    abstract val x: Double
+    abstract val y: Double
+    abstract val width: Double
+    abstract val height: Double
+    abstract val isFocused: Boolean
 
     protected val scenes = arrayListOf<Scene>()
 
@@ -195,7 +200,7 @@ internal sealed class MainWindow(
     private fun registerScene(scene: Scene) {
         scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
 
-        if (!settings.isExperimentalNative
+        if (!settings.isNative
                 && settings.isDesktop
                 && scene is FXGLScene
                 && scene.root.cursor == null) {
@@ -256,6 +261,21 @@ internal class PrimaryStageWindow(
 ) : MainWindow(scene, settings) {
 
     private val fxScene: javafx.scene.Scene
+
+    override val x: Double
+        get() = stage.x
+
+    override val y: Double
+        get() = stage.y
+
+    override val width: Double
+        get() = stage.width
+
+    override val height: Double
+        get() = stage.height
+
+    override val isFocused: Boolean
+        get() = stage.isFocused
 
     init {
         fxScene = createFXScene(scene.root)
@@ -434,7 +454,7 @@ internal class PrimaryStageWindow(
     }
 
     override fun addIcons(vararg images: Image) {
-        if (!settings.isExperimentalNative) {
+        if (!settings.isNative) {
             stage.icons += images
         }
     }
@@ -479,6 +499,22 @@ internal class EmbeddedPaneWindow(
 
     private val backgroundRect = Rectangle()
     private val clipRect = Rectangle()
+
+    override val x: Double
+        get() = fxglPane.localToScene(0.0, 0.0).x
+
+    override val y: Double
+        get() = fxglPane.localToScene(0.0, 0.0).y
+
+    // TODO: fix impl
+    override val isFocused: Boolean
+        get() = true
+
+    override val width: Double
+        get() = fxglPane.renderWidth
+
+    override val height: Double
+        get() = fxglPane.renderHeight
 
     init {
         computeScaledDimensions()

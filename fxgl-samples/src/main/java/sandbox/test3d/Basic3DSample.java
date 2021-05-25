@@ -27,7 +27,7 @@ public class Basic3DSample extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.setTitle("Basic 3D Sample");
-        settings.setExperimental3D(true);
+        settings.set3D(true);
     }
 
     @Override

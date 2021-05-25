@@ -21,7 +21,7 @@ import javafx.scene.shape.Box;
 public class Anim3DSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setExperimental3D(true);
+        settings.set3D(true);
     }
 
     @Override

@@ -16,8 +16,10 @@ public class ContactVelocityConstraint {
     public final Mat22 K = new Mat22();
     public int indexA;
     public int indexB;
-    public float invMassA, invMassB;
-    public float invIA, invIB;
+    public float invMassA;
+    public float invMassB;
+    public float invIA;
+    public float invIB;
     public float friction;
     public float restitution;
     public float tangentSpeed;
