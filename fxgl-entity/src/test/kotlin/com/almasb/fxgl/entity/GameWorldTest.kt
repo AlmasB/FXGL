@@ -6,8 +6,6 @@
 @file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.entity
 
-import java.util.Optional
-import java.util.function.Predicate
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.components.*
 import com.almasb.fxgl.entity.level.Level
@@ -28,6 +26,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.function.Executable
+import java.util.*
+import java.util.function.Predicate
 
 class GameWorldTest {
 

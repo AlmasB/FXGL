@@ -11,8 +11,7 @@ import javafx.geometry.Point2D
 import javafx.geometry.Point3D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.number.IsCloseTo
-import org.hamcrest.number.IsCloseTo.*
+import org.hamcrest.number.IsCloseTo.closeTo
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
