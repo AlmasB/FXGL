@@ -14,7 +14,6 @@ import javafx.scene.shape.MeshView
 import javafx.scene.shape.TriangleMesh
 import java.util.stream.Collectors
 import java.util.stream.IntStream
-import java.util.stream.Stream
 
 // TODO: cache meshes (check CylinderKey)
 // TODO: diffuseColor

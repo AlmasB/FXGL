@@ -31,7 +31,6 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import javafx.stage.FileChooser
 import java.io.File
-import java.lang.Exception
 import java.net.URL
 import java.net.URLClassLoader
 import java.nio.file.Paths
