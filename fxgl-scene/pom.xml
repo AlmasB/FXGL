@@ -19,9 +19,22 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${jfx.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-core</artifactId>
             <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-test</artifactId>
+            <version>${fxgl.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
