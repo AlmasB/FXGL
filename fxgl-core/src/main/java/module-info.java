@@ -28,6 +28,9 @@ module com.almasb.fxgl.core {
 
     exports com.almasb.fxgl.animation;
     exports com.almasb.fxgl.event;
+    exports com.almasb.fxgl.input;
+    exports com.almasb.fxgl.input.view;
+    exports com.almasb.fxgl.input.virtual;
     exports com.almasb.fxgl.localization;
     exports com.almasb.fxgl.logging;
     exports com.almasb.fxgl.texture;

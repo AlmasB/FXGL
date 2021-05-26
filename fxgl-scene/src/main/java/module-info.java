@@ -9,7 +9,6 @@
  */
 module com.almasb.fxgl.scene {
     requires com.almasb.fxgl.core;
-    requires com.almasb.fxgl.input;
 
     exports com.almasb.fxgl.scene;
 
