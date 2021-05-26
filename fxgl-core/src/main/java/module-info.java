@@ -13,6 +13,8 @@ module com.almasb.fxgl.core {
     requires transitive javafx.base;
 
     requires java.desktop;
+    requires javafx.media;
+    requires com.gluonhq.attach.audio;
 
     exports com.almasb.fxgl.core;
     exports com.almasb.fxgl.core.asset;
@@ -27,6 +29,7 @@ module com.almasb.fxgl.core {
     exports com.almasb.fxgl.core.util;
 
     exports com.almasb.fxgl.animation;
+    exports com.almasb.fxgl.audio;
     exports com.almasb.fxgl.event;
     exports com.almasb.fxgl.input;
     exports com.almasb.fxgl.input.view;
