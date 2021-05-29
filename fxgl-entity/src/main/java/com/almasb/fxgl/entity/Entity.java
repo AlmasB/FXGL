@@ -387,11 +387,15 @@ public class Entity implements Animatable, Copyable<Entity> {
      * @throws IllegalStateException if components required by the given component are missing
      */
     public final void addComponent(Component component) {
-        checkNotUpdating();
 
+        if (isUpdating) {
+            log.warning("Cannot add / remove components during updating");
+            return;
+        }
         if (checkRequirementsMet(component.getClass())) {
             addComponentNoChecks(component);
         }
+
     }
 
     private void addComponentNoChecks(Component component) {
@@ -420,7 +424,10 @@ public class Entity implements Animatable, Copyable<Entity> {
             return false;
         }
 
-        checkNotUpdating();
+        if (isUpdating) {
+            log.warning("Cannot add / remove components during updating");
+            return false;
+        }
 
         checkNotRequiredByAny(type);
 
@@ -522,11 +529,6 @@ public class Entity implements Animatable, Copyable<Entity> {
 
     private <T extends Component> void notifyComponentRemoved(T c) {
         componentListeners.forEach(l -> l.onRemoved(c));
-    }
-
-    private void checkNotUpdating() {
-        if (isUpdating)
-            throw new IllegalStateException("Cannot add / remove components during updating");
     }
 
     private boolean isCoreComponent(Class<? extends Component> type) {
