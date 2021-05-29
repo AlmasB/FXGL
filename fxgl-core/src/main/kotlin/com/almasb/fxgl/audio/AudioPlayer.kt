@@ -33,6 +33,9 @@ class AudioPlayer : EngineService() {
     @Inject("globalSoundVolumeProperty")
     private lateinit var soundVolume: DoubleProperty
 
+    @Inject("isPauseMusicWhenMinimized")
+    private var isPauseMusicWhenMinimized = true
+
     private val loader = DesktopAndMobileAudioLoader()
 
     override fun onMainLoopStarting() {
@@ -42,6 +45,18 @@ class AudioPlayer : EngineService() {
 
         soundVolume.addListener { _, _, newVolume ->
             activeSounds.forEach { it.audio.setVolume(newVolume.toDouble()) }
+        }
+    }
+
+    override fun onMainLoopPausing() {
+        if (isPauseMusicWhenMinimized) {
+            pauseAllMusic()
+        }
+    }
+
+    override fun onMainLoopResumed() {
+        if (isPauseMusicWhenMinimized) {
+            resumeAllMusic()
         }
     }
 
