@@ -27,6 +27,9 @@ abstract class ReplicationEvent(eventType: EventType<out ReplicationEvent>) : Ev
 
         @JvmField val INPUT_ACTION_BEGIN = EventType(ANY, "INPUT_ACTION_BEGIN")
         @JvmField val INPUT_ACTION_END = EventType(ANY, "INPUT_ACTION_END")
+
+        @JvmField val PROPERTY_UPDATE = EventType(ANY, "PROPERTY_UPDATE")
+        @JvmField val PROPERTY_REMOVE = EventType(ANY, "PROPERTY_REMOVE")
     }
 }
 
@@ -59,3 +62,12 @@ class ActionEndReplicationEvent(
         val key: KeyCode? = null,
         val btn: MouseButton? = null
 ) : ReplicationEvent(INPUT_ACTION_END)
+
+class PropertyUpdateReplicationEvent(
+        val propertyName: String,
+        val propertyValue: Any
+) : ReplicationEvent(PROPERTY_UPDATE)
+
+class PropertyRemoveReplicationEvent(
+        val propertyName: String
+) : ReplicationEvent(PROPERTY_REMOVE)

@@ -7,6 +7,9 @@
 package com.almasb.fxgl.multiplayer
 
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.collection.PropertyChangeListener
+import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.core.collection.PropertyMapChangeListener
 import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
@@ -17,6 +20,7 @@ import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.net.Connection
 
 /**
+ * TODO: symmetric remove API, e.g. removeReplicationSender()
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -137,6 +141,39 @@ class MultiplayerService : EngineService() {
         })
     }
 
+    fun addPropertyReplicationSender(connection: Connection<Bundle>, map: PropertyMap) {
+        map.addListener(object : PropertyMapChangeListener {
+            override fun onUpdated(propertyName: String, propertyValue: Any) {
+                val event = PropertyUpdateReplicationEvent(propertyName, propertyValue)
+
+                fire(connection, event)
+            }
+
+            override fun onRemoved(propertyName: String, propertyValue: Any) {
+                val event = PropertyRemoveReplicationEvent(propertyName)
+
+                fire(connection, event)
+            }
+        })
+    }
+
+    fun addPropertyReplicationReceiver(connection: Connection<Bundle>, map: PropertyMap) {
+        connection.addMessageHandlerFX { _, message ->
+            handleIfReplicationBundle(message) { event ->
+
+                when (event) {
+                    is PropertyUpdateReplicationEvent -> {
+                        map.setValue(event.propertyName, event.propertyValue)
+                    }
+
+                    is PropertyRemoveReplicationEvent -> {
+                        map.remove(event.propertyName)
+                    }
+                }
+            }
+        }
+    }
+
     fun addInputReplicationReceiver(connection: Connection<Bundle>, input: Input) {
         connection.addMessageHandlerFX { _, message ->
 
@@ -179,6 +216,9 @@ class MultiplayerService : EngineService() {
     }
 
     private fun fire(connection: Connection<Bundle>, vararg events: ReplicationEvent) {
+        if (!connection.isConnected)
+            return
+
         // this is the only place where we create a replication event carrying bundle
         val bundle = Bundle("REPLICATION_EVENT")
 
