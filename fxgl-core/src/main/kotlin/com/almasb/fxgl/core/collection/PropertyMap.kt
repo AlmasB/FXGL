@@ -58,6 +58,8 @@ class PropertyMap {
 
     private val properties = hashMapOf<String, Any>()
 
+    private val mapChangeListeners = arrayListOf<PropertyMapChangeListener>()
+
     fun keys(): Set<String> = properties.keys
 
     /**
@@ -106,6 +108,9 @@ class PropertyMap {
                 }
             }
         } else {
+
+            // new property
+
             val property = when (value) {
                 is Boolean -> SimpleBooleanProperty(value)
                 is Int -> SimpleIntegerProperty(value)
@@ -115,10 +120,22 @@ class PropertyMap {
             }
 
             properties.put(propertyName, property)
+
+            // let listeners know we added a new prop
+            mapChangeListeners.forEach { it.onUpdated(propertyName, value) }
+
+            // add an internal listener for any changes in this new property
+            addListener(propertyName, PropertyChangeListener<Any> { _, now ->
+                mapChangeListeners.forEach { it.onUpdated(propertyName, now) }
+            })
         }
     }
 
     fun remove(propertyName: String) {
+        getValueOptional<Any>(propertyName).ifPresent { value ->
+            mapChangeListeners.forEach { it.onRemoved(propertyName, value) }
+        }
+
         properties.remove(propertyName)
     }
 
@@ -177,6 +194,14 @@ class PropertyMap {
         listeners.remove(key)
     }
 
+    fun addListener(mapChangeListener: PropertyMapChangeListener) {
+        mapChangeListeners += mapChangeListener
+    }
+
+    fun removeListener(mapChangeListener: PropertyMapChangeListener) {
+        mapChangeListeners -= mapChangeListener
+    }
+
     @Suppress("UNCHECKED_CAST")
     fun clear() {
         listeners.forEach { (key, listener) ->
@@ -185,6 +210,7 @@ class PropertyMap {
         }
 
         listeners.clear()
+        mapChangeListeners.clear()
 
         properties.clear()
     }
