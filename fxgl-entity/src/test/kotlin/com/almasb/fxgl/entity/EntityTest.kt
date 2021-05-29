@@ -186,13 +186,11 @@ class EntityTest {
     }
 
     @Test
-    fun `Add control fails if within update of another control`() {
+    fun `Add control ignores and does not fail if within update of another control`() {
         val control = ControlAddingControl()
         entity.addComponent(control)
 
-        assertThrows(IllegalStateException::class.java, {
-            entity.update(0.0)
-        })
+        entity.update(0.0)
     }
 
     @Test
@@ -213,13 +211,11 @@ class EntityTest {
     }
 
     @Test
-    fun `Remove control fails if within update of another control`() {
+    fun `Remove control ignores and does not fail if within update of another control`() {
         val control = ControlRemovingControl()
         entity.addComponent(control)
 
-        assertThrows(IllegalStateException::class.java, {
-            entity.update(0.0)
-        })
+        entity.update(0.0)
     }
 
     @Test
