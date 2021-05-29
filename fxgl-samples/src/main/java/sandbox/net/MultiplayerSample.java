@@ -29,12 +29,17 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
+
+import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 import static javafx.scene.input.KeyCode.*;
 
 /**
+ *  TODO: graceful exit (via API)
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class MultiplayerSample extends GameApplication {
@@ -82,6 +87,11 @@ public class MultiplayerSample extends GameApplication {
     }
 
     @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("score", 0);
+    }
+
+    @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new MultiplayerFactory());
 
@@ -95,9 +105,21 @@ public class MultiplayerSample extends GameApplication {
                 if (isServer) {
                     // TODO: have only server init and only client init code to override
 
+                    runOnce(() -> {
+                        set("newVar", 1.0);
+
+                        var text = addVarText("newVar", 50, 100);
+                        text.fontProperty().unbind();
+                        text.setFont(Font.font(26.0));
+
+                        run(() -> { inc("newVar", +1.25); }, Duration.seconds(1.0));
+                    }, Duration.seconds(3));
+
                     onCollisionBegin(EntityType.BULLET, EntityType.ENEMY, (bullet, enemy) -> {
                         bullet.removeFromWorld();
                         enemy.removeFromWorld();
+
+                        inc("score", +1);
                     });
 
                     server = getNetService().newTCPServer(55555);
@@ -112,32 +134,29 @@ public class MultiplayerSample extends GameApplication {
                             getMPService().spawn(connection, player2, "player2");
 
                             getMPService().addInputReplicationReceiver(conn, clientInput);
+                            getMPService().addPropertyReplicationSender(conn, getWorldProperties());
                         });
                     });
 
                     server.startAsync();
 
-//                    getTaskService().runAsync(
-//                            server.startTask()
-//                                    .onSuccess(n -> System.out.println("Server startTask success"))
-//                                    .onFailure(e -> System.out.println("Server startTask fail: " + e))
-//                    );
-
                 } else {
+
+                    runOnce(() -> {
+                        var text = addVarText("newVar", 50, 100);
+                        text.fontProperty().unbind();
+                        text.setFont(Font.font(26.0));
+                    }, Duration.seconds(5));
+
 
                     var client = getNetService().newTCPClient("localhost", 55555);
                     client.setOnConnected(conn -> {
                         getMPService().addEntityReplicationReceiver(conn, getGameWorld());
                         getMPService().addInputReplicationSender(conn, getInput());
+                        getMPService().addPropertyReplicationReceiver(conn, getWorldProperties());
                     });
 
                     client.connectAsync();
-
-//                    getTaskService().runAsync(
-//                            client.connectTask()
-//                                    .onSuccess(n -> System.out.println("client connectTask success"))
-//                                    .onFailure(e -> System.out.println("client connectTask fail: " + e))
-//                    );
 
                     getInput().setProcessInput(false);
                 }
@@ -162,6 +181,11 @@ public class MultiplayerSample extends GameApplication {
                 getMPService().spawn(connection, e, "enemy");
             }
         }, Duration.seconds(1));
+    }
+
+    @Override
+    protected void initUI() {
+        addVarText("score", 50, 50);
     }
 
     @Override
