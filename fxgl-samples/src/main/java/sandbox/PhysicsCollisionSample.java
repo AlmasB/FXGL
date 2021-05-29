@@ -9,11 +9,15 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import dev.DeveloperWASDControl;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -30,8 +34,15 @@ import javafx.scene.shape.Rectangle;
  */
 public class PhysicsCollisionSample extends GameApplication {
 
+    private Entity player;
+
     private enum Type {
         PLAYER, ENEMY
+    }
+
+    private enum Scale {
+        UP,
+        DOWN
     }
 
     @Override
@@ -39,7 +50,7 @@ public class PhysicsCollisionSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        FXGL.entityBuilder()
+        this.player = FXGL.entityBuilder()
                 .type(Type.PLAYER)
                 .at(100, 100)
                 // 1. define hit boxes manually
@@ -72,6 +83,97 @@ public class PhysicsCollisionSample extends GameApplication {
                 .buildAndAttach();
     }
 
+    private void scalePlayer(Scale scale, double amount) {
+        double newPlayerScaleX = player.getScaleX();
+        double newPlayerScaleY = player.getScaleY();
+
+        switch(scale){
+            case UP:
+                newPlayerScaleX += amount;
+                newPlayerScaleY += amount;
+                break;
+            case DOWN:
+                newPlayerScaleX -= amount;
+                newPlayerScaleY -= amount;
+                break;
+            default:
+                System.out.println("UNKNOWN Scale Case Provided");
+                break;
+        }
+        player.setScaleX(newPlayerScaleX);
+        player.setScaleY(newPlayerScaleY);
+    }
+
+    @Override
+    protected void initInput() {
+        Input input = FXGL.getInput();
+
+        input.addAction(new UserAction("Scale Up") {
+            @Override
+            protected void onActionBegin() {
+                System.out.println("Scaling Up Player.");
+            }
+
+            @Override
+            protected void onAction() {
+                scalePlayer(Scale.UP, 0.20);
+            }
+
+            @Override
+            protected void onActionEnd() {
+            }
+        }, KeyCode.RIGHT);
+
+        input.addAction(new UserAction("Scale Down") {
+            @Override
+            protected void onActionBegin() {
+                System.out.println("Scaling Down Player.");
+            }
+
+            @Override
+            protected void onAction() {
+                scalePlayer(Scale.DOWN, 0.20);
+            }
+
+            @Override
+            protected void onActionEnd() {
+            }
+        }, KeyCode.LEFT);
+
+        input.addAction(new UserAction("Rotate Right") {
+            @Override
+            protected void onActionBegin() {
+                System.out.println("Rotating Player Right.");
+            }
+
+            @Override
+            protected void onAction() {
+                double currentPlayerRotation = player.getRotation();
+                player.setRotation(currentPlayerRotation - 1.5);
+            }
+
+            @Override
+            protected void onActionEnd() {
+            }
+        }, KeyCode.Q);
+
+        input.addAction(new UserAction("Rotate Left") {
+            @Override
+            protected void onActionBegin() {
+                System.out.println("Rotating Player Right.");
+            }
+
+            @Override
+            protected void onAction() {
+                double currentPlayerRotation = player.getRotation();
+                player.setRotation(currentPlayerRotation + 1.5);
+            }
+
+            @Override
+            protected void onActionEnd() {
+            }
+        }, KeyCode.E);
+    }
     @Override
     protected void initPhysics() {
 
