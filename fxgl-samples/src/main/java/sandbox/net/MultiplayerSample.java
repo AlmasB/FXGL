@@ -16,14 +16,17 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.multiplayer.MultiplayerService;
 import com.almasb.fxgl.multiplayer.NetworkComponent;
+import com.almasb.fxgl.multiplayer.ReplicationEvent;
 import com.almasb.fxgl.net.Connection;
 import com.almasb.fxgl.net.Server;
 import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitters;
+import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.MouseButton;
@@ -53,6 +56,7 @@ public class MultiplayerSample extends GameApplication {
     private Entity player2;
 
     private Input clientInput;
+    private EventBus clientBus;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -66,6 +70,12 @@ public class MultiplayerSample extends GameApplication {
         onKey(A, () -> player1.translateX(-5));
         onKey(D, () -> player1.translateX(5));
         onBtnDown(MouseButton.PRIMARY, () -> shoot(player1));
+
+        onKeyDown(F, () -> {
+            if (isServer) {
+                clientBus.fireEvent(new CustomReplicationEvent("Hello", random(0.0, 1000.0)));
+            }
+        });
 
         clientInput = new Input();
 
@@ -93,6 +103,8 @@ public class MultiplayerSample extends GameApplication {
 
     @Override
     protected void initGame() {
+        clientBus = new EventBus();
+
         getGameWorld().addEntityFactory(new MultiplayerFactory());
 
         getGameScene().setBackgroundColor(Color.LIGHTGRAY);
@@ -135,6 +147,8 @@ public class MultiplayerSample extends GameApplication {
 
                             getMPService().addInputReplicationReceiver(conn, clientInput);
                             getMPService().addPropertyReplicationSender(conn, getWorldProperties());
+
+                            getMPService().addEventReplicationSender(conn, clientBus);
                         });
                     });
 
@@ -154,6 +168,12 @@ public class MultiplayerSample extends GameApplication {
                         getMPService().addEntityReplicationReceiver(conn, getGameWorld());
                         getMPService().addInputReplicationSender(conn, getInput());
                         getMPService().addPropertyReplicationReceiver(conn, getWorldProperties());
+
+                        clientBus.addEventHandler(CustomReplicationEvent.CUSTOM_EVENT, event -> {
+                            getNotificationService().pushNotification(event.data + ": " + event.value);
+                        });
+
+                        getMPService().addEventReplicationReceiver(conn, clientBus);
                     });
 
                     client.connectAsync();
@@ -264,6 +284,21 @@ public class MultiplayerSample extends GameApplication {
                         particles.addComponent(comp);
                     })
                     .build();
+        }
+    }
+
+    public static class CustomReplicationEvent extends ReplicationEvent {
+
+        public static final EventType<CustomReplicationEvent> CUSTOM_EVENT = new EventType<>(ReplicationEvent.ANY, "CUSTOM_EVENT");
+
+        public String data;
+        public double value;
+
+        public CustomReplicationEvent(String data, double value) {
+            super(CUSTOM_EVENT);
+
+            this.data = data;
+            this.value = value;
         }
     }
 
