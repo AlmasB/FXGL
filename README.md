@@ -149,6 +149,7 @@ Coordinators:
 Testers:
 
 * [Carl Dea](https://github.com/carldea)
+* [Frank Delporte](https://github.com/FDelporte)
 
 ### Contribution & Support
 
