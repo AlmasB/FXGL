@@ -106,6 +106,12 @@ class EntityBuilder {
         entity.transformComponent.scaleOrigin = point
     }
 
+    fun scale(x: Double, y: Double, z: Double) = this.also {
+        entity.scaleX = x
+        entity.scaleY = y
+        entity.scaleZ = z
+    }
+
     fun scale(x: Double, y: Double) = this.also {
         entity.scaleX = x
         entity.scaleY = y
@@ -113,6 +119,10 @@ class EntityBuilder {
 
     fun scale(scale: Point2D) = this.also {
         scale(scale.x, scale.y)
+    }
+
+    fun scale(scale: Point3D) = this.also {
+        scale(scale.x, scale.y, scale.z)
     }
 
     fun opacity(value: Double) = this.also {
