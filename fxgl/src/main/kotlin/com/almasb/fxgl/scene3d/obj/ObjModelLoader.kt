@@ -30,6 +30,7 @@ class ObjModelLoader : Model3DLoader {
 
         init {
             objParsers[ { it.startsWith("g") }  ] = Companion::parseGroup
+            objParsers[ { it.startsWith("s") }  ] = Companion::parseSmoothing
             objParsers[ { it.startsWith("vt") }  ] = Companion::parseVertexTextures
             objParsers[ { it.startsWith("vn") }  ] = Companion::parseVertexNormals
             objParsers[ { it.startsWith("v ") }  ] = Companion::parseVertices
@@ -49,6 +50,10 @@ class ObjModelLoader : Model3DLoader {
             val groupName = if (tokens.isEmpty()) "default" else tokens[0]
 
             data.groups += ObjGroup(groupName)
+        }
+
+        private fun parseSmoothing(tokens: List<String>, data: ObjData) {
+            data.currentGroup.currentSubGroup.smoothingGroup = tokens.toSmoothingGroup()
         }
 
         private fun parseVertexTextures(tokens: List<String>, data: ObjData) {
@@ -147,6 +152,10 @@ class ObjModelLoader : Model3DLoader {
             return Color.color(rgb[0], rgb[1], rgb[2])
         }
 
+        private fun List<String>.toSmoothingGroup(): Int {
+            return if (this[0] == "off") 0 else this[0].toInt()
+        }
+
         private fun parseNewMaterial(tokens: List<String>, data: MtlData) {
             data.currentMaterial = PhongMaterial()
             data.materials[tokens[0]] = data.currentMaterial
@@ -228,8 +237,6 @@ class ObjModelLoader : Model3DLoader {
                     // TODO: ?
                     if (!it.faces.isEmpty()) {
 
-                        //val subGroupRoot = Group()
-
                         val mesh = TriangleMesh(VertexFormat.POINT_NORMAL_TEXCOORD)
 
                         mesh.points.addAll(*data.vertices.map { it * 0.05f }.toFloatArray())
@@ -250,11 +257,13 @@ class ObjModelLoader : Model3DLoader {
 
                         mesh.faces.addAll(*it.faces.toIntArray())
 
+                        if (it.smoothingGroups.isNotEmpty()) {
+                            mesh.faceSmoothingGroups.addAll(*it.smoothingGroups.toIntArray())
+                        }
+
                         val view = MeshView(mesh)
                         view.material = it.material
                         view.cullFace = CullFace.NONE
-
-                        //subGroupRoot.children.addAll(view)
 
                         groupRoot.addMeshView(view)
                     }
