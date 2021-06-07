@@ -9,6 +9,8 @@ package com.almasb.fxgl.scene3d
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.collections.ObservableFloatArray
+import javafx.scene.paint.Color
+import javafx.scene.paint.PhongMaterial
 import javafx.scene.shape.Mesh
 import javafx.scene.shape.MeshView
 import javafx.scene.shape.TriangleMesh
@@ -16,7 +18,6 @@ import java.util.stream.Collectors
 import java.util.stream.IntStream
 
 // TODO: cache meshes (check CylinderKey)
-// TODO: diffuseColor
 
 /**
  *
@@ -60,6 +61,10 @@ abstract class CustomShape3D : MeshView() {
         IntStream.range(0, numVertices)
                 .mapToObj { MeshVertex(triMesh.points, it*3) }
                 .collect(Collectors.toUnmodifiableList())
+    }
+
+    fun setPhongMaterial(color: Color) {
+        material = PhongMaterial(color)
     }
 
     class MeshVertex internal constructor(
