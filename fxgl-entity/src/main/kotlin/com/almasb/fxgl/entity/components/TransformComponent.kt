@@ -45,9 +45,11 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
 
     private val propScaleOriginX = SimpleDoubleProperty(0.0)
     private val propScaleOriginY = SimpleDoubleProperty(0.0)
+    private val propScaleOriginZ = SimpleDoubleProperty(0.0)
 
     private val propRotationOriginX = SimpleDoubleProperty(0.0)
     private val propRotationOriginY = SimpleDoubleProperty(0.0)
+    private val propRotationOriginZ = SimpleDoubleProperty(0.0)
 
     private val propRotationX = SimpleDoubleProperty(0.0)
     private val propRotationY = SimpleDoubleProperty(0.0)
@@ -111,11 +113,27 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
             propScaleOriginY.value = value.y
         }
 
+    var scaleOrigin3D: Point3D
+        get() = Point3D(propScaleOriginX.value, propScaleOriginY.value, propScaleOriginZ.value)
+        set(value) {
+            propScaleOriginX.value = value.x
+            propScaleOriginY.value = value.y
+            propScaleOriginZ.value = value.z
+        }
+
     var rotationOrigin: Point2D
         get() = Point2D(propRotationOriginX.value, propRotationOriginY.value)
         set(value) {
             propRotationOriginX.value = value.x
             propRotationOriginY.value = value.y
+        }
+
+    var rotationOrigin3D: Point3D
+        get() = Point3D(propRotationOriginX.value, propRotationOriginY.value, propRotationOriginZ.value)
+        set(value) {
+            propRotationOriginX.value = value.x
+            propRotationOriginY.value = value.y
+            propRotationOriginZ.value = value.z
         }
 
     fun xProperty() = propX
@@ -137,9 +155,11 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
 
     fun scaleOriginXProperty() = propScaleOriginX
     fun scaleOriginYProperty() = propScaleOriginY
+    fun scaleOriginZProperty() = propScaleOriginY
 
     fun rotationOriginXProperty() = propRotationOriginX
     fun rotationOriginYProperty() = propRotationOriginY
+    fun rotationOriginZProperty() = propRotationOriginZ
 
     fun rotationXProperty() = propRotationX
     fun rotationYProperty() = propRotationY
