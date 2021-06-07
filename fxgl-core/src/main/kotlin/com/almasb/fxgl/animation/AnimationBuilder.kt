@@ -294,7 +294,7 @@ open class AnimationBuilder
 
         private var startScale = Point3D(1.0, 1.0, 1.0)
         private var endScale = Point3D(1.0, 1.0, 1.0)
-        private var scaleOrigin: Point2D? = null
+        private var scaleOrigin: Point3D? = null
 
         fun from(start: Point2D): ScaleAnimationBuilder {
             startScale = Point3D(start.x, start.y, 1.0)
@@ -317,6 +317,11 @@ open class AnimationBuilder
         }
 
         fun origin(scaleOrigin: Point2D): ScaleAnimationBuilder {
+            this.scaleOrigin = Point3D(scaleOrigin.x, scaleOrigin.y, 0.0)
+            return this
+        }
+
+        fun origin(scaleOrigin: Point3D): ScaleAnimationBuilder {
             this.scaleOrigin = scaleOrigin
             return this
         }
@@ -346,7 +351,7 @@ open class AnimationBuilder
         private var is3DAnimation = false
         private var startRotation = Point3D.ZERO
         private var endRotation = Point3D.ZERO
-        private var rotationOrigin: Point2D? = null
+        private var rotationOrigin: Point3D? = null
 
         fun from(startAngle: Double): RotationAnimationBuilder {
             is3DAnimation = false
@@ -373,11 +378,23 @@ open class AnimationBuilder
         }
 
         fun origin(rotationOrigin: Point2D): RotationAnimationBuilder {
+            this.rotationOrigin = Point3D(rotationOrigin.x, rotationOrigin.y, 0.0)
+            return this
+        }
+
+        fun origin(rotationOrigin: Point3D): RotationAnimationBuilder {
             this.rotationOrigin = rotationOrigin
             return this
         }
 
         override fun build(): Animation<*> {
+            // force 3D rotations to be generated to avoid NPE when accessing rotationX/Y properties
+            if (is3DAnimation) {
+                objects.forEach {
+                    it.setRotationOrigin(Point3D.ZERO)
+                }
+            }
+
             rotationOrigin?.let { origin ->
                 objects.forEach {
                     it.setRotationOrigin(origin)
@@ -470,14 +487,10 @@ private fun Node.toAnimatable(): Animatable {
         }
 
         override fun rotationXProperty(): DoubleProperty {
-            initRotations()
-
             return rotateX!!.angleProperty()
         }
 
         override fun rotationYProperty(): DoubleProperty {
-            initRotations()
-
             return rotateY!!.angleProperty()
         }
 
@@ -489,57 +502,58 @@ private fun Node.toAnimatable(): Animatable {
             return n.opacityProperty()
         }
 
-        override fun setScaleOrigin(pivotPoint: Point2D) {
+        override fun setScaleOrigin(pivotPoint: Point3D) {
             // if a node already has a previous transform, reuse it
             // this means the node was animated previously
             n.properties["anim_scale"]?.let { transform ->
                 scale = transform as Scale
                 scale!!.pivotX = pivotPoint.x
                 scale!!.pivotY = pivotPoint.y
+                scale!!.pivotZ = pivotPoint.z
                 return
             }
 
-            scale = Scale(0.0, 0.0, pivotPoint.x, pivotPoint.y)
+            scale = Scale(0.0, 0.0, 0.0, pivotPoint.x, pivotPoint.y, pivotPoint.z)
                     .also {
                         n.transforms.add(it)
                         n.properties["anim_scale"] = it
                     }
         }
 
-        override fun setRotationOrigin(pivotPoint: Point2D) {
+        override fun setRotationOrigin(pivotPoint: Point3D) {
             // if a node already has a previous transform, reuse it
             // this means the node was animated previously
+            n.properties["anim_rotate_x"]?.let { transform ->
+                rotateX = transform as Rotate
+                rotateX!!.pivotX = pivotPoint.x
+                rotateX!!.pivotY = pivotPoint.y
+                rotateX!!.pivotZ = pivotPoint.z
+            }
+
+            n.properties["anim_rotate_y"]?.let { transform ->
+                rotateY = transform as Rotate
+                rotateY!!.pivotX = pivotPoint.x
+                rotateY!!.pivotY = pivotPoint.y
+                rotateY!!.pivotZ = pivotPoint.z
+            }
+
             n.properties["anim_rotate_z"]?.let { transform ->
                 rotateZ = transform as Rotate
                 rotateZ!!.pivotX = pivotPoint.x
                 rotateZ!!.pivotY = pivotPoint.y
+                rotateZ!!.pivotZ = pivotPoint.z
                 return
             }
 
-            rotateZ = Rotate(0.0, pivotPoint.x, pivotPoint.y)
-                    .also {
-                        it.axis = Rotate.Z_AXIS
-                        n.transforms.add(it)
-                        n.properties["anim_rotate_z"] = it
-                    }
-        }
+            rotateZ = Rotate(0.0, pivotPoint.x, pivotPoint.y, pivotPoint.z, Rotate.Z_AXIS)
+            rotateY = Rotate(0.0, pivotPoint.x, pivotPoint.y, pivotPoint.z, Rotate.Y_AXIS)
+            rotateX = Rotate(0.0, pivotPoint.x, pivotPoint.y, pivotPoint.z, Rotate.X_AXIS)
 
-        private fun initRotations() {
-            if (n.properties.containsKey("anim_rotate_x")) {
-                rotateX = n.properties["anim_rotate_x"]!! as Rotate
-                rotateY = n.properties["anim_rotate_y"]!! as Rotate
-                rotateZ = n.properties["anim_rotate_z"]!! as Rotate
-            } else {
-                rotateX = Rotate(0.0, Rotate.X_AXIS)
-                rotateY = Rotate(0.0, Rotate.Y_AXIS)
-                rotateZ = Rotate(0.0, Rotate.Z_AXIS)
+            n.properties["anim_rotate_x"] = rotateX
+            n.properties["anim_rotate_y"] = rotateY
+            n.properties["anim_rotate_z"] = rotateZ
 
-                n.properties["anim_rotate_x"] = rotateX
-                n.properties["anim_rotate_y"] = rotateY
-                n.properties["anim_rotate_z"] = rotateZ
-
-                n.transforms.addAll(rotateZ, rotateY, rotateX)
-            }
+            n.transforms.addAll(rotateZ, rotateY, rotateX)
         }
     }
 }

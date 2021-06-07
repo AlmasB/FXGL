@@ -6,13 +6,13 @@
 
 package sandbox.test3d;
 
-import com.almasb.fxgl.animation.AnimatedValue;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.pathfinding.maze.Maze;
 import com.almasb.fxgl.scene3d.*;
 import com.almasb.fxgl.scene3d.Cylinder;
+import com.almasb.fxgl.texture.ImagesKt;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
@@ -68,7 +68,151 @@ public class Test3D {
 
         //root.getChildren().addAll(light, light2, light3);
 
-        jumpingTorus();
+        anim3D();
+    }
+
+    private void anim3D() {
+        var e1 = entityBuilder()
+                .at(-10, -1, -6)
+                .view(new Cone())
+                .buildAndAttach();
+
+        var e2 = entityBuilder()
+                .at(-5, -1, -6)
+                .view(new Cone())
+                .buildAndAttach();
+
+        var e3 = entityBuilder()
+                .at(0, -1, -6)
+                .view(new Cone())
+                .buildAndAttach();
+
+        var e4 = entityBuilder()
+                .at(5, -1, -6)
+                .view(new Cone())
+                .buildAndAttach();
+
+        var e5 = entityBuilder()
+                .at(10, -1, -6)
+                .view(new Cone())
+                .buildAndAttach();
+
+        // TODO: new Cuboid(10, 0.1, 10, Color);
+        var ground = new Cuboid(10, 0.1, 10);
+        ground.setPhongMaterial(Color.BROWN);
+
+//        entityBuilder()
+//                .at(0, 0.1, 0)
+//                .view(ground)
+//                .buildAndAttach();
+
+        // anim
+
+        animationBuilder()
+                .duration(Duration.seconds(3))
+                .repeatInfinitely()
+                .rotate(e1)
+                //.origin(new Point3D(0, -1, 0))
+                .from(new Point3D(0, 0, 0))
+                .to(new Point3D(360, 0, 0))
+                .buildAndPlay();
+
+        animationBuilder()
+                .duration(Duration.seconds(3))
+                .repeatInfinitely()
+                .rotate(e2)
+                .origin(new Point3D(0, -1, 0))
+                .from(new Point3D(0, 0, 0))
+                .to(new Point3D(360, 0, 0))
+                .buildAndPlay();
+
+        animationBuilder()
+                .duration(Duration.seconds(3))
+                .repeatInfinitely()
+                .rotate(e3)
+                .origin(new Point3D(0, 1, 0))
+                .from(new Point3D(0, 0, 0))
+                .to(new Point3D(360, 0, 0))
+                .buildAndPlay();
+
+        animationBuilder()
+                .duration(Duration.seconds(3))
+                .repeatInfinitely()
+                .rotate(e4)
+                .origin(new Point3D(-1, 0, -1))
+                .from(new Point3D(0, 0, 0))
+                .to(new Point3D(360, 0, 0))
+                .buildAndPlay();
+
+        animationBuilder()
+                .duration(Duration.seconds(3))
+                .repeatInfinitely()
+                .rotate(e5)
+                .origin(new Point3D(1, 0, 1))
+                .from(new Point3D(0, 0, 0))
+                .to(new Point3D(360, 0, 0))
+                .buildAndPlay();
+    }
+
+    private void loader() {
+
+//        var mat = new PhongMaterial();
+//        mat.setDiffuseColor(Color.WHITE);
+        //mat.setDiffuseMap(image("brick.png"));
+        //model.setMaterial(mat);
+
+        var scaleY = 10;
+
+        var model = getAssetLoader().loadModel3D("pacman.obj");
+//        model.setRotationAxis(Rotate.X_AXIS);
+//        model.setRotate(90);
+
+        model.setScaleY(-1);
+
+        var e = entityBuilder()
+                .at(0, 0, 0)
+                .view(model)
+                .buildAndAttach();
+
+        e.setScaleUniform(1);
+    }
+
+    private void twoThree() {
+        var image = image("ball.png", 100, 100);
+
+        var pixels = ImagesKt.toPixels(image);
+
+        var root = new Group();
+
+        var size = 0.2;
+
+        pixels.forEach(p -> {
+            if (!p.getColor().equals(Color.TRANSPARENT)) {
+                var cuboid = new Cuboid(size, size, size);
+                var mat = new PhongMaterial(p.getColor());
+
+                cuboid.setMaterial(mat);
+                cuboid.setTranslateX(p.getX() * size);
+                cuboid.setTranslateY(p.getY() * size);
+
+                root.getChildren().add(cuboid);
+
+                animationBuilder()
+                        .duration(Duration.seconds(2))
+                        .delay(Duration.seconds(delayIndex++ * 0.001))
+                        .repeat(10)
+                        .autoReverse(true)
+                        .interpolator(Interpolators.BACK.EASE_OUT())
+                        .translate(cuboid)
+                        .from(new Point3D(cuboid.getTranslateX(), cuboid.getTranslateY(), 0))
+                        .to(new Point3D(cuboid.getTranslateX() + random(-2, 2), cuboid.getTranslateY() + random(-2, 2), random(-2, 2) * 4))
+                        .buildAndPlay();
+            }
+        });
+
+        entityBuilder()
+                .view(root)
+                .buildAndAttach();
     }
 
     private void jumpingTorus() {
@@ -443,37 +587,6 @@ public class Test3D {
             runOnce(() -> {
                 split(e2);
             }, Duration.seconds(2));
-        }
-    }
-
-    private void loader() {
-
-//        var mat = new PhongMaterial();
-//        mat.setDiffuseColor(Color.WHITE);
-        //mat.setDiffuseMap(image("brick.png"));
-        //model.setMaterial(mat);
-
-        var scaleY = 10;
-
-        for (int y = -2; y < 4; y++) {
-            for (int x = 0; x < 20; x++) {
-                var model = getAssetLoader().loadModel3D("gifts/gifts.obj");
-                model.setRotationAxis(Rotate.X_AXIS);
-                model.setRotate(90);
-
-                var e = entityBuilder()
-                        .at(0, y * scaleY, 0)
-                        .view(model)
-                        .buildAndAttach();
-
-                animationBuilder()
-                        .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
-                        .duration(Duration.seconds(x * 0.55))
-                        .translate(e)
-                        .from(new Point3D(0, y * scaleY, 0))
-                        .to(new Point3D(3 + x * 10, y * scaleY, 0))
-                        .buildAndPlay();
-            }
         }
     }
 
