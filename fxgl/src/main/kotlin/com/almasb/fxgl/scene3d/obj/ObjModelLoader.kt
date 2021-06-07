@@ -174,24 +174,10 @@ class ObjModelLoader : Model3DLoader {
             data.currentMaterial.diffuseMap = FXGL.getAssetLoader().loadImage(URL(ext + tokens[0]))
         }
 
-        // TODO: refactor loadXXXData below
         private fun loadObjData(url: URL): ObjData {
             val data = ObjData(url)
 
-            url.openStream().bufferedReader().useLines {
-                it.forEach { line ->
-
-                    for ((condition, action) in objParsers) {
-                        if (condition.invoke(line) ) {
-                            // drop identifier
-                            val tokens = line.trim().split(" +".toRegex()).drop(1)
-
-                            action.invoke(tokens, data)
-                            break
-                        }
-                    }
-                }
-            }
+            load(url, objParsers, data)
 
             return data
         }
@@ -199,12 +185,21 @@ class ObjModelLoader : Model3DLoader {
         private fun loadMtlData(url: URL): MtlData {
             val data = MtlData(url)
 
+            load(url, mtlParsers, data)
+
+            return data
+        }
+
+        private fun <T> load(url: URL,
+                             parsers: Map<(String) -> Boolean, (List<String>, T) -> Unit>,
+                             data: T) {
+
             url.openStream().bufferedReader().useLines {
                 it.forEach { line ->
 
                     val lineTrimmed = line.trim()
 
-                    for ((condition, action) in mtlParsers) {
+                    for ((condition, action) in parsers) {
                         if (condition.invoke(lineTrimmed) ) {
                             // drop identifier
                             val tokens = lineTrimmed.split(" +".toRegex()).drop(1)
@@ -215,8 +210,6 @@ class ObjModelLoader : Model3DLoader {
                     }
                 }
             }
-
-            return data
         }
     }
 
