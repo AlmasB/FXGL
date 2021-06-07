@@ -9,6 +9,8 @@ package com.almasb.fxgl.texture
 import com.almasb.fxgl.test.RunWithFX
 import javafx.geometry.Rectangle2D
 import javafx.scene.image.Image
+import javafx.scene.image.WritableImage
+import javafx.scene.paint.Color
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert.*
 import org.junit.jupiter.api.BeforeEach
@@ -39,6 +41,60 @@ class NineSliceTextureBuilderTest {
         verticalTexture = Texture(Image(javaClass.getResource("SliceSampleVertical.png").toExternalForm()))
 
         builder = createBuilder(baseTexture)
+    }
+
+    @Test
+    fun `Set textures directly`() {
+        val manualBuilder = NineSliceTextureBuilder(ColoredTexture(1, 1, Color.BLACK))
+
+        // black corners
+        manualBuilder.topLeft = ColoredTexture(1, 1, Color.BLACK)
+        manualBuilder.botLeft = ColoredTexture(1, 1, Color.BLACK)
+        manualBuilder.topRight = ColoredTexture(1, 1, Color.BLACK)
+        manualBuilder.botRight = ColoredTexture(1, 1, Color.BLACK)
+
+        // white sides
+        manualBuilder.top = ColoredTexture(1, 1, Color.WHITE)
+        manualBuilder.left = ColoredTexture(1, 1, Color.WHITE)
+        manualBuilder.right = ColoredTexture(1, 1, Color.WHITE)
+        manualBuilder.bot = ColoredTexture(1, 1, Color.WHITE)
+
+        // red center
+        manualBuilder.center = ColoredTexture(1, 1, Color.RED)
+
+        val texture = manualBuilder.build(16, 16)
+
+        assertThat(texture.width, CoreMatchers.`is`(16.0))
+        assertThat(texture.height, CoreMatchers.`is`(16.0))
+
+        var corners = 0
+        var sides = 0
+        var center = 0
+
+        texture.pixels().forEach { p ->
+            if (p.x == 0 && p.y == 0
+                    || p.x == 0 && p.y == 15
+                    || p.x == 15 && p.y == 0
+                    || p.x == 15 && p.y == 15) {
+
+                assertThat(p.color, CoreMatchers.`is`(Color.BLACK))
+
+                corners++
+
+            } else if (p.x == 0 || p.y == 0 || p.x == 15 || p.y == 15) {
+                assertThat(p.color, CoreMatchers.`is`(Color.WHITE))
+
+                sides++
+            } else {
+                assertThat(p.color, CoreMatchers.`is`(Color.RED))
+
+                center++
+            }
+        }
+
+        assertThat(corners, CoreMatchers.`is`(4))
+        assertThat(sides, CoreMatchers.`is`(56))
+        assertThat(center, CoreMatchers.`is`(196))
     }
 
     @Test
