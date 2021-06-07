@@ -62,6 +62,18 @@ class NineSliceTextureBuilderTest {
         // red center
         manualBuilder.center = ColoredTexture(1, 1, Color.RED)
 
+        assertThat(manualBuilder.topLeft.width, CoreMatchers.`is`(1.0))
+        assertThat(manualBuilder.botLeft.width, CoreMatchers.`is`(1.0))
+        assertThat(manualBuilder.topRight.width, CoreMatchers.`is`(1.0))
+        assertThat(manualBuilder.botRight.width, CoreMatchers.`is`(1.0))
+
+        assertThat(manualBuilder.top.width, CoreMatchers.`is`(1.0))
+        assertThat(manualBuilder.left.width, CoreMatchers.`is`(1.0))
+        assertThat(manualBuilder.right.width, CoreMatchers.`is`(1.0))
+        assertThat(manualBuilder.bot.width, CoreMatchers.`is`(1.0))
+
+        assertThat(manualBuilder.center.width, CoreMatchers.`is`(1.0))
+
         val texture = manualBuilder.build(16, 16)
 
         assertThat(texture.width, CoreMatchers.`is`(16.0))
