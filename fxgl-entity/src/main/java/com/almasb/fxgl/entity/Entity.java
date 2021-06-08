@@ -1044,12 +1044,10 @@ public class Entity implements Animatable, Copyable<Entity> {
         return view.opacityProperty();
     }
 
-    @Deprecated
     public void setScaleOrigin(Point2D pivotPoint) {
         transform.setScaleOrigin(pivotPoint);
     }
 
-    @Deprecated
     public void setRotationOrigin(Point2D pivotPoint) {
         transform.setRotationOrigin(pivotPoint);
     }
