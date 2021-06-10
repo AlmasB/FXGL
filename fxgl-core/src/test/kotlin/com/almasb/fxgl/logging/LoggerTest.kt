@@ -153,6 +153,34 @@ class LoggerTest {
     }
 
     @Test
+    fun `Logging exceptions`() {
+        val log = Logger.get("test")
+
+        val out = object : LoggerOutput {
+            val testMessages = arrayListOf<String>()
+
+            override fun append(message: String) {
+                testMessages += message
+            }
+
+            override fun close() {
+            }
+        }
+
+        Logger.addOutput(out, LoggerLevel.DEBUG)
+
+        log.warning("Exception", RuntimeException("Test1"))
+        assertThat(out.testMessages[0], containsString("WARN"))
+        assertThat(out.testMessages[0].substringAfter("- "), containsString("RuntimeException: Test1"))
+
+        log.fatal("Exception", RuntimeException("Test2"))
+        assertThat(out.testMessages[1], containsString("FATAL"))
+        assertThat(out.testMessages[1].substringAfter("- "), containsString("RuntimeException: Test2"))
+
+        Logger.removeOutput(out, LoggerLevel.DEBUG)
+    }
+
+    @Test
     fun `Test ConsoleOutput`() {
         val output = ConsoleOutput()
 
