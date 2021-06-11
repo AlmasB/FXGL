@@ -8,8 +8,6 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.app.scene.GameView;
-import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
@@ -18,21 +16,22 @@ import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
-import com.almasb.fxgl.physics.box2d.dynamics.joints.ConstantVolumeJointDef;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.RevoluteJoint;
-import com.almasb.fxgl.physics.box2d.dynamics.joints.RevoluteJointDef;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Point2D;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.core.math.FXGLMath.toRadians;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
+ * TODO: a unified physics simulation sample to extend from, which provides
+ * ability to shoot a physics projectile and spawn various physics objects.
+ *
  * Shows how to use RevoluteJoints with PhysicsComponent.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -66,19 +65,19 @@ public class RevoluteJointSample extends GameApplication {
             }
         }, MouseButton.PRIMARY);
 
-//        onBtnDown(MouseButton.PRIMARY, () -> {
-//            Entity box = createPhysicsEntity();
-//
-//            box.getBoundingBoxComponent()
-//                    .addHitBox(new HitBox("Left", BoundingShape.box(40, 40)));
-//            box.getBoundingBoxComponent()
-//                    .addHitBox(new HitBox("Right", new Point2D(40, 0), BoundingShape.box(40, 40)));
-//
-//            box.getViewComponent().addChild(texture("brick.png", 40, 40).superTexture(texture("brick.png", 40, 40), HorizontalDirection.RIGHT));
-//            box.setRotationOrigin(new Point2D(40, 20));
-//
-//            getGameWorld().addEntity(box);
-//        });
+        onKeyDown(KeyCode.F, () -> {
+            Entity box = createPhysicsEntity();
+
+            box.getBoundingBoxComponent()
+                    .addHitBox(new HitBox("Left", BoundingShape.box(40, 40)));
+            box.getBoundingBoxComponent()
+                    .addHitBox(new HitBox("Right", new Point2D(40, 0), BoundingShape.box(40, 40)));
+
+            box.getViewComponent().addChild(texture("brick.png", 40, 40).superTexture(texture("brick.png", 40, 40), HorizontalDirection.RIGHT));
+            box.setRotationOrigin(new Point2D(40, 20));
+
+            getGameWorld().addEntity(box);
+        });
 
         onBtnDown(MouseButton.SECONDARY, () -> {
             Entity ball = createPhysicsEntity();
@@ -100,6 +99,14 @@ public class RevoluteJointSample extends GameApplication {
 
         entityBuilder()
                 .buildScreenBoundsAndAttach(50);
+
+        // platform
+
+        entityBuilder()
+                .at(400, 400)
+                .viewWithBBox(new Rectangle(500, 20, Color.BROWN))
+                .with(new PhysicsComponent())
+                .buildAndAttach();
 
         PhysicsComponent physics = new PhysicsComponent();
         physics.setFixtureDef(new FixtureDef().density(1.1f));
@@ -127,7 +134,6 @@ public class RevoluteJointSample extends GameApplication {
 
         PhysicsComponent physics3 = new PhysicsComponent();
         physics3.setBodyType(BodyType.DYNAMIC);
-
         physics3.setFixtureDef(fd);
 
         Entity ball2 = entityBuilder()
@@ -137,79 +143,11 @@ public class RevoluteJointSample extends GameApplication {
                 .with(physics3)
                 .buildAndAttach();
 
-        Line line = new Line();
-
-        line.setStartX(block.getCenter().getX());
-        line.setStartY(block.getCenter().getY());
-
-        //line.startXProperty().bind(block.getPositionComponent().xProperty());
-        //line.startYProperty().bind(block.getPositionComponent().yProperty());
-        line.endXProperty().bind(ball1.xProperty().add(15));
-        line.endYProperty().bind(ball1.yProperty().add(15));
-
-        //getGameScene().addGameView(new GameView(line, -10));
-
-        RevoluteJointDef rDef = new RevoluteJointDef();
-
-        //rDef.initialize(physics.getBody(), physics2.getBody(), getPhysicsWorld().toPoint(new Point2D(block.getRightX() - 50, block.getBottomY() - 50)));
-
-        rDef.setBodyA(physics.getBody());
-        rDef.setBodyB(physics2.getBody());
-        rDef.localAnchorA = getPhysicsWorld().toPoint(new Point2D(block.getRightX(), block.getBottomY())).subLocal(physics.getBody().getWorldCenter());
-        rDef.localAnchorB = new Vec2(0, 0);
-
-//        rDef.enableLimit = true;
-//        rDef.lowerAngle = (float) (toRadians(-50.0f));
-//        rDef.upperAngle = (float) (toRadians(50.0f));
-
-        //rDef.enableMotor = true;
-        //rDef.motorSpeed = (float) (toRadians(60));
-        //rDef.maxMotorTorque = 1.0f;
-
-        joint = getPhysicsWorld().getJBox2DWorld().createJoint(rDef);
-
-        //rDef.initialize(physics.getBody(), physics3.getBody(), getPhysicsWorld().toPoint(new Point2D(block.getX(), block.getBottomY() - 50)));
-        //getPhysicsWorld().getJBox2DWorld().createJoint(rDef);
-
-
         physics2.getBody().setAngularDamping(1f);
         physics3.getBody().setAngularDamping(1f);
 
-
-
-
-        rDef.setBodyA(physics.getBody());
-        rDef.setBodyB(physics3.getBody());
-        rDef.localAnchorA = getPhysicsWorld().toPoint(new Point2D(block.getX(), block.getBottomY())).subLocal(physics.getBody().getWorldCenter());
-        rDef.localAnchorB = new Vec2(0, 0);
-
-        joint = getPhysicsWorld().getJBox2DWorld().createJoint(rDef);
-
-        run(() -> {
-
-            //joint.setMotorSpeed((float) toRadians(60));
-            //joint.setMotorSpeed(-joint.getMotorSpeed());
-        }, Duration.seconds(1));
-
-        // platform
-
-        entityBuilder()
-                .at(400, 400)
-                .viewWithBBox(new Rectangle(500, 20, Color.BROWN))
-                .with(new PhysicsComponent())
-                .buildAndAttach();
-
-
-        RevoluteJoint j = getPhysicsWorld().addJoint(ball1, ball2, new RevoluteJointDef());
-
-        //new ConstantVolumeJointDef().createJoint();
-    }
-
-    @Override
-    protected void onUpdate(double tpf) {
-//        if (joint != null && abs(abs(joint.getJointAngle()) - toRadians(90)) < 0.05f) {
-//            joint.setMotorSpeed(-joint.getMotorSpeed());
-//        }
+        getPhysicsWorld().addRevoluteJoint(block, ball1, new Point2D(80, 50), new Point2D(15, 15));
+        getPhysicsWorld().addRevoluteJoint(block, ball2, new Point2D(0, 50), new Point2D(15, 15));
     }
 
     private void spawnBullet(double x, double y, double vx, double vy) {
