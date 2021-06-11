@@ -30,6 +30,7 @@ package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
+import com.almasb.fxgl.physics.box2d.dynamics.World;
 
 /**
  * Revolute joint definition. This requires defining an anchor point where the bodies are joined.
@@ -42,7 +43,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.Body;
  * <li>if you add/remove shapes from a body and recompute the mass, the joints will be broken.</li>
  * </ul>
  */
-public class RevoluteJointDef extends JointDef {
+public class RevoluteJointDef extends JointDef<RevoluteJoint> {
 
     /**
      * The local anchor point relative to body1's origin.
@@ -90,7 +91,6 @@ public class RevoluteJointDef extends JointDef {
     public float maxMotorTorque;
 
     public RevoluteJointDef() {
-        super(JointType.REVOLUTE);
         localAnchorA = new Vec2(0.0f, 0.0f);
         localAnchorB = new Vec2(0.0f, 0.0f);
         referenceAngle = 0.0f;
@@ -110,10 +110,16 @@ public class RevoluteJointDef extends JointDef {
      * @param anchor
      */
     public void initialize(final Body b1, final Body b2, final Vec2 anchor) {
-        bodyA = b1;
-        bodyB = b2;
-        bodyA.getLocalPointToOut(anchor, localAnchorA);
-        bodyB.getLocalPointToOut(anchor, localAnchorB);
-        referenceAngle = bodyB.getAngle() - bodyA.getAngle();
+        setBodyA(b1);
+        setBodyB(b2);
+        b1.getLocalPointToOut(anchor, localAnchorA);
+        b2.getLocalPointToOut(anchor, localAnchorB);
+
+        referenceAngle = b2.getAngle() - b1.getAngle();
+    }
+
+    @Override
+    protected RevoluteJoint createJoint(World world) {
+        return new RevoluteJoint(world.getPool(), this);
     }
 }

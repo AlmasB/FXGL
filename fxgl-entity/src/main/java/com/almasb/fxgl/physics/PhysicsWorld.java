@@ -23,6 +23,8 @@ import com.almasb.fxgl.physics.box2d.collision.Manifold;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
+import com.almasb.fxgl.physics.box2d.dynamics.joints.Joint;
+import com.almasb.fxgl.physics.box2d.dynamics.joints.JointDef;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 
@@ -652,6 +654,30 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
         return new RaycastResult(entity, point);
     }
+
+    /**
+     * Add a joint constraining two entities with PhysicsComponent.
+     * The entities must already be in the game world.
+     *
+     * @return joint created using the provided definition
+     */
+    public <T extends Joint> T addJoint(Entity e1, Entity e2, JointDef<T> def) {
+        if (!e1.hasComponent(PhysicsComponent.class) || !e2.hasComponent(PhysicsComponent.class)) {
+            throw new IllegalArgumentException("Cannot create a joint: both entities must have PhysicsComponent");
+        }
+
+        var p1 = e1.getComponent(PhysicsComponent.class);
+        var p2 = e2.getComponent(PhysicsComponent.class);
+
+        // TODO:
+
+        return null;
+    }
+
+    public void removeJoint(Joint joint) {
+        // TODO:
+    }
+
     @Override
     public double toMeters(double pixels) {
         return pixels * METERS_PER_PIXELS;

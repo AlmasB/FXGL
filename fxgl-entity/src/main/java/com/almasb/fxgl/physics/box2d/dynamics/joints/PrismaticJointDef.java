@@ -7,6 +7,7 @@ package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
+import com.almasb.fxgl.physics.box2d.dynamics.World;
 
 /**
  * Prismatic joint definition. This requires defining a line of motion using an axis and an anchor
@@ -19,7 +20,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.Body;
  * @author Daniel
  *
  */
-public class PrismaticJointDef extends JointDef {
+public class PrismaticJointDef extends JointDef<PrismaticJoint> {
 
 
     /**
@@ -73,7 +74,6 @@ public class PrismaticJointDef extends JointDef {
     public float motorSpeed;
 
     public PrismaticJointDef() {
-        super(JointType.PRISMATIC);
         localAnchorA = new Vec2();
         localAnchorB = new Vec2();
         localAxisA = new Vec2(1.0f, 0.0f);
@@ -92,11 +92,17 @@ public class PrismaticJointDef extends JointDef {
      * axis.
      */
     public void initialize(Body b1, Body b2, Vec2 anchor, Vec2 axis) {
-        bodyA = b1;
-        bodyB = b2;
-        bodyA.getLocalPointToOut(anchor, localAnchorA);
-        bodyB.getLocalPointToOut(anchor, localAnchorB);
-        bodyA.getLocalVectorToOut(axis, localAxisA);
-        referenceAngle = bodyB.getAngle() - bodyA.getAngle();
+        setBodyA(b1);
+        setBodyB(b2);
+
+        b1.getLocalPointToOut(anchor, localAnchorA);
+        b2.getLocalPointToOut(anchor, localAnchorB);
+        b1.getLocalVectorToOut(axis, localAxisA);
+        referenceAngle = b2.getAngle() - b1.getAngle();
+    }
+
+    @Override
+    protected PrismaticJoint createJoint(World world) {
+        return new PrismaticJoint(world.getPool(), this);
     }
 }

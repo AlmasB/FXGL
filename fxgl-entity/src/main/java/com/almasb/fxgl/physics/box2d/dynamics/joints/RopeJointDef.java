@@ -7,6 +7,7 @@
 package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
 import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.physics.box2d.dynamics.World;
 
 /**
  * Rope joint definition. This requires two body anchor points and a maximum lengths. Note: by
@@ -14,7 +15,7 @@ import com.almasb.fxgl.core.math.Vec2;
  *
  * @author Daniel Murphy
  */
-public class RopeJointDef extends JointDef {
+public class RopeJointDef extends JointDef<RopeJoint> {
 
     /**
      * The local anchor point relative to bodyA's origin.
@@ -33,8 +34,12 @@ public class RopeJointDef extends JointDef {
     public float maxLength;
 
     public RopeJointDef() {
-        super(JointType.ROPE);
         localAnchorA.set(-1.0f, 0.0f);
         localAnchorB.set(1.0f, 0.0f);
+    }
+
+    @Override
+    protected RopeJoint createJoint(World world) {
+        return new RopeJoint(world.getPool(), this);
     }
 }

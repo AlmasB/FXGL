@@ -8,13 +8,14 @@ package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
+import com.almasb.fxgl.physics.box2d.dynamics.World;
 
 /**
  * Motor joint definition.
  *
  * @author dmurph
  */
-public class MotorJointDef extends JointDef {
+public class MotorJointDef extends JointDef<MotorJoint> {
     /**
      * Position of bodyB minus the position of bodyA, in bodyA's frame, in meters.
      */
@@ -41,7 +42,6 @@ public class MotorJointDef extends JointDef {
     public float correctionFactor;
 
     public MotorJointDef() {
-        super(JointType.MOTOR);
         angularOffset = 0;
         maxForce = 1;
         maxTorque = 1;
@@ -49,13 +49,19 @@ public class MotorJointDef extends JointDef {
     }
 
     public void initialize(Body bA, Body bB) {
-        bodyA = bA;
-        bodyB = bB;
-        Vec2 xB = bodyB.getPosition();
-        bodyA.getLocalPointToOut(xB, linearOffset);
+        setBodyA(bA);
+        setBodyB(bB);
 
-        float angleA = bodyA.getAngle();
-        float angleB = bodyB.getAngle();
+        Vec2 xB = bB.getPosition();
+        bA.getLocalPointToOut(xB, linearOffset);
+
+        float angleA = bA.getAngle();
+        float angleB = bB.getAngle();
         angularOffset = angleB - angleA;
+    }
+
+    @Override
+    protected MotorJoint createJoint(World world) {
+        return new MotorJoint(world.getPool(), this);
     }
 }

@@ -21,43 +21,14 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
  */
 public abstract class Joint {
 
-    public static Joint create(World world, JointDef def) {
-        switch (def.type) {
-            case MOUSE:
-                return new MouseJoint(world.getPool(), (MouseJointDef) def);
-            case DISTANCE:
-                return new DistanceJoint(world.getPool(), (DistanceJointDef) def);
-            case PRISMATIC:
-                return new PrismaticJoint(world.getPool(), (PrismaticJointDef) def);
-            case REVOLUTE:
-                return new RevoluteJoint(world.getPool(), (RevoluteJointDef) def);
-            case WELD:
-                return new WeldJoint(world.getPool(), (WeldJointDef) def);
-            case FRICTION:
-                return new FrictionJoint(world.getPool(), (FrictionJointDef) def);
-            case WHEEL:
-                return new WheelJoint(world.getPool(), (WheelJointDef) def);
-            case GEAR:
-                return new GearJoint(world.getPool(), (GearJointDef) def);
-            case PULLEY:
-                return new PulleyJoint(world.getPool(), (PulleyJointDef) def);
-            case CONSTANT_VOLUME:
-                return new ConstantVolumeJoint(world, (ConstantVolumeJointDef) def);
-            case ROPE:
-                return new RopeJoint(world.getPool(), (RopeJointDef) def);
-            case MOTOR:
-                return new MotorJoint(world.getPool(), (MotorJointDef) def);
-            case UNKNOWN:
-            default:
-                throw new IllegalArgumentException("Unknown joint type");
-        }
+    public static <T extends Joint> T create(World world, JointDef<T> def) {
+        return def.createJoint(world);
     }
 
     public static void destroy(Joint joint) {
         joint.destructor();
     }
 
-    private final JointType m_type;
     public Joint m_prev;
     public Joint m_next;
     public JointEdge m_edgeA;
@@ -78,17 +49,15 @@ public abstract class Joint {
     // float m_invMassB, m_invIB;
 
     protected Joint(IWorldPool worldPool, JointDef def) {
-        assert def.bodyA != def.bodyB;
-
         pool = worldPool;
-        m_type = def.type;
+
         m_prev = null;
         m_next = null;
-        m_bodyA = def.bodyA;
-        m_bodyB = def.bodyB;
-        m_collideConnected = def.collideConnected;
+        m_bodyA = def.getBodyA();
+        m_bodyB = def.getBodyB();
+        m_collideConnected = def.isBodyCollisionAllowed();
         m_islandFlag = false;
-        m_userData = def.userData;
+        m_userData = def.getUserData();
 
         m_edgeA = new JointEdge();
         m_edgeA.joint = null;
@@ -104,13 +73,6 @@ public abstract class Joint {
 
         // m_localCenterA = new Vec2();
         // m_localCenterB = new Vec2();
-    }
-
-    /**
-     * @return type of the concrete joint
-     */
-    public JointType getType() {
-        return m_type;
     }
 
     /**

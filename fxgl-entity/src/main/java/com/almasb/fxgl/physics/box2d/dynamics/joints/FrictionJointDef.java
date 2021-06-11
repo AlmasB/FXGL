@@ -10,13 +10,14 @@ package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
+import com.almasb.fxgl.physics.box2d.dynamics.World;
 
 /**
  * Friction joint definition.
  *
  * @author Daniel Murphy
  */
-public class FrictionJointDef extends JointDef {
+public class FrictionJointDef extends JointDef<FrictionJoint> {
 
 
     /**
@@ -40,7 +41,6 @@ public class FrictionJointDef extends JointDef {
     public float maxTorque;
 
     public FrictionJointDef() {
-        super(JointType.FRICTION);
         localAnchorA = new Vec2();
         localAnchorB = new Vec2();
         maxForce = 0f;
@@ -52,9 +52,14 @@ public class FrictionJointDef extends JointDef {
      * axis.
      */
     public void initialize(Body bA, Body bB, Vec2 anchor) {
-        bodyA = bA;
-        bodyB = bB;
+        setBodyA(bA);
+        setBodyB(bB);
         bA.getLocalPointToOut(anchor, localAnchorA);
         bB.getLocalPointToOut(anchor, localAnchorB);
+    }
+
+    @Override
+    protected FrictionJoint createJoint(World world) {
+        return new FrictionJoint(world.getPool(), this);
     }
 }

@@ -8,13 +8,15 @@
  */
 package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
+import com.almasb.fxgl.physics.box2d.dynamics.World;
+
 /**
  * Gear joint definition. This definition requires two existing revolute or prismatic joints (any
  * combination will work). The provided joints must attach a dynamic body to a static body.
  *
  * @author Daniel Murphy
  */
-public class GearJointDef extends JointDef {
+public class GearJointDef extends JointDef<GearJoint> {
     /**
      * The first revolute/prismatic joint attached to the gear joint.
      */
@@ -32,9 +34,8 @@ public class GearJointDef extends JointDef {
      */
     public float ratio;
 
-    public GearJointDef() {
-        super(JointType.GEAR);
-        joint1 = null;
-        joint2 = null;
+    @Override
+    protected GearJoint createJoint(World world) {
+        return new GearJoint(world.getPool(), this);
     }
 }
