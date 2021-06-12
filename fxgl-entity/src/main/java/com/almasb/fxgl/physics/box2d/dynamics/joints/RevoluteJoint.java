@@ -38,11 +38,11 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
  *
  * @author Daniel Murphy
  */
-public class RevoluteJoint extends Joint {
+public final class RevoluteJoint extends Joint {
 
     // Solver shared
-    protected final Vec2 m_localAnchorA = new Vec2();
-    protected final Vec2 m_localAnchorB = new Vec2();
+    final Vec2 m_localAnchorA = new Vec2();
+    final Vec2 m_localAnchorB = new Vec2();
     private final Vec3 m_impulse = new Vec3();
     private float m_motorImpulse;
 
@@ -51,7 +51,7 @@ public class RevoluteJoint extends Joint {
     private float m_motorSpeed;
 
     private boolean m_enableLimit;
-    protected float m_referenceAngle;
+    private float m_referenceAngle;
     private float m_lowerAngle;
     private float m_upperAngle;
 
@@ -70,7 +70,7 @@ public class RevoluteJoint extends Joint {
     private float m_motorMass; // effective mass for motor/limit angular constraint.
     private LimitState m_limitState;
 
-    protected RevoluteJoint(IWorldPool argWorld, RevoluteJointDef def) {
+    RevoluteJoint(IWorldPool argWorld, RevoluteJointDef def) {
         super(argWorld, def);
         m_localAnchorA.set(def.localAnchorA);
         m_localAnchorB.set(def.localAnchorB);
