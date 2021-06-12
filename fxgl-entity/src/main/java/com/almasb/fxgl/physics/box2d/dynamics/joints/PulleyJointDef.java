@@ -3,19 +3,15 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-/**
- * Created at 12:11:41 PM Jan 23, 2011
- */
+
 package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
 import com.almasb.fxgl.physics.box2d.dynamics.World;
 
 /**
- * Pulley joint definition. This requires two ground anchors, two dynamic body anchor points, and a
- * pulley ratio.
+ * Requires two ground anchors, two dynamic body anchor points, and a pulley ratio.
  *
  * @author Daniel Murphy
  */
@@ -24,47 +20,40 @@ public class PulleyJointDef extends JointDef<PulleyJoint> {
     /**
      * The first ground anchor in world coordinates. This point never moves.
      */
-    public Vec2 groundAnchorA;
+    public Vec2 groundAnchorA = new Vec2(-1.0f, 1.0f);
 
     /**
      * The second ground anchor in world coordinates. This point never moves.
      */
-    public Vec2 groundAnchorB;
+    public Vec2 groundAnchorB = new Vec2(1.0f, 1.0f);
 
     /**
      * The local anchor point relative to bodyA's origin.
      */
-    public Vec2 localAnchorA;
+    public Vec2 localAnchorA = new Vec2(-1.0f, 0.0f);
 
     /**
      * The local anchor point relative to bodyB's origin.
      */
-    public Vec2 localAnchorB;
+    public Vec2 localAnchorB = new Vec2(1.0f, 0.0f);
 
     /**
      * The a reference length for the segment attached to bodyA.
      */
-    public float lengthA;
+    public float lengthA = 0f;
 
     /**
      * The a reference length for the segment attached to bodyB.
      */
-    public float lengthB;
+    public float lengthB = 0f;
 
     /**
      * The pulley ratio, used to simulate a block-and-tackle.
+     * Must be > than JBoxSettings.EPSILON.
      */
-    public float ratio;
+    public float ratio = 1f;
 
     public PulleyJointDef() {
-        groundAnchorA = new Vec2(-1.0f, 1.0f);
-        groundAnchorB = new Vec2(1.0f, 1.0f);
-        localAnchorA = new Vec2(-1.0f, 0.0f);
-        localAnchorB = new Vec2(1.0f, 0.0f);
-        lengthA = 0.0f;
-        lengthB = 0.0f;
-        ratio = 1.0f;
-
         setBodyCollisionAllowed(true);
     }
 
@@ -83,7 +72,6 @@ public class PulleyJointDef extends JointDef<PulleyJoint> {
         Vec2 d2 = anchor2.sub(ga2);
         lengthB = d2.length();
         ratio = r;
-        assert ratio > JBoxSettings.EPSILON;
     }
 
     @Override
