@@ -29,50 +29,27 @@ public abstract class Joint {
         joint.destructor();
     }
 
-    public Joint m_prev;
-    public Joint m_next;
-    public JointEdge m_edgeA;
-    public JointEdge m_edgeB;
+    public Joint m_prev = null;
+    public Joint m_next = null;
+    public final JointEdge m_edgeA = new JointEdge();
+    public final JointEdge m_edgeB = new JointEdge();
     protected Body m_bodyA;
     protected Body m_bodyB;
 
-    public boolean m_islandFlag;
-    private boolean m_collideConnected;
+    public boolean m_islandFlag = false;
+    private final boolean m_collideConnected;
 
-    public Object m_userData;
+    private Object m_userData;
 
-    protected IWorldPool pool;
-
-    // Cache here per time step to reduce cache misses.
-    // final Vec2 m_localCenterA, m_localCenterB;
-    // float m_invMassA, m_invIA;
-    // float m_invMassB, m_invIB;
+    protected final IWorldPool pool;
 
     protected Joint(IWorldPool worldPool, JointDef def) {
         pool = worldPool;
 
-        m_prev = null;
-        m_next = null;
         m_bodyA = def.getBodyA();
         m_bodyB = def.getBodyB();
         m_collideConnected = def.isBodyCollisionAllowed();
-        m_islandFlag = false;
         m_userData = def.getUserData();
-
-        m_edgeA = new JointEdge();
-        m_edgeA.joint = null;
-        m_edgeA.other = null;
-        m_edgeA.prev = null;
-        m_edgeA.next = null;
-
-        m_edgeB = new JointEdge();
-        m_edgeB.joint = null;
-        m_edgeB.other = null;
-        m_edgeB.prev = null;
-        m_edgeB.next = null;
-
-        // m_localCenterA = new Vec2();
-        // m_localCenterB = new Vec2();
     }
 
     /**
