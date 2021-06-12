@@ -87,13 +87,6 @@ public abstract class Joint {
     public abstract float getReactionTorque(float inv_dt);
 
     /**
-     * @return the next joint the world joint list.
-     */
-    public Joint getNext() {
-        return m_next;
-    }
-
-    /**
      * @return the user data pointer.
      */
     public Object getUserData() {
@@ -113,13 +106,6 @@ public abstract class Joint {
      */
     public final boolean getCollideConnected() {
         return m_collideConnected;
-    }
-
-    /**
-     * Short-cut function to determine if either body is inactive.
-     */
-    public boolean isActive() {
-        return m_bodyA.isActive() && m_bodyB.isActive();
     }
 
     /** Internal */
