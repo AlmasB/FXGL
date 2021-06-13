@@ -36,10 +36,10 @@ public final class ContactSolver {
      */
     private static final float k_maxConditionNumber = 100.0f;
 
-    public Position[] m_positions;
-    public Velocity[] m_velocities;
-    public ContactPositionConstraint[] m_positionConstraints = new ContactPositionConstraint[INITIAL_NUM_CONSTRAINTS];
-    public ContactVelocityConstraint[] m_velocityConstraints = new ContactVelocityConstraint[INITIAL_NUM_CONSTRAINTS];
+    private Position[] m_positions;
+    private Velocity[] m_velocities;
+    private ContactPositionConstraint[] m_positionConstraints = new ContactPositionConstraint[INITIAL_NUM_CONSTRAINTS];
+    private ContactVelocityConstraint[] m_velocityConstraints = new ContactVelocityConstraint[INITIAL_NUM_CONSTRAINTS];
 
     private Contact[] m_contacts;
     private int m_count;
@@ -49,6 +49,10 @@ public final class ContactSolver {
             m_positionConstraints[i] = new ContactPositionConstraint();
             m_velocityConstraints[i] = new ContactVelocityConstraint();
         }
+    }
+
+    public ContactVelocityConstraint[] getVelocityConstraints() {
+        return m_velocityConstraints;
     }
 
     public void init(ContactSolverDef def) {
