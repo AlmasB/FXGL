@@ -148,7 +148,7 @@ public class DefaultWorldPool implements IWorldPool {
             }
         };
 
-        collision = new Collision(this);
+        collision = new Collision();
         toi = new TimeOfImpact(this);
     }
 

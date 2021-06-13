@@ -6,12 +6,10 @@
 package com.almasb.fxgl.physics.box2d.collision;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.collision.Distance.SimplexCache;
 import com.almasb.fxgl.physics.box2d.collision.Manifold.ManifoldType;
 import com.almasb.fxgl.physics.box2d.collision.shapes.CircleShape;
 import com.almasb.fxgl.physics.box2d.collision.shapes.EdgeShape;
 import com.almasb.fxgl.physics.box2d.collision.shapes.PolygonShape;
-import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
@@ -26,16 +24,13 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
  */
 public final class Collision {
 
-    private final IWorldPool pool;
-
-    public Collision(IWorldPool pool) {
+    public Collision() {
         incidentEdge[0] = new ClipVertex();
         incidentEdge[1] = new ClipVertex();
         clipPoints1[0] = new ClipVertex();
         clipPoints1[1] = new ClipVertex();
         clipPoints2[0] = new ClipVertex();
         clipPoints2[1] = new ClipVertex();
-        this.pool = pool;
     }
 
     /**
