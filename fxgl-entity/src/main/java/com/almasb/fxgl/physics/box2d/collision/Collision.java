@@ -38,29 +38,6 @@ public final class Collision {
         this.pool = pool;
     }
 
-    private final DistanceInput input = new DistanceInput();
-    private final SimplexCache cache = new SimplexCache();
-    private final DistanceOutput output = new DistanceOutput();
-
-    /**
-     * Determine if two generic shapes overlap.
-     */
-    public boolean testOverlap(Shape shapeA, int indexA,
-                               Shape shapeB, int indexB,
-                               Transform xfA, Transform xfB) {
-        input.proxyA.set(shapeA, indexA);
-        input.proxyB.set(shapeB, indexB);
-        input.transformA.set(xfA);
-        input.transformB.set(xfB);
-        input.useRadii = true;
-
-        cache.count = 0;
-
-        pool.getDistance().distance(output, cache, input);
-        // djm note: anything significant about 10.0f?
-        return output.distance < 10.0f * JBoxSettings.EPSILON;
-    }
-
     /**
      * Clipping for contact manifolds.
      * Sutherland-Hodgman clipping.
