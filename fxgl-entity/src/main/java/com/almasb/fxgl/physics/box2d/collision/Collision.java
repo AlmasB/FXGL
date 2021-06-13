@@ -189,7 +189,7 @@ public final class Collision {
         float separation = -Float.MAX_VALUE;
         final float radius = polygon.getRadius() + circle.getRadius();
         final int vertexCount = polygon.getVertexCount();
-        float s;
+
         final Vec2[] vertices = polygon.m_vertices;
         final Vec2[] normals = polygon.m_normals;
 
@@ -201,8 +201,7 @@ public final class Collision {
             final Vec2 vertex = vertices[i];
             final float tempx = cLocalx - vertex.x;
             final float tempy = cLocaly - vertex.y;
-            s = normals[i].x * tempx + normals[i].y * tempy;
-
+            float s = normals[i].x * tempx + normals[i].y * tempy;
 
             if (s > radius) {
                 // early out
