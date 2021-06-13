@@ -140,8 +140,7 @@ class ContactManager implements PairCallback {
         // Contact creation may swap fixtures.
         fixtureA = c.getFixtureA();
         fixtureB = c.getFixtureB();
-        indexA = c.getChildIndexA();
-        indexB = c.getChildIndexB();
+
         bodyA = fixtureA.getBody();
         bodyB = fixtureB.getBody();
 
