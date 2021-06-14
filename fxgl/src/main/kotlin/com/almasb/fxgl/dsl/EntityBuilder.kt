@@ -24,6 +24,7 @@ import javafx.scene.paint.Color
 import javafx.scene.paint.PhongMaterial
 import javafx.scene.shape.Box
 import javafx.scene.shape.Sphere
+import java.net.URL
 import java.util.function.Consumer
 
 /**
@@ -167,6 +168,14 @@ class EntityBuilder {
         viewWithBBox(FXGL.texture(textureName))
     }
 
+    fun view(url: URL) = this.also {
+        view(getAssetLoader().loadTexture(url))
+    }
+
+    fun viewWithBBox(url: URL) = this.also {
+        viewWithBBox(getAssetLoader().loadTexture(url))
+    }
+
     fun zIndex(z: Int) = this.also {
         entity.zIndex = z
     }
@@ -179,16 +188,8 @@ class EntityBuilder {
         entity.viewComponent.addEventHandler(MouseEvent.MOUSE_CLICKED, EventHandler { action.accept(entity) })
     }
 
-    fun onActive(action: (Entity) -> Unit) = this.also {
-        onActive(Consumer(action))
-    }
-
     fun onActive(action: Consumer<Entity>) = this.also {
         entity.setOnActive { action.accept(entity) }
-    }
-
-    fun onNotActive(action: (Entity) -> Unit) = this.also {
-        onNotActive(Consumer(action))
     }
 
     fun onNotActive(action: Consumer<Entity>) = this.also {
