@@ -14,10 +14,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       
-    - name: Set up JDK 15
+    - name: Set up latest stable JDK
       uses: actions/setup-java@v1
       with:
-        java-version: 15
+        java-version: 16
 
     - name: Cache maven deps
       uses: actions/cache@v2

@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, macOS-latest, windows-latest ]
-        java: [ 16-ea ]
+        java: [ 17-ea ]
     runs-on: ${{ matrix.os }}
     env:
       MAVEN_OPTS: --illegal-access=permit
