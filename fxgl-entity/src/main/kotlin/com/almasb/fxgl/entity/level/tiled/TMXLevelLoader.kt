@@ -398,6 +398,8 @@ class TMXLevelLoader : LevelLoader {
         val FLIPPED_VERTICALLY_FLAG   = (1 shl 30).toUInt()
         val FLIPPED_DIAGONALLY_FLAG   = (1 shl 29).toUInt()
 
+
+
         obj.isFlippedHorizontal = gidUInt and FLIPPED_HORIZONTALLY_FLAG != 0.toUInt()
         obj.isFlippedVertical = gidUInt and FLIPPED_VERTICALLY_FLAG != 0.toUInt()
 
