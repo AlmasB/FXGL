@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox.achievements;
+package intermediate;
 
 import com.almasb.fxgl.achievement.Achievement;
 import com.almasb.fxgl.achievement.AchievementEvent;
@@ -19,15 +19,16 @@ import java.util.Map;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
- *
+ * Shows how to register achievements and listen for achievement events.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class AchievementApp extends GameApplication {
+public class AchievementSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.getAchievements().add(new Achievement("See the world", "Move 600 pixels", "pixelsMoved", 600));
+        // 1. add achievements
+        settings.getAchievements().add(new Achievement("See the world", "Move 50 pixels", "pixelsMoved", 50));
         settings.getAchievements().add(new Achievement("Killer", "Kill 3 enemies", "enemiesKilled", 3));
 
         settings.setMainMenuEnabled(true);
@@ -36,6 +37,7 @@ public class AchievementApp extends GameApplication {
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
+        // 2. make sure to add variables tracked by the achievements
         vars.put("pixelsMoved", 0);
         vars.put("enemiesKilled", 0);
     }
@@ -49,45 +51,22 @@ public class AchievementApp extends GameApplication {
 
     @Override
     protected void initInput() {
-//        onKeyDown(KeyCode.Q, "save", () -> {
-//            var data = saveState();
-//
-//            getFS().writeDataTask(data, "data.dat").run();
-//        });
-//
-//        onKeyDown(KeyCode.E, "Load", () -> {
-//            getFS().<DataFile>readDataTask("data.dat")
-//                    .onSuccess(data -> loadState(data))
-//                    .run();
-//        });
-
-        onKeyDown(KeyCode.A, "Dec", () -> {
+        onKeyDown(KeyCode.A, () -> {
             inc("enemiesKilled", -1);
         });
 
-        onKeyDown(KeyCode.D, "Inc", () -> {
+        onKeyDown(KeyCode.D, () -> {
             inc("enemiesKilled", +1);
         });
+
+        onKeyDown(KeyCode.Q, () -> {
+            inc("pixelsMoved", -10);
+        });
+
+        onKeyDown(KeyCode.E, () -> {
+            inc("pixelsMoved", +10);
+        });
     }
-
-
-//    @Override
-//    protected DataFile saveState() {
-//        var map = new HashMap<String, Integer>();
-//
-//        map.put("pixelsMoved", geti("pixelsMoved"));
-//        map.put("enemiesKilled", geti("enemiesKilled"));
-//
-//        return new DataFile(map);
-//    }
-//
-//    @Override
-//    protected void loadState(DataFile dataFile) {
-//        Map<String, Integer> map = (Map<String, Integer>) dataFile.getData();
-//
-//        set("pixelsMoved", map.get("pixelsMoved"));
-//        set("enemiesKilled", map.get("enemiesKilled"));
-//    }
 
     public static void main(String[] args) {
         launch(args);
