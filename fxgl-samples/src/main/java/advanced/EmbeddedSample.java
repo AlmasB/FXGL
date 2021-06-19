@@ -4,11 +4,12 @@
  * See LICENSE for details.
  */
 
-package sandbox.view;
+package advanced;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
 import com.almasb.fxgl.dsl.components.RandomMoveComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
@@ -19,13 +20,10 @@ import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -41,40 +39,28 @@ public class EmbeddedSample extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        BorderPane root = new BorderPane();
-        root.setPrefSize(800, 600);
-        root.setTop(new HBox(new Button("Button1"), new Button("Button2"), new Button("Button3"), new Button("Button4")));
-        root.setBottom(new Slider());
-
-        var area = new TextArea();
-        area.setText("Some text in this area");
-        area.setFont(Font.font(36));
-        area.setPrefWidth(190);
-
-        root.setLeft(area);
-        root.setRight(new Text("RIGHT"));
-
         var fxglRoot = GameApplication.embeddedLaunch(new MyGame());
         fxglRoot.setTranslateX(40);
-//        fxglRoot.widthProperty().addListener((observable, oldValue, newValue) -> {
-//
-//            if (newValue.doubleValue() < 700) {
-//                fxglRoot.setRenderWidth(newValue.doubleValue());
-//            }
-//
-//            System.out.println(newValue);
-//        });
 
-        root.setCenter(fxglRoot);
+        var area = new TextArea("Some text in this area");
+        area.setPrefWidth(300);
 
-        var scene = new Scene(root);
-
-        scene.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            fxglRoot.setRenderWidth(600);
-            fxglRoot.setRenderHeight(500);
+        var btnResize = new Button("Example Resize");
+        btnResize.setOnAction(e -> {
+            // Note: whether the game is scaled up or actually resized depends on game settings (settings.setScaleAffectedOnResize();)
+            fxglRoot.setRenderWidth(fxglRoot.getRenderWidth() + 15);
+            fxglRoot.setRenderHeight(fxglRoot.getRenderHeight() + 15);
         });
 
-        stage.setScene(scene);
+        BorderPane root = new BorderPane();
+        root.setPrefSize(800, 600);
+        root.setTop(new HBox(btnResize, new Button("Button2"), new Button("Button3"), new Button("Button4")));
+        root.setBottom(new HBox(new Text("The status area")));
+        root.setLeft(area);
+        root.setRight(new Text("RIGHT"));
+        root.setCenter(fxglRoot);
+
+        stage.setScene(new Scene(root));
         stage.show();
     }
 
@@ -107,14 +93,14 @@ public class EmbeddedSample extends Application {
             getGameWorld().addEntityFactory(new MyFactory());
             getGameScene().setBackgroundColor(Color.BLACK);
 
-            var text = getUIFactoryService().newText("", Color.WHITE, 24.0);
+            var text = getUIFactoryService().newText("", Color.WHITE, 20.0);
             text.textProperty().bind(getip("entities").asString("Entities: %d"));
 
             addUINode(text, 25, 25);
 
             spawn("player");
 
-            //run(this::spawnCrystal, Duration.seconds(3));
+            run(this::spawnCrystal, Duration.seconds(3));
         }
 
         @Override
@@ -148,6 +134,8 @@ public class EmbeddedSample extends Application {
                         .at(FXGLMath.randomPoint(new Rectangle2D(0, 0, getAppWidth() - 55, getAppHeight() - 55)))
                         .viewWithBBox(texture("ball.png", 32, 32))
                         .with(new RandomMoveComponent(new Rectangle2D(0, 0, getAppWidth(), getAppHeight()), 250))
+                        .with(new ExpireCleanComponent(Duration.seconds(5)).animateOpacity())
+                        .onNotActive(e -> inc("entities", -1))
                         .build();
             }
 
