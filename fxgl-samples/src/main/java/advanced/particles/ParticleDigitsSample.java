@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package advanced;
+package advanced.particles;
 
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;

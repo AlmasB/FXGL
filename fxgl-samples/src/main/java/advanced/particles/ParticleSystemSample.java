@@ -3,13 +3,12 @@
  * Copyright (c) AlmasB (almaslvl@gmail.com).
  * See LICENSE for details.
  */
-package sandbox.particles;
+package advanced.particles;
 
 import com.almasb.fxgl.animation.EasingInterpolator;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitter;
 import com.almasb.fxgl.particle.ParticleEmitters;
@@ -28,24 +27,16 @@ import javafx.scene.text.Text;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
- * Example of using particles.
+ * Example of using particles and their configurations via an emitter.
  */
 public class ParticleSystemSample extends GameApplication {
 
-    private Entity particleEntity;
     private ParticleEmitter emitter;
-
-    public Entity getParticleEntity() {
-        return particleEntity;
-    }
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(700 + 300);
         settings.setHeight(600);
-        settings.setTitle("ParticleSystemSample");
-        settings.setVersion("0.1");
-        settings.setProfilingEnabled(true);
     }
 
     @Override
@@ -56,7 +47,7 @@ public class ParticleSystemSample extends GameApplication {
 
         emitter = ParticleEmitters.newFireEmitter();
 
-        particleEntity = entityBuilder()
+        entityBuilder()
                 .at((getAppWidth() - 300) / 2, getAppHeight() / 2)
                 .with(new ParticleComponent(emitter))
                 .buildAndAttach();
