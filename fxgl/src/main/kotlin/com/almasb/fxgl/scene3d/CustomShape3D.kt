@@ -36,10 +36,15 @@ abstract class CustomShape3D : MeshView() {
     }
 
     /**
-     * Convenient getter for Point3D(translateX, translateY, translateZ).
+     * Convenient getter/setter for Point3D(translateX, translateY, translateZ).
      */
-    val translation: Point3D
+    var translation: Point3D
         get() = Point3D(translateX, translateY, translateZ)
+        set(value) {
+            translateX = value.x
+            translateY = value.y
+            translateZ = value.z
+        }
 
     protected fun updateMesh() {
         mesh = createMesh()
