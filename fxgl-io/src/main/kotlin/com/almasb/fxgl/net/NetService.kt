@@ -14,6 +14,7 @@ import com.almasb.fxgl.net.tcp.TCPClient
 import com.almasb.fxgl.net.tcp.TCPServer
 import com.almasb.fxgl.net.udp.UDPClient
 import com.almasb.fxgl.net.udp.UDPServer
+import javafx.application.Platform
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyDoubleWrapper
 import java.io.InputStream
@@ -54,7 +55,15 @@ class NetService : EngineService() {
     fun newUDPClient(ip: String, port: Int): Client<Bundle> = UDPClient(ip, port, UDPClientConfig(Bundle::class.java))
     fun <T> newUDPClient(ip: String, port: Int, config: UDPClientConfig<T>): Client<T> = UDPClient(ip, port, config)
 
-    // TODO: add missing overloads, incl. DownloadCallback
+    /**
+     * @param url web url of a file, e.g. https://raw.githubusercontent.com/AlmasB/FXGL/dev/README.md
+     * @param fileName the file will be saved with this name, e.g. README.md
+     * @param callback download progress info
+     * @return task that downloads a file from given url into running directory
+     */
+    fun downloadTask(url: String, fileName: String, callback: DownloadCallback): IOTask<Path> {
+        return DownloadTask(url, fileName, callback)
+    }
 
     /**
      * @param url web url of a file, e.g. https://raw.githubusercontent.com/AlmasB/FXGL/dev/README.md
@@ -63,6 +72,25 @@ class NetService : EngineService() {
      */
     fun downloadTask(url: String, fileName: String): IOTask<Path> {
         return DownloadTask(url, fileName)
+    }
+
+    /**
+     * @param url web url of a file, e.g. https://raw.githubusercontent.com/AlmasB/FXGL/dev/README.md
+     * @param fileName the file will be saved with this name, e.g. README.md
+     * @param callback download progress info
+     * @return task that downloads a file from given url into running directory
+     */
+    fun downloadTask(url: URL, fileName: String, callback: DownloadCallback): IOTask<Path> {
+        return DownloadTask(url.toExternalForm(), fileName, callback)
+    }
+
+    /**
+     * @param url web url of a file, e.g. https://raw.githubusercontent.com/AlmasB/FXGL/dev/README.md
+     * @param fileName the file will be saved with this name, e.g. README.md
+     * @return task that downloads a file from given url into running directory
+     */
+    fun downloadTask(url: URL, fileName: String): IOTask<Path> {
+        return DownloadTask(url.toExternalForm(), fileName)
     }
 
     // we accept both url and file name as Strings to delay any parsing errors to onExecute()
@@ -108,7 +136,10 @@ class NetService : EngineService() {
                         outStream.write(buffer, 0, read)
                         transferred += read.toLong()
 
-                        callback.progressProp.value = transferred.toDouble() / downloadSize
+                        // update progress on the JavaFX thread
+                        Platform.runLater {
+                            callback.progressProp.value = transferred.toDouble() / downloadSize
+                        }
                     }
                 }
             }
@@ -138,8 +169,6 @@ class DownloadCallback {
     IOTask<Client> connectMultiplayerTask(String serverIP);
 
 class FXGLNet : Net {
-
-    override fun downloadTask(url: String): IOTask<Path> = DownloadTask(url)
 
     override fun openBrowserTask(url: String) = IOTask.ofVoid("openBrowser($url)", { FXGL.getApp().hostServices.showDocument(url) })
 
