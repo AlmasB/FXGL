@@ -68,7 +68,135 @@ public class Test3D {
 
         //root.getChildren().addAll(light, light2, light3);
 
-        anim3D();
+        megacube();
+    }
+
+    private void megacube() {
+        var cubes = new ArrayList<Cuboid>();
+
+        var r = new Group();
+
+        var size = 0.4;
+        var num = 8;
+
+        for (int z = -num; z <= num; z++) {
+            for (int y = -num; y <= num; y++) {
+                for (int x = -num; x <= num; x++) {
+                    var cuboid = new Cuboid(size, size, size);
+                    cuboid.setTranslateX(x * (size - 0.1));
+                    cuboid.setTranslateY(y * (size - 0.1));
+                    cuboid.setTranslateZ(z * (size - 0.1));
+
+                    cuboid.setPhongMaterial(Color.BLUE);
+
+                    cubes.add(cuboid);
+                    r.getChildren().add(cuboid);
+                }
+            }
+        }
+
+        var points = List.of(
+                new Point3D(10, -10, 10),
+                new Point3D(-10, -10, 10),
+                new Point3D(10, -10, -10),
+                new Point3D(-10, -10, -10),
+
+                new Point3D(10, 10, 10),
+                new Point3D(-10, 10, 10),
+                new Point3D(10, 10, -10),
+                new Point3D(-10, 10, -10)
+        );
+
+        final var minSize = size;
+
+        points.forEach(p -> {
+            var unitVector = p.normalize();
+
+            for (int i = 10; i < 30; i++) {
+                var vector = unitVector.multiply(i);
+
+                var cuboid = new Cuboid(minSize, minSize, minSize);
+                cuboid.setTranslateX(vector.getX() * (minSize - 0.1));
+                cuboid.setTranslateY(vector.getY() * (minSize - 0.1));
+                cuboid.setTranslateZ(vector.getZ() * (minSize - 0.1));
+
+                cuboid.setPhongMaterial(Color.BLUEVIOLET);
+
+                cubes.add(cuboid);
+                r.getChildren().add(cuboid);
+            }
+        });
+
+        cubes.stream()
+                .sorted(Comparator.comparingDouble(c -> new Point3D(0, 0, 0).distance(c.getTranslateX(), c.getTranslateY(), c.getTranslateZ())))
+                .forEach(c -> {
+                    var delay = 0.001;
+
+                    animationBuilder()
+                            .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
+                            .delay(Duration.seconds(delayIndex * delay))
+                            .duration(Duration.seconds(1.75))
+                            .repeatInfinitely()
+                            .autoReverse(true)
+                            .rotate(c)
+                            .origin(c.getTranslation().multiply(-1))
+                            .from(new Point3D(0, 0, 0))
+                            .to(new Point3D(0, 0, 180))
+                            .buildAndPlay();
+
+//                    animationBuilder()
+//                            .interpolator(Interpolators.QUADRATIC.EASE_OUT())
+//                            .delay(Duration.seconds(delayIndex * delay))
+//                            .duration(Duration.seconds(0.75))
+//                            .repeatInfinitely()
+//                            .autoReverse(true)
+//                            .scale(c)
+//                            .from(new Point3D(1, 1, 1))
+//                            .to(new Point3D(0.4, 0.4, 0.4))
+//                            .buildAndPlay();
+
+                    var mat = (PhongMaterial) c.getMaterial();
+
+                    animationBuilder()
+                            .delay(Duration.seconds(delayIndex * delay))
+                            .duration(Duration.seconds(1.75))
+                            .repeatInfinitely()
+                            .autoReverse(true)
+                            .animate(mat.diffuseColorProperty())
+                            .from(Color.BLUE)
+                            .to(Color.VIOLET)
+                            .buildAndPlay();
+
+                    animationBuilder()
+                            .delay(Duration.seconds(delayIndex * delay))
+                            .duration(Duration.seconds(1.75))
+                            .repeatInfinitely()
+                            .autoReverse(true)
+                            .translate(c)
+                            .from(c.getTranslation())
+                            .to(c.getTranslation().multiply(1.05))
+                            .buildAndPlay();
+
+                    delayIndex++;
+                });
+
+        var hypercube = new Cuboid(10.5, 10.5, 10.5);
+        hypercube.setPhongMaterial(Color.BLUE);
+        hypercube.setDrawMode(DrawMode.LINE);
+        hypercube.setCullFace(CullFace.NONE);
+
+        var e = entityBuilder()
+                .view(r)
+                //.view(hypercube)
+                .buildAndAttach();
+
+        animationBuilder()
+                .duration(Duration.seconds(13))
+                .repeatInfinitely()
+                .rotate(e)
+                .from(new Point3D(0, 0, 0))
+                .to(new Point3D(0, 360, 0))
+                .buildAndPlay();
     }
 
     private void anim3D() {
@@ -100,11 +228,6 @@ public class Test3D {
         // TODO: new Cuboid(10, 0.1, 10, Color);
         var ground = new Cuboid(10, 0.1, 10);
         ground.setPhongMaterial(Color.BROWN);
-
-//        entityBuilder()
-//                .at(0, 0.1, 0)
-//                .view(ground)
-//                .buildAndAttach();
 
         // anim
 
