@@ -9,6 +9,7 @@ package com.almasb.fxgl.scene3d
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.collections.ObservableFloatArray
+import javafx.geometry.Point3D
 import javafx.scene.paint.Color
 import javafx.scene.paint.PhongMaterial
 import javafx.scene.shape.Mesh
@@ -33,6 +34,12 @@ abstract class CustomShape3D : MeshView() {
         const val DEFAULT_RADIUS = 1.0
         const val DEFAULT_START_ANGLE = 0.0
     }
+
+    /**
+     * Convenient getter for Point3D(translateX, translateY, translateZ).
+     */
+    val translation: Point3D
+        get() = Point3D(translateX, translateY, translateZ)
 
     protected fun updateMesh() {
         mesh = createMesh()
