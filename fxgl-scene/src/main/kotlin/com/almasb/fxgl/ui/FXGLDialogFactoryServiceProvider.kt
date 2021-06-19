@@ -9,7 +9,7 @@ package com.almasb.fxgl.ui
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.localization.LocalizationService
 import javafx.beans.binding.StringBinding
-import javafx.beans.property.DoubleProperty
+import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -216,7 +216,7 @@ class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
         return wrap(vbox)
     }
 
-    override fun progressDialog(message: String, observable: DoubleProperty, callback: Runnable): Pane {
+    override fun progressDialog(message: String, observable: ReadOnlyDoubleProperty, callback: Runnable): Pane {
         val progress = ProgressBar()
         progress.setPrefSize(200.0, 50.0)
         progress.progressProperty().bind(observable)

@@ -7,7 +7,7 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.core.EngineService;
-import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 
@@ -114,5 +114,5 @@ public abstract class DialogService extends EngineService {
      * @param progress [0..1]
      * @param callback called when dialog is dismissed (when progress >= 1)
      */
-    public abstract void showProgressBox(String message, DoubleProperty progress, Runnable callback);
+    public abstract void showProgressBox(String message, ReadOnlyDoubleProperty progress, Runnable callback);
 }

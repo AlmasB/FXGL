@@ -10,7 +10,6 @@ import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
 import com.almasb.fxgl.ui.*
-import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Button
@@ -198,7 +197,7 @@ class FXGLDialogService : DialogService() {
         }
     }
 
-    override fun showProgressBox(message: String, observable: DoubleProperty, callback: Runnable) {
+    override fun showProgressBox(message: String, observable: ReadOnlyDoubleProperty, callback: Runnable) {
         val dialog = dialogFactory.progressDialog(message, observable) {
             close()
             callback.run()

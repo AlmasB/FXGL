@@ -7,7 +7,7 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.core.EngineService;
-import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
@@ -40,7 +40,7 @@ public abstract class DialogFactoryService extends EngineService {
 
     public abstract Pane errorDialog(String errorMessage, Runnable callback);
 
-    public abstract Pane progressDialog(String message, DoubleProperty observable, Runnable callback);
+    public abstract Pane progressDialog(String message, ReadOnlyDoubleProperty observable, Runnable callback);
 
     public abstract Pane progressDialogIndeterminate(String message, Runnable callback);
 
