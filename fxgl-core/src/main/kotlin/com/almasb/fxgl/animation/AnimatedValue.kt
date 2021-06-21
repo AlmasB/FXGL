@@ -129,12 +129,15 @@ class AnimatedColor(from: Color, to: Color)
 
     override fun animate(val1: Color, val2: Color, progress: Double, interpolator: Interpolator): Color {
         return Color.color(
-                interpolator.interpolate(val1.red, val2.red, progress),
-                interpolator.interpolate(val1.green, val2.green, progress),
-                interpolator.interpolate(val1.blue, val2.blue, progress),
-                interpolator.interpolate(val1.opacity, val2.opacity, progress)
+                clamp(interpolator.interpolate(val1.red, val2.red, progress)),
+                clamp(interpolator.interpolate(val1.green, val2.green, progress)),
+                clamp(interpolator.interpolate(val1.blue, val2.blue, progress)),
+                clamp(interpolator.interpolate(val1.opacity, val2.opacity, progress))
         )
     }
+
+    // we need to clamp because interpolators can produce values outside [0..1], which crashes Color.color()
+    private fun clamp(value: Double) = FXGLMath.clamp(value.toFloat(), 0f, 1f).toDouble()
 }
 
 class AnimatedPath
