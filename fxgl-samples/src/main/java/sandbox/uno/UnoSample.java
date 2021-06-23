@@ -38,6 +38,11 @@ public class UnoSample extends GameApplication {
      */
     private Entity currentCard;
 
+    /**
+     * The next hand to be played.
+     */
+    private Hand nextHand;
+
     private Hand player;
     private Hand enemy;
 
@@ -69,6 +74,7 @@ public class UnoSample extends GameApplication {
         }
 
         currentCard = spawnCard(deck.drawCard(), getAppWidth() / 2 - 100 / 2, getAppHeight() / 2 - 150 / 2);
+        nextHand = player;
     }
 
     @Override
@@ -121,6 +127,7 @@ public class UnoSample extends GameApplication {
 
         if (card.canUseOn(currentCard.getComponent(CardComponent.class).getValue())) {
             isPlayerTurn = false;
+            nextHand = enemy;
 
             playCard(player, cardEntity, () -> {
                 playerHandChanged = true;
@@ -139,6 +146,8 @@ public class UnoSample extends GameApplication {
     }
 
     private void aiMove() {
+        nextHand = player;
+
         for (Entity card : enemy.cardsProperty()) {
             if (canPlay(card)) {
                 playCard(enemy, card, () -> isPlayerTurn = true);
@@ -179,24 +188,68 @@ public class UnoSample extends GameApplication {
 
                     currentCard = cardEntity;
 
-                    // TODO: apply special effect
+                    boolean wasSpecialUsed = false;
+
                     switch (card.getRank()) {
-                        case SP_PLUS2:
-                            break;
+                        case SP_PLUS2: {
+                            for (int i = 0; i < 2; i++) {
+                                var newCard = spawnCard(deck.drawCard(), 0, 0);
 
-                        case SP_PLUS4:
-                            break;
+                                if (nextHand == enemy) {
+                                    newCard.setY(-150);
+                                } else {
+                                    playerHandChanged = true;
+                                }
 
-                        case SP_SKIP:
+                                nextHand.addCard(newCard);
+                            }
+
+                            wasSpecialUsed = true;
+
                             break;
+                        }
+
+                        case SP_PLUS4: {
+                            for (int i = 0; i < 4; i++) {
+                                var newCard = spawnCard(deck.drawCard(), 0, 0);
+
+                                if (nextHand == enemy) {
+                                    newCard.setY(-150);
+                                } else {
+                                    playerHandChanged = true;
+                                }
+
+                                nextHand.addCard(newCard);
+                            }
+
+                            wasSpecialUsed = true;
+
+                            break;
+                        }
+
+                        case SP_SKIP: {
+                            wasSpecialUsed = true;
+                            break;
+                        }
 
                         default:
+                            break;
                     }
 
                     if (hand.cardsProperty().isEmpty()) {
                         getDialogService().showMessageBox("Hand wins: " + hand, getGameController()::exit);
                     } else {
-                        onFinished.run();
+
+                        if (!wasSpecialUsed) {
+                            onFinished.run();
+                        } else {
+                            if (nextHand == player) {
+                                aiMove();
+                            } else {
+                                playerHandChanged = true;
+                                isPlayerTurn = true;
+                            }
+                        }
                     }
                 })
                 .duration(Duration.seconds(0.35))

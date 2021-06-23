@@ -11,6 +11,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -63,6 +64,10 @@ public class UnoFactory implements EntityFactory {
         text2.setTranslateX(90 - text2.getLayoutBounds().getWidth());
         text2.setTranslateY(140);
 
-        return new Pane(bg, text, text2);
+        var view = new Pane(bg, text, text2);
+        view.setCache(true);
+        view.setCacheHint(CacheHint.SPEED);
+
+        return view;
     }
 }
