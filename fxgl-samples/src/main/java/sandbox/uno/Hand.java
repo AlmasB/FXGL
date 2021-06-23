@@ -6,6 +6,7 @@
 
 package sandbox.uno;
 
+import com.almasb.fxgl.core.util.EmptyRunnable;
 import com.almasb.fxgl.entity.Entity;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,20 +20,30 @@ public class Hand {
 
     private ObservableList<Entity> cards = FXCollections.observableArrayList();
 
+    private Runnable changeCallback = EmptyRunnable.INSTANCE;
+
     public Hand(String name) {
         this.name = name;
     }
 
+    public void setChangeCallback(Runnable changeCallback) {
+        this.changeCallback = changeCallback;
+    }
+
     public ObservableList<Entity> cardsProperty() {
-        return FXCollections.unmodifiableObservableList(cards);
+        return cards;
     }
 
     public void addCard(Entity card) {
         cards.add(card);
+
+        changeCallback.run();
     }
 
     public void removeCard(Entity card) {
         cards.remove(card);
+
+        changeCallback.run();
     }
 
     @Override

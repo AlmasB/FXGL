@@ -6,6 +6,7 @@
 
 package sandbox.uno;
 
+import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
@@ -14,11 +15,13 @@ import com.almasb.fxgl.entity.SpawnData;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.CacheHint;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,11 +37,6 @@ public class UnoSample extends GameApplication {
     private static final int NUM_BASE_CARDS = 6;
 
     private Deck deck = Deck.newInfiniteDeck();
-
-    /**
-     * The top-most card placed on the table.
-     */
-    private Entity currentCard;
 
     /**
      * The next hand to be played.
@@ -62,6 +60,12 @@ public class UnoSample extends GameApplication {
     }
 
     @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        // the top-most card placed on the table, init with dummy entity before we can construct cards
+        vars.put("currentCard", new Entity());
+    }
+
+    @Override
     protected void initGame() {
         centerCardPosition = new Point2D(getAppWidth() / 2 - 100 / 2, getAppHeight() / 2 - 150 / 2);
 
@@ -72,23 +76,56 @@ public class UnoSample extends GameApplication {
         player = new Hand("Player");
         enemy = new Hand("AI");
 
-        for (int i = 0; i < NUM_BASE_CARDS; i++) {
-            player.addCard(spawnCard(deck.drawCard()));
-            enemy.addCard(spawnCard(deck.drawCard()));
-        }
-
-        currentCard = spawnCard(deck.drawCard());
+        var currentCard = spawnCard(deck.drawCard());
         currentCard.setPosition(centerCardPosition);
+        set("currentCard", currentCard);
+
         nextHand = player;
 
         cardsLayout.put(player, new Rectangle2D(0, getAppHeight() - 150, getAppWidth(), 150));
         cardsLayout.put(enemy, new Rectangle2D(0, 0 - 150, getAppWidth(), 150));
+
+        cardsLayout.forEach((hand, bounds) -> {
+            hand.setChangeCallback(() -> {
+                hand.cardsProperty().sort(Comparator.comparingInt(e -> {
+                    Card card = e.getObject("card");
+
+                    return card.getSuit().ordinal() * 1000 + card.getRank().ordinal();
+                }));
+
+                evaluateAndLayout(hand);
+            });
+
+            if (hand == player) {
+                getWorldProperties().<Entity>addListener("currentCard", (prev, now) -> {
+                    evaluateAndLayout(hand);
+                });
+            }
+        });
+
+        for (int i = 0; i < NUM_BASE_CARDS; i++) {
+            player.addCard(spawnCard(deck.drawCard()));
+            enemy.addCard(spawnCard(deck.drawCard()));
+        }
     }
 
     @Override
     protected void initUI() {
         Text text = getUIFactoryService().newText("", Color.BLACK, 18);
         text.setTranslateY(50);
+        text.setCache(true);
+        text.setCacheHint(CacheHint.SCALE);
+        text.textProperty().addListener((observable, oldValue, newText) -> {
+            animationBuilder()
+                    .interpolator(Interpolators.EXPONENTIAL.EASE_IN())
+                    .duration(Duration.seconds(0.2))
+                    .repeat(2)
+                    .autoReverse(true)
+                    .scale(text)
+                    .from(new Point2D(1, 1))
+                    .to(new Point2D(1.2, 1.2))
+                    .buildAndPlay();
+        });
         text.textProperty().bind(Bindings.size(enemy.cardsProperty()).asString("Enemy Cards: %d"));
 
         getGameScene().addUINode(text);
@@ -102,17 +139,22 @@ public class UnoSample extends GameApplication {
         getGameScene().addUINode(btn);
     }
 
-    @Override
-    protected void onUpdate(double tpf) {
-        cardsLayout.forEach((hand, bounds) -> {
-            double sizePerCard = Math.min(bounds.getWidth() / hand.cardsProperty().size(), 120);
+    private void evaluateAndLayout(Hand hand) {
+        Rectangle2D bounds = cardsLayout.get(hand);
 
-            int i = 0;
-            for (Entity card : hand.cardsProperty()) {
-                card.setX(i++ * sizePerCard + bounds.getMinX());
-                card.setY(bounds.getMinY());
+        double sizePerCard = Math.min(bounds.getWidth() / hand.cardsProperty().size(), 120);
+
+        int i = 0;
+        for (Entity card : hand.cardsProperty()) {
+            card.setX(i++ * sizePerCard + bounds.getMinX());
+            card.setY(bounds.getMinY());
+
+            if (canPlay(card) && hand == player) {
+                card.translateY(-25);
             }
-        });
+
+            card.setZIndex(i + 10);
+        }
     }
 
     private Entity spawnCard(Card card) {
@@ -181,6 +223,7 @@ public class UnoSample extends GameApplication {
      * @param onFinished action to perform once the card has been played
      */
     private void playCard(Hand hand, Entity cardEntity, Runnable onFinished) {
+        Entity currentCard = geto("currentCard");
         currentCard.setZIndex(-1);
 
         Card card = cardEntity.getObject("card");
@@ -190,7 +233,7 @@ public class UnoSample extends GameApplication {
                     hand.removeCard(cardEntity);
                     currentCard.addComponent(new ExpireCleanComponent(Duration.seconds(0.5)));
 
-                    currentCard = cardEntity;
+                    set("currentCard", cardEntity);
 
                     boolean wasSpecialUsed = false;
 
@@ -251,6 +294,7 @@ public class UnoSample extends GameApplication {
      */
     private boolean canPlay(Entity cardEntity) {
         Card card = cardEntity.getObject("card");
+        Entity currentCard = geto("currentCard");
         return card.canUseOn(currentCard.getObject("card"));
     }
 
