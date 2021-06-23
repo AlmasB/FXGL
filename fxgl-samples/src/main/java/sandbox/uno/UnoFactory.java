@@ -42,7 +42,6 @@ public class UnoFactory implements EntityFactory {
 
         return entityBuilder(data)
                 .view(makeCardView(card))
-                .with(new CardComponent(card))
                 .onClick(e -> {
                     FXGL.<UnoSample>getAppCast().playerClickedOnCard(e);
                 })

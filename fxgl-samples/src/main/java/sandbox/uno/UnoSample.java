@@ -13,10 +13,14 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -29,9 +33,7 @@ public class UnoSample extends GameApplication {
 
     private static final int NUM_BASE_CARDS = 6;
 
-    private Point2D centerCardPosition;
-
-    private Deck deck = new InfiniteDeck();
+    private Deck deck = Deck.newInfiniteDeck();
 
     /**
      * The top-most card placed on the table.
@@ -46,15 +48,17 @@ public class UnoSample extends GameApplication {
     private Hand player;
     private Hand enemy;
 
-    private boolean playerHandChanged = false;
     private boolean isPlayerTurn = true;
+
+    private Point2D centerCardPosition;
+    private Map<Hand, Rectangle2D> cardsLayout = new HashMap<>();
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1280);
         settings.setHeight(720);
-        settings.setTitle("UnoSample");
-        settings.setVersion("0.1");
+        settings.setTitle("FXGL Uno");
+        settings.setVersion("1.0");
     }
 
     @Override
@@ -69,12 +73,16 @@ public class UnoSample extends GameApplication {
         enemy = new Hand("AI");
 
         for (int i = 0; i < NUM_BASE_CARDS; i++) {
-            player.addCard(spawnCard(deck.drawCard(), i*130, getAppHeight() - 150));
-            enemy.addCard(spawnCard(deck.drawCard(), 0, -150));
+            player.addCard(spawnCard(deck.drawCard()));
+            enemy.addCard(spawnCard(deck.drawCard()));
         }
 
-        currentCard = spawnCard(deck.drawCard(), getAppWidth() / 2 - 100 / 2, getAppHeight() / 2 - 150 / 2);
+        currentCard = spawnCard(deck.drawCard());
+        currentCard.setPosition(centerCardPosition);
         nextHand = player;
+
+        cardsLayout.put(player, new Rectangle2D(0, getAppHeight() - 150, getAppWidth(), 150));
+        cardsLayout.put(enemy, new Rectangle2D(0, 0 - 150, getAppWidth(), 150));
     }
 
     @Override
@@ -88,9 +96,7 @@ public class UnoSample extends GameApplication {
         Button btn = new Button("Draw Card");
         btn.setTranslateY(getAppHeight() / 2);
         btn.setOnAction(e -> {
-            player.addCard(spawnCard(deck.drawCard(), 0, 0));
-
-            playerHandChanged = true;
+            player.addCard(spawnCard(deck.drawCard()));
         });
 
         getGameScene().addUINode(btn);
@@ -98,22 +104,19 @@ public class UnoSample extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        if (playerHandChanged) {
-
-            double sizePerCard = Math.min(1.0 * getAppWidth() / player.cardsProperty().size(), 120);
+        cardsLayout.forEach((hand, bounds) -> {
+            double sizePerCard = Math.min(bounds.getWidth() / hand.cardsProperty().size(), 120);
 
             int i = 0;
-            for (Entity card : player.cardsProperty()) {
-                card.setX(i++ * sizePerCard);
-                card.setY(getAppHeight() - 150);
+            for (Entity card : hand.cardsProperty()) {
+                card.setX(i++ * sizePerCard + bounds.getMinX());
+                card.setY(bounds.getMinY());
             }
-
-            playerHandChanged = false;
-        }
+        });
     }
 
-    private Entity spawnCard(Card card, int x, int y) {
-        return getGameWorld().spawn("Card", new SpawnData(x, y).put("card", card));
+    private Entity spawnCard(Card card) {
+        return getGameWorld().spawn("Card", new SpawnData().put("card", card));
     }
 
     /**
@@ -123,26 +126,27 @@ public class UnoSample extends GameApplication {
         if (!isPlayerTurn)
             return;
 
-        Card card = cardEntity.getObject("card");
-
-        if (card.canUseOn(currentCard.getComponent(CardComponent.class).getValue())) {
+        if (canPlay(cardEntity)) {
             isPlayerTurn = false;
             nextHand = enemy;
 
             playCard(player, cardEntity, () -> {
-                playerHandChanged = true;
                 aiMove();
             });
         } else {
-            animationBuilder()
-                    .duration(Duration.seconds(0.02))
-                    .repeat(6)
-                    .autoReverse(true)
-                    .translate(cardEntity)
-                    .from(cardEntity.getPosition())
-                    .to(cardEntity.getPosition().add(4, 0))
-                    .buildAndPlay();
+            playInvalidSelectionAnimation(cardEntity);
         }
+    }
+
+    private void playInvalidSelectionAnimation(Entity cardEntity) {
+        animationBuilder()
+                .duration(Duration.seconds(0.02))
+                .repeat(6)
+                .autoReverse(true)
+                .translate(cardEntity)
+                .from(cardEntity.getPosition())
+                .to(cardEntity.getPosition().add(4, 0))
+                .buildAndPlay();
     }
 
     private void aiMove() {
@@ -157,7 +161,7 @@ public class UnoSample extends GameApplication {
 
         // if we reached here, there are no playable cards in enemy's hands
         while (deck.hasCards()) {
-            Entity card = spawnCard(deck.drawCard(), 0, -150);
+            Entity card = spawnCard(deck.drawCard());
 
             if (canPlay(card)) {
                 playCard(enemy, card, () -> isPlayerTurn = true);
@@ -193,15 +197,7 @@ public class UnoSample extends GameApplication {
                     switch (card.getRank()) {
                         case SP_PLUS2: {
                             for (int i = 0; i < 2; i++) {
-                                var newCard = spawnCard(deck.drawCard(), 0, 0);
-
-                                if (nextHand == enemy) {
-                                    newCard.setY(-150);
-                                } else {
-                                    playerHandChanged = true;
-                                }
-
-                                nextHand.addCard(newCard);
+                                nextHand.addCard(spawnCard(deck.drawCard()));
                             }
 
                             wasSpecialUsed = true;
@@ -211,15 +207,7 @@ public class UnoSample extends GameApplication {
 
                         case SP_PLUS4: {
                             for (int i = 0; i < 4; i++) {
-                                var newCard = spawnCard(deck.drawCard(), 0, 0);
-
-                                if (nextHand == enemy) {
-                                    newCard.setY(-150);
-                                } else {
-                                    playerHandChanged = true;
-                                }
-
-                                nextHand.addCard(newCard);
+                                nextHand.addCard(spawnCard(deck.drawCard()));
                             }
 
                             wasSpecialUsed = true;
@@ -246,7 +234,6 @@ public class UnoSample extends GameApplication {
                             if (nextHand == player) {
                                 aiMove();
                             } else {
-                                playerHandChanged = true;
                                 isPlayerTurn = true;
                             }
                         }
@@ -262,10 +249,9 @@ public class UnoSample extends GameApplication {
     /**
      * @return if the given card can be played on top the currentCard
      */
-    private boolean canPlay(Entity card) {
-        return card.getComponent(CardComponent.class)
-                .getValue()
-                .canUseOn(currentCard.getComponent(CardComponent.class).getValue());
+    private boolean canPlay(Entity cardEntity) {
+        Card card = cardEntity.getObject("card");
+        return card.canUseOn(currentCard.getObject("card"));
     }
 
     public static void main(String[] args) {
