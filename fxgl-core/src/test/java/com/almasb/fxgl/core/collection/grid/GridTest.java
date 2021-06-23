@@ -65,6 +65,24 @@ public class GridTest {
     }
 
     @Test
+    public void testConstructorWithNegativeSize() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Grid<>(MockCell.class, -1, 5, CELL_WIDTH, CELL_HEIGHT, new MockCellGenerator());
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Grid<>(MockCell.class, 5, -1, CELL_WIDTH, CELL_HEIGHT, new MockCellGenerator());
+        });
+    }
+
+    @Test
+    public void testGetData() {
+        var data = grid.getData();
+
+        assertThat(data.length, is(GRID_SIZE));
+    }
+
+    @Test
     public void testIsWithin() {
         for (int y = 0; y < GRID_SIZE; y++) {
             for (int x = 0; x < GRID_SIZE; x++) {
