@@ -406,6 +406,7 @@ class AnimationBuilderTest {
     @Test
     fun `Rotate entity 3D`() {
         val anim = builder.rotate(e)
+                .origin(Point3D(0.0, 0.0, 0.0))
                 .from(Point3D(0.0, 2.0, 4.0))
                 .to(Point3D(4.0, 5.0, -2.0))
                 .build()
@@ -501,6 +502,7 @@ class AnimationBuilderTest {
     @Test
     fun `Scale entity 3D`() {
         val anim = builder.scale(e)
+                .origin(Point3D(0.0, 0.0, 0.0))
                 .from(Point3D(1.0, 1.0, 0.5))
                 .to(Point3D(3.0, 3.0, 2.0))
                 .build()
