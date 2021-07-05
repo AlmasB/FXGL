@@ -6,17 +6,29 @@
 
 package com.almasb.fxgl.app.scene
 
-import com.almasb.fxgl.dsl.getAppHeight
-import com.almasb.fxgl.dsl.getAppWidth
-import com.almasb.fxgl.dsl.getUIFactoryService
 import com.almasb.fxgl.logging.stackTraceToString
 import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.ui.MDIWindow
 import javafx.scene.control.Button
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.TextArea
 import javafx.scene.layout.VBox
 
-class ErrorSubScene(val error: Throwable, val action: Runnable) : SubScene() {
+class ErrorSubScene(
+
+        val sceneWidth: Double,
+
+        val sceneHeight: Double,
+
+        /**
+         * Error to be displayed.
+         */
+        val error: Throwable,
+
+        /**
+         * Action to run on subscene close.
+         */
+        val action: Runnable) : SubScene() {
 
     init {
         val btnOK = Button("Exit game")
@@ -25,9 +37,9 @@ class ErrorSubScene(val error: Throwable, val action: Runnable) : SubScene() {
         }
 
         val scrollPane = ScrollPane(makeStackTraceArea())
-        scrollPane.setPrefSize(getAppWidth().toDouble(), getAppHeight().toDouble())
+        scrollPane.setPrefSize(sceneWidth, sceneHeight)
 
-        val window = getUIFactoryService().newWindow()
+        val window = MDIWindow()
         window.canClose = false
         window.title = "Error Reporter"
         window.contentPane.children += VBox(btnOK, scrollPane)
@@ -40,7 +52,7 @@ class ErrorSubScene(val error: Throwable, val action: Runnable) : SubScene() {
         isWrapText = true
 
         // guesstimate size
-        setPrefSize(getAppWidth().toDouble(), (text.count { it == '\n' } + 1) * 20.0)
+        setPrefSize(sceneWidth, (text.count { it == '\n' } + 1) * 20.0)
     }
 
     private fun makeErrorMessage(): String {
