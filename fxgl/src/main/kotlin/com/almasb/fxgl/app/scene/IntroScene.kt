@@ -8,10 +8,10 @@ package com.almasb.fxgl.app.scene
 
 import com.almasb.fxgl.animation.AnimatedPoint2D
 import com.almasb.fxgl.animation.Interpolators
-import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
-import com.almasb.fxgl.dsl.FXGL.Companion.random
+import com.almasb.fxgl.core.util.EmptyRunnable
+import com.almasb.fxgl.dsl.animationBuilder
 import com.almasb.fxgl.dsl.image
+import com.almasb.fxgl.dsl.random
 import com.almasb.fxgl.texture.toPixels
 import javafx.geometry.Point2D
 import javafx.scene.canvas.Canvas
@@ -31,20 +31,10 @@ import java.util.function.Consumer
  */
 abstract class IntroScene : FXGLScene() {
 
-    private var introFinished = false
+    internal var onFinished: Runnable = EmptyRunnable
 
     override fun onCreate() {
         startIntro()
-    }
-
-    override fun onUpdate(tpf: Double) {
-        if (introFinished) {
-            if (FXGL.getSettings().isMainMenuEnabled) {
-                controller.gotoMainMenu()
-            } else {
-                controller.startNewGame()
-            }
-        }
     }
 
     /**
@@ -54,7 +44,7 @@ abstract class IntroScene : FXGLScene() {
      * the game won't proceed to next state.
      */
     protected fun finishIntro() {
-        introFinished = true
+        onFinished.run()
     }
 
     /**
@@ -212,8 +202,6 @@ class FXGLIntroScene : IntroScene() {
     }
 
     override fun onUpdate(tpf: Double) {
-        super.onUpdate(tpf)
-        
         g.clearRect(0.0, 0.0, appWidth.toDouble(), appHeight.toDouble())
 
         pixels1.forEach {
