@@ -7,6 +7,7 @@
 package com.almasb.fxgl.logging
 
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -113,6 +114,70 @@ class LoggerTest {
         message = formatter.makeMessage("DateTime", "ThreadName", "LoggerLevel", "ShortName", "LoggerMessage")
 
         assertThat(message, `is`("DateTime [ThreadName               ] Logge ShortName            - LoggerMessage"))
+    }
+
+    @Test
+    fun `Logging with formatting`() {
+        val log = Logger.get("test")
+
+        val out = object : LoggerOutput {
+            val testMessages = arrayListOf<String>()
+
+            override fun append(message: String) {
+                testMessages += message
+            }
+
+            override fun close() {
+            }
+        }
+
+        Logger.addOutput(out, LoggerLevel.DEBUG)
+
+        log.debugf("Test %.2f", 0.12345)
+        assertThat(out.testMessages[0], containsString("DEBUG"))
+        assertThat(out.testMessages[0].substringAfter("- "), `is`("Test 0.12"))
+
+        log.infof("Test %s", "Hello")
+        assertThat(out.testMessages[1], containsString("INFO"))
+        assertThat(out.testMessages[1].substringAfter("- "), `is`("Test Hello"))
+
+        log.warningf("Test %d", 5)
+        assertThat(out.testMessages[2], containsString("WARN"))
+        assertThat(out.testMessages[2].substringAfter("- "), `is`("Test 5"))
+
+        log.fatalf("Test %s", "Hello")
+        assertThat(out.testMessages[3], containsString("FATAL"))
+        assertThat(out.testMessages[3].substringAfter("- "), `is`("Test Hello"))
+
+        Logger.removeOutput(out, LoggerLevel.DEBUG)
+    }
+
+    @Test
+    fun `Logging exceptions`() {
+        val log = Logger.get("test")
+
+        val out = object : LoggerOutput {
+            val testMessages = arrayListOf<String>()
+
+            override fun append(message: String) {
+                testMessages += message
+            }
+
+            override fun close() {
+            }
+        }
+
+        Logger.addOutput(out, LoggerLevel.DEBUG)
+
+        log.warning("Exception", RuntimeException("Test1"))
+        assertThat(out.testMessages[0], containsString("WARN"))
+        assertThat(out.testMessages[0].substringAfter("- "), containsString("RuntimeException: Test1"))
+
+        log.fatal("Exception", RuntimeException("Test2"))
+        assertThat(out.testMessages[1], containsString("FATAL"))
+        assertThat(out.testMessages[1].substringAfter("- "), containsString("RuntimeException: Test2"))
+
+        Logger.removeOutput(out, LoggerLevel.DEBUG)
     }
 
     @Test

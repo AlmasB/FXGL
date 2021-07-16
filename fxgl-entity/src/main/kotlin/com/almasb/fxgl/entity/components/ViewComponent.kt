@@ -100,6 +100,7 @@ class ViewComponent : Component() {
 
         scale.pivotXProperty().bind(entity.transformComponent.scaleOriginXProperty())
         scale.pivotYProperty().bind(entity.transformComponent.scaleOriginYProperty())
+        scale.pivotZProperty().bind(entity.transformComponent.scaleOriginZProperty())
 
         val rz = Rotate()
         rz.axis = Rotate.Z_AXIS
@@ -107,12 +108,21 @@ class ViewComponent : Component() {
 
         rz.pivotXProperty().bind(entity.transformComponent.rotationOriginXProperty())
         rz.pivotYProperty().bind(entity.transformComponent.rotationOriginYProperty())
+        rz.pivotZProperty().bind(entity.transformComponent.rotationOriginZProperty())
 
         val ry = Rotate(0.0, Rotate.Y_AXIS)
         ry.angleProperty().bind(entity.transformComponent.rotationYProperty())
 
+        ry.pivotXProperty().bind(entity.transformComponent.rotationOriginXProperty())
+        ry.pivotYProperty().bind(entity.transformComponent.rotationOriginYProperty())
+        ry.pivotZProperty().bind(entity.transformComponent.rotationOriginZProperty())
+
         val rx = Rotate(0.0, Rotate.X_AXIS)
         rx.angleProperty().bind(entity.transformComponent.rotationXProperty())
+
+        rx.pivotXProperty().bind(entity.transformComponent.rotationOriginXProperty())
+        rx.pivotYProperty().bind(entity.transformComponent.rotationOriginYProperty())
+        rx.pivotZProperty().bind(entity.transformComponent.rotationOriginZProperty())
 
         viewRoot.transforms.addAll(rz, ry, rx, scale)
         devRoot.transforms.addAll(rz, ry, rx, scale)

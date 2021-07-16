@@ -122,10 +122,10 @@ public final class World {
      * @param def joint definition
      * @return joint
      */
-    public Joint createJoint(JointDef def) {
+    public <T extends Joint> T createJoint(JointDef<T> def) {
         assertNotLocked();
 
-        Joint j = Joint.create(this, def);
+        T j = Joint.create(this, def);
 
         // Connect to the world list.
         j.m_prev = null;
@@ -155,11 +155,11 @@ public final class World {
         }
         j.getBodyB().m_jointList = j.m_edgeB;
 
-        Body bodyA = def.bodyA;
-        Body bodyB = def.bodyB;
+        Body bodyA = def.getBodyA();
+        Body bodyB = def.getBodyB();
 
         // If the joint prevents collisions, then flag any contacts for filtering.
-        if (!def.collideConnected) {
+        if (!def.isBodyCollisionAllowed()) {
             ContactEdge edge = bodyB.getContactList();
             while (edge != null) {
                 if (edge.other == bodyA) {

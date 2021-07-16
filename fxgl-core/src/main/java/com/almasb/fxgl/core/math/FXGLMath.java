@@ -172,7 +172,7 @@ public final class FXGLMath {
      *
      * @param y y component
      * @param x x component
-     * @return atan2 in degrees, faster but less accurate than Math.atan2
+     * @return atan2 in degrees, range [-180..180], faster but less accurate than Math.atan2
      */
     public static double atan2Deg(double y, double x) {
         return toDegrees(atan2(y, x));

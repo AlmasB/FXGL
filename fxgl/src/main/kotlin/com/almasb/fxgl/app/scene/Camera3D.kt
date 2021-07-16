@@ -29,6 +29,12 @@ class Camera3D {
 
     var moveSpeed = 15.0
 
+    /**
+     * If set to true, allows rotationX outside of (-90..90) range.
+     * Default is false.
+     */
+    var isOverRotationXAllowed = false
+
     private var tpfMoveSpeed = moveSpeed * 0.017
 
     init {

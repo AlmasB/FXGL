@@ -21,96 +21,35 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
  */
 public abstract class Joint {
 
-    public static Joint create(World world, JointDef def) {
-        switch (def.type) {
-            case MOUSE:
-                return new MouseJoint(world.getPool(), (MouseJointDef) def);
-            case DISTANCE:
-                return new DistanceJoint(world.getPool(), (DistanceJointDef) def);
-            case PRISMATIC:
-                return new PrismaticJoint(world.getPool(), (PrismaticJointDef) def);
-            case REVOLUTE:
-                return new RevoluteJoint(world.getPool(), (RevoluteJointDef) def);
-            case WELD:
-                return new WeldJoint(world.getPool(), (WeldJointDef) def);
-            case FRICTION:
-                return new FrictionJoint(world.getPool(), (FrictionJointDef) def);
-            case WHEEL:
-                return new WheelJoint(world.getPool(), (WheelJointDef) def);
-            case GEAR:
-                return new GearJoint(world.getPool(), (GearJointDef) def);
-            case PULLEY:
-                return new PulleyJoint(world.getPool(), (PulleyJointDef) def);
-            case CONSTANT_VOLUME:
-                return new ConstantVolumeJoint(world, (ConstantVolumeJointDef) def);
-            case ROPE:
-                return new RopeJoint(world.getPool(), (RopeJointDef) def);
-            case MOTOR:
-                return new MotorJoint(world.getPool(), (MotorJointDef) def);
-            case UNKNOWN:
-            default:
-                throw new IllegalArgumentException("Unknown joint type");
-        }
+    public static <T extends Joint> T create(World world, JointDef<T> def) {
+        return def.createJoint(world);
     }
 
     public static void destroy(Joint joint) {
         joint.destructor();
     }
 
-    private final JointType m_type;
-    public Joint m_prev;
-    public Joint m_next;
-    public JointEdge m_edgeA;
-    public JointEdge m_edgeB;
+    public Joint m_prev = null;
+    public Joint m_next = null;
+    public final JointEdge m_edgeA = new JointEdge();
+    public final JointEdge m_edgeB = new JointEdge();
     protected Body m_bodyA;
     protected Body m_bodyB;
 
-    public boolean m_islandFlag;
-    private boolean m_collideConnected;
+    public boolean m_islandFlag = false;
+    private final boolean m_collideConnected;
 
-    public Object m_userData;
+    private Object m_userData;
 
-    protected IWorldPool pool;
-
-    // Cache here per time step to reduce cache misses.
-    // final Vec2 m_localCenterA, m_localCenterB;
-    // float m_invMassA, m_invIA;
-    // float m_invMassB, m_invIB;
+    protected final IWorldPool pool;
 
     protected Joint(IWorldPool worldPool, JointDef def) {
-        assert def.bodyA != def.bodyB;
-
         pool = worldPool;
-        m_type = def.type;
-        m_prev = null;
-        m_next = null;
-        m_bodyA = def.bodyA;
-        m_bodyB = def.bodyB;
-        m_collideConnected = def.collideConnected;
-        m_islandFlag = false;
-        m_userData = def.userData;
 
-        m_edgeA = new JointEdge();
-        m_edgeA.joint = null;
-        m_edgeA.other = null;
-        m_edgeA.prev = null;
-        m_edgeA.next = null;
-
-        m_edgeB = new JointEdge();
-        m_edgeB.joint = null;
-        m_edgeB.other = null;
-        m_edgeB.prev = null;
-        m_edgeB.next = null;
-
-        // m_localCenterA = new Vec2();
-        // m_localCenterB = new Vec2();
-    }
-
-    /**
-     * @return type of the concrete joint
-     */
-    public JointType getType() {
-        return m_type;
+        m_bodyA = def.getBodyA();
+        m_bodyB = def.getBodyB();
+        m_collideConnected = def.isBodyCollisionAllowed();
+        m_userData = def.getUserData();
     }
 
     /**
@@ -148,13 +87,6 @@ public abstract class Joint {
     public abstract float getReactionTorque(float inv_dt);
 
     /**
-     * @return the next joint the world joint list.
-     */
-    public Joint getNext() {
-        return m_next;
-    }
-
-    /**
      * @return the user data pointer.
      */
     public Object getUserData() {
@@ -174,13 +106,6 @@ public abstract class Joint {
      */
     public final boolean getCollideConnected() {
         return m_collideConnected;
-    }
-
-    /**
-     * Short-cut function to determine if either body is inactive.
-     */
-    public boolean isActive() {
-        return m_bodyA.isActive() && m_bodyB.isActive();
     }
 
     /** Internal */

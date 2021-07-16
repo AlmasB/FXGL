@@ -244,7 +244,7 @@ sealed class MainWindow(
     abstract fun takeScreenshot(): Image
 
     fun showFatalError(error: Throwable, action: Runnable) {
-        pushState(ErrorSubScene(error, action))
+        pushState(ErrorSubScene(settings.width.toDouble(), settings.height.toDouble(), error, action))
     }
 
     abstract fun close()

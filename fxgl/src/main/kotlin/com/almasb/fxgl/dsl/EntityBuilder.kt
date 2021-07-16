@@ -24,6 +24,7 @@ import javafx.scene.paint.Color
 import javafx.scene.paint.PhongMaterial
 import javafx.scene.shape.Box
 import javafx.scene.shape.Sphere
+import java.net.URL
 import java.util.function.Consumer
 
 /**
@@ -106,6 +107,12 @@ class EntityBuilder {
         entity.transformComponent.scaleOrigin = point
     }
 
+    fun scale(x: Double, y: Double, z: Double) = this.also {
+        entity.scaleX = x
+        entity.scaleY = y
+        entity.scaleZ = z
+    }
+
     fun scale(x: Double, y: Double) = this.also {
         entity.scaleX = x
         entity.scaleY = y
@@ -113,6 +120,10 @@ class EntityBuilder {
 
     fun scale(scale: Point2D) = this.also {
         scale(scale.x, scale.y)
+    }
+
+    fun scale(scale: Point3D) = this.also {
+        scale(scale.x, scale.y, scale.z)
     }
 
     fun opacity(value: Double) = this.also {
@@ -157,6 +168,14 @@ class EntityBuilder {
         viewWithBBox(FXGL.texture(textureName))
     }
 
+    fun view(url: URL) = this.also {
+        view(getAssetLoader().loadTexture(url))
+    }
+
+    fun viewWithBBox(url: URL) = this.also {
+        viewWithBBox(getAssetLoader().loadTexture(url))
+    }
+
     fun zIndex(z: Int) = this.also {
         entity.zIndex = z
     }
@@ -169,16 +188,8 @@ class EntityBuilder {
         entity.viewComponent.addEventHandler(MouseEvent.MOUSE_CLICKED, EventHandler { action.accept(entity) })
     }
 
-    fun onActive(action: (Entity) -> Unit) = this.also {
-        onActive(Consumer(action))
-    }
-
     fun onActive(action: Consumer<Entity>) = this.also {
         entity.setOnActive { action.accept(entity) }
-    }
-
-    fun onNotActive(action: (Entity) -> Unit) = this.also {
-        onNotActive(Consumer(action))
     }
 
     fun onNotActive(action: Consumer<Entity>) = this.also {

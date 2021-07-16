@@ -7,7 +7,7 @@
 package com.almasb.fxgl.cutscene.dialogue
 
 import javafx.beans.property.SimpleStringProperty
-import org.hamcrest.MatcherAssert.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
 

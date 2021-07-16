@@ -8,7 +8,6 @@ package com.almasb.fxgl.cutscene.dialogue
 
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.logging.Logger
-import java.lang.RuntimeException
 
 /**
  *

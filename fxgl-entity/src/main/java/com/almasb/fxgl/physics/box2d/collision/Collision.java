@@ -6,12 +6,10 @@
 package com.almasb.fxgl.physics.box2d.collision;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.collision.Distance.SimplexCache;
 import com.almasb.fxgl.physics.box2d.collision.Manifold.ManifoldType;
 import com.almasb.fxgl.physics.box2d.collision.shapes.CircleShape;
 import com.almasb.fxgl.physics.box2d.collision.shapes.EdgeShape;
 import com.almasb.fxgl.physics.box2d.collision.shapes.PolygonShape;
-import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
@@ -26,39 +24,13 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
  */
 public final class Collision {
 
-    private final IWorldPool pool;
-
-    public Collision(IWorldPool pool) {
+    public Collision() {
         incidentEdge[0] = new ClipVertex();
         incidentEdge[1] = new ClipVertex();
         clipPoints1[0] = new ClipVertex();
         clipPoints1[1] = new ClipVertex();
         clipPoints2[0] = new ClipVertex();
         clipPoints2[1] = new ClipVertex();
-        this.pool = pool;
-    }
-
-    private final DistanceInput input = new DistanceInput();
-    private final SimplexCache cache = new SimplexCache();
-    private final DistanceOutput output = new DistanceOutput();
-
-    /**
-     * Determine if two generic shapes overlap.
-     */
-    public boolean testOverlap(Shape shapeA, int indexA,
-                               Shape shapeB, int indexB,
-                               Transform xfA, Transform xfB) {
-        input.proxyA.set(shapeA, indexA);
-        input.proxyB.set(shapeB, indexB);
-        input.transformA.set(xfA);
-        input.transformB.set(xfB);
-        input.useRadii = true;
-
-        cache.count = 0;
-
-        pool.getDistance().distance(output, cache, input);
-        // djm note: anything significant about 10.0f?
-        return output.distance < 10.0f * JBoxSettings.EPSILON;
     }
 
     /**
@@ -189,7 +161,7 @@ public final class Collision {
         float separation = -Float.MAX_VALUE;
         final float radius = polygon.getRadius() + circle.getRadius();
         final int vertexCount = polygon.getVertexCount();
-        float s;
+
         final Vec2[] vertices = polygon.m_vertices;
         final Vec2[] normals = polygon.m_normals;
 
@@ -201,8 +173,7 @@ public final class Collision {
             final Vec2 vertex = vertices[i];
             final float tempx = cLocalx - vertex.x;
             final float tempy = cLocaly - vertex.y;
-            s = normals[i].x * tempx + normals[i].y * tempy;
-
+            float s = normals[i].x * tempx + normals[i].y * tempy;
 
             if (s > radius) {
                 // early out

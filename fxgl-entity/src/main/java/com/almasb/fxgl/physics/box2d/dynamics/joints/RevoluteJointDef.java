@@ -30,6 +30,7 @@ package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
+import com.almasb.fxgl.physics.box2d.dynamics.World;
 
 /**
  * Revolute joint definition. This requires defining an anchor point where the bodies are joined.
@@ -42,78 +43,67 @@ import com.almasb.fxgl.physics.box2d.dynamics.Body;
  * <li>if you add/remove shapes from a body and recompute the mass, the joints will be broken.</li>
  * </ul>
  */
-public class RevoluteJointDef extends JointDef {
+public final class RevoluteJointDef extends JointDef<RevoluteJoint> {
 
     /**
      * The local anchor point relative to body1's origin.
      */
-    public Vec2 localAnchorA;
+    public Vec2 localAnchorA = new Vec2();
 
     /**
      * The local anchor point relative to body2's origin.
      */
-    public Vec2 localAnchorB;
+    public Vec2 localAnchorB = new Vec2();
 
     /**
      * The body2 angle minus body1 angle in the reference state (radians).
      */
-    public float referenceAngle;
+    public float referenceAngle = 0f;
 
     /**
      * A flag to enable joint limits.
      */
-    public boolean enableLimit;
+    public boolean enableLimit = false;
 
     /**
      * The lower angle for the joint limit (radians).
      */
-    public float lowerAngle;
+    public float lowerAngle = 0f;
 
     /**
      * The upper angle for the joint limit (radians).
      */
-    public float upperAngle;
+    public float upperAngle = 0f;
 
     /**
      * A flag to enable the joint motor.
      */
-    public boolean enableMotor;
+    public boolean enableMotor = false;
 
     /**
      * The desired motor speed. Usually in radians per second.
      */
-    public float motorSpeed;
+    public float motorSpeed = 0f;
 
     /**
      * The maximum motor torque used to achieve the desired motor speed. Usually in N-m.
      */
-    public float maxMotorTorque;
-
-    public RevoluteJointDef() {
-        super(JointType.REVOLUTE);
-        localAnchorA = new Vec2(0.0f, 0.0f);
-        localAnchorB = new Vec2(0.0f, 0.0f);
-        referenceAngle = 0.0f;
-        lowerAngle = 0.0f;
-        upperAngle = 0.0f;
-        maxMotorTorque = 0.0f;
-        motorSpeed = 0.0f;
-        enableLimit = false;
-        enableMotor = false;
-    }
+    public float maxMotorTorque = 0f;
 
     /**
-     * Initialize the bodies, anchors, and reference angle using the world anchor.
-     *
-     * @param b1
-     * @param b2
-     * @param anchor
+     * Initialize the bodies, anchors and reference angle using the anchor in world coordinates.
      */
-    public void initialize(final Body b1, final Body b2, final Vec2 anchor) {
-        bodyA = b1;
-        bodyB = b2;
-        bodyA.getLocalPointToOut(anchor, localAnchorA);
-        bodyB.getLocalPointToOut(anchor, localAnchorB);
-        referenceAngle = bodyB.getAngle() - bodyA.getAngle();
+    public void initialize(Body b1, Body b2, Vec2 anchor) {
+        setBodyA(b1);
+        setBodyB(b2);
+        b1.getLocalPointToOut(anchor, localAnchorA);
+        b2.getLocalPointToOut(anchor, localAnchorB);
+
+        referenceAngle = b2.getAngle() - b1.getAngle();
+    }
+
+    @Override
+    protected RevoluteJoint createJoint(World world) {
+        return new RevoluteJoint(world.getPool(), this);
     }
 }

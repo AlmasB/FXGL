@@ -154,9 +154,19 @@ internal constructor(width: Int, height: Int,
 
                     if (FXGLMath.abs(offsetY) > 0.5) {
                         if (mouseY > lastMouseY) {
-                            camera3D.transform.lookDownBy(mouseSensitivity * (mouseY - lastMouseY))
+                            val angle = mouseSensitivity * (mouseY - lastMouseY)
+
+                            // use 85, rather than 90, to avoid potential rounding errors
+                            if (camera3D.isOverRotationXAllowed || camera3D.transform.rotationX - angle > -85) {
+                                camera3D.transform.lookDownBy(angle)
+                            }
+
                         } else if (mouseY < lastMouseY) {
-                            camera3D.transform.lookUpBy(mouseSensitivity * (lastMouseY - mouseY))
+                            val angle = mouseSensitivity * (lastMouseY - mouseY)
+
+                            if (camera3D.isOverRotationXAllowed || camera3D.transform.rotationX + angle < 85) {
+                                camera3D.transform.lookUpBy(angle)
+                            }
                         }
                     }
                 }

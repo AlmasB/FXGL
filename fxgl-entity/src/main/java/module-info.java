@@ -26,6 +26,7 @@ module com.almasb.fxgl.entity {
     exports com.almasb.fxgl.pathfinding.maze;
     exports com.almasb.fxgl.physics;
     exports com.almasb.fxgl.physics.box2d.dynamics;
+    exports com.almasb.fxgl.physics.box2d.dynamics.joints;
     exports com.almasb.fxgl.procedural;
 
     opens com.almasb.fxgl.entity.component to com.almasb.fxgl.core;

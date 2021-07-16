@@ -10,6 +10,7 @@ package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
+import com.almasb.fxgl.physics.box2d.dynamics.World;
 
 /**
  * Wheel joint definition. This requires defining a line of motion using an axis and an anchor
@@ -20,7 +21,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.Body;
  *
  * @author Daniel Murphy
  */
-public class WheelJointDef extends JointDef {
+public class WheelJointDef extends JointDef<WheelJoint> {
 
     /**
      * The local anchor point relative to body1's origin.
@@ -63,7 +64,6 @@ public class WheelJointDef extends JointDef {
     public float dampingRatio;
 
     public WheelJointDef() {
-        super(JointType.WHEEL);
         localAxisA.set(1, 0);
         enableMotor = false;
         maxMotorTorque = 0f;
@@ -71,10 +71,15 @@ public class WheelJointDef extends JointDef {
     }
 
     public void initialize(Body b1, Body b2, Vec2 anchor, Vec2 axis) {
-        bodyA = b1;
-        bodyB = b2;
+        setBodyA(b1);
+        setBodyB(b2);
         b1.getLocalPointToOut(anchor, localAnchorA);
         b2.getLocalPointToOut(anchor, localAnchorB);
-        bodyA.getLocalVectorToOut(axis, localAxisA);
+        b1.getLocalVectorToOut(axis, localAxisA);
+    }
+
+    @Override
+    protected WheelJoint createJoint(World world) {
+        return new WheelJoint(world.getPool(), this);
     }
 }

@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 /**
  *
@@ -686,6 +687,45 @@ class PhysicsWorldTest {
 
         assertFalse(result.entity.isPresent)
         assertFalse(result.point.isPresent)
+    }
+
+    @Test
+    fun `Revolute joint`() {
+        val e1 = Entity()
+        val e2 = Entity()
+
+        e1.addComponent(PhysicsComponent())
+        e2.addComponent(PhysicsComponent())
+
+        val gameWorld = GameWorld()
+        gameWorld.addWorldListener(physicsWorld)
+
+        gameWorld.addEntity(e1)
+        gameWorld.addEntity(e2)
+
+        val p1 = Point2D(25.0, 25.0)
+        val p2 = Point2D(0.0, 0.0)
+
+        val joint = physicsWorld.addRevoluteJoint(e1, e2, p1, p2)
+
+        assertThat(joint.bodyA, `is`(e1.getComponent(PhysicsComponent::class.java).body))
+        assertThat(joint.bodyB, `is`(e2.getComponent(PhysicsComponent::class.java).body))
+
+        assertThat(joint.localAnchorA, `is`(physicsWorld.toPoint(p1).sub(joint.bodyA.worldCenter)))
+        assertThat(joint.localAnchorB, `is`(physicsWorld.toPoint(p2).sub(joint.bodyB.worldCenter)))
+    }
+
+    @Test
+    fun `Revolute joint fails if entities do not have PhysicsComponent`() {
+        val e1 = Entity()
+        val e2 = Entity()
+
+        val p1 = Point2D(25.0, 25.0)
+        val p2 = Point2D(0.0, 0.0)
+
+        assertThrows<IllegalArgumentException> {
+            physicsWorld.addRevoluteJoint(e1, e2, p1, p2)
+        }
     }
 
     @Test

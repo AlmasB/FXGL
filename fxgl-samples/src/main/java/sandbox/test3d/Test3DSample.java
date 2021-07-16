@@ -70,7 +70,7 @@ public class Test3DSample extends GameApplication {
 
         transform.translateZ(-10);
 
-        getGameScene().setBackgroundColor(Color.LIGHTBLUE);
+        getGameScene().setBackgroundColor(Color.LIGHTBLUE.darker().darker());
 
         getGameScene().setFPSCamera(true);
         getGameScene().setCursorInvisible();

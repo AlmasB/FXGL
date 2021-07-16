@@ -73,7 +73,7 @@ class ChoiceNode(text: String) : DialogueNode(CHOICE, text)  {
      * Returns last option id present in the options map, or -1 if there are no options.
      */
     val lastOptionID: Int
-        get() = options.keys.max() ?: -1
+        get() = options.keys.maxOrNull() ?: -1
 }
 
 /* EDGES */

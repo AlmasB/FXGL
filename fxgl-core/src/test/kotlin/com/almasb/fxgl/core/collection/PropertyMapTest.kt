@@ -162,6 +162,45 @@ class PropertyMapTest {
     }
 
     @Test
+    fun `Map change listener`() {
+        var count = 0
+
+        map.addListener(object : PropertyMapChangeListener {
+            override fun onUpdated(propertyName: String, propertyValue: Any) {
+                if (count == 0) {
+
+                    assertThat(propertyName, `is`("key"))
+                    assertThat(propertyValue, `is`(2))
+
+                    count++
+                } else {
+                    assertThat(propertyName, `is`("key"))
+                    assertThat(propertyValue, `is`(5))
+
+                    count++
+                }
+            }
+
+            override fun onRemoved(propertyName: String, propertyValue: Any) {
+
+                assertThat(count, `is`(2))
+                assertThat(propertyName, `is`("key"))
+                assertThat(propertyValue, `is`(5))
+
+                count++
+            }
+        })
+
+        map.setValue("key", 2)
+
+        map.setValue("key", 5)
+
+        map.remove("key")
+
+        assertThat(count, `is`(3))
+    }
+
+    @Test
     fun `ObjectProperty changes are notified via listeners`() {
         var count = 0
 

@@ -30,6 +30,7 @@ package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
+import com.almasb.fxgl.physics.box2d.dynamics.World;
 
 //Updated to rev 56->130->142 of b2DistanceJoint.cpp/.h
 
@@ -40,7 +41,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.Body;
  *
  * @warning Do not use a zero or short length.
  */
-public class DistanceJointDef extends JointDef {
+public class DistanceJointDef extends JointDef<DistanceJoint> {
     /** The local anchor point relative to body1's origin. */
     public final Vec2 localAnchorA;
 
@@ -61,7 +62,6 @@ public class DistanceJointDef extends JointDef {
     public float dampingRatio;
 
     public DistanceJointDef() {
-        super(JointType.DISTANCE);
         localAnchorA = new Vec2(0.0f, 0.0f);
         localAnchorB = new Vec2(0.0f, 0.0f);
         length = 1.0f;
@@ -78,11 +78,16 @@ public class DistanceJointDef extends JointDef {
      * @param anchor2 World anchor on second body
      */
     public void initialize(final Body b1, final Body b2, final Vec2 anchor1, final Vec2 anchor2) {
-        bodyA = b1;
-        bodyB = b2;
-        localAnchorA.set(bodyA.getLocalPoint(anchor1));
-        localAnchorB.set(bodyB.getLocalPoint(anchor2));
+        setBodyA(b1);
+        setBodyB(b2);
+        localAnchorA.set(b1.getLocalPoint(anchor1));
+        localAnchorB.set(b2.getLocalPoint(anchor2));
         Vec2 d = anchor2.sub(anchor1);
         length = d.length();
+    }
+
+    @Override
+    protected DistanceJoint createJoint(World world) {
+        return new DistanceJoint(world.getPool(), this);
     }
 }

@@ -11,8 +11,7 @@ import javafx.event.EventHandler
 import javafx.event.EventType
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertAll
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
@@ -74,5 +73,14 @@ class EventBusTest {
     @Test
     fun `EventBus logging enabled by default`() {
         assertThat(eventBus.isLoggingEnabled, `is`(true))
+    }
+
+    @Test
+    fun `Fire event without logging`() {
+        eventBus.isLoggingEnabled = false
+
+        assertDoesNotThrow {
+            eventBus.fireEvent(Event(EventType.ROOT))
+        }
     }
 }

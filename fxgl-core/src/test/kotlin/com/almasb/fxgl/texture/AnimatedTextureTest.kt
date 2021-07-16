@@ -104,6 +104,35 @@ class AnimatedTextureTest {
     }
 
     @Test
+    fun `Loop with no override`() {
+        val channel = AnimationChannel(image, Duration.seconds(1.0), 2)
+
+        texture.loopNoOverride(channel)
+
+        assertThat(texture.viewport, `is`(Rectangle2D(0.0, 0.0, 320.0, 320.0)))
+
+        // move single frame
+        texture.onUpdate(0.5)
+
+        assertThat(texture.viewport, `is`(Rectangle2D(320.0, 0.0, 320.0, 320.0)))
+
+        // this overrides channel
+        texture.loopAnimationChannel(channel)
+
+        assertThat(texture.viewport, `is`(Rectangle2D(0.0, 0.0, 320.0, 320.0)))
+
+        // move single frame
+        texture.onUpdate(0.5)
+
+        assertThat(texture.viewport, `is`(Rectangle2D(320.0, 0.0, 320.0, 320.0)))
+
+        // this does not
+        texture.loopNoOverride(channel)
+
+        assertThat(texture.viewport, `is`(Rectangle2D(320.0, 0.0, 320.0, 320.0)))
+    }
+
+    @Test
     fun `Stop animation ends with 1st frame`() {
         assertThat(texture.viewport, `is`(Rectangle2D(0.0, 0.0, 320.0, 320.0)))
 

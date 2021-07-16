@@ -446,6 +446,11 @@ class FXGLApplication : Application() {
 
             if (settings.isIntroEnabled) {
                 intro = sceneFactory.newIntro()
+                        .also {
+                            it.onFinished = Runnable {
+                                setSceneAfterIntro()
+                            }
+                        }
             }
 
             if (settings.isMainMenuEnabled) {
@@ -489,6 +494,14 @@ class FXGLApplication : Application() {
             }
 
             log.debug("Application scenes initialized")
+        }
+
+        private fun setSceneAfterIntro() {
+            if (settings.isMainMenuEnabled) {
+                getGameController().gotoMainMenu()
+            } else {
+                getGameController().startNewGame()
+            }
         }
 
         private fun addClickFeedbackHandler() {

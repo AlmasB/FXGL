@@ -16,25 +16,33 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.multiplayer.MultiplayerService;
 import com.almasb.fxgl.multiplayer.NetworkComponent;
+import com.almasb.fxgl.multiplayer.ReplicationEvent;
 import com.almasb.fxgl.net.Connection;
 import com.almasb.fxgl.net.Server;
 import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitters;
+import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
+
+import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 import static javafx.scene.input.KeyCode.*;
 
 /**
+ *  TODO: graceful exit (via API)
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class MultiplayerSample extends GameApplication {
@@ -48,6 +56,7 @@ public class MultiplayerSample extends GameApplication {
     private Entity player2;
 
     private Input clientInput;
+    private EventBus clientBus;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -61,6 +70,12 @@ public class MultiplayerSample extends GameApplication {
         onKey(A, () -> player1.translateX(-5));
         onKey(D, () -> player1.translateX(5));
         onBtnDown(MouseButton.PRIMARY, () -> shoot(player1));
+
+        onKeyDown(F, () -> {
+            if (isServer) {
+                clientBus.fireEvent(new CustomReplicationEvent("Hello", random(0.0, 1000.0)));
+            }
+        });
 
         clientInput = new Input();
 
@@ -82,7 +97,14 @@ public class MultiplayerSample extends GameApplication {
     }
 
     @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("score", 0);
+    }
+
+    @Override
     protected void initGame() {
+        clientBus = new EventBus();
+
         getGameWorld().addEntityFactory(new MultiplayerFactory());
 
         getGameScene().setBackgroundColor(Color.LIGHTGRAY);
@@ -95,9 +117,21 @@ public class MultiplayerSample extends GameApplication {
                 if (isServer) {
                     // TODO: have only server init and only client init code to override
 
+                    runOnce(() -> {
+                        set("newVar", 1.0);
+
+                        var text = addVarText("newVar", 50, 100);
+                        text.fontProperty().unbind();
+                        text.setFont(Font.font(26.0));
+
+                        run(() -> { inc("newVar", +1.25); }, Duration.seconds(1.0));
+                    }, Duration.seconds(3));
+
                     onCollisionBegin(EntityType.BULLET, EntityType.ENEMY, (bullet, enemy) -> {
                         bullet.removeFromWorld();
                         enemy.removeFromWorld();
+
+                        inc("score", +1);
                     });
 
                     server = getNetService().newTCPServer(55555);
@@ -112,32 +146,37 @@ public class MultiplayerSample extends GameApplication {
                             getMPService().spawn(connection, player2, "player2");
 
                             getMPService().addInputReplicationReceiver(conn, clientInput);
+                            getMPService().addPropertyReplicationSender(conn, getWorldProperties());
+
+                            getMPService().addEventReplicationSender(conn, clientBus);
                         });
                     });
 
                     server.startAsync();
 
-//                    getTaskService().runAsync(
-//                            server.startTask()
-//                                    .onSuccess(n -> System.out.println("Server startTask success"))
-//                                    .onFailure(e -> System.out.println("Server startTask fail: " + e))
-//                    );
-
                 } else {
+
+                    runOnce(() -> {
+                        var text = addVarText("newVar", 50, 100);
+                        text.fontProperty().unbind();
+                        text.setFont(Font.font(26.0));
+                    }, Duration.seconds(5));
+
 
                     var client = getNetService().newTCPClient("localhost", 55555);
                     client.setOnConnected(conn -> {
                         getMPService().addEntityReplicationReceiver(conn, getGameWorld());
                         getMPService().addInputReplicationSender(conn, getInput());
+                        getMPService().addPropertyReplicationReceiver(conn, getWorldProperties());
+
+                        clientBus.addEventHandler(CustomReplicationEvent.CUSTOM_EVENT, event -> {
+                            getNotificationService().pushNotification(event.data + ": " + event.value);
+                        });
+
+                        getMPService().addEventReplicationReceiver(conn, clientBus);
                     });
 
                     client.connectAsync();
-
-//                    getTaskService().runAsync(
-//                            client.connectTask()
-//                                    .onSuccess(n -> System.out.println("client connectTask success"))
-//                                    .onFailure(e -> System.out.println("client connectTask fail: " + e))
-//                    );
 
                     getInput().setProcessInput(false);
                 }
@@ -162,6 +201,11 @@ public class MultiplayerSample extends GameApplication {
                 getMPService().spawn(connection, e, "enemy");
             }
         }, Duration.seconds(1));
+    }
+
+    @Override
+    protected void initUI() {
+        addVarText("score", 50, 50);
     }
 
     @Override
@@ -240,6 +284,21 @@ public class MultiplayerSample extends GameApplication {
                         particles.addComponent(comp);
                     })
                     .build();
+        }
+    }
+
+    public static class CustomReplicationEvent extends ReplicationEvent {
+
+        public static final EventType<CustomReplicationEvent> CUSTOM_EVENT = new EventType<>(ReplicationEvent.ANY, "CUSTOM_EVENT");
+
+        public String data;
+        public double value;
+
+        public CustomReplicationEvent(String data, double value) {
+            super(CUSTOM_EVENT);
+
+            this.data = data;
+            this.value = value;
         }
     }
 

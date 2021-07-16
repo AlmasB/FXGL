@@ -8,7 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.ui.DialogBox
 import com.almasb.fxgl.ui.DialogService
-import javafx.beans.property.DoubleProperty
+import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Button
 import java.util.function.Consumer
@@ -47,7 +47,7 @@ object MockDialogService : DialogService() {
         }
     }
 
-    override fun showProgressBox(message: String?, progress: DoubleProperty?, callback: Runnable?) {
+    override fun showProgressBox(message: String?, progress: ReadOnlyDoubleProperty?, callback: Runnable?) {
     }
 
     override fun showInputBox(message: String?, resultCallback: Consumer<String>?) {

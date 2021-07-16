@@ -8,6 +8,7 @@ package com.almasb.fxgl.physics.box2d.dynamics.contacts;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.collision.ContactID;
+import com.almasb.fxgl.physics.box2d.collision.GenericCollision;
 import com.almasb.fxgl.physics.box2d.collision.Manifold;
 import com.almasb.fxgl.physics.box2d.collision.ManifoldPoint;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
@@ -228,7 +229,7 @@ public abstract class Contact {
         if (sensor) {
             Shape shapeA = m_fixtureA.getShape();
             Shape shapeB = m_fixtureB.getShape();
-            touching = pool.getCollision().testOverlap(shapeA, m_indexA, shapeB, m_indexB, xfA, xfB);
+            touching = GenericCollision.testOverlap(pool, shapeA, m_indexA, shapeB, m_indexB, xfA, xfB);
 
             // Sensors don't generate manifolds.
             m_manifold.pointCount = 0;

@@ -14,6 +14,7 @@ import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -85,6 +86,19 @@ class AnimatedValueTest {
         assertThat(anim.getValue(0.0), `is`(Color.BLACK))
         assertThat(anim.getValue(1.0), `is`(Color.WHITE))
         assertThat(anim.getValue(0.5), `is`(Color.color(0.5, 0.5, 0.5)))
+    }
+
+    @Test
+    fun `Interpolated color does not go outside of 0-1 range`() {
+        val anim = AnimatedColor(Color.BLACK, Color.WHITE)
+
+        Interpolators.values().forEach {
+            assertThat(anim.getValue(0.0, it.EASE_IN()), notNullValue())
+            assertThat(anim.getValue(0.25, it.EASE_OUT()), notNullValue())
+            assertThat(anim.getValue(0.5, it.EASE_OUT()), notNullValue())
+            assertThat(anim.getValue(0.75, it.EASE_OUT()), notNullValue())
+            assertThat(anim.getValue(1.0, it.EASE_IN_OUT()), notNullValue())
+        }
     }
 
     @Test

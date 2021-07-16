@@ -45,10 +45,13 @@ internal class ObjGroup(val name: String) {
 
 internal class SubGroup {
     val faces = arrayListOf<Int>()
+    val smoothingGroups = arrayListOf<Int>()
 
     // as per OBJ file spec, default is white
     var material: Material = PhongMaterial(Color.WHITE)
     var ambientColor: Color? = null
+
+    var smoothingGroup = -1
 }
 
 internal class MtlData(

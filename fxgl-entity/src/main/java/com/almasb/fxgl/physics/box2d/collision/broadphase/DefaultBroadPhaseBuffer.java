@@ -22,7 +22,7 @@ import java.util.Arrays;
  *
  * @author Daniel Murphy
  */
-public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
+public final class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
 
     private final BroadPhaseStrategy tree;
 
@@ -45,20 +45,20 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
     }
 
     @Override
-    public final int createProxy(AABB aabb, Object userData) {
+    public int createProxy(AABB aabb, Object userData) {
         int proxyId = tree.createProxy(aabb, userData);
         bufferMove(proxyId);
         return proxyId;
     }
 
     @Override
-    public final void destroyProxy(int proxyId) {
+    public void destroyProxy(int proxyId) {
         unbufferMove(proxyId);
         tree.destroyProxy(proxyId);
     }
 
     @Override
-    public final void moveProxy(int proxyId, AABB aabb, Vec2 displacement) {
+    public void moveProxy(int proxyId, AABB aabb, Vec2 displacement) {
         boolean buffer = tree.moveProxy(proxyId, aabb, displacement);
         if (buffer) {
             bufferMove(proxyId);
@@ -84,7 +84,7 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
     }
 
     @Override
-    public final void updatePairs(PairCallback callback) {
+    public void updatePairs(PairCallback callback) {
         // Reset pair buffer
         pairCount = 0;
 
@@ -131,12 +131,12 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
     }
 
     @Override
-    public final void query(TreeCallback callback, AABB aabb) {
+    public void query(TreeCallback callback, AABB aabb) {
         tree.query(callback, aabb);
     }
 
     @Override
-    public final void raycast(TreeRayCastCallback callback, RayCastInput input) {
+    public void raycast(TreeRayCastCallback callback, RayCastInput input) {
         tree.raycast(callback, input);
     }
 
@@ -164,7 +164,7 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
      * This is called from DynamicTree::query when we are gathering pairs.
      */
     @Override
-    public final boolean treeCallback(int proxyId) {
+    public boolean treeCallback(int proxyId) {
         // A proxy cannot form a pair with itself.
         if (proxyId == m_queryProxyId) {
             return true;

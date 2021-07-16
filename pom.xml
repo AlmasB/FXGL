@@ -16,11 +16,8 @@
         <module>fxgl-core</module>
         <module>fxgl-io</module>
         <module>fxgl-entity</module>
-        <module>fxgl-ui</module>
         <module>fxgl-scene</module>
         <module>fxgl</module>
-        <module>fxgl-media</module>
-        <module>fxgl-input</module>
         <module>fxgl-test</module>
         <module>fxgl-controllerinput</module>
         <module>fxgl-gameplay</module>
@@ -86,14 +83,14 @@
         <maven.source.version>3.2.0</maven.source.version>
         <maven.jar.version>3.2.0</maven.jar.version>
         <maven.shade.version>3.2.2</maven.shade.version>
-        <jacoco.version>0.8.6</jacoco.version>
+        <jacoco.version>0.8.7</jacoco.version>
         <maven.surefire.version>3.0.0-M4</maven.surefire.version>
         <build.helper.version>3.0.0</build.helper.version>
         <maven.templating.version>1.0.0</maven.templating.version>
 
         <!-- dependencies -->
         <jfx.version>16</jfx.version>
-        <kotlin.version>1.4.30</kotlin.version>
+        <kotlin.version>1.5.10</kotlin.version>
         <attach.version>4.0.9</attach.version>
         <jackson.version>2.12.1</jackson.version>
 

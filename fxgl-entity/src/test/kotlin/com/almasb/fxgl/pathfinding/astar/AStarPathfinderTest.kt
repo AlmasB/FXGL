@@ -9,7 +9,6 @@ import com.almasb.fxgl.pathfinding.CellState
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.*
 import java.util.function.Supplier
 
 class AStarPathfinderTest {

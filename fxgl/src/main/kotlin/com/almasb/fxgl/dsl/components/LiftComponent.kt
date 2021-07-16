@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.dsl.components
 
-import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.time.LocalTimer

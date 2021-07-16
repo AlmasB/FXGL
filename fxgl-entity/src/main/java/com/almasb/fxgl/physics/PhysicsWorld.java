@@ -23,6 +23,10 @@ import com.almasb.fxgl.physics.box2d.collision.Manifold;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
+import com.almasb.fxgl.physics.box2d.dynamics.joints.Joint;
+import com.almasb.fxgl.physics.box2d.dynamics.joints.JointDef;
+import com.almasb.fxgl.physics.box2d.dynamics.joints.RevoluteJoint;
+import com.almasb.fxgl.physics.box2d.dynamics.joints.RevoluteJointDef;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 
@@ -652,6 +656,61 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
         return new RaycastResult(entity, point);
     }
+
+    /* JOINTS BEGIN */
+
+    /**
+     * Add revolute joint between two entities.
+     *
+     * @param e1 entity1
+     * @param e2 entity2
+     * @param localAnchor1 point in entity1 local coordinate system to which entity2 is attached
+     * @param localAnchor2 point in entity2 local coordinate system to which entity1 is attached
+     */
+    public RevoluteJoint addRevoluteJoint(Entity e1, Entity e2, Point2D localAnchor1, Point2D localAnchor2) {
+        if (!e1.hasComponent(PhysicsComponent.class) || !e2.hasComponent(PhysicsComponent.class)) {
+            throw new IllegalArgumentException("Cannot create a joint: both entities must have PhysicsComponent");
+        }
+
+        var p1 = e1.getComponent(PhysicsComponent.class);
+        var p2 = e2.getComponent(PhysicsComponent.class);
+
+        RevoluteJointDef def = new RevoluteJointDef();
+        def.localAnchorA = toPoint(e1.getAnchoredPosition().add(localAnchor1)).subLocal(p1.getBody().getWorldCenter());
+        def.localAnchorB = toPoint(e2.getAnchoredPosition().add(localAnchor2)).subLocal(p2.getBody().getWorldCenter());
+
+        return addJoint(e1, e2, def);
+    }
+
+    /**
+     * Add a joint constraining two entities with PhysicsComponent.
+     * The entities must already be in the game world.
+     *
+     * @return joint created using the provided definition
+     */
+    public <T extends Joint> T addJoint(Entity e1, Entity e2, JointDef<T> def) {
+        if (!e1.hasComponent(PhysicsComponent.class) || !e2.hasComponent(PhysicsComponent.class)) {
+            throw new IllegalArgumentException("Cannot create a joint: both entities must have PhysicsComponent");
+        }
+
+        var p1 = e1.getComponent(PhysicsComponent.class);
+        var p2 = e2.getComponent(PhysicsComponent.class);
+
+        def.setBodyA(p1.body);
+        def.setBodyB(p2.body);
+
+        return jboxWorld.createJoint(def);
+    }
+
+    /**
+     * Remove given joint from the physics world.
+     */
+    public void removeJoint(Joint joint) {
+        jboxWorld.destroyJoint(joint);
+    }
+
+    /* JOINTS END */
+
     @Override
     public double toMeters(double pixels) {
         return pixels * METERS_PER_PIXELS;

@@ -30,6 +30,7 @@ class ObjModelLoader : Model3DLoader {
 
         init {
             objParsers[ { it.startsWith("g") }  ] = Companion::parseGroup
+            objParsers[ { it.startsWith("s") }  ] = Companion::parseSmoothing
             objParsers[ { it.startsWith("vt") }  ] = Companion::parseVertexTextures
             objParsers[ { it.startsWith("vn") }  ] = Companion::parseVertexNormals
             objParsers[ { it.startsWith("v ") }  ] = Companion::parseVertices
@@ -49,6 +50,10 @@ class ObjModelLoader : Model3DLoader {
             val groupName = if (tokens.isEmpty()) "default" else tokens[0]
 
             data.groups += ObjGroup(groupName)
+        }
+
+        private fun parseSmoothing(tokens: List<String>, data: ObjData) {
+            data.currentGroup.currentSubGroup.smoothingGroup = tokens.toSmoothingGroup()
         }
 
         private fun parseVertexTextures(tokens: List<String>, data: ObjData) {
@@ -147,6 +152,10 @@ class ObjModelLoader : Model3DLoader {
             return Color.color(rgb[0], rgb[1], rgb[2])
         }
 
+        private fun List<String>.toSmoothingGroup(): Int {
+            return if (this[0] == "off") 0 else this[0].toInt()
+        }
+
         private fun parseNewMaterial(tokens: List<String>, data: MtlData) {
             data.currentMaterial = PhongMaterial()
             data.materials[tokens[0]] = data.currentMaterial
@@ -174,24 +183,10 @@ class ObjModelLoader : Model3DLoader {
             data.currentMaterial.diffuseMap = FXGL.getAssetLoader().loadImage(URL(ext + tokens[0]))
         }
 
-        // TODO: refactor loadXXXData below
         private fun loadObjData(url: URL): ObjData {
             val data = ObjData(url)
 
-            url.openStream().bufferedReader().useLines {
-                it.forEach { line ->
-
-                    for ((condition, action) in objParsers) {
-                        if (condition.invoke(line) ) {
-                            // drop identifier
-                            val tokens = line.trim().split(" +".toRegex()).drop(1)
-
-                            action.invoke(tokens, data)
-                            break
-                        }
-                    }
-                }
-            }
+            load(url, objParsers, data)
 
             return data
         }
@@ -199,12 +194,21 @@ class ObjModelLoader : Model3DLoader {
         private fun loadMtlData(url: URL): MtlData {
             val data = MtlData(url)
 
+            load(url, mtlParsers, data)
+
+            return data
+        }
+
+        private fun <T> load(url: URL,
+                             parsers: Map<(String) -> Boolean, (List<String>, T) -> Unit>,
+                             data: T) {
+
             url.openStream().bufferedReader().useLines {
                 it.forEach { line ->
 
                     val lineTrimmed = line.trim()
 
-                    for ((condition, action) in mtlParsers) {
+                    for ((condition, action) in parsers) {
                         if (condition.invoke(lineTrimmed) ) {
                             // drop identifier
                             val tokens = lineTrimmed.split(" +".toRegex()).drop(1)
@@ -215,8 +219,6 @@ class ObjModelLoader : Model3DLoader {
                     }
                 }
             }
-
-            return data
         }
     }
 
@@ -234,8 +236,6 @@ class ObjModelLoader : Model3DLoader {
 
                     // TODO: ?
                     if (!it.faces.isEmpty()) {
-
-                        //val subGroupRoot = Group()
 
                         val mesh = TriangleMesh(VertexFormat.POINT_NORMAL_TEXCOORD)
 
@@ -257,11 +257,13 @@ class ObjModelLoader : Model3DLoader {
 
                         mesh.faces.addAll(*it.faces.toIntArray())
 
+                        if (it.smoothingGroups.isNotEmpty()) {
+                            mesh.faceSmoothingGroups.addAll(*it.smoothingGroups.toIntArray())
+                        }
+
                         val view = MeshView(mesh)
                         view.material = it.material
                         view.cullFace = CullFace.NONE
-
-                        //subGroupRoot.children.addAll(view)
 
                         groupRoot.addMeshView(view)
                     }

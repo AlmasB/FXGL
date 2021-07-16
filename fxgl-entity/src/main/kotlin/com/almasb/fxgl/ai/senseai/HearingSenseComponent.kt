@@ -107,4 +107,29 @@ class HearingSenseComponent(
 
         alertness += adjustedVolume
     }
+
+    fun alertnessDecay(decayAmount: Double) = this.apply {
+        this.alertnessDecay = decayAmount
+    }
+
+    fun noiseVolumeTolerance(noiseVolumeTolerance: Double) = this.apply {
+        this.noiseVolumeTolerance = noiseVolumeTolerance
+    }
+
+    fun calmFactor(calmFactor: Double) = this.apply {
+        this.calmFactor = calmFactor
+    }
+
+    fun alertStateThreshold(alertThreshold: Double) = this.apply {
+        this.alertStateThreshold = alertThreshold
+    }
+
+    fun aggressiveStateThreshold(aggressiveStateThreshold: Double) = this.apply {
+        this.aggressiveStateThreshold = aggressiveStateThreshold
+    }
+
+    fun lastHeardPoint(lastHeardPoint: Point2D) = this.apply {
+        this.lastHeardPoint = lastHeardPoint
+    }
+
 }

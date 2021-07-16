@@ -6,6 +6,7 @@
 package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
+import com.almasb.fxgl.physics.box2d.dynamics.World;
 
 import java.util.ArrayList;
 
@@ -13,7 +14,7 @@ import java.util.ArrayList;
  * Definition for a {@link ConstantVolumeJoint}, which connects a group a bodies together so they
  * maintain a constant volume within them.
  */
-public class ConstantVolumeJointDef extends JointDef {
+public class ConstantVolumeJointDef extends JointDef<ConstantVolumeJoint> {
     public float frequencyHz;
     public float dampingRatio;
 
@@ -21,10 +22,8 @@ public class ConstantVolumeJointDef extends JointDef {
     ArrayList<DistanceJoint> joints;
 
     public ConstantVolumeJointDef() {
-        super(JointType.CONSTANT_VOLUME);
         bodies = new ArrayList<Body>();
         joints = null;
-        collideConnected = false;
         frequencyHz = 0.0f;
         dampingRatio = 0.0f;
     }
@@ -37,10 +36,10 @@ public class ConstantVolumeJointDef extends JointDef {
     public void addBody(Body argBody) {
         bodies.add(argBody);
         if (bodies.size() == 1) {
-            bodyA = argBody;
+            setBodyA(argBody);
         }
         if (bodies.size() == 2) {
-            bodyB = argBody;
+            setBodyB(argBody);
         }
     }
 
@@ -53,5 +52,10 @@ public class ConstantVolumeJointDef extends JointDef {
             joints = new ArrayList<DistanceJoint>();
         }
         joints.add(argJoint);
+    }
+
+    @Override
+    protected ConstantVolumeJoint createJoint(World world) {
+        return new ConstantVolumeJoint(world, this);
     }
 }

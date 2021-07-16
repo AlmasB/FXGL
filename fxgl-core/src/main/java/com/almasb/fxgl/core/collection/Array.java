@@ -503,21 +503,6 @@ public class Array<T> implements Iterable<T> {
     }
 
     /**
-     * Increases the size of the backing array to accommodate the specified number of additional items.
-     * Useful before adding many items to avoid multiple backing array resizes.
-     *
-     * @param additionalCapacity extra capacity
-     * @return items
-     */
-    public T[] ensureCapacity(int additionalCapacity) {
-        int sizeNeeded = size + additionalCapacity;
-        if (sizeNeeded > items.length)
-            resize(Math.max(8, sizeNeeded));
-
-        return items;
-    }
-
-    /**
      * Creates a new backing array with the specified size containing the current items.
      *
      * @param newSize new array size

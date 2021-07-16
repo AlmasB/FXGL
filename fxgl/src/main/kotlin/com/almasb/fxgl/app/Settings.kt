@@ -200,6 +200,8 @@ class GameSettings(
 
         var isSingleStep: Boolean = false,
 
+        var isPauseMusicWhenMinimized: Boolean = true,
+
         /**
          * Sets application run mode. See [ApplicationMode] for more info.
          */
@@ -370,6 +372,7 @@ class GameSettings(
                 isFileSystemWriteAllowed,
                 isCloseConfirmation,
                 isSingleStep,
+                isPauseMusicWhenMinimized,
                 applicationMode,
                 menuKey,
                 unmodifiableList(credits),
@@ -518,6 +521,8 @@ class ReadOnlyGameSettings internal constructor(
         val isCloseConfirmation: Boolean,
 
         val isSingleStep: Boolean,
+
+        val isPauseMusicWhenMinimized: Boolean,
 
         /**
          * Sets application run mode. See [ApplicationMode] for more info.

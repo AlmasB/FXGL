@@ -245,7 +245,7 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
      */
     private fun computeWidth(): Double {
         return hitBoxes.map { it.bounds.maxX - getMinXLocal() }
-                .max() ?: 0.0
+                .maxOrNull() ?: 0.0
     }
 
     /**
@@ -255,17 +255,17 @@ class BoundingBoxComponent(vararg boxes: HitBox) :
      */
     private fun computeHeight(): Double {
         return hitBoxes.map { it.bounds.maxY - getMinYLocal() }
-                .max() ?: 0.0
+                .maxOrNull() ?: 0.0
     }
 
     private fun computeMinXLocal(): Double {
         return hitBoxes.map { it.minX }
-                .min() ?: 0.0
+                .minOrNull() ?: 0.0
     }
 
     private fun computeMinYLocal(): Double {
         return hitBoxes.map { it.minY }
-                .min() ?: 0.0
+                .minOrNull() ?: 0.0
     }
 
     internal fun applyTransformToHitBoxes() {

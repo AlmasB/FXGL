@@ -22,13 +22,13 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
  *
  * @author Daniel Murphy
  */
-public class RopeJoint extends Joint {
+public final class RopeJoint extends Joint {
     // Solver shared
     private final Vec2 m_localAnchorA = new Vec2();
     private final Vec2 m_localAnchorB = new Vec2();
     private float m_maxLength;
-    private float m_length;
-    private float m_impulse;
+    private float m_length = 0f;
+    private float m_impulse = 0f;
 
     // Solver temp
     private int m_indexA;
@@ -42,20 +42,15 @@ public class RopeJoint extends Joint {
     private float m_invMassB;
     private float m_invIA;
     private float m_invIB;
-    private float m_mass;
-    private LimitState m_state;
+    private float m_mass = 0f;
+    private LimitState m_state = LimitState.INACTIVE;
 
-    protected RopeJoint(IWorldPool worldPool, RopeJointDef def) {
+    RopeJoint(IWorldPool worldPool, RopeJointDef def) {
         super(worldPool, def);
         m_localAnchorA.set(def.localAnchorA);
         m_localAnchorB.set(def.localAnchorB);
 
         m_maxLength = def.maxLength;
-
-        m_mass = 0.0f;
-        m_impulse = 0.0f;
-        m_state = LimitState.INACTIVE;
-        m_length = 0.0f;
     }
 
     @Override
@@ -278,5 +273,4 @@ public class RopeJoint extends Joint {
     public LimitState getLimitState() {
         return m_state;
     }
-
 }

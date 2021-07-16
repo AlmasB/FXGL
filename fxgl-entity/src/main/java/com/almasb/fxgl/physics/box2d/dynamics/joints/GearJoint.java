@@ -51,8 +51,8 @@ public class GearJoint extends Joint {
     private final Joint m_joint1;
     private final Joint m_joint2;
 
-    private final JointType m_typeA;
-    private final JointType m_typeB;
+    private final Class<? extends Joint> m_typeA;
+    private final Class<? extends Joint> m_typeB;
 
     // Body A is connected to body C
     // Body B is connected to body D
@@ -92,11 +92,11 @@ public class GearJoint extends Joint {
         m_joint1 = def.joint1;
         m_joint2 = def.joint2;
 
-        m_typeA = m_joint1.getType();
-        m_typeB = m_joint2.getType();
+        m_typeA = m_joint1.getClass();
+        m_typeB = m_joint2.getClass();
 
-        assert m_typeA == JointType.REVOLUTE || m_typeA == JointType.PRISMATIC;
-        assert m_typeB == JointType.REVOLUTE || m_typeB == JointType.PRISMATIC;
+//        assert m_typeA == JointType.REVOLUTE || m_typeA == JointType.PRISMATIC;
+//        assert m_typeB == JointType.REVOLUTE || m_typeB == JointType.PRISMATIC;
 
         float coordinateA, coordinateB;
 
@@ -111,11 +111,11 @@ public class GearJoint extends Joint {
         Transform xfC = m_bodyC.m_xf;
         float aC = m_bodyC.m_sweep.a;
 
-        if (m_typeA == JointType.REVOLUTE) {
+        if (m_typeA.equals(RevoluteJoint.class)) {
             RevoluteJoint revolute = (RevoluteJoint) def.joint1;
             m_localAnchorC.set(revolute.m_localAnchorA);
             m_localAnchorA.set(revolute.m_localAnchorB);
-            m_referenceAngleA = revolute.m_referenceAngle;
+            m_referenceAngleA = revolute.getReferenceAngle();
             m_localAxisC.setZero();
 
             coordinateA = aA - aC - m_referenceAngleA;
@@ -145,11 +145,11 @@ public class GearJoint extends Joint {
         Transform xfD = m_bodyD.m_xf;
         float aD = m_bodyD.m_sweep.a;
 
-        if (m_typeB == JointType.REVOLUTE) {
+        if (m_typeB.equals(RevoluteJoint.class)) {
             RevoluteJoint revolute = (RevoluteJoint) def.joint2;
             m_localAnchorD.set(revolute.m_localAnchorA);
             m_localAnchorB.set(revolute.m_localAnchorB);
-            m_referenceAngleB = revolute.m_referenceAngle;
+            m_referenceAngleB = revolute.getReferenceAngle();
             m_localAxisD.setZero();
 
             coordinateB = aB - aD - m_referenceAngleB;
@@ -256,7 +256,7 @@ public class GearJoint extends Joint {
 
         Vec2 temp = pool.popVec2();
 
-        if (m_typeA == JointType.REVOLUTE) {
+        if (m_typeA.equals(RevoluteJoint.class)) {
             m_JvAC.setZero();
             m_JwA = 1.0f;
             m_JwC = 1.0f;
@@ -273,7 +273,7 @@ public class GearJoint extends Joint {
             pool.pushVec2(2);
         }
 
-        if (m_typeB == JointType.REVOLUTE) {
+        if (m_typeB.equals(RevoluteJoint.class)) {
             m_JvBD.setZero();
             m_JwB = m_ratio;
             m_JwD = m_ratio;
@@ -414,7 +414,7 @@ public class GearJoint extends Joint {
         float JwA, JwB, JwC, JwD;
         float mass = 0.0f;
 
-        if (m_typeA == JointType.REVOLUTE) {
+        if (m_typeA.equals(RevoluteJoint.class)) {
             JvAC.setZero();
             JwA = 1.0f;
             JwC = 1.0f;
@@ -439,7 +439,7 @@ public class GearJoint extends Joint {
             pool.pushVec2(4);
         }
 
-        if (m_typeB == JointType.REVOLUTE) {
+        if (m_typeB.equals(RevoluteJoint.class)) {
             JvBD.setZero();
             JwB = m_ratio;
             JwD = m_ratio;

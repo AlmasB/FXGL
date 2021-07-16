@@ -9,6 +9,7 @@ package com.almasb.fxgl.dsl
 
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.components.CollidableComponent
 import com.almasb.fxgl.physics.BoundingShape
@@ -19,8 +20,7 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -77,6 +77,36 @@ class EntityBuilderTest {
     }
 
     @Test
+    fun `on active and not active`() {
+        var count = 0
+
+        val e = builder
+                .onActive { count++ }
+                .onNotActive { count-- }
+                .build()
+
+        assertThat(count, `is`(0))
+
+        val world = GameWorld()
+        world.addEntity(e)
+
+        assertThat(count, `is`(1))
+
+        world.removeEntity(e)
+
+        assertThat(count, `is`(0))
+    }
+
+    @Test
+    fun `never updated`() {
+        val e = builder
+                .neverUpdated()
+                .build()
+
+        assertFalse(e.isEverUpdated)
+    }
+
+    @Test
     fun `at Vec2 positions the entity correctly`() {
         val e = builder
                 .at(Vec2(100.0, 150.0))
@@ -90,6 +120,16 @@ class EntityBuilderTest {
     fun `at Point2D positions the entity correctly`() {
         val e = builder
                 .at(Point2D(100.0, 150.0))
+                .build()
+
+        assertThat(e.x, `is`(100.0))
+        assertThat(e.y, `is`(150.0))
+    }
+
+    @Test
+    fun `at xy positions the entity correctly`() {
+        val e = builder
+                .at(100.0, 150.0)
                 .build()
 
         assertThat(e.x, `is`(100.0))
@@ -183,6 +223,28 @@ class EntityBuilderTest {
     }
 
     @Test
+    fun `Scale xyz is set`() {
+        val e = builder
+                .scale(1.0, 2.0, 3.0)
+                .build()
+
+        assertThat(e.transformComponent.scaleX, `is`(1.0))
+        assertThat(e.transformComponent.scaleY, `is`(2.0))
+        assertThat(e.transformComponent.scaleZ, `is`(3.0))
+    }
+
+    @Test
+    fun `Scale Point3D is set`() {
+        val e = builder
+                .scale(Point3D(1.0, 2.0, 3.0))
+                .build()
+
+        assertThat(e.transformComponent.scaleX, `is`(1.0))
+        assertThat(e.transformComponent.scaleY, `is`(2.0))
+        assertThat(e.transformComponent.scaleZ, `is`(3.0))
+    }
+
+    @Test
     fun `Opacity is set`() {
         val e = builder
                 .opacity(0.5)
@@ -268,5 +330,13 @@ class EntityBuilderTest {
         val box = boxes[0]
         assertEquals(40.0, box.width)
         assertEquals(40.0, box.height)
+    }
+
+    @Test
+    fun `Build origin 3D`() {
+        val e = entityBuilder()
+                .buildOrigin3D()
+
+        assertThat(e.viewComponent.children.size, `is`(3 + 1))
     }
 }

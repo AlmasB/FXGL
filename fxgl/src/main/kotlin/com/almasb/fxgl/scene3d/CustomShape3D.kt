@@ -9,15 +9,16 @@ package com.almasb.fxgl.scene3d
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.collections.ObservableFloatArray
+import javafx.geometry.Point3D
+import javafx.scene.paint.Color
+import javafx.scene.paint.PhongMaterial
 import javafx.scene.shape.Mesh
 import javafx.scene.shape.MeshView
 import javafx.scene.shape.TriangleMesh
 import java.util.stream.Collectors
 import java.util.stream.IntStream
-import java.util.stream.Stream
 
 // TODO: cache meshes (check CylinderKey)
-// TODO: diffuseColor
 
 /**
  *
@@ -33,6 +34,17 @@ abstract class CustomShape3D : MeshView() {
         const val DEFAULT_RADIUS = 1.0
         const val DEFAULT_START_ANGLE = 0.0
     }
+
+    /**
+     * Convenient getter/setter for Point3D(translateX, translateY, translateZ).
+     */
+    var translation: Point3D
+        get() = Point3D(translateX, translateY, translateZ)
+        set(value) {
+            translateX = value.x
+            translateY = value.y
+            translateZ = value.z
+        }
 
     protected fun updateMesh() {
         mesh = createMesh()
@@ -61,6 +73,10 @@ abstract class CustomShape3D : MeshView() {
         IntStream.range(0, numVertices)
                 .mapToObj { MeshVertex(triMesh.points, it*3) }
                 .collect(Collectors.toUnmodifiableList())
+    }
+
+    fun setPhongMaterial(color: Color) {
+        material = PhongMaterial(color)
     }
 
     class MeshVertex internal constructor(

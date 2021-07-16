@@ -82,7 +82,6 @@ public class CustomIntroSample extends GameApplication {
 
         @Override
         protected void onUpdate(double tpf) {
-            super.onUpdate(tpf);
             animations.forEach(a -> a.onUpdate(tpf));
         }
 

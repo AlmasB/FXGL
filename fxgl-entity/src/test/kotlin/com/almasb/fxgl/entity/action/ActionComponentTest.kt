@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.entity.action
 
-import com.almasb.fxgl.core.serialization.Bundle
-import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.*
