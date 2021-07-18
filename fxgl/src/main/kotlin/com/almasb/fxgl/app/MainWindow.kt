@@ -31,6 +31,8 @@ import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
+import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import javafx.scene.shape.Rectangle
 import javafx.stage.Screen
 import javafx.stage.Stage
@@ -544,6 +546,7 @@ internal class EmbeddedPaneWindow(
         // this rect ensures min size
         backgroundRect.widthProperty().bind(fxglPane.renderWidthProperty())
         backgroundRect.heightProperty().bind(fxglPane.renderHeightProperty())
+        backgroundRect.fillProperty().bind(fxglPane.renderFillProperty())
         fxglPane.allChildren += backgroundRect
 
         setInitialScene(scene)
@@ -717,6 +720,9 @@ class FXGLPane(w: Double, h: Double) : Region() {
     private val renderWidthProp = SimpleDoubleProperty(w)
     private val renderHeightProp = SimpleDoubleProperty(h)
 
+    // default is white to be consistent with FXGL's scene default in non-embedded mode
+    private val renderFillProp = SimpleObjectProperty<Paint>(Color.WHITE)
+
     var renderWidth: Double
         get() = renderWidthProp.value
         set(value) { renderWidthProp.value = value }
@@ -725,8 +731,14 @@ class FXGLPane(w: Double, h: Double) : Region() {
         get() = renderHeightProp.value
         set(value) { renderHeightProp.value = value }
 
+    var renderFill: Paint
+        get() = renderFillProp.value
+        set(value) { renderFillProp.value = value }
+
     fun renderWidthProperty(): DoubleProperty = renderWidthProp
     fun renderHeightProperty(): DoubleProperty = renderHeightProp
+
+    fun renderFillProperty(): ObjectProperty<Paint> = renderFillProp
 }
 
 class SceneEventSubscriber<T : Event>(
