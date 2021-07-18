@@ -309,8 +309,18 @@ public final class FXGLMath {
         return new Vec2(random(-1.0, 1.0), random(-1.0, 1.0)).normalizeLocal();
     }
 
+    /**
+     * @return random color using RGB color model
+     */
     public static Color randomColor() {
         return Color.color(randomDouble(), randomDouble(), randomDouble());
+    }
+
+    /**
+     * @return random color using HSB color model
+     */
+    public static Color randomColorHSB(double saturation, double brightness) {
+        return Color.hsb(random(0, 360), saturation, brightness);
     }
 
     /**
