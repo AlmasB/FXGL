@@ -15,8 +15,6 @@ jobs:
         os: [ ubuntu-latest, macOS-latest, windows-latest ]
         java: [ 17-ea ]
     runs-on: ${{ matrix.os }}
-    env:
-      MAVEN_OPTS: --illegal-access=permit
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2
@@ -38,4 +36,4 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: |
-            mvn test -B -Dgpg.skip=true -Dmaven.javadoc.skip=true
+            mvn test -B -Dgpg.skip=true -Dmaven.javadoc.skip=true -Dkotlin.compiler.incremental=false
