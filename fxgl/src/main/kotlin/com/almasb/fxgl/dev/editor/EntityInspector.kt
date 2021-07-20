@@ -7,8 +7,7 @@
 package com.almasb.fxgl.dev.editor
 
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.dsl.getAssetLoader
+import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.CopyableComponent
@@ -22,6 +21,7 @@ import javafx.scene.control.ButtonType
 import javafx.scene.control.ComboBox
 import javafx.scene.control.Dialog
 import javafx.scene.control.ListView
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.GridPane
@@ -124,13 +124,7 @@ class EntityInspector : FXGLScrollPane() {
                     // Create a new class loader with the directory
                     val cl: ClassLoader = URLClassLoader(urls)
 
-                    //println(cl)
-
-                    // Load in the class; MyClass.class should be located in
-                    // the directory file:/c:/myclasses/com/mycompany
                     val cls = cl.loadClass("sandbox.CustomComponent")
-
-                    //println(cls)
 
                     val instance = cls.getDeclaredConstructor().newInstance() as Component
 
@@ -138,6 +132,8 @@ class EntityInspector : FXGLScrollPane() {
 
                     entity?.let {
                         it.addComponent(instance)
+
+                        updateView()
                     }
                 }
 
@@ -175,6 +171,7 @@ class EntityInspector : FXGLScrollPane() {
                     pane.addRow(index++, title)
                     pane.addRow(index++, Rectangle(165.0, 2.0, Color.ANTIQUEWHITE))
 
+                    // add property based values
                     comp.javaClass.methods
                             .filter { it.name.endsWith("Property") }
                             .sortedBy { it.name }
@@ -220,6 +217,30 @@ class EntityInspector : FXGLScrollPane() {
                                 } else {
                                     pane.addRow(index++, textKey, textValue)
                                 }
+                            }
+
+                    // add callable methods
+                    // TODO: only allow void methods with 0 params for now
+                    comp.javaClass.declaredMethods
+                            .filter { !it.name.endsWith("Property") }
+                            .sortedBy { it.name }
+                            .forEach { method ->
+
+                                val btnMethod = FXGL.getUIFactoryService().newButton(method.name + "()")
+                                btnMethod.setOnAction {
+                                    getDialogService().showInputBoxWithCancel("Input key", { true }) { input ->
+
+                                        onKeyDown(KeyCode.valueOf(input)) {
+                                            println("Invoking: $method")
+
+                                            method.invoke(comp)
+                                        }
+                                    }
+                                }
+
+                                //val textKey = FXGL.getUIFactoryService().newText(method.name + "()", Color.WHITE, 18.0)
+
+                                pane.addRow(index++, btnMethod)
                             }
 
                     pane.addRow(index++, Text(""))
