@@ -6,8 +6,15 @@
 
 package com.almasb.fxgl.texture
 
+import com.almasb.fxgl.animation.AnimatedValue
+import com.almasb.fxgl.animation.Animation
+import com.almasb.fxgl.animation.AnimationBuilder
+import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.core.util.EmptyRunnable
+import javafx.animation.Interpolator
 import javafx.geometry.Rectangle2D
+import javafx.util.Duration
+import kotlin.math.min
 
 /**
  * Represents an animated texture.
@@ -18,19 +25,28 @@ import javafx.geometry.Rectangle2D
 class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel.image) {
 
     private var currentFrame = 0
-    private var counter = 0.0
 
-    private var isLooping = false
-    private var needUpdate = false
+    private lateinit var animation: Animation<Int>
 
     var animationChannel: AnimationChannel = defaultChannel
-        private set
+        private set(value) {
+            field = value
+            updateAnimation()
+        }
 
     var onCycleFinished: Runnable = EmptyRunnable
+
+    var interpolator: Interpolator = Interpolators.LINEAR.EASE_OUT()
+        set(value) {
+            field = value
+            animation.interpolator = interpolator
+        }
 
     init {
         // force channel to apply settings to this texture
         updateImage()
+
+        updateAnimation()
     }
 
     /**
@@ -39,8 +55,10 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
      */
     fun playAnimationChannel(channel: AnimationChannel) {
         animationChannel = channel
-        isLooping = false
-        reset()
+
+        animation.stop()
+        animation.cycleCount = 1
+        animation.start()
     }
 
     /**
@@ -62,8 +80,33 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
      */
     fun loopAnimationChannel(channel: AnimationChannel) {
         animationChannel = channel
-        isLooping = true
-        reset()
+
+        animation.stop()
+        animation.cycleCount = Int.MAX_VALUE
+        animation.start()
+    }
+
+    /**
+     * Play the last animation channel (or default) from end to start once.
+     * The animation will stop at the first frame.
+     */
+    fun playReverse(): AnimatedTexture {
+        animation.stop()
+        animation.cycleCount = 1
+        animation.startReverse()
+
+        return this
+    }
+
+    /**
+     * Loops the last animation channel (or default) from end to start.
+     */
+    fun loopReverse(): AnimatedTexture {
+        animation.stop()
+        animation.cycleCount = Int.MAX_VALUE
+        animation.startReverse()
+
+        return this
     }
 
     /**
@@ -88,9 +131,9 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
      * The frame will be set to 0th (i.e. the first frame).
      */
     fun stop() {
+        animation.stop()
+
         currentFrame = 0
-        counter = 0.0
-        needUpdate = false
 
         updateImage()
     }
@@ -100,45 +143,7 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
     // loop would set the 0th frame
 
     override fun onUpdate(tpf: Double) {
-        if (!needUpdate)
-            return
-
-        var channelDone = false
-
-        counter += tpf
-
-        if (counter >= animationChannel.frameDuration) {
-
-            // frame done
-            if (animationChannel.isLastFrame(currentFrame)) {
-
-                channelDone = true
-
-                if (!isLooping) {
-                    // stop at last frame, do not update image
-                    needUpdate = false
-                    onCycleFinished()
-                    return
-                }
-            }
-
-            counter = 0.0
-            currentFrame = animationChannel.frameAfter(currentFrame)
-
-            updateImage()
-        }
-
-        if (channelDone) {
-            onCycleFinished()
-        }
-    }
-
-    private fun reset() {
-        currentFrame = 0
-        counter = 0.0
-        needUpdate = true
-
-        updateImage()
+        animation.onUpdate(tpf)
     }
 
     private fun updateImage() {
@@ -150,7 +155,23 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         viewport = Rectangle2D(frameData.x.toDouble(), frameData.y.toDouble(), frameData.width.toDouble(), frameData.height.toDouble())
     }
 
-    private fun onCycleFinished() {
-        onCycleFinished.run()
+    private fun updateAnimation() {
+        animation = AnimationBuilder()
+                .onCycleFinished {
+                    if (animation.cycleCount > 1) {
+                        currentFrame = 0
+                        updateImage()
+                    }
+
+                    onCycleFinished.run()
+                }
+                .duration(Duration.seconds(animationChannel.frameDuration * animationChannel.sequence.size))
+                .interpolator(interpolator)
+                .animate(AnimatedValue(0, animationChannel.sequence.size - 1))
+                .onProgress { frameNum ->
+                    currentFrame = min(frameNum, animationChannel.sequence.size - 1)
+                    updateImage()
+                }
+                .build()
     }
 }
