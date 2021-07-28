@@ -26,8 +26,8 @@ class FileSystemService : EngineService() {
 
     private val log = Logger.get(javaClass)
 
-    @Inject("isDesktop")
-    private var isDesktop = true
+    @Inject("isMobile")
+    private var isMobile = false
 
     @Inject("isFileSystemWriteAllowed")
     private var isFileSystemWriteAllowed = true
@@ -35,7 +35,7 @@ class FileSystemService : EngineService() {
     private lateinit var fs: FileSystemAccess
 
     override fun onInit() {
-        val rootStorage = if (isDesktop)
+        val rootStorage = if (!isMobile)
             File(System.getProperty("user.dir") + "/")
         else
             StorageService.create()

@@ -653,6 +653,9 @@ class ReadOnlyGameSettings internal constructor(
     val isMobile: Boolean
         get() = platform.isMobile
 
+    val isEmbedded: Boolean
+        get() = platform.isEmbedded
+
     val isBrowser: Boolean
         get() = platform.isBrowser
 

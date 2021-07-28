@@ -21,6 +21,9 @@ enum class Platform {
     val isDesktop: Boolean
         get() = this === WINDOWS || this === MAC || this === LINUX
 
+    val isEmbedded: Boolean
+        get() = this === EMBEDDED
+
     companion object {
         @JvmStatic fun get(): Platform {
             // check if running on mobile first
