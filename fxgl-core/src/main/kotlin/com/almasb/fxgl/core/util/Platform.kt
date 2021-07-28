@@ -10,7 +10,7 @@ package com.almasb.fxgl.core.util
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 enum class Platform {
-    WINDOWS, MAC, LINUX, ANDROID, IOS, BROWSER;
+    WINDOWS, MAC, LINUX, ANDROID, IOS, BROWSER, EMBEDDED;
 
     val isBrowser: Boolean
         get() = this === BROWSER
@@ -34,7 +34,15 @@ enum class Platform {
                 return ANDROID
             }
 
-            // if we got here then not running on mobile
+            // check if running on embedded
+            val monoclePlatformName = System.getProperty("monocle.platform", "")
+            val glassPlatformName = System.getProperty("glass.platform", "")
+
+            if (monoclePlatformName == "EGL" && glassPlatformName == "Monocle") {
+                return EMBEDDED
+            }
+
+            // if we got here then not running on mobile or embedded
             val osName = System.getProperty("os.name")
 
             if (osName.contains("mac", ignoreCase = true)) {
