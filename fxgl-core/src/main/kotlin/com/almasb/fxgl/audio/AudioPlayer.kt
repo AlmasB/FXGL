@@ -189,7 +189,7 @@ class AudioPlayer : EngineService() {
         stopAllMusic()
     }
 
-    fun loadAudio(audioType: AudioType, url: URL, isDesktop: Boolean): Audio {
-        return loader.loadAudio(audioType, url, isDesktop)
+    fun loadAudio(audioType: AudioType, url: URL, isMobile: Boolean): Audio {
+        return loader.loadAudio(audioType, url, isMobile)
     }
 }

@@ -30,7 +30,7 @@ class AudioLoaderTest {
 
     @Test
     fun `Load sound file`() {
-        val audio = loader.loadAudio(AudioType.SOUND, javaClass.getResource("sound_effect.wav"), isDesktop = true)
+        val audio = loader.loadAudio(AudioType.SOUND, javaClass.getResource("sound_effect.wav"), isMobile = false)
 
         assertThat(audio, `is`(not(getDummyAudio())))
     }
@@ -39,7 +39,7 @@ class AudioLoaderTest {
     @EnabledOnOs(OS.WINDOWS)
     @Test
     fun `Loading on mobile does not crash if Attach is not present`() {
-        val audio = loader.loadAudio(AudioType.SOUND, javaClass.getResource("sound_effect.wav"), isDesktop = false)
+        val audio = loader.loadAudio(AudioType.SOUND, javaClass.getResource("sound_effect.wav"), isMobile = true)
 
         assertThat(audio, `is`(getDummyAudio()))
     }

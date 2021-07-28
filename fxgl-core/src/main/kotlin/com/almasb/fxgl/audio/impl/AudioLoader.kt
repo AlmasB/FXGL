@@ -19,9 +19,9 @@ interface AudioLoader {
      * Perform an IO operation to load an audio object from [resourceURL] as a given [type].
      * No caching is done by this method -- the IO operation will take place on each call.
      *
-     * @param isDesktop if we are loading on a desktop platform
+     * @param isMobile if we are loading on a mobile platform
      */
-    fun loadAudio(type: AudioType, resourceURL: URL, isDesktop: Boolean): Audio
+    fun loadAudio(type: AudioType, resourceURL: URL, isMobile: Boolean): Audio
 
     /**
      * Release native resources associated with [audio].
