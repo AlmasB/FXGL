@@ -4,7 +4,7 @@
 
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>dev-SNAPSHOT</version>
+    <version>11+dev-SNAPSHOT</version>
     
     <packaging>pom</packaging>
 
@@ -141,6 +141,10 @@
                     <version>${maven.compiler.version}</version>
                     <configuration>
                         <release>${source.version}</release>
+                        <compilerArgs>
+                            <arg>--module-version</arg>
+                            <arg>${project.version}</arg>
+                        </compilerArgs>
                     </configuration>
                 </plugin>
 
