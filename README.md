@@ -53,6 +53,7 @@ For a quick dive into code, see standalone [basic examples](https://github.com/A
 Otherwise, see:
 
 * [Showcase Trailer](https://youtu.be/fuDQg7W0v4g)
+* [Use FXGL with IntelliJ](https://youtu.be/LhmlFC6KE2Q)
 * [Wiki & written tutorials](https://github.com/AlmasB/FXGL/wiki)
 * [YouTube tutorials](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
 * [Sample code demos](fxgl-samples)
