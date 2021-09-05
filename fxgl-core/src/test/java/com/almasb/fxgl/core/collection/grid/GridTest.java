@@ -6,9 +6,6 @@
 
 package com.almasb.fxgl.core.collection.grid;
 
-import com.almasb.fxgl.core.collection.grid.Cell;
-import com.almasb.fxgl.core.collection.grid.CellGenerator;
-import com.almasb.fxgl.core.collection.grid.Grid;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,13 +15,9 @@ import java.util.Random;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("java:S5786")
 public class GridTest {
 
     private static final int GRID_SIZE = 20;
@@ -80,6 +73,45 @@ public class GridTest {
         var data = grid.getData();
 
         assertThat(data.length, is(GRID_SIZE));
+    }
+
+    @Test
+    public void testGetOptionalByPixels() {
+        // div by 0
+        grid = new MockGridWithCellSize(GRID_SIZE, GRID_SIZE, 0, CELL_HEIGHT);
+        assertThat(grid.getOptionalByPixels(0, 0).isPresent(), is(false));
+
+        // div by 0
+        grid = new MockGridWithCellSize(GRID_SIZE, GRID_SIZE, CELL_WIDTH, 0);
+        assertThat(grid.getOptionalByPixels(0, 0).isPresent(), is(false));
+
+        // normal use case
+        grid = new MockGridWithCellSize(GRID_SIZE, GRID_SIZE, CELL_WIDTH, CELL_HEIGHT);
+
+        var cell = grid.getOptionalByPixels(0, 0).get();
+
+        assertThat(cell.getX(), is(0));
+        assertThat(cell.getY(), is(0));
+
+        // x = 9, y = 14 is still cell 0,0 because of width and height above
+        cell = grid.getOptionalByPixels(9, 14).get();
+
+        assertThat(cell.getX(), is(0));
+        assertThat(cell.getY(), is(0));
+
+        cell = grid.getOptionalByPixels(25, 14).get();
+
+        assertThat(cell.getX(), is(2));
+        assertThat(cell.getY(), is(0));
+
+        // 30 is 15 + 15 (between cells, but bias towards rounding up)
+        cell = grid.getOptionalByPixels(25, 30).get();
+
+        assertThat(cell.getX(), is(2));
+        assertThat(cell.getY(), is(2));
+
+        // outside
+        assertThat(grid.getOptionalByPixels(201, 14).isPresent(), is(false));
     }
 
     @Test
@@ -181,6 +213,13 @@ public class GridTest {
 
         public MockCell(int x, int y) {
             super(x, y);
+        }
+    }
+
+    public static class MockGridWithCellSize extends Grid<MockCell> {
+
+        public MockGridWithCellSize(int width, int height, int cW, int cH) {
+            super(MockCell.class, width, height, cW, cH, MockCell::new);
         }
     }
 
