@@ -24,8 +24,8 @@ public class FrictionJoint extends Joint {
     private final Vec2 m_localAnchorB;
 
     // Solver shared
-    private final Vec2 m_linearImpulse;
-    private float m_angularImpulse;
+    private final Vec2 m_linearImpulse = new Vec2();
+    private float m_angularImpulse = 0.0f;
     private float m_maxForce;
     private float m_maxTorque;
 
@@ -43,13 +43,11 @@ public class FrictionJoint extends Joint {
     private final Mat22 m_linearMass = new Mat22();
     private float m_angularMass;
 
-    protected FrictionJoint(IWorldPool argWorldPool, FrictionJointDef def) {
-        super(argWorldPool, def);
+    protected FrictionJoint(IWorldPool worldPool, FrictionJointDef def) {
+        super(worldPool, def);
+
         m_localAnchorA = new Vec2(def.localAnchorA);
         m_localAnchorB = new Vec2(def.localAnchorB);
-
-        m_linearImpulse = new Vec2();
-        m_angularImpulse = 0.0f;
 
         m_maxForce = def.maxForce;
         m_maxTorque = def.maxTorque;
@@ -101,9 +99,6 @@ public class FrictionJoint extends Joint {
         return m_maxTorque;
     }
 
-    /**
-     * @see com.almasb.fxgl.physics.box2d.dynamics.joints.Joint#initVelocityConstraints(com.almasb.fxgl.physics.box2d.dynamics.TimeStep)
-     */
     @Override
     public void initVelocityConstraints(final SolverData data) {
         m_indexA = m_bodyA.m_islandIndex;
