@@ -7,19 +7,16 @@ package com.almasb.fxgl.physics.box2d.pooling;
 
 public abstract class MutableStack<E> implements IDynamicStack<E> {
 
-    private E[] stack;
-    private int index;
+    private E[] stack = null;
+    private int index = 0;
     private int size;
 
-    public MutableStack(int argInitSize) {
-        index = 0;
-        stack = null;
-        index = 0;
-        extendStack(argInitSize);
+    public MutableStack(int initialSize) {
+        extendStack(initialSize);
     }
 
-    private void extendStack(int argSize) {
-        E[] newStack = newArray(argSize);
+    private void extendStack(int newSize) {
+        E[] newStack = newArray(newSize);
         if (stack != null) {
             System.arraycopy(stack, 0, newStack, 0, size);
         }
