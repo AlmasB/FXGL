@@ -190,10 +190,8 @@ class ContactManager implements PairCallback {
     }
 
     void destroy(Contact c) {
-        Fixture fixtureA = c.getFixtureA();
-        Fixture fixtureB = c.getFixtureB();
-        Body bodyA = fixtureA.getBody();
-        Body bodyB = fixtureB.getBody();
+        Body bodyA = c.getFixtureA().getBody();
+        Body bodyB = c.getFixtureB().getBody();
 
         if (contactListener != null && c.isTouching()) {
             contactListener.endContact(c);
