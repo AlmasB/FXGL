@@ -550,7 +550,6 @@ public final class Body {
             return;
         }
 
-        m_invMass = 0;
         m_I = 0;
         m_invI = 0;
 
