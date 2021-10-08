@@ -244,9 +244,6 @@ public final class Body {
     public void destroyFixture(Fixture fixture) {
         world.assertNotLocked();
 
-        assert fixture.getBody() == this;
-        assert fixtures.contains(fixture);
-
         fixtures.remove(fixture);
 
         // Destroy any contacts associated with the fixture.
