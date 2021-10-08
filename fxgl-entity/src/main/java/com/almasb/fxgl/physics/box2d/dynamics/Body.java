@@ -252,10 +252,7 @@ public final class Body {
             Contact c = edge.contact;
             edge = edge.next;
 
-            Fixture fixtureA = c.getFixtureA();
-            Fixture fixtureB = c.getFixtureB();
-
-            if (fixture == fixtureA || fixture == fixtureB) {
+            if (fixture == c.getFixtureA() || fixture == c.getFixtureB()) {
                 // This destroys the contact and removes it from this body's contact list.
                 world.getContactManager().destroy(c);
             }
