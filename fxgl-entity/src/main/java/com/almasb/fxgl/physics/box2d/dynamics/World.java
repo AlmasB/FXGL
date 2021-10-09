@@ -160,15 +160,7 @@ public final class World {
 
         // If the joint prevents collisions, then flag any contacts for filtering.
         if (!def.isBodyCollisionAllowed()) {
-            ContactEdge edge = bodyB.getContactList();
-            while (edge != null) {
-                if (edge.other == bodyA) {
-                    // Flag the contact for filtering at the next time step (where either body is awake).
-                    edge.contact.flagForFiltering();
-                }
-
-                edge = edge.next;
-            }
+            flagContactsForFiltering(bodyA, bodyB);
         }
 
         return j;
@@ -244,15 +236,19 @@ public final class World {
 
         // If the joint prevents collisions, then flag any contacts for filtering.
         if (!collideConnected) {
-            ContactEdge edge = bodyB.getContactList();
-            while (edge != null) {
-                if (edge.other == bodyA) {
-                    // Flag the contact for filtering at the next time step (where either body is awake).
-                    edge.contact.flagForFiltering();
-                }
+            flagContactsForFiltering(bodyA, bodyB);
+        }
+    }
 
-                edge = edge.next;
+    private void flagContactsForFiltering(Body bodyA, Body bodyB) {
+        ContactEdge edge = bodyB.getContactList();
+        while (edge != null) {
+            if (edge.other == bodyA) {
+                // Flag the contact for filtering at the next time step (where either body is awake).
+                edge.contact.flagForFiltering();
             }
+
+            edge = edge.next;
         }
     }
 
