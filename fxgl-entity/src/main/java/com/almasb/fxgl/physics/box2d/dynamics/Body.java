@@ -1127,12 +1127,10 @@ public final class Body {
     }
 
     void synchronizeTransform() {
-        // m_xf.q.set(m_sweep.a);
-        //
-        // // m_xf.position = m_sweep.c - Mul(m_xf.R, m_sweep.localCenter);
+        // m_xf.position = m_sweep.c - Mul(m_xf.R, m_sweep.localCenter);
         // Rot.mulToOutUnsafe(m_xf.q, m_sweep.localCenter, m_xf.p);
         // m_xf.p.mulLocal(-1).addLocal(m_sweep.c);
-        //
+
         m_xf.q.set(m_sweep.a);
         Rotation q = m_xf.q;
         Vec2 v = m_sweep.localCenter;
