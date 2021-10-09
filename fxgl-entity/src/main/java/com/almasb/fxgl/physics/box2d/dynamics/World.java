@@ -240,7 +240,6 @@ public final class World {
 
         Joint.destroy(j);
 
-        assert jointCount > 0;
         --jointCount;
 
         // If the joint prevents collisions, then flag any contacts for filtering.
