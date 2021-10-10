@@ -100,7 +100,7 @@ public final class ContactSolver {
             ContactVelocityConstraint vc = m_velocityConstraints[i];
             vc.friction = contact.m_friction;
             vc.restitution = contact.m_restitution;
-            vc.tangentSpeed = contact.m_tangentSpeed;
+            vc.tangentSpeed = contact.getTangentSpeed();
             vc.indexA = bodyA.m_islandIndex;
             vc.indexB = bodyB.m_islandIndex;
             vc.invMassA = bodyA.m_invMass;

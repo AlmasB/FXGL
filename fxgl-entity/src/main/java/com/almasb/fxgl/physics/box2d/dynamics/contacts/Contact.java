@@ -62,7 +62,7 @@ public abstract class Contact {
     public float m_friction;
     public float m_restitution;
 
-    public float m_tangentSpeed;
+    private float m_tangentSpeed;
 
     protected final IWorldPool pool;
 
