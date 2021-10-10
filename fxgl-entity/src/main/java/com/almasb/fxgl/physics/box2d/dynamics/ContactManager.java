@@ -328,7 +328,7 @@ class ContactManager implements PairCallback {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
-        if (contact.m_manifold.pointCount > 0 && !fixtureA.isSensor() && !fixtureB.isSensor()) {
+        if (contact.getManifold().pointCount > 0 && !fixtureA.isSensor() && !fixtureB.isSensor()) {
             fixtureA.getBody().setAwake(true);
             fixtureB.getBody().setAwake(true);
         }

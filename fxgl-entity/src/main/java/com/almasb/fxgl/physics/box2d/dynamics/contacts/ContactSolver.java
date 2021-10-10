@@ -98,8 +98,8 @@ public final class ContactSolver {
             assert pointCount > 0;
 
             ContactVelocityConstraint vc = m_velocityConstraints[i];
-            vc.friction = contact.m_friction;
-            vc.restitution = contact.m_restitution;
+            vc.friction = contact.getFriction();
+            vc.restitution = contact.getRestitution();
             vc.tangentSpeed = contact.getTangentSpeed();
             vc.indexA = bodyA.m_islandIndex;
             vc.indexB = bodyB.m_islandIndex;

@@ -54,13 +54,13 @@ public abstract class Contact {
     public int m_indexA;
     public int m_indexB;
 
-    public final Manifold m_manifold = new Manifold();
+    private final Manifold m_manifold = new Manifold();
 
     public float m_toiCount;
     public float m_toi;
 
-    public float m_friction;
-    public float m_restitution;
+    private float m_friction;
+    private float m_restitution;
 
     private float m_tangentSpeed;
 
