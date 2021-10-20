@@ -161,11 +161,9 @@ class Island {
     void init(int bodyCapacity, int contactCapacity, int jointCapacity, ContactListener listener) {
         this.bodyCapacity = bodyCapacity;
         this.contactCapacity = contactCapacity;
-        bodyCount = 0;
-        contactCount = 0;
-        jointCount = 0;
-
         this.listener = listener;
+
+        clear();
 
         if (bodies == null || bodyCapacity > bodies.length) {
             bodies = new Body[bodyCapacity];
