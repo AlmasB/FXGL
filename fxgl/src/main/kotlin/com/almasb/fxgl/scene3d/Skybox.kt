@@ -15,7 +15,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.transform.Rotate
 
 /**
- *
+ * TODO: CanvasSkybox, NodeSkybox
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class SkyboxBuilder(val width: Int,
@@ -50,6 +50,30 @@ class SkyboxBuilder(val width: Int,
 
     fun bot(imageName: String) = this.also {
         bot = image(imageName)
+    }
+
+    fun front(image: Image) = this.also {
+        front = image
+    }
+
+    fun back(image: Image) = this.also {
+        back = image
+    }
+
+    fun left(image: Image) = this.also {
+        left = image
+    }
+
+    fun right(image: Image) = this.also {
+        right = image
+    }
+
+    fun top(image: Image) = this.also {
+        top = image
+    }
+
+    fun bot(image: Image) = this.also {
+        bot = image
     }
 
     fun build(): Skybox {
