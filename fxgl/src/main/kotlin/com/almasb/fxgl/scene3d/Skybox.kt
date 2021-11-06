@@ -10,16 +10,15 @@ import com.almasb.fxgl.dsl.image
 import com.almasb.fxgl.texture.getDummyImage
 import javafx.scene.Group
 import javafx.scene.Node
+import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.transform.Rotate
 
 /**
- * TODO: CanvasSkybox, NodeSkybox
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class SkyboxBuilder(val width: Int,
-                    val height: Int) {
+class SkyboxBuilder(val size: Int) {
 
     private var front: Image = getDummyImage()
     private var back: Image = getDummyImage()
@@ -76,10 +75,9 @@ class SkyboxBuilder(val width: Int,
         bot = image
     }
 
-    fun build(): Skybox {
-        return Skybox(
-                width,
-                height,
+    fun buildImageSkybox(): ImageSkybox {
+        return ImageSkybox(
+                size,
                 front,
                 back,
                 left,
@@ -88,24 +86,40 @@ class SkyboxBuilder(val width: Int,
                 bot
         )
     }
+
+    fun buildCanvasSkybox(): CanvasSkybox {
+        return CanvasSkybox(size)
+    }
 }
 
-class Skybox(
-        val width: Int,
-        val height: Int,
-        val front: Image,
-        val back: Image,
-        val left: Image,
-        val right: Image,
-        val top: Image,
-        val bot: Image
-) : Group() {
+/**
+ * A generic skybox whose sides consist of Node objects.
+ */
+open class NodeSkybox(val size: Int) : Group() {
+
+    val front = Group()
+    val back = Group()
+    val left = Group()
+    val right = Group()
+    val top = Group()
+    val bot = Group()
+
+    val scale = 32.0
+
+    // TODO: once enabled, translate "t" value should also be dynamically adjusted
+//    var scale = 32.0
+//        set(value) {
+//            field = value
+//
+//            children.forEach {
+//                it.scaleX = value
+//                it.scaleY = value
+//            }
+//        }
 
     init {
-        // TODO: use both width and height
-        // TODO: why 32?
-        val size = width * 32
-        val t = size / 2.0
+        val sizeX = size * scale
+        val t = sizeX / 2.0
 
         children.addAll(
                 toView(front).also {
@@ -139,13 +153,56 @@ class Skybox(
         )
     }
 
-    private fun toView(image: Image): Node {
-        val view = ImageView(image)
+    private fun toView(node: Node): Node {
+        node.scaleX = scale
+        node.scaleY = scale
 
-        // TODO: scale differently?
-        view.isSmooth = true
-        view.scaleX = 32.0
-        view.scaleY = 32.0
-        return view
+        return node
+    }
+}
+
+/**
+ * A skybox whose sides are Canvas objects, to which users can draw.
+ */
+class CanvasSkybox(size: Int) : NodeSkybox(size) {
+
+    val frontCanvas = Canvas(size.toDouble(), size.toDouble())
+    val backCanvas = Canvas(size.toDouble(), size.toDouble())
+    val leftCanvas = Canvas(size.toDouble(), size.toDouble())
+    val rightCanvas = Canvas(size.toDouble(), size.toDouble())
+    val topCanvas = Canvas(size.toDouble(), size.toDouble())
+    val botCanvas = Canvas(size.toDouble(), size.toDouble())
+
+    init {
+        front.children += frontCanvas
+        back.children += backCanvas
+        left.children += leftCanvas
+        right.children += rightCanvas
+        top.children += topCanvas
+        bot.children += botCanvas
+    }
+}
+
+class ImageSkybox(
+        size: Int,
+        front: Image,
+        back: Image,
+        left: Image,
+        right: Image,
+        top: Image,
+        bot: Image
+) : NodeSkybox(size) {
+
+    init {
+        this.front.children += toView(front)
+        this.back.children += toView(back)
+        this.left.children += toView(left)
+        this.right.children += toView(right)
+        this.top.children += toView(top)
+        this.bot.children += toView(bot)
+    }
+
+    private fun toView(image: Image): Node {
+        return ImageView(image)
     }
 }
