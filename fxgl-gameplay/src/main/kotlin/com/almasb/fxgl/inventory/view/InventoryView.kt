@@ -6,6 +6,7 @@
 package com.almasb.fxgl.inventory.view
 
 import com.almasb.fxgl.inventory.Inventory
+import javafx.collections.FXCollections
 import javafx.scene.Parent
 import javafx.scene.layout.VBox
 
@@ -22,7 +23,7 @@ class InventoryView<T>(inventory: Inventory<T>) : Parent(){
         box.translateX = 25.0
         box.translateY = 25.0
 
-        listView = InventoryListView(inventory.itemsProperty(), inventory)
+        listView = InventoryListView(FXCollections.observableArrayList(inventory.itemsProperty().map { it.userItem }), inventory)
         listView.translateX = 10.0
         listView.translateY = 25.0
 
