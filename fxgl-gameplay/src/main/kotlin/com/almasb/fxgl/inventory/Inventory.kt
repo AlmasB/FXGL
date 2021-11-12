@@ -92,7 +92,7 @@ class Inventory<T>(
 
     /**
      * Add [item] to inventory, dynamically creating stacks based on [config].
-     * If [item] (as checked by identity) is already present, then its quantity is increased by [quantity].
+     * If [item] (as checked by hashCode()) is already present, then its quantity is increased by [quantity].
      *
      * @return false if could not add item, otherwise true
      */
@@ -146,7 +146,7 @@ class Inventory<T>(
      * If you only want to reduce quantity, use [incrementQuantity] with negative amount instead.
      */
     fun remove(item: T) {
-        items.removeIf { it.userItem === item }
+        items.removeIf { it.userItem == item }
         itemsData -= item
     }
 
@@ -163,7 +163,7 @@ class Inventory<T>(
 
         // check if we can actually add
         if (amount > 0 && data.maxStackQuantity < Int.MAX_VALUE) {
-            val maxPossibleQuantityForItem = numFreeStacks * data.maxStackQuantity + items.filter { it.userItem === item }.size
+            val maxPossibleQuantityForItem = numFreeStacks * data.maxStackQuantity + items.filter { it.userItem == item }.size
 
             if (amount + data.quantity > maxPossibleQuantityForItem) {
                 return false
@@ -175,7 +175,7 @@ class Inventory<T>(
         // if all good, update stacks
         if (isOK) {
             // remove non-existent stacks
-            items.removeIf { it !in data.stacks }
+            items.removeIf { it.userItem == item && it !in data.stacks }
 
             // add newly created stacks
             data.stacks.forEach {
