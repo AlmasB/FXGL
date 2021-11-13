@@ -129,6 +129,14 @@ class PrimitiveComponentsTest {
         assertTrue(c.value)
     }
 
+    @Test
+    fun `TimeComponent copy`() {
+        val time = TimeComponent(2.5)
+        val copy = time.copy()
+
+        assertThat(copy.value, `is`(2.5))
+    }
+
     class SimpleBooleanComponent : BooleanComponent()
     class SimpleIntegerComponent : IntegerComponent()
     class SimpleDoubleComponent : DoubleComponent()
