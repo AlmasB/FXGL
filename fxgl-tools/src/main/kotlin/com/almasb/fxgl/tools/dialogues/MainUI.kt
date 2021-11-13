@@ -74,7 +74,7 @@ class MainUI : BorderPane() {
         contextMenuAdd.addItem("Node (CTRL+Left Click)") { currentTab?.pane?.openAddNodeDialog() }
 
         val contextMenuHelp = FXGLContextMenu()
-        //contextMenuHelp.addItem("Updates") { }
+        contextMenuHelp.addItem("Check for Updates...") { FXGL.getFXApp().hostServices.showDocument("https://fxgl.itch.io/fxgl-dialogue-editor") }
         contextMenuHelp.addItem("About") { openAboutDialog() }
 
         val pane = Pane(tabPane, toolbar)
