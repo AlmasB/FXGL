@@ -18,6 +18,10 @@ import static com.almasb.fxgl.tools.dialogues.DialogueEditorVars.*;
 
 /**
  * A dialogue editor for FXGL.
+ * Build:
+ * cd fxgl-tools
+ * mvn compile
+ * mvn javafx:jlink
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -28,7 +32,7 @@ public class DialogueEditorApp extends GameApplication {
         settings.setWidth(1600);
         settings.setHeight(900);
         settings.setTitle("FXGL Dialogue Editor - github.com/AlmasB/FXGL");
-        settings.setVersion("1.0.1-beta");
+        settings.setVersion("1.0.2-beta");
         settings.getCSSList().add("dialogue_editor.css");
         settings.setIntroEnabled(false);
         settings.setMainMenuEnabled(false);
