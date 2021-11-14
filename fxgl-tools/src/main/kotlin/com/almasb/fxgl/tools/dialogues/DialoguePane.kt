@@ -147,6 +147,15 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
         mouseGestures.makeDraggable(selectionRect) {
             selectionStart = Point2D(selectionRect.layoutX, selectionRect.layoutY)
+
+            performUIAction(BulkAction(
+                    selectedNodeViews.map {
+                        val layoutX = it.properties["startLayoutX"] as Double
+                        val layoutY = it.properties["startLayoutY"] as Double
+
+                        MoveNodeAction(it.node, this::getNodeView, layoutX, layoutY, it.layoutX, it.layoutY)
+                    }
+            ))
         }
 
         selectionRect.layoutXProperty().addListener { _, prevX, layoutX ->
@@ -217,6 +226,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
             isSelectingRectangle = false
             selectedNodeViews.addAll(selectionRect.getSelectedNodesIn(nodeViews, NodeView::class.java))
+
+            selectedNodeViews.forEach {
+                it.properties["startLayoutX"] = it.layoutX
+                it.properties["startLayoutY"] = it.layoutY
+            }
 
             if (selectedNodeViews.isEmpty()) {
                 selectionRect.isVisible = false

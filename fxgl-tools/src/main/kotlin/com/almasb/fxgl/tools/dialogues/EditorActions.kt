@@ -28,7 +28,21 @@ interface EditorAction {
 // * remove node (and its incident edges)
 // * add edge
 // * remove edge
+// * bulk action
 // * TODO: node text editing
+
+class BulkAction(
+        private val actions: List<EditorAction>
+) : EditorAction {
+
+    override fun run() {
+        actions.forEach { it.run() }
+    }
+
+    override fun undo() {
+        actions.forEach { it.undo() }
+    }
+}
 
 class MoveNodeAction(
         private val node: DialogueNode,
