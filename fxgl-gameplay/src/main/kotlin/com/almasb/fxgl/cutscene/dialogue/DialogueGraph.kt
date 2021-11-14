@@ -129,6 +129,22 @@ class DialogueGraph(
         edges.removeIf { it.source === node || it.target === node }
     }
 
+    fun addEdge(edge: DialogueEdge) {
+        if (edge is DialogueChoiceEdge) {
+            addChoiceEdge(edge.source, edge.optionID, edge.target)
+        } else {
+            addEdge(edge.source, edge.target)
+        }
+    }
+
+    fun removeEdge(edge: DialogueEdge) {
+        if (edge is DialogueChoiceEdge) {
+            removeChoiceEdge(edge.source, edge.optionID, edge.target)
+        } else {
+            removeEdge(edge.source, edge.target)
+        }
+    }
+
     /**
      * Adds a dialogue edge between [source] and [target].
      */

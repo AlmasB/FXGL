@@ -141,6 +141,39 @@ class DialogueGraphTest {
     }
 
     @Test
+    fun `Add and remove edges via edge object`() {
+        val node1 = TextNode("")
+        val node2 = TextNode("")
+        val edge = DialogueEdge(node1, node2)
+        val choiceEdge = DialogueChoiceEdge(node1, 0, node2)
+
+        graph.addNode(node1)
+        graph.addNode(node2)
+        graph.addEdge(edge)
+
+        assertThat(graph.edges.size, `is`(1))
+        assertThat(graph.edges[0].source, `is`<DialogueNode>(node1))
+        assertThat(graph.edges[0].target, `is`<DialogueNode>(node2))
+
+        graph.removeEdge(edge)
+
+        assertTrue(graph.edges.isEmpty())
+
+        // choice
+
+        graph.addEdge(choiceEdge)
+
+        assertThat(graph.edges.size, `is`(1))
+        assertThat(graph.edges[0].source, `is`<DialogueNode>(node1))
+        assertThat(graph.edges[0].target, `is`<DialogueNode>(node2))
+        assertThat((graph.edges[0] as DialogueChoiceEdge).optionID, `is`(0))
+
+        graph.removeEdge(choiceEdge)
+
+        assertTrue(graph.edges.isEmpty())
+    }
+
+    @Test
     fun `Copy`() {
         val node1 = ChoiceNode("")
         val node2 = TextNode("")
