@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.tools.dialogues
 
+import com.almasb.fxgl.cutscene.dialogue.DialogueEdge
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraph
 import com.almasb.fxgl.cutscene.dialogue.DialogueNode
 
@@ -28,6 +29,25 @@ interface EditorAction {
 // * add edge
 // * remove edge
 
+class MoveNodeAction(
+        private val nodeView: NodeView,
+        private val startX: Double,
+        private val startY: Double,
+        private val endX: Double,
+        private val endY: Double
+) : EditorAction {
+
+    override fun run() {
+        nodeView.layoutX = endX
+        nodeView.layoutY = endY
+    }
+
+    override fun undo() {
+        nodeView.layoutX = startX
+        nodeView.layoutY = startY
+    }
+}
+
 class AddNodeAction(
         private val graph: DialogueGraph,
         private val node: DialogueNode
@@ -45,3 +65,32 @@ class AddNodeAction(
         return "AddNode(${node.type})"
     }
 }
+
+
+
+//class RemoveNodeAction(
+//        private val graph: DialogueGraph,
+//        private val node: DialogueNode
+//) : EditorAction {
+//
+//    private val edges = arrayListOf<DialogueEdge>()
+//
+//    override fun run() {
+//        graph.edges.filter { it.source === node || it.target === node }
+//                .forEach { edges += it }
+//
+//        graph.removeNode(node)
+//    }
+//
+//    override fun undo() {
+//        graph.addNode(node)
+//
+//        edges.forEach {
+//            if (it.target === node) {
+//                graph.addEdge()
+//
+//                graph.addChoiceEdge()
+//            }
+//        }
+//    }
+//}

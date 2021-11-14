@@ -459,6 +459,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         mouseGestures.makeDraggable(nodeView) {
             if (getb(IS_SNAP_TO_GRID))
                 snapToGrid(nodeView)
+
+            val startLayoutX = nodeView.properties["startLayoutX"] as Double
+            val startLayoutY = nodeView.properties["startLayoutY"] as Double
+
+            performUIAction(MoveNodeAction(nodeView, startLayoutX, startLayoutY, nodeView.layoutX, nodeView.layoutY))
         }
 
         nodeView.cursor = Cursor.MOVE
