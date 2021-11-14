@@ -28,9 +28,11 @@ interface EditorAction {
 // * remove node (and its incident edges)
 // * add edge
 // * remove edge
+// * TODO: node text editing
 
 class MoveNodeAction(
-        private val nodeView: NodeView,
+        private val node: DialogueNode,
+        private val newNodeViewGetter: (DialogueNode) -> NodeView,
         private val startX: Double,
         private val startY: Double,
         private val endX: Double,
@@ -38,11 +40,15 @@ class MoveNodeAction(
 ) : EditorAction {
 
     override fun run() {
+        val nodeView = newNodeViewGetter(node)
+
         nodeView.layoutX = endX
         nodeView.layoutY = endY
     }
 
     override fun undo() {
+        val nodeView = newNodeViewGetter(node)
+
         nodeView.layoutX = startX
         nodeView.layoutY = startY
     }
@@ -66,32 +72,37 @@ class AddNodeAction(
     }
 }
 
-//class RemoveNodeAction(
-//        private val graph: DialogueGraph,
-//        private val node: DialogueNode
-//) : EditorAction {
-//
-//    private val edges = arrayListOf<DialogueEdge>()
-//
-//    override fun run() {
-//        graph.edges.filter { it.source === node || it.target === node }
-//                .forEach { edges += it }
-//
-//        graph.removeNode(node)
-//    }
-//
-//    override fun undo() {
-//        graph.addNode(node)
-//
-//        edges.forEach {
-//            if (it.target === node) {
-//                graph.addEdge()
-//
-//                graph.addChoiceEdge()
-//            }
-//        }
-//    }
-//}
+class RemoveNodeAction(
+        private val graph: DialogueGraph,
+        private val node: DialogueNode,
+
+        // where the node was during removal
+        private val layoutX: Double,
+        private val layoutY: Double,
+
+        // the newly created one (via undo) can be accessed through this
+        private val newNodeViewGetter: (DialogueNode) -> NodeView
+) : EditorAction {
+
+    private val edges = arrayListOf<DialogueEdge>()
+
+    override fun run() {
+        graph.edges.filter { it.source === node || it.target === node }
+                .forEach { edges += it }
+
+        graph.removeNode(node)
+    }
+
+    override fun undo() {
+        graph.addNode(node)
+
+        newNodeViewGetter(node).relocate(layoutX, layoutY)
+
+        edges.forEach {
+            graph.addEdge(it)
+        }
+    }
+}
 
 class AddEdgeAction(
         private val graph: DialogueGraph,

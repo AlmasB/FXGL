@@ -473,7 +473,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
             val startLayoutY = nodeView.properties["startLayoutY"] as Double
 
             if (startLayoutX != nodeView.layoutX || startLayoutY != nodeView.layoutY) {
-                performUIAction(MoveNodeAction(nodeView, startLayoutX, startLayoutY, nodeView.layoutX, nodeView.layoutY))
+                performUIAction(MoveNodeAction(nodeView.node, this::getNodeView, startLayoutX, startLayoutY, nodeView.layoutX, nodeView.layoutY))
             }
         }
 
@@ -481,7 +481,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         nodeView.closeButton.cursor = Cursor.HAND
 
         nodeView.closeButton.setOnMouseClicked {
-            graph.removeNode(nodeView.node)
+            performUIAction(RemoveNodeAction(graph, nodeView.node, nodeView.layoutX, nodeView.layoutY, this::getNodeView))
         }
 
         nodeView.outPoints.forEach { outPoint ->

@@ -64,7 +64,7 @@ class MainUI : BorderPane() {
         contextMenuFile.addItem("Exit") { getGameController().exit() }
 
         val contextMenuEdit = FXGLContextMenu()
-        //contextMenuEdit.addItem("Undo (CTRL+Z)") { undo() }
+        contextMenuEdit.addItem("Undo (CTRL+Z)") { undo() }
         //contextMenuEdit.addItem("Redo") { redo() }
         //contextMenuEdit.addItem("Copy (CTRL+C)") {  }
         //contextMenuEdit.addItem("Paste (CTRL+V)") {  }
