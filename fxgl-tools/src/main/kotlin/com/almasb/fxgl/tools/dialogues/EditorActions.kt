@@ -66,8 +66,6 @@ class AddNodeAction(
     }
 }
 
-
-
 //class RemoveNodeAction(
 //        private val graph: DialogueGraph,
 //        private val node: DialogueNode
@@ -94,3 +92,65 @@ class AddNodeAction(
 //        }
 //    }
 //}
+
+class AddEdgeAction(
+        private val graph: DialogueGraph,
+        private val source: DialogueNode,
+        private val target: DialogueNode
+) : EditorAction {
+
+    override fun run() {
+        graph.addEdge(source, target)
+    }
+
+    override fun undo() {
+        graph.removeEdge(source, target)
+    }
+}
+
+class AddChoiceEdgeAction(
+        private val graph: DialogueGraph,
+        private val source: DialogueNode,
+        private val optionID: Int,
+        private val target: DialogueNode
+) : EditorAction {
+
+    override fun run() {
+        graph.addChoiceEdge(source, optionID, target)
+    }
+
+    override fun undo() {
+        graph.removeChoiceEdge(source, optionID, target)
+    }
+}
+
+class RemoveEdgeAction(
+        private val graph: DialogueGraph,
+        private val source: DialogueNode,
+        private val target: DialogueNode
+) : EditorAction {
+
+    override fun run() {
+        graph.removeEdge(source, target)
+    }
+
+    override fun undo() {
+        graph.addEdge(source, target)
+    }
+}
+
+class RemoveChoiceEdgeAction(
+        private val graph: DialogueGraph,
+        private val source: DialogueNode,
+        private val optionID: Int,
+        private val target: DialogueNode
+) : EditorAction {
+
+    override fun run() {
+        graph.removeChoiceEdge(source, optionID, target)
+    }
+
+    override fun undo() {
+        graph.addChoiceEdge(source, optionID, target)
+    }
+}

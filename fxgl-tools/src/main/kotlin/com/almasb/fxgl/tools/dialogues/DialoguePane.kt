@@ -242,9 +242,18 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         graph.addEdge(start, mid)
         graph.addEdge(mid, end)
 
-        getNodeView(start).relocate(50.0, getAppHeight() / 2.0)
-        getNodeView(mid).relocate((getAppWidth() - 370.0 + 50) / 2.0, getAppHeight() / 2.0)
-        getNodeView(end).relocate(getAppWidth() - 370.0, getAppHeight() / 2.0)
+        getNodeView(start).also {
+            it.relocate(50.0, getAppHeight() / 2.0)
+            snapToGrid(it)
+        }
+        getNodeView(mid).also {
+            it.relocate((getAppWidth() - 370.0 + 50) / 2.0, getAppHeight() / 2.0)
+            snapToGrid(it)
+        }
+        getNodeView(end).also {
+            it.relocate(getAppWidth() - 370.0, getAppHeight() / 2.0)
+            snapToGrid(it)
+        }
     }
 
     private fun initContextMenu() {
@@ -463,7 +472,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
             val startLayoutX = nodeView.properties["startLayoutX"] as Double
             val startLayoutY = nodeView.properties["startLayoutY"] as Double
 
-            performUIAction(MoveNodeAction(nodeView, startLayoutX, startLayoutY, nodeView.layoutX, nodeView.layoutY))
+            if (startLayoutX != nodeView.layoutX || startLayoutY != nodeView.layoutY) {
+                performUIAction(MoveNodeAction(nodeView, startLayoutX, startLayoutY, nodeView.layoutX, nodeView.layoutY))
+            }
         }
 
         nodeView.cursor = Cursor.MOVE
@@ -516,9 +527,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                     }
 
                     if (outPoint.choiceOptionID != -1) {
-                        graph.addChoiceEdge(outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node)
+                        performUIAction(AddChoiceEdgeAction(graph, outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node))
                     } else {
-                        graph.addEdge(outPoint.owner.node, inPoint.owner.node)
+                        performUIAction(AddEdgeAction(graph, outPoint.owner.node, inPoint.owner.node))
                     }
 
                     // reset selection
@@ -536,9 +547,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     private fun disconnectOutLink(outPoint: OutLinkPoint) {
         outPoint.other?.let { inPoint ->
             if (outPoint.choiceOptionID != -1) {
-                graph.removeChoiceEdge(outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node)
+                performUIAction(RemoveChoiceEdgeAction(graph, outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node))
             } else {
-                graph.removeEdge(outPoint.owner.node, inPoint.owner.node)
+                performUIAction(RemoveEdgeAction(graph, outPoint.owner.node, inPoint.owner.node))
             }
         }
     }
