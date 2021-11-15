@@ -129,19 +129,7 @@ internal class DialogueScriptRunner(
             }
         }
 
-        return callInvokableFunction(funcName, tokens.drop(1).map { replaceVariablesInText(it.trim()) }.toTypedArray())
-    }
-
-    private fun callInvokableFunction(functionName: String, args: Array<String>): Any {
-        // 1. attempt to find member functions of either [FunctionCallHandler] or its [FunctionCallDelegate]s
-        val result = functionHandler.call(functionName, args)
-
-        // this means the call on a [FunctionCallDelegate] successfully returned
-        if (result !== NullObject)
-            return result
-
-        // 2. otherwise, call the default function handler
-        return functionHandler.handle(functionName, args)
+        return functionHandler.call(funcName, tokens.drop(1).map { replaceVariablesInText(it.trim()) }.toTypedArray())
     }
 
     private fun callAssignmentFunction(line: String) {
@@ -280,12 +268,15 @@ abstract class FunctionCallHandler : FunctionCallDelegate {
             return method.function.invoke(method.delegate, *argsAsObjects.toTypedArray()) ?: 0
         }
 
-        log.warning("Unrecognized function: $functionName with ${args.size} arguments")
+        log.warning("Unrecognized function: $functionName with ${args.size} arguments. Calling default implementation")
 
-        return NullObject
+        return handle(functionName, args)
     }
 
-    open fun handle(functionName: String, args: Array<String>): Any {
+    /**
+     * A default handle function, which is called when no function delegate with matching method signature was found.
+     */
+    protected open fun handle(functionName: String, args: Array<String>): Any {
         log.warning("Function call from dialogue graph via default implementation of FunctionCallHandler:")
         log.warning("$functionName ${args.toList()}")
         return 0

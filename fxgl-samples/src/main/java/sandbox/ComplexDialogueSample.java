@@ -93,7 +93,7 @@ public class ComplexDialogueSample extends GameApplication {
         }
 
         @Override
-        public Object handle(String functionName, String[] args) {
+        protected Object handle(String functionName, String[] args) {
             System.out.println(functionName + " " + Arrays.toString(args));
 
             return false;
