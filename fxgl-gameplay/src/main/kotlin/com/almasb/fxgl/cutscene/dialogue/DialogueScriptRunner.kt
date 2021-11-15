@@ -14,13 +14,20 @@ import com.almasb.fxgl.logging.Logger
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 internal class DialogueScriptRunner(
+
+        /**
+         * Variables global to the game.
+         */
         private val gameVars: PropertyMap,
+
+        /**
+         * Variables local to the dialogue context.
+         */
+        private val localVars: PropertyMap,
         private val functionHandler: FunctionCallHandler
 ) {
 
     private val log = Logger.get<DialogueScriptRunner>()
-
-    private val localVars = hashMapOf<String, Any>()
 
     /**
      * Given a [line], this function replaces all variables with their values.
@@ -43,8 +50,8 @@ internal class DialogueScriptRunner(
         var result = line
 
         varNames.forEach {
-            if (it in localVars) {
-                val value = localVars[it]
+            if (localVars.exists(it)) {
+                val value = localVars.getValue<Any>(it)
                 result = result.replace("\$$it", value.toString())
 
             } else if (gameVars.exists(it)) {
@@ -112,8 +119,8 @@ internal class DialogueScriptRunner(
 
         if (tokens.size == 1) {
             // check if this is a boolean variable -- the only valid variable to use here
-            if (funcName in localVars) {
-                return localVars[funcName]!!
+            if (localVars.exists(funcName)) {
+                return localVars.getValue(funcName)
             }
 
             if (gameVars.exists(funcName)) {
@@ -131,12 +138,13 @@ internal class DialogueScriptRunner(
         val varName = line.substringBefore('=').trim()
         val varValue = line.substringAfter('=').trim().toTypedValue()
 
-        if (varName in localVars) {
-            localVars[varName] = varValue
+        if (localVars.exists(varName)) {
+            localVars.setValue(varName, varValue)
         } else if (gameVars.exists(varName)) {
             gameVars.setValue(varName, varValue)
         } else {
-            localVars[varName] = varValue
+            // does not exist anywhere, create locally
+            localVars.setValue(varName, varValue)
         }
     }
 }

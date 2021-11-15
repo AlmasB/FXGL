@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.cutscene.dialogue
 
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
@@ -22,6 +23,18 @@ enum class DialogueNodeType {
 fun interface FunctionCallHandler {
 
     fun handle(functionName: String, args: Array<String>): Any
+}
+
+/**
+ * The context in which a dialogue is running.
+ * For example, a single NPC could be a context.
+ */
+fun interface DialogueContext {
+
+    /**
+     * @return property map that is local to the dialogue context
+     */
+    fun properties(): PropertyMap
 }
 
 /* NODES */

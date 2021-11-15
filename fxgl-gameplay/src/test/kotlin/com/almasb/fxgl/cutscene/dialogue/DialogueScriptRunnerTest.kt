@@ -31,7 +31,7 @@ class DialogueScriptRunnerTest {
         map.setValue("isAlive", true)
         map.setValue("isSleeping", false)
 
-        runner = DialogueScriptRunner(map) { funcName, args ->
+        runner = DialogueScriptRunner(map, PropertyMap()) { funcName, args ->
 
             var result: Any = ""
 

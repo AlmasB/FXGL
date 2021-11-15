@@ -171,11 +171,11 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         animation2.startReverse()
     }
 
-    fun start(dialogueGraph: DialogueGraph, functionHandler: FunctionCallHandler, onFinished: Runnable) {
+    fun start(dialogueGraph: DialogueGraph, context: DialogueContext, functionHandler: FunctionCallHandler, onFinished: Runnable) {
         graph = dialogueGraph.copy()
         this.functionHandler = functionHandler
         this.onFinished = onFinished
-        dialogueScriptRunner = DialogueScriptRunner(gameVars, functionHandler)
+        dialogueScriptRunner = DialogueScriptRunner(gameVars, context.properties(), functionHandler)
 
         // while graph has subdialogue nodes, expand
         while (graph.nodes.any { it.value.type == SUBDIALOGUE }) {
