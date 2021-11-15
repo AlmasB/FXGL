@@ -8,6 +8,7 @@ package com.almasb.fxgl.cutscene.dialogue
 
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.logging.Logger
+import java.lang.reflect.Method
 
 /**
  *
@@ -128,8 +129,19 @@ internal class DialogueScriptRunner(
             }
         }
 
-        // if all of above checks did not succeed, then call a default function handler
-        return functionHandler.handle(funcName, tokens.drop(1).map { replaceVariablesInText(it.trim()) }.toTypedArray())
+        return callInvokableFunction(funcName, tokens.drop(1).map { replaceVariablesInText(it.trim()) }.toTypedArray())
+    }
+
+    private fun callInvokableFunction(functionName: String, args: Array<String>): Any {
+        // 1. attempt to find member functions of either [FunctionCallHandler] or its [FunctionCallDelegate]s
+        val result = functionHandler.call(functionName, args)
+
+        // this means the call on a [FunctionCallDelegate] successfully returned
+        if (result !== NullObject)
+            return result
+
+        // 2. otherwise, call the default function handler
+        return functionHandler.handle(functionName, args)
     }
 
     private fun callAssignmentFunction(line: String) {
@@ -202,3 +214,87 @@ private operator fun Any.compareTo(other: Any): Int {
 }
 
 private object NullObject
+
+/**
+ * Marks a class as one that contains functions that can be called
+ * by [FunctionCallHandler].
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
+ */
+interface FunctionCallDelegate
+
+abstract class FunctionCallHandler : FunctionCallDelegate {
+
+    private val log = Logger.get(javaClass)
+
+    private val methods = hashMapOf<MethodSignature, InvokableMethod>()
+
+    /**
+     * Provides conversions from [String] to other types.
+     */
+    val stringToObject = hashMapOf<Class<*>, (String) -> Any>()
+
+    init {
+        // register common types
+        stringToObject[String::class.java] = { it }
+        stringToObject[Int::class.java] = { it.toInt() }
+        stringToObject[Double::class.java] = { it.toDouble() }
+        stringToObject[Boolean::class.java] = {
+            when (it) {
+                "true" -> true
+                "false" -> false
+                else -> throw java.lang.RuntimeException("Cannot convert $it to Boolean")
+            }
+        }
+
+        // add self as a delegate
+        addFunctionCallDelegate(this)
+    }
+
+    fun addFunctionCallDelegate(obj: FunctionCallDelegate) {
+        obj.javaClass.declaredMethods.forEach {
+            val signature = MethodSignature(it.name, it.parameterCount)
+            val method = InvokableMethod(obj, it)
+
+            methods[signature] = method
+
+            log.debug("Added cmd: $method ($signature)")
+        }
+    }
+
+    fun removeFunctionCallDelegate(obj: FunctionCallDelegate) {
+        methods.filterValues { it.delegate === obj }
+                .forEach { methods.remove(it.key) }
+    }
+
+    fun call(functionName: String, args: Array<String>): Any {
+        val method = methods[MethodSignature(functionName, args.size)]
+
+        if (method != null) {
+            val argsAsObjects = method.function.parameterTypes.mapIndexed { index, type ->
+                val converter = stringToObject[type] ?: throw java.lang.RuntimeException("No converter found from String to $type")
+                converter.invoke(args[index])
+            }
+
+            // void returns null, but Any is expected, so we return 0 in such cases
+            return method.function.invoke(method.delegate, *argsAsObjects.toTypedArray()) ?: 0
+        }
+
+        log.warning("Unrecognized function: $functionName with ${args.size} arguments")
+
+        return NullObject
+    }
+
+    open fun handle(functionName: String, args: Array<String>): Any {
+        log.warning("Function call from dialogue graph via default implementation of FunctionCallHandler:")
+        log.warning("$functionName ${args.toList()}")
+        return 0
+    }
+
+    private data class MethodSignature(val name: String, val paramCount: Int)
+
+    /**
+     * Stores the object [delegate] and the function [function] that can be invoked on the object.
+     */
+    private data class InvokableMethod(val delegate: FunctionCallDelegate, val function: Method)
+}

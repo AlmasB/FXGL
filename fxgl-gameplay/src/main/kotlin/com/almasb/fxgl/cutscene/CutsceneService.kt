@@ -56,12 +56,4 @@ private class TemporaryContext : DialogueContext {
     override fun properties(): PropertyMap = PropertyMap()
 }
 
-private object EmptyFunctionCallHandler : FunctionCallHandler {
-    private val log = Logger.get(javaClass)
-
-    override fun handle(functionName: String, args: Array<String>): Any {
-        log.warning("Function call from dialogue graph via EmptyFunctionCallHandler:")
-        log.warning("$functionName ${args.toList()}")
-        return 0
-    }
-}
+private object EmptyFunctionCallHandler : FunctionCallHandler()

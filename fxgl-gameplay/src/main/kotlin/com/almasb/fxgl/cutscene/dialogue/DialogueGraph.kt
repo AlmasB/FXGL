@@ -20,11 +20,6 @@ enum class DialogueNodeType {
     START, END, TEXT, SUBDIALOGUE, CHOICE, FUNCTION, BRANCH
 }
 
-fun interface FunctionCallHandler {
-
-    fun handle(functionName: String, args: Array<String>): Any
-}
-
 /**
  * The context in which a dialogue is running.
  * For example, a single NPC could be a context.
