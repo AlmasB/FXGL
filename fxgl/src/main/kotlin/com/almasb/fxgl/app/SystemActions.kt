@@ -42,7 +42,7 @@ object SystemActions {
 
             input.addAction(sysdump(), KeyCode.DIGIT9, InputModifier.CTRL)
             input.addAction(restartGame(), KeyCode.R, InputModifier.CTRL)
-            input.addAction(toggleDebugCamera(), KeyCode.C, InputModifier.CTRL)
+            input.addAction(toggleDebugCamera(), KeyCode.DIGIT7, InputModifier.CTRL)
         }
     }
 
