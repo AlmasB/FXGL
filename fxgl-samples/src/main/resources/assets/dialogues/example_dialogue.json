@@ -1,5 +1,5 @@
 {
-  "uniqueID" : 10,
+  "uniqueID" : 11,
   "nodes" : {
     "0" : {
       "type" : "START",
@@ -28,6 +28,10 @@
     "9" : {
       "type" : "END",
       "text" : "Bye!"
+    },
+    "10" : {
+      "type" : "FUNCTION",
+      "text" : "customFunction 5\nanotherFunction 3 4.5 Hello_World"
     }
   },
   "choiceNodes" : {
@@ -47,9 +51,6 @@
     }
   },
   "edges" : [ {
-    "sourceID" : 0,
-    "targetID" : 4
-  }, {
     "sourceID" : 3,
     "targetID" : 9
   }, {
@@ -58,6 +59,12 @@
   }, {
     "sourceID" : 8,
     "targetID" : 9
+  }, {
+    "sourceID" : 0,
+    "targetID" : 10
+  }, {
+    "sourceID" : 10,
+    "targetID" : 4
   } ],
   "choiceEdges" : [ {
     "sourceID" : 4,
@@ -83,8 +90,8 @@
   "version" : 1,
   "uiMetadata" : {
     "0" : {
-      "x" : 40.0,
-      "y" : 440.0
+      "x" : -560.0,
+      "y" : 160.0
     },
     "2" : {
       "x" : 760.0,
@@ -113,6 +120,10 @@
     "9" : {
       "x" : 1600.0,
       "y" : 320.0
+    },
+    "10" : {
+      "x" : -160.0,
+      "y" : 160.0
     }
   }
 }

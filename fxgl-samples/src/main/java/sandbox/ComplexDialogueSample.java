@@ -10,12 +10,14 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.cutscene.dialogue.DialogueContext;
+import com.almasb.fxgl.cutscene.dialogue.FunctionCallDelegate;
 import com.almasb.fxgl.cutscene.dialogue.FunctionCallHandler;
 import com.almasb.fxgl.dsl.components.view.TextViewComponent;
 import com.almasb.fxgl.entity.Entity;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -62,7 +64,10 @@ public class ComplexDialogueSample extends GameApplication {
                     // the json file is loaded from /assets/dialogues/
                     var dialogueGraph = getAssetLoader().loadDialogueGraph("example_dialogue.json");
 
-                    getCutsceneService().startDialogueScene(dialogueGraph, new ExampleContext(e));
+                    var exampleFunctionHandler = new ExampleFunctionHandler();
+                    exampleFunctionHandler.addFunctionCallDelegate(new ExampleDelegate());
+
+                    getCutsceneService().startDialogueScene(dialogueGraph, new ExampleContext(e), exampleFunctionHandler);
                 })
                 .buildAndAttach();
     }
@@ -81,11 +86,26 @@ public class ComplexDialogueSample extends GameApplication {
         }
     }
 
-    private static class ExampleFunctionHandler implements FunctionCallHandler {
+    public static class ExampleFunctionHandler extends FunctionCallHandler {
+
+        public void customFunction(int number) {
+            System.out.println("Calling custom function with: " + number);
+        }
 
         @Override
         public Object handle(String functionName, String[] args) {
-            return null;
+            System.out.println(functionName + " " + Arrays.toString(args));
+
+            return false;
+        }
+    }
+
+    public static class ExampleDelegate implements FunctionCallDelegate {
+
+        public double anotherFunction(int i, double d, String s) {
+            System.out.println("Calling anotherFunction from delegate: " + i + " " + d + " " + s);
+
+            return d;
         }
     }
 
