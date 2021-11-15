@@ -173,6 +173,11 @@ class CanvasSkybox(size: Int) : NodeSkybox(size) {
     val topCanvas = Canvas(size.toDouble(), size.toDouble())
     val botCanvas = Canvas(size.toDouble(), size.toDouble())
 
+    /**
+     * @return all 6 canvas objects of this skybox
+     */
+    val canvases = listOf(frontCanvas, backCanvas, leftCanvas, rightCanvas, topCanvas, botCanvas)
+
     init {
         front.children += frontCanvas
         back.children += backCanvas
