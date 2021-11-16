@@ -40,6 +40,7 @@ public class DialogueEditorApp extends GameApplication {
         settings.setManualResizeEnabled(true);
         settings.setScaleAffectedOnResize(false);
         //settings.setProfilingEnabled(true);
+        settings.addEngineService(PersistentStorageService.class);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
 
         settings.setCloseConfirmation(settings.getApplicationMode() == ApplicationMode.RELEASE);

@@ -10,6 +10,7 @@ import com.almasb.fxgl.cutscene.dialogue.DialogueChoiceEdge
 import com.almasb.fxgl.cutscene.dialogue.DialogueEdge
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.scene.effect.Glow
@@ -175,7 +176,11 @@ class EdgeView(val edge: DialogueEdge, val source: OutLinkPoint, val target: InL
         )
 
         strokeWidth = EDGE_STROKE_WIDTH
-        stroke = NodeView.colors[inPoint.owner.node.type] ?: Color.color(0.9, 0.9, 0.9, 0.9)
+
+        strokeProperty().bind(
+                NodeView.colors[inPoint.owner.node.type] ?: SimpleObjectProperty(Color.WHITE)
+        )
+
         fill = null
     }
 }

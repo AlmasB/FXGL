@@ -11,6 +11,8 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
 import com.almasb.fxgl.tools.dialogues.ui.ExpandableTextArea
 import javafx.beans.binding.Bindings
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -36,12 +38,12 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         private const val INITIAL_HEIGHT = 100.0
 
         val colors = mapOf(
-                START to Color.DARKGREEN,
-                END to Color.RED,
-                FUNCTION to Color.BLUE,
-                CHOICE to Color.GOLD,
-                TEXT to Color.BEIGE,
-                BRANCH to Color.MEDIUMVIOLETRED
+                START to SimpleObjectProperty(Color.DARKGREEN),
+                END to SimpleObjectProperty(Color.RED),
+                FUNCTION to SimpleObjectProperty(Color.BLUE),
+                CHOICE to SimpleObjectProperty(Color.GOLD),
+                TEXT to SimpleObjectProperty(Color.BEIGE),
+                BRANCH to SimpleObjectProperty(Color.MEDIUMVIOLETRED)
         )
     }
 
@@ -73,8 +75,8 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
 
         addContent(textArea)
 
-        val title = Title(node.type.toString().toLowerCase().capitalize(), colors[node.type]
-                ?: Color.WHITE)
+        val title = Title(node.type.toString().lowercase().replaceFirstChar { it.uppercaseChar() }, colors[node.type]
+                ?: SimpleObjectProperty(Color.WHITE))
         title.prefWidthProperty().bind(prefWidthProperty().subtract(4))
         title.translateX = 2.0
         title.translateY = 2.0
@@ -112,10 +114,19 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         linkPoint.translateYProperty().bind(heightProperty().divide(2))
     }
 
-    private class Title(name: String, c: Color) : HBox() {
+    private class Title(name: String, colorProperty: ObjectProperty<Color>) : HBox() {
 
         init {
             styleClass += "title"
+
+            // if color changes, then re-style
+            colorProperty.addListener { _, _, newColor ->
+                val c = newColor
+
+                style = "-fx-background-color: rgba(${c.red*255}, ${c.green*255}, ${c.blue*255}, 0.85)"
+            }
+
+            val c = colorProperty.value
 
             style = "-fx-background-color: rgba(${c.red*255}, ${c.green*255}, ${c.blue*255}, 0.85)"
 
