@@ -19,7 +19,7 @@ import javafx.scene.shape.Circle
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.Polygon
 
-private const val EDGE_STROKE_WIDTH = 3.5
+private const val EDGE_STROKE_WIDTH = 4.5
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

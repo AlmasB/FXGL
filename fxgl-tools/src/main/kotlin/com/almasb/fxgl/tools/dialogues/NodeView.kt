@@ -36,12 +36,12 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         private const val INITIAL_HEIGHT = 100.0
 
         val colors = mapOf(
-                START to Color.LIGHTGREEN.darker(),
-                END to Color.DARKCYAN,
+                START to Color.DARKGREEN,
+                END to Color.RED,
                 FUNCTION to Color.BLUE,
                 CHOICE to Color.GOLD,
-                TEXT to Color.DARKGREEN,
-                BRANCH to Color.MEDIUMPURPLE
+                TEXT to Color.BEIGE,
+                BRANCH to Color.MEDIUMVIOLETRED
         )
     }
 
