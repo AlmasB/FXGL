@@ -358,4 +358,6 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
 
         return image
     }
+
+    fun copy(): TilesetLoader = TilesetLoader(map, mapURL)
 }

@@ -19,6 +19,7 @@ import javafx.scene.shape.Polygon
 import java.io.InputStream
 import java.net.URL
 import java.util.*
+import java.util.stream.Collectors
 import java.util.zip.GZIPInputStream
 import java.util.zip.InflaterInputStream
 import javax.xml.namespace.QName
@@ -33,7 +34,15 @@ import javax.xml.stream.events.StartElement
 
 private const val TILED_VERSION_LATEST = "1.2.3"
 
-class TMXLevelLoader : LevelLoader {
+class TMXLevelLoader
+@JvmOverloads constructor(
+
+        /**
+         * If true, tile layers will be loaded in parallel, but each layer will use its own image cache.
+         * Setting to true _may_ improve loading performance if there are many large tiles.
+         */
+        private val isParallel: Boolean = false
+) : LevelLoader {
 
     private val log = Logger.get<TMXLevelLoader>()
 
@@ -69,11 +78,18 @@ class TMXLevelLoader : LevelLoader {
         }
     }
 
-    private fun createTileLayerEntities(map: TiledMap, tilesetLoader: TilesetLoader): List<Entity> {
+    private fun createTileLayerEntities(map: TiledMap, loader: TilesetLoader): List<Entity> {
         log.debug("Creating tile layer entities")
 
-        return map.layers.filter { it.type == "tilelayer" }
+        val layers = map.layers.filter { it.type == "tilelayer" }
+        val stream = if (isParallel) layers.parallelStream() else layers.stream()
+
+        return stream
                 .map { layer ->
+
+                    // to avoid any concurrency issues (if running in parallel) we duplicate loader for each layer
+                    val tilesetLoader = if (isParallel) loader.copy() else loader
+
                     Entity().also {
                         it.type = "TiledMapLayer"
                         it.setProperty("layer", layer)
@@ -93,6 +109,7 @@ class TMXLevelLoader : LevelLoader {
                         }
                     }
                 }
+                .collect(Collectors.toList())
     }
 
     private fun createObjectLayerEntities(map: TiledMap, tilesetLoader: TilesetLoader, world: GameWorld): List<Entity> {
