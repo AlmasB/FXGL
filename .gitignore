@@ -40,3 +40,4 @@ hiscore.dat
 
 # Common save file ext #
 *.sav
+*.prefs
