@@ -42,10 +42,10 @@ class FXGLDialogService : DialogService() {
     override fun onInit() {
         window = uiFactory.newWindow()
 
-        window.canResize = false
-        window.canMove = false
-        window.canMinimize = false
-        window.canClose = false
+        window.isManuallyResizable = false
+        window.isMovable = false
+        window.isMinimizable = false
+        window.isCloseable = false
 
         window.layoutXProperty().bind(window.widthProperty().divide(2).negate().add(sceneService.prefWidthProperty().divide(2)))
         window.layoutYProperty().bind(window.heightProperty().divide(2).negate().add(sceneService.prefHeightProperty().divide(2)))

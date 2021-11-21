@@ -40,7 +40,7 @@ class ErrorSubScene(
         scrollPane.setPrefSize(sceneWidth, sceneHeight)
 
         val window = MDIWindow()
-        window.canClose = false
+        window.isCloseable = false
         window.title = "Error Reporter"
         window.contentPane.children += VBox(btnOK, scrollPane)
 

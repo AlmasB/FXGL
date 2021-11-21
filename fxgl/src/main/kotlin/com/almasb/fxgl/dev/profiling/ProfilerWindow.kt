@@ -62,10 +62,10 @@ class ProfilerWindow(width: Double, height: Double, title: String) : MDIWindow()
     private var allTimeHigh = 0.0
 
     init {
-        canClose = false
-        canMinimize = true
-        canMove = true
-        canResize = false
+        isCloseable = false
+        isMinimizable = true
+        isMovable = true
+        isManuallyResizable = false
 
         setPrefSize(width, height)
         this.title = title
