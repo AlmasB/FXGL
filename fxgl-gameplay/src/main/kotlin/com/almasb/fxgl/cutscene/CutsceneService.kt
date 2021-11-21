@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.cutscene
 
+import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.asset.AssetLoaderService
 import com.almasb.fxgl.core.collection.PropertyMap
@@ -25,6 +26,7 @@ class CutsceneService : EngineService() {
 
     private lateinit var assetLoader: AssetLoaderService
     private lateinit var sceneService: SceneService
+    private lateinit var audioPlayer: AudioPlayer
 
     private var gameVars: PropertyMap? = null
 
@@ -44,6 +46,7 @@ class CutsceneService : EngineService() {
 
         dialogueScene.gameVars = gameVars ?: throw IllegalStateException("Cannot start dialogue scene. The game is not initialized yet.")
         dialogueScene.assetLoader = assetLoader
+        dialogueScene.audioPlayer = audioPlayer
         dialogueScene.start(dialogueGraph, context, functionHandler, onFinished)
     }
 
