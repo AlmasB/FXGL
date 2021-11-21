@@ -503,7 +503,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      *
      * Note: specific load methods (e.g. [loadImage]) are preferred over this call.
      */
-    fun <T> load(assetType: AssetType, url: URL): T {
+    override fun <T> load(assetType: AssetType, url: URL): T {
         return load(assetType, LoadParams(url))
     }
 
@@ -566,7 +566,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      * @param name resource name relative to base package (starts with /assets/)
      * @return a valid URL to resource or [NULL_URL] if URL not found
      */
-    private fun getURL(name: String): URL {
+    override fun getURL(name: String): URL {
         // 1. try /assets/ from user module using their app class
         // 2. try /fxglassets/ from fxgl.all module using this javaclass
 
