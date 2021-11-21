@@ -120,6 +120,10 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         val audioField = AudioField()
         audioField.visibleProperty().bind(getbp(IS_SHOW_AUDIO_LINES))
 
+        audioField.field.text = node.audioFileNameProperty.value
+
+        node.audioFileNameProperty.bindBidirectional(audioField.field.textProperty())
+
         contentRoot.children.add(0, audioField)
 
         prefHeightProperty().bind(textArea.prefHeightProperty().add(85))
@@ -173,12 +177,13 @@ class AudioField() : HBox(5.0) {
         private val audioFileChooser = FileChooser()
     }
 
+    val field = TextField()
+
     init {
         audioFileChooser.initialDirectory = File(System.getProperty("user.dir"))
 
         val icon = makeSoundIcon()
 
-        val field = TextField()
         field.prefWidth = 190.0
 
         val button = CustomButton("...", 14.0)

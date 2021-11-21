@@ -22,7 +22,7 @@ import javafx.beans.property.SimpleStringProperty
  * An equivalent of serialVersionUID.
  * Any changes to the serializable graph data structure need to increment this number by 1.
  */
-private const val GRAPH_VERSION = 1
+private const val GRAPH_VERSION = 2
 
 /*
  * We can't use jackson-module-kotlin yet since no module-info.java is provided.
@@ -39,7 +39,10 @@ data class SerializableTextNode
 
         @JsonProperty("text")
         val text: String
-)
+) {
+
+    var audio: String = ""
+}
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SerializableChoiceNode
@@ -55,7 +58,10 @@ data class SerializableChoiceNode
 
         @JsonProperty("conditions")
         val conditions: Map<Int, String>
-)
+) {
+
+    var audio: String = ""
+}
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SerializableEdge
@@ -126,12 +132,13 @@ object DialogueGraphSerializer {
     fun toSerializable(dialogueGraph: DialogueGraph): SerializableGraph {
         val nodesS = dialogueGraph.nodes
                 .filterValues { it.type != CHOICE }
-                .mapValues { (_, n) -> SerializableTextNode(n.type, n.text) }
+                .mapValues { (_, n) -> SerializableTextNode(n.type, n.text).also { it.audio = n.audioFileName } }
 
         val choiceNodesS = dialogueGraph.nodes
                 .filterValues { it.type == CHOICE }
                 .mapValues { (_, n) ->
                     SerializableChoiceNode(n.type, n.text, (n as ChoiceNode).options.mapValues { it.value.value }, n.conditions.mapValues { it.value.value })
+                            .also { it.audio = n.audioFileName }
                 }
 
         val edgesS = dialogueGraph.edges
@@ -162,6 +169,8 @@ object DialogueGraphSerializer {
                 else -> throw IllegalArgumentException("Unknown node type: ${n.type}")
             }
 
+            node.audioFileNameProperty.value = n.audio
+
             graph.nodes[id] = node
         }
 
@@ -175,6 +184,8 @@ object DialogueGraphSerializer {
             n.conditions.forEach { option ->
                 node.conditions[option.key] = SimpleStringProperty(option.value)
             }
+
+            node.audioFileNameProperty.value = n.audio
 
             graph.nodes[id] = node
         }

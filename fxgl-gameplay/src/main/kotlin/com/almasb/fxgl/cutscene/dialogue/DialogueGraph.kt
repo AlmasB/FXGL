@@ -44,6 +44,11 @@ sealed class DialogueNode(
     val text: String
         get() = textProperty.value
 
+    val audioFileNameProperty: StringProperty = SimpleStringProperty()
+
+    val audioFileName: String
+        get() = audioFileNameProperty.value
+
     override fun toString(): String {
         return javaClass.simpleName
     }
