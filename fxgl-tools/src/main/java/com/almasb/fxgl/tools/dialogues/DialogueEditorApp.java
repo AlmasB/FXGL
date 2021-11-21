@@ -50,6 +50,7 @@ public class DialogueEditorApp extends GameApplication {
     protected void initGameVars(Map<String, Object> vars) {
         vars.put(IS_SNAP_TO_GRID, true);
         vars.put(IS_COLOR_BLIND_MODE, true);
+        vars.put(IS_SHOW_AUDIO_LINES, true);
     }
 
     @Override

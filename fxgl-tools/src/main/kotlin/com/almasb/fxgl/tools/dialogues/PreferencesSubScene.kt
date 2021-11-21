@@ -11,6 +11,7 @@ import com.almasb.fxgl.dsl.getAppWidth
 import com.almasb.fxgl.dsl.getUIFactoryService
 import com.almasb.fxgl.dsl.getbp
 import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.tools.dialogues.DialogueEditorVars.IS_SHOW_AUDIO_LINES
 import com.almasb.fxgl.tools.dialogues.DialogueEditorVars.IS_SNAP_TO_GRID
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -36,6 +37,7 @@ class PreferencesSubScene : SubScene() {
         vbox.alignment = Pos.TOP_CENTER
 
         addSnapToGrid()
+        addShowAudioLines()
         addColorOptions()
         addCloseButton()
 
@@ -60,6 +62,13 @@ class PreferencesSubScene : SubScene() {
         cbSnapToGrid.selectedProperty().bindBidirectional(getbp(IS_SNAP_TO_GRID))
 
         vbox.children += HBox(5.0, getUIFactoryService().newText("Snap to grid: "), cbSnapToGrid)
+    }
+
+    private fun addShowAudioLines() {
+        val cbSnapToGrid = getUIFactoryService().newCheckBox()
+        cbSnapToGrid.selectedProperty().bindBidirectional(getbp(IS_SHOW_AUDIO_LINES))
+
+        vbox.children += HBox(5.0, getUIFactoryService().newText("Show audio lines: "), cbSnapToGrid)
     }
 
     private fun addColorOptions() {

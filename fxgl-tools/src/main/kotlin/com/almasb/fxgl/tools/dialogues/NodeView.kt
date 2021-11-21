@@ -9,6 +9,8 @@ package com.almasb.fxgl.tools.dialogues
 import com.almasb.fxgl.cutscene.dialogue.DialogueNode
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
+import com.almasb.fxgl.dsl.getbp
+import com.almasb.fxgl.tools.dialogues.DialogueEditorVars.IS_SHOW_AUDIO_LINES
 import com.almasb.fxgl.tools.dialogues.ui.ExpandableTextArea
 import javafx.beans.binding.Bindings
 import javafx.beans.property.ObjectProperty
@@ -16,15 +18,17 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
+import javafx.scene.Cursor
 import javafx.scene.Node
+import javafx.scene.control.TextField
 import javafx.scene.effect.DropShadow
-import javafx.scene.layout.HBox
-import javafx.scene.layout.Pane
-import javafx.scene.layout.StackPane
-import javafx.scene.layout.VBox
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
+import javafx.scene.text.Text
+import javafx.stage.FileChooser
+import java.io.File
 
 /**
  * A generic view of a dialogue node.
@@ -63,14 +67,12 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
     init {
         styleClass.add("dialogue-editor-node-view")
 
-        prefWidth = INITIAL_WIDTH
-        prefHeight = INITIAL_HEIGHT
-
         isPickOnBounds = false
 
         textArea.font = Font.font(14.0)
         textArea.textProperty().bindBidirectional(node.textProperty)
 
+        prefWidthProperty().bind(textArea.prefWidthProperty().add(70))
         prefHeightProperty().bind(textArea.prefHeightProperty().add(50.0))
 
         addContent(textArea)
@@ -114,6 +116,15 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         linkPoint.translateYProperty().bind(heightProperty().divide(2))
     }
 
+    fun addAudioField() {
+        val audioField = AudioField()
+        audioField.visibleProperty().bind(getbp(IS_SHOW_AUDIO_LINES))
+
+        contentRoot.children.add(0, audioField)
+
+        prefHeightProperty().bind(textArea.prefHeightProperty().add(85))
+    }
+
     private class Title(name: String, colorProperty: ObjectProperty<Color>) : HBox() {
 
         init {
@@ -150,6 +161,51 @@ class CustomButton(symbol: String, size: Double = 24.0) : StackPane() {
                 Bindings.`when`(hoverProperty()).then(Color.WHITE).otherwise(Color.TRANSPARENT)
         )
 
+        cursor = Cursor.HAND
+
         children.addAll(bg, text)
+    }
+}
+
+class AudioField() : HBox(5.0) {
+
+    companion object {
+        private val audioFileChooser = FileChooser()
+    }
+
+    init {
+        audioFileChooser.initialDirectory = File(System.getProperty("user.dir"))
+
+        val icon = makeSoundIcon()
+
+        val field = TextField()
+        field.prefWidth = 190.0
+
+        val button = CustomButton("...", 14.0)
+        button.setOnMouseClicked {
+
+            // TODO: configure as appropriate
+            audioFileChooser.showOpenDialog(null)?.let { file ->
+                field.text = File.separatorChar + "assets" + file.absolutePath.toString().substringAfter("assets")
+            }
+        }
+
+        children.addAll(icon, field, button)
+    }
+
+    private fun makeSoundIcon(): Node {
+        val hbox = HBox(2.0)
+        hbox.alignment = Pos.CENTER
+
+        arrayOf(3.0, 5.0, 4.0, 6.0, 8.0, 5.5, 2.0)
+                .forEach { h ->
+                    val rect = Rectangle(2.0, h * 2.0, Color.WHITE)
+                    rect.arcWidth = 1.0
+                    rect.arcHeight = 1.5
+
+                    hbox.children += rect
+                }
+
+        return hbox
     }
 }

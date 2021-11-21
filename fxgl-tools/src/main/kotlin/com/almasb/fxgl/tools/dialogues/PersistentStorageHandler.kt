@@ -18,6 +18,7 @@ import javafx.scene.paint.Color
 import java.io.Serializable
 
 /**
+ * TODO: save properties (game vars) to bundle, also consider easy API to read/write PropertyMap
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

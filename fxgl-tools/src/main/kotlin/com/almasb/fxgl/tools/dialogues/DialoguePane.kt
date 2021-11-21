@@ -492,7 +492,6 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         }
 
         nodeView.cursor = Cursor.MOVE
-        nodeView.closeButton.cursor = Cursor.HAND
 
         nodeView.closeButton.setOnMouseClicked {
             performUIAction(RemoveNodeAction(graph, nodeView.node, nodeView.layoutX, nodeView.layoutY, this::getNodeView))
