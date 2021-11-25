@@ -48,6 +48,18 @@ public abstract class DialogService extends EngineService {
     public abstract void showConfirmationBox(String message, Consumer<Boolean> resultCallback);
 
     /**
+     * Shows a blocking message box with given choices.
+     * The callback is invoked with the user answer as parameter.
+     *
+     * @param message message to show
+     * @param resultCallback the function to be called
+     * @param firstOption the first option
+     * @param options any other options
+     * @param <T> type of options
+     */
+    public abstract <T> void showChoiceBox(String message, Consumer<T> resultCallback, T firstOption, T... options);
+
+    /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback
      * is invoked with the field text as parameter.
      *

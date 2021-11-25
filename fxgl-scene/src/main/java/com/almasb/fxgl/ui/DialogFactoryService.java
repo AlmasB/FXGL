@@ -26,6 +26,8 @@ public abstract class DialogFactoryService extends EngineService {
 
     public abstract Pane confirmationDialog(String message, Consumer<Boolean> callback);
 
+    public abstract <T> Pane choiceDialog(String message, Consumer<T> resultCallback, T firstOption, T... options);
+
     public abstract Pane inputDialog(String message, Consumer<String> callback);
 
     public abstract Pane inputDialog(String message, Predicate<String> filter, Consumer<String> callback);

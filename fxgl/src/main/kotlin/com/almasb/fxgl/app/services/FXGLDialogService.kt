@@ -133,6 +133,15 @@ class FXGLDialogService : DialogService() {
         show("Confirm", dialog)
     }
 
+    override fun <T : Any> showChoiceBox(message: String, callback: Consumer<T>, firstOption: T, vararg options: T) {
+        val dialog = dialogFactory.choiceDialog(message, { result ->
+            close()
+            callback.accept(result)
+        }, firstOption, *options)
+
+        show("Choice", dialog)
+    }
+
     override fun showInputBox(message: String, resultCallback: Consumer<String>) {
         showInputBox(message, Predicate { true }, resultCallback)
     }
