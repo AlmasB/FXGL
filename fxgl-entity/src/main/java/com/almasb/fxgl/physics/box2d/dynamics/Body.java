@@ -849,8 +849,7 @@ public final class Body {
 
         setAwake(true);
 
-        m_force.setZero();
-        m_torque = 0.0f;
+        clearForces();
 
         destroyAttachedContacts();
 
@@ -864,8 +863,9 @@ public final class Body {
         }
     }
 
-    void setForceToZero() {
+    void clearForces() {
         m_force.setZero();
+        m_torque = 0.0f;
     }
 
     Vec2 getForce() {
@@ -981,8 +981,8 @@ public final class Body {
             sleepTime = 0.0f;
             linearVelocity.setZero();
             angularVelocity = 0.0f;
-            m_force.setZero();
-            m_torque = 0.0f;
+
+            clearForces();
         }
     }
 

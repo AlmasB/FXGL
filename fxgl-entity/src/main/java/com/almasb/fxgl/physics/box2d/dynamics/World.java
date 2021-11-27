@@ -831,8 +831,7 @@ public final class World {
      */
     public void clearForces() {
         for (Body body : bodies) {
-            body.setForceToZero();
-            body.setTorque(0.0f);
+            body.clearForces();
         }
     }
 
