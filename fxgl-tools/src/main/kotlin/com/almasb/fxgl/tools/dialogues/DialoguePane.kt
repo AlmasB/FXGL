@@ -91,6 +91,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     val isDirtyProperty = SimpleBooleanProperty(false)
 
+    /**
+     * Are all outgoing links connected.
+     */
+    val isConnectedProperty = SimpleBooleanProperty(true)
+
     private val scale = Scale()
 
     private val dragScale = 1.35
@@ -363,6 +368,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         val nodeView = nodeViewConstructor(node)
 
         addNodeView(nodeView, x, y)
+
+        evaluateGraphConnectivity()
     }
 
     private fun onRemoved(node: DialogueNode) {
@@ -383,6 +390,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 .from(Point2D(1.0, 1.0))
                 .to(Point2D.ZERO)
                 .buildAndPlay()
+
+        evaluateGraphConnectivity()
     }
 
     private fun onAdded(edge: DialogueEdge) {
@@ -401,6 +410,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         val edgeView = EdgeView(edge, outPoint, inPoint)
 
         edgeViews.children.add(edgeView)
+
+        evaluateGraphConnectivity()
     }
 
     private fun onRemoved(edge: DialogueEdge) {
@@ -444,6 +455,18 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         edgeView.source.disconnect()
 
         edgeViews.children -= edgeView
+
+        evaluateGraphConnectivity()
+    }
+
+    /**
+     * Checks that all outgoing links are connected.
+     */
+    private fun evaluateGraphConnectivity() {
+        isConnectedProperty.value = nodeViews.children
+                .map { it as NodeView }
+                .flatMap { it.outPoints }
+                .all { it.isConnected }
     }
 
     private fun getNodeView(node: DialogueNode): NodeView {
