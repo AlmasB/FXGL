@@ -612,8 +612,6 @@ public final class Body {
             return;
         }
 
-        assert type == BodyType.DYNAMIC;
-
         // Accumulate mass over all fixtures.
         final Vec2 localCenter = world.getPool().popVec2();
         localCenter.setZero();
