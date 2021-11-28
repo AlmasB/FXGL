@@ -7,6 +7,7 @@
 package com.almasb.fxgl.animation
 
 import com.almasb.fxgl.core.UpdatableRunner
+import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.logging.Logger
 import javafx.animation.Interpolator
@@ -180,6 +181,59 @@ open class AnimationBuilder
             .translate(node)
             .from(Point2D(node.translateX, node.translateY))
             .to(Point2D(node.translateX, node.translateY + 5.0))
+
+    fun buildSequence(vararg anims: Animation<*>): Animation<*> {
+        val ranges = linkedMapOf<ClosedFloatingPointRange<Double>, Animation<*>>()
+
+        var count = 0.0
+
+        anims.forEach { anim ->
+            ranges[count..count+anim.endTime] = anim
+
+            count += anim.endTime
+        }
+
+        val totalDuration = anims.sumOf { it.endTime }
+
+        var isNewCycle = true
+
+        var a: Animation<*>? = null
+
+        a = onCycleFinished {
+                    isNewCycle = true
+                }
+                .duration(Duration.seconds(totalDuration))
+                .animate(AnimatedValue(0.0, totalDuration))
+                .onProgress { time ->
+
+                    // this is needed to pre-apply all animations when starting or reversing
+                    if (isNewCycle) {
+                        ranges.values.forEach {
+                            it.stop()
+
+                            if (a!!.isReverse) {
+                                it.startReverse()
+                            } else {
+                                it.start()
+                            }
+                        }
+
+                        isNewCycle = false
+                    }
+
+                    ranges.forEach { (range, anim) ->
+                        if (time in range) {
+
+                            val mappedTime = FXGLMath.map(time, range.start, range.endInclusive, 0.0, anim.endTime)
+
+                            anim.setTimeTo(mappedTime)
+                        }
+                    }
+                }
+                .build()
+
+        return a
+    }
 
     /* END BUILT-IN ANIMATIONS */
 
