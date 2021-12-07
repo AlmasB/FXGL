@@ -59,6 +59,8 @@ class Inventory<T>(
         return Optional.ofNullable(itemsData[item])
     }
 
+    fun hasItem(item: T): Boolean = item in itemsData
+
     /**
      * How many stacks are available before the inventory is full
      */
@@ -182,6 +184,10 @@ class Inventory<T>(
                 if (it !in items) {
                     items += it
                 }
+            }
+
+            if (data.quantity == 0) {
+                itemsData -= item
             }
         }
 
