@@ -201,7 +201,7 @@ class InventoryTest {
         assertTrue(inventory.incrementQuantity("Hello", -5))
 
         assertThat(inventory.size, `is`(0))
-        assertThat(inventory.getItemQuantity("Hello"), `is` (0))
+        assertFalse(inventory.hasItem("Hello"))
     }
 //
 //    @Test
