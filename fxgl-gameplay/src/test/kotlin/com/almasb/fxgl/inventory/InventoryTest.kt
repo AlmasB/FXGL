@@ -238,4 +238,24 @@ class InventoryTest {
 
         assertTrue(inventory.incrementQuantity("Hello", -10))
     }
+
+    @Test
+    fun `Transfer from another inventory`() {
+        inventory = Inventory(5)
+
+        inventory.add("Hello", quantity = 5)
+
+        val other = Inventory<String>(6)
+
+        var result = other.transferFrom(inventory, "Hello", 4)
+
+        assertTrue(result)
+        assertThat(other.getItemQuantity("Hello"), `is`(4))
+        assertThat(inventory.getItemQuantity("Hello"), `is`(1))
+
+        // quantity only 1, so cannot transfer
+        result = other.transferFrom(inventory, "Hello", 4)
+
+        assertFalse(result)
+    }
 }

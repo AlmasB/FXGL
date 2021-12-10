@@ -193,6 +193,27 @@ class Inventory<T>(
 
         return isOK
     }
+
+    /**
+     * Transfer [item] with [quantity] amount from [other] to this inventory.
+     *
+     * @return true if operation was successful
+     */
+    @JvmOverloads fun transferFrom(other: Inventory<T>, item: T, quantity: Int = 1): Boolean {
+        if (isFull)
+            return false
+
+        if (!other.hasItem(item))
+            return false
+
+        if (other.getItemQuantity(item) < quantity)
+            return false
+
+        add(item, quantity = quantity)
+        other.incrementQuantity(item, -quantity)
+
+        return true
+    }
 }
 
 class ItemData<T> internal constructor(var userItem: T) {
