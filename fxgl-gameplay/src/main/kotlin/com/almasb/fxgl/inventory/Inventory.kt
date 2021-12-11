@@ -96,7 +96,7 @@ class Inventory<T>(
      * Add [item] to inventory, dynamically creating stacks based on [config].
      * If [item] (as checked by hashCode()) is already present, then its quantity is increased by [quantity].
      *
-     * @return false if could not add item, otherwise true
+     * @return false if could not add item and no modifications were made, otherwise true
      */
     @JvmOverloads fun add(
             item: T,
@@ -105,13 +105,14 @@ class Inventory<T>(
     ): Boolean {
 
         // already in inventory, just increment quantity
-        if (item in itemsData)
+        if (hasItem(item))
             return incrementQuantity(item, quantity)
 
         // can't add because inventory is full
         if (isFull)
             return false
 
+        // TODO: if == 0?
         // adding a new item, so check if quantity > 0
         if (quantity < 0) {
             log.warning("Attempted to add a new item with negative quantity. Ignoring")
@@ -124,7 +125,7 @@ class Inventory<T>(
         if (numStacksNeeded > numFreeStacks)
             return false
 
-        // capacity-wise we are good, add new item
+        // capacity-wise we are good, add new item will succeed
 
         val data = ItemData(item).also {
             it.name = config.name
@@ -132,6 +133,7 @@ class Inventory<T>(
             it.view = config.view
             it.maxStackQuantity = config.maxStackQuantity
 
+            // TODO: should we delegate to incrementQuantity(item, amount)
             it.incrementQuantity(quantity)
         }
 
@@ -153,10 +155,14 @@ class Inventory<T>(
     }
 
     /**
-     * @return true if operation was successful
+     * @return true if operation was successful, if returns false then no modifications were made
      */
     fun incrementQuantity(item: T, amount: Int): Boolean {
-        if (item !in itemsData) {
+        // meaningless call
+        if (amount == 0)
+            return false
+
+        if (!hasItem(item)) {
             log.warning("Attempted to increment qty of item that is not in inventory. Ignoring")
             return false
         }
@@ -172,47 +178,50 @@ class Inventory<T>(
             }
         }
 
-        val isOK = data.incrementQuantity(amount)
+        // if decrementing, check that we have enough
+        if (amount < 0 && -amount > data.quantity)
+            return false
 
-        // if all good, update stacks
-        if (isOK) {
-            // remove non-existent stacks
-            items.removeIf { it.userItem == item && it !in data.stacks }
+        // all checks passed, we will modify this inventory
+        data.incrementQuantity(amount)
 
-            // add newly created stacks
-            data.stacks.forEach {
-                if (it !in items) {
-                    items += it
-                }
-            }
+        // remove non-existent stacks
+        items.removeIf { it.userItem == item && it !in data.stacks }
 
-            if (data.quantity == 0) {
-                itemsData -= item
+        // add newly created stacks
+        data.stacks.forEach {
+            if (it !in items) {
+                items += it
             }
         }
 
-        return isOK
+        // if we reached 0, remove item from inventory
+        if (data.quantity == 0) {
+            itemsData -= item
+        }
+
+        return true
     }
 
     /**
      * Transfer [item] with [quantity] amount from [other] to this inventory.
      *
-     * @return true if operation was successful
+     * @return true if operation was successful, if returns false then no modifications were made to either inventory objects
      */
     @JvmOverloads fun transferFrom(other: Inventory<T>, item: T, quantity: Int = 1): Boolean {
-        if (isFull)
-            return false
-
         if (!other.hasItem(item))
             return false
 
         if (other.getItemQuantity(item) < quantity)
             return false
 
-        add(item, quantity = quantity)
-        other.incrementQuantity(item, -quantity)
+        val isOK = add(item, quantity = quantity)
 
-        return true
+        if (isOK) {
+            return other.incrementQuantity(item, -quantity)
+        }
+
+        return false
     }
 }
 
@@ -249,20 +258,20 @@ class ItemData<T> internal constructor(var userItem: T) {
     val quantity: Int
         get() = quantityProperty.value
 
-    fun incrementQuantity(amount: Int): Boolean {
+    /**
+     * This operation is meant to always succeed since checks should be done before the call.
+     */
+    internal fun incrementQuantity(amount: Int) {
         if (amount > 0)
-            return fill(amount)
-
-        if (amount < 0)
-            return deplete(-amount)
-
-        return true
+            fill(amount)
+        else if (amount < 0)
+            deplete(-amount)
     }
 
     /**
      * @param amount - a positive value to increment
      */
-    private fun fill(amount: Int): Boolean {
+    private fun fill(amount: Int) {
         var left = amount
 
         // fill existing stacks
@@ -300,18 +309,12 @@ class ItemData<T> internal constructor(var userItem: T) {
                 quantityProperty.value += remainder
             }
         }
-
-        return true
     }
 
     /**
      * @param amount - a positive value to decrement
      */
-    private fun deplete(amount: Int): Boolean {
-        // tried to decrease by more than we have
-        if (amount > quantityProperty.value)
-            return false
-
+    private fun deplete(amount: Int) {
         var left = amount
 
         while (left > 0) {
@@ -330,8 +333,6 @@ class ItemData<T> internal constructor(var userItem: T) {
                 left = 0
             }
         }
-
-        return true
     }
 }
 

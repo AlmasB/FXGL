@@ -245,7 +245,7 @@ class InventoryTest {
 
         inventory.add("Hello", quantity = 5)
 
-        val other = Inventory<String>(6)
+        val other = Inventory<String>(2)
 
         var result = other.transferFrom(inventory, "Hello", 4)
 
@@ -257,5 +257,16 @@ class InventoryTest {
         result = other.transferFrom(inventory, "Hello", 4)
 
         assertFalse(result)
+
+        // fill the inventory
+        other.add("Hi")
+
+        assertTrue(other.isFull)
+
+        // but we can still transfer from other since "Hello" stack exists and not limited
+        result = other.transferFrom(inventory, "Hello", 1)
+
+        assertTrue(result)
+        assertTrue(!inventory.hasItem("Hello"))
     }
 }
