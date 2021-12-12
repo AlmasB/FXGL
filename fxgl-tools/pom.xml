@@ -13,15 +13,8 @@
     <artifactId>fxgl-tools</artifactId>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-
         <!-- plugins -->
         <jfx.maven.plugin.version>0.0.4</jfx.maven.plugin.version>
-
-        <!-- dependencies -->
-        <kotlin.version>1.5.10</kotlin.version>
 
         <mainClassName>com.almasb.fxgl.tools.dialogues.DialogueEditorApp</mainClassName>
 
