@@ -182,14 +182,14 @@ class FXGLIntroScene : IntroScene() {
     private fun playAnim3() {
         delayIndex = 0.0
 
-        pixels1.forEach { p ->
+        pixels1.sortedBy { it.layoutX }.forEach { p ->
             animationBuilder(this)
                     .delay(Duration.seconds(random(delayIndex, delayIndex + 0.21)))
                     .duration(Duration.seconds(1.05))
                     .interpolator(Interpolators.EXPONENTIAL.EASE_IN())
                     .animate(AnimatedPoint2D(
                             Point2D(p.translateX, p.translateY),
-                            Point2D(appWidth * 2.0, appHeight * 2.0))
+                            Point2D(appWidth * 2.0, appHeight / 2.0))
                     )
                     .onProgress(Consumer {
                         p.translateX = it.x
