@@ -166,11 +166,68 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
                 }
                 .duration(Duration.seconds(animationChannel.frameDuration * animationChannel.sequence.size))
                 .interpolator(interpolator)
-                .animate(AnimatedValue(0, animationChannel.sequence.size - 1))
+                .animate(PreciseAnimatedIntValue(0, animationChannel.sequence.size - 1))
                 .onProgress { frameNum ->
                     currentFrame = min(frameNum, animationChannel.sequence.size - 1)
                     updateImage()
                 }
                 .build()
+    }
+}
+
+/**
+ * This animated value provides higher accuracy for mapping progress to an int value.
+ *
+ * For example, the default AnimatedValue results for [0,3]  (non-uniform!):
+0.00: 0
+0.05: 0
+0.10: 0
+0.15: 0
+
+0.20: 1
+0.25: 1
+0.30: 1
+0.35: 1
+0.40: 1
+0.45: 1
+
+0.50: 2
+0.55: 2
+0.60: 2
+0.65: 2
+0.70: 2
+0.75: 2
+0.80: 2
+
+0.85: 3
+0.90: 3
+0.95: 3
+1.00: 3
+ */
+private class PreciseAnimatedIntValue(start: Int, end: Int) : AnimatedValue<Int>(start, end) {
+
+    private val mapping = linkedMapOf<ClosedFloatingPointRange<Double>, Int>()
+
+    init {
+        val numSegments = end - start + 1
+        val progressPerSegment = 1.0 / numSegments
+
+        var progress = 0.0
+
+        for (i in start..end) {
+            val progressEnd = if (i == end) 1.0 else (progress + progressPerSegment)
+
+            mapping[progress..progressEnd] = i
+
+            progress += progressPerSegment
+        }
+    }
+
+    override fun animate(val1: Int, val2: Int, progress: Double, interpolator: Interpolator): Int {
+        val p = interpolator.interpolate(0.0, 1.0, progress)
+
+        return mapping.filterKeys { p in it }
+                .values
+                .firstOrNull() ?: val1
     }
 }
