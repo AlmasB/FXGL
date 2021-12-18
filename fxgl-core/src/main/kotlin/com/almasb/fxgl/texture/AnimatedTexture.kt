@@ -228,6 +228,6 @@ private class PreciseAnimatedIntValue(start: Int, end: Int) : AnimatedValue<Int>
 
         return mapping.filterKeys { p in it }
                 .values
-                .firstOrNull() ?: val1
+                .lastOrNull() ?: val1
     }
 }
