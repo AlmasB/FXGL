@@ -12,7 +12,6 @@ import com.almasb.fxgl.animation.AnimationBuilder
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.core.util.EmptyRunnable
 import javafx.animation.Interpolator
-import javafx.geometry.Rectangle2D
 import javafx.util.Duration
 import kotlin.math.min
 
@@ -152,7 +151,7 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         image = animationChannel.image
         fitWidth = frameData.width.toDouble()
         fitHeight = frameData.height.toDouble()
-        viewport = Rectangle2D(frameData.x.toDouble(), frameData.y.toDouble(), frameData.width.toDouble(), frameData.height.toDouble())
+        viewport = frameData.viewport
     }
 
     private fun updateAnimation() {
