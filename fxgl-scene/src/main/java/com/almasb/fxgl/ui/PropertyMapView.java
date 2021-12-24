@@ -9,6 +9,7 @@ package com.almasb.fxgl.ui;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.core.collection.UpdatableObjectProperty;
 import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.ui.property.Vec2PropertyViewChangeListener;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,76 +34,10 @@ import java.util.Map;
  */
 public class PropertyMapView extends Parent {
 
-    private static final Map<Class<?>, PropertyViewChangeListener<?, ?>> converters = new HashMap<>();
+    public static final Map<Class<?>, PropertyViewChangeListener<?, ?>> converters = new HashMap<>();
 
     static {
-        PropertyViewChangeListener<Vec2, HBox> l = new PropertyViewChangeListener<>() {
-
-            private boolean ignoreChangeView = false;
-            private boolean ignoreChangeProperty = false;
-
-            @Override
-            public HBox makeView(ObjectProperty<Vec2> value) {
-                var fieldX = new TextField();
-                var fieldY = new TextField();
-                HBox view = new HBox(fieldX, fieldY);
-
-                value.addListener((obs, o, newValue) -> {
-                    if (ignoreChangeProperty)
-                        return;
-
-                    onPropertyChanged(value, view);
-                });
-
-                fieldX.textProperty().addListener((obs, o, x) -> {
-                    if (ignoreChangeView)
-                        return;
-
-                    onViewChanged(value, view);
-                });
-
-                fieldY.textProperty().addListener((obs, o, y) -> {
-                    if (ignoreChangeView)
-                        return;
-
-                    onViewChanged(value, view);
-                });
-
-                onPropertyChanged(value, view);
-
-                return view;
-            }
-
-            @Override
-            public void onPropertyChanged(ObjectProperty<Vec2> value, HBox view) {
-                var fieldX = (TextField) view.getChildren().get(0);
-                var fieldY = (TextField) view.getChildren().get(1);
-
-                ignoreChangeView = true;
-
-                fieldX.setText(Float.toString(value.getValue().x));
-                fieldY.setText(Float.toString(value.getValue().y));
-
-                ignoreChangeView = false;
-            }
-
-            @Override
-            public void onViewChanged(ObjectProperty<Vec2> value, HBox view) {
-                var fieldX = (TextField) view.getChildren().get(0);
-                var fieldY = (TextField) view.getChildren().get(1);
-
-                ignoreChangeProperty = true;
-
-                value.getValue().x = Float.parseFloat(fieldX.getText());
-                value.getValue().y = Float.parseFloat(fieldY.getText());
-
-                ((UpdatableObjectProperty<Vec2>)value).forceUpdateListeners(value.getValue(), value.getValue());
-
-                ignoreChangeProperty = false;
-            }
-        };
-
-        addViewConverter(Vec2.class, l);
+        addViewConverter(Vec2.class, new Vec2PropertyViewChangeListener());
     }
 
     public static <T> void addViewConverter(Class<T> type, PropertyViewChangeListener<T, ?> converter) {

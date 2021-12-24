@@ -15,6 +15,7 @@ module com.almasb.fxgl.scene {
     exports com.almasb.fxgl.notification.view;
     exports com.almasb.fxgl.scene;
     exports com.almasb.fxgl.ui;
+    exports com.almasb.fxgl.ui.property;
 
     exports com.almasb.fxgl.notification.impl to com.almasb.fxgl.all;
 

@@ -35,6 +35,8 @@ public class EditorApp extends Application {
         stage.setScene(scene);
         stage.setWidth(1600);
         stage.setHeight(950);
+        stage.setMinWidth(800);
+        stage.setMinHeight(600);
         stage.setTitle("FXGL Editor");
         stage.show();
 

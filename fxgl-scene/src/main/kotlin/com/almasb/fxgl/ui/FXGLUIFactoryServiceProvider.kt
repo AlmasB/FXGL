@@ -8,13 +8,16 @@ package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.ui.FontType.UI
-import javafx.beans.binding.Bindings
-import javafx.beans.binding.StringBinding
-import javafx.beans.binding.StringExpression
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.SimpleObjectProperty
+import com.almasb.fxgl.ui.property.BooleanPropertyView
+import com.almasb.fxgl.ui.property.DoublePropertyView
+import com.almasb.fxgl.ui.property.IntPropertyView
+import javafx.beans.binding.*
+import javafx.beans.property.*
 import javafx.collections.ObservableList
+import javafx.scene.Node
 import javafx.scene.control.*
+import javafx.scene.layout.HBox
+import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.scene.text.Text
@@ -126,6 +129,38 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
 
     override fun <T : Any> newListView(): ListView<T> {
         return FXGLListView<T>()
+    }
+
+    override fun newPropertyView(propertyName: String, property: Any): Node {
+        val text = Text(propertyName).also { it.fill = Color.WHITE }
+
+        val view: Node = when (property) {
+            is ReadOnlyDoubleProperty -> DoublePropertyView(property)
+            is DoubleBinding -> DoublePropertyView(property)
+
+            is ReadOnlyIntegerProperty -> IntPropertyView(property)
+            is IntegerBinding -> IntPropertyView(property)
+
+            is ReadOnlyBooleanProperty -> BooleanPropertyView(property)
+            is BooleanBinding -> BooleanPropertyView(property)
+
+            is ObjectProperty<*> -> {
+
+                if (property.get().javaClass in PropertyMapView.converters) {
+                    val converter = PropertyMapView.converters[property.get().javaClass]!!
+
+                    converter.makeViewInternal(property)
+                } else {
+
+                    // TODO:
+                    Text("Not supported: ${property.get().javaClass}").also { it.fill = Color.WHITE }
+                }
+            }
+
+            else -> Text("Not supported: $property").also { it.fill = Color.WHITE }
+        }
+
+        return HBox(10.0, StackPane(text).also { it.prefWidth = 100.0 }, StackPane(view).also { it.prefWidth = 80.0 })
     }
 
     private fun fontProperty(type: FontType, fontSize: Double) =

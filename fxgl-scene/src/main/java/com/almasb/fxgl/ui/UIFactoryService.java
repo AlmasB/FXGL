@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.EngineService;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.binding.StringExpression;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -62,4 +63,6 @@ public abstract class UIFactoryService extends EngineService {
     public abstract <T> ListView<T> newListView();
 
     public abstract FXGLTextFlow newTextFlow();
+
+    public abstract Node newPropertyView(String propertyName, Object property);
 }

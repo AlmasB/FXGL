@@ -10,6 +10,7 @@ import com.almasb.fxgl.ui.*
 import javafx.beans.binding.StringBinding
 import javafx.beans.binding.StringExpression
 import javafx.collections.ObservableList
+import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
@@ -92,5 +93,9 @@ object MockUIFactoryService : UIFactoryService() {
 
     override fun <T : Any?> newSpinner(items: ObservableList<T>?): Spinner<T> {
         return Spinner(items)
+    }
+
+    override fun newPropertyView(propertyName: String?, property: Any?): Node {
+        return Button()
     }
 }
