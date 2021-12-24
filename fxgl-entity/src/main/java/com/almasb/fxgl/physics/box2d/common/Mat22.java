@@ -16,6 +16,9 @@ import java.io.Serializable;
 public final class Mat22 implements Serializable {
     private static final long serialVersionUID = 2L;
 
+    // [ ex.x   ey.x ]
+    // [ ex.y   ey.y ]
+
     public final Vec2 ex = new Vec2();
     public final Vec2 ey = new Vec2();
 
@@ -30,7 +33,10 @@ public final class Mat22 implements Serializable {
     }
 
     public void invertToOut(Mat22 out) {
-        float a = ex.x, b = ey.x, c = ex.y, d = ey.y;
+        float a = ex.x;
+        float b = ey.x;
+        float c = ex.y;
+        float d = ey.y;
         float det = a * d - b * c;
 
         det = 1.0f / det;
@@ -41,18 +47,22 @@ public final class Mat22 implements Serializable {
     }
 
     public void solveToOut(Vec2 b, Vec2 out) {
-        float a11 = ex.x, a12 = ey.x, a21 = ex.y, a22 = ey.y;
+        float a11 = ex.x;
+        float a12 = ey.x;
+        float a21 = ex.y;
+        float a22 = ey.y;
+
         float det = a11 * a22 - a12 * a21;
         if (det != 0.0f) {
             det = 1.0f / det;
         }
+
         float tempy = det * (a11 * b.y - a21 * b.x);
         out.x = det * (a22 * b.x - a12 * b.y);
         out.y = tempy;
     }
 
     public static void mulToOutUnsafe(Mat22 R, Vec2 v, Vec2 out) {
-        assert v != out;
         out.x = R.ex.x * v.x + R.ey.x * v.y;
         out.y = R.ex.y * v.x + R.ey.y * v.y;
     }
