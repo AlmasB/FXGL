@@ -7,7 +7,6 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.core.collection.PropertyMap;
-import com.almasb.fxgl.core.collection.UpdatableObjectProperty;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.ui.property.Vec2PropertyViewChangeListener;
 import javafx.beans.property.*;
