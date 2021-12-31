@@ -7,6 +7,9 @@ To release:
 
 4. revert gpg entry comment
 
-5. (Optional) Update all dependencies to their latest versions
+5. make_changelog.sh
+6. ChangelogGen::main
+7. Create a GitHub Release, copy CHANGELOG.md, upload uber-jar
+8. (Optional) Update all dependencies to their latest versions
 
 Continue developing on the dev branch
