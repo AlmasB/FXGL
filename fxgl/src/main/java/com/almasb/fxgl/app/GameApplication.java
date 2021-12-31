@@ -8,6 +8,7 @@ package com.almasb.fxgl.app;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.core.util.Platform;
 import com.almasb.fxgl.dev.profiling.ProfilerService;
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.generated.BuildProperties;
 import com.almasb.fxgl.logging.*;
 
@@ -140,6 +141,19 @@ public abstract class GameApplication {
         Logger.configure(new LoggerConfig());
 
         log.debug("Logging settings\n" + settings);
+    }
+
+    /**
+     * Shuts down currently running embedded FXGL instance.
+     * No-op if no FXGL instance is launched in embedded mode.
+     * After this call, another {@link #embeddedLaunch(GameApplication)} can be started.
+     * Note that after FXGL is no longer needed (no launch calls will be made),
+     * FXGL.getGameController().exit() should be called.
+     */
+    public static void embeddedShutdown() {
+        FXGL.extract$fxgl();
+
+        Logger.removeAllOutputs();
     }
 
     /**

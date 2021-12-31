@@ -6,10 +6,12 @@
 
 package com.almasb.fxgl.cutscene
 
+import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.asset.AssetLoaderService
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.util.EmptyRunnable
+import com.almasb.fxgl.cutscene.dialogue.DialogueContext
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraph
 import com.almasb.fxgl.cutscene.dialogue.DialogueScene
 import com.almasb.fxgl.cutscene.dialogue.FunctionCallHandler
@@ -24,6 +26,7 @@ class CutsceneService : EngineService() {
 
     private lateinit var assetLoader: AssetLoaderService
     private lateinit var sceneService: SceneService
+    private lateinit var audioPlayer: AudioPlayer
 
     private var gameVars: PropertyMap? = null
 
@@ -35,10 +38,16 @@ class CutsceneService : EngineService() {
         scene.start(cutscene)
     }
 
-    @JvmOverloads fun startDialogueScene(dialogueGraph: DialogueGraph, functionHandler: FunctionCallHandler = EmptyFunctionCallHandler, onFinished: Runnable = EmptyRunnable) {
+    @JvmOverloads fun startDialogueScene(
+            dialogueGraph: DialogueGraph,
+            context: DialogueContext = TemporaryContext(),
+            functionHandler: FunctionCallHandler = EmptyFunctionCallHandler,
+            onFinished: Runnable = EmptyRunnable) {
+
         dialogueScene.gameVars = gameVars ?: throw IllegalStateException("Cannot start dialogue scene. The game is not initialized yet.")
         dialogueScene.assetLoader = assetLoader
-        dialogueScene.start(dialogueGraph, functionHandler, onFinished)
+        dialogueScene.audioPlayer = audioPlayer
+        dialogueScene.start(dialogueGraph, context, functionHandler, onFinished)
     }
 
     override fun onGameReady(vars: PropertyMap) {
@@ -46,12 +55,8 @@ class CutsceneService : EngineService() {
     }
 }
 
-private object EmptyFunctionCallHandler : FunctionCallHandler {
-    private val log = Logger.get(javaClass)
-
-    override fun handle(functionName: String, args: Array<String>): Any {
-        log.warning("Function call from dialogue graph via EmptyFunctionCallHandler:")
-        log.warning("$functionName ${args.toList()}")
-        return 0
-    }
+private class TemporaryContext : DialogueContext {
+    override fun properties(): PropertyMap = PropertyMap()
 }
+
+private object EmptyFunctionCallHandler : FunctionCallHandler()

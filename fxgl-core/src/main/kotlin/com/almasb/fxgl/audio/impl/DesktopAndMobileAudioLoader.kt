@@ -27,8 +27,8 @@ class DesktopAndMobileAudioLoader : AudioLoader {
         private val attachService by lazy { AudioService.create() }
     }
 
-    override fun loadAudio(type: AudioType, resourceURL: URL, isDesktop: Boolean): Audio {
-        if (isDesktop) {
+    override fun loadAudio(type: AudioType, resourceURL: URL, isMobile: Boolean): Audio {
+        if (!isMobile) {
             val url = resourceURL.toExternalForm()
 
             return if (type === AudioType.MUSIC) {

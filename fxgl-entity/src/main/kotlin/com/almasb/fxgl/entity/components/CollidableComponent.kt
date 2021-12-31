@@ -15,7 +15,8 @@ import java.util.*
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class CollidableComponent(collidable: Boolean) : BooleanComponent(collidable), CopyableComponent<CollidableComponent> {
+class CollidableComponent
+@JvmOverloads constructor(collidable: Boolean = false) : BooleanComponent(collidable), CopyableComponent<CollidableComponent> {
 
     private val ignoredTypes = ArrayList<Serializable>()
 

@@ -4,7 +4,7 @@
 
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>dev-SNAPSHOT</version>
+    <version>17+dev-SNAPSHOT</version>
     
     <packaging>pom</packaging>
 
@@ -63,14 +63,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <source.version>11</source.version>
+        <source.version>17</source.version>
         <fxgl.version>${project.version}</fxgl.version>
 
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>dd.MM.yyyy HH.mm</maven.build.timestamp.format>
 
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
@@ -78,7 +78,7 @@
         <maven.gpg.version>1.6</maven.gpg.version>
         <sonatype.nexus.staging.version>1.6.7</sonatype.nexus.staging.version>
         <maven.compiler.version>3.8.0</maven.compiler.version>
-        <maven.pmd.version>3.13.0</maven.pmd.version>
+        <maven.pmd.version>3.15.0</maven.pmd.version>
         <maven.license.version>3.0</maven.license.version>
         <maven.source.version>3.2.0</maven.source.version>
         <maven.jar.version>3.2.0</maven.jar.version>
@@ -89,8 +89,8 @@
         <maven.templating.version>1.0.0</maven.templating.version>
 
         <!-- dependencies -->
-        <jfx.version>16</jfx.version>
-        <kotlin.version>1.5.10</kotlin.version>
+        <jfx.version>17.0.0.1</jfx.version>
+        <kotlin.version>1.5.32</kotlin.version>
         <attach.version>4.0.9</attach.version>
         <jackson.version>2.12.1</jackson.version>
 
@@ -141,6 +141,10 @@
                     <version>${maven.compiler.version}</version>
                     <configuration>
                         <release>${source.version}</release>
+                        <compilerArgs>
+                            <arg>--module-version</arg>
+                            <arg>${project.version}</arg>
+                        </compilerArgs>
                     </configuration>
                 </plugin>
 

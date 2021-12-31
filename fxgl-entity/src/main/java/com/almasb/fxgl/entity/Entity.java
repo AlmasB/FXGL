@@ -184,9 +184,6 @@ public class Entity implements Animatable, Copyable<Entity> {
 
         isUpdateEnabled = true;
         isUpdating = false;
-
-        // TODO: we probably don't need to set active false again, since we do that in markForRemoval?
-        active.set(false);
     }
 
     /**

@@ -187,6 +187,26 @@ public class Grid<T extends Cell> {
         return getOptional(x, y + 1);
     }
 
+    /**
+     * @param x pixel coord x
+     * @param y pixel coord y
+     * @return optional grid cell
+     */
+    public final Optional<T> getOptionalByPixels(double x, double y) {
+        if (getCellWidth() == 0 || getCellHeight() == 0)
+            return Optional.empty();
+
+        int cellX = (int) (x / getCellWidth());
+        int cellY = (int) (y / getCellHeight());
+
+        return getOptional(cellX, cellY);
+    }
+
+    /**
+     * @param x grid coord x
+     * @param y grid coord y
+     * @return optional grid cell
+     */
     public final Optional<T> getOptional(int x, int y) {
         if (isWithin(x, y))
             return Optional.of(get(x, y));

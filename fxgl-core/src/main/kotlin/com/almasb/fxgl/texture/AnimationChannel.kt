@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.texture
 
+import javafx.geometry.Rectangle2D
 import javafx.scene.image.Image
 import javafx.util.Duration
 
@@ -119,4 +120,6 @@ data class FrameData(
         val y: Int,
         val width: Int,
         val height: Int
-)
+) {
+    val viewport = Rectangle2D(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+}

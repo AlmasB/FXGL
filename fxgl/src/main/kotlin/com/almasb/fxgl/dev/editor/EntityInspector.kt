@@ -7,21 +7,23 @@
 package com.almasb.fxgl.dev.editor
 
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.dsl.FXGL
-import com.almasb.fxgl.dsl.getAssetLoader
+import com.almasb.fxgl.dsl.*
+import com.almasb.fxgl.dsl.components.HealthIntComponent
+import com.almasb.fxgl.dsl.components.LiftComponent
+import com.almasb.fxgl.dsl.components.ProjectileComponent
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.Component
+import com.almasb.fxgl.entity.component.ComponentListener
 import com.almasb.fxgl.entity.component.CopyableComponent
 import com.almasb.fxgl.ui.FXGLButton
 import com.almasb.fxgl.ui.FXGLScrollPane
+import com.almasb.fxgl.ui.property.DoublePropertyView
 import javafx.beans.binding.*
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.geometry.Insets
-import javafx.scene.control.ButtonType
-import javafx.scene.control.ComboBox
-import javafx.scene.control.Dialog
-import javafx.scene.control.ListView
+import javafx.scene.control.*
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.GridPane
@@ -41,13 +43,15 @@ import java.nio.file.Paths
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class EntityInspector : FXGLScrollPane() {
+class EntityInspector : FXGLScrollPane(), ComponentListener {
 
     private val innerBox = VBox(5.0)
 
     // TODO: experimental
     private val componentTypes = arrayListOf<Class<out Component>>(
-            DevSpinComponent::class.java
+            DevSpinComponent::class.java,
+            ProjectileComponent::class.java,
+            HealthIntComponent::class.java
     )
 
     private val addViewButton = FXGLButton("Add View")
@@ -56,6 +60,10 @@ class EntityInspector : FXGLScrollPane() {
 
     var entity: Entity? = null
         set(value) {
+            if (field != null) {
+                field!!.removeComponentListener(this)
+            }
+
             field = value
 
             updateView()
@@ -124,13 +132,7 @@ class EntityInspector : FXGLScrollPane() {
                     // Create a new class loader with the directory
                     val cl: ClassLoader = URLClassLoader(urls)
 
-                    //println(cl)
-
-                    // Load in the class; MyClass.class should be located in
-                    // the directory file:/c:/myclasses/com/mycompany
                     val cls = cl.loadClass("sandbox.CustomComponent")
-
-                    //println(cls)
 
                     val instance = cls.getDeclaredConstructor().newInstance() as Component
 
@@ -138,6 +140,8 @@ class EntityInspector : FXGLScrollPane() {
 
                     entity?.let {
                         it.addComponent(instance)
+
+                        updateView()
                     }
                 }
 
@@ -164,72 +168,75 @@ class EntityInspector : FXGLScrollPane() {
         // TODO: this is just a placeholder and needs to be updated
         entity!!.components.sortedBy { it.javaClass.simpleName }
                 .forEach { comp ->
-                    val pane = GridPane()
-                    pane.hgap = 25.0
-                    pane.vgap = 10.0
-
-                    var index = 0
-
-                    val title = FXGL.getUIFactoryService().newText(comp.javaClass.simpleName.removeSuffix("Component"), Color.ANTIQUEWHITE, 22.0)
-
-                    pane.addRow(index++, title)
-                    pane.addRow(index++, Rectangle(165.0, 2.0, Color.ANTIQUEWHITE))
-
-                    comp.javaClass.methods
-                            .filter { it.name.endsWith("Property") }
-                            .sortedBy { it.name }
-                            .forEach { method ->
-
-                                val textKey = FXGL.getUIFactoryService().newText(method.name.removeSuffix("Property"), Color.WHITE, 18.0)
-
-                                val value = method.invoke(comp)
-                                val textValue = FXGL.getUIFactoryService().newText("", Color.WHITE, 18.0)
-
-                                when (value) {
-                                    is BooleanExpression -> {
-                                        textValue.textProperty().bind(value.asString())
-                                    }
-
-                                    is IntegerExpression -> {
-                                        textValue.textProperty().bind(value.asString())
-                                    }
-
-                                    is DoubleExpression -> {
-                                        textValue.textProperty().bind(value.asString("%.2f"))
-                                    }
-
-                                    is StringExpression -> {
-                                        textValue.textProperty().bind(value)
-                                    }
-
-                                    is ObjectExpression<*> -> {
-                                        textValue.textProperty().bind(value.asString())
-                                    }
-
-                                    is ObservableList<*> -> {
-                                        // ignore here
-                                    }
-
-                                    else -> {
-                                        throw IllegalArgumentException("Unknown value type: ${value.javaClass}")
-                                    }
-                                }
-
-                                if (value is ObservableList<*>) {
-                                    pane.addRow(index++, textKey, ListView(value))
-                                } else {
-                                    pane.addRow(index++, textKey, textValue)
-                                }
-                            }
-
-                    pane.addRow(index++, Text(""))
-
-                    innerBox.children += pane
+                    innerBox.children += generateView(comp)
                 }
 
+        entity!!.addComponentListener(this)
+    }
 
+    private fun generateView(component: Component): GridPane {
+        val pane = GridPane()
+        pane.hgap = 25.0
+        pane.vgap = 10.0
+
+        var index = 0
+
+        val title = FXGL.getUIFactoryService().newText(component.javaClass.simpleName.removeSuffix("Component"), Color.ANTIQUEWHITE, 22.0)
+
+        pane.addRow(index++, title)
+        pane.addRow(index++, Rectangle(165.0, 2.0, Color.ANTIQUEWHITE))
+
+        // add property based values
+        component.javaClass.methods
+                .filter { it.name.endsWith("Property") }
+                .sortedBy { it.name }
+                .forEach { method ->
+
+                    // val textKey = FXGL.getUIFactoryService().newText(method.name.removeSuffix("Property"), Color.WHITE, 18.0)
+                    val value = method.invoke(component)
+
+                    val view = getUIFactoryService().newPropertyView(method.name.removeSuffix("Property"), value)
+
+                    pane.addRow(index++, view)
+                }
+
+        pane.addRow(index++, Text(""))
+
+        return pane
+    }
+
+    override fun onAdded(component: Component) {
+        innerBox.children += generateView(component)
+    }
+
+    override fun onRemoved(component: Component) {
+        // TODO:
     }
 }
+
+// add callable methods
+// TODO: only allow void methods with 0 params for now
+//                    comp.javaClass.declaredMethods
+//                            .filter { !it.name.endsWith("Property") }
+//                            .sortedBy { it.name }
+//                            .forEach { method ->
+//
+//                                val btnMethod = FXGL.getUIFactoryService().newButton(method.name + "()")
+//                                btnMethod.setOnAction {
+//                                    getDialogService().showInputBoxWithCancel("Input key", { true }) { input ->
+//
+//                                        onKeyDown(KeyCode.valueOf(input)) {
+//                                            println("Invoking: $method")
+//
+//                                            method.invoke(comp)
+//                                        }
+//                                    }
+//                                }
+//
+//                                //val textKey = FXGL.getUIFactoryService().newText(method.name + "()", Color.WHITE, 18.0)
+//
+//                                pane.addRow(index++, btnMethod)
+//                            }
 
 internal class DevSpinComponent : Component(), CopyableComponent<DevSpinComponent> {
     override fun onUpdate(tpf: Double) {

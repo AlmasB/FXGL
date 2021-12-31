@@ -200,6 +200,32 @@ public final class FXGLMath {
         return new Point2D(pxNew + pivot.getX(), pyNew + pivot.getY());
     }
 
+    /**
+     * @param point the point to scale
+     * @param pivot the point around which to scale
+     * @param factor the scale factor
+     * @return the scaled point
+     */
+    public static Point2D scale(Point2D point, Point2D pivot, double factor) {
+        return new Point2D(
+                scale1D(point.getX(), pivot.getX(), factor),
+                scale1D(point.getY(), pivot.getY(), factor)
+        );
+    }
+
+    /**
+     * @param x a component of a point, e.g. x or y
+     * @param pivot the pivot value in the same axis as the component
+     * @param factor scale factor
+     * @return scaled value
+     */
+    public static double scale1D(double x, double pivot, double factor) {
+        // 1. treat the pivot as the origin, so x is relative to this origin
+        // 2. scale (multiply) by factor
+        // 3. translate the scaled x back
+        return (x - pivot) * factor + pivot;
+    }
+
     /* RANDOM BEGIN */
 
     private static Random random = new Random();
@@ -309,8 +335,18 @@ public final class FXGLMath {
         return new Vec2(random(-1.0, 1.0), random(-1.0, 1.0)).normalizeLocal();
     }
 
+    /**
+     * @return random color using RGB color model
+     */
     public static Color randomColor() {
         return Color.color(randomDouble(), randomDouble(), randomDouble());
+    }
+
+    /**
+     * @return random color using HSB color model
+     */
+    public static Color randomColorHSB(double saturation, double brightness) {
+        return Color.hsb(random(0, 360), saturation, brightness);
     }
 
     /**

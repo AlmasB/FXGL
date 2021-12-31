@@ -35,4 +35,11 @@ public class ContactEdge {
      * the next contact edge in the body's contact list
      */
     public ContactEdge next = null;
+
+    void reset() {
+        other = null;
+        contact = null;
+        prev = null;
+        next = null;
+    }
 }

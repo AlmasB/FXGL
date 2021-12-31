@@ -10,6 +10,7 @@ import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
 import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.UserAction
+import com.almasb.fxgl.tools.dialogues.ui.ErrorIcon
 import com.almasb.fxgl.tools.dialogues.ui.FXGLContextMenu
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -17,10 +18,7 @@ import javafx.beans.binding.Bindings
 import javafx.geometry.Pos
 import javafx.scene.Cursor
 import javafx.scene.Node
-import javafx.scene.control.Menu
-import javafx.scene.control.MenuBar
-import javafx.scene.control.Tab
-import javafx.scene.control.TabPane
+import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
@@ -30,6 +28,7 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
 import javafx.scene.shape.Rectangle
 import javafx.stage.FileChooser
+import javafx.util.Duration
 import java.io.File
 import java.nio.file.Files
 
@@ -41,6 +40,8 @@ class MainUI : BorderPane() {
 
     private val toolbar = HBox(35.0)
     private val tabPane = TabPane()
+
+    private val errorIcon = ErrorIcon()
 
     private val preferences by lazy { PreferencesSubScene() }
 
@@ -55,6 +56,22 @@ class MainUI : BorderPane() {
         toolbar.style = "-fx-background-color: black"
         toolbar.alignment = Pos.CENTER_LEFT
 
+        errorIcon.layoutXProperty().bind(FXGL.getSettings().actualWidthProperty().subtract(35))
+        errorIcon.layoutY = 40.0
+
+        val tooltip = Tooltip()
+        tooltip.showDelay = Duration.ZERO;
+        tooltip.text = "There are incomplete dialogue paths."
+
+        Tooltip.install(errorIcon, tooltip)
+
+        tabPane.selectionModel.selectedItemProperty().addListener { _, _, newTab ->
+            newTab?.let {
+                errorIcon.visibleProperty().unbind()
+                errorIcon.visibleProperty().bind((newTab as DialogueTab).pane.isConnectedProperty.not())
+            }
+        }
+
         val contextMenuFile = FXGLContextMenu()
         contextMenuFile.addItem("New (CTRL+N)") { openNewDialog() }
         contextMenuFile.addItem("Open... (CTRL+O)") { openLoadDialog() }
@@ -64,7 +81,7 @@ class MainUI : BorderPane() {
         contextMenuFile.addItem("Exit") { getGameController().exit() }
 
         val contextMenuEdit = FXGLContextMenu()
-        //contextMenuEdit.addItem("Undo (CTRL+Z)") { undo() }
+        contextMenuEdit.addItem("Undo (CTRL+Z)") { undo() }
         //contextMenuEdit.addItem("Redo") { redo() }
         //contextMenuEdit.addItem("Copy (CTRL+C)") {  }
         //contextMenuEdit.addItem("Paste (CTRL+V)") {  }
@@ -74,10 +91,10 @@ class MainUI : BorderPane() {
         contextMenuAdd.addItem("Node (CTRL+Left Click)") { currentTab?.pane?.openAddNodeDialog() }
 
         val contextMenuHelp = FXGLContextMenu()
-        //contextMenuHelp.addItem("Updates") { }
+        contextMenuHelp.addItem("Check for Updates...") { FXGL.getFXApp().hostServices.showDocument("https://fxgl.itch.io/fxgl-dialogue-editor") }
         contextMenuHelp.addItem("About") { openAboutDialog() }
 
-        val pane = Pane(tabPane, toolbar)
+        val pane = Pane(tabPane, toolbar, errorIcon)
 
         val menuFile = EditorMenu("File") {
             contextMenuFile.show(pane, 0.0, toolbar.prefHeight)

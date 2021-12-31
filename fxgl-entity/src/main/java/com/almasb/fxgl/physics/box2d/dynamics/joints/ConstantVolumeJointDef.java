@@ -11,27 +11,18 @@ import com.almasb.fxgl.physics.box2d.dynamics.World;
 import java.util.ArrayList;
 
 /**
- * Definition for a {@link ConstantVolumeJoint}, which connects a group a bodies together so they
+ * Definition for a {@link ConstantVolumeJoint}, which connects a group of bodies together so they
  * maintain a constant volume within them.
  */
 public class ConstantVolumeJointDef extends JointDef<ConstantVolumeJoint> {
-    public float frequencyHz;
-    public float dampingRatio;
+    public float frequencyHz = 0.0f;
+    public float dampingRatio = 0.0f;
 
-    ArrayList<Body> bodies;
-    ArrayList<DistanceJoint> joints;
-
-    public ConstantVolumeJointDef() {
-        bodies = new ArrayList<Body>();
-        joints = null;
-        frequencyHz = 0.0f;
-        dampingRatio = 0.0f;
-    }
+    ArrayList<Body> bodies = new ArrayList<Body>();
+    ArrayList<DistanceJoint> joints = null;
 
     /**
-     * Adds a body to the group
-     *
-     * @param argBody
+     * Adds a body to the group.
      */
     public void addBody(Body argBody) {
         bodies.add(argBody);

@@ -156,53 +156,10 @@ class DownloadCallback {
     fun progressProperty(): ReadOnlyDoubleProperty = progressProp.readOnlyProperty
 }
 
-
-/*
-    /**
-     * @param url link to open
-     * @return task that opens default browser with given url
-     */
-    IOTask<?> openBrowserTask(String url);
-
-    IOTask<Server> hostMultiplayerTask();
-
-    IOTask<Client> connectMultiplayerTask(String serverIP);
-
-class FXGLNet : Net {
-
-    override fun openBrowserTask(url: String) = IOTask.ofVoid("openBrowser($url)", { FXGL.getApp().hostServices.showDocument(url) })
-
-    override fun hostMultiplayerTask(): IOTask<Server> {
-        return IOTask.of("Create Host", {
-            val server = Server()
-            server.parsers = dummy.parsers
-
-            server.connectionActiveProperty().addListener(connectionListener)
-
-            // wait 1 minute
-            server.startAndWait(60)
-
-            connectionInternal?.connectionActiveProperty()?.removeListener(connectionListener)
-            connectionInternal = server
-
-            server
-        })
-    }
-
-    override fun connectMultiplayerTask(serverIP: String): IOTask<Client> {
-        return IOTask.of("Connect To Host", {
-            val client = Client(serverIP)
-            client.parsers = dummy.parsers
-
-            client.connectionActiveProperty().addListener(connectionListener)
-
-            client.connect()
-
-            connectionInternal?.connectionActiveProperty()?.removeListener(connectionListener)
-            connectionInternal = client
-
-            client
-        })
-    }
-}
- */
+//    /**
+//     * @param url link to open
+//     * @return task that opens default browser with given url
+//     */
+//    fun openBrowserTask(url: String) = IOTask.of("openBrowser($url)") {
+//        FXGL.getApp().hostServices.showDocument(url)
+//    }

@@ -22,7 +22,7 @@ class HealthDoubleComponent(maxValue: Double) : RechargeableDoubleComponent(maxV
 /**
  * Health component backed up by an int value.
  */
-class HealthIntComponent(maxValue: Int) : RechargeableIntComponent(maxValue)
+class HealthIntComponent @JvmOverloads constructor(maxValue: Int = 0) : RechargeableIntComponent(maxValue)
 
 /**
  * Mana component backed up by a double value.

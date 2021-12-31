@@ -63,8 +63,8 @@ public final class Body {
      */
     public final Sweep m_sweep = new Sweep();
 
-    private final Vec2 m_linearVelocity = new Vec2();
-    private float m_angularVelocity;
+    private final Vec2 linearVelocity = new Vec2();
+    private float angularVelocity;
 
     private final Vec2 m_force = new Vec2();
     private float m_torque = 0;
@@ -118,8 +118,8 @@ public final class Body {
         m_sweep.a = bd.getAngle();
         m_sweep.alpha0 = 0.0f;
 
-        m_linearVelocity.set(bd.getLinearVelocity());
-        m_angularVelocity = bd.getAngularVelocity();
+        linearVelocity.set(bd.getLinearVelocity());
+        angularVelocity = bd.getAngularVelocity();
 
         linearDamping = bd.getLinearDamping();
         angularDamping = bd.getAngularDamping();
@@ -244,9 +244,6 @@ public final class Body {
     public void destroyFixture(Fixture fixture) {
         world.assertNotLocked();
 
-        assert fixture.getBody() == this;
-        assert fixtures.contains(fixture);
-
         fixtures.remove(fixture);
 
         // Destroy any contacts associated with the fixture.
@@ -255,10 +252,7 @@ public final class Body {
             Contact c = edge.contact;
             edge = edge.next;
 
-            Fixture fixtureA = c.getFixtureA();
-            Fixture fixtureB = c.getFixtureB();
-
-            if (fixture == fixtureA || fixture == fixtureB) {
+            if (fixture == c.getFixtureA() || fixture == c.getFixtureB()) {
                 // This destroys the contact and removes it from this body's contact list.
                 world.getContactManager().destroy(c);
             }
@@ -355,11 +349,11 @@ public final class Body {
             setAwake(true);
         }
 
-        m_linearVelocity.set(v);
+        linearVelocity.set(v);
     }
 
     void setLinearVelocityDirectly(float vx, float vy) {
-        m_linearVelocity.set(vx, vy);
+        linearVelocity.set(vx, vy);
     }
 
     /**
@@ -369,7 +363,7 @@ public final class Body {
      * @return the linear velocity of the center of mass.
      */
     public Vec2 getLinearVelocity() {
-        return m_linearVelocity;
+        return linearVelocity;
     }
 
     /**
@@ -386,11 +380,11 @@ public final class Body {
             setAwake(true);
         }
 
-        m_angularVelocity = w;
+        angularVelocity = w;
     }
 
     void setAngularVelocityDirectly(float angularVelocity) {
-        this.m_angularVelocity = angularVelocity;
+        this.angularVelocity = angularVelocity;
     }
 
     /**
@@ -399,7 +393,7 @@ public final class Body {
      * @return the angular velocity in radians/second.
      */
     public float getAngularVelocity() {
-        return m_angularVelocity;
+        return angularVelocity;
     }
 
     /**
@@ -493,10 +487,10 @@ public final class Body {
             }
         }
 
-        m_linearVelocity.x += impulse.x * m_invMass;
-        m_linearVelocity.y += impulse.y * m_invMass;
+        linearVelocity.x += impulse.x * m_invMass;
+        linearVelocity.y += impulse.y * m_invMass;
 
-        m_angularVelocity += m_invI * ((point.x - m_sweep.c.x) * impulse.y - (point.y - m_sweep.c.y) * impulse.x);
+        angularVelocity += m_invI * ((point.x - m_sweep.c.x) * impulse.y - (point.y - m_sweep.c.y) * impulse.x);
     }
 
     /**
@@ -513,7 +507,7 @@ public final class Body {
             setAwake(true);
         }
 
-        m_angularVelocity += m_invI * impulse;
+        angularVelocity += m_invI * impulse;
     }
 
     /**
@@ -556,7 +550,6 @@ public final class Body {
             return;
         }
 
-        m_invMass = 0;
         m_I = 0;
         m_invI = 0;
 
@@ -587,11 +580,11 @@ public final class Body {
         temp.set(m_sweep.c).subLocal(oldCenter);
 
         // crossToOut(m_angularVelocity, temp, temp);
-        final float tempY = m_angularVelocity * temp.x;
-        temp.x = -m_angularVelocity * temp.y;
+        final float tempY = angularVelocity * temp.x;
+        temp.x = -angularVelocity * temp.y;
         temp.y = tempY;
 
-        m_linearVelocity.addLocal(temp);
+        linearVelocity.addLocal(temp);
 
         world.getPool().pushVec2(2);
     }
@@ -618,8 +611,6 @@ public final class Body {
             m_sweep.a0 = m_sweep.a;
             return;
         }
-
-        assert type == BodyType.DYNAMIC;
 
         // Accumulate mass over all fixtures.
         final Vec2 localCenter = world.getPool().popVec2();
@@ -672,8 +663,8 @@ public final class Body {
         temp.set(m_sweep.c).subLocal(oldCenter);
 
         final Vec2 temp2 = oldCenter;
-        Vec2.crossToOutUnsafe(m_angularVelocity, temp, temp2);
-        m_linearVelocity.addLocal(temp2);
+        Vec2.crossToOutUnsafe(angularVelocity, temp, temp2);
+        linearVelocity.addLocal(temp2);
 
         world.getPool().pushVec2(3);
     }
@@ -765,8 +756,8 @@ public final class Body {
     public void getLinearVelocityFromWorldPointToOut(Vec2 worldPoint, Vec2 out) {
         final float tempX = worldPoint.x - m_sweep.c.x;
         final float tempY = worldPoint.y - m_sweep.c.y;
-        out.x = -m_angularVelocity * tempY + m_linearVelocity.x;
-        out.y = m_angularVelocity * tempX + m_linearVelocity.y;
+        out.x = -angularVelocity * tempY + linearVelocity.x;
+        out.y = angularVelocity * tempX + linearVelocity.y;
     }
 
     /**
@@ -847,8 +838,8 @@ public final class Body {
         resetMassData();
 
         if (this.type == BodyType.STATIC) {
-            m_linearVelocity.setZero();
-            m_angularVelocity = 0.0f;
+            linearVelocity.setZero();
+            angularVelocity = 0.0f;
             m_sweep.a0 = m_sweep.a;
             m_sweep.c0.set(m_sweep.c);
             synchronizeFixtures();
@@ -856,8 +847,7 @@ public final class Body {
 
         setAwake(true);
 
-        m_force.setZero();
-        m_torque = 0.0f;
+        clearForces();
 
         destroyAttachedContacts();
 
@@ -871,8 +861,9 @@ public final class Body {
         }
     }
 
-    void setForceToZero() {
+    void clearForces() {
         m_force.setZero();
+        m_torque = 0.0f;
     }
 
     Vec2 getForce() {
@@ -986,10 +977,10 @@ public final class Body {
         } else {
             m_flags &= ~e_awakeFlag;
             sleepTime = 0.0f;
-            m_linearVelocity.setZero();
-            m_angularVelocity = 0.0f;
-            m_force.setZero();
-            m_torque = 0.0f;
+            linearVelocity.setZero();
+            angularVelocity = 0.0f;
+
+            clearForces();
         }
     }
 
@@ -1134,12 +1125,10 @@ public final class Body {
     }
 
     void synchronizeTransform() {
-        // m_xf.q.set(m_sweep.a);
-        //
-        // // m_xf.position = m_sweep.c - Mul(m_xf.R, m_sweep.localCenter);
+        // m_xf.position = m_sweep.c - Mul(m_xf.R, m_sweep.localCenter);
         // Rot.mulToOutUnsafe(m_xf.q, m_sweep.localCenter, m_xf.p);
         // m_xf.p.mulLocal(-1).addLocal(m_sweep.c);
-        //
+
         m_xf.q.set(m_sweep.a);
         Rotation q = m_xf.q;
         Vec2 v = m_sweep.localCenter;

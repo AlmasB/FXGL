@@ -48,7 +48,7 @@ public class Distance {
      */
     static class SimplexCache {
         /** length or area */
-        public float metric = 0f;
+        private float metric = 0f;
         public int count = 0;
 
         /** vertices on shape A */
@@ -64,13 +64,6 @@ public class Distance {
             indexB[1] = Integer.MAX_VALUE;
             indexB[2] = Integer.MAX_VALUE;
         }
-
-        public void set(SimplexCache sc) {
-            System.arraycopy(sc.indexA, 0, indexA, 0, indexA.length);
-            System.arraycopy(sc.indexB, 0, indexB, 0, indexB.length);
-            metric = sc.metric;
-            count = sc.count;
-        }
     }
 
     private class Simplex {
@@ -80,9 +73,9 @@ public class Distance {
         public final SimplexVertex vertices[] = {m_v1, m_v2, m_v3};
         public int m_count;
 
-        public void readCache(SimplexCache cache, DistanceProxy proxyA, Transform transformA,
+        public void readCache(SimplexCache cache,
+                              DistanceProxy proxyA, Transform transformA,
                               DistanceProxy proxyB, Transform transformB) {
-            assert cache.count <= 3;
 
             // Copy data from cache.
             m_count = cache.count;
@@ -522,13 +515,6 @@ public class Distance {
             }
 
             return bestIndex;
-        }
-
-        /**
-         * @return the vertex count
-         */
-        public final int getVertexCount() {
-            return m_count;
         }
 
         /**

@@ -25,11 +25,13 @@ module com.almasb.fxgl.gameplay {
     exports com.almasb.fxgl.minigames.randomoccurrence;
     exports com.almasb.fxgl.minigames.triggermash;
     exports com.almasb.fxgl.minigames.triggersequence;
+    exports com.almasb.fxgl.quest;
     exports com.almasb.fxgl.trade;
     exports com.almasb.fxgl.trade.view;
 
     opens com.almasb.fxgl.achievement to com.almasb.fxgl.core;
     opens com.almasb.fxgl.minigames to com.almasb.fxgl.core;
+    opens com.almasb.fxgl.quest to com.almasb.fxgl.core;
     opens com.almasb.fxgl.cutscene to com.almasb.fxgl.core;
     opens com.almasb.fxgl.cutscene.dialogue;
 }

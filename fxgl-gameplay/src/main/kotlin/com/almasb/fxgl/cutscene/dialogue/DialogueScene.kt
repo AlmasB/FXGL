@@ -8,6 +8,8 @@ package com.almasb.fxgl.cutscene.dialogue
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationBuilder
+import com.almasb.fxgl.audio.AudioPlayer
+import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.core.asset.AssetLoaderService
 import com.almasb.fxgl.core.asset.AssetType
 import com.almasb.fxgl.core.collection.PropertyMap
@@ -54,6 +56,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
     internal lateinit var gameVars: PropertyMap
     internal lateinit var assetLoader: AssetLoaderService
+    internal lateinit var audioPlayer: AudioPlayer
 
     private lateinit var dialogueScriptRunner: DialogueScriptRunner
 
@@ -171,11 +174,11 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         animation2.startReverse()
     }
 
-    fun start(dialogueGraph: DialogueGraph, functionHandler: FunctionCallHandler, onFinished: Runnable) {
+    fun start(dialogueGraph: DialogueGraph, context: DialogueContext, functionHandler: FunctionCallHandler, onFinished: Runnable) {
         graph = dialogueGraph.copy()
         this.functionHandler = functionHandler
         this.onFinished = onFinished
-        dialogueScriptRunner = DialogueScriptRunner(gameVars, functionHandler)
+        dialogueScriptRunner = DialogueScriptRunner(gameVars, context.properties(), functionHandler)
 
         // while graph has subdialogue nodes, expand
         while (graph.nodes.any { it.value.type == SUBDIALOGUE }) {
@@ -233,6 +236,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         val isDone = currentNode.type == END
         if (!isDone) {
             currentNode = nextNode ?: nextNode()
+            playAudioLines(currentNode)
 
             if (currentNode.type == FUNCTION) {
                 currentNode.text.parseAndCallFunctions()
@@ -278,6 +282,17 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             topText.text = ""
             endCutscene()
         }
+    }
+
+    private fun playAudioLines(node: DialogueNode) {
+        if (node.audioFileName.isEmpty())
+            return
+
+        // TODO: store audio being played, so we can stop as appropriate
+        val audio = assetLoader.load<Music>(AssetType.MUSIC, assetLoader.getURL(node.audioFileName.replace("\\", "/")))
+
+        audioPlayer.stopMusic(audio)
+        audioPlayer.playMusic(audio)
     }
 
     private fun populatePlayerLine(localID: Int, data: String) {

@@ -11,6 +11,7 @@ import com.almasb.fxgl.localization.LocalizationService
 import javafx.beans.binding.StringBinding
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.value.ChangeListener
+import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -81,6 +82,46 @@ class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
         }
 
         val hbox = HBox(btnYes, btnNo)
+        hbox.alignment = Pos.CENTER
+
+        val vbox = VBox(50.0, text, hbox)
+        vbox.setAlignment(Pos.CENTER)
+
+        return wrap(vbox)
+    }
+
+    override fun <T : Any> choiceDialog(message: String, resultCallback: Consumer<T>, firstOption: T, vararg options: T): Pane {
+        val text = createMessage(message)
+
+        val choices = options.toMutableList()
+        choices.add(0, firstOption)
+
+        val hbox = HBox()
+
+        if (choices.size > 3) {
+
+            val choiceBox = uiFactory.newChoiceBox(FXCollections.observableArrayList(choices))
+            choiceBox.selectionModel.selectFirst()
+
+            val btn = uiFactory.newButton("Select")
+            btn.setOnAction {
+                resultCallback.accept(choiceBox.value)
+            }
+
+            hbox.children += choiceBox
+            hbox.children += btn
+
+        } else {
+            choices.forEach { option ->
+                val btn = uiFactory.newButton(option.toString())
+                btn.setOnAction {
+                    resultCallback.accept(option)
+                }
+
+                hbox.children += btn
+            }
+        }
+
         hbox.alignment = Pos.CENTER
 
         val vbox = VBox(50.0, text, hbox)

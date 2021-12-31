@@ -95,12 +95,6 @@ class AnimatedTextureTest {
         texture.onUpdate(0.5)
 
         assertThat(texture.viewport, `is`(Rectangle2D(0.0, 0.0, 320.0, 320.0)))
-
-        // even if we advanced by 2sec we still move one frame at a time
-
-        texture.onUpdate(2.0)
-
-        assertThat(texture.viewport, `is`(Rectangle2D(320.0, 0.0, 320.0, 320.0)))
     }
 
     @Test

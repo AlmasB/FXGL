@@ -31,16 +31,17 @@ class DialogueScriptRunnerTest {
         map.setValue("isAlive", true)
         map.setValue("isSleeping", false)
 
-        runner = DialogueScriptRunner(map) { funcName, args ->
+        runner = DialogueScriptRunner(map, PropertyMap(), object : FunctionCallHandler() {
+            override fun handle(functionName: String, args: Array<String>): Any {
+                var result: Any = ""
 
-            var result: Any = ""
+                if (functionName == "hasItem") {
+                    result = args[0] == "400"
+                }
 
-            if (funcName == "hasItem") {
-                result = args[0] == "400"
+                return result
             }
-
-            result
-        }
+        })
     }
 
     @Test

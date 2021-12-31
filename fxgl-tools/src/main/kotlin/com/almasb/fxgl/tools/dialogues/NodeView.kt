@@ -9,20 +9,26 @@ package com.almasb.fxgl.tools.dialogues
 import com.almasb.fxgl.cutscene.dialogue.DialogueNode
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
+import com.almasb.fxgl.dsl.getbp
+import com.almasb.fxgl.tools.dialogues.DialogueEditorVars.IS_SHOW_AUDIO_LINES
 import com.almasb.fxgl.tools.dialogues.ui.ExpandableTextArea
 import javafx.beans.binding.Bindings
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
+import javafx.scene.Cursor
 import javafx.scene.Node
+import javafx.scene.control.TextField
 import javafx.scene.effect.DropShadow
-import javafx.scene.layout.HBox
-import javafx.scene.layout.Pane
-import javafx.scene.layout.StackPane
-import javafx.scene.layout.VBox
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
+import javafx.scene.text.Text
+import javafx.stage.FileChooser
+import java.io.File
 
 /**
  * A generic view of a dialogue node.
@@ -36,12 +42,12 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         private const val INITIAL_HEIGHT = 100.0
 
         val colors = mapOf(
-                START to Color.LIGHTGREEN.darker(),
-                END to Color.DARKCYAN,
-                FUNCTION to Color.BLUE,
-                CHOICE to Color.GOLD,
-                TEXT to Color.DARKGREEN,
-                BRANCH to Color.MEDIUMPURPLE
+                START to SimpleObjectProperty(Color.DARKGREEN),
+                END to SimpleObjectProperty(Color.RED),
+                FUNCTION to SimpleObjectProperty(Color.BLUE),
+                CHOICE to SimpleObjectProperty(Color.GOLD),
+                TEXT to SimpleObjectProperty(Color.BEIGE),
+                BRANCH to SimpleObjectProperty(Color.MEDIUMVIOLETRED)
         )
     }
 
@@ -61,20 +67,18 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
     init {
         styleClass.add("dialogue-editor-node-view")
 
-        prefWidth = INITIAL_WIDTH
-        prefHeight = INITIAL_HEIGHT
-
         isPickOnBounds = false
 
         textArea.font = Font.font(14.0)
         textArea.textProperty().bindBidirectional(node.textProperty)
 
+        prefWidthProperty().bind(textArea.prefWidthProperty().add(70))
         prefHeightProperty().bind(textArea.prefHeightProperty().add(50.0))
 
         addContent(textArea)
 
-        val title = Title(node.type.toString().toLowerCase().capitalize(), colors[node.type]
-                ?: Color.WHITE)
+        val title = Title(node.type.toString().lowercase().replaceFirstChar { it.uppercaseChar() }, colors[node.type]
+                ?: SimpleObjectProperty(Color.WHITE))
         title.prefWidthProperty().bind(prefWidthProperty().subtract(4))
         title.translateX = 2.0
         title.translateY = 2.0
@@ -112,10 +116,32 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         linkPoint.translateYProperty().bind(heightProperty().divide(2))
     }
 
-    private class Title(name: String, c: Color) : HBox() {
+    fun addAudioField() {
+        val audioField = AudioField()
+        audioField.visibleProperty().bind(getbp(IS_SHOW_AUDIO_LINES))
+
+        audioField.field.text = node.audioFileNameProperty.value
+
+        node.audioFileNameProperty.bindBidirectional(audioField.field.textProperty())
+
+        contentRoot.children.add(0, audioField)
+
+        prefHeightProperty().bind(textArea.prefHeightProperty().add(85))
+    }
+
+    private class Title(name: String, colorProperty: ObjectProperty<Color>) : HBox() {
 
         init {
             styleClass += "title"
+
+            // if color changes, then re-style
+            colorProperty.addListener { _, _, newColor ->
+                val c = newColor
+
+                style = "-fx-background-color: rgba(${c.red*255}, ${c.green*255}, ${c.blue*255}, 0.85)"
+            }
+
+            val c = colorProperty.value
 
             style = "-fx-background-color: rgba(${c.red*255}, ${c.green*255}, ${c.blue*255}, 0.85)"
 
@@ -139,6 +165,55 @@ class CustomButton(symbol: String, size: Double = 24.0) : StackPane() {
                 Bindings.`when`(hoverProperty()).then(Color.WHITE).otherwise(Color.TRANSPARENT)
         )
 
+        cursor = Cursor.HAND
+
         children.addAll(bg, text)
+    }
+}
+
+class AudioField() : HBox(5.0) {
+
+    companion object {
+        private val audioFileChooser = FileChooser()
+    }
+
+    val field = TextField()
+
+    init {
+        audioFileChooser.initialDirectory = File(System.getProperty("user.dir"))
+
+        val icon = makeSoundIcon()
+
+        field.prefWidth = 190.0
+
+        val button = CustomButton("...", 14.0)
+        button.setOnMouseClicked {
+
+            // TODO: configure as appropriate
+            audioFileChooser.showOpenDialog(null)?.let { file ->
+                field.text = File.separatorChar + "assets" + file.absolutePath.toString().substringAfter("assets")
+
+                // remember dir
+                audioFileChooser.initialDirectory = file.parentFile
+            }
+        }
+
+        children.addAll(icon, field, button)
+    }
+
+    private fun makeSoundIcon(): Node {
+        val hbox = HBox(2.0)
+        hbox.alignment = Pos.CENTER
+
+        arrayOf(3.0, 5.0, 4.0, 6.0, 8.0, 5.5, 2.0)
+                .forEach { h ->
+                    val rect = Rectangle(2.0, h * 2.0, Color.WHITE)
+                    rect.arcWidth = 1.0
+                    rect.arcHeight = 1.5
+
+                    hbox.children += rect
+                }
+
+        return hbox
     }
 }

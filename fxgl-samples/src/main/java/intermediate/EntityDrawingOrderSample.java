@@ -27,8 +27,8 @@ public class EntityDrawingOrderSample extends GameApplication {
     @Override
     protected void initInput() {
         onKeyDown(KeyCode.F, () -> {
-            getGameWorld().getEntities().get(1).getTransformComponent().setZ(
-                    -getGameWorld().getEntities().get(1).getTransformComponent().getZ()
+            getGameWorld().getEntities().get(1).setZIndex(
+                    -getGameWorld().getEntities().get(1).getZIndex()
             );
         });
     }

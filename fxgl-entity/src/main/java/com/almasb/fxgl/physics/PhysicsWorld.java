@@ -23,10 +23,7 @@ import com.almasb.fxgl.physics.box2d.collision.Manifold;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
-import com.almasb.fxgl.physics.box2d.dynamics.joints.Joint;
-import com.almasb.fxgl.physics.box2d.dynamics.joints.JointDef;
-import com.almasb.fxgl.physics.box2d.dynamics.joints.RevoluteJoint;
-import com.almasb.fxgl.physics.box2d.dynamics.joints.RevoluteJointDef;
+import com.almasb.fxgl.physics.box2d.dynamics.joints.*;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 
@@ -668,9 +665,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
      * @param localAnchor2 point in entity2 local coordinate system to which entity1 is attached
      */
     public RevoluteJoint addRevoluteJoint(Entity e1, Entity e2, Point2D localAnchor1, Point2D localAnchor2) {
-        if (!e1.hasComponent(PhysicsComponent.class) || !e2.hasComponent(PhysicsComponent.class)) {
-            throw new IllegalArgumentException("Cannot create a joint: both entities must have PhysicsComponent");
-        }
+        checkJointRequirements(e1, e2);
 
         var p1 = e1.getComponent(PhysicsComponent.class);
         var p2 = e2.getComponent(PhysicsComponent.class);
@@ -683,15 +678,47 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     }
 
     /**
+     * Add rope joint between two entities.
+     * The joint runs between the center of e1 to the center of e2, using this distance as max length.
+     */
+    public RopeJoint addRopeJoint(Entity e1, Entity e2) {
+        var c1 = e1.getBoundingBoxComponent().getCenterLocal();
+        var c2 = e2.getBoundingBoxComponent().getCenterLocal();
+
+        return addRopeJoint(e1, e2, c1, c2, e1.getCenter().distance(e2.getCenter()));
+    }
+
+    /**
+     * Add rope joint between two entities.
+     *
+     * @param e1 entity1
+     * @param e2 entity2
+     * @param localAnchor1 point in entity1 local coordinate system to which entity2 is attached
+     * @param localAnchor2 point in entity2 local coordinate system to which entity1 is attached
+     * @param length the maximum length of the rope joint in pixels
+     */
+    public RopeJoint addRopeJoint(Entity e1, Entity e2, Point2D localAnchor1, Point2D localAnchor2, double length) {
+        checkJointRequirements(e1, e2);
+
+        var p1 = e1.getComponent(PhysicsComponent.class);
+        var p2 = e2.getComponent(PhysicsComponent.class);
+
+        RopeJointDef def = new RopeJointDef();
+        def.localAnchorA.set(toPoint(e1.getAnchoredPosition().add(localAnchor1)).subLocal(p1.getBody().getWorldCenter()));
+        def.localAnchorB.set(toPoint(e2.getAnchoredPosition().add(localAnchor2)).subLocal(p2.getBody().getWorldCenter()));
+        def.maxLength = toMetersF(length);
+
+        return addJoint(e1, e2, def);
+    }
+
+    /**
      * Add a joint constraining two entities with PhysicsComponent.
      * The entities must already be in the game world.
      *
      * @return joint created using the provided definition
      */
     public <T extends Joint> T addJoint(Entity e1, Entity e2, JointDef<T> def) {
-        if (!e1.hasComponent(PhysicsComponent.class) || !e2.hasComponent(PhysicsComponent.class)) {
-            throw new IllegalArgumentException("Cannot create a joint: both entities must have PhysicsComponent");
-        }
+        checkJointRequirements(e1, e2);
 
         var p1 = e1.getComponent(PhysicsComponent.class);
         var p2 = e2.getComponent(PhysicsComponent.class);
@@ -700,6 +727,12 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
         def.setBodyB(p2.body);
 
         return jboxWorld.createJoint(def);
+    }
+
+    private void checkJointRequirements(Entity e1, Entity e2) {
+        if (!e1.hasComponent(PhysicsComponent.class) || !e2.hasComponent(PhysicsComponent.class)) {
+            throw new IllegalArgumentException("Cannot create a joint: both entities must have PhysicsComponent");
+        }
     }
 
     /**

@@ -43,20 +43,17 @@ public class VoronoiDiagram {
     }
 
     private Generator[] m_generatorBuffer;
-    private int m_generatorCount;
-    private int m_countX, m_countY;
+    private int m_generatorCount = 0;
+    private int m_countX = 0;
+    private int m_countY = 0;
     // The diagram is an array of "pointers".
-    private Generator[] m_diagram;
+    private Generator[] m_diagram = null;
 
     public VoronoiDiagram(int generatorCapacity) {
         m_generatorBuffer = new Generator[generatorCapacity];
         for (int i = 0; i < generatorCapacity; i++) {
             m_generatorBuffer[i] = new Generator();
         }
-        m_generatorCount = 0;
-        m_countX = 0;
-        m_countY = 0;
-        m_diagram = null;
     }
 
     public void getNodes(VoronoiDiagramCallback callback) {

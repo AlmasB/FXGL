@@ -28,7 +28,8 @@ abstract class Animation<T>(
     private var time = 0.0
 
     // for single cycle
-    private var endTime = config.duration.toSeconds()
+    var endTime = config.duration.toSeconds()
+        private set
 
     private var count = 0
 
@@ -130,6 +131,12 @@ abstract class Animation<T>(
 
     private fun resetTime() {
         time = if (isReverse) endTime else 0.0
+    }
+
+    fun setTimeTo(newTime: Double) {
+        time = newTime
+
+        onProgress(animatedValue.getValue(time / endTime, interpolator))
     }
 
     abstract fun onProgress(value: T)

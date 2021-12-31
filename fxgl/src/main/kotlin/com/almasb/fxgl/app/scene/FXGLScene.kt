@@ -43,6 +43,11 @@ abstract class FXGLScene
      */
     protected val window: MainWindow by lazy { FXGL.getService(FXGLApplication.GameApplicationService::class.java).window }
 
+    /**
+     * The root cursor that was used before setCursorInvisible() call.
+     */
+    protected var preInvisibleCursor: Cursor? = null
+
     val viewport = Viewport(appWidth.toDouble(), appHeight.toDouble())
 
     val paddingTop = Rectangle()
@@ -103,6 +108,8 @@ abstract class FXGLScene
 
     fun setCursor(cursor: Cursor) {
         root.cursor = cursor
+
+        preInvisibleCursor = cursor
     }
 
     /**
@@ -110,8 +117,11 @@ abstract class FXGLScene
      * @param hotspot hotspot location
      */
     fun setCursor(image: Image, hotspot: Point2D) {
-        root.cursor = ImageCursor(image, hotspot.x, hotspot.y)
+        setCursor(ImageCursor(image, hotspot.x, hotspot.y))
     }
+
+    val isCursorInvisible: Boolean
+        get() = root.cursor === Cursor.NONE
 
     /**
      * Makes cursor invisible.

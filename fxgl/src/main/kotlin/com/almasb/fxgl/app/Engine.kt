@@ -58,6 +58,7 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
         log.debug("Running on OS: $operatingSystemName version $operatingSystemVersion")
         log.debug("Architecture: $operatingSystemArchitecture")
         log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
+        log.info("      Ask questions and discuss at: https://github.com/AlmasB/FXGL/discussions")
         log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
 

@@ -204,9 +204,8 @@ public final class Fixture {
         ContactEdge edge = body.getContactList();
         while (edge != null) {
             Contact contact = edge.contact;
-            Fixture fixtureA = contact.getFixtureA();
-            Fixture fixtureB = contact.getFixtureB();
-            if (fixtureA == this || fixtureB == this) {
+
+            if (contact.getFixtureA() == this || contact.getFixtureB() == this) {
                 contact.flagForFiltering();
             }
             edge = edge.next;

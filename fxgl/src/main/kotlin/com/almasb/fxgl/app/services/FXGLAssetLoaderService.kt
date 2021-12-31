@@ -101,8 +101,8 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         }
     }
 
-    @Inject("isDesktop")
-    private var isDesktop = true
+    @Inject("isMobile")
+    private var isMobile = false
 
     @Inject("userAppClass")
     private lateinit var userAppClass: Class<*>
@@ -112,8 +112,8 @@ class FXGLAssetLoaderService : AssetLoaderService() {
     private val cachedAssets = hashMapOf<String, Any>()
 
     override fun onInit() {
-        assetData[SOUND] = SoundAssetLoader(audioService, isDesktop)
-        assetData[MUSIC] = MusicAssetLoader(audioService, isDesktop)
+        assetData[SOUND] = SoundAssetLoader(audioService, isMobile)
+        assetData[MUSIC] = MusicAssetLoader(audioService, isMobile)
 
         log.debug("User app class for loading assets: $userAppClass")
     }
@@ -503,7 +503,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      *
      * Note: specific load methods (e.g. [loadImage]) are preferred over this call.
      */
-    fun <T> load(assetType: AssetType, url: URL): T {
+    override fun <T> load(assetType: AssetType, url: URL): T {
         return load(assetType, LoadParams(url))
     }
 
@@ -566,7 +566,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      * @param name resource name relative to base package (starts with /assets/)
      * @return a valid URL to resource or [NULL_URL] if URL not found
      */
-    private fun getURL(name: String): URL {
+    override fun getURL(name: String): URL {
         // 1. try /assets/ from user module using their app class
         // 2. try /fxglassets/ from fxgl.all module using this javaclass
 
@@ -674,20 +674,20 @@ private class ResizableImageAssetLoader : AssetLoader<Image>(
     override fun getDummy(): Image = getDummyImage()
 }
 
-private class SoundAssetLoader(val audioService: AudioPlayer, val isDesktop: Boolean) : AssetLoader<Sound>(
+private class SoundAssetLoader(val audioService: AudioPlayer, val isMobile: Boolean) : AssetLoader<Sound>(
         Sound::class.java,
         SOUNDS_DIR
 ) {
-    override fun load(url: URL): Sound = Sound(audioService.loadAudio(AudioType.SOUND, url, isDesktop))
+    override fun load(url: URL): Sound = Sound(audioService.loadAudio(AudioType.SOUND, url, isMobile))
 
     override fun getDummy(): Sound = Sound(getDummyAudio())
 }
 
-private class MusicAssetLoader(val audioService: AudioPlayer, val isDesktop: Boolean) : AssetLoader<Music>(
+private class MusicAssetLoader(val audioService: AudioPlayer, val isMobile: Boolean) : AssetLoader<Music>(
         Music::class.java,
         MUSIC_DIR
 ) {
-    override fun load(url: URL): Music = Music(audioService.loadAudio(AudioType.MUSIC, url, isDesktop))
+    override fun load(url: URL): Music = Music(audioService.loadAudio(AudioType.MUSIC, url, isMobile))
 
     override fun getDummy(): Music = Music(getDummyAudio())
 }

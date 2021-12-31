@@ -31,6 +31,7 @@ saves/
 profiles/
 system/
 editor_json/
+*.json
 
 # FXGL Tests #
 testprofiles/
@@ -40,3 +41,8 @@ hiscore.dat
 
 # Common save file ext #
 *.sav
+*.prefs
+
+# Auto-generated CHANGELOG #
+CHANGELOG_RAW.md
+CHANGELOG.md

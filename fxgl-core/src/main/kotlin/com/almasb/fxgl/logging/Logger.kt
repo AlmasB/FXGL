@@ -113,6 +113,15 @@ private constructor(private val name: String) {
             }
         }
 
+        @JvmStatic fun removeAllOutputs() {
+            outputs.clear()
+
+            debug.clear()
+            info.clear()
+            warning.clear()
+            fatal.clear()
+        }
+
         private fun doLog(loggerName: String, loggerMessage: String, level: LoggerLevel) {
             val message = lazy { makeMessage(loggerName, loggerMessage, level) }
 

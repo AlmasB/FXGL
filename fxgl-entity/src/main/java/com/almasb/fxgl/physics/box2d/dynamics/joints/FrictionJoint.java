@@ -24,8 +24,8 @@ public class FrictionJoint extends Joint {
     private final Vec2 m_localAnchorB;
 
     // Solver shared
-    private final Vec2 m_linearImpulse;
-    private float m_angularImpulse;
+    private final Vec2 m_linearImpulse = new Vec2();
+    private float m_angularImpulse = 0.0f;
     private float m_maxForce;
     private float m_maxTorque;
 
@@ -43,13 +43,11 @@ public class FrictionJoint extends Joint {
     private final Mat22 m_linearMass = new Mat22();
     private float m_angularMass;
 
-    protected FrictionJoint(IWorldPool argWorldPool, FrictionJointDef def) {
-        super(argWorldPool, def);
+    protected FrictionJoint(IWorldPool worldPool, FrictionJointDef def) {
+        super(worldPool, def);
+
         m_localAnchorA = new Vec2(def.localAnchorA);
         m_localAnchorB = new Vec2(def.localAnchorB);
-
-        m_linearImpulse = new Vec2();
-        m_angularImpulse = 0.0f;
 
         m_maxForce = def.maxForce;
         m_maxTorque = def.maxTorque;
@@ -101,9 +99,6 @@ public class FrictionJoint extends Joint {
         return m_maxTorque;
     }
 
-    /**
-     * @see com.almasb.fxgl.physics.box2d.dynamics.joints.Joint#initVelocityConstraints(com.almasb.fxgl.physics.box2d.dynamics.TimeStep)
-     */
     @Override
     public void initVelocityConstraints(final SolverData data) {
         m_indexA = m_bodyA.m_islandIndex;
@@ -196,13 +191,9 @@ public class FrictionJoint extends Joint {
 
     @Override
     public void solveVelocityConstraints(final SolverData data) {
-        Vec2 vA = data.velocities[m_indexA].v;
         float wA = data.velocities[m_indexA].w;
-        Vec2 vB = data.velocities[m_indexB].v;
         float wB = data.velocities[m_indexB].w;
 
-        float mA = m_invMassA;
-        float mB = m_invMassB;
         float iA = m_invIA;
         float iB = m_invIB;
 
@@ -224,6 +215,9 @@ public class FrictionJoint extends Joint {
 
         // Solve linear friction
         {
+            Vec2 vA = data.velocities[m_indexA].v;
+            Vec2 vB = data.velocities[m_indexB].v;
+
             final Vec2 Cdot = pool.popVec2();
             final Vec2 temp = pool.popVec2();
 
@@ -234,7 +228,6 @@ public class FrictionJoint extends Joint {
             final Vec2 impulse = pool.popVec2();
             Mat22.mulToOutUnsafe(m_linearMass, Cdot, impulse);
             impulse.negateLocal();
-
 
             final Vec2 oldImpulse = pool.popVec2();
             oldImpulse.set(m_linearImpulse);
@@ -249,23 +242,16 @@ public class FrictionJoint extends Joint {
 
             impulse.set(m_linearImpulse).subLocal(oldImpulse);
 
-            temp.set(impulse).mulLocal(mA);
+            temp.set(impulse).mulLocal(m_invMassA);
             vA.subLocal(temp);
             wA -= iA * Vec2.cross(m_rA, impulse);
 
-            temp.set(impulse).mulLocal(mB);
+            temp.set(impulse).mulLocal(m_invMassB);
             vB.addLocal(temp);
             wB += iB * Vec2.cross(m_rB, impulse);
-
         }
 
-//    data.velocities[m_indexA].v.set(vA);
-        if (data.velocities[m_indexA].w != wA) {
-            assert data.velocities[m_indexA].w != wA;
-        }
         data.velocities[m_indexA].w = wA;
-
-//    data.velocities[m_indexB].v.set(vB);
         data.velocities[m_indexB].w = wB;
 
         pool.pushVec2(4);

@@ -267,7 +267,6 @@ public class DistanceJoint extends Joint {
         float impulse = -m_mass * (Cdot + m_bias + m_gamma * m_impulse);
         m_impulse += impulse;
 
-
         float Px = impulse * m_u.x;
         float Py = impulse * m_u.y;
 
@@ -278,9 +277,7 @@ public class DistanceJoint extends Joint {
         vB.y += m_invMassB * Py;
         wB += m_invIB * (m_rB.x * Py - m_rB.y * Px);
 
-//    data.velocities[m_indexA].v.set(vA);
         data.velocities[m_indexA].w = wA;
-//    data.velocities[m_indexB].v.set(vB);
         data.velocities[m_indexB].w = wB;
 
         pool.pushVec2(2);

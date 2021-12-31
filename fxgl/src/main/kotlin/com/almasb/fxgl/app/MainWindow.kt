@@ -18,6 +18,7 @@ import com.almasb.fxgl.scene.SubScene
 import javafx.beans.binding.Bindings
 import javafx.beans.property.*
 import javafx.event.Event
+import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
@@ -30,6 +31,8 @@ import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
+import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import javafx.scene.shape.Rectangle
 import javafx.stage.Screen
 import javafx.stage.Stage
@@ -68,6 +71,8 @@ sealed class MainWindow(
     abstract val isFocused: Boolean
 
     protected val scenes = arrayListOf<Scene>()
+
+    protected val eventSubscribers = arrayListOf<SceneEventSubscriber<*>>()
 
     protected val scaleRatioX: DoubleProperty = SimpleDoubleProperty()
     protected val scaleRatioY: DoubleProperty = SimpleDoubleProperty()
@@ -213,11 +218,13 @@ sealed class MainWindow(
     }
 
     protected fun addKeyHandler(fxScene: javafx.scene.Scene, handler: (KeyEvent) -> Unit) {
-        fxScene.addEventHandler(KeyEvent.ANY, handler)
+        val keyHandler: EventHandler<KeyEvent> = EventHandler(handler)
+
+        eventSubscribers.add(SceneEventSubscriber(fxScene, KeyEvent.ANY, keyHandler, isFilter = false))
     }
 
     protected fun addMouseHandler(fxScene: javafx.scene.Scene, handler: (MouseEventData) -> Unit) {
-        fxScene.addEventHandler(MouseEvent.ANY) {
+        val mouseHandler: EventHandler<MouseEvent> = EventHandler {
             val data = MouseEventData(
                     it,
                     Point2D(currentFXGLScene.contentRoot.translateX, currentFXGLScene.contentRoot.translateY),
@@ -229,15 +236,27 @@ sealed class MainWindow(
 
             handler(data)
         }
+
+        eventSubscribers.add(SceneEventSubscriber(fxScene, MouseEvent.ANY, mouseHandler, isFilter = false))
     }
 
     protected fun addGlobalHandler(fxScene: javafx.scene.Scene, filter: (Event) -> Unit, handler: (Event) -> Unit) {
-        fxScene.addEventFilter(EventType.ROOT) {
-            filter(it)
-        }
+        val rootFilter: EventHandler<Event> = EventHandler(filter)
+        val rootHandler: EventHandler<Event> = EventHandler(handler)
 
-        fxScene.addEventHandler(EventType.ROOT) {
-            handler(it)
+        eventSubscribers.add(SceneEventSubscriber(fxScene, EventType.ROOT, rootFilter, isFilter = true))
+        eventSubscribers.add(SceneEventSubscriber(fxScene, EventType.ROOT, rootHandler, isFilter = false))
+    }
+
+    protected fun removeAllEventFiltersAndHandlers(fxScene: javafx.scene.Scene) {
+        eventSubscribers.removeIf {
+            val shouldRemove = it.fxScene === fxScene
+
+            if (shouldRemove) {
+                it.unsubscribe()
+            }
+
+            shouldRemove
         }
     }
 
@@ -527,12 +546,15 @@ internal class EmbeddedPaneWindow(
         // this rect ensures min size
         backgroundRect.widthProperty().bind(fxglPane.renderWidthProperty())
         backgroundRect.heightProperty().bind(fxglPane.renderHeightProperty())
+        backgroundRect.fillProperty().bind(fxglPane.renderFillProperty())
         fxglPane.allChildren += backgroundRect
 
         setInitialScene(scene)
 
-        fxglPane.sceneProperty().addListener { _, _, newScene ->
-            // TODO: remove handlers from prev scene
+        fxglPane.sceneProperty().addListener { _, oldScene, newScene ->
+            if (oldScene != null) {
+                removeAllEventFiltersAndHandlers(oldScene)
+            }
 
             if (newScene != null) {
                 addKeyHandler(newScene) { e ->
@@ -540,8 +562,8 @@ internal class EmbeddedPaneWindow(
                     stateMachine.runOnActiveStates { it.input.onKeyEvent(e) }
                 }
 
-                // also take fxglPane scene location into account
-                newScene.addEventHandler(MouseEvent.ANY) {
+                // we also take fxglPane scene location into account, hence we add event subscriber directly
+                val mouseHandler: EventHandler<MouseEvent> = EventHandler {
                     val data = MouseEventData(
                             it,
                             fxglPane.localToScene(0.0, 0.0).add(currentFXGLScene.contentRoot.translateX, currentFXGLScene.contentRoot.translateY),
@@ -554,6 +576,8 @@ internal class EmbeddedPaneWindow(
                     input.onMouseEvent(data)
                     stateMachine.runOnActiveStates { it.input.onMouseEvent(data) }
                 }
+
+                eventSubscribers.add(SceneEventSubscriber(newScene, MouseEvent.ANY, mouseHandler, isFilter = false))
 
                 // reroute any events to current state input
                 addGlobalHandler(newScene,
@@ -696,6 +720,9 @@ class FXGLPane(w: Double, h: Double) : Region() {
     private val renderWidthProp = SimpleDoubleProperty(w)
     private val renderHeightProp = SimpleDoubleProperty(h)
 
+    // default is white to be consistent with FXGL's scene default in non-embedded mode
+    private val renderFillProp = SimpleObjectProperty<Paint>(Color.WHITE)
+
     var renderWidth: Double
         get() = renderWidthProp.value
         set(value) { renderWidthProp.value = value }
@@ -704,6 +731,35 @@ class FXGLPane(w: Double, h: Double) : Region() {
         get() = renderHeightProp.value
         set(value) { renderHeightProp.value = value }
 
+    var renderFill: Paint
+        get() = renderFillProp.value
+        set(value) { renderFillProp.value = value }
+
     fun renderWidthProperty(): DoubleProperty = renderWidthProp
     fun renderHeightProperty(): DoubleProperty = renderHeightProp
+
+    fun renderFillProperty(): ObjectProperty<Paint> = renderFillProp
+}
+
+class SceneEventSubscriber<T : Event>(
+        val fxScene: javafx.scene.Scene,
+        val eventType: EventType<T>,
+        val eventHandler: EventHandler<T>,
+        val isFilter: Boolean
+) {
+    init {
+        if (isFilter) {
+            fxScene.addEventFilter(eventType, eventHandler)
+        } else {
+            fxScene.addEventHandler(eventType, eventHandler)
+        }
+    }
+
+    fun unsubscribe() {
+        if (isFilter) {
+            fxScene.removeEventFilter(eventType, eventHandler)
+        } else {
+            fxScene.removeEventHandler(eventType, eventHandler)
+        }
+    }
 }

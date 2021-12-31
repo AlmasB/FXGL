@@ -28,12 +28,16 @@ import javafx.scene.text.Text
 class StartNodeView(node: DialogueNode = StartNode("")) : NodeView(node) {
     init {
         addOutPoint(OutLinkPoint(this))
+
+        addAudioField()
     }
 }
 
 class EndNodeView(node: DialogueNode = EndNode("")) : NodeView(node) {
     init {
         addInPoint(InLinkPoint(this))
+
+        addAudioField()
     }
 }
 
@@ -41,6 +45,8 @@ class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
     init {
         addInPoint(InLinkPoint(this))
         addOutPoint(OutLinkPoint(this))
+
+        addAudioField()
     }
 }
 
@@ -99,10 +105,15 @@ class BranchNodeView(node: DialogueNode = BranchNode("")) : NodeView(node) {
 
 class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
+    // this tells us how far the outPoints should be from internal content
+    private val offsetY = 84
+
     private val conditions = arrayListOf<Condition>()
 
     init {
         addInPoint(InLinkPoint(this))
+
+        addAudioField()
 
         val node = this.node as ChoiceNode
 
@@ -113,7 +124,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
                 val outPoint = OutLinkPoint(this)
                 outPoint.translateXProperty().bind(widthProperty().add(-25.0))
-                outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(53 + i * 35.0))
+                outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(offsetY + i * 35.0))
 
                 outPoint.choiceOptionID = i
                 outPoint.choiceLocalOptionProperty.bind(field.textProperty())
@@ -149,7 +160,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
                 val outPoint = OutLinkPoint(this)
                 outPoint.translateXProperty().bind(widthProperty().add(-25.0))
-                outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(53 + i * 35.0))
+                outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(offsetY + i * 35.0))
 
                 outPoint.choiceOptionID = i
                 outPoint.choiceLocalOptionProperty.bind(field.textProperty())
@@ -227,7 +238,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
         val outPoint = OutLinkPoint(this)
         outPoint.translateXProperty().bind(widthProperty().add(-25.0))
-        outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(53 + nextID * 35.0))
+        outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(offsetY + nextID * 35.0))
 
         outPoint.choiceOptionID = nextID
         outPoint.choiceLocalOptionProperty.bind(field.textProperty())

@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.cutscene.dialogue
 
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
@@ -19,9 +20,16 @@ enum class DialogueNodeType {
     START, END, TEXT, SUBDIALOGUE, CHOICE, FUNCTION, BRANCH
 }
 
-fun interface FunctionCallHandler {
+/**
+ * The context in which a dialogue is running.
+ * For example, a single NPC could be a context.
+ */
+fun interface DialogueContext {
 
-    fun handle(functionName: String, args: Array<String>): Any
+    /**
+     * @return property map that is local to the dialogue context
+     */
+    fun properties(): PropertyMap
 }
 
 /* NODES */
@@ -35,6 +43,11 @@ sealed class DialogueNode(
 
     val text: String
         get() = textProperty.value
+
+    val audioFileNameProperty: StringProperty = SimpleStringProperty("")
+
+    val audioFileName: String
+        get() = audioFileNameProperty.value
 
     override fun toString(): String {
         return javaClass.simpleName
@@ -127,6 +140,14 @@ class DialogueGraph(
         nodes.remove(id)
 
         edges.removeIf { it.source === node || it.target === node }
+    }
+
+    fun addEdge(edge: DialogueEdge) {
+        edges += edge
+    }
+
+    fun removeEdge(edge: DialogueEdge) {
+        edges -= edge
     }
 
     /**

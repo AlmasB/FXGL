@@ -54,15 +54,15 @@ public abstract class Contact {
     public int m_indexA;
     public int m_indexB;
 
-    public final Manifold m_manifold = new Manifold();
+    private final Manifold m_manifold = new Manifold();
 
     public float m_toiCount;
     public float m_toi;
 
-    public float m_friction;
-    public float m_restitution;
+    private float m_friction;
+    private float m_restitution;
 
-    public float m_tangentSpeed;
+    private float m_tangentSpeed;
 
     protected final IWorldPool pool;
 
@@ -85,15 +85,8 @@ public abstract class Contact {
         m_prev = null;
         m_next = null;
 
-        m_nodeA.contact = null;
-        m_nodeA.prev = null;
-        m_nodeA.next = null;
-        m_nodeA.other = null;
-
-        m_nodeB.contact = null;
-        m_nodeB.prev = null;
-        m_nodeB.next = null;
-        m_nodeB.other = null;
+        m_nodeA.reset();
+        m_nodeB.reset();
 
         m_toiCount = 0;
         m_friction = mixFriction(fA.getFriction(), fB.getFriction());

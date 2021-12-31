@@ -18,6 +18,7 @@ import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.components.ViewComponent
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.physics.PhysicsWorld
+import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.ui.UI
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.value.ChangeListener
@@ -392,6 +393,26 @@ internal constructor(width: Int, height: Int,
             view.zProperty.removeListener(zChangeListener)
 
             removeGameView(view)
+        }
+    }
+
+    private var isCursorInvisibleNeeded = false
+
+    override fun onEnteredFrom(prevState: Scene) {
+        if (isCursorInvisibleNeeded) {
+            setCursorInvisible()
+        }
+    }
+
+    override fun onExitingTo(nextState: Scene) {
+        isCursorInvisibleNeeded = isCursorInvisible
+
+        if (isCursorInvisibleNeeded) {
+            val newCursor = preInvisibleCursor ?: window.defaultCursor
+
+            newCursor?.let {
+                setCursor(it)
+            }
         }
     }
 

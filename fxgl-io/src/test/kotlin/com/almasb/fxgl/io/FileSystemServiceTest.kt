@@ -49,7 +49,7 @@ class FileSystemServiceTest {
 
             fs = FileSystemService()
             val injectMap = mapOf(
-                    "isDesktop" to true,
+                    "isMobile" to false,
                     "isFileSystemWriteAllowed" to true)
 
             InjectInTest.inject(MethodHandles.lookup(), fs, injectMap)
@@ -237,7 +237,7 @@ class FileSystemServiceTest {
     fun `Fail on mobile if no private storage present`() {
         val f = FileSystemService()
         val injectMap = mapOf(
-                "isDesktop" to false,
+                "isMobile" to true,
                 "isFileSystemWriteAllowed" to true)
 
         InjectInTest.inject(MethodHandles.lookup(), f, injectMap)
@@ -251,7 +251,7 @@ class FileSystemServiceTest {
     fun `FS is not changed if FS write is not allowed`() {
         val f = FileSystemService()
         val injectMap = mapOf(
-                "isDesktop" to true,
+                "isMobile" to false,
                 "isFileSystemWriteAllowed" to false)
 
         InjectInTest.inject(MethodHandles.lookup(), f, injectMap)

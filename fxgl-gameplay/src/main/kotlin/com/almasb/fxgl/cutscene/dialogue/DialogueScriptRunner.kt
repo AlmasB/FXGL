@@ -8,19 +8,27 @@ package com.almasb.fxgl.cutscene.dialogue
 
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.logging.Logger
+import java.lang.reflect.Method
 
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 internal class DialogueScriptRunner(
+
+        /**
+         * Variables global to the game.
+         */
         private val gameVars: PropertyMap,
+
+        /**
+         * Variables local to the dialogue context.
+         */
+        private val localVars: PropertyMap,
         private val functionHandler: FunctionCallHandler
 ) {
 
     private val log = Logger.get<DialogueScriptRunner>()
-
-    private val localVars = hashMapOf<String, Any>()
 
     /**
      * Given a [line], this function replaces all variables with their values.
@@ -43,8 +51,8 @@ internal class DialogueScriptRunner(
         var result = line
 
         varNames.forEach {
-            if (it in localVars) {
-                val value = localVars[it]
+            if (localVars.exists(it)) {
+                val value = localVars.getValue<Any>(it)
                 result = result.replace("\$$it", value.toString())
 
             } else if (gameVars.exists(it)) {
@@ -112,8 +120,8 @@ internal class DialogueScriptRunner(
 
         if (tokens.size == 1) {
             // check if this is a boolean variable -- the only valid variable to use here
-            if (funcName in localVars) {
-                return localVars[funcName]!!
+            if (localVars.exists(funcName)) {
+                return localVars.getValue(funcName)
             }
 
             if (gameVars.exists(funcName)) {
@@ -121,8 +129,7 @@ internal class DialogueScriptRunner(
             }
         }
 
-        // if all of above checks did not succeed, then call a default function handler
-        return functionHandler.handle(funcName, tokens.drop(1).map { replaceVariablesInText(it.trim()) }.toTypedArray())
+        return functionHandler.call(funcName, tokens.drop(1).map { replaceVariablesInText(it.trim()) }.toTypedArray())
     }
 
     private fun callAssignmentFunction(line: String) {
@@ -131,12 +138,13 @@ internal class DialogueScriptRunner(
         val varName = line.substringBefore('=').trim()
         val varValue = line.substringAfter('=').trim().toTypedValue()
 
-        if (varName in localVars) {
-            localVars[varName] = varValue
+        if (localVars.exists(varName)) {
+            localVars.setValue(varName, varValue)
         } else if (gameVars.exists(varName)) {
             gameVars.setValue(varName, varValue)
         } else {
-            localVars[varName] = varValue
+            // does not exist anywhere, create locally
+            localVars.setValue(varName, varValue)
         }
     }
 }
@@ -194,3 +202,90 @@ private operator fun Any.compareTo(other: Any): Int {
 }
 
 private object NullObject
+
+/**
+ * Marks a class as one that contains functions that can be called
+ * by [FunctionCallHandler].
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
+ */
+interface FunctionCallDelegate
+
+abstract class FunctionCallHandler : FunctionCallDelegate {
+
+    private val log = Logger.get(javaClass)
+
+    private val methods = hashMapOf<MethodSignature, InvokableMethod>()
+
+    /**
+     * Provides conversions from [String] to other types.
+     */
+    val stringToObject = hashMapOf<Class<*>, (String) -> Any>()
+
+    init {
+        // register common types
+        stringToObject[String::class.java] = { it }
+        stringToObject[Int::class.java] = { it.toInt() }
+        stringToObject[Double::class.java] = { it.toDouble() }
+        stringToObject[Boolean::class.java] = {
+            when (it) {
+                "true" -> true
+                "false" -> false
+                else -> throw java.lang.RuntimeException("Cannot convert $it to Boolean")
+            }
+        }
+
+        // add self as a delegate
+        addFunctionCallDelegate(this)
+    }
+
+    fun addFunctionCallDelegate(obj: FunctionCallDelegate) {
+        obj.javaClass.declaredMethods.forEach {
+            val signature = MethodSignature(it.name, it.parameterCount)
+            val method = InvokableMethod(obj, it)
+
+            methods[signature] = method
+
+            log.debug("Added cmd: $method ($signature)")
+        }
+    }
+
+    fun removeFunctionCallDelegate(obj: FunctionCallDelegate) {
+        methods.filterValues { it.delegate === obj }
+                .forEach { methods.remove(it.key) }
+    }
+
+    fun call(functionName: String, args: Array<String>): Any {
+        val method = methods[MethodSignature(functionName, args.size)]
+
+        if (method != null) {
+            val argsAsObjects = method.function.parameterTypes.mapIndexed { index, type ->
+                val converter = stringToObject[type] ?: throw java.lang.RuntimeException("No converter found from String to $type")
+                converter.invoke(args[index])
+            }
+
+            // void returns null, but Any is expected, so we return 0 in such cases
+            return method.function.invoke(method.delegate, *argsAsObjects.toTypedArray()) ?: 0
+        }
+
+        log.warning("Unrecognized function: $functionName with ${args.size} arguments. Calling default implementation")
+
+        return handle(functionName, args)
+    }
+
+    /**
+     * A default handle function, which is called when no function delegate with matching method signature was found.
+     */
+    protected open fun handle(functionName: String, args: Array<String>): Any {
+        log.warning("Function call from dialogue graph via default implementation of FunctionCallHandler:")
+        log.warning("$functionName ${args.toList()}")
+        return 0
+    }
+
+    private data class MethodSignature(val name: String, val paramCount: Int)
+
+    /**
+     * Stores the object [delegate] and the function [function] that can be invoked on the object.
+     */
+    private data class InvokableMethod(val delegate: FunctionCallDelegate, val function: Method)
+}

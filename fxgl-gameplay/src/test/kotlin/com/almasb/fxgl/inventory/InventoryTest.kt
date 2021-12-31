@@ -86,8 +86,8 @@ class InventoryTest {
         assertThat(inventory.allData.size, `is`(1))
 
         val itemData = inventory.allData["Hello"]!!
-        assertThat(itemData[0].userItem, `is`("Hello"))
-        assertThat(itemData[0].quantity, `is`(1))
+        assertThat(itemData.userItem, `is`("Hello"))
+        assertThat(itemData.quantity, `is`(1))
 
         val view = Rectangle()
 
@@ -96,44 +96,25 @@ class InventoryTest {
         assertThat(inventory.allData.size, `is`(2))
 
         val itemData2 = inventory.allData["Hi"]!!
-        assertThat(itemData2[0].userItem, `is`("Hi"))
-        assertThat(itemData2[0].name, `is`("name"))
-        assertThat(itemData2[0].description, `is`("description"))
-        assertThat(itemData2[0].view, `is`(view))
-        assertThat(itemData2[0].quantity, `is`(3))
+        assertThat(itemData2.userItem, `is`("Hi"))
+        assertThat(itemData2.name, `is`("name"))
+        assertThat(itemData2.description, `is`("description"))
+        assertThat(itemData2.view, `is`(view))
+        assertThat(itemData2.quantity, `is`(3))
 
-        assertThat(itemData2[0].nameProperty().value, `is`("name"))
-        assertThat(itemData2[0].descriptionProperty().value, `is`("description"))
-        assertThat(itemData2[0].viewProperty().value, `is`(view))
-        assertThat(itemData2[0].quantityProperty().value, `is`(3))
+        assertThat(itemData2.nameProperty().value, `is`("name"))
+        assertThat(itemData2.descriptionProperty().value, `is`("description"))
+        assertThat(itemData2.viewProperty().value, `is`(view))
+        assertThat(itemData2.quantityProperty().value, `is`(3))
     }
 
     @Test
     fun `Auto-remove items if quantity is 0`() {
-        assertFalse(inventory.isRemoveItemsIfQty0)
-
         inventory.add("Hello", quantity = 2)
 
         inventory.incrementQuantity("Hello", -2)
 
-        assertThat(inventory.itemsProperty().size, `is`(1))
-
-        inventory.isRemoveItemsIfQty0 = true
-
-        assertTrue(inventory.isRemoveItemsIfQty0)
-
-        inventory.incrementQuantity("Hello", 2)
-
-        // should remove item "Hello" since the flag is on
-        inventory.incrementQuantity("Hello", -2)
-
-
         assertThat(inventory.itemsProperty().size, `is`(0))
-    }
-
-    @Test
-    fun `getData returns empty list if no item`() {
-        assertThat(inventory.getData("bla-bla"), `is`(FXCollections.observableArrayList()))
     }
 
     @Test
@@ -159,9 +140,7 @@ class InventoryTest {
 
     @Test
     fun `New items are created when adding quantity of items past stackMax`() {
-        inventory.setStackMax(3)
-
-        inventory.add("Hello", quantity = 7)
+        inventory.add("Hello", ItemConfig(maxStackQuantity = 3), quantity = 7)
 
         // Should create 3 stacks of quantities: [3, 3, 1]
         assertThat(inventory.size, `is`(3))
@@ -174,9 +153,7 @@ class InventoryTest {
 
     @Test
     fun `New items are created when incrementing quantity past stackMax`() {
-        inventory.setStackMax(3)
-
-        inventory.add("Hello", quantity = 3)
+        inventory.add("Hello", ItemConfig(maxStackQuantity = 3), quantity = 3)
 
         // Should create stacks: [3, 3, 3, 1]
         inventory.incrementQuantity("Hello", 7)
@@ -191,17 +168,15 @@ class InventoryTest {
 
     @Test
     fun `getItemQuantity returns total quantity of all item's stacks`() {
-        inventory.setStackMax(3)
-
         // Stacks should be: [3, 3, 3, 3, 3]
-        inventory.add("Hello", quantity = 15)
+        inventory.add("Hello", ItemConfig(maxStackQuantity = 3), quantity = 15)
 
         assertThat(inventory.size, `is`(5))
 
         assertTrue(inventory.incrementQuantity("Hello", -10))
 
-        // Stacks should be: [3, 2, 0, 0, 0]
-        assertThat(inventory.size, `is`(5))
+        // Stacks should be: [3, 2]
+        assertThat(inventory.size, `is`(2))
         assertThat(inventory.getItemQuantity("Hello"), `is`(5))
 
         //Stacks should be: [3, 3, 3, 3, 3, 1]
@@ -212,13 +187,9 @@ class InventoryTest {
     }
 
     @Test
-    fun `Stacks are removed when incrementing quantity when isRemoveItemsIfQty0 is true`() {
-        inventory.setStackMax(3)
-
+    fun `Stacks are removed when incrementing quantity`() {
         // Stacks should be: [3, 3, 3, 3, 3]
-        inventory.add("Hello", quantity = 15)
-
-        inventory.isRemoveItemsIfQty0 = true
+        inventory.add("Hello", ItemConfig(maxStackQuantity = 3), quantity = 15)
 
         // Stacks should be: [3, 2]
         assertTrue(inventory.incrementQuantity("Hello", -10))
@@ -230,31 +201,34 @@ class InventoryTest {
         assertTrue(inventory.incrementQuantity("Hello", -5))
 
         assertThat(inventory.size, `is`(0))
-        assertThat(inventory.getItemQuantity("Hello"), `is` (0))
+        assertFalse(inventory.hasItem("Hello"))
     }
+//
+//    @Test
+//    fun `Cannot change stackMax to higher than greatest item quantity`() {
+//        inventory.setStackMax(5)
+//
+//        inventory.add("Hello", quantity = 5)
+//
+//        assertThat(inventory.size, `is`(1))
+//
+//        assertFalse(inventory.setStackMax(4))
+//
+//        assertThat(inventory.getStackMax(), `is`(5))
+//    }
 
     @Test
-    fun `Cannot change stackMax to higher than greatest item quantity`() {
-        inventory.setStackMax(5)
-
-        inventory.add("Hello", quantity = 5)
-
-        assertThat(inventory.size, `is`(1))
-
-        assertFalse(inventory.setStackMax(4))
-
-        assertThat(inventory.getStackMax(), `is`(5))
-    }
-
-    @Test
-    fun `Cannot increment quantity past inventory size with specified stackMax`() {
+    fun `Cannot increment quantity past inventory capacity`() {
         inventory = Inventory(5)
-        inventory.setStackMax(3)
 
-        assertFalse(inventory.add("Hello", quantity = 16))
-        assertTrue(inventory.add("Hello", quantity = 15))
+        assertFalse(inventory.add("Hello", ItemConfig(maxStackQuantity = 3), quantity = 16))
+        assertTrue(inventory.add("Hello", ItemConfig(maxStackQuantity = 3), quantity = 15))
+
+        // Stacks: [3, 3, 3, 3, 3]
 
         assertTrue(inventory.incrementQuantity("Hello", -5))
+
+        // Stacks: [3, 3, 3, 1]
 
         assertFalse(inventory.incrementQuantity("Hello", 6))
 
@@ -263,5 +237,36 @@ class InventoryTest {
         assertFalse(inventory.incrementQuantity("Hello", -11))
 
         assertTrue(inventory.incrementQuantity("Hello", -10))
+    }
+
+    @Test
+    fun `Transfer from another inventory`() {
+        inventory = Inventory(5)
+
+        inventory.add("Hello", quantity = 5)
+
+        val other = Inventory<String>(2)
+
+        var result = other.transferFrom(inventory, "Hello", 4)
+
+        assertTrue(result)
+        assertThat(other.getItemQuantity("Hello"), `is`(4))
+        assertThat(inventory.getItemQuantity("Hello"), `is`(1))
+
+        // quantity only 1, so cannot transfer
+        result = other.transferFrom(inventory, "Hello", 4)
+
+        assertFalse(result)
+
+        // fill the inventory
+        other.add("Hi")
+
+        assertTrue(other.isFull)
+
+        // but we can still transfer from other since "Hello" stack exists and not limited
+        result = other.transferFrom(inventory, "Hello", 1)
+
+        assertTrue(result)
+        assertTrue(!inventory.hasItem("Hello"))
     }
 }

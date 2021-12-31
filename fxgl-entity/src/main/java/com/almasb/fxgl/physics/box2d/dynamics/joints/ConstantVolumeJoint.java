@@ -27,24 +27,12 @@ public class ConstantVolumeJoint extends Joint {
 
     private DistanceJoint[] distanceJoints;
 
-    public Body[] getBodies() {
-        return bodies;
-    }
-
-    public DistanceJoint[] getJoints() {
-        return distanceJoints;
-    }
-
-    public void inflate(float factor) {
-        targetVolume *= factor;
-    }
-
     public ConstantVolumeJoint(World argWorld, ConstantVolumeJointDef def) {
         super(argWorld.getPool(), def);
         world = argWorld;
+
         if (def.bodies.size() <= 2) {
-            throw new IllegalArgumentException(
-                    "You cannot create a constant volume joint with less than three bodies.");
+            throw new IllegalArgumentException("You cannot create a constant volume joint with less than three bodies.");
         }
         bodies = def.bodies.toArray(new Body[0]);
 
@@ -57,8 +45,7 @@ public class ConstantVolumeJoint extends Joint {
         targetVolume = getBodyArea();
 
         if (def.joints != null && def.joints.size() != def.bodies.size()) {
-            throw new IllegalArgumentException(
-                    "Incorrect joint definition.  Joints have to correspond to the bodies");
+            throw new IllegalArgumentException("Incorrect joint definition. Joints have to correspond to the bodies");
         }
         if (def.joints == null) {
             final DistanceJointDef djd = new DistanceJointDef();
@@ -68,8 +55,7 @@ public class ConstantVolumeJoint extends Joint {
                 djd.frequencyHz = def.frequencyHz;// 20.0f;
                 djd.dampingRatio = def.dampingRatio;// 50.0f;
                 djd.setBodyCollisionAllowed(def.isBodyCollisionAllowed());
-                djd.initialize(bodies[i], bodies[next], bodies[i].getWorldCenter(),
-                        bodies[next].getWorldCenter());
+                djd.initialize(bodies[i], bodies[next], bodies[i].getWorldCenter(), bodies[next].getWorldCenter());
                 distanceJoints[i] = (DistanceJoint) world.createJoint(djd);
             }
         } else {
@@ -89,12 +75,23 @@ public class ConstantVolumeJoint extends Joint {
         }
     }
 
+    public Body[] getBodies() {
+        return bodies;
+    }
+
+    public DistanceJoint[] getJoints() {
+        return distanceJoints;
+    }
+
+    public void inflate(float factor) {
+        targetVolume *= factor;
+    }
+
     private float getBodyArea() {
         float area = 0.0f;
         for (int i = 0; i < bodies.length; ++i) {
             final int next = (i == bodies.length - 1) ? 0 : i + 1;
-            area +=
-                    bodies[i].getWorldCenter().x * bodies[next].getWorldCenter().y
+            area += bodies[i].getWorldCenter().x * bodies[next].getWorldCenter().y
                             - bodies[next].getWorldCenter().x * bodies[i].getWorldCenter().y;
         }
         area *= .5f;
@@ -105,8 +102,7 @@ public class ConstantVolumeJoint extends Joint {
         float area = 0.0f;
         for (int i = 0; i < bodies.length; ++i) {
             final int next = (i == bodies.length - 1) ? 0 : i + 1;
-            area +=
-                    positions[bodies[i].m_islandIndex].c.x * positions[bodies[next].m_islandIndex].c.y
+            area += positions[bodies[i].m_islandIndex].c.x * positions[bodies[next].m_islandIndex].c.y
                             - positions[bodies[next].m_islandIndex].c.x * positions[bodies[i].m_islandIndex].c.y;
         }
         area *= .5f;
@@ -198,7 +194,7 @@ public class ConstantVolumeJoint extends Joint {
 
         Velocity[] velocities = step.velocities;
         Position[] positions = step.positions;
-        final Vec2 d[] = pool.getVec2Array(bodies.length);
+        final Vec2[] d = pool.getVec2Array(bodies.length);
 
         for (int i = 0; i < bodies.length; ++i) {
             final int prev = (i == 0) ? bodies.length - 1 : i - 1;

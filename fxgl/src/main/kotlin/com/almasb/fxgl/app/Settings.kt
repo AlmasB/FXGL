@@ -232,7 +232,7 @@ class GameSettings(
          * The font will be loaded from "/assets/ui/fonts".
          */
         var fontUI: String = "VarelaRound-Regular.ttf",
-        var fontMono: String = "lucida_console.ttf",
+        var fontMono: String = "TerminalLandMono-Regular.otf",
         var fontText: String = "Courier-Prime.ttf",
         var fontGame: String = "Abel-Regular.ttf",
 
@@ -652,6 +652,9 @@ class ReadOnlyGameSettings internal constructor(
 
     val isMobile: Boolean
         get() = platform.isMobile
+
+    val isEmbedded: Boolean
+        get() = platform.isEmbedded
 
     val isBrowser: Boolean
         get() = platform.isBrowser

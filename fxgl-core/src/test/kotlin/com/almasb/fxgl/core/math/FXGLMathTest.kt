@@ -117,6 +117,17 @@ class FXGLMathTest {
     }
 
     @Test
+    fun `Scale point around pivot`() {
+        scale(Point2D(3.0, 0.0), Point2D(0.0, 0.0), 2.0).assertCloseTo(Point2D(6.0, 0.0))
+        scale(Point2D(3.0, 2.0), Point2D(0.0, 0.0), 2.0).assertCloseTo(Point2D(6.0, 4.0))
+
+        scale(Point2D(3.0, 2.0), Point2D(3.0, 2.0), 2.0).assertCloseTo(Point2D(3.0, 2.0))
+
+        scale(Point2D(3.0, 2.0), Point2D(1.0, 2.0), 3.0).assertCloseTo(Point2D(7.0, 2.0))
+        scale(Point2D(3.0, 2.0), Point2D(1.0, -2.0), 3.0).assertCloseTo(Point2D(7.0, 10.0))
+    }
+
+    @Test
     fun `Random values`() {
         val originalRandom = getRandom()
 

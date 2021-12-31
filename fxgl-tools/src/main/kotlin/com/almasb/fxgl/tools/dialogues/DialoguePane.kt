@@ -91,6 +91,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     val isDirtyProperty = SimpleBooleanProperty(false)
 
+    /**
+     * Are all outgoing links connected.
+     */
+    val isConnectedProperty = SimpleBooleanProperty(true)
+
     private val scale = Scale()
 
     private val dragScale = 1.35
@@ -147,6 +152,15 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
         mouseGestures.makeDraggable(selectionRect) {
             selectionStart = Point2D(selectionRect.layoutX, selectionRect.layoutY)
+
+            performUIAction(BulkAction(
+                    selectedNodeViews.map {
+                        val layoutX = it.properties["startLayoutX"] as Double
+                        val layoutY = it.properties["startLayoutY"] as Double
+
+                        MoveNodeAction(it.node, this::getNodeView, layoutX, layoutY, it.layoutX, it.layoutY)
+                    }
+            ))
         }
 
         selectionRect.layoutXProperty().addListener { _, prevX, layoutX ->
@@ -218,6 +232,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
             isSelectingRectangle = false
             selectedNodeViews.addAll(selectionRect.getSelectedNodesIn(nodeViews, NodeView::class.java))
 
+            selectedNodeViews.forEach {
+                it.properties["startLayoutX"] = it.layoutX
+                it.properties["startLayoutY"] = it.layoutY
+            }
+
             if (selectedNodeViews.isEmpty()) {
                 selectionRect.isVisible = false
             }
@@ -242,9 +261,18 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         graph.addEdge(start, mid)
         graph.addEdge(mid, end)
 
-        getNodeView(start).relocate(50.0, getAppHeight() / 2.0)
-        getNodeView(mid).relocate((getAppWidth() - 370.0 + 50) / 2.0, getAppHeight() / 2.0)
-        getNodeView(end).relocate(getAppWidth() - 370.0, getAppHeight() / 2.0)
+        getNodeView(start).also {
+            it.relocate(50.0, getAppHeight() / 2.0)
+            snapToGrid(it)
+        }
+        getNodeView(mid).also {
+            it.relocate((getAppWidth() - 370.0 + 50) / 2.0, getAppHeight() / 2.0)
+            snapToGrid(it)
+        }
+        getNodeView(end).also {
+            it.relocate(getAppWidth() - 370.0, getAppHeight() / 2.0)
+            snapToGrid(it)
+        }
     }
 
     private fun initContextMenu() {
@@ -340,6 +368,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         val nodeView = nodeViewConstructor(node)
 
         addNodeView(nodeView, x, y)
+
+        evaluateGraphConnectivity()
     }
 
     private fun onRemoved(node: DialogueNode) {
@@ -360,6 +390,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 .from(Point2D(1.0, 1.0))
                 .to(Point2D.ZERO)
                 .buildAndPlay()
+
+        evaluateGraphConnectivity()
     }
 
     private fun onAdded(edge: DialogueEdge) {
@@ -378,6 +410,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         val edgeView = EdgeView(edge, outPoint, inPoint)
 
         edgeViews.children.add(edgeView)
+
+        evaluateGraphConnectivity()
     }
 
     private fun onRemoved(edge: DialogueEdge) {
@@ -421,6 +455,18 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         edgeView.source.disconnect()
 
         edgeViews.children -= edgeView
+
+        evaluateGraphConnectivity()
+    }
+
+    /**
+     * Checks that all outgoing links are connected.
+     */
+    private fun evaluateGraphConnectivity() {
+        isConnectedProperty.value = nodeViews.children
+                .map { it as NodeView }
+                .flatMap { it.outPoints }
+                .all { it.isConnected }
     }
 
     private fun getNodeView(node: DialogueNode): NodeView {
@@ -459,13 +505,19 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         mouseGestures.makeDraggable(nodeView) {
             if (getb(IS_SNAP_TO_GRID))
                 snapToGrid(nodeView)
+
+            val startLayoutX = nodeView.properties["startLayoutX"] as Double
+            val startLayoutY = nodeView.properties["startLayoutY"] as Double
+
+            if (startLayoutX != nodeView.layoutX || startLayoutY != nodeView.layoutY) {
+                performUIAction(MoveNodeAction(nodeView.node, this::getNodeView, startLayoutX, startLayoutY, nodeView.layoutX, nodeView.layoutY))
+            }
         }
 
         nodeView.cursor = Cursor.MOVE
-        nodeView.closeButton.cursor = Cursor.HAND
 
         nodeView.closeButton.setOnMouseClicked {
-            graph.removeNode(nodeView.node)
+            performUIAction(RemoveNodeAction(graph, nodeView.node, nodeView.layoutX, nodeView.layoutY, this::getNodeView))
         }
 
         nodeView.outPoints.forEach { outPoint ->
@@ -511,9 +563,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                     }
 
                     if (outPoint.choiceOptionID != -1) {
-                        graph.addChoiceEdge(outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node)
+                        performUIAction(AddChoiceEdgeAction(graph, outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node))
                     } else {
-                        graph.addEdge(outPoint.owner.node, inPoint.owner.node)
+                        performUIAction(AddEdgeAction(graph, outPoint.owner.node, inPoint.owner.node))
                     }
 
                     // reset selection
@@ -531,9 +583,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     private fun disconnectOutLink(outPoint: OutLinkPoint) {
         outPoint.other?.let { inPoint ->
             if (outPoint.choiceOptionID != -1) {
-                graph.removeChoiceEdge(outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node)
+                performUIAction(RemoveChoiceEdgeAction(graph, outPoint.owner.node, outPoint.choiceOptionID, inPoint.owner.node))
             } else {
-                graph.removeEdge(outPoint.owner.node, inPoint.owner.node)
+                performUIAction(RemoveEdgeAction(graph, outPoint.owner.node, inPoint.owner.node))
             }
         }
     }

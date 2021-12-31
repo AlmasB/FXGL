@@ -42,6 +42,7 @@ import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.profile.DataFile
 import com.almasb.fxgl.profile.SaveLoadService
+import com.almasb.fxgl.quest.QuestService
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.texture.Texture
@@ -90,6 +91,12 @@ class FXGL private constructor() { companion object {
         engine = e
         fxApp = a
         app = gameApp
+    }
+
+    @JvmStatic
+    internal fun extract() {
+        if (this::engine.isInitialized)
+            engine.stopLoopAndExitServices()
     }
 
     private val controller = object : GameController {
@@ -225,6 +232,8 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getCutsceneService() = engine.getService(CutsceneService::class.java)
 
     @JvmStatic fun getMiniGameService() = engine.getService(MiniGameService::class.java)
+
+    @JvmStatic fun getQuestService() = engine.getService(QuestService::class.java)
 
     @JvmStatic fun getSaveLoadService() = engine.getService(SaveLoadService::class.java)
 

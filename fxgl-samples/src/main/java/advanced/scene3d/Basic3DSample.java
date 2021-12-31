@@ -4,11 +4,12 @@
  * See LICENSE for details.
  */
 
-package sandbox.test3d;
+package advanced.scene3d;
 
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.scene3d.Cuboid;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -18,6 +19,8 @@ import javafx.util.Duration;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
+ * Shows how to create a simple 3D cube and use it for the player entity view.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class Basic3DSample extends GameApplication {
@@ -26,7 +29,6 @@ public class Basic3DSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1280);
         settings.setHeight(720);
-        settings.setTitle("Basic 3D Sample");
         settings.set3D(true);
     }
 
@@ -34,14 +36,15 @@ public class Basic3DSample extends GameApplication {
     protected void initGame() {
         getGameScene().setBackgroundColor(Color.DARKCYAN);
 
-        var box = new Box(1, 1, 1);
-        box.setMaterial(new PhongMaterial(Color.BLUE));
+        var cube = new Cuboid(1, 1, 1);
+        cube.setPhongMaterial(Color.BLUE);
 
         var player = entityBuilder()
                 .at(0, 0, -5)
-                .view(box)
+                .view(cube)
                 .buildAndAttach();
 
+        // animate player entity
         animationBuilder()
                 .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
                 .duration(Duration.seconds(2))

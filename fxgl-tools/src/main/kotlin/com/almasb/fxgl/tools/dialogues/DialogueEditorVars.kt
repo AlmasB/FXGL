@@ -14,4 +14,5 @@ object DialogueEditorVars {
 
     const val IS_SNAP_TO_GRID = "IS_SNAP_TO_GRID"
     const val IS_COLOR_BLIND_MODE = "IS_COLOR_BLIND_MODE"
+    const val IS_SHOW_AUDIO_LINES = "IS_SHOW_AUDIO_LINES"
 }

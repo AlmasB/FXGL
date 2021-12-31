@@ -4,26 +4,24 @@
  * See LICENSE for details.
  */
 
-package sandbox.test3d;
+package advanced.scene3d;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.Camera3D;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.entity.components.TransformComponent;
+import com.almasb.fxgl.scene3d.Cuboid;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
+ * Shows how to use a 3D camera.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class Camera3DSample extends GameApplication {
-
-    private TransformComponent transform;
 
     private Camera3D camera3D;
 
@@ -57,8 +55,9 @@ public class Camera3DSample extends GameApplication {
     @Override
     protected void initGame() {
         camera3D = getGameScene().getCamera3D();
-        transform = getGameScene().getCamera3D().getTransform();
-        transform.setZ(0);
+
+        // place the camera at origin (by default the camera is moved slightly back)
+        camera3D.getTransform().setZ(0);
 
         getGameScene().setBackgroundColor(Color.DARKCYAN);
 
@@ -70,14 +69,14 @@ public class Camera3DSample extends GameApplication {
         for (int z = -1; z <= 1; z++) {
             for (int y = -1; y <= 1; y++) {
                 for (int x = -1; x <= 1; x++) {
-                    var box = new Box(1, 1, 1);
-                    box.setMaterial(new PhongMaterial(FXGLMath.randomColor()));
+                    var cube = new Cuboid(1, 1, 1);
+                    cube.setPhongMaterial(FXGLMath.randomColor());
 
                     var scale = 15.0;
 
                     entityBuilder()
                             .at(x * scale, y * scale, z * scale)
-                            .view(box)
+                            .view(cube)
                             .buildAndAttach();
                 }
             }

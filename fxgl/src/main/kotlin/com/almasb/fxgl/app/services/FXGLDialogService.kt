@@ -42,10 +42,10 @@ class FXGLDialogService : DialogService() {
     override fun onInit() {
         window = uiFactory.newWindow()
 
-        window.canResize = false
-        window.canMove = false
-        window.canMinimize = false
-        window.canClose = false
+        window.isManuallyResizable = false
+        window.isMovable = false
+        window.isMinimizable = false
+        window.isCloseable = false
 
         window.layoutXProperty().bind(window.widthProperty().divide(2).negate().add(sceneService.prefWidthProperty().divide(2)))
         window.layoutYProperty().bind(window.heightProperty().divide(2).negate().add(sceneService.prefHeightProperty().divide(2)))
@@ -131,6 +131,15 @@ class FXGLDialogService : DialogService() {
         }
 
         show("Confirm", dialog)
+    }
+
+    override fun <T : Any> showChoiceBox(message: String, callback: Consumer<T>, firstOption: T, vararg options: T) {
+        val dialog = dialogFactory.choiceDialog(message, { result ->
+            close()
+            callback.accept(result)
+        }, firstOption, *options)
+
+        show("Choice", dialog)
     }
 
     override fun showInputBox(message: String, resultCallback: Consumer<String>) {

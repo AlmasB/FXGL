@@ -60,6 +60,9 @@ public class MouseGestures {
 
             x = event.getSceneX();
             y = event.getSceneY();
+
+            node.getProperties().put("startLayoutX", node.getLayoutX());
+            node.getProperties().put("startLayoutY", node.getLayoutY());
         };
 
         private EventHandler<MouseEvent> onMouseDraggedEventHandler = event -> {

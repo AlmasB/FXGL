@@ -18,6 +18,10 @@ import static com.almasb.fxgl.tools.dialogues.DialogueEditorVars.*;
 
 /**
  * A dialogue editor for FXGL.
+ * Build:
+ * cd fxgl-tools
+ * mvn compile
+ * mvn javafx:jlink
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -28,7 +32,7 @@ public class DialogueEditorApp extends GameApplication {
         settings.setWidth(1600);
         settings.setHeight(900);
         settings.setTitle("FXGL Dialogue Editor - github.com/AlmasB/FXGL");
-        settings.setVersion("1.0.1-beta");
+        settings.setVersion("1.0.2-beta");
         settings.getCSSList().add("dialogue_editor.css");
         settings.setIntroEnabled(false);
         settings.setMainMenuEnabled(false);
@@ -36,6 +40,7 @@ public class DialogueEditorApp extends GameApplication {
         settings.setManualResizeEnabled(true);
         settings.setScaleAffectedOnResize(false);
         //settings.setProfilingEnabled(true);
+        settings.addEngineService(PersistentStorageService.class);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
 
         settings.setCloseConfirmation(settings.getApplicationMode() == ApplicationMode.RELEASE);
@@ -45,6 +50,7 @@ public class DialogueEditorApp extends GameApplication {
     protected void initGameVars(Map<String, Object> vars) {
         vars.put(IS_SNAP_TO_GRID, true);
         vars.put(IS_COLOR_BLIND_MODE, true);
+        vars.put(IS_SHOW_AUDIO_LINES, true);
     }
 
     @Override
