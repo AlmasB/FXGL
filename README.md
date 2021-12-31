@@ -62,7 +62,7 @@ Otherwise, see:
 
 ### Maven
 
-* [Maven](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin (Java 11+)
+* [Maven](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin (Java 17+)
 
 Make sure to set `<release>11</release>` for `maven-compiler-plugin`.
 
@@ -70,15 +70,15 @@ Make sure to set `<release>11</release>` for `maven-compiler-plugin`.
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>11.17</version>
+    <version>17</version>
 </dependency>
 ```
 
-Note: use `0.5.4` for Java 8-10.
+Note: use `0.5.4` for Java 8-10 and `11.17` for Java 11-16.
 
 ### Gradle
 
-* [Gradle](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin (Java 11+)
+* [Gradle](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin (Java 17+)
 
 Please refer to the template if there are any errors.
 
@@ -88,11 +88,11 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:11.17'
+    compile 'com.github.almasb:fxgl:17'
 }
 ```
 
-Note: use `0.5.4` for Java 8-10.
+Note: use `0.5.4` for Java 8-10 and `11.17` for Java 11-16.
 
 ### Modularity
 
