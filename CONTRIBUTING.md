@@ -73,6 +73,32 @@ The project uses the following guidelines:
 
 If in doubt, skim through the existing source code to get a feel for it.
 
+## Conventional Commits for Changelogs
+
+From version 17, the project uses the following commit message guidelines to auto-generate changelogs, based on [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):
+
+* **build: message** -- change affects the build system, configuration files, scripts, or external dependencies
+* **docs: message** -- change affects documentation **only**
+* **feat: message** -- change adds a new feature
+* **fix: message** -- change fixes a bug
+* **perf: message** -- change improves performance
+* **refactor: message** -- change cleans up or restructures code
+* **test: message** -- change that adds new or updates existing tests 
+* **repo: message** -- change that is related to repository maintenance
+
+Examples:
+
+* `build: use JDK 17 as baseline`
+* `docs: update description of method X to match behavior`
+
+If the commit type follows a `!`, then it is a breaking change.
+Example: `refactor!: removed deprecated methods X and Y`
+
+Optionally, the change scope can be provided. Example: `feat(core): message`.
+
+If a commit does not follow the guidelines (i.e. no `:` character), then it is excluded from the changelog.
+Hence, the `:` character is banned from non-changelog commit messages.
+
 ## Community Roles
 
 Community developers may apply to any of these roles by opening an issue or discussing in the [community chat](https://gitter.im/AlmasB/FXGL). Each role is allocated based on discussions with the individual. The individual is expected to be **committed** to the role guidance. However, the role descriptions are merely a guidance and not binding in any way. The role may be revoked at the request of the individual or due to violation of the [Code of Conduct](CODE_OF_CONDUCT.md).
