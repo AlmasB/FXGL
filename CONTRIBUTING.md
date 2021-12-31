@@ -79,7 +79,7 @@ From version 17, the project uses the following commit message guidelines to aut
 
 * **build: message** -- change affects the build system, configuration files, scripts, or external dependencies
 * **docs: message** -- change affects documentation **only**
-* **feat: message** -- change adds a new feature
+* **feat: message** -- change adds a new or modifies an existing feature
 * **fix: message** -- change fixes a bug
 * **perf: message** -- change improves performance
 * **refactor: message** -- change cleans up or restructures code
