@@ -13,6 +13,7 @@ import javafx.geometry.Point2D
 import javafx.scene.image.ImageView
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
+import javafx.scene.shape.Polyline
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
@@ -43,8 +44,8 @@ class TMXLevelLoaderTest {
         assertThat(level.width, `is`(24*64))
         assertThat(level.height, `is`(24*64))
 
-        // 4 object entities + 2 background tile layers
-        assertThat(level.entities.size, `is`(4 + 2))
+        // 5 object entities + 2 background tile layers
+        assertThat(level.entities.size, `is`(5 + 2))
     }
 
     @ParameterizedTest
@@ -200,7 +201,7 @@ class TMXLevelLoaderTest {
         assertThat(map.height, `is`(64))
         assertThat(map.tilewidth, `is`(24))
         assertThat(map.tileheight, `is`(24))
-        assertThat(map.nextobjectid, `is`(5))
+        assertThat(map.nextobjectid, `is`(7))
         assertThat(map.orientation, `is`("orthogonal"))
         assertThat(map.renderorder, `is`("right-down"))
         assertFalse(map.infinite)
@@ -280,6 +281,11 @@ class TMXLevelLoaderTest {
 
         assertThat(obj4.id, `is`(4))
         assertThat((obj4.properties["polygon"] as Polygon).points, `is`(Polygon(0.0, 0.0, 120.0, -72.0, 192.0, 48.0, 24.0, 48.0).points))
+
+        val obj6 = layer3.objects[3]
+
+        assertThat(obj6.id, `is`(6))
+        assertThat((obj6.properties["polyline"] as Polyline).points, `is`(Polyline(0.0,0.0, 96.0,0.0, 96.0,-96.0, 192.0,-96.0, 192.0,96.0, 24.0,96.0).points))
 
         val layer4 = map.layers[3]
 

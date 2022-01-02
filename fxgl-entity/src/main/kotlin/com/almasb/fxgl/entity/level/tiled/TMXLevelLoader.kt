@@ -16,6 +16,7 @@ import com.almasb.fxgl.entity.level.LevelLoadingException
 import com.almasb.fxgl.logging.Logger
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
+import javafx.scene.shape.Polyline
 import java.io.InputStream
 import java.net.URL
 import java.util.*
@@ -247,7 +248,11 @@ class TMXLevelLoader
                     }
 
                     "polygon" -> {
-                        parseObjectPolygon(currentObject, start)
+                        parseObjectPolyline(currentObject, start, isClosed = true)
+                    }
+
+                    "polyline" -> {
+                        parseObjectPolyline(currentObject, start, isClosed = false)
                     }
                 }
             }
@@ -502,7 +507,7 @@ class TMXLevelLoader
         }
     }
 
-    private fun parseObjectPolygon(obj: TiledObject, start: StartElement) {
+    private fun parseObjectPolyline(obj: TiledObject, start: StartElement, isClosed: Boolean) {
         val data = start.getString("points")
 
         val points = data.split(" +".toRegex())
@@ -510,10 +515,15 @@ class TMXLevelLoader
                 .map { it.toDouble() }
                 .toDoubleArray()
 
-        // https://github.com/AlmasB/FXGL/issues/575
-        val polygon = Polygon(*points)
+        if (isClosed) {
+            val polygon = Polygon(*points)
 
-        (obj.properties as MutableMap)["polygon"] = polygon
+            (obj.properties as MutableMap)["polygon"] = polygon
+        } else {
+            val polyline = Polyline(*points)
+
+            (obj.properties as MutableMap)["polyline"] = polyline
+        }
     }
 }
 
