@@ -33,7 +33,7 @@ import javax.xml.stream.events.StartElement
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 
-private const val TILED_VERSION_LATEST = "1.2.3"
+private const val TILED_VERSION_LATEST = "1.4.2"
 
 class TMXLevelLoader
 @JvmOverloads constructor(
