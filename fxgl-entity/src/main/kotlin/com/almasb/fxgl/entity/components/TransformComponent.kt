@@ -434,6 +434,15 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         direction3D = Point3D(direction3D.x, -sinDeg(rotationX), direction3D.z * cosDeg(rotationX)).normalize()
     }
 
+    /**
+     * Binds x,y,z of this component to x,y,z of [other].
+     */
+    fun bindTranslation(other: TransformComponent) {
+        xProperty().bind(other.xProperty())
+        yProperty().bind(other.yProperty())
+        zProperty().bind(other.zProperty())
+    }
+
     override fun toString(): String {
         return "Transform($x, $y, $angle, $scaleX, $scaleY)"
     }
