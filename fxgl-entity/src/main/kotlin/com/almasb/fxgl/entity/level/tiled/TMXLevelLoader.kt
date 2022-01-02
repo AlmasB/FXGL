@@ -61,7 +61,7 @@ class TMXLevelLoader
 
             val level = Level(map.width * map.tilewidth, map.height * map.tileheight, tileLayerEntities + objectEntities)
 
-            map.properties.forEach { key, value ->
+            map.properties.forEach { (key, value) ->
 
                 if (value is Float) {
                     level.properties.setValue(key, value.toDouble())
