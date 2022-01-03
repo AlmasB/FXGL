@@ -64,7 +64,7 @@ Otherwise, see:
 
 * [Maven](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin (Java 17+)
 
-Make sure to set `<release>11</release>` for `maven-compiler-plugin`.
+Make sure to set `<release>17</release>` for `maven-compiler-plugin`.
 
 ```xml
 <dependency>
