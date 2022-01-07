@@ -220,41 +220,11 @@ class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
     }
 
     override fun errorDialog(errorMessage: String, callback: Runnable): Pane {
-        return messageDialog("Error occurred: $errorMessage", callback)
+        return errorDialog(RuntimeException(errorMessage), callback)
     }
 
     override fun errorDialog(error: Throwable, callback: Runnable): Pane {
-        val text = createMessage(error.toString())
-
-        val btnOK = uiFactory.newButton(localizedStringProperty("dialog.ok"))
-        btnOK.setOnAction {
-            callback.run()
-        }
-
-        val btnLog = uiFactory.newButton("LOG")
-        btnLog.setOnAction {
-//            val sw = StringWriter()
-//            val pw = PrintWriter(sw)
-//            error.printStackTrace(pw)
-//            pw.close()
-//
-//            try {
-//                Files.write(Paths.get("LastException.log"), sw.toString().split("\n".toRegex()).dropLastWhile { it.isEmpty() })
-//                DialogSubState.showMessageBox("Log has been saved as LastException.log")
-//            } catch (ex: Exception) {
-//                DialogSubState.showMessageBox("Failed to save log file")
-//            }
-
-            callback.run()
-        }
-
-        val hbox = HBox(btnOK, btnLog)
-        hbox.alignment = Pos.CENTER
-
-        val vbox = VBox(50.0, text, hbox)
-        vbox.setAlignment(Pos.CENTER)
-
-        return wrap(vbox)
+        return messageDialog(error.toString(), callback)
     }
 
     override fun progressDialog(message: String, observable: ReadOnlyDoubleProperty, callback: Runnable): Pane {
