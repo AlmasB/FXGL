@@ -12,42 +12,29 @@ import com.almasb.fxgl.physics.box2d.common.Transform;
 public class ParticleGroup {
 
     ParticleSystem m_system;
-    int m_firstIndex;
-    int m_lastIndex;
-    int m_groupFlags;
-    float m_strength;
+    int m_firstIndex = 0;
+    int m_lastIndex = 0;
+    int m_groupFlags = 0;
+    float m_strength = 1f;
     ParticleGroup m_prev;
     ParticleGroup m_next;
 
-    int m_timestamp;
-    float m_mass;
-    float m_inertia;
+    private int m_timestamp = -1;
+    private float m_mass = 0;
+    private float m_inertia = 0;
     final Vec2 m_center = new Vec2();
     final Vec2 m_linearVelocity = new Vec2();
-    float m_angularVelocity;
+    float m_angularVelocity = 0;
     final Transform m_transform = new Transform();
 
-    boolean m_destroyAutomatically;
-    boolean m_toBeDestroyed;
-    boolean m_toBeSplit;
+    boolean m_destroyAutomatically = true;
+    boolean m_toBeDestroyed = false;
+    boolean m_toBeSplit = false;
 
     Object m_userData;
 
     public ParticleGroup() {
-        m_firstIndex = 0;
-        m_lastIndex = 0;
-        m_groupFlags = 0;
-        m_strength = 1.0f;
-
-        m_timestamp = -1;
-        m_mass = 0;
-        m_inertia = 0;
-        m_angularVelocity = 0;
         m_transform.setIdentity();
-
-        m_destroyAutomatically = true;
-        m_toBeDestroyed = false;
-        m_toBeSplit = false;
     }
 
     public ParticleGroup getNext() {
