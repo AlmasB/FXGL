@@ -69,6 +69,7 @@ import javafx.scene.input.MouseButton
 import javafx.scene.text.Text
 import javafx.stage.Stage
 import javafx.util.Duration
+import java.net.URL
 import java.util.*
 import java.util.concurrent.Callable
 import java.util.function.BiConsumer
@@ -331,9 +332,17 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun image(assetName: String, width: Double, height: Double): Image = texture(assetName, width, height).image
 
+    @JvmStatic fun image(url: URL): Image = getAssetLoader().loadImage(url)
+
+    @JvmStatic fun image(url: URL, width: Double, height: Double): Image = texture(url, width, height).image
+
     @JvmStatic fun texture(assetName: String): Texture = getAssetLoader().loadTexture(assetName)
 
     @JvmStatic fun texture(assetName: String, width: Double, height: Double): Texture = getAssetLoader().loadTexture(assetName, width, height)
+
+    @JvmStatic fun texture(url: URL): Texture = getAssetLoader().loadTexture(url)
+
+    @JvmStatic fun texture(url: URL, width: Double, height: Double): Texture = getAssetLoader().loadTexture(url, width, height)
 
     @JvmStatic fun text(assetName: String) = getAssetLoader().loadText(assetName)
 
@@ -345,6 +354,16 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun loopBGM(assetName: String): Music {
         val music = getAssetLoader().loadMusic(assetName)
+        getAudioPlayer().loopMusic(music)
+        return music
+    }
+
+    /**
+     * @param url url to the background music file to loop
+     * @return the music object that is played in a loop
+     */
+    @JvmStatic fun loopBGM(url: URL): Music {
+        val music = getAssetLoader().loadMusic(url)
         getAudioPlayer().loopMusic(music)
         return music
     }
@@ -362,6 +381,29 @@ class FXGL private constructor() { companion object {
             }
             assetName.endsWith(".mp3") -> {
                 val music = getAssetLoader().loadMusic(assetName)
+                getAudioPlayer().playMusic(music)
+            }
+            else -> {
+                throw IllegalArgumentException("Unsupported audio format: $assetName")
+            }
+        }
+    }
+
+    /**
+     * Convenience method to play music/sound given its filename.
+     *
+     * @param url name of the music file
+     */
+    @JvmStatic fun play(url: URL) {
+        val assetName = url.toExternalForm()
+
+        when {
+            assetName.endsWith(".wav") -> {
+                val sound = getAssetLoader().loadSound(url)
+                getAudioPlayer().playSound(sound)
+            }
+            assetName.endsWith(".mp3") -> {
+                val music = getAssetLoader().loadMusic(url)
                 getAudioPlayer().playMusic(music)
             }
             else -> {
