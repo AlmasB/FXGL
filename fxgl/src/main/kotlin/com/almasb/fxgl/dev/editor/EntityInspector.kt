@@ -15,6 +15,7 @@ import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.Component
 import com.almasb.fxgl.entity.component.ComponentListener
 import com.almasb.fxgl.entity.component.CopyableComponent
+import com.almasb.fxgl.entity.components.CollidableComponent
 import com.almasb.fxgl.ui.FXGLButton
 import com.almasb.fxgl.ui.FXGLScrollPane
 import com.almasb.fxgl.ui.property.DoublePropertyView
@@ -51,7 +52,8 @@ class EntityInspector : FXGLScrollPane(), ComponentListener {
     private val componentTypes = arrayListOf<Class<out Component>>(
             DevSpinComponent::class.java,
             ProjectileComponent::class.java,
-            HealthIntComponent::class.java
+            HealthIntComponent::class.java,
+            CollidableComponent::class.java
     )
 
     private val addViewButton = FXGLButton("Add View")
