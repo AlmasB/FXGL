@@ -24,8 +24,13 @@ class NotificationServiceProvider : NotificationService() {
     private val ANIMATION_DURATION = Duration.seconds(1.0)
     private val NOTIFICATION_DURATION = Duration.seconds(3.0)
 
-    override var backgroundColor: Color = Color.BLACK
-    override var textColor: Color = Color.WHITE
+    override var backgroundColor: Color
+        set(value) { notificationView.backgroundColor = value }
+        get() = notificationView.backgroundColor
+
+    override var textColor: Color
+        set(value) { notificationView.textColor = value }
+        get() = notificationView.textColor
 
     private val queue = ArrayDeque<Notification>()
 
