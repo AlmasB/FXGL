@@ -44,6 +44,7 @@ class CutsceneScene(private val sceneService: SceneService) : SubScene() {
 
     internal lateinit var assetLoader: AssetLoaderService
     private lateinit var cutscene: Cutscene
+    private lateinit var onFinished: Runnable
 
     init {
         val topLine = Rectangle(sceneService.prefWidth, 150.0)
@@ -117,13 +118,15 @@ class CutsceneScene(private val sceneService: SceneService) : SubScene() {
         animation2.onFinished = Runnable {
             sceneService.popSubScene()
             onClose()
+            onFinished.run()
         }
         animation.startReverse()
         animation2.startReverse()
     }
 
-    fun start(cutscene: Cutscene) {
+    fun start(cutscene: Cutscene, onFinished: Runnable) {
         this.cutscene = cutscene
+        this.onFinished = onFinished
 
         nextLine()
 
