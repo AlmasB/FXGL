@@ -33,8 +33,6 @@ class QuestService : EngineService() {
      */
     fun addQuest(quest: Quest) {
         quests.add(quest)
-
-        bindToVars(quest)
     }
 
     /**
@@ -43,29 +41,31 @@ class QuestService : EngineService() {
     fun removeQuest(quest: Quest) {
         quests.remove(quest)
 
-        quest.objectives.forEach { it.unbind() }
+        quest.objectivesProperty().forEach { it.unbind() }
     }
 
     /**
      * Start given quest. Will automatically track it.
      */
     fun startQuest(quest: Quest) {
-        addQuest(quest)
+        if (quest !in quests)
+            addQuest(quest)
 
+        bindToVars(quest)
         quest.start()
     }
 
     override fun onGameReady(vars: PropertyMap) {
         this.vars = vars
 
-        // TODO: only bind to vars those that are active
-        quests.forEach {
-            bindToVars(it)
-        }
+        quests.filter { it.state == QuestState.ACTIVE }
+                .forEach {
+                    bindToVars(it)
+                }
     }
 
     private fun bindToVars(quest: Quest) {
-        quest.objectives.forEach {
+        quest.objectivesProperty().forEach {
             it.unbind()
             it.bindTo(vars)
         }
