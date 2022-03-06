@@ -240,6 +240,22 @@ class InventoryTest {
     }
 
     @Test
+    fun `Cannot add a new item with 0 or negative amount`() {
+        inventory = Inventory(5)
+
+        assertFalse(inventory.add("Hello", quantity = 0))
+        assertFalse(inventory.add("Hello", quantity = -1))
+    }
+
+    @Test
+    fun `Cannot increment qty of existing item by 0`() {
+        inventory = Inventory(5)
+        inventory.add("Hello")
+
+        assertFalse(inventory.incrementQuantity("Hello", 0))
+    }
+
+    @Test
     fun `Transfer from another inventory`() {
         inventory = Inventory(5)
 
@@ -268,5 +284,23 @@ class InventoryTest {
 
         assertTrue(result)
         assertTrue(!inventory.hasItem("Hello"))
+    }
+
+    @Test
+    fun `Transfer from inventory does not work if no item in inventory`() {
+        inventory = Inventory(5)
+        val other = Inventory<String>(2)
+
+        assertFalse(other.transferFrom(inventory, "Hello"))
+    }
+
+    @Test
+    fun `Transfer from inventory does not work if inventory is full`() {
+        inventory = Inventory(5)
+        inventory.add("Hello")
+
+        val other = Inventory<String>(0)
+
+        assertFalse(other.transferFrom(inventory, "Hello"))
     }
 }
