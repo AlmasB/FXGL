@@ -10,6 +10,7 @@ import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.contains
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -171,6 +172,17 @@ class DialogueGraphTest {
         graph.removeEdge(choiceEdge)
 
         assertTrue(graph.edges.isEmpty())
+    }
+
+    @Test
+    fun `Graph contains node`() {
+        val node1 = TextNode("")
+
+        assertFalse(graph.containsNode(node1))
+
+        graph.addNode(node1)
+
+        assertTrue(graph.containsNode(node1))
     }
 
     @Test
