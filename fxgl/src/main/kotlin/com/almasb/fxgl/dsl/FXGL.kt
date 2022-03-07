@@ -16,6 +16,7 @@ import com.almasb.fxgl.app.services.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.collection.PropertyChangeListener
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.Executor
 import com.almasb.fxgl.core.math.FXGLMath
@@ -325,6 +326,67 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun inc(varName: String, value: Int) = getWorldProperties().increment(varName, value)
 
     @JvmStatic fun inc(varName: String, value: Double) = getWorldProperties().increment(varName, value)
+
+    @JvmStatic fun onIntChangeTo(varName: String, value: Int, action: Runnable): PropertyChangeListener<Int> {
+        return onIntChange(varName) {
+            if (it == value)
+                action.run()
+        }
+    }
+
+    @JvmStatic fun onIntChange(varName: String, action: Consumer<Int>): PropertyChangeListener<Int> {
+        val listener = PropertyChangeListener<Int> { _, newValue -> action.accept(newValue) }
+
+        getWorldProperties().addListener(varName, listener)
+
+        return listener
+    }
+
+    @JvmStatic fun onDoubleChange(varName: String, action: Consumer<Double>): PropertyChangeListener<Double> {
+        val listener = PropertyChangeListener<Double> { _, newValue -> action.accept(newValue) }
+
+        getWorldProperties().addListener(varName, listener)
+
+        return listener
+    }
+
+    @JvmStatic fun onBooleanChangeTo(varName: String, value: Boolean, action: Runnable): PropertyChangeListener<Boolean> {
+        return onBooleanChange(varName) {
+            if (it == value)
+                action.run()
+        }
+    }
+
+    @JvmStatic fun onBooleanChange(varName: String, action: Consumer<Boolean>): PropertyChangeListener<Boolean> {
+        val listener = PropertyChangeListener<Boolean> { _, newValue -> action.accept(newValue) }
+
+        getWorldProperties().addListener(varName, listener)
+
+        return listener
+    }
+
+    @JvmStatic fun onStringChangeTo(varName: String, value: String, action: Runnable): PropertyChangeListener<String> {
+        return onStringChange(varName) {
+            if (it == value)
+                action.run()
+        }
+    }
+
+    @JvmStatic fun onStringChange(varName: String, action: Consumer<String>): PropertyChangeListener<String> {
+        val listener = PropertyChangeListener<String> { _, newValue -> action.accept(newValue) }
+
+        getWorldProperties().addListener(varName, listener)
+
+        return listener
+    }
+
+    @JvmStatic fun <T> onObjectChange(varName: String, action: Consumer<T>): PropertyChangeListener<T> {
+        val listener = PropertyChangeListener<T> { _, newValue -> action.accept(newValue) }
+
+        getWorldProperties().addListener(varName, listener)
+
+        return listener
+    }
 
 /* ASSET LOADING */
 
