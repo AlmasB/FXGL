@@ -22,6 +22,8 @@ public class EditorGameApplication extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setWidth(1000);
+        settings.setHeightFromRatio(16/9.0);
     }
 
     @Override
