@@ -591,9 +591,9 @@ fun toBufferedImage(fxImage: Image): java.awt.image.BufferedImage {
 }
 
 /**
- * Saves image to the filePath
- **/
-fun toFile(image: Image, filePath: Path): Boolean {
+ * Writes [image] to the [filePath].
+ */
+fun writeToFile(image: Image, filePath: Path): Boolean {
     try {
         Files.newOutputStream(filePath).use {
             return ImageIO.write(toBufferedImage(image), "png", it)
