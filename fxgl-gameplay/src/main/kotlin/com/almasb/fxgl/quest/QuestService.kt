@@ -55,6 +55,10 @@ class QuestService : EngineService() {
         quest.start()
     }
 
+    fun removeAllQuests() {
+        quests.toList().forEach { removeQuest(it) }
+    }
+
     override fun onGameReady(vars: PropertyMap) {
         this.vars = vars
 
