@@ -33,10 +33,16 @@ public final class Rotation implements Serializable {
         setIdentity();
     }
 
+    /**
+     * @param angle in radians
+     */
     public Rotation(float angle) {
         set(angle);
     }
 
+    /**
+     * @param angle in radians
+     */
     public Rotation set(float angle) {
         s = sin(angle);
         c = cos(angle);
@@ -55,6 +61,9 @@ public final class Rotation implements Serializable {
         return this;
     }
 
+    /**
+     * @return angle in radians
+     */
     public float getAngle() {
         return (float) FXGLMath.atan2(s, c);
     }
