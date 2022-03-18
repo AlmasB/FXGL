@@ -104,6 +104,10 @@ class TMXLevelLoader
                                 it.viewComponent.addChild(tilesetLoader.loadViewHex(layer.name))
                             }
 
+                            "isometric" -> {
+                                it.viewComponent.addChild(tilesetLoader.loadViewIsometric(layer.name))
+                            }
+
                             else -> {
                                 log.warning("Unknown map orientation: ${map.orientation}")
                             }

@@ -305,6 +305,74 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
         return ImageView(bufferBottom)
     }
 
+    fun loadViewIsometric(layerName: String): Node {
+        log.warning("Isometric maps are not fully implemented: https://github.com/AlmasB/FXGL/issues/1151")
+        log.debug("Loading isometric view for layer $layerName")
+
+        val layer = map.getLayerByName(layerName)
+
+        val buffer = WritableImage(
+                layer.width * map.tilewidth,
+                layer.height * map.tileheight
+        )
+
+        log.debug("Created buffer with size ${buffer.width}x${buffer.height}")
+
+        for (i in 0 until layer.data.size) {
+
+            var gid = layer.data.get(i).toInt()
+
+            // empty tile
+            if (gid == 0)
+                continue
+
+            val tileset = findTileset(gid, map.tilesets)
+
+            // we offset because data is encoded as continuous
+            gid -= tileset.firstgid
+
+            // image destination
+            val x = i % layer.width
+            val y = i / layer.width
+
+            val w = tileset.tilewidth
+            val h = tileset.tileheight
+
+            var sourceImage: Image
+            var srcx: Int
+            var srcy: Int
+
+            if (tileset.isSpriteSheet) {
+                sourceImage = loadImage(tileset.image, tileset.transparentcolor, tileset.imagewidth, tileset.imageheight)
+
+                // image source
+                val tilex = gid % tileset.columns
+                val tiley = gid / tileset.columns
+
+                srcx = tilex * w + tileset.margin + tilex * tileset.spacing
+                srcy = tiley * h + tileset.margin + tiley * tileset.spacing
+
+            } else {
+
+                // tileset is a collection of images
+                val tile = tileset.tiles.find { it.id == gid }
+                        ?: throw IllegalArgumentException("Tile with id=$gid not found")
+
+                sourceImage = loadImage(tile.image, tile.transparentcolor, tile.imagewidth, tile.imageheight)
+
+                srcx = 0
+                srcy = 0
+            }
+
+            buffer.pixelWriter.setPixels(x * map.tilewidth, y * map.tileheight,
+                    w, h, sourceImage.pixelReader,
+                    srcx,
+                    srcy)
+        }
+
+        return ImageView(buffer)
+    }
+
     /**
      * Finds tileset where gid is located.
      *
