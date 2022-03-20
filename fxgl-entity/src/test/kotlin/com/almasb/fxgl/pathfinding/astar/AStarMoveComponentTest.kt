@@ -151,6 +151,43 @@ class AStarMoveComponentTest {
         }
     }
 
+    @Test
+    fun `atDestinationProperty correctly reports changes`() {
+        var count = 0
+
+        aStarMoveComponent.atDestinationProperty().addListener { _, hasNotReached, hasReached ->
+            if (hasReached) {
+                count = 1
+            }
+
+            if (hasNotReached) {
+                count = -1
+            }
+        }
+
+        assertTrue(aStarMoveComponent.isAtDestination)
+        assertTrue(aStarMoveComponent.atDestinationProperty().value)
+
+        aStarMoveComponent.moveToCell(3, 0)
+
+        assertThat(count, `is`(-1))
+
+        repeat(50) {
+            cellMoveComponent.onUpdate(STEP_SIZE)
+            aStarMoveComponent.onUpdate(STEP_SIZE)
+        }
+
+        assertFalse(aStarMoveComponent.isAtDestination)
+        assertFalse(aStarMoveComponent.atDestinationProperty().value)
+        assertThat(count, `is`(-1))
+
+        finishMotion()
+
+        assertTrue(aStarMoveComponent.isAtDestination)
+        assertTrue(aStarMoveComponent.atDestinationProperty().value)
+        assertThat(count, `is`(1))
+    }
+
     private fun putComponentInMotion(x: Int, y: Int) {
         aStarMoveComponent.moveToCell(x, y)
         aStarMoveComponent.onUpdate(STEP_SIZE)

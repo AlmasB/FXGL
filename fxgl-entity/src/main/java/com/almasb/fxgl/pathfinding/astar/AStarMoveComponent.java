@@ -12,6 +12,8 @@ import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.pathfinding.CellMoveComponent;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.value.ChangeListener;
 
 import java.util.ArrayList;
@@ -32,6 +34,8 @@ public final class AStarMoveComponent extends Component {
     private List<AStarCell> path = new ArrayList<>();
 
     private Runnable delayedPathCalc = EmptyRunnable.INSTANCE;
+
+    private ReadOnlyBooleanWrapper isAtDestinationProp = new ReadOnlyBooleanWrapper(true);
 
     private ChangeListener<Boolean> isAtDestinationListener = (o, old, isAtDestination) -> {
         if (isAtDestination) {
@@ -71,11 +75,15 @@ public final class AStarMoveComponent extends Component {
         return path.isEmpty();
     }
 
+    public ReadOnlyBooleanProperty atDestinationProperty() {
+        return isAtDestinationProp.getReadOnlyProperty();
+    }
+
     /**
      * @return true when the path is empty and entity is no longer moving
      */
     public boolean isAtDestination() {
-        return !isMoving() && isPathEmpty();
+        return isAtDestinationProp.get();
     }
 
     public AStarGrid getGrid() {
@@ -99,6 +107,8 @@ public final class AStarMoveComponent extends Component {
     public void stopMovementAt(int cellX, int cellY) {
         path.clear();
         moveComponent.setPositionToCell(cellX, cellY);
+
+        isAtDestinationProp.set(true);
     }
 
     public void stopMovement() {
@@ -153,6 +163,8 @@ public final class AStarMoveComponent extends Component {
      * This can be used to explicitly specify the start X and Y of the entity.
      */
     public void moveToCell(int startX, int startY, int targetX, int targetY) {
+        isAtDestinationProp.set(false);
+
         if (moveComponent.isAtDestination()) {
             path = pathfinder.get().findPath(startX, startY, targetX, targetY);
         } else {
@@ -162,6 +174,10 @@ public final class AStarMoveComponent extends Component {
 
     @Override
     public void onUpdate(double tpf) {
+        if (!isAtDestination() && !isMoving() && isPathEmpty()) {
+            isAtDestinationProp.set(true);
+        }
+
         if (path.isEmpty() || !moveComponent.isAtDestination())
             return;
 
