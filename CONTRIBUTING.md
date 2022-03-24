@@ -2,18 +2,16 @@
 
 Contribution of any form is welcome!
 Please see the list below on how you can contribute to the project.
-Once you've decided what you would like to do, let me know about it first.
-This is just to make sure that the issue you want hasn't already been implemented,
-fixed or being worked on in newer versions.
-Any new API or changes to existing API should be discussed to avoid inconsistencies.
+Once you've decided what you would like to do, let us know about it first.
+This is to make sure that the issue you want hasn't already been implemented or being worked on in newer versions.
 
 * Proof read the public documentation for errors, ambiguities and typos.
-* Crash test features for bugs or write a unit test for one.
+* Crash test features for bugs.
+* Add missing tests.
 * Create an issue or suggest a feature backed up by a use case.
 * Provide or suggest an implementation of an issue from [GitHub Issues](https://github.com/AlmasB/FXGL/issues).
-* Suggest an API change if you think some calls can be made more concise.
-* Add missing tests.
-* [Samples](fxgl-samples) might get outdated quite quickly, see if you can find something weird / not working.
+* Suggest an API change to simplify user workflow.
+* [Samples](fxgl-samples) might get outdated quickly, see if you can find something weird or not working.
 * Share details about your project based on FXGL (this will go to the showcase section).
 * Write a tutorial on how to use FXGL.
 
@@ -32,8 +30,9 @@ To start developing FXGL you can set up IDEA (2021.3+) as follows:
 
 1. Fork FXGL into your GitHub repo, then clone your repo to your machine.
 2. Open IDEA -> File -> New -> Project from Existing Sources -> Select the cloned FXGL directory.
-3. Import project from external model -> Maven -> Next.
-4. Select the provided Maven project to import. Use default settings and JDK 17 (or higher).
+3. Import project from external model -> Maven -> Finish.
+
+Ensure you are using JDK 17 (or higher). You can set this via File -> Project Structure -> Project.
 
 You should now see something like this:
 

@@ -712,6 +712,30 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     }
 
     /**
+     * Add a prismatic joint (a slider along a given axis) between two entities.
+     * More details: https://en.wikipedia.org/wiki/Prismatic_joint
+     *
+     * @param e1 entity1
+     * @param e2 entity2
+     * @param axis the axis along which to slide
+     * @param limit max slide distance in pixels
+     * @return joint
+     */
+    public PrismaticJoint addPrismaticJoint(Entity e1, Entity e2, Point2D axis, double limit) {
+        checkJointRequirements(e1, e2);
+
+        var p1 = e1.getComponent(PhysicsComponent.class);
+        var p2 = e2.getComponent(PhysicsComponent.class);
+
+        var def = new PrismaticJointDef();
+        def.initialize(p1.getBody(), p2.getBody(), p2.getBody().getWorldCenter(), toVector(axis));
+        def.enableLimit = true;
+        def.upperTranslation = toMetersF(limit);
+
+        return addJoint(e1, e2, def);
+    }
+
+    /**
      * Add a joint constraining two entities with PhysicsComponent.
      * The entities must already be in the game world.
      *

@@ -7,6 +7,7 @@
 package com.almasb.fxgl.texture
 
 import com.almasb.fxgl.core.concurrent.Async
+import com.almasb.fxgl.logging.Logger
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.SnapshotParameters
@@ -14,7 +15,10 @@ import javafx.scene.effect.BlendMode
 import javafx.scene.image.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.Callable
+import javax.imageio.ImageIO
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -584,4 +588,18 @@ fun toBufferedImage(fxImage: Image): java.awt.image.BufferedImage {
     fxImage.pixelReader.getPixels(0, 0, w, h, WritablePixelFormat.getIntArgbPreInstance(), buffer.data, 0, w)
 
     return awtImage
+}
+
+/**
+ * Writes [image] to the [filePath].
+ */
+fun writeToFile(image: Image, filePath: Path): Boolean {
+    try {
+        Files.newOutputStream(filePath).use {
+            return ImageIO.write(toBufferedImage(image), "png", it)
+        }
+    } catch (e: Exception) {
+        Logger.get("Images.kt").warning("failed to save", e)
+        return false
+    }
 }

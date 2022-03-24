@@ -44,6 +44,8 @@ public class Test3D {
 
     private Random random = new Random();
 
+    private double t = 0.0;
+
     public void start() {
         getGameWorld().getEntitiesCopy().forEach(Entity::removeFromWorld);
 
@@ -68,7 +70,57 @@ public class Test3D {
 
         //root.getChildren().addAll(light, light2, light3);
 
-        megacube();
+        geom();
+    }
+
+    private void geom() {
+        var spheres = new ArrayList<Sphere>();
+
+        var size = 1.0;
+
+        var color = FXGLMath.randomColorHSB(0.66, 0.84);
+
+        for (int i = 0; i < 1500; i++) {
+            var sphere = new Sphere(size);
+            sphere.setMaterial(new PhongMaterial(color));
+
+            spheres.add(sphere);
+
+            root.getChildren().add(sphere);
+
+            size -= 0.005;
+        }
+
+
+
+        run(() -> {
+            t += 0.016 * 0.2;
+
+            for (int i = 0; i < spheres.size(); i++) {
+
+                var tt = t + i * 0.002;
+
+                var x = 3.5 * sin(sin(tt)) * 1.2 * pow(2, cos(-16.6 * tt));
+                var y = -23 * cos(1.6 * tt) * cos(4.28 - 2.3 * tt) * sin(-2.32 * tt);
+                var z = FXGLMath.cos(tt * 1.5) + FXGLMath.sin(tt * 0.5) * 0.003;
+
+                var s = spheres.get(i);
+                s.setTranslateX(x);
+                s.setTranslateY(y);
+                s.setTranslateZ(z);
+
+//                animationBuilder()
+//                        .duration(Duration.seconds(0.25))
+//                        //.repeat(2)
+//                        .autoReverse(true)
+//                        .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
+//                        .translate(s)
+//                        .from(new Point3D(s.getTranslateX(), s.getTranslateY(), s.getTranslateZ()))
+//                        .to(new Point3D(x, y, z))
+//                        .buildAndPlay();
+            }
+
+        }, Duration.seconds(0.016));
     }
 
     private void megacube() {

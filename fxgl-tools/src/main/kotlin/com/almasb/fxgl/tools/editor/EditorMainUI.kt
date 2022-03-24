@@ -7,30 +7,28 @@
 package com.almasb.fxgl.tools.editor
 
 import com.almasb.fxgl.app.FXGLPane
-import com.almasb.fxgl.dev.DevPane
+import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.dev.editor.EntityInspector
-import com.almasb.fxgl.dsl.*
-import com.almasb.fxgl.dsl.FXGL.Companion.entityBuilder
-import com.almasb.fxgl.dsl.FXGL.Companion.getAppHeight
 import com.almasb.fxgl.dsl.components.DraggableComponent
-import com.almasb.fxgl.dsl.components.ProjectileComponent
+import com.almasb.fxgl.dsl.getAssetLoader
+import com.almasb.fxgl.dsl.getDialogService
+import com.almasb.fxgl.dsl.getGameController
+import com.almasb.fxgl.dsl.getGameWorld
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityWorldListener
 import com.almasb.fxgl.entity.components.IDComponent
-import com.almasb.fxgl.ui.FXGLButton
+import javafx.collections.FXCollections
 import javafx.geometry.Insets
-import javafx.geometry.Point2D
 import javafx.geometry.Pos
-import javafx.scene.control.*
+import javafx.scene.control.Button
+import javafx.scene.control.ListView
+import javafx.scene.control.SplitPane
+import javafx.scene.control.cell.TextFieldListCell
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
-import javafx.util.Duration
-import javafx.scene.control.ListCell
-import javafx.scene.control.cell.TextFieldListCell
 import javafx.util.StringConverter
-
 
 /**
  *
@@ -59,6 +57,7 @@ class EditorMainUI : BorderPane() {
     private lateinit var fxglPane: FXGLPane
 
     private val editorEntities = arrayListOf<Entity>()
+    private val editorEntityTypes = FXCollections.observableArrayList<String>()
 
     private var isStartingFromStop = false
 
@@ -105,6 +104,16 @@ class EditorMainUI : BorderPane() {
                             it.addComponent(DraggableComponent())
                         })
                     }
+                },
+
+                Button("Add EntityType").also {
+                    it.setOnAction {
+                        getDialogService().showInputBox("Enter EntityType", InputPredicates.ALPHA) { input ->
+                            if (input !in editorEntityTypes) {
+                                editorEntityTypes += input
+                            }
+                        }
+                    }
                 }
         )
 
@@ -120,7 +129,7 @@ class EditorMainUI : BorderPane() {
 
         explorerView.padding = Insets(5.0)
         explorerView.children.addAll(
-                entitiesListView
+                entitiesListView, ListView(editorEntityTypes)
         )
 
         val inspectorView = VBox(10.0)

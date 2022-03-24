@@ -1,15 +1,11 @@
 To release:
 
-0. make_changelog.sh
-1. ChangelogGen::main
-2. comment gpg entry block in pom.xml
-3. release-fxgl.sh
-4. Update README.md -> next version
-5. Merge dev branch into release
-
-6. revert gpg entry comment
-
-7. Create a GitHub Release, copy CHANGELOG.md, upload uber-jar
-8. (Optional) Update all dependencies to their latest versions
+0. comment gpg entry block in pom.xml
+1. release-fxgl.sh
+2. Update README.md -> next version
+3. Merge dev branch into release
+4. revert gpg entry comment
+5. Create a GitHub Release, copy CHANGELOG.md, upload uber-jar
+6. (Optional) Update all dependencies to their latest versions
 
 Continue developing on the dev branch

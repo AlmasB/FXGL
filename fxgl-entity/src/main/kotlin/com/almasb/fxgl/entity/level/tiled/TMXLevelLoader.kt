@@ -16,6 +16,7 @@ import com.almasb.fxgl.entity.level.LevelLoadingException
 import com.almasb.fxgl.logging.Logger
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
+import javafx.scene.shape.Polyline
 import java.io.InputStream
 import java.net.URL
 import java.util.*
@@ -32,7 +33,7 @@ import javax.xml.stream.events.StartElement
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 
-private const val TILED_VERSION_LATEST = "1.2.3"
+private const val TILED_VERSION_LATEST = "1.4.2"
 
 class TMXLevelLoader
 @JvmOverloads constructor(
@@ -60,7 +61,7 @@ class TMXLevelLoader
 
             val level = Level(map.width * map.tilewidth, map.height * map.tileheight, tileLayerEntities + objectEntities)
 
-            map.properties.forEach { key, value ->
+            map.properties.forEach { (key, value) ->
 
                 if (value is Float) {
                     level.properties.setValue(key, value.toDouble())
@@ -101,6 +102,10 @@ class TMXLevelLoader
 
                             "hexagonal" -> {
                                 it.viewComponent.addChild(tilesetLoader.loadViewHex(layer.name))
+                            }
+
+                            "isometric" -> {
+                                it.viewComponent.addChild(tilesetLoader.loadViewIsometric(layer.name))
                             }
 
                             else -> {
@@ -247,7 +252,11 @@ class TMXLevelLoader
                     }
 
                     "polygon" -> {
-                        parseObjectPolygon(currentObject, start)
+                        parseObjectPolyline(currentObject, start, isClosed = true)
+                    }
+
+                    "polyline" -> {
+                        parseObjectPolyline(currentObject, start, isClosed = false)
                     }
                 }
             }
@@ -502,7 +511,7 @@ class TMXLevelLoader
         }
     }
 
-    private fun parseObjectPolygon(obj: TiledObject, start: StartElement) {
+    private fun parseObjectPolyline(obj: TiledObject, start: StartElement, isClosed: Boolean) {
         val data = start.getString("points")
 
         val points = data.split(" +".toRegex())
@@ -510,10 +519,15 @@ class TMXLevelLoader
                 .map { it.toDouble() }
                 .toDoubleArray()
 
-        // https://github.com/AlmasB/FXGL/issues/575
-        val polygon = Polygon(*points)
+        if (isClosed) {
+            val polygon = Polygon(*points)
 
-        (obj.properties as MutableMap)["polygon"] = polygon
+            (obj.properties as MutableMap)["polygon"] = polygon
+        } else {
+            val polyline = Polyline(*points)
+
+            (obj.properties as MutableMap)["polyline"] = polyline
+        }
     }
 }
 

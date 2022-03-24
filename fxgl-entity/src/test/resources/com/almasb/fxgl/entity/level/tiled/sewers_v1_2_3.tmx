@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="24" tileheight="24" infinite="0" nextlayerid="5" nextobjectid="5">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="24" tileheight="24" infinite="0" nextlayerid="5" nextobjectid="7">
  <tileset firstgid="1" name="sewer_tileset" tilewidth="24" tileheight="24" tilecount="72" columns="8">
   <image source="sewer_tileset.png" trans="ff00ff" width="192" height="217"/>
  </tileset>
@@ -25,6 +25,9 @@
   <object id="2" name="name2" type="type2" x="504" y="0" width="360" height="168" rotation="31"/>
   <object id="4" name="polygon_name" type="no_type" x="696" y="504">
    <polygon points="0,0 120,-72 192,48 24,48"/>
+  </object>
+  <object id="6" name="polyline_name" type="no_type" x="936" y="432">
+   <polyline points="0,0 96,0 96,-96 192,-96 192,96 24,96"/>
   </object>
  </objectgroup>
  <objectgroup id="4" name="Group2">

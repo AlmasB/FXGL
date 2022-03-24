@@ -29,8 +29,6 @@ public abstract class Joint {
         joint.destructor();
     }
 
-    public Joint m_prev = null;
-    public Joint m_next = null;
     public final JointEdge m_edgeA = new JointEdge();
     public final JointEdge m_edgeB = new JointEdge();
     protected Body m_bodyA;

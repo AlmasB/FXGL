@@ -64,7 +64,7 @@ public final class World {
 
     private Array<Body> bodies = new Array<>(WORLD_POOL_SIZE);
 
-    private Joint m_jointList = null;
+    private Array<Joint> joints = new Array<>();
     private int jointCount = 0;
 
     private final Vec2 gravity = new Vec2();
@@ -127,13 +127,7 @@ public final class World {
 
         T j = Joint.create(this, def);
 
-        // Connect to the world list.
-        j.m_prev = null;
-        j.m_next = m_jointList;
-        if (m_jointList != null) {
-            m_jointList.m_prev = j;
-        }
-        m_jointList = j;
+        joints.add(j);
         ++jointCount;
 
         // Connect to the bodies' doubly linked lists.
@@ -177,18 +171,7 @@ public final class World {
 
         boolean collideConnected = j.getCollideConnected();
 
-        // Remove from the doubly linked list.
-        if (j.m_prev != null) {
-            j.m_prev.m_next = j.m_next;
-        }
-
-        if (j.m_next != null) {
-            j.m_next.m_prev = j.m_prev;
-        }
-
-        if (j == m_jointList) {
-            m_jointList = j.m_next;
-        }
+        joints.removeValueByIdentity(j);
 
         // Disconnect from island graph.
         Body bodyA = j.getBodyA();
@@ -334,7 +317,7 @@ public final class World {
         for (Contact c = contactManager.contactList; c != null; c = c.m_next) {
             c.m_flags &= ~Contact.ISLAND_FLAG;
         }
-        for (Joint j = m_jointList; j != null; j = j.m_next) {
+        for (Joint j : joints) {
             j.m_islandFlag = false;
         }
 
@@ -1147,16 +1130,6 @@ public final class World {
      */
     public Array<Body> getBodies() {
         return bodies;
-    }
-
-    /**
-     * Get the world joint list. With the returned joint, use Joint.getNext to get the next joint in
-     * the world list. A null joint indicates the end of the list.
-     *
-     * @return the head of the world joint list.
-     */
-    public Joint getJointList() {
-        return m_jointList;
     }
 
     /**

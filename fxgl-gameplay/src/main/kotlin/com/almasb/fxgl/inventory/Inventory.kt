@@ -112,10 +112,9 @@ class Inventory<T>(
         if (isFull)
             return false
 
-        // TODO: if == 0?
         // adding a new item, so check if quantity > 0
-        if (quantity < 0) {
-            log.warning("Attempted to add a new item with negative quantity. Ignoring")
+        if (quantity <= 0) {
+            log.warning("Attempted to add a *NEW* item with 0 or negative quantity. Ignoring")
             return false
         }
 

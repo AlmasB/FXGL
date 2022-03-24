@@ -529,6 +529,10 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 c.addedSubList.forEach { outPoint ->
                     attachMouseHandler(outPoint)
                 }
+
+                c.removed.forEach { outPoint ->
+                    disconnectOutLink(outPoint)
+                }
             }
         }
 

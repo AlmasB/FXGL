@@ -16,6 +16,7 @@ import com.almasb.fxgl.app.services.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.collection.PropertyChangeListener
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.Executor
 import com.almasb.fxgl.core.math.FXGLMath
@@ -69,6 +70,7 @@ import javafx.scene.input.MouseButton
 import javafx.scene.text.Text
 import javafx.stage.Stage
 import javafx.util.Duration
+import java.net.URL
 import java.util.*
 import java.util.concurrent.Callable
 import java.util.function.BiConsumer
@@ -325,15 +327,84 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun inc(varName: String, value: Double) = getWorldProperties().increment(varName, value)
 
+    @JvmStatic fun onIntChangeTo(varName: String, value: Int, action: Runnable): PropertyChangeListener<Int> {
+        return onIntChange(varName) {
+            if (it == value)
+                action.run()
+        }
+    }
+
+    @JvmStatic fun onIntChange(varName: String, action: Consumer<Int>): PropertyChangeListener<Int> {
+        val listener = PropertyChangeListener<Int> { _, newValue -> action.accept(newValue) }
+
+        getWorldProperties().addListener(varName, listener)
+
+        return listener
+    }
+
+    @JvmStatic fun onDoubleChange(varName: String, action: Consumer<Double>): PropertyChangeListener<Double> {
+        val listener = PropertyChangeListener<Double> { _, newValue -> action.accept(newValue) }
+
+        getWorldProperties().addListener(varName, listener)
+
+        return listener
+    }
+
+    @JvmStatic fun onBooleanChangeTo(varName: String, value: Boolean, action: Runnable): PropertyChangeListener<Boolean> {
+        return onBooleanChange(varName) {
+            if (it == value)
+                action.run()
+        }
+    }
+
+    @JvmStatic fun onBooleanChange(varName: String, action: Consumer<Boolean>): PropertyChangeListener<Boolean> {
+        val listener = PropertyChangeListener<Boolean> { _, newValue -> action.accept(newValue) }
+
+        getWorldProperties().addListener(varName, listener)
+
+        return listener
+    }
+
+    @JvmStatic fun onStringChangeTo(varName: String, value: String, action: Runnable): PropertyChangeListener<String> {
+        return onStringChange(varName) {
+            if (it == value)
+                action.run()
+        }
+    }
+
+    @JvmStatic fun onStringChange(varName: String, action: Consumer<String>): PropertyChangeListener<String> {
+        val listener = PropertyChangeListener<String> { _, newValue -> action.accept(newValue) }
+
+        getWorldProperties().addListener(varName, listener)
+
+        return listener
+    }
+
+    @JvmStatic fun <T> onObjectChange(varName: String, action: Consumer<T>): PropertyChangeListener<T> {
+        val listener = PropertyChangeListener<T> { _, newValue -> action.accept(newValue) }
+
+        getWorldProperties().addListener(varName, listener)
+
+        return listener
+    }
+
 /* ASSET LOADING */
 
     @JvmStatic fun image(assetName: String): Image = getAssetLoader().loadImage(assetName)
 
     @JvmStatic fun image(assetName: String, width: Double, height: Double): Image = texture(assetName, width, height).image
 
+    @JvmStatic fun image(url: URL): Image = getAssetLoader().loadImage(url)
+
+    @JvmStatic fun image(url: URL, width: Double, height: Double): Image = texture(url, width, height).image
+
     @JvmStatic fun texture(assetName: String): Texture = getAssetLoader().loadTexture(assetName)
 
     @JvmStatic fun texture(assetName: String, width: Double, height: Double): Texture = getAssetLoader().loadTexture(assetName, width, height)
+
+    @JvmStatic fun texture(url: URL): Texture = getAssetLoader().loadTexture(url)
+
+    @JvmStatic fun texture(url: URL, width: Double, height: Double): Texture = getAssetLoader().loadTexture(url, width, height)
 
     @JvmStatic fun text(assetName: String) = getAssetLoader().loadText(assetName)
 
@@ -345,6 +416,16 @@ class FXGL private constructor() { companion object {
      */
     @JvmStatic fun loopBGM(assetName: String): Music {
         val music = getAssetLoader().loadMusic(assetName)
+        getAudioPlayer().loopMusic(music)
+        return music
+    }
+
+    /**
+     * @param url url to the background music file to loop
+     * @return the music object that is played in a loop
+     */
+    @JvmStatic fun loopBGM(url: URL): Music {
+        val music = getAssetLoader().loadMusic(url)
         getAudioPlayer().loopMusic(music)
         return music
     }
@@ -362,6 +443,29 @@ class FXGL private constructor() { companion object {
             }
             assetName.endsWith(".mp3") -> {
                 val music = getAssetLoader().loadMusic(assetName)
+                getAudioPlayer().playMusic(music)
+            }
+            else -> {
+                throw IllegalArgumentException("Unsupported audio format: $assetName")
+            }
+        }
+    }
+
+    /**
+     * Convenience method to play music/sound given its filename.
+     *
+     * @param url name of the music file
+     */
+    @JvmStatic fun play(url: URL) {
+        val assetName = url.toExternalForm()
+
+        when {
+            assetName.endsWith(".wav") -> {
+                val sound = getAssetLoader().loadSound(url)
+                getAudioPlayer().playSound(sound)
+            }
+            assetName.endsWith(".mp3") -> {
+                val music = getAssetLoader().loadMusic(url)
                 getAudioPlayer().playMusic(music)
             }
             else -> {

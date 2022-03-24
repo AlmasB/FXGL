@@ -7,22 +7,37 @@
 package com.almasb.fxgl.quest
 
 import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.Bindings
 import javafx.beans.property.*
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.util.Duration
 import java.util.concurrent.Callable
 
 /**
- * TODO: allow adding / removing objectives after construction.
- *
  * A single quest.
- * A quest can have multiple objectives but at least 1.
+ * A quest can have multiple objectives but to start, it needs at least 1.
  * A quest is always in one of four states [QuestState].
+ * Valid transitions:
+ * NOT_STARTED -> ACTIVE
+ * ACTIVE -> COMPLETED
+ * ACTIVE -> FAILED
+ * FAILED -> ACTIVE
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Quest(val name: String,
-            val objectives: List<QuestObjective>) {
+class Quest(val name: String) {
+
+    private val log = Logger.get(javaClass)
+
+    private val objectives = FXCollections.observableArrayList<QuestObjective>()
+    private val objectivesReadOnly = FXCollections.unmodifiableObservableList(objectives)
+
+    /**
+     * @return read-only copy of the quest's objectives
+     */
+    fun objectivesProperty(): ObservableList<QuestObjective> = objectivesReadOnly
 
     private val stateProp = ReadOnlyObjectWrapper(QuestState.NOT_STARTED)
 
@@ -31,12 +46,52 @@ class Quest(val name: String,
 
     fun stateProperty(): ReadOnlyObjectProperty<QuestState> = stateProp.readOnlyProperty
 
-    // TODO: check transitions between states
+    /**
+     * @return true if any of the states apart from NOT_STARTED
+     */
+    val hasStarted: Boolean
+        get() = state != QuestState.NOT_STARTED
+
+    @JvmOverloads fun addIntObjective(desc: String, varName: String, varValue: Int, duration: Duration = Duration.ZERO): QuestObjective {
+        return IntQuestObjective(desc, varName, varValue, duration).also { addObjective(it) }
+    }
+
+    @JvmOverloads fun addBooleanObjective(desc: String, varName: String, varValue: Boolean, duration: Duration = Duration.ZERO): QuestObjective {
+        return BooleanQuestObjective(desc, varName, varValue, duration).also { addObjective(it) }
+    }
+
+    private fun addObjective(objective: QuestObjective) {
+        objectives += objective
+
+        if (hasStarted)
+            rebindStateToObjectives()
+    }
+
+    fun removeObjective(objective: QuestObjective) {
+        objectives -= objective
+
+        if (hasStarted)
+            rebindStateToObjectives()
+    }
+
+    /**
+     * Can only be called from NOT_STARTED state.
+     */
     internal fun start() {
-        stateProp.value = QuestState.ACTIVE
+        if (objectives.isEmpty()) {
+            log.warning("Cannot start quest $name because it has no objectives")
+            return
+        }
 
-        require(objectives.isNotEmpty()) { "Quest must have at least 1 objective" }
+        if (hasStarted) {
+            log.warning("Cannot start quest $name because it has already been started")
+            return
+        }
 
+        rebindStateToObjectives()
+    }
+
+    private fun rebindStateToObjectives() {
         val failedBinding = objectives.map { it.stateProperty() }
                 .foldRight(Bindings.createBooleanBinding(Callable { false })) { state, binding ->
                     state.isEqualTo(QuestState.FAILED).or(binding)
@@ -57,7 +112,10 @@ class Quest(val name: String,
 /**
  * A single quest objective.
  *
- * TODO: allow user to manually fail an objective.
+ * Valid transitions:
+ * ACTIVE -> COMPLETED
+ * ACTIVE -> FAILED
+ * FAILED -> ACTIVE
  */
 sealed class QuestObjective
 @JvmOverloads
@@ -68,13 +126,14 @@ constructor(
          */
         val description: String,
 
+        // TODO:
         /**
          * How much time is given to complete this objective.
          * Default: 0 - unlimited.
          */
         val expireDuration: Duration = Duration.ZERO) {
 
-    private val stateProp = ReadOnlyObjectWrapper(QuestState.NOT_STARTED)
+    private val stateProp = ReadOnlyObjectWrapper(QuestState.ACTIVE)
 
     val state: QuestState
         get() = stateProp.get()
@@ -94,6 +153,39 @@ constructor(
         successProp.addListener(successListener)
     }
 
+    fun complete() {
+        if (state != QuestState.ACTIVE) {
+            return
+        }
+
+        unbind()
+        successProp.value = true
+    }
+
+    fun fail() {
+        if (state != QuestState.ACTIVE) {
+            return
+        }
+
+        unbind()
+        successProp.value = false
+        clean()
+        stateProp.value = QuestState.FAILED
+    }
+
+    /**
+     * Transition from FAILED -> ACTIVE.
+     */
+    fun reactivate(vars: PropertyMap) {
+        if (state != QuestState.FAILED) {
+            return
+        }
+
+        stateProp.value = QuestState.ACTIVE
+        successProp.addListener(successListener)
+        bindTo(vars)
+    }
+
     abstract fun bindTo(vars: PropertyMap)
 
     internal fun unbind() {
@@ -102,27 +194,10 @@ constructor(
 
     private fun clean() {
         successProp.removeListener(successListener)
-        //failBinding?.expire()
     }
-
-//  TODO:
-//    private fun setState(state: QuestState) {
-//        require(state != QuestState.ACTIVE) { "Quest objective cannot be reactivated!" }
-//
-//        clean()
-//        this.state.set(state)
-//    }
-//
-//    private var failBinding: com.almasb.fxgl.time.TimerAction? = null
-//
-//    init {
-//        if (expireDuration !== Duration.ZERO) {
-//            //failBinding = FXGL.getMasterTimer().runOnceAfter({ setState(QuestState.FAILED) }, expireDuration)
-//        }
-//    }
 }
 
-class IntQuestObjective
+private class IntQuestObjective
 @JvmOverloads constructor(
         /**
          * Text that tells the player how to achieve this objective.
@@ -155,7 +230,7 @@ class IntQuestObjective
     }
 }
 
-class BooleanQuestObjective
+private class BooleanQuestObjective
 @JvmOverloads constructor(
         /**
          * Text that tells the player how to achieve this objective.
