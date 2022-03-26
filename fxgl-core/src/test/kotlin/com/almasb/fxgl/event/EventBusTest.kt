@@ -66,6 +66,17 @@ class EventBusTest {
                     eventBus.fireEvent(Event(EventType.ROOT))
 
                     assertThat(count, `is`(2))
+                },
+
+                Executable {
+                    // add again and remove, but this time using removeAll
+                    eventBus.addEventHandler(EventType.ROOT, handler)
+
+                    eventBus.removeAllEventHandlers()
+
+                    eventBus.fireEvent(Event(EventType.ROOT))
+
+                    assertThat(count, `is`(2))
                 }
         )
     }
