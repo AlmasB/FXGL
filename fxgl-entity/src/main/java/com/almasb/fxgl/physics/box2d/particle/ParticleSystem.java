@@ -1751,13 +1751,6 @@ public class ParticleSystem {
                 oldCapacity, newCapacity, deferred);
     }
 
-    static int[] reallocateBuffer(ParticleBufferInt buffer, int oldCapacity, int newCapacity,
-                                  boolean deferred) {
-        assert newCapacity > oldCapacity;
-        return reallocateBuffer(buffer.data, buffer.userSuppliedCapacity, oldCapacity,
-                newCapacity, deferred);
-    }
-
     @SuppressWarnings("unchecked")
     <T> T[] requestParticleBuffer(Class<T> klass, T[] buffer) {
         if (buffer == null) {
@@ -2220,14 +2213,13 @@ public class ParticleSystem {
      * Reallocate an int buffer. A 'deferred' buffer is reallocated only if it is not NULL. If
      * 'userSuppliedCapacity' is not zero, buffer is user supplied and must be kept.
      */
-    private static int[] reallocateBuffer(int[] buffer, int userSuppliedCapacity, int oldCapacity,
-                                         int newCapacity, boolean deferred) {
-        assert newCapacity > oldCapacity;
-        assert userSuppliedCapacity == 0 || newCapacity <= userSuppliedCapacity;
-        if ((!deferred || buffer != null) && userSuppliedCapacity == 0) {
-            buffer = reallocateBuffer(buffer, oldCapacity, newCapacity);
+    private static int[] reallocateBuffer(ParticleBufferInt buffer, int oldCapacity, int newCapacity, boolean deferred) {
+        int[] data = buffer.data;
+
+        if ((!deferred || data != null) && buffer.userSuppliedCapacity == 0) {
+            data = reallocateBuffer(data, oldCapacity, newCapacity);
         }
-        return buffer;
+        return data;
     }
 
     /**
