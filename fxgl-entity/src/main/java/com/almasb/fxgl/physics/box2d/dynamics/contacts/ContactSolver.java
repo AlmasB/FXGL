@@ -240,13 +240,12 @@ public final class ContactSolver {
             worldManifold.initialize(manifold, xfA, radiusA, xfB, radiusB);
 
             final Vec2 vcnormal = vc.normal;
-            vcnormal.x = worldManifold.normal.x;
-            vcnormal.y = worldManifold.normal.y;
+            vcnormal.set(worldManifold.getNormalX(), worldManifold.getNormalY());
 
             int pointCount = vc.pointCount;
             for (int j = 0; j < pointCount; ++j) {
                 VelocityConstraintPoint vcp = vc.points[j];
-                Vec2 wmPj = worldManifold.points[j];
+                Vec2 wmPj = worldManifold.getPoint(j);
                 final Vec2 vcprA = vcp.rA;
                 final Vec2 vcprB = vcp.rB;
                 vcprA.x = wmPj.x - cA.x;

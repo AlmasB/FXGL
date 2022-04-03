@@ -19,17 +19,29 @@ public final class WorldManifold {
     /**
      * World vector pointing from A to B
      */
-    public final Vec2 normal = new Vec2();
+    private final Vec2 normal = new Vec2();
 
     /**
      * World contact point (point of intersection)
      */
-    public final Vec2[] points = new Vec2[JBoxSettings.maxManifoldPoints];
+    private final Vec2[] points = new Vec2[JBoxSettings.maxManifoldPoints];
 
     public WorldManifold() {
         for (int i = 0; i < JBoxSettings.maxManifoldPoints; i++) {
             points[i] = new Vec2();
         }
+    }
+
+    public float getNormalX() {
+        return normal.x;
+    }
+
+    public float getNormalY() {
+        return normal.y;
+    }
+
+    public Vec2 getPoint(int index) {
+        return points[index];
     }
 
     private final Vec2 pool3 = new Vec2();
