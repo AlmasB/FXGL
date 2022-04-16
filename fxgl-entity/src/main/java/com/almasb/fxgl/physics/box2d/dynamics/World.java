@@ -65,7 +65,6 @@ public final class World {
     private Array<Body> bodies = new Array<>(WORLD_POOL_SIZE);
 
     private Array<Joint> joints = new Array<>();
-    private int jointCount = 0;
 
     private final Vec2 gravity = new Vec2();
 
@@ -128,7 +127,6 @@ public final class World {
         T j = Joint.create(this, def);
 
         joints.add(j);
-        ++jointCount;
 
         // Connect to the bodies' doubly linked lists.
         j.m_edgeA.joint = j;
@@ -214,8 +212,6 @@ public final class World {
         j.m_edgeB.next = null;
 
         Joint.destroy(j);
-
-        --jointCount;
 
         // If the joint prevents collisions, then flag any contacts for filtering.
         if (!collideConnected) {
@@ -308,7 +304,7 @@ public final class World {
         }
 
         // Size the island for the worst case.
-        island.init(getBodyCount(), contactManager.contactCount, jointCount, contactManager.getContactListener());
+        island.init(getBodyCount(), contactManager.contactCount, getJointCount(), contactManager.getContactListener());
 
         // Clear all the island flags.
         for (Body b : bodies) {
@@ -1189,7 +1185,7 @@ public final class World {
      * @return the number of joints
      */
     public int getJointCount() {
-        return jointCount;
+        return joints.size();
     }
 
     /**
