@@ -13,8 +13,6 @@ import com.almasb.fxgl.entity.components.TransformComponent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
-import java.util.Map;
-
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
@@ -59,11 +57,6 @@ public class Test3DSample extends GameApplication {
     }
 
     @Override
-    protected void initGameVars(Map<String, Object> vars) {
-        vars.put("score", 0);
-    }
-
-    @Override
     protected void initGame() {
         camera3D = getGameScene().getCamera3D();
         transform = getGameScene().getCamera3D().getTransform();
@@ -76,11 +69,6 @@ public class Test3DSample extends GameApplication {
         getGameScene().setCursorInvisible();
 
         new Test3D().start();
-    }
-
-    @Override
-    protected void onUpdate(double tpf) {
-        inc("score", +1);
     }
 
     public static void main(String[] args) {
