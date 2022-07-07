@@ -6,34 +6,27 @@
 
 package com.almasb.fxgl.dsl.components
 
-import com.almasb.fxgl.app.scene.Viewport
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.component.Component
+import javafx.geometry.Rectangle2D
 
 /**
  * A component that keeps an entity within the viewport.
  * Entities with physics enabled are not supported.
- * Do NOT use this component if viewport is bound to an entity.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class KeepOnScreenComponent : Component() {
-
-    private lateinit var viewport: Viewport
+open class KeepInBoundsComponent(var bounds: Rectangle2D) : Component() {
 
     /**
-     * keep on screen in X axis.
+     * Keep in bounds in X axis.
      */
     var isHorizontal = true
 
     /**
-     * keep on screen in Y axis.
+     * Keep in bounds in Y axis.
      */
     var isVertical = true
-
-    override fun onAdded() {
-        viewport = FXGL.getGameScene().viewport
-    }
 
     override fun onUpdate(tpf: Double) {
         blockWithBBox()
@@ -41,18 +34,18 @@ class KeepOnScreenComponent : Component() {
 
     private fun blockWithBBox() {
         if (isHorizontal) {
-            if (getEntity().x < viewport.x) {
-                getEntity().x = viewport.x
-            } else if (getEntity().rightX > viewport.x + viewport.width) {
-                getEntity().x = viewport.x + viewport.width - getEntity().width
+            if (getEntity().x < bounds.minX) {
+                getEntity().x = bounds.minX
+            } else if (getEntity().rightX > bounds.maxX) {
+                getEntity().x = bounds.maxX - getEntity().width
             }
         }
 
         if (isVertical) {
-            if (getEntity().y < viewport.y) {
-                getEntity().y = viewport.y
-            } else if (getEntity().bottomY > viewport.y + viewport.height) {
-                getEntity().y = viewport.y + viewport.height - getEntity().height
+            if (getEntity().y < bounds.minY) {
+                getEntity().y = bounds.minY
+            } else if (getEntity().bottomY > bounds.maxY) {
+                getEntity().y = bounds.maxY - getEntity().height
             }
         }
     }
@@ -73,4 +66,17 @@ class KeepOnScreenComponent : Component() {
     }
 
     override fun isComponentInjectionRequired(): Boolean = false
+}
+
+/**
+ * A component that keeps an entity within the viewport.
+ * Entities with physics enabled are not supported.
+ * Do NOT use this component if viewport is bound to an entity.
+ */
+class KeepOnScreenComponent : KeepInBoundsComponent(Rectangle2D.EMPTY) {
+
+    override fun onUpdate(tpf: Double) {
+        bounds = FXGL.getGameScene().viewport.visibleArea
+        super.onUpdate(tpf)
+    }
 }
