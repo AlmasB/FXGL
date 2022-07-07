@@ -277,13 +277,9 @@ open class AnimationBuilder
             this.path = path
         }
 
-        fun from(start: Point2D) = this.also {
-            fromPoint = Point3D(start.x, start.y, 0.0)
-        }
+        fun from(start: Point2D) = from(Point3D(start.x, start.y, 0.0))
 
-        fun to(end: Point2D) = this.also {
-            toPoint = Point3D(end.x, end.y, 0.0)
-        }
+        fun to(end: Point2D) = to(Point3D(end.x, end.y, 0.0))
 
         fun from(start: Point3D) = this.also {
             fromPoint = start
