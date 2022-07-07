@@ -90,7 +90,7 @@
 
         <!-- dependencies -->
         <jfx.version>18</jfx.version>
-        <kotlin.version>1.5.32</kotlin.version>
+        <kotlin.version>1.6.0</kotlin.version>
         <attach.version>4.0.13</attach.version>
         <jackson.version>2.12.1</jackson.version>
 
