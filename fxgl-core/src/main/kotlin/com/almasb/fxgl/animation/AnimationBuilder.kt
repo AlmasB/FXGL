@@ -272,6 +272,7 @@ open class AnimationBuilder
         private var path: Shape? = null
         private var fromPoint = Point3D.ZERO
         private var toPoint = Point3D.ZERO
+        private var isFromSet = false
 
         fun alongPath(path: Shape) = this.also {
             this.path = path
@@ -283,6 +284,7 @@ open class AnimationBuilder
 
         fun from(start: Point3D) = this.also {
             fromPoint = start
+            isFromSet = true
         }
 
         fun to(end: Point3D) = this.also {
@@ -297,6 +299,14 @@ open class AnimationBuilder
                     is CubicCurve -> makeAnim(AnimatedCubicBezierPoint3D(curve))
                     else -> makeAnim(AnimatedPath(curve))
                 }
+            }
+
+            if (!isFromSet && objects.size == 1) {
+                from(Point3D(
+                        objects[0].xProperty().value,
+                        objects[0].yProperty().value,
+                        objects[0].zProperty().value
+                ))
             }
 
             return makeAnim(AnimatedPoint3D(fromPoint, toPoint))
