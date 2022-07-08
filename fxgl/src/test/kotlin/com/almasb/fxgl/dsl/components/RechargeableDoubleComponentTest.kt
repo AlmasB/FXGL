@@ -155,4 +155,16 @@ class RechargeableDoubleComponentTest {
         assertThat(value, `is`(30.0))
         assertThat(zero, `is`(false))
     }
+
+    @Test
+    fun `value in percent`() {
+        hp.value = 10.0
+        hp.maxValue = 100.0
+
+        assertThat(hp.valuePercent, `is`(10.0))
+
+        hp.maxValue = 50.0
+
+        assertThat(hp.valuePercent, `is`(20.0))
+    }
 }
