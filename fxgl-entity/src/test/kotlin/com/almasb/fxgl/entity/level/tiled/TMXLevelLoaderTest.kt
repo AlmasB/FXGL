@@ -190,7 +190,7 @@ class TMXLevelLoaderTest {
     }
 
     @ParameterizedTest
-    @CsvSource("sewers_v1_1_2.tmx", "sewers_v1_2_3.tmx")
+    @CsvSource("sewers_v1_1_2.tmx", "sewers_v1_2_3.tmx", "sewers_v1_9_0.tmx")
     fun parse(mapName: String) {
         val map = javaClass.getResourceAsStream(mapName).use {
             TMXLevelLoader().parse(it)

@@ -33,7 +33,7 @@ import javax.xml.stream.events.StartElement
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 
-private const val TILED_VERSION_LATEST = "1.4.2"
+private const val TILED_VERSION_LATEST = "1.9.0"
 
 class TMXLevelLoader
 @JvmOverloads constructor(
@@ -133,6 +133,7 @@ class TMXLevelLoader
                     data.run {
                         put("name", tiledObject.name)
                         put("type", tiledObject.type)
+                        put("class", tiledObject.type)
                         put("width", tiledObject.width)
                         put("height", tiledObject.height)
                         put("rotation", tiledObject.rotation)
@@ -407,12 +408,18 @@ class TMXLevelLoader
     private fun parseObject(layer: Layer, obj: TiledObject, start: StartElement) {
         obj.name = start.getString("name")
         obj.type = start.getString("type")
+        obj.typeClass = start.getString("class")
         obj.id = start.getInt("id")
         obj.x = start.getInt("x")
         obj.y = start.getInt("y")
         obj.rotation = start.getFloat("rotation")
         obj.width = start.getInt("width")
         obj.height = start.getInt("height")
+
+        // re-map semantics for 1.9+
+        if (obj.typeClass.isNotEmpty() && obj.type.isEmpty()) {
+            obj.type = obj.typeClass
+        }
 
         // gid is stored as UInt, so parsing as int gives incorrect representation
         val gidUInt = start.getUInt("gid")
