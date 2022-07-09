@@ -123,7 +123,7 @@ class Viewport
      * This is only used for visual effects and acts like a viewport overlay.
      * Its x and y follow the actual x and y of viewport.
      */
-    internal val camera = Entity()
+    val camera = Entity()
 
     /**
      * Binds the viewport to entity so that it follows the given entity.
