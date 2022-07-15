@@ -120,10 +120,26 @@ class Input {
      */
     private val currentActions = FXCollections.observableArrayList<UserAction>()
 
+    /**
+     * K - user action.
+     * V - time in seconds when last triggered.
+     */
+    private val actionTimes = hashMapOf<UserAction, Double>()
+
     private val activeTriggers = arrayListOf<Trigger>()
     private val listeners = arrayListOf<TriggerListener>()
 
     private val inputQueue = ArrayDeque<KeyCode>()
+
+    /**
+     * Time accumulated by this input in seconds.
+     */
+    private var time = 0.0
+
+    /**
+     * Time in seconds within which a double press can occur.
+     */
+    var doublePressTimeThreshold = 0.25
 
     /**
      * If action events should be processed.
@@ -259,6 +275,8 @@ class Input {
     }
 
     fun update(tpf: Double) {
+        time += tpf
+
         if (isCapturing) {
             currentCapture!!.update(tpf)
         }
@@ -353,8 +371,19 @@ class Input {
                 .forEach { (act, _) ->
                     currentActions.add(act)
 
-                    if (processInput)
+                    if (processInput) {
                         act.begin()
+
+                        val lastTime = actionTimes[act] ?: -Int.MAX_VALUE.toDouble()
+
+                        actionTimes[act] = time
+
+                        if (time - lastTime <= doublePressTimeThreshold) {
+                            // this resets action time, so that 3rd action will not trigger double action
+                            actionTimes.remove(act)
+                            act.beginDoubleAction()
+                        }
+                    }
                 }
 
         if (event.eventType == KeyEvent.KEY_PRESSED) {
@@ -444,7 +473,10 @@ class Input {
             currentActions.forEach { it.end() }
         }
 
+        time = 0.0
+
         currentActions.clear()
+        actionTimes.clear()
         activeTriggers.clear()
 
         stopCapture()
