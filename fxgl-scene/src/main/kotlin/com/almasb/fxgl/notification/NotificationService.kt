@@ -7,6 +7,7 @@
 package com.almasb.fxgl.notification
 
 import com.almasb.fxgl.core.EngineService
+import javafx.scene.Node
 import javafx.scene.paint.Color
 
 /**
@@ -30,4 +31,9 @@ abstract class NotificationService : EngineService() {
      * Push a notification with given [message].
      */
     abstract fun pushNotification(message: String)
+
+    /**
+     * Push a notification with given [message] and [icon].
+     */
+    abstract fun pushNotification(message: String, icon: Node)
 }
