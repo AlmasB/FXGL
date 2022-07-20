@@ -21,6 +21,7 @@ import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.view.TriggerView
+import com.almasb.fxgl.localization.Language
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.particle.ParticleEmitters
 import com.almasb.fxgl.particle.ParticleSystem
@@ -46,6 +47,7 @@ import javafx.scene.paint.*
 import javafx.scene.shape.Polygon
 import javafx.scene.shape.Rectangle
 import javafx.util.Duration
+import javafx.util.StringConverter
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.function.Consumer
@@ -661,6 +663,15 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
         val languageBox = getUIFactoryService().newChoiceBox(FXCollections.observableArrayList(getSettings().supportedLanguages))
         languageBox.value = getSettings().language.value
+        languageBox.converter = object : StringConverter<Language>() {
+            override fun toString(`object`: Language): String {
+                return `object`.nativeName
+            }
+
+            override fun fromString(string: String): Language {
+                return getSettings().supportedLanguages.find { it.nativeName == string } ?: Language.NONE
+            }
+        }
 
         getSettings().language.bindBidirectional(languageBox.valueProperty())
 
