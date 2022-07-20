@@ -1,5 +1,11 @@
 ![promo](https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_promo.jpg)
 
+## 语言
+
+&emsp;&emsp;English
+
+&emsp;&emsp;[简体中文](https://github.com/AlmasB/FXGL/blob/dev/README_ZH.md)
+
 ## About
 
 <img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_logo.png" width="128" />
