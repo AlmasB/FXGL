@@ -4,7 +4,7 @@
 
 &emsp;&emsp;English
 
-&emsp;&emsp;[简体中文](https://github.com/AlmasB/FXGL/blob/dev/README_ZH.md)
+&emsp;&emsp;[简体中文](https://github.com/AlmasB/FXGL/blob/dev/README_CN.md)
 
 ## About
 
