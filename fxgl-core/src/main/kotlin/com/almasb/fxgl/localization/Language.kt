@@ -11,7 +11,7 @@ package com.almasb.fxgl.localization
  */
 class Language(name: String) {
 
-    val name = name.toUpperCase()
+    val name = name.uppercase()
 
     companion object {
         // this language list is a cross-reference adaptation of Android 10 and iOS 13 languages
