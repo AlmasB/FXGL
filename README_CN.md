@@ -80,7 +80,7 @@ public class BasicGameApp extends GameApplication {
 
 ### Gradle
 
-- 如果您使用 Java 和/或 Kotlin (Java 17+)，则为[Gradle模板项目](https://github.com/AlmasB/FXGL-MavenGradle)
+- [Gradle项目模板](https://github.com/AlmasB/FXGL-MavenGradle)，编程语言为 Java 和/或 Kotlin (Java 17+)
 
 如有错误请以模板为准。
 
