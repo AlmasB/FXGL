@@ -18,7 +18,7 @@ JavaFX 游戏开发框架
 
 - 无需安装或设置
 - “开箱即用”：Java 8-17、Win/Mac/Linux/Android 8+/iOS 11.0+/Web
-- 简单干净的API，比其他引擎更高级别
+- 简单干净的API，相比起其他引擎API级别更高
 - JavaFX 的超集：无需学习新的 UI API
 - 真实世界的游戏开发技术：实体组件、插值动画、粒子[等等](https://github.com/AlmasB/FXGL/wiki/Core-Features)
 - 游戏很容易打包成一个可执行的 .jar 或原生镜像
@@ -27,7 +27,7 @@ JavaFX 游戏开发框架
 
 - 任何 2D 游戏（横向卷轴 /platformer/ 街机 / RPG游戏）
 - 任何具有复杂 UI 控件/动画的业务应用程序
-- 实验 3D
+- 实验性 3D 特性
 - 爱好/学术/商业项目
 - 教学/学习/提高游戏开发技能
 - 应用创意的快速原型制作
@@ -54,17 +54,17 @@ public class BasicGameApp extends GameApplication {
 
 如需快速深入了解代码，请参阅独立的[基本示例](https://github.com/AlmasB/FXGL/tree/dev/fxgl-samples/src/main/java/basics)。否则，请参阅：
 
-- [展示预告片](https://youtu.be/fuDQg7W0v4g)
+- [预告片展示](https://youtu.be/fuDQg7W0v4g)
 - [将 FXGL 与 IntelliJ 一起使用](https://youtu.be/LhmlFC6KE2Q)
 - [维基和书面教程](https://github.com/AlmasB/FXGL/wiki)
 - [YouTube 教程](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
 - [示例代码演示](https://github.com/lhDream/FXGL/blob/dev/fxgl-samples)
 - [FXGL 游戏](https://github.com/AlmasB/FXGLGames)（附源码）
-- 在 `itch.io `上发布了[演示](https://fxgl.itch.io/)
+- [演示](https://fxgl.itch.io/)在 `itch.io `上发布
 
 ### Maven
 
-- [Maven](https://github.com/AlmasB/FXGL-MavenGradle)模板项目，如果你使用 Java 和/或 Kotlin (Java 17+)
+- [Maven](https://github.com/AlmasB/FXGL-MavenGradle)项目模板，编程语言为 Java 和/或 Kotlin (Java 17+)
 
 确保设置`<release>17</release>`为`maven-compiler-plugin`.
 
@@ -76,7 +76,7 @@ public class BasicGameApp extends GameApplication {
 </dependency>
 ```
 
-注意：`0.5.4`用于 Java 8-10 和`11.17`Java 11-16。
+注意：`0.5.4` 及 `11.17` 分别适用于 Java 8-10  及 Java 11-16。
 
 ### Gradle
 
@@ -94,7 +94,7 @@ dependencies {
 }
 ```
 
-注意：`0.5.4`用于 Java 8-10 和`11.17`Java 11-16。
+注意：`0.5.4` 及 `11.17` 分别适用于 Java 8-10  及 Java 11-16。
 
 ### 模块化
 
@@ -106,7 +106,7 @@ open module app.name {
 }
 ```
 
-### Uber jar
+### 独立完整包含所有依赖的 jar 文件
 
 从[Releases](https://github.com/AlmasB/FXGL/releases)下载最新的 uber jar
 
@@ -120,7 +120,7 @@ open module app.name {
 - 美国科南特高中
 - 丹麦新西兰商业技术学院
 - 巴西南里奥格兰德联邦教育、科学和技术学院
-- FHNW 工程/计算机科学学院，瑞士
+- 瑞士西北高等专业学院 工程/计算机科学学院
 
 如果您的机构想要使用或正在使用 FXGL，请在[Chat](https://gitter.im/AlmasB/FXGL)中添加注释以添加到列表中。
 
@@ -177,7 +177,7 @@ open module app.name {
 
 - @karakun
 
-### 接触
+### 与我们取得联系
 
 - 通过[GitHub 讨论](https://github.com/AlmasB/FXGL/discussions)或在[StackOverflow](https://stackoverflow.com/search?q=fxgl)上使用标签`javafx`和`fxgl`
 - 使用[#fxgl 发推文](https://twitter.com/search?src=typd&q=%23fxgl)

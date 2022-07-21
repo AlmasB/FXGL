@@ -1,6 +1,6 @@
 ![promo](https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_promo.jpg)
 
-## 语言
+## Languages
 
 &emsp;&emsp;English
 
