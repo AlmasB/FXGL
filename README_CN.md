@@ -55,7 +55,7 @@ public class BasicGameApp extends GameApplication {
 如需快速深入了解代码，请参阅独立的[基本示例](https://github.com/AlmasB/FXGL/tree/dev/fxgl-samples/src/main/java/basics)。否则，请参阅：
 
 - [预告片展示](https://youtu.be/fuDQg7W0v4g)
-- [将 FXGL 与 IntelliJ 一起使用](https://youtu.be/LhmlFC6KE2Q)
+- [在IntelliJ中使用FXGL](https://youtu.be/LhmlFC6KE2Q)
 - [维基和书面教程](https://github.com/AlmasB/FXGL/wiki)
 - [YouTube 教程](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
 - [示例代码演示](https://github.com/AlmasB/FXGL/blob/dev/fxgl-samples)
