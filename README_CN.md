@@ -58,7 +58,7 @@ public class BasicGameApp extends GameApplication {
 - [将 FXGL 与 IntelliJ 一起使用](https://youtu.be/LhmlFC6KE2Q)
 - [维基和书面教程](https://github.com/AlmasB/FXGL/wiki)
 - [YouTube 教程](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
-- [示例代码演示](https://github.com/lhDream/FXGL/blob/dev/fxgl-samples)
+- [示例代码演示](https://github.com/AlmasB/FXGL/blob/dev/fxgl-samples)
 - [FXGL 游戏](https://github.com/AlmasB/FXGLGames)（附源码）
 - [演示](https://fxgl.itch.io/)在 `itch.io `上发布
 
@@ -140,7 +140,7 @@ open module app.name {
 
 ### 开发团队
 
-角色描述在[贡献指南](https://github.com/lhDream/FXGL/blob/dev/CONTRIBUTING.md)中给出。
+角色描述在[贡献指南](https://github.com/AlmasB/FXGL/blob/dev/CONTRIBUTING.md)中给出。
 
 维护者（合作者）：
 
@@ -157,7 +157,7 @@ open module app.name {
 
 ### 贡献与支持
 
-如果您想从源代码构建 FXGL 或想贡献，请参阅[贡献指南](https://github.com/lhDream/FXGL/blob/dev/CONTRIBUTING.md)（包括非代码）。FXGL 是完全模块化的，因此新的贡献者不需要了解整个代码库，只需要了解做出贡献的模块即可。贡献将根据[行为准则](https://github.com/lhDream/FXGL/blob/dev/CODE_OF_CONDUCT.md)进行审查。
+如果您想从源代码构建 FXGL 或想贡献，请参阅[贡献指南](https://github.com/AlmasB/FXGL/blob/dev/CONTRIBUTING.md)（包括非代码）。FXGL 是完全模块化的，因此新的贡献者不需要了解整个代码库，只需要了解做出贡献的模块即可。贡献将根据[行为准则](https://github.com/AlmasB/FXGL/blob/dev/CODE_OF_CONDUCT.md)进行审查。
 
 [您可以通过简单地为 repo 加注星标或成为赞助商](https://github.com/sponsors/AlmasB)来支持 FXGL 的开发或表现出兴趣。
 
