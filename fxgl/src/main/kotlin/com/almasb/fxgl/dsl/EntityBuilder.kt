@@ -180,10 +180,6 @@ class EntityBuilder {
         entity.zIndex = z
     }
 
-    fun onClick(action: (Entity) -> Unit) = this.also {
-        onClick(Consumer(action))
-    }
-
     fun onClick(action: Consumer<Entity>) = this.also {
         entity.viewComponent.addEventHandler(MouseEvent.MOUSE_CLICKED, EventHandler { action.accept(entity) })
     }
