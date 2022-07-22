@@ -23,6 +23,7 @@ import com.almasb.fxgl.ui.UI
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.value.ChangeListener
 import javafx.collections.ObservableList
+import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.SceneAntialiasing
@@ -120,19 +121,19 @@ internal constructor(width: Int, height: Int,
         )
 
         if (is3D) {
-            input.addEventHandler(MouseEvent.MOUSE_MOVED) {
+            val mouse3DHandler = EventHandler<MouseEvent> {
                 if (isMouseGrabbed) {
                     // ignore warp mouse events
                     if (it.screenX.toInt() == mouseWarper.warpScreenX.toInt() && it.screenY.toInt() == mouseWarper.warpScreenY.toInt()) {
                         lastMouseX = it.screenX - window.x
                         lastMouseY = it.screenY - window.y
 
-                        return@addEventHandler
+                        return@EventHandler
                     }
                 }
 
                 if (!isFPSCamera)
-                    return@addEventHandler
+                    return@EventHandler
 
                 val mouseX = it.screenX - window.x
                 val mouseY = it.screenY - window.y
@@ -175,6 +176,9 @@ internal constructor(width: Int, height: Int,
                 lastMouseX = mouseX
                 lastMouseY = mouseY
             }
+
+            input.addEventHandler(MouseEvent.MOUSE_MOVED, mouse3DHandler)
+            input.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouse3DHandler)
         }
 
         initViewport(width.toDouble(), height.toDouble())
