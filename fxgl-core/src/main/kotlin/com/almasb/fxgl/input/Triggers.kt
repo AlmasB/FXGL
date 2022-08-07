@@ -78,8 +78,10 @@ internal class ObservableTrigger(trigger: Trigger) {
 }
 
 data class KeyTrigger
-@JvmOverloads constructor(val key: KeyCode,
-                          override val modifier: InputModifier = InputModifier.NONE) : Trigger {
+@JvmOverloads constructor(
+    val key: KeyCode,
+    override val modifier: InputModifier = InputModifier.NONE
+) : Trigger {
 
     override val name: String = key.getName()
 
@@ -109,13 +111,15 @@ data class KeyTrigger
 }
 
 data class MouseTrigger
-@JvmOverloads constructor(val button: MouseButton,
-                          override val modifier: InputModifier = InputModifier.NONE) : Trigger {
+@JvmOverloads constructor(
+    val button: MouseButton,
+    override val modifier: InputModifier = InputModifier.NONE
+) : Trigger {
 
     companion object {
         private val log = Logger.get<MouseTrigger>()
 
-        fun buttonFromString(value: String) = when(value) {
+        fun buttonFromString(value: String) = when (value) {
             "LMB" -> MouseButton.PRIMARY
             "MMB" -> MouseButton.MIDDLE
             "RMB" -> MouseButton.SECONDARY
@@ -127,7 +131,7 @@ data class MouseTrigger
             }
         }
 
-        fun buttonToString(button: MouseButton) = when(button) {
+        fun buttonToString(button: MouseButton) = when (button) {
             MouseButton.PRIMARY -> "LMB"
             MouseButton.MIDDLE -> "MMB"
             MouseButton.SECONDARY -> "RMB"
@@ -152,13 +156,13 @@ data class MouseTrigger
         return event.button == button && modifier.isTriggered(event)
     }
 
-    @Suppress("NON_EXHAUSTIVE_WHEN")
     override fun isReleased(event: InputEvent): Boolean {
         if (event is KeyEvent) {
-            when (event.code) {
-                KeyCode.CONTROL -> return modifier == InputModifier.CTRL
-                KeyCode.SHIFT -> return modifier == InputModifier.SHIFT
-                KeyCode.ALT -> return modifier == InputModifier.ALT
+            return when (event.code) {
+                KeyCode.CONTROL -> modifier == InputModifier.CTRL
+                KeyCode.SHIFT -> modifier == InputModifier.SHIFT
+                KeyCode.ALT -> modifier == InputModifier.ALT
+                else -> throw IllegalArgumentException("Unknown code:${event.code}")
             }
         }
 

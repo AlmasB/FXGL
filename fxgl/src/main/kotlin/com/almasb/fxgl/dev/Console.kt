@@ -92,10 +92,10 @@ class Console : Pane() {
 
             // add any special behaving keys
             setOnKeyPressed {
-                @Suppress("NON_EXHAUSTIVE_WHEN")
                 when (it.code) {
                     KeyCode.UP -> prev()
                     KeyCode.DOWN -> next()
+                    else -> throw IllegalArgumentException("Unknown code:${it.code}")
                 }
             }
 
@@ -112,7 +112,9 @@ class Console : Pane() {
     }
 
     private fun cmd(name: String, description: String, function: (Array<String>) -> Unit, syntax: String = "") {
-        commands.put(name, Command(name, description, Consumer { function.invoke(it) }, syntax))
+        commands[name] = Command(name, description, {
+            function.invoke(it)
+        }, syntax)
     }
 
     private fun prev() {
@@ -206,10 +208,11 @@ class Console : Pane() {
     }
 
     data class Command(
-            val name: String,
-            val description: String,
-            val function: Consumer<Array<String>>,
-            val syntax: String = "") {
+        val name: String,
+        val description: String,
+        val function: Consumer<Array<String>>,
+        val syntax: String = ""
+    ) {
 
         override fun toString(): String {
             val s = if (syntax.isNotEmpty()) "$syntax " else ""
