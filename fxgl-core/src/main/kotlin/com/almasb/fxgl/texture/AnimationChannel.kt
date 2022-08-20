@@ -122,4 +122,7 @@ data class FrameData(
         val height: Int
 ) {
     val viewport = Rectangle2D(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+
+    var offsetX = 0
+    var offsetY = 0
 }

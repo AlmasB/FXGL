@@ -152,6 +152,9 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         fitWidth = frameData.width.toDouble()
         fitHeight = frameData.height.toDouble()
         viewport = frameData.viewport
+
+        layoutX = frameData.offsetX.toDouble()
+        layoutY = frameData.offsetY.toDouble()
     }
 
     private fun updateAnimation() {

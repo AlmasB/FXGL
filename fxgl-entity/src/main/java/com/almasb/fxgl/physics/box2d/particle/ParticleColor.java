@@ -16,13 +16,6 @@ import javafx.scene.paint.Color;
 public class ParticleColor {
     public byte r, g, b, a;
 
-    public ParticleColor() {
-        r = (byte) 127;
-        g = (byte) 127;
-        b = (byte) 127;
-        a = (byte) 50;
-    }
-
     public ParticleColor(byte r, byte g, byte b, byte a) {
         set(r, g, b, a);
     }
@@ -32,21 +25,16 @@ public class ParticleColor {
     }
 
     public void set(Color color) {
-        r = (byte) (255 * color.getRed());
-        g = (byte) (255 * color.getGreen());
-        b = (byte) (255 * color.getBlue());
-        a = (byte) 255;
+        set(
+                (byte) (255 * color.getRed()),
+                (byte) (255 * color.getGreen()),
+                (byte) (255 * color.getBlue()),
+                (byte) (255 * color.getOpacity())
+        );
     }
 
     public void set(ParticleColor color) {
-        r = color.r;
-        g = color.g;
-        b = color.b;
-        a = color.a;
-    }
-
-    public boolean isZero() {
-        return r == 0 && g == 0 && b == 0 && a == 0;
+        set(color.r, color.g, color.b, color.a);
     }
 
     public void set(byte r, byte g, byte b, byte a) {

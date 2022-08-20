@@ -123,7 +123,7 @@ class Viewport
      * This is only used for visual effects and acts like a viewport overlay.
      * Its x and y follow the actual x and y of viewport.
      */
-    internal val camera = Entity()
+    val camera = Entity()
 
     /**
      * Binds the viewport to entity so that it follows the given entity.
@@ -152,41 +152,37 @@ class Viewport
         boundY = Bindings.`when`(by.greaterThan(maxY.subtract(zoomedHeight))).then(maxY.subtract(zoomedHeight)).otherwise(boundY)
     }
 
-//    fun bindToFit(xMargin: Double, yMargin: Double, vararg entities: Entity) {
-//        val minBindingX = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
-//                .map { it.getComponent(BoundingBoxComponent::class.java) }
-//                .map { it.minXWorldProperty() }
-//                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE), { min, x -> Bindings.min(min, x) })
-//                .subtract(xMargin)
-//
-//        val minBindingY = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
-//                .map { it.getComponent(BoundingBoxComponent::class.java) }
-//                .map { it.minYWorldProperty() }
-//                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE), { min, y -> Bindings.min(min, y) })
-//                .subtract(yMargin)
-//
-//        val maxBindingX = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
-//                .map { it.getComponent(BoundingBoxComponent::class.java) }
-//                .map { it.maxXWorldProperty() }
-//                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE), { max, x -> Bindings.max(max, x) })
-//                .add(xMargin)
-//
-//        val maxBindingY = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
-//                .map { it.getComponent(BoundingBoxComponent::class.java) }
-//                .map { it.maxYWorldProperty() }
-//                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE), { max, y -> Bindings.max(max, y) })
-//                .add(yMargin)
-//
-//        val widthBinding = maxBindingX.subtract(minBindingX)
-//        val heightBinding = maxBindingY.subtract(minBindingY)
-//
-//        val ratio = Bindings.min(Bindings.divide(width, widthBinding), Bindings.divide(height, heightBinding))
-//
-//        x.bind(minBindingX)
-//        y.bind(minBindingY)
-//
-//        zoom.bind(ratio)
-//    }
+    @JvmOverloads fun bindToFit(xMargin: Double = 0.0, yMargin: Double = 0.0, vararg entities: Entity) {
+        val minBindingX = entities
+                .map { it.boundingBoxComponent.minXWorldProperty() }
+                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE)) { min, x -> Bindings.min(min, x) }
+                .subtract(xMargin)
+
+        val minBindingY = entities
+                .map { it.boundingBoxComponent.minYWorldProperty() }
+                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE)) { min, y -> Bindings.min(min, y) }
+                .subtract(yMargin)
+
+        val maxBindingX = entities
+                .map { it.boundingBoxComponent.maxXWorldProperty() }
+                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE)) { max, x -> Bindings.max(max, x) }
+                .add(xMargin)
+
+        val maxBindingY = entities
+                .map { it.boundingBoxComponent.maxYWorldProperty() }
+                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE)) { max, y -> Bindings.max(max, y) }
+                .add(yMargin)
+
+        val widthBinding = maxBindingX.subtract(minBindingX)
+        val heightBinding = maxBindingY.subtract(minBindingY)
+
+        val ratio = Bindings.min(Bindings.divide(width, widthBinding), Bindings.divide(height, heightBinding))
+
+        boundX = minBindingX
+        boundY = minBindingY
+
+        zoom.bind(ratio)
+    }
 
     /**
      * Unbind viewport.

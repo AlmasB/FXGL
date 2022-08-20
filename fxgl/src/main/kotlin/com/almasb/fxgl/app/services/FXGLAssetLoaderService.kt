@@ -638,7 +638,7 @@ private class ImageAssetLoader : AssetLoader<Image>(
         TEXTURES_DIR
 ) {
     override fun load(url: URL): Image {
-        val image = url.openStream().use { Image(it) }
+        val image = Image(url.toExternalForm())
 
         if (image.isError) {
             throw image.exception
@@ -658,7 +658,7 @@ private class ResizableImageAssetLoader : AssetLoader<Image>(
     override fun load(params: LoadParams): Image {
         val loadParams = params as ResizableImageParams
 
-        val image = params.url.openStream().use { Image(it, loadParams.width, loadParams.height, false, true) }
+        val image = Image(params.url.toExternalForm(), loadParams.width, loadParams.height, false, true)
 
         if (image.isError) {
             throw image.exception

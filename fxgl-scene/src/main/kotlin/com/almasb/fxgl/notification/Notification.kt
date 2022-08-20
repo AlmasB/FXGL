@@ -6,9 +6,14 @@
 
 package com.almasb.fxgl.notification
 
+import javafx.scene.Node
+
 /**
  * Represents a notification message.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class Notification internal constructor(val message: String)
+class Notification internal constructor(
+        val message: String,
+        val icon: Node
+)

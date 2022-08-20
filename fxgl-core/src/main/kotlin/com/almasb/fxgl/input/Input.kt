@@ -20,7 +20,6 @@ import javafx.scene.Node
 import javafx.scene.input.*
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.LinkedHashMap
 
@@ -121,10 +120,26 @@ class Input {
      */
     private val currentActions = FXCollections.observableArrayList<UserAction>()
 
+    /**
+     * K - user action.
+     * V - time in seconds when last triggered.
+     */
+    private val actionTimes = hashMapOf<UserAction, Double>()
+
     private val activeTriggers = arrayListOf<Trigger>()
     private val listeners = arrayListOf<TriggerListener>()
 
     private val inputQueue = ArrayDeque<KeyCode>()
+
+    /**
+     * Time accumulated by this input in seconds.
+     */
+    private var time = 0.0
+
+    /**
+     * Time in seconds within which a double press can occur.
+     */
+    var doublePressTimeThreshold = 0.25
 
     /**
      * If action events should be processed.
@@ -260,6 +275,8 @@ class Input {
     }
 
     fun update(tpf: Double) {
+        time += tpf
+
         if (isCapturing) {
             currentCapture!!.update(tpf)
         }
@@ -271,13 +288,23 @@ class Input {
             currentActions[i].action()
         }
 
-        activeTriggers.forEach { trigger ->
-            listeners.forEach {
-                it.action(trigger)
-            }
+        activeTriggers.forEach {
+            updateTriggerListeners(it)
         }
 
         captureAppliers.forEach { it.update(tpf) }
+    }
+
+    private fun updateTriggerListeners(trigger: Trigger) {
+        listeners.forEach {
+            if (trigger is KeyTrigger) {
+                it.actionKey(trigger)
+            } else if (trigger is MouseTrigger) {
+                it.actionBtn(trigger)
+            }
+
+            it.action(trigger)
+        }
     }
 
     /**
@@ -337,17 +364,26 @@ class Input {
         if (newTrigger !in activeTriggers) {
             activeTriggers += newTrigger
 
-            listeners.forEach {
-                it.begin(newTrigger)
-            }
+            handleTriggerPressed(newTrigger)
         }
 
         bindings.filter { (act, trigger) -> act !in currentActions && trigger.isTriggered(event) }
                 .forEach { (act, _) ->
                     currentActions.add(act)
 
-                    if (processInput)
+                    if (processInput) {
                         act.begin()
+
+                        val lastTime = actionTimes[act] ?: -Int.MAX_VALUE.toDouble()
+
+                        actionTimes[act] = time
+
+                        if (time - lastTime <= doublePressTimeThreshold) {
+                            // this resets action time, so that 3rd action will not trigger double action
+                            actionTimes.remove(act)
+                            act.beginDoubleAction()
+                        }
+                    }
                 }
 
         if (event.eventType == KeyEvent.KEY_PRESSED) {
@@ -361,12 +397,22 @@ class Input {
         }
     }
 
-    private fun handleReleased(event: InputEvent) {
-        val releasedTriggers = activeTriggers.filter { it.isReleased(event) }
-        releasedTriggers.forEach { trigger ->
-            listeners.forEach {
-                it.end(trigger)
+    private fun handleTriggerPressed(trigger: Trigger) {
+        listeners.forEach {
+            if (trigger is KeyTrigger) {
+                it.beginKey(trigger)
+            } else if (trigger is MouseTrigger) {
+                it.beginBtn(trigger)
             }
+
+            it.begin(trigger)
+        }
+    }
+
+    private fun handleReleased(event: InputEvent) {
+        val releasedTriggers = activeTriggers.filter { it.isReleased(event) || (it is KeyTrigger && isIllegal(it.key)) }
+        releasedTriggers.forEach {
+            handleTriggerReleased(it)
         }
 
         activeTriggers -= releasedTriggers
@@ -389,6 +435,18 @@ class Input {
                         if (processInput)
                             act.end()
                     }
+        }
+    }
+
+    private fun handleTriggerReleased(trigger: Trigger) {
+        listeners.forEach {
+            if (trigger is KeyTrigger) {
+                it.endKey(trigger)
+            } else if (trigger is MouseTrigger) {
+                it.endBtn(trigger)
+            }
+
+            it.end(trigger)
         }
     }
 
@@ -415,7 +473,10 @@ class Input {
             currentActions.forEach { it.end() }
         }
 
+        time = 0.0
+
         currentActions.clear()
+        actionTimes.clear()
         activeTriggers.clear()
 
         stopCapture()

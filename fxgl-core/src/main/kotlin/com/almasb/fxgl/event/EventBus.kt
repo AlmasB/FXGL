@@ -24,6 +24,8 @@ class EventBus {
 
     private val eventHandlers = Group()
 
+    private val subscribers = arrayListOf<Subscriber>()
+
     var isLoggingEnabled = true
 
     /**
@@ -33,7 +35,7 @@ class EventBus {
         eventHandlers.addEventHandler(eventType, eventHandler)
 
         @Suppress("UNCHECKED_CAST")
-        return Subscriber(this, eventType, eventHandler as EventHandler<in Event>)
+        return Subscriber(this, eventType, eventHandler as EventHandler<in Event>).also { subscribers.add(it) }
     }
 
     /**
@@ -41,6 +43,13 @@ class EventBus {
      */
     fun <T : Event> removeEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>) {
         eventHandlers.removeEventHandler(eventType, eventHandler)
+    }
+
+    fun removeAllEventHandlers() {
+        // some of these may have already been unsubscribed, either via [removeEventHandler] or [unsubscribe],
+        // but given the following is a no-op when not subscribed, there is no need to update the list
+        subscribers.forEach { it.unsubscribe() }
+        subscribers.clear()
     }
 
     /**

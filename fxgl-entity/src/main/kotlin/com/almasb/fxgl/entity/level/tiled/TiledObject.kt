@@ -18,6 +18,8 @@ class TiledObject(var id: Int = 0,
                   var height: Int = 0,
                   var name: String = "",
                   var type: String = "",
+                  // from 1.9
+                  var typeClass: String = "",
                   var visible: Boolean = true,
                   var x: Int = 0,
                   var y: Int = 0,

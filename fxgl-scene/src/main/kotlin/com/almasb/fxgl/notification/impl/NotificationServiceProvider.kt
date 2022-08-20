@@ -12,6 +12,8 @@ import com.almasb.fxgl.notification.Notification
 import com.almasb.fxgl.notification.NotificationService
 import com.almasb.fxgl.notification.view.NotificationView
 import com.almasb.fxgl.scene.SceneService
+import javafx.scene.Group
+import javafx.scene.Node
 import javafx.scene.paint.Color
 import javafx.util.Duration
 import java.util.*
@@ -63,7 +65,11 @@ class NotificationServiceProvider : NotificationService() {
      * @param message the text to show
      */
     override fun pushNotification(message: String) {
-        val notification = Notification(message)
+        pushNotification(message, Group())
+    }
+
+    override fun pushNotification(message: String, icon: Node) {
+        val notification = Notification(message, icon)
 
         queue.add(notification)
 

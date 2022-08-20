@@ -9,9 +9,20 @@ package com.almasb.fxgl.localization
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Language(name: String) {
+class Language
+@JvmOverloads constructor(
 
-    val name = name.toUpperCase()
+        /**
+         * In English.
+         */
+        name: String,
+
+        /**
+         * In the target language.
+         */
+        val nativeName: String = name) {
+
+    val name = name.uppercase()
 
     companion object {
         // this language list is a cross-reference adaptation of Android 10 and iOS 13 languages
@@ -30,12 +41,12 @@ class Language(name: String) {
         @JvmField val ESTONIAN = Language("ESTONIAN")
         @JvmField val FILIPINO = Language("FILIPINO")
         @JvmField val FINNISH = Language("FINNISH")
-        @JvmField val FRENCH = Language("FRENCH")
-        @JvmField val GERMAN = Language("GERMAN")
+        @JvmField val FRENCH = Language("FRENCH", "Français")
+        @JvmField val GERMAN = Language("GERMAN", "Deutsch")
         @JvmField val GREEK = Language("GREEK")
         @JvmField val HEBREW = Language("HEBREW")
         @JvmField val HINDI = Language("HINDI")
-        @JvmField val HUNGARIAN = Language("HUNGARIAN")
+        @JvmField val HUNGARIAN = Language("HUNGARIAN", "Magyar")
         @JvmField val INDONESIAN = Language("INDONESIAN")
         @JvmField val ITALIAN = Language("ITALIAN")
         @JvmField val JAPANESE = Language("JAPANESE")
@@ -44,7 +55,7 @@ class Language(name: String) {
         @JvmField val NORWEGIAN = Language("NORWEGIAN")
         @JvmField val PORTUGUESE = Language("PORTUGUESE")
         @JvmField val ROMANIAN = Language("ROMANIAN")
-        @JvmField val RUSSIAN = Language("RUSSIAN")
+        @JvmField val RUSSIAN = Language("RUSSIAN", "Русский")
         @JvmField val SLOVAK = Language("SLOVAK")
         @JvmField val SPANISH = Language("SPANISH")
         @JvmField val SWEDISH = Language("SWEDISH")

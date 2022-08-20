@@ -47,12 +47,17 @@ abstract class RechargeableDoubleComponent
 ) : DoubleComponent(initialValue) {
 
     private val maxValueProp = SimpleDoubleProperty(maxValue)
+    private val valuePercentBinding = valueProperty().divide(maxValueProp).multiply(100)
 
     fun maxValueProperty() = maxValueProp
+    fun valuePercentProperty() = valuePercentBinding
 
     var maxValue: Double
         get() = maxValueProp.value
         set(value) { maxValueProp.value = value }
+
+    val valuePercent: Double
+        get() = valuePercentBinding.value
 
     /**
      * Set component value to 0.

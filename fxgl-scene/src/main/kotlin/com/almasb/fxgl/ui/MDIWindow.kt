@@ -29,7 +29,8 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-open class MDIWindow : Region() {
+open class MDIWindow
+@JvmOverloads constructor(initialTitle: String = "Untitled") : Region() {
 
     private enum class ResizeMode {
         NONE,
@@ -150,7 +151,7 @@ open class MDIWindow : Region() {
         get() = closeButton.isVisible
         set(value) { closeButton.isVisible = value }
 
-    var title = "Untitled"
+    var title = initialTitle
         set(value) {
             field = value
 

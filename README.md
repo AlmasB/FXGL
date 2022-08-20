@@ -1,5 +1,11 @@
 ![promo](https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_promo.jpg)
 
+## Languages
+
+&emsp;&emsp;English
+
+&emsp;&emsp;[简体中文](https://github.com/AlmasB/FXGL/blob/dev/README_CN.md)
+
 ## About
 
 <img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_logo.png" width="128" />
@@ -70,7 +76,7 @@ Make sure to set `<release>17</release>` for `maven-compiler-plugin`.
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>17.1</version>
+    <version>17.2</version>
 </dependency>
 ```
 
@@ -88,7 +94,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:17.1'
+    compile 'com.github.almasb:fxgl:17.2'
 }
 ```
 

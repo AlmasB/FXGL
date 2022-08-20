@@ -1237,7 +1237,7 @@ public class ParticleSystem {
         // m_proxyCount = (int) (lastProxy - m_proxyBuffer);
         int j = m_proxyCount;
         for (int i = 0; i < j; i++) {
-            if (Test.IsProxyInvalid(m_proxyBuffer[i])) {
+            if (isProxyInvalid(m_proxyBuffer[i])) {
                 --j;
                 Proxy temp = m_proxyBuffer[j];
                 m_proxyBuffer[j] = m_proxyBuffer[i];
@@ -1259,7 +1259,7 @@ public class ParticleSystem {
         // m_contactCount = (int) (lastContact - m_contactBuffer);
         j = m_contactCount;
         for (int i = 0; i < j; i++) {
-            if (Test.IsContactInvalid(m_contactBuffer[i])) {
+            if (isContactInvalid(m_contactBuffer[i])) {
                 --j;
                 ParticleContact temp = m_contactBuffer[j];
                 m_contactBuffer[j] = m_contactBuffer[i];
@@ -1280,7 +1280,7 @@ public class ParticleSystem {
         // m_bodyContactCount = (int) (lastBodyContact - m_bodyContactBuffer);
         j = m_bodyContactCount;
         for (int i = 0; i < j; i++) {
-            if (Test.IsBodyContactInvalid(m_bodyContactBuffer[i])) {
+            if (isBodyContactInvalid(m_bodyContactBuffer[i])) {
                 --j;
                 ParticleBodyContact temp = m_bodyContactBuffer[j];
                 m_bodyContactBuffer[j] = m_bodyContactBuffer[i];
@@ -1300,7 +1300,7 @@ public class ParticleSystem {
         // m_pairCount = (int) (lastPair - m_pairBuffer);
         j = m_pairCount;
         for (int i = 0; i < j; i++) {
-            if (Test.IsPairInvalid(m_pairBuffer[i])) {
+            if (isPairInvalid(m_pairBuffer[i])) {
                 --j;
                 Pair temp = m_pairBuffer[j];
                 m_pairBuffer[j] = m_pairBuffer[i];
@@ -1322,7 +1322,7 @@ public class ParticleSystem {
         // m_triadCount = (int) (lastTriad - m_triadBuffer);
         j = m_triadCount;
         for (int i = 0; i < j; i++) {
-            if (Test.IsTriadInvalid(m_triadBuffer[i])) {
+            if (isTriadInvalid(m_triadBuffer[i])) {
                 --j;
                 Triad temp = m_triadBuffer[j];
                 m_triadBuffer[j] = m_triadBuffer[i];
@@ -1751,13 +1751,6 @@ public class ParticleSystem {
                 oldCapacity, newCapacity, deferred);
     }
 
-    static int[] reallocateBuffer(ParticleBufferInt buffer, int oldCapacity, int newCapacity,
-                                  boolean deferred) {
-        assert newCapacity > oldCapacity;
-        return reallocateBuffer(buffer.data, buffer.userSuppliedCapacity, oldCapacity,
-                newCapacity, deferred);
-    }
-
     @SuppressWarnings("unchecked")
     <T> T[] requestParticleBuffer(Class<T> klass, T[] buffer) {
         if (buffer == null) {
@@ -2144,26 +2137,24 @@ public class ParticleSystem {
         }
     }
 
-    static class Test {
-        static boolean IsProxyInvalid(final Proxy proxy) {
-            return proxy.index < 0;
-        }
+    private static boolean isProxyInvalid(Proxy proxy) {
+        return proxy.index < 0;
+    }
 
-        static boolean IsContactInvalid(final ParticleContact contact) {
-            return contact.indexA < 0 || contact.indexB < 0;
-        }
+    private static boolean isContactInvalid(ParticleContact contact) {
+        return contact.indexA < 0 || contact.indexB < 0;
+    }
 
-        static boolean IsBodyContactInvalid(final ParticleBodyContact contact) {
-            return contact.index < 0;
-        }
+    private static boolean isBodyContactInvalid(ParticleBodyContact contact) {
+        return contact.index < 0;
+    }
 
-        static boolean IsPairInvalid(final Pair pair) {
-            return pair.indexA < 0 || pair.indexB < 0;
-        }
+    private static boolean isPairInvalid(Pair pair) {
+        return pair.indexA < 0 || pair.indexB < 0;
+    }
 
-        static boolean IsTriadInvalid(final Triad triad) {
-            return triad.indexA < 0 || triad.indexB < 0 || triad.indexC < 0;
-        }
+    private static boolean isTriadInvalid(Triad triad) {
+        return triad.indexA < 0 || triad.indexB < 0 || triad.indexC < 0;
     }
 
     private static <T> T[] reallocateBuffer(Class<T> klass, T[] oldBuffer, int oldCapacity,
@@ -2220,14 +2211,13 @@ public class ParticleSystem {
      * Reallocate an int buffer. A 'deferred' buffer is reallocated only if it is not NULL. If
      * 'userSuppliedCapacity' is not zero, buffer is user supplied and must be kept.
      */
-    private static int[] reallocateBuffer(int[] buffer, int userSuppliedCapacity, int oldCapacity,
-                                         int newCapacity, boolean deferred) {
-        assert newCapacity > oldCapacity;
-        assert userSuppliedCapacity == 0 || newCapacity <= userSuppliedCapacity;
-        if ((!deferred || buffer != null) && userSuppliedCapacity == 0) {
-            buffer = reallocateBuffer(buffer, oldCapacity, newCapacity);
+    private static int[] reallocateBuffer(ParticleBufferInt buffer, int oldCapacity, int newCapacity, boolean deferred) {
+        int[] data = buffer.data;
+
+        if ((!deferred || data != null) && buffer.userSuppliedCapacity == 0) {
+            data = reallocateBuffer(data, oldCapacity, newCapacity);
         }
-        return buffer;
+        return data;
     }
 
     /**

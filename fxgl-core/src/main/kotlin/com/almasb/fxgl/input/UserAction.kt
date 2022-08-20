@@ -37,6 +37,7 @@ abstract class UserAction(
     internal fun begin() = onActionBegin()
     internal fun action() = onAction()
     internal fun end() = onActionEnd()
+    internal fun beginDoubleAction() = onDoubleActionBegin()
 
     /**
      * Called once in the same tick when triggered.
@@ -53,4 +54,10 @@ abstract class UserAction(
      * Called once in the same tick when trigger was released.
      */
     protected open fun onActionEnd() {}
+
+    /**
+     * Called once in the same tick when triggered for the second time
+     * within a specified period of time.
+     */
+    protected open fun onDoubleActionBegin() {}
 }

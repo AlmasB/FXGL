@@ -1012,6 +1012,51 @@ class InputTest {
         assertThat(capture1, `is`(not(capture3)))
     }
 
+    @Test
+    fun `Double press action`() {
+        var calls = 0
+
+        val action = object : UserAction("Action1") {
+            override fun onDoubleActionBegin() {
+                calls++
+            }
+        }
+
+        input.addAction(action, KeyCode.A)
+
+        input.mockKeyPress(KeyCode.A)
+        input.mockKeyRelease(KeyCode.A)
+        assertThat(calls, `is`(0))
+
+        // within threshold, so 2nd press triggers it
+        input.mockKeyPress(KeyCode.A)
+        input.mockKeyRelease(KeyCode.A)
+        assertThat(calls, `is`(1))
+
+        // 3rd press should not trigger since action should be reset
+        input.mockKeyPress(KeyCode.A)
+        input.mockKeyRelease(KeyCode.A)
+        assertThat(calls, `is`(1))
+
+        // 4th press should trigger as normal
+        input.mockKeyPress(KeyCode.A)
+        input.mockKeyRelease(KeyCode.A)
+        assertThat(calls, `is`(2))
+
+        input.doublePressTimeThreshold = 0.1
+
+        input.mockKeyPress(KeyCode.A)
+        input.mockKeyRelease(KeyCode.A)
+        assertThat(calls, `is`(2))
+
+        input.update(0.2)
+
+        // does not trigger it since more time has passed than threshold
+        input.mockKeyPress(KeyCode.A)
+        input.mockKeyRelease(KeyCode.A)
+        assertThat(calls, `is`(2))
+    }
+
 //    @Test
 //    fun `Serialization`() {
 //        val action = object : UserAction("Action") {}

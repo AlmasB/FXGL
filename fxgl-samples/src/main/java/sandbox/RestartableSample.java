@@ -34,7 +34,6 @@ public class RestartableSample extends Application {
     private Parent createContent() {
         List<Supplier<GameApplication>> games = List.of(
                 SpriteSheetAnimationApp::new,
-                ScrollingBackgroundSample::new,
                 PlatformerSample::new,
                 TiledMapSample::new,
                 Model3DSample::new
