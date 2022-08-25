@@ -32,7 +32,7 @@ To start developing FXGL you can set up IDEA (2021.3+) as follows:
 2. Open IDEA -> File -> New -> Project from Existing Sources -> Select the cloned FXGL directory.
 3. Import project from external model -> Maven -> Finish.
 
-Ensure you are using JDK 17 (or higher). You can set this via File -> Project Structure -> Project.
+Ensure you are using [JDK 17](https://jdk.java.net/) (or higher). You can set this via File -> Project Structure -> Project.
 
 You should now see something like this:
 
