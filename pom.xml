@@ -90,7 +90,7 @@
 
         <!-- dependencies -->
         <jfx.version>19-ea+10</jfx.version>
-        <kotlin.version>1.6.21</kotlin.version>
+        <kotlin.version>1.7.10</kotlin.version>
         <attach.version>4.0.15</attach.version>
         <jackson.version>2.13.3</jackson.version>
 
@@ -105,7 +105,7 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
-            <classifier>modular</classifier>
+<!--            <classifier>modular</classifier>-->
         </dependency>
 
         <!-- test scope dependencies -->
