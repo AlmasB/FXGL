@@ -83,7 +83,7 @@
         <maven.source.version>3.2.0</maven.source.version>
         <maven.jar.version>3.2.0</maven.jar.version>
         <maven.shade.version>3.2.2</maven.shade.version>
-        <jacoco.version>0.8.7</jacoco.version>
+        <jacoco.version>0.8.8</jacoco.version>
         <maven.surefire.version>3.0.0-M4</maven.surefire.version>
         <build.helper.version>3.0.0</build.helper.version>
         <maven.templating.version>1.0.0</maven.templating.version>
