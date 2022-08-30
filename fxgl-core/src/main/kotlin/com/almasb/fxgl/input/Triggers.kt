@@ -158,7 +158,7 @@ data class MouseTrigger
                 KeyCode.CONTROL -> modifier == InputModifier.CTRL
                 KeyCode.SHIFT -> modifier == InputModifier.SHIFT
                 KeyCode.ALT -> modifier == InputModifier.ALT
-                else -> false
+                else -> isTriggered(event)
             }
         }
 
