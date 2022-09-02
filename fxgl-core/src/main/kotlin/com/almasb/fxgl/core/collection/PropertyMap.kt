@@ -235,12 +235,30 @@ class PropertyMap {
         return keys().map { it to getValue<Any>(it) }.toMap()
     }
 
-    /***
-     * provides functionality of Map.forEach for PropertyMap
-     * @param action - lambda or method reference with signature (String, Any)
+    /**
+     * Provides functionality of Map.forEach for PropertyMap.
+     *
+     * @param action - lambda or method reference with signature (String, Any),
+     * where Any is the unwrapped (e.g. String, int, etc., not Observable) type
      */
     fun forEach(action: (String, Any) -> Unit) {
+        properties.forEach { (key, _) -> action(key, getValue(key)) }
+    }
+
+    /**
+     * Provides functionality of Map.forEach for PropertyMap.
+     *
+     * @param action - lambda or method reference with signature (String, Any),
+     * where Any is an Observable type
+     */
+    fun forEachObservable(action: (String, Any) -> Unit) {
         properties.forEach(action)
+    }
+
+    fun addAll(other: PropertyMap) {
+        other.forEach { key, value ->
+            setValue(key, value)
+        }
     }
 
     fun toStringMap(): Map<String, String> {

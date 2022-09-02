@@ -341,7 +341,7 @@ class PropertyMapTest {
         map.setValue("testElement1", 2)
         map.setValue("testElement2", 2)
 
-        map.forEach { _, value ->
+        map.forEachObservable { _, value ->
             run {
                 timesCounter++
                 sumCounter += (value as SimpleIntegerProperty).value
@@ -350,6 +350,37 @@ class PropertyMapTest {
 
         assertEquals(2, timesCounter)
         assertEquals(4, sumCounter)
+
+        map.forEach { _, value ->
+            run {
+                timesCounter++
+                sumCounter += value as Int
+            }
+        }
+
+        assertEquals(4, timesCounter)
+        assertEquals(8, sumCounter)
+    }
+
+    @Test
+    fun `Add all`() {
+        val map2 = PropertyMap()
+
+        assertThat(map2.keys().size, `is`(0))
+
+        map.setValue("key1", "aaa")
+        map.setValue("key2", -55)
+        map.setValue("key3", 900.0)
+        map.setValue("key4", MyClass(2))
+        map.setValue("key5", true)
+
+        map2.addAll(map)
+
+        assertThat(map2.getString("key1"), `is`("aaa"))
+        assertThat(map2.getInt("key2"), `is`(-55))
+        assertThat(map2.getDouble("key3"), `is`(900.0))
+        assertThat(map2.getObject<MyClass>("key4").i, `is`(2))
+        assertThat(map2.getBoolean("key5"), `is`(true))
     }
 
     private class MyClass(val i: Int)
