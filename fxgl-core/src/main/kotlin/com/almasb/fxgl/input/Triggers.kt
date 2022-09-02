@@ -152,13 +152,13 @@ data class MouseTrigger
         return event.button == button && modifier.isTriggered(event)
     }
 
-    @Suppress("NON_EXHAUSTIVE_WHEN")
     override fun isReleased(event: InputEvent): Boolean {
         if (event is KeyEvent) {
-            when (event.code) {
-                KeyCode.CONTROL -> return modifier == InputModifier.CTRL
-                KeyCode.SHIFT -> return modifier == InputModifier.SHIFT
-                KeyCode.ALT -> return modifier == InputModifier.ALT
+            return when (event.code) {
+                KeyCode.CONTROL -> modifier == InputModifier.CTRL
+                KeyCode.SHIFT -> modifier == InputModifier.SHIFT
+                KeyCode.ALT -> modifier == InputModifier.ALT
+                else -> isTriggered(event)
             }
         }
 

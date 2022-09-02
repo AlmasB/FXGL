@@ -92,10 +92,10 @@ class Console : Pane() {
 
             // add any special behaving keys
             setOnKeyPressed {
-                @Suppress("NON_EXHAUSTIVE_WHEN")
                 when (it.code) {
                     KeyCode.UP -> prev()
                     KeyCode.DOWN -> next()
+                    else -> Unit
                 }
             }
 
