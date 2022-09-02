@@ -58,7 +58,7 @@ fun getDummyAudio() = audio
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class Music(internal val audio: Audio) : Disposable {
+class Music(val audio: Audio) : Disposable {
 
     internal var isDisposed = false
 
@@ -72,7 +72,7 @@ class Music(internal val audio: Audio) : Disposable {
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class Sound(internal val audio: Audio) : Disposable {
+class Sound(val audio: Audio) : Disposable {
 
     internal var isDisposed = false
 
