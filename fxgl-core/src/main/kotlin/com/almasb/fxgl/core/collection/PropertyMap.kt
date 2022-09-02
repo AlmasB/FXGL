@@ -67,7 +67,7 @@ class PropertyMap {
      */
     fun exists(propertyName: String) = properties.containsKey(propertyName)
 
-    fun <T> getValueOptional(propertyName: String): Optional<T> {
+    fun <T : Any> getValueOptional(propertyName: String): Optional<T> {
         try {
             return Optional.ofNullable(getValue(propertyName))
         } catch (e: Exception) {
