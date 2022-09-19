@@ -359,6 +359,22 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         updateDirection()
     }
 
+    private var boundLookAt: TransformComponent? = null
+
+    fun bindToLookAt3D(other: TransformComponent) {
+        boundLookAt = other
+    }
+
+    fun unbindToLookAt3D() {
+        boundLookAt = null
+    }
+
+    override fun onUpdate(tpf: Double) {
+        boundLookAt?.let {
+            lookAt(it.position3D)
+        }
+    }
+
     /**
      * Move forward on the XZ plane.
      * No Y movement.
