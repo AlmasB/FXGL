@@ -182,6 +182,13 @@ open class AnimationBuilder
             .from(Point2D(node.translateX, node.translateY))
             .to(Point2D(node.translateX, node.translateY + 5.0))
 
+    fun bobbleDown(entity: Animatable) = duration(Duration.seconds(0.15))
+        .autoReverse(true)
+        .repeat(2)
+        .translate(entity)
+        .from(Point2D(entity.xProperty().value, entity.yProperty().value))
+        .to(Point2D(entity.xProperty().value, entity.yProperty().value + 5.0))
+
     fun buildSequence(vararg anims: Animation<*>): Animation<*> {
         val ranges = linkedMapOf<ClosedFloatingPointRange<Double>, Animation<*>>()
 

@@ -873,7 +873,7 @@ class AnimationBuilderTest {
     }
 
     @Test
-    fun `Bobble down`() {
+    fun `Bobble down Node`() {
         val anim = builder.bobbleDown(node)
                 .build()
 
@@ -887,6 +887,23 @@ class AnimationBuilderTest {
 
         assertThat(node.translateX, `is`(0.0))
         assertThat(node.translateY, `is`(not(0.0)))
+    }
+
+    @Test
+    fun `Bobble down Entity`() {
+        val anim = builder.bobbleDown(e)
+                .build()
+
+        anim.start()
+
+        assertThat(e.xProperty().value, `is`(0.0))
+        assertThat(e.yProperty().value, `is`(0.0))
+
+        anim.onUpdate(0.05)
+        anim.onUpdate(0.05)
+
+        assertThat(e.xProperty().value, `is`(0.0))
+        assertThat(e.yProperty().value, `is`(not(0.0)))
     }
 
     private fun makeRunner(): MockRunner = MockRunner()
