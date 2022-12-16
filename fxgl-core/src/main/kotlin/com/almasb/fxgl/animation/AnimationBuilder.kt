@@ -175,19 +175,14 @@ open class AnimationBuilder
         objects += entities.map { it.toAnimatable() }
     }.from(1.0).to(0.0)
 
-    fun bobbleDown(node: Node) = duration(Duration.seconds(0.15))
-            .autoReverse(true)
-            .repeat(2)
-            .translate(node)
-            .from(Point2D(node.translateX, node.translateY))
-            .to(Point2D(node.translateX, node.translateY + 5.0))
+    fun bobbleDown(node: Node) = bobbleDown(node.toAnimatable())
 
-    fun bobbleDown(entity: Animatable) = duration(Duration.seconds(0.15))
+    fun bobbleDown(obj: Animatable) = duration(Duration.seconds(0.15))
         .autoReverse(true)
         .repeat(2)
-        .translate(entity)
-        .from(Point2D(entity.xProperty().value, entity.yProperty().value))
-        .to(Point2D(entity.xProperty().value, entity.yProperty().value + 5.0))
+        .translate(obj)
+        .from(Point2D(obj.xProperty().value, obj.yProperty().value))
+        .to(Point2D(obj.xProperty().value, obj.yProperty().value + 5.0))
 
     fun buildSequence(vararg anims: Animation<*>): Animation<*> {
         val ranges = linkedMapOf<ClosedFloatingPointRange<Double>, Animation<*>>()
