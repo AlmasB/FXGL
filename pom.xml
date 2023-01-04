@@ -90,9 +90,9 @@
 
         <!-- dependencies -->
         <jfx.version>19</jfx.version>
-        <kotlin.version>1.7.10</kotlin.version>
-        <attach.version>4.0.15</attach.version>
-        <jackson.version>2.13.4</jackson.version>
+        <kotlin.version>1.8.0</kotlin.version>
+        <attach.version>4.0.16</attach.version>
+        <jackson.version>2.14.1</jackson.version>
 
         <!-- test dependencies -->
         <junit.jupiter.version>5.8.2</junit.jupiter.version>
