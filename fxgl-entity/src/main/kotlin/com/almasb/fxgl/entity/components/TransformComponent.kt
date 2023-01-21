@@ -357,8 +357,6 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
             // looking up, range 0..90
             rotationX = theta
         }
-
-        updateDirection()
     }
 
     private var boundLookAt: TransformComponent? = null
