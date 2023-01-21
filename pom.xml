@@ -89,7 +89,7 @@
         <maven.templating.version>1.0.0</maven.templating.version>
 
         <!-- dependencies -->
-        <jfx.version>19</jfx.version>
+        <jfx.version>19.0.2.1</jfx.version>
         <kotlin.version>1.8.0</kotlin.version>
         <attach.version>4.0.16</attach.version>
         <jackson.version>2.14.1</jackson.version>
