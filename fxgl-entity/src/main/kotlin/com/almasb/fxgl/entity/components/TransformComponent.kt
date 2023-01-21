@@ -55,6 +55,16 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     private val propRotationY = SimpleDoubleProperty(0.0)
     private val propRotationZ = SimpleDoubleProperty(angle)
 
+    init {
+        propRotationX.addListener { _, _, _ ->
+            updateDirection()
+        }
+
+        propRotationY.addListener { _, _, _ ->
+            updateDirection()
+        }
+    }
+
     var x: Double
         get() = propX.value
         set(value) { propX.value = value }
@@ -315,27 +325,19 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         private set
 
     fun lookUpBy(angle: Double) {
-        propRotationX.value += angle
-
-        updateDirection()
+        rotationX += angle
     }
 
     fun lookDownBy(angle: Double) {
-        propRotationX.value -= angle
-
-        updateDirection()
+        rotationX -= angle
     }
 
     fun lookLeftBy(angle: Double) {
-        propRotationY.value -= angle
-
-        updateDirection()
+        rotationY -= angle
     }
 
     fun lookRightBy(angle: Double) {
-        propRotationY.value += angle
-
-        updateDirection()
+        rotationY += angle
     }
 
     fun lookAt(point: Point3D) {
