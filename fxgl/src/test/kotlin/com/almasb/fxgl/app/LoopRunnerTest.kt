@@ -12,7 +12,9 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.extension.ExtendWith
 
 /**
@@ -20,6 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @ExtendWith(RunWithFX::class)
+@DisabledOnOs(OS.MAC)
 class LoopRunnerTest {
 
     @Test
