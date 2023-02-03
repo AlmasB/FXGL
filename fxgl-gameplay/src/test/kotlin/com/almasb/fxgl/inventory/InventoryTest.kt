@@ -287,6 +287,31 @@ class InventoryTest {
     }
 
     @Test
+    fun `Transfer all from inventory`() {
+        inventory = Inventory(5)
+
+        inventory.add("Hello", quantity = 5)
+        inventory.add("Hi", quantity = 3)
+
+        val other = Inventory<String>(5)
+
+        assertTrue(other.transferAllFrom(inventory))
+        assertThat(other.getItemQuantity("Hello"), `is`(5))
+        assertThat(other.getItemQuantity("Hi"), `is`(3))
+
+        val other2 = Inventory<String>(1)
+
+        // true because [other2] only has 1 space, so partially succeeds
+        assertTrue(other2.transferAllFrom(other))
+        assertThat(other2.getItemQuantity("Hello"), `is`(5))
+        assertThat(other2.getItemQuantity("Hi"), `is`(0))
+
+
+        // false because [other2] now has no space, so op fails
+        assertFalse(other2.transferAllFrom(other))
+    }
+
+    @Test
     fun `Transfer from inventory does not work if no item in inventory`() {
         inventory = Inventory(5)
         val other = Inventory<String>(2)

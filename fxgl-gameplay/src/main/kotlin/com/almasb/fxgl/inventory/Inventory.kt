@@ -82,10 +82,14 @@ class Inventory<T>(
     }
 
     /**
-     * @return the total sum of all [item] stack quantities
+     * @return the total sum of all [item] stack quantities or 0 if [item] not present
      */
     fun getItemQuantity(item: T): Int
-        = itemQuantityProperty(item).value
+        = try {
+            itemQuantityProperty(item).value
+        } catch (e: IllegalArgumentException) {
+            0
+        }
 
     @Deprecated("Use add(ItemConfig)", ReplaceWith("add(com.almasb.fxgl.inventory.ItemConfig)"))
     fun add(item: T, name: String, description: String, view: Node, quantity: Int): Boolean {
@@ -200,6 +204,23 @@ class Inventory<T>(
         }
 
         return true
+    }
+
+    /**
+     * Transfer all items from [other] to this inventory.
+     *
+     * @return true if operation was (at least partially) successful, if returns false then no modifications were made to either inventory objects
+     */
+    fun transferAllFrom(other: Inventory<T>): Boolean {
+        var isPartiallySuccess = false
+
+        // toList() to create a copy since [transferFrom] modifies [other.items]
+        other.items.toList().forEach {
+            if (transferFrom(other, it.userItem, it.quantity))
+                isPartiallySuccess = true
+        }
+
+        return isPartiallySuccess
     }
 
     /**
