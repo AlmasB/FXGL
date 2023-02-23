@@ -25,6 +25,7 @@ public class CustomServicesSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setEngineServiceProvider(NotificationService.class, MyNotificationServiceProvider.class);
+        settings.setTitle("CustomServiceSample");
     }
 
     @Override

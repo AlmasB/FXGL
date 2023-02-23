@@ -26,7 +26,9 @@ import sandbox.anim.AnimationComponent;
 public class SpriteSheetAnimationApp extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) { }
+    protected void initSettings(GameSettings settings) {
+        settings.setTitle("Sprite Sheet Animation App");
+    }
 
     private Entity player;
 

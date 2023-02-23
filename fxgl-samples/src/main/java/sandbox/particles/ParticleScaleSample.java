@@ -26,7 +26,9 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class ParticleScaleSample extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) { }
+    protected void initSettings(GameSettings settings) {
+        settings.setTitle("Particle Scale Sample");
+    }
 
     @Override
     protected void initGame() {

@@ -42,6 +42,7 @@ public class PrismaticJointSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1280);
         settings.setHeight(720);
+        settings.setTitle("Prismatic Joint Sample");
     }
 
     @Override

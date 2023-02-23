@@ -34,6 +34,7 @@ public class AttractorSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1366);
         settings.setHeight(768);
+        settings.setTitle("Attractor Sample");
     }
 
     private double t = 0.0;

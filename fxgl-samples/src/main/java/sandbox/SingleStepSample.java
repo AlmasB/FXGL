@@ -22,6 +22,7 @@ public class SingleStepSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setSingleStep(true);
+        settings.setTitle("Single Step Sample");
     }
 
     @Override

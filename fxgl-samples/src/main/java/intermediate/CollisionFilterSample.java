@@ -37,6 +37,7 @@ public class CollisionFilterSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setDeveloperMenuEnabled(true);
+        settings.setTitle("CustomCSSSample");
     }
 
     private int i = 0;

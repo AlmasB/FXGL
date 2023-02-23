@@ -41,6 +41,7 @@ public class EntityActionSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Entity Action Sample");
         settings.setWidthFromRatio(16/9.0);
     }
 

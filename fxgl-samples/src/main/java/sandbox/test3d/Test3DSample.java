@@ -30,6 +30,7 @@ public class Test3DSample extends GameApplication {
         settings.setHeight(720);
         settings.set3D(true);
         settings.setDeveloperMenuEnabled(true);
+        settings.setTitle("Test 3D Sample");
     }
 
     @Override

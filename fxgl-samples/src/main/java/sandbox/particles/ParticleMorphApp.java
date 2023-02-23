@@ -36,6 +36,7 @@ public class ParticleMorphApp extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidthFromRatio(16/9.0);
         settings.setManualResizeEnabled(true);
+        settings.setTitle("Particle Morph App");
         //settings.setProfilingEnabled(true);
     }
 

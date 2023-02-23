@@ -29,6 +29,7 @@ public class TiledFlippingSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("TileFlippingExample");
         settings.setVersion("0.1");
+        settings.setTitle("Tiled flipping sample");
     }
 
     @Override

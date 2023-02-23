@@ -38,6 +38,7 @@ public class CirclesSample extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.set3D(true);
+        settings.setTitle("Circles Sample");
     }
 
     @Override

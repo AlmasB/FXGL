@@ -25,6 +25,7 @@ public class ManualResizeSample extends GameApplication {
         settings.setPreserveResizeRatio(true);
         settings.setWidth(1280);
         settings.setHeight(720);
+        settings.setTitle("Manual Resize sample");
     }
 
     @Override

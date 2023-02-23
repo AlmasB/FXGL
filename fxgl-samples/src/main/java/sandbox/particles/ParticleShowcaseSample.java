@@ -28,6 +28,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class ParticleShowcaseSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Particle show case sample");
         settings.setWidthFromRatio(16/9.0);
     }
 

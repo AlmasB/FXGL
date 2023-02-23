@@ -30,6 +30,7 @@ public class ReusableEntitySample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Reasuable Entity Sample");
 
     }
 

@@ -32,7 +32,9 @@ public class BusinessApp extends GameApplication {
     private StackPane mainRoot;
 
     @Override
-    protected void initSettings(GameSettings settings) { }
+    protected void initSettings(GameSettings settings) {
+        settings.setTitle("Business App");
+    }
 
     @Override
     protected void initGame() {

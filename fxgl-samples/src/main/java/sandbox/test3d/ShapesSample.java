@@ -42,6 +42,7 @@ public class ShapesSample extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.set3D(true);
+        settings.setTitle("Shapes Sample");
 //        settings.setFullScreenAllowed(true);
 //        settings.setFullScreenFromStart(true);
     }

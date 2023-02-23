@@ -38,6 +38,7 @@ public class CrystalApp2 extends GameApplication {
         settings.setTitle("Crystal Chase");
         settings.setWidthFromRatio(16/9.0);
         settings.setManualResizeEnabled(true);
+        settings.setTitle("Crystal App 2");
     }
 
     private List<Node> pixels;

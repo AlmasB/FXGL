@@ -32,6 +32,8 @@ public class BenchmarkSample extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.setProfilingEnabled(true);
+        settings.setTitle("Benchmark sample");
+
     }
 
     private static final int NUM_OBJECTS = 2500;

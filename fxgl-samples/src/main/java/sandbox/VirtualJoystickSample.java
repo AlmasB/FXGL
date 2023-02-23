@@ -26,6 +26,7 @@ public class VirtualJoystickSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(2400);
         settings.setHeight(1320);
+        settings.setTitle("Virtual Joy Stick Sample");
     }
 
     private VirtualJoystick joystick;

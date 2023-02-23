@@ -81,6 +81,7 @@ public class EmbeddedSample extends Application {
         protected void initSettings(GameSettings settings) {
             settings.setWidth(400);
             settings.setHeight(400);
+            settings.setTitle("Embedded Sample");
         }
 
         @Override

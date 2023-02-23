@@ -36,6 +36,7 @@ public class UINineSliceSample extends GameApplication {
         settings.setVersion("1.0");
         settings.setWidth(800);
         settings.setHeight(800);
+        settings.setTitle("UINine Slice sample");
     }
 
     private final Logger log = Logger.get(UINineSliceSample.class);

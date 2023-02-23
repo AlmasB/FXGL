@@ -27,6 +27,7 @@ public class EngineTicksSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         //settings.setTicksPerSecond(10);
         settings.setProfilingEnabled(true);
+        settings.setTitle("Engine Ticks Sample");
     }
 
     @Override

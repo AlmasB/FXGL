@@ -21,7 +21,9 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class VarChangeSample extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) { }
+    protected void initSettings(GameSettings settings) {
+        settings.setTitle("Var change sample");
+    }
 
     @Override
     protected void initInput() {

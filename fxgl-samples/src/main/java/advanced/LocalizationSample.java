@@ -28,6 +28,7 @@ public class LocalizationSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(650);
         settings.setHeight(357);
+        settings.setTitle("Localization sample");
     }
 
     private int i = 0;

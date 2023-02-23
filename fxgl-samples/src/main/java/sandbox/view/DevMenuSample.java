@@ -25,6 +25,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class DevMenuSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Dev Menu Sample");
         settings.setDeveloperMenuEnabled(true);
     }
 

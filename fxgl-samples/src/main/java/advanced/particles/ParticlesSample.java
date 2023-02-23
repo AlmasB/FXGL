@@ -25,7 +25,9 @@ import static com.almasb.fxgl.dsl.FXGL.getInput;
 public class ParticlesSample extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) { }
+    protected void initSettings(GameSettings settings) {
+        settings.setTitle("Particles sample");
+    }
 
     @Override
     protected void initInput() {

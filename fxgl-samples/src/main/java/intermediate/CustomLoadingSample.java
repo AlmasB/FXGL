@@ -43,6 +43,7 @@ public class CustomLoadingSample extends GameApplication {
                 return new MyLoadingScene();
             }
         });
+        settings.setTitle("Custom loading sample");
     }
 
     @Override

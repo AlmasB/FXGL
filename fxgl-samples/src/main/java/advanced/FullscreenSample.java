@@ -32,6 +32,7 @@ public class FullscreenSample extends GameApplication {
         settings.setIntroEnabled(true);
         settings.setFullScreenAllowed(true);
         settings.setFullScreenFromStart(true);
+        settings.setTitle("Fullscreen sample");
 
         settings.setSceneFactory(new SceneFactory() {
             @Override

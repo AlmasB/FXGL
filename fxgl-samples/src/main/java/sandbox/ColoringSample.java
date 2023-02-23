@@ -35,6 +35,7 @@ public class ColoringSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1280);
         settings.setHeight(920);
+        settings.setTitle("Coloring Sample");
     }
 
     @Override

@@ -29,6 +29,7 @@ public class ScrollingBackgroundSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setManualResizeEnabled(true);
         settings.setPreserveResizeRatio(true);
+        settings.setTitle("Scrolling Background Sample");
     }
 
     @Override

@@ -23,6 +23,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class DragDropEntitiesSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Drag Drop Entites Sample");
 
     }
 

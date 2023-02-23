@@ -31,6 +31,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class ParticleShowcaseSample3 extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Particle Showcase Sample 3");
         settings.setWidthFromRatio(16/9.0);
     }
 

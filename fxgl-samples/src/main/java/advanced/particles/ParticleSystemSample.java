@@ -37,6 +37,7 @@ public class ParticleSystemSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(700 + 300);
         settings.setHeight(600);
+        settings.setTitle("Particle Ststem Sample");
     }
 
     @Override

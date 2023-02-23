@@ -31,6 +31,7 @@ public class ParticleIntroApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Particle Intro App");
         settings.setWidthFromRatio(16/9.0);
     }
 

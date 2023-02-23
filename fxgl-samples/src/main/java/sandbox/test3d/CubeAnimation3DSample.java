@@ -34,6 +34,7 @@ public class CubeAnimation3DSample extends GameApplication {
         settings.set3D(true);
         settings.setFullScreenAllowed(true);
         settings.setFullScreenFromStart(true);
+        settings.setTitle("Cube Animation 3D Sample");
     }
 
     @Override

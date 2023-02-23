@@ -26,6 +26,7 @@ public class AnimatedTextureSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1480);
         settings.setHeight(1020);
+        settings.setTitle("texture");
     }
 
     @Override

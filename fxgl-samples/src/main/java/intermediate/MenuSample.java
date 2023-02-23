@@ -29,6 +29,7 @@ public class MenuSample extends GameApplication {
         settings.setMainMenuEnabled(true);
         settings.setGameMenuEnabled(true);
         settings.setFullScreenAllowed(true);
+        settings.setTitle("Menu Sample");
         settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
         settings.getCredits().addAll(Arrays.asList(
                 "Short Name - Lead Programmer",

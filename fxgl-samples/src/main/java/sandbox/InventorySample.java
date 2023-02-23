@@ -39,6 +39,7 @@ public class InventorySample extends GameApplication {
 
         settings.setWidth(900);
         settings.setHeightFromRatio(16/9.0);
+        settings.setTitle("Inventory Sample");
     }
 
     @Override

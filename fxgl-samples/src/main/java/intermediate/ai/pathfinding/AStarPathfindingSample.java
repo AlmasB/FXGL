@@ -36,6 +36,7 @@ public class AStarPathfindingSample extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.setDeveloperMenuEnabled(true);
+        settings.setTitle("A Star Path Finding Sample");
     }
 
     @Override

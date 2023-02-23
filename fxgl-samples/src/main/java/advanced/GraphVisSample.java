@@ -37,6 +37,7 @@ public class GraphVisSample extends GameApplication {
         settings.setWidth(1600);
         settings.setHeight(900);
         settings.setRandomSeed(1234);
+        settings.setTitle("Graph Vis Sample");
     }
 
     @Override

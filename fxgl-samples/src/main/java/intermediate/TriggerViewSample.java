@@ -30,6 +30,7 @@ public class TriggerViewSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1600);
         settings.setHeight(900);
+        settings.setTitle("TriggerViewSample");
     }
 
     @Override

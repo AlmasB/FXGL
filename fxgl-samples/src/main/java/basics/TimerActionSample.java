@@ -23,7 +23,9 @@ import javafx.util.Duration;
 public class TimerActionSample extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) { }
+    protected void initSettings(GameSettings settings) {
+        settings.setTitle("timer");
+    }
 
     @Override
     protected void initInput() {

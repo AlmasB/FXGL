@@ -27,6 +27,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class MotionBlurSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Motion Blur Sample");
         settings.setWidthFromRatio(16/9.0);
     }
 

@@ -30,7 +30,9 @@ public class ComplexDialogueSample extends GameApplication {
     private Entity entity;
 
     @Override
-    protected void initSettings(GameSettings settings) { }
+    protected void initSettings(GameSettings settings) {
+        settings.setTitle("Complex Dialogue Sample");
+    }
 
     @Override
     protected void initInput() {

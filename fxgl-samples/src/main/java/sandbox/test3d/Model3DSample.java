@@ -27,6 +27,7 @@ public class Model3DSample extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.set3D(true);
+        settings.setTitle("Model 3D Sample");
     }
 
     @Override

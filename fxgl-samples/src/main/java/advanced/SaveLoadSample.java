@@ -29,6 +29,7 @@ public class SaveLoadSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setMainMenuEnabled(true);
         settings.setEnabledMenuItems(EnumSet.allOf(MenuItem.class));
+        settings.setTitle("Save Load Sample");
     }
 
     @Override

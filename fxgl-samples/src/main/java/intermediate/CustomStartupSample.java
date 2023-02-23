@@ -30,6 +30,7 @@ public class CustomStartupSample extends GameApplication {
                 return new MyStartupScene(width, height);
             }
         });
+        settings.setTitle("customstartupsample");
     }
 
     public static class MyStartupScene extends StartupScene {

@@ -49,6 +49,7 @@ public class PolynomialFunctionSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1280);
         settings.setHeight(720);
+        settings.setTitle("Polynomial Function Sample");
     }
 
     @Override

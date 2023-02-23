@@ -31,6 +31,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class TimeGameApp extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Time Game App");
         settings.setWidth(1066);
     }
 

@@ -46,7 +46,9 @@ public class PhysicsCollisionSample extends GameApplication {
     }
 
     @Override
-    protected void initSettings(GameSettings settings) { }
+    protected void initSettings(GameSettings settings) {
+        settings.setTitle("Physics Collision Sample");
+    }
 
     @Override
     protected void initGame() {

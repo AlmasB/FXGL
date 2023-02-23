@@ -25,6 +25,7 @@ public class RTSApp extends GameApplication {
         settings.setHeight(720);
         settings.setTitle("FXGL RTS Game");
         settings.setClickFeedbackEnabled(true);
+        settings.setTitle("RTS App");
     }
 
     @Override

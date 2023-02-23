@@ -33,6 +33,7 @@ public class AchievementSample extends GameApplication {
 
         settings.setMainMenuEnabled(true);
         settings.setEnabledMenuItems(EnumSet.allOf(MenuItem.class));
+        settings.setTitle("Achievement Sample");
     }
 
     @Override

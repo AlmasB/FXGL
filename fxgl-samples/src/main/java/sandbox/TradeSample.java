@@ -34,6 +34,7 @@ public class TradeSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1066);
         settings.setHeight(600);
+        settings.setTitle("Trade sample");
     }
 
     private TradeSubScene tradeSubScene;

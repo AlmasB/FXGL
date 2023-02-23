@@ -35,6 +35,7 @@ public class FlyingKeysPhysicsSample extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.setRandomSeed(4321);
+        settings.setTitle("Flying Key Physics Sample");
     }
 
     @Override

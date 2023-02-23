@@ -36,6 +36,7 @@ public class WobbleEffectSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Wobble Effect Sample");
         settings.setHeightFromRatio(16 / 9.0);
     }
 

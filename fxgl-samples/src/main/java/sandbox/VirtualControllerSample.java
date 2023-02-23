@@ -42,6 +42,7 @@ public class VirtualControllerSample extends GameApplication {
         //settings.setMenuEnabled(false);
         settings.addEngineService(ControllerInputService.class);
         settings.setApplicationMode(ApplicationMode.DEBUG);
+        settings.setTitle("Virtual Controller Sample");
     }
 
     @Override
