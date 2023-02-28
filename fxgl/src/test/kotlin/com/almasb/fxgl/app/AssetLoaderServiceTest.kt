@@ -185,7 +185,8 @@ class AssetLoaderServiceTest {
 
         assertThat(lines.size, `is`(0))
 
-        assertTrue(assetLoader.loadText("test1.txt") === assetLoader.loadText("test1.txt"))
+        // ensure a new copy of the list is loaded so that original cannot be modified
+        assertTrue(assetLoader.loadText("test1.txt") !== assetLoader.loadText("test1.txt"))
     }
 
     @Test

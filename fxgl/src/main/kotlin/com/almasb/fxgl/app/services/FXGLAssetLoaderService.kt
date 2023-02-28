@@ -533,7 +533,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
                 cachedAssets[cacheKey] = loaded as Any
             }
 
-            loaded
+            data.cast(loaded as Any)
         } catch (e: Exception) {
             log.warning("Failed to load ${loadParams.url}", e)
             data.getDummy()
@@ -696,6 +696,12 @@ private class TextAssetLoader : AssetLoader<List<*>>(
         List::class.java,
         TEXT_DIR
 ) {
+    override fun cast(obj: Any): List<String> {
+        val list = obj as List<String>
+
+        return list.toList()
+    }
+
     override fun load(url: URL): List<String> = url.openStream().bufferedReader().readLines()
 
     override fun getDummy(): List<String> = emptyList()
