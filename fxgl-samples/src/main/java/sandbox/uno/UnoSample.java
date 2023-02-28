@@ -295,10 +295,6 @@ public class UnoSample extends GameApplication {
     private boolean canPlay(Entity cardEntity) {
         Card card = cardEntity.getObject("card");
         Entity currentCard = geto("currentCard");
-        if (!currentCard.isActive())
-        {
-            return true;
-        }
         return card.canUseOn(currentCard.getObject("card"));
     }
 
