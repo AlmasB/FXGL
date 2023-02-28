@@ -43,6 +43,7 @@ public class BenchmarkSpawnManyEntitiesSample extends GameApplication {
         settings.setHeight(720);
         settings.setProfilingEnabled(true);
         settings.setEntityPreloadEnabled(true);
+        settings.setTitle("Benchmark Spawn Many Entities Sample");
     }
 
     private static final int NUM_OBJECTS = 20000;

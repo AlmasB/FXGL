@@ -28,6 +28,7 @@ import static javafx.scene.input.KeyCode.*;
 public class MiniGameApp extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Mini Game App");
         settings.setWidth(1066);
         settings.setApplicationMode(ApplicationMode.DEBUG);
     }

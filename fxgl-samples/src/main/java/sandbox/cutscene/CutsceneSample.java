@@ -20,6 +20,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class CutsceneSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Cut scene Sample");
         settings.setWidth(1280);
         settings.setHeight(720);
     }

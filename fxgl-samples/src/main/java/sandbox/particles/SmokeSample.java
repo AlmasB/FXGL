@@ -30,7 +30,9 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class SmokeSample extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) { }
+    protected void initSettings(GameSettings settings) {
+        settings.setTitle("Smoke Sample");
+    }
 
     private ParticleEmitter emitter, e;
     private Entity entity;

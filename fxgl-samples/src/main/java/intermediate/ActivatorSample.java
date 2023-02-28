@@ -34,6 +34,7 @@ public class ActivatorSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(500);
         settings.setHeightFromRatio(16/9.0);
+        settings.setTitle("Activator Sample");
     }
 
     @Override

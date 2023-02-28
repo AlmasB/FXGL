@@ -20,7 +20,9 @@ import javafx.scene.input.KeyCode;
 public class InputSequenceSample extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) { }
+    protected void initSettings(GameSettings settings) {
+        settings.setTitle("Input Sequence Sample");
+    }
 
     @Override
     protected void initInput() {

@@ -34,6 +34,7 @@ public class BenchmarkManyStaticEntitiesSample extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.setProfilingEnabled(true);
+        settings.setTitle("Benchmark Many Static Entities Sample");
     }
 
     private static final int NUM_STATIC_OBJECTS = 5000;

@@ -38,6 +38,7 @@ public class CircleNNApp extends GameApplication {
         settings.setWidth(1750);
         settings.setHeightFromRatio(16/9.0);
         settings.setDeveloperMenuEnabled(true);
+        settings.setTitle("Circle NN App");
     }
 
     private Entity player;

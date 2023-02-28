@@ -48,6 +48,7 @@ public class SenseAISample extends GameApplication {
         settings.setHeight(GRID_HEIGHT * CELL_HEIGHT);
         settings.setWidthFromRatio(16/9.0);
         settings.setClickFeedbackEnabled(true);
+        settings.setTitle("Sense AI Sample");
     }
 
     @Override

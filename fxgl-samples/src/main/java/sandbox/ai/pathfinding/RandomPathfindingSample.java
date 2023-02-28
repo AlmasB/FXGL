@@ -41,6 +41,7 @@ public class RandomPathfindingSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Random Path Finding Sample");
         settings.setWidth(GRID_WIDTH * CELL_WIDTH);
         settings.setHeight(GRID_HEIGHT * CELL_HEIGHT);
     }

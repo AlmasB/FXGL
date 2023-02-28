@@ -24,6 +24,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class AnimPropertySample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Anim Property Sample");
         settings.setWidthFromRatio(16/9.0);
     }
 

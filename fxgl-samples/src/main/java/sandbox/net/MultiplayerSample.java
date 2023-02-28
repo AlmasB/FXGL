@@ -60,6 +60,7 @@ public class MultiplayerSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Multiplayer Sample");
         settings.addEngineService(MultiplayerService.class);
     }
 

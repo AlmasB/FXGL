@@ -51,6 +51,7 @@ public class PhysicsBenchmarkSample extends GameApplication {
         settings.setHeight(720);
         settings.setProfilingEnabled(true);
         settings.setCollisionDetectionStrategy(CollisionDetectionStrategy.BRUTE_FORCE);
+        settings.setTitle("Physics Benchmark Sample");
     }
 
     @Override

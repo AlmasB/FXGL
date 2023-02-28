@@ -15,6 +15,7 @@ import com.almasb.fxgl.app.GameSettings;
 public class InventorySample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setTitle("Inventory Sample");
         settings.setWidth(1000);
         settings.setHeight(1000);
     }

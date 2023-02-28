@@ -36,7 +36,7 @@ public class AnimSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("AnimSample");
+        settings.setTitle("Anim Sample");
         settings.setVersion("0.1");
     }
 
