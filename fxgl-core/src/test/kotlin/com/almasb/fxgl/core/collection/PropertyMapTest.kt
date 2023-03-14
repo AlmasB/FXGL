@@ -11,9 +11,7 @@ import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.StringProperty
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -238,6 +236,13 @@ class PropertyMapTest {
         map.setValue("v", Vec2())
 
         assertThat(count, `is`(2))
+    }
+
+    @Test
+    fun `Removing a property also removes its listeners`() {
+        map.setValue("test", 0)
+        map.remove("test")
+        assertDoesNotThrow { map.clear() }
     }
 
     @Test

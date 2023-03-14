@@ -136,6 +136,16 @@ class PropertyMap {
             mapChangeListeners.forEach { it.onRemoved(propertyName, value) }
         }
 
+        listeners.filter { it.key.propertyName == propertyName }.forEach { (key, listener) ->
+            // clean up all non-removed JavaFX listeners for given [propertyName]
+            (get(key.propertyName) as ObservableValue<Any>).removeListener(listener as ChangeListener<Any>)
+        }
+
+        // remove all FXGL listeners for given [propertyName]
+        listeners.keys
+                .filter { it.propertyName == propertyName }
+                .forEach { listeners.remove(it) }
+
         properties.remove(propertyName)
     }
 
