@@ -153,7 +153,7 @@ Maintainers (Collaborators):
 
 Coordinators:
 
-* [Adam Bocco](https://github.com/adambocco)
+* [Chengen Zhao](https://github.com/chengenzhao)
 
 Testers:
 
