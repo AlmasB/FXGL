@@ -9,6 +9,7 @@ package com.almasb.fxgl.scene3d.obj
 import javafx.scene.paint.Color
 import javafx.scene.paint.Material
 import javafx.scene.paint.PhongMaterial
+import javafx.scene.shape.VertexFormat
 import java.net.URL
 
 /**
@@ -52,6 +53,8 @@ internal class SubGroup {
     var ambientColor: Color? = null
 
     var smoothingGroup = -1
+
+    var vertexFormat = VertexFormat.POINT_TEXCOORD
 }
 
 internal class MtlData(
