@@ -7,7 +7,6 @@
 package com.almasb.fxgl.physics.box2d.collision
 
 import com.almasb.fxgl.core.math.Vec2
-import com.almasb.fxgl.physics.box2d.collision.Distance.DistanceProxy
 import com.almasb.fxgl.physics.box2d.common.Transform
 
 /**

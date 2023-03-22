@@ -6,7 +6,6 @@
 package com.almasb.fxgl.physics.box2d.collision;
 
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.physics.box2d.collision.Distance.DistanceProxy;
 import com.almasb.fxgl.physics.box2d.collision.Distance.SimplexCache;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.Sweep;
