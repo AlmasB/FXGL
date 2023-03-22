@@ -238,22 +238,6 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         return load(MUSIC, url)
     }
 
-    // TODO: remove in future version
-    /**
-     * Loads cursor image with given name from /assets/ui/cursors/.
-     * Either returns a valid image or throws exception in case of errors.
-     *
-     * @param name image name without the /assets/ui/cursors/, e.g. "attack_cursor.png"
-     * @return cursor image
-     * @throws IllegalArgumentException if asset not found or loading error
-     */
-    @Deprecated("Place cursor under textures/ and use loadImage() instead")
-    fun loadCursorImage(name: String): Image {
-        val url = getURL(CURSORS_DIR + name)
-
-        return load(IMAGE, url)
-    }
-
     /**
      * Loads resource bundle with given [name] from "/assets/properties/".
      *

@@ -275,19 +275,6 @@ class AssetLoaderServiceTest {
     }
 
     @Test
-    fun loadCursorImage() {
-        var cursorImage = assetLoader.loadCursorImage("test_cursor.png")
-
-        assertThat(cursorImage, `is`(notNullValue()))
-        assertThat(cursorImage.width, `is`(64.0))
-        assertThat(cursorImage.height, `is`(64.0))
-
-        cursorImage = assetLoader.loadCursorImage("bla-bla")
-
-        assertThat(cursorImage, `is`(notNullValue()))
-    }
-
-    @Test
     fun loadUI() {
         var count = 0
         val controller = object : UIController {
