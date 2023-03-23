@@ -543,8 +543,8 @@ public final class World {
 
                     // Compute the time of impact in interval [0, minTOI]
                     final TOIInput input = toiInput;
-                    input.proxyA.set(fA.getShape(), indexA);
-                    input.proxyB.set(fB.getShape(), indexB);
+                    input.setProxyA(fA.getShape(), indexA);
+                    input.setProxyB(fB.getShape(), indexB);
                     input.sweepA.set(bA.m_sweep);
                     input.sweepB.set(bB.m_sweep);
                     input.tMax = 1.0f;

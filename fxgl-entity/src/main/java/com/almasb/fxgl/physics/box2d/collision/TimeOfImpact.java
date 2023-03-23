@@ -7,6 +7,7 @@ package com.almasb.fxgl.physics.box2d.collision;
 
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.physics.box2d.collision.Distance.SimplexCache;
+import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.Sweep;
 import com.almasb.fxgl.physics.box2d.common.Transform;
@@ -35,6 +36,14 @@ public class TimeOfImpact {
          * defines sweep interval [0, tMax]
          */
         public float tMax;
+
+        public void setProxyA(Shape shape, int index) {
+            proxyA.set(shape, index);
+        }
+
+        public void setProxyB(Shape shape, int index) {
+            proxyB.set(shape, index);
+        }
     }
 
     public enum TOIOutputState {

@@ -16,7 +16,7 @@ import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
  *
  * @author daniel
  */
-public class DistanceProxy {
+class DistanceProxy {
     public final Vec2[] m_vertices = new Vec2[JBoxSettings.maxPolygonVertices];
     public int m_count = 0;
     public float m_radius = 0f;
