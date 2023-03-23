@@ -19,20 +19,39 @@ public final class Sweep implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** Local center of mass position */
+    /**
+     * Local center of mass position
+     */
     public final Vec2 localCenter = new Vec2();
 
-    /** Center world positions */
+    /**
+     * Center world position at alpha0 (sweep start).
+     */
     public final Vec2 c0 = new Vec2();
+
+    /**
+     * Center world position at sweep end.
+     */
     public final Vec2 c = new Vec2();
 
-    /** World angles */
+    /**
+     * World angle at alpha0 (sweep start).
+     */
     public float a0;
+
+    /**
+     * World angle at sweep end.
+     */
     public float a;
 
-    /** Fraction of the current time step in the range [0,1] c0 and a0 are the positions at alpha0. */
+    /**
+     * Fraction of the current time step in the range [0,1] c0 and a0 are the positions at alpha0.
+     */
     public float alpha0;
 
+    /**
+     * Reduce the angles [a0] and [a] to the normalized range [-2PI,2PI].
+     */
     public void normalize() {
         float d = FXGLMath.PI2_F * FXGLMath.floor(a0 / FXGLMath.PI2_F);
         a0 -= d;
