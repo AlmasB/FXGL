@@ -442,9 +442,7 @@ public class Distance {
      * PolygonShape. The simplex cache is input/output. On the first call set SimplexCache.count to
      * zero.
      */
-    @SuppressWarnings("PMD.EmptyIfStmt")
-    public final void distance(final DistanceOutput output, final SimplexCache cache,
-                               final DistanceInput input) {
+    public final void distance(DistanceOutput output, SimplexCache cache, DistanceInput input) {
 
         final DistanceProxy proxyA = input.proxyA;
         final DistanceProxy proxyB = input.proxyB;
@@ -464,8 +462,6 @@ public class Distance {
         int saveCount = 0;
 
         simplex.getClosestPoint(closestPoint);
-        float distanceSqr1 = closestPoint.lengthSquared();
-        float distanceSqr2 = distanceSqr1;
 
         // Main iteration loop
         int iter = 0;
@@ -498,13 +494,6 @@ public class Distance {
 
             // Compute closest point.
             simplex.getClosestPoint(closestPoint);
-            distanceSqr2 = closestPoint.lengthSquared();
-
-            // ensure progress
-            if (distanceSqr2 >= distanceSqr1) {
-                // break;
-            }
-            distanceSqr1 = distanceSqr2;
 
             // get search direction;
             simplex.getSearchDirection(d);
@@ -533,10 +522,11 @@ public class Distance {
             Rotation.mulTransUnsafe(transformA.q, d.negateLocal(), temp);
             vertex.indexA = proxyA.getSupport(temp);
             Transform.mulToOutUnsafe(transformA, proxyA.getVertex(vertex.indexA), vertex.wA);
-            // Vec2 wBLocal;
+
             Rotation.mulTransUnsafe(transformB.q, d.negateLocal(), temp);
             vertex.indexB = proxyB.getSupport(temp);
             Transform.mulToOutUnsafe(transformB, proxyB.getVertex(vertex.indexB), vertex.wB);
+
             vertex.w.set(vertex.wB).subLocal(vertex.wA);
 
             // Iteration count is equated to the number of support point calls.
