@@ -11,83 +11,83 @@ import com.almasb.fxgl.physics.box2d.collision.shapes.*;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 
 /**
- * A distance proxy is used by the GJK algorithm. It encapsulates any shape. jbox2dTODO: see if we can
- * just do assignments with m_vertices, instead of copying stuff over
+ * A distance proxy is used by the GJK algorithm.
+ * It encapsulates any shape.
  *
  * @author daniel
  */
-class DistanceProxy {
-    public final Vec2[] m_vertices = new Vec2[JBoxSettings.maxPolygonVertices];
-    public int m_count = 0;
-    public float m_radius = 0f;
-    public final Vec2[] m_buffer = new Vec2[2];
+final class DistanceProxy {
+    private final Vec2[] vertices = new Vec2[JBoxSettings.maxPolygonVertices];
+    private final Vec2[] buffer = new Vec2[2];
+    private int count = 0;
+    private float radius = 0f;
 
-    public DistanceProxy() {
-        for (int i = 0; i < m_vertices.length; i++) {
-            m_vertices[i] = new Vec2();
+    DistanceProxy() {
+        for (int i = 0; i < vertices.length; i++) {
+            vertices[i] = new Vec2();
         }
     }
 
+    float getRadius() {
+        return radius;
+    }
+
     /**
-     * Initialize the proxy using the given shape. The shape must remain in scope while the proxy is
-     * in use.
+     * Initialize the proxy using the given shape.
+     * The shape must remain in scope while the proxy is in use.
      */
-    public final void set(final Shape shape, int index) {
+    void set(Shape shape, int index) {
         switch (shape.getType()) {
-            case CIRCLE:
-                final CircleShape circle = (CircleShape) shape;
-                m_vertices[0].set(circle.center);
-                m_count = 1;
-                m_radius = circle.getRadius();
+            case CIRCLE -> {
+                CircleShape circle = (CircleShape) shape;
+                vertices[0].set(circle.center);
+                count = 1;
+                radius = circle.getRadius();
+            }
 
-                break;
-            case POLYGON:
-                final PolygonShape poly = (PolygonShape) shape;
-                m_count = poly.getVertexCount();
-                m_radius = poly.getRadius();
-                for (int i = 0; i < m_count; i++) {
-                    m_vertices[i].set(poly.m_vertices[i]);
+            case POLYGON -> {
+                PolygonShape poly = (PolygonShape) shape;
+                count = poly.getVertexCount();
+                radius = poly.getRadius();
+                for (int i = 0; i < count; i++) {
+                    vertices[i].set(poly.m_vertices[i]);
                 }
-                break;
-            case CHAIN:
-                final ChainShape chain = (ChainShape) shape;
+            }
+
+            case CHAIN -> {
+                ChainShape chain = (ChainShape) shape;
                 assert 0 <= index && index < chain.getCount();
-
-                m_buffer[0] = chain.getVertex(index);
+                buffer[0] = chain.getVertex(index);
                 if (index + 1 < chain.getCount()) {
-                    m_buffer[1] = chain.getVertex(index + 1);
+                    buffer[1] = chain.getVertex(index + 1);
                 } else {
-                    m_buffer[1] = chain.getVertex(0);
+                    buffer[1] = chain.getVertex(0);
                 }
+                vertices[0].set(buffer[0]);
+                vertices[1].set(buffer[1]);
+                count = 2;
+                radius = chain.getRadius();
+            }
 
-                m_vertices[0].set(m_buffer[0]);
-                m_vertices[1].set(m_buffer[1]);
-                m_count = 2;
-                m_radius = chain.getRadius();
-                break;
-            case EDGE:
+            case EDGE -> {
                 EdgeShape edge = (EdgeShape) shape;
-                m_vertices[0].set(edge.m_vertex1);
-                m_vertices[1].set(edge.m_vertex2);
-                m_count = 2;
-                m_radius = edge.getRadius();
-                break;
-            default:
-                assert false;
+                vertices[0].set(edge.m_vertex1);
+                vertices[1].set(edge.m_vertex2);
+                count = 2;
+                radius = edge.getRadius();
+            }
         }
     }
 
     /**
-     * Get the supporting vertex index in the given direction.
-     *
-     * @param d
-     * @return
+     * @return the supporting vertex index in the given direction
      */
-    public final int getSupport(final Vec2 d) {
+    int getSupport(Vec2 d) {
         int bestIndex = 0;
-        float bestValue = Vec2.dot(m_vertices[0], d);
-        for (int i = 1; i < m_count; i++) {
-            float value = Vec2.dot(m_vertices[i], d);
+        float bestValue = Vec2.dot(vertices[0], d);
+
+        for (int i = 1; i < count; i++) {
+            float value = Vec2.dot(vertices[i], d);
             if (value > bestValue) {
                 bestIndex = i;
                 bestValue = value;
@@ -98,12 +98,10 @@ class DistanceProxy {
     }
 
     /**
-     * Used by Distance.
-     *
      * @return a vertex by index
      */
-    public final Vec2 getVertex(int index) {
-        assert 0 <= index && index < m_count;
-        return m_vertices[index];
+    Vec2 getVertex(int index) {
+        assert 0 <= index && index < count;
+        return vertices[index];
     }
 }

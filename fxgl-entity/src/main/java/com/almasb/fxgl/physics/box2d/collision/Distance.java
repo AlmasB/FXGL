@@ -6,7 +6,6 @@
 package com.almasb.fxgl.physics.box2d.collision;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.collision.shapes.*;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
@@ -571,8 +570,8 @@ public class Distance {
 
         // Apply radii if requested.
         if (input.useRadii) {
-            float rA = proxyA.m_radius;
-            float rB = proxyB.m_radius;
+            float rA = proxyA.getRadius();
+            float rB = proxyB.getRadius();
 
             if (output.distance > rA + rB && output.distance > JBoxSettings.EPSILON) {
                 // Shapes are still no overlapped.

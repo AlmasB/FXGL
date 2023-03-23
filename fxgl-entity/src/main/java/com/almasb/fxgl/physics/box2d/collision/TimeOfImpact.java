@@ -102,7 +102,7 @@ public class TimeOfImpact {
 
         float tMax = input.tMax;
 
-        float totalRadius = proxyA.m_radius + proxyB.m_radius;
+        float totalRadius = proxyA.getRadius() + proxyB.getRadius();
         // djm: whats with all these constants?
         float target = Math.max(JBoxSettings.linearSlop, totalRadius - 3.0f * JBoxSettings.linearSlop);
         float tolerance = 0.25f * JBoxSettings.linearSlop;
