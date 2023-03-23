@@ -38,6 +38,7 @@ class SweepTest {
 
     @Test
     fun `get transform at given time`() {
+        sweep.localCenter.set(3.5f, 1.2f)
         sweep.c.set(2f, 0f)
         sweep.a0 = 2f
         sweep.a = 4f
@@ -46,7 +47,7 @@ class SweepTest {
 
         sweep.getTransform(xf, 0.5f)
 
-        assertThat(xf.p, `is`(Vec2(1f, 0f)))
+        assertThat(xf.p, `is`(Vec2(4.634288f, 0.694177f)))
 
         // Rotation(3f)
         assertThat(xf.q.c, `is`(-0.9899941f))
