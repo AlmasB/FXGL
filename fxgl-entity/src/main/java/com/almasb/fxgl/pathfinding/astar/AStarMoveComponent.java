@@ -55,6 +55,13 @@ public final class AStarMoveComponent extends Component {
         pathfinder = new LazyValue<>(() -> new AStarPathfinder(grid.get()));
     }
 
+    /**
+     * This ctor is for cases when using a pre-built pathfinder.
+     */
+    public AStarMoveComponent(AStarPathfinder pathfinderValue) {
+        pathfinder = new LazyValue<>(() -> pathfinderValue);
+    }
+
     @Override
     public void onAdded() {
         moveComponent = entity.getComponent(CellMoveComponent.class);

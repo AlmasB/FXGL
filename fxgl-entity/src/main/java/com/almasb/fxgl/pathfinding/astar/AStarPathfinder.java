@@ -9,11 +9,7 @@ package com.almasb.fxgl.pathfinding.astar;
 import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.Pathfinder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -22,12 +18,27 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
 
     private final AStarGrid grid;
 
+    private boolean isCachingPaths = false;
+    private Map<CacheKey, List<AStarCell>> cache = new HashMap<>();
+
     public AStarPathfinder(AStarGrid grid) {
         this.grid = grid;
     }
 
     public AStarGrid getGrid() {
         return grid;
+    }
+
+    /**
+     * If set to true, computed paths for same start and end cells are cached.
+     * Default is false.
+     */
+    public void setCachingPaths(boolean isCachingPaths) {
+        this.isCachingPaths = isCachingPaths;
+    }
+
+    public boolean isCachingPaths() {
+        return isCachingPaths;
     }
 
     @Override
@@ -54,6 +65,16 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
         if (start == target || target.getState() == CellState.NOT_WALKABLE)
             return Collections.emptyList();
 
+        var cacheKey = new CacheKey(start.getX(), start.getY(), target.getX(), target.getY());
+
+        if (isCachingPaths) {
+            var path = cache.get(cacheKey);
+
+            if (path != null) {
+                return new ArrayList<>(path);
+            }
+        }
+
         // reset grid cells data
         for (int y = 0; y < grid[0].length; y++) {
             for (int x = 0; x < grid.length; x++) {
@@ -63,8 +84,8 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
             }
         }
 
-        List<AStarCell> open = new ArrayList<>();
-        List<AStarCell> closed = new ArrayList<>();
+        Set<AStarCell> open = new HashSet<>();
+        Set<AStarCell> closed = new HashSet<>();
 
         AStarCell current = start;
 
@@ -102,9 +123,14 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
                 if (open.isEmpty())
                     return Collections.emptyList();
 
-                AStarCell acc = open.get(0);
+                AStarCell acc = null;
 
                 for (AStarCell a : open) {
+                    if (acc == null) {
+                        acc = a;
+                        continue;
+                    }
+
                     acc = a.getFCost() < acc.getFCost() ? a : acc;
                 }
 
@@ -112,7 +138,13 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
             }
         }
 
-        return buildPath(start, target);
+        var path = buildPath(start, target);
+
+        if (isCachingPaths) {
+            cache.put(cacheKey, path);
+        }
+
+        return new ArrayList<>(path);
     }
 
     private List<AStarCell> buildPath(AStarCell start, AStarCell target) {
@@ -133,11 +165,10 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
      * @param busyNodes nodes which are busy, i.e. walkable but have a temporary obstacle
      * @return neighbors of the node
      */
-    protected List<AStarCell> getValidNeighbors(AStarCell node, AStarCell... busyNodes) {
-        var busyNodesList = Arrays.asList(busyNodes);
-        return grid.getNeighbors(node.getX(), node.getY()).stream()
-                .filter(AStarCell::isWalkable)
-                .filter(neighbor -> !busyNodesList.contains(neighbor))
-                .collect(Collectors.toList());
+    private List<AStarCell> getValidNeighbors(AStarCell node, AStarCell... busyNodes) {
+        var result = grid.getNeighbors(node.getX(), node.getY());
+        result.removeAll(Arrays.asList(busyNodes));
+        result.removeIf(cell -> !cell.isWalkable());
+        return result;
     }
 }
