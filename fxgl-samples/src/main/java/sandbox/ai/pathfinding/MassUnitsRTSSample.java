@@ -16,10 +16,14 @@ import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.astar.AStarGrid;
 import com.almasb.fxgl.pathfinding.astar.AStarMoveComponent;
 import com.almasb.fxgl.pathfinding.astar.AStarPathfinder;
+import com.almasb.fxgl.physics.BoundingShape;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import kotlin.Unit;
+import kotlin.system.TimingKt;
+import kotlin.time.TimeSource;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -66,10 +70,17 @@ public class MassUnitsRTSSample extends GameApplication {
             rect.setFill(Color.RED);
         });
 
-        onBtn(MouseButton.MIDDLE, "Freeze", () -> {
-            var units = getGameWorld().getEntitiesFiltered(e -> e.getPropertyOptional("type").isPresent());
-            units.forEach( unit -> unit.getComponent(AStarMoveComponent.class).stopMovement());
-        });
+//        onBtnDown(MouseButton.PRIMARY, "Freeze", () -> {
+//
+//            var nanos = TimingKt.measureNanoTime(() -> {
+//                var units = getGameWorld().getEntitiesFiltered(e -> e.getPropertyOptional("type").isPresent());
+//                units.forEach( unit -> unit.getComponent(AStarMoveComponent.class).stopMovement());
+//
+//                return Unit.INSTANCE;
+//            });
+//
+//            //System.out.printf("Took: %.3f\n", nanos / 1000000000.0);
+//        });
     }
 
     @Override
@@ -77,6 +88,7 @@ public class MassUnitsRTSSample extends GameApplication {
         // 2. init grid width x height
         grid = new AStarGrid(GRID_WIDTH, GRID_HEIGHT);
         pathfinder = new AStarPathfinder(grid);
+        pathfinder.setCachingPaths(true);
 
         grid.forEach(c -> {
 
@@ -85,7 +97,7 @@ public class MassUnitsRTSSample extends GameApplication {
 
             Rectangle rect = new Rectangle(CELL_WIDTH - 2, CELL_HEIGHT - 2);
             rect.setFill(Color.WHITE);
-            //rect.setStroke(Color.BLACK);
+            rect.setStroke(Color.BLACK);
 
             Entity tile = entityBuilder()
                     .at(x * CELL_WIDTH, y * CELL_HEIGHT)
@@ -94,35 +106,55 @@ public class MassUnitsRTSSample extends GameApplication {
                     .buildAndAttach();
 
             rect.setOnMouseClicked(event -> {
-                // if left click do search, else place a red obstacle
-                if (event.getButton() == MouseButton.PRIMARY) {
-                    var units = getGameWorld().getEntitiesFiltered(e -> e.getPropertyOptional("type").isPresent());
 
-                    var cells = grid.getWalkableCells()
-                            .stream()
-                            .sorted(Comparator.comparingInt(cell -> cell.distance(grid.get(x, y))))
-                            .limit(units.size())
-                            .collect(Collectors.toList());
+                //getExecutor().startAsync(() -> {
 
-                    Collections.shuffle(cells);
 
-                    for (int i = 0; i < units.size(); i++) {
-                        var unit = units.get(i);
-                        var cell = cells.get(i);
+                    var nanos = TimingKt.measureNanoTime(() -> {
 
-                        unit.getComponent(AStarMoveComponent.class).moveToCell(cell);
-                    }
-                }
+                        // 5.6 sec from bot-left to top-right
+
+
+                        // if left click do search, else place a red obstacle
+                        if (event.getButton() == MouseButton.PRIMARY) {
+                            var units = getGameWorld().getEntitiesFiltered(e -> e.getPropertyOptional("type").isPresent());
+
+                            var cells = grid.getWalkableCells()
+                                    .stream()
+                                    .sorted(Comparator.comparingInt(cell -> cell.distance(grid.get(x, y))))
+                                    .limit(units.size())
+                                    .collect(Collectors.toList());
+
+                            Collections.shuffle(cells);
+
+                            for (int i = 0; i < units.size(); i++) {
+                                var unit = units.get(i);
+                                var cell = cells.get(i);
+
+                                unit.getComponent(AStarMoveComponent.class).moveToCell(cell);
+                            }
+                        }
+
+
+
+                        return Unit.INSTANCE;
+                    });
+
+                    System.out.printf("Took: %.3f\n", nanos / 1000000000.0);
+
+
+                //});
             });
         });
 
-        for (int i = 0; i < 485; i++) {
+        for (int i = 0; i < 285; i++) {
             var color = FXGLMath.randomColor().darker().darker();
 
             var e = entityBuilder()
-                    .viewWithBBox(new Circle(CELL_WIDTH / 4, CELL_WIDTH / 4, CELL_WIDTH / 4, color))
+                    .view(new Circle(CELL_WIDTH / 4, color))
+                    .bbox(BoundingShape.box(CELL_WIDTH / 4, CELL_WIDTH / 4))
                     .with(new CellMoveComponent(CELL_WIDTH, CELL_HEIGHT, 300))
-                    .with(new AStarMoveComponent(grid))
+                    .with(new AStarMoveComponent(pathfinder))
                     .with("type", "unit")
                     .buildAndAttach();
         }
