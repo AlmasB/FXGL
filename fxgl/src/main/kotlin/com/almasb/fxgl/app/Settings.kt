@@ -350,6 +350,9 @@ class GameSettings(
     }
 
     fun toReadOnly(userAppClass: Class<*> = GameApplication::class.java): ReadOnlyGameSettings {
+        if (title == "")
+            title = "Untitled"
+
         return ReadOnlyGameSettings(
                 runtimeInfo,
                 title,
