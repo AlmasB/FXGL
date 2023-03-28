@@ -241,6 +241,11 @@ class GameSettings(
         var soundMenuPress: String = "menu/press.wav",
         var soundMenuSelect: String = "menu/select.wav",
 
+        /**
+         * Set the scale value for UI text size, default = 1.0.
+         */
+        var fontSizeScaleUI: Double = 1.0,
+
         var pixelsPerMeter: Double = 50.0,
 
         var collisionDetectionStrategy: CollisionDetectionStrategy = CollisionDetectionStrategy.BRUTE_FORCE,
@@ -391,6 +396,7 @@ class GameSettings(
                 soundMenuBack,
                 soundMenuPress,
                 soundMenuSelect,
+                fontSizeScaleUI,
                 pixelsPerMeter,
                 collisionDetectionStrategy,
                 secondsIn24h,
@@ -561,6 +567,8 @@ class ReadOnlyGameSettings internal constructor(
         val soundMenuBack: String,
         val soundMenuPress: String,
         val soundMenuSelect: String,
+
+        val fontSizeScaleUI: Double,
 
         val pixelsPerMeter: Double,
 

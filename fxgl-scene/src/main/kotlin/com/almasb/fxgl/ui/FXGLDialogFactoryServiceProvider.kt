@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.ui
 
+import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.localization.LocalizationService
 import javafx.beans.binding.StringBinding
@@ -33,6 +34,9 @@ import java.util.function.Predicate
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
+
+    @Inject("fontSizeScaleUI")
+    private var fontSizeScaleUI = 1.0
 
     private lateinit var uiFactory: UIFactoryService
 
@@ -286,7 +290,7 @@ class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
     }
 
     private fun createMessage(message: String): Text {
-        return uiFactory.newText(message)
+        return uiFactory.newText(message, fontSizeScaleUI * 18.0)
     }
 
     private fun localizedStringProperty(key: String): StringBinding {
