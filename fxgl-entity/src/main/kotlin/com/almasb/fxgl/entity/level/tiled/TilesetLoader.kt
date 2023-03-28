@@ -305,15 +305,24 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
         return ImageView(bufferBottom)
     }
 
+    /**
+     * Loads the layer using an isometric projection:
+     * buffer x = (x-y) * map.tilewidth / 2
+     * buffer y = (x+y) * map.tileheight / 2
+     *
+     * in the first case above, we use (maxY - y) instead of just y because we flip the y axis,
+     * where maxY = layer.height - 1
+     */
     fun loadViewIsometric(layerName: String): Node {
-        log.warning("Isometric maps are not fully implemented: https://github.com/AlmasB/FXGL/issues/1151")
         log.debug("Loading isometric view for layer $layerName")
 
         val layer = map.getLayerByName(layerName)
 
+        // from the formula above, we calculate maximal dimensions of the buffer
+        // +1 to handle rounding errors due to integer division
         val buffer = WritableImage(
-                layer.width * map.tilewidth,
-                layer.height * map.tileheight
+                (layer.width + layer.height) * (map.tilewidth / 2 + 1),
+                (layer.width + layer.height) * (map.tileheight / 2 + 1)
         )
 
         log.debug("Created buffer with size ${buffer.width}x${buffer.height}")
@@ -364,10 +373,24 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
                 srcy = 0
             }
 
-            buffer.pixelWriter.setPixels(x * map.tilewidth, y * map.tileheight,
-                    w, h, sourceImage.pixelReader,
-                    srcx,
-                    srcy)
+            val bufferX = (x + map.height-1 - y) * map.tilewidth / 2
+            val bufferY = (x + y) * map.tileheight / 2
+
+            // pixelWriter.setPixels replaces pixels, does not blend them
+            // in order to take into account transparency, we have to draw pixels 1 by 1
+            for (dy in 0 until h) {
+                for (dx in 0 until w) {
+                    val c = sourceImage.pixelReader.getColor(srcx + dx, srcy + dy)
+
+                    if (c != Color.TRANSPARENT) {
+                        buffer.pixelWriter.setColor(
+                                bufferX + dx,
+                                bufferY + dy,
+                                c
+                        )
+                    }
+                }
+            }
         }
 
         return ImageView(buffer)
