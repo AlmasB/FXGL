@@ -77,7 +77,7 @@ Make sure to set `<release>17</release>` for `maven-compiler-plugin`.
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>17.2</version>
+    <version>17.3</version>
 </dependency>
 ```
 
@@ -95,7 +95,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:17.2'
+    compile 'com.github.almasb:fxgl:17.3'
 }
 ```
 
