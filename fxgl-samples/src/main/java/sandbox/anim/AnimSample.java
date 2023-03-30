@@ -7,6 +7,7 @@
 package sandbox.anim;
 
 import com.almasb.fxgl.animation.Animation;
+import com.almasb.fxgl.animation.AnimationBuilder;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.util.LazyValue;
@@ -41,10 +42,12 @@ public class AnimSample extends GameApplication {
     }
 
     private Animation<?> anim;
+    private AnimationBuilder.ScaleAnimationBuilder builder;
 
     @Override
     protected void initInput() {
         onKeyDown(KeyCode.F, "f", () -> {
+
             anim.onUpdate(0.5);
 
             getGameWorld().getEntities().forEach(e -> {
@@ -54,6 +57,8 @@ public class AnimSample extends GameApplication {
         onKeyDown(KeyCode.G, "g", () -> anim.stop());
         onKeyDown(KeyCode.Q, "q", () -> anim.pause());
         onKeyDown(KeyCode.E, "e", () -> anim.resume());
+        onKeyDown(KeyCode.R, "r", () -> anim.start());
+        onKeyDown(KeyCode.P, "p", () -> builder.buildAndPlay());
     }
 
     private LazyValue<Image> image = new LazyValue<>(() -> {
@@ -99,7 +104,7 @@ public class AnimSample extends GameApplication {
 //                .onProgress(value -> System.out.println(value))
 //                .buildAndPlay();
 
-        animationBuilder()
+        builder= animationBuilder()
                 .onCycleFinished(() -> System.out.println("Cycle finished"))
                 .onFinished(() -> System.out.println("Anim finished"))
                 .duration(Duration.seconds(1))
@@ -107,8 +112,10 @@ public class AnimSample extends GameApplication {
                 .scale(e)
                 .origin(new Point2D(40, 40))
                 .from(new Point2D(1, 1))
-                .to(new Point2D(2, 2))
-                .buildAndPlay();
+                .to(new Point2D(2, 2));
+
+        anim = builder.build();
+        builder.buildAndPlay();;
     }
 
     public static class EFactory implements EntityFactory {
