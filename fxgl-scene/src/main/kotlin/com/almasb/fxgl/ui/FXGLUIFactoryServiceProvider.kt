@@ -117,6 +117,10 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
         return FXGLCheckBox()
     }
 
+    override fun newSlider(): Slider {
+        return FXGLSlider()
+    }
+
     override fun <T> newSpinner(items: ObservableList<T>): Spinner<T> {
         return FXGLSpinner(items).also {
             it.editor.fontProperty().bind(fontProperty(UI, 18.0))
