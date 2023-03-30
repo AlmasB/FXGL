@@ -149,7 +149,7 @@ open module app.name {
 
 协调员：
 
-- [Adam Bocco](https://github.com/adambocco)
+- [Chengen Zhao](https://github.com/chengenzhao)
 
 测试人员：
 
@@ -180,6 +180,6 @@ open module app.name {
 
 ### 与我们取得联系
 
-- 通过[GitHub 讨论](https://github.com/AlmasB/FXGL/discussions)或在[StackOverflow](https://stackoverflow.com/search?q=fxgl)上使用标签`javafx`和`fxgl`
+- 通过[GitHub 讨论](https://github.com/AlmasB/FXGL/discussions)
+- 或在[StackOverflow](https://stackoverflow.com/search?q=fxgl)上使用标签`javafx`和`fxgl`
 - 使用[#fxgl 发推文](https://twitter.com/search?src=typd&q=%23fxgl)
-- 与友好的 FXGL 社区[聊天](https://gitter.im/AlmasB/FXGL)

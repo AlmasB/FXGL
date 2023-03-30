@@ -187,6 +187,6 @@ Companies:
 
 ### Contact
 
-* Ask questions via [GitHub Discussions](https://github.com/AlmasB/FXGL/discussions) or on [StackOverflow](https://stackoverflow.com/search?q=fxgl) with tags `javafx` and `fxgl`
+* Ask questions via [GitHub Discussions](https://github.com/AlmasB/FXGL/discussions) 
+* Ask via [StackOverflow](https://stackoverflow.com/search?q=fxgl) with tags `javafx` and `fxgl`
 * Tweet with [#fxgl](https://twitter.com/search?src=typd&q=%23fxgl)
-* [Chat](https://gitter.im/AlmasB/FXGL) with the friendly FXGL community
