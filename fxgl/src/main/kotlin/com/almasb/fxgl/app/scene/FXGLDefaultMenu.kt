@@ -710,13 +710,12 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         val percentSound = getUIFactoryService().newText("")
         percentSound.textProperty().bind(sliderSound.valueProperty().multiply(100).asString("%.0f"))
 
-        val hboxMusic = HBox(15.0, textMusic, sliderMusic, percentMusic)
-        val hboxSound = HBox(15.0, textSound, sliderSound, percentSound)
-
-        hboxMusic.alignment = Pos.CENTER_RIGHT
-        hboxSound.alignment = Pos.CENTER_RIGHT
-
-        return MenuContent(hboxMusic, hboxSound)
+        val gridPane = GridPane()
+        gridPane.hgap = 15.0
+        gridPane.addRow(0, textMusic, sliderMusic, percentMusic)
+        gridPane.addRow(1, textSound, sliderSound, percentSound)
+        
+        return MenuContent(gridPane)
     }
 
     /**
