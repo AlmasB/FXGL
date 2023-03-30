@@ -56,6 +56,8 @@ class Camera3D {
 
     fun update(tpf: Double) {
         tpfMoveSpeed = tpf * moveSpeed
+
+        transform.onUpdate(tpf)
     }
 
     fun moveForward() {

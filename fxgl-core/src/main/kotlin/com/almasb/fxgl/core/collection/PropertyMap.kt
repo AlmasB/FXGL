@@ -67,7 +67,7 @@ class PropertyMap {
      */
     fun exists(propertyName: String) = properties.containsKey(propertyName)
 
-    fun <T> getValueOptional(propertyName: String): Optional<T> {
+    fun <T : Any> getValueOptional(propertyName: String): Optional<T> {
         try {
             return Optional.ofNullable(getValue(propertyName))
         } catch (e: Exception) {
@@ -135,6 +135,16 @@ class PropertyMap {
         getValueOptional<Any>(propertyName).ifPresent { value ->
             mapChangeListeners.forEach { it.onRemoved(propertyName, value) }
         }
+
+        listeners.filter { it.key.propertyName == propertyName }.forEach { (key, listener) ->
+            // clean up all non-removed JavaFX listeners for given [propertyName]
+            (get(key.propertyName) as ObservableValue<Any>).removeListener(listener as ChangeListener<Any>)
+        }
+
+        // remove all FXGL listeners for given [propertyName]
+        listeners.keys
+                .filter { it.propertyName == propertyName }
+                .forEach { listeners.remove(it) }
 
         properties.remove(propertyName)
     }
@@ -235,12 +245,30 @@ class PropertyMap {
         return keys().map { it to getValue<Any>(it) }.toMap()
     }
 
-    /***
-     * provides functionality of Map.forEach for PropertyMap
-     * @param action - lambda or method reference with signature (String, Any)
+    /**
+     * Provides functionality of Map.forEach for PropertyMap.
+     *
+     * @param action - lambda or method reference with signature (String, Any),
+     * where Any is the unwrapped (e.g. String, int, etc., not Observable) type
      */
     fun forEach(action: (String, Any) -> Unit) {
+        properties.forEach { (key, _) -> action(key, getValue(key)) }
+    }
+
+    /**
+     * Provides functionality of Map.forEach for PropertyMap.
+     *
+     * @param action - lambda or method reference with signature (String, Any),
+     * where Any is an Observable type
+     */
+    fun forEachObservable(action: (String, Any) -> Unit) {
         properties.forEach(action)
+    }
+
+    fun addAll(other: PropertyMap) {
+        other.forEach { key, value ->
+            setValue(key, value)
+        }
     }
 
     fun toStringMap(): Map<String, String> {

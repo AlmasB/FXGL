@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package sandbox.joints;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -14,8 +14,11 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyDef;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
+import com.almasb.fxgl.physics.box2d.dynamics.joints.DistanceJointDef;
+import com.almasb.fxgl.physics.box2d.dynamics.joints.GearJointDef;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.RopeJoint;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Point2D;
@@ -32,11 +35,10 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  * TODO: a unified physics simulation sample to extend from, which provides
  * ability to shoot a physics projectile and spawn various physics objects.
  *
- * Shows how to use PrismaticJoints with PhysicsComponent.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class PrismaticJointSample extends GameApplication {
+public class DistanceJointSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -75,6 +77,8 @@ public class PrismaticJointSample extends GameApplication {
 
             box.getViewComponent().addChild(texture("brick.png", 40, 40).superTexture(texture("brick.png", 40, 40), HorizontalDirection.RIGHT));
             box.setRotationOrigin(new Point2D(40, 20));
+            box.setScaleX(random(0.1, 1.5));
+            box.setScaleY(random(0.1, 1.5));
 
             getGameWorld().addEntity(box);
         });
@@ -102,9 +106,10 @@ public class PrismaticJointSample extends GameApplication {
         });
 
         onKeyDown(KeyCode.G, () -> {
-            getPhysicsWorld().removeJoint(joint);
+//            getPhysicsWorld().removeJoint(joint);
+//
+//            removeUINode(line);
 
-            removeUINode(line);
         });
     }
 
@@ -122,24 +127,68 @@ public class PrismaticJointSample extends GameApplication {
 
         // platform
 
-        var platform = entityBuilder()
-                .at(400, 400)
-                .viewWithBBox(new Rectangle(500, 20, Color.BROWN))
-                .with(new PhysicsComponent())
-                .buildAndAttach();
+//        var platform = entityBuilder()
+//                .at(400, 400)
+//                .viewWithBBox(new Rectangle(500, 20, Color.BROWN))
+//                .with(new PhysicsComponent())
+//                .buildAndAttach();
+//
+//        Entity ball = createPhysicsEntity();
+//        theball = ball;
+//
+//        ball.setPosition(400, 410);
+//        ball.getBoundingBoxComponent()
+//                .addHitBox(new HitBox("Test", BoundingShape.circle(20)));
+//        ball.getViewComponent().addChild(texture("ball.png", 40, 40));
+//        ball.setRotationOrigin(new Point2D(20, 20));
+//
+//        getGameWorld().addEntity(ball);
+//
+//        getPhysicsWorld().addPrismaticJoint(platform, ball, new Point2D(1, 0), 500 - 40);
 
-        Entity ball = createPhysicsEntity();
-        theball = ball;
+        Entity first = null;
 
-        ball.setPosition(400, 410);
-        ball.getBoundingBoxComponent()
-                .addHitBox(new HitBox("Test", BoundingShape.circle(20)));
-        ball.getViewComponent().addChild(texture("ball.png", 40, 40));
-        ball.setRotationOrigin(new Point2D(20, 20));
+        for (int i = 0; i < 15; i++) {
+            var b = createPhysicsEntity();
+            b.setPosition(
+                    270 + i * 50, 350
+            );
 
-        getGameWorld().addEntity(ball);
+            b.getBoundingBoxComponent()
+                    .addHitBox(new HitBox("Test", BoundingShape.circle(20)));
+            b.getViewComponent().addChild(texture("ball.png", 40, 40));
+            b.setRotationOrigin(new Point2D(20, 20));
 
-        getPhysicsWorld().addPrismaticJoint(platform, ball, new Point2D(1, 0), 500 - 40);
+
+
+            if (first == null) {
+                first = b;
+                first.getComponent(PhysicsComponent.class).setBodyType(BodyType.STATIC);
+
+                getGameWorld().addEntity(b);
+            } else {
+
+                if (i == 14) {
+                    b.getComponent(PhysicsComponent.class).setBodyType(BodyType.STATIC);
+                }
+
+                getGameWorld().addEntity(b);
+
+
+
+
+                var jointDef = new DistanceJointDef();
+                jointDef.length = 1f;
+                jointDef.dampingRatio = 0.5f;
+                //jointDef.initialize();
+
+                var distanceJoint = getPhysicsWorld().addJoint(first, b, jointDef);
+
+                first = b;
+
+
+            }
+        }
     }
 
     private void spawnBullet(double x, double y, double vx, double vy) {
@@ -154,7 +203,8 @@ public class PrismaticJointSample extends GameApplication {
         entityBuilder()
                 .at(x, y)
                 .bbox(new HitBox(BoundingShape.circle(450 / 15.0 / 2.0)))
-                .view(texture("ball.png", 450 / 15.0, 449 / 15.0))
+                .view(texture("ball.png", 450 / 15.0, 449 / 15.0).multiplyColor(Color.RED))
+                //.viewWithBBox(new Rectangle(random(30, 60), random(30, 60)))
                 .with(physics)
                 .with(new ExpireCleanComponent(Duration.seconds(5)).animateOpacity())
                 .buildAndAttach();
@@ -163,6 +213,13 @@ public class PrismaticJointSample extends GameApplication {
     private Entity createPhysicsEntity() {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
+
+        var bd = new BodyDef();
+        bd.setFixedRotation(true);
+        bd.setType(BodyType.DYNAMIC);
+
+        //physics.setBodyDef(bd);
+
         physics.setFixtureDef(new FixtureDef().density(0.1f).restitution(0.3f));
 
         return entityBuilder()

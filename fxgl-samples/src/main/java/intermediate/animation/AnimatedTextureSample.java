@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox.anim;
+package intermediate.animation;
 
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
@@ -12,6 +12,9 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
 import javafx.animation.Interpolator;
+import javafx.scene.control.Button;
+import javafx.scene.control.Spinner;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
@@ -45,6 +48,34 @@ public class AnimatedTextureSample extends GameApplication {
         spawnRobot(160, 360 * 2, true, false);
         spawnRobot(320, 360 * 2, false, true);
         spawnRobot(480, 360 * 2, true, true);
+    }
+
+    @Override
+    protected void initUI() {
+        var frameSpinner = new Spinner<Integer>(0, 23, 0);
+        frameSpinner.setPrefWidth(100);
+
+        var btn = new Button("Play from frame");
+        btn.setOnAction(e -> {
+            spawnRobotForFrame(900, 700, frameSpinner.getValue());
+        });
+
+        var vbox = new VBox(10, frameSpinner, btn);
+
+        addUINode(vbox, 1230, 820);
+    }
+
+    private void spawnRobotForFrame(double x, double y, int startFrame) {
+        var animChannel = new AnimationChannel(image("robot_roll.png"), 7, 275, 275, Duration.seconds(2.6), 0, 23);
+        var animTexture = new AnimatedTexture(animChannel);
+        animTexture.playFrom(startFrame);
+
+        var e = entityBuilder()
+                .at(x, y)
+                .view(animTexture)
+                .buildAndAttach();
+
+        animTexture.setOnCycleFinished(() -> e.removeFromWorld());
     }
 
     private void spawnRobot(double x, double y, Interpolator interpolator, String name) {
@@ -84,8 +115,6 @@ public class AnimatedTextureSample extends GameApplication {
                 animTexture.play();
             }
         }
-
-
 
         entityBuilder()
                 .at(x, y)

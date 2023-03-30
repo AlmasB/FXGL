@@ -26,10 +26,8 @@ public final class Mat22 implements Serializable {
      * Set as the zero matrix.
      */
     public void setZero() {
-        ex.x = 0.0f;
-        ey.x = 0.0f;
-        ex.y = 0.0f;
-        ey.y = 0.0f;
+        ex.setZero();
+        ey.setZero();
     }
 
     public void invertToOut(Mat22 out) {

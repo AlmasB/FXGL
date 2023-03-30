@@ -55,6 +55,16 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
     private val propRotationY = SimpleDoubleProperty(0.0)
     private val propRotationZ = SimpleDoubleProperty(angle)
 
+    init {
+        propRotationX.addListener { _, _, _ ->
+            updateDirection()
+        }
+
+        propRotationY.addListener { _, _, _ ->
+            updateDirection()
+        }
+    }
+
     var x: Double
         get() = propX.value
         set(value) { propX.value = value }
@@ -315,32 +325,36 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
         private set
 
     fun lookUpBy(angle: Double) {
-        propRotationX.value += angle
-
-        updateDirection()
+        rotationX += angle
     }
 
     fun lookDownBy(angle: Double) {
-        propRotationX.value -= angle
-
-        updateDirection()
+        rotationX -= angle
     }
 
     fun lookLeftBy(angle: Double) {
-        propRotationY.value -= angle
-
-        updateDirection()
+        rotationY -= angle
     }
 
     fun lookRightBy(angle: Double) {
-        propRotationY.value += angle
-
-        updateDirection()
+        rotationY += angle
     }
 
+    /**
+     * Makes this transform look (incl. rotations) at a given [point].
+     * Note that direction3D is updated to approximated and normalised value by calling [setDirectionVector3D].
+     */
     fun lookAt(point: Point3D) {
         val directionToLook = point.subtract(x, y, z)
 
+        setDirectionVector3D(directionToLook)
+    }
+
+    /**
+     * Makes this transform look (incl. rotations) in a given [directionToLook].
+     * Note that direction3D is updated to approximated and normalised [directionToLook].
+     */
+    fun setDirectionVector3D(directionToLook: Point3D) {
         // ignore the Y axis and use XZ as 2D plane
         rotationY = 90 - Math.toDegrees(Math.atan2(directionToLook.z, directionToLook.x))
 
@@ -355,8 +369,22 @@ class TransformComponent(x: Double, y: Double, angle: Double, scaleX: Double, sc
             // looking up, range 0..90
             rotationX = theta
         }
+    }
 
-        updateDirection()
+    private var boundLookAt: TransformComponent? = null
+
+    fun bindToLookAt3D(other: TransformComponent) {
+        boundLookAt = other
+    }
+
+    fun unbindToLookAt3D() {
+        boundLookAt = null
+    }
+
+    override fun onUpdate(tpf: Double) {
+        boundLookAt?.let {
+            lookAt(it.position3D)
+        }
     }
 
     /**

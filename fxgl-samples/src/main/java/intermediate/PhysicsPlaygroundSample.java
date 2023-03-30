@@ -8,12 +8,16 @@ package intermediate;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
@@ -28,6 +32,8 @@ import javafx.scene.text.Text;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
+ * Shows how set up physics properties of entities controlled with PhysicsComponent.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class PhysicsPlaygroundSample extends GameApplication {
@@ -53,6 +59,55 @@ public class PhysicsPlaygroundSample extends GameApplication {
         onBtnDown(MouseButton.SECONDARY, () -> {
             spawnBlock(getInput().getMouseXWorld(), getInput().getMouseYWorld());
         });
+
+        getInput().addAction(new UserAction("Drag") {
+            private Entity selected = null;
+            private double offsetX = 0;
+            private double offsetY = 0;
+
+            @Override
+            protected void onActionBegin() {
+
+                var selectionSize = 4;
+
+                getGameWorld().getEntitiesInRange(
+                            new Rectangle2D(
+                                    getInput().getMouseXWorld() - selectionSize / 2.0,
+                                    getInput().getMouseYWorld() - selectionSize / 2.0,
+                                    selectionSize,
+                                    selectionSize
+                            )
+                        )
+                        .stream()
+                        .filter(e -> e.isType(ShapeType.BOX) || e.isType(ShapeType.CIRCLE) || e.isType(ShapeType.TRIANGLE))
+                        .findFirst()
+                        .ifPresent(e -> {
+                            selected = e;
+                            offsetX = getInput().getMouseXWorld() - selected.getX();
+                            offsetY = getInput().getMouseYWorld() - selected.getY();
+                        });
+            }
+
+            @Override
+            protected void onAction() {
+                if (selected != null) {
+                    var p1 = getInput().getMousePositionWorld().subtract(offsetX, offsetY);
+                    var p0 = selected.getPosition();
+
+                    var scale = 2.5;
+
+                    selected.getComponent(PhysicsComponent.class).setLinearVelocity(
+                            (p1.getX() - p0.getX()) * scale,
+                            (p1.getY() - p0.getY()) * scale
+                    );
+                }
+            }
+
+            @Override
+            protected void onActionEnd() {
+                selected = null;
+            }
+        }, MouseButton.PRIMARY);
     }
 
     @Override
@@ -85,6 +140,13 @@ public class PhysicsPlaygroundSample extends GameApplication {
 
         addUINode(new Rectangle(1280 - 1100, getAppHeight() - 250, Color.LIGHTGREY), 1100, 0);
         addUINode(box, 1100, 0);
+
+        // make a static physics body around UI
+        entityBuilder()
+                .at(1100, 0)
+                .bbox(new HitBox(BoundingShape.box(1280 - 1100, getAppHeight() - 250)))
+                .with(new PhysicsComponent())
+                .buildAndAttach();
     }
 
     private void spawnBlock(double x, double y) {
@@ -130,6 +192,7 @@ public class PhysicsPlaygroundSample extends GameApplication {
         }
 
         entityBuilder()
+                .type(cb.getValue())
                 .at(x, y)
                 .bbox(shape)
                 .view(view)
@@ -144,7 +207,11 @@ public class PhysicsPlaygroundSample extends GameApplication {
         }
 
         float getFloat() {
-            return Float.parseFloat(getText());
+            try {
+                return Float.parseFloat(getText());
+            } catch (Exception e) {
+                return 0.2f;
+            }
         }
     }
 

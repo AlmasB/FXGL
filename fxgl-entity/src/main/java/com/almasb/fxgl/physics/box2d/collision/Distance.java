@@ -6,7 +6,6 @@
 package com.almasb.fxgl.physics.box2d.collision;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.collision.shapes.*;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
@@ -430,104 +429,6 @@ public class Distance {
         }
     }
 
-    /**
-     * A distance proxy is used by the GJK algorithm. It encapsulates any shape. jbox2dTODO: see if we can
-     * just do assignments with m_vertices, instead of copying stuff over
-     *
-     * @author daniel
-     */
-    public static class DistanceProxy {
-        public final Vec2[] m_vertices = new Vec2[JBoxSettings.maxPolygonVertices];
-        public int m_count = 0;
-        public float m_radius = 0f;
-        public final Vec2[] m_buffer = new Vec2[2];
-
-        public DistanceProxy() {
-            for (int i = 0; i < m_vertices.length; i++) {
-                m_vertices[i] = new Vec2();
-            }
-        }
-
-        /**
-         * Initialize the proxy using the given shape. The shape must remain in scope while the proxy is
-         * in use.
-         */
-        public final void set(final Shape shape, int index) {
-            switch (shape.getType()) {
-                case CIRCLE:
-                    final CircleShape circle = (CircleShape) shape;
-                    m_vertices[0].set(circle.center);
-                    m_count = 1;
-                    m_radius = circle.getRadius();
-
-                    break;
-                case POLYGON:
-                    final PolygonShape poly = (PolygonShape) shape;
-                    m_count = poly.getVertexCount();
-                    m_radius = poly.getRadius();
-                    for (int i = 0; i < m_count; i++) {
-                        m_vertices[i].set(poly.m_vertices[i]);
-                    }
-                    break;
-                case CHAIN:
-                    final ChainShape chain = (ChainShape) shape;
-                    assert 0 <= index && index < chain.getCount();
-
-                    m_buffer[0] = chain.getVertex(index);
-                    if (index + 1 < chain.getCount()) {
-                        m_buffer[1] = chain.getVertex(index + 1);
-                    } else {
-                        m_buffer[1] = chain.getVertex(0);
-                    }
-
-                    m_vertices[0].set(m_buffer[0]);
-                    m_vertices[1].set(m_buffer[1]);
-                    m_count = 2;
-                    m_radius = chain.getRadius();
-                    break;
-                case EDGE:
-                    EdgeShape edge = (EdgeShape) shape;
-                    m_vertices[0].set(edge.m_vertex1);
-                    m_vertices[1].set(edge.m_vertex2);
-                    m_count = 2;
-                    m_radius = edge.getRadius();
-                    break;
-                default:
-                    assert false;
-            }
-        }
-
-        /**
-         * Get the supporting vertex index in the given direction.
-         *
-         * @param d
-         * @return
-         */
-        public final int getSupport(final Vec2 d) {
-            int bestIndex = 0;
-            float bestValue = Vec2.dot(m_vertices[0], d);
-            for (int i = 1; i < m_count; i++) {
-                float value = Vec2.dot(m_vertices[i], d);
-                if (value > bestValue) {
-                    bestIndex = i;
-                    bestValue = value;
-                }
-            }
-
-            return bestIndex;
-        }
-
-        /**
-         * Used by Distance.
-         *
-         * @return a vertex by index
-         */
-        public final Vec2 getVertex(int index) {
-            assert 0 <= index && index < m_count;
-            return m_vertices[index];
-        }
-    }
-
     private Simplex simplex = new Simplex();
     private int[] saveA = new int[3];
     private int[] saveB = new int[3];
@@ -541,9 +442,7 @@ public class Distance {
      * PolygonShape. The simplex cache is input/output. On the first call set SimplexCache.count to
      * zero.
      */
-    @SuppressWarnings("PMD.EmptyIfStmt")
-    public final void distance(final DistanceOutput output, final SimplexCache cache,
-                               final DistanceInput input) {
+    public final void distance(DistanceOutput output, SimplexCache cache, DistanceInput input) {
 
         final DistanceProxy proxyA = input.proxyA;
         final DistanceProxy proxyB = input.proxyB;
@@ -563,8 +462,6 @@ public class Distance {
         int saveCount = 0;
 
         simplex.getClosestPoint(closestPoint);
-        float distanceSqr1 = closestPoint.lengthSquared();
-        float distanceSqr2 = distanceSqr1;
 
         // Main iteration loop
         int iter = 0;
@@ -597,13 +494,6 @@ public class Distance {
 
             // Compute closest point.
             simplex.getClosestPoint(closestPoint);
-            distanceSqr2 = closestPoint.lengthSquared();
-
-            // ensure progress
-            if (distanceSqr2 >= distanceSqr1) {
-                // break;
-            }
-            distanceSqr1 = distanceSqr2;
 
             // get search direction;
             simplex.getSearchDirection(d);
@@ -632,10 +522,11 @@ public class Distance {
             Rotation.mulTransUnsafe(transformA.q, d.negateLocal(), temp);
             vertex.indexA = proxyA.getSupport(temp);
             Transform.mulToOutUnsafe(transformA, proxyA.getVertex(vertex.indexA), vertex.wA);
-            // Vec2 wBLocal;
+
             Rotation.mulTransUnsafe(transformB.q, d.negateLocal(), temp);
             vertex.indexB = proxyB.getSupport(temp);
             Transform.mulToOutUnsafe(transformB, proxyB.getVertex(vertex.indexB), vertex.wB);
+
             vertex.w.set(vertex.wB).subLocal(vertex.wA);
 
             // Iteration count is equated to the number of support point calls.
@@ -669,8 +560,8 @@ public class Distance {
 
         // Apply radii if requested.
         if (input.useRadii) {
-            float rA = proxyA.m_radius;
-            float rB = proxyB.m_radius;
+            float rA = proxyA.getRadius();
+            float rB = proxyB.getRadius();
 
             if (output.distance > rA + rB && output.distance > JBoxSettings.EPSILON) {
                 // Shapes are still no overlapped.

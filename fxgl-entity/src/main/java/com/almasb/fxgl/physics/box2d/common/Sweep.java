@@ -19,20 +19,39 @@ public final class Sweep implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** Local center of mass position */
+    /**
+     * Local center of mass position
+     */
     public final Vec2 localCenter = new Vec2();
 
-    /** Center world positions */
+    /**
+     * Center world position at alpha0 (sweep start).
+     */
     public final Vec2 c0 = new Vec2();
+
+    /**
+     * Center world position at sweep end.
+     */
     public final Vec2 c = new Vec2();
 
-    /** World angles */
+    /**
+     * World angle at alpha0 (sweep start).
+     */
     public float a0;
+
+    /**
+     * World angle at sweep end.
+     */
     public float a;
 
-    /** Fraction of the current time step in the range [0,1] c0 and a0 are the positions at alpha0. */
+    /**
+     * Fraction of the current time step in the range [0,1] c0 and a0 are the positions at alpha0.
+     */
     public float alpha0;
 
+    /**
+     * Reduce the angles [a0] and [a] to the normalized range [-2PI,2PI].
+     */
     public void normalize() {
         float d = FXGLMath.PI2_F * FXGLMath.floor(a0 / FXGLMath.PI2_F);
         a0 -= d;
@@ -52,25 +71,25 @@ public final class Sweep implements Serializable {
     /**
      * Get the interpolated transform at a specific time.
      *
-     * @param xf the result is placed here - must not be null
+     * @param xf the result is placed here
      * @param beta the normalized time in [0,1]
      */
-    public void getTransform(final Transform xf, final float beta) {
-        assert xf != null;
-        // xf->p = (1.0f - beta) * c0 + beta * c;
-        // float32 angle = (1.0f - beta) * a0 + beta * a;
-        // xf->q.Set(angle);
-        xf.p.x = (1.0f - beta) * c0.x + beta * c.x;
-        xf.p.y = (1.0f - beta) * c0.y + beta * c.y;
+    public void getTransform(Transform xf, float beta) {
+        xf.p.set(
+                lerp(c0.x, c.x, beta),
+                lerp(c0.y, c.y, beta)
+        );
 
-        float angle = (1.0f - beta) * a0 + beta * a;
-        xf.q.set(angle);
+        xf.q.set(
+                lerp(a0, a, beta)
+        );
 
         // Shift to origin
-        // xf->p -= b2Mul(xf->q, localCenter);
-        final Rotation q = xf.q;
-        xf.p.x -= q.c * localCenter.x - q.s * localCenter.y;
-        xf.p.y -= q.s * localCenter.x + q.c * localCenter.y;
+        xf.shift(localCenter);
+    }
+
+    private float lerp(float a, float b, float t) {
+        return (1.0f - t) * a + t * b;
     }
 
     /**

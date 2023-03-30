@@ -185,7 +185,8 @@ class AssetLoaderServiceTest {
 
         assertThat(lines.size, `is`(0))
 
-        assertTrue(assetLoader.loadText("test1.txt") === assetLoader.loadText("test1.txt"))
+        // ensure a new copy of the list is loaded so that original cannot be modified
+        assertTrue(assetLoader.loadText("test1.txt") !== assetLoader.loadText("test1.txt"))
     }
 
     @Test
@@ -271,19 +272,6 @@ class AssetLoaderServiceTest {
 
         assertThat(map, `is`(notNullValue()))
         assertThat(map.getString("testKey"), `is`("testValue"))
-    }
-
-    @Test
-    fun loadCursorImage() {
-        var cursorImage = assetLoader.loadCursorImage("test_cursor.png")
-
-        assertThat(cursorImage, `is`(notNullValue()))
-        assertThat(cursorImage.width, `is`(64.0))
-        assertThat(cursorImage.height, `is`(64.0))
-
-        cursorImage = assetLoader.loadCursorImage("bla-bla")
-
-        assertThat(cursorImage, `is`(notNullValue()))
     }
 
     @Test

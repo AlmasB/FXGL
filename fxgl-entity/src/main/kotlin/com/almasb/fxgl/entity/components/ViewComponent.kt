@@ -174,6 +174,13 @@ class ViewComponent : Component() {
     }
 
     /**
+     * @return a child node at given [index] which is then cast into [type]
+     */
+    fun <T : Node> getChild(index: Int, type: Class<T>): T {
+        return type.cast(children[index])
+    }
+
+    /**
      * Remove a child from this view.
      */
     fun removeChild(node: Node) {

@@ -99,14 +99,14 @@ class ObjModelLoader : Model3DLoader {
                 // f v1
                 1 -> {
                     data.currentGroup.currentSubGroup.faces += faceVertex[0].toInt() - 1
-                    data.currentGroup.currentSubGroup.faces += 0
+                    // add vt1 as 0
                     data.currentGroup.currentSubGroup.faces += 0
                 }
 
                 // f v1/vt1
                 2 -> {
                     data.currentGroup.currentSubGroup.faces += faceVertex[0].toInt() - 1
-                    data.currentGroup.currentSubGroup.faces += 0
+                    // add vt1
                     data.currentGroup.currentSubGroup.faces += faceVertex[1].toInt() - 1
                 }
 
@@ -115,7 +115,9 @@ class ObjModelLoader : Model3DLoader {
                 3 -> {
                     data.currentGroup.currentSubGroup.faces += faceVertex[0].toInt() - 1
                     data.currentGroup.currentSubGroup.faces += faceVertex[2].toInt() - 1
+                    // add vt1 if present, else 0
                     data.currentGroup.currentSubGroup.faces += (faceVertex[1].toIntOrNull() ?: 1) - 1
+                    data.currentGroup.currentSubGroup.vertexFormat = VertexFormat.POINT_NORMAL_TEXCOORD
                 }
             }
         }
@@ -237,7 +239,7 @@ class ObjModelLoader : Model3DLoader {
                     // TODO: ?
                     if (!it.faces.isEmpty()) {
 
-                        val mesh = TriangleMesh(VertexFormat.POINT_NORMAL_TEXCOORD)
+                        val mesh = TriangleMesh(it.vertexFormat)
 
                         mesh.points.addAll(*data.vertices.map { it * 0.05f }.toFloatArray())
 
@@ -248,11 +250,13 @@ class ObjModelLoader : Model3DLoader {
                             mesh.texCoords.addAll(*data.vertexTextures.toFloatArray())
                         }
 
-                        // if there are no vertex normals, just add 3 values
-                        if (data.vertexNormals.isEmpty()) {
-                            mesh.normals.addAll(*FloatArray(3) { _ -> 0.0f })
-                        } else {
-                            mesh.normals.addAll(*data.vertexNormals.toFloatArray())
+                        if (it.vertexFormat === VertexFormat.POINT_NORMAL_TEXCOORD) {
+                            // if there are no vertex normals, just add 3 values
+                            if (data.vertexNormals.isEmpty()) {
+                                mesh.normals.addAll(*FloatArray(3) { _ -> 0.0f })
+                            } else {
+                                mesh.normals.addAll(*data.vertexNormals.toFloatArray())
+                            }
                         }
 
                         mesh.faces.addAll(*it.faces.toIntArray())

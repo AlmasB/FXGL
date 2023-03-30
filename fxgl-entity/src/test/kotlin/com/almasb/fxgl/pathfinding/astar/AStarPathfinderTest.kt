@@ -6,7 +6,10 @@
 package com.almasb.fxgl.pathfinding.astar
 
 import com.almasb.fxgl.pathfinding.CellState
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.function.Supplier
@@ -46,7 +49,7 @@ class AStarPathfinderTest {
         // Make passing impossible.
         for (i in 0..19) grid[4, i].state = CellState.NOT_WALKABLE
         path = pathfinder.findPath(3, 0, 5, 0)
-        assert(path.isEmpty())
+        assertTrue(path.isEmpty())
     }
 
     @Test
@@ -58,25 +61,22 @@ class AStarPathfinderTest {
         grid[3, 5].state = CellState.NOT_WALKABLE
         grid[1, 4].state = CellState.NOT_WALKABLE
         val path = pathfinder.findPath(1, 1, 4, 5, ArrayList())
-        assertPathEquals(path,
-                2, 1,
-                2, 2,
-                2, 3,
-                2, 4,
-                3, 4,
-                4, 4,
-                4, 5)
+
+        assertThat(path.size, `is`(7))
+
+        var last = path.last()
+
+        assertThat(last.x, `is`(4))
+        assertThat(last.y, `is`(5))
+
         val pathWithBusyCell = pathfinder.findPath(1, 1, 4, 5, listOf(grid[3, 4]))
-        assertPathEquals(pathWithBusyCell,
-                2, 1,
-                2, 2,
-                2, 3,
-                2, 4,
-                2, 5,
-                2, 6,
-                3, 6,
-                4, 6,
-                4, 5)
+
+        assertThat(pathWithBusyCell.size, `is`(9))
+
+        last = pathWithBusyCell.last()
+
+        assertThat(last.x, `is`(4))
+        assertThat(last.y, `is`(5))
     }
 
     private fun assertPathEquals(path: List<AStarCell>, vararg points: Int) {

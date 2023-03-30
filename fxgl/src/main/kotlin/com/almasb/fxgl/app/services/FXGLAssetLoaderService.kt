@@ -238,22 +238,6 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         return load(MUSIC, url)
     }
 
-    // TODO: remove in future version
-    /**
-     * Loads cursor image with given name from /assets/ui/cursors/.
-     * Either returns a valid image or throws exception in case of errors.
-     *
-     * @param name image name without the /assets/ui/cursors/, e.g. "attack_cursor.png"
-     * @return cursor image
-     * @throws IllegalArgumentException if asset not found or loading error
-     */
-    @Deprecated("Place cursor under textures/ and use loadImage() instead")
-    fun loadCursorImage(name: String): Image {
-        val url = getURL(CURSORS_DIR + name)
-
-        return load(IMAGE, url)
-    }
-
     /**
      * Loads resource bundle with given [name] from "/assets/properties/".
      *
@@ -533,7 +517,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
                 cachedAssets[cacheKey] = loaded as Any
             }
 
-            loaded
+            data.cast(loaded as Any)
         } catch (e: Exception) {
             log.warning("Failed to load ${loadParams.url}", e)
             data.getDummy()
@@ -696,6 +680,12 @@ private class TextAssetLoader : AssetLoader<List<*>>(
         List::class.java,
         TEXT_DIR
 ) {
+    override fun cast(obj: Any): List<String> {
+        val list = obj as List<String>
+
+        return list.toList()
+    }
+
     override fun load(url: URL): List<String> = url.openStream().bufferedReader().readLines()
 
     override fun getDummy(): List<String> = emptyList()

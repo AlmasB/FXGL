@@ -14,6 +14,7 @@ import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
+import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -66,6 +67,21 @@ class ViewComponentTest {
 
         assertThat(rect.parent.transforms.size, `is`(4))
         assertThat(rect2.parent.transforms.size, `is`(0))
+    }
+
+    @Test
+    fun `Get child with cast`() {
+        val rect = Rectangle()
+        val circle = Circle()
+
+        view.addChild(rect)
+        view.addChild(circle)
+
+        val rect2: Rectangle = view.getChild(0, Rectangle::class.java)
+        val circle2: Circle = view.getChild(1, Circle::class.java)
+
+        assertThat(rect2, `is`(rect))
+        assertThat(circle2, `is`(circle))
     }
 
     @Test

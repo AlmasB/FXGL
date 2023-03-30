@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package sandbox.joints;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -16,7 +16,7 @@ import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
-import com.almasb.fxgl.physics.box2d.dynamics.joints.RevoluteJoint;
+import com.almasb.fxgl.physics.box2d.dynamics.joints.RopeJoint;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
@@ -32,11 +32,11 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  * TODO: a unified physics simulation sample to extend from, which provides
  * ability to shoot a physics projectile and spawn various physics objects.
  *
- * Shows how to use RevoluteJoints with PhysicsComponent.
+ * Shows how to use PrismaticJoints with PhysicsComponent.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class RevoluteJointSample extends GameApplication {
+public class PrismaticJointSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -88,10 +88,30 @@ public class RevoluteJointSample extends GameApplication {
             ball.setRotationOrigin(new Point2D(20, 20));
 
             getGameWorld().addEntity(ball);
+
+            joint = getPhysicsWorld().addRopeJoint(ball, theball);
+
+            line = new Line();
+
+            addUINode(line);
+
+            line.startXProperty().bind(ball.xProperty().add(20));
+            line.startYProperty().bind(ball.yProperty().add(20));
+            line.endXProperty().bind(theball.xProperty().add(20));
+            line.endYProperty().bind(theball.yProperty().add(20));
+        });
+
+        onKeyDown(KeyCode.G, () -> {
+            getPhysicsWorld().removeJoint(joint);
+
+            removeUINode(line);
         });
     }
 
-    private RevoluteJoint joint;
+    private Line line;
+
+    private RopeJoint joint;
+    private Entity theball;
 
     @Override
     protected void initGame() {
@@ -102,52 +122,24 @@ public class RevoluteJointSample extends GameApplication {
 
         // platform
 
-        entityBuilder()
+        var platform = entityBuilder()
                 .at(400, 400)
                 .viewWithBBox(new Rectangle(500, 20, Color.BROWN))
                 .with(new PhysicsComponent())
                 .buildAndAttach();
 
-        PhysicsComponent physics = new PhysicsComponent();
-        physics.setFixtureDef(new FixtureDef().density(1.1f));
-        physics.setBodyType(BodyType.DYNAMIC);
+        Entity ball = createPhysicsEntity();
+        theball = ball;
 
-        Entity block = entityBuilder()
-                .at(600, 100)
-                .viewWithBBox(new Rectangle(80, 50))
-                .with(physics)
-                .buildAndAttach();
+        ball.setPosition(400, 410);
+        ball.getBoundingBoxComponent()
+                .addHitBox(new HitBox("Test", BoundingShape.circle(20)));
+        ball.getViewComponent().addChild(texture("ball.png", 40, 40));
+        ball.setRotationOrigin(new Point2D(20, 20));
 
-        PhysicsComponent physics2 = new PhysicsComponent();
-        physics2.setBodyType(BodyType.DYNAMIC);
+        getGameWorld().addEntity(ball);
 
-        FixtureDef fd = new FixtureDef();
-        fd.setDensity(1.0f);
-        physics2.setFixtureDef(fd);
-
-        Entity ball1 = entityBuilder()
-                .at(600, 360)
-                .bbox(new HitBox("main", BoundingShape.circle(15)))
-                .view(texture("ball.png", 30, 30))
-                .with(physics2)
-                .buildAndAttach();
-
-        PhysicsComponent physics3 = new PhysicsComponent();
-        physics3.setBodyType(BodyType.DYNAMIC);
-        physics3.setFixtureDef(fd);
-
-        Entity ball2 = entityBuilder()
-                .at(700, 360)
-                .bbox(new HitBox("main", BoundingShape.circle(15)))
-                .view(texture("ball.png", 30, 30))
-                .with(physics3)
-                .buildAndAttach();
-
-        physics2.getBody().setAngularDamping(1f);
-        physics3.getBody().setAngularDamping(1f);
-
-        getPhysicsWorld().addRevoluteJoint(block, ball1, new Point2D(80, 50), new Point2D(15, 15));
-        getPhysicsWorld().addRevoluteJoint(block, ball2, new Point2D(0, 50), new Point2D(15, 15));
+        getPhysicsWorld().addPrismaticJoint(platform, ball, new Point2D(1, 0), 500 - 40);
     }
 
     private void spawnBullet(double x, double y, double vx, double vy) {

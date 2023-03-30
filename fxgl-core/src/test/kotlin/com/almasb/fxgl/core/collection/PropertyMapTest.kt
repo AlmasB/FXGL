@@ -11,9 +11,7 @@ import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.StringProperty
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -241,6 +239,13 @@ class PropertyMapTest {
     }
 
     @Test
+    fun `Removing a property also removes its listeners`() {
+        map.setValue("test", 0)
+        map.remove("test")
+        assertDoesNotThrow { map.clear() }
+    }
+
+    @Test
     fun `Copy returns a shallow copy`() {
         map.setValue("testInt", 3)
         map.setValue("testDouble", 5.0)
@@ -341,7 +346,7 @@ class PropertyMapTest {
         map.setValue("testElement1", 2)
         map.setValue("testElement2", 2)
 
-        map.forEach { _, value ->
+        map.forEachObservable { _, value ->
             run {
                 timesCounter++
                 sumCounter += (value as SimpleIntegerProperty).value
@@ -350,6 +355,37 @@ class PropertyMapTest {
 
         assertEquals(2, timesCounter)
         assertEquals(4, sumCounter)
+
+        map.forEach { _, value ->
+            run {
+                timesCounter++
+                sumCounter += value as Int
+            }
+        }
+
+        assertEquals(4, timesCounter)
+        assertEquals(8, sumCounter)
+    }
+
+    @Test
+    fun `Add all`() {
+        val map2 = PropertyMap()
+
+        assertThat(map2.keys().size, `is`(0))
+
+        map.setValue("key1", "aaa")
+        map.setValue("key2", -55)
+        map.setValue("key3", 900.0)
+        map.setValue("key4", MyClass(2))
+        map.setValue("key5", true)
+
+        map2.addAll(map)
+
+        assertThat(map2.getString("key1"), `is`("aaa"))
+        assertThat(map2.getInt("key2"), `is`(-55))
+        assertThat(map2.getDouble("key3"), `is`(900.0))
+        assertThat(map2.getObject<MyClass>("key4").i, `is`(2))
+        assertThat(map2.getBoolean("key5"), `is`(true))
     }
 
     private class MyClass(val i: Int)

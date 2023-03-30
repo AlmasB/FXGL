@@ -189,6 +189,15 @@ class TMXLevelLoaderTest {
         assertThat(view.image.pixelReader.getColor(31,16), `is`((Color.TRANSPARENT)))
     }
 
+    @Test
+    fun `Load isometric tmx level`() {
+        val world = GameWorld()
+
+        val level = TMXLevelLoader().load(javaClass.getResource("iso/simple.tmx"), world)
+
+        assertThat(level.entities.size, `is`(2))
+    }
+
     @ParameterizedTest
     @CsvSource("sewers_v1_1_2.tmx", "sewers_v1_2_3.tmx", "sewers_v1_9_0.tmx")
     fun parse(mapName: String) {

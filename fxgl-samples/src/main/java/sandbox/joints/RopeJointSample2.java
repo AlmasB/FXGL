@@ -4,10 +4,11 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package sandbox.joints;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
@@ -18,6 +19,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Point2D;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -34,7 +36,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class RopeJointSample extends GameApplication {
+public class RopeJointSample2 extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -91,7 +93,7 @@ public class RopeJointSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        getGameScene().setBackgroundColor(Color.LIGHTGRAY);
+        getGameScene().setBackgroundColor(Color.BLACK);
 
         entityBuilder()
                 .buildScreenBoundsAndAttach(50);
@@ -110,31 +112,43 @@ public class RopeJointSample extends GameApplication {
 
         Entity last = null;
 
-        for (int i = 0; i < 10; i++) {
-            PhysicsComponent physics2 = new PhysicsComponent();
+        var color = FXGLMath.randomColorHSB(0.8, 0.9);
+        var c1 = color.deriveColor(0, 1, random(0.65, 0.95), random(0.65, 0.95)).brighter().brighter();
 
-            if (last != null) {
-                physics2.setBodyType(BodyType.DYNAMIC);
+        for (int x = 0; x < 4; x++) {
+            last = null;
+
+            for (int i = 0; i < 10; i++) {
+                PhysicsComponent physics2 = new PhysicsComponent();
+
+                if (last != null) {
+                    physics2.setBodyType(BodyType.DYNAMIC);
+                }
+
+                FixtureDef fd = new FixtureDef();
+                fd.setDensity(1.0f);
+                physics2.setFixtureDef(fd);
+
+                var texture = texture("particles/circle_05.png", 128, 128);
+                texture = texture.multiplyColor(c1);
+                texture.setBlendMode(BlendMode.ADD);
+
+                Entity ball = entityBuilder()
+                        .at(400 + i * 30 + x * 30, 160)
+                        .bbox(new HitBox("main", BoundingShape.circle(15)))
+                        .view(texture)
+                        //.view(texture("ball.png", 30, 30))
+                        .with(physics2)
+                        .buildAndAttach();
+
+                physics2.getBody().setAngularDamping(1f);
+
+                if (last != null) {
+                    var joint = getPhysicsWorld().addRopeJoint(last, ball);
+                }
+
+                last = ball;
             }
-
-            FixtureDef fd = new FixtureDef();
-            fd.setDensity(1.0f);
-            physics2.setFixtureDef(fd);
-
-            Entity ball = entityBuilder()
-                    .at(400 + i * 30, 160)
-                    .bbox(new HitBox("main", BoundingShape.circle(15)))
-                    .view(texture("ball.png", 30, 30))
-                    .with(physics2)
-                    .buildAndAttach();
-
-            physics2.getBody().setAngularDamping(1f);
-
-            if (last != null) {
-                var joint = getPhysicsWorld().addRopeJoint(last, ball);
-            }
-
-            last = ball;
         }
     }
 

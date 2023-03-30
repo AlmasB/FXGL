@@ -71,7 +71,6 @@ public class Collision3DSample extends GameApplication {
                 .collidable()
                 .buildAndAttach();
 
-        // TODO: camera follow entity, which smoothly continuously calls "look at" entity?
         var camera = getGameScene().getCamera3D();
         camera.getTransform().xProperty().bind(e.xProperty());
         camera.getTransform().yProperty().bind(e.yProperty().subtract(10));

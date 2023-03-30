@@ -58,6 +58,7 @@ public class BasicGameApp extends GameApplication {
 For a quick dive into code, see standalone [basic examples](https://github.com/AlmasB/FXGL/tree/dev/fxgl-samples/src/main/java/basics).
 Otherwise, see:
 
+* [FXGL 17 book](https://link.springer.com/book/10.1007/978-1-4842-8625-8?sap-outbound-id=3352BB472E8E602B4B29844F1A86CCC4374DDF6E)
 * [Showcase Trailer](https://youtu.be/fuDQg7W0v4g)
 * [Use FXGL with IntelliJ](https://youtu.be/LhmlFC6KE2Q)
 * [Wiki & written tutorials](https://github.com/AlmasB/FXGL/wiki)
@@ -76,7 +77,7 @@ Make sure to set `<release>17</release>` for `maven-compiler-plugin`.
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>17.2</version>
+    <version>17.3</version>
 </dependency>
 ```
 
@@ -94,7 +95,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:17.2'
+    compile 'com.github.almasb:fxgl:17.3'
 }
 ```
 
@@ -152,7 +153,7 @@ Maintainers (Collaborators):
 
 Coordinators:
 
-* [Adam Bocco](https://github.com/adambocco)
+* [Chengen Zhao](https://github.com/chengenzhao)
 
 Testers:
 
@@ -186,6 +187,6 @@ Companies:
 
 ### Contact
 
-* Ask questions via [GitHub Discussions](https://github.com/AlmasB/FXGL/discussions) or on [StackOverflow](https://stackoverflow.com/search?q=fxgl) with tags `javafx` and `fxgl`
+* Ask questions via [GitHub Discussions](https://github.com/AlmasB/FXGL/discussions) 
+* Ask via [StackOverflow](https://stackoverflow.com/search?q=fxgl) with tags `javafx` and `fxgl`
 * Tweet with [#fxgl](https://twitter.com/search?src=typd&q=%23fxgl)
-* [Chat](https://gitter.im/AlmasB/FXGL) with the friendly FXGL community

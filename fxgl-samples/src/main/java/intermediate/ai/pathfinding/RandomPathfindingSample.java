@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox.ai.pathfinding;
+package intermediate.ai.pathfinding;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -49,6 +49,7 @@ public class RandomPathfindingSample extends GameApplication {
 
     @Override
     protected void initGame() {
+        getGameScene().setBackgroundColor(Color.LIGHTGREY);
         getGameWorld().addEntityFactory(new WallFactory());
 
         setLevelFromMap("tmx/random_astar.tmx");
@@ -58,17 +59,25 @@ public class RandomPathfindingSample extends GameApplication {
         });
 
         spawnNPC(1, 1);
-
         spawnNPC(7, 17);
-
         spawnNPC(1, 11);
-
         spawnNPC(18, 5);
+        spawnNPC(14, 5);
+        spawnNPC(3, 15);
+        spawnNPC(5, 10);
+        spawnNPC(8, 16);
+        spawnNPC(19, 19);
+        spawnNPC(19, 1);
+        spawnNPC(1, 19);
     }
 
     private void spawnNPC(int x, int y) {
+        var view = new Rectangle(20, 20, FXGLMath.randomColor().brighter().brighter());
+        view.setStroke(Color.BLACK);
+        view.setStrokeWidth(2);
+
         var e = entityBuilder()
-                .viewWithBBox(new Rectangle(20, 20, FXGLMath.randomColor()))
+                .viewWithBBox(view)
                 .anchorFromCenter()
                 .with(new CellMoveComponent(CELL_WIDTH, CELL_HEIGHT, 150))
                 .with(new AStarMoveComponent(grid))
@@ -85,9 +94,13 @@ public class RandomPathfindingSample extends GameApplication {
             int width = data.get("width");
             int height = data.get("height");
 
+            var view = new Rectangle(width, height, Color.RED);
+            view.setStroke(Color.BLACK);
+            view.setStrokeWidth(2);
+
             return entityBuilder(data)
                     .type(Type.WALL)
-                    .viewWithBBox(new Rectangle(width, height, Color.RED))
+                    .viewWithBBox(view)
                     .build();
         }
     }

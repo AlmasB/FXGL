@@ -50,7 +50,7 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
 
     /**
      * Plays given animation [channel] from start to end once.
-     * The animation will stop at the last frame.
+     * The animation will stop on the last frame.
      */
     fun playAnimationChannel(channel: AnimationChannel) {
         animationChannel = channel
@@ -58,6 +58,17 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         animation.stop()
         animation.cycleCount = 1
         animation.start()
+    }
+
+    /**
+     * Plays given animation [channel] from specific [startFrame] to end once.
+     * The animation will stop on the last frame.
+     */
+    fun playAnimationChannel(channel: AnimationChannel, startFrame: Int) {
+        playAnimationChannel(channel)
+
+        currentFrame = startFrame
+        animation.setTimeTo(currentFrame.toDouble() * animationChannel.frameDuration)
     }
 
     /**
@@ -114,6 +125,15 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
      */
     fun play(): AnimatedTexture {
         playAnimationChannel(animationChannel)
+        return this
+    }
+
+    /**
+     * Play the last animation channel (or default) from specific [startFrame] to end once.
+     * The animation will stop on the last frame.
+     */
+    fun playFrom(startFrame: Int): AnimatedTexture {
+        playAnimationChannel(animationChannel, startFrame)
         return this
     }
 
