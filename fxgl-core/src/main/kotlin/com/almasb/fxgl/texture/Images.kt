@@ -515,6 +515,13 @@ internal val BLUE_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
 }
 
 /**
+ * @return pixel at given [x] and [y]
+ */
+fun Image.getPixel(x: Int, y: Int): Pixel {
+    return Pixel(x, y, this.pixelReader.getColor(x, y), this)
+}
+
+/**
  * Map pixels of this image using [f] to produce a new image.
  */
 fun Image.map(f: (Pixel) -> Pixel): Image {
@@ -603,3 +610,4 @@ fun writeToFile(image: Image, filePath: Path): Boolean {
         return false
     }
 }
+
