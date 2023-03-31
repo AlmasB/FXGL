@@ -727,6 +727,12 @@ private class PropertyMapAssetLoader : AssetLoader<PropertyMap>(
         PropertyMap::class.java,
         ASSETS_DIR
 ) {
+    override fun cast(obj: Any): PropertyMap {
+        val map = obj as PropertyMap
+
+        return map.copy()
+    }
+
     override fun load(url: URL): PropertyMap {
         val lines = url.openStream().bufferedReader().readLines()
 
