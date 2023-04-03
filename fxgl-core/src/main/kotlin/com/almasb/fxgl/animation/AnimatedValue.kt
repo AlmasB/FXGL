@@ -7,10 +7,13 @@
 package com.almasb.fxgl.animation
 
 import com.almasb.fxgl.core.math.FXGLMath
+import com.almasb.fxgl.texture.getPixel
+import com.almasb.fxgl.texture.map
 import javafx.animation.Interpolator
 import javafx.animation.PathTransition
 import javafx.geometry.Point2D
 import javafx.geometry.Point3D
+import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
@@ -198,5 +201,16 @@ class AnimatedStringDecreasing(value: String) : AnimatedValue<String>("", value)
 
     override fun animate(val1: String, val2: String, progress: Double, interpolator: Interpolator): String {
         return anim.animate(val1, val2, 1 - progress, interpolator)
+    }
+}
+
+class AnimatedImage(image1: Image, image2: Image) : AnimatedValue<Image>(image1, image2) {
+    override fun animate(val1: Image, val2: Image, progress: Double, interpolator: Interpolator): Image {
+        return val1.map { p ->
+            val animatedColor = AnimatedColor(p.color, val2.getPixel(p.x, p.y).color)
+            val color = animatedColor.getValue(progress, interpolator)
+
+            p.copy(color)
+        }
     }
 }
