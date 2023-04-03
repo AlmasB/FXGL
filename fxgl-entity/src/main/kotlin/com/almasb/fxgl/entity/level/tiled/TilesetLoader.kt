@@ -179,15 +179,14 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
         return ImageView(buffer)
     }
 
-    // NOT FULLY IMPLEMENTED, see https://github.com/AlmasB/FXGL/issues/702
     fun loadViewHex(layerName: String): Node {
         log.debug("Loading view for layer $layerName")
 
         val layer = map.getLayerByName(layerName)
 
         val bufferBottom = WritableImage(
-                layer.width * map.tilewidth + 100,
-                layer.height * map.tileheight + 100
+                layer.width * map.tilewidth + map.tilewidth,
+                layer.height * map.tileheight + map.tileheight
         )
 
         log.debug("Created buffer with size ${bufferBottom.width}x${bufferBottom.height}")
@@ -214,6 +213,7 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
             val y = i / layer.width
 
             val isColumnEven = x % 2 == 0
+            val isRowEven = y % 2 == 0
 
             val w = tileset.tilewidth
             val h = tileset.tileheight
@@ -243,20 +243,31 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
                 srcy = 0
             }
 
-            log.debug("Writing to buffer: dst=${x * map.tilewidth},${y * map.tileheight}, w=$w,h=$h, src=$srcx,$srcy")
+            // map.tilew/h * 0.25 based on https://www.redblobgames.com/grids/hexagons/
+            var offsetX: Int = if (map.staggeraxis == "x" && x > 0) (map.tilewidth  * 0.25).toInt() * -x else 0
+            var offsetY: Int = if (map.staggeraxis == "y" && y > 0) (map.tileheight * 0.25).toInt() * -y else 0
 
-            val offsetX = -(map.hexsidelength + 6) * x
-
-            val offsetY = if (map.staggerindex == "even" && isColumnEven
-                    || map.staggerindex == "odd" && !isColumnEven)
-                map.tileheight / 2
-            else
-                0
-
-//            buffer.pixelWriter.setPixels(x * map.tilewidth + offsetX, y * map.tileheight + offsetY,
-//                    w, h, sourceImage.pixelReader,
-//                    srcx,
-//                    srcy)
+            if (map.staggeraxis == "y") {
+                if (map.staggerindex == "odd") {
+                    if (!isRowEven) {
+                        offsetX = map.tilewidth / 2
+                    }
+                } else {
+                    if (isRowEven) {
+                        offsetX = map.tilewidth / 2
+                    }
+                }
+            } else {
+                if (map.staggerindex == "odd") {
+                    if (!isColumnEven) {
+                        offsetY += map.tileheight / 2
+                    }
+                } else {
+                    if (isColumnEven) {
+                        offsetY += map.tileheight / 2
+                    }
+                }
+            }
 
             if (y > oldY) {
                 delayedDrawings.forEach { it.run() }
@@ -265,9 +276,7 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
                 oldY = y
             }
 
-            if (map.staggerindex == "odd" && isColumnEven
-                    || map.staggerindex == "even" && !isColumnEven) {
-
+            val drawToBuffer = Runnable {
                 for (dy in 0 until h) {
                     for (dx in 0 until w) {
                         val c = sourceImage.pixelReader.getColor(srcx + dx, srcy + dy)
@@ -281,26 +290,21 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
                         }
                     }
                 }
+            }
+
+            if (map.staggerindex == "odd" && isColumnEven
+                    || map.staggerindex == "even" && !isColumnEven) {
+
+                drawToBuffer.run()
             } else {
 
                 // we need delayed drawings to correctly draw shadows
-                delayedDrawings += Runnable {
-                    for (dy in 0 until h) {
-                        for (dx in 0 until w) {
-                            val c = sourceImage.pixelReader.getColor(srcx + dx, srcy + dy)
-
-                            if (c != Color.TRANSPARENT) {
-                                bufferBottom.pixelWriter.setColor(
-                                        x * map.tilewidth + offsetX + dx,
-                                        y * map.tileheight + offsetY + dy,
-                                        c
-                                )
-                            }
-                        }
-                    }
-                }
+                delayedDrawings += drawToBuffer
             }
         }
+
+        delayedDrawings.forEach { it.run() }
+        delayedDrawings.clear()
 
         return ImageView(bufferBottom)
     }
