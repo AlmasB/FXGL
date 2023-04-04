@@ -10,8 +10,8 @@ import javafx.geometry.HorizontalDirection
 import javafx.geometry.VerticalDirection
 import javafx.scene.paint.Color
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
-
 
 /**
  *
@@ -63,5 +63,18 @@ class ImagesTest {
                 .superTexture(left, HorizontalDirection.RIGHT)
 
         assertThat("Diagonal flip is not correct", matchPixels(expected, Texture(result)))
+    }
+
+    @Test
+    fun `Interpolate intermediate images`() {
+        val img1 = ColoredTexture(200, 200, Color.WHITE).image
+        val img2 = ColoredTexture(200, 200, Color.RED).image
+        val img3 = ColoredTexture(200, 200, Color.BLACK).image
+
+        val result = interpolateIntermediateImages(listOf(img1, img2, img3), 10)
+        assertThat(result.size, `is`(10*2 + 3))
+        assertThat(result[0], `is`(img1))
+        assertThat(result[11], `is`(img2))
+        assertThat(result[22], `is`(img3))
     }
 }

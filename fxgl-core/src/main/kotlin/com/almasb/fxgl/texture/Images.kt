@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.texture
 
+import com.almasb.fxgl.animation.AnimatedImage
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.logging.Logger
 import javafx.scene.Group
@@ -611,3 +612,34 @@ fun writeToFile(image: Image, filePath: Path): Boolean {
     }
 }
 
+/**
+ * Using given [images] interpolates between them to produce intermediate images (inbetweening).
+ * The given [images] list must have at least 2 images, otherwise a new list containing the originals is returned.
+ *
+ * @return list with intermediate images, including the original images.
+ * The new list size is (images.size - 1) * [numFramesBetweenImages] + (images.size).
+ */
+fun interpolateIntermediateImages(images: List<Image>, numFramesBetweenImages: Int): List<Image> {
+    if (images.size < 2)
+        return ArrayList(images)
+
+    val result = arrayListOf<Image>()
+
+    images.zipWithNext().forEach { (img1, img2) ->
+        val anim = AnimatedImage(img1, img2)
+
+        result += img1
+
+        repeat(numFramesBetweenImages) { i ->
+
+            // we add +1 since i == 0 will give us [img1], which we add manually, so ignore
+            // and i+1 == numFramesBetweenImages will give us [img2],
+            // which we also add manually during next cycle, so ignore by +1
+            result += anim.getValue((i + 1) / (numFramesBetweenImages.toDouble() + 1))
+        }
+    }
+
+    result += images.last()
+
+    return result
+}
