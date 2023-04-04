@@ -56,7 +56,7 @@ abstract class Scene : State<Scene>, UpdatableRunner {
     override val isSubState: Boolean = false
     override val isAllowConcurrency: Boolean = false
 
-    private val listeners = Array<Updatable>()
+    private val listeners = LinkedHashSet<Updatable>()
     private val listenersToAdd = Array<Updatable>()
     private val listenersToRemove = Array<Updatable>()
 
@@ -105,7 +105,7 @@ abstract class Scene : State<Scene>, UpdatableRunner {
         onUpdate(tpf)
 
         listeners.addAll(listenersToAdd)
-        listeners.removeAllByIdentity(listenersToRemove)
+        listeners.removeAll(listenersToRemove)
 
         listenersToAdd.clear()
         listenersToRemove.clear()
