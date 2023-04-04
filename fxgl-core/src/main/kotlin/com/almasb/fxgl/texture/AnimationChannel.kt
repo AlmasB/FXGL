@@ -100,6 +100,15 @@ class AnimationChannel(val image: Image,
     fun getFrameHeight(frame: Int) = getFrameData(frame).height
 
     /**
+     * @return a computed image for a given [frameIndex]
+     */
+    fun getFrameImage(frameIndex: Int): Image {
+        val frameData = getFrameData(frameIndex)
+
+        return Texture(image).subTexture(frameData.viewport).image
+    }
+
+    /**
      * Returns next frame index or 0 if [frame] is last.
      */
     fun frameAfter(frame: Int) = (frame + 1) % sequence.size
