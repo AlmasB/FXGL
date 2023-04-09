@@ -31,25 +31,30 @@ public final class ChainShape extends Shape {
     private Vec2[] m_vertices = null;
     private int m_count = 0;
 
-    private final Vec2 m_prevVertex = new Vec2();
-    private final Vec2 m_nextVertex = new Vec2();
-    private boolean m_hasPrevVertex = false;
-    private boolean m_hasNextVertex = false;
+    private final Vec2 prevVertex = new Vec2();
+    private final Vec2 nextVertex = new Vec2();
+    private boolean hasPrevVertex = false;
+    private boolean hasNextVertex = false;
 
     private final EdgeShape pool0 = new EdgeShape();
 
-    public ChainShape() {
+    public ChainShape(ChainType type, Vec2[] initialVertices) {
         super(ShapeType.CHAIN, JBoxSettings.polygonRadius);
+
+        if (type == ChainType.CLOSED) {
+            createLoop(initialVertices, initialVertices.length);
+        } else {
+            createChain(initialVertices, initialVertices.length);
+        }
     }
 
     @Override
     public Shape clone() {
-        ChainShape clone = new ChainShape();
-        clone.createChain(m_vertices, m_count);
-        clone.m_prevVertex.set(m_prevVertex);
-        clone.m_nextVertex.set(m_nextVertex);
-        clone.m_hasPrevVertex = m_hasPrevVertex;
-        clone.m_hasNextVertex = m_hasNextVertex;
+        ChainShape clone = new ChainShape(ChainType.OPEN, m_vertices);
+        clone.prevVertex.set(prevVertex);
+        clone.nextVertex.set(nextVertex);
+        clone.hasPrevVertex = hasPrevVertex;
+        clone.hasNextVertex = hasNextVertex;
         return clone;
     }
 
@@ -133,16 +138,16 @@ public final class ChainShape extends Shape {
             edge.m_vertex0.set(m_vertices[index - 1]);
             edge.m_hasVertex0 = true;
         } else {
-            edge.m_vertex0.set(m_prevVertex);
-            edge.m_hasVertex0 = m_hasPrevVertex;
+            edge.m_vertex0.set(prevVertex);
+            edge.m_hasVertex0 = hasPrevVertex;
         }
 
         if (index < m_count - 2) {
             edge.m_vertex3.set(m_vertices[index + 2]);
             edge.m_hasVertex3 = true;
         } else {
-            edge.m_vertex3.set(m_nextVertex);
-            edge.m_hasVertex3 = m_hasNextVertex;
+            edge.m_vertex3.set(nextVertex);
+            edge.m_hasVertex3 = hasNextVertex;
         }
     }
 
@@ -152,7 +157,7 @@ public final class ChainShape extends Shape {
      * @param vertices an array of vertices, these are copied
      * @param count the vertex count
      */
-    public void createLoop(final Vec2[] vertices, int count) {
+    private void createLoop(final Vec2[] vertices, int count) {
         assert m_vertices == null && m_count == 0;
         assert count >= 3;
         m_count = count + 1;
@@ -169,10 +174,10 @@ public final class ChainShape extends Shape {
             m_vertices[i] = new Vec2(vertices[i]);
         }
         m_vertices[count] = new Vec2(m_vertices[0]);
-        m_prevVertex.set(m_vertices[m_count - 2]);
-        m_nextVertex.set(m_vertices[1]);
-        m_hasPrevVertex = true;
-        m_hasNextVertex = true;
+        prevVertex.set(m_vertices[m_count - 2]);
+        nextVertex.set(m_vertices[1]);
+        hasPrevVertex = true;
+        hasNextVertex = true;
     }
 
     /**
@@ -181,7 +186,7 @@ public final class ChainShape extends Shape {
      * @param vertices an array of vertices, these are copied
      * @param count the vertex count
      */
-    public void createChain(final Vec2[] vertices, int count) {
+    private void createChain(final Vec2[] vertices, int count) {
         assert m_vertices == null && m_count == 0;
         assert count >= 2;
         m_count = count;
@@ -197,31 +202,27 @@ public final class ChainShape extends Shape {
         for (int i = 0; i < m_count; i++) {
             m_vertices[i] = new Vec2(vertices[i]);
         }
-        m_hasPrevVertex = false;
-        m_hasNextVertex = false;
+        hasPrevVertex = false;
+        hasNextVertex = false;
 
-        m_prevVertex.setZero();
-        m_nextVertex.setZero();
+        prevVertex.setZero();
+        nextVertex.setZero();
     }
 
     /**
      * Establish connectivity to a vertex that precedes the first vertex. Don't call this for loops.
-     *
-     * @param prevVertex
      */
     public void setPrevVertex(final Vec2 prevVertex) {
-        m_prevVertex.set(prevVertex);
-        m_hasPrevVertex = true;
+        this.prevVertex.set(prevVertex);
+        hasPrevVertex = true;
     }
 
     /**
      * Establish connectivity to a vertex that follows the last vertex. Don't call this for loops.
-     *
-     * @param nextVertex
      */
     public void setNextVertex(final Vec2 nextVertex) {
-        m_nextVertex.set(nextVertex);
-        m_hasNextVertex = true;
+        this.nextVertex.set(nextVertex);
+        hasNextVertex = true;
     }
 
     public int getCount() {

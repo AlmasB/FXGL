@@ -8,10 +8,7 @@ package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.components.BoundingBoxComponent
-import com.almasb.fxgl.physics.box2d.collision.shapes.ChainShape
-import com.almasb.fxgl.physics.box2d.collision.shapes.CircleShape
-import com.almasb.fxgl.physics.box2d.collision.shapes.PolygonShape
-import com.almasb.fxgl.physics.box2d.collision.shapes.Shape
+import com.almasb.fxgl.physics.box2d.collision.shapes.*
 import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import java.lang.RuntimeException
@@ -207,10 +204,7 @@ class ChainShapeData(size: Dimension2D, val points: Array<Point2D>) : BoundingSh
             vertices[i] = conv.toVector(points[i].subtract(boundsCenterLocal)).subLocal(conv.toVector(bboxComp.centerLocal))
         }
 
-        val shape = ChainShape()
-        shape.createLoop(vertices, vertices.size)
-
-        return shape
+        return ChainShape(ChainType.CLOSED, vertices)
     }
 }
 
