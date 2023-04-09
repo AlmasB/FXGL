@@ -9,6 +9,7 @@ package com.almasb.fxgl.texture
 import com.almasb.fxgl.animation.AnimatedImage
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.logging.Logger
+import javafx.geometry.Rectangle2D
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.SnapshotParameters
@@ -567,6 +568,33 @@ fun Image.map(overlay: Image, f: (Pixel, Pixel) -> Pixel): Image {
             writer.setColor(x, y, newPixel.color)
         }
     }
+
+    return newImage
+}
+
+/**
+ * Given a rectangular area, produces a sub-image of this image.
+ *
+ * Rectangle cannot cover area outside of the original image.
+ *
+ * @param area area of the original texture that represents sub-image
+ * @return sub-image
+ */
+fun Image.subImage(area: Rectangle2D): Image {
+    val minX = area.minX.toInt()
+    val minY = area.minY.toInt()
+    val maxX = area.maxX.toInt()
+    val maxY = area.maxY.toInt()
+
+    require(minX >= 0) { "minX value of sub-image cannot be negative" }
+    require(minY >= 0) { "minY value of sub-image cannot be negative" }
+    require(maxX <= this.width) { "maxX value ($maxX) of sub-image cannot be greater than image width (${this.width})" }
+    require(maxY <= this.height) { "maxY value ($maxY) of sub-image cannot be greater than image height (${this.height})" }
+
+    val pixelReader = this.pixelReader
+    val newImage = WritableImage(maxX - minX, maxY - minY)
+
+    newImage.pixelWriter.setPixels(0, 0, newImage.width.toInt(), newImage.height.toInt(), pixelReader, minX, minY)
 
     return newImage
 }
