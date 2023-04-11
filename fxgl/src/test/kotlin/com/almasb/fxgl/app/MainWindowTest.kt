@@ -65,7 +65,7 @@ class MainWindowTest {
     }
 
     @Test
-    //@EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     fun runTests() {
         var count = 0
 
