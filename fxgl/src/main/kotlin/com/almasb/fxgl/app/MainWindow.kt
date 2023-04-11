@@ -15,6 +15,7 @@ import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.scene.Scene
 import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.texture.toImage
 import javafx.beans.binding.Bindings
 import javafx.beans.property.*
 import javafx.event.Event
@@ -64,6 +65,7 @@ sealed class MainWindow(
     var onClose: (() -> Unit)? = null
     var defaultCursor: ImageCursor? = null
 
+    abstract val stage: Stage
     abstract val x: Double
     abstract val y: Double
     abstract val width: Double
@@ -104,7 +106,11 @@ sealed class MainWindow(
      * and most suitable will be chosen.
      * Can only be called before [show].
      */
-    abstract fun addIcons(vararg images: Image)
+    fun addIcons(vararg images: Image) {
+        if (!settings.isNative) {
+            stage.icons += images
+        }
+    }
 
     abstract fun addCSS(vararg cssList: CSS)
 
@@ -273,7 +279,7 @@ internal class PrimaryStageWindow(
         /**
          * Primary stage.
          */
-        val stage: Stage,
+        override val stage: Stage,
         scene: FXGLScene,
         settings: ReadOnlyGameSettings
 
@@ -472,12 +478,6 @@ internal class PrimaryStageWindow(
         stage.close()
     }
 
-    override fun addIcons(vararg images: Image) {
-        if (!settings.isNative) {
-            stage.icons += images
-        }
-    }
-
     override fun addCSS(vararg cssList: CSS) {
         fxScene.stylesheets += cssList.map { it.externalForm }
     }
@@ -518,6 +518,9 @@ internal class EmbeddedPaneWindow(
 
     private val backgroundRect = Rectangle()
     private val clipRect = Rectangle()
+
+    override val stage: Stage
+        get() = fxglPane?.scene?.window as Stage? ?: Stage().also { log.warning("EmbeddedPane not attached to Stage") }
 
     override val x: Double
         get() = fxglPane.localToScene(0.0, 0.0).x
@@ -635,9 +638,6 @@ internal class EmbeddedPaneWindow(
         return ReadOnlyBooleanWrapper().readOnlyProperty
     }
 
-    override fun addIcons(vararg images: Image) {
-    }
-
     override fun addCSS(vararg cssList: CSS) {
         fxglPane.stylesheets += cssList.map { it.externalForm }
     }
@@ -683,8 +683,6 @@ internal class EmbeddedPaneWindow(
         log.debug("Window border size: ($windowBorderWidth, $windowBorderHeight)")
         log.debug("Scaled size: ${scaledWidth.value} x ${scaledHeight.value}")
         log.debug("Scaled ratio: (${scaleRatioX.value}, ${scaleRatioY.value})")
-        //log.debug("Scene size: ${stage.scene.width} x ${stage.scene.height}")
-        //log.debug("Stage size: ${stage.width} x ${stage.height}")
     }
 
     /**
@@ -705,7 +703,7 @@ internal class EmbeddedPaneWindow(
     }
 
     override fun takeScreenshot(): Image {
-        return WritableImage(1, 1)
+        return toImage(fxglPane)
     }
 
     override fun close() {
