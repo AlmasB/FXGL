@@ -507,6 +507,14 @@ class FXGL private constructor() { companion object {
         }, key)
     }
 
+    @JvmStatic fun onBtnDownPrimary(action: Runnable) {
+        onBtnDown(MouseButton.PRIMARY, action)
+    }
+
+    @JvmStatic fun onBtnDownSecondary(action: Runnable) {
+        onBtnDown(MouseButton.SECONDARY, action)
+    }
+
     @JvmStatic fun onBtnDown(btn: MouseButton, action: Runnable) {
         onBtnDown(btn, "action${actionCounter++}", action)
     }
@@ -517,6 +525,14 @@ class FXGL private constructor() { companion object {
                 action.run()
             }
         }, btn)
+    }
+
+    @JvmStatic fun onBtnPrimary(action: Runnable) {
+        onBtn(MouseButton.PRIMARY, action)
+    }
+
+    @JvmStatic fun onBtnSecondary(action: Runnable) {
+        onBtn(MouseButton.SECONDARY, action)
     }
 
     @JvmStatic fun onBtn(btn: MouseButton, action: Runnable) {
