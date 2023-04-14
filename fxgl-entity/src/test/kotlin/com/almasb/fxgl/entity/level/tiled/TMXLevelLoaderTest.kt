@@ -291,10 +291,11 @@ class TMXLevelLoaderTest {
         assertThat(obj1.width, `is`(72))
         assertThat(obj1.height, `is`(336))
         assertThat(obj1.rotation, `is`(0.0f))
-        assertThat(obj1.properties.size, `is`(4))
+        assertThat(obj1.properties.size, `is`(5))
 
         assertThat(obj1.properties["collidable"] as Boolean, `is`(true))
         assertThat(obj1.properties["someColor"] as Color, `is`(Color.web("#ff55ff00")))
+        assertThat(obj1.properties["someFloat"] as Float, `is`(3.14f))
         assertThat(obj1.properties["someInt"] as Int, `is`(33))
         assertThat(obj1.properties["someString"] as String, `is`("Text Here"))
 
