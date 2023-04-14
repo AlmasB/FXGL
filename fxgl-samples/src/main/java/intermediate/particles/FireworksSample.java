@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox.particles;
+package intermediate.particles;
 
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
@@ -12,7 +12,6 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
 import com.almasb.fxgl.dsl.components.ProjectileComponent;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.particle.ParticleComponent;
 import com.almasb.fxgl.particle.ParticleEmitters;
 import javafx.geometry.Point2D;
@@ -24,6 +23,8 @@ import javafx.util.Duration;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
+ * Shows one approach to making fireworks with particles.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class FireworksSample extends GameApplication {
@@ -46,22 +47,13 @@ public class FireworksSample extends GameApplication {
 
     private void spawnMajor(Point2D p) {
         var emitter = ParticleEmitters.newFireEmitter();
-
-//        emitter.setMaxEmissions(1);
-        emitter.setNumParticles(35);
+        emitter.setNumParticles(15);
         emitter.setEmissionRate(0.5);
         emitter.setSize(1, 24);
-        //emitter.setScaleFunction(i -> FXGLMath.randomPoint2D().multiply(0.002));
         emitter.setSpawnPointFunction(i -> new Point2D(random(-1, 1), random(-1, 1)));
         emitter.setExpireFunction(i -> Duration.seconds(random(0.25, 0.6)));
-//
-//        emitter.setInterpolator(Interpolators.EXPONENTIAL.EASE_OUT());
-//        emitter.setAccelerationFunction(() -> new Point2D(0, random(1, 3)));
-
-        var c = Color.YELLOW;
-
         emitter.setBlendMode(BlendMode.SRC_OVER);
-        emitter.setSourceImage(texture("particles/" + "star_04.png", 32, 32).multiplyColor(c));
+        emitter.setSourceImage(texture("particles/" + "star_04.png", 32, 32).multiplyColor(Color.YELLOW));
         emitter.setAllowParticleRotation(true);
 
         var e = entityBuilder()
@@ -72,34 +64,29 @@ public class FireworksSample extends GameApplication {
                 .buildAndAttach();
 
         runOnce(() -> {
-            explode(e);
+            spawnMinor(e.getPosition());
+
+            e.removeFromWorld();
         }, Duration.seconds(random(0.4, 0.7)));
     }
 
-    private void explode(Entity e) {
-        for (int i = 0; i < 1; i++) {
-            spawnMinor(e.getPosition());
-        }
-
-        e.removeFromWorld();
-        //e.addComponent(new ExpireCleanComponent(Duration.seconds(0.3)));
-    }
-
     private void spawnMinor(Point2D p) {
+        var color = FXGLMath.randomColor().brighter().brighter();
+
         var emitter = ParticleEmitters.newExplosionEmitter(random(50, 150));
         emitter.setExpireFunction(i -> Duration.seconds(random(1.25, 2.5)));
         emitter.setInterpolator(Interpolators.EXPONENTIAL.EASE_OUT());
-        emitter.setAccelerationFunction(() -> new Point2D(random(1, 1.5), random(1, 1.5)));
-
-        var c = FXGLMath.randomColor().brighter().brighter();
-
+        emitter.setAccelerationFunction(() -> new Point2D(random(1, 1.5), random(1, 35.5)));
         emitter.setBlendMode(BlendMode.ADD);
-        emitter.setSourceImage(texture("particles/" + "flare_01.png", 64, 64).multiplyColor(c));
+        emitter.setSize(8, 32);
+        emitter.setAllowParticleRotation(false);
+        emitter.setSourceImage(texture("particles/" + "flare_01.png", 64, 64).multiplyColor(color));
 
-        var e = entityBuilder()
+        entityBuilder()
                 .at(p)
                 .with(new ParticleComponent(emitter))
                 .with(new ExpireCleanComponent(Duration.seconds(3)).animateOpacity())
+                .zIndex(100)
                 .buildAndAttach();
     }
 
