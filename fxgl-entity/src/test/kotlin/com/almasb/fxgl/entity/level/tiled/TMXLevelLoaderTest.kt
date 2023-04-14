@@ -8,6 +8,7 @@ package com.almasb.fxgl.entity.level.tiled
 
 import com.almasb.fxgl.entity.*
 import com.almasb.fxgl.entity.components.IDComponent
+import com.almasb.fxgl.entity.level.LevelLoadingException
 import com.almasb.fxgl.test.RunWithFX
 import javafx.geometry.Point2D
 import javafx.scene.image.ImageView
@@ -17,8 +18,7 @@ import javafx.scene.shape.Polyline
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
@@ -205,6 +205,18 @@ class TMXLevelLoaderTest {
         val level = TMXLevelLoader().load(javaClass.getResource("hex/simple.tmx"), world)
 
         assertThat(level.entities.size, `is`(2))
+    }
+
+    @Test
+    fun `Load a map with an error`() {
+        val world = GameWorld()
+
+        val e = assertThrows(LevelLoadingException::class.java) {
+            TMXLevelLoader().load(javaClass.getResource("map_with_error.tmx"), world)
+        }
+
+        assertNotNull(e.message)
+        assertTrue(e.message!!.isNotEmpty())
     }
 
     @ParameterizedTest
