@@ -37,16 +37,17 @@ class ManaIntComponent(maxValue: Int) : RechargeableIntComponent(maxValue)
 /**
  * Any rechargeable component, such as HP, SP, ammo, etc.
  * The internal value is a double in the range [0..maxValue].
+ * All methods assume that the arguments provided are >= 0.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 abstract class RechargeableDoubleComponent
 @JvmOverloads constructor(
-        maxValue: Double,
-        initialValue: Double = maxValue
+        initialMaxValue: Double,
+        initialValue: Double = initialMaxValue
 ) : DoubleComponent(initialValue) {
 
-    private val maxValueProp = SimpleDoubleProperty(maxValue)
+    private val maxValueProp = SimpleDoubleProperty(initialMaxValue)
     private val valuePercentBinding = valueProperty().divide(maxValueProp).multiply(100)
 
     fun maxValueProperty() = maxValueProp
@@ -58,6 +59,18 @@ abstract class RechargeableDoubleComponent
 
     val valuePercent: Double
         get() = valuePercentBinding.value
+
+    init {
+        maxValueProp.addListener { _, _, newValue ->
+            if (value > newValue.toDouble())
+                value = newValue.toDouble()
+        }
+
+        valueProperty().addListener { _, _, newValue ->
+            if (newValue.toDouble() > maxValueProp.value)
+                value = maxValueProp.value
+        }
+    }
 
     /**
      * Set component value to 0.
@@ -146,25 +159,46 @@ abstract class RechargeableDoubleComponent
     fun zeroProperty(): BooleanBinding = zeroProp
 }
 
+// Code below is duplicated for Int for FXGL version upgrade compatibility reasons
+
 /**
  * Any rechargeable component, such as HP, SP, ammo, etc.
  * The internal value is an int in the range [0..maxValue].
+ * All methods assume that the arguments provided are >= 0.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 abstract class RechargeableIntComponent
 @JvmOverloads constructor(
-        maxValue: Int,
-        initialValue: Int = maxValue
+        initialMaxValue: Int,
+        initialValue: Int = initialMaxValue
 ) : IntegerComponent(initialValue) {
 
-    private val maxValueProp = SimpleIntegerProperty(maxValue)
+    private val maxValueProp = SimpleIntegerProperty(initialMaxValue)
+    // 1.0 is needed to avoid integer division
+    private val valuePercentBinding = valueProperty().multiply(1.0).divide(maxValueProp).multiply(100)
 
     fun maxValueProperty() = maxValueProp
+    fun valuePercentProperty() = valuePercentBinding
 
     var maxValue: Int
         get() = maxValueProp.value
         set(value) { maxValueProp.value = value }
+
+    val valuePercent: Double
+        get() = valuePercentBinding.doubleValue()
+
+    init {
+        maxValueProp.addListener { _, _, newValue ->
+            if (value > newValue.toInt())
+                value = newValue.toInt()
+        }
+
+        valueProperty().addListener { _, _, newValue ->
+            if (newValue.toInt() > maxValueProp.value)
+                value = maxValueProp.value
+        }
+    }
 
     /**
      * Set component value to 0.
@@ -236,11 +270,10 @@ abstract class RechargeableIntComponent
         restore((percentage / 100 * maxValue).toInt())
     }
 
-    private val zeroProp = valueProperty().lessThanOrEqualTo(0.0)
+    private val zeroProp = valueProperty().lessThanOrEqualTo(0)
 
     /**
-     * Check if value is 0. Note that because internal value is a double,
-     * value of 0.xx will not return true.
+     * Check if value is 0.
      *
      * @return true iff value is 0
      */
