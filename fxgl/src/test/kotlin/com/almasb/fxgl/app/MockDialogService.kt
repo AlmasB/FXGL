@@ -31,6 +31,12 @@ object MockDialogService : DialogService() {
     override fun <T : Any?> showChoiceBox(message: String?, resultCallback: Consumer<T>?, firstOption: T, vararg options: T) {
     }
 
+    override fun <T : Any?> showChoiceBox(message: String?, options: MutableList<T>?, resultCallback: Consumer<T>?) {
+    }
+
+    override fun <T : Enum<T>?> showChoiceBox(message: String?, enumClass: Class<T>?, resultCallback: Consumer<T>?) {
+    }
+
     override fun showInputBoxWithCancel(message: String?, filter: Predicate<String>?, resultCallback: Consumer<String>?) {
     }
 

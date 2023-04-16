@@ -11,6 +11,7 @@ import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -58,6 +59,28 @@ public abstract class DialogService extends EngineService {
      * @param <T> type of options
      */
     public abstract <T> void showChoiceBox(String message, Consumer<T> resultCallback, T firstOption, T... options);
+
+    /**
+     * Shows a blocking message box with given choices.
+     * The callback is invoked with the user answer as parameter.
+     *
+     * @param message message to show
+     * @param options the list of options
+     * @param resultCallback the function to be called
+     * @param <T> type of options
+     */
+    public abstract <T> void showChoiceBox(String message, List<T> options, Consumer<T> resultCallback);
+
+    /**
+     * Shows a blocking message box with given choices.
+     * The callback is invoked with the user answer as parameter.
+     *
+     * @param message message to show
+     * @param enumClass the Enum class
+     * @param resultCallback the function to be called
+     * @param <T> type of options
+     */
+    public abstract <T extends Enum<T>> void showChoiceBox(String message, Class<T> enumClass, Consumer<T> resultCallback);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback

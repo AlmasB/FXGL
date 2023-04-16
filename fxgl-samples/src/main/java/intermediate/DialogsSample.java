@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -25,6 +26,10 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class DialogsSample extends GameApplication {
+
+    private enum CustomEnum {
+        VALUE1, VALUE2, VALUE3
+    }
 
     @Override
     protected void initSettings(GameSettings settings) { }
@@ -41,6 +46,10 @@ public class DialogsSample extends GameApplication {
         dialogs.put("Choice with 2", () -> getDialogService().showChoiceBox("Choose wisely!", answer -> System.out.println("Chosen: " + answer), "Hello", "World"));
         dialogs.put("Choice with 3", () -> getDialogService().showChoiceBox("Choose wisely!", answer -> System.out.println("Chosen: " + answer), "Hello", "World", "FXGL"));
         dialogs.put("Choice with 4", () -> getDialogService().showChoiceBox("Choose wisely!", answer -> System.out.println("Chosen: " + answer), "Hello", "World", "FXGL", "JavaFX"));
+
+        dialogs.put("Choice with List", () -> getDialogService().showChoiceBox("Choose wisely!", List.of("Item1", "Item2"), answer -> System.out.println("Chosen: " + answer)));
+
+        dialogs.put("Choice with Enum", () -> getDialogService().showChoiceBox("Choose wisely!", CustomEnum.class, answer -> System.out.println("Chosen: " + answer)));
 
         dialogs.put("Confirmation", () -> getDialogService().showConfirmationBox("This is a confirmation box. Agree?", answer -> System.out.println("You pressed yes? " + answer)));
 
