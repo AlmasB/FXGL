@@ -46,8 +46,7 @@ public class Throw3DSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        // TODO: onBtnDownPrimary
-        onBtnDown(MouseButton.PRIMARY, () -> {
+        onBtnDownPrimary(() -> {
             shoot(camera3D.getTransform().getDirection3D());
         });
 
