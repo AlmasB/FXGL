@@ -78,7 +78,7 @@
         <maven.gpg.version>1.6</maven.gpg.version>
         <sonatype.nexus.staging.version>1.6.13</sonatype.nexus.staging.version>
         <maven.compiler.version>3.8.0</maven.compiler.version>
-        <maven.pmd.version>3.15.0</maven.pmd.version>
+        <maven.pmd.version>3.20.0</maven.pmd.version>
         <maven.license.version>3.0</maven.license.version>
         <maven.source.version>3.2.0</maven.source.version>
         <maven.jar.version>3.2.0</maven.jar.version>
