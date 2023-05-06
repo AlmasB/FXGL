@@ -1062,35 +1062,6 @@ public final class World {
     }
 
     /**
-     * Set a buffer for particle data.
-     *
-     * @param buffer is a pointer to a block of memory.
-     * @param capacity is the number of values in the block.
-     */
-    public void setParticleFlagsBuffer(int[] buffer, int capacity) {
-        particleSystem.setParticleFlagsBuffer(buffer, capacity);
-    }
-
-    public void setParticlePositionBuffer(Vec2[] buffer, int capacity) {
-        particleSystem.setParticlePositionBuffer(buffer, capacity);
-
-    }
-
-    public void setParticleVelocityBuffer(Vec2[] buffer, int capacity) {
-        particleSystem.setParticleVelocityBuffer(buffer, capacity);
-
-    }
-
-    public void setParticleColorBuffer(ParticleColor[] buffer, int capacity) {
-        particleSystem.setParticleColorBuffer(buffer, capacity);
-
-    }
-
-    public void setParticleUserDataBuffer(Object[] buffer, int capacity) {
-        particleSystem.setParticleUserDataBuffer(buffer, capacity);
-    }
-
-    /**
      * @return contacts between particles
      */
     public ParticleContact[] getParticleContacts() {
