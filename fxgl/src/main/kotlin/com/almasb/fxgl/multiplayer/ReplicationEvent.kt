@@ -30,6 +30,9 @@ abstract class ReplicationEvent(eventType: EventType<out ReplicationEvent>) : Ev
 
         @JvmField val PROPERTY_UPDATE = EventType(ANY, "PROPERTY_UPDATE")
         @JvmField val PROPERTY_REMOVE = EventType(ANY, "PROPERTY_REMOVE")
+
+        @JvmField val PING = EventType<PingReplicationEvent>(ANY, "PING")
+        @JvmField val PONG = EventType<PongReplicationEvent>(ANY, "PONG")
     }
 }
 
@@ -71,3 +74,12 @@ class PropertyUpdateReplicationEvent(
 class PropertyRemoveReplicationEvent(
         val propertyName: String
 ) : ReplicationEvent(PROPERTY_REMOVE)
+
+class PingReplicationEvent(
+        val timeSent: Long
+) : ReplicationEvent(PING)
+
+class PongReplicationEvent(
+        val timeSent: Long,
+        val timeReceived: Long
+) : ReplicationEvent(PONG)
