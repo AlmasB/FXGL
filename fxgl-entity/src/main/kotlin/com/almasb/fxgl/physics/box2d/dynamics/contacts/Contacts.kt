@@ -68,3 +68,10 @@ class PolygonAndCircleContact(pool: IWorldPool) : Contact(pool) {
         pool.collision.collidePolygonAndCircle(manifold, m_fixtureA.shape as PolygonShape, xfA, m_fixtureB.shape as CircleShape, xfB)
     }
 }
+
+class PolygonContact(pool: IWorldPool) : Contact(pool) {
+
+    override fun evaluate(manifold: Manifold, xfA: Transform, xfB: Transform) {
+        pool.collision.collidePolygons(manifold, m_fixtureA.shape as PolygonShape, xfA, m_fixtureB.shape as PolygonShape, xfB)
+    }
+}
