@@ -22,5 +22,6 @@ enum class AssetType {
     UI,
     CSS,
     FONT,
-    MODEL3D
+    MODEL3D,
+    VIDEO
 }
