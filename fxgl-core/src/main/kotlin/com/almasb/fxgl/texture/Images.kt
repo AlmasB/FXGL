@@ -239,7 +239,7 @@ internal val SRC_OVER_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 top.R + bot.R * (1 - top.R),
                 top.G + bot.G * (1 - top.G),
                 top.B + bot.B * (1 - top.B),
@@ -254,7 +254,7 @@ internal val SRC_ATOP_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 top.R * bot.A + bot.R * (1 - top.R),
                 top.G * bot.A + bot.G * (1 - top.G),
                 top.B * bot.A + bot.B * (1 - top.B),
@@ -269,7 +269,7 @@ internal val ADD_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 minOf(1.0, bot.color.red + top.color.red),
                 minOf(1.0, bot.color.green + top.color.green),
                 minOf(1.0, bot.color.blue + top.color.blue),
@@ -284,7 +284,7 @@ internal val MULTIPLY_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 top.R * bot.R,
                 top.G * bot.G,
                 top.B * bot.B,
@@ -299,7 +299,7 @@ internal val SCREEN_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 1 - (1 - top.R) * (1 - bot.R),
                 1 - (1 - top.G) * (1 - bot.G),
                 1 - (1 - top.B) * (1 - bot.B),
@@ -336,7 +336,7 @@ internal val OVERLAY_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
             1 - 2 * (1 - bot.B) * (1 - top.B)
         }
 
-        val color = Color.color(
+        val color = newColor(
                 r,
                 g,
                 b,
@@ -351,7 +351,7 @@ internal val DARKEN_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 min(top.R, bot.R),
                 min(top.G, bot.G),
                 min(top.B, bot.B),
@@ -366,7 +366,7 @@ internal val LIGHTEN_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 max(top.R, bot.R),
                 max(top.G, bot.G),
                 max(top.B, bot.B),
@@ -381,7 +381,7 @@ internal val COLOR_DODGE_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 bot.R / (1 - top.R),
                 bot.G / (1 - top.G),
                 bot.B / (1 - top.B),
@@ -396,7 +396,7 @@ internal val COLOR_BURN_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 1 - ((1 - bot.R) / top.R),
                 1 - ((1 - bot.G) / top.G),
                 1 - ((1 - bot.B) / top.B),
@@ -428,7 +428,7 @@ internal val SOFT_LIGHT_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
 
         val b = (1 - 2 * top.B) * bot.B * bot.B + 2 * top.B * bot.B
 
-        val color = Color.color(
+        val color = newColor(
                 r,
                 g,
                 b,
@@ -444,7 +444,7 @@ internal val DIFFERENCE_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
         bot.copy(Color.TRANSPARENT)
     } else {
 
-        val color = Color.color(
+        val color = newColor(
                 abs(top.R - bot.R),
                 abs(top.G - bot.G),
                 abs(top.B - bot.B),
@@ -460,7 +460,7 @@ internal val EXCLUSION_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
         bot.copy(Color.TRANSPARENT)
     } else {
 
-        val color = Color.color(
+        val color = newColor(
                 top.R + bot.R - 2 * top.R * bot.R,
                 top.G + bot.G - 2 * top.G * bot.G,
                 top.B + bot.B - 2 * top.B * bot.B,
@@ -475,7 +475,7 @@ internal val RED_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 top.R,
                 bot.G,
                 bot.B,
@@ -490,7 +490,7 @@ internal val GREEN_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 bot.R,
                 top.G,
                 bot.B,
@@ -505,7 +505,7 @@ internal val BLUE_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 bot.R,
                 bot.G,
                 top.B,
@@ -514,6 +514,15 @@ internal val BLUE_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
 
         bot.copy(color)
     }
+}
+
+private fun newColor(r: Double, g: Double, b: Double, a: Double): Color {
+    return Color.color(
+            max(0.0, min(1.0, r)),
+            max(0.0, min(1.0, g)),
+            max(0.0, min(1.0, b)),
+            max(0.0, min(1.0, a))
+    )
 }
 
 /**
