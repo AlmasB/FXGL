@@ -11,6 +11,7 @@ module com.almasb.fxgl.gameplay {
     requires com.almasb.fxgl.core;
     requires com.almasb.fxgl.scene;
     requires javafx.controls;
+    requires javafx.media;
     requires com.fasterxml.jackson.annotation;
 
     exports com.almasb.fxgl.achievement;

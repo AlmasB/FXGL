@@ -17,6 +17,7 @@ import com.almasb.fxgl.cutscene.dialogue.DialogueScene
 import com.almasb.fxgl.cutscene.dialogue.FunctionCallHandler
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.scene.SceneService
+import javafx.scene.media.MediaView
 
 /**
  *
@@ -31,7 +32,8 @@ class CutsceneService : EngineService() {
     private var gameVars: PropertyMap? = null
 
     private val scene by lazy { CutsceneScene(sceneService) }
-    val dialogueScene by lazy { DialogueScene(sceneService) }
+    private val dialogueScene by lazy { DialogueScene(sceneService) }
+    private val videoScene by lazy { VideoScene(sceneService) }
 
     @JvmOverloads fun startCutscene(cutscene: Cutscene, onFinished: Runnable = EmptyRunnable) {
         scene.assetLoader = assetLoader
@@ -48,6 +50,10 @@ class CutsceneService : EngineService() {
         dialogueScene.assetLoader = assetLoader
         dialogueScene.audioPlayer = audioPlayer
         dialogueScene.start(dialogueGraph, context, functionHandler, onFinished)
+    }
+
+    @JvmOverloads fun startVideoCutscene(video: MediaView, onFinished: Runnable = EmptyRunnable) {
+        videoScene.start(video, onFinished)
     }
 
     override fun onGameReady(vars: PropertyMap) {
