@@ -252,6 +252,11 @@ public final class ParticleEmitter {
     private Supplier<Point2D> accelerationFunction = () -> Point2D.ZERO;
 
     /**
+     * Execute this function when the particle is removed
+     */
+    public Consumer<Particle>removeFunction=particle -> {};
+
+    /**
      *
      * @return gravity function
      */
@@ -333,6 +338,14 @@ public final class ParticleEmitter {
      */
     public void setExpireFunction(Function<Integer, Duration> expireFunction) {
         this.expireFunction = expireFunction;
+    }
+
+    /**
+     *
+     * @param removeFunction Execute this function when the particle is removed
+     */
+    public void setRemoveFunction(Consumer<Particle>removeFunction) {
+        this.removeFunction = removeFunction;
     }
 
     private Image sourceImage = null;
