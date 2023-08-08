@@ -9,14 +9,17 @@ package intermediate.animation;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
 import javafx.animation.Interpolator;
 import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -52,15 +55,26 @@ public class AnimatedTextureSample extends GameApplication {
 
     @Override
     protected void initUI() {
-        var frameSpinner = new Spinner<Integer>(0, 23, 0);
-        frameSpinner.setPrefWidth(100);
+        var startFrameSpinner = new Spinner<Integer>(0, 23, 0);
+        var stopFrameSpinner = new Spinner<Integer>(0, 23, 23);
+
+        startFrameSpinner.setPrefWidth(60);
+        stopFrameSpinner.prefWidthProperty().bind(startFrameSpinner.prefWidthProperty());
 
         var btn = new Button("Play from frame");
         btn.setOnAction(e -> {
-            spawnRobotForFrame(900, 700, frameSpinner.getValue());
+            spawnRobotForFrame(900, 700, startFrameSpinner.getValue());
         });
 
-        var vbox = new VBox(10, frameSpinner, btn);
+        var from = new Text("from ");
+        var to = new Text(" to ");
+        from.setFont(Font.font(18));
+        from.setFill(Color.WHITE);
+        to.fontProperty().bind(from.fontProperty());
+        to.fillProperty().bind(from.fillProperty());
+
+        var hbox = new HBox(from,startFrameSpinner,to,stopFrameSpinner);
+        var vbox = new VBox(10, hbox, btn);
 
         addUINode(vbox, 1230, 820);
     }
@@ -75,7 +89,7 @@ public class AnimatedTextureSample extends GameApplication {
                 .view(animTexture)
                 .buildAndAttach();
 
-        animTexture.setOnCycleFinished(() -> e.removeFromWorld());
+        animTexture.setOnCycleFinished(() -> FXGL.runOnce(e::removeFromWorld, Duration.seconds(1)));//keep the last frame for 1 second
     }
 
     private void spawnRobot(double x, double y, Interpolator interpolator, String name) {
