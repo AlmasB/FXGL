@@ -89,7 +89,7 @@ public class AnimatedTextureSample extends GameApplication {
                 .view(animTexture)
                 .buildAndAttach();
 
-        animTexture.setOnCycleFinished(() -> FXGL.runOnce(e::removeFromWorld, Duration.seconds(1)));//keep the last frame for 1 second
+        animTexture.setOnCycleFinished(() -> e.removeFromWorld());
     }
 
     private void spawnRobot(double x, double y, Interpolator interpolator, String name) {
