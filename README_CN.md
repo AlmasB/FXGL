@@ -78,7 +78,7 @@ public class BasicGameApp extends GameApplication {
 </dependency>
 ```
 
-注意：`0.5.4` 及 `11.17` 分别适用于 Java 8-10  及 Java 11-16。
+注意：`0.5.4` 及 `17.3` 分别适用于 Java 8-10  及 Java 11+。
 
 ### Gradle
 
@@ -96,7 +96,7 @@ dependencies {
 }
 ```
 
-注意：`0.5.4` 及 `11.17` 分别适用于 Java 8-10  及 Java 11-16。
+注意：`0.5.4` 及 `17.3` 分别适用于 Java 8-10  及 Java 11+。
 
 ### 模块化
 
