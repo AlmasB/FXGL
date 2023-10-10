@@ -46,6 +46,8 @@ internal class LoopRunner(
     var cpuNanoTime = 0L
         private set
 
+    private var lastFPSUpdateNanos = 0L
+    private var fpsSamplingCount = 0
     private var lastFrameNanos = 0L
 
     private val impl by lazy {
@@ -93,14 +95,27 @@ internal class LoopRunner(
     private fun frame(now: Long) {
         if (lastFrameNanos == 0L) {
             lastFrameNanos = now
+            lastFPSUpdateNanos = now
+            fpsSamplingCount = 0
         }
 
         tpf = (now - lastFrameNanos).toDouble() / 1_000_000_000
 
+        val ticksPerSecond = if (ticksPerSecond < 0) 60 else ticksPerSecond // For JavaFX loops, cap at 60fps too
         // The "executor" will call 60 times per seconds even if the game runs under 60 fps.
         // If it's not even "half" a tick long, skip
         if(tpf < (1_000_000_000 / (ticksPerSecond * 1.5)) / 1_000_000_000 ) {
             return
+        }
+
+        fpsSamplingCount++
+
+        // Update the FPS value every 500 millis
+        val timeSinceLastFPSUpdateNanos = now - lastFPSUpdateNanos;
+        if (timeSinceLastFPSUpdateNanos >= 500_000_000) {
+            lastFPSUpdateNanos = now
+            fps = (fpsSamplingCount.toLong() * 1_000_000_000 / timeSinceLastFPSUpdateNanos).toInt()
+            fpsSamplingCount = 0
         }
 
         lastFrameNanos = now
