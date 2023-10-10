@@ -46,8 +46,7 @@ internal class LoopRunner(
     var cpuNanoTime = 0L
         private set
 
-    private var lastFPSUpdateNanos = 0L
-    private var fpsBuffer2sec = 0
+    private var lastFrameNanos = 0L
 
     private val impl by lazy {
         if (ticksPerSecond <= 0) {
@@ -83,8 +82,6 @@ internal class LoopRunner(
         log.debug("Pausing loop")
 
         impl.pause()
-
-        lastFPSUpdateNanos = 0L
     }
 
     fun stop() {
@@ -94,29 +91,22 @@ internal class LoopRunner(
     }
 
     private fun frame(now: Long) {
-        if (lastFPSUpdateNanos == 0L) {
-            lastFPSUpdateNanos = now
-            fpsBuffer2sec = 0
+        if (lastFrameNanos == 0L) {
+            lastFrameNanos = now
         }
+
+        tpf = (now - lastFrameNanos).toDouble() / 1_000_000_000
+
+        // The "executor" will call 60 times per seconds even if the game runs under 60 fps.
+        // If it's not even "half" a tick long, skip
+        if(tpf < (1_000_000_000 / (ticksPerSecond * 1.5)) / 1_000_000_000 ) {
+            return
+        }
+
+        lastFrameNanos = now
 
         cpuNanoTime = measureNanoTime {
             runnable(tpf)
-        }
-
-        fpsBuffer2sec++
-
-        // if 2 seconds have passed
-        if (now - lastFPSUpdateNanos >= 2_000_000_000) {
-            lastFPSUpdateNanos = now
-            fps = fpsBuffer2sec / 2
-            fpsBuffer2sec = 0
-
-            // tweak potentially erroneous reads
-            if (fps < 5)
-                fps = 60
-
-            // update tpf for the next 2 seconds
-            tpf = 1.0 / fps
         }
     }
 }
