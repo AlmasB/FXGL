@@ -10,6 +10,7 @@ import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.MenuItem
+import com.almasb.fxgl.audio.AudioType
 import com.almasb.fxgl.core.math.FXGLMath.noise1D
 import com.almasb.fxgl.core.util.InputPredicates
 import com.almasb.fxgl.dsl.*
@@ -699,7 +700,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         val sliderMusic = getUIFactoryService().newSlider()
         sliderMusic.min = 0.0
         sliderMusic.max = 1.0
-        sliderMusic.valueProperty().bindBidirectional(getSettings().globalMusicVolumeProperty)
+        sliderMusic.valueProperty().bindBidirectional(AudioType.MUSIC.volume)
 
         val textMusic = getUIFactoryService().newText(localizedStringProperty("menu.music.volume").concat(": "))
         val percentMusic = getUIFactoryService().newText("")
@@ -708,7 +709,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         val sliderSound = getUIFactoryService().newSlider()
         sliderSound.min = 0.0
         sliderSound.max = 1.0
-        sliderSound.valueProperty().bindBidirectional(getSettings().globalSoundVolumeProperty)
+        sliderSound.valueProperty().bindBidirectional(AudioType.SOUND.volume)
 
         val textSound = getUIFactoryService().newText(localizedStringProperty("menu.sound.volume").concat(": "))
         val percentSound = getUIFactoryService().newText("")

@@ -11,6 +11,7 @@ import com.almasb.fxgl.achievement.AchievementService
 import com.almasb.fxgl.app.scene.SceneFactory
 import com.almasb.fxgl.app.services.*
 import com.almasb.fxgl.audio.AudioPlayer
+import com.almasb.fxgl.audio.AudioType
 import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.serialization.Bundle
@@ -765,28 +766,6 @@ class ReadOnlyGameSettings internal constructor(
         get() = gameDifficultyProp.value
         set(value) { gameDifficultyProp.value = value }
 
-    @get:JvmName("globalMusicVolumeProperty")
-    val globalMusicVolumeProperty = SimpleDoubleProperty(0.5)
-
-    /**
-     * Set global music volume in the range [0..1],
-     * where 0 = 0%, 1 = 100%.
-     */
-    var globalMusicVolume: Double
-        get() = globalMusicVolumeProperty.value
-        set(value) { globalMusicVolumeProperty.value = value }
-
-    @get:JvmName("globalSoundVolumeProperty")
-    val globalSoundVolumeProperty = SimpleDoubleProperty(0.5)
-
-    /**
-     * Set global sound volume in the range [0..1],
-     * where 0 = 0%, 1 = 100%.
-     */
-    var globalSoundVolume: Double
-        get() = globalSoundVolumeProperty.value
-        set(value) { globalSoundVolumeProperty.value = value }
-
     private val mouseSensitivityProp = SimpleDoubleProperty(mouseSensitivity)
 
     var mouseSensitivity: Double
@@ -804,15 +783,16 @@ class ReadOnlyGameSettings internal constructor(
 
     override fun write(bundle: Bundle) {
         bundle.put("fullscreen", fullScreen.value)
-        bundle.put("globalMusicVolume", globalMusicVolume)
-        bundle.put("globalSoundVolume", globalSoundVolume)
+
+        bundle.put("globalMusicVolume", AudioType.MUSIC.volume.value)
+        bundle.put("globalSoundVolume", AudioType.SOUND.volume.value)
     }
 
     override fun read(bundle: Bundle) {
         fullScreen.value = bundle.get("fullscreen")
 
-        globalMusicVolume = bundle.get("globalMusicVolume")
-        globalSoundVolume = bundle.get("globalSoundVolume")
+        AudioType.MUSIC.volume.value = bundle.get("globalMusicVolume")
+        AudioType.SOUND.volume.value = bundle.get("globalSoundVolume")
 
         applySettings()
     }
