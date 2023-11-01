@@ -4,7 +4,7 @@
 
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>17+dev-SNAPSHOT</version>
+    <version>21+dev-SNAPSHOT</version>
     
     <packaging>pom</packaging>
 
@@ -63,15 +63,15 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <source.version>17</source.version>
+        <source.version>21</source.version>
         <fxgl.version>${project.version}</fxgl.version>
 
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>dd.MM.yyyy HH.mm</maven.build.timestamp.format>
 
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
         <!-- plugins -->
@@ -90,7 +90,7 @@
 
         <!-- dependencies -->
         <jfx.version>20</jfx.version>
-        <kotlin.version>1.8.10</kotlin.version>
+        <kotlin.version>1.9.20</kotlin.version>
         <attach.version>4.0.17</attach.version>
         <jackson.version>2.14.2</jackson.version>
 

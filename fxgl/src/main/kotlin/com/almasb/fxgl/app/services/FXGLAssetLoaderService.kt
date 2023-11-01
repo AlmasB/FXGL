@@ -316,7 +316,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      *
      * @return parsed object with [type] or Optional.empty() if errors
      */
-    fun <T> loadJSON(name: String, type: Class<T>): Optional<T> {
+    fun <T> loadJSON(name: String, type: Class<T>): Optional<T & Any> {
         return loadJSON(getURL(ASSETS_DIR + name), type)
     }
 
@@ -326,7 +326,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      *
      * @return parsed object with [type] or Optional.empty() if errors
      */
-    fun <T> loadJSON(url: URL, type: Class<T>): Optional<T> {
+    fun <T> loadJSON(url: URL, type: Class<T>): Optional<T & Any> {
         if (url === NULL_URL) {
             log.warning("Failed to load JSON: URL is not valid")
             return Optional.empty()
