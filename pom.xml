@@ -71,7 +71,7 @@
 
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
+        <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
         <!-- plugins -->
@@ -83,14 +83,14 @@
         <maven.source.version>3.2.0</maven.source.version>
         <maven.jar.version>3.2.0</maven.jar.version>
         <maven.shade.version>3.2.2</maven.shade.version>
-        <jacoco.version>0.8.8</jacoco.version>
+        <jacoco.version>0.8.11</jacoco.version>
         <maven.surefire.version>3.0.0-M4</maven.surefire.version>
         <build.helper.version>3.0.0</build.helper.version>
         <maven.templating.version>1.0.0</maven.templating.version>
 
         <!-- dependencies -->
         <jfx.version>20</jfx.version>
-        <kotlin.version>1.9.20</kotlin.version>
+        <kotlin.version>1.8.10</kotlin.version>
         <attach.version>4.0.17</attach.version>
         <jackson.version>2.14.2</jackson.version>
 
