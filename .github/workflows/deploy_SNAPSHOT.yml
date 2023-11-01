@@ -35,7 +35,7 @@ jobs:
       uses: GabrielBB/xvfb-action@v1
       with:
         run: |
-          mvn test -B -Dmaven.javadoc.skip=true -Djacoco.skip=true
+          mvn test -B -Dmaven.javadoc.skip=true -Djacoco.skip=true -Dpmd.skip=true
 
     - name: Deploy SNAPSHOT build
       run: mvn deploy -DskipTests=true -Dlicense.skip=true -Dpmd.skip=true
