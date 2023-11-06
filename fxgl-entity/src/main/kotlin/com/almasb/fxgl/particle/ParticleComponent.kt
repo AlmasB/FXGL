@@ -36,6 +36,7 @@ open class ParticleComponent(val emitter: ParticleEmitter) : Component() {
 
     override fun onUpdate(tpf: Double) {
         if (parent.world == null) {
+            parent.zIndex = entity.zIndex
             entity.world.addEntity(parent)
         }
 
