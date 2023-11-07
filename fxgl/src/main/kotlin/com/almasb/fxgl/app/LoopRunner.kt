@@ -77,6 +77,7 @@ internal class LoopRunner(
     fun resume() {
         log.debug("Resuming loop")
 
+        lastFrameNanos = 0
         impl.resume()
     }
 
@@ -93,15 +94,16 @@ internal class LoopRunner(
     }
 
     private fun frame(now: Long) {
+        val ticksPerSecond = if (ticksPerSecond < 0) 60 else ticksPerSecond // For JavaFX loops, cap at 60fps too
+
         if (lastFrameNanos == 0L) {
-            lastFrameNanos = now
-            lastFPSUpdateNanos = now
-            fpsSamplingCount = 0
+            lastFrameNanos = now - (1_000_000_000.0 / ticksPerSecond).toLong()
+            lastFPSUpdateNanos = lastFrameNanos
+            fpsSamplingCount = 1
         }
 
         tpf = (now - lastFrameNanos).toDouble() / 1_000_000_000
 
-        val ticksPerSecond = if (ticksPerSecond < 0) 60 else ticksPerSecond // For JavaFX loops, cap at 60fps too
         // The "executor" will call 60 times per seconds even if the game runs under 60 fps.
         // If it's not even "half" a tick long, skip
         if(tpf < (1_000_000_000 / (ticksPerSecond * 1.5)) / 1_000_000_000 ) {

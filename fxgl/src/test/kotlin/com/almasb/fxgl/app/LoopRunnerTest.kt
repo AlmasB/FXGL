@@ -121,8 +121,8 @@ class LoopRunnerTest {
         ).forEach {
             it.start()
 
-            // 16.6 per frame, so 10 frames
-            Thread.sleep(frameTime * 10)
+            // 16.6 per frame, so 50 frames
+            Thread.sleep(frameTime * 50)
 
             it.pause()
 
@@ -131,18 +131,18 @@ class LoopRunnerTest {
 
             it.resume()
 
-            // 16.6 per frame, so 10 frames
-            Thread.sleep(frameTime * 10)
+            // 16.6 per frame, so 50 frames
+            Thread.sleep(frameTime * 50)
 
             it.stop()
         }
 
-        // We processed 170 frames
-        assertThat(count1, greaterThan((169 * frameTime).toDouble() / 1_000))
-        assertThat(count1, lessThan((171 * frameTime).toDouble() / 1_000))
+        // We processed approximately 100 frames (150 where in Pause)
+        assertThat(count1, greaterThan((98 * frameTime).toDouble() / 1_000))
+        assertThat(count1, lessThan((102 * frameTime).toDouble() / 1_000))
 
-        assertThat(count2, greaterThan((169 * frameTime).toDouble() / 1_000))
-        assertThat(count2, lessThan((171 * frameTime).toDouble() / 1_000))
+        assertThat(count2, greaterThan((98 * frameTime).toDouble() / 1_000))
+        assertThat(count2, lessThan((102 * frameTime).toDouble() / 1_000))
     }
 
     @Test
