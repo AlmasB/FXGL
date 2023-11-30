@@ -23,9 +23,11 @@ import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.ui.FXGLScrollPane
 import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
 import javafx.scene.Group
+import javafx.scene.control.ScrollPane
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
@@ -34,6 +36,7 @@ import javafx.scene.text.Font
 import javafx.scene.text.Text
 import javafx.util.Duration
 import java.util.*
+
 
 /**
  *
@@ -91,8 +94,27 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         topText.translateX = 50.0
         topText.translateY = 40.0
 
-        boxPlayerLines.translateX = 50.0
-        boxPlayerLines.translateYProperty().bind(sceneService.prefHeightProperty().subtract(160))
+        val playerLinesScroll = FXGLScrollPane(boxPlayerLines)
+        playerLinesScroll.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+        playerLinesScroll.vbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+        playerLinesScroll.prefHeight = botLine.height - 60
+        playerLinesScroll.translateX = 50.0
+        playerLinesScroll.translateYProperty().bind(sceneService.prefHeightProperty().subtract(160))
+        playerLinesScroll.opacityProperty().bind(boxPlayerLines.opacityProperty())
+
+        // these dummy objects help us place the scroll bar for [playerLinesScroll] on the left side
+        val dummyBox = VBox(5.0)
+        dummyBox.prefHeightProperty().bind(boxPlayerLines.heightProperty())
+
+        val dummyScroll = FXGLScrollPane(dummyBox)
+        dummyScroll.translateX = 0.0
+        dummyScroll.translateY = playerLinesScroll.translateY
+        dummyScroll.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+        dummyScroll.prefHeightProperty().bind(playerLinesScroll.prefHeightProperty())
+        dummyScroll.vmaxProperty().bind(playerLinesScroll.vmaxProperty())
+        dummyScroll.vminProperty().bind(playerLinesScroll.vminProperty())
+        dummyScroll.vvalueProperty().bindBidirectional(playerLinesScroll.vvalueProperty())
+
         boxPlayerLines.opacity = 0.0
 
         val keyView = KeyView(KeyCode.ENTER, Color.GREENYELLOW, 18.0)
@@ -104,7 +126,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
         initUserActions()
 
-        contentRoot.children.addAll(topLine, botLineGroup, topText, boxPlayerLines, keyView)
+        contentRoot.children.addAll(topLine, botLineGroup, topText, dummyScroll, playerLinesScroll, keyView)
     }
 
     private fun initUserActions() {
