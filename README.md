@@ -182,6 +182,7 @@ Users:
 * @hendrikebbers
 * @ImperaEtConquer
 * @thejeed
+* @chikega
 
 Companies:
 

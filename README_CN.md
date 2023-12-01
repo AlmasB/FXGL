@@ -174,6 +174,7 @@ open module app.name {
 - @hendrikebbers
 - @ImperaEtConquer
 - @thejeed
+- @chikega
 
 公司：
 
