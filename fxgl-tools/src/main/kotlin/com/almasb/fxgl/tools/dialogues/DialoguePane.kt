@@ -17,8 +17,10 @@ import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.texture.toImage
 import com.almasb.fxgl.tools.dialogues.DialogueEditorVars.IS_SNAP_TO_GRID
 import com.almasb.fxgl.tools.dialogues.ui.SelectionRectangle
+import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.MapChangeListener
@@ -81,6 +83,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     private val contentRoot = Group()
 
     private var selectedOutLink: OutLinkPoint? = null
+    private val selectedNodeView: ObjectProperty<NodeView> = SimpleObjectProperty()
 
     var graph = graph
         private set
@@ -241,6 +244,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 selectionRect.isVisible = false
             }
         }
+
+        selectedNodeView.addListener { _, _, newNodeView -> onSelectedNodeViewChanged(newNodeView) }
 
         initGraphListeners()
 
@@ -459,6 +464,10 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         evaluateGraphConnectivity()
     }
 
+    private fun onSelectedNodeViewChanged(newNodeView: NodeView?) {
+        
+    }
+
     /**
      * Checks that all outgoing links are connected.
      */
@@ -512,6 +521,10 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
             if (startLayoutX != nodeView.layoutX || startLayoutY != nodeView.layoutY) {
                 performUIAction(MoveNodeAction(nodeView.node, this::getNodeView, startLayoutX, startLayoutY, nodeView.layoutX, nodeView.layoutY))
             }
+        }
+
+        nodeView.setOnMouseClicked {
+            selectedNodeView.value = nodeView
         }
 
         nodeView.cursor = Cursor.MOVE
