@@ -465,7 +465,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun onSelectedNodeViewChanged(newNodeView: NodeView?) {
-        
+
     }
 
     /**
@@ -633,6 +633,17 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     fun redo() {
         showMessage("TODO: Sorry, not implemented yet.")
+    }
+
+    fun duplicate() {
+        selectedNodeView.value?.let { nodeView ->
+            // currently we do not allow multiple start nodes
+            if (nodeView.node.type != START) {
+                val node = nodeView.node.copy()
+
+                performUIAction(AddNodeAction(graph, node))
+            }
+        }
     }
 
     fun save(): SerializableGraph {

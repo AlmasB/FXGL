@@ -83,8 +83,7 @@ class MainUI : BorderPane() {
         val contextMenuEdit = FXGLContextMenu()
         contextMenuEdit.addItem("Undo (CTRL+Z)") { undo() }
         //contextMenuEdit.addItem("Redo") { redo() }
-        //contextMenuEdit.addItem("Copy (CTRL+C)") {  }
-        //contextMenuEdit.addItem("Paste (CTRL+V)") {  }
+        contextMenuEdit.addItem("Duplicate Node (CTRL+D)") { duplicate() }
         contextMenuEdit.addItem("Preferences") { openPreferencesDialog() }
 
         val contextMenuAdd = FXGLContextMenu()
@@ -152,6 +151,12 @@ class MainUI : BorderPane() {
                 undo()
             }
         }, KeyCode.Z, InputModifier.CTRL)
+
+        getInput().addAction(object : UserAction("Duplicate") {
+            override fun onActionBegin() {
+                duplicate()
+            }
+        }, KeyCode.D, InputModifier.CTRL)
     }
 
     private fun makeRunButton(): Node {
@@ -268,6 +273,10 @@ class MainUI : BorderPane() {
 
     private fun redo() {
         currentTab?.pane?.redo()
+    }
+
+    private fun duplicate() {
+        currentTab?.pane?.duplicate()
     }
 
     private fun openAboutDialog() {
