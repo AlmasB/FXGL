@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.cutscene.dialogue
 
+import com.almasb.fxgl.core.Copyable
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
 import javafx.beans.property.SimpleStringProperty
@@ -37,7 +38,7 @@ fun interface DialogueContext {
 sealed class DialogueNode(
         val type: DialogueNodeType,
         text: String
-) {
+) : Copyable<DialogueNode> {
 
     val textProperty: StringProperty = SimpleStringProperty(text)
 
@@ -54,17 +55,29 @@ sealed class DialogueNode(
     }
 }
 
-class StartNode(text: String) : DialogueNode(START, text)
+class StartNode(text: String) : DialogueNode(START, text) {
+    override fun copy(): StartNode = StartNode(text)
+}
 
-class EndNode(text: String) : DialogueNode(END, text)
+class EndNode(text: String) : DialogueNode(END, text) {
+    override fun copy(): EndNode = EndNode(text)
+}
 
-class TextNode(text: String) : DialogueNode(TEXT, text)
+class TextNode(text: String) : DialogueNode(TEXT, text) {
+    override fun copy(): TextNode = TextNode(text)
+}
 
-class SubDialogueNode(text: String) : DialogueNode(SUBDIALOGUE, text)
+class SubDialogueNode(text: String) : DialogueNode(SUBDIALOGUE, text) {
+    override fun copy(): SubDialogueNode = SubDialogueNode(text)
+}
 
-class FunctionNode(text: String) : DialogueNode(FUNCTION, text)
+class FunctionNode(text: String) : DialogueNode(FUNCTION, text) {
+    override fun copy(): FunctionNode = FunctionNode(text)
+}
 
-class BranchNode(text: String) : DialogueNode(BRANCH, text)
+class BranchNode(text: String) : DialogueNode(BRANCH, text) {
+    override fun copy(): BranchNode = BranchNode(text)
+}
 
 class ChoiceNode(text: String) : DialogueNode(CHOICE, text)  {
 
@@ -87,6 +100,17 @@ class ChoiceNode(text: String) : DialogueNode(CHOICE, text)  {
      */
     val lastOptionID: Int
         get() = options.keys.maxOrNull() ?: -1
+
+    override fun copy(): ChoiceNode {
+        val copy = ChoiceNode(text)
+        options.forEach { (k, v) ->
+            copy.options[k] = SimpleStringProperty(v.value)
+        }
+        conditions.forEach { (k, v) ->
+            copy.conditions[k] = SimpleStringProperty(v.value)
+        }
+        return copy
+    }
 }
 
 /* EDGES */

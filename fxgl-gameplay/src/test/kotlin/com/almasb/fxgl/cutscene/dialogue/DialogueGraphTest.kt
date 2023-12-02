@@ -7,9 +7,9 @@
 package com.almasb.fxgl.cutscene.dialogue
 
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
+import javafx.beans.property.SimpleStringProperty
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.contains
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -183,6 +183,53 @@ class DialogueGraphTest {
         graph.addNode(node1)
 
         assertTrue(graph.containsNode(node1))
+    }
+
+    @Test
+    fun `Copy nodes`() {
+        listOf(
+            StartNode("TestText"),
+            EndNode("TestText"),
+            TextNode("TestText"),
+            SubDialogueNode("TestText"),
+            FunctionNode("TestText"),
+            BranchNode("TestText"),
+            ChoiceNode("TestText")
+        ).forEach {
+            val copy = it.copy()
+            assertThat(it.text, `is`(copy.text))
+            assertThat(it.type, `is`(copy.type))
+        }
+    }
+
+    @Test
+    fun `Copy choice options`() {
+        val choice = ChoiceNode("Choice")
+        choice.options[0] = SimpleStringProperty("Choice A")
+        choice.options[1] = SimpleStringProperty("Choice B")
+        choice.options[2] = SimpleStringProperty("Choice C")
+
+        choice.conditions[0] = SimpleStringProperty("Condition A")
+        choice.conditions[1] = SimpleStringProperty("Condition B")
+        choice.conditions[2] = SimpleStringProperty("Condition C")
+
+        val copy = choice.copy()
+
+        assertThat(choice.lastOptionID, `is`(copy.lastOptionID))
+
+        // StringProperty has to be a deep copy, not shallow
+        assertThat(choice.options, `is`(not(copy.options)))
+        assertThat(choice.conditions, `is`(not(copy.conditions)))
+        assertThat(choice.options.size, `is`(copy.options.size))
+        assertThat(choice.conditions.size, `is`(copy.conditions.size))
+
+        choice.options.forEach { (k, v) ->
+            assertThat(v.value, `is`(copy.options[k]!!.value))
+        }
+
+        choice.conditions.forEach { (k, v) ->
+            assertThat(v.value, `is`(copy.conditions[k]!!.value))
+        }
     }
 
     @Test
