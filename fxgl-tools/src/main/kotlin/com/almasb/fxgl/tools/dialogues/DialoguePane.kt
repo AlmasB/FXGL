@@ -245,7 +245,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
             }
         }
 
-        selectedNodeView.addListener { _, _, newNodeView -> onSelectedNodeViewChanged(newNodeView) }
+        selectedNodeView.addListener { _, oldNodeView, newNodeView -> onSelectedNodeViewChanged(oldNodeView, newNodeView) }
 
         initGraphListeners()
 
@@ -464,8 +464,14 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         evaluateGraphConnectivity()
     }
 
-    private fun onSelectedNodeViewChanged(newNodeView: NodeView?) {
+    private fun onSelectedNodeViewChanged(oldNodeView: NodeView?, newNodeView: NodeView?) {
+        oldNodeView?.let { view ->
+            view.styleClass -= "dialogue-editor-node-view-selected"
+        }
 
+        newNodeView?.let { view ->
+            view.styleClass += "dialogue-editor-node-view-selected"
+        }
     }
 
     /**
