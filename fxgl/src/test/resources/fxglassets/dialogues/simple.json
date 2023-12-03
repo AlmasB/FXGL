@@ -1,17 +1,21 @@
 {
   "uniqueID" : 4,
+  "startNodeID" : 0,
   "nodes" : {
     "0" : {
-      "type" : "START",
-      "text" : "Simple start."
+      "type" : "TEXT",
+      "text" : "Simple start.",
+      "audio" : ""
     },
     "1" : {
       "type" : "END",
-      "text" : "Simple end."
+      "text" : "Simple end.",
+      "audio" : ""
     },
     "2" : {
       "type" : "TEXT",
-      "text" : "Simple text."
+      "text" : "Simple text.",
+      "audio" : ""
     }
   },
   "choiceNodes" : { },
@@ -23,18 +27,19 @@
     "targetID" : 1
   } ],
   "choiceEdges" : [ ],
+  "version" : 3,
   "uiMetadata" : {
     "0" : {
-      "x" : 50.0,
-      "y" : 450.0
+      "x" : 40.0,
+      "y" : 440.0
     },
     "1" : {
-      "x" : 1230.5,
-      "y" : 450.0
+      "x" : 1240.0,
+      "y" : 440.0
     },
     "2" : {
-      "x" : 665.5,
-      "y" : 274.5
+      "x" : 680.0,
+      "y" : 280.0
     }
   }
 }
