@@ -9,8 +9,7 @@ package com.almasb.fxgl.cutscene.dialogue
 import com.almasb.fxgl.core.collection.PropertyMap
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -107,5 +106,45 @@ class DialogueScriptRunnerTest {
 
         runner.callFunction("someInt = 66")
         assertTrue(runner.callBooleanFunction("\$someInt == 66"))
+    }
+
+    @Test
+    fun `Call built-in functions`() {
+        val globalVars = PropertyMap()
+        val localVars = PropertyMap()
+        localVars.setValue("i", 5)
+        localVars.setValue("d", 3.0)
+
+        runner = DialogueScriptRunner(globalVars, localVars, object : FunctionCallHandler() {})
+
+        runner.callFunction("add i 3")
+        assertThat(localVars.getInt("i"), `is`(8))
+
+        runner.callFunction("sub d 1")
+        assertThat(localVars.getDouble("d"), `is`(2.0))
+
+        runner.callFunction("sub d 1.5")
+        assertThat(localVars.getDouble("d"), `is`(0.5))
+
+        runner.callFunction("mul i 2")
+        assertThat(localVars.getInt("i"), `is`(16))
+
+        runner.callFunction("mul d 2")
+        assertThat(localVars.getDouble("d"), `is`(1.0))
+
+        runner.callFunction("mul d 2.5")
+        assertThat(localVars.getDouble("d"), `is`(2.5))
+
+        runner.callFunction("div i 4")
+        assertThat(localVars.getInt("i"), `is`(4))
+
+        runner.callFunction("div d 2.5")
+        assertThat(localVars.getDouble("d"), `is`(1.0))
+
+        runner.callFunction("div d 2")
+        assertThat(localVars.getDouble("d"), `is`(0.5))
+
+        assertDoesNotThrow { runner.callFunction("add i notNumber") }
+        assertDoesNotThrow { runner.callFunction("add a 2") }
     }
 }
