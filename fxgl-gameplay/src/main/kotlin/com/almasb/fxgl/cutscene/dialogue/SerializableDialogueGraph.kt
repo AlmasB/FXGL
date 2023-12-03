@@ -22,7 +22,7 @@ import javafx.beans.property.SimpleStringProperty
  * An equivalent of serialVersionUID.
  * Any changes to the serializable graph data structure need to increment this number by 1.
  */
-private const val GRAPH_VERSION = 2
+private const val GRAPH_VERSION = 3
 
 /*
  * We can't use jackson-module-kotlin yet since no module-info.java is provided.
@@ -33,6 +33,19 @@ private const val GRAPH_VERSION = 2
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SerializableTextNode
+@JsonCreator constructor(
+        @JsonProperty("type")
+        val type: DialogueNodeType,
+
+        @JsonProperty("text")
+        val text: String
+) {
+
+    var audio: String = ""
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class SerializableFunctionNode
 @JsonCreator constructor(
         @JsonProperty("type")
         val type: DialogueNodeType,

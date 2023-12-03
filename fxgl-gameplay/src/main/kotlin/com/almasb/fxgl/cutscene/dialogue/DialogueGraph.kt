@@ -9,6 +9,8 @@ package com.almasb.fxgl.cutscene.dialogue
 import com.almasb.fxgl.core.Copyable
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
+import javafx.beans.property.IntegerProperty
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.collections.FXCollections
@@ -72,7 +74,22 @@ class SubDialogueNode(text: String) : DialogueNode(SUBDIALOGUE, text) {
 }
 
 class FunctionNode(text: String) : DialogueNode(FUNCTION, text) {
-    override fun copy(): FunctionNode = FunctionNode(text)
+
+    /**
+     * Number of times this function can be called.
+     * Once the number of calls for this function has been reached, the function is skipped.
+     * Default value: -1 for unlimited.
+     */
+    val numTimesProperty: IntegerProperty = SimpleIntegerProperty(-1)
+
+    val numTimes: Int
+        get() = numTimesProperty.value
+
+    override fun copy(): FunctionNode {
+        val copy = FunctionNode(text)
+        copy.numTimesProperty.value = numTimesProperty.value
+        return copy
+    }
 }
 
 class BranchNode(text: String) : DialogueNode(BRANCH, text) {

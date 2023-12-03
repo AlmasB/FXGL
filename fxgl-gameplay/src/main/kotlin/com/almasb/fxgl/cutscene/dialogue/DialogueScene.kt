@@ -56,6 +56,8 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
     private lateinit var graph: DialogueGraph
     private lateinit var functionHandler: FunctionCallHandler
+    private lateinit var context: DialogueContext
+    private lateinit var localVars: PropertyMap
 
     internal lateinit var gameVars: PropertyMap
     internal lateinit var assetLoader: AssetLoaderService
@@ -199,8 +201,11 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     fun start(dialogueGraph: DialogueGraph, context: DialogueContext, functionHandler: FunctionCallHandler, onFinished: Runnable) {
         graph = dialogueGraph.copy()
         this.functionHandler = functionHandler
+        this.context = context
         this.onFinished = onFinished
-        dialogueScriptRunner = DialogueScriptRunner(gameVars, context.properties(), functionHandler)
+        localVars = context.properties()
+
+        dialogueScriptRunner = DialogueScriptRunner(gameVars, localVars, functionHandler)
 
         // while graph has subdialogue nodes, expand
         while (graph.nodes.any { it.value.type == SUBDIALOGUE }) {
@@ -261,7 +266,24 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             playAudioLines(currentNode)
 
             if (currentNode.type == FUNCTION) {
-                currentNode.text.parseAndCallFunctions()
+                val functionNode = currentNode as FunctionNode
+
+                val id = graph.findNodeID(functionNode)
+
+                // TODO: design key prefixes for dialogue created vars
+                val varName = "DialogueScene.function.numTimesCalled.$id"
+
+                if (!localVars.exists(varName)) {
+                    localVars.setValue(varName, 0)
+                }
+
+                val numTimesCalled = localVars.getInt(varName)
+
+                // -1 is unlimited
+                if (functionNode.numTimes == -1 || numTimesCalled < functionNode.numTimes) {
+                    localVars.increment(varName, 1)
+                    currentNode.text.parseAndCallFunctions()
+                }
 
                 nextLine(nextNode())
             } else if (currentNode.type == BRANCH) {
