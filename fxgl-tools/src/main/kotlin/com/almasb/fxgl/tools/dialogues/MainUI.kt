@@ -12,6 +12,8 @@ import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.tools.dialogues.ui.ErrorIcon
 import com.almasb.fxgl.tools.dialogues.ui.FXGLContextMenu
+import com.almasb.fxgl.tools.dialogues.ui.NodeInspectorPane
+import com.almasb.fxgl.ui.InGamePanel
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import javafx.beans.binding.Bindings
@@ -40,6 +42,8 @@ class MainUI : BorderPane() {
 
     private val toolbar = HBox(35.0)
     private val tabPane = TabPane()
+
+    private val nodeInspectorPane = NodeInspectorPane()
 
     private val errorIcon = ErrorIcon()
 
@@ -72,6 +76,8 @@ class MainUI : BorderPane() {
             }
         }
 
+        nodeInspectorPane.translateYProperty().bind(toolbar.heightProperty())
+
         val contextMenuFile = FXGLContextMenu()
         contextMenuFile.addItem("New (CTRL+N)") { openNewDialog() }
         contextMenuFile.addItem("Open... (CTRL+O)") { openLoadDialog() }
@@ -93,7 +99,7 @@ class MainUI : BorderPane() {
         contextMenuHelp.addItem("Check for Updates...") { FXGL.getFXApp().hostServices.showDocument("https://fxgl.itch.io/fxgl-dialogue-editor") }
         contextMenuHelp.addItem("About") { openAboutDialog() }
 
-        val pane = Pane(tabPane, toolbar, errorIcon)
+        val pane = Pane(tabPane, toolbar, errorIcon, nodeInspectorPane)
 
         val menuFile = EditorMenu("File") {
             contextMenuFile.show(pane, 0.0, toolbar.prefHeight)
@@ -120,9 +126,13 @@ class MainUI : BorderPane() {
         pane.style = "-fx-background-color: gray"
         tabPane.prefWidthProperty().bind(FXGL.getSettings().actualWidthProperty())
         tabPane.prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
+
+        nodeInspectorPane.prefWidth = 200.0
+        nodeInspectorPane.prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
+
         center = pane
 
-        openNewTab()
+        openNewTab(File("Untitled.json"))
 
         initInput()
     }
@@ -192,11 +202,16 @@ class MainUI : BorderPane() {
         return stack
     }
 
-    private fun openNewTab() {
-        val tab = DialogueTab(File("Untitled.json"), DialoguePane())
+    private fun openNewTab(file: File): DialogueTab {
+        val tab = DialogueTab(file, DialoguePane())
+        tab.pane.selectedNodeView.addListener { _, _, newNodeView ->
+            nodeInspectorPane.updateSelection(tab.pane.graph, newNodeView.node)
+        }
 
         tabPane.tabs += tab
         tabPane.selectionModel.select(tab)
+
+        return tab
     }
 
     private fun openPreferencesDialog() {
@@ -205,10 +220,7 @@ class MainUI : BorderPane() {
 
     private fun openNewDialog() {
         getDialogService().showInputBox("New dialogue name", { isValidName(it) }, { name ->
-            val tab = DialogueTab(File("$name.json"), DialoguePane())
-
-            tabPane.tabs += tab
-            tabPane.selectionModel.select(tab)
+            openNewTab(File("$name.json"))
         })
     }
 
@@ -258,10 +270,7 @@ class MainUI : BorderPane() {
         chooser.extensionFilters += FileChooser.ExtensionFilter("FXGL dialogue files", "*.json")
 
         chooser.showOpenDialog(scene.window)?.let {
-            val tab = DialogueTab(it, DialoguePane())
-
-            tabPane.tabs += tab
-            tabPane.selectionModel.select(tab)
+            val tab = openNewTab(it)
 
             tab.pane.load(mapper.readValue(it, SerializableGraph::class.java))
         }

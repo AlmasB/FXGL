@@ -31,7 +31,6 @@ class DialogueGraphTest {
 
     @Test
     fun `Node types`() {
-        assertThat(StartNode("").type, `is`(START))
         assertThat(EndNode("").type, `is`(END))
         assertThat(TextNode("").type, `is`(TEXT))
         assertThat(SubDialogueNode("").type, `is`(SUBDIALOGUE))
@@ -39,10 +38,9 @@ class DialogueGraphTest {
         assertThat(BranchNode("").type, `is`(BRANCH))
         assertThat(ChoiceNode("").type, `is`(CHOICE))
 
-        assertThat(StartNode("").toString(), `is`("StartNode"))
         assertThat(EndNode("").toString(), `is`("EndNode"))
 
-        assertThat(StartNode("StartText").text, `is`("StartText"))
+        assertThat(TextNode("StartText").text, `is`("StartText"))
         assertThat(EndNode("EndText").text, `is`("EndText"))
     }
 
@@ -60,11 +58,11 @@ class DialogueGraphTest {
 
     @Test
     fun `Graph start node`() {
-        assertThrows<IllegalStateException> {
+        assertThrows<IllegalArgumentException> {
             graph.startNode
         }
 
-        val start = StartNode("")
+        val start = TextNode("")
 
         graph.addNode(start)
 
@@ -188,7 +186,6 @@ class DialogueGraphTest {
     @Test
     fun `Copy nodes`() {
         listOf(
-            StartNode("TestText"),
             EndNode("TestText"),
             TextNode("TestText"),
             SubDialogueNode("TestText"),
@@ -244,6 +241,7 @@ class DialogueGraphTest {
         val copy = graph.copy()
 
         assertThat(copy.uniqueID, `is`(graph.uniqueID))
+        assertThat(copy.startNodeID, `is`(graph.startNodeID))
         assertThat(copy.nodes, `is`(graph.nodes))
         assertThat(copy.edges, `is`(graph.edges))
     }

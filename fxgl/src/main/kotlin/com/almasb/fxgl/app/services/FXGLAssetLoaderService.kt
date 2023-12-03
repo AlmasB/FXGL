@@ -15,7 +15,6 @@ import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraph
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraphSerializer
 import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
-import com.almasb.fxgl.cutscene.dialogue.StartNode
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
@@ -718,13 +717,7 @@ private class DialogueGraphAssetLoader : AssetLoader<SerializableGraph>(
             url.openStream().use { ObjectMapper().readValue(it, SerializableGraph::class.java) }
 
     override fun getDummy(): SerializableGraph {
-        val dummyGraph = DialogueGraph()
-
-        // TODO: shouldn't this be handled in dialogue play scene
-        // add a start node, so the dialogue can play and not crash at runtime
-        dummyGraph.addNode(StartNode("Failed to load dialogue graph"))
-
-        return DialogueGraphSerializer.toSerializable(dummyGraph)
+        return DialogueGraphSerializer.toSerializable(DialogueGraph())
     }
 }
 

@@ -19,7 +19,6 @@ class SerializableDialogueGraphTest {
 
     @Test
     fun `Serialization to and from`() {
-        val start = StartNode("test start")
         val choice = ChoiceNode("test choice")
         val function = FunctionNode("test function")
         val end = EndNode("test end")
@@ -35,7 +34,6 @@ class SerializableDialogueGraphTest {
         val graph = DialogueGraph()
 
         // nodes
-        graph.addNode(start)
         graph.addNode(choice)
         graph.addNode(function)
         graph.addNode(end)
@@ -44,7 +42,6 @@ class SerializableDialogueGraphTest {
         graph.addNode(subdialogue)
 
         // edges
-        graph.addEdge(start, choice)
         graph.addChoiceEdge(choice, 0, function)
         graph.addChoiceEdge(choice, 1, end)
         graph.addChoiceEdge(branch, 0, text)

@@ -17,6 +17,7 @@ import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.texture.toImage
 import com.almasb.fxgl.tools.dialogues.DialogueEditorVars.IS_SNAP_TO_GRID
 import com.almasb.fxgl.tools.dialogues.ui.SelectionRectangle
+import com.almasb.fxgl.tools.dialogues.ui.StartNodeIcon
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleIntegerProperty
@@ -49,7 +50,6 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
         private val branch: (DialogueNode) -> NodeView = { BranchNodeView(it) }
         private val end: (DialogueNode) -> NodeView = { EndNodeView(it) }
-        private val start: (DialogueNode) -> NodeView = { StartNodeView(it) }
         private val function: (DialogueNode) -> NodeView = { FunctionNodeView(it) }
         private val text: (DialogueNode) -> NodeView = { TextNodeView(it) }
         private val subdialogue: (DialogueNode) -> NodeView = { SubDialogueNodeView(it) }
@@ -60,8 +60,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 CHOICE to { ChoiceNode("") },
                 BRANCH to { BranchNode("") },
                 FUNCTION to { FunctionNode("") },
-                END to { EndNode("") },
-                START to { StartNode("") }
+                END to { EndNode("") }
                 //SUBDIALOGUE to { SubDialogueNode("") }
         )
 
@@ -70,8 +69,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 CHOICE to choice,
                 BRANCH to branch,
                 FUNCTION to function,
-                END to end,
-                START to start
+                END to end
                 //SUBDIALOGUE to subdialogue
         )
 
@@ -83,7 +81,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     private val contentRoot = Group()
 
     private var selectedOutLink: OutLinkPoint? = null
-    private val selectedNodeView: ObjectProperty<NodeView> = SimpleObjectProperty()
+    val selectedNodeView: ObjectProperty<NodeView> = SimpleObjectProperty()
 
     var graph = graph
         private set
@@ -91,6 +89,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     private val views = Group()
     private val edgeViews = Group()
     private val nodeViews = Group()
+
+    private val startNodeIcon = StartNodeIcon()
 
     val isDirtyProperty = SimpleBooleanProperty(false)
 
@@ -255,7 +255,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun initDefaultNodes() {
-        val start = StartNode("Sample start text")
+        val start = TextNode("Sample start text")
         val mid = TextNode("Sample text")
         val end = EndNode("Sample end text")
 
@@ -267,6 +267,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         graph.addEdge(mid, end)
 
         getNodeView(start).also {
+            it.children += startNodeIcon
             it.relocate(50.0, getAppHeight() / 2.0)
             snapToGrid(it)
         }
@@ -282,7 +283,6 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     private fun initContextMenu() {
         nodeConstructors
-                .filter { it.key != START }
                 .forEach { (type, ctor) ->
                     contextMenu.addItem(type.toString()) {
                         val node = ctor()
@@ -323,6 +323,14 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                     c.removed.forEach { onRemoved(it) }
                 }
             }
+        }
+
+        graph.startNodeIDProperty.addListener { _, oldStartID, newStartID ->
+            val oldNode = graph.getNodeByID(oldStartID.toInt())
+            val newNode = graph.getNodeByID(newStartID.toInt())
+
+            getNodeView(oldNode).children -= startNodeIcon
+            getNodeView(newNode).children += startNodeIcon
         }
     }
 
@@ -507,11 +515,6 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
         nodeViews.children.add(nodeView)
 
-        // START node cannot be removed
-        if (nodeView.node.type == START) {
-            nodeView.closeButton.isVisible = false
-        }
-
         if (getb(IS_SNAP_TO_GRID))
             snapToGrid(nodeView)
     }
@@ -643,12 +646,9 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
     fun duplicate() {
         selectedNodeView.value?.let { nodeView ->
-            // currently we do not allow multiple start nodes
-            if (nodeView.node.type != START) {
-                val node = nodeView.node.copy()
+            val node = nodeView.node.copy()
 
-                performUIAction(AddNodeAction(graph, node))
-            }
+            performUIAction(AddNodeAction(graph, node))
         }
     }
 
@@ -682,6 +682,8 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         graph.edges.forEach { edge ->
             onAdded(edge)
         }
+
+        getNodeView(graph.startNode).children += startNodeIcon
 
         initGraphListeners()
 

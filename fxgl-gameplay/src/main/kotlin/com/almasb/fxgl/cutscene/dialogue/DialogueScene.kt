@@ -225,7 +225,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
         currentNode = graph.startNode
 
-        nextLine()
+        nextLine(graph.startNode)
 
         sceneService.pushSubScene(this)
     }
@@ -234,7 +234,6 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         return assetLoader.load(AssetType.DIALOGUE, subDialogueNode.text)
     }
 
-    private var currentLine = 0
     private lateinit var currentNode: DialogueNode
 
     /**
@@ -254,77 +253,72 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             return
         }
 
-        if (currentLine == 0 && currentNode.type == START) {
-            dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
-            currentLine++
+        // TODO: if we start with END
+        val isDone = currentNode.type == END
+        if (isDone) {
+            topText.text = ""
+            endCutscene()
             return
         }
 
-        val isDone = currentNode.type == END
-        if (!isDone) {
-            currentNode = nextNode ?: nextNode()
-            playAudioLines(currentNode)
+        currentNode = nextNode ?: nextNode()
+        playAudioLines(currentNode)
 
-            if (currentNode.type == FUNCTION) {
-                val functionNode = currentNode as FunctionNode
+        if (currentNode.type == FUNCTION) {
+            val functionNode = currentNode as FunctionNode
 
-                val id = graph.findNodeID(functionNode)
+            val id = graph.findNodeID(functionNode)
 
-                // TODO: design key prefixes for dialogue created vars
-                val varName = "DialogueScene.function.numTimesCalled.$id"
+            // TODO: design key prefixes for dialogue created vars
+            val varName = "DialogueScene.function.numTimesCalled.$id"
 
-                if (!localVars.exists(varName)) {
-                    localVars.setValue(varName, 0)
-                }
-
-                val numTimesCalled = localVars.getInt(varName)
-
-                // -1 is unlimited
-                if (functionNode.numTimes == -1 || numTimesCalled < functionNode.numTimes) {
-                    localVars.increment(varName, 1)
-                    currentNode.text.parseAndCallFunctions()
-                }
-
-                nextLine(nextNode())
-            } else if (currentNode.type == BRANCH) {
-                val branchNode = currentNode as BranchNode
-
-                val choiceLocalID: Int
-
-                if (branchNode.text.trim().isNotEmpty()) {
-                    val result = dialogueScriptRunner.callBooleanFunction(branchNode.text)
-
-                    choiceLocalID = if (result) 0 else 1
-                } else {
-                    log.warning("Branch node has no function call: ${branchNode.text}. Assuming <false> branch.")
-                    choiceLocalID = 1
-                }
-
-                nextLine(nextNodeFromChoice(choiceLocalID))
-            } else {
-                dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
-
-                if (currentNode.type == CHOICE) {
-                    val choiceNode = currentNode as ChoiceNode
-
-                    stringID = 0
-
-                    choiceNode.conditions.forEach { id, condition ->
-
-                        if (condition.value.trim().isEmpty() || dialogueScriptRunner.callBooleanFunction(condition.value)) {
-                            val option = choiceNode.options[id]!!
-
-                            populatePlayerLine(id, dialogueScriptRunner.replaceVariablesInText(option.value))
-                        }
-                    }
-                }
-
-                topText.text = ""
+            if (!localVars.exists(varName)) {
+                localVars.setValue(varName, 0)
             }
 
+            val numTimesCalled = localVars.getInt(varName)
+
+            // -1 is unlimited
+            if (functionNode.numTimes == -1 || numTimesCalled < functionNode.numTimes) {
+                localVars.increment(varName, 1)
+                currentNode.text.parseAndCallFunctions()
+            }
+
+            nextLine(nextNode())
+        } else if (currentNode.type == BRANCH) {
+            val branchNode = currentNode as BranchNode
+
+            val choiceLocalID: Int
+
+            if (branchNode.text.trim().isNotEmpty()) {
+                val result = dialogueScriptRunner.callBooleanFunction(branchNode.text)
+
+                choiceLocalID = if (result) 0 else 1
+            } else {
+                log.warning("Branch node has no function call: ${branchNode.text}. Assuming <false> branch.")
+                choiceLocalID = 1
+            }
+
+            nextLine(nextNodeFromChoice(choiceLocalID))
         } else {
+            dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
+
+            if (currentNode.type == CHOICE) {
+                val choiceNode = currentNode as ChoiceNode
+
+                stringID = 0
+
+                choiceNode.conditions.forEach { id, condition ->
+
+                    if (condition.value.trim().isEmpty() || dialogueScriptRunner.callBooleanFunction(condition.value)) {
+                        val option = choiceNode.options[id]!!
+
+                        populatePlayerLine(id, dialogueScriptRunner.replaceVariablesInText(option.value))
+                    }
+                }
+            }
+
             topText.text = ""
-            endCutscene()
         }
     }
 
@@ -393,7 +387,6 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     }
 
     private fun onClose() {
-        currentLine = 0
         message.clear()
         boxPlayerLines.children.clear()
         onFinished.run()

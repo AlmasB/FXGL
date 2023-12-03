@@ -118,6 +118,9 @@ data class SerializableGraph
         @JsonProperty("uniqueID")
         val uniqueID: Int,
 
+        @JsonProperty("startNodeID")
+        val startNodeID: Int,
+
         @JsonProperty("nodes")
         val nodes: Map<Int, SerializableTextNode>,
 
@@ -162,7 +165,7 @@ object DialogueGraphSerializer {
                 .filterIsInstance<DialogueChoiceEdge>()
                 .map { SerializableChoiceEdge(dialogueGraph.findNodeID(it.source), it.optionID, dialogueGraph.findNodeID(it.target)) }
 
-        return SerializableGraph(dialogueGraph.uniqueID, nodesS, choiceNodesS, edgesS, choiceEdgesS)
+        return SerializableGraph(dialogueGraph.uniqueID, dialogueGraph.startNodeID, nodesS, choiceNodesS, edgesS, choiceEdgesS)
     }
 
     fun fromSerializable(sGraph: SerializableGraph): DialogueGraph {
@@ -171,9 +174,9 @@ object DialogueGraphSerializer {
         }
 
         val graph = DialogueGraph(sGraph.uniqueID)
+        graph.startNodeID = sGraph.startNodeID
         sGraph.nodes.forEach { (id, n) ->
             val node = when (n.type) {
-                START -> StartNode(n.text)
                 END -> EndNode(n.text)
                 TEXT -> TextNode(n.text)
                 FUNCTION -> FunctionNode(n.text)

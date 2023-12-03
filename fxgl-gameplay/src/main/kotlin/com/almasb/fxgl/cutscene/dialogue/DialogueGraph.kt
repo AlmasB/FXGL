@@ -20,7 +20,7 @@ import javafx.collections.FXCollections
  */
 
 enum class DialogueNodeType {
-    START, END, TEXT, SUBDIALOGUE, CHOICE, FUNCTION, BRANCH
+    END, TEXT, SUBDIALOGUE, CHOICE, FUNCTION, BRANCH
 }
 
 /**
@@ -55,10 +55,6 @@ sealed class DialogueNode(
     override fun toString(): String {
         return javaClass.simpleName
     }
-}
-
-class StartNode(text: String) : DialogueNode(START, text) {
-    override fun copy(): StartNode = StartNode(text)
 }
 
 class EndNode(text: String) : DialogueNode(END, text) {
@@ -161,9 +157,14 @@ class DialogueGraph(
     val nodes = FXCollections.observableMap(hashMapOf<Int, DialogueNode>())
     val edges = FXCollections.observableArrayList<DialogueEdge>()
 
-    val startNode: StartNode
-        get() = nodes.values.find { it.type == START } as? StartNode
-                ?: throw IllegalStateException("No start node in this graph.")
+    val startNodeIDProperty: IntegerProperty = SimpleIntegerProperty(0)
+
+    var startNodeID: Int
+        get() = startNodeIDProperty.value
+        set(value) { startNodeIDProperty.value = value }
+
+    val startNode: DialogueNode
+        get() = getNodeByID(startNodeID)
 
     /**
      * Adds node to this graph.
@@ -303,6 +304,7 @@ class DialogueGraph(
      */
     fun copy(): DialogueGraph {
         val copy = DialogueGraph(uniqueID)
+        copy.startNodeID = startNodeID
         copy.nodes.putAll(nodes)
         copy.edges.addAll(edges)
         return copy
