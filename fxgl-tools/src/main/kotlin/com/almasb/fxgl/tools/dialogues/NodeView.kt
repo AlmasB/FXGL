@@ -42,7 +42,6 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         private const val INITIAL_HEIGHT = 100.0
 
         val colors = mapOf(
-                END to SimpleObjectProperty(Color.RED),
                 FUNCTION to SimpleObjectProperty(Color.BLUE),
                 CHOICE to SimpleObjectProperty(Color.GOLD),
                 TEXT to SimpleObjectProperty(Color.DARKGREEN),

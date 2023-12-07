@@ -49,7 +49,6 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         private val log = Logger.get<DialoguePane>()
 
         private val branch: (DialogueNode) -> NodeView = { BranchNodeView(it) }
-        private val end: (DialogueNode) -> NodeView = { EndNodeView(it) }
         private val function: (DialogueNode) -> NodeView = { FunctionNodeView(it) }
         private val text: (DialogueNode) -> NodeView = { TextNodeView(it) }
         private val subdialogue: (DialogueNode) -> NodeView = { SubDialogueNodeView(it) }
@@ -59,8 +58,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 TEXT to { TextNode("") },
                 CHOICE to { ChoiceNode("") },
                 BRANCH to { BranchNode("") },
-                FUNCTION to { FunctionNode("") },
-                END to { EndNode("") }
+                FUNCTION to { FunctionNode("") }
                 //SUBDIALOGUE to { SubDialogueNode("") }
         )
 
@@ -68,8 +66,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
                 TEXT to text,
                 CHOICE to choice,
                 BRANCH to branch,
-                FUNCTION to function,
-                END to end
+                FUNCTION to function
                 //SUBDIALOGUE to subdialogue
         )
 
@@ -257,7 +254,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     private fun initDefaultNodes() {
         val start = TextNode("Sample start text")
         val mid = TextNode("Sample text")
-        val end = EndNode("Sample end text")
+        val end = TextNode("Sample end text")
 
         graph.addNode(start)
         graph.addNode(mid)

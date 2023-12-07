@@ -31,17 +31,15 @@ class DialogueGraphTest {
 
     @Test
     fun `Node types`() {
-        assertThat(EndNode("").type, `is`(END))
         assertThat(TextNode("").type, `is`(TEXT))
         assertThat(SubDialogueNode("").type, `is`(SUBDIALOGUE))
         assertThat(FunctionNode("").type, `is`(FUNCTION))
         assertThat(BranchNode("").type, `is`(BRANCH))
         assertThat(ChoiceNode("").type, `is`(CHOICE))
 
-        assertThat(EndNode("").toString(), `is`("EndNode"))
+        assertThat(TextNode("").toString(), `is`("TextNode"))
 
         assertThat(TextNode("StartText").text, `is`("StartText"))
-        assertThat(EndNode("EndText").text, `is`("EndText"))
     }
 
     @Test
@@ -186,7 +184,6 @@ class DialogueGraphTest {
     @Test
     fun `Copy nodes`() {
         listOf(
-            EndNode("TestText"),
             TextNode("TestText"),
             SubDialogueNode("TestText"),
             FunctionNode("TestText"),

@@ -21,7 +21,7 @@ class SerializableDialogueGraphTest {
     fun `Serialization to and from`() {
         val choice = ChoiceNode("test choice")
         val function = FunctionNode("test function")
-        val end = EndNode("test end")
+        val end = TextNode("test end")
         val text = TextNode("test text")
         val branch = BranchNode("test branch")
         val subdialogue = SubDialogueNode("test subdialogue")

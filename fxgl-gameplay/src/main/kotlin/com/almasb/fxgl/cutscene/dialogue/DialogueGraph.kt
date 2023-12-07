@@ -20,7 +20,7 @@ import javafx.collections.FXCollections
  */
 
 enum class DialogueNodeType {
-    END, TEXT, SUBDIALOGUE, CHOICE, FUNCTION, BRANCH
+    TEXT, SUBDIALOGUE, CHOICE, FUNCTION, BRANCH
 }
 
 /**
@@ -55,10 +55,6 @@ sealed class DialogueNode(
     override fun toString(): String {
         return javaClass.simpleName
     }
-}
-
-class EndNode(text: String) : DialogueNode(END, text) {
-    override fun copy(): EndNode = EndNode(text)
 }
 
 class TextNode(text: String) : DialogueNode(TEXT, text) {
@@ -251,52 +247,52 @@ class DialogueGraph(
     }
 
     fun appendGraph(source: DialogueNode, target: DialogueNode, graph: DialogueGraph) {
-        val start = graph.startNode
-        val endNodes = graph.nodes.values.filter { it.type == END }
-
-        // convert start and end nodes into text nodes and add them to this graph
-
-        val newStart = TextNode(start.text)
-        val newEndNodes = endNodes.map { TextNode(it.text) }
-
-        addNode(newStart)
-        newEndNodes.forEach { addNode(it) }
-
-        // add the rest of the nodes "as is" to this graph
-        graph.nodes.values
-                .minus(start)
-                .minus(endNodes)
-                .forEach { addNode(it) }
-
-        // add the "internal" graph edges to this graph
-        graph.edges
-                .filter { containsNode(it.source) && containsNode(it.target) }
-                .forEach {
-                    if (it is DialogueChoiceEdge) {
-                        addChoiceEdge(it.source, it.optionID, it.target)
-                    } else {
-                        addEdge(it.source, it.target)
-                    }
-                }
-
-        // add the "external" graph edges
-        // form new chain source -> start -> ... -> endNodes -> target
-
-        addEdge(source, newStart)
-        newEndNodes.forEach { addEdge(it, target) }
-
-        addEdge(newStart, graph.nextNode(start)!!)
-        newEndNodes.forEach { endNode ->
-            graph.edges
-                    .filter { it.target.type == END }
-                    .forEach {
-                        if (it is DialogueChoiceEdge) {
-                            addChoiceEdge(it.source, it.optionID, endNode)
-                        } else {
-                            addEdge(it.source, endNode)
-                        }
-                    }
-        }
+//        val start = graph.startNode
+//        val endNodes = graph.nodes.values.filter { it.type == END }
+//
+//        // convert start and end nodes into text nodes and add them to this graph
+//
+//        val newStart = TextNode(start.text)
+//        val newEndNodes = endNodes.map { TextNode(it.text) }
+//
+//        addNode(newStart)
+//        newEndNodes.forEach { addNode(it) }
+//
+//        // add the rest of the nodes "as is" to this graph
+//        graph.nodes.values
+//                .minus(start)
+//                .minus(endNodes)
+//                .forEach { addNode(it) }
+//
+//        // add the "internal" graph edges to this graph
+//        graph.edges
+//                .filter { containsNode(it.source) && containsNode(it.target) }
+//                .forEach {
+//                    if (it is DialogueChoiceEdge) {
+//                        addChoiceEdge(it.source, it.optionID, it.target)
+//                    } else {
+//                        addEdge(it.source, it.target)
+//                    }
+//                }
+//
+//        // add the "external" graph edges
+//        // form new chain source -> start -> ... -> endNodes -> target
+//
+//        addEdge(source, newStart)
+//        newEndNodes.forEach { addEdge(it, target) }
+//
+//        addEdge(newStart, graph.nextNode(start)!!)
+//        newEndNodes.forEach { endNode ->
+//            graph.edges
+//                    .filter { it.target.type == END }
+//                    .forEach {
+//                        if (it is DialogueChoiceEdge) {
+//                            addChoiceEdge(it.source, it.optionID, endNode)
+//                        } else {
+//                            addEdge(it.source, endNode)
+//                        }
+//                    }
+//        }
     }
 
     /**

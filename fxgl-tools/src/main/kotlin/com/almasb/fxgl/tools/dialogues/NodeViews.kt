@@ -25,14 +25,6 @@ import javafx.scene.text.Text
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 
-class EndNodeView(node: DialogueNode = EndNode("")) : NodeView(node) {
-    init {
-        addInPoint(InLinkPoint(this))
-
-        addAudioField()
-    }
-}
-
 class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
     init {
         addInPoint(InLinkPoint(this))

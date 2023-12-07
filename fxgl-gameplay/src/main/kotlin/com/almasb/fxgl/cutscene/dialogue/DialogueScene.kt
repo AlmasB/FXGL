@@ -220,7 +220,8 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             graph.removeNode(subDialogueNode)
 
             // connect the source and target with a graph
-            graph.appendGraph(source, target, subGraph)
+            // TODO:
+            //graph.appendGraph(source, target, subGraph)
         }
 
         currentNode = graph.startNode
@@ -241,8 +242,6 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
      */
     private val message = ArrayDeque<Char>()
 
-    private var stringID = 1
-
     private fun nextLine(nextNode: DialogueNode? = null) {
         // do not allow to move to next line while the text animation is going
         if (message.isNotEmpty()) {
@@ -253,84 +252,85 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             return
         }
 
-        // TODO: if we start with END
-        val isDone = currentNode.type == END
-        if (isDone) {
+        val node: DialogueNode? = nextNode ?: nextNode()
+
+        // no next node available, the dialogue is complete
+        if (node == null) {
             topText.text = ""
             endCutscene()
             return
         }
 
-        currentNode = nextNode ?: nextNode()
+        currentNode = node
         playAudioLines(currentNode)
 
-        if (currentNode.type == FUNCTION) {
-            val functionNode = currentNode as FunctionNode
+        when (currentNode.type) {
+            FUNCTION -> handleFunctionNode(currentNode as FunctionNode)
 
-            val id = graph.findNodeID(functionNode)
+            BRANCH -> handleBranchNode(currentNode as BranchNode)
 
-            // TODO: design key prefixes for dialogue created vars
-            val varName = "DialogueScene.function.numTimesCalled.$id"
+            // can only be END, TEXT, CHOICE
+            else -> {
+                dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
 
-            if (!localVars.exists(varName)) {
-                localVars.setValue(varName, 0)
-            }
-
-            val numTimesCalled = localVars.getInt(varName)
-
-            // -1 is unlimited
-            if (functionNode.numTimes == -1 || numTimesCalled < functionNode.numTimes) {
-                localVars.increment(varName, 1)
-                currentNode.text.parseAndCallFunctions()
-            }
-
-            nextLine(nextNode())
-        } else if (currentNode.type == BRANCH) {
-            val branchNode = currentNode as BranchNode
-
-            val choiceLocalID: Int
-
-            if (branchNode.text.trim().isNotEmpty()) {
-                val result = dialogueScriptRunner.callBooleanFunction(branchNode.text)
-
-                choiceLocalID = if (result) 0 else 1
-            } else {
-                log.warning("Branch node has no function call: ${branchNode.text}. Assuming <false> branch.")
-                choiceLocalID = 1
-            }
-
-            nextLine(nextNodeFromChoice(choiceLocalID))
-        } else {
-            dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
-
-            if (currentNode.type == CHOICE) {
-                val choiceNode = currentNode as ChoiceNode
-
-                stringID = 0
-
-                choiceNode.conditions.forEach { id, condition ->
-
-                    if (condition.value.trim().isEmpty() || dialogueScriptRunner.callBooleanFunction(condition.value)) {
-                        val option = choiceNode.options[id]!!
-
-                        populatePlayerLine(id, dialogueScriptRunner.replaceVariablesInText(option.value))
-                    }
+                if (currentNode.type == CHOICE) {
+                    handleChoiceNode(currentNode as ChoiceNode)
                 }
-            }
 
-            topText.text = ""
+                topText.text = ""
+            }
         }
     }
 
-    private fun playAudioLines(node: DialogueNode) {
-        if (node.audioFileName.isEmpty())
-            return
+    private fun handleFunctionNode(functionNode: FunctionNode) {
+        val id = graph.findNodeID(functionNode)
 
-        // TODO: store audio being played, so we can stop as appropriate
-        val audio = assetLoader.load<Music>(AssetType.MUSIC, assetLoader.getURL(node.audioFileName.replace("\\", "/")))
+        // TODO: design key prefixes for dialogue created vars
+        val varName = "DialogueScene.function.numTimesCalled.$id"
 
-        audioPlayer.stopMusic(audio)
-        audioPlayer.playMusic(audio)
+        if (!localVars.exists(varName)) {
+            localVars.setValue(varName, 0)
+        }
+
+        val numTimesCalled = localVars.getInt(varName)
+
+        // -1 is unlimited
+        if (functionNode.numTimes == -1 || numTimesCalled < functionNode.numTimes) {
+            localVars.increment(varName, 1)
+            currentNode.text.parseAndCallFunctions()
+        }
+
+        nextLine(nextNode())
+    }
+
+    private fun handleBranchNode(branchNode: BranchNode) {
+        val choiceLocalID: Int
+
+        if (branchNode.text.trim().isNotEmpty()) {
+            val result = dialogueScriptRunner.callBooleanFunction(branchNode.text)
+
+            choiceLocalID = if (result) 0 else 1
+        } else {
+            log.warning("Branch node has no function call: ${branchNode.text}. Assuming <false> branch.")
+            choiceLocalID = 1
+        }
+
+        nextLine(nextNodeFromChoice(choiceLocalID))
+    }
+
+    private var stringID = 1
+
+    private fun handleChoiceNode(choiceNode: ChoiceNode) {
+        stringID = 0
+
+        choiceNode.conditions.forEach { id, condition ->
+
+            if (condition.value.trim().isEmpty() || dialogueScriptRunner.callBooleanFunction(condition.value)) {
+                val option = choiceNode.options[id]!!
+
+                populatePlayerLine(id, dialogueScriptRunner.replaceVariablesInText(option.value))
+            }
+        }
     }
 
     private fun populatePlayerLine(localID: Int, data: String) {
@@ -369,17 +369,23 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         nextLine(nextNodeFromChoice(choiceLocalID))
     }
 
-    private fun nextNode(): DialogueNode {
-        return graph.nextNode(currentNode) ?: makeDummyEndNode("No next node from $currentNode")
+    private fun playAudioLines(node: DialogueNode) {
+        if (node.audioFileName.isEmpty())
+            return
+
+        // TODO: store audio being played, so we can stop as appropriate
+        val audio = assetLoader.load<Music>(AssetType.MUSIC, assetLoader.getURL(node.audioFileName.replace("\\", "/")))
+
+        audioPlayer.stopMusic(audio)
+        audioPlayer.playMusic(audio)
     }
 
-    private fun nextNodeFromChoice(optionID: Int): DialogueNode {
-        return graph.nextNode(currentNode, optionID) ?: makeDummyEndNode("No next node from $currentNode using option $optionID")
+    private fun nextNode(): DialogueNode? {
+        return graph.nextNode(currentNode)
     }
 
-    private fun makeDummyEndNode(text: String): DialogueNode {
-        log.warning(text)
-        return EndNode(text)
+    private fun nextNodeFromChoice(optionID: Int): DialogueNode? {
+        return graph.nextNode(currentNode, optionID)
     }
 
     private fun onOpen() {

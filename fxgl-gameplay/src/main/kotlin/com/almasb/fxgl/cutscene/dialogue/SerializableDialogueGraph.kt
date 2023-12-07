@@ -177,7 +177,6 @@ object DialogueGraphSerializer {
         graph.startNodeID = sGraph.startNodeID
         sGraph.nodes.forEach { (id, n) ->
             val node = when (n.type) {
-                END -> EndNode(n.text)
                 TEXT -> TextNode(n.text)
                 FUNCTION -> FunctionNode(n.text)
                 BRANCH -> BranchNode(n.text)
