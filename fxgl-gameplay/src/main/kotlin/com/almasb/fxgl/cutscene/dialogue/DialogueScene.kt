@@ -37,7 +37,6 @@ import javafx.scene.text.Text
 import javafx.util.Duration
 import java.util.*
 
-
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -269,7 +268,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
             BRANCH -> handleBranchNode(currentNode as BranchNode)
 
-            // can only be END, TEXT, CHOICE
+            // can only be TEXT, CHOICE
             else -> {
                 dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
 

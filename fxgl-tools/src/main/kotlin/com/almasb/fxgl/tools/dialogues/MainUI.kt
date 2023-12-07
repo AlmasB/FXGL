@@ -76,7 +76,13 @@ class MainUI : BorderPane() {
             }
         }
 
-        nodeInspectorPane.translateYProperty().bind(toolbar.heightProperty())
+        val mdiWindow = getUIFactoryService().newWindow()
+        mdiWindow.title = "Node Inspector"
+        mdiWindow.setPrefSize(500.0, 300.0)
+        mdiWindow.contentPane = nodeInspectorPane
+
+        nodeInspectorPane.prefWidthProperty().bind(mdiWindow.prefWidthProperty())
+        nodeInspectorPane.prefHeightProperty().bind(mdiWindow.prefHeightProperty())
 
         val contextMenuFile = FXGLContextMenu()
         contextMenuFile.addItem("New (CTRL+N)") { openNewDialog() }
@@ -99,7 +105,7 @@ class MainUI : BorderPane() {
         contextMenuHelp.addItem("Check for Updates...") { FXGL.getFXApp().hostServices.showDocument("https://fxgl.itch.io/fxgl-dialogue-editor") }
         contextMenuHelp.addItem("About") { openAboutDialog() }
 
-        val pane = Pane(tabPane, toolbar, errorIcon, nodeInspectorPane)
+        val pane = Pane(tabPane, toolbar, errorIcon, mdiWindow)
 
         val menuFile = EditorMenu("File") {
             contextMenuFile.show(pane, 0.0, toolbar.prefHeight)
@@ -127,8 +133,8 @@ class MainUI : BorderPane() {
         tabPane.prefWidthProperty().bind(FXGL.getSettings().actualWidthProperty())
         tabPane.prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
 
-        nodeInspectorPane.prefWidth = 200.0
-        nodeInspectorPane.prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
+        //nodeInspectorPane.prefWidth = 200.0
+        //nodeInspectorPane.prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
 
         center = pane
 

@@ -29,8 +29,6 @@ class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
     init {
         addInPoint(InLinkPoint(this))
         addOutPoint(OutLinkPoint(this))
-
-        addAudioField()
     }
 }
 
@@ -80,24 +78,15 @@ class BranchNodeView(node: DialogueNode = BranchNode("")) : NodeView(node) {
     }
 }
 
-
-
-
-
-
-
-
 class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
     // this tells us how far the outPoints should be from internal content
-    private val offsetY = 84
+    private val offsetY = 50
 
     private val conditions = arrayListOf<Condition>()
 
     init {
         addInPoint(InLinkPoint(this))
-
-        addAudioField()
 
         val node = this.node as ChoiceNode
 
@@ -130,7 +119,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
                 addContent(field)
 
-                children.add(condition)
+                //children.add(condition)
                 children.add(outPoint)
             }
 
@@ -166,7 +155,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
                 addContent(field)
 
-                children.add(condition)
+                //children.add(condition)
                 children.add(outPoint)
             }
         }
@@ -241,7 +230,7 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
 
         addContent(field)
 
-        children.add(condition)
+        //children.add(condition)
         children.add(outPoint)
 
         prefHeightProperty().bind(outPoint.translateYProperty().add(35.0))
