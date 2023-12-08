@@ -384,7 +384,7 @@ Under Apache License 2.0
  */
 
 .window-titlebar {
-    -fx-glass-color: rgba(42, 42, 42, 0.9);
+    -fx-glass-color: rgba(92, 92, 92, 0.9);
     -fx-alignment: center;
     -fx-background-color: linear-gradient(to bottom, derive(-fx-glass-color, 30%), -fx-glass-color);
     -fx-border-color: derive(-fx-glass-color, -60%);
