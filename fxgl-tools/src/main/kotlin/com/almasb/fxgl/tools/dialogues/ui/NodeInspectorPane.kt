@@ -38,12 +38,10 @@ class NodeInspectorPane : VBox(5.0) {
         set(value) { nodeProp.value = value }
 
     init {
-        background = Background(BackgroundFill(Color.color(0.0, 0.0, 0.0, 0.75), null, null))
-
         nodeProp.addListener { _, oldNode, newNode ->
             val id = graph.findNodeID(newNode)
 
-            children.setAll(DialogueNodeInspector(id, newNode), makeStartNodeButton)
+            children.setAll(DialogueNodeInspector(id, newNode).also { it.prefWidthProperty().bind(prefWidthProperty()) }, makeStartNodeButton)
         }
 
         makeStartNodeButton.setOnAction {
@@ -72,7 +70,7 @@ private class DialogueNodeInspector(val id: Int, node: DialogueNode) : VBox(5.0)
         pane.padding = Insets(0.0, 10.0, 0.0, 10.0)
 
         val textID = Text("Node id: $id")
-        textID.font = Font.font(14.0)
+        //textID.font = Font.font(14.0)
         textID.fill = Color.WHITE
 
 
@@ -84,7 +82,7 @@ private class DialogueNodeInspector(val id: Int, node: DialogueNode) : VBox(5.0)
         val title = FXGL.getUIFactoryService().newText(node.javaClass.simpleName.removeSuffix("Node"), Color.ANTIQUEWHITE, 22.0)
 
         pane.addRow(index++, title)
-        pane.addRow(index++, Rectangle(165.0, 2.0, Color.ANTIQUEWHITE))
+        pane.addRow(index++, Rectangle(0.0, 2.0, Color.ANTIQUEWHITE).also { it.widthProperty().bind(prefWidthProperty().subtract(20.0)) })
 
         pane.addRow(index++, textID)
 
@@ -109,7 +107,7 @@ private class DialogueNodeInspector(val id: Int, node: DialogueNode) : VBox(5.0)
 
         pane.addRow(index++, Text(""))
 
-        pane.addRow(index++, Rectangle(165.0, 2.0, Color.ANTIQUEWHITE))
+        pane.addRow(index++, Rectangle(0.0, 2.0, Color.ANTIQUEWHITE).also { it.widthProperty().bind(prefWidthProperty().subtract(20.0)) })
 
         if (node.type == CHOICE) {
             val choiceNode = node as ChoiceNode

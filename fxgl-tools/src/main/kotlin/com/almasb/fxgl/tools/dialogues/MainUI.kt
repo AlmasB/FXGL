@@ -22,10 +22,7 @@ import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.BorderPane
-import javafx.scene.layout.HBox
-import javafx.scene.layout.Pane
-import javafx.scene.layout.StackPane
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
 import javafx.scene.shape.Rectangle
@@ -78,11 +75,19 @@ class MainUI : BorderPane() {
 
         val mdiWindow = getUIFactoryService().newWindow()
         mdiWindow.title = "Node Inspector"
-        mdiWindow.setPrefSize(500.0, 300.0)
+        mdiWindow.isMinimizable = false
+        mdiWindow.isCloseable = false
+        mdiWindow.isMovable = false
+        // TODO: allow resize only in a single direction
+        mdiWindow.isManuallyResizable = false
+        mdiWindow.setPrefSize(300.0, 300.0)
+        mdiWindow.relocate(0.0, 30.0)
+        mdiWindow.background = Background(BackgroundFill(Color.color(0.0, 0.0, 0.0, 0.5), null, null))
         mdiWindow.contentPane = nodeInspectorPane
+        mdiWindow.prefHeightProperty().bind(getSettings().actualHeightProperty().subtract(30))
 
         nodeInspectorPane.prefWidthProperty().bind(mdiWindow.prefWidthProperty())
-        nodeInspectorPane.prefHeightProperty().bind(mdiWindow.prefHeightProperty())
+        nodeInspectorPane.prefHeightProperty().bind(mdiWindow.prefHeightProperty().subtract(28))
 
         val contextMenuFile = FXGLContextMenu()
         contextMenuFile.addItem("New (CTRL+N)") { openNewDialog() }
