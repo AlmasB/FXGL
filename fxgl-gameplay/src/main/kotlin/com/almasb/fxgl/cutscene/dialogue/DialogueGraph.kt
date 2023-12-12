@@ -110,6 +110,23 @@ class ChoiceNode(text: String) : DialogueNode(CHOICE, text)  {
     val lastOptionID: Int
         get() = options.keys.maxOrNull() ?: -1
 
+    fun addOption(text: String): Int {
+        return addOption(text, "")
+    }
+
+    /**
+     * Adds a new option and a new condition associated with the option.
+     * @return id of the new option
+     */
+    fun addOption(text: String, condition: String): Int {
+        val id = lastOptionID + 1
+
+        options[id] = SimpleStringProperty(text)
+        conditions[id] = SimpleStringProperty(condition)
+
+        return id
+    }
+
     override fun copy(): ChoiceNode {
         val copy = ChoiceNode(text)
         options.forEach { (k, v) ->

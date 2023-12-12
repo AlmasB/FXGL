@@ -7,14 +7,12 @@
 package com.almasb.fxgl.tools.dialogues
 
 import com.almasb.fxgl.cutscene.dialogue.*
-import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getUIFactoryService
 import com.almasb.fxgl.ui.FontType
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.control.TextField
-import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.scene.text.Text
@@ -83,84 +81,22 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
     // this tells us how far the outPoints should be from internal content
     private val offsetY = 50
 
-    private val conditions = arrayListOf<Condition>()
+    private val choiceNode = node as ChoiceNode
 
     init {
         addInPoint(InLinkPoint(this))
 
-        val node = this.node as ChoiceNode
-
-        if (node.options.isNotEmpty()) {
-
-            node.options.forEach { i, optionText ->
-                val field = TextField(optionText.value)
-
-                val outPoint = OutLinkPoint(this)
-                outPoint.translateXProperty().bind(widthProperty().add(-25.0))
-                outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(offsetY + i * 35.0))
-
-                outPoint.choiceOptionID = i
-                outPoint.choiceLocalOptionProperty.bind(field.textProperty())
-
-                optionText.bindBidirectional(field.textProperty())
-
-                val condition = Condition()
-                condition.text.text = node.conditions[i]!!.value
-                condition.prefWidth = 155.0
-                condition.prefHeight = 16.0
-                condition.translateX = -160.0
-                condition.translateYProperty().bind(outPoint.translateYProperty().add(-6))
-
-                node.conditions[i]!!.bindBidirectional(condition.text.textProperty())
-
-                conditions += condition
-
-                outPoints.add(outPoint)
-
-                addContent(field)
-
-                //children.add(condition)
-                children.add(outPoint)
+        if (choiceNode.options.isNotEmpty()) {
+            // load existing options
+            choiceNode.options.keys.forEach { id ->
+                addOptionView(id)
             }
-
-
         } else {
-
-            for (i in 0..1) {
-
-                val field = TextField()
-                field.promptText = "Choice $i"
-
-                val outPoint = OutLinkPoint(this)
-                outPoint.translateXProperty().bind(widthProperty().add(-25.0))
-                outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(offsetY + i * 35.0))
-
-                outPoint.choiceOptionID = i
-                outPoint.choiceLocalOptionProperty.bind(field.textProperty())
-
-                node.options[i] = SimpleStringProperty().also { it.bindBidirectional(field.textProperty()) }
-
-                val condition = Condition()
-                condition.prefWidth = 155.0
-                condition.prefHeight = 16.0
-                condition.translateX = -160.0
-                condition.translateYProperty().bind(outPoint.translateYProperty().add(-6))
-
-                node.conditions[i] = SimpleStringProperty().also { it.bindBidirectional(condition.text.textProperty()) }
-
-                conditions += condition
-
-                outPoints.add(outPoint)
-
-
-                addContent(field)
-
-                //children.add(condition)
-                children.add(outPoint)
+            // add the first two options
+            repeat(2) {
+                addNewOption()
             }
         }
-
-        prefHeightProperty().bind(outPoints.last().translateYProperty().add(35.0))
 
         addButtons()
     }
@@ -180,57 +116,36 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
         }
 
         btnRemove.visibleProperty().bind(Bindings.size(outPoints).greaterThan(2))
-
         btnRemove.translateX = btnAdd.translateX
         btnRemove.translateYProperty().bind(prefHeightProperty().subtract(44))
 
         children.addAll(btnAdd, btnRemove)
     }
 
-    private class Condition : StackPane() {
-        val text = TextField()
+    private fun addNewOption() {
+        val nextID = choiceNode.addOption("")
 
-        init {
-            styleClass.add("dialogue-editor-condition-view")
-
-            text.font = FXGL.getUIFactoryService().newFont(FontType.MONO, 12.0)
-            text.promptText = "condition"
-
-            children.add(text)
-        }
+        addOptionView(nextID)
     }
 
-    private fun addNewOption() {
-        val node = this.node as ChoiceNode
-        val nextID = node.lastOptionID + 1
+    private fun addOptionView(id: Int) {
+        val prop = choiceNode.options[id]!!
 
-        val field = TextField()
-        field.promptText = "Choice $nextID"
+        val field = TextField(prop.value)
+        field.promptText = "Choice $id"
 
-        node.options[nextID] = SimpleStringProperty().also { it.bindBidirectional(field.textProperty()) }
+        prop.bindBidirectional(field.textProperty())
 
         val outPoint = OutLinkPoint(this)
         outPoint.translateXProperty().bind(widthProperty().add(-25.0))
-        outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(offsetY + nextID * 35.0))
-
-        outPoint.choiceOptionID = nextID
+        outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(offsetY + id * 35.0))
+        outPoint.choiceOptionID = id
         outPoint.choiceLocalOptionProperty.bind(field.textProperty())
-
-        val condition = Condition()
-        condition.prefWidth = 155.0
-        condition.prefHeight = 16.0
-        condition.translateX = -160.0
-        condition.translateYProperty().bind(outPoint.translateYProperty().add(-6))
-
-        node.conditions[nextID] = SimpleStringProperty().also { it.bindBidirectional(condition.text.textProperty()) }
-
-        conditions += condition
 
         outPoints.add(outPoint)
 
         addContent(field)
 
-        //children.add(condition)
         children.add(outPoint)
 
         prefHeightProperty().bind(outPoint.translateYProperty().add(35.0))
@@ -242,15 +157,10 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
         val point = outPoints.removeAt(outPoints.size - 1)
         children -= point
 
-        val condition = conditions.removeAt(conditions.size - 1)
-        children -= condition
+        val lastID = choiceNode.lastOptionID
 
-        val node = this.node as ChoiceNode
-
-        val lastID = node.lastOptionID
-
-        node.options.remove(lastID)
-        node.conditions.remove(lastID)
+        choiceNode.options.remove(lastID)
+        choiceNode.conditions.remove(lastID)
 
         prefHeightProperty().bind(outPoints.last().translateYProperty().add(35.0))
     }
