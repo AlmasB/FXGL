@@ -184,6 +184,7 @@ object DialogueGraphSerializer {
 
         sGraph.functionNodes.forEach { (id, n) ->
             val node = FunctionNode(n.text)
+            node.numTimesProperty.value = n.numTimes
 
             node.audioFileNameProperty.value = n.audio
 
