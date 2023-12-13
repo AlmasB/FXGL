@@ -19,7 +19,7 @@ class SerializableDialogueGraphTest {
 
     @Test
     fun `Serialization to and from`() {
-        val choice = ChoiceNode("test choice")
+        val choice = TextNode("test choice")
         val function = FunctionNode("test function")
         val end = TextNode("test end")
         val text = TextNode("test text")
@@ -54,11 +54,11 @@ class SerializableDialogueGraphTest {
 
         assertThat(sGraph.version, greaterThan(0))
         sGraph.nodes.forEach {
-            assertThat(it.value.type, `is`(not(DialogueNodeType.CHOICE)))
+            assertThat(it.value.type, `is`(not(DialogueNodeType.TEXT)))
         }
 
         sGraph.choiceNodes.forEach {
-            assertThat(it.value.type, `is`(DialogueNodeType.CHOICE))
+            assertThat(it.value.type, `is`(DialogueNodeType.TEXT))
         }
 
         sGraph.version++

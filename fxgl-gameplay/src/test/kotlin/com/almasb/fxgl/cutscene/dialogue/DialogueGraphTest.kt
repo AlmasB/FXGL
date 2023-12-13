@@ -31,11 +31,10 @@ class DialogueGraphTest {
 
     @Test
     fun `Node types`() {
-        assertThat(TextNode("").type, `is`(TEXT))
         assertThat(SubDialogueNode("").type, `is`(SUBDIALOGUE))
         assertThat(FunctionNode("").type, `is`(FUNCTION))
         assertThat(BranchNode("").type, `is`(BRANCH))
-        assertThat(ChoiceNode("").type, `is`(CHOICE))
+        assertThat(TextNode("").type, `is`(TEXT))
 
         assertThat(TextNode("").toString(), `is`("TextNode"))
 
@@ -49,9 +48,9 @@ class DialogueGraphTest {
 
         assertThat(DialogueEdge(node1, node2).toString(), `is`("TextNode -> TextNode"))
 
-        val node3 = ChoiceNode("")
+        val node3 = TextNode("")
 
-        assertThat(DialogueChoiceEdge(node3, 0, node2).toString(), `is`("ChoiceNode, 0 -> TextNode"))
+        assertThat(DialogueChoiceEdge(node3, 0, node2).toString(), `is`("TextNode, 0 -> TextNode"))
     }
 
     @Test
@@ -112,7 +111,7 @@ class DialogueGraphTest {
 
     @Test
     fun `Add and remove choice edges`() {
-        val node1 = ChoiceNode("")
+        val node1 = TextNode("")
         val node2 = TextNode("")
 
         graph.addNode(node1)
@@ -184,11 +183,10 @@ class DialogueGraphTest {
     @Test
     fun `Copy nodes`() {
         listOf(
-            TextNode("TestText"),
             SubDialogueNode("TestText"),
             FunctionNode("TestText"),
             BranchNode("TestText"),
-            ChoiceNode("TestText")
+            TextNode("TestText")
         ).forEach {
             val copy = it.copy()
             assertThat(it.text, `is`(copy.text))
@@ -198,7 +196,7 @@ class DialogueGraphTest {
 
     @Test
     fun `Copy choice options`() {
-        val choice = ChoiceNode("Choice")
+        val choice = TextNode("Choice")
         choice.options[0] = SimpleStringProperty("Choice A")
         choice.options[1] = SimpleStringProperty("Choice B")
         choice.options[2] = SimpleStringProperty("Choice C")
@@ -228,7 +226,7 @@ class DialogueGraphTest {
 
     @Test
     fun `Copy`() {
-        val node1 = ChoiceNode("")
+        val node1 = TextNode("")
         val node2 = TextNode("")
 
         graph.addNode(node1)

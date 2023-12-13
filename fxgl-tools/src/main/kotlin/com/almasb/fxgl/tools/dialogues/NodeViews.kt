@@ -10,7 +10,6 @@ import com.almasb.fxgl.cutscene.dialogue.*
 import com.almasb.fxgl.dsl.getUIFactoryService
 import com.almasb.fxgl.ui.FontType
 import javafx.beans.binding.Bindings
-import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.control.TextField
 import javafx.scene.paint.Color
@@ -22,13 +21,6 @@ import javafx.scene.text.Text
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-
-class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
-    init {
-        addInPoint(InLinkPoint(this))
-        addOutPoint(OutLinkPoint(this))
-    }
-}
 
 class SubDialogueNodeView(node: DialogueNode = SubDialogueNode("")) : NodeView(node) {
     init {
@@ -76,19 +68,19 @@ class BranchNodeView(node: DialogueNode = BranchNode("")) : NodeView(node) {
     }
 }
 
-class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
+class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
 
     // this tells us how far the outPoints should be from internal content
     private val offsetY = 50
 
-    private val choiceNode = node as ChoiceNode
+    private val textNode = node as TextNode
 
     init {
         addInPoint(InLinkPoint(this))
 
-        if (choiceNode.options.isNotEmpty()) {
+        if (textNode.options.isNotEmpty()) {
             // load existing options
-            choiceNode.options.keys.forEach { id ->
+            textNode.options.keys.forEach { id ->
                 addOptionView(id)
             }
         } else {
@@ -123,13 +115,13 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
     }
 
     private fun addNewOption() {
-        val nextID = choiceNode.addOption("")
+        val nextID = textNode.addOption("")
 
         addOptionView(nextID)
     }
 
     private fun addOptionView(id: Int) {
-        val prop = choiceNode.options[id]!!
+        val prop = textNode.options[id]!!
 
         val field = TextField(prop.value)
         field.promptText = "Choice $id"
@@ -157,10 +149,10 @@ class ChoiceNodeView(node: DialogueNode = ChoiceNode("")) : NodeView(node) {
         val point = outPoints.removeAt(outPoints.size - 1)
         children -= point
 
-        val lastID = choiceNode.lastOptionID
+        val lastID = textNode.lastOptionID
 
-        choiceNode.options.remove(lastID)
-        choiceNode.conditions.remove(lastID)
+        textNode.options.remove(lastID)
+        textNode.conditions.remove(lastID)
 
         prefHeightProperty().bind(outPoints.last().translateYProperty().add(35.0))
     }

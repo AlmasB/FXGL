@@ -20,7 +20,7 @@ import javafx.collections.FXCollections
  */
 
 enum class DialogueNodeType {
-    TEXT, SUBDIALOGUE, CHOICE, FUNCTION, BRANCH
+    TEXT, SUBDIALOGUE, FUNCTION, BRANCH
 }
 
 /**
@@ -57,10 +57,6 @@ sealed class DialogueNode(
     }
 }
 
-class TextNode(text: String) : DialogueNode(TEXT, text) {
-    override fun copy(): TextNode = TextNode(text)
-}
-
 class SubDialogueNode(text: String) : DialogueNode(SUBDIALOGUE, text) {
     override fun copy(): SubDialogueNode = SubDialogueNode(text)
 }
@@ -88,7 +84,7 @@ class BranchNode(text: String) : DialogueNode(BRANCH, text) {
     override fun copy(): BranchNode = BranchNode(text)
 }
 
-class ChoiceNode(text: String) : DialogueNode(CHOICE, text)  {
+class TextNode(text: String) : DialogueNode(TEXT, text)  {
 
     /**
      * Maps option id to option text.
@@ -104,11 +100,25 @@ class ChoiceNode(text: String) : DialogueNode(CHOICE, text)  {
      */
     val conditions = hashMapOf<Int, StringProperty>()
 
+    val numOptions: Int
+        get() = options.size
+
+    /**
+     * @return true if there exists at least 1 non-empty option
+     */
+    val hasUserOptions: Boolean
+        get() = options.values.any { it.value.isNotEmpty() }
+
     /**
      * Returns last option id present in the options map, or -1 if there are no options.
      */
     val lastOptionID: Int
         get() = options.keys.maxOrNull() ?: -1
+
+    init {
+        // TODO: formalise it has at least one option
+        addOption("")
+    }
 
     fun addOption(text: String): Int {
         return addOption(text, "")
@@ -127,8 +137,8 @@ class ChoiceNode(text: String) : DialogueNode(CHOICE, text)  {
         return id
     }
 
-    override fun copy(): ChoiceNode {
-        val copy = ChoiceNode(text)
+    override fun copy(): TextNode {
+        val copy = TextNode(text)
         options.forEach { (k, v) ->
             copy.options[k] = SimpleStringProperty(v.value)
         }
@@ -209,7 +219,12 @@ class DialogueGraph(
      * Adds a dialogue edge between [source] and [target].
      */
     fun addEdge(source: DialogueNode, target: DialogueNode) {
-        edges += DialogueEdge(source, target)
+        if (source.type == TEXT) {
+            // use option 0
+            addChoiceEdge(source, 0, target)
+        } else {
+            edges += DialogueEdge(source, target)
+        }
     }
 
     /**

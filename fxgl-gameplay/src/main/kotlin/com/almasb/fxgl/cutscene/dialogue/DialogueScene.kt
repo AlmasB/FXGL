@@ -133,19 +133,21 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     private fun initUserActions() {
         val userAction = object : UserAction("Next RPG Line") {
             override fun onActionBegin() {
-                if (currentNode.type == CHOICE) {
+                // TODO: check logic
+                if (currentNode is TextNode && (currentNode as TextNode).numOptions > 0 && (currentNode as TextNode).options[0]!!.value.isNotEmpty()) {
                     return
                 }
 
-                nextLine()
+                nextLine(nextNode())
             }
         }
 
         val digitTriggerListener = object : TriggerListener() {
             override fun onActionBegin(trigger: Trigger) {
 
+                // TODO: logic
                 // ignore any presses if type is not CHOICE or the text animation is still going
-                if (currentNode.type != CHOICE || message.isNotEmpty()) {
+                if ((currentNode.type == TEXT && !(currentNode as TextNode).hasUserOptions) || message.isNotEmpty()) {
                     return
                 }
 
@@ -241,7 +243,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
      */
     private val message = ArrayDeque<Char>()
 
-    private fun nextLine(nextNode: DialogueNode? = null) {
+    private fun nextLine(nextNode: DialogueNode?) {
         // do not allow to move to next line while the text animation is going
         if (message.isNotEmpty()) {
             // just show the text fully
@@ -251,16 +253,14 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             return
         }
 
-        val node: DialogueNode? = nextNode ?: nextNode()
-
         // no next node available, the dialogue is complete
-        if (node == null) {
+        if (nextNode == null) {
             topText.text = ""
             endCutscene()
             return
         }
 
-        currentNode = node
+        currentNode = nextNode
         playAudioLines(currentNode)
 
         when (currentNode.type) {
@@ -268,15 +268,10 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
             BRANCH -> handleBranchNode(currentNode as BranchNode)
 
-            // can only be TEXT, CHOICE
+            TEXT -> handleTextNode(currentNode as TextNode)
+
             else -> {
-                dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
-
-                if (currentNode.type == CHOICE) {
-                    handleChoiceNode(currentNode as ChoiceNode)
-                }
-
-                topText.text = ""
+                log.warning("Unknown DialogueNode type")
             }
         }
     }
@@ -319,20 +314,28 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
     private var stringID = 1
 
-    private fun handleChoiceNode(choiceNode: ChoiceNode) {
+    private fun handleTextNode(textNode: TextNode) {
+        dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
+
         stringID = 0
 
-        choiceNode.conditions.forEach { id, condition ->
+        textNode.conditions.forEach { id, condition ->
 
             if (condition.value.trim().isEmpty() || dialogueScriptRunner.callBooleanFunction(condition.value)) {
-                val option = choiceNode.options[id]!!
+                val option = textNode.options[id]!!
 
                 populatePlayerLine(id, dialogueScriptRunner.replaceVariablesInText(option.value))
             }
         }
+
+        topText.text = ""
     }
 
     private fun populatePlayerLine(localID: Int, data: String) {
+        // skip empty lines
+        if (data.isEmpty())
+            return
+
         stringID++
         val idString = "$stringID"
 

@@ -52,11 +52,10 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
         private val function: (DialogueNode) -> NodeView = { FunctionNodeView(it) }
         private val text: (DialogueNode) -> NodeView = { TextNodeView(it) }
         private val subdialogue: (DialogueNode) -> NodeView = { SubDialogueNodeView(it) }
-        private val choice: (DialogueNode) -> NodeView = { ChoiceNodeView(it) }
+        private val choice: (DialogueNode) -> NodeView = { TextNodeView(it) }
 
         val nodeConstructors = linkedMapOf<DialogueNodeType, () -> DialogueNode>(
                 TEXT to { TextNode("") },
-                CHOICE to { ChoiceNode("") },
                 BRANCH to { BranchNode("") },
                 FUNCTION to { FunctionNode("") }
                 //SUBDIALOGUE to { SubDialogueNode("") }
@@ -64,7 +63,6 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
         val nodeViewConstructors = linkedMapOf<DialogueNodeType, (DialogueNode) -> NodeView>(
                 TEXT to text,
-                CHOICE to choice,
                 BRANCH to branch,
                 FUNCTION to function
                 //SUBDIALOGUE to subdialogue

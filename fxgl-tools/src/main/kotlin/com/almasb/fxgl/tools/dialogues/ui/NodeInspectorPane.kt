@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.tools.dialogues.ui
 
-import com.almasb.fxgl.cutscene.dialogue.ChoiceNode
+import com.almasb.fxgl.cutscene.dialogue.TextNode
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraph
 import com.almasb.fxgl.cutscene.dialogue.DialogueNode
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
@@ -106,16 +106,16 @@ private class DialogueNodeInspector(val id: Int, node: DialogueNode) : VBox(5.0)
 
         pane.addRow(index++, Rectangle(0.0, 2.0, Color.ANTIQUEWHITE).also { it.widthProperty().bind(prefWidthProperty().subtract(20.0)) })
 
-        if (node.type == CHOICE) {
-            val choiceNode = node as ChoiceNode
+        if (node.type == TEXT) {
+            val textNode = node as TextNode
 
-            for (id in 0..choiceNode.lastOptionID) {
+            for (id in 0..textNode.lastOptionID) {
                 pane.addRow(index++, Text("Option $id").also { it.fill = Color.WHITE })
 
-                val view1 = getUIFactoryService().newPropertyView("Text", choiceNode.options[id])
+                val view1 = getUIFactoryService().newPropertyView("Text", textNode.options[id])
                 //view1.styleClass.add("dialogue-editor-condition-view")
 
-                val view2 = getUIFactoryService().newPropertyView("Condition", choiceNode.conditions[id])
+                val view2 = getUIFactoryService().newPropertyView("Condition", textNode.conditions[id])
                 view2.styleClass.add("dialogue-editor-condition-view")
 
                 pane.addRow(index++, view1)

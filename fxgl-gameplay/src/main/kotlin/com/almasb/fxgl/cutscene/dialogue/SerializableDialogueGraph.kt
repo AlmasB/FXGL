@@ -147,13 +147,13 @@ object DialogueGraphSerializer {
 
     fun toSerializable(dialogueGraph: DialogueGraph): SerializableGraph {
         val nodesS = dialogueGraph.nodes
-                .filterValues { it.type != CHOICE }
+                .filterValues { it.type != TEXT }
                 .mapValues { (_, n) -> SerializableTextNode(n.type, n.text).also { it.audio = n.audioFileName } }
 
-        val choiceNodesS = dialogueGraph.nodes
-                .filterValues { it.type == CHOICE }
+        val textNodesS = dialogueGraph.nodes
+                .filterValues { it.type == TEXT }
                 .mapValues { (_, n) ->
-                    SerializableChoiceNode(n.type, n.text, (n as ChoiceNode).options.mapValues { it.value.value }, n.conditions.mapValues { it.value.value })
+                    SerializableChoiceNode(n.type, n.text, (n as TextNode).options.mapValues { it.value.value }, n.conditions.mapValues { it.value.value })
                             .also { it.audio = n.audioFileName }
                 }
 
@@ -165,7 +165,7 @@ object DialogueGraphSerializer {
                 .filterIsInstance<DialogueChoiceEdge>()
                 .map { SerializableChoiceEdge(dialogueGraph.findNodeID(it.source), it.optionID, dialogueGraph.findNodeID(it.target)) }
 
-        return SerializableGraph(dialogueGraph.uniqueID, dialogueGraph.startNodeID, nodesS, choiceNodesS, edgesS, choiceEdgesS)
+        return SerializableGraph(dialogueGraph.uniqueID, dialogueGraph.startNodeID, nodesS, textNodesS, edgesS, choiceEdgesS)
     }
 
     fun fromSerializable(sGraph: SerializableGraph): DialogueGraph {
@@ -177,7 +177,6 @@ object DialogueGraphSerializer {
         graph.startNodeID = sGraph.startNodeID
         sGraph.nodes.forEach { (id, n) ->
             val node = when (n.type) {
-                TEXT -> TextNode(n.text)
                 FUNCTION -> FunctionNode(n.text)
                 BRANCH -> BranchNode(n.text)
                 SUBDIALOGUE -> SubDialogueNode(n.text)
@@ -190,7 +189,7 @@ object DialogueGraphSerializer {
         }
 
         sGraph.choiceNodes.forEach { (id, n) ->
-            val node = ChoiceNode(n.text)
+            val node = TextNode(n.text)
 
             n.options.forEach { option ->
                 node.options[option.key] = SimpleStringProperty(option.value)

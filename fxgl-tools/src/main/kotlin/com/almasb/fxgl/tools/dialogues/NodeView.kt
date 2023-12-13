@@ -43,7 +43,6 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
 
         val colors = mapOf(
                 FUNCTION to SimpleObjectProperty(Color.BLUE),
-                CHOICE to SimpleObjectProperty(Color.GOLD),
                 TEXT to SimpleObjectProperty(Color.DARKGREEN),
                 BRANCH to SimpleObjectProperty(Color.MEDIUMVIOLETRED)
         )
