@@ -218,7 +218,7 @@ class AssetLoaderServiceTest {
         assertThat(graph.nodes.size, `is`(3))
         assertThat(graph.edges.size, `is`(2))
 
-        assertThat(graph.startNode.text, `is`("Simple start."))
+        assertThat(graph.startNode.text, `is`("Sample start text"))
     }
 
     @Test
@@ -228,7 +228,7 @@ class AssetLoaderServiceTest {
         assertThat(graph.nodes.size, `is`(3))
         assertThat(graph.edges.size, `is`(2))
 
-        assertThat(graph.startNode.text, `is`("Simple start."))
+        assertThat(graph.startNode.text, `is`("Sample start text"))
     }
 
     @Test

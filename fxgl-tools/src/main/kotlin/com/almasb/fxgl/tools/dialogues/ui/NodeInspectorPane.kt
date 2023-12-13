@@ -14,8 +14,10 @@ import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.dsl.getUIFactoryService
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.collections.ListChangeListener
 import javafx.geometry.Insets
 import javafx.geometry.Pos
+import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
@@ -106,20 +108,60 @@ private class DialogueNodeInspector(val id: Int, node: DialogueNode) : VBox(5.0)
 
         pane.addRow(index++, Rectangle(0.0, 2.0, Color.ANTIQUEWHITE).also { it.widthProperty().bind(prefWidthProperty().subtract(20.0)) })
 
+        var prevIndex = index
+
         if (node.type == TEXT) {
             val textNode = node as TextNode
 
-            for (id in 0..textNode.lastOptionID) {
-                pane.addRow(index++, Text("Option $id").also { it.fill = Color.WHITE })
+            val views = ArrayList<Node>()
 
-                val view1 = getUIFactoryService().newPropertyView("Text", textNode.options[id])
+            textNode.options.addListener(ListChangeListener {
+                while (it.next()) {
+                    //
+                }
+
+                pane.children.removeAll(views)
+
+                index = prevIndex
+
+                // TODO: duplicated
+                for (id in 0..textNode.lastOptionID) {
+                    val text = Text("Option $id").also { it.fill = Color.WHITE }
+
+                    pane.addRow(index++, text)
+
+                    val option = textNode.options[id]
+
+                    val view1 = getUIFactoryService().newPropertyView("Text", option.textProperty)
+                    //view1.styleClass.add("dialogue-editor-condition-view")
+
+                    val view2 = getUIFactoryService().newPropertyView("Condition", option.conditionProperty)
+                    view2.styleClass.add("dialogue-editor-condition-view")
+
+                    pane.addRow(index++, view1)
+                    pane.addRow(index++, view2)
+
+                    views += listOf(view1, view2, text)
+                }
+            })
+
+            for (id in 0..textNode.lastOptionID) {
+                val text = Text("Option $id").also { it.fill = Color.WHITE }
+
+                pane.addRow(index++, text)
+
+                val option = textNode.options[id]
+
+                val view1 = getUIFactoryService().newPropertyView("Text", option.textProperty)
                 //view1.styleClass.add("dialogue-editor-condition-view")
 
-                val view2 = getUIFactoryService().newPropertyView("Condition", textNode.conditions[id])
+                val view2 = getUIFactoryService().newPropertyView("Condition", option.conditionProperty)
                 view2.styleClass.add("dialogue-editor-condition-view")
 
                 pane.addRow(index++, view1)
                 pane.addRow(index++, view2)
+
+                views += listOf(view1, view2, text)
             }
         }
 

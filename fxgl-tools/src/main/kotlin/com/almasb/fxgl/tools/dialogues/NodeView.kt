@@ -95,6 +95,10 @@ abstract class NodeView(val node: DialogueNode) : Pane() {
         contentRoot.children.add(node)
     }
 
+    fun removeContent(node: Node) {
+        contentRoot.children.remove(node)
+    }
+
     fun addInPoint(linkPoint: InLinkPoint) {
         inPoint = linkPoint
 

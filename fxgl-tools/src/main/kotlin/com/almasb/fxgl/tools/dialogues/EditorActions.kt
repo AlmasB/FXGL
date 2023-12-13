@@ -141,7 +141,7 @@ class AddChoiceEdgeAction(
 ) : EditorAction {
 
     override fun run() {
-        graph.addChoiceEdge(source, optionID, target)
+        graph.addEdge(source, optionID, target)
     }
 
     override fun undo() {
@@ -176,6 +176,6 @@ class RemoveChoiceEdgeAction(
     }
 
     override fun undo() {
-        graph.addChoiceEdge(source, optionID, target)
+        graph.addEdge(source, optionID, target)
     }
 }

@@ -87,18 +87,11 @@ class BranchNode(text: String) : DialogueNode(BRANCH, text) {
 class TextNode(text: String) : DialogueNode(TEXT, text)  {
 
     /**
-     * Maps option id to option text.
-     * Options start at id 0.
-     * These are ids that are local to this choice node.
+     * The list of options in an ordered sequence where the order is dictated by the item index.
+     * There is always at least one option (which can be empty).
+     * The indices are local ids to this node and start from 0.
      */
-    val options = hashMapOf<Int, StringProperty>()
-
-    /**
-     * Maps option id to option condition.
-     * Options start at id 0.
-     * These are ids that are local to this choice node.
-     */
-    val conditions = hashMapOf<Int, StringProperty>()
+    val options = FXCollections.observableArrayList<Option>()
 
     val numOptions: Int
         get() = options.size
@@ -107,16 +100,15 @@ class TextNode(text: String) : DialogueNode(TEXT, text)  {
      * @return true if there exists at least 1 non-empty option
      */
     val hasUserOptions: Boolean
-        get() = options.values.any { it.value.isNotEmpty() }
+        get() = options.any { it.text.isNotEmpty() }
 
     /**
-     * Returns last option id present in the options map, or -1 if there are no options.
+     * @return last usable option id (index into [options])
      */
     val lastOptionID: Int
-        get() = options.keys.maxOrNull() ?: -1
+        get() = numOptions - 1
 
     init {
-        // TODO: formalise it has at least one option
         addOption("")
     }
 
@@ -129,39 +121,57 @@ class TextNode(text: String) : DialogueNode(TEXT, text)  {
      * @return id of the new option
      */
     fun addOption(text: String, condition: String): Int {
-        val id = lastOptionID + 1
+        val nextID = lastOptionID + 1
 
-        options[id] = SimpleStringProperty(text)
-        conditions[id] = SimpleStringProperty(condition)
+        options += Option(nextID, text, condition)
 
-        return id
+        return nextID
+    }
+
+    fun removeOption(id: Int): Option {
+        val removedOption = options.removeAt(id)
+
+        // remap all option IDs
+        options.forEachIndexed { index, option ->
+            option.idProperty.value = index
+        }
+
+        return removedOption
     }
 
     override fun copy(): TextNode {
         val copy = TextNode(text)
-        options.forEach { (k, v) ->
-            copy.options[k] = SimpleStringProperty(v.value)
-        }
-        conditions.forEach { (k, v) ->
-            copy.conditions[k] = SimpleStringProperty(v.value)
-        }
+        copy.options.setAll(options.map { it.copy() })
         return copy
     }
 }
 
-/* EDGES */
+class Option(id: Int, text: String = "", condition: String = "") {
+    val idProperty: IntegerProperty = SimpleIntegerProperty(id)
 
-open class DialogueEdge(val source: DialogueNode, val target: DialogueNode) {
+    val id: Int
+        get() = idProperty.value
 
-    override fun toString(): String {
-        return "$source -> $target"
-    }
+    val textProperty: StringProperty = SimpleStringProperty(text)
+
+    val text: String
+        get() = textProperty.value
+
+    val conditionProperty: StringProperty = SimpleStringProperty(condition)
+
+    val condition: String
+        get() = conditionProperty.value
+
+    fun copy() = Option(id, text, condition)
 }
 
-class DialogueChoiceEdge(source: DialogueNode, val optionID: Int, target: DialogueNode) : DialogueEdge(source, target) {
-    override fun toString(): String {
-        return "$source, $optionID -> $target"
-    }
+/* EDGES */
+
+open class DialogueEdge(val source: DialogueNode, val optionID: Int, val target: DialogueNode) {
+
+    constructor(source: DialogueNode, target: DialogueNode): this(source, 0, target)
+
+    override fun toString(): String = "$source, $optionID -> $target"
 }
 
 /* GRAPH */
@@ -219,19 +229,14 @@ class DialogueGraph(
      * Adds a dialogue edge between [source] and [target].
      */
     fun addEdge(source: DialogueNode, target: DialogueNode) {
-        if (source.type == TEXT) {
-            // use option 0
-            addChoiceEdge(source, 0, target)
-        } else {
-            edges += DialogueEdge(source, target)
-        }
+        edges += DialogueEdge(source, target)
     }
 
     /**
-     * Adds a choice dialog edge between [source] and [target].
+     * Adds a dialogue edge between [source] and [target] using [optionID].
      */
-    fun addChoiceEdge(source: DialogueNode, optionID: Int, target: DialogueNode) {
-        edges += DialogueChoiceEdge(source, optionID, target)
+    fun addEdge(source: DialogueNode, optionID: Int, target: DialogueNode) {
+        edges += DialogueEdge(source, optionID, target)
     }
 
     /**
@@ -242,14 +247,10 @@ class DialogueGraph(
     }
 
     /**
-     * Remove a choice dialogue edge between [source] and [target].
+     * Remove a dialogue edge between [source] and [target] using [optionID].
      */
     fun removeChoiceEdge(source: DialogueNode, optionID: Int, target: DialogueNode) {
-        edges.removeIf { it is DialogueChoiceEdge
-                && it.source === source
-                && it.optionID == optionID
-                && it.target === target
-        }
+        edges.removeIf { it.source === source && it.optionID == optionID && it.target === target }
     }
 
     fun containsNode(node: DialogueNode): Boolean = node in nodes.values
@@ -275,7 +276,7 @@ class DialogueGraph(
     }
 
     fun nextNode(node: DialogueNode, optionID: Int): DialogueNode? {
-        return edges.find { it is DialogueChoiceEdge && it.source === node && it.optionID == optionID }?.target
+        return edges.find { it.source === node && it.optionID == optionID }?.target
     }
 
     fun appendGraph(source: DialogueNode, target: DialogueNode, graph: DialogueGraph) {

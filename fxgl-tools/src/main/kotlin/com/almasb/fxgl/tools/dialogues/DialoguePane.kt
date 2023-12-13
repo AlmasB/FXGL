@@ -407,11 +407,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
 
         isDirtyProperty.value = true
 
-        val (outPoint, inPoint) = if (edge is DialogueChoiceEdge) {
-            getNodeView(edge.source).outPoints.find { it.choiceOptionID == edge.optionID }!! to getNodeView(edge.target).inPoint!!
-        } else {
-            getNodeView(edge.source).outPoints.first() to getNodeView(edge.target).inPoint!!
-        }
+        val (outPoint, inPoint) = getNodeView(edge.source).outPoints.find { it.choiceOptionID == edge.optionID }!! to getNodeView(edge.target).inPoint!!
 
         outPoint.connect(inPoint)
 
@@ -495,7 +491,7 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     private fun getEdgeView(edge: DialogueEdge): EdgeView {
-        val optionID = if (edge is DialogueChoiceEdge) edge.optionID else -1
+        val optionID = edge.optionID
 
         return edgeViews.children
                 .map { it as EdgeView }

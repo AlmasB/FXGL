@@ -10,7 +10,9 @@ import com.almasb.fxgl.cutscene.dialogue.*
 import com.almasb.fxgl.dsl.getUIFactoryService
 import com.almasb.fxgl.ui.FontType
 import javafx.beans.binding.Bindings
+import javafx.collections.ListChangeListener
 import javafx.geometry.Pos
+import javafx.scene.Node
 import javafx.scene.control.TextField
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
@@ -55,7 +57,7 @@ class BranchNodeView(node: DialogueNode = BranchNode("")) : NodeView(node) {
             addContent(field)
 
             val outPoint = OutLinkPoint(this)
-            outPoint.choiceOptionID = i
+            outPoint.choiceOptionIDProperty.value = i
 
             addOutPoint(outPoint)
 
@@ -75,19 +77,30 @@ class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
 
     private val textNode = node as TextNode
 
+    //private val optionViewData = hashMapOf<Int, MutableList<Node>>()
+
     init {
         addInPoint(InLinkPoint(this))
+        inPoint?.let {
+            it.translateYProperty().unbind()
+            it.translateY = 50.0
+        }
 
-        if (textNode.options.isNotEmpty()) {
-            // load existing options
-            textNode.options.keys.forEach { id ->
-                addOptionView(id)
+        textNode.options.addListener(ListChangeListener {
+            while (it.next()) {
+                it.removed.forEach {
+
+                }
+
+                it.addedSubList.forEach {
+                    addOptionView(it)
+                }
             }
-        } else {
-            // add the first two options
-            repeat(2) {
-                addNewOption()
-            }
+        })
+
+        // load existing options
+        textNode.options.forEach {
+            addOptionView(it)
         }
 
         addButtons()
@@ -96,42 +109,27 @@ class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
     private fun addButtons() {
         val btnAdd = CustomButton("+")
         btnAdd.setOnMouseClicked {
-            addNewOption()
+            textNode.addOption("")
         }
 
         btnAdd.translateX = 9.0
         btnAdd.translateY = 1.0
 
-        val btnRemove = CustomButton("-")
-        btnRemove.setOnMouseClicked {
-            removeLastOption()
-        }
-
-        btnRemove.visibleProperty().bind(Bindings.size(outPoints).greaterThan(2))
-        btnRemove.translateX = btnAdd.translateX
-        btnRemove.translateYProperty().bind(prefHeightProperty().subtract(44))
-
-        children.addAll(btnAdd, btnRemove)
+        children.addAll(btnAdd)
     }
 
-    private fun addNewOption() {
-        val nextID = textNode.addOption("")
+    private fun addOptionView(option: Option) {
+        val views = ArrayList<Node>()
 
-        addOptionView(nextID)
-    }
+        val field = TextField(option.text)
+        field.promptTextProperty().bind(option.idProperty.asString("Choice %d"))
 
-    private fun addOptionView(id: Int) {
-        val prop = textNode.options[id]!!
-
-        val field = TextField(prop.value)
-        field.promptText = "Choice $id"
-
-        prop.bindBidirectional(field.textProperty())
+        option.textProperty.bindBidirectional(field.textProperty())
 
         val outPoint = OutLinkPoint(this)
         outPoint.translateXProperty().bind(widthProperty().add(-25.0))
-        outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(offsetY + id * 35.0))
-        outPoint.choiceOptionID = id
+        outPoint.translateYProperty().bind(textArea.prefHeightProperty().add(option.idProperty.multiply(35).add(offsetY)))
+        outPoint.choiceOptionIDProperty.bind(option.idProperty)
         outPoint.choiceLocalOptionProperty.bind(field.textProperty())
 
         outPoints.add(outPoint)
@@ -139,6 +137,33 @@ class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
         addContent(field)
 
         children.add(outPoint)
+
+        views += field
+        views += outPoint
+
+        // remove option button
+        if (option.id > 0) {
+            val btnRemove = CustomButton("-")
+            btnRemove.setOnMouseClicked {
+                textNode.removeOption(option.id)
+
+                outPoints.remove(outPoint)
+
+                views.forEach {
+                    children -= it
+                    removeContent(it)
+                }
+
+                prefHeightProperty().bind(outPoints.last().translateYProperty().add(35.0))
+            }
+
+            btnRemove.translateX = 9.0
+            btnRemove.translateYProperty().bind(outPoint.translateYProperty().subtract(9))
+
+            children.add(btnRemove)
+
+            views += btnRemove
+        }
 
         prefHeightProperty().bind(outPoint.translateYProperty().add(35.0))
     }
@@ -151,8 +176,7 @@ class TextNodeView(node: DialogueNode = TextNode("")) : NodeView(node) {
 
         val lastID = textNode.lastOptionID
 
-        textNode.options.remove(lastID)
-        textNode.conditions.remove(lastID)
+        textNode.removeOption(lastID)
 
         prefHeightProperty().bind(outPoints.last().translateYProperty().add(35.0))
     }

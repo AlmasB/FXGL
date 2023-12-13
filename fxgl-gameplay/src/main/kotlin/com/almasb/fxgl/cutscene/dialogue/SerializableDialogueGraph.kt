@@ -11,7 +11,6 @@ import com.almasb.fxgl.logging.Logger
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import javafx.beans.property.SimpleStringProperty
 
 /**
  *
@@ -38,7 +37,10 @@ data class SerializableTextNode
         val type: DialogueNodeType,
 
         @JsonProperty("text")
-        val text: String
+        val text: String,
+
+        @JsonProperty("options")
+        val options: List<SerializableOption>
 ) {
 
     var audio: String = ""
@@ -51,26 +53,10 @@ data class SerializableFunctionNode
         val type: DialogueNodeType,
 
         @JsonProperty("text")
-        val text: String
-) {
-
-    var audio: String = ""
-}
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class SerializableChoiceNode
-@JsonCreator constructor(
-        @JsonProperty("type")
-        val type: DialogueNodeType,
-
-        @JsonProperty("text")
         val text: String,
 
-        @JsonProperty("options")
-        val options: Map<Int, String>,
-
-        @JsonProperty("conditions")
-        val conditions: Map<Int, String>
+        @JsonProperty("numTimes")
+        val numTimes: Int
 ) {
 
     var audio: String = ""
@@ -83,22 +69,24 @@ data class SerializableEdge
         @JsonProperty("sourceID")
         val sourceID: Int,
 
-        @JsonProperty("targetID")
-        val targetID: Int
-)
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class SerializableChoiceEdge
-@JsonCreator constructor(
-
-        @JsonProperty("sourceID")
-        val sourceID: Int,
-
         @JsonProperty("optionID")
         val optionID: Int,
 
         @JsonProperty("targetID")
         val targetID: Int
+)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class SerializableOption
+@JsonCreator constructor(
+        @JsonProperty("id")
+        val id: Int,
+
+        @JsonProperty("text")
+        val text: String,
+
+        @JsonProperty("condition")
+        val condition: String
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -121,17 +109,14 @@ data class SerializableGraph
         @JsonProperty("startNodeID")
         val startNodeID: Int,
 
-        @JsonProperty("nodes")
-        val nodes: Map<Int, SerializableTextNode>,
+        @JsonProperty("textNodes")
+        val textNodes: Map<Int, SerializableTextNode>,
 
-        @JsonProperty("choiceNodes")
-        val choiceNodes: Map<Int, SerializableChoiceNode>,
+        @JsonProperty("functionNodes")
+        val functionNodes: Map<Int, SerializableFunctionNode>,
 
         @JsonProperty("edges")
-        val edges: List<SerializableEdge>,
-
-        @JsonProperty("choiceEdges")
-        val choiceEdges: List<SerializableChoiceEdge>
+        val edges: List<SerializableEdge>
 ) {
 
     var version: Int = GRAPH_VERSION
@@ -145,27 +130,35 @@ object DialogueGraphSerializer {
 
     private val log = Logger.get(javaClass)
 
-    fun toSerializable(dialogueGraph: DialogueGraph): SerializableGraph {
-        val nodesS = dialogueGraph.nodes
-                .filterValues { it.type != TEXT }
-                .mapValues { (_, n) -> SerializableTextNode(n.type, n.text).also { it.audio = n.audioFileName } }
-
-        val textNodesS = dialogueGraph.nodes
-                .filterValues { it.type == TEXT }
+    fun toSerializable(graph: DialogueGraph): SerializableGraph {
+        val textNodes = graph.nodes
+                .filterValues { it.type == TEXT || it.type == BRANCH }
                 .mapValues { (_, n) ->
-                    SerializableChoiceNode(n.type, n.text, (n as TextNode).options.mapValues { it.value.value }, n.conditions.mapValues { it.value.value })
-                            .also { it.audio = n.audioFileName }
+                    val options: List<SerializableOption> = if (n is TextNode) n.options.toSerializable() else emptyList()
+
+                    SerializableTextNode(n.type, n.text, options).also { it.audio = n.audioFileName }
                 }
 
-        val edgesS = dialogueGraph.edges
-                .filter { it !is DialogueChoiceEdge }
-                .map { SerializableEdge(dialogueGraph.findNodeID(it.source), dialogueGraph.findNodeID(it.target)) }
+        val functionNodes = graph.nodes
+                .filterValues { it.type == FUNCTION }
+                .mapValues { (_, n) ->
+                    val node = (n as FunctionNode)
 
-        val choiceEdgesS = dialogueGraph.edges
-                .filterIsInstance<DialogueChoiceEdge>()
-                .map { SerializableChoiceEdge(dialogueGraph.findNodeID(it.source), it.optionID, dialogueGraph.findNodeID(it.target)) }
+                    SerializableFunctionNode(n.type, n.text, node.numTimes).also { it.audio = n.audioFileName }
+                }
 
-        return SerializableGraph(dialogueGraph.uniqueID, dialogueGraph.startNodeID, nodesS, textNodesS, edgesS, choiceEdgesS)
+        val edges = graph.edges
+                .map { SerializableEdge(graph.findNodeID(it.source), it.optionID, graph.findNodeID(it.target)) }
+
+        return SerializableGraph(graph.uniqueID, graph.startNodeID, textNodes, functionNodes, edges)
+    }
+
+    private fun List<Option>.toSerializable(): List<SerializableOption> {
+        return this.map { SerializableOption(it.id, it.text, it.condition) }
+    }
+
+    private fun List<SerializableOption>.toDeserializable(): List<Option> {
+        return this.map { Option(it.id, it.text, it.condition) }
     }
 
     fun fromSerializable(sGraph: SerializableGraph): DialogueGraph {
@@ -175,9 +168,10 @@ object DialogueGraphSerializer {
 
         val graph = DialogueGraph(sGraph.uniqueID)
         graph.startNodeID = sGraph.startNodeID
-        sGraph.nodes.forEach { (id, n) ->
+
+        sGraph.textNodes.forEach { (id, n) ->
             val node = when (n.type) {
-                FUNCTION -> FunctionNode(n.text)
+                TEXT -> TextNode(n.text).also { it.options.setAll(n.options.toDeserializable()) }
                 BRANCH -> BranchNode(n.text)
                 SUBDIALOGUE -> SubDialogueNode(n.text)
                 else -> throw IllegalArgumentException("Unknown node type: ${n.type}")
@@ -188,16 +182,8 @@ object DialogueGraphSerializer {
             graph.nodes[id] = node
         }
 
-        sGraph.choiceNodes.forEach { (id, n) ->
-            val node = TextNode(n.text)
-
-            n.options.forEach { option ->
-                node.options[option.key] = SimpleStringProperty(option.value)
-            }
-
-            n.conditions.forEach { option ->
-                node.conditions[option.key] = SimpleStringProperty(option.value)
-            }
+        sGraph.functionNodes.forEach { (id, n) ->
+            val node = FunctionNode(n.text)
 
             node.audioFileNameProperty.value = n.audio
 
@@ -208,14 +194,7 @@ object DialogueGraphSerializer {
             val source = graph.getNodeByID(it.sourceID)
             val target = graph.getNodeByID(it.targetID)
 
-            graph.addEdge(source, target)
-        }
-
-        sGraph.choiceEdges.forEach {
-            val source = graph.getNodeByID(it.sourceID)
-            val target = graph.getNodeByID(it.targetID)
-
-            graph.addChoiceEdge(source, it.optionID, target)
+            graph.addEdge(source, it.optionID, target)
         }
 
         return graph

@@ -133,8 +133,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     private fun initUserActions() {
         val userAction = object : UserAction("Next RPG Line") {
             override fun onActionBegin() {
-                // TODO: check logic
-                if (currentNode is TextNode && (currentNode as TextNode).numOptions > 0 && (currentNode as TextNode).options[0]!!.value.isNotEmpty()) {
+                if (currentNode is TextNode && (currentNode as TextNode).hasUserOptions) {
                     return
                 }
 
@@ -145,7 +144,6 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         val digitTriggerListener = object : TriggerListener() {
             override fun onActionBegin(trigger: Trigger) {
 
-                // TODO: logic
                 // ignore any presses if type is not CHOICE or the text animation is still going
                 if ((currentNode.type == TEXT && !(currentNode as TextNode).hasUserOptions) || message.isNotEmpty()) {
                     return
@@ -319,12 +317,9 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
         stringID = 0
 
-        textNode.conditions.forEach { id, condition ->
-
-            if (condition.value.trim().isEmpty() || dialogueScriptRunner.callBooleanFunction(condition.value)) {
-                val option = textNode.options[id]!!
-
-                populatePlayerLine(id, dialogueScriptRunner.replaceVariablesInText(option.value))
+        textNode.options.forEachIndexed { id, option ->
+            if (option.condition.trim().isEmpty() || dialogueScriptRunner.callBooleanFunction(option.condition)) {
+                populatePlayerLine(id, dialogueScriptRunner.replaceVariablesInText(option.text))
             }
         }
 

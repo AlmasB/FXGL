@@ -46,11 +46,11 @@ class DialogueGraphTest {
         val node1 = TextNode("")
         val node2 = TextNode("")
 
-        assertThat(DialogueEdge(node1, node2).toString(), `is`("TextNode -> TextNode"))
+        assertThat(DialogueEdge(node1, node2).toString(), `is`("TextNode, 0 -> TextNode"))
 
         val node3 = TextNode("")
 
-        assertThat(DialogueChoiceEdge(node3, 0, node2).toString(), `is`("TextNode, 0 -> TextNode"))
+        assertThat(DialogueEdge(node3, 1, node2).toString(), `is`("TextNode, 1 -> TextNode"))
     }
 
     @Test
@@ -119,12 +119,12 @@ class DialogueGraphTest {
 
         assertTrue(graph.edges.isEmpty())
 
-        graph.addChoiceEdge(node1, 0, node2)
+        graph.addEdge(node1, 0, node2)
 
         assertThat(graph.edges.size, `is`(1))
         assertThat(graph.edges[0].source, `is`<DialogueNode>(node1))
         assertThat(graph.edges[0].target, `is`<DialogueNode>(node2))
-        assertThat((graph.edges[0] as DialogueChoiceEdge).optionID, `is`(0))
+        assertThat(graph.edges[0].optionID, `is`(0))
 
         // reverse won't work since it's a directed graph
         graph.removeChoiceEdge(node2, 0, node1)
@@ -141,7 +141,7 @@ class DialogueGraphTest {
         val node1 = TextNode("")
         val node2 = TextNode("")
         val edge = DialogueEdge(node1, node2)
-        val choiceEdge = DialogueChoiceEdge(node1, 0, node2)
+        val choiceEdge = DialogueEdge(node1, 0, node2)
 
         graph.addNode(node1)
         graph.addNode(node2)
@@ -162,7 +162,7 @@ class DialogueGraphTest {
         assertThat(graph.edges.size, `is`(1))
         assertThat(graph.edges[0].source, `is`<DialogueNode>(node1))
         assertThat(graph.edges[0].target, `is`<DialogueNode>(node2))
-        assertThat((graph.edges[0] as DialogueChoiceEdge).optionID, `is`(0))
+        assertThat(graph.edges[0].optionID, `is`(0))
 
         graph.removeEdge(choiceEdge)
 
@@ -197,13 +197,10 @@ class DialogueGraphTest {
     @Test
     fun `Copy choice options`() {
         val choice = TextNode("Choice")
-        choice.options[0] = SimpleStringProperty("Choice A")
-        choice.options[1] = SimpleStringProperty("Choice B")
-        choice.options[2] = SimpleStringProperty("Choice C")
 
-        choice.conditions[0] = SimpleStringProperty("Condition A")
-        choice.conditions[1] = SimpleStringProperty("Condition B")
-        choice.conditions[2] = SimpleStringProperty("Condition C")
+        choice.addOption("Choice A", "Condition A")
+        choice.addOption("Choice B", "Condition B")
+        choice.addOption("Choice C", "Condition C")
 
         val copy = choice.copy()
 
@@ -211,16 +208,12 @@ class DialogueGraphTest {
 
         // StringProperty has to be a deep copy, not shallow
         assertThat(choice.options, `is`(not(copy.options)))
-        assertThat(choice.conditions, `is`(not(copy.conditions)))
         assertThat(choice.options.size, `is`(copy.options.size))
-        assertThat(choice.conditions.size, `is`(copy.conditions.size))
 
-        choice.options.forEach { (k, v) ->
-            assertThat(v.value, `is`(copy.options[k]!!.value))
-        }
-
-        choice.conditions.forEach { (k, v) ->
-            assertThat(v.value, `is`(copy.conditions[k]!!.value))
+        choice.options.forEachIndexed { index, option ->
+            assertThat(option.id, `is`(copy.options[index].id))
+            assertThat(option.text, `is`(copy.options[index].text))
+            assertThat(option.condition, `is`(copy.options[index].condition))
         }
     }
 
@@ -231,7 +224,7 @@ class DialogueGraphTest {
 
         graph.addNode(node1)
         graph.addNode(node2)
-        graph.addChoiceEdge(node1, 0, node2)
+        graph.addEdge(node1, 0, node2)
 
         val copy = graph.copy()
 
