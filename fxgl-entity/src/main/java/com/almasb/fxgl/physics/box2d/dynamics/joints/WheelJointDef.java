@@ -36,39 +36,32 @@ public class WheelJointDef extends JointDef<WheelJoint> {
     /**
      * The local translation axis in body1.
      */
-    public final Vec2 localAxisA = new Vec2();
+    public final Vec2 localAxisA = new Vec2(1, 0);
 
     /**
      * Enable/disable the joint motor.
      */
-    public boolean enableMotor;
+    public boolean enableMotor = false;
 
     /**
      * The maximum motor torque, usually in N-m.
      */
-    public float maxMotorTorque;
+    public float maxMotorTorque = 0f;
 
     /**
      * The desired motor speed in radians per second.
      */
-    public float motorSpeed;
+    public float motorSpeed = 0f;
 
     /**
      * Suspension frequency, zero indicates no suspension
      */
-    public float frequencyHz;
+    public float frequencyHz = 0f;
 
     /**
      * Suspension damping ratio, one indicates critical damping
      */
-    public float dampingRatio;
-
-    public WheelJointDef() {
-        localAxisA.set(1, 0);
-        enableMotor = false;
-        maxMotorTorque = 0f;
-        motorSpeed = 0f;
-    }
+    public float dampingRatio = 0f;
 
     public void initialize(Body b1, Body b2, Vec2 anchor, Vec2 axis) {
         setBodyA(b1);

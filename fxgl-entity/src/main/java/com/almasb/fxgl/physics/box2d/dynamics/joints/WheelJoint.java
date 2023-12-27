@@ -39,9 +39,6 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
  */
 public class WheelJoint extends Joint {
 
-    private float m_frequencyHz;
-    private float m_dampingRatio;
-
     // Solver shared
     private final Vec2 m_localAnchorA = new Vec2();
     private final Vec2 m_localAnchorB = new Vec2();
@@ -49,12 +46,14 @@ public class WheelJoint extends Joint {
     private final Vec2 m_localYAxisA = new Vec2();
 
     private float m_impulse;
-    private float m_motorImpulse;
+    private float m_motorImpulse = 0.0f;
     private float m_springImpulse;
 
     private float m_maxMotorTorque;
     private float m_motorSpeed;
     private boolean m_enableMotor;
+    private float m_frequencyHz;
+    private float m_dampingRatio;
 
     // Solver temp
     private int m_indexA;
@@ -68,11 +67,13 @@ public class WheelJoint extends Joint {
 
     private final Vec2 m_ax = new Vec2();
     private final Vec2 m_ay = new Vec2();
-    private float m_sAx, m_sBx;
-    private float m_sAy, m_sBy;
+    private float m_sAx;
+    private float m_sBx;
+    private float m_sAy;
+    private float m_sBy;
 
     private float m_mass;
-    private float m_motorMass;
+    private float m_motorMass = 0.0f;
     private float m_springMass;
 
     private float m_bias;
@@ -85,14 +86,9 @@ public class WheelJoint extends Joint {
         m_localXAxisA.set(def.localAxisA);
         Vec2.crossToOutUnsafe(1.0f, m_localXAxisA, m_localYAxisA);
 
-
-        m_motorMass = 0.0f;
-        m_motorImpulse = 0.0f;
-
         m_maxMotorTorque = def.maxMotorTorque;
         m_motorSpeed = def.motorSpeed;
         m_enableMotor = def.enableMotor;
-
         m_frequencyHz = def.frequencyHz;
         m_dampingRatio = def.dampingRatio;
     }
@@ -340,9 +336,7 @@ public class WheelJoint extends Joint {
         pool.pushRot(2);
         pool.pushVec2(1);
 
-        // data.velocities[m_indexA].v = vA;
         data.velocities[m_indexA].w = wA;
-        // data.velocities[m_indexB].v = vB;
         data.velocities[m_indexB].w = wB;
     }
 
@@ -414,9 +408,7 @@ public class WheelJoint extends Joint {
         }
         pool.pushVec2(2);
 
-        // data.velocities[m_indexA].v = vA;
         data.velocities[m_indexA].w = wA;
-        // data.velocities[m_indexB].v = vB;
         data.velocities[m_indexB].w = wB;
     }
 
@@ -470,9 +462,7 @@ public class WheelJoint extends Joint {
 
         pool.pushVec2(3);
         pool.pushRot(2);
-        // data.positions[m_indexA].c = cA;
         data.positions[m_indexA].a = aA;
-        // data.positions[m_indexB].c = cB;
         data.positions[m_indexB].a = aB;
 
         return FXGLMath.abs(C) <= JBoxSettings.linearSlop;
