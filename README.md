@@ -21,7 +21,7 @@ JavaFX Game Development Framework
 ### Why FXGL?
 
 * No installation or setup is required
-* "Out of the box": Java 8-17, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
+* "Out of the box": Java 8-21, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
 * Simple and clean API, higher level than other engines
 * Superset of JavaFX: no need to learn new UI API
 * Real-world game development techniques: Entity-Component, interpolated animations, particles, and [many more](https://github.com/AlmasB/FXGL/wiki/Core-Features)
@@ -60,7 +60,7 @@ For a quick dive into code, see standalone [basic examples](https://github.com/A
 
 Otherwise, see:
 
-* [FXGL 17 book](https://link.springer.com/book/10.1007/978-1-4842-8625-8?sap-outbound-id=3352BB472E8E602B4B29844F1A86CCC4374DDF6E)
+* [FXGL book](https://link.springer.com/book/10.1007/978-1-4842-8625-8?sap-outbound-id=3352BB472E8E602B4B29844F1A86CCC4374DDF6E)
 * [Showcase Trailer](https://youtu.be/fuDQg7W0v4g)
 * [Use FXGL with IntelliJ](https://youtu.be/LhmlFC6KE2Q)
 * [Wiki & written tutorials](https://github.com/AlmasB/FXGL/wiki)
@@ -71,23 +71,19 @@ Otherwise, see:
 
 ### Maven
 
-* [Maven](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin (Java 17+)
-
-Make sure to set `<release>17</release>` for `maven-compiler-plugin`.
+* [Maven](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin
 
 ```xml
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>17.3</version>
+    <version>21</version>
 </dependency>
 ```
 
-Note: use `0.5.4` for Java 8-10 and `17.3` for Java 11+.
-
 ### Gradle
 
-* [Gradle](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin (Java 17+)
+* [Gradle](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin
 
 Please refer to the template if there are any errors.
 
@@ -97,11 +93,9 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:17.3'
+    compile 'com.github.almasb:fxgl:21'
 }
 ```
-
-Note: use `0.5.4` for Java 8-10 and `17.3` for Java 11+.
 
 ### Modularity
 
