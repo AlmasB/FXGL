@@ -249,13 +249,22 @@ public final class ParticleEmitter {
         this.parametricEquation = parametricEquation;
     }
 
-    private Supplier<Point2D> accelerationFunction = () -> Point2D.ZERO;
+    private Consumer<Particle> onRemoveFunction = particle -> {};
 
+    public Consumer<Particle> getOnRemoveFunction() {
+        return onRemoveFunction;
+    }
+    
     /**
-     * Execute this function when the particle is removed
+     *
+     * @param onRemoveFunction this function is executed when the particle is removed
      */
-    public Consumer<Particle>removeFunction=particle -> {};
-
+    public void setOnRemoveFunction(Consumer<Particle> onRemoveFunction) {
+        this.onRemoveFunction = onRemoveFunction;
+    }
+    
+    private Supplier<Point2D> accelerationFunction = () -> Point2D.ZERO;
+    
     /**
      *
      * @return gravity function
@@ -338,14 +347,6 @@ public final class ParticleEmitter {
      */
     public void setExpireFunction(Function<Integer, Duration> expireFunction) {
         this.expireFunction = expireFunction;
-    }
-
-    /**
-     *
-     * @param removeFunction Execute this function when the particle is removed
-     */
-    public void setRemoveFunction(Consumer<Particle>removeFunction) {
-        this.removeFunction = removeFunction;
     }
 
     private Image sourceImage = null;
