@@ -20,12 +20,12 @@ JavaFX Game Development Framework
 
 ### Why FXGL?
 
-* No installation or setup required
+* No installation or setup is required
 * "Out of the box": Java 8-17, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
 * Simple and clean API, higher level than other engines
 * Superset of JavaFX: no need to learn new UI API
 * Real-world game development techniques: Entity-Component, interpolated animations, particles, and [many more](https://github.com/AlmasB/FXGL/wiki/Core-Features)
-* Games are easily packaged into a single executable .jar or native images
+* Games are easily packaged into a single executable .jar, or native images
 
 ### Good for:
 
@@ -57,6 +57,7 @@ public class BasicGameApp extends GameApplication {
 ## Getting Started
 
 For a quick dive into code, see standalone [basic examples](https://github.com/AlmasB/FXGL/tree/dev/fxgl-samples/src/main/java/basics).
+
 Otherwise, see:
 
 * [FXGL 17 book](https://link.springer.com/book/10.1007/978-1-4842-8625-8?sap-outbound-id=3352BB472E8E602B4B29844F1A86CCC4374DDF6E)
@@ -82,7 +83,7 @@ Make sure to set `<release>17</release>` for `maven-compiler-plugin`.
 </dependency>
 ```
 
-Note: use `0.5.4` for Java 8-10 and `11.17` for Java 11-16.
+Note: use `0.5.4` for Java 8-10 and `17.3` for Java 11+.
 
 ### Gradle
 
@@ -100,7 +101,7 @@ dependencies {
 }
 ```
 
-Note: use `0.5.4` for Java 8-10 and `11.17` for Java 11-16.
+Note: use `0.5.4` for Java 8-10 and `17.3` for Java 11+.
 
 ### Modularity
 
@@ -147,7 +148,7 @@ If you'd like your project featured here, just add a note in the [Chat](https://
 
 ### Development Team
 
-Description of roles is given in the [Contribution Guide](CONTRIBUTING.md).
+A description of roles is given in the [Contribution Guide](CONTRIBUTING.md).
 
 Maintainers (Collaborators):
 
@@ -164,7 +165,7 @@ Testers:
 
 ### Contribution & Support
 
-If you want to build FXGL from sources or want to contribute,
+If you want to build FXGL from the source code or want to contribute,
 please see the [Contribution Guide](CONTRIBUTING.md) (including non-code).
 FXGL is fully modular, so new contributors do not need to understand the entire codebase, only the module to which the contribution is made.
 Contributions will be reviewed in accordance with the [Code of Conduct](CODE_OF_CONDUCT.md).
