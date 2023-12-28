@@ -187,16 +187,6 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         }
     }
 
-    private fun endCutscene() {
-        boxPlayerLines.opacity = 0.0
-        animation2.onFinished = Runnable {
-            sceneService.popSubScene()
-            onClose()
-        }
-        animation1.startReverse()
-        animation2.startReverse()
-    }
-
     fun start(dialogueGraph: DialogueGraph, context: DialogueContext, functionHandler: FunctionCallHandler, onFinished: Runnable) {
         graph = dialogueGraph.copy()
         this.functionHandler = functionHandler
@@ -230,6 +220,20 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         sceneService.pushSubScene(this)
     }
 
+    /**
+     * Terminates currently active dialogue and closes the dialogue scene.
+     */
+    fun endDialogue() {
+        topText.text = ""
+        boxPlayerLines.opacity = 0.0
+        animation2.onFinished = Runnable {
+            sceneService.popSubScene()
+            onClose()
+        }
+        animation1.startReverse()
+        animation2.startReverse()
+    }
+
     private fun loadSubDialogue(subDialogueNode: SubDialogueNode): DialogueGraph {
         return assetLoader.load(AssetType.DIALOGUE, subDialogueNode.text)
     }
@@ -253,8 +257,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
         // no next node available, the dialogue is complete
         if (nextNode == null) {
-            topText.text = ""
-            endCutscene()
+            endDialogue()
             return
         }
 

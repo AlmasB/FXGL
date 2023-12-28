@@ -32,7 +32,7 @@ class CutsceneService : EngineService() {
     private var gameVars: PropertyMap? = null
 
     private val scene by lazy { CutsceneScene(sceneService) }
-    private val dialogueScene by lazy { DialogueScene(sceneService) }
+    val dialogueScene by lazy { DialogueScene(sceneService) }
     private val videoScene by lazy { VideoScene(sceneService) }
 
     @JvmOverloads fun startCutscene(cutscene: Cutscene, onFinished: Runnable = EmptyRunnable) {

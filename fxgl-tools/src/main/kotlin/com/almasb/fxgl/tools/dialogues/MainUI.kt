@@ -138,8 +138,12 @@ class MainUI : BorderPane() {
         tabPane.prefWidthProperty().bind(FXGL.getSettings().actualWidthProperty())
         tabPane.prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
 
-        //nodeInspectorPane.prefWidth = 200.0
-        //nodeInspectorPane.prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
+        val exitButton = Button("Exit")
+        exitButton.translateXProperty().bind(FXGL.getSettings().actualWidthProperty().subtract(45))
+        exitButton.translateY = 15.0
+        exitButton.setOnAction { FXGL.getCutsceneService().dialogueScene.endDialogue() }
+
+        FXGL.getCutsceneService().dialogueScene.contentRoot.children += exitButton
 
         center = pane
 
