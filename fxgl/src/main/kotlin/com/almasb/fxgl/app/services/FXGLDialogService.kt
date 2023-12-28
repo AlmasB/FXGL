@@ -142,6 +142,19 @@ class FXGLDialogService : DialogService() {
         show("Choice", dialog)
     }
 
+    override fun <T : Any> showChoiceBox(message: String, options: List<T>, resultCallback: Consumer<T>) {
+        val dialog = dialogFactory.choiceDialog(message, options) { result ->
+            close()
+            resultCallback.accept(result)
+        }
+
+        show("Choice", dialog)
+    }
+
+    override fun <T : Enum<T>> showChoiceBox(message: String, enumClass: Class<T>, resultCallback: Consumer<T>) {
+        showChoiceBox(message, EnumSet.allOf(enumClass).toList(), resultCallback)
+    }
+
     override fun showInputBox(message: String, resultCallback: Consumer<String>) {
         showInputBox(message, Predicate { true }, resultCallback)
     }

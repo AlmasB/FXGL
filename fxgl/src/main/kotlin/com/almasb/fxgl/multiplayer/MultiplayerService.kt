@@ -7,7 +7,7 @@
 package com.almasb.fxgl.multiplayer
 
 import com.almasb.fxgl.core.EngineService
-import com.almasb.fxgl.core.collection.PropertyChangeListener
+import com.almasb.fxgl.core.collection.MovingAverageQueue
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.collection.PropertyMapChangeListener
 import com.almasb.fxgl.core.serialization.Bundle
@@ -18,6 +18,8 @@ import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.input.*
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.net.Connection
+import javafx.beans.property.ReadOnlyDoubleProperty
+import javafx.beans.property.ReadOnlyDoubleWrapper
 
 /**
  * TODO: symmetric remove API, e.g. removeReplicationSender()
@@ -30,16 +32,54 @@ class MultiplayerService : EngineService() {
 
     private val replicatedEntitiesMap = hashMapOf<Connection<Bundle>, ConnectionData>()
 
+    fun registerConnection(connection: Connection<Bundle>) {
+        val data = ConnectionData(connection)
+        setUpNewConnection(data)
+
+        replicatedEntitiesMap[connection] = data
+    }
+
+    private fun setUpNewConnection(data: ConnectionData) {
+        // register event handler for the given connection
+        // TODO: how to clean up when the connection dies
+        addEventReplicationReceiver(data.connection, data.eventBus)
+
+        data.eventBus.addEventHandler(ReplicationEvent.PING) { ping ->
+            val timeRecv = System.nanoTime()
+            fire(data.connection, PongReplicationEvent(ping.timeSent, timeRecv))
+        }
+
+        data.eventBus.addEventHandler(ReplicationEvent.PONG) { pong ->
+            val timeNow = System.nanoTime()
+            val roundTripTime = timeNow - pong.timeSent
+
+            data.pingBuffer.put(roundTripTime.toDouble())
+            data.ping.value = data.pingBuffer.average
+        }
+    }
+
     override fun onGameUpdate(tpf: Double) {
         if (replicatedEntitiesMap.isEmpty())
             return
 
+        val now = System.nanoTime()
+
         // TODO: can (should) we move this to NetworkComponent to act on a per entity basis ...
         replicatedEntitiesMap.forEach { conn, data ->
+            fire(conn, PingReplicationEvent(now))
+
             if (data.entities.isNotEmpty()) {
                 updateReplicatedEntities(conn, data.entities)
             }
         }
+    }
+
+    /**
+     * @return round-trip time from this endpoint to given [connection]
+     */
+    fun pingProperty(connection: Connection<Bundle>): ReadOnlyDoubleProperty {
+        // TODO: if no connection in map
+        return replicatedEntitiesMap[connection]!!.ping.readOnlyProperty
     }
 
     private fun updateReplicatedEntities(connection: Connection<Bundle>, entities: MutableList<Entity>) {
@@ -73,9 +113,9 @@ class MultiplayerService : EngineService() {
 
         val event = EntitySpawnEvent(networkComponent.id, entityName, entity.x, entity.y, entity.z)
 
-        val data = replicatedEntitiesMap.getOrDefault(connection, ConnectionData())
+        // TODO: if not available
+        val data = replicatedEntitiesMap[connection]!!
         data.entities += entity
-        replicatedEntitiesMap[connection] = data
 
         fire(connection, event)
     }
@@ -237,7 +277,11 @@ class MultiplayerService : EngineService() {
         }
     }
 
-    private class ConnectionData {
+    private class ConnectionData(val connection: Connection<Bundle>) {
         val entities = ArrayList<Entity>()
+        val eventBus = EventBus().also { it.isLoggingEnabled = false }
+
+        val pingBuffer = MovingAverageQueue(1000)
+        val ping = ReadOnlyDoubleWrapper()
     }
 }

@@ -13,11 +13,12 @@
 JavaFX 游戏开发框架
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.almasb/fxgl.svg)]()[![Build Status](https://github.com/AlmasB/FXGL/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/AlmasB/FXGL/actions)[![codecov](https://codecov.io/gh/AlmasB/FXGL/branch/dev/graph/badge.svg)](https://codecov.io/gh/AlmasB/FXGL)[![sponsor](https://img.shields.io/badge/sponsor-%241-brightgreen)](https://github.com/sponsors/AlmasB)
+[![JFXCentral](https://img.shields.io/badge/Find_me_on-JFXCentral-blue?logo=googlechrome&logoColor=white)](https://www.jfx-central.com/libraries/fxgl)
 
 ## 为什么选择FXGL ?
 
 - 无需安装或设置
-- “开箱即用”：Java 8-17、Win/Mac/Linux/Android 8+/iOS 11.0+/Web
+- “开箱即用”：Java 8-21、Win/Mac/Linux/Android 8+/iOS 11.0+/Web
 - 简单干净的API，相比起其他引擎API级别更高
 - JavaFX 的超集：无需学习新的 UI API
 - 真实世界的游戏开发技术：实体组件、插值动画、粒子[等等](https://github.com/AlmasB/FXGL/wiki/Core-Features)
@@ -54,7 +55,7 @@ public class BasicGameApp extends GameApplication {
 
 如需快速深入了解代码，请参阅独立的[基本示例](https://github.com/AlmasB/FXGL/tree/dev/fxgl-samples/src/main/java/basics)。否则，请参阅：
 
-- [FXGL 17 书](https://link.springer.com/book/10.1007/978-1-4842-8625-8?sap-outbound-id=3352BB472E8E602B4B29844F1A86CCC4374DDF6E)
+- [FXGL 书](https://link.springer.com/book/10.1007/978-1-4842-8625-8?sap-outbound-id=3352BB472E8E602B4B29844F1A86CCC4374DDF6E)
 - [预告片展示](https://youtu.be/fuDQg7W0v4g)
 - [在IntelliJ中使用FXGL](https://youtu.be/LhmlFC6KE2Q)
 - [维基和书面教程](https://github.com/AlmasB/FXGL/wiki)
@@ -65,23 +66,19 @@ public class BasicGameApp extends GameApplication {
 
 ### Maven
 
-- [Maven](https://github.com/AlmasB/FXGL-MavenGradle)项目模板，编程语言为 Java 和/或 Kotlin (Java 17+)
-
-确保设置`<release>17</release>`为`maven-compiler-plugin`.
+- [Maven](https://github.com/AlmasB/FXGL-MavenGradle)项目模板，编程语言为 Java 和/或 Kotlin
 
 ```
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>17.3</version>
+    <version>21</version>
 </dependency>
 ```
 
-注意：`0.5.4` 及 `11.17` 分别适用于 Java 8-10  及 Java 11-16。
-
 ### Gradle
 
-- [Gradle项目模板](https://github.com/AlmasB/FXGL-MavenGradle)，编程语言为 Java 和/或 Kotlin (Java 17+)
+- [Gradle项目模板](https://github.com/AlmasB/FXGL-MavenGradle)，编程语言为 Java 和/或 Kotlin
 
 如有错误请以模板为准。
 
@@ -91,11 +88,9 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:17.3'
+    compile 'com.github.almasb:fxgl:21'
 }
 ```
-
-注意：`0.5.4` 及 `11.17` 分别适用于 Java 8-10  及 Java 11-16。
 
 ### 模块化
 
@@ -173,6 +168,7 @@ open module app.name {
 - @hendrikebbers
 - @ImperaEtConquer
 - @thejeed
+- @chikega
 
 公司：
 

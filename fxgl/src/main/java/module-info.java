@@ -18,6 +18,7 @@ module com.almasb.fxgl.all {
     requires transitive javafx.graphics;
     requires transitive javafx.controls;
     requires transitive javafx.fxml;
+    requires transitive javafx.media;
 
     requires java.desktop;
     requires com.fasterxml.jackson.databind;

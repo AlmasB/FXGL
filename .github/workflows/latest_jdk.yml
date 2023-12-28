@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, macOS-latest, windows-latest ]
-        java: [ 19-ea ]
+        java: [ 21 ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: 'Checkout'
@@ -37,4 +37,4 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: |
-            mvn test -B -Dgpg.skip=true -Dmaven.javadoc.skip=true -Dkotlin.compiler.incremental=false
+            mvn test -B -Dgpg.skip=true -Dmaven.javadoc.skip=true -Dkotlin.compiler.incremental=false -Dpmd.skip=true

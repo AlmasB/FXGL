@@ -46,6 +46,7 @@ open class ParticleComponent(val emitter: ParticleEmitter) : Component() {
             val p = iter.next()
 
             if (p.update(tpf)) {
+                emitter.getOnRemoveFunction().accept(p)
                 iter.remove()
 
                 parent.viewComponent.removeChild(p.view)

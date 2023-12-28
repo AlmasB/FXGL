@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -27,6 +28,8 @@ public abstract class DialogFactoryService extends EngineService {
     public abstract Pane confirmationDialog(String message, Consumer<Boolean> callback);
 
     public abstract <T> Pane choiceDialog(String message, Consumer<T> resultCallback, T firstOption, T... options);
+
+    public abstract <T> Pane choiceDialog(String message, List<T> options, Consumer<T> resultCallback);
 
     public abstract Pane inputDialog(String message, Consumer<String> callback);
 

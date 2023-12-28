@@ -91,6 +91,10 @@ object MockUIFactoryService : UIFactoryService() {
         return CheckBox()
     }
 
+    override fun newSlider(): Slider {
+        return Slider()
+    }
+
     override fun <T : Any?> newSpinner(items: ObservableList<T>?): Spinner<T> {
         return Spinner(items)
     }

@@ -6,8 +6,10 @@
 
 package com.almasb.fxgl.texture
 
+import com.almasb.fxgl.animation.AnimatedImage
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.logging.Logger
+import javafx.geometry.Rectangle2D
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.SnapshotParameters
@@ -237,7 +239,7 @@ internal val SRC_OVER_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 top.R + bot.R * (1 - top.R),
                 top.G + bot.G * (1 - top.G),
                 top.B + bot.B * (1 - top.B),
@@ -252,7 +254,7 @@ internal val SRC_ATOP_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 top.R * bot.A + bot.R * (1 - top.R),
                 top.G * bot.A + bot.G * (1 - top.G),
                 top.B * bot.A + bot.B * (1 - top.B),
@@ -267,7 +269,7 @@ internal val ADD_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 minOf(1.0, bot.color.red + top.color.red),
                 minOf(1.0, bot.color.green + top.color.green),
                 minOf(1.0, bot.color.blue + top.color.blue),
@@ -282,7 +284,7 @@ internal val MULTIPLY_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 top.R * bot.R,
                 top.G * bot.G,
                 top.B * bot.B,
@@ -297,7 +299,7 @@ internal val SCREEN_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 1 - (1 - top.R) * (1 - bot.R),
                 1 - (1 - top.G) * (1 - bot.G),
                 1 - (1 - top.B) * (1 - bot.B),
@@ -334,7 +336,7 @@ internal val OVERLAY_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
             1 - 2 * (1 - bot.B) * (1 - top.B)
         }
 
-        val color = Color.color(
+        val color = newColor(
                 r,
                 g,
                 b,
@@ -349,7 +351,7 @@ internal val DARKEN_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 min(top.R, bot.R),
                 min(top.G, bot.G),
                 min(top.B, bot.B),
@@ -364,7 +366,7 @@ internal val LIGHTEN_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 max(top.R, bot.R),
                 max(top.G, bot.G),
                 max(top.B, bot.B),
@@ -379,7 +381,7 @@ internal val COLOR_DODGE_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 bot.R / (1 - top.R),
                 bot.G / (1 - top.G),
                 bot.B / (1 - top.B),
@@ -394,7 +396,7 @@ internal val COLOR_BURN_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 1 - ((1 - bot.R) / top.R),
                 1 - ((1 - bot.G) / top.G),
                 1 - ((1 - bot.B) / top.B),
@@ -426,7 +428,7 @@ internal val SOFT_LIGHT_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
 
         val b = (1 - 2 * top.B) * bot.B * bot.B + 2 * top.B * bot.B
 
-        val color = Color.color(
+        val color = newColor(
                 r,
                 g,
                 b,
@@ -442,7 +444,7 @@ internal val DIFFERENCE_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
         bot.copy(Color.TRANSPARENT)
     } else {
 
-        val color = Color.color(
+        val color = newColor(
                 abs(top.R - bot.R),
                 abs(top.G - bot.G),
                 abs(top.B - bot.B),
@@ -458,7 +460,7 @@ internal val EXCLUSION_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
         bot.copy(Color.TRANSPARENT)
     } else {
 
-        val color = Color.color(
+        val color = newColor(
                 top.R + bot.R - 2 * top.R * bot.R,
                 top.G + bot.G - 2 * top.G * bot.G,
                 top.B + bot.B - 2 * top.B * bot.B,
@@ -473,7 +475,7 @@ internal val RED_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 top.R,
                 bot.G,
                 bot.B,
@@ -488,7 +490,7 @@ internal val GREEN_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 bot.R,
                 top.G,
                 bot.B,
@@ -503,7 +505,7 @@ internal val BLUE_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
     if (top.color == Color.TRANSPARENT) {
         bot.copy(Color.TRANSPARENT)
     } else {
-        val color = Color.color(
+        val color = newColor(
                 bot.R,
                 bot.G,
                 top.B,
@@ -512,6 +514,22 @@ internal val BLUE_BLEND: (Pixel, Pixel) -> Pixel = { bot, top ->
 
         bot.copy(color)
     }
+}
+
+private fun newColor(r: Double, g: Double, b: Double, a: Double): Color {
+    return Color.color(
+            max(0.0, min(1.0, r)),
+            max(0.0, min(1.0, g)),
+            max(0.0, min(1.0, b)),
+            max(0.0, min(1.0, a))
+    )
+}
+
+/**
+ * @return pixel at given [x] and [y]
+ */
+fun Image.getPixel(x: Int, y: Int): Pixel {
+    return Pixel(x, y, this.pixelReader.getColor(x, y), this)
 }
 
 /**
@@ -564,6 +582,33 @@ fun Image.map(overlay: Image, f: (Pixel, Pixel) -> Pixel): Image {
 }
 
 /**
+ * Given a rectangular area, produces a sub-image of this image.
+ *
+ * Rectangle cannot cover area outside of the original image.
+ *
+ * @param area area of the original texture that represents sub-image
+ * @return sub-image
+ */
+fun Image.subImage(area: Rectangle2D): Image {
+    val minX = area.minX.toInt()
+    val minY = area.minY.toInt()
+    val maxX = area.maxX.toInt()
+    val maxY = area.maxY.toInt()
+
+    require(minX >= 0) { "minX value of sub-image cannot be negative" }
+    require(minY >= 0) { "minY value of sub-image cannot be negative" }
+    require(maxX <= this.width) { "maxX value ($maxX) of sub-image cannot be greater than image width (${this.width})" }
+    require(maxY <= this.height) { "maxY value ($maxY) of sub-image cannot be greater than image height (${this.height})" }
+
+    val pixelReader = this.pixelReader
+    val newImage = WritableImage(maxX - minX, maxY - minY)
+
+    newImage.pixelWriter.setPixels(0, 0, newImage.width.toInt(), newImage.height.toInt(), pixelReader, minX, minY)
+
+    return newImage
+}
+
+/**
  * @return the sum of rgb values, which is in range [0..3]
  */
 fun Color.rgbSum(): Double = this.red + this.green + this.blue
@@ -602,4 +647,36 @@ fun writeToFile(image: Image, filePath: Path): Boolean {
         Logger.get("Images.kt").warning("failed to save", e)
         return false
     }
+}
+
+/**
+ * Using given [images] interpolates between them to produce intermediate images (inbetweening).
+ * The given [images] list must have at least 2 images, otherwise a new list containing the originals is returned.
+ *
+ * @return list with intermediate images, including the original images.
+ * The new list size is (images.size - 1) * [numFramesBetweenImages] + (images.size).
+ */
+fun interpolateIntermediateImages(images: List<Image>, numFramesBetweenImages: Int): List<Image> {
+    if (images.size < 2)
+        return ArrayList(images)
+
+    val result = arrayListOf<Image>()
+
+    images.zipWithNext().forEach { (img1, img2) ->
+        val anim = AnimatedImage(img1, img2)
+
+        result += img1
+
+        repeat(numFramesBetweenImages) { i ->
+
+            // we add +1 since i == 0 will give us [img1], which we add manually, so ignore
+            // and i+1 == numFramesBetweenImages will give us [img2],
+            // which we also add manually during next cycle, so ignore by +1
+            result += anim.getValue((i + 1) / (numFramesBetweenImages.toDouble() + 1))
+        }
+    }
+
+    result += images.last()
+
+    return result
 }

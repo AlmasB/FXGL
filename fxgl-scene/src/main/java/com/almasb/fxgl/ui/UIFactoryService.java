@@ -56,6 +56,8 @@ public abstract class UIFactoryService extends EngineService {
 
     public abstract CheckBox newCheckBox();
 
+    public abstract Slider newSlider();
+
     public abstract <T> Spinner<T> newSpinner(ObservableList<T> items);
 
     public abstract <T> ListView<T> newListView(ObservableList<T> items);

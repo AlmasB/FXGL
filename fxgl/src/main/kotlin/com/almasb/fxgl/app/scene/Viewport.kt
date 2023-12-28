@@ -188,6 +188,9 @@ class Viewport
      * Unbind viewport.
      */
     fun unbind() {
+        boundX = null
+        boundY = null
+
         zoomProperty().unbind()
     }
 

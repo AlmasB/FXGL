@@ -218,7 +218,7 @@ class AssetLoaderServiceTest {
         assertThat(graph.nodes.size, `is`(3))
         assertThat(graph.edges.size, `is`(2))
 
-        assertThat(graph.startNode.text, `is`("Simple start."))
+        assertThat(graph.startNode.text, `is`("Sample start text"))
     }
 
     @Test
@@ -228,7 +228,7 @@ class AssetLoaderServiceTest {
         assertThat(graph.nodes.size, `is`(3))
         assertThat(graph.edges.size, `is`(2))
 
-        assertThat(graph.startNode.text, `is`("Simple start."))
+        assertThat(graph.startNode.text, `is`("Sample start text"))
     }
 
     @Test
@@ -260,6 +260,14 @@ class AssetLoaderServiceTest {
 
         assertThat(map, `is`(notNullValue()))
         assertThat(map.getString("testKey"), `is`("testValue"))
+
+        val map2 = assetLoader.loadPropertyMap("properties/test.properties")
+        val map3 = assetLoader.loadPropertyMap("properties/test.properties")
+
+        // must not be same object
+        assertFalse(map === map2)
+        assertFalse(map === map3)
+        assertFalse(map2 === map3)
 
         map = assetLoader.loadPropertyMap("bla-bla")
         assertThat(map, `is`(notNullValue()))

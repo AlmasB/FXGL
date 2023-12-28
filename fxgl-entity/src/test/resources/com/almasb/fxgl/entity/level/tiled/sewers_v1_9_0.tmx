@@ -18,6 +18,7 @@
    <properties>
     <property name="collidable" type="bool" value="true"/>
     <property name="someColor" type="color" value="#ff55ff00"/>
+    <property name="someFloat" type="float" value="3.14"/>
     <property name="someInt" type="int" value="33"/>
     <property name="someString" value="Text Here"/>
    </properties>

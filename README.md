@@ -16,15 +16,16 @@ JavaFX Game Development Framework
 [![Build Status](https://github.com/AlmasB/FXGL/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/AlmasB/FXGL/actions)
 [![codecov](https://codecov.io/gh/AlmasB/FXGL/branch/dev/graph/badge.svg)](https://codecov.io/gh/AlmasB/FXGL)
 [![sponsor](https://img.shields.io/badge/sponsor-%241-brightgreen)](https://github.com/sponsors/AlmasB)
+[![JFXCentral](https://img.shields.io/badge/Find_me_on-JFXCentral-blue?logo=googlechrome&logoColor=white)](https://www.jfx-central.com/libraries/fxgl)
 
 ### Why FXGL?
 
-* No installation or setup required
-* "Out of the box": Java 8-17, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
+* No installation or setup is required
+* "Out of the box": Java 8-21, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
 * Simple and clean API, higher level than other engines
 * Superset of JavaFX: no need to learn new UI API
 * Real-world game development techniques: Entity-Component, interpolated animations, particles, and [many more](https://github.com/AlmasB/FXGL/wiki/Core-Features)
-* Games are easily packaged into a single executable .jar or native images
+* Games are easily packaged into a single executable .jar, or native images
 
 ### Good for:
 
@@ -56,9 +57,10 @@ public class BasicGameApp extends GameApplication {
 ## Getting Started
 
 For a quick dive into code, see standalone [basic examples](https://github.com/AlmasB/FXGL/tree/dev/fxgl-samples/src/main/java/basics).
+
 Otherwise, see:
 
-* [FXGL 17 book](https://link.springer.com/book/10.1007/978-1-4842-8625-8?sap-outbound-id=3352BB472E8E602B4B29844F1A86CCC4374DDF6E)
+* [FXGL book](https://link.springer.com/book/10.1007/978-1-4842-8625-8?sap-outbound-id=3352BB472E8E602B4B29844F1A86CCC4374DDF6E)
 * [Showcase Trailer](https://youtu.be/fuDQg7W0v4g)
 * [Use FXGL with IntelliJ](https://youtu.be/LhmlFC6KE2Q)
 * [Wiki & written tutorials](https://github.com/AlmasB/FXGL/wiki)
@@ -69,23 +71,19 @@ Otherwise, see:
 
 ### Maven
 
-* [Maven](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin (Java 17+)
-
-Make sure to set `<release>17</release>` for `maven-compiler-plugin`.
+* [Maven](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin
 
 ```xml
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>17.3</version>
+    <version>21</version>
 </dependency>
 ```
 
-Note: use `0.5.4` for Java 8-10 and `11.17` for Java 11-16.
-
 ### Gradle
 
-* [Gradle](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin (Java 17+)
+* [Gradle](https://github.com/AlmasB/FXGL-MavenGradle) template project if you use Java and/or Kotlin
 
 Please refer to the template if there are any errors.
 
@@ -95,11 +93,9 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:17.3'
+    compile 'com.github.almasb:fxgl:21'
 }
 ```
-
-Note: use `0.5.4` for Java 8-10 and `11.17` for Java 11-16.
 
 ### Modularity
 
@@ -126,6 +122,7 @@ Download the latest uber jar from [Releases](https://github.com/AlmasB/FXGL/rele
 * Zealand Institute of Business and Technology, Denmark
 * Federal Institute of Education, Science and Technology of Rio Grande do Sul, Brazil
 * FHNW School of Engineering / Computer Science, Switzerland
+* Johann-Andreas-Schmeller-Gymnasium Nabburg, Germany
 
 If your institution wants to use or is using FXGL, add a note in the [Chat](https://gitter.im/AlmasB/FXGL) to be added to the list.
 
@@ -145,7 +142,7 @@ If you'd like your project featured here, just add a note in the [Chat](https://
 
 ### Development Team
 
-Description of roles is given in the [Contribution Guide](CONTRIBUTING.md).
+A description of roles is given in the [Contribution Guide](CONTRIBUTING.md).
 
 Maintainers (Collaborators):
 
@@ -162,7 +159,7 @@ Testers:
 
 ### Contribution & Support
 
-If you want to build FXGL from sources or want to contribute,
+If you want to build FXGL from the source code or want to contribute,
 please see the [Contribution Guide](CONTRIBUTING.md) (including non-code).
 FXGL is fully modular, so new contributors do not need to understand the entire codebase, only the module to which the contribution is made.
 Contributions will be reviewed in accordance with the [Code of Conduct](CODE_OF_CONDUCT.md).
@@ -180,6 +177,7 @@ Users:
 * @hendrikebbers
 * @ImperaEtConquer
 * @thejeed
+* @chikega
 
 Companies:
 

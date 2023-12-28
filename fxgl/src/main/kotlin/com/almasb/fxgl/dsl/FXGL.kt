@@ -36,7 +36,6 @@ import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.input.virtual.VirtualButton
 import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.localization.LocalizationService
-import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.minigames.MiniGameService
 import com.almasb.fxgl.net.NetService
 import com.almasb.fxgl.notification.NotificationService
@@ -72,7 +71,6 @@ import javafx.stage.Stage
 import javafx.util.Duration
 import java.net.URL
 import java.util.*
-import java.util.concurrent.Callable
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 
@@ -190,12 +188,7 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getPrimaryStage(): Stage {
         val window = engine.getService(FXGLApplication.GameApplicationService::class.java).window
 
-        if (window is PrimaryStageWindow)
-            return window.stage
-
-        Logger.get("FXGL").warning("Started via embeddedLaunch(). getPrimaryStage() returning dummy stage.")
-
-        return getExecutor().startAsyncFX(Callable { Stage() }).await()
+        return window.stage
     }
 
     @JvmStatic fun <T : EngineService> getService(serviceClass: Class<T>): T = engine.getService(serviceClass)
@@ -514,6 +507,14 @@ class FXGL private constructor() { companion object {
         }, key)
     }
 
+    @JvmStatic fun onBtnDownPrimary(action: Runnable) {
+        onBtnDown(MouseButton.PRIMARY, action)
+    }
+
+    @JvmStatic fun onBtnDownSecondary(action: Runnable) {
+        onBtnDown(MouseButton.SECONDARY, action)
+    }
+
     @JvmStatic fun onBtnDown(btn: MouseButton, action: Runnable) {
         onBtnDown(btn, "action${actionCounter++}", action)
     }
@@ -524,6 +525,14 @@ class FXGL private constructor() { companion object {
                 action.run()
             }
         }, btn)
+    }
+
+    @JvmStatic fun onBtnPrimary(action: Runnable) {
+        onBtn(MouseButton.PRIMARY, action)
+    }
+
+    @JvmStatic fun onBtnSecondary(action: Runnable) {
+        onBtn(MouseButton.SECONDARY, action)
     }
 
     @JvmStatic fun onBtn(btn: MouseButton, action: Runnable) {

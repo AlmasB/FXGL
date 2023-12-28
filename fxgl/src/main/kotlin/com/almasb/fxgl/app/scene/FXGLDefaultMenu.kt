@@ -696,27 +696,30 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     protected fun createContentAudio(): MenuContent {
         log.debug("createContentAudio()")
 
-        val sliderMusic = Slider(0.0, 1.0, 1.0)
+        val sliderMusic = getUIFactoryService().newSlider()
+        sliderMusic.min = 0.0
+        sliderMusic.max = 1.0
         sliderMusic.valueProperty().bindBidirectional(getSettings().globalMusicVolumeProperty)
 
         val textMusic = getUIFactoryService().newText(localizedStringProperty("menu.music.volume").concat(": "))
         val percentMusic = getUIFactoryService().newText("")
         percentMusic.textProperty().bind(sliderMusic.valueProperty().multiply(100).asString("%.0f"))
 
-        val sliderSound = Slider(0.0, 1.0, 1.0)
+        val sliderSound = getUIFactoryService().newSlider()
+        sliderSound.min = 0.0
+        sliderSound.max = 1.0
         sliderSound.valueProperty().bindBidirectional(getSettings().globalSoundVolumeProperty)
 
         val textSound = getUIFactoryService().newText(localizedStringProperty("menu.sound.volume").concat(": "))
         val percentSound = getUIFactoryService().newText("")
         percentSound.textProperty().bind(sliderSound.valueProperty().multiply(100).asString("%.0f"))
 
-        val hboxMusic = HBox(15.0, textMusic, sliderMusic, percentMusic)
-        val hboxSound = HBox(15.0, textSound, sliderSound, percentSound)
+        val gridPane = GridPane()
+        gridPane.hgap = 15.0
+        gridPane.addRow(0, textMusic, sliderMusic, percentMusic)
+        gridPane.addRow(1, textSound, sliderSound, percentSound)
 
-        hboxMusic.alignment = Pos.CENTER_RIGHT
-        hboxSound.alignment = Pos.CENTER_RIGHT
-
-        return MenuContent(hboxMusic, hboxSound)
+        return MenuContent(gridPane)
     }
 
     /**

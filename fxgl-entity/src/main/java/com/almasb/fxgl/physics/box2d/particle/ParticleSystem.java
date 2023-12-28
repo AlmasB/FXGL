@@ -1370,9 +1370,10 @@ public class ParticleSystem {
             ParticleGroup next = group.getNext();
             if (group.m_toBeDestroyed) {
                 destroyParticleGroup(group);
-            } else if (group.m_toBeSplit) {
-                // jbox2dTODO: split the group
             }
+            //else if (group.m_toBeSplit) {
+                // jbox2dTODO: split the group
+            //}
             group = next;
         }
     }
@@ -1551,42 +1552,6 @@ public class ParticleSystem {
         m_maxCount = count;
     }
 
-    @SuppressWarnings("PMD.EmptyIfStmt")
-    void setParticleBuffer(ParticleBufferInt buffer, int[] newData, int newCapacity) {
-        assert newData != null && newCapacity != 0 || newData == null && newCapacity == 0;
-        if (buffer.userSuppliedCapacity != 0) {
-            // m_world.m_blockAllocator.Free(buffer.data, sizeof(T) * m_internalAllocatedCapacity);
-        }
-        buffer.data = newData;
-        buffer.userSuppliedCapacity = newCapacity;
-    }
-
-    @SuppressWarnings("PMD.EmptyIfStmt")
-    <T> void setParticleBuffer(ParticleBuffer<T> buffer, T[] newData, int newCapacity) {
-        assert newData != null && newCapacity != 0 || newData == null && newCapacity == 0;
-        if (buffer.userSuppliedCapacity != 0) {
-            // m_world.m_blockAllocator.Free(buffer.data, sizeof(T) * m_internalAllocatedCapacity);
-        }
-        buffer.data = newData;
-        buffer.userSuppliedCapacity = newCapacity;
-    }
-
-    public void setParticleFlagsBuffer(int[] buffer, int capacity) {
-        setParticleBuffer(m_flagsBuffer, buffer, capacity);
-    }
-
-    public void setParticlePositionBuffer(Vec2[] buffer, int capacity) {
-        setParticleBuffer(m_positionBuffer, buffer, capacity);
-    }
-
-    public void setParticleVelocityBuffer(Vec2[] buffer, int capacity) {
-        setParticleBuffer(m_velocityBuffer, buffer, capacity);
-    }
-
-    public void setParticleColorBuffer(ParticleColor[] buffer, int capacity) {
-        setParticleBuffer(m_colorBuffer, buffer, capacity);
-    }
-
     public ParticleGroup[] getParticleGroupBuffer() {
         return m_groupBuffer;
     }
@@ -1601,10 +1566,6 @@ public class ParticleSystem {
 
     public int getParticleCount() {
         return m_count;
-    }
-
-    public void setParticleUserDataBuffer(Object[] buffer, int capacity) {
-        setParticleBuffer(m_userDataBuffer, buffer, capacity);
     }
 
     private static int lowerBound(Proxy[] ray, int length, long tag) {

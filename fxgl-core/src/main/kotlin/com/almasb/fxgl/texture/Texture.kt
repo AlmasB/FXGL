@@ -82,22 +82,7 @@ open class Texture : ImageView, View, Copyable<Texture> {
      * @return sub-texture
      */
     fun subTexture(area: Rectangle2D): Texture {
-        val minX = area.minX.toInt()
-        val minY = area.minY.toInt()
-        val maxX = area.maxX.toInt()
-        val maxY = area.maxY.toInt()
-
-        require(minX >= 0) { "minX value of sub-texture cannot be negative" }
-        require(minY >= 0) { "minY value of sub-texture cannot be negative" }
-        require(maxX <= image.width) { "maxX value of sub-texture cannot be greater than image width" }
-        require(maxY <= image.height) { "maxY value of sub-texture cannot be greater than image height" }
-
-        val pixelReader = image.pixelReader
-        val newImage = WritableImage(maxX - minX, maxY - minY)
-        
-        newImage.pixelWriter.setPixels(0, 0, newImage.width.toInt(), newImage.height.toInt(), pixelReader, minX, minY)
-
-        return Texture(newImage)
+        return Texture(image.subImage(area))
     }
 
     /**

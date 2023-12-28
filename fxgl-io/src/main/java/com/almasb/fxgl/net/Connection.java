@@ -12,10 +12,10 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -30,8 +30,8 @@ public abstract class Connection<T> {
 
     private PropertyMap localSessionData = new PropertyMap();
 
-    protected final List<MessageHandler<T>> messageHandlers = new ArrayList<>();
-    protected final List<MessageHandler<T>> messageHandlersFX = new ArrayList<>();
+    protected final List<MessageHandler<T>> messageHandlers = new CopyOnWriteArrayList<>();
+    protected final List<MessageHandler<T>> messageHandlersFX = new CopyOnWriteArrayList<>();
 
     protected BlockingQueue<T> messageQueue = new ArrayBlockingQueue<>(100);
 

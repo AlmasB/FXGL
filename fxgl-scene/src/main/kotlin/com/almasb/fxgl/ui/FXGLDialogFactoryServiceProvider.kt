@@ -9,6 +9,7 @@ package com.almasb.fxgl.ui
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.localization.LocalizationService
+import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.StringBinding
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.value.ChangeListener
@@ -95,16 +96,20 @@ class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
     }
 
     override fun <T : Any> choiceDialog(message: String, resultCallback: Consumer<T>, firstOption: T, vararg options: T): Pane {
-        val text = createMessage(message)
-
         val choices = options.toMutableList()
         choices.add(0, firstOption)
 
+        return choiceDialog(message, choices, resultCallback)
+    }
+
+    override fun <T : Any> choiceDialog(message: String, options: List<T>, resultCallback: Consumer<T>): Pane {
+        val text = createMessage(message)
+
         val hbox = HBox()
 
-        if (choices.size > 3) {
+        if (options.size > 3) {
 
-            val choiceBox = uiFactory.newChoiceBox(FXCollections.observableArrayList(choices))
+            val choiceBox = uiFactory.newChoiceBox(FXCollections.observableArrayList(options))
             choiceBox.selectionModel.selectFirst()
 
             val btn = uiFactory.newButton("Select")
@@ -115,8 +120,15 @@ class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
             hbox.children += choiceBox
             hbox.children += btn
 
+        } else if (options.size == 0) {
+            Logger.get<FXGLDialogFactoryServiceProvider>().warning("choiceDialog() called with an empty options list")
+
+            val btn = uiFactory.newButton("No options provided")
+
+            hbox.children += btn
+
         } else {
-            choices.forEach { option ->
+            options.forEach { option ->
                 val btn = uiFactory.newButton(option.toString())
                 btn.setOnAction {
                     resultCallback.accept(option)

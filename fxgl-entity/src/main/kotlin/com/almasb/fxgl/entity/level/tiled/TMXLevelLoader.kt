@@ -74,7 +74,6 @@ class TMXLevelLoader
 
         } catch (e: Exception) {
             log.warning("Parse error", e)
-            e.printStackTrace()
             throw LevelLoadingException("${e.message}", e)
         }
     }

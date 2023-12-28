@@ -17,6 +17,7 @@ import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.scene.Parent
 import javafx.scene.image.Image
+import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
@@ -37,9 +38,12 @@ class MainWindowTest {
 
     companion object {
 
-        private lateinit var window: PrimaryStageWindow
+        private lateinit var window: MainWindow
         private lateinit var stage: Stage
+        private lateinit var fxglPane: FXGLPane
         private lateinit var scene: FXGLScene
+
+        private val settings = GameSettings()
 
         private const val WIDTH = 600
         private const val HEIGHT = 400
@@ -47,12 +51,12 @@ class MainWindowTest {
         @BeforeAll
         @JvmStatic fun before() {
             Async.startAsyncFX {
-
-                val settings = GameSettings()
                 settings.width = WIDTH
                 settings.height = HEIGHT
 
                 stage = Stage()
+                fxglPane = FXGLPane(WIDTH.toDouble(), HEIGHT.toDouble())
+
                 scene = object : FXGLScene(WIDTH, HEIGHT) {}
 
                 window = PrimaryStageWindow(stage, scene, settings.toReadOnly())
@@ -79,6 +83,22 @@ class MainWindowTest {
         }.await()
 
         assertThat(count, `is`(1))
+
+        Async.startAsyncFX {
+            window = EmbeddedPaneWindow(fxglPane, scene, settings.toReadOnly())
+            stage.scene = javafx.scene.Scene(StackPane(fxglPane))
+            stage.icons.clear()
+
+            `Add icon`()
+            `Show Window`()
+            `Set scene`()
+            `Take screenshot`()
+            `Push and pop subscene`()
+
+            count++
+        }.await()
+
+        assertThat(count, `is`(2))
     }
 
     fun `Add icon`() {
@@ -103,13 +123,17 @@ class MainWindowTest {
     fun `Show Window`() {
         window.show()
 
-        assertThat(window.stage, `is`(stage))
+        if (window is PrimaryStageWindow) {
+            assertThat((window as PrimaryStageWindow).stage, `is`(stage))
+            assertThat(stage.scene.root, `is`<Parent>(scene.root))
+        } else {
+            assertThat((window as EmbeddedPaneWindow).fxglPane, `is`(fxglPane))
+            assertThat(stage.scene, `is`(fxglPane.scene))
+        }
 
         assertTrue(stage.isShowing, "Window is not showing")
         assertTrue(stage.width >= WIDTH, "Window is not at least $WIDTH wide")
         assertTrue(stage.height >= HEIGHT, "Window is not at least $HEIGHT high")
-
-        assertThat(stage.scene.root, `is`<Parent>(scene.root))
     }
 
     /**
@@ -151,8 +175,6 @@ class MainWindowTest {
         val filterConsume = EventHandler<Event> {
             count -= 5
             it.consume()
-
-            println(it.isConsumed)
         }
 
         scene.input.addEventFilter(EventType.ROOT, filterConsume)
@@ -168,7 +190,7 @@ class MainWindowTest {
 
         window.setScene(scene2)
 
-        assertThat(stage.scene.root, `is`<Parent>(scene2.root))
+        assertThat(stage.scene, `is`(scene2.root.scene))
     }
 
     fun `Take screenshot`() {

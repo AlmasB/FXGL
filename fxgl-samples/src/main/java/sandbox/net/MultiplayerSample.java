@@ -138,6 +138,8 @@ public class MultiplayerSample extends GameApplication {
                     server.setOnConnected(conn -> {
                         connection = conn;
 
+                        getMPService().registerConnection(conn);
+
                         getExecutor().startAsyncFX(() -> {
                             player1 = spawn("player1", 150, 150);
                             getMPService().spawn(connection, player1, "player1");
@@ -149,6 +151,11 @@ public class MultiplayerSample extends GameApplication {
                             getMPService().addPropertyReplicationSender(conn, getWorldProperties());
 
                             getMPService().addEventReplicationSender(conn, clientBus);
+
+                            var textPing = getUIFactoryService().newText("", Color.BLUE, 14.0);
+                            textPing.textProperty().bind(getMPService().pingProperty(conn).divide(1000000).asString("Ping: %.0f ms"));
+
+                            addUINode(textPing, 50, 200);
                         });
                     });
 
@@ -162,9 +169,10 @@ public class MultiplayerSample extends GameApplication {
                         text.setFont(Font.font(26.0));
                     }, Duration.seconds(5));
 
-
                     var client = getNetService().newTCPClient("localhost", 55555);
                     client.setOnConnected(conn -> {
+                        getMPService().registerConnection(conn);
+
                         getMPService().addEntityReplicationReceiver(conn, getGameWorld());
                         getMPService().addInputReplicationSender(conn, getInput());
                         getMPService().addPropertyReplicationReceiver(conn, getWorldProperties());

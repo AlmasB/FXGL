@@ -11,7 +11,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>17+dev-SNAPSHOT</version>
+        <version>21+dev-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

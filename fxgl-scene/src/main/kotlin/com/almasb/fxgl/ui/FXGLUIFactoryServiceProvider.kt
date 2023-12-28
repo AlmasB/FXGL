@@ -11,6 +11,7 @@ import com.almasb.fxgl.ui.FontType.UI
 import com.almasb.fxgl.ui.property.BooleanPropertyView
 import com.almasb.fxgl.ui.property.DoublePropertyView
 import com.almasb.fxgl.ui.property.IntPropertyView
+import com.almasb.fxgl.ui.property.StringPropertyView
 import javafx.beans.binding.*
 import javafx.beans.property.*
 import javafx.collections.ObservableList
@@ -117,6 +118,10 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
         return FXGLCheckBox()
     }
 
+    override fun newSlider(): Slider {
+        return FXGLSlider()
+    }
+
     override fun <T> newSpinner(items: ObservableList<T>): Spinner<T> {
         return FXGLSpinner(items).also {
             it.editor.fontProperty().bind(fontProperty(UI, 18.0))
@@ -143,6 +148,9 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
 
             is ReadOnlyBooleanProperty -> BooleanPropertyView(property)
             is BooleanBinding -> BooleanPropertyView(property)
+
+            is ReadOnlyStringProperty -> StringPropertyView(property)
+            is StringBinding -> StringPropertyView(property)
 
             is ObjectProperty<*> -> {
 

@@ -8,6 +8,7 @@ package com.almasb.fxgl.entity.level.tiled
 
 import com.almasb.fxgl.entity.*
 import com.almasb.fxgl.entity.components.IDComponent
+import com.almasb.fxgl.entity.level.LevelLoadingException
 import com.almasb.fxgl.test.RunWithFX
 import javafx.geometry.Point2D
 import javafx.scene.image.ImageView
@@ -17,8 +18,7 @@ import javafx.scene.shape.Polyline
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
@@ -198,6 +198,27 @@ class TMXLevelLoaderTest {
         assertThat(level.entities.size, `is`(2))
     }
 
+    @Test
+    fun `Load hexagonal tmx level`() {
+        val world = GameWorld()
+
+        val level = TMXLevelLoader().load(javaClass.getResource("hex/simple.tmx"), world)
+
+        assertThat(level.entities.size, `is`(2))
+    }
+
+    @Test
+    fun `Load a map with an error`() {
+        val world = GameWorld()
+
+        val e = assertThrows(LevelLoadingException::class.java) {
+            TMXLevelLoader().load(javaClass.getResource("map_with_error.tmx"), world)
+        }
+
+        assertNotNull(e.message)
+        assertTrue(e.message!!.isNotEmpty())
+    }
+
     @ParameterizedTest
     @CsvSource("sewers_v1_1_2.tmx", "sewers_v1_2_3.tmx", "sewers_v1_9_0.tmx")
     fun parse(mapName: String) {
@@ -270,10 +291,11 @@ class TMXLevelLoaderTest {
         assertThat(obj1.width, `is`(72))
         assertThat(obj1.height, `is`(336))
         assertThat(obj1.rotation, `is`(0.0f))
-        assertThat(obj1.properties.size, `is`(4))
+        assertThat(obj1.properties.size, `is`(5))
 
         assertThat(obj1.properties["collidable"] as Boolean, `is`(true))
         assertThat(obj1.properties["someColor"] as Color, `is`(Color.web("#ff55ff00")))
+        assertThat(obj1.properties["someFloat"] as Float, `is`(3.14f))
         assertThat(obj1.properties["someInt"] as Int, `is`(33))
         assertThat(obj1.properties["someString"] as String, `is`("Text Here"))
 

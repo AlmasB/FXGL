@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.dsl.components
 
-import javafx.beans.value.ChangeListener
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -14,19 +13,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class RechargeableDoubleComponentTest {
 
-    private class HPComponent : RechargeableDoubleComponent(100.0)
-
-    private lateinit var hp: HPComponent
+    private lateinit var hp: HealthDoubleComponent
 
     @BeforeEach
     fun setUp() {
-        hp = HPComponent()
+        hp = HealthDoubleComponent(100.0)
     }
 
     @Test
@@ -100,21 +95,18 @@ class RechargeableDoubleComponentTest {
     }
 
     @Test
-    fun `Negative damage`() {
-        hp.restoreFully()
-        hp.damage(-50.0)
-        // value cannot be > maxValue
-        // FAILS:
-        // assertTrue(hp.value <= hp.maxValue)
-    }
-
-    @Test
-    fun `Change max`() {
+    fun `Set max below current value`() {
         hp.restoreFully()
         hp.maxValue = 50.0
         // value cannot be > maxValue
-        // FAILS:
-        // assertTrue(hp.value <= hp.maxValue)
+        assertTrue(hp.value <= hp.maxValue)
+    }
+
+    @Test
+    fun `Set current value above max`() {
+        hp.value = 200.0
+        // value cannot be > maxValue
+        assertTrue(hp.value <= hp.maxValue)
     }
 
     @Test
@@ -166,5 +158,6 @@ class RechargeableDoubleComponentTest {
         hp.maxValue = 50.0
 
         assertThat(hp.valuePercent, `is`(20.0))
+        assertThat(hp.valuePercentProperty().value, `is`(20.0))
     }
 }

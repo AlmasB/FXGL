@@ -26,13 +26,13 @@ All the work goes to your `dev` branch, then pull a request back to `dev`.
 ## Development
 
 Due to use of Kotlin, [IntelliJ IDEA](https://www.jetbrains.com/idea/) is recommended.
-To start developing FXGL you can set up IDEA (2021.3+) as follows:
+To start developing FXGL you can set up IDEA (2023.2+) as follows:
 
 1. Fork FXGL into your GitHub repo, then clone your repo to your machine.
 2. Open IDEA -> File -> New -> Project from Existing Sources -> Select the cloned FXGL directory.
 3. Import project from external model -> Maven -> Finish.
 
-Ensure you are using [JDK 17](https://jdk.java.net/) (or higher). You can set this via File -> Project Structure -> Project.
+Ensure you are using [JDK 21](https://jdk.java.net/) (or higher). You can set this via File -> Project Structure -> Project.
 
 You should now see something like this:
 
@@ -51,13 +51,12 @@ In IntelliJ,
 1. Run -> Edit Configurations
 2. Add new JUnit configuration with name "ALL FXGL TESTS"
 3. Select "Test kind" - "All in package" and "Search for tests" - "In whole project".
-4. Apply -> OK.
+4. Clear the "working directory" text field.
+5. Apply -> OK.
 
 <img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl11_tests.jpg" width="400" />
 
 Now you can run your configuration "ALL FXGL TESTS" which runs tests from all modules.
-
-**Note:** if you encounter errors, such as "Cannot create process = 206", go to Edit Configurations again and clear the "working directory" text field.
 
 ## Coding Standards
 
@@ -74,7 +73,7 @@ If in doubt, skim through the existing source code to get a feel for it.
 
 ## Conventional Commits for Changelogs
 
-From version 17, the project uses the following commit message guidelines to auto-generate changelogs, based on [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):
+The project uses the following commit message guidelines to auto-generate changelogs, mostly based on [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):
 
 * **build: message** -- change affects the build system, configuration files, scripts, or external dependencies
 * **docs: message** -- change affects documentation **only**
@@ -87,15 +86,10 @@ From version 17, the project uses the following commit message guidelines to aut
 
 Examples:
 
-* `build: use JDK 17 as baseline`
+* `build: use latest JDK as baseline`
 * `docs: update description of method X to match behavior`
 
-If the commit type follows a `!`, then it is a breaking change.
-Example: `refactor!: removed deprecated methods X and Y`
-
-Optionally, the change scope can be provided. Example: `feat(core): message`.
-
-If a commit does not follow the guidelines (i.e. no `:` character), then it is excluded from the changelog.
+If a commit does not have the `:` character, then it is excluded from the changelog.
 Hence, the `:` character is banned from non-changelog commit messages.
 
 ## Community Roles

@@ -30,6 +30,59 @@ internal class DialogueScriptRunner(
 
     private val log = Logger.get<DialogueScriptRunner>()
 
+    private val builtInFunctions = object : FunctionCallHandler() {
+
+        // we check property maps in this order: local first, then global
+        private val maps = listOf(localVars, gameVars)
+
+        fun add(varName: String, value: String) {
+            applyOP(varName, {
+                it.increment(varName, value.toInt())
+            }, {
+                it.increment(varName, value.toDouble())
+            })
+        }
+
+        fun sub(varName: String, value: String) {
+            add(varName, "-$value")
+        }
+
+        fun mul(varName: String, value: String) {
+            applyOP(varName, {
+                it.multiply(varName, value.toInt())
+            }, {
+                it.multiply(varName, value.toDouble())
+            })
+        }
+
+        fun div(varName: String, value: String) {
+            applyOP(varName, {
+                it.divide(varName, value.toInt())
+            }, {
+                it.divide(varName, value.toDouble())
+            })
+        }
+
+        private fun applyOP(varName: String, operation1: (PropertyMap) -> Unit, operation2: (PropertyMap) -> Unit) {
+            for (vars in maps) {
+                if (vars.exists(varName)) {
+                    try {
+                        operation1(vars)
+                    } catch (e1: Exception) {
+                        try {
+                            operation2(vars)
+                        } catch (e2: Exception) {
+                            log.warning("Cannot apply operation on $varName: $e1 $e2")
+                        }
+                    }
+
+                    // if we found in local, then skip global
+                    break
+                }
+            }
+        }
+    }
+
     /**
      * Given a [line], this function replaces all variables with their values.
      */
@@ -129,7 +182,14 @@ internal class DialogueScriptRunner(
             }
         }
 
-        return functionHandler.call(funcName, tokens.drop(1).map { replaceVariablesInText(it.trim()) }.toTypedArray())
+        val args = tokens.drop(1).map { replaceVariablesInText(it.trim()) }.toTypedArray()
+
+        // check built-in handler first
+        if (builtInFunctions.exists(funcName, args.size)) {
+            return builtInFunctions.call(funcName, args)
+        }
+
+        return functionHandler.call(funcName, args)
     }
 
     private fun callAssignmentFunction(line: String) {
@@ -235,7 +295,8 @@ abstract class FunctionCallHandler : FunctionCallDelegate {
             }
         }
 
-        // add self as a delegate
+        // add self as a delegate so that all methods of the implementing class
+        // are automatically added into [methods]
         addFunctionCallDelegate(this)
     }
 
@@ -253,6 +314,10 @@ abstract class FunctionCallHandler : FunctionCallDelegate {
     fun removeFunctionCallDelegate(obj: FunctionCallDelegate) {
         methods.filterValues { it.delegate === obj }
                 .forEach { methods.remove(it.key) }
+    }
+
+    fun exists(functionName: String, paramCount: Int): Boolean {
+        return methods.containsKey(MethodSignature(functionName, paramCount))
     }
 
     fun call(functionName: String, args: Array<String>): Any {

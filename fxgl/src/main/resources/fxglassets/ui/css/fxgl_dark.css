@@ -278,6 +278,39 @@
 
 
 
+
+/**
+ * FXGL slider
+ */
+
+.fxgl-slider {
+    -active-color: gold;
+    -inactive-color: darkgray;
+    -track-color: -active-color;
+}
+
+.fxgl-slider .track,
+.fxgl-slider:vertical .track {
+    -fx-background-color: -track-color;
+    -fx-background-radius: 1;
+    -fx-background-insets: 0;
+    -fx-pref-width: 2px;
+    -fx-pref-height: 12px;
+}
+
+.fxgl-slider .thumb,
+.fxgl-slider:focused .thumb {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-background-insets: 0;
+    -fx-border-radius: 7px;
+    -fx-border-width: 2px;
+    -fx-border-color: black;
+}
+
+
+
+
 /*
 From
 https://github.com/jfoenixadmin/JFoenix/blob/master/jfoenix/src/main/resources/css/controls/jfx-check-box.css
@@ -351,7 +384,7 @@ Under Apache License 2.0
  */
 
 .window-titlebar {
-    -fx-glass-color: rgba(42, 42, 42, 0.9);
+    -fx-glass-color: rgba(92, 92, 92, 0.9);
     -fx-alignment: center;
     -fx-background-color: linear-gradient(to bottom, derive(-fx-glass-color, 30%), -fx-glass-color);
     -fx-border-color: derive(-fx-glass-color, -60%);

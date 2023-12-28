@@ -23,9 +23,11 @@ import com.almasb.fxgl.input.view.KeyView
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.scene.SceneService
 import com.almasb.fxgl.scene.SubScene
+import com.almasb.fxgl.ui.FXGLScrollPane
 import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
 import javafx.scene.Group
+import javafx.scene.control.ScrollPane
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
@@ -53,6 +55,8 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
     private lateinit var graph: DialogueGraph
     private lateinit var functionHandler: FunctionCallHandler
+    private lateinit var context: DialogueContext
+    private lateinit var localVars: PropertyMap
 
     internal lateinit var gameVars: PropertyMap
     internal lateinit var assetLoader: AssetLoaderService
@@ -91,8 +95,27 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         topText.translateX = 50.0
         topText.translateY = 40.0
 
-        boxPlayerLines.translateX = 50.0
-        boxPlayerLines.translateYProperty().bind(sceneService.prefHeightProperty().subtract(160))
+        val playerLinesScroll = FXGLScrollPane(boxPlayerLines)
+        playerLinesScroll.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+        playerLinesScroll.vbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+        playerLinesScroll.prefHeight = botLine.height - 60
+        playerLinesScroll.translateX = 50.0
+        playerLinesScroll.translateYProperty().bind(sceneService.prefHeightProperty().subtract(160))
+        playerLinesScroll.opacityProperty().bind(boxPlayerLines.opacityProperty())
+
+        // these dummy objects help us place the scroll bar for [playerLinesScroll] on the left side
+        val dummyBox = VBox(5.0)
+        dummyBox.prefHeightProperty().bind(boxPlayerLines.heightProperty())
+
+        val dummyScroll = FXGLScrollPane(dummyBox)
+        dummyScroll.translateX = 0.0
+        dummyScroll.translateY = playerLinesScroll.translateY
+        dummyScroll.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+        dummyScroll.prefHeightProperty().bind(playerLinesScroll.prefHeightProperty())
+        dummyScroll.vmaxProperty().bind(playerLinesScroll.vmaxProperty())
+        dummyScroll.vminProperty().bind(playerLinesScroll.vminProperty())
+        dummyScroll.vvalueProperty().bindBidirectional(playerLinesScroll.vvalueProperty())
+
         boxPlayerLines.opacity = 0.0
 
         val keyView = KeyView(KeyCode.ENTER, Color.GREENYELLOW, 18.0)
@@ -104,17 +127,17 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
 
         initUserActions()
 
-        contentRoot.children.addAll(topLine, botLineGroup, topText, boxPlayerLines, keyView)
+        contentRoot.children.addAll(topLine, botLineGroup, topText, dummyScroll, playerLinesScroll, keyView)
     }
 
     private fun initUserActions() {
         val userAction = object : UserAction("Next RPG Line") {
             override fun onActionBegin() {
-                if (currentNode.type == CHOICE) {
+                if (currentNode is TextNode && (currentNode as TextNode).hasUserOptions) {
                     return
                 }
 
-                nextLine()
+                nextLine(nextNode())
             }
         }
 
@@ -122,7 +145,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             override fun onActionBegin(trigger: Trigger) {
 
                 // ignore any presses if type is not CHOICE or the text animation is still going
-                if (currentNode.type != CHOICE || message.isNotEmpty()) {
+                if ((currentNode.type == TEXT && !(currentNode as TextNode).hasUserOptions) || message.isNotEmpty()) {
                     return
                 }
 
@@ -164,21 +187,14 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         }
     }
 
-    private fun endCutscene() {
-        boxPlayerLines.opacity = 0.0
-        animation2.onFinished = Runnable {
-            sceneService.popSubScene()
-            onClose()
-        }
-        animation1.startReverse()
-        animation2.startReverse()
-    }
-
     fun start(dialogueGraph: DialogueGraph, context: DialogueContext, functionHandler: FunctionCallHandler, onFinished: Runnable) {
         graph = dialogueGraph.copy()
         this.functionHandler = functionHandler
+        this.context = context
         this.onFinished = onFinished
-        dialogueScriptRunner = DialogueScriptRunner(gameVars, context.properties(), functionHandler)
+        localVars = context.properties()
+
+        dialogueScriptRunner = DialogueScriptRunner(gameVars, localVars, functionHandler)
 
         // while graph has subdialogue nodes, expand
         while (graph.nodes.any { it.value.type == SUBDIALOGUE }) {
@@ -193,21 +209,35 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             graph.removeNode(subDialogueNode)
 
             // connect the source and target with a graph
-            graph.appendGraph(source, target, subGraph)
+            // TODO:
+            //graph.appendGraph(source, target, subGraph)
         }
 
         currentNode = graph.startNode
 
-        nextLine()
+        nextLine(graph.startNode)
 
         sceneService.pushSubScene(this)
+    }
+
+    /**
+     * Terminates currently active dialogue and closes the dialogue scene.
+     */
+    fun endDialogue() {
+        topText.text = ""
+        boxPlayerLines.opacity = 0.0
+        animation2.onFinished = Runnable {
+            sceneService.popSubScene()
+            onClose()
+        }
+        animation1.startReverse()
+        animation2.startReverse()
     }
 
     private fun loadSubDialogue(subDialogueNode: SubDialogueNode): DialogueGraph {
         return assetLoader.load(AssetType.DIALOGUE, subDialogueNode.text)
     }
 
-    private var currentLine = 0
     private lateinit var currentNode: DialogueNode
 
     /**
@@ -215,9 +245,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
      */
     private val message = ArrayDeque<Char>()
 
-    private var stringID = 1
-
-    private fun nextLine(nextNode: DialogueNode? = null) {
+    private fun nextLine(nextNode: DialogueNode?) {
         // do not allow to move to next line while the text animation is going
         if (message.isNotEmpty()) {
             // just show the text fully
@@ -227,75 +255,85 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             return
         }
 
-        if (currentLine == 0 && currentNode.type == START) {
-            dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
-            currentLine++
+        // no next node available, the dialogue is complete
+        if (nextNode == null) {
+            endDialogue()
             return
         }
 
-        val isDone = currentNode.type == END
-        if (!isDone) {
-            currentNode = nextNode ?: nextNode()
-            playAudioLines(currentNode)
+        currentNode = nextNode
+        playAudioLines(currentNode)
 
-            if (currentNode.type == FUNCTION) {
-                currentNode.text.parseAndCallFunctions()
+        when (currentNode.type) {
+            FUNCTION -> handleFunctionNode(currentNode as FunctionNode)
 
-                nextLine(nextNode())
-            } else if (currentNode.type == BRANCH) {
-                val branchNode = currentNode as BranchNode
+            BRANCH -> handleBranchNode(currentNode as BranchNode)
 
-                val choiceLocalID: Int
+            TEXT -> handleTextNode(currentNode as TextNode)
 
-                if (branchNode.text.trim().isNotEmpty()) {
-                    val result = dialogueScriptRunner.callBooleanFunction(branchNode.text)
-
-                    choiceLocalID = if (result) 0 else 1
-                } else {
-                    log.warning("Branch node has no function call: ${branchNode.text}. Assuming <false> branch.")
-                    choiceLocalID = 1
-                }
-
-                nextLine(nextNodeFromChoice(choiceLocalID))
-            } else {
-                dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
-
-                if (currentNode.type == CHOICE) {
-                    val choiceNode = currentNode as ChoiceNode
-
-                    stringID = 0
-
-                    choiceNode.conditions.forEach { id, condition ->
-
-                        if (condition.value.trim().isEmpty() || dialogueScriptRunner.callBooleanFunction(condition.value)) {
-                            val option = choiceNode.options[id]!!
-
-                            populatePlayerLine(id, dialogueScriptRunner.replaceVariablesInText(option.value))
-                        }
-                    }
-                }
-
-                topText.text = ""
+            else -> {
+                log.warning("Unknown DialogueNode type")
             }
-
-        } else {
-            topText.text = ""
-            endCutscene()
         }
     }
 
-    private fun playAudioLines(node: DialogueNode) {
-        if (node.audioFileName.isEmpty())
-            return
+    private fun handleFunctionNode(functionNode: FunctionNode) {
+        val id = graph.findNodeID(functionNode)
 
-        // TODO: store audio being played, so we can stop as appropriate
-        val audio = assetLoader.load<Music>(AssetType.MUSIC, assetLoader.getURL(node.audioFileName.replace("\\", "/")))
+        // TODO: design key prefixes for dialogue created vars
+        val varName = "DialogueScene.function.numTimesCalled.$id"
 
-        audioPlayer.stopMusic(audio)
-        audioPlayer.playMusic(audio)
+        if (!localVars.exists(varName)) {
+            localVars.setValue(varName, 0)
+        }
+
+        val numTimesCalled = localVars.getInt(varName)
+
+        // -1 is unlimited
+        if (functionNode.numTimes == -1 || numTimesCalled < functionNode.numTimes) {
+            localVars.increment(varName, 1)
+            currentNode.text.parseAndCallFunctions()
+        }
+
+        nextLine(nextNode())
+    }
+
+    private fun handleBranchNode(branchNode: BranchNode) {
+        val choiceLocalID: Int
+
+        if (branchNode.text.trim().isNotEmpty()) {
+            val result = dialogueScriptRunner.callBooleanFunction(branchNode.text)
+
+            choiceLocalID = if (result) 0 else 1
+        } else {
+            log.warning("Branch node has no function call: ${branchNode.text}. Assuming <false> branch.")
+            choiceLocalID = 1
+        }
+
+        nextLine(nextNodeFromChoice(choiceLocalID))
+    }
+
+    private var stringID = 1
+
+    private fun handleTextNode(textNode: TextNode) {
+        dialogueScriptRunner.replaceVariablesInText(currentNode.text).forEach { message.addLast(it) }
+
+        stringID = 0
+
+        textNode.options.forEachIndexed { id, option ->
+            if (option.condition.trim().isEmpty() || dialogueScriptRunner.callBooleanFunction(option.condition)) {
+                populatePlayerLine(id, dialogueScriptRunner.replaceVariablesInText(option.text))
+            }
+        }
+
+        topText.text = ""
     }
 
     private fun populatePlayerLine(localID: Int, data: String) {
+        // skip empty lines
+        if (data.isEmpty())
+            return
+
         stringID++
         val idString = "$stringID"
 
@@ -331,17 +369,23 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         nextLine(nextNodeFromChoice(choiceLocalID))
     }
 
-    private fun nextNode(): DialogueNode {
-        return graph.nextNode(currentNode) ?: makeDummyEndNode("No next node from $currentNode")
+    private fun playAudioLines(node: DialogueNode) {
+        if (node.audioFileName.isEmpty())
+            return
+
+        // TODO: store audio being played, so we can stop as appropriate
+        val audio = assetLoader.load<Music>(AssetType.MUSIC, assetLoader.getURL(node.audioFileName.replace("\\", "/")))
+
+        audioPlayer.stopMusic(audio)
+        audioPlayer.playMusic(audio)
     }
 
-    private fun nextNodeFromChoice(optionID: Int): DialogueNode {
-        return graph.nextNode(currentNode, optionID) ?: makeDummyEndNode("No next node from $currentNode using option $optionID")
+    private fun nextNode(): DialogueNode? {
+        return graph.nextNode(currentNode)
     }
 
-    private fun makeDummyEndNode(text: String): DialogueNode {
-        log.warning(text)
-        return EndNode(text)
+    private fun nextNodeFromChoice(optionID: Int): DialogueNode? {
+        return graph.nextNode(currentNode, optionID)
     }
 
     private fun onOpen() {
@@ -349,7 +393,6 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     }
 
     private fun onClose() {
-        currentLine = 0
         message.clear()
         boxPlayerLines.children.clear()
         onFinished.run()

@@ -12,10 +12,10 @@ import com.almasb.fxgl.core.asset.AssetLoaderService
 import com.almasb.fxgl.core.asset.AssetType
 import com.almasb.fxgl.core.asset.AssetType.*
 import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.cutscene.Cutscene
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraph
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraphSerializer
 import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
-import com.almasb.fxgl.cutscene.dialogue.StartNode
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
@@ -33,6 +33,9 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.image.Image
 import javafx.scene.layout.Pane
+import javafx.scene.media.Media
+import javafx.scene.media.MediaPlayer
+import javafx.scene.media.MediaView
 import javafx.scene.text.Font
 import java.io.InputStream
 import java.net.URL
@@ -49,6 +52,7 @@ private const val PROPERTIES_DIR = ASSETS_DIR + "properties/"
 private const val LEVELS_DIR = ASSETS_DIR + "levels/"
 private const val DIALOGUES_DIR = ASSETS_DIR + "dialogues/"
 private const val MODELS_DIR = ASSETS_DIR + "models/"
+private const val VIDEOS_DIR = ASSETS_DIR + "videos/"
 
 private const val UI_DIR = ASSETS_DIR + "ui/"
 private const val CSS_DIR = UI_DIR + "css/"
@@ -98,6 +102,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
             assetData[CSS] = CSSAssetLoader()
             assetData[FONT] = FontAssetLoader()
             assetData[MODEL3D] = Model3DAssetLoader()
+            assetData[VIDEO] = VideoAssetLoader()
         }
     }
 
@@ -285,6 +290,20 @@ class FXGLAssetLoaderService : AssetLoaderService() {
     }
 
     /**
+     * @return [Cutscene] with given [name] from "/assets/text", e.g. cutscene.txt
+     */
+    fun loadCutscene(name: String): Cutscene {
+        return Cutscene(loadText(name))
+    }
+
+    /**
+     * @return [Cutscene] with given [url]
+     */
+    fun loadCutscene(url: URL): Cutscene {
+        return Cutscene(loadText(url))
+    }
+
+    /**
      * Loads text file with given [name] from /assets/text/
      * into List<String> where each element represents a line in the file.
      *
@@ -311,7 +330,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      *
      * @return parsed object with [type] or Optional.empty() if errors
      */
-    fun <T> loadJSON(name: String, type: Class<T>): Optional<T> {
+    fun <T> loadJSON(name: String, type: Class<T>): Optional<T & Any> {
         return loadJSON(getURL(ASSETS_DIR + name), type)
     }
 
@@ -321,7 +340,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      *
      * @return parsed object with [type] or Optional.empty() if errors
      */
-    fun <T> loadJSON(url: URL, type: Class<T>): Optional<T> {
+    fun <T> loadJSON(url: URL, type: Class<T>): Optional<T & Any> {
         if (url === NULL_URL) {
             log.warning("Failed to load JSON: URL is not valid")
             return Optional.empty()
@@ -467,6 +486,20 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      */
     fun loadModel3D(url: URL): Model3D {
         return load(MODEL3D, url)
+    }
+
+    /**
+     * Loads a video from file with given [name] from /assets/videos/.
+     */
+    fun loadVideo(name: String): MediaView {
+        return load(VIDEO, name)
+    }
+
+    /**
+     * Loads a video file from given [url].
+     */
+    fun loadVideo(url: URL): MediaView {
+        return load(VIDEO, url)
     }
 
     /**
@@ -699,13 +732,7 @@ private class DialogueGraphAssetLoader : AssetLoader<SerializableGraph>(
             url.openStream().use { ObjectMapper().readValue(it, SerializableGraph::class.java) }
 
     override fun getDummy(): SerializableGraph {
-        val dummyGraph = DialogueGraph()
-
-        // TODO: shouldn't this be handled in dialogue play scene
-        // add a start node, so the dialogue can play and not crash at runtime
-        dummyGraph.addNode(StartNode("Failed to load dialogue graph"))
-
-        return DialogueGraphSerializer.toSerializable(dummyGraph)
+        return DialogueGraphSerializer.toSerializable(DialogueGraph())
     }
 }
 
@@ -727,6 +754,12 @@ private class PropertyMapAssetLoader : AssetLoader<PropertyMap>(
         PropertyMap::class.java,
         ASSETS_DIR
 ) {
+    override fun cast(obj: Any): PropertyMap {
+        val map = obj as PropertyMap
+
+        return map.copy()
+    }
+
     override fun load(url: URL): PropertyMap {
         val lines = url.openStream().bufferedReader().readLines()
 
@@ -823,4 +856,26 @@ private class Model3DAssetLoader : AssetLoader<Model3D>(
     }
 
     override fun getDummy(): Model3D = Model3D()
+}
+
+private class VideoAssetLoader : AssetLoader<MediaView>(
+        MediaView::class.java,
+        VIDEOS_DIR
+) {
+
+    override fun cast(obj: Any): MediaView {
+        val mediaView = obj as MediaView
+
+        val mediaPlayer = MediaPlayer(mediaView.mediaPlayer.media)
+
+        return MediaView(mediaPlayer)
+    }
+
+    override fun load(url: URL): MediaView {
+        return MediaView(MediaPlayer(Media(url.toExternalForm())))
+    }
+
+    override fun getDummy(): MediaView {
+        return MediaView()
+    }
 }
