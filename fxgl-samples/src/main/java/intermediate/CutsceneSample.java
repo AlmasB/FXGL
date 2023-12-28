@@ -4,41 +4,32 @@
  * See LICENSE for details.
  */
 
-package sandbox.cutscene;
+package intermediate;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.cutscene.Cutscene;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
+ * Shows how to load and start cutscenes.
+ * For cutscene format, see https://github.com/AlmasB/FXGL/wiki/Narrative-and-Dialogue-System-(FXGL-11)#cutscenes
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class CutsceneSample extends GameApplication {
     @Override
-    protected void initSettings(GameSettings settings) {
-        settings.setWidth(1280);
-        settings.setHeight(720);
-    }
+    protected void initSettings(GameSettings settings) { }
 
     @Override
     protected void initInput() {
-        onKeyDown(KeyCode.F, "test", () -> {
-            // TODO: loadCutscene shortcut?
-            var lines = getAssetLoader().loadText("example_cutscene1.txt");
-
-            var cutscene = new Cutscene(lines);
+        // press F to see the cutscene
+        onKeyDown(KeyCode.F, () -> {
+            var cutscene = getAssetLoader().loadCutscene("example_cutscene1.txt");
 
             getCutsceneService().startCutscene(cutscene);
         });
-    }
-
-    @Override
-    protected void initGame() {
-        getGameScene().setBackgroundColor(Color.LIGHTGRAY);
     }
 
     public static void main(String[] args) {

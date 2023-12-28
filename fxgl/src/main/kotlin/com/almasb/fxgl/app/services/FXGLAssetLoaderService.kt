@@ -12,6 +12,7 @@ import com.almasb.fxgl.core.asset.AssetLoaderService
 import com.almasb.fxgl.core.asset.AssetType
 import com.almasb.fxgl.core.asset.AssetType.*
 import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.cutscene.Cutscene
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraph
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraphSerializer
 import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
@@ -286,6 +287,20 @@ class FXGLAssetLoaderService : AssetLoaderService() {
         val graph = load<SerializableGraph>(DIALOGUE, url)
 
         return DialogueGraphSerializer.fromSerializable(graph)
+    }
+
+    /**
+     * @return [Cutscene] with given [name] from "/assets/text", e.g. cutscene.txt
+     */
+    fun loadCutscene(name: String): Cutscene {
+        return Cutscene(loadText(name))
+    }
+
+    /**
+     * @return [Cutscene] with given [url]
+     */
+    fun loadCutscene(url: URL): Cutscene {
+        return Cutscene(loadText(url))
     }
 
     /**
