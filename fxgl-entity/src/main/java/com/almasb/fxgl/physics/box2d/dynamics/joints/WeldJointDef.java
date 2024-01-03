@@ -10,50 +10,36 @@ import com.almasb.fxgl.physics.box2d.dynamics.Body;
 import com.almasb.fxgl.physics.box2d.dynamics.World;
 
 /**
- * Created at 3:38:52 AM Jan 15, 2011
- */
-
-/**
  * @author Daniel Murphy
  */
 public class WeldJointDef extends JointDef<WeldJoint> {
     /**
      * The local anchor point relative to body1's origin.
      */
-    public final Vec2 localAnchorA;
+    public final Vec2 localAnchorA = new Vec2();
 
     /**
      * The local anchor point relative to body2's origin.
      */
-    public final Vec2 localAnchorB;
+    public final Vec2 localAnchorB = new Vec2();
 
     /**
      * The body2 angle minus body1 angle in the reference state (radians).
      */
-    public float referenceAngle;
+    public float referenceAngle = 0f;
 
     /**
      * The mass-spring-damper frequency in Hertz. Rotation only. Disable softness with a value of 0.
      */
-    public float frequencyHz;
+    public float frequencyHz = 0f;
 
     /**
      * The damping ratio. 0 = no damping, 1 = critical damping.
      */
-    public float dampingRatio;
-
-    public WeldJointDef() {
-        localAnchorA = new Vec2();
-        localAnchorB = new Vec2();
-        referenceAngle = 0.0f;
-    }
+    public float dampingRatio = 0f;
 
     /**
      * Initialize the bodies, anchors, and reference angle using a world anchor point.
-     *
-     * @param bA
-     * @param bB
-     * @param anchor
      */
     public void initialize(Body bA, Body bB, Vec2 anchor) {
         setBodyA(bA);
