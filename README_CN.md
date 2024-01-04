@@ -6,6 +6,8 @@
 
 &emsp;&emsp;简体中文
 
+&emsp;&emsp;[Русский](https://github.com/AlmasB/FXGL/blob/dev/README_RU.md)
+
 ## 关于
 
 <img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_logo.png" width="128" />
