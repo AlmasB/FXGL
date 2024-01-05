@@ -12,6 +12,7 @@ import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.scene.Group
+import java.util.Optional
 
 /**
  * Provides access to pushing / popping subscene stack, global input, timer, overlay root and application
@@ -70,6 +71,31 @@ abstract class SceneService : EngineService() {
      * @return top-most scene (or subscene) in the scene service hierarchy
      */
     abstract val currentScene: Scene
+
+    /**
+     * @return intro scene constructed for this game if present
+     */
+    abstract val introScene: Optional<Scene>
+
+    /**
+     * @return loading scene constructed for this game if present
+     */
+    abstract val loadingScene: Optional<Scene>
+
+    /**
+     * @return game scene constructed for this game
+     */
+    abstract val gameScene: Scene
+
+    /**
+     * @return main menu scene constructed for this game if present
+     */
+    abstract val mainMenuScene: Optional<Scene>
+
+    /**
+     * @return game menu scene constructed for this game if present
+     */
+    abstract val gameMenuScene: Optional<Scene>
 
     /**
      * @return true if [scene] is in this scene service hierarchy

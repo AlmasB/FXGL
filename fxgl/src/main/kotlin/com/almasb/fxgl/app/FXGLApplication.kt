@@ -58,7 +58,9 @@ import javafx.util.Duration
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
+import java.util.*
 import javax.imageio.ImageIO
+import kotlin.collections.HashMap
 import kotlin.system.measureNanoTime
 
 /**
@@ -377,12 +379,27 @@ class FXGLApplication : Application() {
         override val currentScene: Scene
             get() = mainWindow.currentScene
 
-        internal lateinit var gameScene: GameScene
+        private lateinit var gameSceneRef: GameScene
         private lateinit var loadScene: LoadingScene
 
         private var intro: FXGLScene? = null
         private var mainMenu: SubScene? = null
         private var gameMenu: SubScene? = null
+
+        override val introScene: Optional<Scene>
+            get() = Optional.ofNullable(intro)
+
+        override val loadingScene: Optional<Scene>
+            get() = Optional.ofNullable(loadScene)
+
+        override val mainMenuScene: Optional<Scene>
+            get() = Optional.ofNullable(mainMenu)
+
+        override val gameMenuScene: Optional<Scene>
+            get() = Optional.ofNullable(gameMenu)
+
+        override val gameScene: GameScene
+            get() = gameSceneRef
 
         internal val window: MainWindow
             get() = mainWindow
@@ -432,13 +449,13 @@ class FXGLApplication : Application() {
             val sceneFactory = settings.sceneFactory
 
             loadScene = sceneFactory.newLoadingScene()
-            gameScene = GameScene(settings.width, settings.height,
+            gameSceneRef = GameScene(settings.width, settings.height,
                     GameWorld(),
                     PhysicsWorld(settings.height, settings.pixelsPerMeter, settings.collisionDetectionStrategy),
                     settings.is3D
             )
 
-            gameScene.isSingleStep = settings.isSingleStep
+            gameSceneRef.isSingleStep = settings.isSingleStep
 
             if (settings.isClickFeedbackEnabled) {
                 addClickFeedbackHandler()
@@ -475,7 +492,7 @@ class FXGLApplication : Application() {
                                 canSwitchGameMenu = false
                                 popSubScene()
 
-                            } else if (mainWindow.currentScene === gameScene) {
+                            } else if (mainWindow.currentScene === gameSceneRef) {
                                 canSwitchGameMenu = false
                                 pushSubScene(gameMenu!!)
                             }
@@ -489,7 +506,7 @@ class FXGLApplication : Application() {
                     }
                 }
 
-                gameScene.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
+                gameSceneRef.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
                 gameMenu!!.input.addEventHandler(KeyEvent.ANY, menuKeyHandler)
             }
 
@@ -505,8 +522,8 @@ class FXGLApplication : Application() {
         }
 
         private fun addClickFeedbackHandler() {
-            gameScene.input.addEventHandler(MouseEvent.MOUSE_PRESSED, EventHandler {
-                val circle = Circle(gameScene.input.mouseXUI, gameScene.input.mouseYUI, 5.0, null)
+            gameSceneRef.input.addEventHandler(MouseEvent.MOUSE_PRESSED, EventHandler {
+                val circle = Circle(gameSceneRef.input.mouseXUI, gameSceneRef.input.mouseYUI, 5.0, null)
                 circle.stroke = Color.GOLD
                 circle.strokeWidth = 2.0
                 circle.opacityProperty().bind(SimpleDoubleProperty(1.0).subtract(circle.radiusProperty().divide(35.0)))
@@ -618,7 +635,7 @@ class FXGLApplication : Application() {
         private fun clearPreviousGame() {
             log.debug("Clearing previous game")
 
-            gameScene.reset()
+            gameSceneRef.reset()
         }
 
         fun saveGame(dataFile: DataFile) {
@@ -681,7 +698,7 @@ class FXGLApplication : Application() {
         }
 
         fun gotoPlay() {
-            mainWindow.setScene(gameScene)
+            mainWindow.setScene(gameSceneRef)
         }
 
         /**
