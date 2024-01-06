@@ -157,6 +157,22 @@ class PropertyMap {
         doubleProperty(propertyName).value += value
     }
 
+    fun multiply(propertyName: String, value: Int) {
+        intProperty(propertyName).value *= value
+    }
+
+    fun multiply(propertyName: String, value: Double) {
+        doubleProperty(propertyName).value *= value
+    }
+
+    fun divide(propertyName: String, value: Int) {
+        intProperty(propertyName).value /= value
+    }
+
+    fun divide(propertyName: String, value: Double) {
+        doubleProperty(propertyName).value /= value
+    }
+
     fun getBoolean(propertyName: String) = booleanProperty(propertyName).value
 
     fun getInt(propertyName: String) = intProperty(propertyName).value

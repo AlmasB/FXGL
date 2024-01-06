@@ -1,40 +1,61 @@
 {
-  "uniqueID" : 4,
-  "nodes" : {
+  "uniqueID" : 3,
+  "startNodeID" : 0,
+  "textNodes" : {
     "0" : {
-      "type" : "START",
-      "text" : "Simple start."
+      "type" : "TEXT",
+      "text" : "Sample start text",
+      "options" : [ {
+        "id" : 0,
+        "text" : "",
+        "condition" : ""
+      } ],
+      "audio" : ""
     },
     "1" : {
-      "type" : "END",
-      "text" : "Simple end."
+      "type" : "TEXT",
+      "text" : "Sample text",
+      "options" : [ {
+        "id" : 0,
+        "text" : "",
+        "condition" : ""
+      } ],
+      "audio" : ""
     },
     "2" : {
       "type" : "TEXT",
-      "text" : "Simple text."
+      "text" : "Sample end text",
+      "options" : [ {
+        "id" : 0,
+        "text" : "",
+        "condition" : ""
+      } ],
+      "audio" : ""
     }
   },
-  "choiceNodes" : { },
+  "functionNodes" : { },
   "edges" : [ {
     "sourceID" : 0,
-    "targetID" : 2
-  }, {
-    "sourceID" : 2,
+    "optionID" : 0,
     "targetID" : 1
+  }, {
+    "sourceID" : 1,
+    "optionID" : 0,
+    "targetID" : 2
   } ],
-  "choiceEdges" : [ ],
+  "version" : 3,
   "uiMetadata" : {
     "0" : {
-      "x" : 50.0,
-      "y" : 450.0
+      "x" : 40.0,
+      "y" : 440.0
     },
     "1" : {
-      "x" : 1230.5,
-      "y" : 450.0
+      "x" : 640.0,
+      "y" : 440.0
     },
     "2" : {
-      "x" : 665.5,
-      "y" : 274.5
+      "x" : 1240.0,
+      "y" : 440.0
     }
   }
 }

@@ -6,14 +6,13 @@
 
 package com.almasb.fxgl.tools.dialogues
 
-import com.almasb.fxgl.cutscene.dialogue.DialogueChoiceEdge
 import com.almasb.fxgl.cutscene.dialogue.DialogueEdge
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import javafx.scene.effect.Glow
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
@@ -81,8 +80,11 @@ class OutLinkPoint(owner: NodeView) : LinkPoint(owner) {
 
     var other: InLinkPoint? = null
 
-    var choiceOptionID: Int = -1
-    var choiceLocalOptionProperty = SimpleStringProperty("")
+    val choiceOptionIDProperty = SimpleIntegerProperty(0)
+    val choiceOptionID: Int
+        get() = choiceOptionIDProperty.value
+
+    val choiceLocalOptionProperty = SimpleStringProperty("")
 
     init {
         translateArrow(16.0 + 2.5, 8.0 - 2.5)
@@ -126,7 +128,7 @@ private class Arrow : Polygon(
 }
 
 class EdgeView(val edge: DialogueEdge, val source: OutLinkPoint, val target: InLinkPoint) : CubicCurve() {
-    val optionID = if (edge is DialogueChoiceEdge) edge.optionID else -1
+    val optionID = edge.optionID
 
     init {
         val outPoint = source

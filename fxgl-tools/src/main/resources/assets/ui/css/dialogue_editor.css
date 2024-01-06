@@ -1,10 +1,14 @@
 .dialogue-editor-node-view {
-    -fx-border-color: azure;
+    -fx-border-color: black;
     -fx-border-width: 2;
     -fx-border-style: solid;
     -fx-border-radius: 5 5 5 5;
     -fx-background-radius: 10 10 10 10;
     -fx-background-color: rgba(0, 0, 0, 0.55);
+}
+
+.dialogue-editor-node-view-selected {
+    -fx-border-color: azure;
 }
 
 .dialogue-editor-node-view .title {

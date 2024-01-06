@@ -18,7 +18,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
-        java-version: 17
+        java-version: 21
 
     - name: Cache maven deps
       uses: actions/cache@v3
@@ -32,7 +32,7 @@ jobs:
       uses: GabrielBB/xvfb-action@v1
       with:
         run: |
-          mvn test -B -Dgpg.skip=true -Dmaven.javadoc.skip=true
+          mvn test -B -Dgpg.skip=true -Dmaven.javadoc.skip=true -Dpmd.skip=true
 
     - name: Upload to CodeCov
       run: bash <(curl -s https://codecov.io/bash)

@@ -19,23 +19,20 @@ class SerializableDialogueGraphTest {
 
     @Test
     fun `Serialization to and from`() {
-        val start = StartNode("test start")
-        val choice = ChoiceNode("test choice")
+        val choice = TextNode("test choice")
         val function = FunctionNode("test function")
-        val end = EndNode("test end")
+        val end = TextNode("test end")
         val text = TextNode("test text")
         val branch = BranchNode("test branch")
-        val subdialogue = SubDialogueNode("test subdialogue")
+        val subdialogue = TextNode("test subdialogue")
 
-        choice.options[0] = SimpleStringProperty("Option 1")
-        choice.options[1] = SimpleStringProperty("Option 2")
-        choice.conditions[0] = SimpleStringProperty("")
-        choice.conditions[1] = SimpleStringProperty("hasItem 5000")
+        choice.options[0].textProperty.value = "Option 1"
+        choice.options[0].conditionProperty.value = ""
+        choice.addOption("Option 2", "hasItem 5000")
 
         val graph = DialogueGraph()
 
         // nodes
-        graph.addNode(start)
         graph.addNode(choice)
         graph.addNode(function)
         graph.addNode(end)
@@ -44,11 +41,10 @@ class SerializableDialogueGraphTest {
         graph.addNode(subdialogue)
 
         // edges
-        graph.addEdge(start, choice)
-        graph.addChoiceEdge(choice, 0, function)
-        graph.addChoiceEdge(choice, 1, end)
-        graph.addChoiceEdge(branch, 0, text)
-        graph.addChoiceEdge(branch, 1, end)
+        graph.addEdge(choice, 0, function)
+        graph.addEdge(choice, 1, end)
+        graph.addEdge(branch, 0, text)
+        graph.addEdge(branch, 1, end)
         graph.addEdge(function, end)
         graph.addEdge(text, subdialogue)
         graph.addEdge(subdialogue, end)
@@ -56,12 +52,12 @@ class SerializableDialogueGraphTest {
         val sGraph = DialogueGraphSerializer.toSerializable(graph)
 
         assertThat(sGraph.version, greaterThan(0))
-        sGraph.nodes.forEach {
-            assertThat(it.value.type, `is`(not(DialogueNodeType.CHOICE)))
+        sGraph.textNodes.forEach {
+            assertThat(it.value.type, `is`(not(DialogueNodeType.FUNCTION)))
         }
 
-        sGraph.choiceNodes.forEach {
-            assertThat(it.value.type, `is`(DialogueNodeType.CHOICE))
+        sGraph.functionNodes.forEach {
+            assertThat(it.value.type, `is`(DialogueNodeType.FUNCTION))
         }
 
         sGraph.version++

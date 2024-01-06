@@ -7,9 +7,9 @@
 package com.almasb.fxgl.cutscene.dialogue
 
 import com.almasb.fxgl.cutscene.dialogue.DialogueNodeType.*
+import javafx.beans.property.SimpleStringProperty
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.contains
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -31,19 +31,14 @@ class DialogueGraphTest {
 
     @Test
     fun `Node types`() {
-        assertThat(StartNode("").type, `is`(START))
-        assertThat(EndNode("").type, `is`(END))
-        assertThat(TextNode("").type, `is`(TEXT))
         assertThat(SubDialogueNode("").type, `is`(SUBDIALOGUE))
         assertThat(FunctionNode("").type, `is`(FUNCTION))
         assertThat(BranchNode("").type, `is`(BRANCH))
-        assertThat(ChoiceNode("").type, `is`(CHOICE))
+        assertThat(TextNode("").type, `is`(TEXT))
 
-        assertThat(StartNode("").toString(), `is`("StartNode"))
-        assertThat(EndNode("").toString(), `is`("EndNode"))
+        assertThat(TextNode("").toString(), `is`("TextNode"))
 
-        assertThat(StartNode("StartText").text, `is`("StartText"))
-        assertThat(EndNode("EndText").text, `is`("EndText"))
+        assertThat(TextNode("StartText").text, `is`("StartText"))
     }
 
     @Test
@@ -51,20 +46,20 @@ class DialogueGraphTest {
         val node1 = TextNode("")
         val node2 = TextNode("")
 
-        assertThat(DialogueEdge(node1, node2).toString(), `is`("TextNode -> TextNode"))
+        assertThat(DialogueEdge(node1, node2).toString(), `is`("TextNode, 0 -> TextNode"))
 
-        val node3 = ChoiceNode("")
+        val node3 = TextNode("")
 
-        assertThat(DialogueChoiceEdge(node3, 0, node2).toString(), `is`("ChoiceNode, 0 -> TextNode"))
+        assertThat(DialogueEdge(node3, 1, node2).toString(), `is`("TextNode, 1 -> TextNode"))
     }
 
     @Test
     fun `Graph start node`() {
-        assertThrows<IllegalStateException> {
+        assertThrows<IllegalArgumentException> {
             graph.startNode
         }
 
-        val start = StartNode("")
+        val start = TextNode("")
 
         graph.addNode(start)
 
@@ -116,7 +111,7 @@ class DialogueGraphTest {
 
     @Test
     fun `Add and remove choice edges`() {
-        val node1 = ChoiceNode("")
+        val node1 = TextNode("")
         val node2 = TextNode("")
 
         graph.addNode(node1)
@@ -124,12 +119,12 @@ class DialogueGraphTest {
 
         assertTrue(graph.edges.isEmpty())
 
-        graph.addChoiceEdge(node1, 0, node2)
+        graph.addEdge(node1, 0, node2)
 
         assertThat(graph.edges.size, `is`(1))
         assertThat(graph.edges[0].source, `is`<DialogueNode>(node1))
         assertThat(graph.edges[0].target, `is`<DialogueNode>(node2))
-        assertThat((graph.edges[0] as DialogueChoiceEdge).optionID, `is`(0))
+        assertThat(graph.edges[0].optionID, `is`(0))
 
         // reverse won't work since it's a directed graph
         graph.removeChoiceEdge(node2, 0, node1)
@@ -146,7 +141,7 @@ class DialogueGraphTest {
         val node1 = TextNode("")
         val node2 = TextNode("")
         val edge = DialogueEdge(node1, node2)
-        val choiceEdge = DialogueChoiceEdge(node1, 0, node2)
+        val choiceEdge = DialogueEdge(node1, 0, node2)
 
         graph.addNode(node1)
         graph.addNode(node2)
@@ -167,7 +162,7 @@ class DialogueGraphTest {
         assertThat(graph.edges.size, `is`(1))
         assertThat(graph.edges[0].source, `is`<DialogueNode>(node1))
         assertThat(graph.edges[0].target, `is`<DialogueNode>(node2))
-        assertThat((graph.edges[0] as DialogueChoiceEdge).optionID, `is`(0))
+        assertThat(graph.edges[0].optionID, `is`(0))
 
         graph.removeEdge(choiceEdge)
 
@@ -186,17 +181,55 @@ class DialogueGraphTest {
     }
 
     @Test
+    fun `Copy nodes`() {
+        listOf(
+            SubDialogueNode("TestText"),
+            FunctionNode("TestText"),
+            BranchNode("TestText"),
+            TextNode("TestText")
+        ).forEach {
+            val copy = it.copy()
+            assertThat(it.text, `is`(copy.text))
+            assertThat(it.type, `is`(copy.type))
+        }
+    }
+
+    @Test
+    fun `Copy choice options`() {
+        val choice = TextNode("Choice")
+
+        choice.addOption("Choice A", "Condition A")
+        choice.addOption("Choice B", "Condition B")
+        choice.addOption("Choice C", "Condition C")
+
+        val copy = choice.copy()
+
+        assertThat(choice.lastOptionID, `is`(copy.lastOptionID))
+
+        // StringProperty has to be a deep copy, not shallow
+        assertThat(choice.options, `is`(not(copy.options)))
+        assertThat(choice.options.size, `is`(copy.options.size))
+
+        choice.options.forEachIndexed { index, option ->
+            assertThat(option.id, `is`(copy.options[index].id))
+            assertThat(option.text, `is`(copy.options[index].text))
+            assertThat(option.condition, `is`(copy.options[index].condition))
+        }
+    }
+
+    @Test
     fun `Copy`() {
-        val node1 = ChoiceNode("")
+        val node1 = TextNode("")
         val node2 = TextNode("")
 
         graph.addNode(node1)
         graph.addNode(node2)
-        graph.addChoiceEdge(node1, 0, node2)
+        graph.addEdge(node1, 0, node2)
 
         val copy = graph.copy()
 
         assertThat(copy.uniqueID, `is`(graph.uniqueID))
+        assertThat(copy.startNodeID, `is`(graph.startNodeID))
         assertThat(copy.nodes, `is`(graph.nodes))
         assertThat(copy.edges, `is`(graph.edges))
     }

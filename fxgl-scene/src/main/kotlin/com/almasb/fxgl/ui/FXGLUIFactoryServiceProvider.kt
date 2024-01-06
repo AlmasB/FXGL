@@ -11,6 +11,7 @@ import com.almasb.fxgl.ui.FontType.UI
 import com.almasb.fxgl.ui.property.BooleanPropertyView
 import com.almasb.fxgl.ui.property.DoublePropertyView
 import com.almasb.fxgl.ui.property.IntPropertyView
+import com.almasb.fxgl.ui.property.StringPropertyView
 import javafx.beans.binding.*
 import javafx.beans.property.*
 import javafx.collections.ObservableList
@@ -147,6 +148,9 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
 
             is ReadOnlyBooleanProperty -> BooleanPropertyView(property)
             is BooleanBinding -> BooleanPropertyView(property)
+
+            is ReadOnlyStringProperty -> StringPropertyView(property)
+            is StringBinding -> StringPropertyView(property)
 
             is ObjectProperty<*> -> {
 

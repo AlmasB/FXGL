@@ -12,6 +12,8 @@ import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.tools.dialogues.ui.ErrorIcon
 import com.almasb.fxgl.tools.dialogues.ui.FXGLContextMenu
+import com.almasb.fxgl.tools.dialogues.ui.NodeInspectorPane
+import com.almasb.fxgl.ui.InGamePanel
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import javafx.beans.binding.Bindings
@@ -20,10 +22,7 @@ import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.BorderPane
-import javafx.scene.layout.HBox
-import javafx.scene.layout.Pane
-import javafx.scene.layout.StackPane
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
 import javafx.scene.shape.Rectangle
@@ -40,6 +39,8 @@ class MainUI : BorderPane() {
 
     private val toolbar = HBox(35.0)
     private val tabPane = TabPane()
+
+    private val nodeInspectorPane = NodeInspectorPane()
 
     private val errorIcon = ErrorIcon()
 
@@ -72,6 +73,22 @@ class MainUI : BorderPane() {
             }
         }
 
+        val mdiWindow = getUIFactoryService().newWindow()
+        mdiWindow.title = "Node Inspector"
+        mdiWindow.isMinimizable = false
+        mdiWindow.isCloseable = false
+        mdiWindow.isMovable = false
+        // TODO: allow resize only in a single direction
+        mdiWindow.isManuallyResizable = false
+        mdiWindow.setPrefSize(300.0, 300.0)
+        mdiWindow.relocate(0.0, 30.0)
+        mdiWindow.background = Background(BackgroundFill(Color.color(0.0, 0.0, 0.0, 0.5), null, null))
+        mdiWindow.contentPane = nodeInspectorPane
+        mdiWindow.prefHeightProperty().bind(getSettings().actualHeightProperty().subtract(30))
+
+        nodeInspectorPane.prefWidthProperty().bind(mdiWindow.prefWidthProperty())
+        nodeInspectorPane.prefHeightProperty().bind(mdiWindow.prefHeightProperty().subtract(28))
+
         val contextMenuFile = FXGLContextMenu()
         contextMenuFile.addItem("New (CTRL+N)") { openNewDialog() }
         contextMenuFile.addItem("Open... (CTRL+O)") { openLoadDialog() }
@@ -83,8 +100,7 @@ class MainUI : BorderPane() {
         val contextMenuEdit = FXGLContextMenu()
         contextMenuEdit.addItem("Undo (CTRL+Z)") { undo() }
         //contextMenuEdit.addItem("Redo") { redo() }
-        //contextMenuEdit.addItem("Copy (CTRL+C)") {  }
-        //contextMenuEdit.addItem("Paste (CTRL+V)") {  }
+        contextMenuEdit.addItem("Duplicate Node (CTRL+D)") { duplicate() }
         contextMenuEdit.addItem("Preferences") { openPreferencesDialog() }
 
         val contextMenuAdd = FXGLContextMenu()
@@ -94,7 +110,7 @@ class MainUI : BorderPane() {
         contextMenuHelp.addItem("Check for Updates...") { FXGL.getFXApp().hostServices.showDocument("https://fxgl.itch.io/fxgl-dialogue-editor") }
         contextMenuHelp.addItem("About") { openAboutDialog() }
 
-        val pane = Pane(tabPane, toolbar, errorIcon)
+        val pane = Pane(tabPane, toolbar, errorIcon, mdiWindow)
 
         val menuFile = EditorMenu("File") {
             contextMenuFile.show(pane, 0.0, toolbar.prefHeight)
@@ -121,9 +137,17 @@ class MainUI : BorderPane() {
         pane.style = "-fx-background-color: gray"
         tabPane.prefWidthProperty().bind(FXGL.getSettings().actualWidthProperty())
         tabPane.prefHeightProperty().bind(FXGL.getSettings().actualHeightProperty())
+
+        val exitButton = Button("Exit")
+        exitButton.translateXProperty().bind(FXGL.getSettings().actualWidthProperty().subtract(45))
+        exitButton.translateY = 15.0
+        exitButton.setOnAction { FXGL.getCutsceneService().dialogueScene.endDialogue() }
+
+        FXGL.getCutsceneService().dialogueScene.contentRoot.children += exitButton
+
         center = pane
 
-        openNewTab()
+        openNewTab(File("Untitled.json"))
 
         initInput()
     }
@@ -152,6 +176,12 @@ class MainUI : BorderPane() {
                 undo()
             }
         }, KeyCode.Z, InputModifier.CTRL)
+
+        getInput().addAction(object : UserAction("Duplicate") {
+            override fun onActionBegin() {
+                duplicate()
+            }
+        }, KeyCode.D, InputModifier.CTRL)
     }
 
     private fun makeRunButton(): Node {
@@ -187,11 +217,16 @@ class MainUI : BorderPane() {
         return stack
     }
 
-    private fun openNewTab() {
-        val tab = DialogueTab(File("Untitled.json"), DialoguePane())
+    private fun openNewTab(file: File): DialogueTab {
+        val tab = DialogueTab(file, DialoguePane())
+        tab.pane.selectedNodeView.addListener { _, _, newNodeView ->
+            nodeInspectorPane.updateSelection(tab.pane.graph, newNodeView.node)
+        }
 
         tabPane.tabs += tab
         tabPane.selectionModel.select(tab)
+
+        return tab
     }
 
     private fun openPreferencesDialog() {
@@ -200,10 +235,7 @@ class MainUI : BorderPane() {
 
     private fun openNewDialog() {
         getDialogService().showInputBox("New dialogue name", { isValidName(it) }, { name ->
-            val tab = DialogueTab(File("$name.json"), DialoguePane())
-
-            tabPane.tabs += tab
-            tabPane.selectionModel.select(tab)
+            openNewTab(File("$name.json"))
         })
     }
 
@@ -253,10 +285,7 @@ class MainUI : BorderPane() {
         chooser.extensionFilters += FileChooser.ExtensionFilter("FXGL dialogue files", "*.json")
 
         chooser.showOpenDialog(scene.window)?.let {
-            val tab = DialogueTab(it, DialoguePane())
-
-            tabPane.tabs += tab
-            tabPane.selectionModel.select(tab)
+            val tab = openNewTab(it)
 
             tab.pane.load(mapper.readValue(it, SerializableGraph::class.java))
         }
@@ -268,6 +297,10 @@ class MainUI : BorderPane() {
 
     private fun redo() {
         currentTab?.pane?.redo()
+    }
+
+    private fun duplicate() {
+        currentTab?.pane?.duplicate()
     }
 
     private fun openAboutDialog() {

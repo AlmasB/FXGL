@@ -118,6 +118,30 @@ class PropertyMapTest {
     }
 
     @Test
+    fun `Multiply Double and Int`() {
+        map.setValue("key2", -55)
+        map.setValue("key3", 900.0)
+
+        map.multiply("key2", 2)
+        assertThat(map.getInt("key2"), `is`(-110))
+
+        map.multiply("key3", -100.0)
+        assertThat(map.getDouble("key3"), `is`(-90000.0))
+    }
+
+    @Test
+    fun `Divide Double and Int`() {
+        map.setValue("key2", -55)
+        map.setValue("key3", 900.0)
+
+        map.divide("key2", 5)
+        assertThat(map.getInt("key2"), `is`(-11))
+
+        map.divide("key3", -100.0)
+        assertThat(map.getDouble("key3"), `is`(-9.0))
+    }
+
+    @Test
     fun `Listeners`() {
         var count = 0
 

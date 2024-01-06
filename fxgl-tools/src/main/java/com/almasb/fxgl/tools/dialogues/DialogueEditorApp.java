@@ -32,7 +32,7 @@ public class DialogueEditorApp extends GameApplication {
         settings.setWidth(1600);
         settings.setHeight(900);
         settings.setTitle("FXGL Dialogue Editor - github.com/AlmasB/FXGL");
-        settings.setVersion("1.0.2-beta");
+        settings.setVersion("3.0");
         settings.getCSSList().add("dialogue_editor.css");
         settings.setIntroEnabled(false);
         settings.setMainMenuEnabled(false);

@@ -16,6 +16,8 @@ import javafx.scene.Node
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
+import javafx.scene.shape.Rectangle
+import javafx.scene.text.Font
 import javafx.scene.text.Text
 import javafx.scene.text.TextFlow
 import javafx.util.Duration
@@ -69,28 +71,19 @@ open class MDIWindow
         val pane = Pane()
         pane.translateY = 1.0
 
-        val size = 20.0
-        val offset = 3.0
+        val box = makeButtonBox()
 
-        val line1 = Line(offset, size / 2 + 1, size, size / 2 + 1)
-        val line2 = Line(size, offset, offset, size)
+        val offset = 6.0
 
+        val line1 = Line(offset, 14.0 / 2 + 1, box.width - offset, 14.0 / 2 + 1)
         line1.strokeWidth = 2.0
-        line2.strokeWidth = 2.0
+        line1.stroke = Color.WHITE
 
-        val stroke = Bindings.`when`(pane.hoverProperty()).then(Color.BLUE).otherwise(Color.WHITE)
-
-        line1.strokeProperty().bind(
-                stroke
+        box.opacityProperty().bind(
+                Bindings.`when`(pane.hoverProperty()).then(0.95).otherwise(0.0)
         )
 
-        line2.strokeProperty().bind(
-                stroke
-        )
-
-        line2.isVisible = false
-
-        pane.children.addAll(line1, line2)
+        pane.children.addAll(box, line1)
 
         return pane
     }
@@ -99,28 +92,30 @@ open class MDIWindow
         val pane = Pane()
         pane.translateY = 1.0
 
-        val size = 22.0
+        val box = makeButtonBox()
+
+        val size = 14.0
         val offset = 3.0
 
-        val line1 = Line(offset, offset, size, size)
-        val line2 = Line(size, offset, offset, size)
+        val line1 = Line(3.0 + offset, offset - 1, 3.0 + size, size - 1)
+        val line2 = Line(3.0 + size, offset - 1, 3.0 + offset, size - 1)
 
         line1.strokeWidth = 2.0
         line2.strokeWidth = 2.0
+        line1.stroke = Color.WHITE
+        line2.stroke = Color.WHITE
 
-        val stroke = Bindings.`when`(pane.hoverProperty()).then(Color.RED).otherwise(Color.WHITE)
-
-        line1.strokeProperty().bind(
-                stroke
+        box.opacityProperty().bind(
+                Bindings.`when`(pane.hoverProperty()).then(0.95).otherwise(0.0)
         )
 
-        line2.strokeProperty().bind(
-                stroke
-        )
-
-        pane.children.addAll(line1, line2)
+        pane.children.addAll(box, line1, line2)
 
         return pane
+    }
+
+    private fun makeButtonBox(): Rectangle {
+        return Rectangle(24.0, 15.0, Color.GRAY)
     }
 
     private val root = Pane()
@@ -159,8 +154,13 @@ open class MDIWindow
         }
 
     private fun updateTitle() {
+        val titleText = Text(title).also {
+            it.font = Font.font(14.0)
+            it.fill = Color.WHITE
+        }
+
         header.children.clear()
-        header.children.add(Text(title).also { it.fill = Color.WHITE })
+        header.children.add(titleText)
     }
 
     init {
@@ -187,10 +187,11 @@ open class MDIWindow
     }
 
     private fun initMinimizeButton(box: HBox) {
+        minWidth = 160.0
         minHeight = 28.0
 
-        minimizeButton.translateXProperty().bind(box.prefWidthProperty().subtract(54.0))
-        minimizeButton.translateY = -20.0
+        minimizeButton.translateXProperty().bind(box.prefWidthProperty().subtract(56.0))
+        minimizeButton.translateY = -22.0
         
         minimizeButton.setOnMouseClicked {
             if (!isAnimationFinished)
@@ -224,14 +225,14 @@ open class MDIWindow
     }
 
     private fun initCloseButton(box: HBox) {
-        closeButton.translateXProperty().bind(box.prefWidthProperty().subtract(27.0))
+        closeButton.translateXProperty().bind(box.prefWidthProperty().subtract(30.0))
         closeButton.translateY = -22.0
 
         closeButton.setOnMouseClicked {
             if (parent is Group) {
                 (parent as Group).children -= this
-            } else {
-                // TODO:
+            } else if (parent is Pane) {
+                (parent as Pane).children -= this
             }
         }
     }

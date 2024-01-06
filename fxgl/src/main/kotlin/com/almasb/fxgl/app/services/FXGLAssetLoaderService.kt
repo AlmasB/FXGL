@@ -12,10 +12,10 @@ import com.almasb.fxgl.core.asset.AssetLoaderService
 import com.almasb.fxgl.core.asset.AssetType
 import com.almasb.fxgl.core.asset.AssetType.*
 import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.cutscene.Cutscene
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraph
 import com.almasb.fxgl.cutscene.dialogue.DialogueGraphSerializer
 import com.almasb.fxgl.cutscene.dialogue.SerializableGraph
-import com.almasb.fxgl.cutscene.dialogue.StartNode
 import com.almasb.fxgl.dsl.FXGL
 import com.almasb.fxgl.entity.level.Level
 import com.almasb.fxgl.entity.level.LevelLoader
@@ -290,6 +290,20 @@ class FXGLAssetLoaderService : AssetLoaderService() {
     }
 
     /**
+     * @return [Cutscene] with given [name] from "/assets/text", e.g. cutscene.txt
+     */
+    fun loadCutscene(name: String): Cutscene {
+        return Cutscene(loadText(name))
+    }
+
+    /**
+     * @return [Cutscene] with given [url]
+     */
+    fun loadCutscene(url: URL): Cutscene {
+        return Cutscene(loadText(url))
+    }
+
+    /**
      * Loads text file with given [name] from /assets/text/
      * into List<String> where each element represents a line in the file.
      *
@@ -316,7 +330,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      *
      * @return parsed object with [type] or Optional.empty() if errors
      */
-    fun <T> loadJSON(name: String, type: Class<T>): Optional<T> {
+    fun <T> loadJSON(name: String, type: Class<T>): Optional<T & Any> {
         return loadJSON(getURL(ASSETS_DIR + name), type)
     }
 
@@ -326,7 +340,7 @@ class FXGLAssetLoaderService : AssetLoaderService() {
      *
      * @return parsed object with [type] or Optional.empty() if errors
      */
-    fun <T> loadJSON(url: URL, type: Class<T>): Optional<T> {
+    fun <T> loadJSON(url: URL, type: Class<T>): Optional<T & Any> {
         if (url === NULL_URL) {
             log.warning("Failed to load JSON: URL is not valid")
             return Optional.empty()
@@ -718,13 +732,7 @@ private class DialogueGraphAssetLoader : AssetLoader<SerializableGraph>(
             url.openStream().use { ObjectMapper().readValue(it, SerializableGraph::class.java) }
 
     override fun getDummy(): SerializableGraph {
-        val dummyGraph = DialogueGraph()
-
-        // TODO: shouldn't this be handled in dialogue play scene
-        // add a start node, so the dialogue can play and not crash at runtime
-        dummyGraph.addNode(StartNode("Failed to load dialogue graph"))
-
-        return DialogueGraphSerializer.toSerializable(dummyGraph)
+        return DialogueGraphSerializer.toSerializable(DialogueGraph())
     }
 }
 
