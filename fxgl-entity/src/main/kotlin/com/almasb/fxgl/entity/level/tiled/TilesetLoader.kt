@@ -18,6 +18,7 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
+import java.net.URI
 import java.net.URL
 
 /**
@@ -425,7 +426,7 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
         val image = try {
             val ext = mapURL.toExternalForm().substringBeforeLast("/") + "/"
 
-            val stream = URL(ext + tilesetImageName).openStream()
+            val stream = URI.create(ext + tilesetImageName).toURL().openStream()
 
             var img = if (transparentcolor.isEmpty())
                 Image(stream)
