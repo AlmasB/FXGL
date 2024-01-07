@@ -427,7 +427,7 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
         val image = try {
             val ext = mapURL.toExternalForm().substringBeforeLast("/") + "/"
 
-            val stream = URL(ext + imageName).openStream()
+            val stream = URL(ext + tilesetImageName).openStream()
 
             var img = if (transparentcolor.isEmpty())
                 Image(stream)
