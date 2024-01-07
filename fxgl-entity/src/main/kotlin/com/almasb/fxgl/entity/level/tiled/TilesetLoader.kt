@@ -418,10 +418,8 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
     }
 
     private fun loadImage(tilesetImageName: String, transparentcolor: String, w: Int, h: Int): Image {
-        val imageName = tilesetImageName.substring(tilesetImageName.lastIndexOf("/") + 1)
-
-        if (imageName in imageCache) {
-            return imageCache[imageName]!!
+        if (tilesetImageName in imageCache) {
+            return imageCache[tilesetImageName]!!
         }
 
         val image = try {
@@ -437,19 +435,19 @@ class TilesetLoader(private val map: TiledMap, private val mapURL: URL) {
             stream.close()
 
             if (img.isError) {
-                log.warning("${ext + imageName} cannot be loaded")
+                log.warning("${ext + tilesetImageName} cannot be loaded")
                 img = resize(getDummyImage(), w, h)
             }
 
             img
 
         } catch (e: Exception) {
-            log.warning("$imageName cannot be loaded using mapURL=$mapURL", e)
+            log.warning("$tilesetImageName cannot be loaded using mapURL=$mapURL", e)
 
             resize(getDummyImage(), w, h)
         }
 
-        imageCache[imageName] = image
+        imageCache[tilesetImageName] = image
 
         return image
     }
