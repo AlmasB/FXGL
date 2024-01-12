@@ -13,7 +13,6 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -24,34 +23,34 @@ import org.junit.jupiter.api.Test
 class ParticleComponentTest {
 
     private lateinit var world: GameWorld
-    private lateinit var particule: ParticleComponent
+    private lateinit var particle: ParticleComponent
 
     @BeforeEach
     fun setUp() {
         world = GameWorld()
-        particule = ParticleComponent(ParticleEmitter())
+        particle = ParticleComponent(ParticleEmitter())
     }
 
     @Test
-    fun `Create ParticuleComponent with zIndex`() {
-        assertNull(particule.entity)
-        assertNotNull(particule.parent)
-        assertThat(particule.parent.zIndex, `is`(0))
+    fun `Create ParticleComponent with zIndex`() {
+        assertNull(particle.entity)
+        assertNotNull(particle.parent)
+        assertThat(particle.parent.zIndex, `is`(0))
 
         val e = Entity()
         e.zIndex = 100
 
-        ComponentHelper.setEntity(particule, e)
+        ComponentHelper.setEntity(particle, e)
         world.addEntity(e)
-        particule.onAdded()
-        particule.onUpdate(1.0)
+        particle.onAdded()
+        particle.onUpdate(1.0)
 
-        assertThat(particule.parent.zIndex, `is`(100))
+        assertThat(particle.parent.zIndex, `is`(100))
 
         e.zIndex = 200
-        particule.onUpdate(1.0)
+        particle.onUpdate(1.0)
 
-        assertThat(particule.parent.zIndex, `is`(100))
+        assertThat(particle.parent.zIndex, `is`(100))
     }
 
 }
