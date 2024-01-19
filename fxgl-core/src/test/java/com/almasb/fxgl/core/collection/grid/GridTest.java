@@ -219,6 +219,57 @@ public class GridTest {
         assertThat(grid.getDown(grid.get(1,  GRID_SIZE - 1)).isPresent(), is(false));
     }
 
+    @Test
+    public void testDiagonals() {
+        // up right cell
+        Optional<MockCell> upRightCell = grid.getUpRight(grid.get(1, 1));
+
+        assertThat(upRightCell.isPresent(), is(true));
+        assertThat(upRightCell.get().getX(), is(2));
+        assertThat(upRightCell.get().getY(), is(0));
+
+        assertThat(grid.getUpRight(grid.get(0, 0)).isPresent(), is(false));
+        assertThat(grid.getUpRight(grid.get(0, GRID_SIZE-1)).isPresent(), is(true));
+        assertThat(grid.getUpRight(grid.get(GRID_SIZE-1, 0)).isPresent(), is(false));
+        assertThat(grid.getUpRight(grid.get(GRID_SIZE-1, GRID_SIZE-1)).isPresent(), is(false));
+
+        // up left Cell
+        Optional<MockCell> upLeftCell = grid.getUpLeft(grid.get(1, 1));
+
+        assertThat(upLeftCell.isPresent(), is(true));
+        assertThat(upLeftCell.get().getX(), is(0));
+        assertThat(upLeftCell.get().getY(), is(0));
+
+        assertThat(grid.getUpLeft(grid.get(0, 0)).isPresent(), is(false));
+        assertThat(grid.getUpLeft(grid.get(0, GRID_SIZE-1)).isPresent(), is(false));
+        assertThat(grid.getUpLeft(grid.get(GRID_SIZE-1, 0)).isPresent(), is(false));
+        assertThat(grid.getUpLeft(grid.get(GRID_SIZE-1, GRID_SIZE-1)).isPresent(), is(true));
+
+        // down right Cell
+        Optional<MockCell> downRightCell = grid.getDownRight(grid.get(1, 1));
+
+        assertThat(downRightCell.isPresent(), is(true));
+        assertThat(downRightCell.get().getX(), is(2));
+        assertThat(downRightCell.get().getY(), is(2));
+
+        assertThat(grid.getDownRight(grid.get(0, 0)).isPresent(), is(true));
+        assertThat(grid.getDownRight(grid.get(0, GRID_SIZE-1)).isPresent(), is(false));
+        assertThat(grid.getDownRight(grid.get(GRID_SIZE-1, 0)).isPresent(), is(false));
+        assertThat(grid.getDownRight(grid.get(GRID_SIZE-1, GRID_SIZE-1)).isPresent(), is(false));
+
+        // down left cell
+        Optional<MockCell> downLeftCell = grid.getDownLeft(grid.get(1, 1));
+
+        assertThat(downLeftCell.isPresent(), is(true));
+        assertThat(downLeftCell.get().getX(), is(0));
+        assertThat(downLeftCell.get().getY(), is(2));
+
+        assertThat(grid.getDownLeft(grid.get(0, 0)).isPresent(), is(false));
+        assertThat(grid.getDownLeft(grid.get(0, GRID_SIZE-1)).isPresent(), is(false));
+        assertThat(grid.getDownLeft(grid.get(GRID_SIZE-1, 0)).isPresent(), is(true));
+        assertThat(grid.getDownLeft(grid.get(GRID_SIZE-1, GRID_SIZE-1)).isPresent(), is(false));
+    }
+
     public static class MockCell extends Cell {
 
         public MockCell(int x, int y) {

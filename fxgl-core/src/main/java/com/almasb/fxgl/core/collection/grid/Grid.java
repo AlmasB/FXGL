@@ -234,19 +234,19 @@ public class Grid<T extends Cell> {
     }
 
     public final Optional<T> getUpRight(int x, int y) {
-        return getOptional(x + 1, y + 1);
-    }
-
-    public final Optional<T> getUpLeft(int x, int y) {
-        return getOptional(x - 1, y + 1);
-    }
-
-    public final Optional<T> getDownRight(int x, int y) {
         return getOptional(x + 1, y - 1);
     }
 
-    public final Optional<T> getDownLeft(int x, int y) {
+    public final Optional<T> getUpLeft(int x, int y) {
         return getOptional(x - 1, y - 1);
+    }
+
+    public final Optional<T> getDownRight(int x, int y) {
+        return getOptional(x + 1, y + 1);
+    }
+
+    public final Optional<T> getDownLeft(int x, int y) {
+        return getOptional(x - 1, y + 1);
     }
 
     /**
