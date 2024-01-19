@@ -143,6 +143,16 @@ public class GridTest {
     }
 
     @Test
+    public void testGetDiagonalNeighbors() {
+        grid.setDiagonal(Diagonal.ALLOWED);
+        assertThat(grid.getNeighbors( 3,3), containsInAnyOrder(
+            grid.get(2, 2),  grid.get(2, 3), grid.get(2, 4),
+            grid.get(3, 2), grid.get(3, 4),  // Doesn't contain 3, 3 (self)
+            grid.get(4, 2), grid.get(4, 3), grid.get(4, 4)
+        ));
+    }
+
+    @Test
     public void testGetRandomCell() {
         for (int i = 0; i < 50; i++) {
             assertNotNull(grid.getRandomCell());
