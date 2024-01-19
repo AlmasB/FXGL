@@ -7,6 +7,7 @@
 package com.almasb.fxgl.core.collection.grid;
 
 import com.almasb.fxgl.core.math.FXGLMath;
+import static com.almasb.fxgl.core.collection.grid.Diagonal.*;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * @param <T> cell type
@@ -29,6 +29,7 @@ public class Grid<T extends Cell> {
     private final int height;
     private final int cellWidth;
     private final int cellHeight;
+    private Diagonal diagonal;
 
     /**
      * Note: all cells are initialized to null.
@@ -38,12 +39,24 @@ public class Grid<T extends Cell> {
         this(type, width, height, (x, y) -> null);
     }
 
+    public Grid(Class<T> type, int width, int height, Diagonal diagonal) {
+        this(type, width, height, diagonal, (x, y) -> null);
+    }
+
     public Grid(Class<T> type, int width, int height, CellGenerator<T> populateFunction) {
         this(type, width, height, 0, 0, populateFunction);
     }
 
-    @SuppressWarnings("unchecked")
+    public Grid(Class<T> type, int width, int height, Diagonal diagonal, CellGenerator<T> populateFunction) {
+        this(type, width, height, 0, 0, diagonal, populateFunction);
+    }
+
     public Grid(Class<T> type, int width, int height, int cellWidth, int cellHeight, CellGenerator<T> populateFunction) {
+        this(type, width, height, cellWidth, cellHeight, Diagonal.NEVER, populateFunction);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Grid(Class<T> type, int width, int height, int cellWidth, int cellHeight, Diagonal diagonal, CellGenerator<T> populateFunction) {
         if (cellWidth < 0 || cellHeight < 0)
             throw new IllegalArgumentException("Cannot create grid with cells of negative size");
 
@@ -54,6 +67,7 @@ public class Grid<T extends Cell> {
         this.height = height;
         this.cellWidth = cellWidth;
         this.cellHeight = cellHeight;
+        this.diagonal = diagonal;
 
         data = (T[][]) Array.newInstance(type, width, height);
 
@@ -98,6 +112,13 @@ public class Grid<T extends Cell> {
         return cellHeight;
     }
 
+    public final void setDiagonal(Diagonal diagonal) {
+        this.diagonal = diagonal;
+    }
+
+    public final Diagonal getDiagonal() {
+        return diagonal;
+    }
 
     /**
      * Checks if given (x,y) is within the bounds of the grid,
@@ -136,6 +157,15 @@ public class Grid<T extends Cell> {
         getUp(x, y).ifPresent(result::add);
         getRight(x, y).ifPresent(result::add);
         getDown(x, y).ifPresent(result::add);
+
+        // Include "Corner" neighbors only if diagonal movement is allowed
+        if(diagonal.is(ALLOWED)) {
+            getUpLeft(x, y).ifPresent(result::add);
+            getUpRight(x, y).ifPresent(result::add);
+            getDownLeft(x, y).ifPresent(result::add);
+            getDownRight(x, y).ifPresent(result::add);
+        }
+
         return result;
     }
 
@@ -171,6 +201,22 @@ public class Grid<T extends Cell> {
         return getDown(cell.getX(), cell.getY());
     }
 
+    public final Optional<T> getUpRight(Cell cell) {
+        return getUpRight(cell.getX(), cell.getY());
+    }
+
+    public final Optional<T> getUpLeft(Cell cell) {
+        return getUpLeft(cell.getX(), cell.getY());
+    }
+
+    public final Optional<T> getDownRight(Cell cell) {
+        return getDownRight(cell.getX(), cell.getY());
+    }
+
+    public final Optional<T> getDownLeft(Cell cell) {
+        return getDownLeft(cell.getX(), cell.getY());
+    }
+
     public final Optional<T> getRight(int x, int y) {
         return getOptional(x + 1, y);
     }
@@ -185,6 +231,22 @@ public class Grid<T extends Cell> {
 
     public final Optional<T> getDown(int x, int y) {
         return getOptional(x, y + 1);
+    }
+
+    public final Optional<T> getUpRight(int x, int y) {
+        return getOptional(x + 1, y + 1);
+    }
+
+    public final Optional<T> getUpLeft(int x, int y) {
+        return getOptional(x - 1, y + 1);
+    }
+
+    public final Optional<T> getDownRight(int x, int y) {
+        return getOptional(x + 1, y - 1);
+    }
+
+    public final Optional<T> getDownLeft(int x, int y) {
+        return getOptional(x - 1, y - 1);
     }
 
     /**
@@ -248,7 +310,7 @@ public class Grid<T extends Cell> {
     public final Optional<T> getRandomCell(Random random, Predicate<T> predicate) {
         List<T> filtered = getCells().stream()
                 .filter(predicate)
-                .collect(Collectors.toList());
+                .toList();
 
         if (filtered.isEmpty())
             return Optional.empty();

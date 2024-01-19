@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.pathfinding.astar;
 
+import com.almasb.fxgl.core.collection.grid.Diagonal;
 import com.almasb.fxgl.core.collection.grid.Grid;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.GameWorld;
@@ -27,6 +28,10 @@ public class AStarGrid extends Grid<AStarCell> {
      */
     public AStarGrid(int width, int height) {
         super(AStarCell.class, width, height, (x, y) -> new AStarCell(x, y, CellState.WALKABLE));
+    }
+
+    public AStarGrid(int width, int height, Diagonal diagonals) {
+        super(AStarCell.class, width, height, diagonals, (x, y) -> new AStarCell(x, y, CellState.WALKABLE));
     }
 
     public List<AStarCell> getWalkableCells() {
