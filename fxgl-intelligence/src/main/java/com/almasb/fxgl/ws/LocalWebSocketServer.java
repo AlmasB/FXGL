@@ -32,7 +32,7 @@ public final class LocalWebSocketServer extends WebSocketServer {
 
     private final Logger log;
 
-    private boolean isLoggingEnabled = true;
+    private boolean hasStarted = false;
 
     private String serverName;
     private List<Consumer<String>> messageHandlers = new ArrayList<>();
@@ -58,12 +58,8 @@ public final class LocalWebSocketServer extends WebSocketServer {
         thread = new SendMessageThread(serverName);
     }
 
-    public boolean isLoggingEnabled() {
-        return isLoggingEnabled;
-    }
-
-    public void setLoggingEnabled(boolean isLoggingEnabled) {
-        this.isLoggingEnabled = isLoggingEnabled;
+    public boolean hasStarted() {
+        return hasStarted;
     }
 
     /**
@@ -109,14 +105,14 @@ public final class LocalWebSocketServer extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        log.info("Opened connection: " + conn.getRemoteSocketAddress());
+        log.debug("Opened connection: " + conn.getRemoteSocketAddress());
 
         socket = conn;
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        log.info("Closed connection, code: " + code);
+        log.debug("Closed connection, code: " + code);
     }
 
     @Override
@@ -131,7 +127,7 @@ public final class LocalWebSocketServer extends WebSocketServer {
 
     @Override
     public void onStart() {
-        log.info("Server started successfully");
+        log.debug("Server started successfully");
     }
 
     @Override
@@ -139,6 +135,8 @@ public final class LocalWebSocketServer extends WebSocketServer {
         try {
             thread.start();
             super.start();
+
+            hasStarted = true;
         } catch (Exception e) {
             log.warning("Failed to start WS server", e);
         }

@@ -96,6 +96,7 @@
         <jackson.version>2.14.2</jackson.version>
         <websocket.version>1.5.5</websocket.version>
         <selenium.version>4.17.0</selenium.version>
+        <slf4j.version>2.0.6</slf4j.version>
 
         <!-- test dependencies -->
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
