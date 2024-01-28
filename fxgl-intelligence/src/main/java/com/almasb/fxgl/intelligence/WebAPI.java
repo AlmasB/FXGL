@@ -14,9 +14,11 @@ package com.almasb.fxgl.intelligence;
  */
 public final class WebAPI {
 
+    public static final String TEXT_TO_SPEECH_API = "https://almasb.github.io/web-api/text-to-speech-v1/";
     public static final String SPEECH_RECOGNITION_API = "https://almasb.github.io/web-api/speech-recog/";
     public static final String GESTURE_RECOGNITION_API = "https://almasb.github.io/web-api/gesture-recog-v1/";
 
+    public static final int TEXT_TO_SPEECH_PORT = 55550;
     public static final int SPEECH_RECOGNITION_PORT = 55555;
     public static final int GESTURE_RECOGNITION_PORT = 55560;
 }
