@@ -10,6 +10,7 @@
 module com.almasb.fxgl.io {
     requires com.almasb.fxgl.core;
     requires com.gluonhq.attach.storage;
+    requires java.net.http;
 
     exports com.almasb.fxgl.io;
     exports com.almasb.fxgl.net;
