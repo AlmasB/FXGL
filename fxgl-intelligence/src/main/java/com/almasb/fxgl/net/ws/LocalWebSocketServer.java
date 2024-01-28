@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.ws;
+package com.almasb.fxgl.net.ws;
 
 import com.almasb.fxgl.logging.Logger;
 import org.java_websocket.WebSocket;

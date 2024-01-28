@@ -11,7 +11,7 @@ import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.intelligence.WebAPI
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.speechrecog.SpeechRecognitionService
-import com.almasb.fxgl.ws.LocalWebSocketServer
+import com.almasb.fxgl.net.ws.LocalWebSocketServer
 import javafx.geometry.Point3D
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.ChromeDriver

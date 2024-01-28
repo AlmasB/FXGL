@@ -9,7 +9,7 @@ package com.almasb.fxgl.speechrecog;
 import com.almasb.fxgl.core.EngineService;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.logging.Logger;
-import com.almasb.fxgl.ws.LocalWebSocketServer;
+import com.almasb.fxgl.net.ws.LocalWebSocketServer;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
