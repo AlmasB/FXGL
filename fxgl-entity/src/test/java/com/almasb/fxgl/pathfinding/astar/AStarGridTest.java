@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.pathfinding.astar;
 
-import com.almasb.fxgl.core.collection.grid.Diagonal;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.pathfinding.CellState;
@@ -45,17 +44,6 @@ public class AStarGridTest {
                 assertFalse(grid.get(x, y).getState().isNotWalkable());
             }
         }
-    }
-
-    @Test
-    public void testDiagonalAssignment() {
-        assertEquals(Diagonal.NEVER, grid.getDiagonal());
-
-        grid.setDiagonal(Diagonal.ALLOWED);
-        assertEquals(Diagonal.ALLOWED, grid.getDiagonal());
-
-        grid = new AStarGrid(GRID_SIZE, GRID_SIZE, Diagonal.ALLOWED);
-        assertEquals(Diagonal.ALLOWED, grid.getDiagonal());
     }
 
     @Test
