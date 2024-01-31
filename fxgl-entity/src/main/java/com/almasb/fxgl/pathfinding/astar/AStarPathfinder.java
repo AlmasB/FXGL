@@ -103,6 +103,7 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
                 if (!closed.contains(neighbor)) {
                     if (open.contains(neighbor)) {
                         int newG = current.getGCost() + 10;
+
                         if (newG < neighbor.getGCost()) {
                             neighbor.setParent(current);
                             neighbor.setGCost(newG);
@@ -170,5 +171,4 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
         result.removeIf(cell -> !cell.isWalkable());
         return result;
     }
-
 }
