@@ -15,141 +15,125 @@ import com.almasb.fxgl.scene.SubScene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
-import java.util.Map;
+
+import java.util.List;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * This is an example of a simple inventory that shows
- * how you can pickup and drop items.
+ * how you can pick up and drop items.
  *
  * @author Adam Bocco (adambocco) (adam.bocco@gmail.com)
  */
 public class InventorySample extends GameApplication {
 
-    private InventorySubScene inventorySubScene;
+    private Inventory<CustomItem> inventory;
 
-    public Entity woodEntity = new Entity();
-    public Entity stoneEntity = new Entity();
-    public Entity crystalEntity = new Entity();
+    private static class CustomItem {
+        private String description;
 
-
-    @Override
-    protected void initSettings(GameSettings settings) {
-
-        settings.setWidth(900);
-        settings.setHeightFromRatio(16/9.0);
+        private CustomItem(String description) {
+            this.description = description;
+        }
     }
 
     @Override
-    protected void initGameVars(Map<String, Object> vars) {
-
-        vars.put("wood", 5);
-        vars.put("stone", 3);
-        vars.put("crystal", 1);
-    }
-
-    @Override
-    protected void initUI() {
-
-        var pickupWood = getUIFactoryService().newButton(getip("wood").asString("Wood: %d"));
-        pickupWood.setStyle("-fx-background-color: saddlebrown");
-        var pickupStone = getUIFactoryService().newButton(getip("stone").asString("Stone: %d"));
-        pickupStone.setStyle("-fx-background-color: grey");
-        var pickupCrystal = getUIFactoryService().newButton(getip("crystal").asString("Crystal: %d"));
-        pickupCrystal.setStyle("-fx-background-color: aqua");
-
-        pickupWood.setOnAction(actionEvent -> pickupItem(woodEntity, "Wood", "Wood description", 1));
-
-        pickupStone.setOnAction(actionEvent -> pickupItem(stoneEntity, "Stone", "Stone description", 1));
-
-        pickupCrystal.setOnAction(actionEvent -> pickupItem(crystalEntity, "Crystal", "Crystal description", 1));
-
-        var vbox = new VBox(5, pickupWood, pickupStone, pickupCrystal);
-
-        addUINode(vbox, 10, 10);
-    }
-
-    @Override
-    protected void initInput() {
-
-        inventorySubScene = new InventorySubScene();
-
-        inventorySubScene.getInput().addAction(new UserAction("Close Inventory") {
-            @Override
-            protected void onActionBegin() {
-                getSceneService().popSubScene();
-            }
-        }, KeyCode.F);
-
-        onKeyDown(KeyCode.F, "Open Inventory", () -> getSceneService().pushSubScene(inventorySubScene));
-    }
+    protected void initSettings(GameSettings settings) { }
 
     @Override
     protected void initGame() {
-        // Add initial items in player inventory
-        inventorySubScene.playerInventory.add(woodEntity, "Wood", "Wood description", inventorySubScene.view, 15);
-        inventorySubScene.playerInventory.add(stoneEntity, "Stone", "Stone description", inventorySubScene.view, 10);
-        inventorySubScene.playerInventory.add(crystalEntity, "Crystal", "Crystal description", inventorySubScene.view, 5);
+        inventory = new Inventory<>(10);
+
+        var wood = new CustomItem("Wood");
+        var stone = new CustomItem("Stone");
+        var crystal = new CustomItem("Crystal");
+
+        var vbox = new VBox(5);
+
+        List.of(wood, stone, crystal)
+                .forEach(item -> {
+                    var btnAdd = new Button("Pick up " + item.description);
+                    var btnRemove = new Button("Drop " + item.description);
+
+                    btnAdd.setOnAction(e -> {
+                        var scene = getSceneService().getGameScene();
+
+                        System.out.println(scene);
+
+                        getSceneService().getMainMenuScene().ifPresent(scene2 -> {
+                            System.out.println(scene2);
+                        });
+
+                        inventory.add(item);
+
+                        System.out.println(inventory.getAllData());
+                    });
+
+                    btnRemove.setOnAction(e -> {
+                        inventory.incrementQuantity(item, -1);
+
+                        System.out.println(inventory.getAllData());
+                    });
+
+                    vbox.getChildren().addAll(btnAdd, btnRemove);
+                });
+
+        addUINode(vbox, 100, 100);
+        addUINode(new InventoryView<>(inventory), 400, 100);
     }
 
-    public void pickupItem(Entity item, String name, String description, int quantity) {
-        if (getip(name.toLowerCase()).get() > 0) {
-            inventorySubScene.playerInventory.add(item, name, description, inventorySubScene.view, quantity);
-            inc(name.toLowerCase(), -1);
-            inventorySubScene.view.getListView().refresh();
-        }
+    public static void main(String[] args) {
+        launch(args);
     }
 
-    public static void main(String[] args) { launch(args); }
-
-
-    private class InventorySubScene extends SubScene {
-
-        public Inventory<Entity> playerInventory = new Inventory(10);
-
-        public InventoryView view = new InventoryView<>(playerInventory);
-
-
-        public InventorySubScene() {
-            getContentRoot().getChildren().addAll(view);
-            getContentRoot().setTranslateX(300);
-            getContentRoot().setTranslateY(0);
-
-            Button dropOne = getUIFactoryService().newButton("Drop One");
-            dropOne.prefHeight(30.0);
-            dropOne.prefWidth(135.0);
-            dropOne.setTranslateX(35.0);
-            dropOne.setTranslateY(320.0);
-
-            dropOne.setOnAction(actionEvent -> {
-                var selectedItem = (Entity) view.getListView().getSelectionModel().getSelectedItem();
-
-                if (selectedItem != null) {
-                    var item = inventorySubScene.playerInventory.getData((Entity) selectedItem).get().getUserItem();
-                    playerInventory.incrementQuantity(item, -1);
-                }
-                view.getListView().refresh();
-            });
-
-            Button dropAll = getUIFactoryService().newButton("Drop All");
-            dropAll.prefHeight(30.0);
-            dropAll.prefWidth(135.0);
-            dropAll.setTranslateX(35.0);
-            dropAll.setTranslateY(370.0);
-
-            dropAll.setOnAction(actionEvent -> {
-
-                var selectedItem = (Entity) view.getListView().getSelectionModel().getSelectedItem();
-
-                if (selectedItem != null) {
-                    var itemData = inventorySubScene.playerInventory.getData((Entity) selectedItem).get().getUserItem();
-                    playerInventory.remove(selectedItem);
-                }
-                view.getListView().refresh();
-            });
-
-            this.getContentRoot().getChildren().addAll(dropOne, dropAll);
-        }
-    }
+//
+//    private class InventorySubScene extends SubScene {
+//
+//        public Inventory<Entity> playerInventory = new Inventory(10);
+//
+//        public InventoryView view = new InventoryView<>(playerInventory);
+//
+//
+//        public InventorySubScene() {
+//            getContentRoot().getChildren().addAll(view);
+//            getContentRoot().setTranslateX(300);
+//            getContentRoot().setTranslateY(0);
+//
+//            Button dropOne = getUIFactoryService().newButton("Drop One");
+//            dropOne.prefHeight(30.0);
+//            dropOne.prefWidth(135.0);
+//            dropOne.setTranslateX(35.0);
+//            dropOne.setTranslateY(320.0);
+//
+//            dropOne.setOnAction(actionEvent -> {
+//                var selectedItem = (Entity) view.getListView().getSelectionModel().getSelectedItem();
+//
+//                if (selectedItem != null) {
+//                    var item = inventorySubScene.playerInventory.getData((Entity) selectedItem).get().getUserItem();
+//                    playerInventory.incrementQuantity(item, -1);
+//                }
+//                view.getListView().refresh();
+//            });
+//
+//            Button dropAll = getUIFactoryService().newButton("Drop All");
+//            dropAll.prefHeight(30.0);
+//            dropAll.prefWidth(135.0);
+//            dropAll.setTranslateX(35.0);
+//            dropAll.setTranslateY(370.0);
+//
+//            dropAll.setOnAction(actionEvent -> {
+//
+//                var selectedItem = (Entity) view.getListView().getSelectionModel().getSelectedItem();
+//
+//                if (selectedItem != null) {
+//                    var itemData = inventorySubScene.playerInventory.getData((Entity) selectedItem).get().getUserItem();
+//                    playerInventory.remove(selectedItem);
+//                }
+//                view.getListView().refresh();
+//            });
+//
+//            this.getContentRoot().getChildren().addAll(dropOne, dropAll);
+//        }
+//    }
 }
