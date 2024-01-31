@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.pathfinding.astar
 
-import com.almasb.fxgl.core.collection.grid.Diagonal
 import com.almasb.fxgl.pathfinding.CellState
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
@@ -47,21 +46,6 @@ class AStarPathfinderTest {
                 5, 1,
                 5, 0)
 
-        // Now test Diagonal Path Finding
-        grid.diagonal = Diagonal.ALLOWED
-        path = pathfinder.findPath(3, 0, 5, 0)
-        assertPathEquals(path,
-                3, 1,
-                3, 2,
-                3, 3,
-                3, 4,
-                4, 5,
-                5, 4,
-                5, 3,
-                5, 2,
-                5, 1,
-                5, 0)
-
         // Make passing impossible.
         for (i in 0..19) grid[4, i].state = CellState.NOT_WALKABLE
         path = pathfinder.findPath(3, 0, 5, 0)
@@ -76,7 +60,7 @@ class AStarPathfinderTest {
         grid[3, 3].state = CellState.NOT_WALKABLE
         grid[3, 5].state = CellState.NOT_WALKABLE
         grid[1, 4].state = CellState.NOT_WALKABLE
-        var path = pathfinder.findPath(1, 1, 4, 5, ArrayList())
+        val path = pathfinder.findPath(1, 1, 4, 5, ArrayList())
 
         assertThat(path.size, `is`(7))
 
@@ -85,30 +69,9 @@ class AStarPathfinderTest {
         assertThat(last.x, `is`(4))
         assertThat(last.y, `is`(5))
 
-        var pathWithBusyCell = pathfinder.findPath(1, 1, 4, 5, listOf(grid[3, 4]))
+        val pathWithBusyCell = pathfinder.findPath(1, 1, 4, 5, listOf(grid[3, 4]))
 
         assertThat(pathWithBusyCell.size, `is`(9))
-
-        last = pathWithBusyCell.last()
-
-        assertThat(last.x, `is`(4))
-        assertThat(last.y, `is`(5))
-
-        // Perform Diagonal Testing
-        grid.diagonal = Diagonal.ALLOWED
-
-        path = pathfinder.findPath(1, 1, 4, 5, ArrayList())
-
-        assertThat(path.size, `is`(4))
-
-        last = path.last()
-
-        assertThat(last.x, `is`(4))
-        assertThat(last.y, `is`(5))
-
-        pathWithBusyCell = pathfinder.findPath(1, 1, 4, 5, listOf(grid[3, 4]))
-
-        assertThat(pathWithBusyCell.size, `is`(6))
 
         last = pathWithBusyCell.last()
 

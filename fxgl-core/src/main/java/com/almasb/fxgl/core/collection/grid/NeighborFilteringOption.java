@@ -8,17 +8,17 @@ package com.almasb.fxgl.core.collection.grid;
 
 
 /**
- * Define Diagonal Movement mode
+ * Define Movement Directions
  *
  * @author Jean-Rene Lavoie (jeanrlavoie@gmail.com)
  */
-public enum Diagonal {
+public enum NeighborFilteringOption {
 
-    NEVER, ALLOWED;
+    FOUR_DIRECTIONS, EIGHT_DIRECTIONS;
 
-    public boolean is(Diagonal... diagonalMovements) {
-        for(Diagonal diagonalMovement : diagonalMovements) {
-            if(diagonalMovement.equals(this)) {
+    public boolean is(NeighborFilteringOption... neighborFilteringOptions) {
+        for(NeighborFilteringOption neighborFilteringOption : neighborFilteringOptions) {
+            if(neighborFilteringOption.equals(this)) {
                 return true;
             }
         }

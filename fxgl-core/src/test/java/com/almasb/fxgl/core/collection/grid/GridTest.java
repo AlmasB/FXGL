@@ -143,9 +143,8 @@ public class GridTest {
     }
 
     @Test
-    public void testGetDiagonalNeighbors() {
-        grid.setDiagonal(Diagonal.ALLOWED);
-        assertThat(grid.getNeighbors( 3,3), containsInAnyOrder(
+    public void testGetNeighborsHeightDirections() {
+        assertThat(grid.getNeighbors( 3,3, NeighborFilteringOption.EIGHT_DIRECTIONS), containsInAnyOrder(
             grid.get(2, 2),  grid.get(2, 3), grid.get(2, 4),
             grid.get(3, 2), grid.get(3, 4),  // Doesn't contain 3, 3 (self)
             grid.get(4, 2), grid.get(4, 3), grid.get(4, 4)

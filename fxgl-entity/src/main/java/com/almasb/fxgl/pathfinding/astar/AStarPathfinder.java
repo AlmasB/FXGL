@@ -6,22 +6,15 @@
 
 package com.almasb.fxgl.pathfinding.astar;
 
-import com.almasb.fxgl.core.collection.grid.Cell;
-import com.almasb.fxgl.core.collection.grid.Diagonal;
 import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.Pathfinder;
 
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public final class AStarPathfinder implements Pathfinder<AStarCell> {
-
-    private static final int WEIGHT = 10;
-    private static final int DIAGONAL_WEIGHT = (int)(Math.sqrt(2) * 10.0);
-    private static final int DIAGONAL_FACTOR = DIAGONAL_WEIGHT - WEIGHT;
 
     private final AStarGrid grid;
 
@@ -82,19 +75,10 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
             }
         }
 
-        Diagonal diagonal = this.grid.getDiagonal();
-
         // reset grid cells data
         for (int y = 0; y < grid[0].length; y++) {
             for (int x = 0; x < grid.length; x++) {
-                int hCost = switch(diagonal) {
-                    // Octile distance
-                    case ALLOWED -> getOctileDistance(x, y, target);
-                    // Manhattan distance
-                    default -> Math.abs(target.getX() - x) + Math.abs(target.getY() - y);
-                };
-
-                grid[x][y].setHCost(hCost);
+                grid[x][y].setHCost(Math.abs(target.getX() - x) + Math.abs(target.getY() - y));
                 grid[x][y].setParent(null);
                 grid[x][y].setGCost(0);
             }
@@ -117,17 +101,15 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
                 }
 
                 if (!closed.contains(neighbor)) {
-                    int gCost = isDiagonal(current, neighbor) ? DIAGONAL_WEIGHT : WEIGHT;
-                    int newGCost = current.getGCost() + gCost;
-
                     if (open.contains(neighbor)) {
-                        if (newGCost < neighbor.getGCost()) {
+                        int newG = current.getGCost() + 10;
+                        if (newG < neighbor.getGCost()) {
                             neighbor.setParent(current);
-                            neighbor.setGCost(newGCost);
+                            neighbor.setGCost(newG);
                         }
                     } else {
                         neighbor.setParent(current);
-                        neighbor.setGCost(newGCost);
+                        neighbor.setGCost(current.getGCost() + 10);
                         open.add(neighbor);
                     }
                 }
@@ -187,21 +169,6 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
         result.removeAll(Arrays.asList(busyNodes));
         result.removeIf(cell -> !cell.isWalkable());
         return result;
-    }
-
-    private int getOctileDistance(int x, int y, Cell target) {
-        int dx = Math.abs(x - target.getX());
-        int dy = Math.abs(y - target.getY());
-        if(dx == dy) {
-            return WEIGHT * (dx + dy);
-        } else if(dx < dy) {
-            return DIAGONAL_FACTOR * dx + WEIGHT * dy;
-        }
-        return DIAGONAL_FACTOR * dy + WEIGHT * dx;
-    }
-
-    private boolean isDiagonal(Cell current, Cell neighbor) {
-        return neighbor.getX() - current.getX() != 0 && neighbor.getY() - current.getY() != 0;
     }
 
 }

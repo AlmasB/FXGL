@@ -7,7 +7,7 @@
 package com.almasb.fxgl.core.collection.grid;
 
 import com.almasb.fxgl.core.math.FXGLMath;
-import static com.almasb.fxgl.core.collection.grid.Diagonal.*;
+import static com.almasb.fxgl.core.collection.grid.NeighborFilteringOption.*;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -29,7 +29,6 @@ public class Grid<T extends Cell> {
     private final int height;
     private final int cellWidth;
     private final int cellHeight;
-    private Diagonal diagonal;
 
     /**
      * Note: all cells are initialized to null.
@@ -39,24 +38,12 @@ public class Grid<T extends Cell> {
         this(type, width, height, (x, y) -> null);
     }
 
-    public Grid(Class<T> type, int width, int height, Diagonal diagonal) {
-        this(type, width, height, diagonal, (x, y) -> null);
-    }
-
     public Grid(Class<T> type, int width, int height, CellGenerator<T> populateFunction) {
         this(type, width, height, 0, 0, populateFunction);
     }
 
-    public Grid(Class<T> type, int width, int height, Diagonal diagonal, CellGenerator<T> populateFunction) {
-        this(type, width, height, 0, 0, diagonal, populateFunction);
-    }
-
-    public Grid(Class<T> type, int width, int height, int cellWidth, int cellHeight, CellGenerator<T> populateFunction) {
-        this(type, width, height, cellWidth, cellHeight, Diagonal.NEVER, populateFunction);
-    }
-
     @SuppressWarnings("unchecked")
-    public Grid(Class<T> type, int width, int height, int cellWidth, int cellHeight, Diagonal diagonal, CellGenerator<T> populateFunction) {
+    public Grid(Class<T> type, int width, int height, int cellWidth, int cellHeight, CellGenerator<T> populateFunction) {
         if (cellWidth < 0 || cellHeight < 0)
             throw new IllegalArgumentException("Cannot create grid with cells of negative size");
 
@@ -67,7 +54,6 @@ public class Grid<T extends Cell> {
         this.height = height;
         this.cellWidth = cellWidth;
         this.cellHeight = cellHeight;
-        this.diagonal = diagonal;
 
         data = (T[][]) Array.newInstance(type, width, height);
 
@@ -112,14 +98,6 @@ public class Grid<T extends Cell> {
         return cellHeight;
     }
 
-    public final void setDiagonal(Diagonal diagonal) {
-        this.diagonal = diagonal;
-    }
-
-    public final Diagonal getDiagonal() {
-        return diagonal;
-    }
-
     /**
      * Checks if given (x,y) is within the bounds of the grid,
      * i.e. get(x, y) won't return OOB.
@@ -146,20 +124,24 @@ public class Grid<T extends Cell> {
 
     /**
      * Note: returned cells are in the grid (i.e. bounds are checked).
-     * Diagonal cells are not included.
+     * NeighborFilteringOption defaulted to 4 directions.
      * The order is left, up, right, down.
      *
      * @return a new list of neighboring cells to given (x, y)
      */
     public final List<T> getNeighbors(int x, int y) {
+        return getNeighbors(x, y, FOUR_DIRECTIONS);
+    }
+
+    public final List<T> getNeighbors(int x, int y, NeighborFilteringOption neighborFilteringOption) {
         List<T> result = new ArrayList<>();
         getLeft(x, y).ifPresent(result::add);
         getUp(x, y).ifPresent(result::add);
         getRight(x, y).ifPresent(result::add);
         getDown(x, y).ifPresent(result::add);
 
-        // Include "Corner" neighbors only if diagonal movement is allowed
-        if(diagonal.is(ALLOWED)) {
+        // Include "Corner" neighbors when eight directions
+        if(neighborFilteringOption.is(EIGHT_DIRECTIONS)) {
             getUpLeft(x, y).ifPresent(result::add);
             getUpRight(x, y).ifPresent(result::add);
             getDownLeft(x, y).ifPresent(result::add);

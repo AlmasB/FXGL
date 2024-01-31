@@ -8,7 +8,6 @@ package intermediate.ai.pathfinding;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.core.collection.grid.Diagonal;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.pathfinding.CellMoveComponent;
 import com.almasb.fxgl.pathfinding.CellState;
@@ -41,7 +40,7 @@ public class AStarPathfindingSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        var grid = new AStarGrid(1280 / 40, 720 / 40, Diagonal.ALLOWED);
+        var grid = new AStarGrid(1280 / 40, 720 / 40);
 
         agent = entityBuilder()
                 .viewWithBBox(new Rectangle(40, 40, Color.BLUE))
