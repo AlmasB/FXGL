@@ -143,6 +143,15 @@ public class GridTest {
     }
 
     @Test
+    public void testGetNeighborsEightDirections() {
+        assertThat(grid.getNeighbors( 3,3, NeighborFilteringOption.EIGHT_DIRECTIONS), containsInAnyOrder(
+                grid.get(2, 2),  grid.get(2, 3), grid.get(2, 4),
+                grid.get(3, 2), grid.get(3, 4),  // Doesn't contain 3, 3 (self)
+                grid.get(4, 2), grid.get(4, 3), grid.get(4, 4)
+        ));
+    }
+
+    @Test
     public void testGetRandomCell() {
         for (int i = 0; i < 50; i++) {
             assertNotNull(grid.getRandomCell());
@@ -165,7 +174,7 @@ public class GridTest {
     }
 
     @Test
-    public void testDirections() {
+    public void testFourDirections() {
 
         // right cell
 
@@ -208,6 +217,58 @@ public class GridTest {
 
         assertThat(grid.getDown(grid.get(1,  GRID_SIZE - 1)).isPresent(), is(false));
     }
+
+    @Test
+    public void testEightDirections() {
+        // up right cell
+        Optional<MockCell> upRightCell = grid.getUpRight(grid.get(1, 1));
+
+        assertThat(upRightCell.isPresent(), is(true));
+        assertThat(upRightCell.get().getX(), is(2));
+        assertThat(upRightCell.get().getY(), is(0));
+
+        assertThat(grid.getUpRight(grid.get(0, 0)).isPresent(), is(false));
+        assertThat(grid.getUpRight(grid.get(0, GRID_SIZE-1)).isPresent(), is(true));
+        assertThat(grid.getUpRight(grid.get(GRID_SIZE-1, 0)).isPresent(), is(false));
+        assertThat(grid.getUpRight(grid.get(GRID_SIZE-1, GRID_SIZE-1)).isPresent(), is(false));
+
+        // up left Cell
+        Optional<MockCell> upLeftCell = grid.getUpLeft(grid.get(1, 1));
+
+        assertThat(upLeftCell.isPresent(), is(true));
+        assertThat(upLeftCell.get().getX(), is(0));
+        assertThat(upLeftCell.get().getY(), is(0));
+
+        assertThat(grid.getUpLeft(grid.get(0, 0)).isPresent(), is(false));
+        assertThat(grid.getUpLeft(grid.get(0, GRID_SIZE-1)).isPresent(), is(false));
+        assertThat(grid.getUpLeft(grid.get(GRID_SIZE-1, 0)).isPresent(), is(false));
+        assertThat(grid.getUpLeft(grid.get(GRID_SIZE-1, GRID_SIZE-1)).isPresent(), is(true));
+
+        // down right Cell
+        Optional<MockCell> downRightCell = grid.getDownRight(grid.get(1, 1));
+
+        assertThat(downRightCell.isPresent(), is(true));
+        assertThat(downRightCell.get().getX(), is(2));
+        assertThat(downRightCell.get().getY(), is(2));
+
+        assertThat(grid.getDownRight(grid.get(0, 0)).isPresent(), is(true));
+        assertThat(grid.getDownRight(grid.get(0, GRID_SIZE-1)).isPresent(), is(false));
+        assertThat(grid.getDownRight(grid.get(GRID_SIZE-1, 0)).isPresent(), is(false));
+        assertThat(grid.getDownRight(grid.get(GRID_SIZE-1, GRID_SIZE-1)).isPresent(), is(false));
+
+        // down left cell
+        Optional<MockCell> downLeftCell = grid.getDownLeft(grid.get(1, 1));
+
+        assertThat(downLeftCell.isPresent(), is(true));
+        assertThat(downLeftCell.get().getX(), is(0));
+        assertThat(downLeftCell.get().getY(), is(2));
+
+        assertThat(grid.getDownLeft(grid.get(0, 0)).isPresent(), is(false));
+        assertThat(grid.getDownLeft(grid.get(0, GRID_SIZE-1)).isPresent(), is(false));
+        assertThat(grid.getDownLeft(grid.get(GRID_SIZE-1, 0)).isPresent(), is(true));
+        assertThat(grid.getDownLeft(grid.get(GRID_SIZE-1, GRID_SIZE-1)).isPresent(), is(false));
+    }
+
 
     public static class MockCell extends Cell {
 

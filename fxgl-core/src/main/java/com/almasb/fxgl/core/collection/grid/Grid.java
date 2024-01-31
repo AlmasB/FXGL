@@ -7,6 +7,7 @@
 package com.almasb.fxgl.core.collection.grid;
 
 import com.almasb.fxgl.core.math.FXGLMath;
+import static com.almasb.fxgl.core.collection.grid.NeighborFilteringOption.*;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * @param <T> cell type
@@ -98,7 +98,6 @@ public class Grid<T extends Cell> {
         return cellHeight;
     }
 
-
     /**
      * Checks if given (x,y) is within the bounds of the grid,
      * i.e. get(x, y) won't return OOB.
@@ -124,18 +123,37 @@ public class Grid<T extends Cell> {
     }
 
     /**
-     * Note: returned cells are in the grid (i.e. bounds are checked).
-     * Diagonal cells are not included.
+     * Note: returned cells are in the grid (i.e. bounds are checked). (defaulted to 4 directions)
      * The order is left, up, right, down.
      *
      * @return a new list of neighboring cells to given (x, y)
      */
     public final List<T> getNeighbors(int x, int y) {
+        return getNeighbors(x, y, FOUR_DIRECTIONS);
+    }
+
+    /**
+     * Note: returned cells are in the grid (i.e. bounds are checked).
+     * NeighborFilteringOption allow filtering based on desired # of directions
+     * The order is left, up, right, down. + "Optionally" up-left, up-right, down-left, down-right
+     *
+     * @return a new list of neighboring cells to given (x, y)
+     */
+    public final List<T> getNeighbors(int x, int y, NeighborFilteringOption neighborFilteringOption) {
         List<T> result = new ArrayList<>();
         getLeft(x, y).ifPresent(result::add);
         getUp(x, y).ifPresent(result::add);
         getRight(x, y).ifPresent(result::add);
         getDown(x, y).ifPresent(result::add);
+
+        // Include "Corner" neighbors when eight directions
+        if(neighborFilteringOption.is(EIGHT_DIRECTIONS)) {
+            getUpLeft(x, y).ifPresent(result::add);
+            getUpRight(x, y).ifPresent(result::add);
+            getDownLeft(x, y).ifPresent(result::add);
+            getDownRight(x, y).ifPresent(result::add);
+        }
+
         return result;
     }
 
@@ -171,6 +189,22 @@ public class Grid<T extends Cell> {
         return getDown(cell.getX(), cell.getY());
     }
 
+    public final Optional<T> getUpRight(Cell cell) {
+        return getUpRight(cell.getX(), cell.getY());
+    }
+
+    public final Optional<T> getUpLeft(Cell cell) {
+        return getUpLeft(cell.getX(), cell.getY());
+    }
+
+    public final Optional<T> getDownRight(Cell cell) {
+        return getDownRight(cell.getX(), cell.getY());
+    }
+
+    public final Optional<T> getDownLeft(Cell cell) {
+        return getDownLeft(cell.getX(), cell.getY());
+    }
+
     public final Optional<T> getRight(int x, int y) {
         return getOptional(x + 1, y);
     }
@@ -186,6 +220,23 @@ public class Grid<T extends Cell> {
     public final Optional<T> getDown(int x, int y) {
         return getOptional(x, y + 1);
     }
+
+    public final Optional<T> getUpRight(int x, int y) {
+        return getOptional(x + 1, y - 1);
+    }
+
+    public final Optional<T> getUpLeft(int x, int y) {
+        return getOptional(x - 1, y - 1);
+    }
+
+    public final Optional<T> getDownRight(int x, int y) {
+        return getOptional(x + 1, y + 1);
+    }
+
+    public final Optional<T> getDownLeft(int x, int y) {
+        return getOptional(x - 1, y + 1);
+    }
+
 
     /**
      * @param x pixel coord x
@@ -248,7 +299,7 @@ public class Grid<T extends Cell> {
     public final Optional<T> getRandomCell(Random random, Predicate<T> predicate) {
         List<T> filtered = getCells().stream()
                 .filter(predicate)
-                .collect(Collectors.toList());
+                .toList();
 
         if (filtered.isEmpty())
             return Optional.empty();
