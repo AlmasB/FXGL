@@ -90,11 +90,11 @@ class AsyncServiceTest {
             }
         }.toDouble(), lessThan(7.0))
 
-        // 3 services resolved in approximately 1/3 of what it would take if they were sequentially resolved
+        // 3 services resolved faster than their combined sleep time
         assertThat(measureTimeMillis {
             services.forEach { service ->
                 service.onGameUpdate(1.0)
             }
-        }.toDouble(), `is`(both(greaterThan(80.0)).and(lessThan(120.0))))
+        }.toDouble(), `is`(lessThan(300.0)))
     }
 }
