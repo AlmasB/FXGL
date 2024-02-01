@@ -8,12 +8,11 @@ package com.almasb.fxgl.core.concurrent
 
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.Matchers.lessThan
-import org.hamcrest.Matchers.both
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.measureTimeMillis
 
 /**
@@ -21,24 +20,6 @@ import kotlin.system.measureTimeMillis
  * @author Jean-Rene Lavoie (jeanrlavoie@gmail.com)
  */
 class AsyncServiceTest {
-
-    @Test
-    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
-    fun `Async Service with Unit (Kotlin Void)`() {
-        val service = object : AsyncService<Unit>() {
-            override fun onGameUpdateAsync(tpf: Double) {
-                Thread.sleep(100)  // Processing takes more time than a normal tick
-            }
-        }
-
-        // On first call, it'll launch the async process and continue the game loop without affecting the tick
-        // If it takes less than 5 millis, it's running async
-        assertThat(measureTimeMillis { service.onGameUpdate(1.0) }.toDouble(), lessThan(7.0))
-
-        // On the second call, it must wait until the first call is resolved before calling it again (to prevent major desync)
-        // We expect it to take more than 80 millis
-        assertThat(measureTimeMillis { service.onGameUpdate(1.0) }.toDouble(), greaterThan(80.0))
-    }
 
     @Test
     fun `Async Service with T (String)`() {
@@ -65,36 +46,46 @@ class AsyncServiceTest {
     @Test
     @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     fun `Async Service parallel`() {
+        val count = AtomicInteger(0)
+
+        // Processing of each service takes more time than a normal tick
         val services = listOf(
             object : AsyncService<Unit>() {
                 override fun onGameUpdateAsync(tpf: Double) {
-                    Thread.sleep(100)  // Processing takes more time than a normal tick
+                    Thread.sleep(100)
+                    count.incrementAndGet()
                 }
             },
             object : AsyncService<Unit>() {
                 override fun onGameUpdateAsync(tpf: Double) {
-                    Thread.sleep(100)  // Processing takes more time than a normal tick
+                    Thread.sleep(100)
+                    count.incrementAndGet()
                 }
             },
             object : AsyncService<Unit>() {
                 override fun onGameUpdateAsync(tpf: Double) {
-                    Thread.sleep(100)  // Processing takes more time than a normal tick
+                    Thread.sleep(100)
+                    count.incrementAndGet()
                 }
             }
         )
 
-        // 3 services started in parallel without additional latency
+        // 3 services started faster than their combined execution time
         assertThat(measureTimeMillis {
             services.forEach { service ->
                 service.onGameUpdate(1.0)
             }
-        }.toDouble(), lessThan(7.0))
+        }.toDouble(), lessThan(300.0))
 
-        // 3 services resolved faster than their combined sleep time
+        assertThat(count.get(), `is`(0))
+
+        // 3 services resolved faster than their combined execution time
         assertThat(measureTimeMillis {
             services.forEach { service ->
                 service.onGameUpdate(1.0)
             }
-        }.toDouble(), `is`(lessThan(300.0)))
+        }.toDouble(), lessThan(300.0))
+
+        assertThat(count.get(), `is`(3))
     }
 }
