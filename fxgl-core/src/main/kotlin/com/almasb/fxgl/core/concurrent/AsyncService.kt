@@ -4,8 +4,9 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.core
+package com.almasb.fxgl.core.concurrent
 
+import com.almasb.fxgl.core.EngineService
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -22,7 +23,7 @@ abstract class AsyncService<T> : EngineService() {
      */
     override fun onGameUpdate(tpf: Double) {
         asyncTask?.let { onPostGameUpdateAsync(it.get()) }
-        asyncTask = CompletableFuture.supplyAsync(){ onGameUpdateAsync(tpf) } // Process until next onGameUpdate
+        asyncTask = CompletableFuture.supplyAsync() { onGameUpdateAsync(tpf) } // Process until next onGameUpdate
     }
 
     /**
@@ -37,5 +38,4 @@ abstract class AsyncService<T> : EngineService() {
      * Service async processing and the main JavaFX thread.
      */
     open fun onPostGameUpdateAsync(result: T) { }
-
 }

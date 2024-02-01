@@ -4,16 +4,16 @@
  * See LICENSE for details.
  */
 @file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
-package com.almasb.fxgl.core
+package com.almasb.fxgl.core.concurrent
 
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.Matchers.lessThan
 import org.hamcrest.Matchers.both
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import kotlin.system.measureTimeMillis
 
 /**
@@ -23,6 +23,7 @@ import kotlin.system.measureTimeMillis
 class AsyncServiceTest {
 
     @Test
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     fun `Async Service with Unit (Kotlin Void)`() {
         val service = object : AsyncService<Unit>() {
             override fun onGameUpdateAsync(tpf: Double) {
@@ -62,6 +63,7 @@ class AsyncServiceTest {
     }
 
     @Test
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
     fun `Async Service parallel`() {
         val services = listOf(
             object : AsyncService<Unit>() {
@@ -95,5 +97,4 @@ class AsyncServiceTest {
             }
         }.toDouble(), `is`(both(greaterThan(80.0)).and(lessThan(120.0))))
     }
-
 }
