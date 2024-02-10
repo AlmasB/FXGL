@@ -7,8 +7,9 @@
 package com.almasb.fxgl.cutscene.dialogue
 
 import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.core.reflect.ReflectionFunctionCaller
 import com.almasb.fxgl.logging.Logger
-import java.lang.reflect.Method
+import java.util.function.BiFunction
 
 /**
  *
@@ -275,67 +276,35 @@ abstract class FunctionCallHandler : FunctionCallDelegate {
 
     private val log = Logger.get(javaClass)
 
-    private val methods = hashMapOf<MethodSignature, InvokableMethod>()
-
-    /**
-     * Provides conversions from [String] to other types.
-     */
-    val stringToObject = hashMapOf<Class<*>, (String) -> Any>()
+    val rfc = ReflectionFunctionCaller()
 
     init {
-        // register common types
-        stringToObject[String::class.java] = { it }
-        stringToObject[Int::class.java] = { it.toInt() }
-        stringToObject[Double::class.java] = { it.toDouble() }
-        stringToObject[Boolean::class.java] = {
-            when (it) {
-                "true" -> true
-                "false" -> false
-                else -> throw java.lang.RuntimeException("Cannot convert $it to Boolean")
-            }
-        }
-
         // add self as a delegate so that all methods of the implementing class
         // are automatically added into [methods]
-        addFunctionCallDelegate(this)
+        rfc.addFunctionCallTarget(this)
+        rfc.defaultFunctionHandler = BiFunction { name, args ->
+            handle(name, args.toTypedArray())
+        }
     }
 
     fun addFunctionCallDelegate(obj: FunctionCallDelegate) {
-        obj.javaClass.declaredMethods.forEach {
-            val signature = MethodSignature(it.name, it.parameterCount)
-            val method = InvokableMethod(obj, it)
+        rfc.addFunctionCallTarget(obj)
 
-            methods[signature] = method
-
-            log.debug("Added cmd: $method ($signature)")
+        rfc.methods.forEach {
+            log.debug("Added cmd: $it")
         }
     }
 
     fun removeFunctionCallDelegate(obj: FunctionCallDelegate) {
-        methods.filterValues { it.delegate === obj }
-                .forEach { methods.remove(it.key) }
+        rfc.removeFunctionCallTarget(obj)
     }
 
     fun exists(functionName: String, paramCount: Int): Boolean {
-        return methods.containsKey(MethodSignature(functionName, paramCount))
+        return rfc.exists(functionName, paramCount)
     }
 
     fun call(functionName: String, args: Array<String>): Any {
-        val method = methods[MethodSignature(functionName, args.size)]
-
-        if (method != null) {
-            val argsAsObjects = method.function.parameterTypes.mapIndexed { index, type ->
-                val converter = stringToObject[type] ?: throw java.lang.RuntimeException("No converter found from String to $type")
-                converter.invoke(args[index])
-            }
-
-            // void returns null, but Any is expected, so we return 0 in such cases
-            return method.function.invoke(method.delegate, *argsAsObjects.toTypedArray()) ?: 0
-        }
-
-        log.warning("Unrecognized function: $functionName with ${args.size} arguments. Calling default implementation")
-
-        return handle(functionName, args)
+        return rfc.call(functionName, args)
     }
 
     /**
@@ -346,11 +315,4 @@ abstract class FunctionCallHandler : FunctionCallDelegate {
         log.warning("$functionName ${args.toList()}")
         return 0
     }
-
-    private data class MethodSignature(val name: String, val paramCount: Int)
-
-    /**
-     * Stores the object [delegate] and the function [function] that can be invoked on the object.
-     */
-    private data class InvokableMethod(val delegate: FunctionCallDelegate, val function: Method)
 }
