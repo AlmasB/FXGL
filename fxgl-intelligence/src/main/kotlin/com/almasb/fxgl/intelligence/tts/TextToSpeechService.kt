@@ -6,85 +6,58 @@
 
 package com.almasb.fxgl.intelligence.tts
 
-import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.intelligence.WebAPI
+import com.almasb.fxgl.intelligence.WebAPIService
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.net.ws.LocalWebSocketServer
-import com.almasb.fxgl.speechrecog.SpeechRecognitionService
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.chrome.ChromeOptions
 
 /**
- * TODO: remove duplicate code
- *
  * @author Almas Baim (https://github.com/AlmasB)
  */
-class TextToSpeechService : EngineService() {
+class TextToSpeechService : WebAPIService(
+        LocalWebSocketServer("TTSServer", WebAPI.TEXT_TO_SPEECH_PORT),
+        WebAPI.TEXT_TO_SPEECH_API
+) {
 
     private val log = Logger.get(TextToSpeechService::class.java)
-    private val server = LocalWebSocketServer("TTSServer", WebAPI.TEXT_TO_SPEECH_PORT)
 
-    private var webDriver: WebDriver? = null
+    private val synthVoices = arrayListOf<Voice>()
+    var selectedVoice: Voice = Voice("NULL")
 
-    override fun onInit() {
-        server.start()
+    val voices: List<Voice>
+        get() = synthVoices.toList()
+
+    override fun onWebDriverLoaded(webDriver: WebDriver) {
+        // force it to play, so the audio output is initialized
+        webDriver.findElement(By.id("play")).click()
     }
 
-    /**
-     * Starts this service in a background thread.
-     * Can be called after stop() to restart the service.
-     * If the service has already started, then calls stop() and restarts it.
-     */
-    fun start() {
-        Async.startAsync {
-            try {
-                if (webDriver != null) {
-                    stop()
-                }
+    private fun initVoices(voiceNames: List<String>) {
+        synthVoices += voiceNames.map { Voice(it) }
 
-                val options = ChromeOptions()
-                options.addArguments("--headless=new")
-                options.addArguments("--use-fake-ui-for-media-stream")
-
-                webDriver = ChromeDriver(options)
-                webDriver!!.get(WebAPI.TEXT_TO_SPEECH_API)
-
-                // TODO: update web-api impl
-                // force it to play, so the audio output is initialized
-                webDriver!!.findElement(By.id("play")).click()
-
-                // we are ready to use the web api service
-            } catch (e: Exception) {
-                log.warning("Failed to start Chrome web driver. Ensure Chrome is installed in default location")
-                log.warning("Error data", e)
-            }
+        if (synthVoices.isNotEmpty()) {
+            selectedVoice = synthVoices[0]
         }
-    }
 
-    /**
-     * Stops this service.
-     * No-op if it has not started via start() before.
-     */
-    fun stop() {
-        try {
-            if (webDriver != null) {
-                webDriver!!.quit()
-                webDriver = null
-            }
-        } catch (e: Exception) {
-            log.warning("Failed to quit web driver", e)
+        Async.startAsyncFX {
+            isReady = true
         }
     }
 
     fun speak(text: String) {
-        server.send(text)
+        if (!isReady || synthVoices.isEmpty())
+            return
+
+        rpcRun("speak", selectedVoice.name, text)
     }
 
     override fun onExit() {
         stop()
-        server.stop()
+        super.onExit()
     }
 }
+
+data class Voice internal constructor(val name: String)
