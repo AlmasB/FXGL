@@ -6,9 +6,10 @@
 
 package sandbox.net;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.speechrecog.SpeechRecognitionService;
+import com.almasb.fxgl.intelligence.speechrecog.SpeechRecognitionService;
 import com.almasb.fxgl.ui.FontType;
 import javafx.scene.control.TextArea;
 
@@ -26,14 +27,17 @@ public class SpeechRecogSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.addEngineService(SpeechRecognitionService.class);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
     protected void initGame() {
-        getService(SpeechRecognitionService.class).addInputHandler(input -> {
-            getExecutor().startAsyncFX(() -> {
-                output.appendText(input + "\n");
-            });
+        getService(SpeechRecognitionService.class).readyProperty().addListener((o, old, isReady) -> {
+            System.out.println("Updated readyProperty: " + isReady);
+        });
+
+        getService(SpeechRecognitionService.class).addInputHandler((input, confidence) -> {
+            output.appendText(String.format("(confidence %.0f) %s\n", confidence*100, input));
         });
 
         getService(SpeechRecognitionService.class).start();

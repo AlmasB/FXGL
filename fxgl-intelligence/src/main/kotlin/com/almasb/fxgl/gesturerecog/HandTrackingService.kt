@@ -10,7 +10,6 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.intelligence.WebAPI
 import com.almasb.fxgl.logging.Logger
-import com.almasb.fxgl.speechrecog.SpeechRecognitionService
 import com.almasb.fxgl.net.ws.LocalWebSocketServer
 import javafx.geometry.Point3D
 import org.openqa.selenium.WebDriver
@@ -25,7 +24,7 @@ import java.util.function.Consumer
  */
 class HandTrackingService : EngineService() {
 
-    private val log = Logger.get(SpeechRecognitionService::class.java)
+    private val log = Logger.get(HandTrackingService::class.java)
     private val server = LocalWebSocketServer("HandTrackingServer", WebAPI.GESTURE_RECOGNITION_PORT)
 
     private var webDriver: WebDriver? = null

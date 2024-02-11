@@ -42,9 +42,7 @@ class TextToSpeechService : WebAPIService(
             selectedVoice = synthVoices[0]
         }
 
-        Async.startAsyncFX {
-            isReady = true
-        }
+        setReady()
     }
 
     fun speak(text: String) {
@@ -52,11 +50,6 @@ class TextToSpeechService : WebAPIService(
             return
 
         rpcRun("speak", selectedVoice.name, text)
-    }
-
-    override fun onExit() {
-        stop()
-        super.onExit()
     }
 }
 

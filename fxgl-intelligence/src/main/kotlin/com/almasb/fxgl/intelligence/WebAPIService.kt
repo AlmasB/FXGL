@@ -29,10 +29,26 @@ abstract class WebAPIService(server: LocalWebSocketServer, private val apiURL: S
 
     var isReady: Boolean
         get() = readyProp.value
-        protected set(value) { readyProp.value = value }
+        private set(value) { readyProp.value = value }
 
+    /**
+     * @return a property that tracks whether this service is ready to be used
+     * all changes to the property are notified on the JavaFX thread
+     */
     fun readyProperty(): ReadOnlyBooleanProperty {
         return readyProp.readOnlyProperty
+    }
+
+    protected fun setReady() {
+        Async.startAsyncFX {
+            isReady = true
+        }
+    }
+
+    protected fun setNotReady() {
+        Async.startAsyncFX {
+            isReady = false
+        }
     }
 
     private var webDriver: WebDriver? = null
@@ -69,6 +85,8 @@ abstract class WebAPIService(server: LocalWebSocketServer, private val apiURL: S
      * No-op if it has not started via start() before.
      */
     fun stop() {
+        setNotReady()
+
         try {
             if (webDriver != null) {
                 webDriver!!.quit()
@@ -77,6 +95,11 @@ abstract class WebAPIService(server: LocalWebSocketServer, private val apiURL: S
         } catch (e: Exception) {
             log.warning("Failed to quit web driver", e)
         }
+    }
+
+    override fun onExit() {
+        stop()
+        super.onExit()
     }
 
     /**

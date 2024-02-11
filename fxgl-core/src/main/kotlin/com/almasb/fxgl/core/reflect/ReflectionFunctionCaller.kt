@@ -26,7 +26,7 @@ class ReflectionFunctionCaller {
     private val stringToObject = hashMapOf<Class<*>, (String) -> Any>()
 
     var defaultFunctionHandler: BiFunction<String, List<String>, Any> = BiFunction { name, args ->
-        throw RuntimeException("No function handler for $name with $args")
+        throw RuntimeException("No function handler for $name with args $args")
     }
 
     val methods: List<Method>

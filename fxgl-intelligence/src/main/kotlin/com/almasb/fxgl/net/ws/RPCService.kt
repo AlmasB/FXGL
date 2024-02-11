@@ -39,6 +39,8 @@ abstract class RPCService(
                 val funcName = message.substringAfter(FUNCTION_CALL_TAG).substringBefore(SEPARATOR)
                 val args = message.substringAfter(SEPARATOR)
                         .split(SEPARATOR)
+                        // TODO: we should just remove the last empty item
+                        // otherwise this could filter empty String that is a genuine argument
                         .filter { it.isNotEmpty() }
 
                 rfc.call(funcName, args)
