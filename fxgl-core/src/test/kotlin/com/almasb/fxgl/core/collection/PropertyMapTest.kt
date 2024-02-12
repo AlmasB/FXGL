@@ -8,7 +8,6 @@ package com.almasb.fxgl.core.collection
 
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.core.serialization.Bundle
-import javafx.beans.property.Property
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.StringProperty
 import org.hamcrest.MatcherAssert.assertThat
