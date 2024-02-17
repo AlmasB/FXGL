@@ -28,7 +28,7 @@ import java.util.List;
  * @author Daniel Murphy
  */
 public final class Body {
-    static final int e_islandFlag = 0x0001;
+    private static final int e_islandFlag = 0x0001;
 
     private static final int e_awakeFlag = 0x0002;
     private static final int e_autoSleepFlag = 0x0004;
@@ -936,6 +936,26 @@ public final class Body {
             m_flags |= e_bulletFlag;
         } else {
             m_flags &= ~e_bulletFlag;
+        }
+    }
+
+    boolean isIslandFlagOff() {
+        return (m_flags & e_islandFlag) == 0;
+    }
+
+    boolean isIslandFlagOn() {
+        return (m_flags & e_islandFlag) != 0;
+    }
+
+    boolean isIslandFlagOn2() {
+        return (m_flags & e_islandFlag) == e_islandFlag;
+    }
+
+    void setIslandFlag(boolean flag) {
+        if (flag) {
+            m_flags |= e_islandFlag;
+        } else {
+            m_flags &= ~e_islandFlag;
         }
     }
 

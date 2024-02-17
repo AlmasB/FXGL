@@ -530,7 +530,7 @@ class Island {
     void resetFlagsAndSynchronizeBroadphaseProxies() {
         for (int i = 0; i < bodyCount; ++i) {
             Body body = bodies[i];
-            body.m_flags &= ~Body.e_islandFlag;
+            body.setIslandFlag(false);
 
             if (body.getType() != BodyType.DYNAMIC) {
                 continue;
@@ -550,7 +550,7 @@ class Island {
             // Allow static bodies to participate in other islands.
             Body b = bodies[i];
             if (b.getType() == BodyType.STATIC) {
-                b.m_flags &= ~Body.e_islandFlag;
+                b.setIslandFlag(false);
             }
         }
     }
