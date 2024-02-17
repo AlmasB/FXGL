@@ -28,6 +28,8 @@ import com.almasb.fxgl.physics.box2d.particle.VoronoiDiagram.VoronoiDiagramCallb
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
+import static com.almasb.fxgl.physics.box2d.common.JBoxSettings.*;
+
 public class ParticleSystem {
     /**
      * All particle types that require creating pairs
@@ -76,16 +78,16 @@ public class ParticleSystem {
     private int m_count = 0;
     private int m_internalAllocatedCapacity = 0;
     private int m_maxCount = 0;
-    private ParticleBufferInt m_flagsBuffer;
-    ParticleBuffer<Vec2> m_positionBuffer;
-    ParticleBuffer<Vec2> m_velocityBuffer;
+    private ParticleBufferInt m_flagsBuffer = new ParticleBufferInt();
+    ParticleBuffer<Vec2> m_positionBuffer = new ParticleBuffer<Vec2>(Vec2.class);
+    ParticleBuffer<Vec2> m_velocityBuffer = new ParticleBuffer<Vec2>(Vec2.class);
     private float[] m_accumulationBuffer; // temporary values
     private Vec2[] m_accumulation2Buffer; // temporary vector values
     private float[] m_depthBuffer; // distance from the surface
 
-    private ParticleBuffer<ParticleColor> m_colorBuffer;
+    private ParticleBuffer<ParticleColor> m_colorBuffer = new ParticleBuffer<ParticleColor>(ParticleColor.class);
     private ParticleGroup[] m_groupBuffer;
-    private ParticleBuffer<Object> m_userDataBuffer;
+    private ParticleBuffer<Object> m_userDataBuffer = new ParticleBuffer<Object>(Object.class);
 
     private int m_proxyCount = 0;
     private int m_proxyCapacity = 0;
@@ -125,17 +127,11 @@ public class ParticleSystem {
 
     public ParticleSystem(World world) {
         m_world = world;
-
-        m_flagsBuffer = new ParticleBufferInt();
-        m_positionBuffer = new ParticleBuffer<Vec2>(Vec2.class);
-        m_velocityBuffer = new ParticleBuffer<Vec2>(Vec2.class);
-        m_colorBuffer = new ParticleBuffer<ParticleColor>(ParticleColor.class);
-        m_userDataBuffer = new ParticleBuffer<Object>(Object.class);
     }
 
     public int createParticle(ParticleDef def) {
         if (m_count >= m_internalAllocatedCapacity) {
-            int capacity = m_count != 0 ? 2 * m_count : JBoxSettings.minParticleBufferCapacity;
+            int capacity = m_count != 0 ? 2 * m_count : minParticleBufferCapacity;
             capacity = limitCapacity(capacity, m_maxCount);
             capacity = limitCapacity(capacity, m_flagsBuffer.userSuppliedCapacity);
             capacity = limitCapacity(capacity, m_positionBuffer.userSuppliedCapacity);
@@ -150,26 +146,22 @@ public class ParticleSystem {
                 m_velocityBuffer.data =
                         reallocateBuffer(m_velocityBuffer, m_internalAllocatedCapacity, capacity, false);
                 m_accumulationBuffer =
-                        reallocateBuffer(m_accumulationBuffer, 0, m_internalAllocatedCapacity,
-                                capacity, false);
+                        reallocateBuffer(m_accumulationBuffer, 0, m_internalAllocatedCapacity, capacity, false);
                 m_accumulation2Buffer =
-                        reallocateBuffer(Vec2.class, m_accumulation2Buffer, 0,
-                                m_internalAllocatedCapacity, capacity, true);
+                        reallocateBuffer(Vec2.class, m_accumulation2Buffer, 0, m_internalAllocatedCapacity, capacity, true);
                 m_depthBuffer =
-                        reallocateBuffer(m_depthBuffer, 0, m_internalAllocatedCapacity, capacity,
-                                true);
+                        reallocateBuffer(m_depthBuffer, 0, m_internalAllocatedCapacity, capacity, true);
                 m_colorBuffer.data =
                         reallocateBuffer(m_colorBuffer, m_internalAllocatedCapacity, capacity, true);
                 m_groupBuffer =
-                        reallocateBuffer(ParticleGroup.class, m_groupBuffer, 0,
-                                m_internalAllocatedCapacity, capacity, false);
+                        reallocateBuffer(ParticleGroup.class, m_groupBuffer, 0, m_internalAllocatedCapacity, capacity, false);
                 m_userDataBuffer.data =
                         reallocateBuffer(m_userDataBuffer, m_internalAllocatedCapacity, capacity, true);
                 m_internalAllocatedCapacity = capacity;
             }
         }
         if (m_count >= m_internalAllocatedCapacity) {
-            return JBoxSettings.invalidParticleIndex;
+            return invalidParticleIndex;
         }
         int index = m_count++;
         m_flagsBuffer.data[index] = def.getTypeFlags();
@@ -189,7 +181,7 @@ public class ParticleSystem {
         }
         if (m_proxyCount >= m_proxyCapacity) {
             int oldCapacity = m_proxyCapacity;
-            int newCapacity = m_proxyCount != 0 ? 2 * m_proxyCount : JBoxSettings.minParticleBufferCapacity;
+            int newCapacity = m_proxyCount != 0 ? 2 * m_proxyCount : minParticleBufferCapacity;
             m_proxyBuffer =
                     reallocateBuffer(Proxy.class, m_proxyBuffer, oldCapacity, newCapacity);
             m_proxyCapacity = newCapacity;
@@ -257,10 +249,8 @@ public class ParticleSystem {
             }
             final float upperBoundY = aabb.upperBound.y;
             final float upperBoundX = aabb.upperBound.x;
-            for (float y = FXGLMath.floor(aabb.lowerBound.y / stride) * stride; y < upperBoundY; y +=
-                    stride) {
-                for (float x = FXGLMath.floor(aabb.lowerBound.x / stride) * stride; x < upperBoundX; x +=
-                        stride) {
+            for (float y = FXGLMath.floor(aabb.lowerBound.y / stride) * stride; y < upperBoundY; y += stride) {
+                for (float x = FXGLMath.floor(aabb.lowerBound.x / stride) * stride; x < upperBoundX; x += stride) {
                     Vec2 p = tempVec;
                     p.x = x;
                     p.y = y;
@@ -313,7 +303,7 @@ public class ParticleSystem {
                     if (m_pairCount >= m_pairCapacity) {
                         int oldCapacity = m_pairCapacity;
                         int newCapacity =
-                                m_pairCount != 0 ? 2 * m_pairCount : JBoxSettings.minParticleBufferCapacity;
+                                m_pairCount != 0 ? 2 * m_pairCount : minParticleBufferCapacity;
                         m_pairBuffer =
                                 reallocateBuffer(Pair.class, m_pairBuffer, oldCapacity, newCapacity);
                         m_pairCapacity = newCapacity;
@@ -373,8 +363,7 @@ public class ParticleSystem {
                         && b < groupB.m_lastIndex) {
                     if (m_pairCount >= m_pairCapacity) {
                         int oldCapacity = m_pairCapacity;
-                        int newCapacity =
-                                m_pairCount != 0 ? 2 * m_pairCount : JBoxSettings.minParticleBufferCapacity;
+                        int newCapacity = m_pairCount != 0 ? 2 * m_pairCount : minParticleBufferCapacity;
                         m_pairBuffer =
                                 reallocateBuffer(Pair.class, m_pairBuffer, oldCapacity, newCapacity);
                         m_pairCapacity = newCapacity;
@@ -512,8 +501,7 @@ public class ParticleSystem {
         if (d2 < m_squaredDiameter) {
             if (m_contactCount >= m_contactCapacity) {
                 int oldCapacity = m_contactCapacity;
-                int newCapacity =
-                        m_contactCount != 0 ? 2 * m_contactCount : JBoxSettings.minParticleBufferCapacity;
+                int newCapacity = m_contactCount != 0 ? 2 * m_contactCount : minParticleBufferCapacity;
                 m_contactBuffer =
                         reallocateBuffer(ParticleContact.class, m_contactBuffer, oldCapacity,
                                 newCapacity);
@@ -743,9 +731,7 @@ public class ParticleSystem {
         for (int i = 0; i < m_count; i++) {
             float w = m_accumulationBuffer[i];
             float h =
-                    pressurePerWeight
-                            * Math.max(0.0f, Math.min(w, JBoxSettings.maxParticleWeight)
-                            - JBoxSettings.minParticleWeight);
+                    pressurePerWeight * Math.max(0.0f, Math.min(w, maxParticleWeight) - minParticleWeight);
             m_accumulationBuffer[i] = h;
         }
         // applies pressure between each particles in contact
@@ -1052,7 +1038,7 @@ public class ParticleSystem {
 
     private void solvePowder(final TimeStep step) {
         float powderStrength = m_powderStrength * getCriticalVelocity(step);
-        float minWeight = 1.0f - JBoxSettings.particleStride;
+        float minWeight = 1.0f - particleStride;
         for (int k = 0; k < m_bodyContactCount; k++) {
             final ParticleBodyContact contact = m_bodyContactBuffer[k];
             int a = contact.index;
@@ -1162,7 +1148,7 @@ public class ParticleSystem {
                 if ((flags & ParticleTypeInternal.b2_destructionListener) != 0 && destructionListener != null) {
                     destructionListener.onDestroy(i);
                 }
-                newIndices[i] = JBoxSettings.invalidParticleIndex;
+                newIndices[i] = invalidParticleIndex;
             } else {
                 newIndices[i] = newCount;
                 if (i != newCount) {
@@ -1468,7 +1454,7 @@ public class ParticleSystem {
     }
 
     float getParticleStride() {
-        return JBoxSettings.particleStride * m_particleDiameter;
+        return particleStride * m_particleDiameter;
     }
 
     float getParticleMass() {
@@ -1768,7 +1754,7 @@ public class ParticleSystem {
             final float dbcy = pb.y - pc.y;
             final float dcax = pc.x - pa.x;
             final float dcay = pc.y - pa.y;
-            float maxDistanceSquared = JBoxSettings.maxTriadDistanceSquared * system.m_squaredDiameter;
+            float maxDistanceSquared = maxTriadDistanceSquared * system.m_squaredDiameter;
             if (dabx * dabx + daby * daby < maxDistanceSquared
                     && dbcx * dbcx + dbcy * dbcy < maxDistanceSquared
                     && dcax * dcax + dcay * dcay < maxDistanceSquared) {
@@ -1777,7 +1763,7 @@ public class ParticleSystem {
                     int newCapacity =
                             system.m_triadCount != 0
                                     ? 2 * system.m_triadCount
-                                    : JBoxSettings.minParticleBufferCapacity;
+                                    : minParticleBufferCapacity;
                     system.m_triadBuffer =
                             reallocateBuffer(Triad.class, system.m_triadBuffer, oldCapacity,
                                     newCapacity);
@@ -1828,7 +1814,7 @@ public class ParticleSystem {
                     final float dbcy = pb.y - pc.y;
                     final float dcax = pc.x - pa.x;
                     final float dcay = pc.y - pa.y;
-                    float maxDistanceSquared = JBoxSettings.maxTriadDistanceSquared * system.m_squaredDiameter;
+                    float maxDistanceSquared = maxTriadDistanceSquared * system.m_squaredDiameter;
                     if (dabx * dabx + daby * daby < maxDistanceSquared
                             && dbcx * dbcx + dbcy * dbcy < maxDistanceSquared
                             && dcax * dcax + dcay * dcay < maxDistanceSquared) {
@@ -1837,7 +1823,7 @@ public class ParticleSystem {
                             int newCapacity =
                                     system.m_triadCount != 0
                                             ? 2 * system.m_triadCount
-                                            : JBoxSettings.minParticleBufferCapacity;
+                                            : minParticleBufferCapacity;
                             system.m_triadBuffer =
                                     reallocateBuffer(Triad.class, system.m_triadBuffer, oldCapacity,
                                             newCapacity);
@@ -1947,7 +1933,7 @@ public class ParticleSystem {
                             float rpn = rpx * n.y - rpy * n.x;
                             if (system.m_bodyContactCount >= system.m_bodyContactCapacity) {
                                 int oldCapacity = system.m_bodyContactCapacity;
-                                int newCapacity = system.m_bodyContactCount != 0 ? 2 * system.m_bodyContactCount : JBoxSettings.minParticleBufferCapacity;
+                                int newCapacity = system.m_bodyContactCount != 0 ? 2 * system.m_bodyContactCount : minParticleBufferCapacity;
 
                                 system.m_bodyContactBuffer = reallocateBuffer(ParticleBodyContact.class, system.m_bodyContactBuffer, oldCapacity, newCapacity);
                                 system.m_bodyContactCapacity = newCapacity;
@@ -2016,8 +2002,8 @@ public class ParticleSystem {
                         input.maxFraction = 1;
                         if (fixture.raycast(output, input, childIndex)) {
                             final Vec2 p = tempVec;
-                            p.x = (1 - output.fraction) * input.p1.x + output.fraction * input.p2.x + JBoxSettings.linearSlop * output.normal.x;
-                            p.y = (1 - output.fraction) * input.p1.y + output.fraction * input.p2.y + JBoxSettings.linearSlop * output.normal.y;
+                            p.x = (1 - output.fraction) * input.p1.x + output.fraction * input.p2.x + linearSlop * output.normal.x;
+                            p.y = (1 - output.fraction) * input.p1.y + output.fraction * input.p2.y + linearSlop * output.normal.y;
 
                             final float vx = step.inv_dt * (p.x - ap.x);
                             final float vy = step.inv_dt * (p.y - ap.y);
