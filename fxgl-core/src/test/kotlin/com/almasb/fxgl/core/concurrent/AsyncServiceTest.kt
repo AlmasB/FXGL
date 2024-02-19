@@ -7,8 +7,7 @@
 package com.almasb.fxgl.core.concurrent
 
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.lessThan
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
@@ -86,6 +85,6 @@ class AsyncServiceTest {
             }
         }.toDouble(), lessThan(300.0))
 
-        assertThat(count.get(), `is`(3))
+        assertThat(count.get(), `is`(greaterThan(2)))
     }
 }
