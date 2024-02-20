@@ -321,8 +321,8 @@ class PropertyMap : SerializableType {
     }
 
     override fun read(bundle: Bundle) {
-        bundle.data.forEach { (key) ->
-            this.setValue(key, toValue(bundle.get(key)));
+        bundle.data.forEach { (key, value) ->
+            this.setValue(key, toValue(value.toString()))
         }
     }
 
