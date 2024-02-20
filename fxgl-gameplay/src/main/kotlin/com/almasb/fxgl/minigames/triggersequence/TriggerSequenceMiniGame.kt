@@ -37,14 +37,16 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
     private val circle = StackPane()
     private val bg = Circle(40.0, 40.0, 40.0, Color.GREEN)
 
+    private val line1 = Line(0.0, 0.0, 0.0, 300.0)
+    private val line2 = Line(100.0, 0.0, 100.0, 300.0)
+
     private val triggerViews = Group()
 
     private val good = ImageView(Image(javaClass.getResourceAsStream("checkmark.png")))
     private val bad = ImageView(Image(javaClass.getResourceAsStream("cross.png")))
 
     init {
-        val line1 = Line(0.0, 0.0, 0.0, 300.0)
-        val line2 = Line(100.0, 0.0, 100.0, 300.0)
+
         line1.strokeWidth = 2.0
         line2.strokeWidth = 2.0
 
@@ -87,13 +89,18 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
             override fun onActionBegin(trigger: Trigger) {
                 if (trigger is KeyTrigger) {
                     val key = trigger.key
+                    val currentTrigger = triggerViews.children[0]
 
                     circle.opacity = 1.0
 
                     if (triggerViews.children.isNotEmpty())
                         triggerViews.children.removeAt(0)
 
-                    if (miniGame.press(key)) {
+                    // Has the correct key been pressed, and is the current view between the two lines
+                    if (miniGame.press(key) &&
+                        currentTrigger.translateX >= line1.startX &&
+                        currentTrigger.translateX <= line2.startX)
+                    {
                         animationGood.start()
                         bg.fill = Color.GREEN
 
