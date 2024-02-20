@@ -314,9 +314,9 @@ class PropertyMap : SerializableType {
 
     override fun write(bundle: Bundle) {
         // Convert to string map
-        this.toStringMap().forEach { key, value ->
+        this.toStringMap().forEach { (key, value) ->
             // write to bundle
-            bundle.put(key, value);
+            bundle.put(key, value)
         }
     }
 
