@@ -6,13 +6,11 @@
 
 package com.almasb.fxgl.core.collection.grid;
 
-
 /**
- * Define Movement Directions
+ * Defines neighboring directions.
  *
  * @author Jean-Rene Lavoie (jeanrlavoie@gmail.com)
  */
-public enum NeighborFilteringOption {
-
-    FOUR_DIRECTIONS, EIGHT_DIRECTIONS;
+public enum NeighborDirection {
+    FOUR_DIRECTIONS, EIGHT_DIRECTIONS
 }

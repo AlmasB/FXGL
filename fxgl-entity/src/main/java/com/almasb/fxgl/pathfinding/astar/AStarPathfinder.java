@@ -7,8 +7,8 @@
 package com.almasb.fxgl.pathfinding.astar;
 
 import com.almasb.fxgl.core.collection.grid.Cell;
-import com.almasb.fxgl.core.collection.grid.NeighborFilteringOption;
-import static com.almasb.fxgl.core.collection.grid.NeighborFilteringOption.*;
+import com.almasb.fxgl.core.collection.grid.NeighborDirection;
+import static com.almasb.fxgl.core.collection.grid.NeighborDirection.*;
 import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.Pathfinder;
 import com.almasb.fxgl.pathfinding.heuristic.Heuristic;
@@ -62,8 +62,8 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
     }
 
     @Override
-    public List<AStarCell> findPath(int sourceX, int sourceY, int targetX, int targetY, NeighborFilteringOption neighborFilteringOption) {
-        return findPath(grid.getData(), grid.get(sourceX, sourceY), grid.get(targetX, targetY), neighborFilteringOption);
+    public List<AStarCell> findPath(int sourceX, int sourceY, int targetX, int targetY, NeighborDirection neighborDirection) {
+        return findPath(grid.getData(), grid.get(sourceX, sourceY), grid.get(targetX, targetY), neighborDirection);
     }
 
     @Override
@@ -72,8 +72,8 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
     }
 
     @Override
-    public List<AStarCell> findPath(int sourceX, int sourceY, int targetX, int targetY, NeighborFilteringOption neighborFilteringOption, List<AStarCell> busyCells) {
-        return findPath(grid.getData(), grid.get(sourceX, sourceY), grid.get(targetX, targetY), neighborFilteringOption, busyCells.toArray(new AStarCell[0]));
+    public List<AStarCell> findPath(int sourceX, int sourceY, int targetX, int targetY, NeighborDirection neighborDirection, List<AStarCell> busyCells) {
+        return findPath(grid.getData(), grid.get(sourceX, sourceY), grid.get(targetX, targetY), neighborDirection, busyCells.toArray(new AStarCell[0]));
     }
 
     /**
@@ -87,7 +87,7 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
      * @return          path as list of nodes from start (excl) to target (incl) or empty list if no path found
      */
     public List<AStarCell> findPath(AStarCell[][] grid, AStarCell start, AStarCell target, AStarCell... busyNodes) {
-        return findPath(grid, start, target, NeighborFilteringOption.FOUR_DIRECTIONS, busyNodes);
+        return findPath(grid, start, target, NeighborDirection.FOUR_DIRECTIONS, busyNodes);
     }
 
     /**
@@ -100,7 +100,7 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
      * @param busyNodes busy "unwalkable" nodes
      * @return          path as list of nodes from start (excl) to target (incl) or empty list if no path found
      */
-    public List<AStarCell> findPath(AStarCell[][] grid, AStarCell start, AStarCell target, NeighborFilteringOption neighborFilteringOption, AStarCell... busyNodes) {
+    public List<AStarCell> findPath(AStarCell[][] grid, AStarCell start, AStarCell target, NeighborDirection neighborDirection, AStarCell... busyNodes) {
         if (start == target || target.getState() == CellState.NOT_WALKABLE)
             return Collections.emptyList();
 
@@ -114,7 +114,7 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
             }
         }
 
-        Heuristic<AStarCell> heuristic = (neighborFilteringOption == FOUR_DIRECTIONS) ? defaultHeuristic : diagonalHeuristic;
+        Heuristic<AStarCell> heuristic = (neighborDirection == FOUR_DIRECTIONS) ? defaultHeuristic : diagonalHeuristic;
 
         // reset grid cells data
         for (int y = 0; y < grid[0].length; y++) {
@@ -133,7 +133,7 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
         boolean found = false;
 
         while (!found && !closed.contains(target)) {
-            for (AStarCell neighbor : getValidNeighbors(current, neighborFilteringOption, busyNodes)) {
+            for (AStarCell neighbor : getValidNeighbors(current, neighborDirection, busyNodes)) {
                 if (neighbor == target) {
                     target.setParent(current);
                     found = true;
@@ -208,8 +208,8 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
      * @param busyNodes nodes which are busy, i.e. walkable but have a temporary obstacle
      * @return neighbors of the node
      */
-    private List<AStarCell> getValidNeighbors(AStarCell node, NeighborFilteringOption neighborFilteringOption, AStarCell... busyNodes) {
-        var result = grid.getNeighbors(node.getX(), node.getY(), neighborFilteringOption);
+    private List<AStarCell> getValidNeighbors(AStarCell node, NeighborDirection neighborDirection, AStarCell... busyNodes) {
+        var result = grid.getNeighbors(node.getX(), node.getY(), neighborDirection);
         result.removeAll(Arrays.asList(busyNodes));
         result.removeIf(cell -> !cell.isWalkable());
         return result;

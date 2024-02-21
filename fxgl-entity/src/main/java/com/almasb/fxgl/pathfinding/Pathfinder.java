@@ -7,7 +7,7 @@
 package com.almasb.fxgl.pathfinding;
 
 import com.almasb.fxgl.core.collection.grid.Cell;
-import com.almasb.fxgl.core.collection.grid.NeighborFilteringOption;
+import com.almasb.fxgl.core.collection.grid.NeighborDirection;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public interface Pathfinder<T extends Cell> {
      *
      * @return a list of cells from source (excl.) to target (incl.)
      */
-    List<T> findPath(int sourceX, int sourceY, int targetX, int targetY, NeighborFilteringOption neighborFilteringOption);
+    List<T> findPath(int sourceX, int sourceY, int targetX, int targetY, NeighborDirection neighborDirection);
 
     /**
      * Empty list is returned if no path exists.
@@ -42,6 +42,6 @@ public interface Pathfinder<T extends Cell> {
      *
      * @return a list of cells from source (excl.) to target (incl.) while ignoring busyCells
      */
-    List<T> findPath(int sourceX, int sourceY, int targetX, int targetY, NeighborFilteringOption neighborFilteringOption, List<T> busyCells);
+    List<T> findPath(int sourceX, int sourceY, int targetX, int targetY, NeighborDirection neighborDirection, List<T> busyCells);
 
 }

@@ -5,7 +5,7 @@
  */
 package com.almasb.fxgl.pathfinding.astar
 
-import com.almasb.fxgl.core.collection.grid.NeighborFilteringOption
+import com.almasb.fxgl.core.collection.grid.NeighborDirection
 import com.almasb.fxgl.pathfinding.CellState
 import com.almasb.fxgl.pathfinding.heuristic.ManhattanDistance
 import com.almasb.fxgl.pathfinding.heuristic.OctileDistance
@@ -53,7 +53,7 @@ class AStarPathfinderTest {
                 5, 0)
 
         // Now test Diagonal Path Finding
-        path = pathfinder.findPath(3, 0, 5, 0, NeighborFilteringOption.EIGHT_DIRECTIONS)
+        path = pathfinder.findPath(3, 0, 5, 0, NeighborDirection.EIGHT_DIRECTIONS)
         assertPathEquals(path,
             3, 1,
             3, 2,
@@ -95,7 +95,7 @@ class AStarPathfinderTest {
             5, 0)
 
         // Now test Diagonal Path Finding
-        path = pathfinderHeuristics.findPath(3, 0, 5, 0, NeighborFilteringOption.EIGHT_DIRECTIONS)
+        path = pathfinderHeuristics.findPath(3, 0, 5, 0, NeighborDirection.EIGHT_DIRECTIONS)
         assertPathEquals(path,
             3, 1,
             3, 2,
@@ -144,7 +144,7 @@ class AStarPathfinderTest {
 
 
         // Perform Diagonal Testing
-        path = pathfinder.findPath(1, 1, 4, 5, NeighborFilteringOption.EIGHT_DIRECTIONS, ArrayList())
+        path = pathfinder.findPath(1, 1, 4, 5, NeighborDirection.EIGHT_DIRECTIONS, ArrayList())
 
         assertThat(path.size, `is`(4))
 
@@ -153,7 +153,7 @@ class AStarPathfinderTest {
         assertThat(last.x, `is`(4))
         assertThat(last.y, `is`(5))
 
-        pathWithBusyCell = pathfinder.findPath(1, 1, 4, 5, NeighborFilteringOption.EIGHT_DIRECTIONS, listOf(grid[3, 4]))
+        pathWithBusyCell = pathfinder.findPath(1, 1, 4, 5, NeighborDirection.EIGHT_DIRECTIONS, listOf(grid[3, 4]))
 
         assertThat(pathWithBusyCell.size, `is`(6))
 
@@ -191,7 +191,7 @@ class AStarPathfinderTest {
 
 
         // Perform Diagonal Testing
-        path = pathfinderHeuristics.findPath(1, 1, 4, 5, NeighborFilteringOption.EIGHT_DIRECTIONS, ArrayList())
+        path = pathfinderHeuristics.findPath(1, 1, 4, 5, NeighborDirection.EIGHT_DIRECTIONS, ArrayList())
 
         assertThat(path.size, `is`(6))
 
@@ -200,7 +200,7 @@ class AStarPathfinderTest {
         assertThat(last.x, `is`(4))
         assertThat(last.y, `is`(5))
 
-        pathWithBusyCell = pathfinderHeuristics.findPath(1, 1, 4, 5, NeighborFilteringOption.EIGHT_DIRECTIONS, listOf(grid[3, 4]))
+        pathWithBusyCell = pathfinderHeuristics.findPath(1, 1, 4, 5, NeighborDirection.EIGHT_DIRECTIONS, listOf(grid[3, 4]))
 
         assertThat(pathWithBusyCell.size, `is`(8))
 
