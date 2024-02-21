@@ -14,16 +14,39 @@ import com.almasb.fxgl.pathfinding.CellState;
  */
 public class AStarCell extends Cell {
 
+    private static final int DEFAULT_MOVEMENT_COST = 30;
+
     private AStarCell parent;
 
     private CellState state;
+
+    /**
+     * Determines the movement (G) cost into this cell.
+     * For example, this can take into account different types of terrain:
+     * grass, mountains, sand, water, etc.
+     * This is typically greater than the (H) cost of the cell.
+     */
+    private int movementCost;
 
     private int gCost;
     private int hCost;
 
     public AStarCell(int x, int y, CellState state) {
+        this(x, y, state, DEFAULT_MOVEMENT_COST);
+    }
+
+    public AStarCell(int x, int y, CellState state, int movementCost) {
         super(x, y);
         this.state = state;
+        this.movementCost = movementCost;
+    }
+
+    public final void setMovementCost(int movementCost) {
+        this.movementCost = movementCost;
+    }
+
+    public final int getMovementCost() {
+        return movementCost;
     }
 
     public final void setParent(AStarCell parent) {

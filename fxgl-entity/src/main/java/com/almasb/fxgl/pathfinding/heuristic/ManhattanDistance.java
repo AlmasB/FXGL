@@ -8,10 +8,14 @@ package com.almasb.fxgl.pathfinding.heuristic;
 
 import com.almasb.fxgl.core.collection.grid.Cell;
 
+import static java.lang.Math.*;
+
 /**
+ * See https://en.wikipedia.org/wiki/Taxicab_geometry for definition.
+ *
  * @author Jean-René Lavoie (jeanrlavoie@gmail.com)
  */
-public class ManhattanDistance<T extends Cell> extends Heuristic<T> {
+public final class ManhattanDistance<T extends Cell> extends Heuristic<T> {
 
     public ManhattanDistance() {
         super();
@@ -22,8 +26,7 @@ public class ManhattanDistance<T extends Cell> extends Heuristic<T> {
     }
 
     @Override
-    public int getCost(int x, int y, T target) {
-        return (Math.abs(target.getX() - x) + Math.abs(target.getY() - y)) * getWeight();
+    public int getCost(int startX, int startY, int targetX, int targetY) {
+        return (abs(targetX - startX) + abs(targetY - startY)) * getWeight();
     }
-
 }

@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.collection.grid.NeighborDirection;
 import static com.almasb.fxgl.core.collection.grid.NeighborDirection.*;
 import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.Pathfinder;
+import com.almasb.fxgl.pathfinding.heuristic.DiagonalHeuristic;
 import com.almasb.fxgl.pathfinding.heuristic.Heuristic;
 import com.almasb.fxgl.pathfinding.heuristic.ManhattanDistance;
 import com.almasb.fxgl.pathfinding.heuristic.OctileDistance;
@@ -25,16 +26,16 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
     private final AStarGrid grid;
 
     private final Heuristic<AStarCell> defaultHeuristic;
-    private final Heuristic<AStarCell> diagonalHeuristic;
+    private final DiagonalHeuristic<AStarCell> diagonalHeuristic;
 
     private boolean isCachingPaths = false;
     private Map<CacheKey, List<AStarCell>> cache = new HashMap<>();
 
     public AStarPathfinder(AStarGrid grid) {
-        this(grid, new ManhattanDistance<>(10), new OctileDistance<>());
+        this(grid, new ManhattanDistance<>(), new OctileDistance<>());
     }
 
-    public AStarPathfinder(AStarGrid grid, Heuristic<AStarCell> defaultHeuristic, Heuristic<AStarCell> diagonalHeuristic) {
+    public AStarPathfinder(AStarGrid grid, Heuristic<AStarCell> defaultHeuristic, DiagonalHeuristic<AStarCell> diagonalHeuristic) {
         this.grid = grid;
         this.defaultHeuristic = defaultHeuristic;
         this.diagonalHeuristic = diagonalHeuristic;
@@ -119,7 +120,7 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
         // reset grid cells data
         for (int y = 0; y < grid[0].length; y++) {
             for (int x = 0; x < grid.length; x++) {
-                grid[x][y].setHCost(heuristic.getCost(x, y, target));
+                grid[x][y].setHCost(heuristic.getCost(x, y, target.getX(), target.getY()));
                 grid[x][y].setParent(null);
                 grid[x][y].setGCost(0);
             }
@@ -142,12 +143,16 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
                 }
 
                 if (!closed.contains(neighbor)) {
-                    int gCost = isDiagonal(current, neighbor) ? diagonalHeuristic.getWeight() : defaultHeuristic.getWeight();
+                    int gCost = isDiagonal(current, neighbor)
+                            ? diagonalHeuristic.getDiagonalWeight()
+                            : defaultHeuristic.getWeight();
+
+                    gCost *= neighbor.getMovementCost();
+
                     int newGCost = current.getGCost() + gCost;
 
                     if (open.contains(neighbor)) {
                         if (newGCost < neighbor.getGCost()) {
-
                             neighbor.setParent(current);
                             neighbor.setGCost(newGCost);
                         }
