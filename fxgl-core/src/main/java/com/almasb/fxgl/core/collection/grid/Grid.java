@@ -147,7 +147,7 @@ public class Grid<T extends Cell> {
         getDown(x, y).ifPresent(result::add);
 
         // Include "Corner" neighbors when eight directions
-        if(neighborFilteringOption.is(EIGHT_DIRECTIONS)) {
+        if (neighborFilteringOption == EIGHT_DIRECTIONS) {
             getUpLeft(x, y).ifPresent(result::add);
             getUpRight(x, y).ifPresent(result::add);
             getDownLeft(x, y).ifPresent(result::add);

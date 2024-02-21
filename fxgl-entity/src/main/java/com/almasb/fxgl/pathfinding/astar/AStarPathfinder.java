@@ -114,7 +114,7 @@ public final class AStarPathfinder implements Pathfinder<AStarCell> {
             }
         }
 
-        Heuristic<AStarCell> heuristic = (neighborFilteringOption.is(FOUR_DIRECTIONS)) ? defaultHeuristic : diagonalHeuristic;
+        Heuristic<AStarCell> heuristic = (neighborFilteringOption == FOUR_DIRECTIONS) ? defaultHeuristic : diagonalHeuristic;
 
         // reset grid cells data
         for (int y = 0; y < grid[0].length; y++) {

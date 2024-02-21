@@ -15,14 +15,4 @@ package com.almasb.fxgl.core.collection.grid;
 public enum NeighborFilteringOption {
 
     FOUR_DIRECTIONS, EIGHT_DIRECTIONS;
-
-    public boolean is(NeighborFilteringOption... neighborFilteringOptions) {
-        for(NeighborFilteringOption neighborFilteringOption : neighborFilteringOptions) {
-            if(neighborFilteringOption.equals(this)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }
