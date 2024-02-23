@@ -15,6 +15,8 @@ import javafx.beans.property.ReadOnlyBooleanWrapper
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.firefox.FirefoxOptions
 
 /**
  * Provides access to JS-driven implementation.
@@ -65,19 +67,48 @@ abstract class WebAPIService(server: LocalWebSocketServer, private val apiURL: S
                     stop()
                 }
 
-                val options = ChromeOptions()
-                options.addArguments("--headless=new")
-                options.addArguments("--use-fake-ui-for-media-stream")
-
-                webDriver = ChromeDriver(options)
-                webDriver!!.get(apiURL)
+                webDriver = loadWebDriverAndPage(apiURL)
 
                 onWebDriverLoaded(webDriver!!)
             } catch (e: Exception) {
-                log.warning("Failed to start Chrome web driver. Ensure Chrome is installed in default location")
+                log.warning("Failed to start web driver.")
                 log.warning("Error data", e)
             }
         }
+    }
+
+    private fun loadWebDriverAndPage(url: String): WebDriver {
+        val driverSuppliers = listOf(
+                { loadChromeDriver() },
+                { loadFirefoxDriver() }
+        )
+
+        driverSuppliers.forEach { supplier ->
+            try {
+                val driver = supplier()
+                driver.get(url)
+                return driver
+            } catch (e: Exception) {
+                log.warning("Failed to load web driver/page. Ensure Chrome or Firefox is installed in default location", e)
+            }
+        }
+
+        throw RuntimeException("No valid driver was able to load: $url")
+    }
+
+    private fun loadFirefoxDriver(): WebDriver {
+        val options = FirefoxOptions()
+        options.addArguments("--headless")
+
+        return FirefoxDriver(options)
+    }
+
+    private fun loadChromeDriver(): WebDriver {
+        val options = ChromeOptions()
+        options.addArguments("--headless=new")
+        options.addArguments("--use-fake-ui-for-media-stream")
+
+        return ChromeDriver(options)
     }
 
     /**
