@@ -126,7 +126,6 @@ constructor(
          */
         val description: String,
 
-        // TODO:
         /**
          * How much time is given to complete this objective.
          * Default: 0 - unlimited.

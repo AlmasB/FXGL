@@ -43,7 +43,6 @@ class SpeechRecognitionService : WebAPIService(
         setReady()
     }
 
-    // TODO: expand API to also include alternative text options
     private fun onSpeechInput(text: String, confidence: Double) {
         log.debug("Received speech input ($confidence): $text")
 

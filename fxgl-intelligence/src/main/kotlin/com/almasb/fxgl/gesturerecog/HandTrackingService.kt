@@ -18,7 +18,6 @@ import org.openqa.selenium.chrome.ChromeOptions
 import java.util.function.Consumer
 
 /**
- * TODO: remove duplicate code
  *
  * @author Almas Baim (https://github.com/AlmasB)
  */

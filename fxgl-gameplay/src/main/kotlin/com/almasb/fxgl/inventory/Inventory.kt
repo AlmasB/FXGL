@@ -260,7 +260,6 @@ class ItemData<T> internal constructor(var userItem: T) {
     fun nameProperty() = nameProperty
     fun descriptionProperty() = descriptionProperty
 
-    // TODO: make it read-only
     fun quantityProperty() = quantityProperty
 
     var view: Node
