@@ -8,21 +8,8 @@ package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.quest.Quest;
-import com.almasb.fxgl.quest.QuestService;
 import com.almasb.fxgl.ui.SoftwareCursor;
-import com.sun.glass.events.MouseEvent;
-import javafx.scene.Cursor;
-import javafx.scene.Group;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
-
-import java.awt.*;
-import java.awt.event.MouseMotionListener;
-import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
