@@ -60,6 +60,11 @@ import java.util.function.Supplier
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+
+// CONSTANTS
+private const val BUTTON_WIDTH = 200; // Size from FXGLButton.java
+private const val MENU_PADDING = 50;
+private const val MAX_CONTENT_SIZE = 500.0 // Based on Credits Box.
 open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
     companion object {
@@ -89,13 +94,25 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         else
             createMenuBodyGameMenu()
         
-        val menuX = 50.0
-        val menuY = appHeight / 2.0 - menu.layoutHeight / 2
+        var menuX = 0.0
+        val menuY = appHeight / 2.0 - menu.layoutHeight / 2;
+        var menuContentX = 0.0
+
+        if (appWidth >= 1200)
+        {
+            menuX = appWidth / 2.0 - BUTTON_WIDTH - MENU_PADDING;
+            menuContentX = appWidth / 2.0 + MENU_PADDING;
+        }
+        else
+        {
+            menuX = (appWidth - (BUTTON_WIDTH + MENU_PADDING * 2 + MAX_CONTENT_SIZE)) / 2
+            menuContentX = menuX + BUTTON_WIDTH + MENU_PADDING * 2
+        }
 
         menuRoot.translateX = menuX
         menuRoot.translateY = menuY
 
-        menuContentRoot.translateX = appWidth - 500.0
+        menuContentRoot.translateX = menuContentX
         menuContentRoot.translateY = menuY
 
         initParticles()
