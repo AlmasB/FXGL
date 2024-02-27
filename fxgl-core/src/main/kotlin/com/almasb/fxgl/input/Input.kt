@@ -264,16 +264,6 @@ class Input {
         } while (eventType != null)
     }
 
-    /**
-     * Fire JavaFX event via handlers.
-     *
-     * @param event the JavaFX event
-     */
-    @Deprecated("Use [fireEventViaHandlers]", ReplaceWith("fireEventViaHandlers(event)"))
-    fun fireEvent(event: Event) {
-        fireEventViaHandlers(event)
-    }
-
     fun update(tpf: Double) {
         time += tpf
 
@@ -634,11 +624,11 @@ class Input {
     /* MOCKING */
 
     internal fun mockKeyPressEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
-        fireEvent(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
+        fireEventViaHandlers(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
     }
 
     internal fun mockKeyReleaseEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
-        fireEvent(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
+        fireEventViaHandlers(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
     }
 
     fun mockTriggerPress(trigger: Trigger) {
