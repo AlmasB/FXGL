@@ -24,11 +24,10 @@ import java.util.EnumSet;
 public class MenuSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1920);
+        settings.setWidth(800);
         settings.setHeight(600);
         settings.setMainMenuEnabled(true);
         settings.setGameMenuEnabled(true);
-        settings.setManualResizeEnabled(true);
         settings.setFullScreenAllowed(true);
         settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
         settings.getCredits().addAll(Arrays.asList(
