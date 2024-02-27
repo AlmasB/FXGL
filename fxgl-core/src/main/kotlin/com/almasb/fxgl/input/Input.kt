@@ -400,7 +400,10 @@ class Input {
     }
 
     private fun handleReleased(event: InputEvent) {
-        val releasedTriggers = activeTriggers.filter { it.isReleased(event) || (it is KeyTrigger && isIllegal(it.key)) }
+        val releasedTriggers = activeTriggers.filter {
+            // input modifiers are never released under the standard check, so we need the second branch
+            it.isReleased(event) || (it is KeyTrigger && isIllegal(it.key) && event is KeyEvent && event.code == it.key)
+        }
         releasedTriggers.forEach {
             handleTriggerReleased(it)
         }
