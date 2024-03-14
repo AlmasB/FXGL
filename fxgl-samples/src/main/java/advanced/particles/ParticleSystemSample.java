@@ -73,12 +73,12 @@ public class ParticleSystemSample extends GameApplication {
         spinnerVelX.setPrefWidth(65);
         spinnerVelY.setPrefWidth(65);
 
-        spinnerVelX.valueProperty().addListener((observable, oldValue, newValue) -> {
-            emitter.setVelocityFunction(i -> new Point2D(newValue, spinnerVelY.getValue()));
+        spinnerVelX.valueProperty().subscribe(newX -> {
+            emitter.setVelocityFunction(i -> new Point2D(newX, spinnerVelY.getValue()));
         });
 
-        spinnerVelY.valueProperty().addListener((observable, oldValue, newValue) -> {
-            emitter.setVelocityFunction(i -> new Point2D(spinnerVelX.getValue(), newValue));
+        spinnerVelY.valueProperty().subscribe(newY -> {
+            emitter.setVelocityFunction(i -> new Point2D(spinnerVelX.getValue(), newY));
         });
 
         Spinner<Double> spinnerAccelX = new Spinner<>(-150.0, 150.0, 0.0, 10);
@@ -87,12 +87,12 @@ public class ParticleSystemSample extends GameApplication {
         spinnerAccelX.setPrefWidth(65);
         spinnerAccelY.setPrefWidth(65);
 
-        spinnerAccelX.valueProperty().addListener((observable, oldValue, newValue) -> {
-            emitter.setAccelerationFunction(() -> new Point2D(newValue, spinnerAccelY.getValue()));
+        spinnerAccelX.valueProperty().subscribe(newX -> {
+            emitter.setAccelerationFunction(() -> new Point2D(newX, spinnerAccelY.getValue()));
         });
 
-        spinnerAccelY.valueProperty().addListener((observable, oldValue, newValue) -> {
-            emitter.setAccelerationFunction(() -> new Point2D(spinnerAccelX.getValue(), newValue));
+        spinnerAccelY.valueProperty().subscribe(newY -> {
+            emitter.setAccelerationFunction(() -> new Point2D(spinnerAccelX.getValue(), newY));
         });
 
         ChoiceBox<BlendMode> choiceBlend = getUIFactoryService().newChoiceBox(
