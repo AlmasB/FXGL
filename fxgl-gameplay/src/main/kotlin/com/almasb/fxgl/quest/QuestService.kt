@@ -12,7 +12,8 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 
 /**
- * Keeps track of quests, allows adding, removing and starting quests.
+ * Allows constructing new quests.
+ * Keeps track of started (active) quests.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -21,57 +22,53 @@ class QuestService : EngineService() {
     private val quests = FXCollections.observableArrayList<Quest>()
     private val unmodifiableQuests = FXCollections.unmodifiableObservableList(quests)
 
-    private lateinit var vars: PropertyMap
+    private var vars = PropertyMap()
 
     /**
      * @return unmodifiable list of currently tracked quests
      */
     fun questsProperty(): ObservableList<Quest> = unmodifiableQuests
 
-    /**
-     * Add a quest to be tracked by the service.
-     */
-    fun addQuest(quest: Quest) {
-        quests.add(quest)
+    override fun onVarsInitialized(vars: PropertyMap) {
+        this.vars = vars
     }
 
     /**
-     * Remove a quest from being tracked by the service.
+     * Constructs a new quest with given [name] and variables data [varsMap].
+     * By default, the variables data is taken from the game variables.
      */
-    fun removeQuest(quest: Quest) {
-        quests.remove(quest)
-
-        quest.objectivesProperty().forEach { it.unbind() }
+    @JvmOverloads fun newQuest(name: String, varsMap: PropertyMap = vars): Quest {
+        return Quest(name, varsMap)
     }
 
     /**
-     * Start given quest. Will automatically track it.
+     * Start the [quest] and adds it to tracked list.
      */
     fun startQuest(quest: Quest) {
-        if (quest !in quests)
-            addQuest(quest)
-
-        bindToVars(quest)
+        quests.add(quest)
         quest.start()
     }
 
-    fun removeAllQuests() {
-        quests.toList().forEach { removeQuest(it) }
+    /**
+     * Stops the [quest] and removes it from tracked list.
+     */
+    fun stopQuest(quest: Quest) {
+        quests.remove(quest)
+        quest.stop()
     }
 
-    override fun onGameReady(vars: PropertyMap) {
-        this.vars = vars
-
-        quests.filter { it.state == QuestState.ACTIVE }
-                .forEach {
-                    bindToVars(it)
-                }
+    /**
+     * Stops all quests and removes them from being tracked.
+     */
+    fun stopAllQuests() {
+        quests.toList().forEach { stopQuest(it) }
     }
 
-    private fun bindToVars(quest: Quest) {
-        quest.objectivesProperty().forEach {
-            it.unbind()
-            it.bindTo(vars)
-        }
+    override fun onGameUpdate(tpf: Double) {
+        quests.forEach { it.onUpdate(tpf) }
+    }
+
+    override fun onGameReset() {
+        stopAllQuests()
     }
 }
