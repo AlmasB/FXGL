@@ -636,6 +636,7 @@ class FXGLApplication : Application() {
             log.debug("Clearing previous game")
 
             gameSceneRef.reset()
+            engine.resetServices()
         }
 
         fun saveGame(dataFile: DataFile) {

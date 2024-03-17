@@ -174,6 +174,10 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
         services.forEach { it.onMainLoopResumed() }
     }
 
+    fun resetServices() {
+        services.forEach { it.onGameReset() }
+    }
+
     fun write(bundle: Bundle) {
         settings.write(bundle)
         services.forEach { it.write(bundle) }

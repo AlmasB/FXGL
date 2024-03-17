@@ -48,6 +48,12 @@ abstract class EngineService : Updatable, SerializableType {
     open fun onGameUpdate(tpf: Double) { }
 
     /**
+     * Called on the JavaFX thread after the game scene has been reset,
+     * when starting a new game or loading the game from a save file.
+     */
+    open fun onGameReset() { }
+
+    /**
      * Called just before the engine exits and the application shuts down.
      */
     open fun onExit() { }
