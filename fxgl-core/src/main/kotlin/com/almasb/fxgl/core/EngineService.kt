@@ -31,6 +31,12 @@ abstract class EngineService : Updatable, SerializableType {
     open fun onMainLoopStarting() { }
 
     /**
+     * Called after initGameVars() is completed.
+     * This is called on a background thread.
+     */
+    open fun onVarsInitialized(vars: PropertyMap) { }
+
+    /**
      * Called when initGame(), initPhysics(), initUI() all completed and
      * the game is ready to be played.
      * This is called on a background thread.

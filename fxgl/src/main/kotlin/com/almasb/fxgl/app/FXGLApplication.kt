@@ -338,6 +338,8 @@ class FXGLApplication : Application() {
                 FXGL.getWorldProperties().setValue(name, value)
             }
 
+            engine.onVarsInitialized(FXGL.getWorldProperties())
+
             app.initGame();
         }
 

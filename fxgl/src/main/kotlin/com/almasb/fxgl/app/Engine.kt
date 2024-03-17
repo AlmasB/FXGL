@@ -138,6 +138,10 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
         services.forEach { it.onGameUpdate(tpf) }
     }
 
+    fun onVarsInitialized(vars: PropertyMap) {
+        services.forEach { it.onVarsInitialized(vars) }
+    }
+
     fun onGameReady(vars: PropertyMap) {
         services.forEach { it.onGameReady(vars) }
     }
