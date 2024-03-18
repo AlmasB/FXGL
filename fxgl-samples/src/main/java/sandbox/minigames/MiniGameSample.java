@@ -44,7 +44,7 @@ public class MiniGameSample extends GameApplication {
 
         var btn1 = new Button("Trigger Sequence");
         btn1.setOnAction(e -> {
-            getMiniGameService().startTriggerSequence(List.of(S, F, A), result -> {
+            getMiniGameService().startTriggerSequence(List.of(S, F, A), 1.0, result -> {
                 debugText.setText(result.isSuccess() ? "Success" : "Fail");
             });
         });
