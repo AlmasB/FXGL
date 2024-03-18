@@ -1,3 +1,11 @@
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
+
+package com.almasb.fxgl.core.collection.grid;
+
 public class DungeonCell extends Cell {
     private int cellType;
 
