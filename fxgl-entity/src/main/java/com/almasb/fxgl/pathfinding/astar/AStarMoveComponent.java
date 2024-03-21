@@ -25,13 +25,13 @@ import java.util.Random;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Required(CellMoveComponent.class)
-public final class AStarMoveComponent extends Component {
+public final class AStarMoveComponent<T extends AStarCell> extends Component {
 
     private CellMoveComponent moveComponent;
 
-    private LazyValue<AStarPathfinder> pathfinder;
+    private LazyValue<AStarPathfinder<T>> pathfinder;
 
-    private List<AStarCell> path = new ArrayList<>();
+    private List<T> path = new ArrayList<>();
 
     private Runnable delayedPathCalc = EmptyRunnable.INSTANCE;
 
@@ -44,21 +44,21 @@ public final class AStarMoveComponent extends Component {
         }
     };
 
-    public AStarMoveComponent(AStarGrid grid) {
+    public AStarMoveComponent(TraversableGrid<T> grid) {
         this(new LazyValue<>(() -> grid));
     }
 
     /**
      * This ctor is for cases when the grid has not been constructed yet.
      */
-    public AStarMoveComponent(LazyValue<AStarGrid> grid) {
-        pathfinder = new LazyValue<>(() -> new AStarPathfinder(grid.get()));
+    public AStarMoveComponent(LazyValue<TraversableGrid<T>> grid) {
+        pathfinder = new LazyValue<>(() -> new AStarPathfinder<>(grid.get()));
     }
 
     /**
      * This ctor is for cases when using a pre-built pathfinder.
      */
-    public AStarMoveComponent(AStarPathfinder pathfinderValue) {
+    public AStarMoveComponent(AStarPathfinder<T> pathfinderValue) {
         pathfinder = new LazyValue<>(() -> pathfinderValue);
     }
 
@@ -93,7 +93,7 @@ public final class AStarMoveComponent extends Component {
         return isAtDestinationProp.get();
     }
 
-    public AStarGrid getGrid() {
+    public TraversableGrid<T> getGrid() {
         return pathfinder.get().getGrid();
     }
 
@@ -104,7 +104,7 @@ public final class AStarMoveComponent extends Component {
      *
      * @return cell where this entity is located
      */
-    public Optional<AStarCell> getCurrentCell() {
+    public Optional<T> getCurrentCell() {
         var cellX = moveComponent.getCellX();
         var cellY = moveComponent.getCellY();
 

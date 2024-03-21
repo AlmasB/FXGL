@@ -19,8 +19,8 @@ import java.util.function.Supplier
 
 class AStarPathfinderTest {
     private lateinit var grid: AStarGrid
-    private lateinit var pathfinder: AStarPathfinder
-    private lateinit var pathfinderHeuristics: AStarPathfinder
+    private lateinit var pathfinder: AStarPathfinder<AStarCell>
+    private lateinit var pathfinderHeuristics: AStarPathfinder<AStarCell>
 
     @BeforeEach
     fun setUp() {

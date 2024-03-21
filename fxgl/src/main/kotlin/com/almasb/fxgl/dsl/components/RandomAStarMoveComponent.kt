@@ -21,7 +21,7 @@ import java.util.function.Predicate
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Required(AStarMoveComponent::class)
-class RandomAStarMoveComponent
+class RandomAStarMoveComponent<T : AStarCell>
 @JvmOverloads constructor(
 
         /**
@@ -50,7 +50,7 @@ class RandomAStarMoveComponent
 
 ) : Component() {
 
-    private lateinit var astar: AStarMoveComponent
+    private lateinit var astar: AStarMoveComponent<T>
 
     private val moveTimer = FXGL.newLocalTimer()
 
