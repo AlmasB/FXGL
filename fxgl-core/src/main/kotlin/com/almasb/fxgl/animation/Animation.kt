@@ -66,6 +66,23 @@ abstract class Animation<T>(
         }
     }
 
+    fun playReverse(){
+        if (!isAnimating) {
+            isReverse = true
+            play()
+        }
+    }
+
+    /**
+     * Plays Animation from current position in the direction indicated by rate.
+     */
+    fun play(){
+        if (!isAnimating) {
+            isAnimating = true
+            onProgress(animatedValue.getValue(if (isReverse) 1.0 else 0.0))
+        }
+    }
+
     fun stop() {
         if (isAnimating) {
             isAnimating = false

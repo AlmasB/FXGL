@@ -26,6 +26,7 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
     private var currentFrame = 0
 
     private lateinit var animation: Animation<Int>
+    private var animationList = mutableListOf<Animation<Int>>();
 
     var animationChannel: AnimationChannel = defaultChannel
         private set(value) {
@@ -65,8 +66,14 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
      * The animation will stop on the last frame.
      */
     fun playAnimationChannel(channel: AnimationChannel, startFrame: Int) {
-        playAnimationChannel(channel)
+        animationChannel = channel
 
+        jumpTo(startFrame)
+
+        animation.play()
+    }
+
+    fun jumpTo(startFrame: Int){
         currentFrame = startFrame
         animation.setTimeTo(currentFrame.toDouble() * animationChannel.frameDuration)
     }
