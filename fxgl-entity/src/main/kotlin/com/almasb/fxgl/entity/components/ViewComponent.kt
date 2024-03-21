@@ -163,10 +163,17 @@ class ViewComponent : Component() {
      * Add a child node to this view.
      */
     @JvmOverloads fun addChild(node: Node, isTransformApplied: Boolean = true) {
+        addChild(node, isTransformApplied, true)
+    }
+
+    /**
+     * Add a child node to this view.
+     */
+    fun addChild(node: Node, isTransformApplied: Boolean, addLast: Boolean) {
         if (isTransformApplied) {
-            addToGroup(viewRoot, node)
+            addToGroup(viewRoot, node, addLast)
         } else {
-            addToGroup(viewRootNoTransform, node)
+            addToGroup(viewRootNoTransform, node, addLast)
         }
 
         if (node is View)
@@ -205,7 +212,7 @@ class ViewComponent : Component() {
         removeFromGroup(devRoot, node)
     }
 
-    private fun addToGroup(group: Group, child: Node, addLast: Boolean = false) {
+    private fun addToGroup(group: Group, child: Node, addLast: Boolean) {
         if (!(parent as Group).children.contains(group)) {
             if (addLast) {
                 parent.children += group
@@ -214,7 +221,11 @@ class ViewComponent : Component() {
             }
         }
 
-        group.children += child
+        if(addLast) {
+            group.children += child
+        } else {
+            group.children.add(0, child)
+        }
     }
 
     private fun removeFromGroup(group: Group, child: Node) {
