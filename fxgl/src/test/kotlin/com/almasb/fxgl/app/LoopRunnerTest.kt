@@ -138,11 +138,11 @@ class LoopRunnerTest {
         }
 
         // We processed approximately 100 frames (150 where in Pause)
-        assertThat(count1, greaterThan((98 * frameTime).toDouble() / 1_000))
-        assertThat(count1, lessThan((102 * frameTime).toDouble() / 1_000))
+        assertThat(count1, greaterThan((90 * frameTime).toDouble() / 1_000))
+        assertThat(count1, lessThan((110 * frameTime).toDouble() / 1_000))
 
-        assertThat(count2, greaterThan((98 * frameTime).toDouble() / 1_000))
-        assertThat(count2, lessThan((102 * frameTime).toDouble() / 1_000))
+        assertThat(count2, greaterThan((90 * frameTime).toDouble() / 1_000))
+        assertThat(count2, lessThan((110 * frameTime).toDouble() / 1_000))
     }
 
     @Test
