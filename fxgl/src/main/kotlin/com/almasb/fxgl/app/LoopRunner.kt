@@ -9,6 +9,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.logging.Logger
 import javafx.animation.AnimationTimer
 import javafx.application.Platform
+import javafx.util.Duration
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureNanoTime
@@ -28,6 +29,8 @@ internal class LoopRunner(
          * to the display refresh rate.
          */
         private val ticksPerSecond: Int = -1,
+
+        private val fpsRefreshRate: Duration = Duration.millis(500.0),
 
         private val runnable: (Double) -> Unit) {
 
@@ -94,7 +97,7 @@ internal class LoopRunner(
     }
 
     private fun frame(now: Long) {
-        val ticksPerSecond = if (ticksPerSecond < 0) 60 else ticksPerSecond // For JavaFX loops, cap at 60fps too
+        val ticksPerSecond = if (ticksPerSecond < 0) 60 else ticksPerSecond // When unknown, default to 60 fps
 
         if (lastFrameNanos == 0L) {
             lastFrameNanos = now - (1_000_000_000.0 / ticksPerSecond).toLong()
@@ -112,9 +115,9 @@ internal class LoopRunner(
 
         fpsSamplingCount++
 
-        // Update the FPS value every 500 millis
+        // Update the FPS value based on provided refresh rate
         val timeSinceLastFPSUpdateNanos = now - lastFPSUpdateNanos;
-        if (timeSinceLastFPSUpdateNanos >= 500_000_000) {
+        if (timeSinceLastFPSUpdateNanos >= fpsRefreshRate.toMillis() * 1_000_000) {
             lastFPSUpdateNanos = now
             fps = (fpsSamplingCount.toLong() * 1_000_000_000 / timeSinceLastFPSUpdateNanos).toInt()
             fpsSamplingCount = 0
