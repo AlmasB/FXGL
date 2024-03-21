@@ -40,4 +40,12 @@ public abstract class TraversableGrid<T extends AStarCell> extends Grid<T> {
                 .filter(c -> c.getState().isWalkable())
                 .collect(Collectors.toList());
     }
+
+    /**
+     * @return given neighbors [source] and [target], true if we can move from [source] to [target] in a single action,
+     * i.e. there exists a path of size 1
+     */
+    public boolean isTraversableInSingleMove(T source, T target) {
+        return target.isWalkable();
+    }
 }

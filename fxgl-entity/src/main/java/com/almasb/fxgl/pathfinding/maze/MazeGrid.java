@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.pathfinding.maze;
 
-import com.almasb.fxgl.core.collection.grid.Grid;
+import com.almasb.fxgl.pathfinding.astar.TraversableGrid;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,7 +19,7 @@ import java.util.Collections;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class Maze extends Grid<MazeCell> {
+public class MazeGrid extends TraversableGrid<MazeCell> {
 
     /**
      * Constructs a new maze with given width and height.
@@ -27,7 +27,7 @@ public class Maze extends Grid<MazeCell> {
      * @param width maze width
      * @param height maze height
      */
-    public Maze(int width, int height) {
+    public MazeGrid(int width, int height) {
         super(MazeCell.class, width, height);
 
         int[][] maze = new int[width][height];
@@ -43,6 +43,43 @@ public class Maze extends Grid<MazeCell> {
 
             return cell;
         });
+    }
+
+    @Override
+    public boolean isTraversableInSingleMove(MazeCell source, MazeCell target) {
+        var isTraversable = super.isTraversableInSingleMove(source, target);
+        if (!isTraversable)
+            return false;
+
+        // move is vertical
+        if (source.getX() == target.getX()) {
+            // source
+            //   |
+            //   V
+            // target
+            if (source.getY() < target.getY())
+                return !target.hasTopWall();
+
+            // target
+            //   ^
+            //   |
+            // source
+            if (source.getY() > target.getY())
+                return !source.hasTopWall();
+        }
+
+        // move is horizontal
+        if (source.getY() == target.getY()) {
+            // source -> target
+            if (source.getX() < target.getX())
+                return !target.hasLeftWall();
+
+            // target <- source
+            if (source.getX() > target.getX())
+                return !source.hasLeftWall();
+        }
+
+        return true;
     }
 
     @SuppressWarnings("PMD.UselessParentheses")

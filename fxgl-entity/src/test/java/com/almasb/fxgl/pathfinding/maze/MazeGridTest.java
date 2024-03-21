@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MazeTest {
+public class MazeGridTest {
     @Test
     public void TestMaze() {
-        var maze = new Maze(8,5);
+        var maze = new MazeGrid(8,5);
 
         var atLeastOneHasLeftWall = maze.getCells()
                 .stream()

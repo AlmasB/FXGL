@@ -126,15 +126,15 @@ public final class AStarPathfinder<T extends AStarCell> implements Pathfinder<T>
             }
         }
 
-        Set<AStarCell> open = new HashSet<>();
-        Set<AStarCell> closed = new HashSet<>();
+        Set<T> open = new HashSet<>();
+        Set<T> closed = new HashSet<>();
 
-        AStarCell current = start;
+        T current = start;
 
         boolean found = false;
 
         while (!found && !closed.contains(target)) {
-            for (AStarCell neighbor : getValidNeighbors(current, neighborDirection, busyNodes)) {
+            for (T neighbor : getValidNeighbors(current, neighborDirection, busyNodes)) {
                 if (neighbor == target) {
                     target.setParent(current);
                     found = true;
@@ -171,9 +171,9 @@ public final class AStarPathfinder<T extends AStarCell> implements Pathfinder<T>
                 if (open.isEmpty())
                     return Collections.emptyList();
 
-                AStarCell acc = null;
+                T acc = null;
 
-                for (AStarCell a : open) {
+                for (T a : open) {
                     if (acc == null) {
                         acc = a;
                         continue;
@@ -213,10 +213,10 @@ public final class AStarPathfinder<T extends AStarCell> implements Pathfinder<T>
      * @param busyNodes nodes which are busy, i.e. walkable but have a temporary obstacle
      * @return neighbors of the node
      */
-    private List<T> getValidNeighbors(AStarCell node, NeighborDirection neighborDirection, AStarCell... busyNodes) {
+    private List<T> getValidNeighbors(T node, NeighborDirection neighborDirection, AStarCell... busyNodes) {
         var result = grid.getNeighbors(node.getX(), node.getY(), neighborDirection);
         result.removeAll(Arrays.asList(busyNodes));
-        result.removeIf(cell -> !cell.isWalkable());
+        result.removeIf(cell -> !grid.isTraversableInSingleMove(node, cell));
         return result;
     }
 
