@@ -10,57 +10,83 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.astar.TraversableGrid;
 
-import java.util.Random;
-
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 
 public class DungeonGrid extends TraversableGrid<DungeonCell> {
 
+    private static final DungeonConfig DEFAULT = new DungeonConfig(
+            FXGLMath.getRandom(),
+            6,
+            4, 9,
+            4, 9
+    );
+
     private DungeonCell[][] tileMap;
 
-    private int[][] roomPositions = new int[20][2];
-
-    private Random random;
+    private DungeonConfig config;
     
     public DungeonGrid(int width, int height) {
-        this(width, height, FXGLMath.getRandom());
+        this(width, height, DEFAULT);
     }
     
-    public DungeonGrid(int width, int height, Random random) {
+    public DungeonGrid(int width, int height, DungeonConfig config) {
         super(DungeonCell.class, width, height, DungeonCell::new);
         tileMap = getData();
-        this.random = random;
+        this.config = config;
         generateDungeon();
     }
 
     private void generateDungeon() {
+        if (config.numRooms() < 1)
+            throw new IllegalArgumentException("A dungeon must have at least 1 room.");
+
+        if (config.minRoomWidth() < 2)
+            throw new IllegalArgumentException("Minimum room width must be at least 2.");
+
+        if (config.minRoomHeight() < 2)
+            throw new IllegalArgumentException("Minimum room height must be at least 2.");
+
+        record Pos(int x, int y) {}
+
+        var random = config.random();
+
+        Pos[] roomPositions = new Pos[config.numRooms()];
+
         // Pick initial room positions
         for (int i = 0; i < roomPositions.length; i++) {
-            roomPositions[i][0] = random.nextInt(getWidth());
-            roomPositions[i][1] = random.nextInt(getHeight());
+            roomPositions[i] = new Pos(random.nextInt(getWidth()), random.nextInt(getHeight()));
         }
 
         // Clear out rooms
         for (int i = 0; i < roomPositions.length; i++) {
             if (random.nextInt(3) == 0) {
-                clearCircle(roomPositions[i][0], roomPositions[i][1], random.nextInt(3) + 1);
+                clearCircle(roomPositions[i].x, roomPositions[i].y, random.nextInt(3) + 1);
             } else {
-                clearRect(roomPositions[i][0], roomPositions[i][1], random.nextInt(3) + 4, random.nextInt(3) + 4);
+                clearRect(roomPositions[i].x, roomPositions[i].y, randomRectWidth(), randomRectHeight());
             }
 
-            // Connect Rooms
-            int connectRoom = random.nextInt(roomPositions.length);
+            // if there is just 1 room, then there is nothing to connect it to
+            if (config.numRooms() == 1)
+                break;
 
-            clearPath(roomPositions[i][0], roomPositions[i][1], roomPositions[connectRoom][0], roomPositions[connectRoom][1]);
+            // Connect room i to a random room
+            int randomRoom = random.nextInt(roomPositions.length);
+
+            // Ensure i is not the same as the chosen random room
+            while (randomRoom == i) {
+                randomRoom = random.nextInt(roomPositions.length);
+            }
+
+            clearPath(roomPositions[i].x, roomPositions[i].y, roomPositions[randomRoom].x, roomPositions[randomRoom].y);
         }
     }
 
-    private void clearRect(int xPos, int yPos, int width, int height) {
+    private void clearRect(int x, int y, int width, int height) {
         for (int i = 0; i < tileMap.length; i++) {
             for (int j = 0; j < tileMap[0].length; j++) {
-                int xDis = abs(i - xPos);
-                int yDis = abs(j - yPos);
+                int xDis = abs(i - x);
+                int yDis = abs(j - y);
 
                 if (xDis <= width / 2 && yDis <= height / 2) {
                     tileMap[i][j].setState(CellState.WALKABLE);
@@ -96,5 +122,13 @@ public class DungeonGrid extends TraversableGrid<DungeonCell> {
 
             tileMap[clearPos[0]][clearPos[1]].setState(CellState.WALKABLE);
         }
+    }
+
+    private int randomRectWidth() {
+        return config.minRoomWidth() + config.random().nextInt(config.maxRoomWidth() - config.minRoomWidth() + 1);
+    }
+
+    private int randomRectHeight() {
+        return config.minRoomHeight() + config.random().nextInt(config.maxRoomHeight() - config.minRoomHeight() + 1);
     }
 }
