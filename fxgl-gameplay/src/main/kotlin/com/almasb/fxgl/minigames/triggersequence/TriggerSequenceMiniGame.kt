@@ -20,6 +20,7 @@ import com.almasb.fxgl.minigames.MiniGameResult
 import com.almasb.fxgl.minigames.MiniGameView
 import javafx.geometry.Point2D
 import javafx.scene.Group
+import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
@@ -29,7 +30,7 @@ import javafx.scene.shape.Circle
 import javafx.scene.shape.Line
 import javafx.util.Duration
 
-class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMiniGame()) : MiniGameView<TriggerSequenceMiniGame>(miniGame) {
+class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMiniGame(winRatio = 1.0)) : MiniGameView<TriggerSequenceMiniGame>(miniGame) {
 
     private val animationGood: Animation<*>
     private val animationBad: Animation<*>
@@ -37,14 +38,18 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
     private val circle = StackPane()
     private val bg = Circle(40.0, 40.0, 40.0, Color.GREEN)
 
+    private val line1 = Line(0.0, 0.0, 0.0, 300.0)
+    private val line2 = Line(150.0, 0.0, 150.0, 300.0)
+
     private val triggerViews = Group()
+    private var numCorrectTriggers = 0
+    private var currentTriggerIndex = 0
 
     private val good = ImageView(Image(javaClass.getResourceAsStream("checkmark.png")))
     private val bad = ImageView(Image(javaClass.getResourceAsStream("cross.png")))
 
     init {
-        val line1 = Line(0.0, 0.0, 0.0, 300.0)
-        val line2 = Line(100.0, 0.0, 100.0, 300.0)
+
         line1.strokeWidth = 2.0
         line2.strokeWidth = 2.0
 
@@ -80,6 +85,37 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
 
         animationGood.onUpdate(tpf)
         animationBad.onUpdate(tpf)
+
+        if (triggerViews.children.isNotEmpty()) {
+            checkTriggerPosition(triggerViews.children[0])
+        } else {
+            miniGame.endGame(numCorrectTriggers)
+        }
+    }
+
+    private fun checkTriggerPosition(currentTriggerView: Node) {
+        if (currentTriggerView.translateX < line1.startX) {
+            triggerViews.children.removeAt(0) // TODO Check index
+            currentTriggerIndex++
+            startAnimationBad()
+        }
+
+    }
+
+    private fun startAnimationGood() {
+        circle.opacity = 1.0
+        animationGood.start()
+        bg.fill = Color.GREEN
+
+        circle.children[1] = good
+    }
+
+    private fun startAnimationBad() {
+        circle.opacity = 1.0
+        animationBad.start()
+        bg.fill = Color.RED
+
+        circle.children[1] = bad
     }
 
     override fun onInitInput(input: Input) {
@@ -88,23 +124,23 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
                 if (trigger is KeyTrigger) {
                     val key = trigger.key
 
-                    circle.opacity = 1.0
+                    if (triggerViews.children.isEmpty())
+                        return
 
-                    if (triggerViews.children.isNotEmpty())
-                        triggerViews.children.removeAt(0)
+                    val currentTrigger = triggerViews.children.removeAt(0)
 
-                    if (miniGame.press(key)) {
-                        animationGood.start()
-                        bg.fill = Color.GREEN
-
-                        circle.children[1] = good
-
+                    // Has the correct key been pressed, and is the current view between the two lines
+                    if (miniGame.isCorrect(key, currentTriggerIndex) &&
+                        currentTrigger.translateX >= line1.startX &&
+                        currentTrigger.translateX <= line2.startX)
+                    {
+                        startAnimationGood()
+                        numCorrectTriggers++
                     } else {
-                        animationBad.start()
-                        bg.fill = Color.RED
-
-                        circle.children[1] = bad
+                        startAnimationBad()
                     }
+                    // After checking, increment trigger index
+                    currentTriggerIndex++
                 }
             }
         })
@@ -115,17 +151,15 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class TriggerSequenceMiniGame : MiniGame<TriggerSequenceResult>() {
+class TriggerSequenceMiniGame(val winRatio: Double) : MiniGame<TriggerSequenceResult>() {
 
     private val log = Logger.get(javaClass)
 
     var numTriggersForSuccess = 0
-    var numTriggers = 4
+    val numTriggers: Int
+        get() = triggers.size
+
     var moveSpeed = 350
-
-    private var numCorrectTriggers = 0
-
-    private var currentIndex = 0
 
     val triggers = arrayListOf<KeyTrigger>()
 
@@ -150,27 +184,18 @@ class TriggerSequenceMiniGame : MiniGame<TriggerSequenceResult>() {
         views.forEach { it.translateX -= moveSpeed * tpf }
     }
 
-    fun press(key: KeyCode): Boolean {
-        if (currentIndex >= triggers.size) {
-            log.warning("Current index is greater or equal to number of triggers")
-            isDone = true
-            result = TriggerSequenceResult(true)
-            return true
-        }
+    fun endGame(numCorrectTriggers: Int) {
+        // Trigger the end of the MiniGame
+        isDone = true
+        val ratio = numCorrectTriggers / numTriggers.toDouble()
+        result = TriggerSequenceResult(ratio >= winRatio, ratio)
+    }
 
-        val ok = triggers[currentIndex++].key == key
-
-        if (ok) {
-            numCorrectTriggers++
-        }
-
-        if (currentIndex == triggers.size) {
-            isDone = true
-            result = TriggerSequenceResult(numCorrectTriggers >= numTriggersForSuccess)
-        }
-
-        return ok
+    fun isCorrect(key: KeyCode, currentIndex: Int): Boolean {
+        return triggers[currentIndex].key == key
     }
 }
 
-class TriggerSequenceResult(override val isSuccess: Boolean) : MiniGameResult
+class TriggerSequenceResult(override val isSuccess: Boolean, val ratio: Double ) : MiniGameResult {
+
+}
