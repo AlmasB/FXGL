@@ -7,6 +7,7 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.core.EngineService;
+import com.almasb.fxgl.core.collection.PropertyMap;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.binding.StringExpression;
 import javafx.collections.ObservableList;
@@ -67,4 +68,6 @@ public abstract class UIFactoryService extends EngineService {
     public abstract FXGLTextFlow newTextFlow();
 
     public abstract Node newPropertyView(String propertyName, Object property);
+
+    public abstract Node newPropertyMapView(PropertyMap map);
 }

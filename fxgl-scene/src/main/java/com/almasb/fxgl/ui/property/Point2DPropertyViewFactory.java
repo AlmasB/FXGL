@@ -6,23 +6,23 @@
 
 package com.almasb.fxgl.ui.property;
 
-import com.almasb.fxgl.core.collection.UpdatableObjectProperty;
-import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.ui.PropertyViewChangeListener;
 import javafx.beans.property.ObjectProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
 /**
+ * // TODO: read-only version?
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class Vec2PropertyViewChangeListener implements PropertyViewChangeListener<Vec2, HBox> {
+public class Point2DPropertyViewFactory implements PropertyViewFactory<Point2D, HBox> {
 
     private boolean ignoreChangeView = false;
     private boolean ignoreChangeProperty = false;
 
     @Override
-    public HBox makeView(ObjectProperty<Vec2> value) {
+    public HBox makeView(ObjectProperty<Point2D> value) {
         var fieldX = new TextField();
         var fieldY = new TextField();
         HBox view = new HBox(fieldX, fieldY);
@@ -54,29 +54,31 @@ public class Vec2PropertyViewChangeListener implements PropertyViewChangeListene
     }
 
     @Override
-    public void onPropertyChanged(ObjectProperty<Vec2> value, HBox view) {
+    public void onPropertyChanged(ObjectProperty<Point2D> value, HBox view) {
         var fieldX = (TextField) view.getChildren().get(0);
         var fieldY = (TextField) view.getChildren().get(1);
 
         ignoreChangeView = true;
 
-        fieldX.setText(Float.toString(value.getValue().x));
-        fieldY.setText(Float.toString(value.getValue().y));
+        fieldX.setText(Double.toString(value.getValue().getX()));
+        fieldY.setText(Double.toString(value.getValue().getY()));
 
         ignoreChangeView = false;
     }
 
     @Override
-    public void onViewChanged(ObjectProperty<Vec2> value, HBox view) {
+    public void onViewChanged(ObjectProperty<Point2D> value, HBox view) {
         var fieldX = (TextField) view.getChildren().get(0);
         var fieldY = (TextField) view.getChildren().get(1);
 
         ignoreChangeProperty = true;
 
-        value.getValue().x = Float.parseFloat(fieldX.getText());
-        value.getValue().y = Float.parseFloat(fieldY.getText());
+        var newPoint = new Point2D(
+                Double.parseDouble(fieldX.getText()),
+                Double.parseDouble(fieldY.getText())
+        );
 
-        ((UpdatableObjectProperty<Vec2>)value).forceUpdateListeners(value.getValue(), value.getValue());
+        value.setValue(newPoint);
 
         ignoreChangeProperty = false;
     }

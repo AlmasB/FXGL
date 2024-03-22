@@ -18,9 +18,14 @@ import javafx.beans.value.ObservableBooleanValue
 import javafx.beans.value.ObservableDoubleValue
 import javafx.beans.value.ObservableIntegerValue
 import javafx.beans.value.ObservableStringValue
+import javafx.collections.FXCollections
+import javafx.geometry.Point2D
 import javafx.scene.Parent
 import javafx.scene.control.CheckBox
+import javafx.scene.control.ChoiceBox
+import javafx.scene.control.ColorPicker
 import javafx.scene.control.TextField
+import javafx.scene.paint.Color
 import javafx.util.converter.DoubleStringConverter
 import javafx.util.converter.IntegerStringConverter
 
@@ -81,11 +86,35 @@ class StringPropertyView(property: ObservableStringValue) : TextField() {
     }
 }
 
-class Vec2PropertyView(property: ObjectProperty<Vec2>) : Parent() {
+class EnumPropertyView(enumProperty: ObjectProperty<Enum<*>>) : ChoiceBox<Enum<*>>() {
 
     init {
-        children += Vec2PropertyViewChangeListener().makeViewInternal(property)
+        val enumValue = enumProperty.get()
+
+        val list = FXCollections.observableArrayList<Enum<*>>()
+        for (anEnum in enumValue.javaClass.getEnumConstants()) {
+            list.add(anEnum as Enum<*>)
+        }
+
+        setItems(list)
+        setValue(enumValue)
+        valueProperty().bindBidirectional(enumProperty)
+
+        // TODO: read only version
+    }
+}
+
+class ColorPropertyViewFactory : PropertyViewFactory<Color, ColorPicker> {
+    override fun makeView(value: ObjectProperty<Color>): ColorPicker {
+        val picker = ColorPicker()
 
         // TODO: handle read-only version
+        picker.valueProperty().bindBidirectional(value)
+
+        return picker
     }
+
+    override fun onPropertyChanged(value: ObjectProperty<Color>, view: ColorPicker) { }
+
+    override fun onViewChanged(value: ObjectProperty<Color>, view: ColorPicker) { }
 }
