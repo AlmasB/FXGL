@@ -9,6 +9,8 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.ui.SoftwareCursor;
+import javafx.scene.Cursor;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -19,40 +21,32 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  * @author Poppy Eyres (eyres.poppy@gmail.com)
  */
 public class SoftwareCursorSample extends GameApplication {
-    SoftwareCursor Cursor;
+    private SoftwareCursor softwareCursor;
 
     @Override
-    protected void initSettings(GameSettings settings) {
-      //  settings.addEngineService(QuestService.class);
-    }
-
+    protected void initSettings(GameSettings settings) { }
 
     @Override
     protected void initInput() {
-        //hide default cursor
-        getGameScene().getRoot().setCursor(javafx.scene.Cursor.NONE);
+        onKey(KeyCode.UP, () -> softwareCursor.translatePositionY(-5));
+        onKey(KeyCode.DOWN, () -> softwareCursor.translatePositionY(5));
+        onKey(KeyCode.LEFT, () -> softwareCursor.translatePositionX(-5));
+        onKey(KeyCode.RIGHT, () -> softwareCursor.translatePositionX(5));
     }
+
     @Override
     protected void initGame() {
+        //hide default cursor
+        getGameScene().setCursor(Cursor.NONE);
+
         //create software cursor
-        Cursor = new SoftwareCursor(Color.PINK);
-        getGameScene().getRoot().getChildren().add(Cursor.getCursorNode());
+        softwareCursor = new SoftwareCursor(Color.PINK);
+        getGameScene().addUINode(softwareCursor.getCursorNode());
 
         //initialize cursor position
-        Cursor.setPositionX((double) getGameScene().getAppWidth() / 2);
-        Cursor.setPositionY((double) getGameScene().getAppHeight() / 2);
+        softwareCursor.setPositionX(getGameScene().getAppWidth() / 2.0);
+        softwareCursor.setPositionY(getGameScene().getAppHeight() / 2.0);
     }
-
-
-
-    @Override
-    protected void onUpdate(double tpf) {
-        //Cursor.setPosition(getInput().getMouseXWorld(), getInput().getMouseYWorld());
-        //Cursor.setPositionX(getInput().getMouseXWorld());
-        //Cursor.setPositionY(getInput().getMouseYWorld());
-        Cursor.translatePosition(tpf,tpf);
-    }
-
 
     public static void main(String[] args) {
         launch(args);
