@@ -14,7 +14,6 @@ import com.almasb.fxgl.input.KeyTrigger
 import com.almasb.fxgl.input.Trigger
 import com.almasb.fxgl.input.TriggerListener
 import com.almasb.fxgl.input.view.TriggerView
-import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.minigames.MiniGame
 import com.almasb.fxgl.minigames.MiniGameResult
 import com.almasb.fxgl.minigames.MiniGameView
@@ -49,7 +48,6 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
     private val bad = ImageView(Image(javaClass.getResourceAsStream("cross.png")))
 
     init {
-
         line1.strokeWidth = 2.0
         line2.strokeWidth = 2.0
 
@@ -60,16 +58,16 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
                 .interpolator(Interpolators.ELASTIC.EASE_OUT())
                 .onFinished(Runnable { circle.opacity = 0.0 })
                 .translate(circle)
-                .from(Point2D(0.0, 40.0))
-                .to(Point2D(0.0, -40.0))
+                .from(Point2D(25.0, 40.0))
+                .to(Point2D(25.0, -40.0))
                 .build()
 
         animationBad = AnimationBuilder().duration(Duration.seconds(0.49))
                 .onFinished(Runnable { circle.opacity = 0.0 })
                 .interpolator(Interpolators.ELASTIC.EASE_OUT())
                 .translate(circle)
-                .from(Point2D(0.0, 40.0))
-                .to(Point2D(0.0, 190.0))
+                .from(Point2D(25.0, 40.0))
+                .to(Point2D(25.0, 190.0))
                 .build()
 
         children.addAll(line1, line2, circle, triggerViews)
@@ -95,11 +93,10 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
 
     private fun checkTriggerPosition(currentTriggerView: Node) {
         if (currentTriggerView.translateX < line1.startX) {
-            triggerViews.children.removeAt(0) // TODO Check index
+            triggerViews.children.remove(currentTriggerView)
             currentTriggerIndex++
             startAnimationBad()
         }
-
     }
 
     private fun startAnimationGood() {
@@ -130,10 +127,10 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
                     val currentTrigger = triggerViews.children.removeAt(0)
 
                     // Has the correct key been pressed, and is the current view between the two lines
-                    if (miniGame.isCorrect(key, currentTriggerIndex) &&
-                        currentTrigger.translateX >= line1.startX &&
-                        currentTrigger.translateX <= line2.startX)
-                    {
+                    if (miniGame.isCorrect(key, currentTriggerIndex)
+                            && currentTrigger.translateX >= line1.startX
+                            && currentTrigger.translateX <= line2.startX) {
+
                         startAnimationGood()
                         numCorrectTriggers++
                     } else {
@@ -152,8 +149,6 @@ class TriggerSequenceView(miniGame: TriggerSequenceMiniGame = TriggerSequenceMin
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class TriggerSequenceMiniGame(val winRatio: Double) : MiniGame<TriggerSequenceResult>() {
-
-    private val log = Logger.get(javaClass)
 
     var numTriggersForSuccess = 0
     val numTriggers: Int
@@ -196,6 +191,4 @@ class TriggerSequenceMiniGame(val winRatio: Double) : MiniGame<TriggerSequenceRe
     }
 }
 
-class TriggerSequenceResult(override val isSuccess: Boolean, val ratio: Double ) : MiniGameResult {
-
-}
+class TriggerSequenceResult(override val isSuccess: Boolean, val ratio: Double ) : MiniGameResult
