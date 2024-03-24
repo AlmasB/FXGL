@@ -120,7 +120,7 @@ open module app.name {
 - 巴西南里奥格兰德联邦教育、科学和技术学院
 - 瑞士西北高等专业学院 工程/计算机科学学院
 
-如果您的机构想要使用或正在使用 FXGL，请在[Chat](https://gitter.im/AlmasB/FXGL)中添加注释以添加到列表中。
+如果您的机构想要使用或正在使用 FXGL，请在[Discussions](https://github.com/AlmasB/FXGL/discussions)中添加注释以添加到列表中。
 
 社区教程：
 
@@ -134,7 +134,7 @@ open module app.name {
 - [消耗](https://ergoscrit.itch.io/consume)
 - [FXGL 滑动拼图](https://github.com/beryx/fxgl-sliding-puzzle)
 
-如果您希望在此处展示您的项目，只需在[Chat](https://gitter.im/AlmasB/FXGL)中添加注释即可。
+如果您希望在此处展示您的项目，只需在[Discussions](https://github.com/AlmasB/FXGL/discussions)中添加注释即可。
 
 ### 开发团队
 

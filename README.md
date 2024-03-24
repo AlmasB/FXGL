@@ -126,7 +126,7 @@ Download the latest uber jar from [Releases](https://github.com/AlmasB/FXGL/rele
 * FHNW School of Engineering / Computer Science, Switzerland
 * Johann-Andreas-Schmeller-Gymnasium Nabburg, Germany
 
-If your institution wants to use or is using FXGL, add a note in the [Chat](https://gitter.im/AlmasB/FXGL) to be added to the list.
+If your institution wants to use or is using FXGL, add a note via [GitHub Discussions](https://github.com/AlmasB/FXGL/discussions) to be added to the list.
 
 Community tutorials:
 
@@ -140,7 +140,7 @@ Community projects (identified using `fxgl` topic):
 - [Consume](https://ergoscrit.itch.io/consume)
 - [FXGL Sliding Puzzle](https://github.com/beryx/fxgl-sliding-puzzle)
 
-If you'd like your project featured here, just add a note in the [Chat](https://gitter.im/AlmasB/FXGL).
+If you'd like your project featured here, just add a note via [GitHub Discussions](https://github.com/AlmasB/FXGL/discussions).
 
 ### Development Team
 
