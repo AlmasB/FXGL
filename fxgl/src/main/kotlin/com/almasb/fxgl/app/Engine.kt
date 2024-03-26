@@ -25,7 +25,7 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
 
     private val log = Logger.get(javaClass)
 
-    private val loop = LoopRunner(settings.ticksPerSecond) { loop(it) }
+    private val loop = LoopRunner(settings.ticksPerSecond, settings.fpsRefreshRate) { loop(it) }
 
     val tpf: Double
         get() = loop.tpf

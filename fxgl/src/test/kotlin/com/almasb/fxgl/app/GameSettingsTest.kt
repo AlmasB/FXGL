@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.util.Platform
 import com.almasb.fxgl.test.RunWithFX
 import javafx.scene.input.KeyCode
 import javafx.stage.Stage
+import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.MatcherAssert.assertThat
@@ -87,6 +88,7 @@ class GameSettingsTest {
         assertThat(settings.menuKey, `is`(KeyCode.ENTER))
         assertThat(settings.credits, hasItems("TestCredit1", "TestCredit2"))
         assertThat(settings.applicationMode, `is`(ApplicationMode.RELEASE))
+        assertThat(settings.fpsRefreshRate, `is`(Duration.millis(500.0)))
 
         assertTrue(settings.isDesktop)
         assertFalse(settings.isBrowser)

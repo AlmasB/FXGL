@@ -9,6 +9,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.logging.Logger
 import javafx.animation.AnimationTimer
 import javafx.application.Platform
+import javafx.util.Duration
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureNanoTime
@@ -29,6 +30,8 @@ internal class LoopRunner(
          */
         private val ticksPerSecond: Int = -1,
 
+        private val fpsRefreshRate: Duration = Duration.millis(500.0),
+
         private val runnable: (Double) -> Unit) {
 
     private val log = Logger.get<LoopRunner>()
@@ -47,7 +50,8 @@ internal class LoopRunner(
         private set
 
     private var lastFPSUpdateNanos = 0L
-    private var fpsBuffer2sec = 0
+    private var fpsSamplingCount = 0
+    private var lastFrameNanos = 0L
 
     private val impl by lazy {
         if (ticksPerSecond <= 0) {
@@ -76,6 +80,7 @@ internal class LoopRunner(
     fun resume() {
         log.debug("Resuming loop")
 
+        lastFrameNanos = 0
         impl.resume()
     }
 
@@ -83,8 +88,6 @@ internal class LoopRunner(
         log.debug("Pausing loop")
 
         impl.pause()
-
-        lastFPSUpdateNanos = 0L
     }
 
     fun stop() {
@@ -94,29 +97,36 @@ internal class LoopRunner(
     }
 
     private fun frame(now: Long) {
-        if (lastFPSUpdateNanos == 0L) {
-            lastFPSUpdateNanos = now
-            fpsBuffer2sec = 0
+        val ticksPerSecond = if (ticksPerSecond < 0) 60 else ticksPerSecond // When unknown, default to 60 fps
+
+        if (lastFrameNanos == 0L) {
+            lastFrameNanos = now - (1_000_000_000.0 / ticksPerSecond).toLong()
+            lastFPSUpdateNanos = lastFrameNanos
+            fpsSamplingCount = 1
         }
+
+        tpf = (now - lastFrameNanos).toDouble() / 1_000_000_000
+
+        // The "executor" will call 60 times per seconds even if the game runs under 60 fps.
+        // If it's not even "half" a tick long, skip
+        if(tpf < (1_000_000_000 / (ticksPerSecond * 1.5)) / 1_000_000_000 ) {
+            return
+        }
+
+        fpsSamplingCount++
+
+        // Update the FPS value based on provided refresh rate
+        val timeSinceLastFPSUpdateNanos = now - lastFPSUpdateNanos;
+        if (timeSinceLastFPSUpdateNanos >= fpsRefreshRate.toMillis() * 1_000_000) {
+            lastFPSUpdateNanos = now
+            fps = (fpsSamplingCount.toLong() * 1_000_000_000 / timeSinceLastFPSUpdateNanos).toInt()
+            fpsSamplingCount = 0
+        }
+
+        lastFrameNanos = now
 
         cpuNanoTime = measureNanoTime {
             runnable(tpf)
-        }
-
-        fpsBuffer2sec++
-
-        // if 2 seconds have passed
-        if (now - lastFPSUpdateNanos >= 2_000_000_000) {
-            lastFPSUpdateNanos = now
-            fps = fpsBuffer2sec / 2
-            fpsBuffer2sec = 0
-
-            // tweak potentially erroneous reads
-            if (fps < 5)
-                fps = 60
-
-            // update tpf for the next 2 seconds
-            tpf = 1.0 / fps
         }
     }
 }
