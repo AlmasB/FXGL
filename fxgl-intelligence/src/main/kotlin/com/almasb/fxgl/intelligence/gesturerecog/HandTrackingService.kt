@@ -78,7 +78,7 @@ class HandTrackingService : EngineService() {
                 options.addArguments("--use-fake-ui-for-media-stream")
 
                 webDriver = ChromeDriver(options)
-                webDriver!!.get(WebAPI.GESTURE_RECOGNITION_API)
+                webDriver!!.get(WebAPI.GESTURE_RECOGNITION_API.toExternalForm())
 
                 // we are ready to use the web api service
             } catch (e: Exception) {

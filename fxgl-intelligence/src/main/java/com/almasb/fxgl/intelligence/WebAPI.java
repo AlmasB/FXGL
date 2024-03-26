@@ -16,7 +16,6 @@ import java.util.Map;
 
 /**
  * Stores constants related to web-api projects.
- * Changes to these values must be synchronized with the web-api project (https://github.com/AlmasB/web-api).
  *
  * @author Almas Baim (https://github.com/AlmasB)
  */
@@ -31,8 +30,8 @@ public final class WebAPI {
     private static final Map<String, URL> URLS = extractURLs();
 
     public static final URL TEXT_TO_SPEECH_API = URLS.get("tts/index.html");
-    public static final String SPEECH_RECOGNITION_API = "https://almasb.github.io/web-api/speech-recog-v1/";
-    public static final String GESTURE_RECOGNITION_API = "https://almasb.github.io/web-api/gesture-recog-v1/";
+    public static final URL SPEECH_RECOGNITION_API = URLS.get("speechrecog/index.html");
+    public static final URL GESTURE_RECOGNITION_API = URLS.get("gesturerecog/index.html");
 
     public static final int TEXT_TO_SPEECH_PORT = 55550;
     public static final int SPEECH_RECOGNITION_PORT = 55555;
@@ -44,7 +43,10 @@ public final class WebAPI {
         List.of(
                 "rpc-common.js",
                 "tts/index.html",
-                "tts/script.js"
+                "tts/script.js",
+                "gesturerecog/index.html",
+                "speechrecog/index.html",
+                "speechrecog/script.js"
         ).forEach(relativeURL -> {
             map.put(relativeURL, extractURL(relativeURL, "intelligence/" + relativeURL));
         });
