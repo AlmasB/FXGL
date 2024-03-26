@@ -74,7 +74,7 @@ public class BasicGameApp extends GameApplication {
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>21</version>
+    <version>21.1</version>
 </dependency>
 ```
 
@@ -90,7 +90,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:21'
+    compile 'com.github.almasb:fxgl:21.1'
 }
 ```
 
