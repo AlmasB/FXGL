@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.gesturerecog
+package com.almasb.fxgl.intelligence.gesturerecog
 
 /**
  * The ordinal of each item matches the format defined at:

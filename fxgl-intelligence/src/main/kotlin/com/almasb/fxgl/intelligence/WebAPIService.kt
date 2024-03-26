@@ -85,6 +85,8 @@ abstract class WebAPIService(server: LocalWebSocketServer, private val apiURL: S
 
         driverSuppliers.forEach { supplier ->
             try {
+                log.debug("WebDriver opening: $url")
+
                 val driver = supplier()
                 driver.get(url)
                 return driver

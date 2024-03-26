@@ -9,7 +9,7 @@ package sandbox.net;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.gesturerecog.HandTrackingService;
+import com.almasb.fxgl.intelligence.gesturerecog.HandTrackingService;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
