@@ -10,6 +10,7 @@ import com.almasb.fxgl.logging.Logger
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 /**
  * Extracts resources from the deployed jar to the local file system.
@@ -24,6 +25,7 @@ class ResourceExtractor {
 
         /**
          * Extracts the file at jar [url] as a [relativeFilePath].
+         * Note: the destination file will be overwritten.
          *
          * @return the url on the local file system of the extracted file
          */
@@ -45,7 +47,7 @@ class ResourceExtractor {
             }
 
             url.openStream().use {
-                Files.copy(it, file)
+                Files.copy(it, file, StandardCopyOption.REPLACE_EXISTING)
             }
 
             return file.toUri().toURL()
