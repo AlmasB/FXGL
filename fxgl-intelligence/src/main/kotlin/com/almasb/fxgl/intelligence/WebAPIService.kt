@@ -17,6 +17,7 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxOptions
+import java.net.URL
 
 /**
  * Provides access to JS-driven implementation.
@@ -24,6 +25,8 @@ import org.openqa.selenium.firefox.FirefoxOptions
  * @author Almas Baim (https://github.com/AlmasB)
  */
 abstract class WebAPIService(server: LocalWebSocketServer, private val apiURL: String) : RPCService(server) {
+
+    constructor(server: LocalWebSocketServer, url: URL) : this(server, url.toExternalForm())
 
     private val log = Logger.get(WebAPIService::class.java)
 
