@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Processing MediaPipe Camera Input...</h1>
+        <video class="input_video" hidden></video>
+    </div>
+
+    <script type="module">
+        const videoElement = document.getElementsByClassName('input_video')[0];
+
+        // Create WebSocket connection.
+        const socket = new WebSocket('ws://localhost:55560');
+
+        function onResults(results) {
+            if (results.multiHandLandmarks) {
+                // hand id
+                var id = 0;
+                for (const landmarks of results.multiHandLandmarks) {
+                    var data = "" + id + ",";
+
+                    landmarks.forEach(point => {
+                        data += point.x + "," + point.y + "," + point.z + ",";
+                    });
+
+                    socket.send(data);
+
+                    id++;
+                }
+            }
+        }
+
+        const hands = new Hands({locateFile: (file) => {
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+        }});
+        hands.setOptions({
+            maxNumHands: 2,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+        hands.onResults(onResults);
+
+        // pick a mid-quality resolution
+        const camera = new Camera(videoElement, {
+            onFrame: async () => {
+                await hands.send({image: videoElement});
+            },
+            width: 853,
+            height: 480
+        });
+        camera.start();
+    </script>
+
+</body>
+</html>

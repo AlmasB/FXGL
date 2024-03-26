@@ -416,8 +416,6 @@ class GameWorld {
         if (pooledEntity != null) {
             pooledEntity.setPosition3D(data.x, data.y, data.z)
 
-            // TODO: also parse data?
-
             return pooledEntity
         }
 

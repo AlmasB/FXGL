@@ -11,6 +11,7 @@ import com.almasb.fxgl.entity.components.IDComponent
 import com.almasb.fxgl.entity.level.LevelLoadingException
 import com.almasb.fxgl.test.RunWithFX
 import javafx.geometry.Point2D
+import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
@@ -361,6 +362,38 @@ class TMXLevelLoaderTest {
         assertThat(tileset.transparentcolor, `is`(""))
     }
 
+    @Test
+    fun `Load tmx level with relative image source path`() {
+        // Relative Path check
+        val level = TMXLevelLoader().load(javaClass.getResource("relative_image_source.tmx"), GameWorld())
+        val levelImageChecksum = imageChecksum((level.entities[0].viewComponent.children[0] as ImageView).image)
+
+        // Validate that the Checksum strategy is legitimate
+        val levelIdem = TMXLevelLoader().load(javaClass.getResource("relative_image_source.tmx"), GameWorld())
+        val levelIdemChecksum = imageChecksum((levelIdem.entities[0].viewComponent.children[0] as ImageView).image)
+        assertEquals(levelImageChecksum, levelIdemChecksum)
+
+        // Standard none-relative Path check (uses the "same" image - different files, but it's the same image)
+        val levelValidator = TMXLevelLoader().load(javaClass.getResource("relative_image_source_validator.tmx"), GameWorld())
+        val levelValidatorChecksum = imageChecksum((levelValidator.entities[0].viewComponent.children[0] as ImageView).image)
+        assertEquals(levelImageChecksum, levelValidatorChecksum)
+
+        // Relative Path file doesn't exist - The checksum need to fail
+        val levelDummyImage = TMXLevelLoader().load(javaClass.getResource("relative_image_source_missing.tmx"), GameWorld())
+        val levelDummyImageChecksum = imageChecksum((levelDummyImage.entities[0].viewComponent.children[0] as ImageView).image)
+        assertNotEquals(levelImageChecksum, levelDummyImageChecksum)
+    }
+
+    fun imageChecksum(image: Image): Int {
+        var sum = 0
+        for (x in 0 until image.getWidth().toInt()) {
+            for (y in 0 until image.getHeight().toInt()) {
+                sum += image.getPixelReader().getArgb(x, y)
+            }
+        }
+        return sum
+    }
+
     class MyEntityFactory : EntityFactory {
 
         @Spawns("no_type,type1")
@@ -415,4 +448,5 @@ class TMXLevelLoaderTest {
             return Entity().also { it.type = data.get("type") }
         }
     }
+
 }

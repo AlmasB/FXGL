@@ -31,6 +31,12 @@ abstract class EngineService : Updatable, SerializableType {
     open fun onMainLoopStarting() { }
 
     /**
+     * Called after initGameVars() is completed.
+     * This is called on a background thread.
+     */
+    open fun onVarsInitialized(vars: PropertyMap) { }
+
+    /**
      * Called when initGame(), initPhysics(), initUI() all completed and
      * the game is ready to be played.
      * This is called on a background thread.
@@ -46,6 +52,12 @@ abstract class EngineService : Updatable, SerializableType {
      * Called on a JavaFX thread at each engine tick _only_ in game scene.
      */
     open fun onGameUpdate(tpf: Double) { }
+
+    /**
+     * Called on the JavaFX thread after the game scene has been reset,
+     * when starting a new game or loading the game from a save file.
+     */
+    open fun onGameReset() { }
 
     /**
      * Called just before the engine exits and the application shuts down.

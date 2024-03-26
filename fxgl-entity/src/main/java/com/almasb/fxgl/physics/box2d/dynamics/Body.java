@@ -28,10 +28,9 @@ import java.util.List;
  * @author Daniel Murphy
  */
 public final class Body {
-    static final int e_islandFlag = 0x0001;
+    private static final int e_islandFlag = 0x0001;
 
     private static final int e_awakeFlag = 0x0002;
-    private static final int e_autoSleepFlag = 0x0004;
     private static final int e_bulletFlag = 0x0008;
     private static final int e_fixedRotationFlag = 0x0010;
     private static final int e_activeFlag = 0x0020;
@@ -45,6 +44,8 @@ public final class Body {
     public ContactEdge m_contactList = null;
 
     public int m_flags = 0;
+
+    private boolean isSleepingAllowed = false;
 
     public int m_islandIndex;
 
@@ -102,7 +103,7 @@ public final class Body {
             m_flags |= e_fixedRotationFlag;
         }
         if (bd.isAllowSleep()) {
-            m_flags |= e_autoSleepFlag;
+            isSleepingAllowed = true;
         }
         if (bd.isAwake()) {
             m_flags |= e_awakeFlag;
@@ -939,6 +940,26 @@ public final class Body {
         }
     }
 
+    boolean isIslandFlagOff() {
+        return (m_flags & e_islandFlag) == 0;
+    }
+
+    boolean isIslandFlagOn() {
+        return (m_flags & e_islandFlag) != 0;
+    }
+
+    boolean isIslandFlagOn2() {
+        return (m_flags & e_islandFlag) == e_islandFlag;
+    }
+
+    void setIslandFlag(boolean flag) {
+        if (flag) {
+            m_flags |= e_islandFlag;
+        } else {
+            m_flags &= ~e_islandFlag;
+        }
+    }
+
     /**
      * You can disable sleeping on this body.
      * If you disable sleeping, the body will be woken.
@@ -946,10 +967,9 @@ public final class Body {
      * @param flag sleep flag
      */
     public void setSleepingAllowed(boolean flag) {
-        if (flag) {
-            m_flags |= e_autoSleepFlag;
-        } else {
-            m_flags &= ~e_autoSleepFlag;
+        isSleepingAllowed = flag;
+
+        if (!isSleepingAllowed) {
             setAwake(true);
         }
     }
@@ -958,7 +978,7 @@ public final class Body {
      * @return whether this body is allowed to sleep
      */
     public boolean isSleepingAllowed() {
-        return (m_flags & e_autoSleepFlag) == e_autoSleepFlag;
+        return isSleepingAllowed;
     }
 
     /**

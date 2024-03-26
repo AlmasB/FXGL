@@ -6,19 +6,21 @@
 
 package com.almasb.fxgl.ui
 
+import com.almasb.fxgl.core.collection.PropertyMap
+import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.ui.FontType.UI
-import com.almasb.fxgl.ui.property.BooleanPropertyView
-import com.almasb.fxgl.ui.property.DoublePropertyView
-import com.almasb.fxgl.ui.property.IntPropertyView
-import com.almasb.fxgl.ui.property.StringPropertyView
+import com.almasb.fxgl.ui.property.*
 import javafx.beans.binding.*
 import javafx.beans.property.*
 import javafx.collections.ObservableList
+import javafx.geometry.Point2D
+import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.scene.text.Text
@@ -34,11 +36,16 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
     private val log = Logger.get(javaClass)
 
     private val fontFactories = hashMapOf<FontType, ObjectProperty<FontFactory>>()
+    private val propertyViewFactories = hashMapOf<Class<*>, PropertyViewFactory<*, *>>()
 
     init {
         FontType.values().forEach { fontType ->
             fontFactories[fontType] = SimpleObjectProperty(FontFactory(Font.font(18.0)))
         }
+
+        propertyViewFactories[Vec2::class.java] = Vec2PropertyViewFactory()
+        propertyViewFactories[Color::class.java] = ColorPropertyViewFactory()
+        propertyViewFactories[Point2D::class.java] = Point2DPropertyViewFactory()
     }
 
     override fun registerFontFactory(type: FontType, fontFactory: FontFactory) {
@@ -137,7 +144,10 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
     }
 
     override fun newPropertyView(propertyName: String, property: Any): Node {
-        val text = Text(propertyName).also { it.fill = Color.WHITE }
+        val text = Text(propertyName).also {
+            it.fill = Color.WHITE
+            it.wrappingWidth = 100.0
+        }
 
         val view: Node = when (property) {
             is ReadOnlyDoubleProperty -> DoublePropertyView(property)
@@ -153,22 +163,44 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
             is StringBinding -> StringPropertyView(property)
 
             is ObjectProperty<*> -> {
-
-                if (property.get().javaClass in PropertyMapView.converters) {
-                    val converter = PropertyMapView.converters[property.get().javaClass]!!
+                if (property.get().javaClass in propertyViewFactories) {
+                    val converter = propertyViewFactories[property.get().javaClass]!!
 
                     converter.makeViewInternal(property)
                 } else {
 
-                    // TODO:
-                    Text("Not supported: ${property.get().javaClass}").also { it.fill = Color.WHITE }
+                    if (property.get().javaClass.isEnum) {
+                        EnumPropertyView(property as ObjectProperty<Enum<*>>)
+                    } else {
+                        Text("Not supported ObjectProperty<?>: ${property.get().javaClass}").also { it.fill = Color.WHITE }
+                    }
                 }
             }
 
-            else -> Text("Not supported: $property").also { it.fill = Color.WHITE }
+            else -> Text("Not supported property type: $property").also { it.fill = Color.WHITE }
         }
 
-        return HBox(10.0, StackPane(text).also { it.prefWidth = 100.0 }, StackPane(view).also { it.prefWidth = 80.0 })
+        return HBox(10.0,
+                StackPane(text).also {
+                    it.prefWidth = 100.0
+                    it.alignment = Pos.CENTER_LEFT
+                },
+                StackPane(view).also {
+                    it.prefWidth = 80.0
+                }
+        )
+    }
+
+    override fun newPropertyMapView(map: PropertyMap): Node {
+        val vbox = VBox(5.0)
+
+        map.forEachObservable { key, property ->
+            val node = newPropertyView(key, property)
+
+            vbox.children += node
+        }
+
+        return vbox
     }
 
     private fun fontProperty(type: FontType, fontSize: Double) =

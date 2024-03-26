@@ -18,7 +18,6 @@ module com.almasb.fxgl.gameplay {
     exports com.almasb.fxgl.cutscene;
     exports com.almasb.fxgl.cutscene.dialogue;
     exports com.almasb.fxgl.inventory;
-    exports com.almasb.fxgl.inventory.view;
     exports com.almasb.fxgl.minigames;
     exports com.almasb.fxgl.minigames.circuitbreaker;
     exports com.almasb.fxgl.minigames.sweetspot;

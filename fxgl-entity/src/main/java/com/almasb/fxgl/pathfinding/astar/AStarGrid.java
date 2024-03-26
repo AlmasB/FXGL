@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.pathfinding.astar;
 
-import com.almasb.fxgl.core.collection.grid.Grid;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.pathfinding.CellState;
@@ -17,9 +16,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
+ * Default implementation of the TraversableGrid<AStarCell> for pathfinding purposes.
+ * Domain-specific grids, or those that require extra functionality, should extend
+ * TraversableGrid directly.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class AStarGrid extends Grid<AStarCell> {
+public final class AStarGrid extends TraversableGrid<AStarCell> {
 
     /**
      * Constructs A* grid with A* cells using given width and height.
@@ -27,13 +30,6 @@ public class AStarGrid extends Grid<AStarCell> {
      */
     public AStarGrid(int width, int height) {
         super(AStarCell.class, width, height, (x, y) -> new AStarCell(x, y, CellState.WALKABLE));
-    }
-
-    public List<AStarCell> getWalkableCells() {
-        return getCells()
-                .stream()
-                .filter(c -> c.getState().isWalkable())
-                .collect(Collectors.toList());
     }
 
     /**

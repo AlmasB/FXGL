@@ -17,6 +17,7 @@ import com.almasb.fxgl.test.InjectInTest
 import com.almasb.fxgl.test.RunWithFX
 import com.almasb.fxgl.texture.getDummyImage
 import com.almasb.fxgl.ui.UIController
+import javafx.scene.image.ImageView
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.*
@@ -319,6 +320,21 @@ class AssetLoaderServiceTest {
 
         assertThat(ui, `is`(notNullValue()))
         assertThat(ui.root, `is`(notNullValue()))
+    }
+
+    @Test
+    fun `Load UI with image element`() {
+        val controller = object : UIController {
+            override fun init() {
+            }
+        }
+
+        val ui = assetLoader.loadUI("fxml/test_ui_with_image.fxml", controller)
+
+        val imageView = ui.root.lookup("#imageView") as ImageView
+
+        assertThat(imageView, `is`(notNullValue()))
+        assertThat(imageView.image, `is`(notNullValue()))
     }
 
     @Test

@@ -528,7 +528,6 @@ internal class EmbeddedPaneWindow(
     override val y: Double
         get() = fxglPane.localToScene(0.0, 0.0).y
 
-    // TODO: fix impl
     override val isFocused: Boolean
         get() = true
 

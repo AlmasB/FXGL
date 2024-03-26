@@ -132,9 +132,7 @@ public final class RopeJoint extends Joint {
         pool.pushRot(2);
         pool.pushVec2(1);
 
-        // data.velocities[m_indexA].v = vA;
         data.velocities[m_indexA].w = wA;
-        // data.velocities[m_indexB].v = vB;
         data.velocities[m_indexB].w = wB;
     }
 
@@ -179,9 +177,7 @@ public final class RopeJoint extends Joint {
 
         pool.pushVec2(3);
 
-        // data.velocities[m_indexA].v = vA;
         data.velocities[m_indexA].w = wA;
-        // data.velocities[m_indexB].v = vB;
         data.velocities[m_indexB].w = wB;
     }
 
@@ -226,9 +222,7 @@ public final class RopeJoint extends Joint {
         pool.pushRot(2);
         pool.pushVec2(4);
 
-        // data.positions[m_indexA].c = cA;
         data.positions[m_indexA].a = aA;
-        // data.positions[m_indexB].c = cB;
         data.positions[m_indexB].a = aB;
 
         return length - m_maxLength < JBoxSettings.linearSlop;

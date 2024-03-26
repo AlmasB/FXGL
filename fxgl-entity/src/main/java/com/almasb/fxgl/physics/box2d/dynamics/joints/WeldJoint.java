@@ -231,9 +231,7 @@ public class WeldJoint extends Joint {
             m_impulse.setZero();
         }
 
-//    data.velocities[m_indexA].v.set(vA);
         data.velocities[m_indexA].w = wA;
-//    data.velocities[m_indexB].v.set(vB);
         data.velocities[m_indexB].w = wB;
 
         pool.pushVec2(1);
@@ -308,9 +306,7 @@ public class WeldJoint extends Joint {
             pool.pushVec3(2);
         }
 
-//    data.velocities[m_indexA].v.set(vA);
         data.velocities[m_indexA].w = wA;
-//    data.velocities[m_indexB].v.set(vB);
         data.velocities[m_indexB].w = wB;
 
         pool.pushVec2(3);
@@ -392,9 +388,7 @@ public class WeldJoint extends Joint {
             pool.pushVec3(2);
         }
 
-//    data.positions[m_indexA].c.set(cA);
         data.positions[m_indexA].a = aA;
-//    data.positions[m_indexB].c.set(cB);
         data.positions[m_indexB].a = aB;
 
         pool.pushVec2(5);

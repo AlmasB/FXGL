@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.lang.invoke.MethodHandles
+import java.util.*
 
 /**
  *
@@ -62,6 +63,21 @@ class NotificationServiceTest {
                 get() = theTimer
 
             override val currentScene: Scene
+                get() = object : Scene() {}
+
+            override val introScene: Optional<Scene>
+                get() = Optional.ofNullable(object : Scene() {})
+
+            override val loadingScene: Optional<Scene>
+                get() = Optional.ofNullable(object : Scene() {})
+
+            override val mainMenuScene: Optional<Scene>
+                get() = Optional.ofNullable(object : Scene() {})
+
+            override val gameMenuScene: Optional<Scene>
+                get() = Optional.ofNullable(object : Scene() {})
+
+            override val gameScene: Scene
                 get() = object : Scene() {}
 
             override fun isInHierarchy(scene: Scene): Boolean {

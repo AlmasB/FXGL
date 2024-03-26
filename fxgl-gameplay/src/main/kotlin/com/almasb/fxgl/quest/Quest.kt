@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.quest
 
+import com.almasb.fxgl.core.Updatable
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.Bindings
@@ -27,9 +28,18 @@ import java.util.concurrent.Callable
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Quest(val name: String) {
+class Quest
+@JvmOverloads constructor(name: String, val vars: PropertyMap = PropertyMap()) : Updatable {
 
     private val log = Logger.get(javaClass)
+
+    private val nameProp = SimpleStringProperty(name)
+
+    var name: String
+        get() = nameProp.value
+        set(value) { nameProp.value = value }
+
+    fun nameProperty() = nameProp
 
     private val objectives = FXCollections.observableArrayList<QuestObjective>()
     private val objectivesReadOnly = FXCollections.unmodifiableObservableList(objectives)
@@ -49,33 +59,34 @@ class Quest(val name: String) {
     /**
      * @return true if any of the states apart from NOT_STARTED
      */
-    val hasStarted: Boolean
+    val isStarted: Boolean
         get() = state != QuestState.NOT_STARTED
 
     @JvmOverloads fun addIntObjective(desc: String, varName: String, varValue: Int, duration: Duration = Duration.ZERO): QuestObjective {
-        return IntQuestObjective(desc, varName, varValue, duration).also { addObjective(it) }
+        return IntQuestObjective(desc, vars, varName, varValue, duration).also { addObjective(it) }
     }
 
     @JvmOverloads fun addBooleanObjective(desc: String, varName: String, varValue: Boolean, duration: Duration = Duration.ZERO): QuestObjective {
-        return BooleanQuestObjective(desc, varName, varValue, duration).also { addObjective(it) }
+        return BooleanQuestObjective(desc, vars, varName, varValue, duration).also { addObjective(it) }
     }
 
     private fun addObjective(objective: QuestObjective) {
         objectives += objective
 
-        if (hasStarted)
+        if (isStarted)
             rebindStateToObjectives()
     }
 
     fun removeObjective(objective: QuestObjective) {
         objectives -= objective
 
-        if (hasStarted)
+        if (isStarted)
             rebindStateToObjectives()
     }
 
     /**
      * Can only be called from NOT_STARTED state.
+     * Binds quest state to the combined state of its objectives.
      */
     internal fun start() {
         if (objectives.isEmpty()) {
@@ -83,7 +94,7 @@ class Quest(val name: String) {
             return
         }
 
-        if (hasStarted) {
+        if (isStarted) {
             log.warning("Cannot start quest $name because it has already been started")
             return
         }
@@ -91,7 +102,23 @@ class Quest(val name: String) {
         rebindStateToObjectives()
     }
 
+    override fun onUpdate(tpf: Double) {
+        objectives.forEach { it.onUpdate(tpf) }
+    }
+
+    /**
+     * Sets the state to NOT_STARTED and unbinds objectives from the variables they are tracking.
+     */
+    internal fun stop() {
+        stateProp.unbind()
+        stateProp.value = QuestState.NOT_STARTED
+
+        objectives.forEach { it.unbindFromVars() }
+    }
+
     private fun rebindStateToObjectives() {
+        objectives.forEach { it.bindToVars() }
+
         val failedBinding = objectives.map { it.stateProperty() }
                 .foldRight(Bindings.createBooleanBinding(Callable { false })) { state, binding ->
                     state.isEqualTo(QuestState.FAILED).or(binding)
@@ -126,12 +153,16 @@ constructor(
          */
         val description: String,
 
-        // TODO:
+        /**
+         * Variables map, from which to check whether the objective is complete.
+         */
+        protected val vars: PropertyMap,
+
         /**
          * How much time is given to complete this objective.
          * Default: 0 - unlimited.
          */
-        val expireDuration: Duration = Duration.ZERO) {
+        val expireDuration: Duration = Duration.ZERO) : Updatable {
 
     private val stateProp = ReadOnlyObjectWrapper(QuestState.ACTIVE)
 
@@ -139,6 +170,17 @@ constructor(
         get() = stateProp.get()
 
     fun stateProperty(): ReadOnlyObjectProperty<QuestState> = stateProp.readOnlyProperty
+
+    private val timeRemainingProp = ReadOnlyDoubleWrapper(expireDuration.toSeconds())
+
+    /**
+     * @return time remaining (in seconds) to complete this objective,
+     * returns 0.0 if unlimited
+     */
+    val timeRemaining: Double
+        get() = timeRemainingProp.value
+
+    fun timeRemainingProperty(): ReadOnlyDoubleProperty = timeRemainingProp.readOnlyProperty
 
     protected val successProp = ReadOnlyBooleanWrapper()
 
@@ -153,12 +195,30 @@ constructor(
         successProp.addListener(successListener)
     }
 
+    override fun onUpdate(tpf: Double) {
+        if (state != QuestState.ACTIVE)
+            return
+
+        // ignore if no duration is set
+        if (expireDuration.lessThanOrEqualTo(Duration.ZERO))
+            return
+
+        val remaining = timeRemaining - tpf
+
+        if (remaining <= 0) {
+            timeRemainingProp.value = 0.0
+            fail()
+        } else {
+            timeRemainingProp.value = remaining
+        }
+    }
+
     fun complete() {
         if (state != QuestState.ACTIVE) {
             return
         }
 
-        unbind()
+        unbindFromVars()
         successProp.value = true
     }
 
@@ -167,7 +227,7 @@ constructor(
             return
         }
 
-        unbind()
+        unbindFromVars()
         successProp.value = false
         clean()
         stateProp.value = QuestState.FAILED
@@ -176,19 +236,24 @@ constructor(
     /**
      * Transition from FAILED -> ACTIVE.
      */
-    fun reactivate(vars: PropertyMap) {
+    fun reactivate() {
         if (state != QuestState.FAILED) {
             return
         }
 
         stateProp.value = QuestState.ACTIVE
+        timeRemainingProp.value = expireDuration.toSeconds()
         successProp.addListener(successListener)
-        bindTo(vars)
+        bindToVars()
     }
 
-    abstract fun bindTo(vars: PropertyMap)
+    /**
+     * Bind the state to variables, so that the state
+     * is updated as variables change.
+     */
+    internal abstract fun bindToVars()
 
-    internal fun unbind() {
+    internal fun unbindFromVars() {
         successProp.unbind()
     }
 
@@ -203,6 +268,8 @@ private class IntQuestObjective
          * Text that tells the player how to achieve this objective.
          */
         description: String,
+
+        vars: PropertyMap,
 
         /**
          * Variable name of an int property from the world properties to track.
@@ -221,9 +288,9 @@ private class IntQuestObjective
          */
         expireDuration: Duration = Duration.ZERO
 
-) : QuestObjective(description, expireDuration) {
+) : QuestObjective(description, vars, expireDuration) {
 
-    override fun bindTo(vars: PropertyMap) {
+    override fun bindToVars() {
         successProp.bind(
                 vars.intProperty(varName).greaterThanOrEqualTo(varValue)
         )
@@ -236,6 +303,8 @@ private class BooleanQuestObjective
          * Text that tells the player how to achieve this objective.
          */
         description: String,
+
+        vars: PropertyMap,
 
         /**
          * Variable name of a boolean property from the world properties to track.
@@ -253,9 +322,9 @@ private class BooleanQuestObjective
          */
         expireDuration: Duration = Duration.ZERO
 
-) : QuestObjective(description, expireDuration) {
+) : QuestObjective(description, vars, expireDuration) {
 
-    override fun bindTo(vars: PropertyMap) {
+    override fun bindToVars() {
         successProp.bind(
                 vars.booleanProperty(varName).isEqualTo(SimpleBooleanProperty(varValue))
         )

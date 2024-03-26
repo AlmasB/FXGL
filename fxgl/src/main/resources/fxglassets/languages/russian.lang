@@ -41,66 +41,63 @@ menu.feedback = ОБРАТНАЯ СВЯЗЬ
 menu.back = НАЗАД
 menu.delete = УДАЛИТЬ
 menu.difficulty = СЛОЖНОСТЬ
-
-# EVERYTHING BELOW NEEDS TRANSLATIONS!
-
-menu.playtime = PLAYTIME
-menu.music.volume = Music Volume
-menu.sound.volume = Sound Volume
-menu.fullscreen = Fullscreen
-menu.fixRatio = Fix Ratio
-menu.settingsRestore = Settings will be restored to default
-menu.exitMainMenu = Exit to Main menu?
-menu.logOut = Log out?
-menu.unsavedProgress = Unsaved progress will be lost!
-menu.chooseFeedback = Choose your feedback method
-menu.pressAnyKey = PRESS ANY KEY
-menu.loadSave = Load save
-menu.loading = Loading
-menu.loadingSaveFiles = Loading save files
-menu.loadingLast = Loading last save file
-menu.deleteSave = Delete save
-menu.deleting = Deleting
-menu.overwrite = Overwrite save
-menu.enterSaveName = Enter save file name
-menu.savingData = Saving data
+menu.playtime = ИГРОВОЕ ВРЕМЯ
+menu.music.volume = ГРОМКОСТЬ МУЗЫКИ
+menu.sound.volume = ГРОМКОСТЬ ЗВУКА
+menu.fullscreen = ПОЛНЫЙ ЭКРАН
+menu.fixRatio = ФИКСИРОВАННОЕ СООТНОШЕНИЕ
+menu.settingsRestore = ВОССТАНОВИТЬ НАСТРОЙКИ ПО УМОЛЧАНИЮ
+menu.exitMainMenu = ВЫЙТИ В ГЛАВНОЕ МЕНЮ?
+menu.logOut = ВЫЙТИ?
+menu.unsavedProgress = НЕСОХРАНЕННЫЙ ПРОГРЕСС БУДЕТ УТЕРЯН!
+menu.chooseFeedback = ВЫБЕРИТЕ СПОСОБ ОБРАТНОЙ СВЯЗИ
+menu.pressAnyKey = НАЖМИТЕ ЛЮБУЮ КЛАВИШУ
+menu.loadSave = ЗАГРУЗИТЬ СОХРАНЕНИЕ
+menu.loading = ЗАГРУЗКА
+menu.loadingSaveFiles = ЗАГРУЗКА СОХРАНЕНИЯ
+menu.loadingLast = ЗАГРУЗКА ПОСЛЕДНЕГО СОХРАНЕНИЯ
+menu.deleteSave = УДАЛИТЬ СОХРАНЕНИЕ
+menu.deleting = УДАЛЕНИЕ
+menu.overwrite = ПЕРЕЗАПИСАТЬ СОХРАНЕНИЕ
+menu.enterSaveName = ВВЕДИТЕ ИМЯ СОХРАНЕНИЯ
+menu.savingData = СОХРАНЕНИЕ ДАННЫХ
 
 #
 # Multiplayer text
 #
 
-multiplayer.new = NEW
-multiplayer.select = SELECT
-multiplayer.options = Multiplayer Options
-multiplayer.connect = Connect...
-multiplayer.connecting = Connecting to Game
-multiplayer.host = Host
-multiplayer.hosting = Hosting Game
-multiplayer.enterIp = Enter Server IP
+multiplayer.new = НОВЫЙ
+multiplayer.select = ВЫБРАТЬ
+multiplayer.options = НАСТРОЙКИ МНОГОПОЛЬЗОВАТЕЛЬСКОГО РЕЖИМА
+multiplayer.connect = ПОДКЛЮЧЕНИЕ...
+multiplayer.connecting = ПОДКЛЮЧЕНИЕ К ИГРЕ
+multiplayer.host = ХОСТ
+multiplayer.hosting = СОЗДАНИЕ ИГРЫ
+multiplayer.enterIp = ВВЕДИТЕ IP АДРЕС СЕРВЕРА
 
 #
 # Profile text
 #
 
-profile.profile = Profile
-profile.selectOrCreate = Select profile or create new
-profile.loadingProfile = Loading profile
-profile.loadingProfiles = Loading profiles
-profile.deletingProfile = Deleting profile
-profile.corrupted = Profile is corrupted
-profile.new = New profile
+profile.profile = ПРОФИЛЬ
+profile.selectOrCreate = ВЫБЕРИТЕ ПРОФИЛЬ ИЛИ СОЗДАЙТЕ НОВЫЙ
+profile.loadingProfile = ЗАГРУЗКА ПРОФИЛЯ
+profile.loadingProfiles = ЗАГРУЗКА ПРОФИЛЕЙ
+profile.deletingProfile = УДАЛЕНИЕ ПРОФИЛЯ
+profile.corrupted = ПРОФИЛЬ ПОВРЕЖДЕН
+profile.new = НОВЫЙ ПРОФИЛЬ
 
 #
 # Development text
 #
 
-dev.screenshotSaved = Screenshot saved
-dev.screenshotFailed = Screenshot failed
+dev.screenshotSaved = СКРИНШОТ СОХРАНЕН
+dev.screenshotFailed = ОШИБКА СОХРАНЕНИЯ СКРИНШОТА
 
 #
 # Achievement text
 #
 
-achievement.achievement = Achievement
-achievement.progress = Progress
-achievement.receive = You got an achievement!
+achievement.achievement = ДОСТИЖЕНИЕ
+achievement.progress = ПРОГРЕСС
+achievement.receive = ВЫ ПОЛУЧИЛИ ДОСТИЖЕНИЕ!

@@ -51,8 +51,8 @@ class MiniGameService : EngineService() {
         startMiniGame(RandomOccurrenceView(miniGame)) { callback.accept(it) }
     }
 
-    fun startTriggerSequence(keys: List<KeyCode>, callback: Consumer<TriggerSequenceResult>) {
-        val miniGame = TriggerSequenceMiniGame()
+    fun startTriggerSequence(keys: List<KeyCode>, winRatio: Double, callback: Consumer<TriggerSequenceResult>) {
+        val miniGame = TriggerSequenceMiniGame(winRatio)
         miniGame.triggers += keys.map { KeyTrigger(it) }
 
         startMiniGame(TriggerSequenceView(miniGame)) { callback.accept(it) }

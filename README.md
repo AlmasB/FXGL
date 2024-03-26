@@ -6,6 +6,8 @@
 
 &emsp;&emsp;[简体中文](https://github.com/AlmasB/FXGL/blob/dev/README_CN.md)
 
+&emsp;&emsp;[Русский](https://github.com/AlmasB/FXGL/blob/dev/README_RU.md)
+
 ## About
 
 <img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_logo.png" width="128" />
@@ -77,7 +79,7 @@ Otherwise, see:
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>21</version>
+    <version>21.1</version>
 </dependency>
 ```
 
@@ -93,7 +95,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:21'
+    compile 'com.github.almasb:fxgl:21.1'
 }
 ```
 
@@ -124,7 +126,7 @@ Download the latest uber jar from [Releases](https://github.com/AlmasB/FXGL/rele
 * FHNW School of Engineering / Computer Science, Switzerland
 * Johann-Andreas-Schmeller-Gymnasium Nabburg, Germany
 
-If your institution wants to use or is using FXGL, add a note in the [Chat](https://gitter.im/AlmasB/FXGL) to be added to the list.
+If your institution wants to use or is using FXGL, add a note via [GitHub Discussions](https://github.com/AlmasB/FXGL/discussions) to be added to the list.
 
 Community tutorials:
 
@@ -138,7 +140,7 @@ Community projects (identified using `fxgl` topic):
 - [Consume](https://ergoscrit.itch.io/consume)
 - [FXGL Sliding Puzzle](https://github.com/beryx/fxgl-sliding-puzzle)
 
-If you'd like your project featured here, just add a note in the [Chat](https://gitter.im/AlmasB/FXGL).
+If you'd like your project featured here, just add a note via [GitHub Discussions](https://github.com/AlmasB/FXGL/discussions).
 
 ### Development Team
 

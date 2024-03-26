@@ -6,6 +6,8 @@
 
 &emsp;&emsp;简体中文
 
+&emsp;&emsp;[Русский](https://github.com/AlmasB/FXGL/blob/dev/README_RU.md)
+
 ## 关于
 
 <img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_logo.png" width="128" />
@@ -72,7 +74,7 @@ public class BasicGameApp extends GameApplication {
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>21</version>
+    <version>21.1</version>
 </dependency>
 ```
 
@@ -88,7 +90,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:21'
+    compile 'com.github.almasb:fxgl:21.1'
 }
 ```
 
@@ -118,7 +120,7 @@ open module app.name {
 - 巴西南里奥格兰德联邦教育、科学和技术学院
 - 瑞士西北高等专业学院 工程/计算机科学学院
 
-如果您的机构想要使用或正在使用 FXGL，请在[Chat](https://gitter.im/AlmasB/FXGL)中添加注释以添加到列表中。
+如果您的机构想要使用或正在使用 FXGL，请在[Discussions](https://github.com/AlmasB/FXGL/discussions)中添加注释以添加到列表中。
 
 社区教程：
 
@@ -132,7 +134,7 @@ open module app.name {
 - [消耗](https://ergoscrit.itch.io/consume)
 - [FXGL 滑动拼图](https://github.com/beryx/fxgl-sliding-puzzle)
 
-如果您希望在此处展示您的项目，只需在[Chat](https://gitter.im/AlmasB/FXGL)中添加注释即可。
+如果您希望在此处展示您的项目，只需在[Discussions](https://github.com/AlmasB/FXGL/discussions)中添加注释即可。
 
 ### 开发团队
 

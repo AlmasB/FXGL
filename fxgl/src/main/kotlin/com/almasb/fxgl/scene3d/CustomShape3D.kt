@@ -18,8 +18,6 @@ import javafx.scene.shape.TriangleMesh
 import java.util.stream.Collectors
 import java.util.stream.IntStream
 
-// TODO: cache meshes (check CylinderKey)
-
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)

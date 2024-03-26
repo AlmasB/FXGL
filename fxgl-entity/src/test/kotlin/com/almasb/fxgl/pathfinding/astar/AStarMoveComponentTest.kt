@@ -21,7 +21,7 @@ class AStarMoveComponentTest {
 
     private lateinit var e: Entity
     private lateinit var grid: AStarGrid
-    private lateinit var aStarMoveComponent: AStarMoveComponent
+    private lateinit var aStarMoveComponent: AStarMoveComponent<AStarCell>
     private lateinit var cellMoveComponent: CellMoveComponent
 
     @BeforeEach

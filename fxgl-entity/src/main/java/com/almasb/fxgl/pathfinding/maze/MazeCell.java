@@ -6,20 +6,21 @@
 
 package com.almasb.fxgl.pathfinding.maze;
 
-import com.almasb.fxgl.core.collection.grid.Cell;
+import com.almasb.fxgl.pathfinding.CellState;
+import com.almasb.fxgl.pathfinding.astar.AStarCell;
 
 /**
  * Represents a single cell in a maze.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class MazeCell extends Cell {
+public class MazeCell extends AStarCell {
 
     private boolean topWall = false;
     private boolean leftWall = false;
 
     public MazeCell(int x, int y) {
-        super(x, y);
+        super(x, y, CellState.WALKABLE);
     }
 
     /**

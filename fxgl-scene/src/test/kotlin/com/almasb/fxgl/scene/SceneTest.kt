@@ -7,13 +7,7 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.core.Updatable
-import com.almasb.fxgl.event.EventBus
-import com.almasb.fxgl.input.Input
-import com.almasb.fxgl.time.Timer
-import javafx.beans.property.ReadOnlyDoubleProperty
-import javafx.beans.property.ReadOnlyDoubleWrapper
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.layout.Region
 import javafx.scene.shape.Rectangle
@@ -62,36 +56,6 @@ class SceneTest {
 
     @Test
     fun `Default methods are noop`() {
-        val sceneService = object : SceneService() {
-            override val overlayRoot: Group
-                get() = Group()
-            override fun prefWidthProperty(): ReadOnlyDoubleProperty {
-                return ReadOnlyDoubleWrapper(600.0).readOnlyProperty
-            }
-            override fun prefHeightProperty(): ReadOnlyDoubleProperty {
-                return ReadOnlyDoubleWrapper(600.0).readOnlyProperty
-            }
-
-            override val eventBus: EventBus
-                get() = EventBus()
-            override val input: Input
-                get() = Input()
-            override val timer: Timer
-                get() = Timer()
-
-            override val currentScene: Scene
-                get() = object : Scene() {}
-
-            override fun isInHierarchy(scene: Scene): Boolean {
-                return false
-            }
-
-            override fun pushSubScene(subScene: SubScene) {
-            }
-
-            override fun popSubScene() {
-            }
-        }
         val scene = object : Scene() {}
 
         scene.onCreate()

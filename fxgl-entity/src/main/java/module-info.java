@@ -23,6 +23,8 @@ module com.almasb.fxgl.entity {
     exports com.almasb.fxgl.particle;
     exports com.almasb.fxgl.pathfinding;
     exports com.almasb.fxgl.pathfinding.astar;
+    exports com.almasb.fxgl.pathfinding.dungeon;
+    exports com.almasb.fxgl.pathfinding.heuristic;
     exports com.almasb.fxgl.pathfinding.maze;
     exports com.almasb.fxgl.physics;
     exports com.almasb.fxgl.physics.box2d.dynamics;
