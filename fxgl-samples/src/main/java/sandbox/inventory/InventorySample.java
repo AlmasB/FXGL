@@ -7,13 +7,10 @@ package sandbox.inventory;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.inventory.Inventory;
-import com.almasb.fxgl.inventory.view.InventoryView;
-import com.almasb.fxgl.scene.SubScene;
+import com.almasb.fxgl.inventory.InventoryListView;
+import com.almasb.fxgl.inventory.ItemConfig;
 import javafx.scene.control.Button;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
@@ -47,7 +44,7 @@ public class InventorySample extends GameApplication {
 
         var wood = new CustomItem("Wood");
         var stone = new CustomItem("Stone");
-        var crystal = new CustomItem("Crystal");
+        var crystal = new CustomItem("Crystal that has a really long name going beyond the limit of 20");
 
         var vbox = new VBox(5);
 
@@ -57,83 +54,21 @@ public class InventorySample extends GameApplication {
                     var btnRemove = new Button("Drop " + item.description);
 
                     btnAdd.setOnAction(e -> {
-                        var scene = getSceneService().getGameScene();
-
-                        System.out.println(scene);
-
-                        getSceneService().getMainMenuScene().ifPresent(scene2 -> {
-                            System.out.println(scene2);
-                        });
-
-                        inventory.add(item);
-
-                        System.out.println(inventory.getAllData());
+                        inventory.add(item, new ItemConfig(item.description), +1);
                     });
 
                     btnRemove.setOnAction(e -> {
                         inventory.incrementQuantity(item, -1);
-
-                        System.out.println(inventory.getAllData());
                     });
 
                     vbox.getChildren().addAll(btnAdd, btnRemove);
                 });
 
         addUINode(vbox, 100, 100);
-        addUINode(new InventoryView<>(inventory), 400, 100);
+        addUINode(new InventoryListView<>(inventory), 340, 70);
     }
 
     public static void main(String[] args) {
         launch(args);
     }
-
-//
-//    private class InventorySubScene extends SubScene {
-//
-//        public Inventory<Entity> playerInventory = new Inventory(10);
-//
-//        public InventoryView view = new InventoryView<>(playerInventory);
-//
-//
-//        public InventorySubScene() {
-//            getContentRoot().getChildren().addAll(view);
-//            getContentRoot().setTranslateX(300);
-//            getContentRoot().setTranslateY(0);
-//
-//            Button dropOne = getUIFactoryService().newButton("Drop One");
-//            dropOne.prefHeight(30.0);
-//            dropOne.prefWidth(135.0);
-//            dropOne.setTranslateX(35.0);
-//            dropOne.setTranslateY(320.0);
-//
-//            dropOne.setOnAction(actionEvent -> {
-//                var selectedItem = (Entity) view.getListView().getSelectionModel().getSelectedItem();
-//
-//                if (selectedItem != null) {
-//                    var item = inventorySubScene.playerInventory.getData((Entity) selectedItem).get().getUserItem();
-//                    playerInventory.incrementQuantity(item, -1);
-//                }
-//                view.getListView().refresh();
-//            });
-//
-//            Button dropAll = getUIFactoryService().newButton("Drop All");
-//            dropAll.prefHeight(30.0);
-//            dropAll.prefWidth(135.0);
-//            dropAll.setTranslateX(35.0);
-//            dropAll.setTranslateY(370.0);
-//
-//            dropAll.setOnAction(actionEvent -> {
-//
-//                var selectedItem = (Entity) view.getListView().getSelectionModel().getSelectedItem();
-//
-//                if (selectedItem != null) {
-//                    var itemData = inventorySubScene.playerInventory.getData((Entity) selectedItem).get().getUserItem();
-//                    playerInventory.remove(selectedItem);
-//                }
-//                view.getListView().refresh();
-//            });
-//
-//            this.getContentRoot().getChildren().addAll(dropOne, dropAll);
-//        }
-//    }
 }
