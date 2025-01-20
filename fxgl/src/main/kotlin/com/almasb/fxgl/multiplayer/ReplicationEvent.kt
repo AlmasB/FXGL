@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.multiplayer
 
+import com.almasb.fxgl.entity.SpawnData
 import javafx.event.Event
 import javafx.event.EventType
 import javafx.scene.input.KeyCode
@@ -36,13 +37,10 @@ abstract class ReplicationEvent(eventType: EventType<out ReplicationEvent>) : Ev
     }
 }
 
-// TODO: consider SpawnData properties in the future
 class EntitySpawnEvent(
         val networkID: Long,
         val entityName: String,
-        val x: Double,
-        val y: Double,
-        val z: Double
+        val networkSpawnData: NetworkSpawnData,
 ) : ReplicationEvent(ENTITY_SPAWN)
 
 class EntityUpdateEvent(

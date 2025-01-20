@@ -104,6 +104,10 @@ class MultiplayerService : EngineService() {
     }
 
     fun spawn(connection: Connection<Bundle>, entity: Entity, entityName: String) {
+        spawn(connection, entity, entityName, SpawnData(entity.x, entity.y, entity.z))
+    }
+
+    fun spawn(connection: Connection<Bundle>, entity: Entity, entityName: String, spawnData: SpawnData) {
         if (!entity.hasComponent(NetworkComponent::class.java)) {
             log.warning("Attempted to network-spawn entity $entityName, but it does not have NetworkComponent")
             return
@@ -111,7 +115,7 @@ class MultiplayerService : EngineService() {
 
         val networkComponent = entity.getComponent(NetworkComponent::class.java)
 
-        val event = EntitySpawnEvent(networkComponent.id, entityName, entity.x, entity.y, entity.z)
+        val event = EntitySpawnEvent(networkComponent.id, entityName, NetworkSpawnData(spawnData))
 
         // TODO: if not available
         val data = replicatedEntitiesMap[connection]!!
@@ -129,7 +133,12 @@ class MultiplayerService : EngineService() {
                         val id = event.networkID
                         val entityName = event.entityName
 
-                        val e = gameWorld.spawn(entityName, SpawnData(event.x, event.y, event.z))
+                        val networkSpawnData = event.networkSpawnData
+                        val data = networkSpawnData.bundle.data
+                        val spawnData = SpawnData(networkSpawnData.x, networkSpawnData.y, networkSpawnData.z)
+                        data.forEach(spawnData::put)
+
+                        val e = gameWorld.spawn(entityName, spawnData)
 
                         // TODO: show warning if not present
                         e.getComponentOptional(NetworkComponent::class.java)
