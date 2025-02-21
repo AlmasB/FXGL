@@ -31,7 +31,7 @@ class ErrorSubScene(
         val action: Runnable) : SubScene() {
 
     init {
-        val btnOK = Button("Exit game")
+        val btnOK = Button("Exit App")
         btnOK.setOnAction {
             action.run()
         }
