@@ -26,8 +26,19 @@ class ForeignFunctionCallerTest {
     @EnabledOnOs(OS.WINDOWS)
     @Test
     @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
-    fun `Downcall a native function`() {
-        val file = ResourceExtractor.extractNativeLibAsPath("native-lib-test.dll")
+    fun `Downcall a native function in Windows`() {
+        `Downcall a native function`("native-lib-test.dll")
+    }
+
+    @EnabledOnOs(OS.MAC)
+    @Test
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    fun `Downcall a native function in MacOS`() {
+        `Downcall a native function`("native-lib-test.dylib")
+    }
+
+    fun `Downcall a native function`(libName:String) {
+        val file = ResourceExtractor.extractNativeLibAsPath(libName)
 
         val countDown = CountDownLatch(1)
         val count = AtomicInteger()
@@ -61,4 +72,5 @@ class ForeignFunctionCallerTest {
 
         assertThat(count.get(), `is`(25))
     }
+
 }
