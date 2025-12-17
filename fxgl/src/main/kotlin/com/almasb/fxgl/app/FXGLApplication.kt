@@ -244,14 +244,14 @@ class FXGLApplication : Application() {
 
         val defaultLang = settings.language.value
 
-        val langData = FXGL.getAssetLoader().loadPropertyMap("languages/" + defaultLang.name.toLowerCase() + ".lang")
+        val langData = FXGL.getAssetLoader().loadPropertyMap("languages/" + defaultLang.name.lowercase() + ".lang")
 
         FXGL.getLocalizationService().addLanguageData(defaultLang, langData.toStringMap())
 
         settings.supportedLanguages.filter { it != defaultLang }.forEach { lang ->
             FXGL.getLocalizationService().addLanguageDataLazy(lang) {
                 FXGL.getAssetLoader()
-                        .loadPropertyMap("languages/" + lang.name.toLowerCase() + ".lang")
+                        .loadPropertyMap("languages/" + lang.name.lowercase() + ".lang")
                         .toStringMap()
             }
         }

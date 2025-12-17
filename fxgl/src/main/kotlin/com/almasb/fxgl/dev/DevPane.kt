@@ -139,7 +139,7 @@ class DevPane(private val sceneService: SceneService, val settings: ReadOnlyGame
                         }
 
                         SimpleObjectProperty::class.java -> {
-                            if (method.name.toLowerCase().contains("color")) {
+                            if (method.name.lowercase().contains("color")) {
                                 val text = FXGL.getUIFactoryService().newText(method.name, Color.WHITE, 18.0)
                                 val colorPicker = ColorPicker()
 
