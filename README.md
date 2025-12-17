@@ -79,7 +79,7 @@ Otherwise, see:
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>25</version>
+    <version>21.1</version>
 </dependency>
 ```
 
