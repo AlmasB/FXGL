@@ -163,6 +163,7 @@ class AnimatedPath
             points[percent++] = Point3D(dummy.translateX, dummy.translateY, 0.0)
 
             t += 0.01
+            Thread.sleep(10)//seems like if the time elapsed speed is not matching the transition time, the calculation wont be activated
 
             pt.jumpTo(Duration.seconds(t))
         }
