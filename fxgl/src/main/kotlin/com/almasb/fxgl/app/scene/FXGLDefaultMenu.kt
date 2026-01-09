@@ -681,7 +681,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             val cbFullScreen = getUIFactoryService().newCheckBox()
             cbFullScreen.selectedProperty().bindBidirectional(getSettings().fullScreen)
 
-            vbox.children.add(HBox(25.0, getUIFactoryService().newText(localize("menu.fullscreen") + ": "), cbFullScreen))
+            vbox.children.add(HBox(25.0, getUIFactoryService().newText(localizedStringProperty("menu.fullscreen").concat(": ")), cbFullScreen))
         }
 
         return MenuContent(

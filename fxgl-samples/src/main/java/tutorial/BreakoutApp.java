@@ -17,6 +17,7 @@ import com.almasb.fxgl.input.UserAction;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -41,7 +42,14 @@ public class BreakoutApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setTitle("Breakout");
+        settings.setWidth(800);
+        settings.setHeight(600);
+        settings.setTitle("Breakout by shimon, reproduce bug ");
+        settings.setMainMenuEnabled(true);
+        settings.setGameMenuEnabled(true);
+        settings.setFullScreenAllowed(true);
+
+
     }
 
     @Override
@@ -164,7 +172,7 @@ public class BreakoutApp extends GameApplication {
             return entityBuilder()
                     .from(data)
                     .type(BreakoutType.BALL)
-                    .viewWithBBox(new Rectangle(BALL_SIZE, BALL_SIZE, Color.BLUE))
+                    .viewWithBBox(new Circle(BALL_SIZE,  Color.BLACK))
                     .collidable()
                     .with("velocity", new Point2D(BALL_SPEED, BALL_SPEED))
                     .build();
@@ -180,6 +188,7 @@ public class BreakoutApp extends GameApplication {
                     .build();
         }
     }
+
 
     public static void main(String[] args) {
         launch(args);
