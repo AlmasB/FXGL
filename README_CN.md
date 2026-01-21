@@ -72,9 +72,9 @@ public class BasicGameApp extends GameApplication {
 
 ```
 <dependency>
-    <groupId>com.github.almasb</groupId>
+    <groupId>io.github.chengenzhao</groupId>
     <artifactId>fxgl</artifactId>
-    <version>21.1</version>
+    <version>26</version>
 </dependency>
 ```
 
