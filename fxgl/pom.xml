@@ -6,12 +6,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>fxgl-framework</artifactId>
-        <groupId>com.github.almasb</groupId>
-        <version>25+dev-SNAPSHOT</version>
+        <groupId>io.github.chengenzhao</groupId>
+        <version>26</version>
     </parent>
 
     <artifactId>fxgl</artifactId>
     <packaging>jar</packaging>
+
+    <name>${project.groupId}:${project.artifactId}</name>
 
     <profiles>
         <profile>
@@ -140,31 +142,31 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.almasb</groupId>
+            <groupId>io.github.chengenzhao</groupId>
             <artifactId>fxgl-core</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.github.almasb</groupId>
+            <groupId>io.github.chengenzhao</groupId>
             <artifactId>fxgl-io</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.github.almasb</groupId>
+            <groupId>io.github.chengenzhao</groupId>
             <artifactId>fxgl-entity</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.github.almasb</groupId>
+            <groupId>io.github.chengenzhao</groupId>
             <artifactId>fxgl-scene</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.github.almasb</groupId>
+            <groupId>io.github.chengenzhao</groupId>
             <artifactId>fxgl-gameplay</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
@@ -182,7 +184,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.almasb</groupId>
+            <groupId>io.github.chengenzhao</groupId>
             <artifactId>fxgl-test</artifactId>
             <version>${fxgl.version}</version>
             <scope>test</scope>

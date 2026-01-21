@@ -4,12 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>fxgl-framework</artifactId>
-        <groupId>com.github.almasb</groupId>
-        <version>25+dev-SNAPSHOT</version>
+        <groupId>io.github.chengenzhao</groupId>
+        <version>26</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>fxgl-core</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
 
     <dependencies>
         <dependency>
@@ -31,7 +32,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.almasb</groupId>
+            <groupId>io.github.chengenzhao</groupId>
             <artifactId>fxgl-test</artifactId>
             <version>${fxgl.version}</version>
             <scope>test</scope>

@@ -2,9 +2,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.almasb</groupId>
+    <groupId>io.github.chengenzhao</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>25+dev-SNAPSHOT</version>
+    <version>26</version>
     
     <packaging>pom</packaging>
 
@@ -19,12 +19,12 @@
         <module>fxgl-scene</module>
         <module>fxgl</module>
         <module>fxgl-test</module>
-        <module>fxgl-controllerinput</module>
+<!--        <module>fxgl-controllerinput</module>-->
         <module>fxgl-intelligence</module>
         <module>fxgl-gameplay</module>
-        <module>fxgl-samples</module>
-        <module>fxgl-tools</module>
-        <module>fxgl-zdeploy</module>
+<!--        <module>fxgl-samples</module>-->
+<!--        <module>fxgl-tools</module>-->
+<!--        <module>fxgl-zdeploy</module>-->
     </modules>
 
     <licenses>
@@ -70,9 +70,9 @@
 
         <!-- plugins -->
         <maven.gpg.version>1.6</maven.gpg.version>
-        <central.publishing.version>0.8.0</central.publishing.version>
+        <central.publishing.version>0.10.0</central.publishing.version>
         <maven.compiler.version>3.13.0</maven.compiler.version>
-        <maven.pmd.version>3.26.0</maven.pmd.version>
+        <maven.pmd.version>3.28.0</maven.pmd.version>
         <maven.license.version>3.0</maven.license.version>
         <maven.source.version>3.2.0</maven.source.version>
         <maven.jar.version>3.2.0</maven.jar.version>
@@ -284,25 +284,16 @@
             </plugin>
 
             <!-- Sign artifact using gpg -->
+            <!-- GPG -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>${maven.gpg.version}</version>
+                <version>3.2.6</version>
                 <executions>
                     <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>
-
-                        <!-- This is needed for maven deploy using GH Actions -->
-                        <configuration>
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
