@@ -79,7 +79,7 @@ Otherwise, see:
 <dependency>
     <groupId>io.github.chengenzhao</groupId>
     <artifactId>fxgl</artifactId>
-    <version>26</version>
+    <version>26.1</version>
 </dependency>
 ```
 
