@@ -4,7 +4,7 @@
 
     <groupId>io.github.chengenzhao</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>26.1</version>
+    <version>26.2</version>
     
     <packaging>pom</packaging>
 
@@ -65,7 +65,7 @@
 
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
-        <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
+        <kotlin.compiler.jvmTarget>25</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
         <!-- plugins -->
