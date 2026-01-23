@@ -478,4 +478,20 @@ public final class FXGLMath {
     public static double distance(Rectangle2D rect1, Rectangle2D rect2) {
         return Distances.INSTANCE.distance(rect1, rect2);
     }
+
+    /**
+     * Calculates the distance between two points Α(x1, y1) and Β(x2, y2).
+     * This is a fundamental helper for game mechanics like proximity triggers.
+     *
+     * @param x1 the x coordinate of the first point
+     * @param y1 the y coordinate of the first point
+     * @param x2 the x coordinate of the second point
+     * @param y2 the y coordinate of the second point
+     * @return the euclidean distance between the two points
+     */
+    public static double getDistance(double x1, double y1, double x2, double y2) {
+        double x = x1 - x2;
+        double y = y1 - y2;
+        return Math.sqrt(x * x + y * y);
+    }
 }
