@@ -74,7 +74,7 @@ public class BasicGameApp extends GameApplication {
 <dependency>
     <groupId>io.github.chengenzhao</groupId>
     <artifactId>fxgl</artifactId>
-    <version>26.2</version>
+    <version>26.3</version>
 </dependency>
 ```
 
