@@ -646,7 +646,7 @@ class ReadOnlyGameSettings internal constructor(
     /**
      * project GitHub repo
      */
-    val urlGithub = "https://github.com/AlmasB/FXGL"
+    val urlGithub = "https://github.com/chengenzhao/FXGL"
 
     /**
      * link to Heroku leaderboard server
