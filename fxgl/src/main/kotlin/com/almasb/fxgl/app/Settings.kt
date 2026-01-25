@@ -206,7 +206,7 @@ class GameSettings(
         /**
          * Sets application run mode. See [ApplicationMode] for more info.
          */
-        var applicationMode: ApplicationMode = ApplicationMode.DEVELOPER,
+        var applicationMode: ApplicationMode = ApplicationMode.RELEASE,
 
         /**
          * Set the key that will trigger in-game menu.
@@ -646,7 +646,7 @@ class ReadOnlyGameSettings internal constructor(
     /**
      * project GitHub repo
      */
-    val urlGithub = "https://github.com/chengenzhao/FXGL"
+    val urlGithub = "https://github.com/AlmasB/FXGL"
 
     /**
      * link to Heroku leaderboard server

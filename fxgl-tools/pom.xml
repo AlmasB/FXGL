@@ -6,7 +6,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>io.github.chengenzhao</groupId>
-        <version>26.3</version>
+        <version>26.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
