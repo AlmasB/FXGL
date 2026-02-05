@@ -96,6 +96,9 @@ public final class RopeJoint extends Joint {
             m_state = LimitState.INACTIVE;
         }
 
+        pool.pushRot(2);
+        pool.pushVec2(1);
+
         if (m_length > JBoxSettings.linearSlop) {
             m_u.mulLocal(1.0f / m_length);
         } else {
@@ -128,9 +131,6 @@ public final class RopeJoint extends Joint {
         } else {
             m_impulse = 0.0f;
         }
-
-        pool.pushRot(2);
-        pool.pushVec2(1);
 
         data.velocities[m_indexA].w = wA;
         data.velocities[m_indexB].w = wB;

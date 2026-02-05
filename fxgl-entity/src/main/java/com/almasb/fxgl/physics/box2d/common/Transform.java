@@ -70,7 +70,7 @@ public final class Transform implements Serializable {
 
     public static void mulToOut(Transform T, Vec2 v, Vec2 out) {
         float tempy = T.q.s * v.x + T.q.c * v.y + T.p.y;
-        out.x = (T.q.c * v.x - T.q.s * v.y) + T.p.x;
+        out.x = T.q.c * v.x - T.q.s * v.y + T.p.x;
         out.y = tempy;
     }
 

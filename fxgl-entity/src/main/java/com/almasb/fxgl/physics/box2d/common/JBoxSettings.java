@@ -150,11 +150,13 @@ public class JBoxSettings {
      * A body cannot sleep if its linear velocity is above this tolerance.
      */
     public static float linearSleepTolerance = 0.01f;
+    public static float linearSleepToleranceSquared = linearSleepTolerance * linearSleepTolerance;
 
     /**
      * A body cannot sleep if its angular velocity is above this tolerance.
      */
     public static float angularSleepTolerance = 2.0f / 180.0f * PI_F;
+    public static float angularSleepToleranceSquared = angularSleepTolerance * angularSleepTolerance;
 
     // Particle
 

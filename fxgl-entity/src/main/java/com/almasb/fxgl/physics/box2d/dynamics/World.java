@@ -1111,14 +1111,6 @@ public final class World {
         return contactManager.contactList;
     }
 
-    public boolean isSleepingAllowed() {
-        return allowSleep;
-    }
-
-    public void setSleepingAllowed(boolean sleepingAllowed) {
-        allowSleep = sleepingAllowed;
-    }
-
     /**
      * Enable/disable warm starting. For testing.
      *

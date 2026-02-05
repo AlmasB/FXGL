@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.collection.grid.NeighborDirection;
 import static com.almasb.fxgl.core.collection.grid.NeighborDirection.*;
 import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.Pathfinder;
+import com.almasb.fxgl.pathfinding.TraversableGrid;
 import com.almasb.fxgl.pathfinding.heuristic.DiagonalHeuristic;
 import com.almasb.fxgl.pathfinding.heuristic.Heuristic;
 import com.almasb.fxgl.pathfinding.heuristic.ManhattanDistance;
@@ -21,9 +22,7 @@ import java.util.*;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public final class AStarPathfinder<T extends AStarCell> implements Pathfinder<T> {
-
-    private final TraversableGrid<T> grid;
+public final class AStarPathfinder<T extends AStarCell> extends Pathfinder<T> {
 
     private final Heuristic<T> defaultHeuristic;
     private final DiagonalHeuristic<T> diagonalHeuristic;
@@ -36,13 +35,9 @@ public final class AStarPathfinder<T extends AStarCell> implements Pathfinder<T>
     }
 
     public AStarPathfinder(TraversableGrid<T> grid, Heuristic<T> defaultHeuristic, DiagonalHeuristic<T> diagonalHeuristic) {
-        this.grid = grid;
+        super(grid);
         this.defaultHeuristic = defaultHeuristic;
         this.diagonalHeuristic = diagonalHeuristic;
-    }
-
-    public TraversableGrid<T> getGrid() {
-        return grid;
     }
 
     /**
@@ -58,23 +53,8 @@ public final class AStarPathfinder<T extends AStarCell> implements Pathfinder<T>
     }
 
     @Override
-    public List<T> findPath(int sourceX, int sourceY, int targetX, int targetY) {
-        return findPath(grid.getData(), grid.get(sourceX, sourceY), grid.get(targetX, targetY));
-    }
-
-    @Override
-    public List<T> findPath(int sourceX, int sourceY, int targetX, int targetY, NeighborDirection neighborDirection) {
-        return findPath(grid.getData(), grid.get(sourceX, sourceY), grid.get(targetX, targetY), neighborDirection);
-    }
-
-    @Override
-    public List<T> findPath(int sourceX, int sourceY, int targetX, int targetY, List<T> busyCells) {
-        return findPath(grid.getData(), grid.get(sourceX, sourceY), grid.get(targetX, targetY), NeighborDirection.FOUR_DIRECTIONS, busyCells.toArray(new AStarCell[0]));
-    }
-
-    @Override
     public List<T> findPath(int sourceX, int sourceY, int targetX, int targetY, NeighborDirection neighborDirection, List<T> busyCells) {
-        return findPath(grid.getData(), grid.get(sourceX, sourceY), grid.get(targetX, targetY), neighborDirection, busyCells.toArray(new AStarCell[0]));
+        return findPath(getGrid().getData(), getGrid().get(sourceX, sourceY), getGrid().get(targetX, targetY), neighborDirection, busyCells.toArray(new AStarCell[0]));
     }
 
     /**
@@ -88,7 +68,7 @@ public final class AStarPathfinder<T extends AStarCell> implements Pathfinder<T>
      * @return          path as list of nodes from start (excl) to target (incl) or empty list if no path found
      */
     public List<T> findPath(T[][] grid, T start, T target, T... busyNodes) {
-        return findPath(grid, start, target, NeighborDirection.FOUR_DIRECTIONS, busyNodes);
+        return findPath(grid, start, target, FOUR_DIRECTIONS, busyNodes);
     }
 
     /**
@@ -135,6 +115,8 @@ public final class AStarPathfinder<T extends AStarCell> implements Pathfinder<T>
 
         while (!found && !closed.contains(target)) {
             for (T neighbor : getValidNeighbors(current, neighborDirection, busyNodes)) {
+                getCellVisitListener().onVisit(neighbor);
+
                 if (neighbor == target) {
                     target.setParent(current);
                     found = true;
@@ -192,7 +174,11 @@ public final class AStarPathfinder<T extends AStarCell> implements Pathfinder<T>
             cache.put(cacheKey, path);
         }
 
-        return new ArrayList<>(path);
+        var result = new ArrayList<>(path);
+
+        getPathFoundListener().onPathFound(result);
+
+        return result;
     }
 
     private List<T> buildPath(T start, T target) {
@@ -214,9 +200,9 @@ public final class AStarPathfinder<T extends AStarCell> implements Pathfinder<T>
      * @return neighbors of the node
      */
     private List<T> getValidNeighbors(T node, NeighborDirection neighborDirection, AStarCell... busyNodes) {
-        var result = grid.getNeighbors(node.getX(), node.getY(), neighborDirection);
+        var result = new ArrayList<>(getGrid().getNeighbors(node.getX(), node.getY(), neighborDirection));
         result.removeAll(Arrays.asList(busyNodes));
-        result.removeIf(cell -> !grid.isTraversableInSingleMove(node, cell));
+        result.removeIf(cell -> !getGrid().isTraversableInSingleMove(node, cell));
         return result;
     }
 

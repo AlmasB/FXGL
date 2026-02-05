@@ -9,6 +9,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.logging.Logger
 import javafx.animation.AnimationTimer
 import javafx.application.Platform
+import javafx.util.Duration
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureNanoTime
@@ -16,7 +17,7 @@ import kotlin.system.measureNanoTime
 /**
  * The main loop runner.
  * Uses the number of JavaFX pulse calls per second (using a 2-sec buffer) to compute FPS.
- * Based on FPS, time per frame (tpf) is computed for the next 2 seconds.
+ * Based on FPS, by default, time per frame (tpf) is computed for the next 2 seconds.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -29,16 +30,25 @@ internal class LoopRunner(
          */
         private val ticksPerSecond: Int = -1,
 
+        /**
+         * The duration for which the last calculated fps is fixed, i.e. sampling rate.
+         */
+        private val fpsRefreshRate: Duration = Duration.millis(2000.0),
+
         private val runnable: (Double) -> Unit) {
 
     private val log = Logger.get<LoopRunner>()
 
-    // use 60 as default until fps buffer is full
+    /**
+     * Number of processed frames per second.
+     */
     @get:JvmName("getFPS")
     var fps = 60
         private set
 
-    // use 1.0 / 60 as default until fps buffer is full
+    /**
+     * Time difference between this and last frame in seconds.
+     */
     @get:JvmName("tpf")
     var tpf = 1.0 / 60
         private set
@@ -46,8 +56,20 @@ internal class LoopRunner(
     var cpuNanoTime = 0L
         private set
 
+    /**
+     * Time recorded in the frame where we calculated and then fixed FPS for [fpsRefreshRate].
+     */
     private var lastFPSUpdateNanos = 0L
-    private var fpsBuffer2sec = 0
+
+    /**
+     * Number of frames since the last frame where we calculated and then fixed FPS for [fpsRefreshRate].
+     */
+    private var numFramesSinceLastRefresh = 0
+
+    /**
+     * Time recorded in last frame, in nanoseconds.
+     */
+    private var lastFrameNanos = 0L
 
     private val impl by lazy {
         if (ticksPerSecond <= 0) {
@@ -76,6 +98,7 @@ internal class LoopRunner(
     fun resume() {
         log.debug("Resuming loop")
 
+        lastFrameNanos = 0
         impl.resume()
     }
 
@@ -83,8 +106,6 @@ internal class LoopRunner(
         log.debug("Pausing loop")
 
         impl.pause()
-
-        lastFPSUpdateNanos = 0L
     }
 
     fun stop() {
@@ -93,31 +114,52 @@ internal class LoopRunner(
         impl.stop()
     }
 
-    private fun frame(now: Long) {
-        if (lastFPSUpdateNanos == 0L) {
-            lastFPSUpdateNanos = now
-            fpsBuffer2sec = 0
+    private fun frame(thisFrameNanos: Long) {
+        // if this is our first frame since engine started,
+        // or first frame since engine resumed
+        // then assume time has passed equivalent to the engine running at 60 fps
+        // it will get overridden after refresh rate duration has passed
+        if (lastFrameNanos == 0L) {
+            lastFrameNanos = thisFrameNanos - (1_000_000_000.0 / 60).toLong()
+            lastFPSUpdateNanos = lastFrameNanos
+            numFramesSinceLastRefresh = 1
         }
+
+        // convert time between frames from nanos to seconds
+        tpf = (thisFrameNanos - lastFrameNanos) / 1_000_000_000.0
+
+        // The "executor" will call X times per second even if the game runs under X fps.
+        // If it's not even "half" a tick long, skip
+        // but only if we are not using the JavaFX loop runner, i.e. ticksPerSecond > 0
+        if (ticksPerSecond > 0) {
+            if (tpf < 1 / (ticksPerSecond * 1.5)) {
+                return
+            }
+        }
+
+        numFramesSinceLastRefresh++
+
+        // Update the FPS value based on provided refresh rate
+        val timeSinceLastFPSUpdateNanos = thisFrameNanos - lastFPSUpdateNanos
+        if (timeSinceLastFPSUpdateNanos >= fpsRefreshRate.toNanos()) {
+            lastFPSUpdateNanos = thisFrameNanos
+
+            // numFramesSinceLastRefresh -- timeSinceLastFPSUpdateNanos
+            // fps                       -- 1_000_000_000L
+            // hence, fps equals below
+            fps = (numFramesSinceLastRefresh * 1_000_000_000L / timeSinceLastFPSUpdateNanos).toInt()
+            numFramesSinceLastRefresh = 0
+        }
+
+        lastFrameNanos = thisFrameNanos
 
         cpuNanoTime = measureNanoTime {
             runnable(tpf)
         }
+    }
 
-        fpsBuffer2sec++
-
-        // if 2 seconds have passed
-        if (now - lastFPSUpdateNanos >= 2_000_000_000) {
-            lastFPSUpdateNanos = now
-            fps = fpsBuffer2sec / 2
-            fpsBuffer2sec = 0
-
-            // tweak potentially erroneous reads
-            if (fps < 5)
-                fps = 60
-
-            // update tpf for the next 2 seconds
-            tpf = 1.0 / fps
-        }
+    private fun Duration.toNanos(): Long {
+        return (this.toMillis() * 1_000_000).toLong()
     }
 }
 

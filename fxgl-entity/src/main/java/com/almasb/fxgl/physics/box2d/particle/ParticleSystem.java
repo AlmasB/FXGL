@@ -16,7 +16,6 @@ import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.collision.RayCastOutput;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
-import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.Rotation;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
@@ -53,6 +52,7 @@ public class ParticleSystem {
     private static final long xScale = 1 << xShift;
     private static final long xOffset = xScale * (1 << (xTruncBits - 1));
 
+    @SuppressWarnings("PMD.UselessParentheses")
     private static long computeTag(float x, float y) {
         return (((long) (y + yOffset)) << yShift) + (((long) (xScale * x)) + xOffset);
     }

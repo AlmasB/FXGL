@@ -224,6 +224,42 @@ class ReflectionUtilsTest {
         }
     }
 
+    @Test
+    fun `ReflectionFunctionCaller can invoke functions with non-String arguments`() {
+        val value = 335
+        val data = TestClass2("world")
+
+        val obj = TestClass3()
+        val rfc = ReflectionFunctionCaller().also { it.addFunctionCallTarget(obj) }
+
+        val result = rfc.invoke("someFunction", arrayOf(value, data))
+
+        assertThat(result, `is`("335world"))
+    }
+
+    @Test
+    fun `ReflectionFunctionCaller fails if incorrect types of arguments`() {
+        val value = 335
+        val data = TestClass2("world")
+
+        val obj = TestClass3()
+        val rfc = ReflectionFunctionCaller().also { it.addFunctionCallTarget(obj) }
+
+        assertThrows<RuntimeException> {
+            rfc.invoke("someFunction", arrayOf(data, value))
+        }
+    }
+
+    @Test
+    fun `ReflectionFunctionCaller fails if incorrect number of arguments`() {
+        val obj = TestClass3()
+        val rfc = ReflectionFunctionCaller().also { it.addFunctionCallTarget(obj) }
+
+        assertThrows<RuntimeException> {
+            rfc.invoke("someFunction", arrayOf())
+        }
+    }
+
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Ann
 
@@ -256,4 +292,10 @@ class ReflectionUtilsTest {
     }
 
     class TestClass2(val s: String) : TestClass1()
+
+    class TestClass3 {
+        fun someFunction(value: Int, data: TestClass2): String {
+            return "" + value + data.s
+        }
+    }
 }

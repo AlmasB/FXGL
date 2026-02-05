@@ -77,7 +77,7 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
      * Note: if the given channel is already playing or looping, then noop.
      */
     fun loopNoOverride(channel: AnimationChannel) {
-        if (animationChannel === channel)
+        if (animationChannel === channel && animation.isAnimating)
             return
 
         loopAnimationChannel(channel)

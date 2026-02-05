@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.pathfinding.maze;
 
-import com.almasb.fxgl.pathfinding.astar.TraversableGrid;
+import com.almasb.fxgl.pathfinding.TraversableGrid;
 
 import java.util.Arrays;
 import java.util.Collections;

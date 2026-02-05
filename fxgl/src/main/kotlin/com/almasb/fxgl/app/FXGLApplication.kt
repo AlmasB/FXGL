@@ -12,6 +12,7 @@ import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.scene.LoadingScene
 import com.almasb.fxgl.app.services.FXGLAssetLoaderService
 import com.almasb.fxgl.core.Updatable
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.IOTask
 import com.almasb.fxgl.core.serialization.Bundle
@@ -243,14 +244,14 @@ class FXGLApplication : Application() {
 
         val defaultLang = settings.language.value
 
-        val langData = FXGL.getAssetLoader().loadPropertyMap("languages/" + defaultLang.name.toLowerCase() + ".lang")
+        val langData = FXGL.getAssetLoader().loadPropertyMap("languages/" + defaultLang.name.lowercase() + ".lang")
 
         FXGL.getLocalizationService().addLanguageData(defaultLang, langData.toStringMap())
 
         settings.supportedLanguages.filter { it != defaultLang }.forEach { lang ->
             FXGL.getLocalizationService().addLanguageDataLazy(lang) {
                 FXGL.getAssetLoader()
-                        .loadPropertyMap("languages/" + lang.name.toLowerCase() + ".lang")
+                        .loadPropertyMap("languages/" + lang.name.lowercase() + ".lang")
                         .toStringMap()
             }
         }
@@ -295,8 +296,10 @@ class FXGLApplication : Application() {
     fun exitFXGL() {
         log.debug("Exiting FXGL")
 
-        if (!isError)
+        if (!isError) {
             engine.stopLoopAndExitServices()
+            app.onExit()
+        }
 
         Async.shutdownNow()
 
@@ -377,6 +380,9 @@ class FXGLApplication : Application() {
          * Always-on timer.
          */
         override val timer = Timer()
+
+        override val worldProperties: PropertyMap
+            get() = gameScene.gameWorld.properties
 
         override val currentScene: Scene
             get() = mainWindow.currentScene

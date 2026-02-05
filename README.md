@@ -23,7 +23,7 @@ JavaFX Game Development Framework
 ### Why FXGL?
 
 * No installation or setup is required
-* "Out of the box": Java 8-21, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
+* "Out of the box": Java 8-25, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
 * Simple and clean API, higher level than other engines
 * Superset of JavaFX: no need to learn new UI API
 * Real-world game development techniques: Entity-Component, interpolated animations, particles, and [many more](https://github.com/AlmasB/FXGL/wiki/Core-Features)
@@ -79,7 +79,7 @@ Otherwise, see:
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>21.1</version>
+    <version>25</version>
 </dependency>
 ```
 
@@ -95,7 +95,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:21.1'
+    compile 'com.github.almasb:fxgl:25'
 }
 ```
 

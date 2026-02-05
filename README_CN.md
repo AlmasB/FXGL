@@ -20,7 +20,7 @@ JavaFX 游戏开发框架
 ## 为什么选择FXGL ?
 
 - 无需安装或设置
-- “开箱即用”：Java 8-21、Win/Mac/Linux/Android 8+/iOS 11.0+/Web
+- “开箱即用”：Java 8-25、Win/Mac/Linux/Android 8+/iOS 11.0+/Web
 - 简单干净的API，相比起其他引擎API级别更高
 - JavaFX 的超集：无需学习新的 UI API
 - 真实世界的游戏开发技术：实体组件、插值动画、粒子[等等](https://github.com/AlmasB/FXGL/wiki/Core-Features)
@@ -74,7 +74,7 @@ public class BasicGameApp extends GameApplication {
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>21.1</version>
+    <version>25</version>
 </dependency>
 ```
 
@@ -90,7 +90,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:21.1'
+    compile 'com.github.almasb:fxgl:25'
 }
 ```
 

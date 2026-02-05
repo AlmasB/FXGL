@@ -348,7 +348,7 @@ public final class PolygonShape extends Shape {
             float intx2 = ex1 * ex1 + ex2 * ex1 + ex2 * ex2;
             float inty2 = ey1 * ey1 + ey2 * ey1 + ey2 * ey2;
 
-            I += (0.25f * INV_3 * D) * (intx2 + inty2);
+            I += 0.25f * INV_3 * D * (intx2 + inty2);
         }
 
         // Total mass
@@ -363,7 +363,7 @@ public final class PolygonShape extends Shape {
         massData.I = I * density;
 
         // Shift to center of mass then to original body origin.
-        massData.I += massData.mass * (Vec2.dot(massData.center, massData.center));
+        massData.I += massData.mass * Vec2.dot(massData.center, massData.center);
     }
 
     public void set(Vec2[] vertices) {

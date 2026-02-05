@@ -25,7 +25,7 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
 
     private val log = Logger.get(javaClass)
 
-    private val loop = LoopRunner(settings.ticksPerSecond) { loop(it) }
+    private val loop = LoopRunner(settings.ticksPerSecond, settings.fpsRefreshRate) { loop(it) }
 
     val tpf: Double
         get() = loop.tpf
@@ -59,7 +59,6 @@ internal class Engine(val settings: ReadOnlyGameSettings) {
         log.debug("Architecture: $operatingSystemArchitecture")
         log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL")
         log.info("      Ask questions and discuss at: https://github.com/AlmasB/FXGL/discussions")
-        log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL")
     }
 
     fun <T : EngineService> getService(serviceClass: Class<T>): T {

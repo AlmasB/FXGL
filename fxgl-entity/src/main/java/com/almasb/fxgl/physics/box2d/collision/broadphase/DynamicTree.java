@@ -339,7 +339,7 @@ public class DynamicTree implements BroadPhaseStrategy {
                 combinedAABB.combine(leafAABB, child1.aabb);
                 float oldArea = child1.aabb.getPerimeter();
                 float newArea = combinedAABB.getPerimeter();
-                cost1 = (newArea - oldArea) + inheritanceCost;
+                cost1 = newArea - oldArea + inheritanceCost;
             }
 
             // Cost of descending into child2

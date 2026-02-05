@@ -147,7 +147,7 @@ public class MouseJoint extends Joint {
         float d = 2.0f * mass * m_dampingRatio * omega;
 
         // Spring stiffness
-        float k = mass * (omega * omega);
+        float k = mass * omega * omega;
 
         // magic formulas
         // gamma has units of inverse mass.

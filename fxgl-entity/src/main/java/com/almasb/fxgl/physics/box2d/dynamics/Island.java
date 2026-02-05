@@ -300,12 +300,7 @@ class Island {
                 v.mulLocal(ratio);
             }
 
-            float w = velocities[i].w;
-            float rotation = h * w;
-            if (rotation * rotation > maxRotationSquared) {
-                float ratio = maxRotation / FXGLMath.abs(rotation);
-                w *= ratio;
-            }
+            float w = limitRotation(velocities[i].w, h);
 
             Vec2 c = positions[i].c;
             // Integrate
@@ -351,9 +346,6 @@ class Island {
         if (allowSleep) {
             float minSleepTime = Float.MAX_VALUE;
 
-            final float linTolSqr = linearSleepTolerance * linearSleepTolerance;
-            final float angTolSqr = angularSleepTolerance * angularSleepTolerance;
-
             for (int i = 0; i < bodyCount; ++i) {
                 Body b = bodies[i];
                 if (b.getType() == BodyType.STATIC) {
@@ -361,8 +353,8 @@ class Island {
                 }
 
                 if (!b.isSleepingAllowed()
-                        || b.getAngularVelocity() * b.getAngularVelocity() > angTolSqr
-                        || Vec2.dot(b.getLinearVelocity(), b.getLinearVelocity()) > linTolSqr) {
+                        || b.getAngularVelocity() * b.getAngularVelocity() > angularSleepToleranceSquared
+                        || Vec2.dot(b.getLinearVelocity(), b.getLinearVelocity()) > linearSleepToleranceSquared) {
                     b.setSleepTime(0);
                     minSleepTime = 0.0f;
                 } else {
@@ -448,12 +440,7 @@ class Island {
                 v.mulLocal(ratio);
             }
 
-            float w = velocities[i].w;
-            float rotation = h * w;
-            if (rotation * rotation > maxRotationSquared) {
-                float ratio = maxRotation / FXGLMath.abs(rotation);
-                w *= ratio;
-            }
+            float w = limitRotation(velocities[i].w, h);
 
             Vec2 c = positions[i].c;
             // Integrate
@@ -482,6 +469,22 @@ class Island {
         }
 
         report(toiContactSolver.getVelocityConstraints());
+    }
+
+    /**
+     * @param originalW rotation representation
+     * @param h time step
+     * @return w or w limited to maxRotation ratio
+     */
+    private float limitRotation(float originalW, float h) {
+        float w = originalW;
+        float rotation = h * w;
+        if (rotation * rotation > maxRotationSquared) {
+            float ratio = maxRotation / FXGLMath.abs(rotation);
+            w *= ratio;
+        }
+
+        return w;
     }
 
     void add(Body body) {

@@ -23,7 +23,7 @@
 ### Почему FXGL?
 
 * Не требуется установка или настройка
-* "Из коробки": Java 8-21, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
+* "Из коробки": Java 8-25, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
 * Простой и чистый API, более высокого уровня по сравнению с другими движками
 * Расширение JavaFX: нет необходимости изучать новый API пользовательского интерфейса
 * Реальные методы разработки игр: Entity-Component, интерполированная анимация, частицы и [многое другое](https://github.com/AlmasB/FXGL/wiki/Core-Features)
@@ -79,7 +79,7 @@ public class BasicGameApp extends GameApplication {
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>21.1</version>
+    <version>25</version>
 </dependency>
 ```
 
@@ -95,7 +95,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:21.1'
+    compile 'com.github.almasb:fxgl:25'
 }
 ```
 

@@ -6,6 +6,7 @@
 @file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
 package com.almasb.fxgl.notification
 
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.notification.impl.NotificationServiceProvider
@@ -61,6 +62,8 @@ class NotificationServiceTest {
                 get() = Input()
             override val timer: Timer
                 get() = theTimer
+            override val worldProperties: PropertyMap
+                get() = PropertyMap()
 
             override val currentScene: Scene
                 get() = object : Scene() {}

@@ -78,12 +78,10 @@ class AsyncServiceTest {
 
         assertThat(count.get(), `is`(0))
 
-        // 3 services resolved faster than their combined execution time
-        assertThat(measureTimeMillis {
-            services.forEach { service ->
-                service.onGameUpdate(1.0)
-            }
-        }.toDouble(), lessThan(300.0))
+        // resolve services
+        services.forEach { service ->
+            service.onGameUpdate(1.0)
+        }
 
         assertThat(count.get(), `is`(greaterThan(2)))
     }

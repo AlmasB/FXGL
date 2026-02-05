@@ -6,103 +6,93 @@
 
 package com.almasb.fxgl.intelligence.gesturerecog
 
-import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.concurrent.Async
+import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.intelligence.WebAPI
+import com.almasb.fxgl.intelligence.WebAPIService
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.net.ws.LocalWebSocketServer
+import com.almasb.fxgl.net.ws.VideoInputDeviceInfo
 import javafx.geometry.Point3D
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.chrome.ChromeOptions
 import java.util.function.Consumer
 
 /**
+ * Service that provides access to hand tracking.
  *
  * @author Almas Baim (https://github.com/AlmasB)
  */
-class HandTrackingService : EngineService() {
+class HandTrackingService : WebAPIService(
+    LocalWebSocketServer("HandTrackingServer", WebAPI.GESTURE_RECOGNITION_PORT),
+    WebAPI.GESTURE_RECOGNITION_API
+) {
 
     private val log = Logger.get(HandTrackingService::class.java)
-    private val server = LocalWebSocketServer("HandTrackingServer", WebAPI.GESTURE_RECOGNITION_PORT)
 
-    private var webDriver: WebDriver? = null
+    private val videoInputDevices = arrayListOf<VideoInputDeviceInfo>()
 
     private val handDataHandlers = arrayListOf<Consumer<Hand>>()
 
-    override fun onInit() {
-        server.addMessageHandler { message ->
-            try {
-                val rawData = message.split(",").filter { it.isNotEmpty() }
+    var onMediaDeviceDetectionCompleted: Runnable = EmptyRunnable
 
-                val id = rawData[0].toInt()
-                val points = ArrayList<Point3D>()
+    val videoDevices: List<VideoInputDeviceInfo>
+        get() = videoInputDevices.toList()
 
-                var i = 1
-                while (i < rawData.size) {
-                    val x = rawData[i + 0].toDouble()
-                    val y = rawData[i + 1].toDouble()
-                    val z = rawData[i + 2].toDouble()
-
-                    points.add(Point3D(x, y, z))
-
-                    i += 3
-                }
-
-                Async.startAsyncFX {
-                    handDataHandlers.forEach { it.accept(Hand(id, points)) }
-                }
-
-            } catch (e: Exception) {
-                log.warning("Failed to parse message.", e)
-            }
-        }
-
-        server.start()
+    val landmarksView: HandLandmarksView by lazy {
+        HandLandmarksView().also { addInputHandler(it) }
     }
 
-    /**
-     * Starts this service in a background thread.
-     * Can be called after stop() to restart the service.
-     * If the service has already started, then calls stop() and restarts it.
-     */
-    fun start() {
-        Async.startAsync {
-            try {
-                if (webDriver != null) {
-                    stop()
-                }
+    // kind: audioinput, videoinput, audiooutput
+    private fun onMediaDeviceDetected(kind: String, label: String, deviceID: String) {
+        log.debug("New media device detected: $kind,$label,$deviceID")
 
-                val options = ChromeOptions()
-                options.addArguments("--headless=new")
-                options.addArguments("--use-fake-ui-for-media-stream")
-
-                webDriver = ChromeDriver(options)
-                webDriver!!.get(WebAPI.GESTURE_RECOGNITION_API.toExternalForm())
-
-                // we are ready to use the web api service
-            } catch (e: Exception) {
-                log.warning("Failed to start Chrome web driver. Ensure Chrome is installed in default location")
-                log.warning("Error data", e)
-            }
+        if (kind == "videoinput") {
+            videoInputDevices += VideoInputDeviceInfo(label, deviceID)
         }
     }
 
-    /**
-     * Stops this service.
-     * No-op if it has not started via start() before.
-     */
-    fun stop() {
+    private fun onMediaDeviceDetectionComplete() {
+        Async.startAsyncFX {
+            onMediaDeviceDetectionCompleted.run()
+        }
+    }
+
+    private fun initService() {
+        log.debug("initService()")
+
+        setReady()
+    }
+
+    private fun onHandInput(message: String) {
         try {
-            if (webDriver != null) {
-                webDriver!!.quit()
-                webDriver = null
+            val rawData = message.split(",").filter { it.isNotEmpty() }
+
+            val id = rawData[0].toInt()
+            val points = ArrayList<Point3D>()
+
+            var i = 1
+            while (i < rawData.size) {
+                val x = rawData[i + 0].toDouble()
+                val y = rawData[i + 1].toDouble()
+                val z = rawData[i + 2].toDouble()
+
+                points.add(Point3D(x, y, z))
+
+                i += 3
             }
+
+            Async.startAsyncFX {
+                handDataHandlers.forEach { it.accept(Hand(id, points)) }
+            }
+
         } catch (e: Exception) {
-            log.warning("Failed to quit web driver", e)
+            log.warning("Failed to parse message.", e)
         }
     }
 
+    /**
+     * Add input handler for hand tracking data.
+     * Input handlers are called on the JavaFX thread.
+     */
     fun addInputHandler(handler: Consumer<Hand>) {
         handDataHandlers += handler
     }
@@ -111,8 +101,9 @@ class HandTrackingService : EngineService() {
         handDataHandlers -= handler
     }
 
-    override fun onExit() {
-        stop()
-        server.stop()
+    fun setVideoDevice(videoDevice: VideoInputDeviceInfo) {
+        log.debug("setting video device = $videoDevice")
+
+        rpcRun("setVideoInputDevice", videoDevice.id)
     }
 }

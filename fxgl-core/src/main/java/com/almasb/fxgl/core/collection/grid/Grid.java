@@ -8,6 +8,7 @@ package com.almasb.fxgl.core.collection.grid;
 
 import com.almasb.fxgl.core.math.FXGLMath;
 import static com.almasb.fxgl.core.collection.grid.NeighborDirection.*;
+import static com.almasb.fxgl.core.collection.grid.NeighborSelectionStrategy.*;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -129,32 +130,37 @@ public class Grid<T extends Cell> {
      * @return a new list of neighboring cells to given (x, y) in 4 directions
      */
     public final List<T> getNeighbors(int x, int y) {
-        return getNeighbors(x, y, FOUR_DIRECTIONS);
+        return getNeighbors(x, y, LEFT_UP_RIGHT_DOWN);
     }
 
     /**
+     * Deprecated: use getNeighbors() with strategy.
+     *
      * Note: returned cells are in the grid (i.e. bounds are checked).
      * The order is left, up, right, down for 4 directions
      * + (optionally) up-left, up-right, down-right, down-left for 8 directions.
      *
      * @return a new list of neighboring cells to given (x, y) in desired # of directions
      */
+    @Deprecated
     public final List<T> getNeighbors(int x, int y, NeighborDirection neighborDirection) {
-        List<T> result = new ArrayList<>();
-        getLeft(x, y).ifPresent(result::add);
-        getUp(x, y).ifPresent(result::add);
-        getRight(x, y).ifPresent(result::add);
-        getDown(x, y).ifPresent(result::add);
+        return getNeighbors(x, y,
+                neighborDirection == FOUR_DIRECTIONS
+                        ? LEFT_UP_RIGHT_DOWN
+                        : LEFT_UP_RIGHT_DOWN_UPLEFT_UPRIGHT_DOWNRIGHT_DOWNLEFT
+        );
+    }
 
-        // Include "Corner" neighbors when eight directions
-        if (neighborDirection == EIGHT_DIRECTIONS) {
-            getUpLeft(x, y).ifPresent(result::add);
-            getUpRight(x, y).ifPresent(result::add);
-            getDownRight(x, y).ifPresent(result::add);
-            getDownLeft(x, y).ifPresent(result::add);
-        }
-
-        return result;
+    /**
+     * @return a list of valid (inside the grid) neighboring cells to given (x, y)
+     */
+    public final List<T> getNeighbors(int x, int y, NeighborSelectionStrategy strategy) {
+        return strategy.selectNeighborCoordinates(x, y)
+                .stream()
+                .map(p -> getOptional((int) p.getX(), (int) p.getY()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
     }
 
     public final T get(int x, int y) {

@@ -33,7 +33,7 @@ public class ColoringSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1280);
+        settings.setWidth(1480);
         settings.setHeight(920);
     }
 
@@ -113,6 +113,14 @@ public class ColoringSample extends GameApplication {
         centerText(t, 150, 450);
 
         getGameScene().addUINodes(hbox, hbox2, hbox3, hbox4, t);
+
+        var awtImage = ImagesKt.toBufferedImage(original.getImage());
+        var fxImage = ImagesKt.fromBufferedImage(awtImage);
+
+        addUINode(new Texture(fxImage), 900, 10);
+
+        var derived = original.deriveColor(0, 1.0, 0.45, 0.7);
+        addUINode(derived, 980, 10);
     }
 
     private VBox makeBox(String header, Node texture) {

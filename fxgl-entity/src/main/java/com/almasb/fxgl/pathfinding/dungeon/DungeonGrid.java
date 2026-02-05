@@ -8,7 +8,7 @@ package com.almasb.fxgl.pathfinding.dungeon;
 
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.pathfinding.CellState;
-import com.almasb.fxgl.pathfinding.astar.TraversableGrid;
+import com.almasb.fxgl.pathfinding.TraversableGrid;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;

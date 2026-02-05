@@ -8,6 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.app.scene.GameScene
 import com.almasb.fxgl.app.scene.GameView
+import com.almasb.fxgl.core.View
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.particle.ParticleComponent
@@ -18,6 +19,7 @@ import com.almasb.fxgl.ui.UIController
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.layout.Pane
+import javafx.scene.layout.Region
 import javafx.scene.shape.Rectangle
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
@@ -116,6 +118,19 @@ class GameSceneTest {
         gameScene.removeUINodes(rect, rect2)
 
         assertTrue(gameScene.uiNodes.isEmpty())
+    }
+
+    @Test
+    fun `UI nodes are updated`() {
+        val testView = TestView()
+
+        gameScene.addUINode(testView)
+
+        assertThat(testView.count, `is`(0.0))
+
+        gameScene.update(1.0)
+
+        assertThat(testView.count, `is`(1.0))
     }
 
     @Test
@@ -233,5 +248,20 @@ class GameSceneTest {
 
         assertThat(gameRoot.children[0], `is`(view1.node))
         assertThat(gameRoot.children[1], `is`(view2.node))
+    }
+
+    private class TestView : Region(), View {
+        var count = 0.0
+
+        override fun onUpdate(tpf: Double) {
+            count = tpf
+        }
+
+        override fun dispose() {
+        }
+
+        override fun getNode(): Node {
+            return this
+        }
     }
 }

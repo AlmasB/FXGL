@@ -6,19 +6,15 @@
 
 package com.almasb.fxgl.pathfinding.astar;
 
-import com.almasb.fxgl.core.collection.grid.Cell;
 import com.almasb.fxgl.pathfinding.CellState;
+import com.almasb.fxgl.pathfinding.TraversableCell;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class AStarCell extends Cell {
+public class AStarCell extends TraversableCell {
 
     private static final int DEFAULT_MOVEMENT_COST = 30;
-
-    private AStarCell parent;
-
-    private CellState state;
 
     /**
      * Determines the movement (G) cost into this cell.
@@ -31,13 +27,16 @@ public class AStarCell extends Cell {
     private int gCost;
     private int hCost;
 
+    public AStarCell(int x, int y) {
+        this(x, y, CellState.WALKABLE);
+    }
+
     public AStarCell(int x, int y, CellState state) {
         this(x, y, state, DEFAULT_MOVEMENT_COST);
     }
 
     public AStarCell(int x, int y, CellState state, int movementCost) {
-        super(x, y);
-        this.state = state;
+        super(x, y, state);
         this.movementCost = movementCost;
     }
 
@@ -47,14 +46,6 @@ public class AStarCell extends Cell {
 
     public final int getMovementCost() {
         return movementCost;
-    }
-
-    public final void setParent(AStarCell parent) {
-        this.parent = parent;
-    }
-
-    public final AStarCell getParent() {
-        return parent;
     }
 
     public final void setHCost(int hCost) {
@@ -73,18 +64,6 @@ public class AStarCell extends Cell {
         return gCost;
     }
 
-    public final void setState(CellState state) {
-        this.state = state;
-    }
-
-    public final CellState getState() {
-        return state;
-    }
-
-    public final boolean isWalkable() {
-        return state.isWalkable();
-    }
-
     /**
      * @return F cost (G + H)
      */
@@ -94,6 +73,6 @@ public class AStarCell extends Cell {
 
     @Override
     public String toString() {
-        return "A* Cell[x=" + getX() + ",y=" + getY() + "," + state + "]";
+        return "A* Cell[x=" + getX() + ",y=" + getY() + "," + getState() + "]";
     }
 }

@@ -7,11 +7,12 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>21+dev-SNAPSHOT</version>
+        <version>25+dev-SNAPSHOT</version>
     </parent>
 
     <artifactId>fxgl</artifactId>
     <packaging>jar</packaging>
+    <name>fxgl</name>
 
     <profiles>
         <profile>

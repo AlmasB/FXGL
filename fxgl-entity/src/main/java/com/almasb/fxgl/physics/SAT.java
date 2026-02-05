@@ -100,6 +100,7 @@ public final class SAT {
          * @param other another min-max (assumed on the same axis)
          * @return true if this min-max is separated from other
          */
+        @SuppressWarnings("PMD.UnusedPrivateMethod")
         private boolean isSeparated(MinMax other) {
             return max < other.min || other.max < min;
         }

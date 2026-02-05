@@ -194,6 +194,7 @@ public class Particle implements Poolable {
     /**
      * @return true if particle died
      */
+    @SuppressWarnings("PMD.UselessParentheses")
     boolean update(double tpf) {
         double progress = 1 - life / initialLife;
 

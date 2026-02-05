@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.pathfinding.astar;
+package com.almasb.fxgl.pathfinding;
 
 import com.almasb.fxgl.core.collection.grid.CellGenerator;
 import com.almasb.fxgl.core.collection.grid.Grid;
@@ -13,11 +13,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * The supertype for any grid that can be traversed using A* pathfinding.
+ * The supertype for any grid that can be traversed using some pathfinding algorithm.
+ * It can be extended by domain-specific grids, whose cells extend TraversableCell.
  *
  * @author Almas Baim (https://github.com/AlmasB)
  */
-public abstract class TraversableGrid<T extends AStarCell> extends Grid<T> {
+public abstract class TraversableGrid<T extends TraversableCell> extends Grid<T> {
 
     public TraversableGrid(Class<T> type, int width, int height) {
         super(type, width, height);

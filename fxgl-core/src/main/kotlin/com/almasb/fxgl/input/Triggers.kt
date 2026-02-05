@@ -98,7 +98,7 @@ data class KeyTrigger
             return false
 
         return when (event.code) {
-            KeyCode.CONTROL -> modifier == InputModifier.CTRL
+            KeyCode.CONTROL, KeyCode.SHORTCUT -> modifier == InputModifier.CTRL
             KeyCode.SHIFT -> modifier == InputModifier.SHIFT
             KeyCode.ALT -> modifier == InputModifier.ALT
             else -> event.code == key
@@ -155,7 +155,7 @@ data class MouseTrigger
     override fun isReleased(event: InputEvent): Boolean {
         if (event is KeyEvent) {
             return when (event.code) {
-                KeyCode.CONTROL -> modifier == InputModifier.CTRL
+                KeyCode.CONTROL, KeyCode.SHORTCUT -> modifier == InputModifier.CTRL
                 KeyCode.SHIFT -> modifier == InputModifier.SHIFT
                 KeyCode.ALT -> modifier == InputModifier.ALT
                 else -> isTriggered(event)

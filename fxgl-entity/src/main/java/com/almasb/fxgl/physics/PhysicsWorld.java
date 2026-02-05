@@ -657,6 +657,33 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     /* JOINTS BEGIN */
 
     /**
+     * @param entities to add joint between
+     * @return joint
+     */
+    public ConstantVolumeJoint addConstantVolumeJoint(Entity... entities) {
+        return addConstantVolumeJoint(0, 0, entities);
+    }
+
+    /**
+     * @param frequencyHz the mass-spring-damper frequency in Hertz
+     * @param dampingRatio 0 = no damping, 1 = critical damping.
+     * @param entities to add joint between
+     * @return joint
+     */
+    public ConstantVolumeJoint addConstantVolumeJoint(float frequencyHz, float dampingRatio, Entity... entities) {
+        checkJointRequirements(entities);
+
+        var def = new ConstantVolumeJointDef();
+        def.frequencyHz = frequencyHz;
+        def.dampingRatio = dampingRatio;
+        for (var e : entities) {
+            def.addBody(e.getComponent(PhysicsComponent.class).getBody());
+        }
+
+        return jboxWorld.createJoint(def);
+    }
+
+    /**
      * Add revolute joint between two entities.
      *
      * @param e1 entity1
@@ -753,9 +780,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
         return jboxWorld.createJoint(def);
     }
 
-    private void checkJointRequirements(Entity e1, Entity e2) {
-        if (!e1.hasComponent(PhysicsComponent.class) || !e2.hasComponent(PhysicsComponent.class)) {
-            throw new IllegalArgumentException("Cannot create a joint: both entities must have PhysicsComponent");
+    private void checkJointRequirements(Entity... entities) {
+        for (var e : entities) {
+            if (!e.hasComponent(PhysicsComponent.class)) {
+                throw new IllegalArgumentException("Cannot create a joint: all entities must have PhysicsComponent");
+            }
         }
     }
 

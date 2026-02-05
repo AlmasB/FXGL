@@ -77,4 +77,43 @@ class ImagesTest {
         assertThat(result[11], `is`(img2))
         assertThat(result[22], `is`(img3))
     }
+
+    @Test
+    fun `Compare two images`() {
+        var img1 = ColoredTexture(100, 100, Color.WHITE)
+            .superTexture(ColoredTexture(100, 100, Color.BLACK), HorizontalDirection.RIGHT)
+            .image
+
+        var img2 = ColoredTexture(100, 100, Color.WHITE)
+            .superTexture(ColoredTexture(100, 100, Color.RED), HorizontalDirection.RIGHT)
+            .image
+
+        var result = img1.compareStrict(img2)
+
+        assertThat(result, `is`(0.5))
+
+        // compare identical
+        img1 = ColoredTexture(100, 100, Color.WHITE).image
+        img2 = ColoredTexture(100, 100, Color.WHITE).image
+        result = img1.compareStrict(img2)
+
+        assertThat(result, `is`(1.0))
+
+        // compare different sizes
+        img2 = ColoredTexture(100, 50, Color.WHITE).image
+        result = img1.compareStrict(img2)
+
+        assertThat(result, `is`(0.0))
+    }
+
+    @Test
+    fun `Convert to base64`() {
+        val img1 = ColoredTexture(100, 100, Color.WHITE).image
+
+        val s = img1.toBase64()
+
+        assertThat(s, `is`(
+            "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAA/ElEQVR4Xu3RoQEAMAyAsP7/dOv3wBCJxDJLyryBvwyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTGkBhDYgyJMSTmAPgrrNZaawxDAAAAAElFTkSuQmCC"
+        ))
+    }
 }

@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox.ai.pathfinding;
+package sandbox.benchmark;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -23,7 +23,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import kotlin.Unit;
 import kotlin.system.TimingKt;
-import kotlin.time.TimeSource;
 
 import java.util.Collections;
 import java.util.Comparator;

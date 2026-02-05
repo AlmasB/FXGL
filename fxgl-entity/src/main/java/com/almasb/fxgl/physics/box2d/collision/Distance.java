@@ -151,7 +151,6 @@ public class Distance {
                 default:
                     assert false;
                     out.setZero();
-                    return;
             }
         }
 
@@ -182,7 +181,6 @@ public class Distance {
                 default:
                     assert false;
                     out.setZero();
-                    return;
             }
         }
 

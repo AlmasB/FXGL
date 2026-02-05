@@ -209,4 +209,10 @@ public abstract class GameApplication {
      * @param tpf time per frame
      */
     protected void onUpdate(double tpf) {}
+
+    /**
+     * Called once per application lifetime, after all engine services exited
+     * and before FXGL is about to shutdown.
+     */
+    protected void onExit() {}
 }

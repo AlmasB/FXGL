@@ -104,6 +104,26 @@ class ReflectionFunctionCaller {
         return defaultFunctionHandler.apply(functionName, args.toList())
     }
 
+    fun invoke(functionName: String, args: List<Any>): Any {
+        return invoke(functionName, args.toTypedArray())
+    }
+
+    /**
+     * An equivalent of [call], but allows any type of arguments, not just String.
+     *
+     * @return 0 for void type functions, otherwise return value from the invoked function
+     */
+    fun invoke(functionName: String, args: Array<Any>): Any {
+        val function = functions[FunctionSignature(functionName, args.size)]
+
+        if (function != null) {
+            // void returns null, but Any is expected, so we return 0 in such cases
+            return function.method.invoke(function.functionCallTarget, *args) ?: 0
+        }
+
+        return defaultFunctionHandler.apply(functionName, args.toList().map { it.toString() })
+    }
+
     private data class FunctionSignature(val name: String, val paramCount: Int)
 
     /**

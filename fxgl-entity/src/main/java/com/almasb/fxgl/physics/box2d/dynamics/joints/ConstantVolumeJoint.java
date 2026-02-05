@@ -7,25 +7,28 @@ package com.almasb.fxgl.physics.box2d.dynamics.joints;
 
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
 import com.almasb.fxgl.physics.box2d.dynamics.SolverData;
 import com.almasb.fxgl.physics.box2d.dynamics.World;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Position;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Velocity;
 
-public class ConstantVolumeJoint extends Joint {
+import static com.almasb.fxgl.physics.box2d.common.JBoxSettings.*;
+
+/**
+ * This joint connects a group of bodies together so they maintain a constant volume within them.
+ */
+public final class ConstantVolumeJoint extends Joint {
 
     private final Body[] bodies;
-    private float[] targetLengths;
     private float targetVolume;
 
-    private Vec2[] normals;
+    private final Vec2[] normals;
     private float m_impulse = 0.0f;
 
-    private World world;
+    private final DistanceJoint[] distanceJoints;
 
-    private DistanceJoint[] distanceJoints;
+    private final World world;
 
     public ConstantVolumeJoint(World argWorld, ConstantVolumeJointDef def) {
         super(argWorld.getPool(), def);
@@ -34,29 +37,30 @@ public class ConstantVolumeJoint extends Joint {
         if (def.bodies.size() <= 2) {
             throw new IllegalArgumentException("You cannot create a constant volume joint with less than three bodies.");
         }
-        bodies = def.bodies.toArray(new Body[0]);
 
-        targetLengths = new float[bodies.length];
-        for (int i = 0; i < targetLengths.length; ++i) {
-            final int next = (i == targetLengths.length - 1) ? 0 : i + 1;
-            float dist = bodies[i].getWorldCenter().sub(bodies[next].getWorldCenter()).length();
-            targetLengths[i] = dist;
-        }
-        targetVolume = getBodyArea();
-
-        if (def.joints != null && def.joints.size() != def.bodies.size()) {
+        // if def was constructed / deserialized using def.addBodyAndJoint()
+        if (!def.joints.isEmpty() && def.joints.size() != def.bodies.size()) {
             throw new IllegalArgumentException("Incorrect joint definition. Joints have to correspond to the bodies");
         }
-        if (def.joints == null) {
-            final DistanceJointDef djd = new DistanceJointDef();
+
+        bodies = def.bodies.toArray(new Body[0]);
+
+        targetVolume = getBodyArea();
+
+        if (def.joints.isEmpty()) {
             distanceJoints = new DistanceJoint[bodies.length];
-            for (int i = 0; i < targetLengths.length; ++i) {
-                final int next = (i == targetLengths.length - 1) ? 0 : i + 1;
-                djd.frequencyHz = def.frequencyHz;// 20.0f;
-                djd.dampingRatio = def.dampingRatio;// 50.0f;
-                djd.setBodyCollisionAllowed(def.isBodyCollisionAllowed());
+
+            DistanceJointDef djd = new DistanceJointDef();
+            djd.frequencyHz = def.frequencyHz; // 20.0f;
+            djd.dampingRatio = def.dampingRatio; // 50.0f;
+            djd.setBodyCollisionAllowed(def.isBodyCollisionAllowed());
+
+            for (int i = 0; i < bodies.length; ++i) {
+                final int next = (i == bodies.length - 1) ? 0 : i + 1;
+
                 djd.initialize(bodies[i], bodies[next], bodies[i].getWorldCenter(), bodies[next].getWorldCenter());
-                distanceJoints[i] = (DistanceJoint) world.createJoint(djd);
+
+                distanceJoints[i] = world.createJoint(djd);
             }
         } else {
             distanceJoints = def.joints.toArray(new DistanceJoint[0]);
@@ -116,7 +120,7 @@ public class ConstantVolumeJoint extends Joint {
             float dx = positions[bodies[next].m_islandIndex].c.x - positions[bodies[i].m_islandIndex].c.x;
             float dy = positions[bodies[next].m_islandIndex].c.y - positions[bodies[i].m_islandIndex].c.y;
             float dist = FXGLMath.sqrtF(dx * dx + dy * dy);
-            if (dist < JBoxSettings.EPSILON) {
+            if (dist < EPSILON) {
                 dist = 1.0f;
             }
             normals[i].x = dy / dist;
@@ -132,14 +136,16 @@ public class ConstantVolumeJoint extends Joint {
         boolean done = true;
         for (int i = 0; i < bodies.length; ++i) {
             final int next = (i == bodies.length - 1) ? 0 : i + 1;
-            delta.set(toExtrude * (normals[i].x + normals[next].x), toExtrude
-                    * (normals[i].y + normals[next].y));
+            delta.set(
+                    toExtrude * (normals[i].x + normals[next].x),
+                    toExtrude * (normals[i].y + normals[next].y)
+            );
             // sumdeltax += dx;
             float normSqrd = delta.lengthSquared();
-            if (normSqrd > JBoxSettings.maxLinearCorrection * JBoxSettings.maxLinearCorrection) {
-                delta.mulLocal(JBoxSettings.maxLinearCorrection / FXGLMath.sqrtF(normSqrd));
+            if (normSqrd > maxLinearCorrection * maxLinearCorrection) {
+                delta.mulLocal(maxLinearCorrection / FXGLMath.sqrtF(normSqrd));
             }
-            if (normSqrd > JBoxSettings.linearSlop * JBoxSettings.linearSlop) {
+            if (normSqrd > linearSlop * linearSlop) {
                 done = false;
             }
             positions[bodies[next].m_islandIndex].c.x += delta.x;
@@ -170,8 +176,7 @@ public class ConstantVolumeJoint extends Joint {
             m_impulse *= step.step.dtRatio;
             // float lambda = -2.0f * crossMassSum / dotMassSum;
 
-            // lambda = FXGLMath.clamp(lambda, -JBoxSettings.maxLinearCorrection,
-            // JBoxSettings.maxLinearCorrection);
+            // lambda = FXGLMath.clamp(lambda, -JBoxSettings.maxLinearCorrection, JBoxSettings.maxLinearCorrection);
             // m_impulse = lambda;
             for (int i = 0; i < bodies.length; ++i) {
                 velocities[bodies[i].m_islandIndex].v.x += bodies[i].m_invMass * d[i].y * .5f * m_impulse;
@@ -201,13 +206,12 @@ public class ConstantVolumeJoint extends Joint {
             final int next = (i == bodies.length - 1) ? 0 : i + 1;
             d[i].set(positions[bodies[next].m_islandIndex].c);
             d[i].subLocal(positions[bodies[prev].m_islandIndex].c);
-            dotMassSum += (d[i].lengthSquared()) / bodies[i].getMass();
+            dotMassSum += d[i].lengthSquared() / bodies[i].getMass();
             crossMassSum += Vec2.cross(velocities[bodies[i].m_islandIndex].v, d[i]);
         }
         float lambda = -2.0f * crossMassSum / dotMassSum;
 
-        // lambda = FXGLMath.clamp(lambda, -JBoxSettings.maxLinearCorrection,
-        // JBoxSettings.maxLinearCorrection);
+        // lambda = FXGLMath.clamp(lambda, -JBoxSettings.maxLinearCorrection, JBoxSettings.maxLinearCorrection);
         m_impulse += lambda;
 
         for (int i = 0; i < bodies.length; ++i) {

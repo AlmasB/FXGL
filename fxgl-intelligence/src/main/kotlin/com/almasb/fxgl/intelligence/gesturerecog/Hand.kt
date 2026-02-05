@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.intelligence.gesturerecog
 
+import javafx.geometry.Point2D
 import javafx.geometry.Point3D
 
 /**
@@ -22,4 +23,10 @@ data class Hand(
 ) {
 
     fun getPoint(landmark: HandLandmark) = points[landmark.ordinal]
+
+    fun getScaledPoint2D(landmark: HandLandmark, scaleWidth: Double, scaleHeight: Double): Point2D {
+        val p = points[landmark.ordinal]
+
+        return Point2D((1.0 - p.x) * scaleWidth, p.y * scaleHeight)
+    }
 }
