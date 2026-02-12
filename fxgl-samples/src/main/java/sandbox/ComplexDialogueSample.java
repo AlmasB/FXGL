@@ -37,7 +37,7 @@ public class ComplexDialogueSample extends GameApplication {
         // simple dialogue
         onKeyDown(KeyCode.Q, () -> {
             // the json file is loaded from /assets/dialogues/
-            var dialogueGraph = getAssetLoader().loadDialogueGraph("simple.json");
+            var dialogueGraph = getAssetLoader().loadDialogueGraph("simplesample.json");
 
             getCutsceneService().startDialogueScene(dialogueGraph);
         });

@@ -31,7 +31,7 @@ public class DialogueSample extends GameApplication {
 
         // we schedule this to fire in 0.5 seconds since we can't change our scene while loading in background
         onKeyDown(KeyCode.F, () -> {
-            // the file simple.json is loaded from /assets/dialogues/
+            // the file simplesample.json is loaded from /assets/dialogues/
             try {
                 var url = Paths.get("function_test.json").toUri().toURL();
 
