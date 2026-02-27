@@ -18,6 +18,7 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.pathfinding.CellMoveComponent;
 import com.almasb.fxgl.pathfinding.CellState;
+import com.almasb.fxgl.pathfinding.astar.AStarCell;
 import com.almasb.fxgl.pathfinding.astar.AStarGrid;
 import com.almasb.fxgl.pathfinding.astar.AStarMoveComponent;
 import javafx.scene.input.MouseButton;
@@ -113,7 +114,7 @@ public class SenseAISample extends GameApplication {
 
     private static class CustomAIComponent extends Component {
         private CellMoveComponent cellMove;
-        private AStarMoveComponent astarMove;
+        private AStarMoveComponent<AStarCell> astarMove;
         private HearingSenseComponent sense;
 
         @Override

@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.intelligence.tts
 
-import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.intelligence.WebAPI
 import com.almasb.fxgl.intelligence.WebAPIService
 import com.almasb.fxgl.logging.Logger

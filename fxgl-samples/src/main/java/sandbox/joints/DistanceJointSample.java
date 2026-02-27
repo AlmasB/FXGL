@@ -32,9 +32,6 @@ import javafx.util.Duration;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
- * TODO: a unified physics simulation sample to extend from, which provides
- * ability to shoot a physics projectile and spawn various physics objects.
- *
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

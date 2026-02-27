@@ -9,6 +9,7 @@
  */
 module com.almasb.fxgl.io {
     requires com.almasb.fxgl.core;
+    requires com.almasb.fxgl.scene;
     requires com.gluonhq.attach.storage;
     requires java.net.http;
 

@@ -785,7 +785,7 @@ private class UIAssetLoader : AssetLoader<UI>(
         val controller = (params as UIParams).controller
 
         params.url.openStream().use {
-            val loader = FXMLLoader()
+            val loader = FXMLLoader(params.url)
             loader.setController(controller)
             val root = loader.load<Parent>(it)
             controller.init()

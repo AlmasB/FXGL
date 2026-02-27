@@ -6,7 +6,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>21+dev-SNAPSHOT</version>
+        <version>25+dev-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -17,8 +17,6 @@
         <jfx.maven.plugin.version>0.0.4</jfx.maven.plugin.version>
 
         <mainClassName>com.almasb.fxgl.tools.dialogues.DialogueEditorApp</mainClassName>
-
-        <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
     </properties>
 
     <dependencies>
@@ -61,6 +59,17 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
                     <skip>true</skip>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>${central.publishing.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <skipPublishing>true</skipPublishing>
                 </configuration>
             </plugin>
             

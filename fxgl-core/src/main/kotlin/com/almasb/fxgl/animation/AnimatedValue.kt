@@ -163,6 +163,7 @@ class AnimatedPath
             points[percent++] = Point3D(dummy.translateX, dummy.translateY, 0.0)
 
             t += 0.01
+            Thread.sleep(10)//this line of code is due to JavaFX behavior being different between versions 21 and 25, JavaFX 25 requires transition time elapsed to activate pt.jumpTo() method below.
 
             pt.jumpTo(Duration.seconds(t))
         }

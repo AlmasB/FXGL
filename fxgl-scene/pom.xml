@@ -11,11 +11,12 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>21+dev-SNAPSHOT</version>
+        <version>25+dev-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>fxgl-scene</artifactId>
+    <name>fxgl-scene</name>
 
     <dependencies>
         <dependency>

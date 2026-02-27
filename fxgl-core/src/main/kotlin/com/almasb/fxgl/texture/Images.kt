@@ -17,8 +17,10 @@ import javafx.scene.effect.BlendMode
 import javafx.scene.image.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
+import java.io.ByteArrayOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.Base64
 import java.util.concurrent.Callable
 import javax.imageio.ImageIO
 import kotlin.math.abs
@@ -608,6 +610,20 @@ fun Image.subImage(area: Rectangle2D): Image {
     return newImage
 }
 
+fun Image.toByteArray(): ByteArray {
+    val awtImage = toBufferedImage(this)
+
+    val baos = ByteArrayOutputStream()
+
+    ImageIO.write(awtImage, "png", baos)
+
+    return baos.toByteArray()
+}
+
+fun Image.toBase64(): String {
+    return Base64.getEncoder().encodeToString(this.toByteArray())
+}
+
 /**
  * @return the sum of rgb values, which is in range [0..3]
  */
@@ -633,6 +649,18 @@ fun toBufferedImage(fxImage: Image): java.awt.image.BufferedImage {
     fxImage.pixelReader.getPixels(0, 0, w, h, WritablePixelFormat.getIntArgbPreInstance(), buffer.data, 0, w)
 
     return awtImage
+}
+
+fun fromBufferedImage(awtImage: java.awt.image.BufferedImage): Image {
+    val w = awtImage.width
+    val h = awtImage.height
+
+    val buffer = awtImage.raster.dataBuffer as java.awt.image.DataBufferInt
+
+    val fxImage = WritableImage(w, h)
+    fxImage.pixelWriter.setPixels(0, 0, w, h, WritablePixelFormat.getIntArgbPreInstance(), buffer.data, 0, w)
+
+    return fxImage
 }
 
 /**
@@ -679,4 +707,25 @@ fun interpolateIntermediateImages(images: List<Image>, numFramesBetweenImages: I
     result += images.last()
 
     return result
+}
+
+/**
+ * The returned value of 0 means images do not share a single pixel (x, y, color are checked).
+ * The value of 1 means images are identical.
+ * If images have different sizes, 0 is returned.
+ *
+ * @return an accuracy value [0..1] (a ratio)
+ * representing the number of matched pixels over the number of total pixels
+ */
+fun Image.compareStrict(other: Image): Double {
+    if (this.width != other.width || this.height != other.height)
+        return 0.0
+
+    val pixels0 = toPixels(this)
+    val pixels1 = toPixels(other)
+
+    val matched = pixels0.zip(pixels1)
+        .count { (p0, p1) -> p0.color == p1.color }
+
+    return matched.toDouble() / pixels0.size
 }

@@ -23,7 +23,7 @@
 ### Почему FXGL?
 
 * Не требуется установка или настройка
-* "Из коробки": Java 8-21, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
+* "Из коробки": Java 8-25, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
 * Простой и чистый API, более высокого уровня по сравнению с другими движками
 * Расширение JavaFX: нет необходимости изучать новый API пользовательского интерфейса
 * Реальные методы разработки игр: Entity-Component, интерполированная анимация, частицы и [многое другое](https://github.com/AlmasB/FXGL/wiki/Core-Features)
@@ -79,7 +79,7 @@ public class BasicGameApp extends GameApplication {
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>21</version>
+    <version>25</version>
 </dependency>
 ```
 
@@ -95,7 +95,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:21'
+    compile 'com.github.almasb:fxgl:25'
 }
 ```
 
@@ -126,7 +126,7 @@ open module app.name {
 * Школа инженерии / информатики FHNW, Швейцария
 * Гимназия Иоганна-Андреаса-Шмеллера, Наббург, Германия
 
-Если ваше учебное заведение хочет использовать FXGL или уже использует его, оставьте заметку в [чате](https://gitter.im/AlmasB/FXGL), чтобы мы могли внести его в список.
+Если ваше учебное заведение хочет использовать FXGL или уже использует его, оставьте заметку в [чате](https://github.com/AlmasB/FXGL/discussions), чтобы мы могли внести его в список.
 
 Руководства сообщества:
 
@@ -140,7 +140,7 @@ open module app.name {
 - [Consume](https://ergoscrit.itch.io/consume)
 - [FXGL Sliding Puzzle](https://github.com/beryx/fxgl-sliding-puzzle)
 
-Если вы хотите, чтобы ваш проект был представлен здесь, просто добавьте заметку в [чате](https://gitter.im/AlmasB/FXGL).
+Если вы хотите, чтобы ваш проект был представлен здесь, просто добавьте заметку в [чате](https://github.com/AlmasB/FXGL/discussions).
 
 ### Команда разработчиков
 

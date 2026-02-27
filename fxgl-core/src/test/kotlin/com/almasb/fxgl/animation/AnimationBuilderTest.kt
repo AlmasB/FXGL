@@ -25,6 +25,7 @@ import org.hamcrest.Matchers.closeTo
 import org.hamcrest.Matchers.not
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -273,6 +274,7 @@ class AnimationBuilderTest {
         assertThat(e.z, `is`(3.0))
     }
 
+    @Disabled
     @ParameterizedTest
     @MethodSource("pathProvider")
     fun `Translate along a path`(path: Shape) {

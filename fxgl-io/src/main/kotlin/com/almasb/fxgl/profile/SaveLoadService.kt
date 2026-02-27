@@ -7,10 +7,13 @@
 package com.almasb.fxgl.profile
 
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.concurrent.IOTask
+import com.almasb.fxgl.core.serialization.Bundle
 import com.almasb.fxgl.io.FileExtension
 import com.almasb.fxgl.io.FileSystemService
 import com.almasb.fxgl.logging.Logger
+import com.almasb.fxgl.scene.SceneService
 import java.util.*
 
 /**
@@ -21,6 +24,7 @@ class SaveLoadService : EngineService() {
 
     private val log = Logger.get(javaClass)
 
+    private lateinit var sceneService: SceneService
     private lateinit var fs: FileSystemService
 
     private val saveLoadHandlers = arrayListOf<SaveLoadHandler>()
@@ -31,6 +35,27 @@ class SaveLoadService : EngineService() {
 
     fun removeHandler(saveLoadHandler: SaveLoadHandler) {
         saveLoadHandlers -= saveLoadHandler
+    }
+
+    fun addWorldPropertiesHandler() {
+        addHandler(object : SaveLoadHandler {
+            override fun onSave(data: DataFile) {
+                data.putBundle(Bundle("fxglDataVars").also {
+                    it.put("vars", sceneService.worldProperties.toStringMap() as java.io.Serializable)
+                })
+            }
+
+            override fun onLoad(data: DataFile) {
+                val bundle = data.getBundle("fxglDataVars")
+                val map = bundle.get<Map<String, String>>("vars")
+
+                val pMap = PropertyMap.fromStringMap(map)
+
+                pMap.forEach { key, value ->
+                    sceneService.worldProperties.setValue(key, pMap.getValue(key))
+                }
+            }
+        })
     }
 
     /**

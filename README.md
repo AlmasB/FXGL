@@ -23,7 +23,7 @@ JavaFX Game Development Framework
 ### Why FXGL?
 
 * No installation or setup is required
-* "Out of the box": Java 8-21, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
+* "Out of the box": Java 8-25, Win/Mac/Linux/Android 8+/iOS 11.0+/Web
 * Simple and clean API, higher level than other engines
 * Superset of JavaFX: no need to learn new UI API
 * Real-world game development techniques: Entity-Component, interpolated animations, particles, and [many more](https://github.com/AlmasB/FXGL/wiki/Core-Features)
@@ -79,7 +79,7 @@ Otherwise, see:
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>21</version>
+    <version>25</version>
 </dependency>
 ```
 
@@ -95,7 +95,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:21'
+    compile 'com.github.almasb:fxgl:25'
 }
 ```
 
@@ -126,7 +126,7 @@ Download the latest uber jar from [Releases](https://github.com/AlmasB/FXGL/rele
 * FHNW School of Engineering / Computer Science, Switzerland
 * Johann-Andreas-Schmeller-Gymnasium Nabburg, Germany
 
-If your institution wants to use or is using FXGL, add a note in the [Chat](https://gitter.im/AlmasB/FXGL) to be added to the list.
+If your institution wants to use or is using FXGL, add a note via [GitHub Discussions](https://github.com/AlmasB/FXGL/discussions) to be added to the list.
 
 Community tutorials:
 
@@ -140,7 +140,7 @@ Community projects (identified using `fxgl` topic):
 - [Consume](https://ergoscrit.itch.io/consume)
 - [FXGL Sliding Puzzle](https://github.com/beryx/fxgl-sliding-puzzle)
 
-If you'd like your project featured here, just add a note in the [Chat](https://gitter.im/AlmasB/FXGL).
+If you'd like your project featured here, just add a note via [GitHub Discussions](https://github.com/AlmasB/FXGL/discussions).
 
 ### Development Team
 

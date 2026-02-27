@@ -106,44 +106,89 @@ class LoopRunnerTest {
     fun `LoopRunner resets ticks after pause`() {
         var count1 = 0.0
         var count2 = 0.0
+        val frameTime = 1_000L / 60
 
         listOf(
                 // run with a given ticks per second (via scheduled service tick)
                 LoopRunner(60) {
-
                     count1 += it
                 },
 
                 // run with display refresh rate (via JavaFX pulse tick)
                 LoopRunner {
-
                     count2 += it
                 }
         ).forEach {
             it.start()
 
-            // 16.6 per frame, so 10 frames
-            Thread.sleep(166)
+            // 16.6 per frame, so 50 frames
+            Thread.sleep(frameTime * 50)
 
             it.pause()
 
             // sleep for 150 frames = 2.5 sec
-            Thread.sleep(166 * 15)
+            Thread.sleep(frameTime * 150)
 
             it.resume()
 
-            // 16.6 per frame, so 10 frames
-            Thread.sleep(166)
+            // 16.6 per frame, so 50 frames
+            Thread.sleep(frameTime * 50)
 
             it.stop()
         }
 
-        // in total we should have computed 20 frames, ~20 * 0.017 = ~0.34
+        // We processed approximately 100 frames (150 where in Pause)
+        assertThat(count1, greaterThan((90 * frameTime).toDouble() / 1_000))
+        assertThat(count1, lessThan((110 * frameTime).toDouble() / 1_000))
 
-        assertThat(count1, greaterThan(0.0))
-        assertThat(count1, lessThan(0.75))
+        assertThat(count2, greaterThan((90 * frameTime).toDouble() / 1_000))
+        assertThat(count2, lessThan((110 * frameTime).toDouble() / 1_000))
+    }
 
-        assertThat(count2, greaterThan(0.0))
-        assertThat(count2, lessThan(0.75))
+    @Test
+    @EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+    fun `Lag Recovery`() {
+        var t = 0.0
+        var lag = 200L
+
+        listOf(
+            // run with a given ticks per second (via scheduled service tick)
+            LoopRunner(60) { t += it; Thread.sleep(lag) }
+        ).forEach { loop ->
+            t = 0.0
+
+            loop.start()
+
+            Thread.sleep(2500)  // Sample for more than 2 seconds, to cover the 2SecsBuffer case
+
+            loop.pause()
+
+            // We know that a single tick will take at least "lag" millis, so TPFs should be around 200 millis
+            assertThat(loop.tpf, closeTo(lag.toDouble() / 1000.0, 0.02))
+            assertThat(loop.fps.toDouble(), closeTo(5.0, 1.0))
+
+            // The game loop should have completed 2.5 seconds of game time at this stage
+            assertThat(t, closeTo(2.5, 0.2))
+
+            lag = 1L  // Stop Lag
+
+            loop.resume()
+
+            Thread.sleep(1000)  // Need to wait at least 2 seconds for the FPS sampling to recalculate
+
+            loop.stop()
+
+            // The 2 seconds Buffer shouldn't cause tpf to be 200 millis anymore
+            assertThat(loop.tpf, closeTo(0.016, 0.09))
+
+            assertThat(t, closeTo(3.5, 0.4))
+
+            // shouldn't change anything since loop is stopped
+            Thread.sleep(300)
+
+            assertThat(loop.tpf, closeTo(0.016, 0.09))
+
+            assertThat(t, closeTo(3.5, 0.4))
+        }
     }
 }

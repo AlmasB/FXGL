@@ -7,7 +7,8 @@
 package com.almasb.fxgl.core.collection.grid;
 
 import com.almasb.fxgl.core.math.FXGLMath;
-import static com.almasb.fxgl.core.collection.grid.NeighborFilteringOption.*;
+import static com.almasb.fxgl.core.collection.grid.NeighborDirection.*;
+import static com.almasb.fxgl.core.collection.grid.NeighborSelectionStrategy.*;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -123,38 +124,43 @@ public class Grid<T extends Cell> {
     }
 
     /**
-     * Note: returned cells are in the grid (i.e. bounds are checked). (defaulted to 4 directions)
+     * Note: returned cells are in the grid (i.e. bounds are checked).
      * The order is left, up, right, down.
      *
-     * @return a new list of neighboring cells to given (x, y)
+     * @return a new list of neighboring cells to given (x, y) in 4 directions
      */
     public final List<T> getNeighbors(int x, int y) {
-        return getNeighbors(x, y, FOUR_DIRECTIONS);
+        return getNeighbors(x, y, LEFT_UP_RIGHT_DOWN);
     }
 
     /**
-     * Note: returned cells are in the grid (i.e. bounds are checked).
-     * NeighborFilteringOption allow filtering based on desired # of directions
-     * The order is left, up, right, down. + "Optionally" up-left, up-right, down-left, down-right
+     * Deprecated: use getNeighbors() with strategy.
      *
-     * @return a new list of neighboring cells to given (x, y)
+     * Note: returned cells are in the grid (i.e. bounds are checked).
+     * The order is left, up, right, down for 4 directions
+     * + (optionally) up-left, up-right, down-right, down-left for 8 directions.
+     *
+     * @return a new list of neighboring cells to given (x, y) in desired # of directions
      */
-    public final List<T> getNeighbors(int x, int y, NeighborFilteringOption neighborFilteringOption) {
-        List<T> result = new ArrayList<>();
-        getLeft(x, y).ifPresent(result::add);
-        getUp(x, y).ifPresent(result::add);
-        getRight(x, y).ifPresent(result::add);
-        getDown(x, y).ifPresent(result::add);
+    @Deprecated
+    public final List<T> getNeighbors(int x, int y, NeighborDirection neighborDirection) {
+        return getNeighbors(x, y,
+                neighborDirection == FOUR_DIRECTIONS
+                        ? LEFT_UP_RIGHT_DOWN
+                        : LEFT_UP_RIGHT_DOWN_UPLEFT_UPRIGHT_DOWNRIGHT_DOWNLEFT
+        );
+    }
 
-        // Include "Corner" neighbors when eight directions
-        if(neighborFilteringOption.is(EIGHT_DIRECTIONS)) {
-            getUpLeft(x, y).ifPresent(result::add);
-            getUpRight(x, y).ifPresent(result::add);
-            getDownLeft(x, y).ifPresent(result::add);
-            getDownRight(x, y).ifPresent(result::add);
-        }
-
-        return result;
+    /**
+     * @return a list of valid (inside the grid) neighboring cells to given (x, y)
+     */
+    public final List<T> getNeighbors(int x, int y, NeighborSelectionStrategy strategy) {
+        return strategy.selectNeighborCoordinates(x, y)
+                .stream()
+                .map(p -> getOptional((int) p.getX(), (int) p.getY()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
     }
 
     public final T get(int x, int y) {
@@ -236,7 +242,6 @@ public class Grid<T extends Cell> {
     public final Optional<T> getDownLeft(int x, int y) {
         return getOptional(x - 1, y + 1);
     }
-
 
     /**
      * @param x pixel coord x

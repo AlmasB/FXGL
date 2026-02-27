@@ -9,6 +9,8 @@ package com.almasb.fxgl.core.collection
 import javafx.beans.property.*
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
+import com.almasb.fxgl.core.serialization.SerializableType
+import com.almasb.fxgl.core.serialization.Bundle
 import java.util.*
 
 
@@ -23,10 +25,11 @@ import java.util.*
  * SimpleObjectProperty.
  *
  * Null values are not allowed.
+ * Object Properties are not supported for Serialization.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class PropertyMap {
+class PropertyMap : SerializableType {
 
     companion object {
         @JvmStatic fun fromStringMap(map: Map<String, String>): PropertyMap {
@@ -306,6 +309,20 @@ class PropertyMap {
             val o = other as ListenerKey
 
             return propertyName == o.propertyName && propertyListener === o.propertyListener
+        }
+    }
+
+    override fun write(bundle: Bundle) {
+        // Convert to string map
+        this.toStringMap().forEach { (key, value) ->
+            // write to bundle
+            bundle.put(key, value)
+        }
+    }
+
+    override fun read(bundle: Bundle) {
+        bundle.data.forEach { (key, value) ->
+            this.setValue(key, toValue(value.toString()))
         }
     }
 

@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-**Please discuss the feature ideas on [Gitter](https://gitter.im/AlmasB/FXGL) first. Then please describe the feature**
+**Please use [Discussions](https://github.com/AlmasB/FXGL/discussions) to discuss the feature first. Then link the discussion here**
 A clear and concise description of what the feature is.
 
 **Describe alternatives you've considered (optional)**

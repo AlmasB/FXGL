@@ -11,6 +11,7 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 /**
@@ -19,6 +20,13 @@ import org.junit.jupiter.api.Test
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class InputModifierTest {
+
+    private lateinit var input: Input
+
+    @BeforeEach
+    fun setUp() {
+        input = Input()
+    }
 
     @Test
     fun `Convert Shift from MouseEvent`() {
@@ -116,13 +124,44 @@ class InputModifierTest {
         assertTrue(InputModifier.NONE.toKeyCode() == KeyCode.ALPHANUMERIC)
     }
 
-//    private fun mouseEvent(shift: Boolean, ctrl: Boolean, alt: Boolean): MouseEvent {
-//        return MouseEvent(MouseEvent.ANY, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 1,
-//                shift, ctrl, alt,
-//                false, false, false, false, false, false, false, null)
-//    }
-//
-//    private fun keyEvent(shift: Boolean, ctrl: Boolean, alt: Boolean): KeyEvent {
-//        return KeyEvent(KeyEvent.ANY, "", "", KeyCode.A, shift, ctrl, alt, false)
-//    }
+    @Test
+    fun `Do not release illegal keys when main key is released`() {
+        var callsShift = 0
+
+        input.addTriggerListener(object : TriggerListener() {
+            override fun onKey(keyTrigger: KeyTrigger) {
+                if (keyTrigger.key == KeyCode.SHIFT) {
+                    callsShift++
+                }
+            }
+
+            override fun onKeyEnd(keyTrigger: KeyTrigger) {
+                if (keyTrigger.key == KeyCode.SHIFT) {
+                    callsShift = 999
+                }
+            }
+        })
+
+        input.update(0.0)
+        assertThat(callsShift, `is`(0))
+
+        // press shift
+        input.mockKeyPress(KeyCode.SHIFT)
+        input.update(0.0)
+        assertThat(callsShift, `is`(1))
+
+        // press arbitrary key
+        input.mockKeyPress(KeyCode.D)
+        input.update(0.0)
+        assertThat(callsShift, `is`(2))
+
+        // release that arbitrary key
+        input.mockKeyRelease(KeyCode.D)
+        input.update(0.0)
+        assertThat(callsShift, `is`(3))
+
+        // shift must still remain to be active
+        input.update(0.0)
+        assertThat(callsShift, `is`(4))
+    }
 }

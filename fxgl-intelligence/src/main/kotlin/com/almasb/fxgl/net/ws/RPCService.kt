@@ -37,13 +37,22 @@ abstract class RPCService(
         server.addMessageHandler { message ->
             if (message.startsWith(FUNCTION_CALL_TAG)) {
                 val funcName = message.substringAfter(FUNCTION_CALL_TAG).substringBefore(SEPARATOR)
-                val args = message.substringAfter(SEPARATOR)
-                        .split(SEPARATOR)
-                        // TODO: we should just remove the last empty item
-                        // otherwise this could filter empty String that is a genuine argument
-                        .filter { it.isNotEmpty() }
+                var remainder = message.substringAfter(SEPARATOR)
 
-                rfc.call(funcName, args)
+                // this means there is at least 1 arg
+                if (remainder.endsWith(SEPARATOR)) {
+                    // remove last unnecessary separator
+                    remainder = remainder.removeSuffix(SEPARATOR)
+                }
+
+                if (remainder.isEmpty()) {
+                    // there are no arguments, call no-arg version
+                    rfc.call(funcName, emptyList())
+                } else {
+                    val args = remainder.split(SEPARATOR)
+
+                    rfc.call(funcName, args)
+                }
             }
 
             if (message.startsWith(FUNCTION_RETURN_TAG)) {
@@ -52,7 +61,7 @@ abstract class RPCService(
         }
     }
 
-    override fun onInit() {
+    final override fun onInit() {
         rfc.addFunctionCallTarget(this)
         log.debug("Added ${javaClass.simpleName} methods: ${rfc.methods.map { it.name }}")
 

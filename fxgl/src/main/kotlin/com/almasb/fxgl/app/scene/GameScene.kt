@@ -7,6 +7,7 @@
 package com.almasb.fxgl.app.scene
 
 import com.almasb.fxgl.app.MainWindow
+import com.almasb.fxgl.core.View
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.dsl.FXGL.Companion.getAppHeight
@@ -24,12 +25,16 @@ import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.value.ChangeListener
 import javafx.collections.ObservableList
 import javafx.event.EventHandler
+import javafx.geometry.Point2D
+import javafx.geometry.Rectangle2D
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.SceneAntialiasing
 import javafx.scene.SubScene
 import javafx.scene.input.MouseEvent
+import javafx.scene.paint.Color
 import javafx.scene.robot.Robot
+import javafx.scene.shape.Rectangle
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
 import java.util.concurrent.Callable
@@ -80,6 +85,12 @@ internal constructor(width: Int, height: Int,
     @get:JvmName("getUINodes")
     val uiNodes: ObservableList<Node>
         get() = uiRoot.childrenUnmodifiable
+
+    private val updatableViews = arrayListOf<View>()
+
+    val entitySelectionRectangle: EntitySelectionRectangle by lazy {
+        EntitySelectionRectangle(this)
+    }
 
     /**
      * If set to true, Game Scene will require calling step()
@@ -229,6 +240,9 @@ internal constructor(width: Int, height: Int,
         physicsWorld.onUpdate(tpf)
         viewport.onUpdate(tpf)
 
+        // update UI nodes
+        updatableViews.forEach { it.onUpdate(tpf) }
+
         if (!is3D && isZSortingNeeded) {
             sortZ()
             isZSortingNeeded = false
@@ -259,6 +273,9 @@ internal constructor(width: Int, height: Int,
      */
     fun addUINode(node: Node) {
         uiRoot.children.add(node)
+
+        if (node is View)
+            updatableViews += node
     }
 
     /**
@@ -274,11 +291,13 @@ internal constructor(width: Int, height: Int,
     /**
      * Remove given node from the UI overlay.
      *
-     * @param n node to remove
-     * @return true iff the node has been removed
+     * @param node node to remove
      */
-    fun removeUINode(n: Node): Boolean {
-        return uiRoot.children.remove(n)
+    fun removeUINode(node: Node) {
+        uiRoot.children.remove(node)
+
+        if (node is View)
+            updatableViews -= node
     }
 
     /**
@@ -311,6 +330,7 @@ internal constructor(width: Int, height: Int,
      */
     fun clearUINodes() {
         uiRoot.children.clear()
+        updatableViews.clear()
     }
 
     /**
@@ -350,6 +370,8 @@ internal constructor(width: Int, height: Int,
         physicsWorld.clearCollisionHandlers()
 
         timer.clear()
+
+        entitySelectionRectangle.lastSelection.clear()
 
         viewport.unbind()
         gameRoot.children.clear()
@@ -449,4 +471,76 @@ class GameView(val node: Node, zIndex: Int) {
         set(value) {
             zProperty.value = value
         }
+}
+
+class EntitySelectionRectangle(
+    private val gameScene: GameScene
+) : Rectangle(), View {
+
+    private val world = gameScene.gameWorld
+    private val input = gameScene.input
+
+    /**
+     * This list is populated on [stopSelection].
+     */
+    val lastSelection: MutableList<Entity> = arrayListOf()
+
+    private var selectionStart: Point2D = Point2D.ZERO
+
+    init {
+        fill = Color.web("darkblue", 0.4)
+        stroke = Color.LIGHTBLUE
+        isVisible = false
+    }
+
+    fun startSelection() {
+        if (scene == null) {
+            gameScene.addUINode(this)
+        }
+
+        selectionStart = input.mousePositionUI
+        translateX = selectionStart.x
+        translateY = selectionStart.y
+        width = 0.0
+        height = 0.0
+
+        isVisible = true
+    }
+
+    fun stopSelection() {
+        isVisible = false
+
+        lastSelection.clear()
+
+        lastSelection.addAll(
+            world.getEntitiesInRange(Rectangle2D(translateX, translateY, width, height))
+        )
+    }
+
+    override fun onUpdate(tpf: Double) {
+        if (isVisible) {
+            val dx = input.mouseXUI - selectionStart.x
+            val dy = input.mouseYUI - selectionStart.y
+
+            if (dx > 0) {
+                width = dx
+            } else {
+                translateX = input.mouseXUI
+                width = -dx
+            }
+
+            if (dy > 0) {
+                height = dy
+            } else {
+                translateY = input.mouseYUI
+                height = -dy
+            }
+        }
+    }
+
+    override fun getNode(): Node {
+        return this
+    }
+
+    override fun dispose() { }
 }

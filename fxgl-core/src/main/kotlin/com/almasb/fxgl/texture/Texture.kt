@@ -226,6 +226,23 @@ open class Texture : ImageView, View, Copyable<Texture> {
     }
 
     /**
+     * @return new texture with pixels colored according to [Color.deriveColor]
+     */
+    fun deriveColor(hueShift: Double,
+                    saturationFactor: Double,
+                    brightnessFactor: Double,
+                    opacityFactor: Double): Texture {
+        return Texture(image.map {
+            it.copy(it.color.deriveColor(
+                hueShift,
+                saturationFactor,
+                brightnessFactor,
+                opacityFactor
+            ))
+        })
+    }
+
+    /**
      * Replaces all [oldColor] pixels with [newColor] pixels.
      */
     fun replaceColor(oldColor: Color, newColor: Color): Texture {

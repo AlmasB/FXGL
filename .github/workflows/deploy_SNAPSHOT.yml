@@ -12,12 +12,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up JDK 21
+    - name: Set up JDK 25
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
-        java-version: 21
-        server-id: ossrh
+        java-version: 25
+        server-id: central
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}

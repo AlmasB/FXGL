@@ -264,16 +264,6 @@ class Input {
         } while (eventType != null)
     }
 
-    /**
-     * Fire JavaFX event via handlers.
-     *
-     * @param event the JavaFX event
-     */
-    @Deprecated("Use [fireEventViaHandlers]", ReplaceWith("fireEventViaHandlers(event)"))
-    fun fireEvent(event: Event) {
-        fireEventViaHandlers(event)
-    }
-
     fun update(tpf: Double) {
         time += tpf
 
@@ -410,7 +400,10 @@ class Input {
     }
 
     private fun handleReleased(event: InputEvent) {
-        val releasedTriggers = activeTriggers.filter { it.isReleased(event) || (it is KeyTrigger && isIllegal(it.key)) }
+        val releasedTriggers = activeTriggers.filter {
+            // input modifiers are never released under the standard check, so we need the second branch
+            it.isReleased(event) || (it is KeyTrigger && isIllegal(it.key) && event is KeyEvent && event.code == it.key)
+        }
         releasedTriggers.forEach {
             handleTriggerReleased(it)
         }
@@ -634,11 +627,11 @@ class Input {
     /* MOCKING */
 
     internal fun mockKeyPressEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
-        fireEvent(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
+        fireEventViaHandlers(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
     }
 
     internal fun mockKeyReleaseEvent(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
-        fireEvent(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
+        fireEventViaHandlers(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
     }
 
     fun mockTriggerPress(trigger: Trigger) {

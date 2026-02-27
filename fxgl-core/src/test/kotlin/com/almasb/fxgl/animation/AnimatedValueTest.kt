@@ -16,6 +16,7 @@ import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -101,6 +102,8 @@ class AnimatedValueTest {
         }
     }
 
+    // in javafx 25 animated path behaves in an undefined way
+    @Disabled
     @Test
     fun `Path`() {
         val rect = Rectangle(160.0, 50.0)

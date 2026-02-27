@@ -7,6 +7,7 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.time.Timer
@@ -66,6 +67,11 @@ abstract class SceneService : EngineService() {
      * Always-on timer.
      */
     abstract val timer: Timer
+
+    /**
+     * Global world properties.
+     */
+    abstract val worldProperties: PropertyMap
 
     /**
      * @return top-most scene (or subscene) in the scene service hierarchy

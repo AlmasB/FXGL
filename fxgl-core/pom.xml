@@ -5,11 +5,12 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>21+dev-SNAPSHOT</version>
+        <version>25+dev-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>fxgl-core</artifactId>
+    <name>fxgl-core</name>
 
     <dependencies>
         <dependency>
@@ -77,6 +78,12 @@
                 <configuration>
                     <destFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</destFile>
                     <dataFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</dataFile>
+
+                    <!-- Ignore 3rd party code -->
+
+                    <excludes>
+                        <exclude>com/almasb/fxgl/physics/box2d/**/*</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>

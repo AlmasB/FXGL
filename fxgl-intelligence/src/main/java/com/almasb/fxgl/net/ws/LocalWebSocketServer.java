@@ -34,7 +34,6 @@ public final class LocalWebSocketServer extends WebSocketServer {
 
     private boolean hasStarted = false;
 
-    private String serverName;
     private List<Consumer<String>> messageHandlers = new ArrayList<>();
 
     private SendMessageThread thread;
@@ -52,7 +51,6 @@ public final class LocalWebSocketServer extends WebSocketServer {
      */
     public LocalWebSocketServer(String serverName, int port) {
         super(new InetSocketAddress("localhost", port));
-        this.serverName = serverName;
 
         log = Logger.get("WSServer " + serverName + ":" + port);
         thread = new SendMessageThread(serverName);

@@ -46,7 +46,6 @@ public class PlatformerSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("PlatformerSample");
         settings.setVersion("0.1");
-        settings.addEngineService(ControllerInputService.class);
     }
 
     @Override
@@ -110,8 +109,8 @@ public class PlatformerSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        var controllerService = getService(ControllerInputService.class);
-        controllerService.getGameControllers().forEach(con -> con.addInputHandler(getInput()));
+        //var controllerService = getService(ControllerInputService.class);
+        //controllerService.getGameControllers().forEach(con -> con.addInputHandler(getInput()));
 
         entityBuilder().buildScreenBoundsAndAttach(40);
 
@@ -216,6 +215,17 @@ public class PlatformerSample extends GameApplication {
         minimap.setEntityColor(Color.GREEN);
 
         addUINode(minimap, getAppWidth() - 210, getAppHeight() - 110);
+    }
+
+    private int count = 0;
+
+    @Override
+    protected void onUpdate(double tpf) {
+        if (count >= 500)
+            return;
+
+        System.out.println(tpf);
+        count++;
     }
 
     public static void main(String[] args) {

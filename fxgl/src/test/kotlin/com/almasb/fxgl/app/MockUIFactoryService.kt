@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.ui.*
 import javafx.beans.binding.StringBinding
 import javafx.beans.binding.StringExpression
@@ -100,6 +101,10 @@ object MockUIFactoryService : UIFactoryService() {
     }
 
     override fun newPropertyView(propertyName: String?, property: Any?): Node {
+        return Button()
+    }
+
+    override fun newPropertyMapView(map: PropertyMap?): Node {
         return Button()
     }
 }

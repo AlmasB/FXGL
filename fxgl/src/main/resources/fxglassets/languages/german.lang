@@ -8,7 +8,7 @@
 # Dialog text (as translated by Google)
 #
 
-dialog.exitGame = Beenden?
+dialog.exitGame = Spiel beenden?
 dialog.yes = JA
 dialog.no = NEIN
 dialog.ok = OK
@@ -23,7 +23,7 @@ menu.continue = FORTFAHREN
 menu.resume = FORTSETZEN
 menu.newGame = NEUES SPIEL
 menu.save = SPEICHERN
-menu.load = EINLADEN
+menu.load = LADEN
 menu.extra = EXTRA
 menu.online = ONLINE
 menu.video = VIDEO
@@ -35,32 +35,33 @@ menu.exit = BEENDEN
 menu.mainMenu = HAUPTMENÜ
 menu.restore = WIEDERHERSTELLEN
 menu.gameplay = SPIEL
-menu.controls = KONTROLLEN
+menu.controls = STEUERUNG
 menu.trophies = TROPHÄEN
-menu.feedback = RÜCKMELDUNG
+menu.feedback = FEEDBACK
 menu.back = ZURÜCK
 menu.delete = LÖSCHEN
-menu.difficulty = SCHWIERIGKEIT
+menu.difficulty = SCHWIERIGKEITSGRAD
 menu.playtime = SPIELZEIT
-menu.music.volume = Musik-Volumen
-menu.sound.volume = Schall-Volumen
+menu.music.volume = Musik-Lautstärke
+menu.sound.volume = Effekt-Lautstärke
 menu.fullscreen = Vollbild
-menu.fixRatio = Adjustieren Bildformat
-menu.settingsRestore = Stell die Einstellwerte zu den Standardeinstellungen auf
+menu.fixRatio = Bildformat anpassen
+menu.settingsRestore = Einstellungen auf Standardwerte zurücksetzen
 menu.exitMainMenu = Zum Hauptmenü gehen?
 menu.logOut = Abmelden?
-menu.unsavedProgress = Nicht gespeichertes Weiterkommen werdet verschollen!
-menu.chooseFeedback = Wähl deine Rückmeldung-Methode aus!
-menu.pressAnyKey = Klick irgendein Taste an
-menu.loading = Einladen
-menu.loadSave = Lad Sicherungsdatei ein
-menu.loadingSaveFiles = Laden Sicherungsdateien ein
-menu.loadingLast = Laden letzte Sicherungsdatei ein
-menu.deleteSave = Löschen Sicherungsdatei
-menu.deleting = Löschen
-menu.overwrite = Überschreiben Sicherungsdatei
-menu.enterSaveName = Schreib die Name der Sicherungsdatei
-menu.savingData = Speichern Daten
+menu.unsavedProgress = Nicht gespeicherte Änderungen gehen verloren!
+menu.chooseFeedback = Wähle Deine Feedback-Methode aus!
+menu.pressAnyKey = Drücke beliebige Taste
+menu.loading = Laden
+# Not sure about the meaning of this:
+menu.loadSave = Laden/Speichern
+menu.loadingSaveFiles = Gespeicherte Dateien laden
+menu.loadingLast = Letzte Sicherungsdatei laden
+menu.deleteSave = Sicherungsdatei löschen
+menu.deleting = Wird gelöscht
+menu.overwrite = Sicherungsdatei überschreiben
+menu.enterSaveName = Name der Sicherungsdatei eingeben
+menu.savingData = Speichere Daten
 
 #
 # Multiplayer text (as translated by Zach)
@@ -70,34 +71,34 @@ multiplayer.new = NEU
 multiplayer.select = AUSWÄHLEN
 multiplayer.options = Mehrspieler-Optionen
 multiplayer.connect = Verbinden...
-multiplayer.connecting = Verbinden zum Spiel
+multiplayer.connecting = Verbindung zum Spiel herstellen
 multiplayer.host = Host
-multiplayer.hosting = Hosten Spiel
-multiplayer.enterIp = Schreib Server-IP
+multiplayer.hosting = Spiel bereitstellen
+multiplayer.enterIp = Server-IP eingeben
 
 #
 # Profile text (as translated by Zach)
 #
 
 profile.profile = Profil
-profile.selectOrCreate = Wähl Profil aus oder mach neues Profil
-profile.loadingProfile = Laden Profil ein
-profile.loadingProfiles = Laden Profile ein
-profile.deletingProfile = Löschen Profil
+profile.selectOrCreate = Profil auswählen oder neu erstellen
+profile.loadingProfile = Profil laden
+profile.loadingProfiles = Lade Profile
+profile.deletingProfile = Profil löschen
 profile.corrupted = Profil ist beschädigt
-profile.new = Neues Profile
+profile.new = Neues Profil
 
 #
 # Development text (as translated by Zach)
 #
 
-dev.screenshotSaved = Speicherte Bildschirmfoto
-dev.screenshotFailed = Speichern Bildschirmfoto misslungen
+dev.screenshotSaved = Bildschirmfoto gespeichert
+dev.screenshotFailed = Bildschirmfoto fehlgeschlagen
 
 #
 # Achievement text (as translated by Zach)
 #
 
-achievement.achievement = Erringung
-achievement.progress = Weiterkommen
-achievement.receive = Du bekamst eine Erringung!
+achievement.achievement = Erfolg
+achievement.progress = Fortschritt
+achievement.receive = Du warst erfolgreich!

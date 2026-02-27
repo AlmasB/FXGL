@@ -7,6 +7,7 @@
 package com.almasb.fxgl.core.collection
 
 import com.almasb.fxgl.core.math.Vec2
+import com.almasb.fxgl.core.serialization.Bundle
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.StringProperty
 import org.hamcrest.MatcherAssert.assertThat
@@ -410,6 +411,33 @@ class PropertyMapTest {
         assertThat(map2.getDouble("key3"), `is`(900.0))
         assertThat(map2.getObject<MyClass>("key4").i, `is`(2))
         assertThat(map2.getBoolean("key5"), `is`(true))
+    }
+
+    @Test
+    fun `Serialize Property Map`() {
+        // Set test values
+        map.setValue("key1", "ABC")
+        map.setValue("key2", 100)
+        map.setValue("key3", 10.0)
+        map.setValue("key4", true)
+
+        // Create a bundle
+        val testBundle = Bundle("propertyMap")
+
+        // Write to bundle
+        map.write(testBundle)
+
+        // Create a new PropertyMap to test
+        val map2 = PropertyMap()
+
+        // Read from bundle
+        map2.read(testBundle)
+
+        // Check test values
+        assertThat(map2.getString("key1"), `is`("ABC"))
+        assertThat(map2.getInt("key2"), `is`(100))
+        assertThat(map2.getDouble("key3"), `is`(10.0))
+        assertThat(map2.getBoolean("key4"), `is`(true))
     }
 
     private class MyClass(val i: Int)
