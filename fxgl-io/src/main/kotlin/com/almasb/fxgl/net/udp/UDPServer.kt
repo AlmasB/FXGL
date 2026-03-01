@@ -76,8 +76,6 @@ class UDPServer<T>(val port: Int, private val config: UDPServerConfig<T>) : Serv
             }
 
         } catch (e: Exception) {
-            // TODO: check logic here
-
             if (!isStopped) {
                 throw RuntimeException("Failed to start: " + e.message, e)
             }

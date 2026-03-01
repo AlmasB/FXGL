@@ -31,9 +31,8 @@ class UDPClient<T>(val ip: String, val port: Int, private val config: UDPClientC
     private var socket: DatagramSocket? = null
 
     override fun connect() {
-        // TODO: exception handling
-
-        DatagramSocket().use {
+        try {
+            DatagramSocket().use {
             socket = it
             it.connect(InetAddress.getByName(ip), port)
 
@@ -73,6 +72,10 @@ class UDPClient<T>(val ip: String, val port: Int, private val config: UDPClientC
             if (it.isClosed) {
                 onConnectionClosed(connection)
             }
+        }
+        } catch (e: Exception) {
+            log.warning("Failed to connect UDP client to $ip:$port", e)
+            onConnectionClosed(null)
         }
     }
 
