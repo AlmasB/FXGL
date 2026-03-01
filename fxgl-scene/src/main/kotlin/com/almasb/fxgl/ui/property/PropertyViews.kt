@@ -100,7 +100,7 @@ class EnumPropertyView(enumProperty: ObjectProperty<Enum<*>>) : ChoiceBox<Enum<*
         setValue(enumValue)
         valueProperty().bindBidirectional(enumProperty)
 
-        // TODO: read only version
+        // Note: read-only version support is reserved for future implementation
     }
 }
 
@@ -108,7 +108,7 @@ class ColorPropertyViewFactory : PropertyViewFactory<Color, ColorPicker> {
     override fun makeView(value: ObjectProperty<Color>): ColorPicker {
         val picker = ColorPicker()
 
-        // TODO: handle read-only version
+        // Note: read-only version support is reserved for future implementation
         picker.valueProperty().bindBidirectional(value)
 
         return picker
