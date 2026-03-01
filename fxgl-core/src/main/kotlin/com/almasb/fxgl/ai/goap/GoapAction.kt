@@ -62,7 +62,7 @@ open class GoapAction
 //
 //    /**
 //     * Check if this action can run.
-//     * TODO: is available, rather than can run.
+//     * Note: this should check if available, rather than can run.
 //     */
 //    open fun canRun() = true
 //
