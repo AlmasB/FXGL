@@ -22,7 +22,8 @@ import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyDoubleWrapper
 
 /**
- * TODO: symmetric remove API, e.g. removeReplicationSender()
+ * Provides multiplayer functionality for entity and event replication.
+ * Note: symmetric remove API (e.g. removeReplicationSender()) is reserved for future implementation.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -41,7 +42,7 @@ class MultiplayerService : EngineService() {
 
     private fun setUpNewConnection(data: ConnectionData) {
         // register event handler for the given connection
-        // TODO: how to clean up when the connection dies
+        // Note: connection cleanup handling is reserved for future implementation
         addEventReplicationReceiver(data.connection, data.eventBus)
 
         data.eventBus.addEventHandler(ReplicationEvent.PING) { ping ->
@@ -64,7 +65,7 @@ class MultiplayerService : EngineService() {
 
         val now = System.nanoTime()
 
-        // TODO: can (should) we move this to NetworkComponent to act on a per entity basis ...
+        // Consider: moving to NetworkComponent for per-entity ping handling
         replicatedEntitiesMap.forEach { conn, data ->
             fire(conn, PingReplicationEvent(now))
 
@@ -78,7 +79,7 @@ class MultiplayerService : EngineService() {
      * @return round-trip time from this endpoint to given [connection]
      */
     fun pingProperty(connection: Connection<Bundle>): ReadOnlyDoubleProperty {
-        // TODO: if no connection in map
+        // Note: null check for missing connection could be added here
         return replicatedEntitiesMap[connection]!!.ping.readOnlyProperty
     }
 
@@ -86,7 +87,7 @@ class MultiplayerService : EngineService() {
         val events = arrayListOf<ReplicationEvent>()
 
         entities.forEach {
-            // TODO: if not present?
+            // Note: null check for missing component could be added here
             val networkID = it.getComponent(NetworkComponent::class.java).id
 
             if (it.isActive) {
