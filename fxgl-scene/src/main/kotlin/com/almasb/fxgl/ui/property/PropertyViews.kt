@@ -36,8 +36,8 @@ import javafx.util.converter.IntegerStringConverter
 class DoublePropertyView(property: ObservableDoubleValue) : TextField() {
 
     init {
-        // TODO: any other way to check if read-only?
-        if (!property.javaClass.canonicalName.contains("ReadOnlyDoubleWrapper")) {
+        // Check if property is writable (Property) or read-only (ObservableValue only)
+        if (property is Property<*>) {
             textProperty().bindBidirectional(property as Property<Double>, DoubleStringConverter())
         } else {
             textProperty().bind((property as DoubleExpression).asString())
@@ -50,7 +50,7 @@ class DoublePropertyView(property: ObservableDoubleValue) : TextField() {
 class IntPropertyView(property: ObservableIntegerValue) : TextField() {
 
     init {
-        if (!property.javaClass.canonicalName.contains("ReadOnlyIntegerWrapper")) {
+        if (property is Property<*>) {
             textProperty().bindBidirectional(property as Property<Int>, IntegerStringConverter())
         } else {
             textProperty().bind((property as IntegerExpression).asString())
