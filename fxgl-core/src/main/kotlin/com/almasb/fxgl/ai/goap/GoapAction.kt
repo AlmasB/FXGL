@@ -67,7 +67,7 @@ open class GoapAction
 //    open fun canRun() = true
 //
 //    override fun onUpdate(tpf: Double) {
-//        // TODO: perform(tpf)
+//        // Note: perform(tpf) with time per frame could be added here
 //        perform()
 //    }
 //
