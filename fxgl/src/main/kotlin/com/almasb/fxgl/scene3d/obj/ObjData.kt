@@ -29,7 +29,7 @@ internal class ObjData(val url: URL) {
         get() {
             // it is possible there are no groups in the obj file,
             // in which case when asked for current group return default
-            // TODO: extract string
+            // Note: default group name could be extracted to a constant
             if (groups.isEmpty())
                 groups += ObjGroup("default")
 
