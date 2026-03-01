@@ -20,6 +20,8 @@ interface EditorAction {
     fun run()
 
     fun undo()
+
+    fun redo() = run()
 }
 
 // possible actions:

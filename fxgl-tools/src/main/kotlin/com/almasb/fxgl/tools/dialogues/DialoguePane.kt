@@ -632,7 +632,11 @@ class DialoguePane(graph: DialogueGraph = DialogueGraph()) : Pane() {
     }
 
     fun redo() {
-        showMessage("TODO: Sorry, not implemented yet.")
+        if (historyIndex.value + 1 >= history.size)
+            return
+
+        historyIndex.value++
+        history[historyIndex.value].redo()
     }
 
     fun duplicate() {
