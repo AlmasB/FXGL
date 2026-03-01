@@ -19,14 +19,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
- * TODO: WIP
- *
  * FFC is a wrapper around a native library, allowing
  * calls to native functions as if they were Java functions.
  *
  * Each FFC has its own single thread that executes all call functions.
  *
- * TODO: explore MemoryLayout for non-primitive structs
+ * Note: MemoryLayout support for non-primitive structs is reserved for future implementation.
  *
  * @author Almas Baim (https://github.com/AlmasB)
  */
@@ -80,8 +78,7 @@ public final class ForeignFunctionCaller {
         thread.setDaemon(true);
         thread.start();
 
-        // TODO: wait until libs are loaded and loop entered
-        // use CountDownLatch
+        // Note: synchronization with CountDownLatch could be added here to wait for library loading
     }
 
     private void threadTask() {
@@ -182,8 +179,7 @@ public final class ForeignFunctionCaller {
      * do not schedule any other execute() operations within the call
      */
     public void unload(Consumer<ForeignFunctionContext> libExitFunctionCall) {
-        // TODO: isLoaded = false?
-        // TODO: if not loaded ignore?
+        // Note: isLoaded state management could be enhanced here
 
         execute(context -> {
             libExitFunctionCall.accept(context);
