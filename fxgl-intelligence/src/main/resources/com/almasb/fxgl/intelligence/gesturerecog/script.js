@@ -38,8 +38,7 @@ socket.addEventListener('message', function (event) {
         if (funcName === "setVideoInputDevice") {
             let deviceId = tokens[1];
 
-            // TODO: window["functionName"](arguments);
-
+            // Dynamic function call via window[funcName] could be used here for extensibility
             setVideoInputDevice(deviceId);
         }
     }
