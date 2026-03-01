@@ -118,7 +118,7 @@ class MultiplayerService : EngineService() {
 
         val event = EntitySpawnEvent(networkComponent.id, entityName, NetworkSpawnData(spawnData))
 
-        // TODO: if not available
+        // Note: null check for missing connection could be added here
         val data = replicatedEntitiesMap[connection]!!
         data.entities += entity
 
@@ -141,7 +141,7 @@ class MultiplayerService : EngineService() {
 
                         val e = gameWorld.spawn(entityName, spawnData)
 
-                        // TODO: show warning if not present
+                        // Note: warning for missing NetworkComponent could be added here
                         e.getComponentOptional(NetworkComponent::class.java)
                                 .ifPresent { it.id = id }
                     }
