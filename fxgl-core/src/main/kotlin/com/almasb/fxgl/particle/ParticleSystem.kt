@@ -48,7 +48,7 @@ class ParticleSystem : Updatable {
                     iter.remove()
 
                     pane.children.remove(particle.view)
-                    Pools.free(p)
+                    Pools.free(particle)
                 } else {
                     if (particle.view.parent == null)
                         pane.children.add(particle.view)
