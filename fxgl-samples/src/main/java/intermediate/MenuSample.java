@@ -29,7 +29,7 @@ public class MenuSample extends GameApplication {
         settings.setMainMenuEnabled(true);
         settings.setGameMenuEnabled(true);
         settings.setFullScreenAllowed(true);
-        settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
+        settings.setEnabledMenuItems(EnumSet.of(MenuItem.DIFFICULTY));
         settings.getCredits().addAll(Arrays.asList(
                 "Short Name - Lead Programmer",
                 "LongLongLongLongLongLongLong Name - Programmer",

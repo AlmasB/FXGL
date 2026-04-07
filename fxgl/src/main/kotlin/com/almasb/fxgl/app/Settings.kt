@@ -60,7 +60,12 @@ enum class MenuItem {
     /**
      * Enables ONLINE (multiplayer).
      */
-    ONLINE
+    ONLINE,
+
+    /**
+     * Enables DIFFICULTY -> EASY, MEDIUM, HARD, CUSTOM
+     */
+    DIFFICULTY,
 }
 
 /**
