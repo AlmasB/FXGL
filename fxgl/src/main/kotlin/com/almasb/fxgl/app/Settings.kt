@@ -63,7 +63,7 @@ enum class MenuItem {
     ONLINE,
 
     /**
-     * Enables DIFFICULTY -> EASY, MEDIUM, HARD, CUSTOM
+     * Enables DIFFICULTY -> EASY, MEDIUM, HARD, NIGHTMARE
      */
     DIFFICULTY,
 }
