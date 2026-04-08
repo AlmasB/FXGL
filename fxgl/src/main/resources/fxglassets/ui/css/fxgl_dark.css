@@ -312,7 +312,7 @@
 /*
  * Styling for the difficulty choice box
  */
-.fxgl-difficulty-menu-choicebox {
+.fxgl-difficulty-choice-box {
     -fx-background-color: rgba(0, 0, 0, 0.35);
     -fx-background-radius: 4;
     -fx-background-insets: 0;
@@ -321,26 +321,26 @@
     -fx-font-size: 18px;
 }
 
-.fxgl-difficulty-menu-choicebox:hover,
-.fxgl-difficulty-menu-choicebox:focused,
-.fxgl-difficulty-menu-choicebox:focused:hover,
-.fxgl-difficulty-menu-choicebox:armed {
+.fxgl-difficulty-choice-box:hover,
+.fxgl-difficulty-choice-box:focused,
+.fxgl-difficulty-choice-box:focused:hover,
+.fxgl-difficulty-choice-box:armed {
     -fx-background-color: rgba(0, 0, 0, 0.45);
     -fx-background-radius: 4;
     -fx-background-insets: 0;
     -fx-border-color: rgba(255, 255, 255, 0.35);
 }
 
-.fxgl-difficulty-menu-choicebox .label {
+.fxgl-difficulty-choice-box .label {
     -fx-text-fill: white;
     -fx-background-color: transparent;
 }
 
-.fxgl-difficulty-menu-choicebox .context-menu {
+.fxgl-difficulty-choice-box .context-menu {
     -fx-background-color: rgba(20, 20, 20, 0.9);
 }
 
-.fxgl-difficulty-menu-choicebox .menu-item:focused {
+.fxgl-difficulty-choice-box .menu-item:focused {
     -fx-background-color: rgba(255, 255, 255, 0.15);
 }
 
