@@ -33,12 +33,20 @@ public class ParticleScaleSample2 extends GameApplication{
     protected void initGame() {
         getGameScene().setBackgroundColor(Color.BLACK);
 
+        //this circle has a difference in the x and the y points in the scale
         spawnMinor(new Point2D(450, 300), false);
-        spawnMinor(new Point2D(250, 300), true);
+
+        //this cricle has the same x and y points in the scale
+        spawnMinor(new Point2D(450, 300), true);
+
+        //both of their locations are the same, they should spawn in the same space. but because the x point is affected by the scale, the circles appear in different locations.
+        //this shows the biggest issue with this bug, the x value is being affected by the y scale, when it should not be. 
     }
 
     private void spawnMinor(Point2D p, Boolean pointsTheSame) {
         var emitter = ParticleEmitters.newExplosionEmitter(17);
+
+        //this sets the new points to be either the same or different
         if (pointsTheSame) {
             emitter.setEntityScaleFunction(() -> new Point2D(1, 1));
         } else {
