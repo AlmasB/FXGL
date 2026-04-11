@@ -38,7 +38,6 @@ public final class ParticleEmitter {
         return numParticles;
     }
 
-    public boolean corrected;
 
     /**
      * @return number of particles being spawned per emission
@@ -97,10 +96,6 @@ public final class ParticleEmitter {
     }
 
     private DoubleProperty minSize = new SimpleDoubleProperty(9.0);
-
-    public void setCorrected(boolean corrected) {
-        this.corrected = corrected;
-    }
 
     /**
      * @return minimum particle size
