@@ -426,12 +426,6 @@ public final class ParticleEmitter {
         for (int i = 0; i < num; i++) {
             emissionParticles.add(emit(i, x, y));
             }
-
-        if (corrected){
-            for (Particle emissionParticle : emissionParticles) {
-                emissionParticle.setCorrected(true);
-            }
-        }
         return emissionParticles;
     }
 
