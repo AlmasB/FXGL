@@ -158,7 +158,6 @@ public class Particle implements Poolable {
         this.allowRotation = allowRotation;
         this.equation = equation;
         this.control = control;
-        this.corrected = false;
 
         this.scaleOrigin.set(scaleOrigin);
 
