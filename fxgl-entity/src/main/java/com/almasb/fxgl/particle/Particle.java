@@ -91,7 +91,6 @@ public class Particle implements Poolable {
      * Allow view rotation based on velocity.
      */
     private boolean allowRotation;
-    private boolean corrected;
 
     /**
      * Controls the particle position based on the equation.
@@ -194,10 +193,6 @@ public class Particle implements Poolable {
 
     private Vec2 moveVector = new Vec2();
 
-    public void setCorrected(boolean corrected) {
-        this.corrected = corrected;
-    }
-
     /**
      * @return true if particle died
      */
@@ -259,26 +254,18 @@ public class Particle implements Poolable {
 
             // From https://stackoverflow.com/questions/17113234/affine-transform-scale-around-a-point
             // x = S(x – c) + c = Sx + (c – Sc)
+            
             //scale origin and entity scale are 2d points, when referencing the x and y values these are
-            //the corresponding points
-
-            //scaled x??
-            var sx = 0.0;
-            if (corrected){
-                sx = (scaleOrigin.x + x - entityScale.x * (scaleOrigin.x + x)) + entityScale.x * x;
-            } else {
-                sx = (scaleOrigin.x + x - entityScale.x * (scaleOrigin.x + x)) + entityScale.y * x;
-
-            }
-            //  sx = (x plus the scale of x from origin - center of where particle comes from) + scaled centre of particle
-            // sx = (x on the page, including origin - center of where particle comes from + sc
+            //the corresponding points            
+            var sx = (scaleOrigin.x + x - entityScale.x * (scaleOrigin.x + x)) + entityScale.x * x;
+            //sx = (x plus the scale of x from origin - center of where particle comes from) + scaled centre of particle
+            //sx = (x on the page, including origin - center of where particle comes from + sc
+            
             var sy = (scaleOrigin.y + y - entityScale.y * (scaleOrigin.y + y)) + entityScale.y * y;
 
             //x = sx + (c - Sc)
             //sx = x - (c - Sc) = x - c + Sc
-            // S is the scaling transformation, and c is the center in coordinates relative to the top left.
-
-
+            //S is the scaling transformation, and c is the center in coordinates relative to the top left.
 
             getView().setLayoutX(sx);
             getView().setLayoutY(sy);
