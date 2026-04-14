@@ -38,7 +38,6 @@ public final class ParticleEmitter {
         return numParticles;
     }
 
-
     /**
      * @return number of particles being spawned per emission
      */
@@ -425,7 +424,8 @@ public final class ParticleEmitter {
 
         for (int i = 0; i < num; i++) {
             emissionParticles.add(emit(i, x, y));
-            }
+        }
+
         return emissionParticles;
     }
 
