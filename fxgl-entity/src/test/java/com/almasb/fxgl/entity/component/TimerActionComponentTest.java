@@ -10,7 +10,6 @@ import com.almasb.fxgl.time.TimerAction;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.util.Duration;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,32 +21,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class TimerActionComponentTest {
 
-    /* Counter class to allow for atomic operations from Runnable action */
-    private static class Counter {
-        private int value;
-
-        int  get      () { return value    ; }
-        void reset    () {        value = 0; }
-        void increment() {        value++  ; }
-    }
-
-    private final Counter  executionCounter = new Counter();
-    private final Runnable action           = executionCounter::increment;
-
-    private TimerActionComponent timerActionComponent;
-
-    @BeforeEach
-    public void setUp() {
-        timerActionComponent = new TimerActionComponent();
-        executionCounter.reset();
-    }
-
     /**
      * Tests that the action is ran multiple times as the interval elapses.
      * Tests the method {@link TimerActionComponent#runAtInterval(Runnable, Duration, int) runAtInterval}.
      */
     @Test
     public void testRunAtInterval() {
+        final TimerActionComponent timerActionComponent = new TimerActionComponent();
+        final IntegerProperty executionCounter = new SimpleIntegerProperty();
+        final Runnable action = () -> executionCounter.set(executionCounter.get() + 1);
+
         timerActionComponent.runAtInterval(action, Duration.seconds(0.5f));
 
         assertEquals(0, executionCounter.get());
@@ -64,6 +47,10 @@ public class TimerActionComponentTest {
      */
     @Test
     public void testRunAtIntervalThenCancel() {
+        final TimerActionComponent timerActionComponent = new TimerActionComponent();
+        final IntegerProperty executionCounter = new SimpleIntegerProperty();
+        final Runnable action = () -> executionCounter.set(executionCounter.get() + 1);
+
         TimerAction timerAction = timerActionComponent.runAtInterval(action, Duration.seconds(0.5f));
 
         assertEquals(0, executionCounter.get());
@@ -81,6 +68,10 @@ public class TimerActionComponentTest {
      */
     @Test
     public void testRunAtIntervalInLoop() {
+        final TimerActionComponent timerActionComponent = new TimerActionComponent();
+        final IntegerProperty executionCounter = new SimpleIntegerProperty();
+        final Runnable action = () -> executionCounter.set(executionCounter.get() + 1);
+
         timerActionComponent.runAtInterval(action, Duration.seconds(0.5f));
 
         for(int i = 0; i < 10; ++i) {
@@ -94,6 +85,10 @@ public class TimerActionComponentTest {
      */
     @Test
     public void testRunAtIntervalWithLimit() {
+        final TimerActionComponent timerActionComponent = new TimerActionComponent();
+        final IntegerProperty executionCounter = new SimpleIntegerProperty();
+        final Runnable action = () -> executionCounter.set(executionCounter.get() + 1);
+
         timerActionComponent.runAtInterval(action, Duration.seconds(0.5f), 4);
 
         for(int i = 0; i < 10; ++i) {
@@ -108,6 +103,10 @@ public class TimerActionComponentTest {
      */
     @Test
     public void testRunAtIntervalConditional() {
+        final TimerActionComponent timerActionComponent = new TimerActionComponent();
+        final IntegerProperty executionCounter = new SimpleIntegerProperty();
+        final Runnable action = () -> executionCounter.set(executionCounter.get() + 1);
+
         IntegerProperty iterationCount = new SimpleIntegerProperty();
         BooleanBinding condition = iterationCount.lessThan(5);
 
@@ -129,6 +128,10 @@ public class TimerActionComponentTest {
      */
     @Test
     public void testRunAtIntervalConditionalCancelledEarly() {
+        final TimerActionComponent timerActionComponent = new TimerActionComponent();
+        final IntegerProperty executionCounter = new SimpleIntegerProperty();
+        final Runnable action = () -> executionCounter.set(executionCounter.get() + 1);
+
         IntegerProperty iterationCount = new SimpleIntegerProperty();
         BooleanBinding condition = iterationCount.lessThan(5);
 
@@ -155,6 +158,10 @@ public class TimerActionComponentTest {
      */
     @Test
     public void testRunOnceAfter() {
+        final TimerActionComponent timerActionComponent = new TimerActionComponent();
+        final IntegerProperty executionCounter = new SimpleIntegerProperty();
+        final Runnable action = () -> executionCounter.set(executionCounter.get() + 1);
+
         timerActionComponent.runOnceAfter(action, Duration.seconds(1));
 
         assertEquals(0, executionCounter.get());
@@ -171,6 +178,10 @@ public class TimerActionComponentTest {
      */
     @Test
     public void testRunOnceAfterWithStartingTime() {
+        final TimerActionComponent timerActionComponent = new TimerActionComponent();
+        final IntegerProperty executionCounter = new SimpleIntegerProperty();
+        final Runnable action = () -> executionCounter.set(executionCounter.get() + 1);
+
         timerActionComponent.onUpdate(2.0f);
         timerActionComponent.runOnceAfter(action, Duration.seconds(1));
 
@@ -185,6 +196,10 @@ public class TimerActionComponentTest {
      */
     @Test
     public void testRunOnceNotElapsed() {
+        final TimerActionComponent timerActionComponent = new TimerActionComponent();
+        final IntegerProperty executionCounter = new SimpleIntegerProperty();
+        final Runnable action = () -> executionCounter.set(executionCounter.get() + 1);
+
         timerActionComponent.runOnceAfter(action, Duration.seconds(1));
 
         assertEquals(0, executionCounter.get());
@@ -198,6 +213,10 @@ public class TimerActionComponentTest {
      */
     @Test
     public void testRunOnceCancelled() {
+        final TimerActionComponent timerActionComponent = new TimerActionComponent();
+        final IntegerProperty executionCounter = new SimpleIntegerProperty();
+        final Runnable action = () -> executionCounter.set(executionCounter.get() + 1);
+
         TimerAction timerAction = timerActionComponent.runOnceAfter(action, Duration.seconds(1));
         timerAction.expire();
 
@@ -211,6 +230,10 @@ public class TimerActionComponentTest {
      */
     @Test
     public void testRunOnceWithMultiple() {
+        final TimerActionComponent timerActionComponent = new TimerActionComponent();
+        final IntegerProperty executionCounter = new SimpleIntegerProperty();
+        final Runnable action = () -> executionCounter.set(executionCounter.get() + 1);
+
         timerActionComponent.runOnceAfter(action, Duration.seconds(0.1f));
         timerActionComponent.runOnceAfter(action, Duration.seconds(0.2f));
         timerActionComponent.runOnceAfter(action, Duration.seconds(0.29f)); /* Floating point cannot represent 0.3 well */
@@ -229,6 +252,10 @@ public class TimerActionComponentTest {
      */
     @Test
     public void testClear() {
+        final TimerActionComponent timerActionComponent = new TimerActionComponent();
+        final IntegerProperty executionCounter = new SimpleIntegerProperty();
+        final Runnable action = () -> executionCounter.set(executionCounter.get() + 1);
+
         timerActionComponent.runAtInterval(action, Duration.seconds(1));
         timerActionComponent.runOnceAfter(action, Duration.seconds(0.1f));
 

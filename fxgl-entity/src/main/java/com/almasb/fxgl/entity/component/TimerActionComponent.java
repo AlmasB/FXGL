@@ -13,18 +13,19 @@ import javafx.util.Duration;
 
 /**
  * Component to schedule the execution of actions.
+ * The timer's time per frame (TPF) is tied to the entity's TPF.
+ * The entity's TPF can be modified by {@link com.almasb.fxgl.entity.components.TimeComponent}.
  *
  * @implNote - A wrapper around a Timer class, as a component.
  *
  * @author Michael Pearson (<a href="https://github.com/michqql/">https://github.com/michqql/</a>)
  */
-public class TimerActionComponent extends Component {
+public final class TimerActionComponent extends Component {
 
     private final Timer timer = new Timer();
 
     @Override
     public void onUpdate(double tpf) {
-        super.onUpdate(tpf);
         this.timer.update(tpf);
     }
 
