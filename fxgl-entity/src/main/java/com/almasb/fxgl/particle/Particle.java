@@ -22,7 +22,6 @@ import javafx.util.Duration;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.logging.Logger;
 
 /**
  * Simple particle represented by a Shape or an Image.
@@ -139,7 +138,7 @@ public class Particle implements Poolable {
             BlendMode blendMode,
             Interpolator interpolator,
             boolean allowRotation,
-            Function<Double, Point2D> equation){
+            Function<Double, Point2D> equation) {
 
         this.image = image;
         this.startPosition.set(position);
