@@ -7,7 +7,6 @@
 
 package basics;
 
-
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
@@ -28,9 +27,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-
 import static com.almasb.fxgl.dsl.FXGL.*;
-
 
 /**
  * Shows how to change mass within a body directly
@@ -44,10 +41,8 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  */
 public class MassSample extends GameApplication {
 
-
     int mass = 1;
     Text uiText;
-
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -55,14 +50,12 @@ public class MassSample extends GameApplication {
         settings.setHeight(720);
     }
 
-
     @Override
     protected void initInput() {
         // click to add a new ball of the shown (on screen) mass
         getInput().addAction(new UserAction("LMB") {
             private double x;
             private double y;
-
 
             @Override
             protected void onActionBegin() {
@@ -72,13 +65,11 @@ public class MassSample extends GameApplication {
             }
         }, MouseButton.PRIMARY);
 
-
         // press E to increase the mass of new balls by 1
         onKeyDown(KeyCode.E, () -> {
             mass += 1;
             uiText.setText(mass + " mass");
         });
-
 
         // press P to increase the mass of new balls by 10
         onKeyDown(KeyCode.P, () -> {
@@ -86,13 +77,11 @@ public class MassSample extends GameApplication {
             uiText.setText(mass + " mass");
         });
 
-
         // press Q to decrease the mass of new balls by 1
         onKeyDown(KeyCode.Q, () -> {
             mass -= 1;
             uiText.setText(mass + " mass");
         });
-
 
         // press O to decrease the mass of new balls by 10
         onKeyDown(KeyCode.O, () -> {
@@ -101,19 +90,14 @@ public class MassSample extends GameApplication {
         });
     }
 
-
     @Override
     protected void initGame() {
         getGameScene().setBackgroundColor(Color.LIGHTGRAY);
-
 
         uiText = new Text(mass + " mass");
         Font uifont = new Font(40);
         uiText.setFont(uifont);
         FXGL.addUINode(uiText, 600, 100);
-
-
-
 
         //floor
         Entity floor = entityBuilder()
@@ -122,26 +106,21 @@ public class MassSample extends GameApplication {
                 .with(new PhysicsComponent())
                 .buildAndAttach();
 
-
         // balls for right hand seesaw
         newBall(100, 1050, 300);
         newBall(10, 700,300);
-
 
         // balls for left hand side seesaw
         newBall(20, 170, 300);
         newBall(10, 300,300);
 
-
         newSeesaw(250,600, 1);
         newSeesaw(900,550, 1.4);
     }
 
-
     public void newSeesaw(int x, int y, double size){
         int circum = (int) (10 * size);
         int rectx = (int) (400 * size);
-
 
         Entity circle = entityBuilder()
                 .at(x, y)
@@ -149,10 +128,8 @@ public class MassSample extends GameApplication {
                 .with(new PhysicsComponent())
                 .buildAndAttach();
 
-
         circle.getComponent(PhysicsComponent.class)
                 .setBodyType(BodyType.STATIC);
-
 
         PhysicsComponent plankPhysics = new PhysicsComponent();
         plankPhysics.setBodyType(BodyType.DYNAMIC);
@@ -160,17 +137,14 @@ public class MassSample extends GameApplication {
         fd.setDensity(5.0f);
         plankPhysics.setFixtureDef(fd);
 
-
         Entity plank = entityBuilder()
                 .at(x, y)
                 .viewWithBBox(new Rectangle(rectx, 20, Color.BROWN))
                 .with(plankPhysics)
                 .buildAndAttach();
 
-
         Point2D anchor = new Point2D((circum/2), (circum/2));
         Point2D anchor2 = new Point2D((rectx/2), (20/2));
-
 
         getPhysicsWorld().addRevoluteJoint(
                 circle,
@@ -180,18 +154,15 @@ public class MassSample extends GameApplication {
         );
     }
 
-
     public void newBall(int mass, double x, double y){
         var physics = new PhysicsComponent();
         physics.setFixtureDef(new FixtureDef().density(25.5f).restitution(0.5f));
         physics.setBodyType(BodyType.DYNAMIC);
 
-
         MassData massValue = new MassData();
         // the code to directly change the mass of a body
         massValue.mass = mass;
         physics.setOnPhysicsInitialized(() -> physics.getBody().setMassData(massValue));
-
 
         entityBuilder()
                 .at(x, y)
@@ -201,13 +172,7 @@ public class MassSample extends GameApplication {
                 .buildAndAttach();
     }
 
-
     static void main(String[] args) {
         launch(args);
     }
 }
-
-
-
-
-
