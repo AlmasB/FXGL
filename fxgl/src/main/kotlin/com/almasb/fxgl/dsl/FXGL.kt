@@ -861,12 +861,28 @@ class FXGL private constructor() { companion object {
      * Note: for onAction() to work, [input.update()] needs to be called.
      */
     @JvmStatic @JvmOverloads fun onKeyBuilder(
-            input: Input,
-            key: KeyCode,
-            modifier: InputModifier = InputModifier.NONE) = KeyInputBuilder(input, key, modifier)
-}
-}
+        input: Input,
+        key: KeyCode,
+        modifier: InputModifier = InputModifier.NONE) = KeyInputBuilder(input, key, modifier)
 
+    @JvmStatic fun onBtnBuilder(
+        btn: MouseButton,
+        name: String) = ButtonInputBuilder(getInput(), btn, InputModifier.NONE, name)
+
+    @JvmStatic @JvmOverloads fun onBtnBuilder(
+        btn: MouseButton,
+        modifier: InputModifier = InputModifier.NONE) = ButtonInputBuilder(getInput(), btn, modifier)
+
+    /**
+     * Button builder for custom input.
+     * Note: for onAction() to work, [input.update()] needs to be called.
+     */
+    @JvmStatic @JvmOverloads fun onBtnBuilder(
+        input: Input,
+        btn: MouseButton,
+        modifier: InputModifier = InputModifier.NONE) = ButtonInputBuilder(input, btn, modifier)
+}
+}
 
 
 
