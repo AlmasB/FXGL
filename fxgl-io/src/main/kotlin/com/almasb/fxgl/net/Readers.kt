@@ -22,7 +22,7 @@ interface TCPMessageReader<T> {
     fun read(): T
 }
 
-// we need a factory for tcp message readers since each inpu stream is valid for a single connection
+// we need a factory for tcp message readers since each input stream is valid for a single connection
 // therefore we cannot reuse the same message reader for each connection
 interface TCPReaderFactory<T> {
     fun create(input: InputStream): TCPMessageReader<T>
