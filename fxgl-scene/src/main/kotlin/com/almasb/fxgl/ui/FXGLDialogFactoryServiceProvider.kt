@@ -1,70 +1,70 @@
-    /*
-    * FXGL - JavaFX Game Library. The MIT License (MIT).
-    * Copyright (c) AlmasB (almaslvl@gmail.com).
-    * See LICENSE for details.
-    */
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
 
-    package com.almasb.fxgl.ui
+package com.almasb.fxgl.ui
 
-    import com.almasb.fxgl.core.UISettings
-    import com.almasb.fxgl.core.util.EmptyRunnable
-    import com.almasb.fxgl.localization.LocalizationService
-    import com.almasb.fxgl.logging.Logger
-    import javafx.beans.binding.StringBinding
-    import javafx.beans.property.ReadOnlyDoubleProperty
-    import javafx.beans.value.ChangeListener
-    import javafx.collections.FXCollections
-    import javafx.geometry.Insets
-    import javafx.geometry.Pos
-    import javafx.scene.Node
-    import javafx.scene.control.Button
-    import javafx.scene.control.ProgressBar
-    import javafx.scene.control.ProgressIndicator
-    import javafx.scene.control.TextField
-    import javafx.scene.layout.HBox
-    import javafx.scene.layout.Pane
-    import javafx.scene.layout.StackPane
-    import javafx.scene.layout.VBox
-    import javafx.scene.text.Text
-    import java.util.function.Consumer
-    import java.util.function.Predicate
+import com.almasb.fxgl.core.UISettings
+import com.almasb.fxgl.core.util.EmptyRunnable
+import com.almasb.fxgl.localization.LocalizationService
+import com.almasb.fxgl.logging.Logger
+import javafx.beans.binding.StringBinding
+import javafx.beans.property.ReadOnlyDoubleProperty
+import javafx.beans.value.ChangeListener
+import javafx.collections.FXCollections
+import javafx.geometry.Insets
+import javafx.geometry.Pos
+import javafx.scene.Node
+import javafx.scene.control.Button
+import javafx.scene.control.ProgressBar
+import javafx.scene.control.ProgressIndicator
+import javafx.scene.control.TextField
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Pane
+import javafx.scene.layout.StackPane
+import javafx.scene.layout.VBox
+import javafx.scene.text.Text
+import java.util.function.Consumer
+import java.util.function.Predicate
+
+/**
+ *
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
+ */
+class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
 
     /**
-     *
-     *
-     * @author Almas Baimagambetov (almaslvl@gmail.com)
+     * Returns the current scaled font size based on the global multiplier.
+     * See issue #1224.
      */
-    class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
+    private fun scaledSize(baseSize: Double): Double =
+            baseSize * UISettings.uiFontSizeMultiplier.value
 
-        /**
-         * Returns the current scaled font size based on the global multiplier.
-         * See issue #1224.
-         */
-        private fun scaledSize(baseSize: Double): Double =
-                baseSize * UISettings.uiFontSizeMultiplier.value
-
-        /**
-         * Creates a Text node whose font size scales with the global UI font size
-         * multiplier (issue #1224). The font is updated live when the multiplier changes.
-         */
-        private fun scaledText(message: String, baseSize: Double): Text {
-            val text = uiFactory.newText(message, scaledSize(baseSize))
-            UISettings.uiFontSizeMultiplier.addListener { _, _, _ ->
-                text.font = uiFactory.newFont(scaledSize(baseSize))
-            }
-            return text
+    /**
+     * Creates a Text node whose font size scales with the global UI font size
+     * multiplier (issue #1224). The font is updated live when the multiplier changes.
+     */
+    private fun scaledText(message: String, baseSize: Double): Text {
+        val text = uiFactory.newText(message, scaledSize(baseSize))
+        UISettings.uiFontSizeMultiplier.addListener { _, _, _ ->
+            text.font = uiFactory.newFont(scaledSize(baseSize))
         }
+        return text
+    }
 
-        /**
-         * Applies a scaled font to an existing node that uses setFont (Button, TextField).
-         * Re-applies on multiplier changes (issue #1224).
-         */
-        private fun applyScaledFont(setFont: (javafx.scene.text.Font) -> Unit, baseSize: Double) {
+    /**
+     * Applies a scaled font to an existing node that uses setFont (Button, TextField).
+     * Re-applies on multiplier changes (issue #1224).
+     */
+    private fun applyScaledFont(setFont: (javafx.scene.text.Font) -> Unit, baseSize: Double) {
+        setFont(uiFactory.newFont(scaledSize(baseSize)))
+        UISettings.uiFontSizeMultiplier.addListener { _, _, _ ->
             setFont(uiFactory.newFont(scaledSize(baseSize)))
-            UISettings.uiFontSizeMultiplier.addListener { _, _, _ ->
-                setFont(uiFactory.newFont(scaledSize(baseSize)))
-            }
         }
+    }
 
     private lateinit var uiFactory: UIFactoryService
 
