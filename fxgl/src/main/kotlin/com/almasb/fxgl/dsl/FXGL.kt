@@ -16,6 +16,7 @@ import com.almasb.fxgl.app.services.SystemBundleService
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.core.EngineService
+import com.almasb.fxgl.core.UISettings
 import com.almasb.fxgl.core.collection.PropertyChangeListener
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.concurrent.Executor
@@ -54,6 +55,8 @@ import com.almasb.fxgl.ui.DialogService
 import com.almasb.fxgl.ui.UIFactoryService
 import javafx.animation.Interpolator
 import javafx.application.Application
+import javafx.beans.property.DoubleProperty
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.binding.StringExpression
 import javafx.beans.property.*
 import javafx.concurrent.Task
@@ -241,6 +244,28 @@ class FXGL private constructor() { companion object {
     @JvmStatic fun getNetService() = engine.getService(NetService::class.java)
 
     @JvmStatic fun getTaskService() = engine.getService(IOTaskExecutorService::class.java)
+
+
+    /**
+         * Global UI font size multiplier. All dialog and notification text is
+         * scaled by this factor at render time. Default is 1.0 (no scaling). Can
+         * be modified at runtime; bound listeners will update the rendered fonts
+         * on change.
+         *
+         * Backed by UISettings.uiFontSizeMultiplier in fxgl-core so downstream
+         * modules (e.g. fxgl-scene) can consume the property without an upward
+         * module dependency.
+         *
+         * See issue #1224.
+         */
+        @JvmStatic fun uiFontSizeMultiplierProperty(): DoubleProperty = UISettings.uiFontSizeMultiplier
+
+        @JvmStatic fun getUIFontSizeMultiplier(): Double = UISettings.uiFontSizeMultiplier.value
+
+        @JvmStatic fun setUIFontSizeMultiplier(value: Double) {
+            require(value > 0) { "UI font size multiplier must be > 0, got: $value" }
+            UISettings.uiFontSizeMultiplier.value = value
+        }
 
     /**
      * @return time per frame (in this frame)
