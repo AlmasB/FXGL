@@ -36,8 +36,8 @@ import java.util.function.Predicate
  */
 class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
 
-    @Inject("fontSizeScaleUI")
-    private var fontSizeScaleUI = 1.0
+    @Inject("fontSizeScaleDialog")
+    private var fontSizeScaleDialog = 1.0
 
     private lateinit var uiFactory: UIFactoryService
 
@@ -155,7 +155,7 @@ class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
 
         val field = TextField()
         field.maxWidth = Math.max(text.layoutBounds.width, 200.0)
-        field.font = uiFactory.newFont(18.0)
+        field.font = uiFactory.newFont(fontSizeScaleDialog * 18.0)
 
         field.focusedProperty().addListener { _, _, isFocused ->
             if (!isFocused && field.scene != null) {
@@ -200,7 +200,7 @@ class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
 
         val field = TextField()
         field.maxWidth = Math.max(text.layoutBounds.width, 200.0)
-        field.font = uiFactory.newFont(18.0)
+        field.font = uiFactory.newFont(fontSizeScaleDialog * 18.0)
 
         val btnOK = uiFactory.newButton(localizedStringProperty("dialog.ok"))
 
@@ -302,7 +302,7 @@ class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
     }
 
     private fun createMessage(message: String): Text {
-        return uiFactory.newText(message, fontSizeScaleUI * 18.0)
+        return uiFactory.newText(message, fontSizeScaleDialog * 18.0)
     }
 
     private fun localizedStringProperty(key: String): StringBinding {
