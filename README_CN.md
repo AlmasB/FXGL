@@ -133,6 +133,7 @@ open module app.name {
 - [SOFTKNK.IO](https://github.com/softknk/softknk.io)
 - [消耗](https://ergoscrit.itch.io/consume)
 - [FXGL 滑动拼图](https://github.com/beryx/fxgl-sliding-puzzle)
+- [IRON DEFENDERS](https://magma777.itch.io/iron-defenders)
 
 如果您希望在此处展示您的项目，只需在[Discussions](https://github.com/AlmasB/FXGL/discussions)中添加注释即可。
 

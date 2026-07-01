@@ -139,6 +139,7 @@ Community projects (identified using `fxgl` topic):
 - [SOFTKNK.IO](https://github.com/softknk/softknk.io)
 - [Consume](https://ergoscrit.itch.io/consume)
 - [FXGL Sliding Puzzle](https://github.com/beryx/fxgl-sliding-puzzle)
+- [IRON DEFENDERS](https://magma777.itch.io/iron-defenders)
 
 If you'd like your project featured here, just add a note via [GitHub Discussions](https://github.com/AlmasB/FXGL/discussions).
 

@@ -139,6 +139,7 @@ open module app.name {
 - [SOFTKNK.IO](https://github.com/softknk/softknk.io)
 - [Consume](https://ergoscrit.itch.io/consume)
 - [FXGL Sliding Puzzle](https://github.com/beryx/fxgl-sliding-puzzle)
+- [IRON DEFENDERS](https://magma777.itch.io/iron-defenders)
 
 Если вы хотите, чтобы ваш проект был представлен здесь, просто добавьте заметку в [чате](https://github.com/AlmasB/FXGL/discussions).
 
