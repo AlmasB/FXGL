@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.ui
 
-import com.almasb.fxgl.core.Inject
+import com.almasb.fxgl.core.UISettings
 import com.almasb.fxgl.core.util.EmptyRunnable
 import com.almasb.fxgl.localization.LocalizationService
 import com.almasb.fxgl.logging.Logger
@@ -36,8 +36,35 @@ import java.util.function.Predicate
  */
 class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
 
-    @Inject("fontSizeScaleUI")
-    private var fontSizeScaleUI = 1.0
+    /**
+     * Returns the current scaled font size based on the global multiplier.
+     * See issue #1224.
+     */
+    private fun scaledSize(baseSize: Double): Double =
+            baseSize * UISettings.uiFontSizeMultiplier.value
+
+    /**
+     * Creates a Text node whose font size scales with the global UI font size
+     * multiplier (issue #1224). The font is updated live when the multiplier changes.
+     */
+    private fun scaledText(message: String, baseSize: Double): Text {
+        val text = uiFactory.newText(message, scaledSize(baseSize))
+        UISettings.uiFontSizeMultiplier.addListener { _, _, _ ->
+            text.font = uiFactory.newFont(scaledSize(baseSize))
+        }
+        return text
+    }
+
+    /**
+     * Applies a scaled font to an existing node that uses setFont (Button, TextField).
+     * Re-applies on multiplier changes (issue #1224).
+     */
+    private fun applyScaledFont(setFont: (javafx.scene.text.Font) -> Unit, baseSize: Double) {
+        setFont(uiFactory.newFont(scaledSize(baseSize)))
+        UISettings.uiFontSizeMultiplier.addListener { _, _, _ ->
+            setFont(uiFactory.newFont(scaledSize(baseSize)))
+        }
+    }
 
     private lateinit var uiFactory: UIFactoryService
 
@@ -302,9 +329,9 @@ class FXGLDialogFactoryServiceProvider : DialogFactoryService() {
     }
 
     private fun createMessage(message: String): Text {
-        return uiFactory.newText(message, fontSizeScaleUI * 18.0)
-    }
-
+            return scaledText(message, 18.0)
+        }
+        
     private fun localizedStringProperty(key: String): StringBinding {
         return local.localizedStringProperty(key)
     }
