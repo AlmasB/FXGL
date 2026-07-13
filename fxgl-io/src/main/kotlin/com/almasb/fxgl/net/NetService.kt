@@ -19,6 +19,7 @@ import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyDoubleWrapper
 import java.io.InputStream
 import java.io.OutputStream
+import java.net.URI
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
@@ -40,7 +41,7 @@ class NetService : EngineService() {
      * @return task that provides stream access to given link
      */
     fun openStreamTask(url: String): IOTask<InputStream> = IOTask.of("openStream($url)") {
-        URL(url).openStream()
+        URI(url).toURL().openStream()
     }
 
     fun newTCPServer(port: Int): Server<Bundle> = TCPServer(port, Bundle::class.java)
@@ -111,7 +112,7 @@ class NetService : EngineService() {
     ) : IOTask<Path>("DownloadTask($urlString, $fileName)") {
 
         override fun onExecute(): Path {
-            val url = URL(urlString)
+            val url = URI.create(urlString).toURL()
             val file = Paths.get(fileName)
 
             val connection = url.openConnection()
