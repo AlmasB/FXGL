@@ -58,6 +58,7 @@ module com.almasb.fxgl.core {
     exports com.almasb.fxgl.pathfinding.heuristic;
     exports com.almasb.fxgl.pathfinding.maze;
     exports com.almasb.fxgl.physics;
+    exports com.almasb.fxgl.physics.box2d.collision.shapes;
     exports com.almasb.fxgl.physics.box2d.dynamics;
     exports com.almasb.fxgl.physics.box2d.dynamics.joints;
     exports com.almasb.fxgl.procedural;
