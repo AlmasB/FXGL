@@ -189,19 +189,25 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     }
 
     private fun createTitleView(title: String): Node {
-        val text = getUIFactoryService().newText(title.substring(0, 1), 50.0)
-        text.fill = null
-        text.strokeProperty().bind(titleColor)
-        text.strokeWidth = 1.5
+        val firstLetter = getUIFactoryService().newText(title.substring(0, 1), 50.0)
+        firstLetter.fill = null
+        firstLetter.strokeProperty().bind(titleColor)
+        firstLetter.strokeWidth = 1.5
 
-        val text2 = getUIFactoryService().newText(title.substring(1, title.length), 50.0)
-        text2.fill = null
-        text2.stroke = titleColor.value
-        text2.strokeWidth = 1.5
+        val restOfTheTitle = getUIFactoryService().newText(title.substring(1, title.length), 50.0)
+        restOfTheTitle.fill = null
+        restOfTheTitle.stroke = titleColor.value
+        restOfTheTitle.strokeWidth = 1.5
 
-        val textWidth = text.layoutBounds.width + text2.layoutBounds.width
+        var firstLetterWidth = firstLetter.layoutBounds.width
+        var restOfTheTitleWidth = restOfTheTitle.layoutBounds.width
 
-        val border = Rectangle(textWidth + 30, 65.0, null)
+        firstLetter.layoutBoundsProperty().addListener { _, _, newBounds -> firstLetterWidth = newBounds.width}
+        restOfTheTitle.layoutBoundsProperty().addListener { _, _, newBounds -> restOfTheTitleWidth = newBounds.width}
+
+        val titleWidth = firstLetterWidth + restOfTheTitleWidth
+
+        val border = Rectangle(titleWidth + 30, 65.0, null)
         border.stroke = Color.WHITE
         border.strokeWidth = 4.0
         border.arcWidth = 25.0
@@ -225,11 +231,11 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         emitter.setSpawnPointFunction { Point2D.ZERO }
         emitter.setAccelerationFunction { Point2D(random(-1.0, 1.0), random(0.0, 0.0)) }
 
-        val box = HBox(text, text2)
+        val box = HBox(firstLetter, restOfTheTitle)
         box.alignment = Pos.CENTER
 
         val titleRoot = StackPane(border, box)
-        titleRoot.translateX = appWidth / 2.0 - (textWidth + 30) / 2
+        titleRoot.translateX = appWidth / 2.0 - (titleWidth + 30) / 2
         titleRoot.translateY = 50.0
 
         if (!FXGL.getSettings().isNative)
