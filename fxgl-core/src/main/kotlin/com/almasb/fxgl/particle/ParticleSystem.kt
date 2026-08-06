@@ -35,10 +35,9 @@ class ParticleSystem : Updatable {
     }
 
     override fun onUpdate(tpf: Double) {
-        emitters.forEach { (emitter, p) ->
+        emitters.forEach { (emitter, position) ->
             val particlesList = particles[emitter]!!
-
-            particlesList.addAll(emitter.emit(p.x, p.y))
+            particlesList.addAll(emitter.emit(position.x, position.y))
 
             val iter = particlesList.iterator()
             while (iter.hasNext()) {
@@ -46,9 +45,8 @@ class ParticleSystem : Updatable {
 
                 if (particle.update(tpf)) {
                     iter.remove()
-
                     pane.children.remove(particle.view)
-                    Pools.free(p)
+                    Pools.free(particle)
                 } else {
                     if (particle.view.parent == null)
                         pane.children.add(particle.view)
