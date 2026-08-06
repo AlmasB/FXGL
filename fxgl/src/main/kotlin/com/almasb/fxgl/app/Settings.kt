@@ -249,8 +249,24 @@ class GameSettings(
 
         /**
          * Set the scale value for UI text size, default = 1.0.
+         * Applied globally to all text constructed via UIFactoryService.
          */
         var fontSizeScaleUI: Double = 1.0,
+
+        /**
+         * Per-area scale for menu text, multiplied on top of [fontSizeScaleUI], default = 1.0.
+         */
+        var fontSizeScaleMenu: Double = 1.0,
+
+        /**
+         * Per-area scale for dialog text, multiplied on top of [fontSizeScaleUI], default = 1.0.
+         */
+        var fontSizeScaleDialog: Double = 1.0,
+
+        /**
+         * Per-area scale for notification text, multiplied on top of [fontSizeScaleUI], default = 1.0.
+         */
+        var fontSizeScaleNotification: Double = 1.0,
 
         var pixelsPerMeter: Double = 50.0,
 
@@ -409,6 +425,9 @@ class GameSettings(
                 soundMenuPress,
                 soundMenuSelect,
                 fontSizeScaleUI,
+                fontSizeScaleMenu,
+                fontSizeScaleDialog,
+                fontSizeScaleNotification,
                 pixelsPerMeter,
                 collisionDetectionStrategy,
                 secondsIn24h,
@@ -582,6 +601,12 @@ class ReadOnlyGameSettings internal constructor(
         val soundMenuSelect: String,
 
         val fontSizeScaleUI: Double,
+
+        val fontSizeScaleMenu: Double,
+
+        val fontSizeScaleDialog: Double,
+
+        val fontSizeScaleNotification: Double,
 
         val pixelsPerMeter: Double,
 
