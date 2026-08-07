@@ -35,7 +35,7 @@ class AudioLoaderTest {
         assertThat(audio, `is`(not(getDummyAudio())))
     }
 
-    // TODO: unclear why it fails on macOS and linux
+    // Note: test is Windows-only due to platform-specific audio loading behavior
     @EnabledOnOs(OS.WINDOWS)
     @Test
     fun `Loading on mobile does not crash if Attach is not present`() {

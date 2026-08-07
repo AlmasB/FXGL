@@ -20,6 +20,8 @@ interface EditorAction {
     fun run()
 
     fun undo()
+
+    fun redo() = run()
 }
 
 // possible actions:
@@ -29,7 +31,7 @@ interface EditorAction {
 // * add edge
 // * remove edge
 // * bulk action
-// * TODO: node text editing
+// * Note: node text editing is reserved for future implementation
 
 class BulkAction(
         private val actions: List<EditorAction>

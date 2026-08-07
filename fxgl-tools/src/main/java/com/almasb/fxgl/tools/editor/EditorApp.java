@@ -28,7 +28,7 @@ public class EditorApp extends Application {
 
         var fxglPane = GameApplication.embeddedLaunch(new EditorGameApplication(root));
 
-        // TODO: allow notifying when FXGL is ready? so we can build UI for example
+        // Note: FXGL ready notification for UI building is reserved for future implementation
         root.addPane(fxglPane);
 
         var scene = new Scene(root);

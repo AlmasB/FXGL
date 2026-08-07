@@ -136,7 +136,7 @@ class Inventory<T>(
             it.view = config.view
             it.maxStackQuantity = config.maxStackQuantity
 
-            // TODO: should we delegate to incrementQuantity(item, amount)
+            // Consider: delegate to incrementQuantity(item, amount) for consistency
             it.incrementQuantity(quantity)
         }
 

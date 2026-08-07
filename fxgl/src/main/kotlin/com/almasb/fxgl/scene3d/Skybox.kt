@@ -106,7 +106,7 @@ open class NodeSkybox(val size: Int) : Group() {
 
     val scale = 32.0
 
-    // TODO: once enabled, translate "t" value should also be dynamically adjusted
+    // Note: dynamic "t" value adjustment when scale changes is reserved for future implementation
 //    var scale = 32.0
 //        set(value) {
 //            field = value

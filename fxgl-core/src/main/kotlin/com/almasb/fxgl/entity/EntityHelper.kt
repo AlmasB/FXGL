@@ -22,7 +22,7 @@ internal object EntityHelper {
     fun copy(entity: Entity): Entity {
         val copy = Entity()
 
-        // TODO: other transform properties
+        // Copy basic transform properties
         copy.type = entity.type
         copy.position = entity.position
         copy.rotation = entity.rotation
@@ -40,7 +40,7 @@ internal object EntityHelper {
                 .map { it.copy() }
                 .forEach { copy.addComponent(it) }
 
-        // TODO: implement proper copy(), what to do if a Component is not copyable?
+        // Note: proper copy() for all component types is reserved for future implementation
 //
 //        entity.boundingBoxComponent.hitBoxesProperty().forEach {
 //            copy.boundingBoxComponent.addHitBox(it.copy())

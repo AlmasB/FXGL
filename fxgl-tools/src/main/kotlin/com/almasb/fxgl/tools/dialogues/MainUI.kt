@@ -78,7 +78,6 @@ class MainUI : BorderPane() {
         mdiWindow.isMinimizable = false
         mdiWindow.isCloseable = false
         mdiWindow.isMovable = false
-        // TODO: allow resize only in a single direction
         mdiWindow.isManuallyResizable = false
         mdiWindow.setPrefSize(300.0, 300.0)
         mdiWindow.relocate(0.0, 30.0)

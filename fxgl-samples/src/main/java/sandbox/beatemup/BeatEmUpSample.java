@@ -37,7 +37,7 @@ public class BeatEmUpSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        // TODO: spawn, on animation finish?
+        // Note: spawn on animation finish could be added here
         onBtnDownPrimary(() -> {
             player.call("attack");
 

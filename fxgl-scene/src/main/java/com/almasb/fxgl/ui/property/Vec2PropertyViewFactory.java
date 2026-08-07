@@ -13,9 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
 /**
- * // TODO: read-only version?
- * // TODO: empty String check when view is updated
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class Vec2PropertyViewFactory implements PropertyViewFactory<Vec2, HBox> {
