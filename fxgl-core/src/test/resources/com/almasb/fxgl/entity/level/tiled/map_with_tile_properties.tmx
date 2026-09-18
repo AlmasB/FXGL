@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.9" tiledversion="1.9.0" orientation="orthogonal" renderorder="right-down" width="2" height="1" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="2">
+ <tileset firstgid="1" name="tileset_black" tilewidth="16" tileheight="16" tilecount="256" columns="16">
+  <image source="tileset_black.png" width="256" height="256"/>
+  <tile id="83">
+   <properties>
+    <property name="collectible" type="bool" value="true"/>
+    <property name="kind" value="coin"/>
+   </properties>
+  </tile>
+  <tile id="220">
+   <properties>
+    <property name="solid" type="bool" value="false"/>
+    <property name="label" value="slash"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer id="1" name="Tile Layer 1" width="2" height="1">
+  <data encoding="csv">
+221,11
+</data>
+ </layer>
+ <objectgroup id="2" name="Object layer 1">
+  <object id="1" type="Player" gid="221" x="0" y="16" width="16" height="16"/>
+ </objectgroup>
+</map>

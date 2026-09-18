@@ -220,6 +220,93 @@ class TMXLevelLoaderTest {
         assertTrue(e.message!!.isNotEmpty())
     }
 
+    @Test
+    fun `Parse sprite sheet tileset with metadata-only tile entries`() {
+        val map = javaClass.getResourceAsStream("map_with_tile_properties.tmx").use {
+            TMXLevelLoader().parse(it)
+        }
+
+        val tileset = map.tilesets[0]
+
+        assertThat(tileset.image, `is`("tileset_black.png"))
+        assertThat(tileset.tiles.size, `is`(2))
+        assertTrue(tileset.isSpriteSheet)
+
+        val tile83 = tileset.tiles.find { it.id == 83 }!!
+        val tile220 = tileset.tiles.find { it.id == 220 }!!
+
+        assertThat(tile83.image, `is`(""))
+        assertThat(tile83.imagewidth, `is`(0))
+        assertThat(tile83.imageheight, `is`(0))
+
+        assertThat(tile220.image, `is`(""))
+        assertThat(tile220.imagewidth, `is`(0))
+        assertThat(tile220.imageheight, `is`(0))
+
+        // gid 11 (tile id 10) is used by the layer but has no metadata entry
+        assertTrue(tileset.tiles.none { it.id == 10 })
+    }
+
+    @Test
+    fun `Load tmx level with sprite sheet tile properties`() {
+        val world = GameWorld()
+        world.addEntityFactory(MyEntityFactory())
+
+        val level = TMXLevelLoader().load(javaClass.getResource("map_with_tile_properties.tmx"), world)
+
+        assertThat(level.width, `is`(16 * 2))
+        assertThat(level.height, `is`(16 * 1))
+
+        // 1 tile layer + 1 gid object
+        assertThat(level.entities.size, `is`(1 + 1))
+
+        val view = level.entities[0].viewComponent.children[0] as ImageView
+
+        assertThat(view.image.width, `is`(32.0))
+        assertThat(view.image.height, `is`(16.0))
+
+        // Decorated sprite-sheet tile (gid 221 / id 220)
+        assertThat(view.image.pixelReader.getColor(0, 0), `is`(Color.TRANSPARENT))
+        assertThat(view.image.pixelReader.getColor(0, 15), `is`(Color.BLACK))
+        assertThat(view.image.pixelReader.getColor(8, 8), `is`(Color.BLACK))
+
+        // Undecorated atlas tile (gid 11 / id 10) must still be addressable
+        assertThat(view.image.pixelReader.getColor(16, 0), `is`(Color.BLACK))
+        assertThat(view.image.pixelReader.getColor(16, 15), `is`(Color.BLACK))
+        assertThat(view.image.pixelReader.getColor(31, 0), `is`(Color.BLACK))
+
+        val gidObject = level.entities.drop(1).find { it.getInt("id") == 1 }!!
+        val gidView = gidObject.viewComponent.children[0] as ImageView
+
+        assertThat(gidView.image.width, `is`(16.0))
+        assertThat(gidView.image.height, `is`(16.0))
+        assertThat(gidView.image.pixelReader.getColor(0, 0), `is`(Color.TRANSPARENT))
+        assertThat(gidView.image.pixelReader.getColor(0, 15), `is`(Color.BLACK))
+        assertThat(gidView.image.pixelReader.getColor(8, 8), `is`(Color.BLACK))
+    }
+
+    @Test
+    fun `Tileset image ownership classifies sprite sheets independently of tile metadata`() {
+        val tileset = Tileset(image = "tileset_black.png")
+        assertTrue(tileset.isSpriteSheet)
+
+        tileset.tiles += Tile(id = 1)
+        tileset.tiles += Tile(id = 2, image = "")
+        assertTrue(tileset.isSpriteSheet)
+
+        tileset.image = ""
+        tileset.tiles.clear()
+        tileset.tiles += Tile(id = 0, image = "tank1.png", imagewidth = 64, imageheight = 64)
+        tileset.tiles += Tile(id = 1, image = "tank2.png", imagewidth = 64, imageheight = 64)
+        assertFalse(tileset.isSpriteSheet)
+
+        tileset.image = "tileset_black.png"
+        assertTrue(tileset.isSpriteSheet)
+
+        tileset.image = ""
+        assertFalse(tileset.isSpriteSheet)
+    }
+
     @ParameterizedTest
     @CsvSource("sewers_v1_1_2.tmx", "sewers_v1_2_3.tmx", "sewers_v1_9_0.tmx")
     fun parse(mapName: String) {

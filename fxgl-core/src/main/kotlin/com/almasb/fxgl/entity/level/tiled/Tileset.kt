@@ -28,10 +28,17 @@ data class Tileset(
 ) {
 
     /**
+     * Tilesets are either a sprite sheet (one atlas image) or a collection of images
+     * (each [Tile] owns its image). Tiled still emits `<tile>` entries on sprite sheets
+     * when tiles have custom properties; those metadata-only entries do not replace the
+     * tileset image. Classification therefore follows the independently parsed tileset
+     * image source, not whether [tiles] is empty. [image] is a non-null [String], so
+     * emptiness is tested with [String.isNotEmpty] rather than a null check.
+     *
      * @return true if tileset is a sprite sheet, false if tileset is a collection of images
      */
     val isSpriteSheet: Boolean
-        get() = tiles.isEmpty()
+        get() = image.isNotEmpty()
 }
 
 data class Tile(
