@@ -238,6 +238,16 @@ class ReflectionUtilsTest {
     }
 
     @Test
+    fun `ReflectionFunctionCaller auto-casts String to Enum arguments`() {
+        val obj = TestClass4()
+        val rfc = ReflectionFunctionCaller().also { it.addFunctionCallTarget(obj) }
+
+        val result: ReflectionEnum = rfc.call("functionWithEnum", arrayOf("3.14", ReflectionEnum.ITEM_TWO.toString())) as ReflectionEnum
+
+        assertThat(result, `is`(ReflectionEnum.ITEM_TWO))
+    }
+
+    @Test
     fun `ReflectionFunctionCaller fails if incorrect types of arguments`() {
         val value = 335
         val data = TestClass2("world")
@@ -296,6 +306,16 @@ class ReflectionUtilsTest {
     class TestClass3 {
         fun someFunction(value: Int, data: TestClass2): String {
             return "" + value + data.s
+        }
+    }
+
+    enum class ReflectionEnum {
+        ITEM_ONE, ITEM_TWO
+    }
+
+    class TestClass4 {
+        fun functionWithEnum(value: Double, data: ReflectionEnum): ReflectionEnum {
+            return data
         }
     }
 }

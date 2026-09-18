@@ -93,8 +93,19 @@ class ReflectionFunctionCaller {
 
         if (function != null) {
             val argsAsObjects = function.method.parameterTypes.mapIndexed { index, type ->
-                val converter = stringToObject[type] ?: throw java.lang.RuntimeException("No converter found from String to $type")
-                converter.invoke(args[index])
+                val converter = stringToObject[type]
+
+                if (converter != null) {
+                    return@mapIndexed converter.invoke(args[index])
+                }
+
+                // if no converter found, but type is enum, we can try mapping against it
+                if (type.isEnum) {
+                    return@mapIndexed type.enumConstants.find { it.toString().equals(args[index], ignoreCase = true) }
+                        ?: throw java.lang.RuntimeException("No enum constant found from String to $type")
+                }
+
+                throw java.lang.RuntimeException("No converter found from String to $type")
             }
 
             // void returns null, but Any is expected, so we return 0 in such cases
