@@ -40,12 +40,10 @@ class XboxNotificationView : NotificationView() {
      */
     private val text1 = Text().also {
         it.fill = textColor
-        it.font = Font.font(18.0)
     }
 
     private val text2 = Text().also {
         it.fill = textColor
-        it.font = Font.font(18.0)
     }
 
     init {
@@ -67,9 +65,11 @@ class XboxNotificationView : NotificationView() {
         text1.translateY = 35.0
         text1.isVisible = false
         text1.fill = textColor
+        text1.font = Font.font(fontSize)
         text1.text = ""
 
         text2.fill = textColor
+        text2.font = Font.font(fontSize)
 
         translateX = appWidth / 2 - bg.width / 2 + 200
         translateY = 50.0

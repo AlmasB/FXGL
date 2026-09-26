@@ -25,6 +25,7 @@ abstract class NotificationView : Pane(), Updatable {
     // these will be updated during notification service init
     var appWidth = 800
     var appHeight = 600
+    var fontSize = 18.0
 
     /**
      * Called when view is added to scene.

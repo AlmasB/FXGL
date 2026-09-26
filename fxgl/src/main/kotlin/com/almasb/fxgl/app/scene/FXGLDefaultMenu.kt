@@ -69,6 +69,9 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
     private val particleSystem = ParticleSystem()
 
+    private val menuScale: Double
+        get() = getSettings().fontSizeScaleMenu
+
     private val titleColor = SimpleObjectProperty(Color.WHITE)
     private var t = 0.0
 
@@ -189,12 +192,12 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     }
 
     private fun createTitleView(title: String): Node {
-        val text = getUIFactoryService().newText(title.substring(0, 1), 50.0)
+        val text = getUIFactoryService().newText(title.substring(0, 1), menuScale * 50.0)
         text.fill = null
         text.strokeProperty().bind(titleColor)
         text.strokeWidth = 1.5
 
-        val text2 = getUIFactoryService().newText(title.substring(1, title.length), 50.0)
+        val text2 = getUIFactoryService().newText(title.substring(1, title.length), menuScale * 50.0)
         text2.fill = null
         text2.stroke = titleColor.value
         text2.strokeWidth = 1.5
@@ -540,7 +543,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
 
                         val nameDate = "%-25.25s %s".format(item.name, item.dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm")))
 
-                        val text = getUIFactoryService().newText(nameDate, Color.WHITE, FontType.MONO, FONT_SIZE)
+                        val text = getUIFactoryService().newText(nameDate, Color.WHITE, FontType.MONO, menuScale * FONT_SIZE)
 
                         graphic = text
                     }
@@ -654,7 +657,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             rect.arcWidth = 15.0
             rect.arcHeight = 15.0
 
-            val text = getUIFactoryService().newText("", 24.0)
+            val text = getUIFactoryService().newText("", menuScale * 24.0)
             text.textProperty().bind(localizedStringProperty("menu.pressAnyKey"))
 
             val pane = StackPane(rect, text)
@@ -666,7 +669,7 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
     }
 
     private fun addNewInputBinding(action: UserAction, trigger: Trigger, grid: GridPane) {
-        val actionName = getUIFactoryService().newText(action.name, Color.WHITE, 18.0)
+        val actionName = getUIFactoryService().newText(action.name, Color.WHITE, menuScale * 18.0)
 
         val triggerView = TriggerView(trigger)
         triggerView.triggerProperty().bind(getInput().triggerProperty(action))

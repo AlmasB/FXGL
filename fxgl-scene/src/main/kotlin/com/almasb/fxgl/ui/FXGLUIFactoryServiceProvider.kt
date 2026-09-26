@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.ui
 
+import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.PropertyMap
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.logging.Logger
@@ -34,6 +35,9 @@ import java.util.concurrent.Callable
 class FXGLUIFactoryServiceProvider : UIFactoryService() {
 
     private val log = Logger.get(javaClass)
+
+    @Inject("fontSizeScaleUI")
+    private var fontSizeScaleUI = 1.0
 
     private val fontFactories = hashMapOf<FontType, ObjectProperty<FontFactory>>()
     private val propertyViewFactories = hashMapOf<Class<*>, PropertyViewFactory<*, *>>()
@@ -90,7 +94,7 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
     }
 
     override fun newFont(type: FontType, size: Double): Font {
-        val font = fontFactories[type]?.value?.newFont(size)
+        val font = fontFactories[type]?.value?.newFont(fontSizeScaleUI * size)
 
         if (font != null) {
             return font
@@ -98,7 +102,7 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
 
         log.warning("No font factory found for $type. Using default")
 
-        return Font.font(size)
+        return Font.font(fontSizeScaleUI * size)
     }
     
     override fun newButton(text: String): Button {
@@ -205,6 +209,6 @@ class FXGLUIFactoryServiceProvider : UIFactoryService() {
 
     private fun fontProperty(type: FontType, fontSize: Double) =
             Bindings.createObjectBinding(Callable {
-                return@Callable fontFactories[type]!!.value.newFont(fontSize)
+                return@Callable fontFactories[type]!!.value.newFont(fontSizeScaleUI * fontSize)
             }, fontFactories[type]!!)
 }
