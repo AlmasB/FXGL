@@ -8,6 +8,7 @@ package com.almasb.fxgl.notification.view
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.AnimationBuilder
+import com.almasb.fxgl.core.UISettings
 import com.almasb.fxgl.notification.Notification
 import javafx.geometry.Point2D
 import javafx.scene.Group
@@ -39,14 +40,20 @@ class XboxNotificationView : NotificationView() {
      * These two will be replacing one another.
      */
     private val text1 = Text().also {
-        it.fill = textColor
-        it.font = Font.font(18.0)
-    }
+            it.fill = textColor
+            it.font = Font.font(18.0 * UISettings.uiFontSizeMultiplier.value)
+            UISettings.uiFontSizeMultiplier.addListener { _, _, newValue ->
+                it.font = Font.font(18.0 * newValue.toDouble())
+            }
+        }
 
     private val text2 = Text().also {
-        it.fill = textColor
-        it.font = Font.font(18.0)
-    }
+            it.fill = textColor
+            it.font = Font.font(18.0 * UISettings.uiFontSizeMultiplier.value)
+            UISettings.uiFontSizeMultiplier.addListener { _, _, newValue ->
+                it.font = Font.font(18.0 * newValue.toDouble())
+            }
+        }
 
     init {
         bg.arcWidth = 55.0
