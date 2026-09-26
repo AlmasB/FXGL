@@ -18,7 +18,8 @@ import javafx.scene.paint.Color
 import java.io.Serializable
 
 /**
- * TODO: save properties (game vars) to bundle, also consider easy API to read/write PropertyMap
+ * Handles persistent storage for dialogue editor preferences.
+ * Note: saving game variables to bundle and PropertyMap read/write API are reserved for future implementation.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

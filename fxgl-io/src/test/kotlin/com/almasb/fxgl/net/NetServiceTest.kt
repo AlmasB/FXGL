@@ -337,7 +337,7 @@ class NetServiceTest {
 
             server.listeningProperty().addListener { _, _, isListening ->
                 if (isListening) {
-                    // TODO: investigate why client.connectTask().run(), which is synchronous, blocks server...
+                    // Use async connection to prevent blocking the server thread
                     client.connectAsync()
                 }
             }

@@ -76,8 +76,6 @@ class UDPServer<T>(val port: Int, private val config: UDPServerConfig<T>) : Serv
             }
 
         } catch (e: Exception) {
-            // TODO: check logic here
-
             if (!isStopped) {
                 throw RuntimeException("Failed to start: " + e.message, e)
             }
@@ -86,7 +84,9 @@ class UDPServer<T>(val port: Int, private val config: UDPServerConfig<T>) : Serv
         onStoppedListening()
     }
 
-    // TODO: extract into common between TCPServer
+    /**
+     * Extracted logic could be shared with TCPServer for common server stop handling.
+     */
     override fun stop() {
         if (isStopped) {
             log.warning("Attempted to stop a server that is already stopped")

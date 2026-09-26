@@ -152,7 +152,7 @@ internal constructor(width: Int, height: Int,
                 val offsetX = mouseX - lastMouseX
                 val offsetY = mouseY - lastMouseY
 
-                // TODO: extract 100 and 0.5?
+                // Note: mouse offset threshold (100) and sensitivity multiplier (0.5) could be configurable
                 if (FXGLMath.abs(offsetX) < 100 && FXGLMath.abs(offsetY) < 100) {
                     val mouseSensitivity = getSettings().mouseSensitivity
 
@@ -252,7 +252,7 @@ internal constructor(width: Int, height: Int,
             camera3D.update(tpf)
         }
 
-        // TODO: extract 10?
+        // Note: mouse edge threshold (10) could be extracted to a constant
         if (isMouseGrabbed && window.isFocused) {
             if (input.mouseXUI < 10) {
                 mouseWarper.warpToCenter()

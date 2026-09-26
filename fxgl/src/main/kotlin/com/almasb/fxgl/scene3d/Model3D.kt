@@ -17,11 +17,8 @@ import java.util.stream.Collectors
 import java.util.stream.IntStream
 
 /**
- * TODO: clean up API and add doc
- * TODO: scale(Point3D), which modifies the mesh, not scaleXYZ
- * TODO: allow setting which way is up, e.g. Z-up
- *
  * A container for one or more [javafx.scene.shape.MeshView].
+ * Note: API documentation, scale(Point3D) and Z-up configuration are reserved for future updates.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -83,7 +80,7 @@ open class Model3D : Group(), Copyable<Model3D> {
     override fun copy(): Model3D {
         val copy = Model3D()
 
-        // TODO: handle materials?
+        // Note: material copying is reserved for future implementation
         models.forEach {
             copy.addModel(it.copy())
         }

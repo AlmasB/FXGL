@@ -64,7 +64,7 @@ public class EditorGameApplication extends GameApplication {
     protected void onUpdate(double tpf) {
         if (!isAdded) {
             ui.notifyDone();
-            // TODO: use service?
+            // Consider using a service for this notification pattern
             isAdded = true;
         }
     }

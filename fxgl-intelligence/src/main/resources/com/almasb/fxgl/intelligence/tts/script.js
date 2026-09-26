@@ -30,7 +30,10 @@ socket.addEventListener('message', function (event) {
         let funcName = tokens[0];
         
         if (funcName === "speak") {
-            // TODO: check length?
+            if (tokens.length < 3) {
+                console.error("Invalid speak call: expected 3 tokens, got " + tokens.length);
+                return;
+            }
             let voiceName = tokens[1];
             let voiceText = tokens[2];
             
@@ -59,8 +62,7 @@ function speak(text) {
     const speech = new SpeechSynthesisUtterance(text);
 
     speech.onerror = function (event) {
-        // TODO:
-        //socket.send(`Speech synthesis error: ${event.error}`);
+        console.error(`Speech synthesis error: ${event.error}`);
     };
     
     if (selectedVoice !== null) {

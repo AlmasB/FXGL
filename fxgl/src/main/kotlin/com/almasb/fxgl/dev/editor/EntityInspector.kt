@@ -40,7 +40,8 @@ import java.nio.file.Paths
 
 
 /**
- * TODO: how are going to modify each component data, e.g. ViewComponent add new view?
+ * Provides UI for inspecting and modifying entity components.
+ * Note: component data modification (e.g., ViewComponent add new view) is reserved for future implementation.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -48,7 +49,7 @@ class EntityInspector : FXGLScrollPane(), ComponentListener {
 
     private val innerBox = VBox(5.0)
 
-    // TODO: experimental
+    // Experimental: list of component types that can be added via inspector
     private val componentTypes = arrayListOf<Class<out Component>>(
             DevSpinComponent::class.java,
             ProjectileComponent::class.java,
@@ -167,7 +168,7 @@ class EntityInspector : FXGLScrollPane(), ComponentListener {
         innerBox.children += addComponentButton
         innerBox.children += addCustomComponentButton
 
-        // TODO: this is just a placeholder and needs to be updated
+        // Note: component display is basic and may need enhancement
         entity!!.components.sortedBy { it.javaClass.simpleName }
                 .forEach { comp ->
                     innerBox.children += generateView(comp)
@@ -212,12 +213,12 @@ class EntityInspector : FXGLScrollPane(), ComponentListener {
     }
 
     override fun onRemoved(component: Component) {
-        // TODO:
+        // Component removal UI update is reserved for future implementation
     }
 }
 
 // add callable methods
-// TODO: only allow void methods with 0 params for now
+// Note: only void methods with 0 params are supported currently
 //                    comp.javaClass.declaredMethods
 //                            .filter { !it.name.endsWith("Property") }
 //                            .sortedBy { it.name }

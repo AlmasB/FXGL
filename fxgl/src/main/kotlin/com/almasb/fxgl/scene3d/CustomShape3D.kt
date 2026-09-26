@@ -62,7 +62,7 @@ abstract class CustomShape3D : MeshView() {
         }
     }
 
-    // TODO: this is lazy-init, so we need to update it when the mesh changes
+    // Note: lazy initialization - vertices won't update if mesh changes after first access
     val vertices: List<MeshVertex> by lazy {
         val triMesh = mesh as TriangleMesh
 

@@ -37,7 +37,7 @@ public class BeatEmUpFactory implements EntityFactory {
                 .type(BeatEmUpEntityType.WEAPON)
                 .bbox(BoundingShape.box(20, 20))
                 .collidable()
-                // TODO: based on anim
+                // Note: weapon duration could be based on animation length
                 .with(new ExpireCleanComponent(Duration.seconds(0.3)))
                 .build();
     }

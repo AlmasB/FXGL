@@ -98,7 +98,7 @@ class FXGL private constructor() { companion object {
         if (this::engine.isInitialized)
             engine.stopLoopAndExitServices()
 
-        // TODO: app.onExit() to work properly for embedded shutdown cases
+        // Note: app.onExit() handling for embedded shutdown cases is reserved for future implementation
     }
 
     private val controller = object : GameController {

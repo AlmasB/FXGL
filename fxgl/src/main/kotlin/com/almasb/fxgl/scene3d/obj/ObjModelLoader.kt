@@ -18,7 +18,8 @@ import javafx.scene.shape.VertexFormat
 import java.net.URL
 
 /**
- * TODO: revisit implementation
+ * Loads OBJ 3D model files.
+ * Note: Implementation may be revisited for additional features.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -224,7 +225,7 @@ class ObjModelLoader : Model3DLoader {
         }
     }
 
-    // TODO: smoothing groups
+    // Note: smoothing groups support is reserved for future implementation
     override fun load(url: URL): Model3D {
         try {
             val data = loadObjData(url)
@@ -236,7 +237,7 @@ class ObjModelLoader : Model3DLoader {
 
                 it.subGroups.forEach {
 
-                    // TODO: ?
+                    // Process faces if present
                     if (!it.faces.isEmpty()) {
 
                         val mesh = TriangleMesh(it.vertexFormat)

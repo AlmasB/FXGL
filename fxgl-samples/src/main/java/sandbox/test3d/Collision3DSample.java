@@ -22,7 +22,7 @@ import static javafx.scene.input.KeyCode.*;
 
 /**
  * Sample for collisions in 3D space.
- * TODO: not implemented
+ * Note: implementation is incomplete.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
