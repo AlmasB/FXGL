@@ -763,7 +763,7 @@ class PhysicsWorldTest {
             gWorld.onUpdate(0.016)
             pWorld.onUpdate(0.016)
 
-            assertThat(numCollisions, `is`(843))
+            assertThat("unrotated collisions with $strategy", numCollisions, `is`(843))
 
             // check with rotations now
             numCollisions = 0
@@ -775,7 +775,7 @@ class PhysicsWorldTest {
             gWorld.onUpdate(0.016)
             pWorld.onUpdate(0.016)
 
-            assertThat(numCollisions, `is`(970))
+            assertThat("rotated collisions with $strategy", numCollisions, `is`(970))
         }
     }
 }

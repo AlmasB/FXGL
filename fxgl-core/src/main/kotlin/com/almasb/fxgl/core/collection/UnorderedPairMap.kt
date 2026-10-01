@@ -14,7 +14,7 @@ package com.almasb.fxgl.core.collection
 class UnorderedPairMap<K, V>
 @JvmOverloads constructor(capacity: Int = 16) {
     
-    private val map = HashMap<Int, V>(capacity)
+    private val map = HashMap<UnorderedPair<K>, V>(capacity)
 
     val values
         get() = map.values
@@ -30,31 +30,43 @@ class UnorderedPairMap<K, V>
      * @return a value for [key1] [key2] pair or null if no such key exists
      */
     fun get(key1: K, key2: K): V? {
-        return map[hash(key1, key2)]
+        return map[UnorderedPair(key1, key2)]
     }
 
     /**
      * Add a new mapping from [key1] [key2] to [value].
      */
     fun put(key1: K, key2: K, value: V) {
-        map[hash(key1, key2)] = value
+        map[UnorderedPair(key1, key2)] = value
     }
 
     /**
      * Remove an existing mapping whose key is [key1] [key2].
      */
     fun remove(key1: K, key2: K) {
-        map.remove(hash(key1, key2))
+        map.remove(UnorderedPair(key1, key2))
     }
 
-    private fun hash(key1: K, key2: K): Int {
-        val hash1 = key1.hashCode()
-        val hash2 = key2.hashCode()
+    /**
+     * Unordered pair key. Distinct pairs with the same hash must remain distinct.
+     */
+    private class UnorderedPair<K>(val a: K, val b: K) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is UnorderedPair<*>) return false
 
-        return if (hash1 > hash2) {
-            31 * (31 + hash1) + hash2
-        } else {
-            31 * (31 + hash2) + hash1
+            return (a == other.a && b == other.b) || (a == other.b && b == other.a)
+        }
+
+        override fun hashCode(): Int {
+            val hash1 = a.hashCode()
+            val hash2 = b.hashCode()
+
+            return if (hash1 > hash2) {
+                31 * (31 + hash1) + hash2
+            } else {
+                31 * (31 + hash2) + hash1
+            }
         }
     }
 }
