@@ -440,5 +440,13 @@ class PropertyMapTest {
         assertThat(map2.getBoolean("key4"), `is`(true))
     }
 
+    @Test
+    fun `Get default values if property is not present`() {
+        assertThat(map.getString("none", "default"), `is`("default"))
+        assertThat(map.getInt("none", 42), `is`(42))
+        assertThat(map.getDouble("none", 3.14), `is`(3.14))
+        assertThat(map.getBoolean("none", true), `is`(true))
+    }
+
     private class MyClass(val i: Int)
 }

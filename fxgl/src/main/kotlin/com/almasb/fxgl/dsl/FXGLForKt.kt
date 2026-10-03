@@ -102,6 +102,14 @@ fun getb(varName: String): Boolean = FXGL.getWorldProperties().getBoolean(varNam
 
 fun gets(varName: String): String = FXGL.getWorldProperties().getString(varName)
 
+fun geti(varName: String, defaultValue: Int): Int = FXGL.getWorldProperties().getInt(varName, defaultValue)
+
+fun getd(varName: String, defaultValue: Double): Double = FXGL.getWorldProperties().getDouble(varName, defaultValue)
+
+fun getb(varName: String, defaultValue: Boolean): Boolean = FXGL.getWorldProperties().getBoolean(varName, defaultValue)
+
+fun gets(varName: String, defaultValue: String): String = FXGL.getWorldProperties().getString(varName, defaultValue)
+
 fun <T> geto(varName: String): T = FXGL.getWorldProperties().getObject(varName)
 
 fun getip(varName: String): IntegerProperty = FXGL.getWorldProperties().intProperty(varName)

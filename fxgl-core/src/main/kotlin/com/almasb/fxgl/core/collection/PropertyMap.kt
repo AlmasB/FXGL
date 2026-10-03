@@ -184,6 +184,34 @@ class PropertyMap : SerializableType {
 
     fun getString(propertyName: String) = stringProperty(propertyName).value
 
+    fun getBoolean(propertyName: String, defaultValue: Boolean): Boolean {
+        if (exists(propertyName))
+            return getBoolean(propertyName)
+
+        return defaultValue
+    }
+
+    fun getInt(propertyName: String, defaultValue: Int): Int {
+        if (exists(propertyName))
+            return getInt(propertyName)
+
+        return defaultValue
+    }
+
+    fun getDouble(propertyName: String, defaultValue: Double): Double {
+        if (exists(propertyName))
+            return getDouble(propertyName)
+
+        return defaultValue
+    }
+
+    fun getString(propertyName: String, defaultValue: String): String {
+        if (exists(propertyName))
+            return getString(propertyName)
+
+        return defaultValue
+    }
+
     fun <T> getObject(propertyName: String) = objectProperty<T>(propertyName).value
 
     fun booleanProperty(propertyName: String) = get(propertyName) as BooleanProperty

@@ -306,6 +306,14 @@ class FXGL private constructor() { companion object {
 
     @JvmStatic fun gets(varName: String): String = getWorldProperties().getString(varName)
 
+    @JvmStatic fun geti(varName: String, defaultValue: Int): Int = getWorldProperties().getInt(varName, defaultValue)
+
+    @JvmStatic fun getd(varName: String, defaultValue: Double): Double = getWorldProperties().getDouble(varName, defaultValue)
+
+    @JvmStatic fun getb(varName: String, defaultValue: Boolean): Boolean = getWorldProperties().getBoolean(varName, defaultValue)
+
+    @JvmStatic fun gets(varName: String, defaultValue: String): String = getWorldProperties().getString(varName, defaultValue)
+
     @JvmStatic fun <T> geto(varName: String): T = getWorldProperties().getObject(varName)
 
     @JvmStatic fun getip(varName: String): IntegerProperty = getWorldProperties().intProperty(varName)
