@@ -61,6 +61,11 @@ internal class SystemBundleService : EngineService() {
     }
 
     private fun saveSystemData() {
+        if (!::bundle.isInitialized) {
+            log.debug("Skipping FXGL system data save")
+            return
+        }
+
         log.debug("Saving FXGL system data")
 
         fs.writeDataTask(bundle, "system/fxgl.bundle")
