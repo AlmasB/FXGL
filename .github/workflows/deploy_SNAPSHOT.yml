@@ -20,6 +20,8 @@ jobs:
         server-id: central
         server-username-env-var: MAVEN_USERNAME
         server-password-env-var: MAVEN_PASSWORD
+        gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+        gpg-passphrase-env-var: MAVEN_GPG_PASSPHRASE
 
     - name: Cache maven deps
       uses: actions/cache@v6
