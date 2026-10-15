@@ -13,6 +13,7 @@ import javafx.beans.property.*
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
+import javafx.scene.Cursor
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -74,6 +75,10 @@ class ViewComponent : Component() {
      */
     val children: List<Node>
         get() = viewRoot.children + viewRootNoTransform.children
+
+    var cursor: Cursor
+        get() = parent.cursor
+        set(value) { parent.cursor = value }
 
     init {
         viewRoot.opacityProperty().bind(opacityProperty)

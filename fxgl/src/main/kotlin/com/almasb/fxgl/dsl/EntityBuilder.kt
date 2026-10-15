@@ -18,6 +18,7 @@ import com.almasb.fxgl.physics.PhysicsComponent
 import javafx.event.EventHandler
 import javafx.geometry.Point2D
 import javafx.geometry.Point3D
+import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
@@ -178,6 +179,10 @@ class EntityBuilder {
 
     fun zIndex(z: Int) = this.also {
         entity.zIndex = z
+    }
+
+    fun cursor(cursor: Cursor) = this.also {
+        entity.viewComponent.cursor = cursor
     }
 
     fun onClick(action: Consumer<Entity>) = this.also {
