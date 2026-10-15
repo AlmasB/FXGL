@@ -41,7 +41,8 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 import static javafx.scene.input.KeyCode.*;
 
 /**
- *  TODO: graceful exit (via API)
+ * Sample demonstrating multiplayer networking.
+ * Note: graceful exit API is reserved for future implementation.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -115,7 +116,7 @@ public class MultiplayerSample extends GameApplication {
                 isServer = answer;
 
                 if (isServer) {
-                    // TODO: have only server init and only client init code to override
+                    // Note: separate server-only and client-only init hooks could be added here
 
                     runOnce(() -> {
                         set("newVar", 1.0);

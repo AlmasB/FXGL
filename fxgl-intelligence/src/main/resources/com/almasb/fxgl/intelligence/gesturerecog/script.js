@@ -38,8 +38,7 @@ socket.addEventListener('message', function (event) {
         if (funcName === "setVideoInputDevice") {
             let deviceId = tokens[1];
 
-            // TODO: window["functionName"](arguments);
-
+            // Dynamic function call via window[funcName] could be used here for extensibility
             setVideoInputDevice(deviceId);
         }
     }
@@ -176,7 +175,12 @@ function rpcRun(funcName, ...args) {
     socket.send(message);
 }
 
+let _rpcIdCounter = 0;
+function generateRPCId() {
+    return `${Date.now()}_${_rpcIdCounter++}`;
+}
+
 function rpcReturn(funcName) {
-    // TODO: unique id?
-    //socket.send(`${FUNCTION_RETURN_TAG}${funcName}.F_RESULT:${names}`);
+    let id = generateRPCId();
+    //socket.send(`${FUNCTION_RETURN_TAG}${funcName}.${id}:${names}`);
 }

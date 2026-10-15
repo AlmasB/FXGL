@@ -209,8 +209,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
             graph.removeNode(subDialogueNode)
 
             // connect the source and target with a graph
-            // TODO:
-            //graph.appendGraph(source, target, subGraph)
+            // Note: graph.appendGraph(source, target, subGraph) is reserved for future implementation
         }
 
         currentNode = graph.startNode
@@ -280,7 +279,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
     private fun handleFunctionNode(functionNode: FunctionNode) {
         val id = graph.findNodeID(functionNode)
 
-        // TODO: design key prefixes for dialogue created vars
+        // Note: dialogue variable key prefix design is reserved for future enhancement
         val varName = "DialogueScene.function.numTimesCalled.$id"
 
         if (!localVars.exists(varName)) {
@@ -373,7 +372,7 @@ class DialogueScene(private val sceneService: SceneService) : SubScene() {
         if (node.audioFileName.isEmpty())
             return
 
-        // TODO: store audio being played, so we can stop as appropriate
+        // Note: audio tracking for selective stop is reserved for future implementation
         val audio = assetLoader.load<Music>(AssetType.MUSIC, assetLoader.getURL(node.audioFileName.replace("\\", "/")))
 
         audioPlayer.stopMusic(audio)

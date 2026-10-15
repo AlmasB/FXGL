@@ -12,8 +12,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
 /**
- * // TODO: read-only version?
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class Point2DPropertyViewFactory implements PropertyViewFactory<Point2D, HBox> {

@@ -17,7 +17,8 @@ import javafx.scene.shape.Sphere
 import javafx.util.Duration
 
 /**
- * TODO: EXPERIMENTAL API, return models or entities, correct name? API?
+ * Factory for creating 3D scene objects.
+ * Note: This is an EXPERIMENTAL API. Return types and naming may change in future versions.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

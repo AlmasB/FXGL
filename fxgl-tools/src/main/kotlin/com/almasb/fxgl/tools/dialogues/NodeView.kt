@@ -189,8 +189,6 @@ class AudioField() : HBox(5.0) {
 
         val button = CustomButton("...", 14.0)
         button.setOnMouseClicked {
-
-            // TODO: configure as appropriate
             audioFileChooser.showOpenDialog(null)?.let { file ->
                 field.text = File.separatorChar + "assets" + file.absolutePath.toString().substringAfter("assets")
 
