@@ -29,7 +29,7 @@ class FileOutput
         /**
          * The directory in which the log is to be saved.
          */
-        private val logDirectory: String = "logs/",
+        private val logDirectory: String = "system/logs/",
 
         /**
          * Maximum number of log files to keep in the given directory.
@@ -58,7 +58,7 @@ class FileOutput
     private fun getOrCreateLogDir(): Path {
         val logDir = Paths.get(logDirectory)
         if (!Files.exists(logDir)) {
-            Files.createDirectory(logDir)
+            Files.createDirectories(logDir)
         }
 
         return logDir
