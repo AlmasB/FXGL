@@ -11,7 +11,6 @@ import com.almasb.fxgl.core.EngineService
 import com.almasb.fxgl.core.Inject
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.logging.Logger
-import javafx.beans.property.DoubleProperty
 import java.net.URL
 
 /**
@@ -27,26 +26,10 @@ class AudioPlayer : EngineService() {
     private val activeMusic = UnorderedArray<Music>()
     private val activeSounds = UnorderedArray<Sound>()
 
-    @Inject("globalMusicVolumeProperty")
-    private lateinit var musicVolume: DoubleProperty
-
-    @Inject("globalSoundVolumeProperty")
-    private lateinit var soundVolume: DoubleProperty
-
     @Inject("isPauseMusicWhenMinimized")
     private var isPauseMusicWhenMinimized = true
 
     private val loader = DesktopAndMobileAudioLoader()
-
-    override fun onMainLoopStarting() {
-        musicVolume.addListener { _, _, newVolume ->
-            activeMusic.forEach { it.audio.setVolume(newVolume.toDouble()) }
-        }
-
-        soundVolume.addListener { _, _, newVolume ->
-            activeSounds.forEach { it.audio.setVolume(newVolume.toDouble()) }
-        }
-    }
 
     override fun onMainLoopPausing() {
         if (isPauseMusicWhenMinimized) {
@@ -74,7 +57,6 @@ class AudioPlayer : EngineService() {
         if (!activeSounds.containsByIdentity(sound))
             activeSounds.add(sound)
 
-        sound.audio.setVolume(soundVolume.value)
         sound.audio.play()
     }
 
@@ -106,7 +88,6 @@ class AudioPlayer : EngineService() {
             activeMusic.add(music)
         }
 
-        music.audio.setVolume(musicVolume.value)
         music.audio.play()
     }
 
@@ -192,4 +173,5 @@ class AudioPlayer : EngineService() {
     fun loadAudio(audioType: AudioType, url: URL, isMobile: Boolean): Audio {
         return loader.loadAudio(audioType, url, isMobile)
     }
+
 }
