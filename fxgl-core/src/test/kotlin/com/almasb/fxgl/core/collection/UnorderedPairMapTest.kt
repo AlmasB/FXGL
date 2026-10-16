@@ -69,5 +69,33 @@ class UnorderedPairMapTest {
         assertThat(map2.get(key1, CustomObject()), nullValue())
     }
 
+    @Test
+    fun `Different pairs with the same hash stay distinct`() {
+        class Key(val id: Int) {
+            override fun hashCode() = 7
+            override fun equals(other: Any?) = other is Key && id == other.id
+        }
+
+        val map2 = UnorderedPairMap<Key, String>()
+        val a = Key(1)
+        val b = Key(2)
+        val c = Key(3)
+        val d = Key(4)
+
+        map2.put(a, b, "ab")
+        map2.put(c, d, "cd")
+
+        assertThat(map2.get(a, b), `is`("ab"))
+        assertThat(map2.get(b, a), `is`("ab"))
+        assertThat(map2.get(c, d), `is`("cd"))
+        assertThat(map2.get(d, c), `is`("cd"))
+        assertThat(map2.values, containsInAnyOrder("ab", "cd"))
+
+        map2.remove(a, b)
+
+        assertThat(map2.get(a, b), nullValue())
+        assertThat(map2.get(c, d), `is`("cd"))
+    }
+
     private class CustomObject
 }
