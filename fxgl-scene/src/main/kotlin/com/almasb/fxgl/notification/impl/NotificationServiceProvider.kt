@@ -49,10 +49,17 @@ class NotificationServiceProvider : NotificationService() {
     @Inject("notificationViewClass")
     private lateinit var notificationViewClass: Class<out NotificationView>
 
+    @Inject("fontSizeScaleUI")
+    private var fontSizeScaleUI = 1.0
+
+    @Inject("fontSizeScaleNotification")
+    private var fontSizeScaleNotification = 1.0
+
     private val notificationView by lazy {
         ReflectionUtils.newInstance(notificationViewClass).also {
             it.appWidth = sceneService.prefWidth.toInt()
             it.appHeight = sceneService.prefHeight.toInt()
+            it.fontSize = fontSizeScaleUI * fontSizeScaleNotification * 18.0
         }
     }
 
