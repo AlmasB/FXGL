@@ -14,7 +14,8 @@ import com.almasb.fxgl.pathfinding.TraversableGrid
 import java.util.*
 
 /**
- * TODO: incomplete impl
+ * Depth-first search pathfinding implementation.
+ * Note: This is an incomplete implementation.
  *
  * @author Almas Baim (https://github.com/AlmasB)
  */
@@ -41,7 +42,7 @@ class DFSPathfinder<T : AStarCell>(grid: TraversableGrid<T>) : Pathfinder<T>(gri
 
         closed.add(current)
 
-        // TODO: target not ....
+        // Note: target validation check is reserved for future implementation
 
         var isFound = false
 

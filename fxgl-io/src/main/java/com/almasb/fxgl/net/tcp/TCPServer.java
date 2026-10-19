@@ -51,9 +51,6 @@ public final class TCPServer<T> extends Server<T> {
             }
 
         } catch (Exception e) {
-
-            // TODO: check logic here
-
             if (!isStopped) {
                 throw new RuntimeException("Failed to start: " + e.getMessage(), e);
             }

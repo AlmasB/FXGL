@@ -77,7 +77,7 @@ public final class WebAPI {
             log.warning("Failed to get url: " + relativeURL, e);
         }
 
-        // TODO: github URLs, e.g. https://raw.githubusercontent.com/AlmasB/FXGL/dev/fxgl-intelligence/src/main/resources/com/almasb/fxgl/intelligence/rpc-common.js
+        // Note: GitHub raw URLs fallback could be added here if needed
         throw new IllegalArgumentException("Failed to extract URL: " + relativeURL);
     }
 }

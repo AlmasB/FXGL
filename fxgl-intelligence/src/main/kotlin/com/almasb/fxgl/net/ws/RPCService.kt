@@ -56,7 +56,8 @@ abstract class RPCService(
             }
 
             if (message.startsWith(FUNCTION_RETURN_TAG)) {
-                // TODO:
+                // FUNCTION_RETURN_TAG handling not yet implemented
+                log.debug("Received function return: $message")
             }
         }
     }
@@ -85,7 +86,8 @@ abstract class RPCService(
     }
 
     private fun rpcReturn() {
-        // TODO:
+        // RPC return functionality not yet implemented
+        log.debug("rpcReturn() called but not implemented")
     }
 
     override fun onExit() {

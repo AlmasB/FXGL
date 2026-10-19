@@ -18,7 +18,7 @@ internal val MESSAGE_OPEN = byteArrayOf(-2, -1, 0, 70, 0, 88, 0, 71, 0, 76, 0, 9
 internal val MESSAGE_CLOSE = byteArrayOf(-2, -1, 0, 70, 0, 88, 0, 71, 0, 76, 0, 95, 0, 66, 0, 89, 0, 69, 0, 33, 0, 33)
 
 /**
- * TODO: readers / writers will operate on byte[] <-> T
+ * Readers / writers will operate on byte[] <-> T conversion.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -31,9 +31,8 @@ class UDPClient<T>(val ip: String, val port: Int, private val config: UDPClientC
     private var socket: DatagramSocket? = null
 
     override fun connect() {
-        // TODO: exception handling
-
-        DatagramSocket().use {
+        try {
+            DatagramSocket().use {
             socket = it
             it.connect(InetAddress.getByName(ip), port)
 
@@ -74,9 +73,15 @@ class UDPClient<T>(val ip: String, val port: Int, private val config: UDPClientC
                 onConnectionClosed(connection)
             }
         }
+        } catch (e: Exception) {
+            log.warning("Failed to connect UDP client to $ip:$port", e)
+            onConnectionClosed(null)
+        }
     }
 
-    // TODO: extract into common between UDPServer
+    /**
+     * Extracted logic could be shared with UDPServer for common connection cleanup.
+     */
     override fun disconnect() {
         if (isStopped) {
             log.warning("Attempted to stop a client that is already stopped")

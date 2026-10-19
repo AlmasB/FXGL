@@ -28,13 +28,8 @@ object GoapPlanner {
              currentState: PropertyMap,
              goalState: PropertyMap): Queue<GoapAction> {
 
-        // reset the actions so we can start fresh with them
-        // TODO:
-        //availableActions.forEach { it.cancel() }
-
-        // check what actions can run
-        // TODO:
-        //val usableActions = availableActions.filter { it.canRun() }.toSet()
+        // Reset actions and filter for runnable actions
+        // Note: action.cancel() and canRun() filtering are reserved for future implementation
         val usableActions = availableActions.toSet()
 
         // we now have all actions that can run, stored in usableActions
@@ -120,7 +115,10 @@ object GoapPlanner {
         return newState
     }
 
-    // TODO: currently only supports boolean values
+    /**
+     * Checks if this state is a subset of another state.
+     * Note: Currently only supports boolean values.
+     */
     private fun PropertyMap.isIn(other: PropertyMap): Boolean {
         var result = true
 

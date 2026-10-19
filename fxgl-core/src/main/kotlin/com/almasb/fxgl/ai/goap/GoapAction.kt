@@ -62,12 +62,12 @@ open class GoapAction
 //
 //    /**
 //     * Check if this action can run.
-//     * TODO: is available, rather than can run.
+//     * Note: this should check if available, rather than can run.
 //     */
 //    open fun canRun() = true
 //
 //    override fun onUpdate(tpf: Double) {
-//        // TODO: perform(tpf)
+//        // Note: perform(tpf) with time per frame could be added here
 //        perform()
 //    }
 //

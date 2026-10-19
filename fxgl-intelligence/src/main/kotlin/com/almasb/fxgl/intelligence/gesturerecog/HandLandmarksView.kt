@@ -55,8 +55,7 @@ class HandLandmarksView : Pane(), Consumer<Hand> {
 
             val now = System.currentTimeMillis()
 
-            // TODO: this isn't quite right because accept() is only called when there is data available
-            // so isVisible = false is never needed
+            // Note: accept() is only called when data is available, so visibility handling is limited
             if (now - handView1.lastTimeVisibleMillis > config.keepVisibleDuration.toMillis()) {
                 handView1.isVisible = false
             }

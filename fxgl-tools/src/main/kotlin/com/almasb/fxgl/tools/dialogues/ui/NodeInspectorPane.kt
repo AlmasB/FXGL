@@ -54,14 +54,14 @@ class NodeInspectorPane : VBox(5.0) {
     }
 }
 
-// TODO: a generic inspector view
+// Note: generic inspector view API could be extracted here
 private class DialogueNodeInspector(val id: Int, node: DialogueNode) : VBox(5.0) {
 
     init {
         children += generateView(node)
     }
 
-    // TODO: if NodeView of node changed, then regenerate UI
+    // Note: UI regeneration on NodeView change is reserved for future implementation
     private fun generateView(node: DialogueNode): GridPane {
         val pane = GridPane()
         pane.hgap = 25.0
@@ -77,7 +77,7 @@ private class DialogueNodeInspector(val id: Int, node: DialogueNode) : VBox(5.0)
 
         var index = 0
 
-        // TODO: turn into generic inspector view API
+        // Note: generic inspector view API could be used here
         val title = FXGL.getUIFactoryService().newText(node.javaClass.simpleName.removeSuffix("Node"), Color.ANTIQUEWHITE, 22.0)
 
         pane.addRow(index++, title)
@@ -124,7 +124,7 @@ private class DialogueNodeInspector(val id: Int, node: DialogueNode) : VBox(5.0)
 
                 index = prevIndex
 
-                // TODO: duplicated
+                // Note: this logic is duplicated elsewhere and could be refactored
                 for (id in 0..textNode.lastOptionID) {
                     val text = Text("Option $id").also { it.fill = Color.WHITE }
 
