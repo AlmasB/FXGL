@@ -21,7 +21,7 @@ class DesktopMusic(private val mediaPlayer: MediaPlayer) : Audio(AudioType.MUSIC
     }
 
     override fun setVolume(volume: Double) {
-        mediaPlayer.volume = volume
+        mediaPlayer.volume = mix(volume)
     }
 
     override fun setOnFinished(action: Runnable) {
@@ -52,7 +52,7 @@ class DesktopSound(private val clip: AudioClip) : Audio(AudioType.SOUND) {
     }
 
     override fun setVolume(volume: Double) {
-        clip.volume = volume
+        clip.volume = mix(volume)
     }
 
     override fun setOnFinished(action: Runnable) {

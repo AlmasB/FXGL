@@ -66,7 +66,7 @@ class DesktopAndMobileAudioLoader : AudioLoader {
             }
 
             override fun setVolume(volume: Double) {
-                nativeAudio.ifPresent { it.setVolume(volume) }
+                nativeAudio.ifPresent { it.setVolume(mix(volume)) }
             }
 
             override fun setOnFinished(action: Runnable) {

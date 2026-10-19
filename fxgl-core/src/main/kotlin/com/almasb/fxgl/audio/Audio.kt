@@ -7,9 +7,12 @@
 package com.almasb.fxgl.audio
 
 import com.almasb.fxgl.core.Disposable
+import javafx.beans.property.DoubleProperty
+import javafx.beans.property.SimpleDoubleProperty
 
-enum class AudioType {
-    MUSIC, SOUND
+enum class AudioType(val volume: DoubleProperty) {
+    MUSIC(SimpleDoubleProperty(0.5)),
+    SOUND(SimpleDoubleProperty(0.5))
 }
 
 /**
@@ -18,6 +21,10 @@ enum class AudioType {
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 abstract class Audio(val type: AudioType) {
+
+    internal fun mix(volume: Double) : Double {
+        return type.volume.value * volume
+    }
 
     abstract fun setLooping(looping: Boolean)
 
@@ -52,15 +59,35 @@ private val audio: Audio by lazy {
 
 fun getDummyAudio() = audio
 
-/**
- * Represents a long-term audio in mp3 file.
- * Use for background (looping) music or recorded dialogues.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- */
-class Music(val audio: Audio) : Disposable {
+abstract class Media(internal val audio : Audio) : Disposable {
 
     internal var isDisposed = false
+    internal val volume = SimpleDoubleProperty(1.0)
+
+    init {
+        audio.type.volume.addListener { _, _, _ ->
+            audio.setVolume(volume.value)
+        }
+        volume.addListener { _, _, _ ->
+            audio.setVolume(volume.value)
+        }
+    }
+
+    fun setVolume(value: Double) {
+        volume.value = value
+    }
+
+    fun getVolume() : Double {
+        return volume.value
+    }
+
+    fun volumeProperty() : DoubleProperty {
+        return volume
+    }
+
+    fun setLooping(looping: Boolean) {
+        audio.setLooping(looping)
+    }
 
     override fun dispose() {
         isDisposed = true
@@ -68,15 +95,20 @@ class Music(val audio: Audio) : Disposable {
 }
 
 /**
+ * Represents a long-term audio in mp3 file.
+ * Use for background (looping) music or recorded dialogues.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
+class Music(audio : Audio) : Media(audio) {
+
+}
+
+/**
  * Represents a short sound in .wav file.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class Sound(val audio: Audio) : Disposable {
+class Sound(audio : Audio) : Media(audio) {
 
-    internal var isDisposed = false
-
-    override fun dispose() {
-        isDisposed = true
-    }
 }
