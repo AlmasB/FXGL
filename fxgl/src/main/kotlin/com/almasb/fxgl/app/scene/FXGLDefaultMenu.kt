@@ -91,13 +91,20 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
             createMenuBodyGameMenu()
         
         val menuX = 50.0
-        val menuY = appHeight / 2.0 - menu.layoutHeight / 2
 
-        menuRoot.translateX = menuX
-        menuRoot.translateY = menuY
+menuRoot.translateX = menuX
+menuRoot.translateYProperty().bind(
+    getSettings().prefHeightProperty().divide(2.0).subtract(menu.layoutHeight / 2)
+)
 
-        menuContentRoot.translateX = appWidth - 500.0
-        menuContentRoot.translateY = menuY
+menuContentRoot.translateXProperty().bind(
+    getSettings().prefWidthProperty().subtract(500.0)
+)
+menuContentRoot.translateYProperty().bind(
+    getSettings().prefHeightProperty().divide(2.0).subtract(menu.layoutHeight / 2)
+)
+
+
 
         initParticles()
 
