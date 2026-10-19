@@ -19,7 +19,8 @@ import javafx.geometry.Point2D
  */
 class WaypointMoveComponent(
         var speed: Double,
-        waypoints: List<Point2D>) : Component() {
+        waypoints: List<Point2D>
+) : Component() {
 
     private val log = Logger.get<WaypointMoveComponent>()
 
@@ -28,11 +29,21 @@ class WaypointMoveComponent(
 
     private val isAtDestinationProp = ReadOnlyBooleanWrapper(true)
 
+    private var isAllowRotation = false
+
     init {
         move(waypoints)
     }
 
     fun atDestinationProperty(): ReadOnlyBooleanProperty = isAtDestinationProp.readOnlyProperty
+
+    /**
+     * Allows enabling or disabling rotation towards the current movement direction.
+     */
+    fun allowRotation(allowRotation: Boolean): WaypointMoveComponent {
+        isAllowRotation = allowRotation
+        return this
+    }
 
     fun move(waypoints: List<Point2D>) {
         points.clear()
@@ -48,22 +59,39 @@ class WaypointMoveComponent(
         isAtDestinationProp.value = false
     }
 
+    override fun onAdded() {
+        updateRotation()
+    }
+
     override fun onUpdate(tpf: Double) {
         if (isAtDestinationProp.value)
             return
 
         val dist = tpf * speed
 
-        if (nextPoint.distance(entity.anchoredPosition) < dist) {
+        if (nextPoint.distance(entity.anchoredPosition) <= dist) {
             entity.anchoredPosition = nextPoint
 
             if (points.isNotEmpty()) {
                 nextPoint = points.removeAt(0)
+                updateRotation()
             } else {
                 isAtDestinationProp.value = true
             }
         } else {
+            updateRotation()
             entity.translateTowards(nextPoint, dist)
+        }
+    }
+
+    private fun updateRotation() {
+        if (!isAllowRotation)
+            return
+
+        val movementVector = nextPoint.subtract(entity.anchoredPosition)
+
+        if (movementVector.magnitude() > 0.0) {
+            entity.rotateToVector(movementVector)
         }
     }
 
