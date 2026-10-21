@@ -25,6 +25,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.fxgl.physics.box2d.dynamics.joints.*;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;
 
 import java.io.Serializable;
@@ -110,6 +111,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
     private Array<Body> delayedBodiesRemove = new UnorderedArray<>();
 
     private Map<Entity, ChangeListener<Number> > scaleListeners = new HashMap<>();
+    private Map<Entity, ListChangeListener<HitBox> > hitBoxListeners = new HashMap<>();
 
     @Override
     public void onEntityAdded(Entity entity) {
@@ -144,6 +146,23 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
 
         entity.getTransformComponent().scaleXProperty().addListener(scaleChangeListener);
         entity.getTransformComponent().scaleYProperty().addListener(scaleChangeListener);
+
+        ListChangeListener<HitBox> hitBoxChangeListener = change -> {
+            Body b = entity.getComponent(PhysicsComponent.class).body;
+
+            if (b != null) {
+                List<Fixture> fixtures = List.copyOf(b.getFixtures());
+
+                fixtures.forEach(b::destroyFixture);
+
+                createFixtures(entity);
+                createSensors(entity);
+            }
+        };
+
+        hitBoxListeners.put(entity, hitBoxChangeListener);
+
+        entity.getBoundingBoxComponent().hitBoxesProperty().addListener(hitBoxChangeListener);
     }
 
     @Override
@@ -163,6 +182,14 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener,
             entity.getTransformComponent().scaleYProperty().removeListener(scaleChangeListener);
 
             scaleListeners.remove(entity);
+        }
+
+        if (hitBoxListeners.containsKey(entity)) {
+            ListChangeListener<HitBox> hitBoxChangeListener = hitBoxListeners.get(entity);
+
+            entity.getBoundingBoxComponent().hitBoxesProperty().removeListener(hitBoxChangeListener);
+
+            hitBoxListeners.remove(entity);
         }
 
         if (!jboxWorld.isLocked()) {
